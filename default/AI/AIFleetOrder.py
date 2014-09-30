@@ -15,33 +15,12 @@ dumpTurn=0
 class AIFleetOrder(object):
     """Stores information about orders which can be executed"""
 
-    def __init__(self, fleet_order_type, source_target, target_target):
-        self.__aiFleetOrderType = fleet_order_type
-        self.__sourceAITarget = source_target
-        self.__targetAITarget = target_target
-        self.__executed = False
-        self.__executionCompleted = False
-
-    def get_fleet_order_type(self):
-        return self.__aiFleetOrderType
-
-    def get_source_target(self):
-        return self.__sourceAITarget
-
-    def get_target_target(self):
-        return self.__targetAITarget
-
-    def is_executed(self):
-        return self.__executed
-
-    def __set_executed(self):
-        self.__executed = True
-
-    def is_execution_completed(self):
-        return self.__executionCompleted
-
-    def __set_execution_completed(self):
-        self.__executionCompleted = True
+    def __init__(self, fleet_order_type, fleet, target):
+        self.order_type = fleet_order_type
+        self.fleet = fleet
+        self.target = target
+        self.executed = False
+        self.execution_completed = False
 
     def __check_validity_ship_in_fleet(self, ship_target, fleet_target):
         ship_id = ship_target.target_id
@@ -56,52 +35,52 @@ class AIFleetOrder(object):
     def is_valid(self):
         """check if FleetOrder could be somehow in future issued = is valid"""
 
-        if self.is_executed() and self.is_execution_completed():
+        if self.executed and self.execution_completed:
             return False
-        if self.get_source_target().valid and self.get_target_target().valid:
+        if self.fleet.valid and self.target.valid:
             sourceAITargetTypeValid = False
             targetAITargetTypeValid = False
             universe = fo.getUniverse()
 
             # outpost
-            if AIFleetOrderType.ORDER_OUTPOST == self.get_fleet_order_type():
+            if AIFleetOrderType.ORDER_OUTPOST == self.order_type:
                 # with ship
-                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                    ship = universe.getShip(self.get_source_target().target_id)
+                if AITargetType.TARGET_SHIP == self.fleet.target_type:
+                    ship = universe.getShip(self.fleet.target_id)
                     if ship.canColonize:
                         sourceAITargetTypeValid = True
                 # with fleet
-                elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-                    fleet = universe.getFleet(self.get_source_target().target_id)
+                elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+                    fleet = universe.getFleet(self.fleet.target_id)
                     if fleet.hasOutpostShips:
                         sourceAITargetTypeValid = True
                 # colonise planet
-                if AITargetType.TARGET_PLANET == self.get_target_target().target_type:
-                    planet = universe.getPlanet(self.get_target_target().target_id)
+                if AITargetType.TARGET_PLANET == self.target.target_type:
+                    planet = universe.getPlanet(self.target.target_id)
                     system = universe.getSystem(planet.systemID)
                     sysPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
                     planetPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
                     if (planetPartialVisTurn == sysPartialVisTurn) and planet.unowned:
                         targetAITargetTypeValid = True
                     else:#try to get order cancelled out
-                        self.__set_executed()
-                        self.__set_execution_completed()
+                        self.executed = True
+                        self.execution_completed = True
 
             # colonise
-            elif AIFleetOrderType.ORDER_COLONISE == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_COLONISE == self.order_type:
                 # with ship
-                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                    ship = universe.getShip(self.get_source_target().target_id)
+                if AITargetType.TARGET_SHIP == self.fleet.target_type:
+                    ship = universe.getShip(self.fleet.target_id)
                     if ship.canColonize:
                         sourceAITargetTypeValid = True
                 # with fleet
-                elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-                    fleet = universe.getFleet(self.get_source_target().target_id)
+                elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+                    fleet = universe.getFleet(self.fleet.target_id)
                     if fleet.hasColonyShips:
                         sourceAITargetTypeValid = True
                 # colonise planet
-                if AITargetType.TARGET_PLANET == self.get_target_target().target_type:
-                    planet = universe.getPlanet(self.get_target_target().target_id)
+                if AITargetType.TARGET_PLANET == self.target.target_type:
+                    planet = universe.getPlanet(self.target.target_id)
                     system = universe.getSystem(planet.systemID)
                     sysPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
                     planetPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
@@ -109,99 +88,99 @@ class AIFleetOrder(object):
                     if (planetPartialVisTurn == sysPartialVisTurn) and ( planet.unowned or (planet.ownedBy(fo.empireID()) and planet.currentMeterValue(fo.meterType.population)==0 )):
                         targetAITargetTypeValid = True
                     else:#try to get order cancelled out
-                        self.__set_executed()
-                        self.__set_execution_completed()
+                        self.executed = True
+                        self.execution_completed = True
             # invade
-            elif AIFleetOrderType.ORDER_INVADE == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_INVADE == self.order_type:
                 # with ship
-                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                    ship = universe.getShip(self.get_source_target().target_id)
+                if AITargetType.TARGET_SHIP == self.fleet.target_type:
+                    ship = universe.getShip(self.fleet.target_id)
                     if ship.canInvade:
                         sourceAITargetTypeValid = True
                 # with fleet
-                elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-                    fleet = universe.getFleet(self.get_source_target().target_id)
+                elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+                    fleet = universe.getFleet(self.fleet.target_id)
                     if fleet.hasTroopShips:
                         sourceAITargetTypeValid = True
                 # invade planet
-                if AITargetType.TARGET_PLANET == self.get_target_target().target_type:
-                    planet = universe.getPlanet(self.get_target_target().target_id)
+                if AITargetType.TARGET_PLANET == self.target.target_type:
+                    planet = universe.getPlanet(self.target.target_id)
                     planetPopulation = planet.currentMeterValue(fo.meterType.population)
                     if not planet.unowned or planetPopulation > 0:
                         targetAITargetTypeValid = True
                     else:#try to get order cancelled out
-                        self.__set_executed()
-                        self.__set_execution_completed()
+                        self.executed = True
+                        self.execution_completed = True
             # military
-            elif AIFleetOrderType.ORDER_MILITARY == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_MILITARY == self.order_type:
                 # with ship
-                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                    ship = universe.getShip(self.get_source_target().target_id)
+                if AITargetType.TARGET_SHIP == self.fleet.target_type:
+                    ship = universe.getShip(self.fleet.target_id)
                     if ship.isArmed:
                         sourceAITargetTypeValid = True
                 # with fleet
-                elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-                    fleet = universe.getFleet(self.get_source_target().target_id)
+                elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+                    fleet = universe.getFleet(self.fleet.target_id)
                     if fleet.hasArmedShips:
                         sourceAITargetTypeValid = True
                 # military system
-                if AITargetType.TARGET_SYSTEM == self.get_target_target().target_type:
-                    system = universe.getSystem(self.get_target_target().target_id)
+                if AITargetType.TARGET_SYSTEM == self.target.target_type:
+                    system = universe.getSystem(self.target.target_id)
                     targetAITargetTypeValid = True
             # move
-            elif AIFleetOrderType.ORDER_MOVE == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_MOVE == self.order_type:
                 # with fleet
-                if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+                if AITargetType.TARGET_FLEET == self.fleet.target_type:
                     sourceAITargetTypeValid = True
                 # move to system
-                if AITargetType.TARGET_SYSTEM == self.get_target_target().target_type:
+                if AITargetType.TARGET_SYSTEM == self.target.target_type:
                     targetAITargetTypeValid = True
             # resupply
-            elif AIFleetOrderType.ORDER_RESUPPLY == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_RESUPPLY == self.order_type:
                 # with fleet
-                if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+                if AITargetType.TARGET_FLEET == self.fleet.target_type:
                     sourceAITargetTypeValid = True
                 # move to system
-                if AITargetType.TARGET_SYSTEM == self.get_target_target().target_type:
+                if AITargetType.TARGET_SYSTEM == self.target.target_type:
                     empire = fo.getEmpire()
                     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-                    if self.get_target_target().target_id in fleetSupplyableSystemIDs:
+                    if self.target.target_id in fleetSupplyableSystemIDs:
                         targetAITargetTypeValid = True
             # repair
-            elif AIFleetOrderType.ORDER_REPAIR == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_REPAIR == self.order_type:
                 # with fleet
-                if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+                if AITargetType.TARGET_FLEET == self.fleet.target_type:
                     sourceAITargetTypeValid = True
                 # move to system
-                if AITargetType.TARGET_SYSTEM == self.get_target_target().target_type:
+                if AITargetType.TARGET_SYSTEM == self.target.target_type:
                     empire = fo.getEmpire()
                     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-                    if self.get_target_target().target_id in fleetSupplyableSystemIDs: #TODO: check for drydock still there/owned
+                    if self.target.target_id in fleetSupplyableSystemIDs: #TODO: check for drydock still there/owned
                         targetAITargetTypeValid = True
             # split fleet
-            elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.order_type:
                 # with fleet
-                if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+                if AITargetType.TARGET_FLEET == self.fleet.target_type:
                     sourceAITargetTypeValid = True
                 # split ship
-                if AITargetType.TARGET_SHIP == self.get_target_target().target_type:
+                if AITargetType.TARGET_SHIP == self.target.target_type:
                     targetAITargetTypeValid = True
                 if sourceAITargetTypeValid == True and targetAITargetTypeValid == True:
-                    if self.__check_validity_ship_in_fleet(self.get_target_target(), self.get_source_target()):
+                    if self.__check_validity_ship_in_fleet(self.target, self.fleet):
                         return True
-            elif AIFleetOrderType.ORDER_ATTACK == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_ATTACK == self.order_type:
                 # with fleet
-                if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+                if AITargetType.TARGET_FLEET == self.fleet.target_type:
                     sourceAITargetTypeValid = True
                 # move to system
-                if AITargetType.TARGET_SYSTEM == self.get_target_target().target_type or AITargetType.TARGET_PLANET == self.get_target_target().target_type:
+                if AITargetType.TARGET_SYSTEM == self.target.target_type or AITargetType.TARGET_PLANET == self.target.target_type:
                     targetAITargetTypeValid = True
-            elif AIFleetOrderType.ORDER_DEFEND == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_DEFEND == self.order_type:
                 # with fleet
-                if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+                if AITargetType.TARGET_FLEET == self.fleet.target_type:
                     sourceAITargetTypeValid = True
                 # move to system
-                if AITargetType.TARGET_SYSTEM == self.get_target_target().target_type or AITargetType.TARGET_PLANET == self.get_target_target().target_type:
+                if AITargetType.TARGET_SYSTEM == self.target.target_type or AITargetType.TARGET_PLANET == self.target.target_type:
                     targetAITargetTypeValid = True
 
             if sourceAITargetTypeValid == True and targetAITargetTypeValid == True:
@@ -213,7 +192,7 @@ class AIFleetOrder(object):
         """if FleetOrder can be issued now"""
 
         #for some orders, may need to re-issue if invasion/outposting/colonization was interrupted
-        if self.is_executed() and self.get_fleet_order_type() not in [ AIFleetOrderType.ORDER_OUTPOST, AIFleetOrderType.ORDER_COLONISE, AIFleetOrderType.ORDER_INVADE ]:
+        if self.executed and self.order_type not in [ AIFleetOrderType.ORDER_OUTPOST, AIFleetOrderType.ORDER_COLONISE, AIFleetOrderType.ORDER_INVADE ]:
             return False
         if not self.is_valid():
             return False
@@ -222,18 +201,18 @@ class AIFleetOrder(object):
         universe = fo.getUniverse()
         fleetID = None
         shipID = None
-        if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-            shipID = self.get_source_target().target_id
+        if AITargetType.TARGET_SHIP == self.fleet.target_type:
+            shipID = self.fleet.target_id
             ship = universe.getShip(shipID)
             fleetID = ship.fleetID
-        elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-            fleetID = self.get_source_target().target_id
+        elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+            fleetID = self.fleet.target_id
         fleet = universe.getFleet(fleetID)
 
         systemID = fleet.systemID
         sys1=universe.getSystem(systemID)
         sysName = (sys1 and sys1.name) or "unknown"
-        targetID = self.get_target_target().target_id
+        targetID = self.target.target_id
 
         if verbose:
             mainFleetMission=foAI.foAIstate.get_fleet_mission(fleetID)
@@ -244,26 +223,26 @@ class AIFleetOrder(object):
         #
         # outpost
         #
-        if AIFleetOrderType.ORDER_OUTPOST == self.get_fleet_order_type():#TODO: check for separate fleet holding outpost ships
-            if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+        if AIFleetOrderType.ORDER_OUTPOST == self.order_type:#TODO: check for separate fleet holding outpost ships
+            if AITargetType.TARGET_FLEET == self.fleet.target_type:
                 shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST)
                 if shipID is None:
                     shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_BASE_OUTPOST)
             ship = universe.getShip(shipID)
-            planet = universe.getPlanet(self.get_target_target().target_id)
+            planet = universe.getPlanet(self.target.target_id)
             if (ship is not None) and (fleet.systemID == planet.systemID) and ship.canColonize:
                 return True
             return False
         #
         # colonise
         #
-        elif AIFleetOrderType.ORDER_COLONISE == self.get_fleet_order_type():#TODO: check for separate fleet holding colony ships
-            if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+        elif AIFleetOrderType.ORDER_COLONISE == self.order_type:#TODO: check for separate fleet holding colony ships
+            if AITargetType.TARGET_FLEET == self.fleet.target_type:
                 shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
                 if shipID is None:
                     shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_BASE_COLONISATION)
             ship = universe.getShip(shipID)
-            planet = universe.getPlanet(self.get_target_target().target_id)
+            planet = universe.getPlanet(self.target.target_id)
             if ship and not ship.canColonize:
                 print "Error: colonization fleet %d has no colony ship"%fleetID
             if (ship is not None) and (fleet.systemID == planet.systemID) and ship.canColonize:
@@ -272,39 +251,39 @@ class AIFleetOrder(object):
         #
         # invade
         #
-        elif AIFleetOrderType.ORDER_INVADE == self.get_fleet_order_type():#TODO: check for separate fleet holding invasion ships
-            if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+        elif AIFleetOrderType.ORDER_INVADE == self.order_type:#TODO: check for separate fleet holding invasion ships
+            if AITargetType.TARGET_FLEET == self.fleet.target_type:
                 shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY_INVASION, False)
                 if shipID is None:
                     shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_BASE_INVASION)
             ship = universe.getShip(shipID)
-            planet = universe.getPlanet(self.get_target_target().target_id)
+            planet = universe.getPlanet(self.target.target_id)
             if (ship is not None) and (fleet.systemID == planet.systemID) and ship.canInvade and ( planet.currentMeterValue(fo.meterType.shield) ==0):
                 return True
             return False
         #
         # military
         #
-        elif AIFleetOrderType.ORDER_MILITARY == self.get_fleet_order_type():
-            if AITargetType.TARGET_FLEET == self.get_source_target().target_type:
+        elif AIFleetOrderType.ORDER_MILITARY == self.order_type:
+            if AITargetType.TARGET_FLEET == self.fleet.target_type:
                 shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY)
             ship = universe.getShip(shipID)
-            system = universe.getSystem(self.get_target_target().target_id)
+            system = universe.getSystem(self.target.target_id)
             if (ship is not None) and (fleet.systemID == system.systemID) and ship.isArmed:
                 return True
             return False
         #
         # split fleet
         #
-        elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.get_fleet_order_type():
-            fleet2 = universe.getFleet(self.get_source_target().target_id)
+        elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.order_type:
+            fleet2 = universe.getFleet(self.fleet.target_id)
             if len(fleet2.shipIDs) <= 1:
                 return False
         #
         # move -- have fleets will do a safety check, also check for potential military fleet mergers
         #
-        elif AIFleetOrderType.ORDER_MOVE == self.get_fleet_order_type():
-            #targetID = self.get_target_target().target_id
+        elif AIFleetOrderType.ORDER_MOVE == self.order_type:
+            #targetID = self.target.target_id
             #TODO: figure out better way to have invasions (& possibly colonizations) require visibility on target without needing visibility of all intermediate systems
             if False and mainMissionType not in [ AIFleetMissionType.FLEET_MISSION_ATTACK,  #TODO: consider this later
                                                                             AIFleetMissionType.FLEET_MISSION_MILITARY,
@@ -362,53 +341,53 @@ class AIFleetOrder(object):
             print "\tcan't issue %s"%self
         else:
             universe=fo.getUniverse()
-            self.__set_executed()
+            self.executed = True
             # outpost
-            if AIFleetOrderType.ORDER_OUTPOST == self.get_fleet_order_type():
-                planet=universe.getPlanet(self.get_target_target().target_id)
+            if AIFleetOrderType.ORDER_OUTPOST == self.order_type:
+                planet=universe.getPlanet(self.target.target_id)
                 if not planet.unowned:
-                    self.__set_execution_completed()
+                    self.execution_completed = True
                     return
                 shipID = None
-                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                    shipID = self.get_source_target().target_id
-                elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-                    fleetID = self.get_source_target().target_id
+                if AITargetType.TARGET_SHIP == self.fleet.target_type:
+                    shipID = self.fleet.target_id
+                elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+                    fleetID = self.fleet.target_id
                     shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST)
                     if shipID is None:
                         shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_BASE_OUTPOST)
-                result=fo.issueColonizeOrder(shipID, self.get_target_target().target_id)
+                result=fo.issueColonizeOrder(shipID, self.target.target_id)
                 if result==0:
-                    self.__executed = False
+                    self.executed = False
             # colonise
-            elif AIFleetOrderType.ORDER_COLONISE == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_COLONISE == self.order_type:
                 shipID = None
-                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                    shipID = self.get_source_target().target_id
-                elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-                    fleetID = self.get_source_target().target_id
+                if AITargetType.TARGET_SHIP == self.fleet.target_type:
+                    shipID = self.fleet.target_id
+                elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+                    fleetID = self.fleet.target_id
                     shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
                     if shipID is None:
                         shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_BASE_COLONISATION)
 
-                planetID = self.get_target_target().target_id
+                planetID = self.target.target_id
                 planet=universe.getPlanet(planetID)
                 planetName = (planet and planet.name) or "apparently invisible"
                 result = fo.issueColonizeOrder(shipID, planetID)
                 print "Ordered colony ship ID %d to colonize %s, got result %d"%(shipID, planetName, result)
                 if result==0:
-                    self.__executed = False
+                    self.executed = False
             # invade
-            elif AIFleetOrderType.ORDER_INVADE == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_INVADE == self.order_type:
                 result = False
                 shipID = None
-                planetID = self.get_target_target().target_id
+                planetID = self.target.target_id
                 planet=universe.getPlanet(planetID)
                 planetName = (planet and planet.name) or "invisible"
-                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                    shipID = self.get_source_target().target_id
-                elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-                    fleetID = self.get_source_target().target_id
+                if AITargetType.TARGET_SHIP == self.fleet.target_type:
+                    shipID = self.fleet.target_id
+                elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+                    fleetID = self.fleet.target_id
                     fleet = fo.getUniverse().getFleet(fleetID)
                     for shipID in fleet.shipIDs:
                         ship = universe.getShip(shipID)
@@ -428,7 +407,7 @@ class AIFleetOrder(object):
                                 if fleet.systemID not in foAI.foAIstate.needsEmergencyExploration:
                                     foAI.foAIstate.needsEmergencyExploration.append(fleet.systemID)
                                     print "Due to trouble invading, adding system %d to Emergency Exploration List"%fleet.systemID
-                                    self.__executed = False
+                                    self.executed = False
                                 if shields >0 and owner==-1 and dumpTurn<fo.currentTurn():
                                     dumpTurn=fo.currentTurn()
                                     print "Universe Dump to debug invasions:"
@@ -437,34 +416,34 @@ class AIFleetOrder(object):
                 if result:
                     print "Successfully ordered troop ship(s) to invade %s, with detail%s "%(planetName, detailStr)
             # military
-            elif AIFleetOrderType.ORDER_MILITARY == self.get_fleet_order_type():
+            elif AIFleetOrderType.ORDER_MILITARY == self.order_type:
                 shipID = None
-                if AITargetType.TARGET_SHIP == self.get_source_target().target_type:
-                    shipID = self.get_source_target().target_id
-                elif AITargetType.TARGET_FLEET == self.get_source_target().target_type:
-                    fleetID = self.get_source_target().target_id
+                if AITargetType.TARGET_SHIP == self.fleet.target_type:
+                    shipID = self.fleet.target_id
+                elif AITargetType.TARGET_FLEET == self.fleet.target_type:
+                    fleetID = self.fleet.target_id
                     shipID = FleetUtilsAI.get_ship_id_with_role(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY)
-                #fo.issueFleetMoveOrder(fleetID, self.get_target_target().target_id) #moving is already taken care of separately
-                targetSysID = self.get_target_target().target_id
+                #fo.issueFleetMoveOrder(fleetID, self.target.target_id) #moving is already taken care of separately
+                targetSysID = self.target.target_id
                 fleet = fo.getUniverse().getFleet(fleetID)
                 systemStatus = foAI.foAIstate.systemStatus.get(targetSysID, {})
                 if fleet and ( fleet.systemID==targetSysID ) and ((systemStatus.get('fleetThreat', 0) + systemStatus.get('planetThreat', 0)+ systemStatus.get('monsterThreat', 0))==0):
-                    self.__set_execution_completed()
+                    self.execution_completed = True
 
             # move or resupply
-            elif self.get_fleet_order_type() in [ AIFleetOrderType.ORDER_MOVE, AIFleetOrderType.ORDER_REPAIR, AIFleetOrderType.ORDER_RESUPPLY]:
-                fleetID = self.get_source_target().target_id
-                system_id = self.get_target_target().target_id
+            elif self.order_type in [ AIFleetOrderType.ORDER_MOVE, AIFleetOrderType.ORDER_REPAIR, AIFleetOrderType.ORDER_RESUPPLY]:
+                fleetID = self.fleet.target_id
+                system_id = self.target.target_id
                 fleet = fo.getUniverse().getFleet(fleetID)
                 if system_id not in [fleet.systemID, fleet.nextSystemID] :
-                    if self.get_fleet_order_type() == AIFleetOrderType.ORDER_MOVE:
+                    if self.order_type == AIFleetOrderType.ORDER_MOVE:
                         dest_id = system_id
                     else:
-                        if self.get_fleet_order_type() == AIFleetOrderType.ORDER_REPAIR:
+                        if self.order_type == AIFleetOrderType.ORDER_REPAIR:
                             fo.issueAggressionOrder(fleetID, False)
                         start_id = [fleet.systemID, fleet.nextSystemID][ fleet.systemID == -1 ]
                         dest_id = MoveUtilsAI.get_safe_path_leg_to_dest(fleetID, start_id, system_id)
-                        print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s"%(fleetID, AIFleetOrderTypeNames.name(self.get_fleet_order_type()),
+                        print "fleet %d with order type(%s) sent to safe leg dest %s and ultimate dest %s"%(fleetID, AIFleetOrderTypeNames.name(self.order_type),
                                                                                                             PlanetUtilsAI.sys_name_ids([dest_id]),
                                                                                                             PlanetUtilsAI.sys_name_ids([system_id]))
                     fo.issueFleetMoveOrder(fleetID, dest_id)
@@ -472,37 +451,36 @@ class AIFleetOrder(object):
                     if foAI.foAIstate.get_fleet_role(fleetID) == AIFleetMissionType.FLEET_MISSION_EXPLORATION :
                         if system_id in foAI.foAIstate.needsEmergencyExploration:
                             del foAI.foAIstate.needsEmergencyExploration[ foAI.foAIstate.needsEmergencyExploration.index(system_id) ]
-                    self.__set_execution_completed()
+                    self.execution_completed = True
 
             # split fleet
-            elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.get_fleet_order_type():
-                fleetID = self.get_source_target().target_id
-                shipID = self.get_target_target().target_id
+            elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.order_type:
+                fleetID = self.fleet.target_id
+                shipID = self.target.target_id
                 fleet = fo.getUniverse().getFleet(fleetID)
                 if shipID in fleet.shipIDs:
                     fo.issueNewFleetOrder(str(shipID), shipID)
-                self.__set_execution_completed()
+                self.execution_completed = True
             # attack
-            elif AIFleetOrderType.ORDER_ATTACK == self.get_fleet_order_type():
-                fleetID = self.get_source_target().target_id
-                systemID = self.get_target_target().get_required_system_ai_targets()[0].target_id
+            elif AIFleetOrderType.ORDER_ATTACK == self.order_type:
+                fleetID = self.fleet.target_id
+                systemID = self.target.get_required_system_ai_targets()[0].target_id
 
                 fo.issueFleetMoveOrder(fleetID, systemID)
 
     def __str__(self):
-        return "fleet order[%s] source:%26s | target %26s" %( AIFleetOrderTypeNames.name(self.__aiFleetOrderType), self.__sourceAITarget, self.__targetAITarget)
+        return "fleet order[%s] source:%26s | target %26s" %( AIFleetOrderTypeNames.name(self.order_type), self.fleet, self.target)
 
     def __cmp__(self, other):
         """compares AIFleetOrders"""
-
         if other is None:
             return False
-        if self.get_fleet_order_type() < other.get_fleet_order_type():
+        if self.order_type < other.order_type:
             return - 1
-        elif self.get_fleet_order_type() == other.get_fleet_order_type():
-            result = self.get_source_target().__cmp__(other.get_source_target())
+        elif self.order_type == other.order_type:
+            result = self.fleet.__cmp__(other.fleet)
             if result == 0:
-                return self.get_target_target().__cmp__(other.get_target_target())
+                return self.target.__cmp__(other.target)
             else:
                 return result
         return 1

@@ -261,9 +261,9 @@ class AIFleetMission(object):
 
     def _check_abort_mission(self, fleet_order):
         """ checks if current mission (targeting a planet) should be aborted"""
-        planet = fo.getUniverse().getPlanet(fleet_order.get_target_target().target_id)
+        planet = fo.getUniverse().getPlanet(fleet_order.target.target_id)
         if planet:
-            order_type = fleet_order.get_fleet_order_type()
+            order_type = fleet_order.order_type
             if order_type == AIFleetOrderType.ORDER_COLONISE:
                 if planet.currentMeterValue(fo.meterType.population) == 0 and (planet.ownedBy(fo.empireID()) or planet.unowned):
                     return False
@@ -299,7 +299,7 @@ class AIFleetMission(object):
         orders = self.orders
         last_sys_target = -1
         if orders:
-            last_sys_target = orders[-1].get_target_target().target_id
+            last_sys_target = orders[-1].target.target_id
         if last_sys_target == fleet.systemID:
             return  # TODO: check for best local target
         open_targets = []
@@ -365,7 +365,7 @@ class AIFleetMission(object):
             self._check_retarget_invasion()
         for fleet_order in self.orders:
             print "  checking Order: %s" % fleet_order
-            order_type = fleet_order.get_fleet_order_type()
+            order_type = fleet_order.order_type
             if order_type in [AIFleetOrderType.ORDER_COLONISE,
                               AIFleetOrderType.ORDER_OUTPOST,
                               AIFleetOrderType.ORDER_INVADE]:  # TODO: invasion?
@@ -377,11 +377,11 @@ class AIFleetMission(object):
                     fleet_order.issue_order()
                 elif order_type not in [AIFleetOrderType.ORDER_MOVE, AIFleetOrderType.ORDER_DEFEND]:
                     fleet_order.issue_order()
-                if not fleet_order.is_execution_completed():
+                if not fleet_order.execution_completed:
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
                 if order_type == AIFleetOrderType.ORDER_MOVE:
-                    this_system_id = fleet_order.get_target_target().target_id
+                    this_system_id = fleet_order.target.target_id
                     this_status = foAI.foAIstate.systemStatus.setdefault(this_system_id, {})
                     if this_status.get('monsterThreat', 0) > fo.currentTurn() * ProductionAI.curBestMilShipRating()/4.0:
                         first_mission = self.get_mission_types()[0] if self.get_mission_types() else AIFleetMissionType.FLEET_MISSION_INVALID
@@ -403,7 +403,7 @@ class AIFleetMission(object):
             # move order is also the last order in system
             if order_type == AIFleetOrderType.ORDER_MOVE:
                 fleet = fo.getUniverse().getFleet(self.target_id)
-                if fleet.systemID != fleet_order.get_target_target().target_id:
+                if fleet.systemID != fleet_order.target.target_id:
                     break
         else:  # went through entire order list
             if order_completed:
@@ -411,8 +411,8 @@ class AIFleetMission(object):
                 last_order = orders[-1] if orders else None
                 universe = fo.getUniverse()
 
-                if last_order and last_order.get_fleet_order_type() == AIFleetOrderType.ORDER_COLONISE:
-                    planet = universe.getPlanet(last_order.get_target_target().target_id)
+                if last_order and last_order.order_type == AIFleetOrderType.ORDER_COLONISE:
+                    planet = universe.getPlanet(last_order.target.target_id)
                     sys_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
                     planet_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
                     if planet_partial_vis_turn == sys_partial_vis_turn and not planet.currentMeterValue(fo.meterType.population):
@@ -420,8 +420,8 @@ class AIFleetMission(object):
                         print "    Order details are %s" % last_order
                         print "    Order is valid: %s ; is Executed : %s; is execution completed: %s " % (last_order.is_valid(), last_order.isExecuted(), last_order.isExecutionCompleted())
                         if not last_order.is_valid():
-                            source_target = last_order.get_source_target()
-                            target_target = last_order.get_target_target()
+                            source_target = last_order.fleet
+                            target_target = last_order.target
                             print "        source target validity: %s; target target validity: %s " % (source_target.valid, target_target.valid)
                             if EnumsAI.AITargetType.TARGET_SHIP == source_target.target_type:
                                 ship_id = source_target.target_id
@@ -432,8 +432,8 @@ class AIFleetMission(object):
                         return  # colonize order must not have completed yet
                 clearAll = True
                 last_sys_target = -1
-                if last_order and last_order.get_fleet_order_type() == AIFleetOrderType.ORDER_MILITARY:
-                    last_sys_target = last_order.get_target_target().target_id
+                if last_order and last_order.order_type == AIFleetOrderType.ORDER_MILITARY:
+                    last_sys_target = last_order.target.target_id
                     # if (AIFleetMissionType.FLEET_MISSION_SECURE in self.get_mission_types()) or # not doing this until decide a way to release from a SECURE mission
                     secure_targets = set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
                     if last_sys_target in secure_targets:  # consider a secure mission
