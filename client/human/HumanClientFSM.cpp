@@ -627,6 +627,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
 ////////////////////////////////////////////////////////////
 namespace {
     static bool once = true;
+    static int target_turn = -1;
 }
 
 PlayingTurn::PlayingTurn(my_context ctx) :
@@ -653,11 +654,24 @@ PlayingTurn::PlayingTurn(my_context ctx) :
         post_event(TurnEnded());
 
     } else if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-        if ((once && GetOptionsDB().Get<bool>("auto-advance-first-turn")) ||
+        if (once) {
+            once = false;
+            target_turn = Client().CurrentTurn() + GetOptionsDB().Get<int>("auto-advance-n-turns");
+        }
+        bool need_more_turns = false;
+        if ((GetOptionsDB().Get<int>("auto-advance-n-turns")) ||
             Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled())
         {
-            once = false;
-            post_event(AdvanceTurn());
+            if (Client().CurrentTurn() < target_turn) {
+                need_more_turns = true;
+                post_event(AdvanceTurn());
+            }
+        }
+        if (!need_more_turns && GetOptionsDB().Get<bool>("auto-quit")) {
+            Logger().debugStream() << "auto-quit ending game.";
+            std::cout << "auto-quit ending game." << std::endl;
+            Client().EndGame();
+            throw HumanClientApp::CleanQuit();
         }
     }
 }

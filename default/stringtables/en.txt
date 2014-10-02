@@ -1256,8 +1256,8 @@ Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 OPTIONS_DB_QUICKSTART
 Starts a new quick-start game, bypassing the main menu.
 
-OPTIONS_DB_AUTO_FIRST_TURN
-Hits the "Turn" button automatically on the first turn; useful for debugging, especially when used with --quickstart.
+OPTIONS_DB_AUTO_N_TURNS
+Hits the "Turn" button automatically on the first N turns (up to 400 turns, defaults to zero); useful for various testing particularly with --quickstart or --load, possibly also --auto-quit.
 
 OPTIONS_DB_CHECKED_GL_VERSION
 Stores whether the OpenGL version of this system has been checked. If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true.
@@ -1286,6 +1286,8 @@ Loads the specified single-player save game.
 OPTIONS_DB_EFFECTS_THREADS_DESC
 Specifies number of threads to use in effects processing. More than one thread may lead to unpredictable crashes of the client or server.
 
+OPTIONS_DB_AUTO_QUIT
+Automatically quits once any turns specified by --auto-advance-n-turns are completed (defaults to zero), useful for various testing particularly with --quickstart or --load.
 
 #################
 # File Dialog   #

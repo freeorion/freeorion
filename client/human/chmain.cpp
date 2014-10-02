@@ -106,7 +106,8 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add("reset-fullscreen-size",         UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
         GetOptionsDB().Add<int>("fullscreen-monitor-id",    UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
         GetOptionsDB().AddFlag('q', "quickstart",           UserStringNop("OPTIONS_DB_QUICKSTART"),            false);
-        GetOptionsDB().AddFlag("auto-advance-first-turn",   UserStringNop("OPTIONS_DB_AUTO_FIRST_TURN"),       false);
+        GetOptionsDB().AddFlag("auto-quit",                 UserStringNop("OPTIONS_DB_AUTO_QUIT"),             false);
+        GetOptionsDB().Add<int>("auto-advance-n-turns",     UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),          0, RangedValidator<int>(0, 400));
         GetOptionsDB().Add<std::string>("load",             UserStringNop("OPTIONS_DB_LOAD"),                  "", Validator<std::string>(), false);
         GetOptionsDB().Add("UI.sound.music-enabled",        UserStringNop("OPTIONS_DB_MUSIC_ON"),              true);
         GetOptionsDB().Add("UI.sound.enabled",              UserStringNop("OPTIONS_DB_SOUND_ON"),              true);
