@@ -1630,6 +1630,11 @@ public:
         GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
 
+    virtual ~ObjectListBox() {
+        delete m_filter_condition;
+        delete m_header_row;
+    }
+
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
         Wnd::SizeMove(ul, lr);

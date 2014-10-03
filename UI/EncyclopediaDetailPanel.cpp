@@ -560,6 +560,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
 }
 
+EncyclopediaDetailPanel::~EncyclopediaDetailPanel()
+{ delete m_graph; }
+
 void EncyclopediaDetailPanel::DoLayout() {
     const int PTS = ClientUI::Pts();
     const int NAME_PTS = PTS*3/2;

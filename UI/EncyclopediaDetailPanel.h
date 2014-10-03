@@ -30,6 +30,7 @@ class EncyclopediaDetailPanel : public CUIWnd {
 public:
     //! \name Structors //!@{
     EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags = GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE );
+    virtual ~EncyclopediaDetailPanel();
     //!@}
 
     /** \name Mutators */ //@{

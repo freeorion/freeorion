@@ -288,6 +288,9 @@ public:
         UpdateEnabled();
     }
 
+    ~MapScaleLine()
+    { delete m_label; }
+
     virtual void Render() {
         if (!m_enabled)
             return;
@@ -1135,6 +1138,7 @@ MapWnd::~MapWnd() {
     delete m_research_wnd;
     delete m_production_wnd;
     delete m_design_wnd;
+    delete m_side_panel;
 }
 
 void MapWnd::DoLayout() {
