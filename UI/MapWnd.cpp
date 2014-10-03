@@ -288,7 +288,7 @@ public:
         UpdateEnabled();
     }
 
-    ~MapScaleLine()
+    virtual ~MapScaleLine()
     { delete m_label; }
 
     virtual void Render() {
