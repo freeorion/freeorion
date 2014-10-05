@@ -177,6 +177,7 @@ Tech
 //                SetMaxShield Value + 30
                 SetShield Value + 0.25*Target.Construction
             ]
+    graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
     name = "DEF_PLAN_BARRIER_SHLD_2"
@@ -197,6 +198,7 @@ Tech
 //                SetMaxShield Value + 60
                 SetShield Value + 0.75*Target.Construction
             ]
+    graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
     name = "DEF_PLAN_BARRIER_SHLD_3"
@@ -217,6 +219,7 @@ Tech
 //                SetMaxShield Value + 90
                 SetShield Value + 1.0*Target.Construction
             ]
+    graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
     name = "DEF_PLAN_BARRIER_SHLD_4"
@@ -237,6 +240,7 @@ Tech
 //                SetMaxShield Value + 150
                 SetShield Value + 1.5*Target.Construction
             ]
+    graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
     name = "DEF_PLAN_BARRIER_SHLD_5"
@@ -257,6 +261,7 @@ Tech
 //                SetMaxShield Value + 150
                 SetShield Value + 2.5*Target.Construction
             ]
+    graphic = "icons/tech/planetary_barrier_shield.png"
 
 Tech
     name = "DEF_PLANET_CLOAK"
@@ -346,6 +351,7 @@ Tech
                 Destroy
             ]
     ]
+    graphic = "icons/tech/system_defense_mines.png"
 
 Tech
     name = "DEF_SYST_DEF_MINE_2"
@@ -423,6 +429,7 @@ Tech
                 Destroy
             ]
     ]
+    graphic = "icons/tech/system_defense_mines.png"
 
 Tech
     name = "DEF_SYST_DEF_MINE_3"
@@ -497,6 +504,7 @@ Tech
                 Destroy
             ]
     ]
+    graphic = "icons/tech/system_defense_mines.png"
 
 
 //########################################################
