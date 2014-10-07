@@ -1135,6 +1135,9 @@ Si activé, plusieurs boutons de flotte cliqués ouvrent plusieurs fenêtres de 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Active/Désactive l'effet du clic droit sur la carte galactique qui ferme d'abord les fenêtres de flotte puis, lorsque réitéré, le panneau latéral de système stellaire.
 
+OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
+Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef conçus par le joueur à la liste des modèles connus de l'Empire du joueur.
+
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Fixe la taille du panneau latéral de description de système stellaire.
 
@@ -1253,8 +1256,8 @@ Remplissage/Encadrement des objets sélectionnés.
 OPTIONS_DB_QUICKSTART
 Lance une nouvelle partie en court-circuitant le menu principal.
 
-OPTIONS_DB_AUTO_FIRST_TURN
-Clique automatiquement le bouton Tour au premier tour; utile au déboguage, notamment si utilisation de la commande --quickstart.
+OPTIONS_DB_AUTO_N_TURNS
+Clique le bouton "Tour" automatiquement pour les N premiers tours (jusqu'à 400 tours, valeur défaut à zéro); utile pour le débogage notamment avec --quickstart ou --load, et éventuellement --auto-quit.
 
 OPTIONS_DB_CHECKED_GL_VERSION
 Indique si la version d'OpenGL du système a été vérifiée. Si non, diverses options de rendu (selon la version d'OpenGL effectivement présente) peuvent être modifiées, afin de provoquer cette vérification.
@@ -1283,6 +1286,8 @@ Charge la partie solo sauvegardée spécifiée.
 OPTIONS_DB_EFFECTS_THREADS_DESC
 Spécifie le nombre de threads simultanés pour le rendu des effets. Plus d'un thread peut mener à des plantages inopinés du client ou du serveur.
 
+OPTIONS_DB_AUTO_QUIT
+Quitter automatiquement une fois au tour spécifié par --auto-advance-n-turns (valeur défaut à zéro), utile pour le débogage notamment avec --quickstart ou --load.
 
 #################
 # File Dialog   #
@@ -2162,7 +2167,7 @@ OPTIONS_AUTO_EFFECT_DESC
 Génération automatique de descriptions
 
 OPTIONS_VERBOSE_LOGGING_DESC
-Journaux détaillés de déboguage
+Journaux détaillés de débogage
 
 OPTIONS_VERBOSE_SITREP_DESC
 Affichage des rapports d'erreurs
@@ -2170,6 +2175,8 @@ Affichage des rapports d'erreurs
 OPTIONS_EFFECTS_THREADS
 Threads de rendu d'effets
 
+OPTIONS_ADD_SAVED_DESIGNS
+Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
 ##################
 # CombatSetupWnd #
@@ -2729,7 +2736,7 @@ TECH_WND_TYPE_APPLICATIONS
 Applications
 
 TECH_WND_TYPE_REFINEMENTS
-Perfectionnements
+Améliorations
 
 TECH_WND_STATUS_COMPLETED
 Acquis
@@ -2918,6 +2925,12 @@ Fichiers de Conception
 
 DESIGN_SAVE
 Enregistrer fichier de Conception
+
+DESIGN_ADD
+Ajouter le modèle aux Conceptions de l'Empire
+
+DESIGN_ADD_ALL
+Ajouter tous les modèles sauvegardés à l'Empire
 
 DESIGN_NAME_DEFAULT
 Modèle d'astronef personnalisé
@@ -3549,7 +3562,7 @@ L'indicateur 'Approvisionnement' d'une planète représente le nombre de Voies s
 FLEET_UPKEEP_TITLE
 Entretien des flottes
 FLEET_UPKEEP_TEXT
-'''Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] et [[shippart CO_OUTPOST_POD]] augmentent quant à eux de 6% pour chaque planète que l'empire possède.'''
+'''Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et [[buildingtype BLD_EXOBOT_SHIP]] augmentent quant à eux de 6% pour chaque planète que l'empire possède.'''
 
 EVACUATION_TITLE
 Évacuation
@@ -4741,7 +4754,7 @@ Les Cynos ne peuvent ni se reproduire sans leur plante-mère d'origine, ni plant
 SP_PHINNERT
 Phinnert
 SP_PHINNERT_GAMEPLAY_DESC
-'''Singes volants.
+'''Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
 [[AVERAGE_INDUSTRY]]
@@ -4754,13 +4767,13 @@ SP_PHINNERT_GAMEPLAY_DESC
 
 SP_PHINNERT_DESC
 '''Description:
-Les Phinnerts sont des mammifères arboricoles d'une taille variant entre 1 et 2 mètres. Leurs longs bras peuvent atteindre une envergure d'environ 2 fois leur taille. Ils sont munis d'une membrane de peau rétractable de chaque côté du corps, s'étendant du poignet à la cheville, et qui permet un vol totalement fonctionnel à faible gravité. Leur vol très agile leur rend possiblee la chasse de créatures insectoïdes, qu'ils attrapent à l'aide d'un appendice nasale préhensile. Tout comme les chauves-souris, les Phinnerts utilisent l'écholocalisation, même si leur sens est bien moins développé.
+Les Phinnerts sont des mammifères arboricoles d'une taille variant entre 1 et 2 mètres. Leurs longs bras peuvent atteindre une envergure d'environ 2 fois leur taille. Ils sont munis d'une membrane de peau rétractable de chaque côté du corps, s'étendant du poignet à la cheville, et qui permet un vol totalement fonctionnel à faible gravité. Leur vol très agile leur rend possible la chasse de créatures insectoïdes, qu'ils attrapent à l'aide d'un appendice nasal préhensile. Tout comme les chauves-souris, les Phinnerts utilisent l'écholocalisation, même si leur sens est bien moins développé.
 
 Structure sociale:
-La vie est bien plus courte pour les Phinnerts que pour la majorité des espèces sensibles, en raison des nombreux dangers d'un marais. Tous les Phinnerts sont considérés comme les membres d'une grande famille et les différends ne durent jamais très longtemps. Il n'y aucune autorité centrale, seulement une vague hiérarchie. Du fait de leur mortalité élevée, l'équilibre des forces chez les Phinnerts peut varier très rapidement. Pour compenser, leur société est très peu individualiste, et bien plus centrée sur le groupe.
+La vie est bien plus courte pour les Phinnerts que pour la majorité des espèces sensibles, en raison des nombreux dangers d'un marais. Tous les Phinnerts sont considérés comme les membres d'une grande famille et les différends ne durent jamais très longtemps. Il n'y aucune autorité centrale, seulement une vague hiérarchie. Du fait de leur mortalité élevée, l'équilibre des forces chez les Phinnerts peut varier très rapidement. En compensation, leur société est très peu individualiste, et bien plus centrée sur le groupe.
 
 Monde natal: 
-Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent, est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
+Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
 '''
 
 SP_EGASSEM
@@ -4781,13 +4794,13 @@ Préfèrent les Planètes infernales.
 
 SP_EGASSEM_DESC
 '''Description:
-Egassem are several kilometers across and have no fixed shape, they are capable of operating multiple instruments at once through custom formed appendages. Egassem are incredibly slow, capable of moving at most a few meters an hour as moving was only necessary to strip an area of resources. They reproduce by budding, releasing a young that is a mere hundred thousand tons.
+Les Egassem sont des super-organismes d'une taille de plusieurs kilomètres, sans forme prédéfinie. Ils sont ainsi capables de manipuler plusieurs instruments simultanément à l'aide d'appendices corporels dédiés. Les Egassem sont incroyablement lents, se déplaçant de quelques mètres par heure, et ce dans l'unique but d'accéder à une nouvelle zone de ressources. Ils se reproduisent par bourgeonnement, relâchant un jeune spécimen pesant pas moins de cent mille tonnes.
 
-Social Structure:
-Egassem society is essentially feudalistic, with each Egassem individual being one 'fiefdom'. The fact that Egassem are typically long-lived (effectively ageless) means that they are highly conservative and highly concerned with wealth.
+Structure sociale:
+La société Egassem est essentiellement féodale, chaque Egassem s'apparentant à un "fief". Du fait de leur durée de vie colossale (quasiment éternelle), les Egassem sont très conservateurs et accordent la plus haute importance à leur bien-être.
 
-Homeworld:
-A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface.
+Monde natal:
+Un environnement soumis à la chaleur générée par les forces de marée et l'activité tectonique, ainsi que par les radiations solaires. De gigantesques océans de roche en fusion recouvrent la majeure partie de la surface planétaire.
 '''
 
 SP_SSLITH
@@ -4809,14 +4822,14 @@ Préfèrent les Planètes avec toundra.
 
 SP_SSLITH_DESC
 '''Description:
-In its relaxed state, an individual Sslith is essentially a 2.15cm thick rectangular sheet, that's always 132cm long, and between 31 and 53cm wide. Its only appendage is a single tentacle that is used to sense sound and infrared light, it is also used for communication via ultrasound. Sslith are able to flex their bodies into other shapes, an ability originally evolved for the purpose of sliding into the shells of Vreen (a creature that recedes into its shell when it detects danger). Their flexibility allows them to move astonishingly fast in the oceans, by a ripple effect that looks like they are folding themselves through the water. They don't have a central brain, a Sslith's mental capacity is a collection of multiple nodes that are linked together to form a distributed consciousness allowing a Sslith to perform many tasks at once.
+Totalement étendu, un Sslith ressemble à un fin rectangle d'une épaisseur de 2.15cm, d'une longueur de 132cm, et d'une largeur comprise en 31 et 53cm. Son seul appendice est une unique tentacule servant à capter les ondes sonores et la lumière infrarouge, ainsi qu'à communiquer par ultrasons. Les Sslith ont la capacité de modifier la forme de leur corps, une aptitude évolutive héritée de la Coquille de Vreen (une créature se réfugiant dans sa coquille lorsqu'elle détecte un danger). Cette flexibilité permet aux Sslith de se déplacer à une vitesse prodigieuse dans les océans, par un effet d'onde donnant l'impression qu'ils font partie intégrante du milieu aqueux. Les Sslith n'ayant pas de cerveau central, leur capacité mentale s'apparente plutôt à un ensemble de ramifications nodales, créant une conscience unifiée, permettant ainsi aux Sslith d'accomplir plusieurs tâches simultanément.
 
-Social Structure:
-The Sslith are organized into groups called Pnacra which serve as independent governmental units. Though there are a few global laws that all Sslith in all Pnacra obey, each Pnacra has it's own rules and laws as to conduct and actions. The Pnacra move around of their own accord, and have no fixed geographic location. If two or more of them meet, then members who are discontented with their present Pnacra can move to another to try out its ways and customs.
+Structure sociale:
+Les Sslith sont organisés en groupe appelés Pnacra, servant la communauté en tant qu'unités gouvernementales indépendantes. Bien qu'il y ait quelques lois observées par tous les Sslith de tous les Pnacra, chaque Pnacra édicte ses propres lois et règles de conduite. Les Pnacra se déplacent indépendamment, et n'ont pas d'habitat fixe. Lorsque deux Pnacra ou plus se rencontrent, les membres insatisfaits de leur Pnacra actuel, peuvent migrer vers un autre Pnacra afin d'y tester son organisation et ses coutumes.
 '''
 
 SP_FIFTYSEVEN
-Fifty-seven
+Fifty-Seven
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Serpents célestes mathématiciens, sifflant des mélopées fractales au sein d'une chorale planétaire.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -4830,17 +4843,17 @@ SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''
 
 SP_FIFTYSEVEN_DESC
-'''Biology:
-Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side. Various fins provide fine control. Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation. Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton. Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
+'''Biologie:
+Les Fifty-Seven adultes mesurent entre 10 et 20 mètres de long. La principale caractéristique morphologique les différenciant des serpents communs sont les deux dômes de résonance situés à l'avant de l'épine dorsale, tandis que des nageoires de taille variable situées tout le long du corps leur servent à se mouvoir. Totalement aveugles, ils se fient à leur odorat, leur ouïe, un sens du toucher extrêmement développé, et peuvent même avoir recours à l'écholocalisation en cas de besoin. Les Fifty-Seven sont omnivores: ils sont particulièrement friands de bancs de petites créatures volantes ressemblant à du phytoplancton. Restant dans les airs tout au long de leur existence et n'ayant pas de membres préhensiles, les Fifty-Seven ne disposent d'aucun équipement technologique.
 
-Personality:
-The Fifty-Seven show little interest in the rest of the galaxy, or indeed in the parts of their planet that they don't use. The bulk of their attention individually, and culturally is focused on math. They do seem eager for new mathematical puzzles, so if research problems can be phrased properly...
+Comportement:
+Les Fifty-Seven ne montrent que peu d'intérêt pour le reste de la galaxie, ainsi que pour les régions non-peuplées de leur planète. Étrangement, ils sont fascinés individuellement et culturellement par les mathématiques. En effet, les énigmes arithmétiques semblent attirer toute leur attention. Par conséquent, si des problèmes scientifiques peuvent leur être formulés correctement...
 
-Homeworld:
-High g swamp world with a very dense atmosphere.
+Monde natal:
+Un environnement marécageux à forte gravité et atmosphère dense.
 
-Reason for Staying:
-The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.
+Raison de la sédentarité:
+Les Fifty-Seven sont en contact constant avec tous les autres individus de l'espèce, prenant ainsi part à un "chant" fractal complexe, qui semble être un moyen de tester des hypothèses mathématiques sophistiquées ou bien une sorte d'expression artistique et sociale. Quitter ce chant fractal semble apparamment très peu avantageux.
 '''
 
 
@@ -4863,13 +4876,13 @@ Préfèrent les Planètes marécageuses.
 
 SP_SETINON_DESC
 '''Description:
-The Setinon evolved from genetic defense cells protecting a larger organism from parasites and viruses. They are about 1 mm across with multiple sub sub-compartments and structures. Proteins and nucleic acids are taking the place of neurons of the more standard minds of sentient organisms. They use biological constructs (requiring thousands of Setinon operators) to execute tasks their microscopic nature wouldn't normally allow them to carry out.
+Les Setinon sont l'évolution génétique de cellules immunitaires protégeant les plus grands organismes des parasites et autres virus. Mesurant 1mm, ils sont constitués de multiples compartiments nucléiques. Les protéines et les acides aminés s'organisent en réseau neuronal semblable au système rachidien des organismes sensibles communément répandus. Les Setinon utilisent des constructions biologiques (nécessitant des milliers de spécimen Setinon) pour exécuter les tâches que leur taille microscopique devrait normalement rendre impossibles.
 
-Social Structure:
-Setinon society is based on two factors, firstly their strongly individualistic, defensive nature, and secondly their contrasting need to cooperate to deal with the world. Therefore Setinon society is best summed up as highly complex with multiple interacting channels of power that may change weekly.
+Structure sociale:
+La société Setinon est fondée sur deux facteurs opposés: leur nature fortement individualiste et défensive, contrastant avec leur besoin vital de coopérer afin d'interagir avec le monde extérieur. Par conséquent, la société Setinon apparaît hautement complexe, basée sur plusieurs niveaux de pouvoir et de décision, en constante recherche d'équilibre.
 
-Homeworld:
-A swamp world with a dense atmosphere and fairly dense biosphere.
+Monde natal:
+Un environnement marécageux doté d'une biosphère très dense.
 '''
 
 
@@ -4897,7 +4910,7 @@ SP_NYMNMN_DESC
 SP_TRENCHERS
 Trenchers
 SP_TRENCHERS_GAMEPLAY_DESC
-'''Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète avec les courbes et les spirales les plus élaborées.
+'''Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
 Préfèrent les Planètes stériles.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
@@ -4928,23 +4941,23 @@ Préfèrent les Planètes de type terrestre.
 '''
 
 SP_RAAAGH_DESC
-'''The Raaagh are 1.5 meter tall stripe-furred bipeds. The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance. The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin. After three years usually only one is left, and the surviving young begin to learn to speak. This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
+'''Les Raaagh sont des organismes bipèdes à fourrure mesurant 1.5 mètre de hauteur. Le corps est penché vers l'avant à 45 degrés, laissant libres leurs mâchoires acérées et leurs membres antérieurs munis de griffes, afin de combattre, capturer des proies ou construire. Leurs oreilles triangulaires et leur iris en forme de fente leur donnent une apparence féline. Ovipares, les Raaagh pondent une moyenne de douze oeufs. Après l'éclosion, peu de soins et d'attention sont portés aux petits-- ils doivent survivre par leurs propres moyens, entrant en compétition avec leurs jeunes semblables pour trouver un abri ou dérober de la nourriture. Après trois années, seul un jeune Raaagh parvient généralement à survivre, ce dernier commençant alors à développer l'aptitude au langage. Cela active soudainement l'instinct parental des adultes, et le jeune rescapé est alors élevé avec attention comme membre de la Tribu.
 
-Personality:
-Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture. Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
+Comportement:
+La territorialité extrême est le trait comportemental le plus distinctif chez les Raaagh- régissant leur vie quotidienne et imprégnant toute leur culture. Ce caractère marqué dénote leur préférence pour ce qui est familier et connu. Leur curiosité est très peu développée, ce qui explique leur technologie très peu avancée.
 
-Homeworld:
-The Raaagh homeworld is of the Terran type. Sea and land are more or less evenly spread out, with the largest continent covering only 4% of planet's surface. The many small continents and large islands encourage a territorial attitude.
+Monde natal:
+Le monde natal des Raaagh est de type terrestre. Les surfaces terrestres et océaniques sont réparties d'une manière plus ou moins égale, mais le plus grand des continents ne recouvre que 4% de la surface planétaire. Cette profusion de petits continents et de grandes îles renforcent d'autant plus leur attitude territoriale.
 
-Reason for Staying:
-There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries. The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land. Abandoning one's territory is inconceivable, and a Raaagh forcibly removed from his territory goes violently insane.
+Raison de la sédentarité:
+Il ne reste aucun bout de terre assez grand pour y subsister que les Raaagh n'aient pas découvert. L'instinct génétique d'un Raaagh le pousse à protéger son territoire de sa vie, et lorsque l'occasion se présente, d'occuper une terre adjacente. Abandonner un territoire leur est inconcevable, et un Raaagh contraint à le quitter est instantanément atteint d'une violente démence.
 '''
 
 
 SP_BEIGEGOO
 Beige Goo
 SP_BEIGEGOO_GAMEPLAY_DESC
-'''Essaim de nanorobots à propagation planétaire, farouche auto-protection.
+'''Essaim de nanorobots à propagation planétaire, féroce auto-protection.
 Préfèrent les Planètes irradiées.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
@@ -4957,13 +4970,13 @@ Préfèrent les Planètes irradiées.
 '''
 
 SP_BEIGEGOO_DESC
-'''The entire planet is covered in a beige haze of Nanites. It is unknown whether they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials. However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
+'''La planète entière est recouverte d'un voile beige de nanorobots ou Nanites. Nul ne sait s'ils ont été déployés en tant qu'arme, s'ils sont le résultat d'une expérience ayant mal tourné, ou bien un système défaillant d'extraction de ressources, mais ils se sont appropriés toute la planète. Il n'en reste d'ailleurs rien d'autre qu'un coeur radioactif. Ces Nanites sont des assembleurs très efficaces, et s'exécutent dès que des matériaux viables sont à leur disposition. Cependant, ces Nanites protègent farouchement le secret de leur conception-- ils s'autodétruisent dès qu'ils sont capturés ou éloignés de leur planète.
 '''
 
 SP_SILEXIAN
 Silexian
 SP_SILEXIAN_GAMEPLAY_DESC
-'''Robots écologistes étincelants, abandonnés à leur sort.
+'''Robots écologistes brillants, abandonnés à leur sort.
 Préfèrent les Planètes de type terrestre.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
@@ -4977,17 +4990,17 @@ Préfèrent les Planètes de type terrestre.
 '''
 
 SP_SILEXIAN_DESC
-'''The Silexians are a race of ecological maintenance robots. They see their own existence as a means of bringing biological beauty and balance to the galaxy.
+'''Les Silexians sont des robots de maintenance écologique. Ils conçoivent leur existence comme un moyen de développer la magnificience biologique et l'équilibre environnemental dans toute la galaxie.
 
 Description:
-As each type of Silexian is customized for a specific task, there are variations in appearance. The majority of Silexians however, share many similar features: They are wholly artificial robotic beings made primarily of metals. They have an antennae used for short range radio communication, advanced tactile sensors as well as wide-frequency photon detectors.
-Silexians generally have a flat base equipped with wheels and rocket boosters, but the occasional model is bipedal, to allow greater agility. Many have pincer-like appendages and injector tubules for manipulating objects.
+Comme chaque type de Silexian est dédié à une tâche spécifique, leur apparence peut varier. Cependant, la majorité des Silexians partage plusieurs traits communs: ce sont principalement des organismes robotiques artificiels composés de métal. Ils utilisent une antenne radio à ondes courtes pour communiquer, des capteurs sensitifs avancés ainsi que des détecteurs photoniques à large fréquence.
+Les Silexians reposent généralement sur une plaque équipée de roues et de moteurs à propulsion, mais certains modèles peuvent être bipèdes, permettant un déplacement plus performant et précis. La plupart sont équipés d'appendices en forme de pince, ainsi que de tubes injecteurs, pour la manipulation d'objets.
 
-Social Structure:
-The Silexians have a hierarchical caste system under a dictatorship government. Each Silexian is created for a specific job, and fills that job until declared obsolete. There is no social mobility. In fact the very idea would be alien and somewhat unwholesome to a Silexian. The race is led by a caste of supervisors giving work assignments, determine upgrades and declare models obsolete. Supervisors themselves defer to the Prime Operator, whom nobody has the authority to deem obsolete, and therefore is practically immortal.
+Structure sociale:
+Les Silexians sont organisés selon un système de caste hiérarchique, dominé par un gouvernement dictatorial. Chaque Silexian est créé pour une tâche spécifique, et remplit son office jusqu'à ce qu'il soit déclaré comme obsolète. Il n'y a aucune ascension sociale entre les castes: en effet, l'idée même apparaît étrange et en un sens malsaine pour tout Silexian. La base est dominée par une caste de superviseurs assignant les tâches, déterminant les améliorations ou l'obsolescence des modèles. Les superviseurs en réfèrent eux-mêmes au Grand Opérateur, sur lequel personne n'a d'autorité, nul ne pouvant le déclarer comme obsolète. Ce qui par conséquent, lui confère une quasi-immortalité.
 
-History:
-The Silexians were created by the Caretakers in order to increase the efficiency and automation of their environmental maintenance projects. Eventually, all of the Caretakers’ worlds were inhabited and maintained by the peaceful and loyal Silexians. When the Caretakers left the galaxy, some Silexians were abandoned.
+Histoire:
+Les Silexians furent créés par les Caretakers dans le but d'augmenter l'efficacité et l'automatisation de leurs projets de maintenance écologique. Au cours du temps, tous les mondes habités par les Caretakers furent désertés, mais les Silexians, pacifiques et loyaux, continuèrent inlassablement leur ouvrage. Quand finalement les Caretakers quittèrent la galaxie, les Silexians furent abandonnés.
 '''
 
 SP_KOBUNTURA
@@ -5007,10 +5020,10 @@ Préfèrent les Planètes stériles.
 
 SP_KOBUNTURA_DESC
 '''Description:
-A Kobuntura is composed of trillions of magnetic dust particles. Their dense core of vibrating molecules generates a magnetic field which manipulates a less dense cloud of particles orbiting it in complex patterns. Kobuntura can directly detect and manipulate objects on the outer reaches of their particle clouds, but can indirectly detect, manipulate and communicate with objects and individuals much further away using there magnetic fields. The primary method of locomotion involves interaction with the planet’s magnetic field. Whenever a Kobuntura moves, there is a small chance that the movement will magnetize and agitate the surrounding dust particles to a sufficient extent to trigger a chain reaction which causes a new fully matured Kobuntura to form in a matter of seconds.
+Un Kobuntura est composé de billions de particules de poussière magnétique. Leur coeur dense de molécules vibratoires génère un champ magnétique autour duquel orbite de manière complexe un nuage moins dense de particules. Un Kobuntura peut directement détecter et manipuler des objets situés en dehors de son nuage de particules, mais ne peut détecter, manipuler et communiquer qu'indirectement avec les objets ou organismes beaucoup plus éloignés, à l'aide de son champs magnétique. Leur principal moyen de déplacement se base sur une interaction complexe avec le champ magnétique planétaire. Lorsqu'un Kobuntura se déplace, cela induit une agitation et une magnétisation des particules de poussière environnantes. Si la force thermomagnétique générée est suffisante, une réaction en chaîne s'opère, avec pour conséquence la formation en quelques secondes d'un nouveau Kobuntura.
 
-Social Structure:
-The Kobuntura have a guild system since ancient times, but one of the guilds, the Dark Enclave specialized in martial arts, has gained control over all the other guilds and established a military dictatorship. Despite this, there are no secrets amongst Kobuntura as they can't communicate without all the other Kobuntura noticing. Recreation and trade are very limited, as the sole intent of the Dark Enclave, and indeed all of Kobuntura society, is to find one of the Precursor species, the Builders, and unlock the greatest secrets of construction. This goal is the impetus driving their entire civilization.
+Structure sociale:
+Les Kobuntura s'organisent en guilde depuis les temps ancestraux, mais l'une de ces guildes, l'Enclave des Ténèbres, spécialisée dans les arts martiaux, a pris le contrôle sur toutes les autres factions et a instauré une dictature militaire. Malgré cela, il ne peut y avoir aucun secret chez les Kobuntura, dans la mesure où ils ne peuvent communiquer sans que tous les Kobuntura soient au courant. Les échanges et la sociabilité sont très limités, étant donné que le seul but de l'Enclave des Ténèbres, et par là même de toute la société Kobuntura, est de retrouver une espèce précise de Précurseurs, les Constructeurs, afin de découvrir leurs plus grands secrets d'ingénierie. Cet unique objectif cimente la civilisation Kobuntura depuis sa naissance.
 '''
 
 SP_UGMORS
@@ -5029,24 +5042,24 @@ Préfèrent les Planètes infernales.
 '''
 
 SP_UGMORS_DESC
-'''The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
+'''Les Ugmors sont une forme d'écume magmatique utilisant les roches et les minéraux pour fabriquer des entités temporaires, chacune conçue pour accomplir des tâches spécifiques.
 
-Social Structure:
-The Larar drifts are the true center of the species. These masses of yeast sit on top of the hottest part of the lava seas and absorb energy. When enough energy is available a large colony of supercharged yeast will gather large rocks at the edge of the lava pool and join them together to form an Ugmor. The Ugmors were originally designed to get from one lava pool to another, but have since developed into a very complex society. The Larar drifts are not very intelligent on their own, acting as more of a central memory which carries out the directives of the most recent Ugmor to be privileged enough to return to the Larar drifts. 
+Structure sociale:
+Les Trappes de Larar sont le coeur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège. 
 
-Ugmors have a very unified form of government. It resembles a hive, but without a central queen. This is because all Ugmors start out with the same racial memories and agenda. When something new is discovered the Ugmor who discovered it usually returns to the nearest Larar drift to share his discovery with the rest of the species.
+Les Ugmors ont une forme de gouvernement très centralisé, ressemblant à une ruche, mais sans aucune reine. Cela s'explique par le fait que tous les Ugmors naissent avec les mêmes données mémorielles et partagent les mêmes buts. Lorsqu'un Ugmor découvre quelque chose de nouveau, il retourne aux Trappes de Larar les plus proches afin de partager sa découverte avec le reste de l'espèce.
 
 Description:
-An Ugmor can take on many shapes, but all of them consist of rocks or sheets of metal connected by a sticky fibrous material. They are extremely durable and can even live in empty space for several hours. In their natural environment they can live for up to five years before cooling down and dying of “old age.” Ugmors as a race are not very bright. While the Larar pools see the value of intelligence, they tend to see it as a trait which should be grown in new Ugmors only in moderation.
+Un Ugmor peut revêtir plusieurs formes, mais ils sont tous constitués de roches et de métaux, connectés par une substance fibreuse collante. Ils sont extrêmement résistants et peuvent même survivre quelques heures dans le vide spatial. Dans leur environnement naturel, ils peuvent vivre jusqu'à cinq ans avant de refroidir et mourir de “vieillesse”. Les Ugmors ne sont pas particulièrement intelligents. Tandis que les Trappes de Larar font preuve d'une intelligence dite "mémorielle", cette faculté semble empêcher chez les Ugmors l'éclosion d'une intelligence basée sur la raison.
 
-Homeworld:
-The Ugmor homeworld is a rocky planet that rotates very quickly (once every 3 and a half hours). 30% of its surface is covered by seas of lava and liquid metals.
+Monde natal:
+Le monde d'origine des Ugmors est une planète rocheuse à la période de rotation extrêmement rapide (une rotation complète toutes les 3 heures et demie). 30% de sa surface est recouverte de mers de lave et de métaux liquides.
 '''
 
 SP_GISGUFGTHRIM
 '''Gis Guf Gthrim'''
 SP_GISGUFGTHRIM_GAMEPLAY_DESC
-'''Herbivores à carapace vivant exclusivement à la surface d'une planète unique, recouverte par un organisme gélatineux parasitaire.
+'''Herbivores à carapace, vivant uniquement à la surface de planètes recouvertes par un organisme gélatineux parasitaire singulier.
 Préfèrent les Planètes toxiques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -5059,7 +5072,7 @@ Préfèrent les Planètes toxiques.
 '''
 
 SP_GISGUFGTHRIM_DESC
-'''Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
+'''Les régions équatoriales de la plupart des planètes où résident les Gis Guf Gthrim, sont recouvertes d'un organisme gélatineux nommé la Grande Étendue Ambrée, qui y remplace toute vie végétale. Les Gis (et toutes les autres créatures) vivent et se nourrissent exclusivement sur la Grande Étendue Ambrée. Le cycle de vie des Gis est d'ailleurs étroitement lié à celui de son hôte. L'Étendue elle-même semble immortelle mais toutes les tentatives de clonage ont échoué, ce qui induit qu'il est impossible pour un Gis de quitter sa planète, du fait de sa totale dépendance à la Grande Étendue Ambrée.
 '''
 
 SP_HIDDENGARDENER
@@ -5078,13 +5091,13 @@ Préfèrent les Planètes de type terrestre.
 '''
 
 SP_HIDDENGARDENER_DESC
-'''The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kilometers. Its actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener, by means of enzymes, the encapsulation and releases of seeds, and the control of water, tends its garden to produce precisely the rotting plant matter it needs to survive.
+'''Le Hidden Gardener est une forme fongique intelligente, s'étalant sous la surface planétaire. Chaque spécimen peut s'étendre sur plusieurs kilomètres carrés, mais ses mouvements et pensées restent lents. Plusieurs nodules sensitifs lui permettent de capter les conditions climatiques et la qualité du sol où il est implanté. Un Hidden Gardener, grâce à des enzymes, à la dissémination de graines, et au contrôle de l'eau, entretient le sol qui le recouvre, afin que ce dernier produise de la matière végétale en décomposition, vitale à sa survie.
 
-Fungal-type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
+Les formes de vie fongique n'ont que très rarement un système cérébral, mais celui du Gardener s'est développé en symbiose avec le sol qui l'abrite: l'entretien du sol par le Gardener procure assez d'énergie pour que le cerveau de ce dernier fonctionne.
 
-Their terran homeworld is an eerily park-like place with plants arranged with unnatural precision, but no other signs of habitation.
+Leur monde natal de type terrestre est une biosphère végétale hétéroclite mais plutôt instable, n'abritant aucune autre forme de vie.
 
-The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
+La toile fongique recouvrant le sous-sol est bien trop grande pour quitter la planète, et bien que les Hidden Gardeners puissent se reproduire par 'duplication' en deux spécimen partageant la même conscience, leur grande taille provoque invariablement une latence de la pensée. Par conséquent, on ne trouve aucun spécimen de petite taille, qui pourrait éventuellement quitter sa planète natale.'''
 
 
 SP_ABADDONI
@@ -5104,11 +5117,11 @@ Préfèrent les Planètes infernales.
 
 SP_ABADDONI_DESC
 '''Description:
-Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
-At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
+Les Abaddoni ont une forme ovoïde d'environ 0.8 mètres de diamètre, arborent une profonde couleur rouge, tachetée de points noirs sur le dessus du corps. Leur caractéristique morphologique principale est une grande bouche s'étendant sur l'avant du corps à partir de ces points noirs, soit près d'un tiers de leur surface corporelle.
+À l'extrémité de chacune de leurs 6 pattes ressemblant à celles de crustacés, se trouve une sorte de sac gonflable qui leur permet de s'accrocher par effet de ventouse à n'importe quelle surface, quelle que soit son inclinaison. Comme les Abaddoni se développent en milieu souterrain, ils ne possèdent pas d'organe de vision, se référant ainsi principalement à leur odorat, et dans une moindre proportion, à l'ouïe et au toucher pour se déplacer.
 
-Social Structure:
-The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves. 
+Structure sociale:
+L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves. 
 '''
 
 
@@ -5128,21 +5141,21 @@ Préfèrent les Planètes irradiées.
 '''
 
 SP_ACIREMA_DESC
-'''Description
-An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
+'''Description:
+Les Acirema sont des organismes purement énergétiques, d'une forme elliptique d'environ 30m de diamètre, mais dont l'envergure peut atteindre les 100m une fois leurs ''ailes'' dépliées. Avec le temps, ils peuvent accumuler la matière environnante, et revêtir une apparence poussiéreuse voire rocheuse (les effluves d'énergie restant toujours visibles). La plupart des Acirema vivent dans un univers aux propriétés physiques légèrement différentes. Ils ne peuvent ainsi se matérialiser qu'en un unique endroit dans cet univers: leur "Portail Natal". Cependant, cela a une incidence sur leur physiologie, qui s'accélère alors grandement. Un Acirema ne peut pas survivre plus de quelques fractions de cycle galactique dans cet univers, et par conséquent, n'y demeure que très peu de temps, avant de retourner dans son propre univers.
 
-As the Acirema found the anomaly that allowed them to enter into this universe, they also found that harnessing the differences in structure allowed them to generate energy in massive amounts in both universes. They also found that their bodies could release and manipulate massive amounts of energy. They rapidly began gathering material on Portal to study, and use to build structures on Portal itself. However that massive amount of energy meant they rapidly mined Portal out, and soon had very limited minerals that were safe for them to extract.
+Tout comme les Acirema ont trouvé l'anomalie qui leur permet de voyager entre les univers, ils ont également découvert qu'exploiter leur différence structurelle permet de produire des quantités colossales d'énergie dans les deux univers. Ils se sont également rendus compte que leurs propres corps pouvaient manipuler l'énergie produite. Menant de nombreuses études sur le Portail et construisant même des structures en son sein, il est apparu rapidement que la quantité phénoménale d'énergie produite avait une incidence sur la stabilité du Portail, et qu'exploiter davantage d'énergie pouvait remettre en question la sécurité des Acirema.
 
-The massive amount of energy they can release as individuals and across the connection from Portal to their home universe, gives them the ability to produce large amounts of Industry, and also allows them to act as weapons. This makes Portal a very dangerous world to approach, as the Acirema are very wary of outsiders, and are sensitive to the vulnerability of their position. Trade with another universe is definitely beneficial, especially since they cannot obtain minerals from other planets. The Acirema on Portal seem to have a government that is similar to a military and/or research outpost (tightly controlled core with a majority loosely controlled) They are very secretive of the nature of their society back home.
+La quantité gigantesque d'énergie que les Acirema peuvent transférer dans leur univers via le Portail, leur confère une production excellente en Industrie, tandis que le fait qu'il puisse manipuler eux-mêmes cette énergie, leur permet d'utiliser leur propre corps comme armement. Cela rend le Portail très dangereux à approcher, sans compter que les Acirema se méfient des étrangers, et sont conscients de la vulnérabilité de leur position. Faire commerce de l'énergie du Portail dans cet univers leur est cependant devenu bénéfique, puisque qu'ils ne sont pas en mesure d'exploiter les planètes qui s'y trouvent. Les Acirema du Portail semble avoir un gouvernement de type militaire et/ou d'avant-poste scientifique (un coeur décisionnel resserré donnant les grandes orientations à une population quasiment autonome). Les Acirema restent très discrets sur la nature de leur société dans leur propre univers.
 
-Living Weapons:
-Ships crewed by Acirema will gain a +1 bonus to their shields, even if the ship itself has no shield.
+Armes vivantes:
+Les astronefs avec un équipage Acirema gagneront 1 point bonus en Bouclier, même si l'astronef n'est pas équipé de boucliers.
 
-"Homeworld"
-Portal is a Radiated world close to an unusually bright Blue Giant Star, with a connection to another universe. It is thought that Precursor testing may have opened the connection, and caused the star to change. There is suspicion that there may have been intelligent life on Portal, and they were destroyed by the Acirema when the connection opened (either due to research or advanced weapons use).
+"Monde Natal":
+Le Portail est est un environnement irradié, situé à proximité d'une Géante bleue anormalement plus brillante que la moyenne, et dispose d'une connection à un autre univers. La rumeur veut que des expériences menées par les Précurseurs aient donné naissance à cette connection, ce qui a eu une influence sur l'étoile géante toute proche. On suppose même qu'une vie intelligente s'est développée au sein du Portail, mais qu'elle fut détruite lorsque les Acirema furent les premiers à ouvrir cette connection (par la recherche ou par l'utilisation d'armes avancées).
 
-Reason for staying
-They can't stay here long enough to actually move to another planet and still survive.'''
+Raison de la sédentarité:
+Les Acirema ne peuvent pas demeurer assez longtemps dans cet univers pour coloniser d'autres planètes et y survivre.'''
 
 
 SP_OURBOOLS
@@ -5163,18 +5176,18 @@ Préfèrent les Planètes océaniques.
 '''
 
 SP_OURBOOLS_DESC
-'''Biology:
-A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head. This houses the gravi-sensory organs. Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment. Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives. Ourbools live long so
+'''Biologie:
+Serpent aquatique géant, le trait morphologique le plus distinctif d'un Ourbools est cet arc massif situé de chaque côté de sa tête et qui abrite les organes sensibles à la gravité. Les trois tentacules à l'avant de la bouche permettent aux Ourbools d'agir avec son environnement. Les Ourbools ne s'accouplent qu'une fois au cours de leur vie, qu'ils consacrent durant 35 années à élever 5 à 7 jeunes -- généralement avec l'aide d'autres adultes.
 
-Personality:
-Ourbools are inclined to a nomadic life, hunting or herding their prey ichthyoids. Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
-A significant minority drop out of society and adopt sedentary lives bound by the practical requirements of their craft
+Comportement:
+Les Ourbools ont une vie nomade, chassant ou élevant leurs proies ichthyoïdes. Les rapports sociaux entre deux groupes se rencontrant par hasard sont généralement bienveillants.
+Une petite minorité a cependant adopté une vie sédentaire, reposant sur la pratique d'un artisanat balbutiant.
 
-Homeworld:
-The homeworld, Oolur is orbited by 23 moons.
+Monde natal:
+Leur planète natale, Oolur, possède 23 lunes.
 
-Reason for Staying:
-The Ourbools find their sense of position via the regular movements of the 23 moons. Everything is perceived against that gravitational background. To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler. He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
+Raison de la sédentarité:
+Les Ourbools définissent leur position à l'aide des mouvements réguliers des 23 lunes orbitant autour de leur planète. Toute leur perception sensorielle est basée sur ce ressenti gravitationnel. Retirer un Ourbools de cet environnement le désoriente totalement au point de le rendre complètement "aveugle". Sans l'influence gravitationnelle qui lui est familière, un Ourbools ne peut alors plus que percevoir un bruit de fond gravitationnel sans aucune signification pour lui.
 '''
 
 SP_VOLP
@@ -5194,16 +5207,16 @@ Préfèrent les Planètes stériles.
 
 SP_VOLP_DESC
 '''Description:
-The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunneling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resource needs, as well as how societal structures affected individual behavior.
-The Volp-Uglush society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Uglush society is incredibly efficient, it would take individual Volp-Uglushs hundreds, if not thousands of years to be able to successfully develop a new independent society.
+Les Volp-Uglush sont une espèce asexuée mesurant environ 300 mètres de long et vivant dans des tunnels au sein de leur monde natal. Ils se nourrissent de silicates et possèdent un grand nombre de bras/bouches le long de leur corps fin et cylindrique, servant à la fois comme membres manipulateurs, pour creuser des galeries, pour se nourrir et pour communiquer à travers le réseau de tunnels. Dans l'ancien temps, il existait plusieurs souches de Volp-Uglush mais ces dernières étaient constamment en conflit. Les groupes qui jouissaient de la meilleure organisation étaient les mieux placés dans la compétition aux ressources. Tandis que l'espèce passait de l'ère industrielle à l'ère de l'information, une souche devint dominante, et les autres s'éteignirent lentement. La souche survivante commença alors à optimiser son environnement pour une utilisation plus efficace des ressources disponibles. Elle devint particulièrement performante dans l'exploitation des ressources, renforçant par la même les structures sociales en unifiant les comportements individuels.
+La société Volp-Uglush agit quasiment comme un organisme unique, car son organisation est optimisée à un niveau rarement atteint par d'autres espèces. Cependant, ceci a entraîné une perte critique d'initiative indépendante. Bien que la société Volp-Uglush soit incroyablement efficace, il faudrait des centaines, voire des milliers d'années à un groupe de Volp-Uglush pour être capable de créer et de développer une société nouvelle et indépendante.
 
-They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of individually taking on various large battle engines, the chaos of combat is not their most effective environment.
+Les Volp-Uglush sont très efficaces dans la gestion des flottes marchandes et sont d'excellents bureaucrates. Alors qu'ils possèdent une machine de guerre performante étant capable de prendre part aux plus grandes batailles, le chaos du combat est loin d'être un environnement qui leur convient.
 
-Homeworld:
-Hive is a large Barren world that is ~2 times bigger than its mass and material would suggest as all of it but a small metal core has been converted through tunneling and building into the Vast tunnel network of the Volp-Uglush bureaucracy.
+Monde natal:
+Hive est une vaste planète stérile dont la taille est 2 fois plus importante que la masse. Cela suggère que toute sa matière, excepté un petit coeur de métal, a été utilisée pour créer les galeries et construire les infrastructures au sein du vaste réseau de tunnels de la bureaucratie Volp-Uglush.
 
-Reason for Staying:
-Volp-Uglush are now too integrated and ingrown. They now totally lack the independence and innovation needed to leave Hive and start a new colony.
+Raison de la sédentarité:
+Les Volp-Uglush ayant à présent une société hautement complexe et intriquée, il leur est impossible de quitter Hive pour fonder ailleurs une nouvelle colonie, cela nécessitant un esprit d'indépendance et d'innovation leur faisant désormais défaut.
 '''
 
 SP_FURTHEST
@@ -5225,17 +5238,17 @@ Préfèrent les Planètes avec toundra.
 '''
 
 SP_FURTHEST_DESC
-'''Biology:
-The Furthest are furry, 1.5 m tall creatures. Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects. This allows the creature too keep watch in most directions at once. The actual brain is in the center of the body.
+'''Biologie:
+Les Furthest sont des créatures à fourrure mesurant 1.5m de haut. Verticalement symétriques, ils possèdent trois longues jambes, ainsi que trois longs cous flexibles. Au sommet de chaque cou, se trouve un oeil à multi-facettes, et une bouche pour l'alimentation et la manipulation d'objets. Cela permet à la créature d'observer dans toutes les directions à la fois. Leur système cérébral se situe au centre de leur corps.
 
-Name:
-The Furthest believe that sapience is measured by the distance that a being can separate itself from danger. Thus the name " Furthest" describes their species as the most advanced of beings.
+Nom:
+Les Furthest pensent que l'intelligence se mesure à la distance qu'un organisme est capable de mettre en lui-même et une menace potentielle. Si bien que le nom "Furthest" est censé décrire leur espèce comme la plus avancée de toutes.
 
-Personality: 
-The Furthest report that their homeworld was once full of the deadliest predators imaginable. They survived by developing caution to the utmost level. Indeed staying alert for threats, and hiding  are the core of their psychology and culture. The Furthest homeworld currently contains no carnivore they can't crush underfoot.
+Comportement: 
+Les Furthest affirment que leur monde natal est peuplé depuis toujours des prédateurs les plus mortels et féroces. Ils sont parvenus à survivre en développant la prudence au plus haut point. Rester constamment en alerte vis-à-vis de tout danger potentiel et être capable de s'y soustraire quelle que soit la situation, représente le leitmotiv de leur psychologie et culture. Le monde natal des Furthest n'abrite en effet aucun carnivore contre lequel ils soient en mesure de lutter.
 
-Reason for Staying:
-The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
+Raison de la sédentarité:
+Les Furthest considèrent le voyage spatial comme bien trop dangereux pour un être sensé, mais certains d'entre eux considérant leur monde natal comme tout aussi dangereux pourraient bien envisager de coloniser un autre monde.
 '''
 
 SP_EXOBOT
@@ -5899,7 +5912,7 @@ Théorie
 TT_APPLICATION
 Application
 TT_REFINEMENT
-Perfectionnement
+Amélioration
 
 
 # BuildTypes
@@ -6015,7 +6028,7 @@ DESC_VAR_LOCAL_CANDIDATE
 Candidat aux conditions locales
 
 DESC_VAR_ROOT_CANDIDATE
-Candidat aux conditions d'origines
+Candidat aux conditions d'origine
 
 DESC_STATISTIC
 statistique
@@ -6030,7 +6043,7 @@ DESC_VAR_PLANETTYPE
 type de planète
 
 DESC_VAR_NEXTBETTERPLANETTYPE
-next better planet type for planet's species
+Meilleur type suivant de planète pour l'espèce
 
 DESC_VAR_PLANETENVIRONMENT
 environnement de la planète
@@ -6042,7 +6055,7 @@ DESC_VAR_STARTYPE
 type d'étoile
 
 DESC_VAR_VALUE
-sa valeur précédente
+valeur précédente
 
 DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]
@@ -6122,7 +6135,7 @@ DESC_VAR_FIGHTERWEAPONRANGE
 [[METER_FIGHTER_WEAPON_RANGE]]
 
 DESC_VAR_TRADESTOCKPILE
-stock de crédits
+stock commercial
 
 DESC_VAR_TRADEOUTPUT
 production commerciale
@@ -6141,31 +6154,31 @@ DESC_VAR_AGE
 âge en tours
 
 DESC_VAR_PRODUCEDBYEMPIREID
-producteur
+empire producteur
 
 DESC_VAR_CREATIONTURN
 tour de création
 
 DESC_VAR_DESIGNID
-design id
+id modèle
 
 DESC_VAR_FLEETID
-fleet id
+id flotte
 
 DESC_VAR_PLANETID
-Planète id
+id planète
 
 DESC_VAR_SYSTEMID
-system id
+id système
 
 DESC_VAR_FINALDESTINATIONID
-final destination id
+id destination finale
 
 DESC_VAR_NEXTSYSTEMID
-next system id
+id prochain système
 
 DESC_VAR_PREVIOUSSYSTEMID
-previous system id
+id système précédent
 
 DESC_VAR_NUMSHIPS
 nombre d'astronefs
@@ -6183,13 +6196,13 @@ DESC_VAR_BUILDINGTYPE
 Nom du type de structure
 
 DESC_VAR_FOCUS
-focalisation
+focus
 
 DESC_VAR_OWNERLEASTEXPENSIVEENQUEUEDTECH
-technologie la moins coûteuse mise en file
+technologie la moins coûteuse mise en attente de recherche
 
 DESC_VAR_OWNERMOSTEXPENSIVEENQUEUEDTECH
-technologie la plus coûteuse mise en file
+technologie la plus coûteuse mise en attente de recherche
 
 DESC_VAR_OWNERMOSTRPCOSTLEFTENQUEUEDTECH
 technologie au coût résiduel le plus important
@@ -6201,7 +6214,7 @@ DESC_VAR_OWNERTOPPRIORITYENQUEUEDTECH
 technologie prioritaire
 
 DESC_VAR_LASTTURNBATTLEHERE
-une bataille s'est déroulée ici au dernier tour
+dernier tour où une bataille s'est déroulée ici
 
 
 
@@ -6310,10 +6323,10 @@ DESC_REMOVE_SPECIAL
 Enlève la capacité spéciale %1% à l'objet
 
 DESC_ADD_STARLANES
-Crée des Voies spatiales entre le système cible et le système des objects%1%
+Crée des Voies spatiales entre le système cible et le système des objets%1%
 
 DESC_REMOVE_STARLANES
-Supprime les Voies spatiales entre le système cible et le système des objects%1%
+Supprime les Voies spatiales entre le système cible et le système des objets%1%
 
 DESC_SET_STAR_TYPE
 Change le type d'étoile en %1%
@@ -6322,37 +6335,37 @@ DESC_MOVE_TO
 Déplace l'objet à l'endroit d'un objet%1%
 
 DESC_MOVE_IN_ORBIT_OF_OBJECT
-Moves the object in orbit of an object%1% at speed %2%
+Déplace l'objet en orbite de l'objet%1% à la vitesse de %2%
 
 DESC_MOVE_IN_ORBIT_OF_XY
-Moves the object in orbit of an object located at %1% and %2% at speed %3%
+Déplace l'objet en orbite d'un objet situé à %1% et %2% à la vitesse %3%
 
 DESC_MOVE_TOWARDS_OBJECT
-Moves the object toward an object%1% at speed %2%
+Déplace l'objet vers un objet%1% à la vitesse de %2%
 
 DESC_MOVE_TOWARDS_XY
-Moves the object toward an object located at %1% and %2% at speed %3%
+Déplace l'objet vers un objet situé à %1% et %2% à la vitesse de %3%
 
 DESC_SET_DESTINATION
-Sets the destination of the object to an object%1%
+Définit la destination de l'objet vers un objet%1%
 
 DESC_VICTORY
-Oblige le propriétaire de l'objet à gagner le jeu
+Définit le propriétaire de l'objet comme vainqueur de la partie
 
 DESC_GENERATE_SITREP
-Generates a SitRep message for empire %1%
+Génère un message de rapport de situation pour l'empire %1%
 
 DESC_SET_EMPIRE_TECH_PROGRESS
-Sets the research progress of tech %1% to %2% for empire %3%
+Définit la progression de la recherche de la technologie %1% à %2% pour l'empire %3%
 
 DESC_GIVE_EMPIRE_TECH
-Gives tech %1% to empire %2%
+Donne la technologie %1% à l'empire %2%
 
 DESC_SET_OVERLAY_TEXTURE
-Modifies the appearance of the object
+Modifie l'apparence de l'objet
 
 DESC_SET_TEXTURE
-Modifies the appearance of the object
+Modifie l'apparence de l'objet
 
 
 # Object Creation
@@ -6364,22 +6377,22 @@ DESC_CREATE_BUILDING
 Crée une nouvelle structure %1%
 
 DESC_CREATE_SHIP
-Creates a new ship of design %1% owned by the %2% empire crewed by %3%
+Crée un nouveau modèle d'astronef %1% appartenant à l'empire %2% avec un équipage %3%
 
 DESC_CREATE_SHIP_SIMPLE
-Creates a new ship of design %1% with no owner and no species
+Crée un nouveau modèle d'astronef %1% sans propriétaire ni espèce
 
 DESC_CREATE_FIELD_SIZE
-Creates a new field of type %1% with radius %2%
+Crée un nouveau champ de type %1% avec un rayon de %2%
 
 DESC_CREATE_FIELD
-Creates a new field of type %1%
+Crée un nouveau champ de type %1%
 
 DESC_CREATE_SYSTEM_TYPE
-Creates a new system of star type %1%
+Crée un nouveau système de type d'étoile %1%
 
 DESC_CREATE_SYSTEM
-Créer un nouveau système
+Crée un nouveau système
 
 
 # Conditions
@@ -6415,10 +6428,10 @@ DESC_SOURCE_NOT
  qui n'est pas l'objet source
 
 DESC_ROOT_CANDIDATE
- qui est l'objet racine candidat
+ qui est l'objet d'origine candidat
 
 DESC_ROOT_CANDIDATE_NOT
- qui n'est pas l'objet racine candidat
+ qui n'est pas l'objet d'origine candidat
 
 DESC_TARGET
  qui est l'objet cible
@@ -6427,10 +6440,10 @@ DESC_TARGET_NOT
  qui n'est pas l'objet cible
 
 DESC_HOMEWORLD
- qui est le Monde Natal de l'espèce %1%
+ qui est le Monde natal de l'espèce %1%
 
 DESC_HOMEWORLD_NOT
- qui n'est pas le Monde Natal de l'espèce %1%
+ qui n'est pas le Monde natal de l'espèce %1%
 
 DESC_CAPITAL
  qui est capitale d'empire
@@ -6469,16 +6482,16 @@ DESC_SPECIAL_NOT
  qui ne présente pas la Particularité %1%
 
 DESC_SPECIAL_TURN_RANGE
- qui présente un Particularité %1% depuis l'inter-tour %2%-%3%
+ qui présente une Particularité %1% depuis l'entre-tour %2%-%3%
 
 DESC_SPECIAL_TURN_RANGE_NOT
- qui présente un Particularité %1% depuis l'inter-tour %2%-%3%
+ qui ne présente pas une Particularité %1% depuis l'entre-tour %2%-%3%
 
 DESC_CREATED_ON_TURN
- créé dans intervalle entre les tours %1% et %2%
+ qui a été créé entre les tours %1% et %2%
 
 DESC_CREATED_ON_TURN_NOT
- créé hors de l'intervalle entre les tours %1% et %2%
+ qui n'a pas été créé entre les tours %1% et %2%
 
 DESC_CONTAINS
  qui contient un objet%1%
@@ -6496,7 +6509,7 @@ DESC_PLANET_SIZE
  qui est une planète %1%
 
 DESC_PLANET_SIZE_NOT
- qui n'est pas une planète de %1% taille
+ qui n'est pas une planète %1%
 
 DESC_PLANET_ENVIRONMENT
  qui est une planète %1%
@@ -6529,16 +6542,16 @@ DESC_ENQUEUED_DESIGN_NOT
  où l'empire %1% n'a pas entre %2% et %3% %4% astronefs dans la file d'attente de production
 
 DESC_FOCUS_TYPE
- focalisé sur %1%
+ qui a un focus sur %1%
 
 DESC_FOCUS_TYPE_NOT
- non focalisé sur %1%
+ qui n'a pas un focus sur %1%
 
 DESC_STAR_TYPE
- qui est un système d'étoile %1% 
+ qui est un système avec une étoile %1% 
 
 DESC_STAR_TYPE_NOT
- qui n'est pas un système d'étoile %1%
+ qui n'est pas un système avec une étoile %1%
 
 DESC_DESIGN_HAS_HULL
  qui contient la coque %1%
@@ -6583,10 +6596,10 @@ DESC_CHANCE_NOT
  avec une probabilité de 1 - %1%
 
 DESC_PRODUCED_BY_EMPIRE
- produit par l'empire %1%
+ qui a été produit par l'empire %1%
 
 DESC_PRODUCED_BY_EMPIRE_NOT
- non produit par l'empire %1%
+ qui n'a pas pas été produit par l'empire %1%
 
 DESC_METER_VALUE_CURRENT
  qui a un(e) %1% actuel(le) compris(e) entre %2% et %3%
@@ -6625,22 +6638,22 @@ DESC_WITHIN_DISTANCE_NOT
  qui n'est pas à moins de %1% de tout objet%2%
 
 DESC_WITHIN_STARLANE_JUMPS
- qui est à moins de %1% saut hyperspatial de tout objet%2%
+ qui est à moins de %1% sauts hyperspatiaux de tout objet%2%
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
- qui est à plus de %1% saut hyperspatial de tout objet%2%
+ qui est à plus de %1% sauts hyperspatiaux de tout objet%2%
 
 DESC_CAN_ADD_STARLANE_CONNECTION
- auquel on peut ajouter des voies spatiales vers tous les systèmes qui contiennent des objets%1%
+ auquel on peut ajouter des voies spatiales vers tous les systèmes contenant des objets%1%
 
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
- auquel on ne peut ajouter des voies spatiales vers tous les systèmes qui contiennent des objets%1%
+ auquel on ne peut ajouter des voies spatiales vers tous les systèmes contenant des objets%1%
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION
- auquel on peut ôter des voies spatiales vers tous les systèmes qui contiennent des objets%1%
+ auquel on peut ôter des voies spatiales vers tous les systèmes contenant des objets%1%
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
- auquel on ne peut ôter des voies spatiales vers tous les systèmes qui contiennent des objets%1%
+ auquel on ne peut ôter des voies spatiales vers tous les systèmes contenant des objets%1%
 
 DESC_EXPLORED_BY_EMPIRE
  qui a été exploré par l'empire %1%
@@ -9954,16 +9967,16 @@ FOCUS_HEAVY_MINING_LABEL
 '''%1% Focus Extraction intensive'''
 
 BAD_MINING_LABEL
-'''%1% Mauvaise Extraction'''
+'''%1% Mauvais en Extraction'''
 
 GOOD_MINING_LABEL
-'''%1% Bonne Extraction'''
+'''%1% Bon en Extraction'''
 
 GREAT_MINING_LABEL
-'''%1% Excellente Extraction'''
+'''%1% Excellent en Extraction'''
 
 ULTIMATE_MINING_LABEL
-'''%1% Parfaite Extraction'''
+'''%1% Parfait en Extraction'''
 
 FOCUS_INDUSTRY_LABEL
 '''%2% Focus Industrie'''
@@ -9995,14 +10008,17 @@ GREAT_RESEARCH_LABEL
 ULTIMATE_RESEARCH_LABEL
 '''%2% Parfait en Recherche'''
 
+BAD_SUPPLY_LABEL
+'''%2% Mauvais en Approvisionnement'''
+
 AVERAGE_SUPPLY_LABEL
-'''%2% Approvisionnement normal'''
+'''%2% Normal en Approvisionnement'''
 
 GREAT_SUPPLY_LABEL
-'''%2% Approvisionnement excellent'''
+'''%2% Excellent en Approvisionnement'''
 
 ULTIMATE_SUPPLY_LABEL
-'''%2% Approvisionnement parfait'''
+'''%2% Parfait en Approvisionnement'''
 
 BAD_TROOPS_LABEL
 '''%2% Mauvais en Infanterie'''
