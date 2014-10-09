@@ -116,7 +116,10 @@ public:
 
     // \override
     virtual std::vector<std::string> GetSupportedResolutions() const;
-    bool FramebuffersAvailable() const;
+    // \override
+    virtual Pt GetDefaultResolution (int display_id);
+    static  Pt GetDefaultResolutionStatic(int display_id);
+    virtual bool FramebuffersAvailable() const;
 protected:
     void SetAppSize(const GG::Pt& size);
 

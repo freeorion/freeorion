@@ -676,17 +676,19 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     }
 
     GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
-
-    return std::make_pair(width, height);
+    GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("fullscreen-monitor-id"));
+    GetOptionsDB().Set("app-width", Value(default_resolution.x));
+    GetOptionsDB().Set("app-height", Value(default_resolution.y));
+    GetOptionsDB().Commit();
+    return std::make_pair(Value(default_resolution.x), Value(default_resolution.y));
 }
 
 void HumanClientApp::Reinitialize() {
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
     bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
     std::pair<int, int> size = GetWindowWidthHeight();
-
-    SetVideoMode(GG::X(size.first), GG::Y(size.second), fullscreen, fake_mode_change);
-    HandleWindowResize(GG::X(size.first), GG::Y(size.second));
+    SetVideoMode (GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
+    HandleWindowResize (GG::X (size.first), GG::Y (size.second));
 }
 
 float HumanClientApp::GLVersion() const
@@ -759,9 +761,11 @@ void HumanClientApp::HandleSaveGameDataRequest() {
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     //Logger().debugStream() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
 
-    GetOptionsDB().Set<int>("app-left-windowed", Value(w));
-    GetOptionsDB().Set<int>("app-top-windowed", Value(h));
-    GetOptionsDB().Commit();
+    if(!Fullscreen()) {
+        GetOptionsDB().Set<int> ("app-left-windowed", Value (w));
+        GetOptionsDB().Set<int> ("app-top-windowed", Value (h));
+        GetOptionsDB().Commit();
+    }
 }
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {

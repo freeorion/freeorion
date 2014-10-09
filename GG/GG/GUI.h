@@ -378,6 +378,9 @@ public:
      */
     virtual std::vector<std::string> GetSupportedResolutions() const = 0;
 
+    /** Returns the default resolution of the display */
+    virtual Pt GetDefaultResolution(int display_id) = 0;
+
 protected:
     /** \name Structors */ ///@{
     GUI(const std::string& app_name); ///< protected ctor, called by derived classes

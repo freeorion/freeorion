@@ -210,6 +210,7 @@ int mainSetupAndRun() {
         int colour_depth = GetOptionsDB().Get<int>("color-depth");
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
         bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
+
         std::pair<int, int> width_height = HumanClientApp::GetWindowWidthHeight();
         int width(width_height.first), height(width_height.second);
         std::pair<int, int> left_top = HumanClientApp::GetWindowLeftTop();

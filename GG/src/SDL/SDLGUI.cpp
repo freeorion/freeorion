@@ -318,7 +318,7 @@ namespace {
         // keys[SDLK_SLEEP] = GGK_SLEEP;
     }
 
-    void SetSDLFullscreenSize(SDL_Window* window, int display_id, int width, int height) {
+    Pt SetSDLFullscreenSize(SDL_Window* window, int display_id, int width, int height) {
         SDL_DisplayMode target;
         target.w = width;
         target.h = height;
@@ -328,6 +328,7 @@ namespace {
         SDL_DisplayMode closest;
         SDL_GetClosestDisplayMode(display_id, &target, &closest);
         SDL_SetWindowDisplayMode(window, &closest);
+        return Pt(X(closest.w), Y(closest.h));
     }
 
     void Enter2DModeImpl(int width, int height) {
@@ -529,14 +530,15 @@ void SDLGUI::SetVideoMode (X width, Y height, bool fullscreen, bool fake_mode_ch
     m_fake_mode_change = fake_mode_change && FramebuffersAvailable();
     m_app_width = width;
     m_app_height = height;
+    SDL_SetWindowFullscreen(m_window, 0);
     if (fullscreen) {
         if (!m_fake_mode_change) {
-            SetSDLFullscreenSize(m_window, m_display_id, Value(width), Value(height));
+            Pt resulting_size = SetSDLFullscreenSize(m_window, m_display_id, Value(width), Value(height));
+            m_app_width = resulting_size.x;
+            m_app_height = resulting_size.y;
         }
         SDL_SetWindowFullscreen(m_window, m_fake_mode_change?SDL_WINDOW_FULLSCREEN_DESKTOP:SDL_WINDOW_FULLSCREEN);
-        SDL_SetWindowSize(m_window, Value(width), Value(height));
     } else {
-        SDL_SetWindowFullscreen(m_window, 0);
         SDL_SetWindowSize(m_window, Value(width), Value(height));
         SDL_RestoreWindow(m_window);
     }
@@ -600,11 +602,6 @@ void SDLGUI::SetAppSize(const Pt& size)
 void SDLGUI::SDLInit()
 {
     InitializeKeyMap(m_key_map);
-
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << "SDL initialization failed: " << SDL_GetError();
-        Exit(1);
-    }
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 2);
@@ -861,6 +858,27 @@ std::vector<std::string> SDLGUI::GetSupportedResolutions() const {
 
     return mode_vec;
 }
+
+Pt SDLGUI::GetDefaultResolution (int display_id) {
+    return GetDefaultResolutionStatic(display_id);
+}
+
+Pt SDLGUI::GetDefaultResolutionStatic (int display_id) {
+
+    // Must initialize sdl here to be able to query the default screen resolution
+    if (!SDL_WasInit(SDL_INIT_VIDEO)) {
+        if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+            std::cerr << "SDL initialization failed: " << SDL_GetError();
+            throw std::runtime_error("Failed to initialize SDL");
+        }
+    }
+
+    SDL_DisplayMode mode;
+    SDL_GetDesktopDisplayMode(display_id, &mode);
+    Pt resolution(X(mode.w), Y(mode.h));
+    return resolution;
+}
+
 
 void SDLGUI::RelayTextInput (const SDL_TextInputEvent& text, GG::Pt mouse_pos) {
     const char *current = text.text;
