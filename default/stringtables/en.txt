@@ -1304,7 +1304,7 @@ Invalid file name.
 
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% exists.
-Ok to overwrite it?'''
+OK to overwrite it?'''
 
 FILE_DLG_INVALID_FILENAME
 '''"%1%"
@@ -3466,7 +3466,7 @@ DEFENSE_TEXT
 SHIELDS_TITLE
 Shields
 SHIELDS_TEXT
-'''The term Shields combines all kinds of protective forcefields. They are usually the first barrier incoming attacks have to overcome. There are two distinct types of shields that work very differently: ship shields and planetary barrier shields.
+'''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two distinct types of shields that work very differently: ship shields and planetary barrier shields.
 
 Ship shields: Reduce the damage sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if it's damage value is higher than the shield's strength.
 
@@ -3505,22 +3505,22 @@ The Troop meter on a planet represents the power of the defending ground forces.
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
 ORGANIC_SPECIES_TEXT
-'''Organic species are more or less, 'life as we know it'. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.'''
+'''Organic species are more or less, 'life as we know it'. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.'''
 
 LITHIC_SPECIES_TITLE
 Lithic Metabolism
 LITHIC_SPECIES_TEXT
-'''Lithic species are silicon or mineral-based. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+'''Lithic species are silicon or mineral-based. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.'''
 
 ROBOTIC_SPECIES_TITLE
 Robotic Metabolism
 ROBOTIC_SPECIES_TEXT
-'''Robotic species are sapient machines. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.'''
+'''Robotic species are sapient machines. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.'''
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Metabolism
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better. Growth specials do not benefit them.
+'''Phototrophic species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star -- the bigger the better. Growth specials do not benefit them.
 
 Population changes:
 Blue Star: Tiny +3 , Small +6 , Medium +9 , Large +12 , Huge +15.
@@ -3974,22 +3974,22 @@ SITREP_TECH_RESEARCHED_LABEL
 Tech Researched
 
 SITREP_TECH_UNLOCKED
-%tech% has been unlocked and can now be researched
+%tech% has been unlocked and can now be researched.
 SITREP_TECH_UNLOCKED_LABEL
 Tech Unlocked
 
 SITREP_SHIP_PART_UNLOCKED
-%shippart% has been unlocked and can now be produced in ship designs
+%shippart% has been unlocked and can now be produced in ship designs.
 SITREP_SHIP_PART_UNLOCKED_LABEL
 Ship Part Unlocked
 
 SITREP_SHIP_HULL_UNLOCKED
-%shiphull% has been unlocked and can now be produced in ship designs
+%shiphull% has been unlocked and can now be produced in ship designs.
 SITREP_SHIP_HULL_UNLOCKED_LABEL
 Ship Hull Unlocked
 
 SITREP_BUILDING_TYPE_UNLOCKED
-%buildingtype% has been unlocked and can now be produced
+%buildingtype% has been unlocked and can now be produced.
 SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Building Type Unlocked
 
@@ -4402,7 +4402,7 @@ Chromatophores provide the race with their main form of communication. When two 
 Scyliori are without gender and reproduce in an iteroparous style. The lifespan of a Scylior is roughly 30 years in which they never stop growing, hatching with a shell diameter of only 5cm and experiencing roughly 10 percent growth each year.
 
 Society:
-The remnant of a once-mighty telepathic hive brain, referred to as the Mind is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to it's former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
+The remnant of a once-mighty telepathic hive brain, referred to as 'the Mind', is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to its former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
 
 History:
 Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
@@ -4425,14 +4425,14 @@ Prefer Swamp planets.
 '''
 
 SP_GYSACHE_DESC
-'''The Gysache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
+'''The Gysache are a herbivorous species that has always been prey. They seek to remove all that threatens them, until every place in the universe is safe.
 
 Description:
 The Gysache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
 Their oblong bodies lack anything resembling a head, instead they have three identical eye stalks that are located at the forward tip of the body. A small mouth is located at the base of them.
 
 Personality:
-The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
+The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. However, they do have a herding tendency and this keeps them together when faced with danger.
 
 Homeworld:
 Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
@@ -4457,7 +4457,7 @@ Prefer Toxic planets.
 
 SP_CHATO_DESC
 '''Description:
-The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 Centimeters in height and 10 Centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
+The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 centimeters in height and 10 centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
 
 Social Structure:
 In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
@@ -4485,10 +4485,10 @@ Prefer Desert planets.
 
 SP_TRITH_DESC
 '''Description:
-The Trith are a mixture of matter and their enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for the Trith’s rage: While the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To the grown up Trith this is merely vexing, but for young Trith it can be fatal. The Trith that gain their ability before their adolescent years are sometimes not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
+The Trith are a mixture of matter and enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for their rage: while the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To mature Trith this is merely vexing, but for young Trith it can be fatal. Sometimes, Trith that gain their telepathic ability before adolescence are not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
 
 Social Structure:
-The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought noise in the universe.
+The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought-noise in the universe.
 '''
 
 SP_HHHOH
@@ -4510,11 +4510,11 @@ Prefer Tundra planets.
 
 SP_HHHOH_DESC
 '''Description:
-Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
-Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
+Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tonnes. They have a very thick layer of white fur.
+Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws used to handle objects. When not in use, Hhhohs curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous but do not actively hunt or farm large domesticated life.
 
 Personality:
-Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
+Hhhohs describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
 '''
 
 SP_EAXAW
@@ -4535,13 +4535,13 @@ Prefer Terran planets.
 
 SP_EAXAW_DESC
 '''Description:
-The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a 3 beaked mouth that is used to dig extensive tunnel system. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the Body is musculature, the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
+The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a three-beaked mouth that is used to dig extensive tunnel systems. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the body is musculature and the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
 
 Social Structure:
 Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
 
 History:
-A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation: "All of this must go!".
+A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld. As the Eaxaw learned some of the ship's secrets they deduced that there were other intelligent species. Their great matriarchal council soon issued its greatest proclamation: "All of this must go!"
 '''
 
 SP_DERTHREAN
@@ -4563,10 +4563,10 @@ Prefer Toxic planets.
 
 SP_DERTHREAN_DESC
 '''Description:
-The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and the plant without it is but an empty shell, yet somehow together, their neural synapses are compatible to create a reasonable being. Although the virus brings awareness to the plant, it is also toxic to its nervous system, inflicting great amounts of pain to the host, slowly murdering it the greater it spawns, and in the end, killing the plant itself, effectively meaning that the greater the intelligence of a Derthrean, the more pain he endures.
+The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and without the virus, the plant is but an empty shell yet together, their neural synapses are compatible and form a reasonable being. Although the virus brings awareness to the plant, the virus is also toxic to its nervous system, inflicting great amounts of pain, slowly destroying the plant as the virus spawns and in the end, killing it. This means that the greater the intelligence of a Derthrean, the more pain he endures.
 
 Social Structure:
-The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays the fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
+The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays a fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
 '''
 
 SP_LAENFA
@@ -4589,10 +4589,10 @@ Prefer Ocean Planets.
 
 SP_LAENFA_DESC
 '''Description:
-The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others and has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility , as they are able to swim and slither like a serpent. The increased effectiveness of attached Laenfa's telepathic communication allows them to synchronize the motions of a single vine for more effective transportation.
+The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others. A leaf has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility as they are able to swim and slither like a serpent. When Laenfa are attached, the effectiveness of their telepathic communication increases, allowing them to synchronize the motions of a single vine for more effective transportation.
 
 Social Structure:
-The Laenfa have a unified culture due to their telepathy, but as their ability to communicate telepathically weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret, but takes into account the voices of all Laenfa they are able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goal of gaining knowledge of other species and protecting knowledge of themselves.
+The Laenfa have a unified culture due to their telepathy but because their telepathic communication weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret but takes into account the voices of all Laenfa it is able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goals of gaining knowledge of other species and protecting knowledge of themselves.
 '''
 
 SP_TAEGHIRUS
@@ -4661,7 +4661,7 @@ SP_GEORGE_DESC
 '''George is a single telepathic entity that consists of multiple mobile telepathic units.
 
 Description:
-The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
+The units that make up George look like 2.5 meter long, 0.5 meter tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own. The mind of George is the sum of all the units communicating telepathically, over any distance.
 '''
 
 
@@ -4684,11 +4684,11 @@ Prefer Barren planets.
 
 SP_CRAY_DESC
 '''Description:
-The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray's language is done by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
+The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray communicate by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
 
 Social Structure:
-The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsman rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
-Day to day decisions run on an extremely complex web of favors, all Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
+The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsmen rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
+Day to day decisions run on an extremely complex web of favors. All Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
 '''
 
 
@@ -4714,7 +4714,7 @@ Prefer Desert planets.
 
 SP_ETTY_DESC
 '''Description:
-Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong scent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the scent of greater predators, they also have a powerful sense of smell.
+Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong scent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the scent of greater predators. They also have a powerful sense of smell.
 
 The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
 
@@ -4740,7 +4740,7 @@ SP_CYNOS_GAMEPLAY_DESC
 
 SP_CYNOS_DESC
 '''Description:
-The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
+The Cynos are part of a mother plant which resembles a 90-meter high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live up to 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
 
 A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant—artificial substitutes for this feed are possible, but result in the infertility of the Cyno, thus all Cyno leaving their homeworld become infertile.
 
@@ -4748,7 +4748,7 @@ Social Structure:
 Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods.
 
 Reason for Staying:
-Neither can the Cynos reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
+The Cynos cannot reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
 '''
 
 SP_PHINNERT
