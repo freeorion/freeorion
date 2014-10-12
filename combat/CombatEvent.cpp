@@ -18,6 +18,10 @@ void CombatEvent::serialize ( Archive& ar, const unsigned int version ) {}
 BOOST_CLASS_EXPORT_IMPLEMENT ( CombatEvent )
 
 template
-void CombatEvent::serialize<freeorion_iarchive> ( freeorion_iarchive& ar, const unsigned int version );
+void CombatEvent::serialize<freeorion_bin_iarchive> ( freeorion_bin_iarchive& ar, const unsigned int version );
 template
-void CombatEvent::serialize<freeorion_oarchive> ( freeorion_oarchive& ar, const unsigned int version );
+void CombatEvent::serialize<freeorion_bin_oarchive> ( freeorion_bin_oarchive& ar, const unsigned int version );
+template
+void CombatEvent::serialize<freeorion_xml_iarchive> ( freeorion_xml_iarchive& ar, const unsigned int version );
+template
+void CombatEvent::serialize<freeorion_xml_oarchive> ( freeorion_xml_oarchive& ar, const unsigned int version );

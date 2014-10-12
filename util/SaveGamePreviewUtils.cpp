@@ -2,6 +2,7 @@
  *
  */
 
+#include "OptionsDB.h"
 #include "SaveGamePreviewUtils.h"
 
 #include "i18n.h"
@@ -40,7 +41,7 @@ namespace {
 
     /// Populates a SaveGamePreviewData from a given file
     /// returns true on success, false if preview data could not be found
-    bool LoadSaveGamePreviewData ( const fs::path& path, FullPreview& full ) {
+    bool LoadSaveGamePreviewData( const fs::path& path, FullPreview& full, bool alternate_serialization ) {
         if ( !fs::exists ( path ) ) {
             Logger().debugStream() << "LoadSaveGamePreviewData: Save file note found: " << path.string();
             return false;
@@ -52,14 +53,27 @@ namespace {
 
         if ( !ifs )
             throw std::runtime_error ( UNABLE_TO_OPEN_FILE );
+        bool use_binary = GetOptionsDB().Get<bool>("binary-serialization") ^ alternate_serialization;
         try {
-            freeorion_iarchive ia ( ifs );
-            Logger().debugStream() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
-            ia >> BOOST_SERIALIZATION_NVP ( full.preview );
-            ia >> BOOST_SERIALIZATION_NVP ( full.galaxy );
+            if (use_binary) {
+                freeorion_bin_iarchive ia ( ifs );
+                Logger().debugStream() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
+                ia >> BOOST_SERIALIZATION_NVP ( full.preview );
+                ia >> BOOST_SERIALIZATION_NVP ( full.galaxy );
+            } else {
+                freeorion_xml_iarchive ia ( ifs );
+                Logger().debugStream() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
+                ia >> BOOST_SERIALIZATION_NVP ( full.preview );
+                ia >> BOOST_SERIALIZATION_NVP ( full.galaxy );
+            }
         } catch ( const std::exception& e ) {
-            Logger().errorStream() << "LoadSaveGamePreviewData: Failed to read preview of " << path.string() << " because: " << e.what();
-            return false;
+            if (alternate_serialization) {
+                Logger().errorStream() << "LoadSaveGamePreviewData: Failed to read preview of " << path.string() << " because: " << e.what();
+                return false;
+            } else {
+                Logger().debugStream() << "LoadSaveGamePreviewData trying alternate_serialization";
+                return LoadSaveGamePreviewData (path, full, true);
+            }
         }
         if ( full.preview.Valid() ) {
             Logger().debugStream() << "LoadSaveGamePreviewData: Successfully loaded preview from:" << path.string();
@@ -69,6 +83,11 @@ namespace {
             return false;
         }
     }
+
+    bool LoadSaveGamePreviewData( const fs::path& path, FullPreview& full )
+        { return LoadSaveGamePreviewData(path, full, false ); }
+
+
 }
 
 
@@ -100,8 +119,10 @@ void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
     }
 }
 
-template void SaveGamePreviewData::serialize<freeorion_oarchive>(freeorion_oarchive&, unsigned int);
-template void SaveGamePreviewData::serialize<freeorion_iarchive>(freeorion_iarchive&, unsigned int);
+template void SaveGamePreviewData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, unsigned int);
+template void SaveGamePreviewData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, unsigned int);
+template void SaveGamePreviewData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, unsigned int);
+template void SaveGamePreviewData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
 
 template<class Archive>
 void FullPreview::serialize(Archive& ar, unsigned int version)
@@ -111,8 +132,10 @@ void FullPreview::serialize(Archive& ar, unsigned int version)
     & BOOST_SERIALIZATION_NVP(galaxy);
 }
 
-template void FullPreview::serialize<freeorion_oarchive>(freeorion_oarchive&, unsigned int);
-template void FullPreview::serialize<freeorion_iarchive>(freeorion_iarchive&, unsigned int);
+template void FullPreview::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, unsigned int);
+template void FullPreview::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, unsigned int);
+template void FullPreview::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, unsigned int);
+template void FullPreview::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
 
 
 template<typename Archive>
@@ -122,8 +145,10 @@ void PreviewInformation::serialize ( Archive& ar, const unsigned int version ) {
        & BOOST_SERIALIZATION_NVP(previews);
 }
 
-template void PreviewInformation::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void PreviewInformation::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
+template void PreviewInformation::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void PreviewInformation::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void PreviewInformation::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void PreviewInformation::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 std::string ColumnInPreview ( const FullPreview& full, const std::string& name, bool thin ) {
     if ( name == "player" ) {

@@ -189,12 +189,17 @@ void GiveObjectToEmpireOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_recipient_empire_id);
 }
 
-void Serialize(freeorion_oarchive& oa, const OrderSet& order_set)
+template <class Archive>
+void Serialize(Archive& oa, const OrderSet& order_set)
 { oa << BOOST_SERIALIZATION_NVP(order_set); }
+template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const OrderSet& order_set);
+template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const OrderSet& order_set);
 
-void Deserialize(freeorion_iarchive& ia, OrderSet& order_set)
+template <class Archive>
+void Deserialize(Archive& ia, OrderSet& order_set)
 { ia >> BOOST_SERIALIZATION_NVP(order_set); }
-
+template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, OrderSet& order_set);
+template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, OrderSet& order_set);
 
 ////////////////////////////////////////////////////////////
 // Combat orders
@@ -208,8 +213,10 @@ void ShipMission::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_target);
 }
 
-template void ShipMission::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void ShipMission::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
+template void ShipMission::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void ShipMission::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void ShipMission::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void ShipMission::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 template <class Archive>
 void FighterMission::serialize(Archive& ar, const unsigned int version)
@@ -219,8 +226,10 @@ void FighterMission::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_target);
 }
 
-template void FighterMission::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void FighterMission::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
+template void FighterMission::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void FighterMission::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void FighterMission::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void FighterMission::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 template <class Archive>
 void CombatOrder::serialize(Archive& ar, const unsigned int version)
@@ -238,5 +247,7 @@ void CombatOrder::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-template void CombatOrder::serialize<freeorion_oarchive>(freeorion_oarchive&, const unsigned int);
-template void CombatOrder::serialize<freeorion_iarchive>(freeorion_iarchive&, const unsigned int);
+template void CombatOrder::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void CombatOrder::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void CombatOrder::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void CombatOrder::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);

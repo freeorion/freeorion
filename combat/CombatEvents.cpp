@@ -36,9 +36,13 @@ void BoutBeginEvent::serialize ( Archive& ar, const unsigned int version ) {
 BOOST_CLASS_EXPORT ( BoutBeginEvent )
 
 template
-void BoutBeginEvent::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version );
+void BoutBeginEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version );
 template
-void BoutBeginEvent::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version );
+void BoutBeginEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version );
+template
+void BoutBeginEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version );
+template
+void BoutBeginEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version );
 
 //////////////////////////////////////////
 ///////// Attack Event////////////////////
@@ -65,8 +69,8 @@ damage ( damage_ )
 std::string AttackEvent::DebugString() const {
     std::stringstream ss;
     ss << "rnd: " << round << " : "
-    << attacker_id << " -> " << target_id << " : "
-    << damage;
+       << attacker_id << " -> " << target_id << " : "
+       << damage;
     return ss.str();
 }
 
@@ -88,9 +92,13 @@ BOOST_CLASS_VERSION ( AttackEvent, 3 )
 BOOST_CLASS_EXPORT ( AttackEvent )
 
 template
-void AttackEvent::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version );
+void AttackEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version );
 template
-void AttackEvent::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version );
+void AttackEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version );
+template
+void AttackEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version );
+template
+void AttackEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version );
 
 //////////////////////////////////////////
 ///////// IncapacitationEvent////////////////////
@@ -122,6 +130,10 @@ void IncapacitationEvent::serialize ( Archive& ar, const unsigned int version ) 
 BOOST_CLASS_EXPORT ( IncapacitationEvent )
 
 template
-void IncapacitationEvent::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version );
+void IncapacitationEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version );
 template
-void IncapacitationEvent::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version );
+void IncapacitationEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version );
+template
+void IncapacitationEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version );
+template
+void IncapacitationEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version );

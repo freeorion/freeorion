@@ -1289,6 +1289,9 @@ Specifies number of threads to use in effects processing. More than one thread m
 OPTIONS_DB_AUTO_QUIT
 Automatically quits once any turns specified by --auto-advance-n-turns are completed (defaults to zero), useful for various testing particularly with --quickstart or --load.
 
+OPTIONS_DB_BINARY_SERIALIZATION
+Use Binary serialization for savegames and client-server communications (which is compact/fast but may have cross-platform compatibility issues); if unchecked text xml serialization is used. Restart after changing is recommended.
+
 #################
 # File Dialog   #
 #################
@@ -2177,6 +2180,9 @@ Effects processing threads
 
 OPTIONS_ADD_SAVED_DESIGNS
 Add All Saved Ship Designs at Game Start
+
+OPTIONS_USE_BINARY_SERIALIZATION
+Use Binary serialization
 
 ##################
 # CombatSetupWnd #

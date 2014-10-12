@@ -150,8 +150,14 @@ void PathingEngine::serialize(Archive& ar, const unsigned int version)
     }
 }
 
-void Serialize(freeorion_oarchive& oa, const PathingEngine& pathing_engine)
+template <class Archive>
+void Serialize(Archive& oa, const PathingEngine& pathing_engine)
 { oa << BOOST_SERIALIZATION_NVP(pathing_engine); }
+template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const PathingEngine& pathing_engine);
+template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const PathingEngine& pathing_engine);
 
-void Deserialize(freeorion_iarchive& ia, PathingEngine& pathing_engine)
+template <class Archive>
+void Deserialize(Archive& ia, PathingEngine& pathing_engine)
 { ia >> BOOST_SERIALIZATION_NVP(pathing_engine); }
+template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, PathingEngine& pathing_engine);
+template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, PathingEngine& pathing_engine);
