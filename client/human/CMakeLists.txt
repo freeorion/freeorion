@@ -61,11 +61,6 @@ set(freeorion_HEADER
     ../../UI/BuildDesignatorWnd.h
     ../../UI/ChatWnd.h
     ../../UI/ClientUI.h
-    ../../UI/CollisionMeshConverter.h
-    ../../UI/CombatCamera.h
-    ../../UI/CombatSetupWnd.h
-    ../../UI/CombatWndFwd.h
-    ../../UI/CombatWnd.h
     ../../UI/CUIControls.h
     ../../UI/CUIDrawUtil.h
     ../../UI/CUISlider.h
@@ -75,7 +70,6 @@ set(freeorion_HEADER
     ../../UI/DesignWnd.h
     ../../UI/EncyclopediaDetailPanel.h
     ../../UI/Encyclopedia.h
-    ../../UI/EntityRenderer.h
     ../../UI/FieldIcon.h
     ../../UI/FleetButton.h
     ../../UI/FleetWnd.h
@@ -120,17 +114,12 @@ set(freeorion_SOURCES
     ../../UI/BuildDesignatorWnd.cpp
     ../../UI/ChatWnd.cpp
     ../../UI/ClientUI.cpp
-    ../../UI/CollisionMeshConverter.cpp
-    ../../UI/CombatCamera.cpp
-    ../../UI/CombatSetupWnd.cpp
-    ../../UI/CombatWnd.cpp
     ../../UI/CUIControls.cpp
     ../../UI/CUIDrawUtil.cpp
     ../../UI/CUIStyle.cpp
     ../../UI/CUIWnd.cpp
     ../../UI/DesignWnd.cpp
     ../../UI/EncyclopediaDetailPanel.cpp
-    ../../UI/EntityRenderer.cpp
     ../../UI/FieldIcon.cpp
     ../../UI/FleetButton.cpp
     ../../UI/FleetWnd.cpp
@@ -166,7 +155,6 @@ set(freeorion_SOURCES
 set(freeorion_LINK_LIBS
     freeorioncommon
     freeorionparse
-    pagedgeometry
     GiGi
     GiGiSDL
     ${OPENGL_gl_LIBRARY}
@@ -197,11 +185,6 @@ target_link_libraries(freeorion
     ${freeorion_LINK_LIBS}
 )
 
-configure_file(
-    ${CMAKE_SOURCE_DIR}/ogre_plugins.cfg.in
-    ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
-)
-
 install(
     TARGETS freeorion
     RUNTIME DESTINATION bin
@@ -210,7 +193,6 @@ install(
 
 install(
     FILES
-    ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
     DESTINATION share/freeorion
     COMPONENT COMPONENT_FREEORION
 )

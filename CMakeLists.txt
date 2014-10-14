@@ -125,20 +125,10 @@ if (FREEORION_RELEASE)
 endif ()
 
 set (freeorioncommon_HEADER
-    combat/AsteroidBeltObstacle.h
-    combat/CombatEventListener.h
     combat/CombatEvent.h
     combat/CombatEvents.h
-    combat/CombatFighter.h
     combat/CombatLogManager.h
-    combat/CombatObject.h
-    combat/CombatOrder.h
-    combat/CombatShip.h
     combat/CombatSystem.h
-    combat/Missile.h
-    combat/PathingEngineFwd.h
-    combat/PathingEngine.h
-    combat/ProximityDatabase.h
     Empire/Diplomacy.h
     Empire/Empire.h
     Empire/EmpireManager.h
@@ -149,7 +139,6 @@ set (freeorioncommon_HEADER
     python/PythonSetWrapper.h
     python/PythonWrappers.h
     universe/Building.h
-    universe/CombatData.h
     universe/Condition.h
     universe/EffectAccounting.h
     universe/Effect.h
@@ -202,16 +191,9 @@ set (freeorioncommon_HEADER
 )
 
 set (freeorioncommon_SOURCE
-    combat/AsteroidBeltObstacle.cpp
     combat/CombatEvent.cpp
     combat/CombatEvents.cpp
-    combat/CombatFighter.cpp
     combat/CombatLogManager.cpp
-    combat/CombatObject.cpp
-    combat/CombatOrder.cpp
-    combat/CombatShip.cpp
-    combat/Missile.cpp
-    combat/PathingEngine.cpp
     Empire/Diplomacy.cpp
     Empire/Empire.cpp
     Empire/EmpireManager.cpp
@@ -219,12 +201,7 @@ set (freeorioncommon_SOURCE
     network/Message.cpp
     network/MessageQueue.cpp
     network/Networking.cpp
-    OpenSteer/src/Obstacle.cpp
-    OpenSteer/src/SimpleVehicle.cpp
-    OpenSteer/src/Vec3.cpp
-    OpenSteer/src/Vec3Utilities.cpp
     universe/Building.cpp
-    universe/CombatData.cpp
     universe/Condition.cpp
     universe/EffectAccounting.cpp
     universe/Effect.cpp
@@ -266,7 +243,6 @@ set (freeorioncommon_SOURCE
     util/SerializeModeratorAction.cpp
     util/SerializeMultiplayerCommon.cpp
     util/SerializeOrderSet.cpp
-    util/SerializePathingEngine.cpp
     util/SerializeUniverse.cpp
     util/SitRepEntry.cpp
     util/StringTable.cpp
@@ -319,7 +295,6 @@ endif ()
 # Recurse Into Sources                 #
 ########################################
 add_subdirectory(log4cpp)
-add_subdirectory(PagedGeometry)
 add_subdirectory(parse)
 add_subdirectory(server)
 add_subdirectory(client/AI)
@@ -671,7 +646,6 @@ set(CPACK_SOURCE_IGNORE_FILES
     "\\\\.gz$"
     "\\\\.lib$"
     "/Makefile$"
-    "/ogre_plugins.cfg$"
     "\\\\.pc$"
     "\\\\.pdb$"
     "\\\\.pyc$"
