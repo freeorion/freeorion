@@ -4,6 +4,14 @@
 
 #include <boost/static_assert.hpp>
 #include <boost/detail/endian.hpp>
+
+#if BOOST_VERSION == 105600
+// HACK: The following two includes work around a bug in boost 1.56,
+// which uses them without including. They can be removed once the bug is gone.
+#include <boost/serialization/singleton.hpp> // This
+#include <boost/serialization/extended_type_info.hpp> //This
+#endif
+
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>

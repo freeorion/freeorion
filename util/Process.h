@@ -2,6 +2,14 @@
 #ifndef _Process_h_
 #define _Process_h_
 
+// HACK: The following two includes work around a bug in boost 1.56,
+// which uses them without including. They can be removed once the bug is gone.
+#include <boost/version.hpp>
+#if BOOST_VERSION == 105600
+#include <boost/serialization/singleton.hpp> // This
+#include <boost/serialization/extended_type_info.hpp> //This
+#endif
+
 #include <boost/serialization/shared_ptr.hpp>
 
 #include <vector>
