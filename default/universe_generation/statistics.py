@@ -77,7 +77,7 @@ def log_species_summary():
             expectation = expectation_tally / (1E-10 + settleable_planets)
             print "Settled natives %18s on %3d planets -- %5.1f%% of total and %5.1f%% vs %5.1f%% (actual vs expected) of %s planets" % \
                 (species, species_summary[species], 100.0 * species_summary[species] / (1E-10 + native_potential_planet_total),
-                 100.0 * species_summary[species] / (1E-10 + settleable_planets, expectation), [str(p_t) for p_t in natives.planet_types_for_natives[species]])
+                 100.0 * species_summary[species] / (1E-10 + settleable_planets), expectation, [str(p_t) for p_t in natives.planet_types_for_natives[species]])
     print
     native_settled_planet_total = sum(settled_native_planet_summary.values())
     print "Planet Type Summary for Native Planets (native frequency: %.1f%%)" % (inverse_native_chance and (100 * native_chance))
