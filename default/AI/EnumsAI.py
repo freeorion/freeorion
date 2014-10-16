@@ -209,7 +209,7 @@ def get_ship_roles_types():
     return range(0, 9)
 
 
-class AITargetType(object):
+class TargetType(object):
     TARGET_INVALID = -1
     TARGET_BUILDING = 0
     TARGET_TECHNOLOGY = 1

@@ -1,7 +1,7 @@
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
 import FleetUtilsAI
-from EnumsAI import AIFleetMissionType, AITargetType
+from EnumsAI import AIFleetMissionType, TargetType
 import AITarget
 import MoveUtilsAI
 import PlanetUtilsAI
@@ -85,7 +85,7 @@ def assign_scouts_to_explore_systems():
             break #must have ran out of scouts
         fleet_id = this_fleet_list[0]
         fleet_mission = foAI.foAIstate.get_fleet_mission( fleet_id )
-        target = AITarget.AITarget(AITargetType.TARGET_SYSTEM, this_sys_id )
+        target = AITarget.AITarget(TargetType.TARGET_SYSTEM, this_sys_id )
         if len(MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(), target)) > 0:
             fleet_mission.add_target(AIFleetMissionType.FLEET_MISSION_EXPLORATION, target)
             sent_list.append(this_sys_id)

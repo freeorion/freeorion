@@ -2,7 +2,7 @@ import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
 import AITarget
-from EnumsAI import AIFleetMissionType, AITargetType
+from EnumsAI import AIFleetMissionType, TargetType
 import FleetUtilsAI
 import PlanetUtilsAI
 import PriorityAI
@@ -616,7 +616,7 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None):
             if not fleet:
                 continue
             sysID = fleet.systemID
-            aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, sysID)
+            aiTarget = AITarget.AITarget(TargetType.TARGET_SYSTEM, sysID)
             aiFleetMission = foAI.foAIstate.get_fleet_mission(fleetID)
             aiFleetMission.clear_fleet_orders()
             aiFleetMission.clear_targets( (aiFleetMission.get_mission_types() + [-1])[0] )
@@ -677,7 +677,7 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None):
                         print "FULL MIN military allocation for system %d ( %s ) -- requested allocation %8d -- got %8d with fleets %s "%(sysID, universe.getSystem(sysID).name, minMilAllocations.get(sysID, 0) , rating, theseFleets)
         elif doingMain and verboseMilReporting:
             print "FULL+ military allocation for system %d ( %s ) -- requested allocation %8d, got %8d with fleets %s"%(sysID, universe.getSystem(sysID).name, alloc, foundStats.get('rating', 0), theseFleets)
-        aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, sysID)
+        aiTarget = AITarget.AITarget(TargetType.TARGET_SYSTEM, sysID)
         for fleetID in theseFleets:
             fleet=universe.getFleet(fleetID)
             fo.issueAggressionOrder(fleetID, True)

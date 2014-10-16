@@ -120,8 +120,8 @@ def calculateResearchPriority():
     totalRP = empire.resourceProduction(fo.resourceType.research)
     industrySurge = ((foAI.foAIstate.aggression > fo.aggression.cautious) and
                      ((totalPP + 1.6 * totalRP) <(60* foAI.foAIstate.aggression)) and
-                     (((orb_gen_tech in researchQueueList[:4] or got_orb_gen) and ColonisationAI.gotGG) or
-                      ((mgrav_prod_tech in researchQueueList[:4] or got_mgrav_prod) and ColonisationAI.gotAst)) and
+                     (((orb_gen_tech in researchQueueList[:4] or got_orb_gen) and ColonisationAI.got_gg) or
+                      ((mgrav_prod_tech in researchQueueList[:4] or got_mgrav_prod) and ColonisationAI.got_ast)) and
                      (not (len(AIstate.popCtrIDs) >= 12 )))
     # get current industry production & Target
     ownedPlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)

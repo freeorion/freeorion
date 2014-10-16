@@ -249,7 +249,7 @@ def generate_research_orders():
     #
     # check to accelerate asteroid or GG tech
     if True: #just to help with cold-folding / organization
-        if ColonisationAI.gotAst and not tech_is_complete("SHP_ASTEROID_HULLS") and (
+        if ColonisationAI.got_ast and not tech_is_complete("SHP_ASTEROID_HULLS") and (
                         ("SHP_ASTEROID_HULLS" not in research_queue_list[num_techs_accelerated])): #if needed but not top item, will block acceleration of pro_orb_gen
             if "SHP_ASTEROID_HULLS" not in research_queue_list[:2+num_techs_accelerated]:
                 if "GRO_SYMBIOTIC_BIO" in research_queue_list:
@@ -262,7 +262,7 @@ def generate_research_orders():
                         num_techs_accelerated += 1
                         print "Asteroids: have colonized an asteroid belt, so attempted to fast-track %s , got result %d"%(ast_tech, res)
                 research_queue_list = get_research_queue_techs()
-        elif ColonisationAI.gotGG and not tech_is_complete("PRO_ORBITAL_GEN") and (
+        elif ColonisationAI.got_gg and not tech_is_complete("PRO_ORBITAL_GEN") and (
                     "PRO_ORBITAL_GEN" not in research_queue_list[:3+num_techs_accelerated]):
             if "GRO_SYMBIOTIC_BIO" in research_queue_list:
                 insert_idx = 1+ research_queue_list.index("GRO_SYMBIOTIC_BIO")
@@ -277,7 +277,7 @@ def generate_research_orders():
     if True: #just to help with cold-folding / organization
         if gotGGG and gotSymBio and (not gotXenoGen) and foAI.foAIstate.aggression >= fo.aggression.cautious:
             mostAdequate=0
-            for specName in ColonisationAI.empireColonizers:
+            for specName in ColonisationAI.empire_colonizers:
                 environs={}
                 thisSpec = fo.getSpecies(specName)
                 if not thisSpec: 
@@ -299,7 +299,7 @@ def generate_research_orders():
     if True: #just to help with cold-folding / organization
         if not tech_is_complete("LRN_DISTRIB_THOUGHT"):
             got_telepathy = False
-            for specName in ColonisationAI.empireSpecies:
+            for specName in ColonisationAI.empire_species:
                 thisSpec=fo.getSpecies(specName)
                 if thisSpec and ("TELEPATHIC" in list(thisSpec.tags)):
                     got_telepathy = True

@@ -67,7 +67,7 @@ def get_capital():
         else:
             return -1
     try:
-        for spec_list in [ColonisationAI.empireColonizers, ColonisationAI.empireShipBuilders, None]:
+        for spec_list in [ColonisationAI.empire_colonizers, ColonisationAI.empire_ship_builders, None]:
             population_id_pairs = []
             for planet_id in peopled_planets:
                 planet = universe.getPlanet(planet_id)

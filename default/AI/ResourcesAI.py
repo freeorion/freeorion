@@ -152,10 +152,10 @@ def set_planet_resource_foci(): #+
         planetMap.clear()
         planetMap.update( zip( empirePlanetIDs, planets))
         if useGrowth:
-            for metab, metabIncPop in ColonisationAI.empireMetabolisms.items():
-                for special in [aspec for aspec in AIDependencies.metabolismBoostMap.get(metab, []) if aspec in ColonisationAI.availableGrowthSpecials]:
+            for metab, metabIncPop in ColonisationAI.empire_metabolisms.items():
+                for special in [aspec for aspec in AIDependencies.metabolismBoostMap.get(metab, []) if aspec in ColonisationAI.available_growth_specials]:
                     rankedPlanets=[]
-                    for pid in ColonisationAI.availableGrowthSpecials[special]:
+                    for pid in ColonisationAI.available_growth_specials[special]:
                         planet = planetMap[pid]
                         cur_focus = planet.focus
                         pop = planet.currentMeterValue(fo.meterType.population)
