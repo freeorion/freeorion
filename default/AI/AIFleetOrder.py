@@ -72,7 +72,7 @@ class AIFleetOrder(object):
                 if TargetType.TARGET_PLANET == target_type:
                     planet = universe.getPlanet(self.target.target_id)
                     planet_population = planet.currentMeterValue(fo.meterType.population)
-                    if planet.unowned and not planet_population:
+                    if planet.unowned or not planet_population:
                         self.executed = True
                         self.execution_completed = True
                         return False
