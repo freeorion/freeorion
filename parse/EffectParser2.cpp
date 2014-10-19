@@ -6,8 +6,6 @@
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
 
-#include <boost/phoenix/phoenix.hpp>
-
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 

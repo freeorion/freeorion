@@ -6,7 +6,7 @@
 #include "Label.h"
 #include "ParseImpl.h"
 
-#include <boost/phoenix/phoenix.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 

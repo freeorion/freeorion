@@ -4,7 +4,7 @@
 
 #include "../universe/ShipDesign.h"
 
-#include <boost/phoenix/phoenix.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -18,7 +18,7 @@ namespace std {
 
 namespace {
     struct insert_ {
-#if BOOST_VERSION < 105500
+#if BOOST_VERSION < 105600
         template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };

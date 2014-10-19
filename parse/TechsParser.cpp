@@ -5,7 +5,7 @@
 #include "Parse.h"
 #include "../universe/Species.h"
 
-#include <boost/phoenix/phoenix.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -24,7 +24,7 @@ namespace {
     std::map<std::string, TechCategory*>* g_categories = 0;
 
     struct insert_tech_ {
-#if BOOST_VERSION < 105500
+#if BOOST_VERSION < 105600
         template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };
@@ -48,7 +48,7 @@ namespace {
     const boost::phoenix::function<insert_tech_> insert_tech;
 
     struct insert_category_ {
-#if BOOST_VERSION < 105500
+#if BOOST_VERSION < 105600
         template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };

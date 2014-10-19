@@ -2,9 +2,13 @@
 
 struct quote_
 {
+#if BOOST_VERSION < 105600
     template <typename Arg>
     struct result
     { typedef std::string type; };
+#else
+    typedef std::string result_type;
+#endif
 
     std::string operator()(const std::string& arg1) const
         { return '"' + arg1 + '"'; }
@@ -13,11 +17,15 @@ const boost::phoenix::function<quote_> quote;
 
 struct remove_
 {
-    template <typename Arg>
+#if BOOST_VERSION < 105600
+    template <typename Arg> // Phoenix v2
     struct result
     { typedef void type; };
+#else
+    typedef void result_type;
+#endif
 
-    void operator()(const char*& arg1) const
+    void operator()(const char* const& arg1) const
         { lexer_test_rules::unchecked_tokens.erase(arg1); }
 };
 const boost::phoenix::function<remove_> do_erase;

@@ -6,9 +6,6 @@
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
-#include <boost/phoenix/phoenix.hpp>
-
-
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 

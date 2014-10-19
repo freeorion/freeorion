@@ -6,8 +6,6 @@
 #include "ParseImpl.h"
 #include "../universe/Special.h"
 
-#include <boost/phoenix/phoenix.hpp>
-
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS
@@ -20,7 +18,7 @@ namespace std {
 
 namespace {
     struct insert_ {
-#if BOOST_VERSION < 105500
+#if BOOST_VERSION < 105600
         template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };

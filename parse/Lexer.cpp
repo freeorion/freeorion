@@ -5,12 +5,12 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/preprocessor/stringize.hpp>
-#include <boost/phoenix/phoenix.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 
 namespace {
     struct strip_quotes_ {
-#if BOOST_VERSION < 105500
+#if BOOST_VERSION < 105600
         template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef std::string type; };

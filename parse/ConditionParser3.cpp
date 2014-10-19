@@ -4,8 +4,6 @@
 #include "Label.h"
 #include "../universe/Condition.h"
 
-#include <boost/phoenix/phoenix.hpp>
-
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;

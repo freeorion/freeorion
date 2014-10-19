@@ -5,7 +5,7 @@
 #include "../universe/Universe.h"
 #include "../universe/UniverseGenerator.h"
 
-#include <boost/phoenix/phoenix.hpp>
+#include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_PARSERS 0
 
