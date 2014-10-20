@@ -670,7 +670,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
         if (!need_more_turns && GetOptionsDB().Get<bool>("auto-quit")) {
             Logger().debugStream() << "auto-quit ending game.";
             std::cout << "auto-quit ending game." << std::endl;
-            Client().EndGame();
+            Client().EndGame(true);
             throw HumanClientApp::CleanQuit();
         }
     }
