@@ -1627,7 +1627,7 @@ public:
 
         GG::Connect(m_header_row->ColumnsChangedSignal,         &ObjectListBox::Refresh,                this);
         GG::Connect(m_header_row->ColumnHeaderLeftClickSignal,  &ObjectListBox::SortingClicked,         this);
-        GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
+        m_obj_deleted_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
 
     virtual ~ObjectListBox() {
@@ -2111,6 +2111,7 @@ private:
     Condition::ConditionBase*                           m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >m_visibilities;
     ObjectHeaderRow*                                    m_header_row;
+    boost::signals2::connection m_obj_deleted_connection;
 };
 
 ////////////////////////////////////////////////
