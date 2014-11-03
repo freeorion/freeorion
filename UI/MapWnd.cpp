@@ -1351,7 +1351,7 @@ void MapWnd::RenderGalaxyGas() {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it =
+    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it =
             m_galaxy_gas_quad_vertices.begin(); it != m_galaxy_gas_quad_vertices.end(); ++it)
     {
         glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
@@ -1393,7 +1393,7 @@ void MapWnd::RenderSystems() {
             glTranslatef(0.5f, 0.5f, 0.0f);
             glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
             glTranslatef(-0.5f, -0.5f, 0.0f);
-            for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+            for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
                  it != m_star_halo_quad_vertices.end(); ++it)
             {
                 if (!it->second.size())
@@ -1411,7 +1411,7 @@ void MapWnd::RenderSystems() {
         if (m_star_texture_coords.size() &&
             ClientUI::SystemTinyIconSizeThreshold() < ZoomFactor() * ClientUI::SystemIconSize())
         {
-            for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
+            for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
                  it != m_star_core_quad_vertices.end(); ++it)
             {
                 if (!it->second.size())
@@ -1510,7 +1510,7 @@ void MapWnd::RenderStarlanes() {
     RenderStarlanes(m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
 }
 
-void MapWnd::RenderStarlanes(GL2DVertexBuffer& vertices, GLRGBAColorBuffer& colours,
+void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuffer& colours,
                              double thickness, bool coloured, bool doBase) {
     if (vertices.size() && (colours.size() || !coloured) && (coloured || doBase)) {
         // render starlanes with vertex buffer (and possibly colour buffer)
@@ -2356,7 +2356,7 @@ void MapWnd::InitSystemRenderingBuffers() {
             glBindTexture(GL_TEXTURE_2D, icon->DiscTexture()->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-            GL2DVertexBuffer& core_vertices = m_star_core_quad_vertices[icon->DiscTexture()];
+            GG::GL2DVertexBuffer& core_vertices = m_star_core_quad_vertices[icon->DiscTexture()];
             core_vertices.store(icon_lr_x,icon_ul_y);
             core_vertices.store(icon_ul_x,icon_ul_y);
             core_vertices.store(icon_ul_x,icon_lr_y);
@@ -2367,7 +2367,7 @@ void MapWnd::InitSystemRenderingBuffers() {
             glBindTexture(GL_TEXTURE_2D, icon->HaloTexture()->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-            GL2DVertexBuffer& halo_vertices = m_star_halo_quad_vertices[icon->HaloTexture()];
+            GG::GL2DVertexBuffer& halo_vertices = m_star_halo_quad_vertices[icon->HaloTexture()];
             halo_vertices.store(icon_lr_x,icon_ul_y);
             halo_vertices.store(icon_ul_x,icon_ul_y);
             halo_vertices.store(icon_ul_x,icon_lr_y);
@@ -2414,7 +2414,7 @@ void MapWnd::InitSystemRenderingBuffers() {
             const float GAS_X4 = static_cast<float>(system->X() + (X4r * GAS_SIZE));
             const float GAS_Y4 = static_cast<float>(system->Y() + (Y4r * GAS_SIZE));
 
-            GL2DVertexBuffer& gas_vertices = m_galaxy_gas_quad_vertices[gaseous_texture];
+            GG::GL2DVertexBuffer& gas_vertices = m_galaxy_gas_quad_vertices[gaseous_texture];
 
             gas_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
             gas_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
@@ -2426,17 +2426,17 @@ void MapWnd::InitSystemRenderingBuffers() {
     // create new buffers
 
     // star cores
-    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it =
+    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it =
              m_star_core_quad_vertices.begin(); it != m_star_core_quad_vertices.end(); ++it)
     { m_star_core_quad_vertices[it->first].createServerBuffer(); }
 
     // star halos
-    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
          it != m_star_halo_quad_vertices.end(); ++it)
     { m_star_halo_quad_vertices[it->first].createServerBuffer(); }
 
     // galaxy gas
-    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end(); ++it)
     { m_galaxy_gas_quad_vertices[it->first].createServerBuffer(); }
 
@@ -2690,14 +2690,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 }
 
                 // vertex colours for starlane
-                m_starlane_colors.store(lane_colour.r,
-                                        lane_colour.g,
-                                        lane_colour.b,
-                                        lane_colour.a);
-                m_starlane_colors.store(lane_colour.r,
-                                        lane_colour.g,
-                                        lane_colour.b,
-                                        lane_colour.a);
+                m_starlane_colors.store(lane_colour);
+                m_starlane_colors.store(lane_colour);
 
                 //Logger().debugStream() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
             }
@@ -2733,14 +2727,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     m_RC_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicatorExtent + lane_endpoints.X1,   // part way along starlane
                                                  (lane_endpoints.Y2 - lane_endpoints.Y1) * indicatorExtent + lane_endpoints.Y1);
 
-                    m_RC_starlane_colors.store(lane_colour.r,
-                                               lane_colour.g,
-                                               lane_colour.b,
-                                               lane_colour.a);
-                    m_RC_starlane_colors.store(lane_colour.r,
-                                               lane_colour.g,
-                                               lane_colour.b,
-                                               lane_colour.a);
+                    m_RC_starlane_colors.store(lane_colour);
+                    m_RC_starlane_colors.store(lane_colour);
                 }
 
                 for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
@@ -2758,14 +2746,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                                                   (lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
 
                         lane_colour = empire->Color();
-                        m_starlane_colors.store(lane_colour.r,
-                                                lane_colour.g,
-                                                lane_colour.b,
-                                                lane_colour.a);
-                        m_starlane_colors.store(lane_colour.r,
-                                                lane_colour.g,
-                                                lane_colour.b,
-                                                lane_colour.a);
+                        m_starlane_colors.store(lane_colour);
 
                         //std::cout << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name() << std::endl;
 

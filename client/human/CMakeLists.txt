@@ -36,7 +36,7 @@ if(WIN32)
     include_directories(${GLEW_INCLUDE_DIRS})
 endif()
 
-add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
+add_definitions(-DFREEORION_BUILD_HUMAN)
 
 link_directories(${BULLET_LIB_DIR})
 
@@ -73,7 +73,6 @@ set(freeorion_HEADER
     ../../UI/FleetButton.h
     ../../UI/FleetWnd.h
     ../../UI/GalaxySetupWnd.h
-    ../../UI/GLClientAndServerBuffer.h
     ../../UI/GraphControl.h
     ../../UI/Hotkeys.h
     ../../UI/InfoPanels.h
@@ -128,7 +127,6 @@ set(freeorion_SOURCES
     ../../UI/FleetButton.cpp
     ../../UI/FleetWnd.cpp
     ../../UI/GalaxySetupWnd.cpp
-    ../../UI/GLClientAndServerBuffer.cpp
     ../../UI/GraphControl.cpp
     ../../UI/Hotkeys.cpp
     ../../UI/InfoPanels.cpp

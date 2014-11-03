@@ -131,7 +131,6 @@
     <ClInclude Include="..\..\UI\FleetButton.h" />
     <ClInclude Include="..\..\UI\FleetWnd.h" />
     <ClInclude Include="..\..\UI\GalaxySetupWnd.h" />
-    <ClInclude Include="..\..\UI\GLClientAndServerBuffer.h" />
     <ClInclude Include="..\..\UI\GraphControl.h" />
     <ClInclude Include="..\..\UI\Hotkeys.h" />
     <ClInclude Include="..\..\UI\InfoPanels.h" />
@@ -246,7 +245,6 @@
     <ClCompile Include="..\..\UI\FleetButton.cpp" />
     <ClCompile Include="..\..\UI\FleetWnd.cpp" />
     <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp" />
-    <ClCompile Include="..\..\UI\GLClientAndServerBuffer.cpp" />
     <ClCompile Include="..\..\UI\GraphControl.cpp" />
     <ClCompile Include="..\..\UI\Hotkeys.cpp" />
     <ClCompile Include="..\..\UI\InfoPanels.cpp" />

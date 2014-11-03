@@ -29,6 +29,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/StyleFactory.h>
 #include <GG/utf8/checked.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -587,8 +588,61 @@ bool Font::LineData::Empty() const
 Font::RenderState::RenderState() :
     use_italics(0),
     draw_underline(0)
+{
+    // Initialize the color stack with the current color
+    GLfloat current[4];
+    glGetFloatv(GL_CURRENT_COLOR, current);
+    PushColor(current[0]*255, current[1]*255, current[2]*255, current[3]*255);
+}
+
+Font::RenderState::RenderState (Clr color):
+use_italics(0),
+draw_underline(0)
+{
+    PushColor(color.r, color.g, color.b, color.a);
+}
+
+
+void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
+{
+    GG::Clr color(r, g, b, a);
+    // The same color may end up being stored multiple times, but the cost of deduplication
+    // is greater than the cost of just letting it be so.
+    color_index_stack.push(used_colors.size());
+    used_colors.push_back(color);
+}
+
+void Font::RenderState::PopColor()
+{
+    // Never remove the initial color from the stack
+    if(color_index_stack.size() > 1)
+        color_index_stack.pop();
+}
+
+int Font::RenderState::CurrentIndex() const
+{ return color_index_stack.top(); }
+
+const Clr& Font::RenderState::CurrentColor() const
+{ return used_colors[CurrentIndex()]; }
+
+bool Font::RenderState::ColorsEmpty() const
+{ return color_index_stack.size() <= 1; }
+
+
+///////////////////////////////////////
+// class GG::Font::RenderCache
+///////////////////////////////////////
+
+// Must be here for scoped_ptr deleter to work
+Font::RenderCache::RenderCache() :
+vertices(new GG::GLPtBuffer()),
+coordinates(new GG::GLTexCoordBuffer()),
+colors(new GG::GLRGBAColorBuffer())
 {}
 
+// Must be here for scoped_ptr deleter to work
+Font::RenderCache::~RenderCache()
+{}
 
 ///////////////////////////////////////
 // class GG::Font::LineData::CharData
@@ -716,41 +770,39 @@ Y Font::Lineskip() const
 X Font::SpaceWidth() const
 { return m_space_width; }
 
-X Font::RenderGlyph(const Pt& pt, char c) const
-{
-    if (!detail::ValidUTFChar<char>()(c))
-        throw utf8::invalid_utf8(c);
-
-    GlyphMap::const_iterator it = m_glyphs.find(CharToUint32_t(c));
-    if (it == m_glyphs.end())
-        it = m_glyphs.find(WIDE_SPACE); // print a space when an unrendered glyph is requested
-    return RenderGlyph(pt, it->second, 0);
-}
-
-X Font::RenderGlyph(const Pt& pt, boost::uint32_t c) const
-{
-    GlyphMap::const_iterator it = m_glyphs.find(c);
-    if (it == m_glyphs.end())
-        it = m_glyphs.find(WIDE_SPACE); // print a space when an unrendered glyph is requested
-    return RenderGlyph(pt, it->second, 0);
-}
-
 X Font::RenderText(const Pt& pt_, const std::string& text) const
 {
     Pt pt = pt_;
     X orig_x = pt.x;
-    std::string::const_iterator it = text.begin();
-    std::string::const_iterator end_it = text.end();
+
+    double orig_color[4];
+    glGetDoublev(GL_CURRENT_COLOR, orig_color);
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
-    while (it != end_it) {
-        pt.x += RenderGlyph(pt, utf8::next(it, end_it));
+
+    RenderCache cache;
+    RenderState render_state;
+
+    for (std::string::const_iterator text_it = text.begin(); text_it != text.end();) {
+        boost::uint32_t c = utf8::next (text_it, text.end());
+        GlyphMap::const_iterator it = m_glyphs.find(c);
+        if (it == m_glyphs.end()) {
+            pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
+        } else {
+            pt.x += StoreGlyph (pt, it->second, &render_state, cache);
+        }
     }
+
+    cache.vertices->createServerBuffer();
+    cache.coordinates->createServerBuffer();
+    cache.colors->createServerBuffer();
+    RenderCachedText(cache);
+    
     return pt.x - orig_x;
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
                       const std::vector<LineData>* line_data/* = 0*/, RenderState* render_state/* = 0*/) const
-{
+                      {
     RenderState state;
     if (!render_state)
         render_state = &state;
@@ -767,16 +819,42 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+                     const std::vector<LineData>& line_data, RenderState& render_state,
+                     std::size_t begin_line, CPSize begin_char,
+                     std::size_t end_line, CPSize end_char) const
+ {
+    RenderCache cache;
+    PreRenderText(ul, lr, text, format, line_data, render_state, begin_line, begin_char, end_line, end_char, cache);
+    RenderCachedText(cache);
+}
+
+void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format, RenderCache& cache,
+                      const std::vector<LineData>* line_data/* = 0*/, RenderState* render_state/* = 0*/) const
+ {
+    RenderState state;
+    if (!render_state)
+        render_state = &state;
+
+    // get breakdown of how text is divided into lines
+    std::vector<LineData> lines;
+    if (!line_data) {
+        DetermineLines(text, format, lr.x - ul.x, lines);
+        line_data = &lines;
+    }
+
+    PreRenderText(ul, lr, text, format, *line_data, *render_state,
+                  0, CP0, line_data->size(), CPSize(line_data->back().char_data.size()), cache);
+}
+
+void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
                       const std::vector<LineData>& line_data, RenderState& render_state,
                       std::size_t begin_line, CPSize begin_char,
-                      std::size_t end_line, CPSize end_char) const
+                      std::size_t end_line, CPSize end_char,
+                      RenderCache& cache) const
 {
     double orig_color[4];
     glGetDoublev(GL_CURRENT_COLOR, orig_color);
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
-
-    if (!render_state.colors.empty())
-        glColor(render_state.colors.top());
 
     Y y_origin = ul.y; // default value for FORMAT_TOP
     if (format & FORMAT_BOTTOM)
@@ -812,13 +890,37 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
             if (c == WIDE_NEWLINE)
                 continue;
             GlyphMap::const_iterator it = m_glyphs.find(c);
-            if (it == m_glyphs.end())
+            if (it == m_glyphs.end()) {
                 x = x_origin + char_data.extent; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
-            else
-                x += RenderGlyph(Pt(x, y), it->second, &render_state);
+            } else {
+                x += StoreGlyph(Pt(x, y), it->second, &render_state, cache);
+            }
         }
     }
 
+    cache.vertices->createServerBuffer();
+    cache.coordinates->createServerBuffer();
+    cache.colors->createServerBuffer();
+}
+
+void Font::RenderCachedText(RenderCache& cache) const
+{
+    double orig_color[4];
+    glGetDoublev(GL_CURRENT_COLOR, orig_color);
+
+
+    //RenderStoredGlyph(it->second, running_index, *cache.vertices, *cache.coordinates);
+    glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    cache.vertices->activate();
+    cache.coordinates->activate();
+    cache.colors->activate();
+    glDrawArrays(GL_QUADS, 0,  cache.vertices->size());
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
     glColor4dv(orig_color);
 }
 
@@ -1508,41 +1610,32 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
         format &= ~FORMAT_LINEWRAP;
 }
 
-X Font::RenderGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* render_state) const
+X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* render_state,
+                   Font::RenderCache& cache) const
 {
-    // Italics is emulated by tilting the quad with an offset if italics are on
-    double offset = 0;
+    int offset = 0;
+
     if (render_state && render_state->use_italics) {
-        offset = m_italics_offset;
+        // Should we enable sub pixel italics offsets?
+        offset = static_cast<int>(m_italics_offset);
     }
+    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
+    cache.vertices->store(pt.x + glyph.left_bearing + offset, pt.y + glyph.y_offset);
+    cache.colors->store(render_state->CurrentColor());
 
-    // render subtexture to rhombus instead of rectangle
-    glBegin (GL_TRIANGLE_STRIP);
-    glTexCoord2f (glyph.sub_texture.TexCoords() [0], glyph.sub_texture.TexCoords() [1]);
-    glVertex(pt.x + glyph.left_bearing + offset, pt.y + glyph.y_offset);
-        glTexCoord2f(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
-        glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + offset, pt.y + glyph.y_offset);
-        glTexCoord2f(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
-        glVertex(pt.x + glyph.left_bearing - offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
-        glTexCoord2f(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
-        glVertex(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - offset,
-                 pt.y + glyph.sub_texture.Height() + glyph.y_offset);
-    glEnd();
+    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
+    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + offset, pt.y + glyph.y_offset);
+    cache.colors->store(render_state->CurrentColor());
 
-    if (render_state && render_state->draw_underline) {
-        X x1 = pt.x;
-        Y_d y1 = pt.y + m_height + m_descent - m_underline_offset;
-        X x2 = x1 + glyph.advance;
-        Y_d y2 = y1 + m_underline_height;
-        glDisable(GL_TEXTURE_2D);
-        glBegin(GL_QUADS);
-        glVertex(x1, y2);
-        glVertex(x1, y1);
-        glVertex(x2, y1);
-        glVertex(x2, y2);
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
-    }
+    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
+    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - offset,
+                                     pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+    cache.colors->store(render_state->CurrentColor());
+
+    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
+    cache.vertices->store(pt.x + glyph.left_bearing - offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+    cache.colors->store(render_state->CurrentColor());
+
     return glyph.advance;
 }
 
@@ -1567,19 +1660,8 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
         }
     } else if (tag->tag_name == "rgba") {
         if (tag->close_tag) {
-            // commenting out this assert because, I think, if a multi-word
-            // substring is wrapped in rgba tags and then is split over a line-
-            // break, the render state (or at least the colour portion thereof,
-            // I think...) is reset, but the closing rgba tag will still be
-            // present on the next line, leading to a crash due to a closing
-            // rgba tag when the render state for the line has no colour
-            if (!render_state.colors.empty()) {
-                render_state.colors.pop();
-                if (render_state.colors.empty())
-                    glColor4dv(orig_color);
-                else
-                    glColor(render_state.colors.top());
-            }
+            // Popping is ok also for an empty color stack.
+            render_state.PopColor();
         } else {
             using boost::lexical_cast;
             bool well_formed_tag = true;
@@ -1600,7 +1682,7 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
                         color[2] = temp_color[2];
                         color[3] = temp_color[3];
                         glColor4ubv(color);
-                        render_state.colors.push(Clr(color[0], color[1], color[2], color[3]));
+                        render_state.PushColor(color[0], color[1], color[2], color[3]);
                     } else {
                         well_formed_tag = false;
                     }
@@ -1616,7 +1698,7 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
                             0.0 <= color[2] && color[2] <= 1.0 &&
                             0.0 <= color[3] && color[3] <= 1.0) {
                             glColor4dv(color);
-                            render_state.colors.push(FloatClr(color[0], color[1], color[2], color[3]));
+                            render_state.PushColor(color[0], color[1], color[2], color[3]);
                         } else {
                             well_formed_tag = false;
                         }

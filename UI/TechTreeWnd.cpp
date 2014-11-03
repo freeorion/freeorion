@@ -21,6 +21,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 #include <algorithm>
 
@@ -1295,11 +1296,17 @@ void TechTreeWnd::LayoutPanel::DrawArc(DependencyArcsMap::const_iterator it,
                                        const GG::Clr& color, bool with_arrow_head)
 {
     GG::Pt ul = UpperLeft();
-    glBegin(GL_LINE_STRIP);
+
+    GG::GLPtBuffer vertices;
     for (unsigned int i = 0; i < it->second.second.size(); ++i) {
-        glVertex(it->second.second[i].first + ul.x, it->second.second[i].second + ul.y);
+        vertices.store(GG::Pt(it->second.second[i].first + ul.x, it->second.second[i].second + ul.y));
     }
-    glEnd();
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    vertices.activate();
+    glDrawArrays(GL_LINE_STRIP, 0, vertices.size());
+    glDisableClientState(GL_VERTEX_ARRAY);
+
     if (with_arrow_head) {
         double final_point_x = Value(it->second.second.back().first + ul.x);
         double final_point_y = Value(it->second.second.back().second + ul.y);

@@ -23,6 +23,9 @@ if (WIN32)
         add_definitions(/wd4146 /wd4099 /wd4251 /wd4800 /wd4267 /wd4275
                         /wd4244 /wd4101 /wd4258 /wd4351 /wd4996)
     endif ()
+    find_package(GLEW REQUIRED)
+    include_directories(${GLEW_INCLUDE_DIRS})
+    list(APPEND GiGi_LINK_LIBS ${GLEW_LIBRARIES})
 endif ()
 
 add_library(GiGi
@@ -39,6 +42,7 @@ add_library(GiGi
     Edit.cpp
     EventPump.cpp
     Font.cpp
+    GLClientAndServerBuffer.cpp
     GroupBox.cpp
     GUI.cpp
     Layout.cpp

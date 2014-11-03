@@ -31,10 +31,15 @@
 
 #include <GG/Export.h>
 
+// Causes extension functions to be declared
+#define GL_GLEXT_PROTOTYPES 1
+
 // include OpenGL headers
 #if defined(__APPLE__) && defined(__MACH__)
 # include <OpenGL/gl.h>
 # include <OpenGL/glu.h>
+#elif defined(_WIN32)
+# include <GL/glew.h>
 #else
 # include <GL/gl.h>
 # include <GL/glu.h>

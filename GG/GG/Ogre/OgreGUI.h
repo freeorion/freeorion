@@ -45,13 +45,13 @@
 #include <Carbon/Carbon.h>
 #endif
 
+#include <GG/GUI.h>
+
 #include <OgreRenderTargetListener.h>
 #include <OgreTimer.h>
 #include <OgreSharedPtr.h>
 #include <OgreDataStream.h>
 #include <OgreWindowEventUtilities.h>
-
-#include <GG/GUI.h>
 
 #include <boost/filesystem/path.hpp>
 

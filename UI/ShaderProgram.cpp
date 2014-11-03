@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #endif
 
+#include "../client/human/HumanClientApp.h"
 #include "ShaderProgram.h"
 
 #include <cassert>

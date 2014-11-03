@@ -339,9 +339,6 @@
     <ClInclude Include="..\..\UI\TechTreeLayout.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\GLClientAndServerBuffer.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\CUISlider.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -509,9 +506,6 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\GLClientAndServerBuffer.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\Process.cpp">
