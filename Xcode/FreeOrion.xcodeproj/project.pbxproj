@@ -35,7 +35,6 @@
 
 /* Begin PBXBuildFile section */
 		2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */; };
-		2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F276A39130401E000153050 /* GLClientAndServerBuffer.cpp */; };
 		2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */; };
 		2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F60966A12EEAF0200F58913 /* GroupBox.cpp */; };
 		2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA40CEF565700A7DF2B /* MessageQueue.cpp */; };
@@ -378,6 +377,7 @@
 		82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */; };
 		82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A11838C8340011C212 /* ConditionParser5.cpp */; };
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
+		82E2513E1A08CCCE003DAF48 /* GLClientAndServerBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E2513D1A08CCCE003DAF48 /* GLClientAndServerBuffer.cpp */; };
 		82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E5238E192FE8CE001E2374 /* AppKit.framework */; };
 		82E52391192FE90F001E2374 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52390192FE90F001E2374 /* IOKit.framework */; };
 		82E52398192FE99D001E2374 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52392192FE99C001E2374 /* Carbon.framework */; };
@@ -618,8 +618,6 @@
 /* Begin PBXFileReference section */
 		2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TechTreeLayout.cpp; sourceTree = "<group>"; };
 		2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TechTreeLayout.h; sourceTree = "<group>"; };
-		2F276A39130401E000153050 /* GLClientAndServerBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLClientAndServerBuffer.cpp; sourceTree = "<group>"; };
-		2F276A3A130401E000153050 /* GLClientAndServerBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLClientAndServerBuffer.h; sourceTree = "<group>"; };
 		2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerListWnd.cpp; sourceTree = "<group>"; };
 		2F60966412EEAD2200F58913 /* PlayerListWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerListWnd.h; sourceTree = "<group>"; };
 		2F60966A12EEAF0200F58913 /* GroupBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupBox.cpp; sourceTree = "<group>"; };
@@ -1393,6 +1391,8 @@
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
+		82E2513C1A08CCA7003DAF48 /* GLClientAndServerBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLClientAndServerBuffer.h; sourceTree = "<group>"; };
+		82E2513D1A08CCCE003DAF48 /* GLClientAndServerBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLClientAndServerBuffer.cpp; sourceTree = "<group>"; };
 		82E5238E192FE8CE001E2374 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		82E52390192FE90F001E2374 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		82E52392192FE99C001E2374 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -1787,16 +1787,12 @@
 		4710233E0CEF3AAB00A7DF2B /* GG */ = {
 			isa = PBXGroup;
 			children = (
-				2F60966C12EEAF2C00F58913 /* GroupBox.h */,
-				34C9B34711DA2ECA003695F4 /* ClrConstants.h */,
-				34BAB0C20FC5CDC400EF792E /* FontFwd.h */,
-				34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */,
-				343EC66D0F3F600800782AD3 /* StrongTypedef.h */,
 				4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */,
 				471023400CEF3AAB00A7DF2B /* Base.h */,
 				471023410CEF3AAB00A7DF2B /* BrowseInfoWnd.h */,
 				471023420CEF3AAB00A7DF2B /* Button.h */,
 				471023430CEF3AAB00A7DF2B /* Clr.h */,
+				34C9B34711DA2ECA003695F4 /* ClrConstants.h */,
 				471023440CEF3AAB00A7DF2B /* Control.h */,
 				471023450CEF3AAB00A7DF2B /* Cursor.h */,
 				471023460CEF3AAB00A7DF2B /* dialogs */,
@@ -1809,13 +1805,17 @@
 				471023500CEF3AAB00A7DF2B /* Exception.h */,
 				471023510CEF3AAB00A7DF2B /* Flags.h */,
 				471023520CEF3AAB00A7DF2B /* Font.h */,
+				34BAB0C20FC5CDC400EF792E /* FontFwd.h */,
 				471023530CEF3AAB00A7DF2B /* gen_signals.py */,
+				82E2513C1A08CCA7003DAF48 /* GLClientAndServerBuffer.h */,
 				471023540CEF3AAB00A7DF2B /* glext.h */,
+				2F60966C12EEAF2C00F58913 /* GroupBox.h */,
 				471023550CEF3AAB00A7DF2B /* GUI.h */,
 				471023560CEF3AAB00A7DF2B /* Layout.h */,
 				471023570CEF3AAB00A7DF2B /* ListBox.h */,
 				471023580CEF3AAB00A7DF2B /* Menu.h */,
 				471023590CEF3AAB00A7DF2B /* MultiEdit.h */,
+				34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */,
 				4710235A0CEF3AAB00A7DF2B /* Ogre */,
 				4710235D0CEF3AAB00A7DF2B /* PtRect.h */,
 				4710235E0CEF3AAB00A7DF2B /* Scroll.h */,
@@ -1834,6 +1834,7 @@
 				4710236C0CEF3AAB00A7DF2B /* Slider.h */,
 				4710236D0CEF3AAB00A7DF2B /* Spin.h */,
 				4710236E0CEF3AAB00A7DF2B /* StaticGraphic.h */,
+				343EC66D0F3F600800782AD3 /* StrongTypedef.h */,
 				4710236F0CEF3AAB00A7DF2B /* StyleFactory.h */,
 				471023700CEF3AAC00A7DF2B /* TabWnd.h */,
 				471023710CEF3AAC00A7DF2B /* TextControl.h */,
@@ -1878,16 +1879,14 @@
 		471023900CEF3AAC00A7DF2B /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2F60966A12EEAF0200F58913 /* GroupBox.cpp */,
-				34C9B34311DA2E95003695F4 /* ClrConstants.cpp */,
-				34BAB1AF0FC5CFE500EF792E /* GIL */,
-				34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */,
 				471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */,
 				471023930CEF3AAC00A7DF2B /* Base.cpp */,
 				471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */,
 				471023950CEF3AAC00A7DF2B /* Button.cpp */,
+				34C9B34311DA2E95003695F4 /* ClrConstants.cpp */,
 				471023970CEF3AAC00A7DF2B /* Control.cpp */,
 				471023980CEF3AAC00A7DF2B /* Cursor.cpp */,
+				34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */,
 				471023990CEF3AAC00A7DF2B /* dialogs */,
 				4710239E0CEF3AAC00A7DF2B /* DrawUtil.cpp */,
 				4710239F0CEF3AAC00A7DF2B /* DropDownList.cpp */,
@@ -1895,6 +1894,9 @@
 				471023A10CEF3AAC00A7DF2B /* Edit.cpp */,
 				471023A20CEF3AAC00A7DF2B /* EventPump.cpp */,
 				471023A30CEF3AAC00A7DF2B /* Font.cpp */,
+				34BAB1AF0FC5CFE500EF792E /* GIL */,
+				82E2513D1A08CCCE003DAF48 /* GLClientAndServerBuffer.cpp */,
+				2F60966A12EEAF0200F58913 /* GroupBox.cpp */,
 				471023A40CEF3AAC00A7DF2B /* GUI.cpp */,
 				471023A50CEF3AAC00A7DF2B /* Layout.cpp */,
 				471023A60CEF3AAC00A7DF2B /* ListBox.cpp */,
@@ -2191,8 +2193,6 @@
 				471D5CBD0A98A3F900DA9C21 /* FleetWnd.h */,
 				471D5CC00A98A3F900DA9C21 /* GalaxySetupWnd.cpp */,
 				471D5CC10A98A3F900DA9C21 /* GalaxySetupWnd.h */,
-				2F276A39130401E000153050 /* GLClientAndServerBuffer.cpp */,
-				2F276A3A130401E000153050 /* GLClientAndServerBuffer.h */,
 				82B9D445180C53FE0032F86D /* GraphControl.cpp */,
 				82B9D446180C53FE0032F86D /* GraphControl.h */,
 				820BDECB1848A93E009BC457 /* Hotkeys.cpp */,
@@ -3234,6 +3234,7 @@
 				4710240D0CEF3AAC00A7DF2B /* Button.cpp in Sources */,
 				4710240F0CEF3AAC00A7DF2B /* Control.cpp in Sources */,
 				471024100CEF3AAC00A7DF2B /* Cursor.cpp in Sources */,
+				82E2513E1A08CCCE003DAF48 /* GLClientAndServerBuffer.cpp in Sources */,
 				471024110CEF3AAC00A7DF2B /* ColorDlg.cpp in Sources */,
 				471024120CEF3AAC00A7DF2B /* FileDlg.cpp in Sources */,
 				471024130CEF3AAC00A7DF2B /* ThreeButtonDlg.cpp in Sources */,
@@ -3462,7 +3463,6 @@
 				471D5E1B0A98A99D00DA9C21 /* FleetButton.cpp in Sources */,
 				471D5E1C0A98A9A300DA9C21 /* FleetWnd.cpp in Sources */,
 				471D5E1E0A98A9AE00DA9C21 /* GalaxySetupWnd.cpp in Sources */,
-				2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */,
 				82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */,
 				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
 				820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */,
