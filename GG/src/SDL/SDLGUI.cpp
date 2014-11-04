@@ -607,6 +607,12 @@ void SDLGUI::SDLInit()
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 
+    int sdl_status = SDL_Init(SDL_INIT_VIDEO);
+    if(sdl_status < 0) {
+        std::cerr << "Failed to initialize sdl. SDL_Init returned: " << sdl_status << std::endl;
+        Exit(1);
+    }
+
     // Create the window with a temporary size.
     // Use the same code for the real size initialization that is used for resizing the window
     // to avoid duplicated effort.
