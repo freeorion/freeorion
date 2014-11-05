@@ -14,7 +14,7 @@ def seed_rng(seed):
     # The following jumpahead call can be uncommented to work around this issue of the Mersenne Twister PRNG
     # (quoted from wikipedia http://en.wikipedia.org/wiki/Mersenne_twister):
     # "It can take a long time to start generating output that passes randomness tests, if the initial state is highly
-    # non-random—particularly if the initial state has many zeros. A consequence of this is that two instances of the
+    # non-random-- particularly if the initial state has many zeros. A consequence of this is that two instances of the
     # generator, started with initial states that are almost the same, will usually output nearly the same sequence
     # for many iterations, before eventually diverging."
     # random.jumpahead(999999)
