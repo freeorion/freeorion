@@ -8,10 +8,16 @@ error_list = []
 
 def seed_rng(seed):
     """
-    Seeds the default RNG with the specified seed and performs a jumpahead
+    Seeds the default RNG with the specified seed
     """
     random.seed(seed)
-    random.jumpahead(999999)
+    # The following jumpahead call can be uncommented to work around this issue of the Mersenne Twister PRNG
+    # (quoted from wikipedia http://en.wikipedia.org/wiki/Mersenne_twister):
+    # "It can take a long time to start generating output that passes randomness tests, if the initial state is highly
+    # non-random—particularly if the initial state has many zeros. A consequence of this is that two instances of the
+    # generator, started with initial states that are almost the same, will usually output nearly the same sequence
+    # for many iterations, before eventually diverging."
+    # random.jumpahead(999999)
 
 
 def distance(x1, y1, x2, y2):
