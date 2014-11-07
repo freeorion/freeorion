@@ -2747,6 +2747,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                         lane_colour = empire->Color();
                         m_starlane_colors.store(lane_colour);
+                        m_starlane_colors.store(lane_colour);
 
                         //std::cout << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name() << std::endl;
 
