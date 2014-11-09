@@ -228,6 +228,8 @@ namespace {
     const std::string&                      ConditionClassName(const Condition::ConditionBase* const condition) {
         if (dynamic_cast<const Condition::All* const>(condition))
             return ALL_CONDITION;
+        else if (dynamic_cast<const Condition::EmpireAffiliation* const>(condition))
+            return EMPIREAFFILIATION_CONDITION;
         else if (dynamic_cast<const Condition::Homeworld* const>(condition))
             return HOMEWORLD_CONDITION;
         else if (dynamic_cast<const Condition::Capital* const>(condition))
