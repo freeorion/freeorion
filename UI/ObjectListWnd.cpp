@@ -352,6 +352,12 @@ public:
             names.push_back(new ValueRef::Constant<std::string>(species_name));
             return new Condition::Homeworld(names);
 
+        } else if (condition_key == CANCOLONIZE_CONDITION) {
+            return new Condition::CanColonize();
+
+        } else if (condition_key == CANPRODUCESHIPS_CONDITION) {
+            return new Condition::CanProduceShips();
+
         } else if (condition_key == HASSPECIAL_CONDITION) {
             return new Condition::HasSpecial(GetString());
 
