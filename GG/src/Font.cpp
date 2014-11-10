@@ -637,7 +637,9 @@ bool Font::RenderState::ColorsEmpty() const
 Font::RenderCache::RenderCache() :
 vertices(new GG::GLPtBuffer()),
 coordinates(new GG::GLTexCoordBuffer()),
-colors(new GG::GLRGBAColorBuffer())
+colors(new GG::GLRGBAColorBuffer()),
+underline_vertices(new GG::GLPtBuffer()),
+underline_colors(new GG::GLRGBAColorBuffer())
 {}
 
 // Must be here for scoped_ptr deleter to work
@@ -914,12 +916,20 @@ void Font::RenderCachedText(RenderCache& cache) const
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
+
     cache.vertices->activate();
     cache.coordinates->activate();
     cache.colors->activate();
     glDrawArrays(GL_QUADS, 0,  cache.vertices->size());
-    glDisableClientState(GL_VERTEX_ARRAY);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    cache.underline_vertices->activate();
+    cache.underline_colors->activate();
+    glDrawArrays(GL_QUADS, 0, cache.underline_vertices->size());
+
+    glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glColor4dv(orig_color);
 }
@@ -1635,6 +1645,22 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
     cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
     cache.vertices->store(pt.x + glyph.left_bearing - offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
     cache.colors->store(render_state->CurrentColor());
+
+    if (render_state && render_state->draw_underline) {
+        X x1 = pt.x;
+        Y y1(pt.y + m_height + m_descent - m_underline_offset);
+        X x2 = x1 + glyph.advance;
+        Y y2(y1 + m_underline_height);
+
+        cache.underline_vertices->store(x1, y1);
+        cache.underline_colors->store(render_state->CurrentColor());
+        cache.underline_vertices->store(x2, y1);
+        cache.underline_colors->store(render_state->CurrentColor());
+        cache.underline_vertices->store(x2, y2);
+        cache.underline_colors->store(render_state->CurrentColor());
+        cache.underline_vertices->store(x1, y2);
+        cache.underline_colors->store(render_state->CurrentColor());
+    }
 
     return glyph.advance;
 }

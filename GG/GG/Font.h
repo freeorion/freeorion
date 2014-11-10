@@ -41,6 +41,7 @@
 #include <stack>
 
 #include <boost/unordered_map.hpp>
+#include <boost/graph/graph_concepts.hpp>
 
 
 struct FT_FaceRec_;
@@ -352,6 +353,9 @@ public:
         boost::scoped_ptr<GLPtBuffer> vertices;
         boost::scoped_ptr<GLTexCoordBuffer> coordinates;
         boost::scoped_ptr<GLRGBAColorBuffer> colors;
+
+        boost::scoped_ptr<GLPtBuffer> underline_vertices;
+        boost::scoped_ptr<GLRGBAColorBuffer> underline_colors;
 
         RenderCache();
 
