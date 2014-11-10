@@ -407,10 +407,16 @@ void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_
     case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
     case Message::DEBUG:        break;
     default:
-        Logger().errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
-                                     << msg.Type() << "\" for a non-player Message.  Terminating connection.";
-        m_networking.Disconnect(player_connection);
-        break;
+        if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
+            Logger().debugStream() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
+                                   << "connected player, who is local and so the request is being honored; server shutting down.";
+                                   Exit(1);
+        } else {
+            Logger().errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
+                                            << msg.Type() << "\" for a non-player Message.  Terminating connection.";
+            m_networking.Disconnect(player_connection);
+            break;
+        }
     }
 }
 
