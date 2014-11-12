@@ -210,13 +210,16 @@ void TextControl::SetTextFormat(Flags<TextFormat> format)
         SetText(m_text);
 }
 
-void TextControl::SetTextColor(Clr color)
-{ m_text_color = color; }
+void TextControl::SetTextColor(Clr color){
+    m_text_color = color;
+    PurgeCache();
+}
 
 void TextControl::SetColor(Clr c)
 {
     Control::SetColor(c);
     m_text_color = c;
+    PurgeCache();
 }
 
 void TextControl::ClipText(bool b)
