@@ -75,7 +75,7 @@ public:
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
-    ~TextControl();
+    virtual ~TextControl();
 
     /** \name Accessors */ ///@{
     virtual Pt        MinUsableSize() const;
