@@ -53,6 +53,9 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
     SetText(str);
 }
 
+TextControl::~TextControl()
+{ delete m_render_cache; }
+
 Pt TextControl::MinUsableSize() const
 { return m_text_lr - m_text_ul; }
 
