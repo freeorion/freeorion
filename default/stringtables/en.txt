@@ -8696,7 +8696,7 @@ Transformer
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
-This building can be given the effects of a [[building BLD_PLANET_CLOAK]], a [[building BLD_BIOTERROR_PROJECTOR]], a [[building BLD_STARGATE]], a [[building BLD_PLANET_DRIVE]], or a [[building BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
+This building can be given the effects of a [[buildingtype BLD_PLANET_CLOAK]], a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
 
 BLD_PLANET_CLOAK
 Planetary Cloaking Device
