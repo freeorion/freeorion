@@ -2637,13 +2637,13 @@ Cesser l'exploration
 ORDER_GIVE_FLEET_TO_EMPIRE
 Offrir la flotte à...
 
-ORCER_CANCEL_GIVE_FLEET
+ORDER_CANCEL_GIVE_FLEET
 Annuler l'offre de la flotte
 
 ORDER_GIVE_PLANET_TO_EMPIRE
 Offrir la planète à...
 
-ORCER_CANCEL_GIVE_PLANET
+ORDER_CANCEL_GIVE_PLANET
 Annuler l'offre de la planète
 
 

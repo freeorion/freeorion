@@ -1851,7 +1851,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         menu_contents.next_level.push_back(give_away_menu);
 
         if (planet->OrderedGivenToEmpire() != ALL_EMPIRES) {
-            GG::MenuItem cancel_give_away_menu(UserString("ORCER_CANCEL_GIVE_PLANET"), 12, false, false);
+            GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_PLANET"), 12, false, false);
             menu_contents.next_level.push_back(cancel_give_away_menu);
         }
     }

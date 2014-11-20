@@ -3214,7 +3214,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
         menu_contents.next_level.push_back(give_away_menu);
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
-            GG::MenuItem cancel_give_away_menu(UserString("ORCER_CANCEL_GIVE_FLEET"), 12, false, false);
+            GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_FLEET"), 12, false, false);
             menu_contents.next_level.push_back(cancel_give_away_menu);
         }
     }
