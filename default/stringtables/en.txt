@@ -2999,7 +2999,7 @@ DESIGN_INV_NO_HULL
 Begin a ship design by selecting its hull.
 
 DESIGN_INV_NO_NAME
-Each ship design must have a unique name.
+Design name cannot be empty.
 
 DESIGN_KNOWN
 Duplicates Existing Design
