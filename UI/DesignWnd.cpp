@@ -2929,8 +2929,10 @@ void DesignWnd::MainPanel::DesignChanged() {
 void DesignWnd::MainPanel::DesignNameChanged() {
     if (m_disabled_by_name || (m_design_name->Text().empty() && !m_confirm_button->Disabled()))
         DesignChangedSignal();
-    else
+    else if (GetOptionsDB().Get<bool>("UI.design-pedia-dynamic"))
         DesignNameChangedSignal();
+    else
+        RefreshIncompleteDesign();
 }
 
 std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_design) {
