@@ -19,6 +19,10 @@ def get_research_index():
         research_index += 1
     return research_index
 
+def exclude_tech(tech_name):
+    return ((foAI.foAIstate.aggression < AIDependencies.TECH_EXCLUSION_MAP_1.get(tech_name, fo.aggression.invalid)) or
+            (foAI.foAIstate.aggression > AIDependencies.TECH_EXCLUSION_MAP_2.get(tech_name, fo.aggression.maniacal)) or
+            tech_name in TechsListsAI.unusable_techs())
 
 def generate_research_orders():
     """generate research orders"""
@@ -372,13 +376,12 @@ def generate_default_research_order():
 
     # get all usable researchable techs not already completed or queued for research
 
-    excluded_techs = TechsListsAI.unusable_techs()
     queued_techs = get_research_queue_techs()
 
     def is_possible(tech_name):
         return all([empire.getTechStatus(tech_name) == fo.techStatus.researchable,
                    not tech_is_complete(tech_name),
-                   tech_name not in excluded_techs,
+                   not exclude_tech(tech_name),
                    tech_name not in queued_techs])
 
     # (cost, name) for all tech that possible to add to queue, cheapest last
@@ -392,6 +395,7 @@ def generate_default_research_order():
     print
 
     # iterate through techs in order of cost
+    fo.updateResearchQueue()
     total_spent = fo.getEmpire().researchQueue.totalSpent
     print "enqueuing techs. already spent RP: %s total RP: %s" % (total_spent, total_rp)
 
