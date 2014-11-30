@@ -12,7 +12,7 @@ import TechsListsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType, AIFocusType
 import EnumsAI
 from freeorion_tools import dict_from_map, tech_is_complete
-from freeorion_timing import Timer
+from freeorion_debug import Timer
 
 colonization_timer = Timer('getColonyFleets()')
 

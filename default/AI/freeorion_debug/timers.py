@@ -1,16 +1,38 @@
 import os
 import freeOrionAIInterface as fo
 from time import time
+from option_tools import get_option_dict, check_bool, TIMERS_TO_FILE, TIMERS_USE_TIMERS, TIMERS_DUMP_FOLDER
 
-TIMERS_DIR = 'timers'
-DUMP_TO_FILE = os.path.isdir(TIMERS_DIR)
+# setup module
+options = get_option_dict()
+
+USE_TIMERS = check_bool(options[TIMERS_USE_TIMERS])
+DUMP_TO_FILE = check_bool(options[TIMERS_TO_FILE])
+TIMERS_DIR = options[TIMERS_DUMP_FOLDER]
 
 
 def make_header(*args):
     return ['%-8s ' % x for x in args]
 
 
-class Timer(object):
+class DummyTimer(object):
+    """
+    Dummy timer to be called if no need any logging.
+    """
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def stop(self, *args, **kwargs):
+        pass
+
+    def start(self, *args, **kwargs):
+        pass
+
+    def end(self):
+        pass
+
+
+class LogTimer(object):
     def __init__(self, timer_name, write_log=False):
         """
         Creates timer. Timer name is name that will be in logs header and part of filename if write_log=True
@@ -85,3 +107,5 @@ class Timer(object):
                 row.append('%*s ' % (len(header) - 2, int(val)))
             self._write(''.join(row))
         self.timers = []  # clear times
+
+Timer = LogTimer if USE_TIMERS else DummyTimer

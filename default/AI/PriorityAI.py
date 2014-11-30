@@ -1,4 +1,5 @@
 import math
+
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import AIstate
 import ColonisationAI
@@ -12,7 +13,7 @@ import EnumsAI
 import ProductionAI
 import ResearchAI
 import AIDependencies
-from freeorion_timing import Timer
+from freeorion_debug import Timer
 from freeorion_tools import tech_is_complete
 
 prioritiees_timer = Timer('calculate_priorities()')

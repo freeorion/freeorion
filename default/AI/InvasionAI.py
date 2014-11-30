@@ -1,3 +1,5 @@
+import math
+
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
@@ -11,7 +13,7 @@ import ProductionAI
 import ColonisationAI
 import MilitaryAI
 from freeorion_tools import dict_from_map, tech_is_complete
-from freeorion_timing import Timer
+from freeorion_debug import Timer
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
 

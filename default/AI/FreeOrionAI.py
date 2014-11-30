@@ -1,4 +1,3 @@
-
 # pylint: disable=line-too-long
 """ The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code"""
@@ -19,9 +18,8 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from freeorion_tools import UserString
-from debug_tools import chat_on_error, print_error
-from freeorion_timing import Timer
+from freeorion_tools import UserString, chat_on_error, print_error
+from freeorion_debug import Timer
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)
