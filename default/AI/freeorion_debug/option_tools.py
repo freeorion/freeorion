@@ -43,21 +43,29 @@ def get_sectioned_option_dict():
     return sectioned_options
     
 def _parse_options():
-    # write defaults if don't already exist
+    # get defaults; check if don't already exist and can write
     default_file = _get_default_file_path()
-    if not os.path.exists(default_file):
-        _create_default_config_file(default_file)
+    if os.path.exists(default_file):
+        config = SafeConfigParser()
+        config.read([default_file])
+    else:
+        try:
+            config = _create_default_config_file(default_file)
+        except IOError:
+            print "AI Config: default file is not present and not writable at location %s" % default_file
+            config = _create_default_config_file("")
+
     option_path = _get_option_file_path()
     #if not os.path.exists(option_path):
     #    raise Exception('Error, option path "%s" does not exists.' % option_path)
 
-    config = SafeConfigParser()
     # read the defaults and then the specified config path
-    config_files = [default_file, option_path]
-    configs_read = config.read(config_files)
-    print "AI Config read config file(s): %s" % configs_read
-    if len(configs_read) != len(config_files):
-        print "AI Config Error; could NOT read config file(s): %s" % list(set(config_files).difference(configs_read))
+    if option_path:
+        config_files = [option_path]
+        configs_read = config.read(config_files)
+        print "AI Config read config file(s): %s" % configs_read
+        if len(configs_read) != len(config_files):
+            print "AI Config Error; could NOT read config file(s): %s" % list(set(config_files).difference(configs_read))
     for section in config.sections():
         sectioned_options.setdefault(section, odict())
         for k, v in config.items(section):
@@ -90,6 +98,7 @@ def _get_option_file_path():
         return None
 
 def _get_default_file_path():
+    # TODO: determine more robust treatment in case ResourceDir is not writable by user
     return os.path.join(_get_AI_folder_path() or ".", DEFAULT_CONFIG_FILE)
 
 def _get_preset_default_ai_options():
@@ -118,9 +127,11 @@ def _create_default_config_file(path):
         config.add_section(section)
         for k, v in entries.iteritems():
             config.set(section, k, str(v))
-    with open(path, 'w') as configfile:
-        config.write(configfile)
-    print "default config is dumped to %s" % path
+    if path:
+        with open(path, 'w') as configfile:
+            config.write(configfile)
+        print "default config is dumped to %s" % path
+    return config
 
 
 if __name__ == '__main__':
