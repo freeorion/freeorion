@@ -23,6 +23,8 @@ from freeorion_tools import UserString
 from debug_tools import chat_on_error, print_error
 from freeorion_timing import Timer
 
+config_info = {}
+
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)
 
@@ -44,9 +46,10 @@ foAIstate = None
 
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
-def initFreeOrionAI(): # pylint: disable=invalid-name
+def initFreeOrionAI(ai_config = None):  # pylint: disable=invalid-name
     """called by client to initialize AI """
-    print "Initialized FreeOrion Python AI"
+    print "Initialized FreeOrion Python AI with ai_config string '%s'" % ai_config
+    config_info['ai_config'] = ai_config
     print(sys.path)
 
 

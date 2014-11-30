@@ -5,6 +5,7 @@
 #include "../util/Logger.h"
 #include "../util/i18n.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
@@ -277,14 +278,15 @@ PythonAI::PythonAI() {
 
     try {
         // tell Python the path in which to locate AI script file
-        std::string AI_path = (GetResourceDir() / "AI").string();
+        std::string AI_path = (GetResourceDir() / GetOptionsDB().GetValueString("ai-path")).string();
         std::string path_command = "sys.path.append(r'" + AI_path + "')";
         object ignored = exec(path_command.c_str(), s_main_namespace, s_main_namespace);
 
         // import AI script file and run initialization function
         s_ai_module = import("FreeOrionAI");
         object initAIPythonFunction = s_ai_module.attr("initFreeOrionAI");
-        initAIPythonFunction();
+        std::string ai_config = GetOptionsDB().GetValueString("ai-config");
+        initAIPythonFunction(ai_config);
 
         //ignored = exec(fo_interface_import_script.c_str(), s_main_namespace, s_main_namespace);
     } catch (error_already_set err) {
