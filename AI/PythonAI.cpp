@@ -127,6 +127,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("currentTurn",              AIInterface::CurrentTurn);
 
     def("getAIConfigStr",           AIInterface::GetAIConfigStr,    return_value_policy<return_by_value>());
+    def("getAIDir",                 AIInterface::GetAIDir,          return_value_policy<return_by_value>());
 
     def("updateMeterEstimates",     AIInterface::UpdateMeterEstimates);
     def("updateResourcePools",      AIInterface::UpdateResourcePools);

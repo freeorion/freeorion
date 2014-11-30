@@ -14,6 +14,7 @@
 #include "../universe/Tech.h"
 #include "../Empire/Empire.h"
 
+#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
@@ -160,6 +161,9 @@ namespace AIInterface {
 
     std::string GetAIConfigStr()
     { return GetOptionsDB().GetValueString("ai-config"); }
+
+    std::string GetAIDir()
+    { return (GetResourceDir() / GetOptionsDB().GetValueString("ai-path")).string(); }
 
     const GalaxySetupData&  GetGalaxySetupData()
     { return AIClientApp::GetApp()->GetGalaxySetupData(); }
