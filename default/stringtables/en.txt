@@ -1230,7 +1230,7 @@ OPTIONS_DB_AI_FOLDER_PATH
 Sets the path for the directory containing the AI script files, for current execution only, relative to the Resource Directory; default is "AI".  Intended to facilitate AI testing.
 
 OPTIONS_DB_AI_CONFIG
-Will be passed to the AI upon initialization, for current execution only.  Current expected use is to name an optional AI config file within the AI script folder; default is the empty string.  Intended to facilitate AI testing.
+Is available to the AI via the freeorioninterface, is set for current execution only.  Current expected use is to name an optional AI config file within the AI script folder; default is the empty string.  Intended to facilitate AI testing.
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
 If true, autosaves will occur during single-player games.

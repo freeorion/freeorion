@@ -61,6 +61,8 @@ namespace AIInterface {
 
     int                 CurrentTurn();                  ///< returns the current game turn
 
+    std::string         GetAIConfigStr();               ///< returns the OptionsDB ai-config value
+
     const GalaxySetupData&  GetGalaxySetupData();       ///< returns the setup data used to generate the game universe
     //@}
 

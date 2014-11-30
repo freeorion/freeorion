@@ -126,6 +126,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("currentTurn",              AIInterface::CurrentTurn);
 
+    def("getAIConfigStr",           AIInterface::GetAIConfigStr,    return_value_policy<return_by_value>());
+
     def("updateMeterEstimates",     AIInterface::UpdateMeterEstimates);
     def("updateResourcePools",      AIInterface::UpdateResourcePools);
     def("updateResearchQueue",      AIInterface::UpdateResearchQueue);
@@ -285,8 +287,7 @@ PythonAI::PythonAI() {
         // import AI script file and run initialization function
         s_ai_module = import("FreeOrionAI");
         object initAIPythonFunction = s_ai_module.attr("initFreeOrionAI");
-        std::string ai_config = GetOptionsDB().GetValueString("ai-config");
-        initAIPythonFunction(ai_config);
+        initAIPythonFunction();
 
         //ignored = exec(fo_interface_import_script.c_str(), s_main_namespace, s_main_namespace);
     } catch (error_already_set err) {
