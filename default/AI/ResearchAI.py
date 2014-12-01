@@ -30,6 +30,7 @@ def generate_research_orders():
     empire = fo.getEmpire()
     empire_id = empire.empireID
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
+    galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     print "Research Queue Management:"
     resource_production = empire.resourceProduction(fo.resourceType.research)
     print "\nTotal Current Research Points: %.2f\n"%resource_production
@@ -71,7 +72,7 @@ def generate_research_orders():
     #
     if (fo.currentTurn() == 1) or ((fo.currentTurn() < 5) and (len(research_queue_list) == 0)):
         research_index = get_research_index()
-        new_tech = TechsListsAI.primary_meta_techs(index = research_index)
+        new_tech = TechsListsAI.sparse_galaxy_techs(research_index) if galaxy_is_sparse else TechsListsAI.primary_meta_techs(research_index)
         print "Empire %s (%d) is selecting research index %d"%(empire.name, empire_id, research_index)
         #pLTs_to_enqueue = (set(new_tech)-(set(completed_techs)|set(research_queue_list)))
         pLTs_to_enqueue = new_tech[:]
@@ -260,7 +261,7 @@ def generate_research_orders():
                     insert_idx = 1+ research_queue_list.index("GRO_SYMBIOTIC_BIO")
                 else:
                     insert_idx = num_techs_accelerated
-                for ast_tech in ["SHP_ASTEROID_HULLS", "PRO_MICROGRAV_MAN"]:
+                for ast_tech in ["SHP_ASTEROID_HULLS", "PRO_MICROGRAV_MAN", "SHP_IMPROVED_ENGINE_COUPLINGS"]:
                     if not tech_is_complete(ast_tech) and ast_tech not in research_queue_list[:insert_idx + 2]:
                         res=fo.issueEnqueueTechOrder(ast_tech,insert_idx)
                         num_techs_accelerated += 1
@@ -358,9 +359,10 @@ def generate_research_orders():
                     for preReq in missing_prereqs:  #sorted(missing_prereqs, reverse=True)[2:]
                         if preReq in research_queue_list:
                             res = fo.issueDequeueTechOrder(preReq)
+                    research_queue_list = get_research_queue_techs()
                     if "SHP_WEAPON_4_2" in research_queue_list: #(should be)
                         idx = research_queue_list.index("SHP_WEAPON_4_2")
-                        res=fo.issueEnqueueTechOrder("SHP_WEAPON_4_2", max(0, idx-15) )
+                        res=fo.issueEnqueueTechOrder("SHP_WEAPON_4_2", max(0, idx-18) )
             research_queue_list = get_research_queue_techs()
 
 

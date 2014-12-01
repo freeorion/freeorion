@@ -25,9 +25,11 @@ class AIFleetOrder(object):
         fleet = universe.getFleet(self.fleet.target_id)
         return self.target.target_id in fleet.shipIDs
 
-    def is_valid(self):
+    def is_valid(self, verbose = True):
         """Check if FleetOrder could be somehow in future issued = is valid."""
         if self.executed and self.execution_completed:
+            if verbose:
+                print "\t\t order not valid because already executed and completed"
             return False
         if self.fleet.valid and self.target.valid:
             universe = fo.getUniverse()
@@ -73,6 +75,7 @@ class AIFleetOrder(object):
                     planet = universe.getPlanet(self.target.target_id)
                     planet_population = planet.currentMeterValue(fo.meterType.population)
                     if planet.unowned and not planet_population:
+                        print "\t\t invasion order not valid due to target planet status-- owned: %s and population %.1f" % (not planet.unowned, planet_population)
                         self.executed = True
                         self.execution_completed = True
                         return False
@@ -111,6 +114,9 @@ class AIFleetOrder(object):
                 return target_type in (TargetType.TARGET_SYSTEM, TargetType.TARGET_PLANET)
             elif AIFleetOrderType.ORDER_DEFEND == self.order_type:
                 return target_type in (TargetType.TARGET_SYSTEM, TargetType.TARGET_PLANET)
+        else:
+            if verbose:
+                print "\t\t order not valid: fleet validity: %s and target validity %s" % (self.fleet.valid, self.target.valid)
         return False
 
     def can_issue_order(self, verbose=False):

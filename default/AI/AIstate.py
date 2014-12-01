@@ -263,6 +263,9 @@ class AIstate(object):
         empire = fo.getEmpire()
         empireID = fo.empireID()
         destroyedObjIDs = universe.destroyedObjectIDs(empireID)
+        supply_unobstructed_systems = set(empire.supplyUnobstructedSystems)
+        min_hidden_attack = 4
+        min_hidden_health = 8
         if sysIDList is None:
             sysIDList = universe.systemIDs  # will normally look at this, the list of all known systems
 
@@ -274,6 +277,7 @@ class AIstate(object):
         myFleetsBySystem = {}
         fleetSpotPosition = {}
         sawEnemiesAtSystem = {}
+        my_milship_rating = ProductionAI.curBestMilShipRating()
         current_turn = fo.currentTurn()
         for fleetID in universe.fleetIDs:
             #if ( fleetID in self.fleetStatus ): # only looking for enemies here
@@ -302,6 +306,9 @@ class AIstate(object):
                             enemiesBySystem.setdefault(thisSysID, []).append(fleetID)
                             if not fleet.ownedBy(-1):
                                 self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleetID)
+                                rating = self.rate_fleet(fleetID, self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
+                                if rating.get('overall', 0) > 0.25 * my_milship_rating:
+                                    self.misc.setdefault('dangerous_enemies_sighted', {}).setdefault(current_turn, []).append(fleetID)
         e_f_dict = [cur_e_fighters, old_e_fighters][len(cur_e_fighters) == 1]
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.empire_standard_enemy = std_fighter
@@ -392,7 +399,7 @@ class AIstate(object):
             if not partialVisTurn == current_turn:  # (universe.getVisibility(sysID, self.empireID) >= fo.visibility.partial):
                 # print "Stale visibility for system %d ( %s ) -- last seen %d, current Turn %d -- basing threat assessment on old info and lost ships"%(sysID, sysStatus.get('name', "name unknown"), partialVisTurn, currentTurn)
                 sysStatus['fleetThreat'] = int(max(enemyRating, 0.98*sysStatus.get('fleetThreat', 0), 1.1 * lostFleetRating))
-                sysStatus['totalThreat'] = (pattack + enemyAttack + sysStatus.get('monsterThreat', 0) ** 0.5) * (phealth + enemyHealth + sysStatus.get('monsterThreat', 0) ** 0.5)
+                sysStatus['totalThreat'] = ((pattack + enemyAttack + sysStatus.get('monsterThreat', 0)) ** 0.8) * ((phealth + enemyHealth + sysStatus.get('monsterThreat', 0))** 0.6)
             else:  # system considered visible #TODO: reevaluate as visibility rules change
                 enemyattack, enemyhealth, enemythreat = 0, 0, 0
                 monsterattack, monsterhealth, monsterthreat = 0, 0, 0
@@ -409,6 +416,10 @@ class AIstate(object):
                 sysStatus['fleetThreat'] = int(max(enemyattack*enemyhealth, lostFleetRating))  # fleetThreat always includes monster threat, and may not have seen stealthed enemies
                 sysStatus['monsterThreat'] = monsterattack * monsterhealth
                 sysStatus['totalThreat'] = int(max(lostFleetRating, (enemyattack + monsterattack+pattack) * (enemyhealth+monsterhealth + phealth)))
+                
+            if (partialVisTurn > 0) and (sysID not in supply_unobstructed_systems): # has been seen with Partial Vis, but is currently supply-blocked
+                sysStatus['fleetThreat'] = max(sysStatus['fleetThreat'], min_hidden_attack * min_hidden_health)
+                sysStatus['totalThreat'] = max(sysStatus['totalThreat'], ((pattack + min_hidden_attack) ** 0.8) * ((phealth + min_hidden_health) ** 0.6))
 
         #assess secondary threats (threats of surrounding systems) and update my fleet rating
         for sysID in sysIDList:

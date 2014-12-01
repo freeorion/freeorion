@@ -70,10 +70,21 @@ NEST_VAL_MAP = {
               "JUGGERNAUT_NEST_SPECIAL": 80,
               }
 
+AVG_PILOT_RATING = 2.0
+GOOD_PILOT_RATING = 4.0
+GREAT_PILOT_RATING = 6.0
+ULT_PILOT_RATING = 12.0
+
+def galaxy_is_sparse():
+    setup_data = fo.getGalaxySetupData()
+    avg_empire_systems = setup_data.size / len(fo.allEmpireIDs())
+    return ((setup_data.monsterFrequency <= fo.galaxySetupOption.low) and 
+            ((avg_empire_systems >= 40) or
+             ((avg_empire_systems >= 35) and (setup_data.shape != fo.galaxyShape.elliptical))))
 
 def rate_piloting_tag(tag_list):
-    grade = 2.0
-    grades = {'NO': 1e-8, 'BAD': 0.75, 'GOOD': 4.0, 'GREAT': 6.0, 'ULTIMATE': 12.0}
+    grade = AVG_PILOT_RATING
+    grades = {'NO': 1e-8, 'BAD': 0.75, 'GOOD': GOOD_PILOT_RATING, 'GREAT': GREAT_PILOT_RATING, 'ULTIMATE': ULT_PILOT_RATING}
     for tag in [tag1 for tag1 in tag_list if "AI_TAG" in tag1 and "WEAPONS" in tag1]:
         tag_parts = tag.split('_')
         grade = grades.get(tag_parts[2], 1.0)

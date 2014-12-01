@@ -332,6 +332,7 @@ class AIFleetMission(object):
         if target_id == -1:
             return
 
+        print "\t AIFleetMission._check_retarget_invasion: splitting and retargetting fleet %d" % fleet_id
         new_fleets = FleetUtilsAI.split_fleet(fleet_id)
         self.clear_targets(-1)  # TODO: clear from foAIstate
         self.clear_fleet_orders()
@@ -356,30 +357,37 @@ class AIFleetMission(object):
         # TODO: priority
         order_completed = True
         print "--------------"
-        print "Checking orders for fleet %d (on turn %d)" % (self.target_id, fo.currentTurn())
+        print "Checking orders for fleet %d (on turn %d), with mission types %s" % (self.target_id, fo.currentTurn(), [AIFleetMissionType.name(mt) for mt in self.get_mission_types()])
         print "\t Full Orders are:"
-        for this_orders in self.orders:
-            print "\t\t %s" % this_orders
+        for this_order in self.orders:
+            print "\t\t| %s" % this_order
         print "/t/t------"
         if AIFleetMissionType.FLEET_MISSION_INVASION in self.get_mission_types():
             self._check_retarget_invasion()
         for fleet_order in self.orders:
-            print "  checking Order: %s" % fleet_order
+            print "\t| checking Order: %s" % fleet_order
             order_type = fleet_order.order_type
             if order_type in [AIFleetOrderType.ORDER_COLONISE,
                               AIFleetOrderType.ORDER_OUTPOST,
                               AIFleetOrderType.ORDER_INVADE]:  # TODO: invasion?
                 if self._check_abort_mission(fleet_order):
+                    print "\t\t| Aborting fleet order %s" % fleet_order
                     return
             self.check_mergers(context=str(fleet_order))
             if fleet_order.can_issue_order(verbose=True):
                 if order_type == AIFleetOrderType.ORDER_MOVE and order_completed:  # only move if all other orders completed
+                    print "\t\t| issuing fleet order %s" % fleet_order
                     fleet_order.issue_order()
                 elif order_type not in [AIFleetOrderType.ORDER_MOVE, AIFleetOrderType.ORDER_DEFEND]:
+                    print "\t\t| issuing fleet order %s" % fleet_order
                     fleet_order.issue_order()
+                else:
+                    print "\t\t| NOT issuing (even though can_issue) fleet order %s" % fleet_order
+                print "\t\t| order status-- execution completed: %s" % fleet_order.execution_completed
                 if not fleet_order.execution_completed:
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
+                print "\t\t| CAN'T issue fleet order %s" % fleet_order
                 if order_type == AIFleetOrderType.ORDER_MOVE:
                     this_system_id = fleet_order.target.target_id
                     this_status = foAI.foAIstate.systemStatus.setdefault(this_system_id, {})
@@ -394,8 +402,8 @@ class AIFleetMission(object):
                             ):
                             print "Aborting mission due to being blocked by Big Monster at system %d, threat %d"%(this_system_id, foAI.foAIstate.systemStatus[this_system_id]['monsterThreat'])
                             print "Full set of orders were:"
-                            for this_orders in self.orders:
-                                print "\t\t %s" % this_orders
+                            for this_order in self.orders:
+                                print "\t\t %s" % this_order
                             self.clear_fleet_orders()
                             self.clear_targets(([-1] + self.get_mission_types()[:1])[-1])
                             return
@@ -407,6 +415,7 @@ class AIFleetMission(object):
                     break
         else:  # went through entire order list
             if order_completed:
+                print "\t| Final order is completed"
                 orders = self.orders
                 last_order = orders[-1] if orders else None
                 universe = fo.getUniverse()
@@ -454,8 +463,8 @@ class AIFleetMission(object):
                     if orders:
                         print "Fleet %d has completed its mission; clearing all orders and targets." % self.target_id
                         print "Full set of orders were:"
-                        for this_orders in orders:
-                            print "\t\t %s" % this_orders
+                        for this_order in orders:
+                            print "\t\t %s" % this_order
                         self.clear_fleet_orders()
                         self.clear_targets(([-1] + self.get_mission_types()[:1])[-1])
                         if foAI.foAIstate.get_fleet_role(fleet_id) in (AIFleetMissionType.FLEET_MISSION_MILITARY,

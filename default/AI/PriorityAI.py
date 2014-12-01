@@ -120,14 +120,17 @@ def calculateResearchPriority():
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
     industrySurge = ((foAI.foAIstate.aggression > fo.aggression.cautious) and
-                     ((totalPP + 1.6 * totalRP) <(60* foAI.foAIstate.aggression)) and
-                     (((orb_gen_tech in researchQueueList[:4] or got_orb_gen) and ColonisationAI.got_gg) or
-                      ((mgrav_prod_tech in researchQueueList[:4] or got_mgrav_prod) and ColonisationAI.got_ast)) and
+                     ((totalPP + 1.6 * totalRP) <(50* foAI.foAIstate.aggression)) and
+                     (((orb_gen_tech in researchQueueList[:2] or got_orb_gen) and ColonisationAI.got_gg) or
+                      ((mgrav_prod_tech in researchQueueList[:2] or got_mgrav_prod) and ColonisationAI.got_ast)) and
                      (not (len(AIstate.popCtrIDs) >= 12 )))
     # get current industry production & Target
     ownedPlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = map(universe.getPlanet, ownedPlanetIDs)
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch), planets) )
+    galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
+    enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
+
 
     styleIndex = empireID%2
     if foAI.foAIstate.aggression >=fo.aggression.maniacal:
@@ -157,7 +160,10 @@ def calculateResearchPriority():
         elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
             researchPriority *= 0.7  # closing in on end of research
     if industrySurge:
-        researchPriority *= 0.7
+        if galaxy_is_sparse and not any(enemies_sighted):
+            researchPriority *= 0.3
+        else:
+            researchPriority *= 0.7
                 
     if ((tech_is_complete("SHP_WEAPON_2_4") or
          tech_is_complete("SHP_WEAPON_4_1")) and
@@ -212,6 +218,7 @@ def calculateColonisationPriority():
     """calculates the demand for colony ships by colonisable planets"""
     global allottedColonyTargets, colonyGrowthBarrier
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
+    galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     totalPP=fo.getEmpire().productionPoints
     num_colonies = len( list(AIstate.popCtrIDs) )
     colonyGrowthBarrier = 2 + ((0.5+foAI.foAIstate.aggression)**2)*fo.currentTurn()/50.0 #significant for low aggression, negligible for high aggression
@@ -220,7 +227,7 @@ def calculateColonisationPriority():
     colonyCost=120*(1+ 0.06*num_colonies)
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    allottedPortion = [[0.3, 0.4],[0.6, 0.9]][any(enemies_sighted)][fo.empireID() % 2]  #
+    allottedPortion = [[[0.6, 0.8],[0.3, 0.4]],[[0.8, 0.9],[0.3, 0.4]]][galaxy_is_sparse][any(enemies_sighted)][fo.empireID() % 2]  #
     #if ( foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
     # > 2 * foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
     # allottedPortion *= 1.5

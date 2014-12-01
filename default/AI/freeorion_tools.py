@@ -1,3 +1,5 @@
+# This Python file uses the following encoding: utf-8
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from functools import wraps
 from traceback import format_exc
@@ -21,6 +23,25 @@ def tech_is_complete(tech):
     """
     Return if tech is complete.
     """
+    return fo.getEmpire().getTechStatus(tech) == fo.techStatus.complete
+
+def mystring(foo):
+    '''returns a string version of lists, dicts, sets, such that entries with special characters will be
+    printed in legible string format rather than as hex escape characters, i.e., 
+    ['Asimov α'] rather than ['Asimov \xce\xb1']'''
+    
+    if isinstance(foo, list):
+        return "[" + ",".join(map(mystring, foo)) + "]"
+    elif isinstance(foo, dict):
+        return "{" + ",".join([mystring(k) + ":" + mystring(v) for k, v in foo.iteritems()]) + "}"
+    elif isinstance(foo, tuple):
+        return "(" + ",".join(map(mystring, foo)) + ")"
+    elif isinstance(foo, set) or isinstance(foo, frozenset):
+        return "{" + ",".join(map(mystring, foo)) + "}"
+    elif isinstance(foo, str):
+        return "'" + foo + "'"
+    else:
+        return str(foo)
     return fo.getEmpire().getTechStatus(tech) == fo.techStatus.complete
 
 
