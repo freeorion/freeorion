@@ -1631,7 +1631,7 @@ public:
         //m_visibilities[OBJ_FIELD].insert(SHOW_VISIBLE);
 
         m_header_row = new ObjectHeaderRow(GG::X1, ListRowHeight());
-        SetColHeaders(m_header_row);
+        SetColHeaders(m_header_row); // Gives ownership
 
         GG::Connect(m_header_row->ColumnsChangedSignal,         &ObjectListBox::Refresh,                this);
         GG::Connect(m_header_row->ColumnHeaderLeftClickSignal,  &ObjectListBox::SortingClicked,         this);
@@ -1640,7 +1640,6 @@ public:
 
     virtual ~ObjectListBox() {
         delete m_filter_condition;
-        delete m_header_row;
     }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
