@@ -233,6 +233,8 @@
     (PartClass)                                 \
     (PartName)                                  \
     (Parts)                                     \
+    (PartClassInShipDesign)                     \
+    (PartsInShipDesign)                         \
     (Planet)                                    \
     (Planetbound)                               \
     (PlanetEnvironment)                         \

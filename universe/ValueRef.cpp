@@ -12,6 +12,7 @@
 #include "Universe.h"
 #include "UniverseObject.h"
 #include "Condition.h"
+#include "Enums.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../util/Random.h"
@@ -1251,6 +1252,77 @@ namespace ValueRef {
             }
 
             return GetEmpirePropertyNoKey(empire_id, variable_name);
+        }
+
+        // non-empire properties
+        if (variable_name == "PartsInShipDesign") {
+            int design_id = ShipDesign::INVALID_DESIGN_ID;
+            if (m_int_ref1) {
+                design_id = m_int_ref1->Eval(context);
+                if (design_id == ShipDesign::INVALID_DESIGN_ID)
+                    return 0;
+            } else {
+                return 0;
+            }
+
+            std::string part_type_name;
+            if (m_string_ref1) {
+                part_type_name = m_string_ref1->Eval(context);
+            }
+
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design)
+                return 0;
+
+            int count = 0;
+            const std::vector<std::string>& parts = design->Parts();
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                if (part_type_name.empty() && !it->empty())
+                    count++;
+                else if (!part_type_name.empty() && part_type_name == *it)
+                    count ++;
+            }
+            return count;
+
+        } else if (variable_name == "PartOfClassInShipDesign") {
+            int design_id = ShipDesign::INVALID_DESIGN_ID;
+            if (m_int_ref1) {
+                design_id = m_int_ref1->Eval(context);
+                if (design_id == ShipDesign::INVALID_DESIGN_ID)
+                    return 0;
+            } else {
+                return 0;
+            }
+
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design)
+                return 0;
+
+            std::string part_class_name;
+            if (m_string_ref1) {
+                part_class_name = m_string_ref1->Eval(context);
+            } else {
+                return 0;
+            }
+            ShipPartClass part_class = INVALID_SHIP_PART_CLASS;
+            try {
+                part_class = boost::lexical_cast<ShipPartClass>(part_class_name);
+            } catch (...) {
+                return 0;
+            }
+
+            int count = 0;
+            const std::vector<std::string>& parts = design->Parts();
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                if (it->empty())
+                    continue;
+                const PartType* part = GetPartType(*it);
+                if (!part)
+                    continue;
+                if (part->Class() == part_class)
+                    count++;
+            }
+            return count;
         }
 
         return 0;

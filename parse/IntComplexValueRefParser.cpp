@@ -59,6 +59,35 @@ namespace parse {
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
                 ;
 
+            parts_in_ship_design
+                =   (
+                            tok.PartsInShipDesign_[ _a = construct<std::string>(_1) ]
+                        >-( parse::label(Name_token)   >>   string_value_ref [ _d = _1 ] )
+                        > ( parse::label(Design_token) >>   int_value_ref [ _b = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
+                ;
+
+            part_class_in_ship_design
+                =   (
+                            tok.PartClassInShipDesign_  [ _a = construct<std::string>(_1) ]
+                        //> ( parse::label(Class_token) >>
+                        //    as_string [ parse::enum_parser<ShipPartClass>() ]
+                        //    [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
+                        //  )
+                        > ( parse::label(Class_token) >>
+                            ( tok.ShortRange_     | tok.Missiles_     | tok.Fighters_
+                            | tok.PointDefense_   | tok.Shield_       | tok.Armour_
+                            | tok.Troops_         | tok.Detection_    | tok.Stealth_
+                            | tok.Fuel_           | tok.Colony_       | tok.BattleSpeed_
+                            | tok.StarlaneSpeed_  | tok.General_      | tok.Bombard_
+                            | tok.Research_       | tok.Industry_     | tok.Trade_
+                            | tok.ProductionLocation_
+                            ) [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
+                          )
+                        > ( parse::label(Design_token) >>   int_value_ref [ _b = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _d, _e) ]
+                ;
+
             ship_designs_destroyed
                 =   (
                             tok.ShipDesignsDestroyed_ [ _a = construct<std::string>(_1) ]
@@ -177,6 +206,8 @@ namespace parse {
                 |    building_types_scrapped
                 |    empire_ships_destroyed
                 |    outposts_owned
+                |    parts_in_ship_design
+                |    part_class_in_ship_design
                 |    ship_designs_destroyed
                 |    ship_designs_lost
                 |    ship_designs_owned
@@ -198,6 +229,8 @@ namespace parse {
             building_types_scrapped.name("BuildingTypesScrapped");
             empire_ships_destroyed.name("EmpireShipsDestroyed");
             outposts_owned.name("OutpostsOwned");
+            parts_in_ship_design.name("PartsInShipDesign");
+            part_class_in_ship_design.name("PartClassInShipDesign");
             ship_designs_destroyed.name("ShipDesignsDestroyed");
             ship_designs_lost.name("ShipDesignsLost");
             ship_designs_owned.name("ShipDesignsOwned");
@@ -219,6 +252,8 @@ namespace parse {
             debug(building_types_scrapped);
             debug(empire_ships_destroyed);
             debug(outposts_owned);
+            debug(parts_in_ship_design);
+            debug(part_class_in_ship_design);
             debug(ship_designs_destroyed);
             debug(ship_designs_lost);
             debug(ship_designs_owned);
@@ -242,6 +277,8 @@ namespace parse {
         complex_variable_rule<int>::type    building_types_scrapped;
         complex_variable_rule<int>::type    empire_ships_destroyed;
         complex_variable_rule<int>::type    outposts_owned;
+        complex_variable_rule<int>::type    parts_in_ship_design;
+        complex_variable_rule<int>::type    part_class_in_ship_design;
         complex_variable_rule<int>::type    ship_designs_destroyed;
         complex_variable_rule<int>::type    ship_designs_lost;
         complex_variable_rule<int>::type    ship_designs_owned;
