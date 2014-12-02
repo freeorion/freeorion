@@ -26,9 +26,9 @@ def tech_is_complete(tech):
     return fo.getEmpire().getTechStatus(tech) == fo.techStatus.complete
 
 def mystring(foo):
-    '''returns a string version of lists, dicts, sets, such that entries with special characters will be
+    """returns a string version of lists, dicts, sets, such that entries with special characters will be
     printed in legible string format rather than as hex escape characters, i.e., 
-    ['Asimov α'] rather than ['Asimov \xce\xb1']'''
+    ['Asimov α'] rather than ['Asimov \xce\xb1']"""
     
     if isinstance(foo, list):
         return "[" + ",".join(map(mystring, foo)) + "]"
@@ -42,8 +42,6 @@ def mystring(foo):
         return "'" + foo + "'"
     else:
         return str(foo)
-    return fo.getEmpire().getTechStatus(tech) == fo.techStatus.complete
-
 
 def chat_on_error(function):
     @wraps(function)
@@ -54,7 +52,6 @@ def chat_on_error(function):
             print_error(e, location=function.__name__, trace=False)
             raise
     return wrapper
-
 
 def print_error(msg, location=None, trace=True):
     """

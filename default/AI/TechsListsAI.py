@@ -4,8 +4,6 @@ various technologies to help the AI decide which technologies should be
 researched next.
 """
 
-import freeOrionAIInterface as fo # pylint: disable=import-error
-
 # TODO: further consider alternative implementations for tech priorities
 # adrian_broher recommends this whole module (and related
 # decision branches within ResearchAI.py) not exist-- that this 
@@ -79,8 +77,9 @@ def tech_group_1_sparse(): #
             "CON_ENV_ENCAPSUL",
             "LRN_ARTIF_MINDS",
             "SHP_WEAPON_1_2",
-            "SHP_WEAPON_1_3",
             "PRO_ROBOTIC_PROD",
+            "SHP_WEAPON_1_3",
+            "SHP_MIL_ROBO_CONT",
             "SHP_WEAPON_1_4",
             "SHP_SPACE_FLUX_DRIVE",
     ]
@@ -283,7 +282,7 @@ def tech_group_5():
     return result
 
 def sparse_galaxy_techs(index):
-    return primary_meta_techs()
+    #return primary_meta_techs()
     result = []
     print "Choosing Research Techlist Index %d" % index
     if index == 0:
