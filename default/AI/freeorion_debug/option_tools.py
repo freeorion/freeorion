@@ -1,6 +1,7 @@
 import os
 from ConfigParser import SafeConfigParser
 from collections import OrderedDict as odict
+import platform
 
 try:
     import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -49,6 +50,8 @@ def _parse_options():
         config = SafeConfigParser()
         config.read([default_file])
     else:
+        if platform.system != "Linux":
+            default_file = ""
         try:
             config = _create_default_config_file(default_file)
         except IOError:
