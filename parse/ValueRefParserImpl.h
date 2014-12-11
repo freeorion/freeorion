@@ -59,7 +59,8 @@ struct statistic_rule
         qi::locals<
             std::vector<std::string>,
             ValueRef::StatisticType,
-            Condition::ConditionBase*
+            Condition::ConditionBase*,
+            ValueRef::ValueRefBase<T>*
         >,
         parse::skipper_type
     > type;
@@ -251,6 +252,7 @@ void initialize_numeric_statistic_parser(
     qi::_a_type _a;
     qi::_b_type _b;
     qi::_c_type _c;
+    qi::_d_type _d;
     qi::_val_type _val;
     qi::eps_type eps;
     using phoenix::construct;
@@ -274,8 +276,13 @@ void initialize_numeric_statistic_parser(
                    >>       variable_name [ push_back(_a, construct<std::string>(_1)) ]
                    >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
                   )
+              |   (
+                       parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
+                   >>  parse::label(Value_token)     >>   parse::value_ref_parser<T>() [_d = _1 ]
+                   >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
+                  )
              )
-             [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]
+             [ _val = new_<ValueRef::Statistic<T> >(_d, _b, _c) ]
         ;
 }
 
@@ -290,6 +297,7 @@ void initialize_nonnumeric_statistic_parser(
     qi::_a_type _a;
     qi::_b_type _b;
     qi::_c_type _c;
+    qi::_d_type _d;
     qi::_val_type _val;
     qi::eps_type eps;
     using phoenix::construct;

@@ -185,12 +185,17 @@ struct FO_COMMON_API ValueRef::Statistic : public ValueRef::Variable<T>
     Statistic(const std::vector<std::string>& property_name,
               StatisticType stat_type,
               const Condition::ConditionBase* sampling_condition);
+    Statistic(const ValueRef::ValueRefBase<T>* value_ref,
+              StatisticType stat_type,
+              const Condition::ConditionBase* sampling_condition);
+
     ~Statistic();
 
     virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
 
-    StatisticType                   GetStatisticType() const     { return m_stat_type; }
-    const Condition::ConditionBase* GetSamplingCondition() const { return m_sampling_condition; }
+    StatisticType                   GetStatisticType() const    { return m_stat_type; }
+    const Condition::ConditionBase* GetSamplingCondition() const{ return m_sampling_condition; }
+    const ValueRef::ValueRefBase<T>*GetValueRef() const         { return m_value_ref; }
 
     virtual T                       Eval(const ScriptingContext& context) const;
 
@@ -219,6 +224,7 @@ protected:
 private:
     StatisticType                   m_stat_type;
     const Condition::ConditionBase* m_sampling_condition;
+    const ValueRef::ValueRefBase<T>*m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -580,12 +586,26 @@ ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
                                   const Condition::ConditionBase* sampling_condition) :
     Variable<T>(ValueRef::NON_OBJECT_REFERENCE, property_name),
     m_stat_type(stat_type),
-    m_sampling_condition(sampling_condition)
+    m_sampling_condition(sampling_condition),
+    m_value_ref(0)
+{}
+
+template <class T>
+ValueRef::Statistic<T>::Statistic(const ValueRef::ValueRefBase<T>* value_ref,
+                                  StatisticType stat_type,
+                                  const Condition::ConditionBase* sampling_condition) :
+    Variable<T>(ValueRef::NON_OBJECT_REFERENCE, ""),
+    m_stat_type(stat_type),
+    m_sampling_condition(sampling_condition),
+    m_value_ref(value_ref)
 {}
 
 template <class T>
 ValueRef::Statistic<T>::~Statistic()
-{ delete m_sampling_condition; }
+{
+    delete m_sampling_condition;
+    delete m_value_ref;
+}
 
 template <class T>
 bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) const
@@ -599,6 +619,8 @@ bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) co
     if (m_stat_type != rhs_.m_stat_type)
         return false;
     if (this->m_property_name != rhs_.m_property_name)
+        return false;
+    if (this->m_value_ref != rhs_.m_value_ref)
         return false;
 
     if (m_sampling_condition == rhs_.m_sampling_condition) {
@@ -633,18 +655,32 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& con
     //Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
     //                       << " sampling condition: " << m_sampling_condition->Dump()
     //                       << " property name final: " << this->PropertyName().back();
-    ReferenceType original_ref_type = this->m_ref_type;
-    this->m_ref_type = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE;
-    for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
-        T property_value = this->Variable<T>::Eval(ScriptingContext(context, *it));
-        object_property_values[*it] = property_value;
+
+    if (m_value_ref) {
+        // evaluate a full ValueRef with each condition match as the LocalCandidate
+        for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+            T property_value = m_value_ref->Eval(ScriptingContext(context, *it));
+            object_property_values[*it] = property_value;
+        }
+    } else {
+        // evaluate a simple property on each condition-match
+        ReferenceType original_ref_type = this->m_ref_type;
+        this->m_ref_type = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE;
+        for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+            T property_value = this->Variable<T>::Eval(ScriptingContext(context, *it));
+            object_property_values[*it] = property_value;
+        }
+        this->m_ref_type = original_ref_type;
     }
-    this->m_ref_type = original_ref_type;
 }
 
 template <class T>
 bool ValueRef::Statistic<T>::RootCandidateInvariant() const
-{ return ValueRef::Variable<T>::RootCandidateInvariant() && m_sampling_condition->RootCandidateInvariant(); }
+{
+    return ValueRef::Variable<T>::RootCandidateInvariant() &&
+           m_sampling_condition->RootCandidateInvariant() &&
+           (!m_value_ref || m_value_ref->RootCandidateInvariant());
+}
 
 template <class T>
 bool ValueRef::Statistic<T>::LocalCandidateInvariant() const
@@ -652,16 +688,25 @@ bool ValueRef::Statistic<T>::LocalCandidateInvariant() const
     // don't need to check if sampling condition is LocalCandidateInvariant, as
     // all conditions aren't, but that refers to their own local candidate.  no
     // condition is explicitly dependent on the parent context's local candidate.
-    return ValueRef::Variable<T>::LocalCandidateInvariant();
+    return ValueRef::Variable<T>::LocalCandidateInvariant() &&
+           (!m_value_ref || m_value_ref->LocalCandidateInvariant());
 }
 
 template <class T>
 bool ValueRef::Statistic<T>::TargetInvariant() const
-{ return ValueRef::Variable<T>::TargetInvariant() && m_sampling_condition->TargetInvariant(); }
+{
+    return ValueRef::Variable<T>::TargetInvariant() &&
+           m_sampling_condition->TargetInvariant() &&
+           (!m_value_ref || m_value_ref->TargetInvariant());
+}
 
 template <class T>
 bool ValueRef::Statistic<T>::SourceInvariant() const
-{ return ValueRef::Variable<T>::SourceInvariant() && m_sampling_condition->SourceInvariant(); }
+{
+    return ValueRef::Variable<T>::SourceInvariant() &&
+           m_sampling_condition->SourceInvariant() &&
+           (!m_value_ref || m_value_ref->SourceInvariant());
+}
 
 template <class T>
 std::string ValueRef::Statistic<T>::Description() const
@@ -907,7 +952,8 @@ void ValueRef::Statistic<T>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable)
         & BOOST_SERIALIZATION_NVP(m_stat_type)
-        & BOOST_SERIALIZATION_NVP(m_sampling_condition);
+        & BOOST_SERIALIZATION_NVP(m_sampling_condition)
+        & BOOST_SERIALIZATION_NVP(m_value_ref);
 }
 
 ///////////////////////////////////////////////////////////
