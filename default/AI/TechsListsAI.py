@@ -63,6 +63,9 @@ def tech_group_1b():  # early _lrn_artif_minds
             "GRO_PLANET_ECOL",
             "GRO_SUBTER_HAB",
             "CON_ENV_ENCAPSUL",
+            "SHP_WEAPON_1_3",
+            "PRO_ROBOTIC_PROD",
+            "SHP_MIL_ROBO_CONT",
             "CON_ORBITAL_CON",
             "SHP_WEAPON_1_4",
     ]
@@ -114,10 +117,10 @@ def tech_group_2b():  # prioritizes weapons over growth & spy
             "LRN_FORCE_FIELD",
             "DEF_DEFENSE_NET_1",
             "DEF_GARRISON_1",
+            "PRO_FUSION_GEN",
             "SHP_WEAPON_2_1",
             "SHP_WEAPON_2_2",
             "SHP_WEAPON_2_3",
-            "PRO_FUSION_GEN",
             "SHP_WEAPON_2_4",
             "GRO_SYMBIOTIC_BIO",
             "PRO_INDUSTRY_CENTER_I",
@@ -345,7 +348,7 @@ def primary_meta_techs(index = 0):
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
         result += tech_group_5()  #
     elif index == 3:
-        result = tech_group_1a()  # early org_hull
+        result = tech_group_1b()  # 
         result += tech_group_2b()  # prioritizes weapons over growth & defense
         result += tech_group_3b()  # without SHP_ASTEROID_REFORM
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN

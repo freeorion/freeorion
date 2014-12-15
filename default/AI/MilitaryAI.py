@@ -7,6 +7,7 @@ import FleetUtilsAI
 import PlanetUtilsAI
 import PriorityAI
 import ColonisationAI
+from freeorion_tools import ppstring
 
 MinThreat = 10 # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
 MilitaryAllocations = []
@@ -31,6 +32,8 @@ def rating_needed(target, current=0):
     else:
         return target + current - (4*target*current)**0.5
 
+def get_safety_factor():
+    return [ 4.0, 3.0, 2.0, 1.5, 1.2, 1.0 ][foAI.foAIstate.aggression]
 
 def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False):
     """returns tuple of lists-- ( ids_needing_repair, ids_not )"""
@@ -42,6 +45,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False)
         ship_buckets = [ [], [] ]
         ships_cur_health = [ 0, 0 ]
         ships_max_health = [ 0, 0 ]
+        safely_needed = False
         for ship_id in fleet.shipIDs:
             this_ship = universe.getShip(ship_id)
             cur_struc = this_ship.currentMeterValue(fo.meterType.structure)
@@ -50,12 +54,21 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False)
             ship_buckets[ship_ok].append( ship_id )
             ships_cur_health[ship_ok] += cur_struc
             ships_max_health[ship_ok] += max_struc
-        #TODO: the following is a temp all-or-nothing test
+        thisSysID = (fleet.nextSystemID != -1 and fleet.nextSystemID) or fleet.systemID
         fleet_ok = ( sum(ships_cur_health) >= cutoff * sum(ships_max_health) )
+        local_status = foAI.foAIstate.systemStatus.get(thisSysID, {})
+        my_local_rating = local_status.get('mydefenses', {}).get('overall',0) + local_status.get('myFleetRating',0)
+        needed_here = local_status.get('totalThreat', 0) > 0  # TODO: assess if remaining other forces are sufficient
+        safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0)  # TODO: improve both assessment prongs
         if not fleet_ok:
-            pass
-            print "Selecting fleet %d at %s for repair"%(fleet_id, PlanetUtilsAI.sys_name_ids( [fleet.systemID] ))
-        fleet_buckets[fleet_ok].append(fleet_id)
+            if safely_needed:
+                print "Fleet %d at %s needs repair but deemed safely needed to remain for defense"%(fleet_id, ppstring(PlanetUtilsAI.sys_name_ids( [fleet.systemID] )))
+            else:
+                if needed_here:
+                    print "Fleet %d at %s needed present for combat, but is damaged and deemed unsafe to remain."%(fleet_id, ppstring(PlanetUtilsAI.sys_name_ids( [fleet.systemID] )))
+                    print "\t my_local_rating: %.1f ; threat: %.1f" % (my_local_rating, local_status.get('totalThreat', 0))
+                print "Selecting fleet %d at %s for repair"%(fleet_id, ppstring(PlanetUtilsAI.sys_name_ids( [fleet.systemID] )))
+        fleet_buckets[fleet_ok or safely_needed].append(fleet_id)
     return fleet_buckets
 
 
@@ -178,7 +191,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     else:
         threatBias = 0
 
-    safetyFactor = [ 4.0, 3.0, 2.0, 1.5, 1.2, 1.0 ][foAI.foAIstate.aggression]
+    safetyFactor = get_safety_factor()
 
     topTargetPlanets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets] if pscore > 20] + [pid for pid, pscore in foAI.foAIstate.colonisablePlanetIDs[:10] if pscore > 20]
     topTargetPlanets.extend( foAI.foAIstate.qualifyingTroopBaseTargets.keys() )

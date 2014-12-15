@@ -370,6 +370,7 @@ def calculateMilitaryPriority():
         return 0# no capitol (not even a capitol-in-the-making), means can't produce any ships
         
     have_l1_weaps = (tech_is_complete("SHP_WEAPON_1_4") or
+                     (tech_is_complete("SHP_WEAPON_1_3") and tech_is_complete("SHP_MIL_ROBO_CONT")) or
                      tech_is_complete("SHP_WEAPON_2_1") or
                      tech_is_complete("SHP_WEAPON_4_1"))
     have_l2_weaps = (tech_is_complete("SHP_WEAPON_2_3") or

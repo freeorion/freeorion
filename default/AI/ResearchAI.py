@@ -23,7 +23,7 @@ def exclude_tech(tech_name):
     return ((foAI.foAIstate.aggression < AIDependencies.TECH_EXCLUSION_MAP_1.get(tech_name, fo.aggression.invalid)) or
             (foAI.foAIstate.aggression > AIDependencies.TECH_EXCLUSION_MAP_2.get(tech_name, fo.aggression.maniacal)) or
             tech_name in TechsListsAI.unusable_techs())
-
+            
 def generate_research_orders():
     """generate research orders"""
     universe=fo.getUniverse()
@@ -223,7 +223,7 @@ def generate_research_orders():
                         print "ANCIENT_RUINS: have an ancient ruins, so attempted to fast-track %s to enable LRN_XENOARCH, got result %d"%(xenoTech, res)
                 research_queue_list = get_research_queue_techs()
 
-    if not enemies_sighted:
+    if False and not enemies_sighted:  # curently disabled
         # params = [ (tech, gate, target_slot, add_tech_list), ]
         params = [("GRO_XENO_GENETICS", "PRO_EXOBOTS", "PRO_EXOBOTS", ["GRO_GENETIC_MED", "GRO_XENO_GENETICS"]),
                   ("PRO_EXOBOTS", "PRO_SENTIENT_AUTOMATION", "PRO_SENTIENT_AUTOMATION", ["PRO_EXOBOTS"]),
@@ -269,10 +269,9 @@ def generate_research_orders():
                 research_queue_list = get_research_queue_techs()
         elif ColonisationAI.got_gg and not tech_is_complete("PRO_ORBITAL_GEN") and (
                     "PRO_ORBITAL_GEN" not in research_queue_list[:3+num_techs_accelerated]):
-            if "GRO_SYMBIOTIC_BIO" in research_queue_list:
-                insert_idx = 1+ research_queue_list.index("GRO_SYMBIOTIC_BIO")
-            else:
-                insert_idx = num_techs_accelerated
+            fusion_idx = 0 if "PRO_FUSION_GEN" not in research_queue_list else (1 + research_queue_list.index("PRO_FUSION_GEN"))
+            forcefields_idx = 0 if "LRN_FORCE_FIELD" not in research_queue_list else (1 + research_queue_list.index("LRN_FORCE_FIELD"))
+            insert_idx = max(fusion_idx, forcefields_idx) if enemies_sighted else fusion_idx
             res=fo.issueEnqueueTechOrder("PRO_ORBITAL_GEN",insert_idx)
             num_techs_accelerated += 1
             print "GasGiant: have colonized a gas giant, so attempted to fast-track %s, got result %d"%("PRO_ORBITAL_GEN", res)
@@ -321,10 +320,10 @@ def generate_research_orders():
                 research_queue_list = get_research_queue_techs()
     #
     # check to accelerate quant net
-    if True: #just to help with cold-folding / organization
+    if False:  # disabled for now, otherwise just to help with cold-folding / organization
         if (foAI.foAIstate.aggression > fo.aggression.cautious) and( ColonisationAI.empire_status.get('researchers', 0) >= 40 ):
             if not tech_is_complete("LRN_QUANT_NET"):
-                insert_idx = num_techs_accelerated
+                insert_idx = num_techs_accelerated  # TODO determine min target slot if reenabling
                 for qnTech in [ "LRN_NDIM_SUBSPACE", "LRN_QUANT_NET" ]:
                     if qnTech not in research_queue_list[:2+num_techs_accelerated] and not tech_is_complete(qnTech):
                         res=fo.issueEnqueueTechOrder(qnTech, insert_idx)
@@ -336,7 +335,8 @@ def generate_research_orders():
     # if we own a blackhole, accelerate sing_gen and conc camp
     if True: #just to help with cold-folding / organization
         if ( fo.currentTurn() >50 and len (AIstate.empireStars.get(fo.starType.blackHole, []))!=0 and
-                    foAI.foAIstate.aggression > fo.aggression.cautious and not tech_is_complete(AIDependencies.PRO_SINGULAR_GEN)):
+                    foAI.foAIstate.aggression > fo.aggression.cautious and not tech_is_complete(AIDependencies.PRO_SINGULAR_GEN) and
+                    tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN)):
             #sing_tech_list = [ "LRN_GRAVITONICS" , "PRO_SINGULAR_GEN"]  # formerly also "CON_ARCH_PSYCH", "CON_CONC_CAMP",
             sing_gen_tech = fo.getTech(AIDependencies.PRO_SINGULAR_GEN)
             sing_tech_list = [pre_req for pre_req in sing_gen_tech.recursivePrerequisites(empire_id) if not tech_is_complete(pre_req)]

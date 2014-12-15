@@ -268,7 +268,7 @@ def extract_fleet_ids_without_mission_types(fleets_ids):
 
 
 def assess_fleet_role(fleet_id):
-    """Assesses ShipRoles represented in a fleet and returns a corresponding overall fleetRole."""
+    """Assesses ShipRoles represented in a fleet and returns a corresponding overall fleetRole (of type AIFleetMissionType)."""
     universe = fo.getUniverse()
     ship_roles = {}
     fleet = universe.getFleet(fleet_id)

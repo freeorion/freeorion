@@ -2,6 +2,7 @@ from EnumsAI import AIFleetOrderType, TargetType, AIShipRoleType, AIFleetMission
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
+import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map
@@ -206,7 +207,7 @@ class AIFleetOrder(object):
 
             system_id = fleet.systemID
             if system_id == target_id:
-                return True  # already there so no point to worry about threat
+                return True  # TODO: already there, but could consider retreating
 
             fleet_rating = foAI.foAIstate.get_rating(fleet_id).get('overall', 0)
             target_sys_status = foAI.foAIstate.systemStatus.get(target_id, {})
@@ -214,7 +215,7 @@ class AIFleetOrder(object):
             m_threat = target_sys_status.get('monsterThreat', 0)
             p_threat = target_sys_status.get('planetThreat', 0)
             threat = f_threat + m_threat + p_threat
-            safety_factor = 1.1
+            safety_factor = MilitaryAI.get_safety_factor()
             if fleet_rating >= safety_factor * threat:
                 return True
             else:
@@ -226,8 +227,11 @@ class AIFleetOrder(object):
                 # my_other_fleet_rating = sum([foAI.foAIstate.fleetStatus.get(fleet_id, {}).get('rating', 0) for fleet_id in foAI.foAIstate.militaryFleetIDs if ( foAI.foAIstate.fleetStatus.get(fleet_id, {}).get('sysID', -1) == thisSystemID ) ])
                 # myOtherFleetsRatings = [foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', {}) for fid in foAI.foAIstate.systemStatus.get(target_id, {}).get('myfleets', [])]
                 # my_other_fleet_rating = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('rating', 0) for fid in foAI.foAIstate.systemStatus.get( target_id, {}).get('myfleets', []) ])
-                my_other_fleet_rating = foAI.foAIstate.systemStatus.get(target_id, {}).get('myFleetRating', 0)
-                if my_other_fleet_rating > 1.5 * safety_factor * threat or my_other_fleet_rating + fleet_rating > 2.0 * safety_factor * threat:
+                my_other_fleet_rating = foAI.foAIstate.systemStatus.get(target_id, {}).get('myFleetRating', 0)  # TODO: adjust calc for any departing fleets
+                is_military = foAI.foAIstate.get_fleet_role(fleet_id) == AIFleetMissionType.FLEET_MISSION_MILITARY
+                if ((my_other_fleet_rating > 3 * safety_factor * threat) or
+                            (is_military and my_other_fleet_rating + fleet_rating > safety_factor * threat) or
+                            (is_military and my_other_fleet_rating + fleet_rating > 0.8 * safety_factor * threat and fleet_rating > 0.2 * threat)):
                     if verbose:
                         print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at destination" % (fleet_id, fleet_rating, system_id, sys1_name, target_id, targ1_name, threat)
                     return True

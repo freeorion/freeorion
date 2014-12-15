@@ -6,6 +6,7 @@ import AITarget
 import AIFleetOrder
 import ColonisationAI
 import PlanetUtilsAI
+from freeorion_tools import ppstring
 
 
 def get_fleet_orders_from_system_targets(fleet_target, targets):
@@ -20,7 +21,7 @@ def get_fleet_orders_from_system_targets(fleet_target, targets):
         # determine systems required to visit(with possible return to supplied system)
         ensure_return = target.target_id not in secure_targets
         system_targets = can_travel_to_system(fleet_target.target_id, last_system_target, target, ensure_return=ensure_return)
-        #print "making path with %d targets: "%len(system_targets) , PlanetUtilsAI.sys_name_ids( [sysTarg.target_id for sysTarg in system_targets])
+        #print "making path with %d targets: "%len(system_targets) , ppstring(PlanetUtilsAI.sys_name_ids( [sysTarg.target_id for sysTarg in system_targets]))
         if system_targets:
             # for every system required to visit create move order
             for system_targer in system_targets:
@@ -59,8 +60,8 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
     #suppliedStops = [ sid for sid in short_path if sid in fleet_supplyable_system_ids ]
     #unsupplied_stops = [sid for sid in short_path if sid not in suppliedStops ]
     unsupplied_stops = [sys_b for sys_a, sys_b in legs if ((sys_a not in fleet_supplyable_system_ids) and (sys_b not in fleet_supplyable_system_ids))]
-    #print "getting path from %s to %s "%(PlanetUtilsAI.sys_name_ids([ start_sys_id ]), PlanetUtilsAI.sys_name_ids([ target_sys_id ]) ),
-    #print " ::: found initial path %s having suppliedStops %s and unsupplied_stops %s ; tot fuel available is %.1f"%( PlanetUtilsAI.sys_name_ids( short_path[:] ), suppliedStops, unsupplied_stops, fuel)
+    #print "getting path from %s to %s "%(ppstring(PlanetUtilsAI.sys_name_ids([ start_sys_id ])), ppstring(PlanetUtilsAI.sys_name_ids([ target_sys_id ])) ),
+    #print " ::: found initial path %s having suppliedStops %s and unsupplied_stops %s ; tot fuel available is %.1f"%( ppstring(PlanetUtilsAI.sys_name_ids( short_path[:])), suppliedStops, unsupplied_stops, fuel)
     if False:
         if target_sys_id in fleet_supplyable_system_ids:
             print "target has FleetSupply"
@@ -156,7 +157,7 @@ def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
     start_info = PlanetUtilsAI.sys_name_ids([start_id])
     dest_info = PlanetUtilsAI.sys_name_ids([dest_id])
     path_info = [PlanetUtilsAI.sys_name_ids([sys_id]) for sys_id in path_ids]
-    print "Fleet %d requested safe path leg from %s to %s, found path %s" % (fleet_id, start_info, dest_info, path_info)
+    print "Fleet %d requested safe path leg from %s to %s, found path %s" % (fleet_id, ppstring(start_info), ppstring(dest_info), ppstring(path_info))
     return path_ids[0]
 
 
@@ -221,6 +222,6 @@ def get_repair_fleet_order(fleet_target, current_sys_id):
     # find nearest supplied system
     drydock_sys_id = get_nearest_drydock_system_id(current_sys_id)
     drydock_system_target = AITarget.AITarget(TargetType.TARGET_SYSTEM, drydock_sys_id)
-    print "ordering fleet %d to %s for repair" % (fleet_target.target_id, PlanetUtilsAI.sys_name_ids([drydock_sys_id]))
+    print "ordering fleet %d to %s for repair" % (fleet_target.target_id, ppstring(PlanetUtilsAI.sys_name_ids([drydock_sys_id])))
     # create resupply AIFleetOrder
     return AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_REPAIR, fleet_target, drydock_system_target)

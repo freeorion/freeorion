@@ -34,6 +34,12 @@ ORDERS_FOR_MISSION = {
         AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION: AIFleetOrderType.ORDER_COLONISE,
         AIFleetMissionType.FLEET_MISSION_REPAIR: AIFleetOrderType.ORDER_REPAIR}
 
+COMBAT_MISSION_TYPES = (AIFleetMissionType.FLEET_MISSION_MILITARY,
+                       AIFleetMissionType.FLEET_MISSION_ATTACK,
+                       AIFleetMissionType.FLEET_MISSION_DEFEND,
+                       AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
+                       AIFleetMissionType.FLEET_MISSION_SECURE
+                       )
 
 class AIFleetMission(object):
     """
@@ -496,11 +502,7 @@ class AIFleetMission(object):
                         print "Threat remains in target system; NOT releasing any ships."
                     new_military_fleets = []
                     for fleet_id in new_fleets:
-                        if foAI.foAIstate.get_fleet_role(fleet_id) in (AIFleetMissionType.FLEET_MISSION_MILITARY,
-                                                                       AIFleetMissionType.FLEET_MISSION_ATTACK,
-                                                                       AIFleetMissionType.FLEET_MISSION_DEFEND,
-                                                                       AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
-                                                                       AIFleetMissionType.FLEET_MISSION_SECURE):
+                        if foAI.foAIstate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
                             new_military_fleets.append(fleet_id)
                     allocations = []
                     if new_military_fleets:
@@ -579,6 +581,9 @@ class AIFleetMission(object):
 
         universe = fo.getUniverse()
         fleet_id = self.target_id
+        # if combat fleet, use military repair check
+        if foAI.foAIstate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
+            return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], False, True)[0]
         fleet = universe.getFleet(fleet_id)
         ships_cur_health = 0
         ships_max_health = 0
