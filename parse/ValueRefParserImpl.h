@@ -262,27 +262,29 @@ void initialize_numeric_statistic_parser(
 
     statistic
         =    (
-                  (
+                  ((
                         (
                             tok.Count_  [ _b = ValueRef::COUNT ]
                         |   tok.If_     [ _b = ValueRef::IF ]
                         )
                    >   parse::label(Condition_token) >> parse::detail::condition_parser [ _c = _1 ]
-                  )
-              |   (
+                   )
+                  ) [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]
+              |   ((
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
                    >>  parse::label(Property_token)
                    >>       -(container_type() [ push_back(_a, construct<std::string>(_1)) ] >> '.')
                    >>       variable_name [ push_back(_a, construct<std::string>(_1)) ]
                    >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
-                  )
-              |   (
+                   )
+                  ) [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]
+              |   ((
                        parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
                    >>  parse::label(Value_token)     >>   parse::value_ref_parser<T>() [_d = _1 ]
                    >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
+                   ) [ _val = new_<ValueRef::Statistic<T> >(_d, _b, _c) ]
                   )
              )
-             [ _val = new_<ValueRef::Statistic<T> >(_d, _b, _c) ]
         ;
 }
 
