@@ -64,8 +64,7 @@ namespace {
             using phoenix::construct;
 
             building_type_params
-                =    tok.BuildingType_
-                >    parse::label(Name_token)                   > tok.string [ _a = _1 ]
+                =    parse::label(Name_token)                   > tok.string [ _a = _1 ]
                 >    parse::label(Description_token)            > tok.string [ _b = _1 ]
                 >    parse::label(BuildCost_token)              > double_value_ref [ _c = _1 ]
                 >    parse::label(BuildTime_token)              > int_value_ref [ _d = _1 ]
@@ -85,7 +84,7 @@ namespace {
 
             building_type
                 =    tok.BuildingType_
-                >    building_type_params [ _1 = _a ]
+                >    building_type_params [ _a = _1 ]
                 >    parse::detail::tags_parser()(_b)
                 >  -(parse::label(Location_token)           >> parse::detail::condition_parser [ _c = _1 ] )
                 >  -(parse::label(EnqueueLocation_token)    >> parse::detail::condition_parser [ _d = _1 ] )
