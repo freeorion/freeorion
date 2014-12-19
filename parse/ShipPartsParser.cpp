@@ -114,8 +114,9 @@ namespace {
 
             part_type
                 =    part_type_prefix(_a, _b, _c)
-                >    (( parse::label(Capacity_token) >> parse::double_ [ _d = _1 ])
-                      | eps [ _d = 0.0 ]
+                >    (  ( parse::label(Capacity_token)  >> parse::double_ [ _d = _1 ])
+                      | ( parse::label(Damage_token)    >> parse::double_ [ _d = _1 ])
+                      |   eps [ _d = 0.0 ]
                      )
                 >    slots(_f)
                 >    common_params [ _e = _1 ]
