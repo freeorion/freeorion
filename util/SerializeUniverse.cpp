@@ -213,8 +213,6 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_ordered_colonize_planet_id)
         & BOOST_SERIALIZATION_NVP(m_ordered_invade_planet_id)
         & BOOST_SERIALIZATION_NVP(m_ordered_bombard_planet_id)
-        & BOOST_SERIALIZATION_NVP(m_fighters)
-        & BOOST_SERIALIZATION_NVP(m_missiles)
         & BOOST_SERIALIZATION_NVP(m_part_meters)
         & BOOST_SERIALIZATION_NVP(m_species_name)
         & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id);

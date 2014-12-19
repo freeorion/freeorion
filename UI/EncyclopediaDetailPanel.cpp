@@ -370,69 +370,32 @@ namespace {
 }
 
 namespace {
-    struct DescriptionVisitor : public boost::static_visitor<>
-    {
-        DescriptionVisitor(ShipPartClass part_class, std::string& description) :
-            m_class(part_class),
-            m_description(description)
-        {}
-        void operator()(const float& d) const {
-            std::string desc_string;
+    void GetPartDescription(const PartType* part, std::string& description) {
+        if (!part)
+            return;
+        ShipPartClass part_class = part->Class();
+        std::string desc_string;
+        float d = part->Capacity();
 
-            switch(m_class){
-            case PC_FUEL:
-            case PC_TROOPS:
-            case PC_COLONY:
-                desc_string += UserString("PART_DESC_CAPACITY");
-                break;
-            case PC_SHIELD:
-                desc_string = UserString("PART_DESC_SHIELD_STRENGTH");
-                break;
-            case PC_DETECTION:
-                desc_string = UserString("PART_DESC_DETECTION");
-                break;
-            default:
-                desc_string = UserString("PART_DESC_STRENGTH");
-                break;
-            }
-            m_description +=
-                str(FlexibleFormat(desc_string) % d);
+        switch (part_class) {
+        case PC_FUEL:
+        case PC_TROOPS:
+        case PC_COLONY:
+            desc_string += UserString("PART_DESC_CAPACITY");
+            break;
+        case PC_SHIELD:
+            desc_string = UserString("PART_DESC_SHIELD_STRENGTH");
+            break;
+        case PC_DETECTION:
+            desc_string = UserString("PART_DESC_DETECTION");
+            break;
+        default:
+            desc_string = UserString("PART_DESC_STRENGTH");
+            break;
         }
-        void operator()(const DirectFireStats& stats) const {
-            m_description +=
-                str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS"))
-                    % stats.m_damage
-                    % stats.m_ROF
-                    % stats.m_range);
-        }
-        void operator()(const LRStats& stats) const {
-            m_description +=
-                str(FlexibleFormat(UserString("PART_DESC_LR_STATS"))
-                    % stats.m_damage
-                    % stats.m_ROF
-                    % stats.m_range
-                    % stats.m_speed
-                    % stats.m_structure
-                    % stats.m_stealth
-                    % stats.m_capacity);
-        }
-        void operator()(const FighterStats& stats) const {
-            m_description +=
-                str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
-                    % (stats.m_type == BOMBER ? UserString("BOMBER") : UserString("INTERCEPTOR"))
-                    % stats.m_anti_ship_damage
-                    % stats.m_anti_fighter_damage
-                    % stats.m_launch_rate
-                    % stats.m_speed
-                    % stats.m_stealth
-                    % stats.m_structure
-                    % stats.m_detection
-                    % stats.m_capacity);
-        }
-
-        const ShipPartClass m_class;
-        std::string& m_description;
-    };
+        description +=
+            str(FlexibleFormat(desc_string) % d);
+    }
 
     class ColorByOwner: public LinkDecorator {
     public:
@@ -1042,7 +1005,7 @@ namespace {
         specific_type = UserString(boost::lexical_cast<std::string>(part->Class()));
 
         std::string stat_description;
-        boost::apply_visitor(DescriptionVisitor(part->Class(), stat_description), part->Stats());
+        GetPartDescription(part, stat_description);
         detailed_description += UserString(part->Description()) + "\n\n" + stat_description;
 
         std::string slot_types_list;
@@ -1796,19 +1759,19 @@ namespace {
         }
 
         return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-        % design->Description()
-        % hull_link
-        % parts_list
-        % static_cast<int>(design->SRWeapons().size())
-        % static_cast<int>(design->LRWeapons().size())
-        % static_cast<int>(design->FWeapons().size())
-        % static_cast<int>(design->PDWeapons().size())
-        % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
-        % ship->CurrentMeterValue(METER_MAX_SHIELD)
-        % ship->CurrentMeterValue(METER_DETECTION)
-        % ship->CurrentMeterValue(METER_STEALTH)
-        % ship->CurrentMeterValue(METER_BATTLE_SPEED)
-        % ship->CurrentMeterValue(METER_STARLANE_SPEED)
+                    % design->Description()
+                    % hull_link
+                    % parts_list
+                    % static_cast<int>(design->Weapons().size())
+                    % 0
+                    % 0
+                    % 0
+                    % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
+                    % ship->CurrentMeterValue(METER_MAX_SHIELD)
+                    % ship->CurrentMeterValue(METER_DETECTION)
+                    % ship->CurrentMeterValue(METER_STEALTH)
+                    % ship->CurrentMeterValue(METER_BATTLE_SPEED)
+                    % ship->CurrentMeterValue(METER_STARLANE_SPEED)
         % ship->CurrentMeterValue(METER_MAX_FUEL)
         % design->ColonyCapacity()
         % design->TroopCapacity()

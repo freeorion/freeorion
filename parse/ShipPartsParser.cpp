@@ -3,11 +3,13 @@
 
 #include "ConditionParserImpl.h"
 #include "EnumParser.h"
+#include "Double.h"
 #include "Label.h"
 #include "Parse.h"
 #include "ParseImpl.h"
 #include "ShipPartStatsParser.h"
 #include "ValueRefParser.h"
+#include "../universe/ShipDesign.h"
 
 #include "../universe/Condition.h"
 
@@ -112,7 +114,9 @@ namespace {
 
             part_type
                 =    part_type_prefix(_a, _b, _c)
-                >    parse::detail::part_stats_parser() [ _d = _1 ]
+                >    (( parse::label(Capacity_token) >> parse::double_ [ _d = _1 ])
+                      | eps [ _d = 0.0 ]
+                     )
                 >    slots(_f)
                 >    common_params [ _e = _1 ]
                     [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f)) ]
@@ -186,7 +190,7 @@ namespace {
                 std::string,
                 std::string,
                 ShipPartClass,
-                PartTypeStats,
+                double,
                 PartHullCommonParams,
                 std::vector<ShipSlotType>
             >,

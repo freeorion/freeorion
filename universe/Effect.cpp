@@ -186,9 +186,8 @@ namespace {
         case PC_SHORT_RANGE:
         case PC_MISSILES:
         case PC_POINT_DEFENSE:
-            return part.Class() == part_class;
         case PC_FIGHTERS:
-            return boost::get<FighterStats>(part.Stats()).m_type == fighter_type;
+            return part.Class() == part_class;
         default:
             break;
         }
