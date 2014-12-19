@@ -654,7 +654,10 @@ PlayingTurn::PlayingTurn(my_context ctx) :
         post_event(TurnEnded());
 
     } else if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+        // default, if auto turn advance enabled: advance one turn upon start of current turn
+        target_turn = Client().CurrentTurn() + 1;
         if (once) {
+            // special case for auto-advancing first n turns
             once = false;
             target_turn = Client().CurrentTurn() + GetOptionsDB().Get<int>("auto-advance-n-turns");
         }
