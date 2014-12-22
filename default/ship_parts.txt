@@ -709,7 +709,7 @@ Part
     buildtime = 8
     location = And [
         OwnedBy TheEmpire Source.Owner
-        Population low = 3 high = 999
+        Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
     ]
     icon = "icons/ship_parts/colony_pod.png"
 
@@ -717,13 +717,13 @@ Part
     name = "CO_SUSPEND_ANIM_POD"
     description = "CO_SUSPEND_ANIM_POD_DESC"
     class = Colony
-    capacity = 3
+    capacity = [[MIN_RECOLONIZING_SIZE]]
     mountableSlotTypes = Internal
     buildcost = 120 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
-        Population low = 3 high = 999
+        Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
     ]
     icon = "icons/ship_parts/cryonic_colony_pod.png"
 

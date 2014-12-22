@@ -1857,10 +1857,19 @@ Tech
 
         EffectsGroup
             scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet type = GasGiant
+            ]
+            activation = Planet
+            accountinglabel = "GAS_GIANT_LABEL"
+            effects = SetMaxSupply Value - 1
+
+        EffectsGroup
+            scope = And [
                 Planet
                 OwnedBy TheEmpire Source.Owner
-                ValueTest low = 0.1 high = 2.99 testvalue = LocalCandidate.Population
-                ValueTest low = (3.0 - RootCandidate.Population)  testvalue = LocalCandidate.NextTurnPopGrowth
+                ValueTest low = 0.1 high = ([[MIN_RECOLONIZING_SIZE]] - 0.001) testvalue = LocalCandidate.Population
+                ValueTest low = ([[MIN_RECOLONIZING_SIZE]] - RootCandidate.Population)  testvalue = LocalCandidate.NextTurnPopGrowth
             ]
             activation = Source
             effects = [

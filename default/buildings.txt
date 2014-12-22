@@ -1458,7 +1458,7 @@ BuildingType
     location = And [
         Planet
         Not Contains Building "BLD_COLONY_BASE"
-        Population low = 3
+        Population low = [[MIN_RECOLONIZING_SIZE]]
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups = [
