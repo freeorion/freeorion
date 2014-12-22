@@ -206,6 +206,19 @@ namespace {
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
     std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
 
+    std::vector<int>        AttackStatsP(const ShipDesign& ship_design) {
+        const std::vector<std::string>& partslist = ship_design.Parts();
+        std::vector<int> results;
+        for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); part_it++){
+            const PartType* part = GetPartType(*part_it);
+            if (part && part->Class() == PC_SHORT_RANGE) { // TODO: handle other weapon classes when they are implemented
+                results.push_back(part->Capacity());
+            }
+        }
+        return results;
+    }
+    boost::function<std::vector<int> (const ShipDesign&)> AttackStatsFunc =                 &AttackStatsP;
+
     unsigned int            (HullType::*NumSlotsTotal)(void) const =                            &HullType::NumSlots;
     unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;
 
@@ -454,6 +467,12 @@ namespace FreeOrionPython {
             .def("perTurnCost",                 &ShipDesign::PerTurnCost)
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
+            .add_property("attackStats",        make_function(
+                                                    AttackStatsFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<int>, const ShipDesign&>()
+                                                ))
+
             .def("partsInSlotType",             PartsSlotType,                              return_value_policy<return_by_value>())
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
         ;
@@ -467,6 +486,7 @@ namespace FreeOrionPython {
             .def("productionCost",              &PartType::ProductionCost)
             .def("productionTime",              &PartType::ProductionTime)
             .def("canMountInSlotType",          &PartType::CanMountInSlotType)
+            .def("capacity",                    &PartType::Capacity)
         ;
         def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>());
 
