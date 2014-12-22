@@ -4188,6 +4188,11 @@ The mystery of the fearsome threat plaguing the galaxy has been solved, and its 
 SITREP_VICTORY_BIO_LABEL
 Victory Biological
 
+SITREP_POP_THRESHOLD
+The colony on %planet% has reached recolonizing size.
+SITREP_POP_THRESHOLD_LABEL
+Colonizing Threshold
+
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %planet%!
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL

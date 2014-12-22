@@ -1857,12 +1857,21 @@ Tech
 
         EffectsGroup
             scope = And [
+                Planet
                 OwnedBy TheEmpire Source.Owner
-                Planet type = GasGiant
+                ValueTest low = 0.1 high = 2.99 testvalue = LocalCandidate.Population
+                ValueTest low = (3.0 - RootCandidate.Population)  testvalue = LocalCandidate.NextTurnPopGrowth
             ]
-            activation = Planet
-            accountinglabel = "GAS_GIANT_LABEL"
-            effects = SetMaxSupply Value - 1
+            activation = Source
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_POP_THRESHOLD"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+                ]
     ]
     graphic = "icons/tech/galactic_exploration.png"
 
