@@ -294,11 +294,7 @@ namespace {
             dlg.Run();
             if (!dlg.Result().empty()) {
                 boost::filesystem::path save_path =
-#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
                 boost::filesystem::absolute(*dlg.Result().begin());
-#else
-                boost::filesystem::complete(*dlg.Result().begin());
-#endif
                 WriteDesignToFile(design_id, save_path);
             }
         } catch (const std::exception& e) {
