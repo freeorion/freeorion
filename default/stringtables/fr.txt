@@ -1138,6 +1138,9 @@ Active/Désactive l'effet du clic droit sur la carte galactique qui ferme d'abor
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
 Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef conçus par le joueur à la liste des modèles connus de l'Empire du joueur.
 
+OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
+Dans la fenêtre de Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
+
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Fixe la taille du panneau latéral de description de système stellaire.
 
@@ -1223,6 +1226,12 @@ Fixe le niveau d'importance à partir duquel les messages du journal seront affi
 OPTIONS_DB_STRINGTABLE_FILENAME
 L'adresse du fichier contenant la langue choisie pour l'interface utilisateur. Une fois le fichier sélectionné, cliquez sur 'Réinitialiser le fichier langue en mémoire' puis validez.
 
+OPTIONS_DB_AI_FOLDER_PATH
+Définit le chemin du dossier contenant les fichiers de script de l'IA, pour l'exécution en cours uniquement, par rapport au dossier principal; par défaut "AI". A pour but de faciliter le test de l'IA.
+
+OPTIONS_DB_AI_CONFIG
+Est disponible pour l'IA via l'interface freeorion, et utilisé pour l'éxécution en cours uniquement.  Permet de nommer un fichier de configuration optionnel de l'IA à l'intérieur du dossier de scripts de l'IA; par défaut une valeur nulle. A pour but de faciliter le test de l'IA.
+
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
 Si activé, les parties solo bénéficieront d'une sauvegarde automatique régulière.
 
@@ -1288,6 +1297,9 @@ Spécifie le nombre de threads simultanés pour le rendu des effets. Plus d'un t
 
 OPTIONS_DB_AUTO_QUIT
 Quitter automatiquement une fois au tour spécifié par --auto-advance-n-turns (valeur défaut à zéro), utile pour le débogage notamment avec --quickstart ou --load.
+
+OPTIONS_DB_BINARY_SERIALIZATION
+Utilise la sérialisation binaire pour les fichiers de sauvegarde et les communications serveur-client (plus compact et rapide mais peut causer des problèmes de compatibilité cross-platform); si désactivé, la sérialisation texte XML est utilisée. Il est conseillé de redémarrer après modification de ce réglage.
 
 #################
 # File Dialog   #
@@ -2178,6 +2190,9 @@ Threads de rendu d'effets
 OPTIONS_ADD_SAVED_DESIGNS
 Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
+OPTIONS_USE_BINARY_SERIALIZATION
+Sérialisation binaire
+
 ##################
 # CombatSetupWnd #
 ##################
@@ -2993,7 +3008,7 @@ DESIGN_INV_NO_HULL
 Démarrer la conception d'un astronef par le choix de la coque.
 
 DESIGN_INV_NO_NAME
-Chaque modèle d'astronef doit avoir un nom unique.
+La dénomination du modèle d'astronef ne peut pas être vide.
 
 DESIGN_KNOWN
 Modèle déjà existant
@@ -4825,7 +4840,7 @@ SP_SSLITH_DESC
 Totalement étendu, un Sslith ressemble à un fin rectangle d'une épaisseur de 2.15cm, d'une longueur de 132cm, et d'une largeur comprise en 31 et 53cm. Son seul appendice est une unique tentacule servant à capter les ondes sonores et la lumière infrarouge, ainsi qu'à communiquer par ultrasons. Les Sslith ont la capacité de modifier la forme de leur corps, une aptitude évolutive héritée de la Coquille de Vreen (une créature se réfugiant dans sa coquille lorsqu'elle détecte un danger). Cette flexibilité permet aux Sslith de se déplacer à une vitesse prodigieuse dans les océans, par un effet d'onde donnant l'impression qu'ils font partie intégrante du milieu aqueux. Les Sslith n'ayant pas de cerveau central, leur capacité mentale s'apparente plutôt à un ensemble de ramifications nodales, créant une conscience unifiée, permettant ainsi aux Sslith d'accomplir plusieurs tâches simultanément.
 
 Structure sociale:
-Les Sslith sont organisés en groupe appelés Pnacra, servant la communauté en tant qu'unités gouvernementales indépendantes. Bien qu'il y ait quelques lois observées par tous les Sslith de tous les Pnacra, chaque Pnacra édicte ses propres lois et règles de conduite. Les Pnacra se déplacent indépendamment, et n'ont pas d'habitat fixe. Lorsque deux Pnacra ou plus se rencontrent, les membres insatisfaits de leur Pnacra actuel, peuvent migrer vers un autre Pnacra afin d'y tester son organisation et ses coutumes.
+Les Sslith sont organisés en groupes appelés Pnacra, servant la communauté en tant qu'unités gouvernementales indépendantes. Bien qu'il y ait quelques lois observées par tous les Sslith de tous les Pnacra, chaque Pnacra édicte ses propres lois et règles de conduite. Les Pnacra se déplacent indépendamment, et n'ont pas d'habitat fixe. Lorsque deux Pnacra ou plus se rencontrent, les membres insatisfaits de leur Pnacra actuel, peuvent migrer vers un autre Pnacra afin d'y tester son organisation et ses coutumes.
 '''
 
 SP_FIFTYSEVEN
@@ -8690,7 +8705,7 @@ Transformeur
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
-This building can be given the effects of a [[building BLD_PLANET_CLOAK]], a [[building BLD_BIOTERROR_PROJECTOR]], a [[building BLD_STARGATE]], a [[building BLD_PLANET_DRIVE]], or a [[building BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
+This building can be given the effects of a [[buildingtype BLD_PLANET_CLOAK]], a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
 
 BLD_PLANET_CLOAK
 Dispositif de Camouflage Planétaire
