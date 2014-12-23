@@ -57,7 +57,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const double    OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
     const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;         // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
 
     template <class Key, class Value> struct constant_property

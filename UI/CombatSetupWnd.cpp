@@ -44,7 +44,6 @@ namespace {
     { return GG::Y(std::max(ICON_SIZE, Value(LabelHeight() + StatIconSize().y) + PAD)); }
 
     // HACK! This must be kept in synch with CombatWnd.cpp.
-    const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
     const std::string UNPLACEABLE_MATERIAL_PREFIX = "unplaceable ";
 
     class ShipRow : public GG::ListBox::Row {

@@ -61,8 +61,6 @@
 using namespace GG;
 
 namespace {
-    const bool VERBOSE_DEVIL_ERROR_REPORTING = true;
-
     template <class T>
     T PowerOfTwo(T input)
     {
@@ -73,6 +71,8 @@ namespace {
     }
 
 #if GG_USE_DEVIL_IMAGE_LOAD_LIBRARY
+    const bool VERBOSE_DEVIL_ERROR_REPORTING = true;
+
     void CheckILErrors(const std::string& function_call)
     {
         ILuint error;

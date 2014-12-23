@@ -7,7 +7,6 @@
 namespace  {
     const int NODE_CELL_HEIGHT = 2;
     const int LINE_CELL_HEIGHT = 1;
-    const int CATEGORY_SEPARATOR_HEIGHT = 12;
 
 ///////////////////////////
 // struct NodePointerCmp //
