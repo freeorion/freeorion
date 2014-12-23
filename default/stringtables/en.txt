@@ -3094,10 +3094,10 @@ ENC_TEST
 Test
 
 ENC_GRAPH
-Graph
+[Game - Graphs]
 
 ENC_GALAXY_SETUP
-Galaxy Generation Settings
+[Game - Galaxy]
 
 ENC_GALAXY_SETUP_SETTINGS
 '''Seed: %1%
@@ -3149,7 +3149,7 @@ ENC_INCOMPETE_SHIP_DESIGN
 Incomplete Ship Design
 
 ENC_EMPIRE
-Empire
+[Game - Empires]
 
 EMPIRE_CAPITAL
 Capital: 
@@ -3218,7 +3218,7 @@ BUILDING_TYPES_SCRAPPED
 Building Types Scrapped
 
 ENC_SHIP
-Ship
+[Game - Ships]
 
 ENC_MONSTER
 Monster
@@ -3236,19 +3236,19 @@ NO_MONSTER_OBJECTS
 No Known Monsters
 
 ENC_FLEET
-Fleet
+[Game - Fleets]
 
 ENC_PLANET
-Planet
+[Game - Planets]
 
 ENC_BUILDING
-Building
+[Game - Buildings]
 
 ENC_SYSTEM
-System
+[Game - Systems]
 
 ENC_FIELD
-Field
+[Game - Fields]
 
 ENC_INDEX
 Encyclopedia Index
@@ -3377,7 +3377,7 @@ Lost:
 ###########################################
 
 CATEGORY_GAME_CONCEPTS
-Game Concepts
+*Game Concepts*
 
 GROWTH_ARTICLE_SHORT_DESC
 Growth
