@@ -11,6 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 829C763B1689EFF3005881B4 /* Build configuration list for PBXAggregateTarget "Configure" */;
 			buildPhases = (
+				82728DEB1A49A58D0034F4FE /* Delete existing app bundle */,
 				829C76341689EFD4005881B4 /* Version.cpp */,
 				3A01FCCC174A20DD00EC9110 /* ogre_plugins.cfg */,
 			);
@@ -490,6 +491,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 82271BF715F8AB900063179C;
 			remoteInfo = OIS;
+		};
+		82728DE71A49A0360034F4FE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 829C76351689EFD4005881B4;
+			remoteInfo = Configure;
 		};
 		829C763E1689F0EA005881B4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2965,6 +2973,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				82728DE81A49A0360034F4FE /* PBXTargetDependency */,
 			);
 			name = ClientCommon;
 			productName = Common;
@@ -3110,6 +3119,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_ogre_plugins.py\" \"${SRCROOT}/..\"\nfi";
+		};
+		82728DEB1A49A58D0034F4FE /* Delete existing app bundle */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Delete existing app bundle";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"Deleting ${BUILT_PRODUCTS_DIR}/FreeOrion.app\"\nrm -rf ${BUILT_PRODUCTS_DIR}/FreeOrion.app";
 		};
 		829C76341689EFD4005881B4 /* Version.cpp */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3569,6 +3592,11 @@
 			isa = PBXTargetDependency;
 			target = 82271BF715F8AB900063179C /* OIS */;
 			targetProxy = 82271C9815F8AD150063179C /* PBXContainerItemProxy */;
+		};
+		82728DE81A49A0360034F4FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 829C76351689EFD4005881B4 /* Configure */;
+			targetProxy = 82728DE71A49A0360034F4FE /* PBXContainerItemProxy */;
 		};
 		829C763F1689F0EA005881B4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
