@@ -96,6 +96,7 @@ set(freeorion_HEADER
     ../../UI/SitRepPanel.h
     ../../UI/Sound.h
     ../../UI/SystemIcon.h
+    ../../UI/TechTreeArcs.h
     ../../UI/TechTreeLayout.h
     ../../UI/TechTreeWnd.h
 )
@@ -150,6 +151,7 @@ set(freeorion_SOURCES
     ../../UI/SitRepPanel.cpp
     ../../UI/Sound.cpp
     ../../UI/SystemIcon.cpp
+    ../../UI/TechTreeArcs.cpp
     ../../UI/TechTreeLayout.cpp
     ../../UI/TechTreeWnd.cpp
 )

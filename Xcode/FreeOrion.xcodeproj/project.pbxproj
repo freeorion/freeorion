@@ -361,6 +361,7 @@
 		82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */; };
 		828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 828AB7D315F7BCDD0075BE24 /* libpng.a */; };
 		828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828C793D160778AA0075F220 /* FieldIcon.cpp */; };
+		82970BEF1A0CF53A008B37EF /* TechTreeArcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */; };
 		8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */; };
 		829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */; };
 		829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */; };
@@ -1376,6 +1377,8 @@
 		828AB7D315F7BCDD0075BE24 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		828C793D160778AA0075F220 /* FieldIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldIcon.cpp; sourceTree = "<group>"; };
 		828C793E160778AA0075F220 /* FieldIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldIcon.h; sourceTree = "<group>"; };
+		82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TechTreeArcs.cpp; sourceTree = "<group>"; };
+		82970BEE1A0CF53A008B37EF /* TechTreeArcs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TechTreeArcs.h; sourceTree = "<group>"; };
 		8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveFileDialog.cpp; sourceTree = "<group>"; };
 		8298A1AD18F9BB980001D3DA /* SaveFileDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveFileDialog.h; sourceTree = "<group>"; };
 		829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueRefParserImpl.cpp; sourceTree = "<group>"; };
@@ -2247,6 +2250,8 @@
 				34972BED0F49CBF90015C864 /* Sound.h */,
 				471D5CDE0A98A3F900DA9C21 /* SystemIcon.cpp */,
 				471D5CDF0A98A3F900DA9C21 /* SystemIcon.h */,
+				82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */,
+				82970BEE1A0CF53A008B37EF /* TechTreeArcs.h */,
 				2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */,
 				2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */,
 				471D5CE00A98A3F900DA9C21 /* TechTreeWnd.cpp */,
@@ -3508,6 +3513,7 @@
 				471D5E260A98A9CD00DA9C21 /* ProductionWnd.cpp in Sources */,
 				3402E2520F5A30D600DF6FE7 /* PropertyMaps.cpp in Sources */,
 				343EC6650F3F5C7C00782AD3 /* QueueListBox.cpp in Sources */,
+				82970BEF1A0CF53A008B37EF /* TechTreeArcs.cpp in Sources */,
 				471D5E270A98A9CF00DA9C21 /* ResearchWnd.cpp in Sources */,
 				8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */,
 				471D5E280A98A9D100DA9C21 /* ServerConnectWnd.cpp in Sources */,
