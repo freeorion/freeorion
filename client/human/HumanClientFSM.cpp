@@ -654,28 +654,31 @@ PlayingTurn::PlayingTurn(my_context ctx) :
         post_event(TurnEnded());
 
     } else if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-        // default, if auto turn advance enabled: advance one turn upon start of current turn
-        target_turn = Client().CurrentTurn() + 1;
-        if (once) {
-            // special case for auto-advancing first n turns
+        if (Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled()) {
+            // if in-game-GUI auto turn advance enabled, set target turn to the next turn
+            target_turn = Client().CurrentTurn() + 1;
+        } else if (once && GetOptionsDB().Get<int>("auto-advance-n-turns") > 0) {
+            // if command-line auto-turn advance is set, set the target turn that many turns ahead
             once = false;
             target_turn = Client().CurrentTurn() + GetOptionsDB().Get<int>("auto-advance-n-turns");
+        } else if (target_turn < Client().CurrentTurn()) {
+            // do not auto-advance turn
+            target_turn = Client().CurrentTurn();
         }
-        bool need_more_turns = false;
-        if ((GetOptionsDB().Get<int>("auto-advance-n-turns")) ||
-            Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled())
+
+        if (target_turn <= Client().CurrentTurn() &&
+            GetOptionsDB().Get<bool>("auto-quit"))
         {
-            if (Client().CurrentTurn() < target_turn) {
-                need_more_turns = true;
-                post_event(AdvanceTurn());
-            }
-        }
-        if (!need_more_turns && GetOptionsDB().Get<bool>("auto-quit")) {
+            // if target turn reached, and supposed to quit after reaching it, quit
             Logger().debugStream() << "auto-quit ending game.";
             std::cout << "auto-quit ending game." << std::endl;
             Client().EndGame(true);
             throw HumanClientApp::CleanQuit();
         }
+
+        // if target turn not yet reached, advance the turn automatically
+        if (Client().CurrentTurn() < target_turn)
+        { post_event(AdvanceTurn()); }
     }
 }
 
