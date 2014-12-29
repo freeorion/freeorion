@@ -7006,7 +7006,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the max population of Good, Adequate, & Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
+'''Increases the max population of Good, Adequate and Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -8532,7 +8532,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Increases max Population according to planet size-- Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Increases max Population according to planet size; Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -9209,9 +9209,9 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in hull types that have Robotic Hulls as a prerequisite.
+'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in one of [[shiphull SH_ROBOTIC]], [[shiphull SH_SELF_GRAVITATING]], [[shiphull SH_NANOROBOTIC]], [[shiphull SH_LOGISTICS_FACILITATOR]], [[shiphull SH_TITANIC]].
 
-Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact. 
+Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact.
 '''
 
 CO_COLONY_POD
@@ -13635,4 +13635,3 @@ MONSTER_NAMES
 [[SHIP_NAME_BASQUE_MYTHOLOGY]]
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 [[SHIP_NAME_DEVS]]'''
-
