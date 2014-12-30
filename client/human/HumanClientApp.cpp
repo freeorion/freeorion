@@ -177,6 +177,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     m_single_player_game(true),
     m_game_started(false),
     m_connected(false),
+    m_auto_turns(0),
     m_root(root),
     m_scene_manager(scene_manager),
     m_camera(camera),
@@ -268,6 +269,8 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
         { key_map[GG::Key(key_int_it->first)] = GG::Key(key_int_it->second); }
         this->SetKeyMap(key_map);
     }
+
+    InitAutoTurns(GetOptionsDB().Get<int>("auto-advance-n-turns"));
 
     m_fsm->initiate();
 }
@@ -1184,6 +1187,22 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     if (!suppress_FSM_reset)
         m_fsm->process_event(ResetToIntroMenu());
 }
+
+void HumanClientApp::InitAutoTurns(int auto_turns) {
+    if (auto_turns > 0)
+        m_auto_turns = auto_turns;
+    else
+        m_auto_turns = 0;
+}
+
+void HumanClientApp::DecAutoTurns(int n) {
+    m_auto_turns -= n;
+    if (m_auto_turns < 0)
+        m_auto_turns = 0;
+}
+
+int HumanClientApp::AutoTurnsLeft()
+{ return m_auto_turns; }
 
 void HumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("limit-fps")) {

@@ -625,11 +625,6 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
 ////////////////////////////////////////////////////////////
 // PlayingTurn
 ////////////////////////////////////////////////////////////
-namespace {
-    static bool once = true;
-    static int target_turn = -1;
-}
-
 PlayingTurn::PlayingTurn(my_context ctx) :
     Base(ctx)
 {
@@ -655,30 +650,26 @@ PlayingTurn::PlayingTurn(my_context ctx) :
 
     } else if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         if (Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled()) {
-            // if in-game-GUI auto turn advance enabled, set target turn to the next turn
-            target_turn = Client().CurrentTurn() + 1;
-        } else if (once && GetOptionsDB().Get<int>("auto-advance-n-turns") > 0) {
-            // if command-line auto-turn advance is set, set the target turn that many turns ahead
-            once = false;
-            target_turn = Client().CurrentTurn() + GetOptionsDB().Get<int>("auto-advance-n-turns");
-        } else if (target_turn < Client().CurrentTurn()) {
-            // do not auto-advance turn
-            target_turn = Client().CurrentTurn();
+            // if in-game-GUI auto turn advance enabled, set auto turn counter to 1
+            Client().InitAutoTurns(1);
         }
 
-        if (target_turn <= Client().CurrentTurn() &&
+        if (Client().AutoTurnsLeft() <= 0 &&
             GetOptionsDB().Get<bool>("auto-quit"))
         {
-            // if target turn reached, and supposed to quit after reaching it, quit
+            // if no auto turns left, and supposed to quit after that, quit
             Logger().debugStream() << "auto-quit ending game.";
             std::cout << "auto-quit ending game." << std::endl;
             Client().EndGame(true);
             throw HumanClientApp::CleanQuit();
         }
 
-        // if target turn not yet reached, advance the turn automatically
-        if (Client().CurrentTurn() < target_turn)
-        { post_event(AdvanceTurn()); }
+        // if there are still auto turns left, advance the turn automatically,
+        // and decrease the auto turn counter
+        if (Client().AutoTurnsLeft() > 0) {
+            post_event(AdvanceTurn());
+            Client().DecAutoTurns();
+        }
     }
 }
 

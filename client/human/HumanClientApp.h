@@ -38,6 +38,7 @@ public:
     /** \name Accessors */ //@{
     bool                SinglePlayerGame() const;   ///< returns true iff this game is a single-player game
     bool                CanSaveNow() const;         ///< returns true / false to indicate whether this client can currently safely initiate a game save
+    int                 AutoTurnsLeft();            ///< returns number of turns left to execute automatically
     //@}
 
     /** \name Mutators */ //@{
@@ -58,6 +59,8 @@ public:
     void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met
     std::string         SelectLoadFile();                               //< Lets the user select a multiplayer save to load.
     std::string         SelectSaveFile();                               //< Lets the user select a multiplayer save to save to.
+    void                InitAutoTurns(int auto_turns);                  ///< Initialize auto turn counter
+    void                DecAutoTurns(int n = 1);                        ///< Decrease auto turn counter
 
     Ogre::SceneManager* SceneManager();
     Ogre::Camera*       Camera();
@@ -107,6 +110,7 @@ private:
     bool                        m_single_player_game;   ///< true when this game is a single-player game
     bool                        m_game_started;         ///< true when a game is currently in progress
     bool                        m_connected;            ///< true if we are in a state in which we are supposed to be connected to the server
+    int                         m_auto_turns;           ///< auto turn counter
     Ogre::Root*                 m_root;
     Ogre::SceneManager*         m_scene_manager;
     Ogre::Camera*               m_camera;
