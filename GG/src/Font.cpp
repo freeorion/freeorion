@@ -1511,22 +1511,22 @@ void Font::Init(FT_Face& face)
                     ThrowBadGlyph("GG::Font::Init : Glyph too large for buffer'%1%'", c); // catch broken fonts
                 }
 
-                if (Value(x + glyph_bitmap.width) >= TEX_MAX_SIZE) { // start a new row of glyph images
+                if (Value(x) + glyph_bitmap.width >= TEX_MAX_SIZE) { // start a new row of glyph images
                     if (x > max_x) max_x = x;
                     x = X0;
                     y = max_y;
                 }
-                if (Value(y + glyph_bitmap.rows) >= TEX_MAX_SIZE) {
+                if (Value(y) + glyph_bitmap.rows >= TEX_MAX_SIZE) {
                     // We cannot make the texture any larger. The font does not fit.
                     ThrowBadGlyph("GG::Font::Init : Face too large for buffer. First glyph to no longer fit: '%1%'", c);
                 }
-                if (y + glyph_bitmap.rows > max_y) {
-                    max_y = y + glyph_bitmap.rows +1; //Leave a one pixel gap between glyphs
+                if (Value(y) + glyph_bitmap.rows > Value(max_y)) {
+                    max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
                 }
 
                 boost::uint8_t*  src_start = glyph_bitmap.buffer;
                 // Resize buffer to fit new data
-                buffer.at(x + glyph_bitmap.width, y + glyph_bitmap.rows) = 0;
+                buffer.at(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)) = 0;
 
                 for (int row = 0; row < glyph_bitmap.rows; ++row) {
                     boost::uint8_t*  src = src_start + row * glyph_bitmap.pitch;
@@ -1543,13 +1543,13 @@ void Font::Init(FT_Face& face)
 
                 // record info on how to find and use this glyph later
                 temp_glyph_data[c] =
-                    TempGlyphData(Pt(x, y), Pt(x + glyph_bitmap.width, y + glyph_bitmap.rows),
+                    TempGlyphData(Pt(x, y), Pt(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)),
                                   Y(m_height - 1 + m_descent - face->glyph->bitmap_top),
                                   X(static_cast<int>((std::ceil(face->glyph->metrics.horiBearingX / 64.0)))),
                                   X(static_cast<int>((std::ceil(face->glyph->metrics.horiAdvance / 64.0)))));
 
                 // advance buffer write-position
-                x += glyph_bitmap.width + 1; //Leave a one pixel gap between glyphs
+                x += X(glyph_bitmap.width + 1); //Leave a one pixel gap between glyphs
             }
         }
     }
