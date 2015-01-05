@@ -954,15 +954,15 @@ Tech
     graphic = "icons/tech/genetic_engineering.png"
 
 Tech
-    name = "CON_ENV_ENCAPSUL"
-    description = "CON_ENV_ENCAPSUL_DESC"
-    short_description = "SUPPLY_SHORT_DESC"
+    name = "CON_REMOTE_COL"
+    description = "CON_REMOTE_COL_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 3 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    unlock = Item type = ShipPart name = "CO_OUTPOST_POD"
-    graphic = "icons/tech/habitation_domes.png"
+    unlock = Item type = ShipPart name = "CO_COLONY_POD"
+    graphic = "icons/tech/environmental_encapsulation.png"
 
 Tech
     name = "GRO_SYMBIOTIC_BIO"
@@ -1281,7 +1281,7 @@ Tech
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "PRO_SENTIENT_AUTOMATION"
-    unlock = Item type = Building name = "BLD_EXOBOT_SHIP"
+    unlock = Item type = Building name = "BLD_COL_EXOBOT"
     
     graphic = "icons/species/robotic-01.png"
 
@@ -1724,7 +1724,6 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 40 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
-    prerequisites = "CON_ENV_ENCAPSUL"
     effectsgroups =
         EffectsGroup
             scope = And [

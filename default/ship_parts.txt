@@ -733,7 +733,7 @@ Part
     class = Colony
     capacity = 0
     mountableSlotTypes = Internal
-    buildcost = 80 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy TheEmpire Source.Owner
     icon = "icons/tech/habitation_domes.png"

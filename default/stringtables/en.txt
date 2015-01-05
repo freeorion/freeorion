@@ -4325,9 +4325,13 @@ System Mines Destroyed Ship
 
 HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
-
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
+
+NEW_COLONY_MESSAGE
+A new %species% colony has been established on %planet%.
+NEW_COLONY_MESSAGE_LABEL
+New Colony Established
 
 
 
@@ -6996,11 +7000,11 @@ Genetic Engineering
 GRO_GENETIC_ENG_DESC
 '''The palette of genetics is as varied as the forms of life from which it borrows. Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature. As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created. Techniques are limited, however, to small modifications of existing genes that are available for study.'''
 
-CON_ENV_ENCAPSUL
-Environmental Encapsulation
+CON_REMOTE_COL
+Remote Colonization
 
-CON_ENV_ENCAPSUL_DESC
-'''Allows unmanned stations on uninhabitable planet types, including Asteroids and Gas Giants. Many building types cannot be constructed on these outposts. Outposts are cheaper, and while they don't provide production, might be chosen as a faster way to claim territory.'''
+CON_REMOTE_COL_DESC
+'''Founding new colonies beyond the supply range of already established worlds is a complex endeavour. It requires colony ships which can carry all the equipment required to build up a self-sustaining colony as well as an initial contingent of colonists.'''
 
 GRO_SYMBIOTIC_BIO
 Symbiotic Biology
@@ -7117,7 +7121,7 @@ Although high level initial design and initial facility setup still require acti
 PRO_EXOBOTS
 Exobots
 PRO_EXOBOTS_DESC
-Allows the construction of Exobots optimized for industry on hostile planets.
+Allows the construction of Exobot colonies optimized for industry on hostile planets.
 
 PRO_RAPID_EXO_PROD
 Rapid Exobot Production
@@ -8758,6 +8762,132 @@ Nova Bomb Activator
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all Nova Bombs within one starlane jump.
 
+BLD_COL_ABADDONI
+Abaddoni Colony
+
+BLD_COL_ABADDONI_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Abaddoni colony
+
+BLD_COL_CHATO
+Chato Colony
+
+BLD_COL_CHATO_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Chato colony
+
+BLD_COL_CRAY
+Cray Colony
+
+BLD_COL_CRAY_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Cray colony
+
+BLD_COL_DERTHREAN
+Derthrean Colony
+
+BLD_COL_DERTHREAN_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Derthrean colony
+
+BLD_COL_EAXAW
+Eaxaw Colony
+
+BLD_COL_EAXAW_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Eaxaw colony
+
+BLD_COL_EGASSEM
+Egassem Colony
+
+BLD_COL_EGASSEM_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Egassem colony
+
+BLD_COL_ETTY
+Etty Colony
+
+BLD_COL_ETTY_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Etty colony
+
+BLD_COL_GEORGE
+George Colony
+
+BLD_COL_GEORGE_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new George colony
+
+BLD_COL_GYSACHE
+Gysache Colony
+
+BLD_COL_GYSACHE_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Gysache colony
+
+BLD_COL_HHHOH
+Hhhoh Colony
+
+BLD_COL_HHHOH_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Hhhoh colony
+
+BLD_COL_HUMAN
+Human Colony
+
+BLD_COL_HUMAN_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Human colony
+
+BLD_COL_KOBUNTURA
+Kobuntura Colony
+
+BLD_COL_KOBUNTURA_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Kobuntura colony
+
+BLD_COL_LAENFA
+Laenfa Colony
+
+BLD_COL_LAENFA_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Laenfa colony
+
+BLD_COL_MUURSH
+Mu Ursh Colony
+
+BLD_COL_MUURSH_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Mu Ursh colony
+
+BLD_COL_SCYLIOR
+Scylior Colony
+
+BLD_COL_SCYLIOR_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Scylior colony
+
+BLD_COL_SETINON
+Setinon Colony
+
+BLD_COL_SETINON_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Setinon colony
+
+BLD_COL_SSLITH
+Sslith Colony
+
+BLD_COL_SSLITH_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Sslith colony
+
+BLD_COL_TAEGHIRUS
+Tae Ghirus Colony
+
+BLD_COL_TAEGHIRUS_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Tae Ghirus colony
+
+BLD_COL_TRITH
+Trith Colony
+
+BLD_COL_TRITH_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Trith colony
+
+BLD_COL_UGMORS
+Ugmors Colony
+
+BLD_COL_UGMORS_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Ugmors colony
+
+BLD_COL_EXOBOT
+Exobot Colony
+
+BLD_COL_EXOBOT_DESC
+This building will construct an Exobot colony at an outpost. Contrary to the colony buildings of other species, an Exobot colony does not need an already existing Exobot colony within supply range, as the Exobots are constructed as part of the colony directly planetside. However, because of that they are more expensive to build, and they still need an empire owned planet within supply range.
+
 
 #############################################################
 ####           Hull/Part Description Templates           ####
@@ -9234,7 +9364,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Colonies can be founded on planets that already have an Outpost. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
+'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Outposts can be upgraded to colonies. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
 
 GT_TROOP_POD
 Ground Troop Pod

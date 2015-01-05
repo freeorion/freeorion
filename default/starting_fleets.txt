@@ -19,6 +19,6 @@ Fleet
 Fleet
     name = "FN_COLONY_FLEET"
     ships = [
-        "SD_COLONY_SHIP"
+        "SD_OUTPOST_SHIP"
     ]
 
