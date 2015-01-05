@@ -175,6 +175,15 @@ namespace {
         species->RemoveHomeworld(homeworld_id);
     }
 
+    bool SpeciesCanColonize(const std::string& species_name) {
+        Species* species = SpeciesManager::GetSpeciesManager().GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpeciesCanColonize: couldn't get species " << species_name;
+            return false;
+        }
+        return species->CanColonize();
+    }
+
     list GetAllSpecies() {
         list            species_list;
         SpeciesManager& species_manager = GetSpeciesManager();
@@ -1155,6 +1164,7 @@ BOOST_PYTHON_MODULE(fo_universe_generator) {
     def("species_get_planet_environment",       SpeciesGetPlanetEnvironment);
     def("species_add_homeworld",                SpeciesAddHomeworld);
     def("species_remove_homeworld",             SpeciesRemoveHomeworld);
+    def("species_can_colonize",                 SpeciesCanColonize);
     def("get_all_species",                      GetAllSpecies);
     def("get_playable_species",                 GetPlayableSpecies);
     def("get_native_species",                   GetNativeSpecies);
