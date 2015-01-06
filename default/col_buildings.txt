@@ -59,7 +59,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_CHATO"
 description = "BLD_COL_CHATO_DESC"
@@ -120,7 +119,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_CRAY"
@@ -183,7 +181,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_DERTHREAN"
 description = "BLD_COL_DERTHREAN_DESC"
@@ -244,7 +241,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_EAXAW"
@@ -307,7 +303,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_EGASSEM"
 description = "BLD_COL_EGASSEM_DESC"
@@ -368,7 +363,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_ETTY"
@@ -431,7 +425,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_GEORGE"
 description = "BLD_COL_GEORGE_DESC"
@@ -492,7 +485,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_GYSACHE"
@@ -555,7 +547,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_HHHOH"
 description = "BLD_COL_HHHOH_DESC"
@@ -616,7 +607,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_HUMAN"
@@ -679,7 +669,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_KOBUNTURA"
 description = "BLD_COL_KOBUNTURA_DESC"
@@ -740,7 +729,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_LAENFA"
@@ -803,7 +791,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_MUURSH"
 description = "BLD_COL_MUURSH_DESC"
@@ -864,7 +851,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_SCYLIOR"
@@ -927,7 +913,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_SETINON"
 description = "BLD_COL_SETINON_DESC"
@@ -988,7 +973,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_SSLITH"
@@ -1051,7 +1035,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_TAEGHIRUS"
 description = "BLD_COL_TAEGHIRUS_DESC"
@@ -1112,7 +1095,6 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
-
 
 BuildingType
 name = "BLD_COL_TRITH"
@@ -1175,7 +1157,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_UGMORS"
 description = "BLD_COL_UGMORS_DESC"
@@ -1237,7 +1218,6 @@ effectsgroups = [
 ]
 icon = "icons/building/generic_building.png"
 
-
 BuildingType
 name = "BLD_COL_EXOBOT"
 description = "BLD_COL_EXOBOT_DESC"
@@ -1251,6 +1231,7 @@ location = And [
     ResourceSupplyConnected Source.Owner And [
         Planet
         OwnedBy TheEmpire Source.Owner
+        // no existing Exobot colony required!
     ]
 ]
 EnqueueLocation = And [
@@ -1262,6 +1243,7 @@ EnqueueLocation = And [
     ResourceSupplyConnected Source.Owner And [
         Planet
         OwnedBy TheEmpire Source.Owner
+        // no existing Exobot colony required!
     ]
 ]
 effectsgroups = [
@@ -1294,3 +1276,4 @@ effectsgroups = [
         effects = Destroy
 ]
 icon = "icons/building/generic_building.png"
+
