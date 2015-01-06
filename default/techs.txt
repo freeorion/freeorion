@@ -952,7 +952,7 @@ Tech
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     graphic = "icons/tech/genetic_engineering.png"
-
+/*
 Tech
     name = "CON_REMOTE_COL"
     description = "CON_REMOTE_COL_DESC"
@@ -963,7 +963,7 @@ Tech
     researchturns = 2
     unlock = Item type = ShipPart name = "CO_COLONY_POD"
     graphic = "icons/tech/environmental_encapsulation.png"
-
+*/
 Tech
     name = "GRO_SYMBIOTIC_BIO"
     description = "GRO_SYMBIOTIC_BIO_DESC"

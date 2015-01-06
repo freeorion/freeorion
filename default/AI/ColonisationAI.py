@@ -47,6 +47,7 @@ pop_map = {}
 empire_status = {'industrialists': 0, 'researchers': 0}
 unowned_empty_planet_ids = set()
 empire_outpost_ids = set()
+empire_ast_outpost_ids = set()
 claimed_stars = {}
 
 ENVIRONS = {str(fo.planetEnvironment.uninhabitable): 0, str(fo.planetEnvironment.hostile): 1, str(fo.planetEnvironment.poor): 2, str(fo.planetEnvironment.adequate): 3, str(fo.planetEnvironment.good): 4}
@@ -238,6 +239,7 @@ def survey_universe():
         empire_owned_planet_ids = []
         empire_pop_ctrs = set()
         empire_outpost_ids.clear()
+        empire_ast_outpost_ids.clear()
 
         old_pop_ctrs = []
         for specn in empire_species:
@@ -290,6 +292,8 @@ def survey_universe():
                 if planet_population <= 0.0:
                     empire_outpost_ids.add(pid)
                     AIstate.outpostIDs.append(pid)
+                    if planet.type == fo.planetType.asteroids:
+                        empire_ast_outpost_ids.add(pid)
                 else:
                     empire_pop_ctrs.add(pid)
                     AIstate.popCtrIDs.append(pid)

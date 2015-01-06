@@ -42,7 +42,6 @@ def defense_techs_2():
 
 def tech_group_1a(): # early org_hull
     result = [
-            "CON_REMOTE_COL",
             "LRN_ALGO_ELEGANCE",
             "GRO_PLANET_ECOL",
             "GRO_SUBTER_HAB",
@@ -57,7 +56,6 @@ def tech_group_1a(): # early org_hull
 
 def tech_group_1b():  # early _lrn_artif_minds
     result = [
-            "CON_REMOTE_COL",
             "LRN_ALGO_ELEGANCE",
             "LRN_ARTIF_MINDS",
             "SHP_WEAPON_1_2",
@@ -74,7 +72,6 @@ def tech_group_1b():  # early _lrn_artif_minds
 
 def tech_group_1_sparse(): # 
     result = [
-            "CON_REMOTE_COL",
             "LRN_ALGO_ELEGANCE",
             "GRO_PLANET_ECOL",
             "GRO_SUBTER_HAB",
@@ -370,7 +367,6 @@ def primary_meta_techs(index = 0):
 # "CON_ASYMP_MATS",
 # "CON_CONC_CAMP",
 # "CON_CONTGRAV_ARCH",
-# "CON_REMOTE_COL",
 # "CON_FRC_ENRG_CAMO",
 # "CON_FRC_ENRG_STRC",
 # "CON_GAL_INFRA",

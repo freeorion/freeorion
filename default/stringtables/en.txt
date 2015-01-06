@@ -3577,7 +3577,7 @@ The supply meter on a planet represents the number of star-lanes supply can reac
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
 FLEET_UPKEEP_TEXT
-'''The cost of a fleet is more than the sum of the cost of its ships due to the operational costs associated with managing multiple ships. When producing new ships, costs increase by 1% for each ship already owned by the empire. The cost of the [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] and [[shippart CO_OUTPOST_POD]] as well as [[buildingtype BLD_EXOBOT_SHIP]] instead increase by 6% for each planet already owned by the empire.'''
+'''The cost of a fleet is more than the sum of the cost of its ships due to the operational costs associated with managing multiple ships. When producing new ships, costs increase by 1% for each ship already owned by the empire. The cost of the [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] and [[shippart CO_OUTPOST_POD]] as well as all the colony buildings instead increase by 6% for each planet already owned by the empire.'''
 
 EVACUATION_TITLE
 Evacuation
@@ -3953,7 +3953,6 @@ EFFECT_TERRAFORM
 EFFECT_TAME_MONSTER_HATCHED
 EFFECT_TAME_MONSTER_MATURED
 SITREP_BUILDING_BUILT
-EFFECT_EXOBOT
 SITREP_SHIP_BUILT
 SITREP_SHIP_BATCH_BUILT
 EFFECT_EVACUEES
@@ -4292,11 +4291,6 @@ EFFECT_BIOWEAPON
 %system% has lost population due to a biological attack.
 EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
-
-EFFECT_EXOBOT
-At %planet%: an Exobot colony ship has been built.
-EFFECT_EXOBOT_LABEL
-Exobot Ship
 
 EFFECT_EVACUEES
 At %planet%: evacuees have settled.
@@ -5291,7 +5285,7 @@ SP_EXOBOT_GAMEPLAY_DESC
 '''
 
 SP_EXOBOT_DESC
-'''While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
+'''While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more Exobots.
 '''
 
 SP_EXPERIMENTOR
@@ -8502,11 +8496,6 @@ BLD_INDUSTRY_CENTER_DESC
 [[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
 
 [[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus.'''
-
-BLD_EXOBOT_SHIP
-Exobot Colony Origin
-BLD_EXOBOT_SHIP_DESC
-'''Constructing the first group of exobots is a major production. However, once established on their own planet, they will be able to build themselves. The cost of this building increases as the empire expands to reflect the upkeep costs of a large empire.'''
 
 BLD_MEGALITH
 Megalith

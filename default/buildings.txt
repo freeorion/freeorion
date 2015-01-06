@@ -602,37 +602,6 @@ BuildingType
     icon = ""
 
 BuildingType
-    name = "BLD_EXOBOT_SHIP"
-    description = "BLD_EXOBOT_SHIP_DESC"
-    buildcost = 140 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 12
-    location = And [
-        Planet
-        OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1
-    ]
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Object Source.PlanetID
-                Planet
-            ]
-            effects = [
-                CreateShip "SD_COLONY_SHIP" Source.Owner "SP_EXOBOT"
-                GenerateSitRepMessage
-                    message = "EFFECT_EXOBOT"
-                    icon = "icons/species/robotic-01.png"
-                    parameters = tag = "planet" data = Target.ID
-                    empire = Source.Owner
-            ]
-
-        EffectsGroup
-            scope = Source
-            effects = Destroy
-    ]
-    icon = "icons/species/robotic-01.png"
-
-BuildingType
     name = "BLD_MEGALITH"
     description = "BLD_MEGALITH_DESC"
     buildcost = 250
