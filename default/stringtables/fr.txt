@@ -138,10 +138,10 @@ EMPTY_SPACE
 Espace intersidéral
 
 UNEXPLORED_REGION
-l'Inconnu
+Région Inexplorée
 
 UNEXPLORED_SYSTEM
-Système inexploré
+Système Inexploré
 
 NOT_APPLICABLE
 N/A
@@ -631,7 +631,7 @@ SM_DIM_DESC
 Une créature nébuleuse qui accroît la [[encyclopedia STEALTH_TITLE]] de planètes choisies au hasard.
 
 SM_VOID
-Behemoth du Vide
+Béhémoth du Vide
 SM_VOID_DESC
 Une créature nébuleuse qui accroît la [[encyclopedia STEALTH_TITLE]] de planètes choisies au hasard.
 
@@ -765,7 +765,7 @@ UNABLE_TO_READ_SAVE_FILE
 Erreur de lecture du fichier de sauvegarde.
 
 UNABLE_TO_SAVE_NOW_TRY_AGAIN
-Unable to save during AI processing. Try again when AIs have finished turns.
+Impossible de sauvegarder pendant le calcul de l'IA. Veuillez réessayer lorsque l'IA aura terminé son tour.
 
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 Vous ne contrôlez aucun empire et ne pouvez émettre aucun ordre.
@@ -1930,10 +1930,10 @@ OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Curseur de zoom sur la carte galactique
 
 OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Galaxy map detection range displayed stealth threshold
+Carte de la galaxie montrant la plage de détection selon le seuil de furtivité
 
 OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Galaxy map stealth threshold slider
+Curseur du seuil de furtivité de la carte de la galaxie
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Cercles de détection
@@ -2152,7 +2152,7 @@ OPTIONS_COMBAT_ENABLE_LENS_FLARES
 Lens Flares
 
 OPTIONS_COMBAT_FILLED_SELECTION
-Filled selection
+Affichage sélection
 
 OPTIONS_ANY_FILE
 Tout fichier
@@ -3008,7 +3008,7 @@ DESIGN_INV_NO_HULL
 Démarrer la conception d'un astronef par le choix de la coque.
 
 DESIGN_INV_NO_NAME
-La dénomination du modèle d'astronef ne peut pas être vide.
+La dénomination du modèle d'astronef ne peut pas rester vide.
 
 DESIGN_KNOWN
 Modèle déjà existant
@@ -3326,7 +3326,7 @@ ENC_UNLOCKS
 '''
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
-Se monte dans 
+Se monte dans :
 
 ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''%1% %2%
@@ -3828,10 +3828,10 @@ SIZE_AS_DOUBLE
 Size As Number
 
 DISTANCE_FROM_ORIGINAL_TYPE
-Distance From Original Planet Type
+Distance Planète type d'origine
 
 NEXT_TURN_POP_GROWTH
-Prochain Tour Croiss. Pop.
+Croiss. Pop. au Prochain Tour
 
 
 ####################
@@ -4187,6 +4187,11 @@ SITREP_VICTORY_BIO
 Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, ont rencontré leur inévitable destin sous la puissance de feu de votre formidable flotte de guerre.
 SITREP_VICTORY_BIO_LABEL
 Victoire Biologique
+
+SITREP_POP_THRESHOLD
+La colonie sur %planet% a atteint sa taille d'expansion.
+SITREP_POP_THRESHOLD_LABEL
+Seuil de Colonisation
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés sur la planète %planet%, rôdant près de l'Avant-poste %species%!
@@ -6891,11 +6896,11 @@ LRN_ARTIF_MINDS
 Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 2.
+'''Augmente l'objectif [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes de 2.
 
 Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinie , ils leur manquent une qualité essentielle : la conscience. Avec le développement d'une véritable intelligence artificielle, cette qualité peut être synthétisée, modifiée. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de metaparadigmes.
 
-Nascent AIs can input all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
+Des IA sont à même d'entrer toutes les données découvertes par des chercheurs actifs en un seul réseau de traitement automatique de données, ces données peuvent être analysées et de nouvelles données obtenues par un centre de recherche entièrement automatisé. Chaque planète peut contenir de telles structures, indépendamment des professions de la population, ce qui donne un bonus à la recherche sur tous les mondes.'''
 
 LRN_XENOARCH
 Xénoarchéologie
@@ -9204,9 +9209,9 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Boucliers à Interface Robotisée
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in hull types that have Robotic Hulls as a prerequisite.
+'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in one of [[shiphull SH_ROBOTIC]], [[shiphull SH_SELF_GRAVITATING]], [[shiphull SH_NANOROBOTIC]], [[shiphull SH_LOGISTICS_FACILITATOR]], [[shiphull SH_TITANIC]].
 
-Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact. 
+Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact.
 '''
 
 CO_COLONY_POD
@@ -9638,7 +9643,7 @@ Coque Basique Légère
 SH_BASIC_SMALL_DESC
 '''Une petite coque de base d'astronef. Comparé aux autres coques de base, elle est capable de faire un saut supplémentaire.
 
-[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average. 
+La [[encyclopedia STEALTH_TITLE]] est basse, la [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est moyenne également.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] sur la planète ou elle sera construite.'''
 
@@ -9647,7 +9652,7 @@ Coque Basique Moyenne
 SH_BASIC_MEDIUM_DESC
 '''Une coque de base d'astronef de taille moyenne.
 
-[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
+La [[encyclopedia STEALTH_TITLE]] est basse, la [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est basse également.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] sur la planète ou elle sera construite.'''
 
@@ -9657,7 +9662,7 @@ Coque Basique Massive
 SH_STANDARD_DESC
 '''Une grande coque de base d'astronef.
 
-[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
+La [[encyclopedia STEALTH_TITLE]] est basse, la [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est basse également.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] sur la planète ou elle sera construite.'''
 
@@ -9668,7 +9673,7 @@ SH_XENTRONIUM
 Coque Xentronium
 
 SH_XENTRONIUM_DESC
-A hull constructed primarily with xentronium. Though small, it has extremely high max structure.
+Une coque construite principalement à partir de xentronium. Bien que petite, elle a une structure max extrêmement élevée.
 
 SH_COLONY_BASE
 Coque Colon Stellaire
@@ -9752,42 +9757,42 @@ Un puissant Kraken noir à l'apparence surnaturelle..
 SH_SNOWFLAKE_1_BODY
 Corps Flocon Juvénile
 SH_SNOWFLAKE_1_BODY_DESC
-A formidable light-weight space monster.
+Un formidable monstre de l'espace de poids léger.
 
 SH_SNOWFLAKE_2_BODY
 Corps Flocon
 SH_SNOWFLAKE_2_BODY_DESC
-A formidable light-weight space monster.
+Un formidable monstre de l'espace de poids léger.
 
 SH_SNOWFLAKE_3_BODY
 Corps Flocon Massif
 SH_SNOWFLAKE_3_BODY_DESC
-A formidable light-weight space monster.
+Un formidable monstre de l'espace de poids léger.
 
 SH_PSIONIC_SNOWFLAKE_BODY
 Corps Flocon Psionique
 SH_PSIONIC_SNOWFLAKE_BODY_DESC
-A mentally powerful space monster.
+Un monstre de l'espace mentalement puissant.
 
 SH_JUGGERNAUT_1_BODY
 Corps Mastodonte Juvénile
 SH_JUGGERNAUT_1_BODY_DESC
-A formidable heavy-weight space monster.
+Un formidable monstre de l'espace poids-lourd.
 
 SH_JUGGERNAUT_2_BODY
 Corps Mastodonte
 SH_JUGGERNAUT_2_BODY_DESC
-A formidable heavy-weight space monster.
+Un formidable monstre de l'espace poids-lourd.
 
 SH_JUGGERNAUT_3_BODY
 Corps Mastodonte Massif
 SH_JUGGERNAUT_3_BODY_DESC
-A formidable heavy-weight space monster.
+Un formidable monstre de l'espace poids-lourd.
 
 SH_BLOATED_JUGGERNAUT_BODY
 Corps Mastodonte Déformé
 SH_BLOATED_JUGGERNAUT_BODY_DESC
-An unnaturally large space monster.
+Un monstre de l'espace de taille exceptionnelle.
 
 SH_NEBULOUS_BODY
 Corps Nébuleux
@@ -9795,17 +9800,17 @@ Corps Nébuleux
 SH_EXP_OUTPOST_HULL
 Coque Pionnier Expérimentateur
 SH_EXP_OUTPOST_HULL_DESC
-A hull used by the Experimentors use to transport experimental equipment to other galaxies.
+Une coque utilisée par les Expérimentateurs pour transporter du matériel expérimental vers d'autres galaxies.
 
 SH_COSMIC_DRAGON_BODY
 Corps Dragon Cosmique
 SH_COSMIC_DRAGON_BODY_DESC
-A fearsome space dragon the size of a small planet.
+Un effroyable dragon de l'espace de la taille d'une petite planète.
 
 SH_DAMPENING_CLOUD_BODY
 Corps Nuage Siphonnant
 SH_DAMPENING_CLOUD_BODY_DESC
-A cosmic cloud of high energetic particles.
+Un nuage cosmique de particules à haute énergie.
 
 
 #############################################################
