@@ -1,0 +1,1296 @@
+BuildingType
+name = "BLD_COL_ABADDONI"
+description = "BLD_COL_ABADDONI_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_ABADDONI"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_ABADDONI"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_ABADDONI"
+    Not Enqueued type = Building name = "BLD_COL_ABADDONI"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_ABADDONI"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_ABADDONI"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/abaddonnian.png"
+                parameters = [
+                    tag = "species" data = "SP_ABADDONI"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_CHATO"
+description = "BLD_COL_CHATO_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_CHATO"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_CHATO"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_CHATO"
+    Not Enqueued type = Building name = "BLD_COL_CHATO"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_CHATO"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_CHATO"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/chato-matou-gormoshk.png"
+                parameters = [
+                    tag = "species" data = "SP_CHATO"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_CRAY"
+description = "BLD_COL_CRAY_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_CRAY"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_CRAY"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_CRAY"
+    Not Enqueued type = Building name = "BLD_COL_CRAY"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_CRAY"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_CRAY"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/cray.png"
+                parameters = [
+                    tag = "species" data = "SP_CRAY"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_DERTHREAN"
+description = "BLD_COL_DERTHREAN_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_DERTHREAN"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_DERTHREAN"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_DERTHREAN"
+    Not Enqueued type = Building name = "BLD_COL_DERTHREAN"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_DERTHREAN"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_DERTHREAN"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/derthrean.png"
+                parameters = [
+                    tag = "species" data = "SP_DERTHREAN"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_EAXAW"
+description = "BLD_COL_EAXAW_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_EAXAW"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_EAXAW"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_EAXAW"
+    Not Enqueued type = Building name = "BLD_COL_EAXAW"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_EAXAW"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_EAXAW"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/eaxaw.png"
+                parameters = [
+                    tag = "species" data = "SP_EAXAW"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_EGASSEM"
+description = "BLD_COL_EGASSEM_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_EGASSEM"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_EGASSEM"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_EGASSEM"
+    Not Enqueued type = Building name = "BLD_COL_EGASSEM"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_EGASSEM"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_EGASSEM"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/egassem.png"
+                parameters = [
+                    tag = "species" data = "SP_EGASSEM"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_ETTY"
+description = "BLD_COL_ETTY_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_ETTY"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_ETTY"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_ETTY"
+    Not Enqueued type = Building name = "BLD_COL_ETTY"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_ETTY"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_ETTY"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/etty.png"
+                parameters = [
+                    tag = "species" data = "SP_ETTY"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_GEORGE"
+description = "BLD_COL_GEORGE_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_GEORGE"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_GEORGE"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_GEORGE"
+    Not Enqueued type = Building name = "BLD_COL_GEORGE"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_GEORGE"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_GEORGE"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/george.png"
+                parameters = [
+                    tag = "species" data = "SP_GEORGE"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_GYSACHE"
+description = "BLD_COL_GYSACHE_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_GYSACHE"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_GYSACHE"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_GYSACHE"
+    Not Enqueued type = Building name = "BLD_COL_GYSACHE"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_GYSACHE"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_GYSACHE"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/gysache.png"
+                parameters = [
+                    tag = "species" data = "SP_GYSACHE"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_HHHOH"
+description = "BLD_COL_HHHOH_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_HHHOH"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_HHHOH"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_HHHOH"
+    Not Enqueued type = Building name = "BLD_COL_HHHOH"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_HHHOH"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_HHHOH"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/hhhoh.png"
+                parameters = [
+                    tag = "species" data = "SP_HHHOH"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_HUMAN"
+description = "BLD_COL_HUMAN_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_HUMAN"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_HUMAN"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_HUMAN"
+    Not Enqueued type = Building name = "BLD_COL_HUMAN"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_HUMAN"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_HUMAN"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/human.png"
+                parameters = [
+                    tag = "species" data = "SP_HUMAN"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_KOBUNTURA"
+description = "BLD_COL_KOBUNTURA_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_KOBUNTURA"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_KOBUNTURA"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_KOBUNTURA"
+    Not Enqueued type = Building name = "BLD_COL_KOBUNTURA"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_KOBUNTURA"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_KOBUNTURA"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/intangible-04.png"
+                parameters = [
+                    tag = "species" data = "SP_KOBUNTURA"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_LAENFA"
+description = "BLD_COL_LAENFA_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_LAENFA"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_LAENFA"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_LAENFA"
+    Not Enqueued type = Building name = "BLD_COL_LAENFA"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_LAENFA"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_LAENFA"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/laenfa.png"
+                parameters = [
+                    tag = "species" data = "SP_LAENFA"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_MUURSH"
+description = "BLD_COL_MUURSH_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_MUURSH"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_MUURSH"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_MUURSH"
+    Not Enqueued type = Building name = "BLD_COL_MUURSH"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_MUURSH"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_MUURSH"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/muursh.png"
+                parameters = [
+                    tag = "species" data = "SP_MUURSH"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_SCYLIOR"
+description = "BLD_COL_SCYLIOR_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_SCYLIOR"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_SCYLIOR"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_SCYLIOR"
+    Not Enqueued type = Building name = "BLD_COL_SCYLIOR"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_SCYLIOR"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_SCYLIOR"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/scylior.png"
+                parameters = [
+                    tag = "species" data = "SP_SCYLIOR"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_SETINON"
+description = "BLD_COL_SETINON_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_SETINON"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_SETINON"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_SETINON"
+    Not Enqueued type = Building name = "BLD_COL_SETINON"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_SETINON"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_SETINON"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/amorphous-02.png"
+                parameters = [
+                    tag = "species" data = "SP_SETINON"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_SSLITH"
+description = "BLD_COL_SSLITH_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_SSLITH"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_SSLITH"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_SSLITH"
+    Not Enqueued type = Building name = "BLD_COL_SSLITH"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_SSLITH"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_SSLITH"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/sslith.png"
+                parameters = [
+                    tag = "species" data = "SP_SSLITH"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_TAEGHIRUS"
+description = "BLD_COL_TAEGHIRUS_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_TAEGHIRUS"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_TAEGHIRUS"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_TAEGHIRUS"
+    Not Enqueued type = Building name = "BLD_COL_TAEGHIRUS"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_TAEGHIRUS"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_TAEGHIRUS"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/t-aeghirus.png"
+                parameters = [
+                    tag = "species" data = "SP_TAEGHIRUS"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_TRITH"
+description = "BLD_COL_TRITH_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_TRITH"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_TRITH"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_TRITH"
+    Not Enqueued type = Building name = "BLD_COL_TRITH"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_TRITH"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_TRITH"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/trith.png"
+                parameters = [
+                    tag = "species" data = "SP_TRITH"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_UGMORS"
+description = "BLD_COL_UGMORS_DESC"
+buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_UGMORS"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_UGMORS"
+        Population low = 3
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_UGMORS"
+    Not Enqueued type = Building name = "BLD_COL_UGMORS"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+        Species "SP_UGMORS"
+        Population low = 3
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_UGMORS"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/amorphous-06.png"
+                parameters = [
+                    tag = "species" data = "SP_UGMORS"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
+
+
+BuildingType
+name = "BLD_COL_EXOBOT"
+description = "BLD_COL_EXOBOT_DESC"
+buildcost = 70 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+buildtime = 5
+location = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_EXOBOT"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+    ]
+]
+EnqueueLocation = And [
+    Planet
+    OwnedBy TheEmpire Source.Owner
+    Population high = 0
+    Not Contains Building "BLD_COL_EXOBOT"
+    Not Enqueued type = Building name = "BLD_COL_EXOBOT"
+    ResourceSupplyConnected Source.Owner And [
+        Planet
+        OwnedBy TheEmpire Source.Owner
+    ]
+]
+effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Source
+        effects = [
+            SetSpecies name = "SP_EXOBOT"
+            GenerateSitRepMessage
+                message = "NEW_COLONY_MESSAGE"
+                icon = "icons/species/robotic-01.png"
+                parameters = [
+                    tag = "species" data = "SP_EXOBOT"
+                    tag = "planet" data = Target.ID
+                ]
+        ]
+    EffectsGroup
+        scope = And [
+            Object Source.PlanetID
+            Planet
+        ]
+        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+        effects = SetPopulation 1
+    EffectsGroup
+        scope = Source
+        activation = Turn low = Source.CreationTurn + 2
+        effects = Destroy
+]
+icon = "icons/building/generic_building.png"
