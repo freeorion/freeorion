@@ -8278,10 +8278,10 @@ SHP_NOVA_BOMB_DESC
 The most powerful weapon ever devised, capable of destroying an entire star system.
 
 SHP_DEATH_SPORE
-Spores Mortels
+Spores Mortelles
 
 SHP_DEATH_SPORE_DESC
-Débloque l'équipement Spores Mortels, qui permet de réduire quelque peu la population des planètes.
+Débloque l'équipement Spores Mortelles, qui permet de réduire quelque peu la population des planètes. Les Spores Mortelles n'agissent que contre les espèces organiques.
 
 SHP_BIOTERM
 Bio-Terminateurs
