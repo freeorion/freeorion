@@ -8281,7 +8281,7 @@ SHP_DEATH_SPORE
 Death Spores
 
 SHP_DEATH_SPORE_DESC
-Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets.
+Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets. Death Spores only work against Organic species.
 
 SHP_BIOTERM
 Bio-Terminators
