@@ -6216,7 +6216,9 @@ namespace {
                         if (group.find(candidate->SystemID()) != group.end())
                             return true;    // test object and candidate object are in same resourse sharing group
                         else
-                            return false;   // test object is not in resource sharing group with candidate (each object can be in only one group)
+                            // test object is not in resource sharing group with candidate
+                            // as each object can be in only one group, no need to check the remaining groups
+                            break;
                     }
                     // current subcondition-matching object is not in this resource sharing group
                 }
