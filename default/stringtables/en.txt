@@ -3945,6 +3945,7 @@ SITREP_SHIP_HULL_UNLOCKED
 SITREP_BUILDING_TYPE_UNLOCKED
 SITREP_PLANET_CAPTURED
 SITREP_PLANET_COLONIZED
+SITREP_NEW_COLONY_ESTABLISHED
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 EFFECT_CONC_CAMP_COMLETE
@@ -4116,6 +4117,11 @@ SITREP_PLANET_COLONIZED
 %planet% has been colonized.
 SITREP_PLANET_COLONIZED_LABEL
 Planet Colonized
+
+SITREP_NEW_COLONY_ESTABLISHED
+A new %species% colony has been established on %planet%.
+SITREP_NEW_COLONY_ESTABLISHED_LABEL
+New Colony Established
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 At %system%: %fleet% (%rawtext% ships) has arrived.
@@ -4321,12 +4327,6 @@ HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
-
-NEW_COLONY_MESSAGE
-A new %species% colony has been established on %planet%.
-NEW_COLONY_MESSAGE_LABEL
-New Colony Established
-
 
 
 #############################################################

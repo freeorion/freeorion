@@ -28,66 +28,57 @@ species_list = [
 ]
 
 t_main = string.Template('''BuildingType
-name = "BLD_COL_${name}"
-description = "BLD_COL_${name}_DESC"
-buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]]
-buildtime = ${time}
-location = And [
-    Planet
-    OwnedBy TheEmpire Source.Owner
-    Population high = 0
-    Not Contains Building "BLD_COL_${name}"
-    ResourceSupplyConnected Source.Owner And [
+    name = "BLD_COL_${name}"
+    description = "BLD_COL_${name}_DESC"
+    buildcost = ${cost} * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = ${time}
+    location = And [
         Planet
         OwnedBy TheEmpire Source.Owner
+        Population high = 0
+        Not Contains Building "BLD_COL_${name}"
         ${species_condition}
     ]
-]
-EnqueueLocation = And [
-    Planet
-    OwnedBy TheEmpire Source.Owner
-    Population high = 0
-    Not Contains Building "BLD_COL_${name}"
-    Not Enqueued type = Building name = "BLD_COL_${name}"
-    ResourceSupplyConnected Source.Owner And [
+    EnqueueLocation = And [
         Planet
         OwnedBy TheEmpire Source.Owner
+        Population high = 0
+        Not Contains Building "BLD_COL_${name}"
+        Not Enqueued type = Building name = "BLD_COL_${name}"
         ${species_condition}
     ]
-]
-effectsgroups = [
-    EffectsGroup
-        scope = And [
-            Object Source.PlanetID
-            Planet
-        ]
-        activation = Source
-        effects = [
-            SetSpecies name = "${id}"
-            GenerateSitRepMessage
-                message = "NEW_COLONY_MESSAGE"
-                icon = "${graphic}"
-                parameters = [
-                    tag = "species" data = "${id}"
-                    tag = "planet" data = Target.ID
-                ]
-        ]
-    EffectsGroup
-        scope = And [
-            Object Source.PlanetID
-            Planet
-        ]
-        activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
-        effects = SetPopulation 1
-    EffectsGroup
-        scope = Source
-        activation = Turn low = Source.CreationTurn + 2
-        effects = Destroy
-]
-icon = "icons/building/generic_building.png"''')
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                SetSpecies name = "${id}"
+                SetPopulation 1
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "${graphic}"
+                    parameters = [
+                        tag = "species" data = "${id}"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"''')
 
-t_species_condition = string.Template('''Species "${id}"
-        Population low = 3''')
+t_species_condition = string.Template('''ResourceSupplyConnected Source.Owner And [
+            Planet
+            OwnedBy TheEmpire Source.Owner
+            Species "${id}"
+            Population low = 3
+        ]''')
 
 outpath = os.getcwd()
 print "Output folder:", outpath
