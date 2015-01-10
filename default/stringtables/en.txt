@@ -10078,6 +10078,9 @@ POOR_ENVIRONMENT_LABEL
 HOSTILE_ENVIRONMENT_LABEL
 '''%1% Hostile Environment'''
 
+UNINHABTIABLE_ENVIRONMENT_LABEL
+'''%1% Uninhabitable Environment'''
+
 ENV_ENCAPSUL_LABEL
 '''%1% Environmental Encapsulation'''
 

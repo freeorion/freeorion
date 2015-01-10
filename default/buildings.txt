@@ -1319,7 +1319,7 @@ BuildingType
                 InSystem Source.SystemID
             ]
             activation = Source
-            effects = SetTargetPopulation 0.1
+            effects = SetTargetPopulation min(Value, 0.1)
 
         EffectsGroup
             scope = InSystem Source.SystemID
