@@ -1100,7 +1100,7 @@ OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
 Fixe le niveau minimal de zoom auquel les icônes des petites flottes apparaissent sur la carte galactique.
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel les icônes des flottes minimales apparaissent sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
+Fixe le niveau minimal de zoom auquel les icônes des flottes minuscules apparaissent sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de flottes sélectionnées, relativement à celle de ces dernières.
@@ -1112,7 +1112,7 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
 Fixe la vitesse d'animation des cercles entourant les icônes de systèmes stellaire sélectionnés.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
-Fixe la taille d'icône de système stellaire au-dessous de laquelle les mini-icônes de taille fixe seront affichées.
+Fixe la taille des icônes de système stellaire au-dessous de laquelle les minuscules icônes affichées auront une taille fixe.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Fixe le délai, en millisecondes, d'apparition dans l'interface utilisateur des bulles d'information lors du survol par le curseur.
@@ -1894,7 +1894,7 @@ OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
 Ni/s de l'animation de sélection d'un système
 
 OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
-Seuil de taille de l'icône minimale d'un système
+Seuil de taille de l'icône minuscule d'un système
 
 OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
 Couleur du nom d'un système sans empire
@@ -1903,7 +1903,7 @@ OPTIONS_FLEET_ICONS
 Icônes de flotte
 
 OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Zoom minimal de l'icône d'une flotte minimale
+Zoom minimal de l'icône d'une flotte minuscule
 
 OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
 Zoom minimal de l'icône d'une petite flotte
@@ -3352,16 +3352,16 @@ Inconnu
 
 ENC_ROUND_BEGIN
 '''
-Round %1%'''
+Passe %1%'''
 
 ENC_COMBAT_UNKNOWN_DESTROYED_STR
 Something %2% was incapacitated one way or another
 
 ENC_COMBAT_PLANET_INCAPACITATED_STR
-La%1%planète %2% a été mise en déroute
+La planète %2% de l'empire %1% a été mise en déroute
 
 ENC_COMBAT_DESTROYED_STR
-Le%1%vaisseau %2% a été détruit
+Le vaisseau %2% de %1% a été détruit
 
 NEUTRAL
 Neutre
@@ -6957,7 +6957,7 @@ LRN_UNIF_CONC
 Conscience Unifiée 
 
 LRN_UNIF_CONC_DESC
-'''By transferring the mind into cyberspace, thousands of minds can act as one, their actions perfectly unified and directed towards the good of the whole.
+'''En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, leurs actions parfaitement unifiées et dirigées pour le bien de l'ensemble.
 
 La communication télépathique entre individus, qu'elle soit directe ou assistée par les machines, n'a permis que les échanges de pensées et d'idées les plus élémentaires, triviaux et superficiels. Des esprits véritablement reliés fonctionnent comme une unique conscience, avec la somme des facultés et des connaissances de ses parties, et agissent comme une nouvelle entité. Ceci donne un grand potentiel, mais fait aussi courir le grave risque que l'esprit ainsi formé refuse sa propre destruction, laquelle est nécessaire pour que chacun des esprits communicants retrouve son intégrité. Autre péril : un des esprits communicants peut vouloir dominer, contrôler, voire détruire l'autre, interdisant la formation d'une union équitable et harmonieuse.'''
 
@@ -6965,11 +6965,11 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
+'''Augmente la cible [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes par une mise au point de la recherche de 0,5 par population.
 
-A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
+Un réseau massif de donnés, à l'échelle de l'empire, en mesure de transférer des informations instantanément entre deux endroits quelconques, plutôt que par la voie longue et indirecte des voies spatiales. Ce progrès facilite grandement la recherche dans tout l'empire.
 
-Every particle is inextricably connected on the quantum level to every particle with which it has previously interacted. Older mechanistic ideas about cause and effect do not apply on this level, and particles can "communicate" instantaneously across vast distances. When a thorough understanding of this phenomena is acquired, selective small-scale action-at-a-distance between any two points can be achieved instantaneously and outdated relativistic speed limits no longer apply to the transfer of information.'''
+Chaque particule est inextricablement liée au niveau quantique à chaque particule avec laquelle elle a déjà précédemment interagi. De vieilles idées mécanistes concernant la cause et l'effet ne sont plus applicable pas à ce niveau, car les particules peuvent désormais "communiquer" instantanément à travers des distances énormes. Quand une compréhension approfondie de ce phénomène est acquise, l'action sélectionnée, à petite échelle, sur une distance entre deux points peut être réalisée instantanément et les limites de vitesse relativiste obsolète ne s'appliquent plus au transfert de l'information.'''
 
 LRN_TRANSCEND
 Singularité Transcendentale
@@ -7026,7 +7026,7 @@ GRO_ADV_ECOMAN
 Éco-Manipulation Avancée
 
 GRO_ADV_ECOMAN_DESC
-Even in an artificial environment, weather patterns and natural ecological cycles can get out of control, causing large amounts of damage. By introducing stabilizing factors, incidents of destructive ecological forces in artificial environments can be reduced, allowing large-scale environmental modifications.
+Même dans un environnement artificiel, les conditions météorologiques et les cycles écologiques naturels peuvent passer hors de contrôle, causant d'importants dégâts. En introduisant des facteurs de stabilisation, les incidents de forces destructrices écologiques dans des environnements artificiels peuvent être réduits, permettant des modifications environnementales à grande échelle.
 
 GRO_XENO_GENETICS
 Génétique Xénobiologique
@@ -7108,7 +7108,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.1 per Population.
+'''Augmente la cible [[encyclopedia INDUSTRY_TITLE]] sur toutes les planètes par une mise au point de l'industrie de 0,1 par population.
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -7129,7 +7129,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.2 per Population.
+'''Augmente la cible [[encyclopedia INDUSTRY_TITLE]] sur toutes les planètes par une mise au point de l'industrie de 0,2 par population.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -7153,7 +7153,7 @@ PRO_SENTIENT_AUTOMATION
 Automates Adaptatifs
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets by 5.
+'''Augmente la cible [[encyclopedia INDUSTRY_TITLE]] sur toutes les planètes par 5.
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -7452,7 +7452,7 @@ Unlocks the Krill Spawner ship part, which causes wild space krill to appear in 
 SPY_ROOT_DECEPTION
 Tromperie
 SPY_ROOT_DECEPTION_DESC
-'''The art of deception is not natural to every species, but the ability to hide the truth can be most useful.'''
+'''L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de cacher la vérité peut être bien utile.'''
 
 
 #############################################################
@@ -7671,7 +7671,7 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with any focus by 0.1 per Population.
+'''Augmente la cible [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes par une mise au point de la recherche de 0,1 par population.
 
 Le citoyen moyen gaspille litteralement son esprit, de loin l'un des plus fins esprits informatiques de l'univers. En puisant dans les cycles inactifs du cerveau d'une population suffisament large, par le biais d'un réseau de simple émetteurs-récepteurs cybernetics, les centres de recherche d'un monde peuvent accéder à une puissance de calcul abondante et à bas prix.'''
 
@@ -8161,7 +8161,7 @@ SHP_ROOT_ARMOR
 Blindage
 
 SHP_ROOT_ARMOR_DESC
-Researching special alloys that allow to equip ship hulls with armor plating greatly enhances their durability, especially in battle.
+La recherche d'alliages spéciaux permet d'équiper les coques de navires d'un blindage ce qui améliore considérablement leur durabilité, en particulier dans les batailles.
 
 SHP_ZORTRIUM_PLATE
 Blindage Zortrium
@@ -8336,7 +8336,7 @@ BLD_EVACUATION
 Évacuation
 
 BLD_EVACUATION_DESC
-Ôte la population de cette planète sur plusieurs tours. Si une planète de remplacement appropriée, est disponible, avec déja la même espèce et suffisamment de place libre, la population y sera transférée.
+Ôte la population de cette planète sur plusieurs tours. Si une planète de remplacement appropriée, est disponible, avec déjà la même espèce et suffisamment de place libre, la population y sera transférée.
 
 BLD_OBSERVATORY
 Observatoire
@@ -8374,7 +8374,7 @@ BLD_SHIPYARD_BASE_DESC
 Installation orbitale pour l'assemblage d'engins spatiaux de qualité militaire. Permet la production d'astronefs dans le système où il se trouve. Peut être amélioré par la production de structures supplémentaires dans le même système.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
-Astroport Orbital
+Cale de Rabout Orbitale
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 '''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, fully repairing all structural damage each turn, as long as no combat has taken place in system that turn.
@@ -8556,7 +8556,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.75 per Population.
+'''Augmente la cible [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes par une mise au point de la recherche de 0,75 par population.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
@@ -8977,7 +8977,7 @@ LR_SPECTRAL_MISSILE
 Missile Spectral
 
 LR_SPECTRAL_MISSILE_DESC
-A fast, stealthy missile.
+Un missile furtif rapide.
 
 LR_NEUTRONIUM_PLATE_NUC_MIS
 Neutronium Plated Nuclear Missile
@@ -9312,61 +9312,61 @@ SH_ROBOTIC
 Coque Robotique
 
 SH_ROBOTIC_DESC
-'''This hull is completely automated and functions under the principals of Military Robotic Control. It has four external slots and one internal slot, and repairs 2 points of structure each turn.
+'''Cette coque est entièrement automatisée et fonctionne selon des principes de contrôle militaire robotisé. Elle dispose de quatre niches externes, une interne et se répare à raison de deux points de structure par tour.
 
-[[encyclopedia STEALTH_TITLE]] is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average. 
+La [[encyclopedia STEALTH_TITLE]] est faible, le [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que la vitesse sur les voies spatiales. 
 
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]] an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
+En plus d'un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] est requise sur la planète où elle sera construite.'''
 
 SH_SPATIAL_FLUX
 Coque Flux Spatial
 
 SH_SPATIAL_FLUX_DESC
-'''This tiny hull is capable of decent speed over long distances due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. 
+'''Cette minuscule coque est susceptible d'une vitesse convenable sur de longues distances dues à la puissance de son entraînement par flux spatial. Elle ne dispose cependant que de deux niches externes et sa structure max est faible.
+ 
+La [[encyclopedia STEALTH_TITLE]] est modérée, mais reçois une grande pénalité de [[encyclopedia STEALTH_TITLE]] lors de mouvements dans les combats et le [[encyclopedia DETECTION_RANGE_TITLE]] de la carte de la galaxie est moyen, de même que la vitesse sur les voies spatiales.
 
-[[encyclopedia STEALTH_TITLE]] is moderate, but it receives a large [[encyclopedia STEALTH_TITLE]] penalty for movement both in combat and on the galaxy map. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
-
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
+En plus d'un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] est requise sur la planète où elle sera construite.'''
 
 SH_SELF_GRAVITATING
 Coque Auto-Gravitationnelle
 
 SH_SELF_GRAVITATING_DESC
-'''This hull is immense in both size and power, with six external slots, two internal slots and one core slot—one of the few hulls able to mount such advanced features. It is also fairly sturdy, having a high max structure.
+'''Cette coque est immense, tant par la taille que par sa puissance, avec six niches externes, deux niches internes, et une niche principale - une des rares coques capables de monter de tels articles avancés. Elle est aussi assez vigoureuse par sa structure max élevée.
 
-[[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
+La [[encyclopedia STEALTH_TITLE]] est très faible, le [[encyclopedia DETECTION_RANGE_TITLE]] moyen et, de même que la vitesse sur les voies spatiales.
 
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] is required at the planet where it is constructed.'''
+En plus d'un [[buildingtype BLD_SHIPYARD_BASE]] et d'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], une [[buildingtype BLD_SHIPYARD_CON_GEOINT]] est requise sur la planète où elle sera construite.'''
 
 SH_NANOROBOTIC
 Coque Nano-Robotique
 
 SH_NANOROBOTIC_DESC
-'''This automated hull is large and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, and restores structure completely between combats. 
+'''Cette coque automatisée est grande et répare ses dégâts en utilisant des millions de nanorobots. Elle dispose de six niches externes et d'une interne. Elle reconstitue sa structure entièrement entre les combats. 
 
-[[encyclopedia STEALTH_TITLE]] and is low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
+La [[encyclopedia STEALTH_TITLE]] est faible, le [[encyclopedia DETECTION_RANGE_TITLE]] moyen et, de même que la vitesse sur les voies spatiales.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] unit at the planet where it is constructed.'''
+Elle requière un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] et une [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] sur la planète où elle sera construite.'''
 
 SH_TITANIC
 Coque Titanesque
 
 SH_TITANIC_DESC
-'''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots, three internal slots and a core slot, and its max structure is very high. Its immense size makes it almost impossible to hide, even with advanced stealth technology.
+'''Cette coque, extraordinairement grande, est un véritable exploit d'ingénierie et qui est également requis pour se déplacer. Elle dispose de seize niches externes, trois niches internes et une niche en son coeur; sa structure max est extrêmement élevée. Son immense taille la rend presque impossible à cacher, même avec la technique furtive avancée.
 
-[[encyclopedia STEALTH_TITLE]] is very low, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
+La [[encyclopedia STEALTH_TITLE]] est très faible, le [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que la vitesse sur les voies spatiales.
 
-Requires a Basic [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] at the planet where it is constructed.'''
+Elle requière un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] et une [[buildingtype BLD_SHIPYARD_CON_GEOINT]] sur la planète où elle sera construite.'''
 
 SH_TRANSSPATIAL
 Coque Trans-Spatiale
 
 SH_TRANSSPATIAL_DESC
-'''This experimental hull is primarily for testing new technologies; it has one external slot and one core slot, and its max structure is extremely low. It was designed alongside the [[shippart FU_TRANSPATIAL_DRIVE]] and if equipped with that can make a very effective infiltrating scout.
+'''Cette coque expérimentale sert principalement à tester de nouvelles technologies. Elle dispose d'une niche externe et d'une niche en son coeur, sa structure max est extrêmement basse. Elle a été concue autour de la [[shippart FU_TRANSPATIAL_DRIVE]] et ainsi équipé en fait un éclaireur d'infiltration très efficace.
 
-[[encyclopedia STEALTH_TITLE]] is moderate, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
+La [[encyclopedia STEALTH_TITLE]] est modérée, le [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que la vitesse sur les voies spatiales.
 
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
+Elle requière un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] et un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] sur la planète où elle sera construite.'''
 
 SH_LOGISTICS_FACILITATOR
 Coque Logistique
@@ -9374,7 +9374,7 @@ Coque Logistique
 SH_LOGISTICS_FACILITATOR_DESC
 '''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots, two internal slots and a core slot. Its built-in fleet of stealthy freighters allows transfer of personnel and material during battle, enabling all friendly ships to completely restore structure between combats.
 
-[[encyclopedia STEALTH_TITLE]] is moderate, [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is average.
+La [[encyclopedia STEALTH_TITLE]] est modérée, le [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que la vitesse sur les voies spatiales.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
 
@@ -9643,7 +9643,7 @@ Coque Basique Légère
 SH_BASIC_SMALL_DESC
 '''Une petite coque de base d'astronef. Comparé aux autres coques de base, elle est capable de faire un saut supplémentaire.
 
-La [[encyclopedia STEALTH_TITLE]] est basse, la [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est moyenne également.
+La [[encyclopedia STEALTH_TITLE]] est basse, le [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est moyenne également.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] sur la planète ou elle sera construite.'''
 
@@ -9652,7 +9652,7 @@ Coque Basique Moyenne
 SH_BASIC_MEDIUM_DESC
 '''Une coque de base d'astronef de taille moyenne.
 
-La [[encyclopedia STEALTH_TITLE]] est basse, la [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est basse également.
+La [[encyclopedia STEALTH_TITLE]] est basse, le [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est basse également.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] sur la planète ou elle sera construite.'''
 
@@ -9662,7 +9662,7 @@ Coque Basique Massive
 SH_STANDARD_DESC
 '''Une grande coque de base d'astronef.
 
-La [[encyclopedia STEALTH_TITLE]] est basse, la [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est basse également.
+La [[encyclopedia STEALTH_TITLE]] est basse, le [[encyclopedia DETECTION_RANGE_TITLE]] est moyenne et la vitesse est basse également.
 
 Nécessite un [[buildingtype BLD_SHIPYARD_BASE]] sur la planète ou elle sera construite.'''
 
@@ -9702,7 +9702,7 @@ Grand corps fort avec d'effroyables armes naturelles et une armure naturelle for
 SH_GUARD_MONSTER_BODY
 Coque Gardien
 SH_GUARD_MONSTER_BODY_DESC
-Une forte coque pour monstres de la classe gardes.
+Une forte coque pour monstres de la classe gardiens.
 
 SH_KRILL_1_BODY
 Corps Krill 1
@@ -9757,17 +9757,17 @@ Un puissant Kraken noir à l'apparence surnaturelle..
 SH_SNOWFLAKE_1_BODY
 Corps Flocon Juvénile
 SH_SNOWFLAKE_1_BODY_DESC
-Un formidable monstre de l'espace de poids léger.
+Un formidable monstre de l'espace, poids léger.
 
 SH_SNOWFLAKE_2_BODY
 Corps Flocon
 SH_SNOWFLAKE_2_BODY_DESC
-Un formidable monstre de l'espace de poids léger.
+Un formidable monstre de l'espace, poids léger.
 
 SH_SNOWFLAKE_3_BODY
 Corps Flocon Massif
 SH_SNOWFLAKE_3_BODY_DESC
-Un formidable monstre de l'espace de poids léger.
+Un formidable monstre de l'espace, poids léger.
 
 SH_PSIONIC_SNOWFLAKE_BODY
 Corps Flocon Psionique
@@ -9777,17 +9777,17 @@ Un monstre de l'espace mentalement puissant.
 SH_JUGGERNAUT_1_BODY
 Corps Mastodonte Juvénile
 SH_JUGGERNAUT_1_BODY_DESC
-Un formidable monstre de l'espace poids-lourd.
+Un formidable monstre de l'espace, poids-lourd.
 
 SH_JUGGERNAUT_2_BODY
 Corps Mastodonte
 SH_JUGGERNAUT_2_BODY_DESC
-Un formidable monstre de l'espace poids-lourd.
+Un formidable monstre de l'espace, poids-lourd.
 
 SH_JUGGERNAUT_3_BODY
 Corps Mastodonte Massif
 SH_JUGGERNAUT_3_BODY_DESC
-Un formidable monstre de l'espace poids-lourd.
+Un formidable monstre de l'espace, poids-lourd.
 
 SH_BLOATED_JUGGERNAUT_BODY
 Corps Mastodonte Déformé
