@@ -13,9 +13,13 @@ RESEARCH_PER_POP
 TECH_COST_MULTIPLIER
 '''2.0'''
 
+/*   M I S C   */
+
 MIN_RECOLONIZING_SIZE
 '''3.0'''
 
+IMPOSSIBLY_LARGE_TURN
+'''(2^15)'''
 
 /*   S T E A L T H   */
 

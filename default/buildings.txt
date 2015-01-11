@@ -1474,6 +1474,29 @@ BuildingType
     ]
     icon = "icons/ship_hulls/colony_base_hull_small.png"
 
+
+/* Experimentor related variables / macros */
+
+// the highest current MaxAIAggression is 5, so this would range from 0.2 to 1.2
+EXPERIMENTOR_MONSTER_FREQ_FACTOR
+'''((1 + GalaxyMaxAIAggression) / 5.0)'''
+
+EXPERIMENTOR_SPAWN_BASE_TURN
+'''200'''
+
+EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK
+'''(If condition = ValueTest high = 2 testvalue = GalaxyMaxAIAggression)'''
+
+// the following intermediate value is turn 200 for Manaical Max AI Aggression, and 50 turns later for each aggression tier less,
+// for AI aggressions above Typical, otherwise adding 1000 turns
+EXPERIMENTOR_SPAWN_CALC_A
+'''( [[EXPERIMENTOR_SPAWN_BASE_TURN]] + (50 * (5 - GalaxyMaxAIAggression)) + (1000 * [[EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK]]))'''
+
+// the following increases Experimentor spawn start by a factor of about 1.4 for low planet density, and
+// for galaxy sizes above 200 increases it somewhat as the galaxy size grows
+EXPERIMENTOR_SPAWN_START_TURN
+''' ( [[EXPERIMENTOR_SPAWN_CALC_A]] * ((Max(1, 3 - GalaxyPlanetDensity))^0.5) * ((Max(1, GalaxySize / 200))^0.4))'''
+
 BuildingType
     name = "BLD_EXPERIMENTOR_OUTPOST"
     description = "BLD_EXPERIMENTOR_OUTPOST_DESC"
@@ -1528,7 +1551,7 @@ BuildingType
             scope = Source
             activation = Or [
                 Not ContainedBy Contains And [ Monster Not OwnedBy AnyEmpire ]
-                Turn high = 200     // always remove lanes before turn 200
+                Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]      // always remove lanes before spawn start turn
             ]
             effects = RemoveStarlanes WithinStarlaneJumps 1 Source
 
@@ -1536,7 +1559,7 @@ BuildingType
             scope = Source
             activation = And [
                 ContainedBy Contains And [ Monster Not OwnedBy AnyEmpire ]
-                Turn low = 200      // don't create lanes before turn 200
+                Turn low = [[EXPERIMENTOR_SPAWN_START_TURN]]       // don't create lanes before spawn start turn
             ]
             effects = AddStarlanes NumberOf 1 And [
                 WithinDistance 100 Source
@@ -1546,8 +1569,8 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 200 high = 235
-                Random 0.2
+                Turn low = [[EXPERIMENTOR_SPAWN_START_TURN]]  high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 35)
+                Random (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip "SM_BLACK_KRAKEN" Source.Owner
@@ -1569,8 +1592,8 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 235
-                Random 0.1
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 35) high = [[IMPOSSIBLY_LARGE_TURN]]
+                Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip "SM_BLACK_KRAKEN" Source.Owner
@@ -1589,8 +1612,8 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 230 high = 270
-                Random 0.2
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 30) high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 70)
+                Random (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
@@ -1612,8 +1635,8 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 270
-                Random 0.1
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 70) high = [[IMPOSSIBLY_LARGE_TURN]]
+                Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
@@ -1632,8 +1655,8 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 265 high = 290
-                Random 0.2
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 65) high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 90)
+                Random (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
@@ -1655,8 +1678,8 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 330
-                Random 0.1
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 130) high = [[IMPOSSIBLY_LARGE_TURN]]
+                Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
@@ -1675,8 +1698,8 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                Turn low = 310
-                Random 0.2
+                Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 110) high = [[IMPOSSIBLY_LARGE_TURN]]
+                Random (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip "SM_COSMIC_DRAGON" Source.Owner
