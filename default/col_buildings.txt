@@ -7,6 +7,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_ABADDONI"
         Not Contains Building "BLD_COL_ABADDONI"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -19,6 +20,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_ABADDONI"
         Not Contains Building "BLD_COL_ABADDONI"
         Not Enqueued type = Building name = "BLD_COL_ABADDONI"
         ResourceSupplyConnected Source.Owner And [
@@ -63,6 +65,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_CHATO"
         Not Contains Building "BLD_COL_CHATO"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -75,6 +78,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_CHATO"
         Not Contains Building "BLD_COL_CHATO"
         Not Enqueued type = Building name = "BLD_COL_CHATO"
         ResourceSupplyConnected Source.Owner And [
@@ -119,6 +123,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_CRAY"
         Not Contains Building "BLD_COL_CRAY"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -131,6 +136,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_CRAY"
         Not Contains Building "BLD_COL_CRAY"
         Not Enqueued type = Building name = "BLD_COL_CRAY"
         ResourceSupplyConnected Source.Owner And [
@@ -175,6 +181,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_DERTHREAN"
         Not Contains Building "BLD_COL_DERTHREAN"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -187,6 +194,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_DERTHREAN"
         Not Contains Building "BLD_COL_DERTHREAN"
         Not Enqueued type = Building name = "BLD_COL_DERTHREAN"
         ResourceSupplyConnected Source.Owner And [
@@ -231,6 +239,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EAXAW"
         Not Contains Building "BLD_COL_EAXAW"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -243,6 +252,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EAXAW"
         Not Contains Building "BLD_COL_EAXAW"
         Not Enqueued type = Building name = "BLD_COL_EAXAW"
         ResourceSupplyConnected Source.Owner And [
@@ -287,6 +297,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EGASSEM"
         Not Contains Building "BLD_COL_EGASSEM"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -299,6 +310,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EGASSEM"
         Not Contains Building "BLD_COL_EGASSEM"
         Not Enqueued type = Building name = "BLD_COL_EGASSEM"
         ResourceSupplyConnected Source.Owner And [
@@ -343,6 +355,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_ETTY"
         Not Contains Building "BLD_COL_ETTY"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -355,6 +368,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_ETTY"
         Not Contains Building "BLD_COL_ETTY"
         Not Enqueued type = Building name = "BLD_COL_ETTY"
         ResourceSupplyConnected Source.Owner And [
@@ -399,6 +413,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_GEORGE"
         Not Contains Building "BLD_COL_GEORGE"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -411,6 +426,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_GEORGE"
         Not Contains Building "BLD_COL_GEORGE"
         Not Enqueued type = Building name = "BLD_COL_GEORGE"
         ResourceSupplyConnected Source.Owner And [
@@ -455,6 +471,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_GYSACHE"
         Not Contains Building "BLD_COL_GYSACHE"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -467,6 +484,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_GYSACHE"
         Not Contains Building "BLD_COL_GYSACHE"
         Not Enqueued type = Building name = "BLD_COL_GYSACHE"
         ResourceSupplyConnected Source.Owner And [
@@ -511,6 +529,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_HHHOH"
         Not Contains Building "BLD_COL_HHHOH"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -523,6 +542,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_HHHOH"
         Not Contains Building "BLD_COL_HHHOH"
         Not Enqueued type = Building name = "BLD_COL_HHHOH"
         ResourceSupplyConnected Source.Owner And [
@@ -567,6 +587,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_HUMAN"
         Not Contains Building "BLD_COL_HUMAN"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -579,6 +600,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_HUMAN"
         Not Contains Building "BLD_COL_HUMAN"
         Not Enqueued type = Building name = "BLD_COL_HUMAN"
         ResourceSupplyConnected Source.Owner And [
@@ -623,6 +645,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_KOBUNTURA"
         Not Contains Building "BLD_COL_KOBUNTURA"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -635,6 +658,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_KOBUNTURA"
         Not Contains Building "BLD_COL_KOBUNTURA"
         Not Enqueued type = Building name = "BLD_COL_KOBUNTURA"
         ResourceSupplyConnected Source.Owner And [
@@ -679,6 +703,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_LAENFA"
         Not Contains Building "BLD_COL_LAENFA"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -691,6 +716,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_LAENFA"
         Not Contains Building "BLD_COL_LAENFA"
         Not Enqueued type = Building name = "BLD_COL_LAENFA"
         ResourceSupplyConnected Source.Owner And [
@@ -735,6 +761,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_MUURSH"
         Not Contains Building "BLD_COL_MUURSH"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -747,6 +774,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_MUURSH"
         Not Contains Building "BLD_COL_MUURSH"
         Not Enqueued type = Building name = "BLD_COL_MUURSH"
         ResourceSupplyConnected Source.Owner And [
@@ -791,6 +819,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SCYLIOR"
         Not Contains Building "BLD_COL_SCYLIOR"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -803,6 +832,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SCYLIOR"
         Not Contains Building "BLD_COL_SCYLIOR"
         Not Enqueued type = Building name = "BLD_COL_SCYLIOR"
         ResourceSupplyConnected Source.Owner And [
@@ -847,6 +877,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SETINON"
         Not Contains Building "BLD_COL_SETINON"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -859,6 +890,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SETINON"
         Not Contains Building "BLD_COL_SETINON"
         Not Enqueued type = Building name = "BLD_COL_SETINON"
         ResourceSupplyConnected Source.Owner And [
@@ -903,6 +935,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SSLITH"
         Not Contains Building "BLD_COL_SSLITH"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -915,6 +948,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SSLITH"
         Not Contains Building "BLD_COL_SSLITH"
         Not Enqueued type = Building name = "BLD_COL_SSLITH"
         ResourceSupplyConnected Source.Owner And [
@@ -959,6 +993,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_TAEGHIRUS"
         Not Contains Building "BLD_COL_TAEGHIRUS"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -971,6 +1006,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_TAEGHIRUS"
         Not Contains Building "BLD_COL_TAEGHIRUS"
         Not Enqueued type = Building name = "BLD_COL_TAEGHIRUS"
         ResourceSupplyConnected Source.Owner And [
@@ -1015,6 +1051,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_TRITH"
         Not Contains Building "BLD_COL_TRITH"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -1027,6 +1064,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_TRITH"
         Not Contains Building "BLD_COL_TRITH"
         Not Enqueued type = Building name = "BLD_COL_TRITH"
         ResourceSupplyConnected Source.Owner And [
@@ -1071,6 +1109,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_UGMORS"
         Not Contains Building "BLD_COL_UGMORS"
         ResourceSupplyConnected Source.Owner And [
             Planet
@@ -1083,6 +1122,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_UGMORS"
         Not Contains Building "BLD_COL_UGMORS"
         Not Enqueued type = Building name = "BLD_COL_UGMORS"
         ResourceSupplyConnected Source.Owner And [
@@ -1127,6 +1167,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EXOBOT"
         Not Contains Building "BLD_COL_EXOBOT"
         // no existing Exobot colony required!
     ]
@@ -1134,6 +1175,7 @@ BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EXOBOT"
         Not Contains Building "BLD_COL_EXOBOT"
         Not Enqueued type = Building name = "BLD_COL_EXOBOT"
         // no existing Exobot colony required!

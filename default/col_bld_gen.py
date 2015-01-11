@@ -36,6 +36,7 @@ t_main = string.Template('''BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "${id}"
         Not Contains Building "BLD_COL_${name}"
         ${species_condition}
     ]
@@ -43,6 +44,7 @@ t_main = string.Template('''BuildingType
         Planet
         OwnedBy TheEmpire Source.Owner
         Population high = 0
+        Not Planet environment = Uninhabitable species = "${id}"
         Not Contains Building "BLD_COL_${name}"
         Not Enqueued type = Building name = "BLD_COL_${name}"
         ${species_condition}
