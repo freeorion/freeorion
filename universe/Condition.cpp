@@ -3101,6 +3101,7 @@ Condition::PlanetEnvironment::~PlanetEnvironment() {
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
         delete m_environments[i];
     }
+    delete m_species_name;
 }
 
 bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rhs) const {
@@ -3110,6 +3111,8 @@ bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rh
         return false;
 
     const Condition::PlanetEnvironment& rhs_ = static_cast<const Condition::PlanetEnvironment&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_species_name)
 
     if (m_environments.size() != rhs_.m_environments.size())
         return false;
@@ -3122,8 +3125,10 @@ bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rh
 
 namespace {
     struct PlanetEnvironmentSimpleMatch {
-        PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments) :
-            m_environments(environments)
+        PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments,
+                                     const std::string& species = "") :
+            m_environments(environments),
+            m_species(species)
         {}
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
@@ -3141,7 +3146,7 @@ namespace {
                 for (std::vector< ::PlanetEnvironment>::const_iterator it = m_environments.begin();
                         it != m_environments.end(); ++it)
                 {
-                    if (planet->EnvironmentForSpecies() == *it)
+                    if (planet->EnvironmentForSpecies(m_species) == *it)
                         return true;
                 }
             }
@@ -3149,7 +3154,8 @@ namespace {
             return false;
         }
 
-        const std::vector< ::PlanetEnvironment>& m_environments;
+        const std::vector< ::PlanetEnvironment>&    m_environments;
+        const std::string&                          m_species;
     };
 }
 
@@ -3157,7 +3163,8 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context,
                                         ObjectSet& matches, ObjectSet& non_matches,
                                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    bool simple_eval_safe = ((!m_species_name || m_species_name->LocalCandidateInvariant()) &&
+                             parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
         for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
@@ -3178,7 +3185,10 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         {
             environments.push_back((*it)->Eval(parent_context));
         }
-        EvalImpl(matches, non_matches, search_domain, PlanetEnvironmentSimpleMatch(environments));
+        std::string species_name;
+        if (m_species_name)
+            species_name = m_species_name->Eval(parent_context);
+        EvalImpl(matches, non_matches, search_domain, PlanetEnvironmentSimpleMatch(environments, species_name));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -3186,6 +3196,8 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::PlanetEnvironment::RootCandidateInvariant() const {
+    if (m_species_name && !m_species_name->RootCandidateInvariant())
+        return false;
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
@@ -3196,6 +3208,8 @@ bool Condition::PlanetEnvironment::RootCandidateInvariant() const {
 }
 
 bool Condition::PlanetEnvironment::TargetInvariant() const {
+    if (m_species_name && !m_species_name->TargetInvariant())
+        return false;
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
@@ -3206,6 +3220,8 @@ bool Condition::PlanetEnvironment::TargetInvariant() const {
 }
 
 bool Condition::PlanetEnvironment::SourceInvariant() const {
+    if (m_species_name && !m_species_name->SourceInvariant())
+        return false;
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
@@ -3229,23 +3245,30 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
             values_str += " ";
         }
     }
+    std::string species_str;
+    if (m_species_name)
+        species_str = m_species_name->Description();
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_PLANET_ENVIRONMENT")
         : UserString("DESC_PLANET_ENVIRONMENT_NOT"))
-        % values_str);
+        % values_str
+        % species_str);
 }
 
 std::string Condition::PlanetEnvironment::Dump() const {
     std::string retval = DumpIndent() + "Planet environment = ";
     if (m_environments.size() == 1) {
-        retval += m_environments[0]->Dump() + "\n";
+        retval += m_environments[0]->Dump();
     } else {
         retval += "[ ";
         for (unsigned int i = 0; i < m_environments.size(); ++i) {
             retval += m_environments[i]->Dump() + " ";
         }
-        retval += "]\n";
+        retval += "]";
     }
+    if (m_species_name)
+        retval += " species = " + m_species_name->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -3262,19 +3285,24 @@ bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) 
         Logger().errorStream() << "PlanetEnvironment::Match passed no candidate object";
         return false;
     }
-    
+
     // is it a planet or on a planet? TODO: factor out
     TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
     TemporaryPtr<const ::Building> building;
     if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
-    if (planet) {
-        ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies();
-        for (unsigned int i = 0; i < m_environments.size(); ++i) {
-            if (m_environments[i]->Eval(local_context) == env_for_planets_species)
-                return true;
-        }
+    if (!planet)
+        return false;
+
+    std::string species_name;
+    if (m_species_name)
+        species_name = m_species_name->Eval(local_context);
+
+    ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies(species_name);
+    for (unsigned int i = 0; i < m_environments.size(); ++i) {
+        if (m_environments[i]->Eval(local_context) == env_for_planets_species)
+            return true;
     }
     return false;
 }

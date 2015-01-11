@@ -45,6 +45,7 @@ namespace {
 
             qi::_1_type _1;
             qi::_a_type _a;
+            qi::_b_type _b;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -111,13 +112,14 @@ namespace {
                 ;
 
             planet_environment
-                =    tok.Planet_
+                =   (tok.Planet_
                 >>   parse::label(Environment_token)
                 >>   (
                             '[' >> +planet_environment_value_ref [ push_back(_a, _1) ] >> ']'
                         |   planet_environment_value_ref [ push_back(_a, _1) ]
                      )
-                     [ _val = new_<Condition::PlanetEnvironment>(_a) ]
+                >  -(parse::label(Species_token)        >>  string_value_ref [_b = _1]))
+                     [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
                 ;
 
             object_type
@@ -193,7 +195,10 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Condition::ConditionBase* (),
-            qi::locals<std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*> >,
+            qi::locals<
+                std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>,
+                const ValueRef::ValueRefBase<std::string>*
+            >,
             parse::skipper_type
         > planet_environment_rule;
 
