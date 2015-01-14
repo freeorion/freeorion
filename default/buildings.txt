@@ -67,16 +67,16 @@ BuildingType
             scope = Source
             activation = Random probability = 0.02
             effects = CreateField type = "FLD_ION_STORM"
-                    x = UniverseCentreX + Random(1.25,1.5)*UniverseCentreX*sin(CurrentTurn)
-                    y = UniverseCentreY + Random(1.25,1.5)*UniverseCentreY*cos(CurrentTurn)
+                    x = UniverseCentreX + RandomNumber(1.25,1.5)*UniverseCentreX*sin(CurrentTurn)
+                    y = UniverseCentreY + RandomNumber(1.25,1.5)*UniverseCentreY*cos(CurrentTurn)
                     size = 50
                     
         EffectsGroup
             scope = Source
             activation = Random probability = 0.01
             effects = CreateField type = "FLD_MOLECULAR_CLOUD"
-                    x = UniverseCentreX + Random(1.25,1.5)*UniverseCentreX*sin(CurrentTurn)
-                    y = UniverseCentreY + Random(1.25,1.5)*UniverseCentreY*cos(CurrentTurn)
+                    x = UniverseCentreX + RandomNumber(1.25,1.5)*UniverseCentreX*sin(CurrentTurn)
+                    y = UniverseCentreY + RandomNumber(1.25,1.5)*UniverseCentreY*cos(CurrentTurn)
                     size = 120
     ]
     icon = "icons/building/archive.png"
