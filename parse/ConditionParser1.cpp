@@ -77,7 +77,7 @@ namespace {
 
             owned_by
                 =    tok.OwnedBy_
-                >>  -(
+                >>   (
                             parse::label(Affiliation_token) >> parse::enum_parser<EmpireAffiliationType>() [ _a = _1 ]
                         |   eps [ _a = AFFIL_SELF ]
                      )
