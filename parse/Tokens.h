@@ -264,6 +264,7 @@
     (Radiated)                                  \
     (Radius)                                    \
     (Random)                                    \
+    (RandomNumber)                              \
     (Range)                                     \
     (Reason)                                    \
     (RebelTroops)                               \
