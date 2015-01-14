@@ -101,6 +101,7 @@ public:
         m_preferred_focus(preferred_focus),
         m_planet_environments(planet_environments),
         m_effects(effects),
+        m_location(0),
         m_playable(params.playable),
         m_native(params.native),
         m_can_colonize(params.can_colonize),
@@ -108,6 +109,8 @@ public:
         m_tags(tags),
         m_graphic(graphic)
     {}
+
+    ~Species();
     //@}
 
     /** \name Accessors */ //@{
@@ -118,6 +121,8 @@ public:
     const std::set<int>&                    Homeworlds() const          { return m_homeworlds; }            ///< returns the ids of objects that are homeworlds for this species
     const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires
     const std::map<std::string, double>&    OtherSpeciesOpinions() const{ return m_other_species_opinions; }///< returns the positive/negative opinions of this species about other species
+
+    const Condition::ConditionBase* Location() const;
 
     std::string                     Dump() const;                                           ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const            { return m_foci; }              ///< returns the focus types this species can use
@@ -158,6 +163,8 @@ private:
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
+
+    mutable Condition::ConditionBase*       m_location;
 
     bool                                    m_playable;
     bool                                    m_native;
