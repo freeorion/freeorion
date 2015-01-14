@@ -6715,8 +6715,8 @@ bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 namespace {
     const Condition::ConditionBase* GetLocationCondition(Condition::ContentType content_type,
-                                                   const std::string& name1,
-                                                   const std::string& name2)
+                                                         const std::string& name1,
+                                                         const std::string& name2)
     {
         if (name1.empty())
             return 0;
@@ -6727,7 +6727,10 @@ namespace {
             break;
         }
         case Condition::CONTENT_SPECIES: {
-            return 0;   // species have no location conditions (but their foci do...)
+            const Species* s = GetSpecies(name1);
+            if (!s)
+                return 0;
+            return s->Location();
         }
         case Condition::CONTENT_SHIP_HULL: {
             if (const HullType* h = GetHullType(name1))
