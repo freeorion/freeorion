@@ -1593,7 +1593,7 @@ BuildingType
             scope = Source
             activation = And [
                 Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 35) high = [[IMPOSSIBLY_LARGE_TURN]]
-                Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+                Random probability = (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
@@ -1636,7 +1636,7 @@ BuildingType
             scope = Source
             activation = And [
                 Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 70) high = [[IMPOSSIBLY_LARGE_TURN]]
-                Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+                Random probability = (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
@@ -1679,7 +1679,7 @@ BuildingType
             scope = Source
             activation = And [
                 Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 130) high = [[IMPOSSIBLY_LARGE_TURN]]
-                Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+                Random probability = (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
                 CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
@@ -1832,7 +1832,7 @@ BuildingType
         ]
         effects = [
             SetSpecies name = "SP_SUPER_TEST"
-            SetPopulation max(Target.Population, 1)
+            SetPopulation value = max(Target.Population, 1)
         ]
         
         EffectsGroup            // remove building when done

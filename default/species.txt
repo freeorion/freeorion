@@ -1259,7 +1259,7 @@ Species
                 Source
                 Capital
                 ]
-            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" 200  // Omniscient Detection
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = 200  // Omniscient Detection
 
     ]
 
