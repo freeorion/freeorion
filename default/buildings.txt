@@ -11,9 +11,9 @@ BuildingType
 /*  // testing effects
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             effects = SetEmpireTechProgress
                 name = Source.OwnerTopPriorityEnqueuedTech
@@ -22,39 +22,39 @@ BuildingType
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 ValueTest
                     high = 5
                     value = LocalCandidate.Population
             ]
-            effects = SetTargetPopulation Value + 100
+            effects = SetTargetPopulation value = Value + 100
 
         EffectsGroup
-            scope = Object Source.PlanetID
+            scope = Object id = Source.PlanetID
             effects = SetTargetConstruction 99
 */
 
         EffectsGroup          // These bonuses given to anyone
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             effects = [
-                SetTargetResearch Value + 5
-                SetTargetIndustry Value + Target.Population / 2
+                SetTargetResearch value = Value + 5
+                SetTargetIndustry value = Value + Target.Population / 2
             ]
             
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                Not HasSpecial "HEAD_ON_A_SPIKE_SPECIAL"
+                OwnedBy empire = Source.Owner
+                Not HasSpecial name = "HEAD_ON_A_SPIKE_SPECIAL"
             ]
-            activation = Not ProducedByEmpire Source.Owner                
+            activation = Not ProducedByEmpire empire = Source.Owner                
             effects = [
-                AddSpecial "HEAD_ON_A_SPIKE_SPECIAL"
+                AddSpecial name = "HEAD_ON_A_SPIKE_SPECIAL"
                 GenerateSitRepMessage
                     message = "HEAD_ON_A_SPIKE_MESSAGE"
                     icon = "icons/sitrep/empire_eliminated.png"
@@ -89,35 +89,35 @@ BuildingType
     captureresult = destroy
     location = And [
         Planet
-        OwnedBy TheEmpire Source.Owner
-        Not Contains Building "BLD_IMPERIAL_PALACE"
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_IMPERIAL_PALACE"
         TargetPopulation low = 1
-        Number 0 0 And [
+        Number low = 0 high = 0 condition = And [
             Building name = "BLD_IMPERIAL_PALACE"
-            OwnedBy Source.Owner
+            OwnedBy empire = Source.Owner
             ProducedByEmpire empire = Source.Owner
         ]
     ]
     enqueuelocation = And [
         // must own production location planet
         Planet
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         
         // can't build where another palace exists (even if not owned by this empire)
-        Not Contains Building "BLD_IMPERIAL_PALACE"
+        Not Contains Building name = "BLD_IMPERIAL_PALACE"
         
         // must have a non-trivial population
         TargetPopulation low = 1
         
         // can't enqueue if already own a self-built palace
-        Number 0 0 And [
+        Number low = 0 high = 0 condition = And [
             Building name = "BLD_IMPERIAL_PALACE"
-            OwnedBy Source.Owner
+            OwnedBy empire = Source.Owner
             ProducedByEmpire empire = Source.Owner
         ]
         
         // can't enqueue if already have an enqueued palace anywhere
-        Number 0 0 And [
+        Number low = 0 high = 0 condition = And [
             Planet
             Enqueued
                 type = Building
@@ -129,52 +129,52 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
-                OwnedBy TheEmpire Source.ProducedByEmpireID
+                OwnedBy empire = Source.ProducedByEmpireID
             ]
             effects = SetEmpireCapital
 
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
-                OwnedBy TheEmpire Source.ProducedByEmpireID
+                OwnedBy empire = Source.ProducedByEmpireID
             ]
             stackinggroup = "IMPERIAL_PALACE_SUPPLY_EFFECT"
-            effects = SetMaxSupply Value + 2
+            effects = SetMaxSupply value = Value + 2
 
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
-                OwnedBy TheEmpire Source.ProducedByEmpireID
+                OwnedBy empire = Source.ProducedByEmpireID
             ]
-            activation = Not Number low = 1 And [
-                Building "BLD_MEGALITH"
-                OwnedBy TheEmpire Source.Owner
+            activation = Not Number low = 1 condition = And [
+                Building name = "BLD_MEGALITH"
+                OwnedBy empire = Source.Owner
             ]
             stackinggroup = "IMPERIAL_PALACE_EFFECT"
             effects =
-                SetTargetConstruction Value + 20
+                SetTargetConstruction value = Value + 20
 
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                Species Source.Planet.Species
+                OwnedBy empire = Source.Owner
+                Species name = Source.Planet.Species
             ]
             activation = And [
-                OwnedBy Source.ProducedByEmpireID
+                OwnedBy empire = Source.ProducedByEmpireID
                 ContainedBy And [
-                    Object Source.PlanetID
+                    Object id = Source.PlanetID
                     Planet
                     Species
                 ]
             ]
             stackinggroup = "IMPERIAL_PALACE_HAPPINESS"
             effects =
-                SetTargetHappiness Value + 5 // min(10, max(0, 10 - Target.DistanceToSource/20))
+                SetTargetHappiness value = Value + 5 // min(10, max(0, 10 - Target.DistanceToSource/20))
         ]
     icon = "icons/building/palace.png"
 
@@ -186,20 +186,20 @@ BuildingType
     buildtime = 3
     location = AND [
         Planet
-        OwnedBy TheEmpire Source.Owner
-        Not Contains Building "BLD_OBSERVATORY"
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_OBSERVATORY"
     ]
     effectsgroups = [
         EffectsGroup
-            scope = NumberOf 1 System
-            effects = SetStealth Value - 1
+            scope = NumberOf number = 1 condition = System
+            effects = SetStealth value = Value - 1
             
         EffectsGroup
             scope = And [ 
                 Planet 
-                Object Source.PlanetID
+                Object id = Source.PlanetID
             ]
-            effects = SetTargetConstruction Value - 10
+            effects = SetTargetConstruction value = Value - 10
     ]
     icon = "icons/building/lighthouse.png"
 */
@@ -213,16 +213,16 @@ BuildingType
     location = And [
         Planet
         TargetPopulation low = 1
-        Not Contains Building "BLD_SHIPYARD_BASE"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_SHIPYARD_BASE"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups =
         EffectsGroup
             scope = And [ 
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
-            effects = SetTargetConstruction Value - 10
+            effects = SetTargetConstruction value = Value - 10
     icon = "icons/building/shipyard.png"
 
 BuildingType
@@ -233,25 +233,25 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+        Not Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 Ship
                 InSystem id = Source.SystemID
-                OwnedBy Source.Owner
+                OwnedBy empire = Source.Owner
                 Structure high = LocalCandidate.MaxStructure - 0.001
             ]
             activation = Turn low = Source.System.LastTurnBattleHere + 1
             effects = [
-                //SetStructure Value + 10
-                SetStructure Target.MaxStructure
+                //SetStructure value = Value + 10
+                SetStructure value = Target.MaxStructure
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR"
                     icon = "icons/sitrep/ship-repair.png"
@@ -265,10 +265,10 @@ BuildingType
             
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
-            effects = SetTargetConstruction Value - 15
+            effects = SetTargetConstruction value = Value - 15
         ]
     icon = "icons/building/shipyard-1.png"
 
@@ -280,16 +280,16 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_CON_NANOROBO"
+        Not Contains Building name = "BLD_SHIPYARD_CON_NANOROBO"
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/shipyard-2.png"
 
@@ -301,16 +301,16 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_CON_GEOINT"
+        Not Contains Building name = "BLD_SHIPYARD_CON_GEOINT"
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/shipyard-3.png"
 
@@ -322,16 +322,16 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_CON_ADV_ENGINE"
+        Not Contains Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/shipyard-4.png"
 
@@ -342,12 +342,12 @@ BuildingType
     buildtime = 5
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_AST"
+        Not Contains Building name = "BLD_SHIPYARD_AST"
         Planet type = Asteroids
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Not Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_AST"
+            OwnedBy empire = Source.Owner
         ]
     ]
     icon = "icons/building/shipyard-5.png"
@@ -359,16 +359,16 @@ BuildingType
     buildtime = 5
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_AST_REF"
+        Not Contains Building name = "BLD_SHIPYARD_AST_REF"
         Planet type = Asteroids
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Contains And [
-            Building "BLD_SHIPYARD_AST"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_AST"
+            OwnedBy empire = Source.Owner
         ]
         Not Contains And [
-            Building "BLD_SHIPYARD_AST_REF"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_AST_REF"
+            OwnedBy empire = Source.Owner
         ]
     ]
     icon = "icons/building/shipyard-6.png"
@@ -381,12 +381,12 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_ORG_ORB_INC"
+        Not Contains Building name = "BLD_SHIPYARD_ORG_ORB_INC"
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/shipyard-7.png"
 
@@ -398,16 +398,16 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+        Not Contains Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/shipyard-8.png"
 
@@ -419,16 +419,16 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_ORG_XENO_FAC"
+        Not Contains Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/shipyard-9.png"
 
@@ -440,12 +440,12 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_ENRG_COMP"
+        Not Contains Building name = "BLD_SHIPYARD_ENRG_COMP"
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/shipyard-10.png"
 
@@ -457,16 +457,16 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_SHIPYARD_ENRG_SOLAR"
+        Not Contains Building name = "BLD_SHIPYARD_ENRG_SOLAR"
         Contains And [
-            Building "BLD_SHIPYARD_ENRG_COMP"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/shipyard-16.png"
 
@@ -477,12 +477,12 @@ BuildingType
     buildtime = 15
     location = And [
         Planet
-        Not Contains Building "BLD_BIOTERROR_PROJECTOR"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_BIOTERROR_PROJECTOR"
+        OwnedBy empire = Source.Owner
         HasSpecial name = "RESONANT_MOON_SPECIAL"
         Not Contains Or [
-            Building "BLD_CLONING_CENTER"
-            Building "BLD_BIOTERROR_PROJECTOR"
+            Building name = "BLD_CLONING_CENTER"
+            Building name = "BLD_BIOTERROR_PROJECTOR"
         ]
     ]
     icon = "icons/building/bioterror_projector.png"
@@ -494,24 +494,24 @@ BuildingType
     buildtime = 10
     location = AND [
         Planet
-        Not Contains Building "BLD_LIGHTHOUSE"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_LIGHTHOUSE"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
-            scope = WithinDistance 0.00001 Source
+            scope = WithinDistance distance = 0.00001 condition = Source
             stackinggroup = "LIGHTHOUSE_STEALTH_STACK"
-            effects = SetStealth Value - 30
+            effects = SetStealth value = Value - 30
 
         EffectsGroup
             scope = And [
                 Ship
-                OwnedBy TheEmpire Source.Owner
-                WithinDistance 50 Source
+                OwnedBy empire = Source.Owner
+                WithinDistance distance = 50 condition = Source
                 StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
             ]
             stackinggroup = "LIGHTHOUSE_SPEED_STACK"
-            effects = SetStarlaneSpeed Value + 20
+            effects = SetStarlaneSpeed value = Value + 20
     ]
     icon = "icons/building/lighthouse.png"
 
@@ -522,16 +522,16 @@ BuildingType
     buildtime = 5
     location = AND [
         Planet
-        Not Contains Building "BLD_SCANNING_FACILITY"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_SCANNING_FACILITY"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
-            SetDetection Value + 75
+            effects = SetDetection value = Value + 75
     ]
     icon = "icons/building/lighthouse.png"
 
@@ -542,8 +542,8 @@ BuildingType
     buildtime = 1
     location = And [
         Planet
-        Not Contains Building "BLD_HEAVY_MINE_PROCESSOR"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_HEAVY_MINE_PROCESSOR"
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     icon = "icons/building/heavy_mining_processor.png"
@@ -555,49 +555,49 @@ BuildingType
     buildtime = 5
     location = And [
         Planet
-        Not Contains Building "BLD_INDUSTRY_CENTER"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_INDUSTRY_CENTER"
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                Focus "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
             ]
             activation = And [
-                OwnerHasTech "PRO_INDUSTRY_CENTER_I"
-                Not OwnerHasTech "PRO_INDUSTRY_CENTER_II"
+                OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"
+                Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                Focus "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
             ]
             activation = And [
-                OwnerHasTech "PRO_INDUSTRY_CENTER_II"
-                Not OwnerHasTech "PRO_INDUSTRY_CENTER_III"
+                OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
+                Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
-                Focus "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
             ]
-            activation = OwnerHasTech "PRO_INDUSTRY_CENTER_III"
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
     ]
     icon = ""
 
@@ -608,17 +608,17 @@ BuildingType
     buildtime = 12
     location = And [
         Planet
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             effects = [
-                CreateShip "SD_COLONY_SHIP" Source.Owner "SP_EXOBOT"
+                CreateShip designname = "SD_COLONY_SHIP" empire = Source.Owner species = "SP_EXOBOT"
                 GenerateSitRepMessage
                     message = "EFFECT_EXOBOT"
                     icon = "icons/species/robotic-01.png"
@@ -639,35 +639,35 @@ BuildingType
     buildtime = 10
     location = And [
         Planet
-        Not Contains Building "BLD_MEGALITH"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_MEGALITH"
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
             effects = [
-                SetTargetConstruction Value + 30
+                SetTargetConstruction value = Value + 30
                 SetEmpireCapital
-                SetIndustry Target.TargetIndustry
-                SetTrade Target.TargetTrade
-                SetResearch Target.TargetResearch
+                SetIndustry value = Target.TargetIndustry
+                SetTrade value = Target.TargetTrade
+                SetResearch value = Target.TargetResearch
             ]
 
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 TargetPopulation low = 1
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
-            effects = SetMaxSupply Value + 2
+            effects = SetMaxSupply value = Value + 2
     ]
     icon = "icons/building/megalith.png"
 
@@ -678,36 +678,36 @@ BuildingType
     buildtime = 10
     location = And [
         Planet
-        Not Contains Building "BLD_COLLECTIVE_NET"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_COLLECTIVE_NET"
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
             ]
-            activation = Not WithinDistance 200 And [
+            activation = Not WithinDistance distance = 200 condition = And [
                 Ship
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
             ]
-            activation = Not WithinDistance 200 And [
+            activation = Not WithinDistance distance = 200 condition = And [
                 Ship
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
-            effects = SetTargetResearch Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
     icon = ""
 
@@ -718,8 +718,8 @@ BuildingType
     buildtime = 16
     location = And [
         Planet
-        Not Contains Building "BLD_GENOME_BANK"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_GENOME_BANK"
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     icon = "icons/building/genome_bank.png"
@@ -731,59 +731,59 @@ BuildingType
     buildtime = 6
     location = And [
         Planet
-        Not Contains Building "BLD_SPACE_ELEVATOR"
+        Not Contains Building name = "BLD_SPACE_ELEVATOR"
         Not Planet type = Asteroids
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet size = Tiny
             ]
             activation = Source
-            effects = SetMaxSupply Value + 1
+            effects = SetMaxSupply value = Value + 1
 
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet size = Small
             ]
             activation = Source
-            effects = SetMaxSupply Value + 2
+            effects = SetMaxSupply value = Value + 2
 
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet size = Medium
             ]
             activation = Source
-            effects = SetMaxSupply Value + 3
+            effects = SetMaxSupply value = Value + 3
 
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet size = Large
             ]
             activation = Source
-            effects = SetMaxSupply Value + 4
+            effects = SetMaxSupply value = Value + 4
 
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet size = Huge
             ]
             activation = Source
-            effects = SetMaxSupply Value + 5
+            effects = SetMaxSupply value = Value + 5
 
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet type = GasGiant
             ]
             activation = Source
-            effects = SetMaxSupply Value + 4
+            effects = SetMaxSupply value = Value + 4
     ]
     icon = ""
 
@@ -794,8 +794,8 @@ BuildingType
     buildtime = 12
     location = And [
         Planet
-        Not Contains Building "BLD_GAIA_TRANS"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_GAIA_TRANS"
+        OwnedBy empire = Source.Owner
         Planet environment = Good
         Not Planet type = [Asteroids GasGiant]
         Not HasSpecial name = "GAIA_SPECIAL"
@@ -803,11 +803,11 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = Source
-            effects = AddSpecial "GAIA_SPECIAL"
+            effects = AddSpecial name = "GAIA_SPECIAL"
 
         EffectsGroup
             scope = Source
@@ -823,18 +823,18 @@ BuildingType
     buildtime = 10
     location = And [
         Planet
-        Not Contains Building "BLD_ART_BLACK_HOLE"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_ART_BLACK_HOLE"
+        OwnedBy empire = Source.Owner
         Star type = Red
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.SystemID
+                Object id = Source.SystemID
                 System
             ]
             activation = Star type = Red
-            effects = SetStarType BlackHole
+            effects = SetStarType type = BlackHole
 
         EffectsGroup
             scope = Source
@@ -851,32 +851,32 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_HYPER_DAM"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_HYPER_DAM"
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
+                Focus type = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"
-            effects = SetTargetIndustry Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
                 Not Star type = BlackHole
-                Focus "FOCUS_INDUSTRY"
+                Focus type = "FOCUS_INDUSTRY"
             ]
             activation = Source
-            effects = SetTargetPopulation Value - 5
+            effects = SetTargetPopulation value = Value - 5
     ]
     icon = "icons/building/blackhole.png"
 
@@ -887,56 +887,56 @@ BuildingType
     buildtime = 6
     tags = "ORBITAL"
     location = AND [
-        Not Contains Building "BLD_SOL_ORB_GEN"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_SOL_ORB_GEN"
+        OwnedBy empire = Source.Owner
         ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
+                Focus type = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
+                Focus type = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [
                 Star type = [Yellow Orange]
-                Not ResourceSupplyConnected Source.Owner And [
-                    Building "BLD_SOL_ORB_GEN"
-                    OwnedBy TheEmpire Source.Owner
+                Not ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Building name = "BLD_SOL_ORB_GEN"
+                    OwnedBy empire = Source.Owner
                     Star type = [Blue White]
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
+                Focus type = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [
                 Star type = Red
-                Not ResourceSupplyConnected Source.Owner And [
-                    Building "BLD_SOL_ORB_GEN"
-                    OwnedBy TheEmpire Source.Owner
+                Not ResourceSupplyConnected empire = Source.Owner condition = And [
+                    Building name = "BLD_SOL_ORB_GEN"
+                    OwnedBy empire = Source.Owner
                     Star type = [Yellow Orange Blue White]
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/miniature_sun.png"
 /*
@@ -947,11 +947,11 @@ BuildingType
     buildtime = 5
     location = And [
         Planet
-        Not Contains Building "BLD_CLONING_CENTER"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_CLONING_CENTER"
+        OwnedBy empire = Source.Owner
         Not Contains Or [
-            Building "BLD_CLONING_CENTER"
-            Building "BLD_BIOTERROR_PROJECTOR"
+            Building name = "BLD_CLONING_CENTER"
+            Building name = "BLD_BIOTERROR_PROJECTOR"
         ]
     ]
     icon = ""
@@ -963,25 +963,25 @@ BuildingType
     buildtime = 8
     location = And [
         Planet
-        Not Contains Building "BLD_TERRAFORM"
-        Not Contains Building "BLD_TERRAFORM_REVERT"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_TERRAFORM"
+        Not Contains Building name = "BLD_TERRAFORM_REVERT"
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
         Not Planet type = [Asteroids GasGiant]
         Not Planet environment = [Uninhabitable Good]
         Not And [
-            Species "SP_EXOBOT"
+            Species name = "SP_EXOBOT"
             Planet environment = Adequate
         ]
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             effects = [
-                SetPlanetType Target.NextBetterPlanetType
+                SetPlanetType type = Target.NextBetterPlanetType
                 GenerateSitRepMessage
                     message = "EFFECT_TERRAFORM"
                     icon = "icons/building/terraform.png"
@@ -1002,20 +1002,20 @@ BuildingType
     buildtime = 6
     location = And [
         Planet
-        Not Contains Building "BLD_TERRAFORM"
-        Not Contains Building "BLD_TERRAFORM_REVERT"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_TERRAFORM"
+        Not Contains Building name = "BLD_TERRAFORM_REVERT"
+        OwnedBy empire = Source.Owner
         Not Planet type = [Asteroids GasGiant]
         Not Planet type = LocalCandidate.OriginalType
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             effects = [
-                SetPlanetType Target.NextCloserToOriginalPlanetType
+                SetPlanetType type = Target.NextCloserToOriginalPlanetType
                 GenerateSitRepMessage
                     message = "EFFECT_TERRAFORM"
                     icon = "icons/building/terraform.png"
@@ -1037,18 +1037,18 @@ BuildingType
     buildtime = 16
     location = And [
         Planet
-        Not Contains Building "BLD_REMOTE_TERRAFORM"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_REMOTE_TERRAFORM"
+        OwnedBy empire = Source.Owner
         Not Planet environment = [Uninhabitable Good]
         Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
-            effects = SetPlanetType Target.NextBetterPlanetType
+            effects = SetPlanetType type = Target.NextBetterPlanetType
 
         EffectsGroup
             scope = Source
@@ -1064,8 +1064,8 @@ BuildingType
     tags = "ORBITAL"
     location = AND [
         Planet
-        Not Contains Building "BLD_NEUTRONIUM_EXTRACTOR"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_NEUTRONIUM_EXTRACTOR"
+        OwnedBy empire = Source.Owner
         Star type = Neutron
         ]
     icon = "icons/building/neutronium-forge.png"
@@ -1078,8 +1078,8 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_NEUTRONIUM_FORGE"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_NEUTRONIUM_FORGE"
+        OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
     icon = "icons/building/neutronium-forge.png"
@@ -1091,8 +1091,8 @@ BuildingType
     buildtime = 10
     location = AND [
         Planet
-        Not Contains Building "BLD_NEUTRONIUM_SYNTH"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_NEUTRONIUM_SYNTH"
+        OwnedBy empire = Source.Owner
         ]
     icon = "icons/building/neutronium-forge.png"
 
@@ -1102,37 +1102,37 @@ BuildingType
     buildcost = 5
     buildtime = 1
     location = AND [
-        Not Contains Building "BLD_CONC_CAMP"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_CONC_CAMP"
+        OwnedBy empire = Source.Owner
         Population low = 3
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetTargetIndustry Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Population low = 0.0001
-                Not HasSpecial "CONC_CAMP_MASTER_SPECIAL"
+                Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
-            effects = AddSpecial "CONC_CAMP_MASTER_SPECIAL"
+            effects = AddSpecial name = "CONC_CAMP_MASTER_SPECIAL"
         EffectsGroup
             scope = Source
             activation =    ContainedBy And [
-                                Object Source.PlanetID
+                                Object id = Source.PlanetID
                                 Population high = 0
                             ]
             effects = [
@@ -1145,21 +1145,21 @@ BuildingType
                 ]
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                HasSpecial "CONC_CAMP_MASTER_SPECIAL"
+                OwnedBy empire = Source.Owner
+                HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
             effects = [
-                SetPopulation Min(Value - 3, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-3*100))^0.5))
-                SetIndustry Target.TargetIndustry
+                SetPopulation value = min(Value - 3, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-3*100))^0.5))
+                SetIndustry value = Target.TargetIndustry
             ]
         EffectsGroup
             scope = Source
-            activation = Not ProducedByEmpire Source.Owner
+            activation = Not ProducedByEmpire empire = Source.Owner
             effects = Destroy
     ]
     icon = "icons/building/concentration-camp.png"
@@ -1173,19 +1173,19 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
-                Not Contains Building "BLD_CONC_CAMP"
+                Not Contains Building name = "BLD_CONC_CAMP"
             ]
-            effects = SetIndustry Target.TargetIndustry
+            effects = SetIndustry value = Target.TargetIndustry
         EffectsGroup
             scope = Source
             activation =  ContainedBy AND [
-                Not HasSpecial "CONC_CAMP_MASTER_SPECIAL"
-                Not HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
+                Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
+                Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
                 Industry High = Source.Planet.TargetIndustry + 2 
             ]
             effects = Destroy
@@ -1200,21 +1200,21 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_BLACK_HOLE_POW_GEN"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_BLACK_HOLE_POW_GEN"
+        OwnedBy empire = Source.Owner
         Star type = BlackHole
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-                OwnedBy TheEmpire Source.Owner
-                ResourceSupplyConnected Source.Owner Source
+                Focus type = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
-            effects = SetTargetIndustry Value + Target.Population * 6 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 6 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/blackhole.png"
 
@@ -1224,8 +1224,8 @@ BuildingType
     buildcost = 125
     buildtime = 4
     location = AND [
-        Not Contains Building "BLD_REPLICATORS"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_REPLICATORS"
+        OwnedBy empire = Source.Owner
     ]
     icon = ""
 
@@ -1236,8 +1236,8 @@ BuildingType
     buildtime = 5
     location = And [
         Planet
-        Not Contains Building "BLD_PLANET_DRIVE"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_PLANET_DRIVE"
+        OwnedBy empire = Source.Owner
         Not Planet type = Asteroids
     ]
     icon = ""
@@ -1248,13 +1248,13 @@ BuildingType
     buildcost = 1
     buildtime = 1
     location = AND [
-        Not Contains Building "BLD_PLANET_BEACON"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_PLANET_BEACON"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = WithinStarlaneJumps 1 Building name = "BLD_PLANET_DRIVE"
+            activation = WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_DRIVE"
             effects = Destroy
     icon = "icons/building/beacon.png"
 
@@ -1265,18 +1265,18 @@ BuildingType
     buildtime = 15
     location = And [
         Planet
-        Not Contains Building "BLD_ART_PLANET"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_ART_PLANET"
+        OwnedBy empire = Source.Owner
         Planet type = [Asteroids GasGiant]
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = Source
-            effects = SetPlanetType Barren
+            effects = SetPlanetType type = Barren
 
         EffectsGroup
             scope = Source
@@ -1292,18 +1292,18 @@ BuildingType
     buildtime = 5
     location = And [
         Planet
-        Not Contains Building "BLD_ART_MOON"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_ART_MOON"
+        OwnedBy empire = Source.Owner
         Not Planet type = [Asteroids GasGiant]
     ]
     effectsgroups =
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = Source
-            effects = AddSpecial "RESONANT_MOON_SPECIAL"
+            effects = AddSpecial name = "RESONANT_MOON_SPECIAL"
     icon = "icons/specials_huge/resonant_moon.png"
 
 BuildingType
@@ -1312,8 +1312,8 @@ BuildingType
     buildcost = 100
     buildtime = 8
     location = AND [
-        Not Contains Building "BLD_TRANSFORMER"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_TRANSFORMER"
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/transformer.png"
 
@@ -1323,14 +1323,14 @@ BuildingType
     buildcost = 200
     buildtime = 10
     location = AND [
-        Not Contains Building "BLD_GATEWAY_VOID"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_GATEWAY_VOID"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
             ]
             activation = Source
             effects = [
@@ -1347,15 +1347,15 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
             ]
             activation = Source
-            effects = SetTargetPopulation 0.1
+            effects = SetTargetPopulation value = 0.1
 
         EffectsGroup
-            scope = InSystem Source.SystemID
+            scope = InSystem id = Source.SystemID
             activation = Source
-            effects = SetStealth Value + 1000
+            effects = SetStealth value = Value + 1000
     ]
     icon = ""
 
@@ -1365,19 +1365,19 @@ BuildingType
     buildcost = 100
     buildtime = 3
     location = AND [
-        Not Contains Building "BLD_ENCLAVE_VOID"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_ENCLAVE_VOID"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
-            effects = SetTargetResearch Value + Target.Population * 3.75 *  [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 3.75 *  [[RESEARCH_PER_POP]]
     ]
     icon = ""
 
@@ -1387,8 +1387,8 @@ BuildingType
     buildcost = 150
     buildtime = 8
     location = AND [
-        Not Contains Building "BLD_PLANET_CLOAK"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_PLANET_CLOAK"
+        OwnedBy empire = Source.Owner
     ]
     icon = ""
 
@@ -1398,8 +1398,8 @@ BuildingType
     buildcost = 30
     buildtime = 10
     location = AND [
-        Not Contains Building "BLD_SPATIAL_DISTORT_GEN"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_SPATIAL_DISTORT_GEN"
+        OwnedBy empire = Source.Owner
     ]
     icon = ""
 
@@ -1408,15 +1408,15 @@ BuildingType
     description = "BLD_STARGATE_DESC"
     buildcost = 500 + 50 *
                     Count condition = And [
-                        Building "BLD_STARGATE"
-                        OwnedBy TheEmpire Source.Owner
+                        Building name = "BLD_STARGATE"
+                        OwnedBy empire = Source.Owner
                     ]
     buildtime = 10
     tags = "ORBITAL"
     location = AND [
         TargetPopulation low = 1
-        Not Contains Building "BLD_STARGATE"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_STARGATE"
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/building/stargate.png"
 
@@ -1428,21 +1428,21 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
-        Not Contains Building "BLD_GAS_GIANT_GEN"
-        OwnedBy TheEmpire Source.Owner
+        Not Contains Building name = "BLD_GAS_GIANT_GEN"
+        OwnedBy empire = Source.Owner
         Planet type = GasGiant
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
-                InSystem Source.SystemID
-                Focus "FOCUS_INDUSTRY"
+                InSystem id = Source.SystemID
+                Focus type = "FOCUS_INDUSTRY"
                 NOT Population high = 0
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
-            effects = SetTargetIndustry Value + 10
+            effects = SetTargetIndustry value = Value + 10
         EffectsGroup
             scope = Source
             activation = Not Planet type = GasGiant
@@ -1457,15 +1457,15 @@ BuildingType
     buildtime = 1
     location = And [
         Planet
-        Not Contains Building "BLD_COLONY_BASE"
+        Not Contains Building name = "BLD_COLONY_BASE"
         Population low = [[MIN_RECOLONIZING_SIZE]]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
-            effects = CreateShip "SD_COLONY_BASE" Source.Owner Source.Planet.Species
+            effects = CreateShip designname = "SD_COLONY_BASE" empire = Source.Owner species = Source.Planet.Species
 
         EffectsGroup
             scope = Source
@@ -1509,60 +1509,60 @@ BuildingType
             scope = Or [
                 Source
                 And [
-                    Object Source.PlanetID
+                    Object id = Source.PlanetID
                     Planet
                 ]
             ]
-            effects = SetStealth Value + 60
+            effects = SetStealth value = Value + 60
 
         EffectsGroup
             scope = Or [
                 And [
-                    Object Source.SystemID
+                    Object id = Source.SystemID
                     System
                 ]
                 And [
                     Planet
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     Not Source
                 ]
             ]
-            effects = SetStealth Value + 40
+            effects = SetStealth value = Value + 40
 
         EffectsGroup
             scope = And [
 				Source
-                OwnedBy AnyEmpire
-                Species "SP_EXPERIMENTOR" 
+                OwnedBy affiliation = AnyEmpire
+                Species name = "SP_EXPERIMENTOR" 
             ]
             effects = [
                         GenerateSitRepMessage
                             message = "SITREP_VICTORY_CAPTURE"
                             icon = "icons/sitrep/victory.png"
                             empire = Source.Owner
-                        AddStarlanes NumberOf 1 And [
-                                                    WithinDistance 100 Source
-                                                    System
-                                                ]
+                        AddStarlanes endpoint = NumberOf number = 1 condition = And [
+                            WithinDistance distance = 100 condition = Source
+                            System
+                        ]
                         Destroy
                     ]
 
         EffectsGroup
             scope = Source
             activation = Or [
-                Not ContainedBy Contains And [ Monster Not OwnedBy AnyEmpire ]
+                Not ContainedBy Contains And [ Monster Not OwnedBy affiliation = AnyEmpire ]
                 Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]      // always remove lanes before spawn start turn
             ]
-            effects = RemoveStarlanes WithinStarlaneJumps 1 Source
+            effects = RemoveStarlanes endpoint = WithinStarlaneJumps jumps = 1 condition = Source
 
         EffectsGroup
             scope = Source
             activation = And [
-                ContainedBy Contains And [ Monster Not OwnedBy AnyEmpire ]
+                ContainedBy Contains And [ Monster Not OwnedBy affiliation = AnyEmpire ]
                 Turn low = [[EXPERIMENTOR_SPAWN_START_TURN]]       // don't create lanes before spawn start turn
             ]
-            effects = AddStarlanes NumberOf 1 And [
-                WithinDistance 100 Source
+            effects = AddStarlanes endpoint = NumberOf number = 1 condition = And [
+                WithinDistance distance = 100 condition = Source
                 System
             ]
 
@@ -1570,14 +1570,14 @@ BuildingType
             scope = Source
             activation = And [
                 Turn low = [[EXPERIMENTOR_SPAWN_START_TURN]]  high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 35)
-                Random (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+                Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
-                CreateShip "SM_BLACK_KRAKEN" Source.Owner
-                CreateShip "SM_BLACK_KRAKEN" Source.Owner
-                CreateShip "SM_BLACK_KRAKEN" Source.Owner
-                CreateShip "SM_BLACK_KRAKEN" Source.Owner
-                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -1596,8 +1596,8 @@ BuildingType
                 Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
-                CreateShip "SM_BLACK_KRAKEN" Source.Owner
-                CreateShip "SM_BLACK_KRAKEN" Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
+                CreateShip designname = "SM_BLACK_KRAKEN" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -1613,14 +1613,14 @@ BuildingType
             scope = Source
             activation = And [
                 Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 30) high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 70)
-                Random (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+                Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
-                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
-                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
-                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
-                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
-                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -1639,8 +1639,8 @@ BuildingType
                 Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
-                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
-                CreateShip "SM_BLOATED_JUGGERNAUT" Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
+                CreateShip designname = "SM_BLOATED_JUGGERNAUT" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -1656,14 +1656,14 @@ BuildingType
             scope = Source
             activation = And [
                 Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 65) high = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 90)
-                Random (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+                Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
-                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
-                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
-                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
-                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
-                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -1682,8 +1682,8 @@ BuildingType
                 Random (0.1 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
-                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
-                CreateShip "SM_PSIONIC_SNOWFLAKE" Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
+                CreateShip designname = "SM_PSIONIC_SNOWFLAKE" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -1699,12 +1699,12 @@ BuildingType
             scope = Source
             activation = And [
                 Turn low = ( [[EXPERIMENTOR_SPAWN_START_TURN]] + 110) high = [[IMPOSSIBLY_LARGE_TURN]]
-                Random (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
+                Random probability = (0.2 * [[EXPERIMENTOR_MONSTER_FREQ_FACTOR]] )
             ]
             effects = [
-                CreateShip "SM_COSMIC_DRAGON" Source.Owner
-                CreateShip "SM_COSMIC_DRAGON" Source.Owner
-                CreateShip "SM_COSMIC_DRAGON" Source.Owner
+                CreateShip designname = "SM_COSMIC_DRAGON" empire = Source.Owner
+                CreateShip designname = "SM_COSMIC_DRAGON" empire = Source.Owner
+                CreateShip designname = "SM_COSMIC_DRAGON" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -1737,19 +1737,19 @@ BuildingType
     buildtime = 1
     location = AND [
         Planet
-        OwnedBy TheEmpire Source.Owner
-        Not Contains Building "BLD_EVACUATION"
-        Not Contains Building "BLD_CONC_CAMP"
-        Not HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_EVACUATION"
+        Not Contains Building name = "BLD_CONC_CAMP"
+        Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
         Not Enqueued type = Building name = "BLD_CONC_CAMP"
         TargetPopulation low = 1
     ]
     EnqueueLocation = And [
         Planet
-        OwnedBy TheEmpire Source.Owner
-        Not Contains Building "BLD_EVACUATION"
-        Not Contains Building "BLD_CONC_CAMP"
-        Not HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
+        OwnedBy empire = Source.Owner
+        Not Contains Building name = "BLD_EVACUATION"
+        Not Contains Building name = "BLD_CONC_CAMP"
+        Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
         Not Enqueued type = Building name = "BLD_EVACUATION"
         Not Enqueued type = Building name = "BLD_CONC_CAMP"
         TargetPopulation low = 1        
@@ -1759,21 +1759,21 @@ BuildingType
             scope = NumberOf number = 1 condition = And [
                 PopulationCenter
                 Species name = Source.Planet.Species
-                Not Object Source.PlanetID
-                ResourceSupplyConnected Source.Owner Source
+                Not Object id = Source.PlanetID
+                ResourceSupplyConnected empire = Source.Owner condition = Source
                 Population low = 1 high = LocalCandidate.TargetPopulation - 1
-                Not Contains Building "BLD_EVACUATION"
-                Not Contains Building "BLD_CONC_CAMP"
+                Not Contains Building name = "BLD_EVACUATION"
+                Not Contains Building name = "BLD_CONC_CAMP"
             ]
             activation = Number low = 1 condition = And [
                 PopulationCenter
                 Species name = Source.Planet.Species
-                Not Object Source.PlanetID
-                ResourceSupplyConnected Source.Owner Source
+                Not Object id = Source.PlanetID
+                ResourceSupplyConnected empire = Source.Owner condition = Source
                 Population low = 1 high = LocalCandidate.TargetPopulation - 1
             ]
             effects = [
-                SetPopulation Value + 2
+                SetPopulation value = Value + 2
                 GenerateSitRepMessage
                     message = "EFFECT_EVACUEES"
                     icon = "icons/building/evacuation.png"
@@ -1783,34 +1783,34 @@ BuildingType
     
         EffectsGroup            // remove population from location
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet            
             ]
             activation = ContainedBy And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             effects = [ //complicated population formula necessary to actually peg pop reduction at -2, not just 2 less growth than it would have been
                 // the fixed amount for pop change per turn is 'k' towards the end of the comment line immediately below, which is 2 in the functional line that follows it
-                //SetPopulation Min(Value - k, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-k*100))^0.5))
-                SetPopulation Min(Value - 2, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5))
-                SetIndustry Value = 0
-                SetTargetIndustry Value = 0
-                SetResearch Value = 0
-                SetTargetResearch Value = 0
+                //SetPopulation value = min(Value - k, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-k*100))^0.5))
+                SetPopulation value = min(Value - 2, Value + 0.5*(101+Target.TargetPopulation-2*Value - Max(0,(101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5))
+                SetIndustry value = 0
+                SetTargetIndustry value = 0
+                SetResearch value = 0
+                SetTargetResearch value = 0
                 ]
 
         EffectsGroup            // remove evacuation when planet is depopulated or no longer owned by empire that produced this building
             scope = Source
             activation = OR [
-                NOT OwnedBy TheEmpire Source.Owner
+                NOT OwnedBy empire = Source.Owner
                 ContainedBy Or [
                     And [
-                        Object Source.PlanetID
+                        Object id = Source.PlanetID
                         Population high = 0
                     ]
-                    Contains Building "BLD_CONC_CAMP"
-                    HasSpecial "CONC_CAMP_SLAVE_SPECIAL"
+                    Contains Building name = "BLD_CONC_CAMP"
+                    HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
                 ]
             ]
             effects = Destroy
@@ -1827,7 +1827,7 @@ BuildingType
     effectsgroups = [
         Effectsgroup
         scope = And [
-            Object Source.PlanetID
+            Object id = Source.PlanetID
             Planet
         ]
         effects = [

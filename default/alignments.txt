@@ -28,12 +28,12 @@ AlignmentEffects effectsgroups = [
     EffectsGroup
         scope = And [
             Ship
-            OwnedBy TheEmpire Source.Owner
+            OwnedBy empire = Source.Owner
             Or [
-                DesignHasPartClass 1 999 ShortRange
-                DesignHasPartClass 1 999 Missiles
-                DesignHasPartClass 1 999 Fighters
-                DesignHasPartClass 1 999 PointDefense
+                DesignHasPartClass low = 1 high = 999 class = ShortRange
+                DesignHasPartClass low = 1 high = 999 class = Missiles
+                DesignHasPartClass low = 1 high = 999 class = Fighters
+                DesignHasPartClass low = 1 high = 999 class = PointDefense
             ]
         ]
         effects =
@@ -44,7 +44,7 @@ AlignmentEffects effectsgroups = [
                 
     EffectsGroup
         scope = And [
-            OwnedBy TheEmpire Source.Owner
+            OwnedBy empire = Source.Owner
             Or [
                 Building name = "BLD_BIOTERROR_PROJECTOR"
                 Building name = "BLD_GENOME_BANK"
@@ -59,7 +59,7 @@ AlignmentEffects effectsgroups = [
 
     EffectsGroup
         scope = And [
-            OwnedBy TheEmpire Source.Owner
+            OwnedBy empire = Source.Owner
             Building name = "BLD_TERRAFORM"
         ]
         effects =

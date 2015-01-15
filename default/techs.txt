@@ -137,9 +137,9 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetDefense Value + 0.1*Target.MaxDefense
+            effects = SetDefense value = Value + 0.1*Target.MaxDefense
 
 Tech
     name = "DEF_DEFENSE_NET_REGEN_2"
@@ -154,9 +154,9 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetDefense Value + 0.25*Target.Construction
+            effects = SetDefense value = Value + 0.25*Target.Construction
 
 Tech
     name = "DEF_PLAN_BARRIER_SHLD_1"
@@ -171,11 +171,11 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             effects = [
-//                SetMaxShield Value + 30
-                SetShield Value + 0.25*Target.Construction
+//                SetMaxShield value = Value + 30
+                SetShield value = Value + 0.25*Target.Construction
             ]
     graphic = "icons/tech/planetary_barrier_shield.png"
 
@@ -192,11 +192,11 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             effects = [
-//                SetMaxShield Value + 60
-                SetShield Value + 0.75*Target.Construction
+//                SetMaxShield value = Value + 60
+                SetShield value = Value + 0.75*Target.Construction
             ]
     graphic = "icons/tech/planetary_barrier_shield.png"
 
@@ -213,11 +213,11 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             effects = [
-//                SetMaxShield Value + 90
-                SetShield Value + 1.0*Target.Construction
+//                SetMaxShield value = Value + 90
+                SetShield value = Value + 1.0*Target.Construction
             ]
     graphic = "icons/tech/planetary_barrier_shield.png"
 
@@ -234,11 +234,11 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             effects = [
-//                SetMaxShield Value + 150
-                SetShield Value + 1.5*Target.Construction
+//                SetMaxShield value = Value + 150
+                SetShield value = Value + 1.5*Target.Construction
             ]
     graphic = "icons/tech/planetary_barrier_shield.png"
 
@@ -255,11 +255,11 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             effects = [
-//                SetMaxShield Value + 150
-                SetShield Value + 2.5*Target.Construction
+//                SetMaxShield value = Value + 150
+                SetShield value = Value + 2.5*Target.Construction
             ]
     graphic = "icons/tech/planetary_barrier_shield.png"
 
@@ -292,13 +292,13 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
-            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_2"
-            effects = SetStructure Value - 2
+            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
+            effects = SetStructure value = Value - 2
         EffectsGroup
             scope = And [
                 Fleet
@@ -306,12 +306,12 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
-            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_2"
+            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
@@ -331,13 +331,13 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
                 Structure high = 2
             ]
-            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_2"
+            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"
@@ -370,13 +370,13 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
-            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_3"
-            effects = SetStructure Value - 6
+            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_3"
+            effects = SetStructure value = Value - 6
         EffectsGroup
             scope = And [
                 Fleet
@@ -384,12 +384,12 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
-            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_3"
+            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_3"
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES"
@@ -409,13 +409,13 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
                 Structure high = 6
             ]
-            activation = Not OwnerHasTech "DEF_SYST_DEF_MINE_3"
+            activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_3"
             effects = [
                 GenerateSitRepMessage
                     message = "EFFECT_MINES_SHIP_DESTROYED"
@@ -448,12 +448,12 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
-            effects = SetStructure Value - 14
+            effects = SetStructure value = Value - 14
         EffectsGroup
             scope = And [
                 Fleet
@@ -461,10 +461,10 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
             effects = [
                 GenerateSitRepMessage
@@ -485,10 +485,10 @@ Tech
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy EnemyOf Source.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
                 Structure high = 14
             ]
             effects = [
@@ -534,10 +534,10 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/algorithmic_elegance.png"
 
@@ -562,8 +562,8 @@ Tech
     techtype = Theory
     category = "LEARNING_CATEGORY"
     researchcost = 300 * [[TECH_COST_MULTIPLIER]] - (250 * [[TECH_COST_MULTIPLIER]] * If condition = AND [
-        OwnedBy TheEmpire Source.Owner
-        HasTag "TELEPATHIC"
+        OwnedBy empire = Source.Owner
+        HasTag name = "TELEPATHIC"
     ])
     researchturns = 4
     prerequisites = "LRN_TRANSLING_THT"
@@ -660,10 +660,10 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 NOT TargetPopulation low = 0 high = 0
             ]
-            effects = SetTargetResearch Value + 10 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + 10 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/basic_autolabs.png"
 
@@ -680,10 +680,10 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                // Focus "FOCUS_RESEARCH"  //Does not require research Focus
+                OwnedBy empire = Source.Owner
+                // Focus type = "FOCUS_RESEARCH"  //Does not require research Focus
             ]
-            effects = SetTargetResearch Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/distributed_thought.png"
 
@@ -740,10 +740,10 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
 
 Tech
@@ -759,38 +759,38 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Star type = BlackHole
-                Focus "FOCUS_RESEARCH"
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Star type = Neutron
-                Focus "FOCUS_RESEARCH"
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 3.75 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 3.75 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Star type = [Blue White]
-                Focus "FOCUS_RESEARCH"
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Star type = [Red Orange Yellow]
-                Focus "FOCUS_RESEARCH"
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/stellar_tomography.png"
 
@@ -839,19 +839,19 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                Not OwnedBy TheEmpire Source.Owner
-                VisibleToEmpire Source.Owner
-                Random .1
+                Not OwnedBy empire = Source.Owner
+                VisibleToEmpire empire = Source.Owner
+                Random probability = 0.1
                 Not Monster
-                Not HasTag "TELEPATHIC"
-                Not OwnerHasTech "LRN_PSY_DOM"
+                Not HasTag name = "TELEPATHIC"
+                Not OwnerHasTech name = "LRN_PSY_DOM"
                 ContainedBy And [
                     System
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
-                        HasTag "TELEPATHIC"
-                        Focus "FOCUS_DOMINATION"
+                        OwnedBy empire = Source.Owner
+                        HasTag name = "TELEPATHIC"
+                        Focus type = "FOCUS_DOMINATION"
                     ]
                 ]
             ]
@@ -872,7 +872,7 @@ Tech
                         tag = "ship" data = Target.ID
                     ]
                     empire = Source.Owner
-                SetOwner Source.Owner
+                SetOwner empire = Source.Owner
             ]
 
 Tech
@@ -923,7 +923,7 @@ Tech
                     message = "SITREP_VICTORY_TECH"
                     icon = "icons/sitrep/victory.png"
                     empire = Source.Owner
-                Victory "TECH_VICTORY"
+                Victory reason = "TECH_VICTORY"
             ]
     graphic = "icons/tech/singularity_of_transcendence.png"
 
@@ -1102,29 +1102,29 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetMaxFuel Value + 2
+            effects = SetMaxFuel value = Value + 2
 
 //Shield & defense now adjusted in Species.txt
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
 
             ]
-            effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_RESEARCH"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_RESEARCH"
 
             ]
-            effects = SetTargetResearch Value  + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value  + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
     graphic = "icons/tech/pure-energy_metabolism.png"
 
@@ -1238,18 +1238,18 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 ContainedBy And [
                     System 
                     Contains And [
                         Planet
                         Planet type = Asteroids
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                Focus "FOCUS_INDUSTRY"
+                Focus type = "FOCUS_INDUSTRY"
             ]
-            effects = SetTargetIndustry Value + 5
+            effects = SetTargetIndustry value = Value + 5
     ]
     graphic = "icons/tech/microgravity_manufacturing.png"
 
@@ -1265,10 +1265,10 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
             ]
-            effects = SetTargetIndustry Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
         ]
     graphic = "icons/tech/robotic_production.png"
     
@@ -1298,10 +1298,10 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_INDUSTRY"
             ]
-            effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
     ]
     graphic = "icons/tech/fusion_generation.png"
 
@@ -1347,10 +1347,10 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 NOT TargetPopulation low = 0 high = 0
              ]
-             effects = SetTargetIndustry Value + 5
+             effects = SetTargetIndustry value = Value + 5
     ]
     graphic = "icons/tech/basic_autofactories.png"
 
@@ -1512,9 +1512,9 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetMaxSupply Value + 1
+            effects = SetMaxSupply value = Value + 1
 
 Tech
     name = "CON_FRC_ENRG_STRC"
@@ -1532,98 +1532,98 @@ Tech
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Industry high = RootCandidate.TargetIndustry - 3
             ]
-            effects = SetIndustry Value + 2
+            effects = SetIndustry value = Value + 2
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Research high = RootCandidate.TargetResearch - 3
             ]
-            effects = SetResearch Value + 2
+            effects = SetResearch value = Value + 2
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Construction high = RootCandidate.TargetConstruction - 3
             ]
-            effects = SetConstruction Value + 2
+            effects = SetConstruction value = Value + 2
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Industry low = RootCandidate.TargetIndustry - 3 high = RootCandidate.TargetIndustry
             ]
-            effects = SetIndustry Target.TargetIndustry
+            effects = SetIndustry value = Target.TargetIndustry
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Research low = RootCandidate.TargetResearch - 3 high = RootCandidate.TargetResearch
             ]
-            effects = SetResearch Target.TargetResearch
+            effects = SetResearch value = Target.TargetResearch
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Construction low = RootCandidate.TargetConstruction - 3 high = RootCandidate.TargetConstruction
             ]
-            effects = SetConstruction Target.TargetConstruction
+            effects = SetConstruction value = Target.TargetConstruction
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Industry low = RootCandidate.TargetIndustry + 5
             ]
-            effects = SetIndustry Value - 3
+            effects = SetIndustry value = Value - 3
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Research low = RootCandidate.TargetResearch + 5
             ]
-            effects = SetResearch Value - 3
+            effects = SetResearch value = Value - 3
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Construction low = RootCandidate.TargetConstruction + 5
             ]
-            effects = SetConstruction Value - 3
+            effects = SetConstruction value = Value - 3
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 5
             ]
-            effects = SetIndustry Target.TargetIndustry
+            effects = SetIndustry value = Target.TargetIndustry
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 5
             ]
-            effects = SetResearch Target.TargetResearch
+            effects = SetResearch value = Target.TargetResearch
 
         EffectsGroup
             scope = And [
                 ProductionCenter
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Construction low = RootCandidate.TargetConstruction high = RootCandidate.TargetConstruction + 5
             ]
-            effects = SetConstruction Target.TargetConstruction
+            effects = SetConstruction value = Target.TargetConstruction
     ]
     graphic = "icons/tech/force_energy_structures.png"
 
@@ -1652,8 +1652,8 @@ Tech
     ]
     effectsgroups = 
         EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            effects = SetTargetConstruction Value + 10
+            scope = OwnedBy empire = Source.Owner
+            effects = SetTargetConstruction value = Value + 10
     graphic = "icons/tech/n-dimensional_structures.png"
 
 Tech
@@ -1699,9 +1699,9 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetMaxSupply Value + 1
+            effects = SetMaxSupply value = Value + 1
     graphic = "icons/tech/controlled_gravity_architecture.png"
 
 Tech
@@ -1729,9 +1729,9 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetMaxSupply Value + 1
+            effects = SetMaxSupply value = Value + 1
     graphic = "icons/tech/orbital_construction.png"
 
 Tech
@@ -1759,9 +1759,9 @@ Tech
         EffectsGroup
             scope = And [
                 Building
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetStealth Value + 20
+            effects = SetStealth value = Value + 20
 
 Tech
     name = "CON_PLANET_DRIVE"
@@ -1821,53 +1821,53 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Planet size = Tiny
             ]
             activation = Planet
             accountinglabel = "TINY_PLANET_LABEL"
-            effects = SetMaxSupply Value + 2
+            effects = SetMaxSupply value = Value + 2
 
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Planet size = Small
             ]
             activation = Planet
             accountinglabel = "SMALL_PLANET_LABEL"
-            effects = SetMaxSupply Value + 1
+            effects = SetMaxSupply value = Value + 1
 
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Planet size = Large
             ]
             activation = Planet
             accountinglabel = "LARGE_PLANET_LABEL"
-            effects = SetMaxSupply Value - 1
+            effects = SetMaxSupply value = Value - 1
 
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Planet size = Huge
             ]
             activation = Planet
             accountinglabel = "HUGE_PLANET_LABEL"
-            effects = SetMaxSupply Value - 2
+            effects = SetMaxSupply value = Value - 2
 
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Planet type = GasGiant
             ]
             activation = Planet
             accountinglabel = "GAS_GIANT_LABEL"
-            effects = SetMaxSupply Value - 1
+            effects = SetMaxSupply value = Value - 1
 
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 ValueTest low = 0.1 high = ([[MIN_RECOLONIZING_SIZE]] - 0.001) testvalue = LocalCandidate.Population
                 ValueTest low = ([[MIN_RECOLONIZING_SIZE]] - RootCandidate.Population)  testvalue = LocalCandidate.NextTurnPopGrowth
             ]
@@ -1906,14 +1906,14 @@ Tech
     effectsgroups = EffectsGroup
             scope = And [
                 Ship
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
-                WithinDistance 50 And [
+                WithinDistance distance = 50 condition = And [
                     Planet
-                    OwnedBy TheEmpire Source.Owner
+                    OwnedBy empire = Source.Owner
                 ]
             ]
-        effects = SetStarlaneSpeed Value + 20
+        effects = SetStarlaneSpeed value = Value + 20
     graphic = "icons/tech/stellar_navigation.png"
     
 //########################################################
@@ -2406,9 +2406,9 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetMaxStructure Value + 5
+            effects = SetMaxStructure value = Value + 5
 
 Tech
     name = "SHP_BASIC_DAM_CONT"
@@ -2423,10 +2423,10 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-//            activation = Not OwnerHasTech "SHP_ADV_DAM_CONT"
-            effects = SetStructure Value + 1
+//            activation = Not OwnerHasTech name = "SHP_ADV_DAM_CONT"
+            effects = SetStructure value = Value + 1
 
 Tech
     name = "SHP_FLEET_REPAIR"
@@ -2446,12 +2446,12 @@ Tech
                 Ship
                 InSystem
                 Stationary
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Turn low = LocalCandidate.System.LastTurnBattleHere + 1
                 Structure high = LocalCandidate.MaxStructure - 0.001
                 ResupplyableBy empire = Source.Owner
             ]
-            effects = SetStructure Value + (Target.MaxStructure/10)
+            effects = SetStructure value = Value + (Target.MaxStructure/10)
 
 Tech
     name = "SHP_ADV_DAM_CONT"
@@ -2469,11 +2469,11 @@ Tech
         EffectsGroup
             scope = And [
                 Ship
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Stationary
                 Turn low = LocalCandidate.System.LastTurnBattleHere + 1
             ]
-            effects = SetStructure Value + (Target.MaxStructure/10)
+            effects = SetStructure value = Value + (Target.MaxStructure/10)
    
 //########################################################
 //#     Parts
@@ -2932,7 +2932,7 @@ Tech
         EffectsGroup
             scope = Building
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
-            effects = SetStealth Value + 0.01
+            effects = SetStealth value = Value + 0.01
     graphic = ""
 
 
@@ -2973,25 +2973,25 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
-                Not OwnerHasTech "SPY_DETECT_2"
-                Not OwnerHasTech "SPY_DETECT_3"
-                Not OwnerHasTech "SPY_DETECT_4"
-                Not OwnerHasTech "SPY_DETECT_5"
+                Not OwnerHasTech name = "SPY_DETECT_2"
+                Not OwnerHasTech name = "SPY_DETECT_3"
+                Not OwnerHasTech name = "SPY_DETECT_4"
+                Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetDetection Value + 50
+            effects = SetDetection value = Value + 50
 
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech "SPY_DETECT_2"
-                Not OwnerHasTech "SPY_DETECT_3"
-                Not OwnerHasTech "SPY_DETECT_4"
-                Not OwnerHasTech "SPY_DETECT_5"
+                Not OwnerHasTech name = "SPY_DETECT_2"
+                Not OwnerHasTech name = "SPY_DETECT_3"
+                Not OwnerHasTech name = "SPY_DETECT_4"
+                Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 10
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
     ]
 
 Tech
@@ -3011,23 +3011,23 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
-                Not OwnerHasTech "SPY_DETECT_3"
-                Not OwnerHasTech "SPY_DETECT_4"
-                Not OwnerHasTech "SPY_DETECT_5"
+                Not OwnerHasTech name = "SPY_DETECT_3"
+                Not OwnerHasTech name = "SPY_DETECT_4"
+                Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetDetection Value + 75
+            effects = SetDetection value = Value + 75
 
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech "SPY_DETECT_3"
-                Not OwnerHasTech "SPY_DETECT_4"
-                Not OwnerHasTech "SPY_DETECT_5"
+                Not OwnerHasTech name = "SPY_DETECT_3"
+                Not OwnerHasTech name = "SPY_DETECT_4"
+                Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 30
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 30
     ]
     graphic = "icons/tech/active_radar.png"
     
@@ -3045,21 +3045,21 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
-                Not OwnerHasTech "SPY_DETECT_4"
-                Not OwnerHasTech "SPY_DETECT_5"
+                Not OwnerHasTech name = "SPY_DETECT_4"
+                Not OwnerHasTech name = "SPY_DETECT_5"
                 ]
-            effects = SetDetection Value + 150
+            effects = SetDetection value = Value + 150
 
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech "SPY_DETECT_4"
-                Not OwnerHasTech "SPY_DETECT_5"
+                Not OwnerHasTech name = "SPY_DETECT_4"
+                Not OwnerHasTech name = "SPY_DETECT_5"
                 ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 50
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 50
     ]
     
 Tech
@@ -3076,15 +3076,15 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            activation = Not OwnerHasTech "SPY_DETECT_5"
-            effects = SetDetection Value + 200
+            activation = Not OwnerHasTech name = "SPY_DETECT_5"
+            effects = SetDetection value = Value + 200
 
         EffectsGroup
             scope = Source
-            activation = Not OwnerHasTech "SPY_DETECT_5"
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 70
+            activation = Not OwnerHasTech name = "SPY_DETECT_5"
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 70
     ]
     
 Tech
@@ -3100,13 +3100,13 @@ Tech
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            effects = SetDetection Value + 300
+            effects = SetDetection value = Value + 300
 
         EffectsGroup
             scope = Source
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 200
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 200
     ]
 
 Tech
@@ -3158,18 +3158,18 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Or [
                     Planet
                     System
                 ]
             ]
             activation = And [
-                Not OwnerHasTech "SPY_STEALTH_2"
-                Not OwnerHasTech "SPY_STEALTH_3"
-                Not OwnerHasTech "SPY_STEALTH_4"
+                Not OwnerHasTech name = "SPY_STEALTH_2"
+                Not OwnerHasTech name = "SPY_STEALTH_3"
+                Not OwnerHasTech name = "SPY_STEALTH_4"
             ]
-            effects = AddSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            effects = AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             
 Tech
     name = "SPY_STEALTH_2"
@@ -3184,19 +3184,19 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Or [
                     Planet
                     System
                 ]
             ]
             activation = And [
-                Not OwnerHasTech "SPY_STEALTH_3"
-                Not OwnerHasTech "SPY_STEALTH_4"
+                Not OwnerHasTech name = "SPY_STEALTH_3"
+                Not OwnerHasTech name = "SPY_STEALTH_4"
             ]
             effects = [
-                AddSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
-                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+                AddSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+                RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
             
 Tech
@@ -3212,17 +3212,17 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Or [
                     Planet
                     System
                 ]
             ]
-            activation = Not OwnerHasTech "SPY_STEALTH_4"
+            activation = Not OwnerHasTech name = "SPY_STEALTH_4"
             effects = [
-                AddSpecial "DIM_RIFT_SLAVE_SPECIAL"
-                RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
-                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+                AddSpecial name = "DIM_RIFT_SLAVE_SPECIAL"
+                RemoveSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+                RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
             
 Tech
@@ -3238,16 +3238,16 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Or [
                     Planet
                     System
                 ]
             ]
             effects = [
-                AddSpecial "VOID_SLAVE_SPECIAL"
-                RemoveSpecial "DIM_RIFT_SLAVE_SPECIAL"
-                RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
-                RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+                AddSpecial name = "VOID_SLAVE_SPECIAL"
+                RemoveSpecial name = "DIM_RIFT_SLAVE_SPECIAL"
+                RemoveSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
+                RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
 

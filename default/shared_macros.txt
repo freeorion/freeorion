@@ -30,7 +30,7 @@ STEALTH_BOOST_LOW
         ContainedBy Source
     ]
     stackinggroup = "TECH_STEALTH_STACK"
-    effects = SetStealth Value + [[LOW_STEALTH]]
+    effects = SetStealth value = Value + [[LOW_STEALTH]]
 '''
 
 STEALTH_BOOST_MEDIUM
@@ -40,7 +40,7 @@ STEALTH_BOOST_MEDIUM
         ContainedBy Source
     ]
     stackinggroup = "TECH_STEALTH_STACK"
-    effects = SetStealth Value + [[MEDIUM_STEALTH]]
+    effects = SetStealth value = Value + [[MEDIUM_STEALTH]]
 '''
 
 STEALTH_BOOST_HIGH
@@ -50,7 +50,7 @@ STEALTH_BOOST_HIGH
         ContainedBy Source
     ]
     stackinggroup = "TECH_STEALTH_STACK"
-    effects = SetStealth Value + [[HIGH_STEALTH]]
+    effects = SetStealth value = Value + [[HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_ULTIMATE
@@ -60,7 +60,7 @@ STEALTH_BOOST_ULTIMATE
         ContainedBy Source
     ]
     stackinggroup = "TECH_STEALTH_STACK"
-    effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
+    effects = SetStealth value = Value + [[VERY_HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_LOW_NO_ORBITAL
@@ -69,11 +69,11 @@ STEALTH_BOOST_LOW_NO_ORBITAL
         Source
         And [
             ContainedBy Source
-            Not HasTag "ORBITAL"
+            Not HasTag name = "ORBITAL"
         ]
     ]
     stackinggroup = "TECH_STEALTH_STACK"
-    effects = SetStealth Value + [[LOW_STEALTH]]
+    effects = SetStealth value = Value + [[LOW_STEALTH]]
 '''
 
 STEALTH_BOOST_MEDIUM_NO_ORBITAL
@@ -82,11 +82,11 @@ STEALTH_BOOST_MEDIUM_NO_ORBITAL
         Source
         And [
             ContainedBy Source
-            Not HasTag "ORBITAL"
+            Not HasTag name = "ORBITAL"
         ]
     ]
     stackinggroup = "TECH_STEALTH_STACK"
-    effects = SetStealth Value + [[MEDIUM_STEALTH]]
+    effects = SetStealth value = Value + [[MEDIUM_STEALTH]]
 '''
 
 STEALTH_BOOST_HIGH_NO_ORBITAL
@@ -95,11 +95,11 @@ STEALTH_BOOST_HIGH_NO_ORBITAL
         Source
         And [
             ContainedBy Source
-            Not HasTag "ORBITAL"
+            Not HasTag name = "ORBITAL"
         ]
     ]
     stackinggroup = "TECH_STEALTH_STACK"
-    effects = SetStealth Value + [[HIGH_STEALTH]]
+    effects = SetStealth value = Value + [[HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_ULTIMATE_NO_ORBITAL
@@ -108,11 +108,11 @@ STEALTH_BOOST_ULTIMATE_NO_ORBITAL
         Source
         And [
             ContainedBy Source
-            Not HasTag "ORBITAL"
+            Not HasTag name = "ORBITAL"
         ]
     ]
     stackinggroup = "TECH_STEALTH_STACK"
-    effects = SetStealth Value + [[VERY_HIGH_STEALTH]]
+    effects = SetStealth value = Value + [[VERY_HIGH_STEALTH]]
 '''
 
 STEALTH_BOOST_PLUS_PLUS
@@ -122,7 +122,7 @@ STEALTH_BOOST_PLUS_PLUS
         ContainedBy Source
     ]
     stackinggroup = "SPECIES_STEALTH_STACK"
-    effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
+    effects = SetStealth value = Value + [[PLUS_PLUS_STEALTH]]
 '''
 
 SYSTEM_STEALTH_PLUS_PLUS
@@ -132,7 +132,7 @@ SYSTEM_STEALTH_PLUS_PLUS
         ContainedBy Source
     ]
     stackinggroup = "SPECIES_STEALTH_STACK"
-    effects = SetStealth Value + [[PLUS_PLUS_STEALTH]]
+    effects = SetStealth value = Value + [[PLUS_PLUS_STEALTH]]
 '''
 
 LOW_STEALTH

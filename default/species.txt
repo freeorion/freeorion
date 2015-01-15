@@ -88,22 +88,22 @@ Species
                     Turn low = 220 high = 220
                     Turn low = 290 high = 290
                 ]
-                Not WithinStarlaneJumps 1 And [
+                Not WithinStarlaneJumps jumps = 1 condition = And [
                     System
                     Contains And [
                         Planet
-                        OwnedBy AnyEmpire
+                        OwnedBy affiliation = AnyEmpire
                     ]
                 ]
             ]
-            effects = CreateShip "SM_ACIREMA_GUARD"
+            effects = CreateShip designname = "SM_ACIREMA_GUARD"
 
         EffectsGroup
             scope = And [
                 Source
                 Ship
             ]
-            effects = SetMaxShield Value + 1
+            effects = SetMaxShield value = Value + 1
 
         EffectsGroup
             scope = And [
@@ -111,8 +111,8 @@ Species
                 Planet
             ]
             effects = [
-                SetMaxDefense Value + 5
-                SetMaxShield Value + 5
+                SetMaxDefense value = Value + 5
+                SetMaxShield value = Value + 5
             ]
 
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1252,14 +1252,14 @@ Species
         
         EffectsGroup
             scope = Source
-            effects = SetDetection Value + 10000
+            effects = SetDetection value = Value + 10000
 
         EffectsGroup
             scope = And [
                 Source
                 Capital
                 ]
-            effects = SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" 200  // Omniscient Detection
+            effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" 200  // Omniscient Detection
 
     ]
 
@@ -1969,7 +1969,7 @@ HAS_GROWTH_FOCUS
             location = Or [
                 AND [
                     Homeworld
-                    Not HasTag "SELF_SUSTAINING"
+                    Not HasTag name = "SELF_SUSTAINING"
                 ]
                 HasSpecial name = "POSITRONIUM_SPECIAL"
                 HasSpecial name = "SUPERCONDUCTOR_SPECIAL"
@@ -1989,9 +1989,9 @@ HAS_MINING_FOCUS
             name = "FOCUS_MINING"
             description = "FOCUS_MINING_DESC"
             location = And [
-                HasSpecial "MINERALS_SPECIAL"
-                HasSpecial "CRYSTALS_SPECIAL"
-                HasSpecial "ELERIUM_SPECIAL"
+                HasSpecial name = "MINERALS_SPECIAL"
+                HasSpecial name = "CRYSTALS_SPECIAL"
+                HasSpecial name = "ELERIUM_SPECIAL"
             ]
             graphic = "icons/focus/mining.png"
 
@@ -2014,10 +2014,10 @@ HAS_ADVANCED_FOCI
             name = "FOCUS_STEALTH"
             description = "FOCUS_STEALTH_DESC"
             location = Or [
-                Contains Building "BLD_PLANET_CLOAK"
+                Contains Building name = "BLD_PLANET_CLOAK"
                 And [
-                    Contains Building "BLD_TRANSFORMER"
-                    OwnerHasTech "DEF_PLANET_CLOAK"
+                    Contains Building name = "BLD_TRANSFORMER"
+                    OwnerHasTech name = "DEF_PLANET_CLOAK"
                 ]
             ]
             graphic = "icons/focus/stealth.png"
@@ -2026,10 +2026,10 @@ HAS_ADVANCED_FOCI
             name = "FOCUS_BIOTERROR"
             description = "FOCUS_BIOTERROR_DESC"
             location = Or [
-                Contains Building "BLD_BIOTERROR_PROJECTOR"
+                Contains Building name = "BLD_BIOTERROR_PROJECTOR"
                 And [
-                    Contains Building "BLD_TRANSFORMER"
-                    OwnerHasTech "GRO_BIOTERROR"
+                    Contains Building name = "BLD_TRANSFORMER"
+                    OwnerHasTech name = "GRO_BIOTERROR"
                 ]
             ]
             graphic = "icons/focus/bioterror.png"
@@ -2038,10 +2038,10 @@ HAS_ADVANCED_FOCI
             name = "FOCUS_STARGATE_SEND"
             description = "FOCUS_STARGATE_SEND_DESC"
             location = Or [
-                Contains Building "BLD_STARGATE"
+                Contains Building name = "BLD_STARGATE"
                 And [
-                    Contains Building "BLD_TRANSFORMER"
-                    OwnerHasTech "CON_STARGATE"
+                    Contains Building name = "BLD_TRANSFORMER"
+                    OwnerHasTech name = "CON_STARGATE"
                 ]
             ]
             graphic = "icons/focus/stargate_send.png"
@@ -2050,10 +2050,10 @@ HAS_ADVANCED_FOCI
             name = "FOCUS_STARGATE_RECEIVE"
             description = "FOCUS_STARGATE_RECEIVE_DESC"
             location = Or [
-                Contains Building "BLD_STARGATE"
+                Contains Building name = "BLD_STARGATE"
                 And [
-                    Contains Building "BLD_TRANSFORMER"
-                    OwnerHasTech "CON_STARGATE"
+                    Contains Building name = "BLD_TRANSFORMER"
+                    OwnerHasTech name = "CON_STARGATE"
                 ]
             ]
             graphic = "icons/focus/stargate_receive.png"
@@ -2062,10 +2062,10 @@ HAS_ADVANCED_FOCI
             name = "FOCUS_PLANET_DRIVE"
             description = "FOCUS_PLANET_DRIVE_DESC"
             location = Or [
-                Contains Building "BLD_PLANET_DRIVE"
+                Contains Building name = "BLD_PLANET_DRIVE"
                 And [
-                    Contains Building "BLD_TRANSFORMER"
-                    OwnerHasTech "CON_PLANET_DRIVE"
+                    Contains Building name = "BLD_TRANSFORMER"
+                    OwnerHasTech name = "CON_PLANET_DRIVE"
                 ]
             ]
             graphic = "icons/focus/planet_drive.png"
@@ -2074,10 +2074,10 @@ HAS_ADVANCED_FOCI
             name = "FOCUS_DISTORTION"
             description = "FOCUS_DISTORTION_DESC"
             location = Or [
-                Contains Building "BLD_SPATIAL_DISTORT_GEN"
+                Contains Building name = "BLD_SPATIAL_DISTORT_GEN"
                 And [
-                    Contains Building "BLD_TRANSFORMER"
-                    OwnerHasTech "LRN_SPATIAL_DISTORT_GEN"
+                    Contains Building name = "BLD_TRANSFORMER"
+                    OwnerHasTech name = "LRN_SPATIAL_DISTORT_GEN"
                 ]
             ]
             graphic = "icons/focus/distortion.png"
@@ -2086,8 +2086,8 @@ HAS_ADVANCED_FOCI
             name = "FOCUS_DOMINATION"
             description = "FOCUS_DOMINATION_DESC"
             location = And [
-                HasTag "TELEPATHIC"
-                OwnerHasTech "LRN_PSY_DOM"
+                HasTag name = "TELEPATHIC"
+                OwnerHasTech name = "LRN_PSY_DOM"
             ]
             graphic = "icons/focus/psi_domination.png"
 '''
@@ -2097,7 +2097,7 @@ STANDARD_CONSTRUCTION
             scope = Source
             activation = Planet
             accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
-            effects = SetTargetConstruction Value + 20
+            effects = SetTargetConstruction value = Value + 20
 '''
 
 NO_SUPPLY
@@ -2109,7 +2109,7 @@ BAD_SUPPLY
             scope = Source
             activation = Planet
             accountinglabel = "BAD_SUPPLY_LABEL"
-            effects = SetMaxSupply Value + 0
+            effects = SetMaxSupply value = Value + 0
 '''
 
 AVERAGE_SUPPLY
@@ -2117,7 +2117,7 @@ AVERAGE_SUPPLY
             scope = Source
             activation = Planet
             accountinglabel = "AVERAGE_SUPPLY_LABEL"
-            effects = SetMaxSupply Value + 1
+            effects = SetMaxSupply value = Value + 1
 '''
 
 GREAT_SUPPLY
@@ -2125,7 +2125,7 @@ GREAT_SUPPLY
             scope = Source
             activation = Planet
             accountinglabel = "GREAT_SUPPLY_LABEL"
-            effects = SetMaxSupply Value + 2
+            effects = SetMaxSupply value = Value + 2
 '''
 
 ULTIMATE_SUPPLY
@@ -2133,7 +2133,7 @@ ULTIMATE_SUPPLY
             scope = Source
             activation = Planet
             accountinglabel = "ULTIMATE_SUPPLY_LABEL"
-            effects = SetMaxSupply Value + 3
+            effects = SetMaxSupply value = Value + 3
 '''
 
 
@@ -2164,7 +2164,7 @@ BAD_POPULATION
             scope = Source
             activation = Planet
             accountinglabel = "BAD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value -0.25*abs(Value) 
+            effects = SetTargetPopulation value = Value -0.25*abs(Value) 
 '''
 
 GOOD_POPULATION
@@ -2174,7 +2174,7 @@ GOOD_POPULATION
             scope = Source
             activation = Planet
             accountinglabel = "GOOD_POPULATION_LABEL"
-            effects = SetTargetPopulation Value +0.25*abs(Value) 
+            effects = SetTargetPopulation value = Value +0.25*abs(Value) 
 '''
 
 
@@ -2182,20 +2182,20 @@ XENOPHOBIC_SELF
 '''     EffectsGroup
             scope = Source
             activation = Turn high = 0
-            GiveEmpireTech name = "CON_CONC_CAMP"
+            effects = GiveEmpireTech name = "CON_CONC_CAMP"
     
         EffectsGroup
             scope = Source
             activation = And [
                 PopulationCenter
-                Number low = 1 high = 999 And [
+                Number low = 1 high = 999 condition = And [
                     PopulationCenter
-                    OwnedBy TheEmpire Source.Owner
-                    WithinStarlaneJumps 5 Source
-                    Not Contains Building "BLD_CONC_CAMP"
+                    OwnedBy empire = Source.Owner
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                    Not Contains Building name = "BLD_CONC_CAMP"
                     Not OR [ 
-                        Species Source.Species
-                        Species "SP_EXOBOT"
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0
                 ]
@@ -2203,26 +2203,26 @@ XENOPHOBIC_SELF
             stackinggroup = "XENOPHOBIC_LABEL_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
             effects = [ 
-                SetTargetIndustry Value*0.2 - 1
-                SetTargetResearch Value*0.9
+                SetTargetIndustry value = Value*0.2 - 1
+                SetTargetResearch value = Value*0.9
             ]
     
         EffectsGroup
             scope = Source
             activation = And [
                 PopulationCenter
-                HasTag "SELF_SUSTAINING"
+                HasTag name = "SELF_SUSTAINING"
             ]
             stackinggroup = "XENOPHOBIC_POP_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
-            effects = SetTargetPopulation Value * (0.6 + (0.4 * (0.8 ^ 
+            effects = SetTargetPopulation value = Value * (0.6 + (0.4 * (0.8 ^ 
                 Count condition = And [
                     PopulationCenter
-                    WithinStarlaneJumps 5 Source
-                    VisibleToEmpire Source.Owner
+                    WithinStarlaneJumps jumps = 5 condition = Source
+                    VisibleToEmpire empire = Source.Owner
                     Not OR [ 
-                        Species Source.Species
-                        Species "SP_EXOBOT"
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0
                 ]
@@ -2232,30 +2232,30 @@ XENOPHOBIC_SELF
             scope = Source
             activation = And [
                 PopulationCenter
-                Number low = 1 high = 999 And [
+                Number low = 1 high = 999 condition = And [
                     PopulationCenter
-                    VisibleToEmpire Source.Owner
-                    Not Contains Building "BLD_CONC_CAMP"
+                    VisibleToEmpire empire = Source.Owner
+                    Not Contains Building name = "BLD_CONC_CAMP"
                     Not OR [
-                        Species Source.Species
-                        Species "SP_EXOBOT"
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0
-                    WithinStarlaneJumps 5 Source
+                    WithinStarlaneJumps jumps = 5 condition = Source
                 ]
             ]
             stackinggroup = "XENOPHOBIC_LABEL_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
             effects =
-                SetTargetHappiness Value - Count condition = And [
+                SetTargetHappiness value = Value - Count condition = And [
                     PopulationCenter
-                    VisibleToEmpire Source.Owner
+                    VisibleToEmpire empire = Source.Owner
                     Not OR [
-                        Species Source.Species
-                        Species "SP_EXOBOT"
+                        Species name = Source.Species
+                        Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0
-                    WithinStarlaneJumps 5 Source
+                    WithinStarlaneJumps jumps = 5 condition = Source
                 ]
 
 '''
@@ -2264,12 +2264,12 @@ XENOPHOBIC_OTHER_BEGIN
 '''     EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-                WithinStarlaneJumps 5 Source  
-                Not Contains Building "BLD_CONC_CAMP"
+                OwnedBy empire = Source.Owner
+                WithinStarlaneJumps jumps = 5 condition = Source  
+                Not Contains Building name = "BLD_CONC_CAMP"
                 Not OR [ 
-                    Species Source.Species
-                    Species "SP_EXOBOT"
+                    Species name = Source.Species
+                    Species name = "SP_EXOBOT"
                 ]
                 Not Population high = 0
             ]
@@ -2278,7 +2278,7 @@ XENOPHOBIC_OTHER_BEGIN
 
 XENOPHOBIC_OTHER_END
 '''
-            effects = SetTargetIndustry Value - Target.Population * 0.1
+            effects = SetTargetIndustry value = Value - Target.Population * 0.1
 '''
 
 /*
@@ -2293,7 +2293,7 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Hostile
             ]
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value - 4 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value - 4 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
@@ -2302,7 +2302,7 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Poor
             ]
             accountinglabel = "POOR_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value - 2 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value - 2 * Source.SizeAsDouble
 
 /*        EffectsGroup
             scope = Source
@@ -2311,74 +2311,74 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Adequate
             ]
             accountinglabel = "ADEQUATE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 0 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 0 * Source.SizeAsDouble
 */
 
         EffectsGroup
             scope = Source
             activation = Planet environment = Good
             accountinglabel = "GOOD_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Planet environment = [ Good Adequate Poor ]
-                OwnerHasTech "GRO_SYMBIOTIC_BIO"
+                OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
             ]
             accountinglabel = "GRO_SYMBIOTIC_BIO"
-            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Planet environment = [ Adequate Poor ]
-                OwnerHasTech "GRO_XENO_GENETICS"
+                OwnerHasTech name = "GRO_XENO_GENETICS"
             ]
             accountinglabel = "GRO_XENO_GENETICS"
-            effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Planet environment = [ Hostile ]
-                OwnerHasTech "GRO_XENO_GENETICS"
+                OwnerHasTech name = "GRO_XENO_GENETICS"
             ]
             accountinglabel = "GRO_XENO_GENETICS"
-            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Planet environment = [ Poor ]
-                OwnerHasTech "GRO_XENO_HYBRIDS"
+                OwnerHasTech name = "GRO_XENO_HYBRIDS"
             ]
             accountinglabel = "GRO_XENO_HYBRIDS"
-            effects = SetTargetPopulation Value + 1 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Planet environment = [ Hostile ]
-                OwnerHasTech "GRO_XENO_HYBRIDS"
+                OwnerHasTech name = "GRO_XENO_HYBRIDS"
             ]
             accountinglabel = "GRO_XENO_HYBRIDS"
-            effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
                 Planet environment = [ Hostile ]
-                OwnerHasTech "GRO_CYBORG"
+                OwnerHasTech name = "GRO_CYBORG"
             ]
             accountinglabel = "GRO_CYBORG"
-            effects = SetTargetPopulation Value + 2 * Source.SizeAsDouble  
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble  
 '''
 
 HOMEWORLD_BONUS_POPULATION
@@ -2390,27 +2390,27 @@ HOMEWORLD_BONUS_POPULATION
             activation = Planet
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_BONUS"
-            effects = SetTargetPopulation Value + 2 * Target.SizeAsDouble  
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble  
 '''
 
 HOMEWORLD_GROWTH_FOCUS_BOOST
 '''     EffectsGroup 
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                Species Source.Species
+                OwnedBy empire = Source.Owner
+                Species name = Source.Species
                 Not Homeworld name = Source.Species
                 TargetPopulation low = 0 high = 9999
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [
                 Planet
-                Focus "FOCUS_GROWTH"
+                Focus type = "FOCUS_GROWTH"
                 Homeworld
             ]
             stackinggroup = "HOMEWORLD_STACK"
             accountinglabel = "HOMEWORLD_SUPPLY"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 '''
 
 GRO_HAB_MODIFIER
@@ -2418,11 +2418,11 @@ GRO_HAB_MODIFIER
             scope = Source
             activation = And [
                 Planet
-                OwnerHasTech "GRO_SUBTER_HAB"
+                OwnerHasTech name = "GRO_SUBTER_HAB"
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "SUBTERRANEAN_LABEL"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 '''
 
 GAIA_POP_MODIFIER
@@ -2430,12 +2430,12 @@ GAIA_POP_MODIFIER
             scope = Source
             activation = AND [
                 Planet
-                HasSpecial "GAIA_SPECIAL"
+                HasSpecial name = "GAIA_SPECIAL"
                 Planet environment = Good
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "GAIA_LABEL"
-            effects = SetTargetPopulation Value + 3 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
 '''
 
 POPULATION_TECHS
@@ -2443,21 +2443,21 @@ POPULATION_TECHS
             scope = Source
             activation = AND [
                 Planet
-                OwnerHasTech "CON_NDIM_STRC"
+                OwnerHasTech name = "CON_NDIM_STRC"
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "NDIM_STRC_LABEL"
-            effects = SetTargetPopulation Value + 2 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble
             
         EffectsGroup
             scope = Source
             activation = AND [
                 Planet
-                OwnerHasTech "CON_ORBITAL_HAB"
+                OwnerHasTech name = "CON_ORBITAL_HAB"
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "ORBITAL_HAB_LABEL"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
 '''
 
 // This is dependent on current placement in population effects calc, just after Homeworld and Environment
@@ -2469,11 +2469,11 @@ SELF_SUSTAINING_BONUS
             ]
             activation = And [
                 Planet
-                HasTag "SELF_SUSTAINING"
+                HasTag name = "SELF_SUSTAINING"
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
-            effects = SetTargetPopulation Value * 2    // Gets double the population based on environment and environment techs
+            effects = SetTargetPopulation value = Value * 2    // Gets double the population based on environment and environment techs
         EffectsGroup
             scope = AND [
                 Source
@@ -2481,11 +2481,11 @@ SELF_SUSTAINING_BONUS
             ]
             activation = And [
                 Planet
-                HasTag "SELF_SUSTAINING"
+                HasTag name = "SELF_SUSTAINING"
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
-            effects = SetTargetPopulation Value * 2 - (2 * Target.SizeAsDouble)    // prevents doubled homeworld bonus
+            effects = SetTargetPopulation value = Value * 2 - (2 * Target.SizeAsDouble)    // prevents doubled homeworld bonus
 '''
 
 PHOTOTROPHIC_BONUS
@@ -2493,53 +2493,53 @@ PHOTOTROPHIC_BONUS
             scope = Contains Source
             activation = AND [
                 Planet
-                HasTag "PHOTOTROPHIC"
+                HasTag name = "PHOTOTROPHIC"
                 Turn high = 0
                 NOT Star type = [Orange]
             ]
-            effects = SetStarType Yellow // start with a normal star to be balanced
+            effects = SetStarType type = Yellow // start with a normal star to be balanced
  
         EffectsGroup
             scope = Source
             activation = AND [
                 Planet
-                HasTag "PHOTOTROPHIC"
+                HasTag name = "PHOTOTROPHIC"
                 Star type = [Blue]
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
-            effects = SetTargetPopulation Value + 3 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 3 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
             activation = AND [
                 Planet
-                HasTag "PHOTOTROPHIC"
+                HasTag name = "PHOTOTROPHIC"
                 Star type = [White]
                 TargetPopulation low = 0 high = 9999
             ]
             accountinglabel = "BRIGHT_STAR"
-            effects = SetTargetPopulation Value + 1.5 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1.5 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
             activation = AND [
                 Planet
-                HasTag "PHOTOTROPHIC"
+                HasTag name = "PHOTOTROPHIC"
                 Star type = [Red Neutron]
             ]
             accountinglabel = "DIM_STAR"
-            effects = SetTargetPopulation Value - 1 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value - 1 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
             activation = AND [
                 Planet
-                HasTag "PHOTOTROPHIC"
+                HasTag name = "PHOTOTROPHIC"
                 Star type = [BlackHole NoStar]
             ]
             accountinglabel = "NO_STAR"
-            effects = SetTargetPopulation Value - 10 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value - 10 * Source.SizeAsDouble
 '''
 // Population end
 
@@ -2549,13 +2549,13 @@ AVERAGE_HAPPINESS
             scope = Source
             activation = Planet
             accountinglabel = "BASIC_CONTENTEDNESS_LABEL"
-            effects = SetTargetHappiness Value + 10
+            effects = SetTargetHappiness value = Value + 10
         
         EffectsGroup
             scope = Source
-            activation = Focus Source.PreferredFocus
+            activation = Focus type = Source.PreferredFocus
             accountinglabel = "FOCUS_PREFERENCE_LABEL"
-            effects = SetTargetHappiness Value + 10
+            effects = SetTargetHappiness value = Value + 10
 '''
 
 
@@ -2565,17 +2565,17 @@ FOCUS_CHANGE_PENALTY
             scope = Source
             activation = And [
                 Planet
-                Not Focus "FOCUS_INDUSTRY"
+                Not Focus type = "FOCUS_INDUSTRY"
             ]
-            effects = SetIndustry Value - max(0, 1 - Target.TurnsSinceFocusChange)
+            effects = SetIndustry value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Not Focus "FOCUS_RESEARCH"
+                Not Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetResearch Value - max(0, 1 - Target.TurnsSinceFocusChange)
+            effects = SetResearch value = Value - max(0, 1 - Target.TurnsSinceFocusChange)
 '''
 
 ADVANCED_FOCUS_EFFECTS
@@ -2583,39 +2583,39 @@ ADVANCED_FOCUS_EFFECTS
             scope = Source
             activation = And [
                 Planet
-                Focus "FOCUS_STEALTH"
+                Focus type = "FOCUS_STEALTH"
             ]
-            effects = SetStealth Value + 15
+            effects = SetStealth value = Value + 15
 
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy EnemyOf Source.Owner
-                WithinStarlaneJumps 4 Source
-                Not Number low = 1 And [
-                    Building "BLD_GENOME_BANK"
-                    OwnedBy TheEmpire RootCandidate.Owner
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                WithinStarlaneJumps jumps = 4 condition = Source
+                Not Number low = 1 condition = And [
+                    Building name = "BLD_GENOME_BANK"
+                    OwnedBy empire = RootCandidate.Owner
                 ]
             ]
-            activation = Focus "FOCUS_BIOTERROR"
-            effects = SetTargetPopulation Value - 4
+            activation = Focus type = "FOCUS_BIOTERROR"
+            effects = SetTargetPopulation value = Value - 4
 
         EffectsGroup
             scope = And [
                 Fleet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 ContainedBy And [
                     System 
                     Contains And [
                         Planet
-                        OwnedBy TheEmpire Source.Owner
-                        Focus "FOCUS_STARGATE_SEND"
+                        OwnedBy empire = Source.Owner
+                        Focus type = "FOCUS_STARGATE_SEND"
                     ]
                 ]
             ]
             activation = And [
                 Planet
-                Focus "FOCUS_STARGATE_RECEIVE"
+                Focus type = "FOCUS_STARGATE_RECEIVE"
             ]
             stackinggroup = "STARGATE_STACK"
             effects = [
@@ -2627,7 +2627,7 @@ ADVANCED_FOCUS_EFFECTS
                         tag = "system" data = Source.SystemID
                     ]
                     empire = Source.Owner
-                MoveTo And [
+                MoveTo destination = And [
                     Contains Source
                     System
                 ]
@@ -2637,29 +2637,29 @@ ADVANCED_FOCUS_EFFECTS
             scope = Source
             activation = And [
                 Planet
-                Focus "FOCUS_PLANET_DRIVE"
-                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Focus type = "FOCUS_PLANET_DRIVE"
+                WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
             ]
             effects = [
-                MoveTo And [
-                    OwnedBy TheEmpire Source.Owner
-                    WithinStarlaneJumps 1 Source
+                MoveTo destination = And [
+                    OwnedBy empire = Source.Owner
+                    WithinStarlaneJumps jumps = 1 condition = Source
                     Contains And [
                         Building name = "BLD_PLANET_BEACON"
-                        OwnedBy TheEmpire Source.Owner
+                        OwnedBy empire = Source.Owner
                     ]
                 ]
-                SetPopulation Value / 2
+                SetPopulation value = Value / 2
             ]
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Focus "FOCUS_PLANET_DRIVE"
+                Focus type = "FOCUS_PLANET_DRIVE"
                 Random probability = 0.5
-                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
-                Not WithinDistance 200 Building name = "BLD_LIGHTHOUSE"
+                WithinStarlaneJumps jumps = 1 condition = Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance distance = 200 condition = Building name = "BLD_LIGHTHOUSE"
             ]
             effects = Destroy
 
@@ -2667,25 +2667,25 @@ ADVANCED_FOCUS_EFFECTS
             scope = And [
                 Fleet
                 Not Stationary
-                OwnedBy EnemyOf Source.Owner
-                WithinStarlaneJumps 1 Source
-                Not WithinDistance 0 Source
+                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not WithinDistance distance = 0 condition = Source
             ]
             activation = And [
                 Planet
-                Focus "FOCUS_DISTORTION"
+                Focus type = "FOCUS_DISTORTION"
             ]
-            effects = MoveTo And [
+            effects = MoveTo destination = And [
                 System
-                WithinStarlaneJumps 1 Source
-                Not WithinDistance 0 Source
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not WithinDistance distance = 0 condition = Source
             ]
 
         EffectsGroup
             scope = Source
-            activation = Focus "FOCUS_LOGISTICS"
+            activation = Focus type = "FOCUS_LOGISTICS"
             accountinglabel = "SHP_INTSTEL_LOG"
-            effects = SetMaxSupply Value + 3
+            effects = SetMaxSupply value = Value + 3
 '''
 
 //#####      I N D U S T R Y    #####//
@@ -2702,11 +2702,11 @@ BAD_INDUSTRY
             activation = And [
                 Source
                 Planet
-                TargetIndustry Low = 0
+                TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "BAD_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value*[[BAD_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value*[[BAD_MULTIPLIER]]
 '''
 
 AVERAGE_INDUSTRY
@@ -2715,11 +2715,11 @@ AVERAGE_INDUSTRY
             activation = And [
                 Source
                 Planet
-                TargetIndustry Low = 0
+                TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "FOCUS_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value + Target.Population * [[INDUSTRY_PER_POP]]
+            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
            
         EffectsGroup                    // removes residual production from a dead planet
             scope = Source
@@ -2727,7 +2727,7 @@ AVERAGE_INDUSTRY
                 Planet
                 TargetPopulation low = 0 high = 0
             ]
-            effects = SetIndustry Value = 0
+            effects = SetIndustry value = 0
 '''
 
 GOOD_INDUSTRY
@@ -2738,11 +2738,11 @@ GOOD_INDUSTRY
             activation = And [
                 Source
                 Planet
-                TargetIndustry Low = 0
+                TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GOOD_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value*[[GOOD_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value*[[GOOD_MULTIPLIER]]
 '''
 
 GREAT_INDUSTRY
@@ -2753,11 +2753,11 @@ GREAT_INDUSTRY
             activation = And [
                 Source
                 Planet
-                TargetIndustry Low = 0
+                TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "GREAT_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value*[[GREAT_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value*[[GREAT_MULTIPLIER]]
 '''
 
 ULTIMATE_INDUSTRY
@@ -2768,11 +2768,11 @@ ULTIMATE_INDUSTRY
             activation = And [
                 Source
                 Planet
-                TargetIndustry Low = 0
+                TargetIndustry low = 0
                 Focus type = "FOCUS_INDUSTRY"
             ]
             accountinglabel = "ULTIMATE_INDUSTRY_LABEL"
-            effects = SetTargetIndustry Value*[[ULTIMATE_MULTIPLIER]]
+            effects = SetTargetIndustry value = Value*[[ULTIMATE_MULTIPLIER]]
 '''
 
 //#####      R E S E A R C H    #####//
@@ -2792,7 +2792,7 @@ BAD_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "BAD_RESEARCH_LABEL"
-            effects = SetTargetResearch Value*[[BAD_MULTIPLIER]]
+            effects = SetTargetResearch value = Value*[[BAD_MULTIPLIER]]
 '''
 
 AVERAGE_RESEARCH
@@ -2804,7 +2804,7 @@ AVERAGE_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "FOCUS_RESEARCH_LABEL"
-            effects = SetTargetResearch Value + Target.Population * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
            
         EffectsGroup      // removes residual production from a dead planet
             scope = Source
@@ -2812,7 +2812,7 @@ AVERAGE_RESEARCH
                 Planet
                 TargetPopulation low = 0 high = 0
             ]
-            effects = SetResearch Value = 0
+            effects = SetResearch value = 0
 '''
 
 GOOD_RESEARCH
@@ -2826,7 +2826,7 @@ GOOD_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "GOOD_RESEARCH_LABEL"
-            effects = SetTargetResearch Value*[[GOOD_MULTIPLIER]]
+            effects = SetTargetResearch value = Value*[[GOOD_MULTIPLIER]]
 '''
 
 GREAT_RESEARCH
@@ -2840,7 +2840,7 @@ GREAT_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "GREAT_RESEARCH_LABEL"
-            effects = SetTargetResearch Value*[[GREAT_MULTIPLIER]]
+            effects = SetTargetResearch value = Value*[[GREAT_MULTIPLIER]]
 '''
 
 ULTIMATE_RESEARCH
@@ -2854,7 +2854,7 @@ ULTIMATE_RESEARCH
                 Focus type = "FOCUS_RESEARCH"
             ]
             accountinglabel = "ULTIMATE_RESEARCH_LABEL"
-            effects = SetTargetResearch Value*[[ULTIMATE_MULTIPLIER]]
+            effects = SetTargetResearch value = Value*[[ULTIMATE_MULTIPLIER]]
 '''
 
 //#####      T R O O P S     #####//
@@ -2869,7 +2869,7 @@ EffectsGroup
             scope = Source
             activation = Planet
             accountinglabel = "BAD_TROOPS_LABEL"
-            effects = SetMaxTroops Value * .5
+            effects = SetMaxTroops value = Value * 0.5
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
@@ -2881,7 +2881,7 @@ EffectsGroup
             scope = Source
             activation = Planet
             accountinglabel = "AVERAGE_TROOPS_LABEL"
-            effects = SetMaxTroops Value * 1
+            effects = SetMaxTroops value = Value * 1
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
@@ -2893,7 +2893,7 @@ EffectsGroup
             scope = Source
             activation = Planet
             accountinglabel = "GOOD_TROOPS_LABEL"
-            effects = SetMaxTroops Value * 1.5
+            effects = SetMaxTroops value = Value * 1.5
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
@@ -2905,7 +2905,7 @@ EffectsGroup
             scope = Source
             activation = Planet
             accountinglabel = "GREAT_TROOPS_LABEL"
-            effects = SetMaxTroops Value * 2
+            effects = SetMaxTroops value = Value * 2
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
@@ -2917,7 +2917,7 @@ EffectsGroup
             scope = Source
             activation = Planet
             accountinglabel = "ULTIMATE_TROOPS_LABEL"
-            effects = SetMaxTroops Value * 3
+            effects = SetMaxTroops value = Value * 3
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
@@ -2926,111 +2926,111 @@ BASIC_GROUND_TROOPS
 '''EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
-            activation = NOT OwnerHasTech "DEF_GARRISON_1"
+            activation = NOT OwnerHasTech name = "DEF_GARRISON_1"
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_ROOT_DEFENSE"
-            effects = SetMaxTroops Value + 2    
+            effects = SetMaxTroops value = Value + 2    
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = AND [
                 Planet
-                OwnerHasTech "DEF_GARRISON_1"
-                NOT OwnerHasTech "DEF_GARRISON_2"
+                OwnerHasTech name = "DEF_GARRISON_1"
+                NOT OwnerHasTech name = "DEF_GARRISON_2"
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_1"
-            effects = SetMaxTroops Value + 5
+            effects = SetMaxTroops value = Value + 5
             
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = AND [
                 Planet
-                OwnerHasTech "DEF_GARRISON_2"
-                NOT OwnerHasTech "DEF_GARRISON_3"
+                OwnerHasTech name = "DEF_GARRISON_2"
+                NOT OwnerHasTech name = "DEF_GARRISON_3"
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_2"
-            effects = SetMaxTroops Value + 10
+            effects = SetMaxTroops value = Value + 10
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = AND [
                 Planet
-                OwnerHasTech "DEF_GARRISON_3"
-                NOT OwnerHasTech "DEF_GARRISON_4"
+                OwnerHasTech name = "DEF_GARRISON_3"
+                NOT OwnerHasTech name = "DEF_GARRISON_4"
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_3"
-            effects = SetMaxTroops Value + 15        
+            effects = SetMaxTroops value = Value + 15        
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_GARRISON_4"
+                OwnerHasTech name = "DEF_GARRISON_4"
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_4"
-            effects = SetMaxTroops Value + 20
+            effects = SetMaxTroops value = Value + 20
              
 EffectsGroup
             scope = AND [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Population high = 0
             ]
             stackinggroup = "OUTPOST_TROOPS_STACK"
             accountinglabel = "OUTPOST_TROOP_LABEL"
-            effects = SetMaxTroops Value * .5
+            effects = SetMaxTroops value = Value * .5
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Contains Building name = "BLD_IMPERIAL_PALACE"
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_ROOT_DEFENSE"
+                OwnerHasTech name = "DEF_ROOT_DEFENSE"
             ]
             stackinggroup = "PALACE_TROOPS_STACK"
             accountinglabel = "BLD_IMPERIAL_PALACE"
-            effects = SetMaxTroops Value + 3
+            effects = SetMaxTroops value = Value + 3
 
 EffectsGroup
             scope = AND [
                 Homeworld
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = Planet
             stackinggroup = "HOMEWORLD_TROOPS_STACK"
             accountinglabel = "HOMEWORLD_LABEL"
-            effects = SetMaxTroops Value + 2
+            effects = SetMaxTroops value = Value + 2
 
 EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Not OwnedBy AnyEmpire
+                Not OwnedBy affiliation = AnyEmpire
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "INDEPENDENT_TROOP_LABEL"
-            effects = SetMaxTroops Value + 12
+            effects = SetMaxTroops value = Value + 12
 
 '''
 
@@ -3038,13 +3038,13 @@ PROTECTION_FOCUS_TROOPS
 '''            EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_PROTECTION"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_PROTECTION"
             ]
             activation = Planet
             stackinggroup = "FOCUS_PROTECTION_TROOPS_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
-            effects = SetMaxTroops Value * 2
+            effects = SetMaxTroops value = Value * 2
 '''
 
 //#####      P L A N E T A R Y   S H I E L D S     #####//
@@ -3057,10 +3057,10 @@ EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Not OwnedBy AnyEmpire
+                Not OwnedBy affiliation = AnyEmpire
             ]
             accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
-            effects = SetMaxShield Value + 10
+            effects = SetMaxShield value = Value + 10
             
     [[PROTECTION_FOCUS_SHIELDS]]
 '''
@@ -3073,7 +3073,7 @@ AVERAGE_PLANETARY_SHIELDS
 //            scope = Source
 //            activation = Planet
 //          accountinglabel = "AVERAGE_SHIELDS_LABEL"
-//            effects = SetMaxShield Value * 1
+//            effects = SetMaxShield value = Value * 1
             
     [[PROTECTION_FOCUS_SHIELDS]]
 '''
@@ -3082,107 +3082,107 @@ BASIC_PLANETARY_SHIELDS
 '''EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "LRN_FORCE_FIELD"
+                OwnerHasTech name = "LRN_FORCE_FIELD"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_FF"
             accountinglabel = "LRN_FORCE_FIELD"
-            effects = SetMaxShield Value + 10
+            effects = SetMaxShield value = Value + 10
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_PLAN_BARRIER_SHLD_1"
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_1"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_1"
             accountinglabel = "DEF_PLAN_BARRIER_SHLD_1"
-            SetMaxShield Value + 30
+            effects = SetMaxShield value = Value + 30
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_PLAN_BARRIER_SHLD_2"
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_2"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_2"
             accountinglabel = "DEF_PLAN_BARRIER_SHLD_2"
-            SetMaxShield Value + 60
+            effects = SetMaxShield value = Value + 60
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_PLAN_BARRIER_SHLD_3"
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_3"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_3"
             accountinglabel = "DEF_PLAN_BARRIER_SHLD_3"
-            SetMaxShield Value + 90
+            effects = SetMaxShield value = Value + 90
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_PLAN_BARRIER_SHLD_4"
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_4"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_4"
             accountinglabel = "DEF_PLAN_BARRIER_SHLD_4"
-            SetMaxShield Value + 150
+            effects = SetMaxShield value = Value + 150
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_PLAN_BARRIER_SHLD_5"
+                OwnerHasTech name = "DEF_PLAN_BARRIER_SHLD_5"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_5"
             accountinglabel = "DEF_PLAN_BARRIER_SHLD_5"
-            SetMaxShield Value + 150
+            effects = SetMaxShield value = Value + 150
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Population low = 0.000001
             ]
             activation = And [
                 Planet
-                OwnerHasTech "GRO_ENERGY_META"
+                OwnerHasTech name = "GRO_ENERGY_META"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_GEM"
             accountinglabel = "GRO_ENERGY_META"
-            SetMaxShield Value + 50
+            effects = SetMaxShield value = Value + 50
 '''
 
 PROTECTION_FOCUS_SHIELDS
 '''            EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_PROTECTION"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_PROTECTION"
             ]
             activation = Planet
             stackinggroup = "FOCUS_PROTECTION_SHIELDS_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
-            effects = SetMaxShield Value * 2
+            effects = SetMaxShield value = Value * 2
 '''
 
 //#####      P L A N E T A R Y   D E F E N S E     #####//
@@ -3194,13 +3194,13 @@ EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Not OwnedBy AnyEmpire
+                Not OwnedBy affiliation = AnyEmpire
             ]
             accountinglabel = "NATIVE_PLANETARY_DEFENSE_LABEL"
             effects = [
-                SetMaxDefense Value + 10
-                SetDetection Value + 10
-                ]
+                SetMaxDefense value = Value + 10
+                SetDetection value = Value + 10
+            ]
     [[PROTECTION_FOCUS_DEFENSE]]
 '''
 
@@ -3211,7 +3211,7 @@ AVERAGE_PLANETARY_DEFENSE
 //            scope = Source
 //            activation = Planet
 //          accountinglabel = "AVERAGE_SHIELDS_LABEL"
-//            effects = SetMaxDefense Value * 1
+//            effects = SetMaxDefense value = Value * 1
             
     [[PROTECTION_FOCUS_DEFENSE]]
 '''
@@ -3220,75 +3220,75 @@ BASIC_PLANETARY_DEFENSE
 '''EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
                 Contains Building name = "BLD_IMPERIAL_PALACE"
             ]
             activation = Planet
             stackinggroup = "PALACE_DEFENSE_STACK"
             accountinglabel = "BLD_IMPERIAL_PALACE"
-            effects = SetMaxDefense Value + 5
+            effects = SetMaxDefense value = Value + 5
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_DEFENSE_NET_1"
+                OwnerHasTech name = "DEF_DEFENSE_NET_1"
             ]
             stackinggroup = "DEFENSE_NET_STACK_1"
             accountinglabel = "DEF_DEFENSE_NET_1"
-            effects = SetMaxDefense Value + 5
+            effects = SetMaxDefense value = Value + 5
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_DEFENSE_NET_2"
+                OwnerHasTech name = "DEF_DEFENSE_NET_2"
             ]
             stackinggroup = "DEFENSE_NET_STACK_2"
             accountinglabel = "DEF_DEFENSE_NET_2"
-            effects = SetMaxDefense Value + 15
+            effects = SetMaxDefense value = Value + 15
 
 EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             activation = And [
                 Planet
-                OwnerHasTech "DEF_DEFENSE_NET_3"
+                OwnerHasTech name = "DEF_DEFENSE_NET_3"
             ]
             stackinggroup = "DEFENSE_NET_STACK_3"
             accountinglabel = "DEF_DEFENSE_NET_3"
-            effects = SetMaxDefense Value + 25
+            effects = SetMaxDefense value = Value + 25
 
 EffectsGroup
             scope = Source
             activation = And [
                 PopulationCenter
-                OwnerHasTech "GRO_ENERGY_META"
+                OwnerHasTech name = "GRO_ENERGY_META"
             ]
             stackinggroup = "DEFENSE_NET_STACK_GM"
             accountinglabel = "GRO_ENERGY_META"
-            effects = SetMaxDefense Value + 10
+            effects = SetMaxDefense value = Value + 10
 '''
 
 PROTECTION_FOCUS_DEFENSE
 '''            EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_PROTECTION"
+                OwnedBy empire = Source.Owner
+                Focus type = "FOCUS_PROTECTION"
             ]
             activation = Planet
             stackinggroup = "FOCUS_PROTECTION_DEFENSE_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
-            effects = SetMaxDefense Value * 2
+            effects = SetMaxDefense value = Value * 2
 '''
 
 //#####      D E T E C T I O N     #####//
@@ -3297,29 +3297,29 @@ BAD_DETECTION
 '''EffectsGroup
             scope = Source
             activation = Not Ship
-            effects = SetDetection Value -20
+            effects = SetDetection value = Value - 20
     EffectsGroup
             scope = Source
             activation = Ship
-            effects = SetDetection Value -9
+            effects = SetDetection value = Value - 9
 '''
 
 GOOD_DETECTION
 '''EffectsGroup
             scope = Source
-            effects = SetDetection Value + 25
+            effects = SetDetection value = Value + 25
 '''
 
 GREAT_DETECTION
 '''        EffectsGroup
             scope = Source
-            effects = SetDetection Value + 50
+            effects = SetDetection value = Value + 50
 '''
 
 ULTIMATE_DETECTION
 '''        EffectsGroup
             scope = Source
-            effects = SetDetection Value + 100
+            effects = SetDetection value = Value + 100
 '''
 
 
@@ -3331,12 +3331,12 @@ BAD_STEALTH
                 Source
                 And [
                     ContainedBy Source
-                    Not HasTag "ORBITAL"
+                    Not HasTag name = "ORBITAL"
                 ]
             ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value - 15
+            effects = SetStealth value = Value - 15
 '''
 
 GOOD_STEALTH
@@ -3345,12 +3345,12 @@ GOOD_STEALTH
                 Source
                 And [
                     ContainedBy Source
-                    Not HasTag "ORBITAL"
+                    Not HasTag name = "ORBITAL"
                 ]
             ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value + 15
+            effects = SetStealth value = Value + 15
 '''
             
 GREAT_STEALTH
@@ -3359,12 +3359,12 @@ GREAT_STEALTH
                 Source
                 And [
                     ContainedBy Source
-                    Not HasTag "ORBITAL"
+                    Not HasTag name = "ORBITAL"
                 ]
             ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value + 40
+            effects = SetStealth value = Value + 40
 '''
 
 ULTIMATE_STEALTH
@@ -3373,12 +3373,12 @@ ULTIMATE_STEALTH
                 Source
                 And [
                     ContainedBy Source
-                    Not HasTag "ORBITAL"
+                    Not HasTag name = "ORBITAL"
                 ]
             ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth Value + 60
+            effects = SetStealth value = Value + 60
 '''
 
 //#####      W E A P O N S     #####//
@@ -3486,7 +3486,7 @@ HUGE_PLANET
             Planet
             Turn high = 0
         ]
-        effects = SetPlanetSize Huge
+        effects = SetPlanetSize planetsize = Huge
 '''
 
 LARGE_PLANET
@@ -3496,7 +3496,7 @@ LARGE_PLANET
             Planet
             Turn high = 0
         ]
-        effects = SetPlanetSize Large
+        effects = SetPlanetSize planetsize = Large
 '''
 
 MEDIUM_PLANET
@@ -3506,7 +3506,7 @@ MEDIUM_PLANET
             Planet
             Turn high = 0
         ]
-        effects = SetPlanetSize Medium
+        effects = SetPlanetSize planetsize = Medium
 '''
 
 SMALL_PLANET
@@ -3516,7 +3516,7 @@ SMALL_PLANET
             Planet
             Turn high = 0
         ]
-        effects = SetPlanetSize Small
+        effects = SetPlanetSize planetsize = Small
 '''
 
 NOT_HUGE_PLANET
@@ -3527,7 +3527,7 @@ NOT_HUGE_PLANET
             Turn high = 0
             Planet Size = Huge
         ]
-        effects = SetPlanetSize Large
+        effects = SetPlanetSize planetsize = Large
 '''
 
 //#####      M U L T I P L I E R S     #####//

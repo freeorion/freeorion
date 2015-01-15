@@ -56,8 +56,7 @@ namespace {
                 ;
 
             value_test
-                =
-                    tok.ValueTest_
+                =   tok.ValueTest_
                     >> -(
                             parse::label(Low_token)     >> double_value_ref [ _a = _1 ]
                         )
@@ -69,17 +68,11 @@ namespace {
                 ;
 
             turn
-                =    (
-                        tok.Turn_
-                        >> -(
-                                parse::label(Low_token) >> int_value_ref [ _a = _1 ]
-                            )
-                        >> -(
-                                parse::label(High_token) >> int_value_ref [ _b = _1 ]
-                            )
-                     )
-                     [ _val = new_<Condition::Turn>(_a, _b) ]
-                ;
+                =   tok.Turn_
+                    > -(parse::label(Low_token) >> int_value_ref [ _a = _1 ] )
+                    > -(parse::label(High_token) >> int_value_ref [ _b = _1 ] )
+                [ _val = new_<Condition::Turn>(_a, _b) ]
+            ;
 
             created_on_turn
                 =    (
