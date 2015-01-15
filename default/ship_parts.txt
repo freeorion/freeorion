@@ -9,7 +9,7 @@ Part
     buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     tags = "COMFORTABLE"
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/troops.png"
 
 Part
@@ -22,7 +22,7 @@ Part
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/mass-driver-1.png"
     
 Part
@@ -35,7 +35,7 @@ Part
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/mass-driver-2.png"
 
 Part
@@ -48,7 +48,7 @@ Part
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/mass-driver-3.png"
     
 Part
@@ -61,7 +61,7 @@ Part
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/mass-driver-4.png"
     
 Part
@@ -74,7 +74,7 @@ Part
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/laser-1.png"
 
 Part
@@ -87,7 +87,7 @@ Part
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/laser-2.png"
 
 Part
@@ -100,7 +100,7 @@ Part
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/laser-3.png"
 
 Part
@@ -113,7 +113,7 @@ Part
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/laser-4.png"
     
 Part
@@ -126,7 +126,7 @@ Part
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/plasma-1.png"
     
 Part
@@ -139,7 +139,7 @@ Part
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/plasma-2.png"
     
 Part
@@ -152,7 +152,7 @@ Part
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/plasma-3.png" 
 
 Part
@@ -165,7 +165,7 @@ Part
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/plasma-4.png"
 
 Part
@@ -178,7 +178,7 @@ Part
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/death-ray-1.png"    
 
 Part
@@ -191,7 +191,7 @@ Part
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/death-ray-2.png"
 
 Part
@@ -204,7 +204,7 @@ Part
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/death-ray-3.png"
 
 Part
@@ -217,7 +217,7 @@ Part
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/death-ray-4.png"
 
 Part
@@ -228,7 +228,7 @@ Part
     mountableSlotTypes = External
     buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/std_armor_plating.png"
 
 Part
@@ -239,7 +239,7 @@ Part
     mountableSlotTypes = External
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/zortrium_plating.png"
 
 Part
@@ -250,7 +250,7 @@ Part
     mountableSlotTypes = External
     buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/diamond_plating.png"
 
 Part
@@ -261,7 +261,7 @@ Part
     mountableSlotTypes = External
     buildcost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/xentronium_plating.png"
 
 Part
@@ -273,14 +273,14 @@ Part
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = And [
-        Number low = 1 high = 999 And [
-            Building "BLD_SHIPYARD_AST_REF"
+        Number low = 1 high = 999 condition = And [
+            Building name = "BLD_SHIPYARD_AST_REF"
             Or [
-                OwnedBy TheEmpire Source.Owner
-                OwnedBy AllyOf Source.Owner
+                OwnedBy empire = Source.Owner
+                OwnedBy affiliation = AllyOf empire = Source.Owner
             ]
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/ship_parts/rock_plating.png"
 
@@ -293,14 +293,14 @@ Part
     buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = And [
-        Number low = 1 high = 999 And [
-            Building "BLD_SHIPYARD_AST_REF"
+        Number low = 1 high = 999 condition = And [
+            Building name = "BLD_SHIPYARD_AST_REF"
             Or [
-                OwnedBy TheEmpire Source.Owner
-                OwnedBy AllyOf Source.Owner
+                OwnedBy empire = Source.Owner
+                OwnedBy affiliation = AllyOf empire = Source.Owner
             ]
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     icon = "icons/ship_parts/crystal_plating.png"
 
@@ -313,10 +313,10 @@ Part
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = And [
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Contains Building name = "BLD_NEUTRONIUM_FORGE"
         Number low = 1 high = 999 condition = And [
-            OwnedBy TheEmpire Source.Owner
+            OwnedBy empire = Source.Owner
             Or [
                 Building name = "BLD_NEUTRONIUM_EXTRACTOR"
                 Building name = "BLD_NEUTRONIUM_SYNTH"
@@ -344,13 +344,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield Value + 4
+            effects = SetMaxShield value = Value + 4
     icon = "icons/ship_parts/defense_grid.png"
 
 Part
@@ -361,13 +361,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield Value + 7
+            effects = SetMaxShield value = Value + 7
     icon = "icons/ship_parts/deflector_shield.png"
 
 Part
@@ -378,13 +378,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield Value + 12
+            effects = SetMaxShield value = Value + 12
     icon = "icons/ship_parts/plasma_shield.png"
 
 Part
@@ -395,13 +395,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield Value + 20
+            effects = SetMaxShield value = Value + 20
     icon = "icons/ship_parts/blackshield.png"
 
 Part
@@ -412,18 +412,18 @@ Part
     mountableSlotTypes = Internal
     buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Star type = [Red Orange Yellow White Blue]
             stackinggroup = "STEALTH_SOLAR_STACK"
-            effects = SetStealth Value + 60
+            effects = SetStealth value = Value + 60
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield Value + 15
+            effects = SetMaxShield value = Value + 15
     ]
     icon = "icons/ship_parts/multi-spectral.png"
 
@@ -435,13 +435,13 @@ Part
     mountableSlotTypes = External
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 200
+            effects = SetDetection value = Value + 200
     icon = "icons/ship_parts/detector-4.png"
 
 Part
@@ -452,13 +452,13 @@ Part
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 150
+            effects = SetDetection value = Value + 150
     icon = "icons/ship_parts/detector-3.png"
 
 Part
@@ -469,13 +469,13 @@ Part
     mountableSlotTypes = External
     buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 75
+            effects = SetDetection value = Value + 75
     icon = "icons/ship_parts/detector-2.png"
 
 Part
@@ -486,13 +486,13 @@ Part
     mountableSlotTypes = External
     buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 25
+            effects = SetDetection value = Value + 25
     icon = "icons/ship_parts/detector-1.png"
 
 Part
@@ -502,12 +502,12 @@ Part
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetStarlaneSpeed Value + 10
+            effects = SetStarlaneSpeed value = Value + 10
     icon = "icons/ship_parts/engine-1.png"
     
     
@@ -518,12 +518,12 @@ Part
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetStarlaneSpeed Value + 20
+            effects = SetStarlaneSpeed value = Value + 20
     icon = "icons/ship_parts/engine-2.png"
     
 Part
@@ -533,12 +533,12 @@ Part
     mountableSlotTypes = Core
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetStarlaneSpeed Value + 30
+            effects = SetStarlaneSpeed value = Value + 30
     icon = "icons/ship_parts/engine-3.png"
     
 Part
@@ -549,7 +549,7 @@ Part
     buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
     location = And [
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Contains Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
         ]
     effectsgroups = [
@@ -557,11 +557,11 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 40
+            effects = SetStealth value = Value + 40
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetStarlaneSpeed Value + 40
+            effects = SetStarlaneSpeed value = Value + 40
     ]
     icon = "icons/ship_parts/engine-4.png"
     
@@ -573,7 +573,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/basic-tank.png"
 
 Part
@@ -584,7 +584,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/deuterium_tank.png"
 
 Part
@@ -595,7 +595,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/antimatter_tank.png"
 
 Part
@@ -606,13 +606,13 @@ Part
     mountableSlotTypes = External
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Stationary
             stackinggroup = "RAMSCOOP_STACK"
-            effects = SetFuel Value + 0.1
+            effects = SetFuel value = Value + 0.1
     icon = "icons/ship_parts/antimatter_tank.png"
 
 Part
@@ -623,12 +623,12 @@ Part
     mountableSlotTypes = Core
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetFuel Target.MaxFuel
+            effects = SetFuel value = Target.MaxFuel
     icon = "icons/tech/zero_point_energy.png"
 
 Part
@@ -639,13 +639,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 80
+            effects = SetStealth value = Value + 80
     icon = "icons/ship_parts/cloak-4.png"
 
 Part
@@ -656,13 +656,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 7
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 60
+            effects = SetStealth value = Value + 60
     icon = "icons/ship_parts/cloak-3.png"
 
 Part
@@ -673,13 +673,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 40
+            effects = SetStealth value = Value + 40
     icon = "icons/ship_parts/cloak-2.png"
 
 Part
@@ -690,13 +690,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 20
+            effects = SetStealth value = Value + 20
     icon = "icons/ship_parts/cloak-1.png"
 
 Part
@@ -708,7 +708,7 @@ Part
     buildcost = 120 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
     location = And [
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
     ]
     icon = "icons/ship_parts/colony_pod.png"
@@ -722,7 +722,7 @@ Part
     buildcost = 120 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
     location = And [
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
     ]
     icon = "icons/ship_parts/cryonic_colony_pod.png"
@@ -735,7 +735,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/tech/habitation_domes.png"
     
 Part
@@ -745,13 +745,13 @@ Part
     mountableSlotTypes = Internal
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = WithinDistance 0 Source
+            scope = WithinDistance distance = 0 condition = Source
             activation = Source
             stackinggroup = "SP_DISTORTION_MODULATOR_STACK"
-            effects = SetStealth Value - 20
+            effects = SetStealth value = Value - 20
     icon = "icons/ship_parts/distortion_modulator.png"
 
 Part
@@ -764,38 +764,38 @@ Part
     location = All
     effectsgroups = [
         EffectsGroup
-            scope = NumberOf 1 And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
                 Not Planet type = [Asteroids GasGiant Barren Desert]
             ]
             activation = And [
-                            Random 0.15
+                            Random probability = 0.15
                             InSystem
-                        ]
-            effects = AddSpecial "CLOUD_COVER_MASTER_SPECIAL"
+            ]
+            effects = AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_2"
+            activation = Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_2"
             effects = [
-                CreateShip "SM_ASH" Source.Owner
+                CreateShip designname = "SM_ASH" empire = Source.Owner
                 Destroy
             ]
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_3"
+            activation = Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_3"
             effects = [
-                CreateShip "SM_DIM" Source.Owner
+                CreateShip designname = "SM_DIM" empire = Source.Owner
                 Destroy
             ]
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_4"
+            activation = Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_4"
             effects = [
-                CreateShip "SM_VOID" Source.Owner
+                CreateShip designname = "SM_VOID" empire = Source.Owner
                 Destroy
             ]
     ]
@@ -811,38 +811,38 @@ Part
     location = All
     effectsgroups = [
         EffectsGroup
-            scope = NumberOf 1 And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
             ]
             activation = And [
-                            Random 0.15
-                            InSystem
-                        ]
-            effects = AddSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
+                Random probability = 0.15
+                InSystem
+            ]
+            effects = AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_3"
+            activation = Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_3"
             effects = [
-                CreateShip "SM_DIM" Source.Owner
+                CreateShip designname = "SM_DIM" empire = Source.Owner
                 Destroy
             ]
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_4"
+            activation = Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_4"
             effects = [
-                CreateShip "SM_VOID" Source.Owner
+                CreateShip designname = "SM_VOID" empire = Source.Owner
                 Destroy
             ]
 
         EffectsGroup
-            scope = HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
+            scope = HasSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "CLOUD_COVER_MASTER_SPECIAL"
-                AddSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
+                RemoveSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+                AddSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
             ]
     ]
     icon = ""
@@ -857,38 +857,38 @@ Part
     location = All
     effectsgroups = [
         EffectsGroup
-            scope = NumberOf 1 And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
             ]
             activation = And [
-                            Random 0.15
-                            InSystem
-                        ]
-            effects = AddSpecial "DIM_RIFT_MASTER_SPECIAL"
+                Random probability = 0.15
+                InSystem
+            ]
+            effects = AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
 
         EffectsGroup
             scope = Source
-            activation = Number low = 1 OwnerHasTech "SPY_STEALTH_4"
+            activation = Number low = 1 condition = OwnerHasTech name = "SPY_STEALTH_4"
             effects = [
-                CreateShip "SM_VOID" Source.Owner
+                CreateShip designname = "SM_VOID" empire = Source.Owner
                 Destroy
             ]
 
         EffectsGroup
-            scope = HasSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
+            scope = HasSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
-                AddSpecial "DIM_RIFT_MASTER_SPECIAL"
+                RemoveSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+                AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
             ]
 
         EffectsGroup
-            scope = HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
+            scope = HasSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "CLOUD_COVER_MASTER_SPECIAL"
-                AddSpecial "DIM_RIFT_MASTER_SPECIAL"
+                RemoveSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+                AddSpecial name = "DIM_RIFT_MASTER_SPECIAL"
             ]
     ]
     icon = ""
@@ -903,38 +903,38 @@ Part
     location = All
     effectsgroups = [
         EffectsGroup
-            scope = NumberOf 1 And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
             ]
             activation = And [
-                            Random 0.15
-                            InSystem
-                        ]
-            effects = AddSpecial "VOID_MASTER_SPECIAL"
+                Random probability = 0.15
+                InSystem
+            ]
+            effects = AddSpecial name = "VOID_MASTER_SPECIAL"
 
         EffectsGroup
-            scope = HasSpecial "DIM_RIFT_MASTER_SPECIAL"
+            scope = HasSpecial name = "DIM_RIFT_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "DIM_RIFT_MASTER_SPECIAL"
-                AddSpecial "VOID_MASTER_SPECIAL"
+                RemoveSpecial name = "DIM_RIFT_MASTER_SPECIAL"
+                AddSpecial name = "VOID_MASTER_SPECIAL"
             ]
 
         EffectsGroup
-            scope = HasSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
+            scope = HasSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
-                AddSpecial "VOID_MASTER_SPECIAL"
+                RemoveSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+                AddSpecial name = "VOID_MASTER_SPECIAL"
             ]
 
         EffectsGroup
-            scope = HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
+            scope = HasSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
             activation = Source
             effects = [
-                RemoveSpecial "CLOUD_COVER_MASTER_SPECIAL"
-                AddSpecial "VOID_MASTER_SPECIAL"
+                RemoveSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+                AddSpecial name = "VOID_MASTER_SPECIAL"
             ]
     ]
     icon = ""
@@ -951,17 +951,17 @@ Part
         EffectsGroup    // players can order death spores used on enemies
             scope = And [
                 Planet
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
                 OrderedBombardedBy condition = Source
                 Or [
-                    OwnedBy EnemyOf Source.Owner
-                    Not OwnedBy AnyEmpire
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Not OwnedBy affiliation = AnyEmpire
                 ]
-                VisibleToEmpire Source.Owner
-                HasTag "ORGANIC"
+                VisibleToEmpire empire = Source.Owner
+                HasTag name = "ORGANIC"
             ]
             effects = [
-                SetPopulation Value - 0.5
+                SetPopulation value = Value - 0.5
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     parameters = [
@@ -973,17 +973,17 @@ Part
         EffectsGroup    // monsters use death spores on player planets
             scope = And [
                 Planet
-                InSystem Source.SystemID
-                OwnedBy AnyEmpire
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
-                HasTag "ORGANIC"
+                HasTag name = "ORGANIC"
             ]
             activation = And [
-                            Not OwnedBy AnyEmpire
-                            InSystem
-                         ]
+                Not OwnedBy affiliation = AnyEmpire
+                InSystem
+            ]
             effects = [
-                SetPopulation Value - 0.5
+                SetPopulation value = Value - 0.5
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     parameters = [
@@ -1006,17 +1006,17 @@ Part
         EffectsGroup    // players can order terminators used on enemies
             scope = And [
                 Planet
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
                 OrderedBombardedBy condition = Source
                 Or [
-                    OwnedBy EnemyOf Source.Owner
-                    Not OwnedBy AnyEmpire
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Not OwnedBy affiliation = AnyEmpire
                 ]
-                VisibleToEmpire Source.Owner
-                HasTag "ORGANIC"
+                VisibleToEmpire empire = Source.Owner
+                HasTag name = "ORGANIC"
             ]
             effects = [
-                SetPopulation Value - 1
+                SetPopulation value = Value - 1
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     parameters = [
@@ -1028,17 +1028,17 @@ Part
         EffectsGroup    // monsters use terminators on player planets
             scope = And [
                 Planet
-                InSystem Source.SystemID
-                OwnedBy AnyEmpire
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
-                HasTag "ORGANIC"
+                HasTag name = "ORGANIC"
             ]
             activation = And [
-                            Not OwnedBy AnyEmpire
-                            InSystem
-                         ]
+                Not OwnedBy affiliation = AnyEmpire
+                InSystem
+            ]
             effects = [
-                SetPopulation Value - 1
+                SetPopulation value = Value - 1
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     parameters = [
@@ -1060,33 +1060,33 @@ Part
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.SystemID
+                Object id = Source.SystemID
                 System
             ]
-            activation = Number 1 And [
-                Building "BLD_NOVA_BOMB_ACTIVATOR"
-                OwnedBy TheEmpire Source.Owner
-                WithinStarlaneJumps 1 Source
+            activation = Number low = 1 condition = And [
+                Building name = "BLD_NOVA_BOMB_ACTIVATOR"
+                OwnedBy empire = Source.Owner
+                WithinStarlaneJumps jumps = 1 condition = Source
             ]
             effects = [
-                SetStarType NoStar
-                AddSpecial "SUPERNOVA_SPECIAL"
+                SetStarType type = NoStar
+                AddSpecial name = "SUPERNOVA_SPECIAL"
             ]
 
         EffectsGroup
             scope = ContainedBy And [
-                Object Source.SystemID
+                Object id = Source.SystemID
                 System
             ]
             activation = Or [
-                Number 1 And [
-                    Building "BLD_NOVA_BOMB_ACTIVATOR"
-                    OwnedBy TheEmpire Source.Owner
-                    WithinStarlaneJumps 1 Source
+                Number low = 1 condition = And [
+                    Building name = "BLD_NOVA_BOMB_ACTIVATOR"
+                    OwnedBy empire = Source.Owner
+                    WithinStarlaneJumps jumps = 1 condition = Source
                 ]
                 ContainedBy And [
                     System 
-                    Contains HasSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                    Contains HasSpecial name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
                 ]
             ]
             effects = Destroy
@@ -1106,17 +1106,17 @@ Part
             scope = And [
                 Planet
                 Planet type = Asteroids
-                InSystem Source.SystemID
-                Not OwnedBy AnyEmpire
+                InSystem id = Source.SystemID
+                Not OwnedBy affiliation = AnyEmpire
             ]
             activation = And [
                 InSystem
                 Not ContainedBy And [
-                    Object Source.SystemID
+                    Object id = Source.SystemID
                     System
                     Contains And [
                         Ship
-                        InSystem Source.SystemID
+                        InSystem id = Source.SystemID
                         Or [
                             DesignHasHull name = "SH_KRILL_1_BODY"
                             DesignHasHull name = "SH_KRILL_2_BODY"
@@ -1127,7 +1127,7 @@ Part
                 ]
             ]
             stackinggroup = "SP_KRILL_SPAWN_STACK"
-            effects = CreateShip "SM_KRILL_1"
+            effects = CreateShip designname = "SM_KRILL_1"
             
     icon = ""
 
@@ -1141,7 +1141,7 @@ Part
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     Unproducible
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/tech/categories/learning.png"
 
 Part
@@ -1153,7 +1153,7 @@ Part
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     Unproducible
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/tech/categories/production.png"
 
 Part
@@ -1165,7 +1165,7 @@ Part
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     Unproducible
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     icon = "icons/tech/categories/economics.png"
 */
 
@@ -1178,14 +1178,14 @@ Part
     buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = And [
-        OwnedBy TheEmpire Source.Owner
-        HasTag "ROBOTIC"
+        OwnedBy empire = Source.Owner
+        HasTag name = "ROBOTIC"
     ]
     effectsgroups =
         EffectsGroup
             scope = And [
                 Source
-                HasTag "ROBOTIC"
+                HasTag name = "ROBOTIC"
                 Or [
                     DesignHasHull name = "SH_ROBOTIC"
                     DesignHasHull name = "SH_SELF_GRAVITATING"
@@ -1195,7 +1195,7 @@ Part
                 ]
             ]
             stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield Value + min(min(
+            effects = SetMaxShield value = Value + min(min(
                 (([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]])),            
                 ((([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]]) * 7 ) ^ 0.5 )), 20)
     icon = "icons/ship_parts/robotic-interface-shields.png"
@@ -1205,11 +1205,11 @@ COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS
 '''
 Count condition = And [
                 Ship
-                OwnedBy TheEmpire Source.Owner
-                VisibleToEmpire Source.Owner
-                HasTag "ROBOTIC"
+                OwnedBy empire = Source.Owner
+                VisibleToEmpire empire = Source.Owner
+                HasTag name = "ROBOTIC"
                 Not Source
-                DesignHasPart 1 999 "SH_ROBOTIC_INTERFACE_SHIELDS"
+                DesignHasPart low = 1 high = 999 name = "SH_ROBOTIC_INTERFACE_SHIELDS"
                 Or [
                     DesignHasHull name = "SH_ROBOTIC"
                     DesignHasHull name = "SH_SELF_GRAVITATING"
@@ -1217,6 +1217,6 @@ Count condition = And [
                     DesignHasHull name = "SH_LOGISTICS_FACILITATOR"
                     DesignHasHull name = "SH_TITANIC"
                 ]
-                WithinStarlaneJumps 0 Source
+                WithinStarlaneJumps jumps = 0 condition = Source
             ]
 '''

@@ -132,9 +132,9 @@ void initialize_expression_parsers(
                 )
             |   (
                     (
-                        tok.Min_    [ _c = ValueRef::MINIMUM ]
-                    |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
-                    |   tok.Random_ [ _c = ValueRef::RANDOM_UNIFORM ]
+                        tok.Min_            [ _c = ValueRef::MINIMUM ]
+                    |   tok.Max_            [ _c = ValueRef::MAXIMUM ]
+                    |   tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]
                     )
                     >> '(' > expr [ _a = _1 ] > ','
                     > expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] > ')'

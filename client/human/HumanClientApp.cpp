@@ -344,6 +344,7 @@ void HumanClientApp::StartServer() {
 
     std::vector<std::string> args;
     std::string ai_config = GetOptionsDB().GetValueString("ai-config");
+    std::string ai_path = GetOptionsDB().GetValueString("ai-path");
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource-dir");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
@@ -351,6 +352,11 @@ void HumanClientApp::StartServer() {
     args.push_back(GetOptionsDB().Get<std::string>("log-level"));
     if (GetOptionsDB().Get<bool>("test-3d-combat"))
         args.push_back("--test-3d-combat");
+    if (ai_path != GetOptionsDB().GetDefaultValueString("ai-path")) {
+        args.push_back("--ai-path");
+        args.push_back(ai_path);
+        Logger().debugStream() << "ai-path set to '" << ai_path << "'";
+    }
     if (!ai_config.empty()) {
         args.push_back("--ai-config");
         args.push_back(ai_config);

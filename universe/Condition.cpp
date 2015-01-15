@@ -6715,8 +6715,8 @@ bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 namespace {
     const Condition::ConditionBase* GetLocationCondition(Condition::ContentType content_type,
-                                                   const std::string& name1,
-                                                   const std::string& name2)
+                                                         const std::string& name1,
+                                                         const std::string& name2)
     {
         if (name1.empty())
             return 0;
@@ -6727,7 +6727,10 @@ namespace {
             break;
         }
         case Condition::CONTENT_SPECIES: {
-            return 0;   // species have no location conditions (but their foci do...)
+            const Species* s = GetSpecies(name1);
+            if (!s)
+                return 0;
+            return s->Location();
         }
         case Condition::CONTENT_SHIP_HULL: {
             if (const HullType* h = GetHullType(name1))
@@ -6930,6 +6933,17 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
+    if (m_operands.empty()) {
+        Logger().errorStream() << "Condition::And::Eval given no operands!";
+        return;
+    }
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        if (!m_operands[i]) {
+            Logger().errorStream() << "Condition::And::Eval given null operand!";
+            return;
+        }
+    }
+
     if (search_domain == NON_MATCHES) {
         ObjectSet partly_checked_non_matches;
         partly_checked_non_matches.reserve(non_matches.size());
@@ -7078,6 +7092,17 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
+    if (m_operands.empty()) {
+        Logger().errorStream() << "Condition::Or::Eval given no operands!";
+        return;
+    }
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        if (!m_operands[i]) {
+            Logger().errorStream() << "Condition::Or::Eval given null operand!";
+            return;
+        }
+    }
+
     if (search_domain == NON_MATCHES) {
         // check each item in the non-matches set against each of the operand conditions
         // if a non-candidate item matches an operand condition, move the item to the
@@ -7213,6 +7238,11 @@ void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& mat
 {
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
+
+    if (!m_operand) {
+        Logger().errorStream() << "Condition::Not::Eval found no subcondition to evaluate!";
+        return;
+    }
 
     if (search_domain == NON_MATCHES) {
         // search non_matches set for items that don't meet the operand

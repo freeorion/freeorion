@@ -2,6 +2,7 @@
 
 #include "Effect.h"
 #include "Condition.h"
+#include "ValueRef.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
@@ -68,6 +69,9 @@ namespace {
     }
 }
 
+Species::~Species()
+{ delete m_location; }
+
 std::string Species::Dump() const {
     std::string retval = DumpIndent() + "Species\n";
     ++g_indent;
@@ -129,6 +133,25 @@ std::string Species::Dump() const {
     retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     --g_indent;
     return retval;
+}
+
+const Condition::ConditionBase* Species::Location() const {
+    if (!m_location) {
+        // set up a Condition structure to match popcenters that have (not uninhabitable) environment for this species
+        std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> environments_vec;
+        environments_vec.push_back(new ValueRef::Constant<PlanetEnvironment>( ::PE_UNINHABITABLE));
+        const ValueRef::Constant<std::string>* this_species_name_ref = new ValueRef::Constant<std::string>(m_name);  // m_name specifies this species
+        Condition::ConditionBase* enviro_cond = new Condition::Not(new Condition::PlanetEnvironment(environments_vec, this_species_name_ref));
+
+        Condition::ConditionBase* type_cond = new Condition::Type(new ValueRef::Constant<UniverseObjectType>( ::OBJ_POP_CENTER));
+
+        std::vector<const Condition::ConditionBase*> operands;
+        operands.push_back(enviro_cond);
+        operands.push_back(type_cond);
+
+        m_location = new Condition::And(operands);
+    }
+    return m_location;
 }
 
 PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {

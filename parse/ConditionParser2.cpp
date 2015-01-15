@@ -95,7 +95,7 @@ namespace {
                 =    tok.DesignHasPart_
                 >    parse::label(Low_token)   > int_value_ref [ _a = _1 ]
                 >    parse::label(High_token)  > int_value_ref [ _b = _1 ]
-                >    parse::label(Class_token) > tok.string
+                >    parse::label(Name_token)  > tok.string
                 [ _val = new_<Condition::DesignHasPart>(_a, _b, _1) ]
                 ;
 

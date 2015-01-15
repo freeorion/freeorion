@@ -34,31 +34,31 @@ t_main = string.Template('''BuildingType
     buildtime = ${time}
     location = And [
         Planet
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Population high = 0
         Not Planet environment = Uninhabitable species = "${id}"
-        Not Contains Building "BLD_COL_${name}"
+        Not Contains Building name = "BLD_COL_${name}"
         ${species_condition}
     ]
     EnqueueLocation = And [
         Planet
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Population high = 0
         Not Planet environment = Uninhabitable species = "${id}"
-        Not Contains Building "BLD_COL_${name}"
+        Not Contains Building name = "BLD_COL_${name}"
         Not Enqueued type = Building name = "BLD_COL_${name}"
         ${species_condition}
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Object Source.PlanetID
+                Object id = Source.PlanetID
                 Planet
             ]
             activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
             effects = [
                 SetSpecies name = "${id}"
-                SetPopulation 1
+                SetPopulation value = 1
                 GenerateSitRepMessage
                     message = "SITREP_NEW_COLONY_ESTABLISHED"
                     icon = "${graphic}"
@@ -75,10 +75,10 @@ t_main = string.Template('''BuildingType
     ]
     icon = "icons/building/generic_building.png"''')
 
-t_species_condition = string.Template('''ResourceSupplyConnected Source.Owner And [
+t_species_condition = string.Template('''ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet
-            OwnedBy TheEmpire Source.Owner
-            Species "${id}"
+            OwnedBy empire = Source.Owner
+            Species name = "${id}"
             Population low = 3
         ]''')
 

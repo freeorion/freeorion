@@ -8,19 +8,19 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not OwnedBy AnyEmpire
+        Not OwnedBy affiliation = AnyEmpire
         Species
-        Not HasSpecial "HIGH_TECH_NATIVES_SPECIAL"
+        Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Not OwnedBy AnyEmpire
+            activation = Not OwnedBy affiliation = AnyEmpire
             effects = [
-                SetMaxDefense Value + 10
-                SetMaxShield Value + 10
-                SetMaxTroops Value + 10
-                SetDetection Value + 20
+                SetMaxDefense value = Value + 10
+                SetMaxShield value = Value + 10
+                SetMaxTroops value = Value + 10
+                SetDetection value = Value + 20
             ]
     ]
     graphic = "icons/tech/categories/learning.png"
@@ -33,19 +33,19 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not OwnedBy AnyEmpire
+        Not OwnedBy affiliation = AnyEmpire
         Species
-        Not HasSpecial "MODERATE_TECH_NATIVES_SPECIAL"
+        Not HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Not OwnedBy AnyEmpire
+            activation = Not OwnedBy affiliation = AnyEmpire
             effects = [
-                SetMaxDefense Value + 30
-                SetMaxShield Value + 30
-                SetMaxTroops Value + 30
-                SetDetection Value + 60
+                SetMaxDefense value = Value + 30
+                SetMaxShield value = Value + 30
+                SetMaxTroops value = Value + 30
+                SetDetection value = Value + 60
             ]
     ]
     graphic = "icons/tech/categories/learning.png"
@@ -68,8 +68,8 @@ Special
             stackinggroup = "NEBULA_SPAWN"
             effects = [
                 CreateField type = "FLD_NEBULA_1"
-                    x = Source.X y = Source.Y size = Random(40,120)
-                RemoveSpecial "STARSPAWN_NEBULA_SPECIAL"
+                    x = Source.X y = Source.Y size = RandomNumber(40,120)
+                RemoveSpecial name = "STARSPAWN_NEBULA_SPECIAL"
             ]
         EffectsGroup
             scope = Source
@@ -77,8 +77,8 @@ Special
             stackinggroup = "NEBULA_SPAWN"
             effects = [
                 CreateField type = "FLD_NEBULA_2"
-                    x = Source.X y = Source.Y size = Random(40,120)
-                RemoveSpecial "STARSPAWN_NEBULA_SPECIAL"
+                    x = Source.X y = Source.Y size = RandomNumber(40,120)
+                RemoveSpecial name = "STARSPAWN_NEBULA_SPECIAL"
             ]
         ]
     graphic = "nebulae/nebula9.png"
@@ -99,8 +99,8 @@ Special
             scope = Source
             activation = Source
             effects = [
-                SetTargetResearch Value + 3
-                SetTargetPopulation Value - 3
+                SetTargetResearch value = Value + 3
+                SetTargetPopulation value = Value - 3
             ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
 
@@ -124,7 +124,7 @@ Special
                 System 
                 Contains Or [
                     Capital
-                    And [ Planet HasSpecial "ANCIENT_RUINS_SPECIAL" ]
+                    And [ Planet HasSpecial name = "ANCIENT_RUINS_SPECIAL" ]
                     Design name = "SM_EXP_OUTPOST"
                 ]
             ]
@@ -141,32 +141,32 @@ Special
                 Random probability = 0.9
                 ValueTest low = 1 testvalue = GalaxyMaxAIAggression
                 ValueTest low = 1 testvalue = GalaxyMonsterFrequency
-                Not WithinStarlaneJumps 1 And [
+                Not WithinStarlaneJumps jumps = 1 condition = And [
                     System
                     Contains And [
                         Planet
-                        OwnedBy AnyEmpire
+                        OwnedBy affiliation = AnyEmpire
                     ]
                 ]
             ]
-            effects = CreateShip "SM_GUARD_2"
+            effects = CreateShip designname = "SM_GUARD_2"
             
         EffectsGroup
             scope = And [
                 Source
-                Focus "FOCUS_RESEARCH"
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
             
         EffectsGroup
             scope = Source
             activation = And [
                 Random probability = .2
-                OwnerHasTech "LRN_XENOARCH"
+                OwnerHasTech name = "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                CreateShip "SD_DRAGON_TOOTH" Source.Owner Source.Species
+                CreateShip designname = "SD_DRAGON_TOOTH" empire = Source.Owner species = Source.Species
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_SHIP"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -187,7 +187,7 @@ Special
             scope = Source
             activation = And [
                 Random probability = .25
-                OwnerHasTech "LRN_XENOARCH"
+                OwnerHasTech name = "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
@@ -212,12 +212,12 @@ Special
             scope = Source
             activation = And [
                 Random probability = .50
-                NotOwnerHasTech "SHP_WEAPON_4_1"
-                OwnerHasTech "LRN_XENOARCH"
+                NotOwnerHasTech name = "SHP_WEAPON_4_1"
+                OwnerHasTech name = "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                GiveEmpireTech "SHP_WEAPON_4_1" empire = Target.Owner
+                GiveEmpireTech name = "SHP_WEAPON_4_1" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -237,12 +237,12 @@ Special
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech "SHP_MULTISPEC_SHIELD"
-                OwnerHasTech "LRN_XENOARCH"
+                Not OwnerHasTech name = "SHP_MULTISPEC_SHIELD"
+                OwnerHasTech name = "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                GiveEmpireTech "SHP_MULTISPEC_SHIELD" empire = Target.Owner
+                GiveEmpireTech name = "SHP_MULTISPEC_SHIELD" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -262,12 +262,12 @@ Special
         EffectsGroup
             scope = Source
             activation = And [
-                Not OwnerHasTech "SHP_KRILL_SPAWN"
-                OwnerHasTech "LRN_XENOARCH"
+                Not OwnerHasTech name = "SHP_KRILL_SPAWN"
+                OwnerHasTech name = "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                GiveEmpireTech "SHP_KRILL_SPAWN" empire = Target.Owner
+                GiveEmpireTech name = "SHP_KRILL_SPAWN" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -286,10 +286,10 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = OwnerHasTech "LRN_XENOARCH"
+            activation = OwnerHasTech name = "LRN_XENOARCH"
             effects = [
-                AddSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
-                RemoveSpecial "ANCIENT_RUINS_SPECIAL"
+                AddSpecial name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
+                RemoveSpecial name = "ANCIENT_RUINS_SPECIAL"
             ]
     ]
     graphic = "icons/specials_huge/ancient_ruins.png"
@@ -303,11 +303,11 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not WithinStarlaneJumps 2 And [
+        Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
         Not ContainedBy Contains Design name = "SM_EXP_OUTPOST"
@@ -315,10 +315,10 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = OwnedBy AnyEmpire
+            activation = OwnedBy affiliation = AnyEmpire
             effects = [
-                SetDetection Value + 75
-                SetEmpireMeter Source.Owner "METER_DETECTION_STRENGTH" Value + 10
+                SetDetection value = Value + 75
+                SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
             ]
         EffectsGroup
             scope = Source
@@ -331,15 +331,15 @@ Special
                 Random probability = 0.5
                 ValueTest low = 1 testvalue = GalaxyMaxAIAggression
                 ValueTest low = 1 testvalue = GalaxyMonsterFrequency                
-                Not WithinStarlaneJumps 1 And [
+                Not WithinStarlaneJumps jumps = 1 condition = And [
                     System
                     Contains And [
                         Planet
-                        OwnedBy AnyEmpire
+                        OwnedBy affiliation = AnyEmpire
                     ]
                 ]
             ]
-            effects = CreateShip "SM_GUARD_2"
+            effects = CreateShip designname = "SM_GUARD_2"
         
         EffectsGroup     
             scope = Source     
@@ -348,7 +348,7 @@ Special
                 ValueTest low = 1 testvalue = GalaxyMaxAIAggression
                 ValueTest low = 1 testvalue = GalaxyMonsterFrequency
             ]                
-            effects = CreateShip "SM_GUARD_2"
+            effects = CreateShip designname = "SM_GUARD_2"
         ]
         graphic = "icons/meter/detection.png"
 
@@ -368,23 +368,23 @@ Special
             scope = And [
                 Building
                 ContainedBy And [
-                    Object Source.PlanetID
+                    Object id = Source.PlanetID
                     Planet
                 ]
             ]
-            effects = SetStealth Value + 10
+            effects = SetStealth value = Value + 10
 
         EffectsGroup
             scope = And [
                 Ship
                 ContainedBy And [
-                    Object Source.SystemID
+                    Object id = Source.SystemID
                     System
                 ]
-                OwnedBy TheEmpire Source.Owner
+                OwnedBy empire = Source.Owner
             ]
             stackinggroup = "RESONANT_MOON_STACK"
-            effects = SetStealth Value + 10
+            effects = SetStealth value = Value + 10
     ]
     graphic = "icons/specials_huge/resonant_moon.png"
 
@@ -401,11 +401,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 2 And [
+        Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -413,12 +413,12 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                Focus "FOCUS_RESEARCH"
-                OwnedBy TheEmpire Source.Owner
+                Focus type = "FOCUS_RESEARCH"
+                OwnedBy empire = Source.Owner
             ]
-            activation = Focus "FOCUS_RESEARCH"
+            activation = Focus type = "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"
-            effects = SetTargetResearch Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
             
             
         [[CHANCE_OF_GUARD_1]]
@@ -441,11 +441,11 @@ Special
             Contains Capital
         ]
         Not Species
-        Not WithinStarlaneJumps 2 And [
+        Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
         ContainedBy And [
@@ -460,21 +460,21 @@ Special
         EffectsGroup     
             scope = Source     
             activation = Turn high = 0
-            effects = SetPlanetType Radiated
+            effects = SetPlanetType type = Radiated
         
         EffectsGroup
             scope = And [
                 Planet
-                // Focus "FOCUS_RESEARCH" // Does not require focus
-                InSystem Source.SystemID
+                // Focus type = "FOCUS_RESEARCH" // Does not require focus
+                InSystem id = Source.SystemID
             ]
-            activation = Not OwnedBy AnyEmpire
+            activation = Not OwnedBy affiliation = AnyEmpire
             stackinggroup = "PHILOSOPHER_STACK"
-            effects = SetTargetResearch Value + 5    
+            effects = SetTargetResearch value = Value + 5    
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value - 20
+            effects = SetTargetConstruction value = Value - 20
     ]
     graphic = "icons/specials_huge/philospher-planet.png"
 
@@ -497,20 +497,20 @@ Special
             scope = Source
             activation = AND [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
                 Construction low = 10
             ] 
             stackinggroup = "ABANDONED_STACK"
-            effects = RemoveSpecial "ABANDONED_COLONY_SPECIAL"
+            effects = RemoveSpecial name = "ABANDONED_COLONY_SPECIAL"
             
         EffectsGroup
             scope = Source
             activation = AND [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
             stackinggroup = "ABANDONED_STACK"
-            effects = SetConstruction Value + 10
+            effects = SetConstruction value = Value + 10
         ]
     graphic = "icons/specials_huge/abandoned-colony.png"
 
@@ -523,11 +523,11 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not WithinStarlaneJumps 2 And [
+        Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
         Not ContainedBy Contains Design name = "SM_EXP_OUTPOST"
@@ -540,7 +540,7 @@ Special
                 Species
                 Not Planet environment = Good
                 Population low = 0.01
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
                 Not And [
                     Species name = "SP_EXOBOT"
                     Planet environment = adequate
@@ -548,7 +548,7 @@ Special
                 Random probability = 0.5
             ]
             effects = [
-                SetPlanetType Target.NextBetterPlanetType
+                SetPlanetType type = Target.NextBetterPlanetType
                 GenerateSitRepMessage
                     message = "EFFECT_GAIAN_TERRAFORM"
                     icon = "icons/building/terraform.png"
@@ -568,7 +568,7 @@ Special
                 ValueTest low = 1 testvalue = GalaxyMonsterFrequency
             ]
             stackinggroup = "GAIAN_STACK"
-            effects = CreateShip "SM_GUARD_2"
+            effects = CreateShip designname = "SM_GUARD_2"
 
         EffectsGroup
             scope = Source
@@ -591,9 +591,9 @@ Special
         EffectsGroup
             scope = And [
                 Source
-                Focus "FOCUS_RESEARCH"
+                Focus type = "FOCUS_RESEARCH"
             ]
-            effects = SetTargetResearch Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
         ]
     graphic = "icons/specials_huge/ancient_ruins.png"
     
@@ -605,11 +605,11 @@ Special
         ValueTest low = 1 testvalue = GalaxyMonsterFrequency    
         Planet        
         Planet type = GasGiant
-        Not WithinStarlaneJumps 3 And [
+        Not WithinStarlaneJumps jumps = 3 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -618,13 +618,13 @@ Special
             scope = Source
             activation = AND [
                 Planet
-                OwnedBy AnyEmpire
-                OwnerHasTech "SHP_DOMESTIC_MONSTER"
+                OwnedBy affiliation = AnyEmpire
+                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
                 Random probability = 0.05
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
-                CreateShip "SM_KRAKEN_1" Source.Owner
+                CreateShip designname = "SM_KRAKEN_1" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_HATCHED"
                     icon = "icons/monsters/kraken-1.png"
@@ -639,11 +639,11 @@ Special
             activation = AND [
                 Planet
                 Turn low = 10
-                Not OwnedBy AnyEmpire
+                Not OwnedBy affiliation = AnyEmpire
                 Random probability = 0.12
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
-            effects = CreateShip "SM_KRAKEN_1"
+            effects = CreateShip designname = "SM_KRAKEN_1"
         ]
     graphic = "icons/specials_huge/kraken-nest.png"
     
@@ -654,11 +654,11 @@ Special
     location = And [
         Planet
         Planet size = Small
-        Not WithinStarlaneJumps 2 And [
+        Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -667,13 +667,13 @@ Special
             scope = Source
             activation = AND [
                 Planet
-                OwnedBy AnyEmpire
-                OwnerHasTech "SHP_DOMESTIC_MONSTER"
+                OwnedBy affiliation = AnyEmpire
+                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
                 Random probability = 0.08
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = [
-                CreateShip "SM_SNOWFLAKE_1" Source.Owner
+                CreateShip designname = "SM_SNOWFLAKE_1" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_HATCHED"
                     icon = "icons/monsters/snowflake-1.png"
@@ -688,11 +688,11 @@ Special
             activation = AND [
                 Planet
                 Turn low = 10
-                Not OwnedBy AnyEmpire
+                Not OwnedBy affiliation = AnyEmpire
                 Random probability = 0.12
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
-            effects = CreateShip "SM_SNOWFLAKE_1"
+            effects = CreateShip designname = "SM_SNOWFLAKE_1"
         ]
     graphic = "icons/specials_huge/snowflake-nest.png"
     
@@ -704,11 +704,11 @@ Special
         Planet
         ValueTest low = 1 testvalue = GalaxyMonsterFrequency        
         Planet type = Asteroids
-        Not WithinStarlaneJumps 4 And [
+        Not WithinStarlaneJumps jumps = 4 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -717,13 +717,13 @@ Special
             scope = Source
             activation = AND [
                 Planet
-                OwnedBy AnyEmpire
-                OwnerHasTech "SHP_DOMESTIC_MONSTER"
+                OwnedBy affiliation = AnyEmpire
+                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
                 Random probability = 0.06
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [
-                CreateShip "SM_JUGGERNAUT_1" Source.Owner
+                CreateShip designname = "SM_JUGGERNAUT_1" empire = Source.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_HATCHED"
                     icon = "icons/monsters/juggernaut-1.png"
@@ -738,11 +738,11 @@ Special
             activation = AND [
                 Planet
                 Turn low = 10
-                Not OwnedBy AnyEmpire
+                Not OwnedBy affiliation = AnyEmpire
                 Random probability = 0.12
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
-            effects = CreateShip "SM_JUGGERNAUT_1"
+            effects = CreateShip designname = "SM_JUGGERNAUT_1"
         ]
         
     graphic = "icons/specials_huge/juggernaut-nest.png"
@@ -756,21 +756,21 @@ Special
             scope = Source
             activation = Source
             effects = [
-                SetMaxDefense Value + 1
-                SetMaxShield Value + 1
+                SetMaxDefense value = Value + 1
+                SetMaxShield value = Value + 1
             ]
 
         EffectsGroup
             scope = And [
                 Ship
-                NOT OwnedBy TheEmpire Source.Owner
-                OwnedBy AnyEmpire
-                WithinDistance 100 Source
+                NOT OwnedBy empire = Source.Owner
+                OwnedBy affiliation = AnyEmpire
+                WithinDistance distance = 100 condition = Source
             ]
         stackinggroup = "HEAD_ON_A_SPIKE_SPECIAL_EFFECT"
         effects = [
-            SetMaxShield Value - 1
-            SetMaxStructure Value -1 
+            SetMaxShield value = Value - 1
+            SetMaxStructure value = Value -1 
             SetDamage partname = "SR_WEAPON_1_1" value = Value - 1
             SetDamage partname = "SR_WEAPON_1_2" value = Value - 1
             SetDamage partname = "SR_WEAPON_1_3" value = Value - 1
@@ -799,28 +799,28 @@ Special
         EffectsGroup
             scope = Source
             activation = And [
-                Not Contains Building "BLD_CONC_CAMP"
+                Not Contains Building name = "BLD_CONC_CAMP"
                 Population low = 0.0001
             ]
             effects = [                
-                AddSpecial "CONC_CAMP_SLAVE_SPECIAL"
-                RemoveSpecial "CONC_CAMP_MASTER_SPECIAL"
+                AddSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
+                RemoveSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
         EffectsGroup
             scope = Source
             activation = AND [ 
-                Not Contains Building "BLD_CONC_CAMP"
-                Not Contains Building "BLD_CONC_CAMP_REMNANT"
+                Not Contains Building name = "BLD_CONC_CAMP"
+                Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
                 Population low = 0.0001
             ]
             effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
         EffectsGroup
             scope = Source
             activation = And [
-                Not Contains Building "BLD_CONC_CAMP"
+                Not Contains Building name = "BLD_CONC_CAMP"
                 Population high = 0.0001
             ]
-            effects = RemoveSpecial "CONC_CAMP_MASTER_SPECIAL"
+            effects = RemoveSpecial name = "CONC_CAMP_MASTER_SPECIAL"
     ]
     graphic = "icons/building/concentration-camp.png"
 
@@ -831,13 +831,13 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
-                SetPopulation Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5)
+            effects = SetPopulation value = Value + 0.5*(101+Target.TargetPopulation-2*Value - ((101+Target.TargetPopulation-2*Value)^2 -4*(Value*(Value-1-Target.TargetPopulation)-2*100))^0.5)
         EffectsGroup
             scope = Source
             activation = And [
                 PopulationCenter
-                Not Contains Building "BLD_CONC_CAMP"
-                Not Contains Building "BLD_CONC_CAMP_REMNANT"
+                Not Contains Building name = "BLD_CONC_CAMP"
+                Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
             ]
             effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
         EffectsGroup
@@ -846,7 +846,7 @@ Special
                 Random probability = 0.167
                 Population high = 0
             ]
-            effects = RemoveSpecial "CONC_CAMP_SLAVE_SPECIAL"
+            effects = RemoveSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
     ]
     graphic = "icons/building/concentration-camp.png"
 
@@ -862,7 +862,7 @@ Special
         EffectsGroup
             scope = Source
             stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
-            effects = AddSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            effects = AddSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
     ]
     graphic = "icons/specials_huge/cloud_cover.png"
 
@@ -876,10 +876,10 @@ Special
         EffectsGroup
             scope = Source
             activation = Not Or [
-                HasSpecial "CLOUD_COVER_MASTER_SPECIAL"
-                OwnerHasTech "SPY_STEALTH_1"
+                HasSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
+                OwnerHasTech name = "SPY_STEALTH_1"
             ]
-            effects = RemoveSpecial "CLOUD_COVER_SLAVE_SPECIAL"
+            effects = RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
 
         EffectsGroup
             scope = Source
@@ -899,7 +899,7 @@ Special
         EffectsGroup
             scope = Source
             stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
-            effects = AddSpecial "VOLCANIC_ACTIVITY_SPECIAL"
+            effects = AddSpecial name = "VOLCANIC_ACTIVITY_SPECIAL"
 
         [[REMOVE_CLOUD_COVER]]
     ]
@@ -912,8 +912,8 @@ Special
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = Not HasSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
-            effects = RemoveSpecial "VOLCANIC_ACTIVITY_SPECIAL"
+            activation = Not HasSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
+            effects = RemoveSpecial name = "VOLCANIC_ACTIVITY_SPECIAL"
     graphic = "icons/specials_huge/volcanic_ash.png"
 
 Special
@@ -926,10 +926,10 @@ Special
         EffectsGroup
             scope = Source
             activation = Not Or [
-                HasSpecial "VOLCANIC_ACTIVITY_SPECIAL"
-                OwnerHasTech "SPY_STEALTH_2"
+                HasSpecial name = "VOLCANIC_ACTIVITY_SPECIAL"
+                OwnerHasTech name = "SPY_STEALTH_2"
             ]
-            effects = RemoveSpecial "VOLCANIC_ASH_SLAVE_SPECIAL"
+            effects = RemoveSpecial name = "VOLCANIC_ASH_SLAVE_SPECIAL"
 
         EffectsGroup
             scope = Source
@@ -950,8 +950,8 @@ Special
             scope = Source
             stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
             effects = [
-                AddSpecial "DIM_RIFT_SLAVE_SPECIAL"
-                SetTargetPopulation Value - 4
+                AddSpecial name = "DIM_RIFT_SLAVE_SPECIAL"
+                SetTargetPopulation value = Value - 4
             ]
 
         [[REMOVE_CLOUD_COVER]]
@@ -969,10 +969,10 @@ Special
         EffectsGroup
             scope = Source
             activation = Not Or [
-                HasSpecial "DIM_RIFT_MASTER_SPECIAL"
-                OwnerHasTech "SPY_STEALTH_3"
+                HasSpecial name = "DIM_RIFT_MASTER_SPECIAL"
+                OwnerHasTech name = "SPY_STEALTH_3"
             ]
-            effects = RemoveSpecial "DIM_RIFT_SLAVE_SPECIAL"
+            effects = RemoveSpecial name = "DIM_RIFT_SLAVE_SPECIAL"
 
         EffectsGroup
             scope = Source
@@ -992,7 +992,7 @@ Special
         EffectsGroup
             scope = Source
             stackinggroup = "STEALTH_SPECIAL_MASTER_STACK"
-            effects = AddSpecial "VOID_SLAVE_SPECIAL"
+            effects = AddSpecial name = "VOID_SLAVE_SPECIAL"
 
         [[REMOVE_CLOUD_COVER]]
         [[REMOVE_ASH]]
@@ -1010,10 +1010,10 @@ Special
         EffectsGroup
             scope = Source
             activation = And [
-                Not HasSpecial "VOID_MASTER_SPECIAL"
-                Not OwnerHasTech "SPY_STEALTH_4"
+                Not HasSpecial name = "VOID_MASTER_SPECIAL"
+                Not OwnerHasTech name = "SPY_STEALTH_4"
             ]
-            effects = RemoveSpecial "VOID_SLAVE_SPECIAL"
+            effects = RemoveSpecial name = "VOID_SLAVE_SPECIAL"
     ]
     graphic = "icons/specials_huge/void.png"
 
@@ -1034,8 +1034,8 @@ Special
                 Ship
             ]
             effects = [
-                SetDetection Value + 60
-                RemoveSpecial "DERELICT_SPECIAL2"
+                SetDetection value = Value + 60
+                RemoveSpecial name = "DERELICT_SPECIAL2"
             ]
 
         EffectsGroup
@@ -1046,29 +1046,29 @@ Special
             activation = And [
                 Ship
                 Number low = 1 condition = And [
-                    Object Source.SystemID
-                    HasSpecial "DERELICT_SPECIAL2"
+                    Object id = Source.SystemID
+                    HasSpecial name = "DERELICT_SPECIAL2"
                 ]
             ]
             effects = [
-                AddSpecial "DERELICT_SPECIAL2" // renew the special (that was just removed above) if have moved into system that has (had) the special
+                AddSpecial name = "DERELICT_SPECIAL2" // renew the special (that was just removed above) if have moved into system that has (had) the special
             ]
 
         EffectsGroup
-            scope = NumberOf 1 And [
+            scope = NumberOf number = 1 condition = And [
                 Ship
-                InSystem Source.SystemID
-                OwnedBy AnyEmpire
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
             ]
             activation = And [
                 System
                 Contains And [
                     Ship
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                 ]
             ]
             effects = [
-                AddSpecial "DERELICT_SPECIAL2"
+                AddSpecial name = "DERELICT_SPECIAL2"
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_MAP"
                     parameters = [
@@ -1087,11 +1087,11 @@ Special
                 System
                 Contains And [
                     Ship
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                 ]
             ]
             effects = [
-                RemoveSpecial "DERELICT_SPECIAL2"
+                RemoveSpecial name = "DERELICT_SPECIAL2"
             ]
     ]
     graphic = "icons/specials_huge/derelict.png"
@@ -1110,18 +1110,18 @@ Special
         EffectsGroup
             scope = And [
                 Ship
-                InSystem Source.SystemID
-                OwnedBy AnyEmpire
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
             ]
             activation = And [
                 System
                 Contains And [
                     Ship
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                 ]
             ]
             effects = [
-                AddSpecial "DERELICT_SPECIAL3"
+                AddSpecial name = "DERELICT_SPECIAL3"
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_FUEL"
                     icon = "icons/meter/fuel.png"
@@ -1141,11 +1141,11 @@ Special
                 System
                 Contains And [
                     Ship
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                 ]
             ]
             effects = [
-                RemoveSpecial "DERELICT_SPECIAL3"
+                RemoveSpecial name = "DERELICT_SPECIAL3"
             ]
 
         EffectsGroup
@@ -1154,8 +1154,8 @@ Special
                 Ship
             ]
             effects = [
-                SetFuel Value + 100
-                RemoveSpecial "DERELICT_SPECIAL3"
+                SetFuel value = Value + 100
+                RemoveSpecial name = "DERELICT_SPECIAL3"
             ]
     ]
     graphic = "icons/specials_huge/derelict.png"
@@ -1170,10 +1170,10 @@ Special
             scope = Source
             effects = [
                 SetOverlayTexture name = "stars/nova-boom1.png" size = 120
-                SetStealth Value - 1000     // should be visible from afar...
-                RemoveSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
-                RemoveSpecial "SUPERNOVA_SPECIAL"
-                AddSpecial    "SUPERNOVA_SPECIAL2"
+                SetStealth value = Value - 1000     // should be visible from afar...
+                RemoveSpecial name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                RemoveSpecial name = "SUPERNOVA_SPECIAL"
+                AddSpecial name = "SUPERNOVA_SPECIAL2"
             ]
     graphic = "icons/specials_huge/nova_boom.png"
 
@@ -1187,9 +1187,9 @@ Special
             scope = Source
             effects = [
                 SetOverlayTexture name = "stars/nova-boom2.png" size = 120
-                SetStealth Value - 1000     // should be visible from afar...
-                RemoveSpecial "SUPERNOVA_SPECIAL2"
-                AddSpecial    "SUPERNOVA_SPECIAL3"
+                SetStealth value = Value - 1000     // should be visible from afar...
+                RemoveSpecial name = "SUPERNOVA_SPECIAL2"
+                AddSpecial name = "SUPERNOVA_SPECIAL3"
             ]
     graphic = "icons/specials_huge/nova_boom.png"
 
@@ -1203,9 +1203,9 @@ Special
             scope = Source
             effects = [
                 SetOverlayTexture name = "stars/nova-boom3.png" size = 120
-                SetStealth Value - 1000     // should be visible from afar...
-                RemoveSpecial "SUPERNOVA_SPECIAL3"
-                AddSpecial    "SUPERNOVA_SPECIAL4"
+                SetStealth value = Value - 1000     // should be visible from afar...
+                RemoveSpecial name = "SUPERNOVA_SPECIAL3"
+                AddSpecial name = "SUPERNOVA_SPECIAL4"
             ]
     graphic = "icons/specials_huge/nova_boom.png"
 
@@ -1219,8 +1219,8 @@ Special
             scope = Source
             effects = [
                 SetOverlayTexture name = "stars/nova-boom4.png" size = 120
-                SetStealth Value - 1000     // should be visible from afar...
-                RemoveSpecial "SUPERNOVA_SPECIAL4"
+                SetStealth value = Value - 1000     // should be visible from afar...
+                RemoveSpecial name = "SUPERNOVA_SPECIAL4"
             ]
     graphic = "icons/specials_huge/nova_boom.png"
     
@@ -1244,11 +1244,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1256,22 +1256,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "ORGANIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "ORGANIC"
                 TargetPopulation low = 0 high = 9999
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "PROBIOTIC_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "ORGANIC"
+                HasTag name = "ORGANIC"
             ]
             stackinggroup = "PROBIOTIC_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -1291,11 +1291,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1303,22 +1303,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "ORGANIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "ORGANIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 TargetPopulation low = 0 high = 9999
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "ORGANIC"
+                HasTag name = "ORGANIC"
             ]
             stackinggroup = "FRUIT_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
     ]
@@ -1337,11 +1337,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1349,22 +1349,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "ORGANIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "ORGANIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 TargetPopulation low = 0 high = 9999
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "ORGANIC"
+                HasTag name = "ORGANIC"
             ]
             stackinggroup = "SPICE_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
     ]
@@ -1383,11 +1383,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1397,22 +1397,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "ROBOTIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 TargetPopulation low = 0 high = 9999
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "ROBOTIC"
+                HasTag name = "ROBOTIC"
             ]
             stackinggroup = "MONOPOLE_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
     ]
@@ -1431,11 +1431,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1445,22 +1445,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "ROBOTIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 TargetPopulation low = 0 high = 9999
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "ROBOTIC"
+                HasTag name = "ROBOTIC"
             ]
             stackinggroup = "SUPERCONDUCTOR_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -1480,11 +1480,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1494,22 +1494,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "ROBOTIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 TargetPopulation low = 0 high = 9999
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "POSITRONIUM_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "ROBOTIC"
+                HasTag name = "ROBOTIC"
             ]
             stackinggroup = "POSITRONIUM_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -1529,11 +1529,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1543,22 +1543,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "LITHIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 TargetPopulation low = 0 high = 9999
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MINERALS_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "LITHIC"
+                HasTag name = "LITHIC"
             ]
             stackinggroup = "MINERALS_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
     ]
@@ -1577,11 +1577,11 @@ Special
             System 
             Contains Capital
             ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1591,22 +1591,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "LITHIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 TargetPopulation low = 0 high = 9999
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "CRYSTALS_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "LITHIC"
+                HasTag name = "LITHIC"
             ]
             stackinggroup = "CRYSTALS_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -1626,11 +1626,11 @@ Special
             System 
             Contains Capital
         ]
-        Not WithinStarlaneJumps 1 And [
+        Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
                 Planet
-                OwnedBy AnyEmpire
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -1640,22 +1640,22 @@ Special
         EffectsGroup
             scope = And [
                 Planet
-                OwnedBy TheEmpire Source.Owner
-                HasTag "LITHIC"
+                OwnedBy empire = Source.Owner
+                HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 TargetPopulation low = 0 high = 9999
             ]
-            activation =  Focus "FOCUS_GROWTH"
+            activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "ELERIUM_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
             scope = And [
                 Source
-                HasTag "LITHIC"
+                HasTag name = "LITHIC"
             ]
             stackinggroup = "ELERIUM_STACK"
-            effects = SetTargetPopulation Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
+            effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
 
@@ -1671,15 +1671,15 @@ Special
 STANDARD_MINERAL_BOOST
 '''EffectsGroup
             scope = Source
-            activation = Focus "FOCUS_MINING"
-            effects = SetTargetIndustry Value + 25
+            activation = Focus type = "FOCUS_MINING"
+            effects = SetTargetIndustry value = Value + 25
 '''
 
 STANDARD_INDUSTRY_BOOST
 '''EffectsGroup
             scope = Source
-            activation = Focus "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
 '''
 
@@ -1687,28 +1687,28 @@ REMOVE_CLOUD_COVER
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = RemoveSpecial "CLOUD_COVER_MASTER_SPECIAL"
+        effects = RemoveSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
 '''
 
 REMOVE_ASH
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = RemoveSpecial "VOLCANIC_ASH_MASTER_SPECIAL"
+        effects = RemoveSpecial name = "VOLCANIC_ASH_MASTER_SPECIAL"
 '''
 
 REMOVE_DIM
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = RemoveSpecial "DIM_RIFT_MASTER_SPECIAL"
+        effects = RemoveSpecial name = "DIM_RIFT_MASTER_SPECIAL"
 '''
 
 REMOVE_VOID
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = RemoveSpecial "VOID_MASTER_SPECIAL"
+        effects = RemoveSpecial name = "VOID_MASTER_SPECIAL"
 '''
 
 CHANCE_OF_GUARD_1
@@ -1721,9 +1721,9 @@ CHANCE_OF_GUARD_1
                 ValueTest low = 1 testvalue = GalaxyMonsterFrequency                
                 Not ContainedBy Contains OR [
                                     Design name = "SM_EXP_OUTPOST"
-                                    Building "BLD_EXPERIMENTOR_OUTPOST"
-                                    And [ Planet HasSpecial "HIGH_TECH_NATIVES_SPECIAL" ]
+                                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                                    And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
                                     ]
             ]
-            effects = CreateShip "SM_GUARD_1"
+            effects = CreateShip designname = "SM_GUARD_1"
 '''
