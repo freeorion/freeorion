@@ -203,7 +203,7 @@ namespace {
     }
 }
 
-MeterType ValueRef::NameToMeter(std::string name) {
+MeterType ValueRef::NameToMeter(const std::string& name) {
     MeterType retval = INVALID_METER_TYPE;
     std::map<std::string, MeterType>::const_iterator it = GetMeterNameMap().find(name);
     if (it != GetMeterNameMap().end())
