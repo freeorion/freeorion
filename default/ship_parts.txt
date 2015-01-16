@@ -955,7 +955,7 @@ Part
                 OrderedBombardedBy condition = Source
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
-                    Not OwnedBy affiliation = AnyEmpire
+                    Unowned
                 ]
                 VisibleToEmpire empire = Source.Owner
                 HasTag name = "ORGANIC"
@@ -979,7 +979,7 @@ Part
                 HasTag name = "ORGANIC"
             ]
             activation = And [
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
                 InSystem
             ]
             effects = [
@@ -1010,7 +1010,7 @@ Part
                 OrderedBombardedBy condition = Source
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
-                    Not OwnedBy affiliation = AnyEmpire
+                    Unowned
                 ]
                 VisibleToEmpire empire = Source.Owner
                 HasTag name = "ORGANIC"
@@ -1034,7 +1034,7 @@ Part
                 HasTag name = "ORGANIC"
             ]
             activation = And [
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
                 InSystem
             ]
             effects = [
@@ -1107,7 +1107,7 @@ Part
                 Planet
                 Planet type = Asteroids
                 InSystem id = Source.SystemID
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
             ]
             activation = And [
                 InSystem

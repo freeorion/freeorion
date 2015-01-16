@@ -1074,8 +1074,11 @@ namespace {
             }
 
             case AFFIL_ANY:
-                return true;
-                //return !candidate->Unowned();
+                return !candidate->Unowned();
+                break;
+
+            case AFFIL_NONE:
+                return candidate->Unowned();
                 break;
 
             default:
@@ -1136,6 +1139,10 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
         return (!negated)
             ? UserString("DESC_EMPIRE_AFFILIATION_ANY")
             : UserString("DESC_EMPIRE_AFFILIATION_ANY_NOT");
+    } else if (m_affiliation == AFFIL_NONE) {
+        return (!negated)
+            ? UserString("DESC_EMPIRE_AFFILIATION_ANY_NOT")
+            : UserString("DESC_EMPIRE_AFFILIATION_ANY");
     } else {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_EMPIRE_AFFILIATION")
@@ -1146,17 +1153,32 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
 }
 
 std::string Condition::EmpireAffiliation::Dump() const {
-    std::string retval = DumpIndent() + "OwnedBy";
-    retval += " affiliation = ";
-    switch (m_affiliation) {
-    case AFFIL_SELF:    retval += "TheEmpire";  break;
-    case AFFIL_ENEMY:   retval += "EnemyOf";    break;
-    case AFFIL_ALLY:    retval += "AllyOf";     break;
-    case AFFIL_ANY:     retval += "AnyEmpire";  break;
-    default:            retval += "?";          break;
+    std::string retval = DumpIndent();
+    if (m_affiliation == AFFIL_SELF) {
+        retval += "OwnedBy";
+        if (m_empire_id)
+            retval += " empire = " + m_empire_id->Dump();
+
+    } else if (m_affiliation == AFFIL_ANY) {
+        retval += "OwnedBy affiliation = AnyEmpire";
+
+    } else if (m_affiliation == AFFIL_NONE) {
+        retval += "Unowned";
+
+    } else if (m_affiliation == AFFIL_ENEMY) {
+        retval += "OwnedBy affilition = EnemyOf";
+        if (m_empire_id)
+            retval += " empire = " + m_empire_id->Dump();
+
+    } else if (m_affiliation == AFFIL_ALLY) {
+        retval += "OwnedBy affiliation = AllyOf";
+        if (m_empire_id)
+            retval += " empire = " + m_empire_id->Dump();
+
+    } else {
+        retval += "OwnedBy ??";
     }
-    if (m_empire_id)
-        retval += " empire = " + m_empire_id->Dump();
+
     retval += "\n";
     return retval;
 }

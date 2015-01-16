@@ -75,16 +75,35 @@ namespace {
                 =    tok.Armed_ [ _val = new_<Condition::Armed>() ]
                 ;
 
-            owned_by
+            owned_by_1
                 =    tok.OwnedBy_
-                >>   (
-                            parse::label(Affiliation_token) >> parse::enum_parser<EmpireAffiliationType>() [ _a = _1 ]
-                        |   eps [ _a = AFFIL_SELF ]
-                     )
-                >>   (
-                            parse::label(Empire_token) >> int_value_ref [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
-                        |   eps [ _val = new_<Condition::EmpireAffiliation>(_a) ]
-                     )
+                >>   parse::label(Empire_token) >> int_value_ref
+                     [ _val = new_<Condition::EmpireAffiliation>(_1) ]
+                ;
+
+             owned_by_2
+                 =   tok.OwnedBy_
+                 >>  parse::label(Affiliation_token) >> tok.AnyEmpire_
+                     [ _val = new_<Condition::EmpireAffiliation>( AFFIL_ANY ) ]
+                 ;
+
+             owned_by_3
+                 =   tok.Unowned_
+                     [ _val = new_<Condition::EmpireAffiliation>( AFFIL_NONE ) ]
+                 ;
+
+             owned_by_4
+                 =   tok.OwnedBy_
+                 >>  parse::label(Affiliation_token) >> parse::enum_parser<EmpireAffiliationType>() [ _a = _1 ]
+                 >>  parse::label(Empire_token)      >> int_value_ref
+                     [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
+                 ;
+
+            owned_by
+                %=  owned_by_1
+                |   owned_by_2
+                |   owned_by_3
+                |   owned_by_4
                 ;
 
             and_
@@ -176,7 +195,11 @@ namespace {
         parse::condition_parser_rule    capital;
         parse::condition_parser_rule    monster;
         parse::condition_parser_rule    armed;
-        owned_by_rule                   owned_by;
+        parse::condition_parser_rule    owned_by_1;
+        parse::condition_parser_rule    owned_by_2;
+        parse::condition_parser_rule    owned_by_3;
+        owned_by_rule                   owned_by_4;
+        parse::condition_parser_rule    owned_by;
         and_or_rule                     and_;
         and_or_rule                     or_;
         parse::condition_parser_rule    not_;

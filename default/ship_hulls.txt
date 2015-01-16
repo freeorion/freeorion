@@ -2418,6 +2418,7 @@ Hull
                 ]
             ]
             activation = Not Turn low = 1
+            accountinglabel = "ADD_NEST_SPECIAL_EFFECT_1"
             effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
             
         [[MONSTER_MOVE_ALWAYS]]
@@ -2432,6 +2433,7 @@ Hull
                 ]
             ]
             activation = Random probability = 0.03
+            accountinglabel = "SNOWFLAKE_GROWTH_LABEL"
             effects = [
                 CreateShip designname = "SM_SNOWFLAKE_2" empire = Source.Owner
                 Destroy
@@ -2946,7 +2948,7 @@ UNOWNED_GOOD_VISION
         scope = Source
         activation = And [
             Source
-            Not OwnedBy affiliation = AnyEmpire
+            Unowned
         ]
         accountinglabel = "GOOD_VISION_LABEL"
         effects = SetDetection value = Value + 100
@@ -2962,7 +2964,7 @@ UNOWNED_MOVE
             activation = And [
                 Turn low = 10
                 Stationary
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
                 Random probability = 0.9
                 Not And [
                     DesignHasHull name = "SH_ASTEROID"
@@ -2988,9 +2990,10 @@ MONSTER_MOVE_ALWAYS
             activation = And [
                 Turn low = 10
                 Stationary
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
             ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            accountinglabel = "MONSTER_MOVE_ALWAYS_LABEL"
             effects = SetDestination destination = And [
                 System
                 Not InSystem id = Source.SystemID
@@ -3007,7 +3010,7 @@ MONSTER_MOVE_PRE
             ]
             activation = And [
                 Stationary
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
                 Random probability = 
 '''
 
@@ -3040,6 +3043,7 @@ MONSTER_MOVE_POST
 INFINITE_FUEL
 '''EffectsGroup
             scope = Source
+            accountinglabel = "INFINITE_FUEL_LABEL"
             effects = SetFuel value = Value + 1
 '''
 
@@ -3048,7 +3052,7 @@ SCAVANGE_FUEL_UNOWNED
             scope = Source
             activation = And [
                 Stationary
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
                 Random probability = 0.6
             ]
             effects = SetFuel value = Value + 1
@@ -3069,7 +3073,7 @@ HUNT_BUILDINGS
                     ]
                 ]
             ]
-            activation = Not OwnedBy affiliation = AnyEmpire
+            activation = Unowned
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -3094,7 +3098,7 @@ HUNT_SHIPS
                     WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
-            activation = Not OwnedBy affiliation = AnyEmpire
+            activation = Unowned
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -3119,7 +3123,7 @@ HUNT_PLANETS
                     WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
-            activation = Not OwnedBy affiliation = AnyEmpire
+            activation = Unowned
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System

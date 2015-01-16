@@ -1550,7 +1550,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = Or [
-                Not ContainedBy Contains And [ Monster Not OwnedBy affiliation = AnyEmpire ]
+                Not ContainedBy Contains And [ Monster Unowned ]
                 Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]      // always remove lanes before spawn start turn
             ]
             effects = RemoveStarlanes endpoint = WithinStarlaneJumps jumps = 1 condition = Source
@@ -1558,7 +1558,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = And [
-                ContainedBy Contains And [ Monster Not OwnedBy affiliation = AnyEmpire ]
+                ContainedBy Contains And [ Monster Unowned ]
                 Turn low = [[EXPERIMENTOR_SPAWN_START_TURN]]       // don't create lanes before spawn start turn
             ]
             effects = AddStarlanes endpoint = NumberOf number = 1 condition = And [
@@ -1803,7 +1803,7 @@ BuildingType
         EffectsGroup            // remove evacuation when planet is depopulated or no longer owned by empire that produced this building
             scope = Source
             activation = OR [
-                NOT OwnedBy empire = Source.Owner
+                Not OwnedBy empire = Source.Owner
                 ContainedBy Or [
                     And [
                         Object id = Source.PlanetID

@@ -185,7 +185,7 @@ MonsterFleet
     location = And [
         Contains And [
             Planet
-            Not OwnedBy affiliation = AnyEmpire
+            Unowned
             Not Planet type = [Asteroids GasGiant]
         ]
         Not Contains Or [

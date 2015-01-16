@@ -57,34 +57,24 @@ namespace {
 
             value_test
                 =   tok.ValueTest_
-                    >> -(
-                            parse::label(Low_token)     >> double_value_ref [ _a = _1 ]
-                        )
-                    >> -(
-                            parse::label(High_token)    >> double_value_ref [ _b = _1 ]
-                        )
-                    >> parse::label(TestValue_token)    >> double_value_ref
+                    >> -(parse::label(Low_token)     >> double_value_ref [ _a = _1 ])
+                    >> -(parse::label(High_token)    >> double_value_ref [ _b = _1 ])
+                    >> parse::label(TestValue_token) >> double_value_ref
                     [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
                 ;
 
             turn
-                =   tok.Turn_
-                    > -(parse::label(Low_token) >> int_value_ref [ _a = _1 ] )
-                    > -(parse::label(High_token) >> int_value_ref [ _b = _1 ] )
-                [ _val = new_<Condition::Turn>(_a, _b) ]
-            ;
+                =  (tok.Turn_
+                    >> -(parse::label(Low_token)  >> int_value_ref [ _a = _1 ])
+                    >> -(parse::label(High_token) >> int_value_ref [ _b = _1 ]))
+                    [ _val = new_<Condition::Turn>(_a, _b) ]
+                ;
 
             created_on_turn
-                =    (
-                        tok.CreatedOnTurn_
-                        >> -(
-                                parse::label(Low_token) >> int_value_ref [ _a = _1 ]
-                            )
-                        >> -(
-                                parse::label(High_token) >> int_value_ref [ _b = _1 ]
-                            )
-                     )
-                     [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
+                =  (tok.CreatedOnTurn_
+                    >> -(parse::label(Low_token)  >> int_value_ref [ _a = _1 ])
+                    >> -(parse::label(High_token) >> int_value_ref [ _b = _1 ]))
+                    [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
                 ;
 
             number_of1

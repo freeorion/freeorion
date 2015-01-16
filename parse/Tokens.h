@@ -202,6 +202,7 @@
     (NextSystemID)                              \
     (NextTurnPopGrowth)                         \
     (NextYoungerStarType)                       \
+    (None)                                      \
     (NoStar)                                    \
     (NoStringtableLookup)                       \
     (Not)                                       \
@@ -424,6 +425,7 @@
     (UniverseCentreX)                           \
     (UniverseCentreY)                           \
     (Unlock)                                    \
+    (Unowned)                                   \
     (Unproducible)                              \
     (Unresearchable)                            \
     (Value)                                     \

@@ -3026,7 +3026,7 @@ EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "INDEPENDENT_TROOP_LABEL"
@@ -3057,7 +3057,7 @@ EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
             ]
             accountinglabel = "NATIVE_PLANETARY_SHIELDS_LABEL"
             effects = SetMaxShield value = Value + 10
@@ -3194,7 +3194,7 @@ EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
             ]
             accountinglabel = "NATIVE_PLANETARY_DEFENSE_LABEL"
             effects = [

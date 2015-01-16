@@ -175,10 +175,11 @@ GG_ENUM(GalaxySetupOption,
 /** types of diplomatic empire affiliations to another empire*/
 GG_ENUM(EmpireAffiliationType,
     INVALID_EMPIRE_AFFIL_TYPE = -1,
-    AFFIL_SELF,     ///< not an affiliation as such; this indicates that the given empire, rather than its affiliates
+    AFFIL_SELF,     ///< the given empire iteslf
     AFFIL_ENEMY,    ///< enemies of the given empire
     AFFIL_ALLY,     ///< allies of the given empire
     AFFIL_ANY,      ///< any empire
+    AFFIL_NONE,     ///< no empire
     NUM_AFFIL_TYPES ///< keep last, the number of affiliation types
 )
 

@@ -8,14 +8,14 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not OwnedBy affiliation = AnyEmpire
+        Unowned
         Species
         Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Not OwnedBy affiliation = AnyEmpire
+            activation = Unowned
             effects = [
                 SetMaxDefense value = Value + 10
                 SetMaxShield value = Value + 10
@@ -33,14 +33,14 @@ Special
     spawnlimit = 9999
     location = And [
         Planet
-        Not OwnedBy affiliation = AnyEmpire
+        Unowned
         Species
         Not HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Not OwnedBy affiliation = AnyEmpire
+            activation = Unowned
             effects = [
                 SetMaxDefense value = Value + 30
                 SetMaxShield value = Value + 30
@@ -468,7 +468,7 @@ Special
                 // Focus type = "FOCUS_RESEARCH" // Does not require focus
                 InSystem id = Source.SystemID
             ]
-            activation = Not OwnedBy affiliation = AnyEmpire
+            activation = Unowned
             stackinggroup = "PHILOSOPHER_STACK"
             effects = SetTargetResearch value = Value + 5    
         EffectsGroup
@@ -639,7 +639,7 @@ Special
             activation = AND [
                 Planet
                 Turn low = 10
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
                 Random probability = 0.12
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
@@ -688,7 +688,7 @@ Special
             activation = AND [
                 Planet
                 Turn low = 10
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
                 Random probability = 0.12
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
@@ -738,7 +738,7 @@ Special
             activation = AND [
                 Planet
                 Turn low = 10
-                Not OwnedBy affiliation = AnyEmpire
+                Unowned
                 Random probability = 0.12
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
@@ -763,7 +763,7 @@ Special
         EffectsGroup
             scope = And [
                 Ship
-                NOT OwnedBy empire = Source.Owner
+                Not OwnedBy empire = Source.Owner
                 OwnedBy affiliation = AnyEmpire
                 WithinDistance distance = 100 condition = Source
             ]
@@ -1074,7 +1074,6 @@ Special
                     parameters = [
                         tag = "system" data = Source.ID
                     ]
-                    affiliation = TheEmpire
                     empire = Target.Owner
             ]
 
@@ -1128,7 +1127,6 @@ Special
                     parameters = [
                         tag = "system" data = Source.ID
                     ]
-                    affiliation = TheEmpire
                     empire = Target.Owner
             ]
 
