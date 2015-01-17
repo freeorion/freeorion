@@ -931,37 +931,42 @@ namespace ValueRef {
 namespace ValueRef {
     template <>
     PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_PLANET_SIZE;
-    }
+    { return INVALID_PLANET_SIZE; }
 
     template <>
     PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_PLANET_TYPE;
-    }
+    { return INVALID_PLANET_TYPE; }
 
     template <>
     PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_PLANET_ENVIRONMENT;
-    }
+    { return INVALID_PLANET_ENVIRONMENT; }
 
     template <>
     UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_UNIVERSE_OBJECT_TYPE;
-    }
+    { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
     template <>
     StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_STAR_TYPE;
-    }
+    { return INVALID_STAR_TYPE; }
 
     template <>
     double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     {
+        const std::string& variable_name = m_property_name.back();
+
+        if (variable_name == "PartCapacity") {
+            std::string part_type_name;
+            if (m_string_ref1) {
+                part_type_name = m_string_ref1->Eval(context);
+            }
+
+            const PartType* part_type = GetPartType(part_type_name);
+            if (!part_type)
+                return 0.0;
+
+            return part_type->Capacity();
+        }
+
         return 0.0;
     }
 
@@ -1330,9 +1335,7 @@ namespace ValueRef {
 
     template <>
     std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const
-    {
-        return "";
-    }
+    { return "";  }
 
 #undef IF_CURRENT_VALUE
 }

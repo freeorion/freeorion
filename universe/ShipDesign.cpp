@@ -413,6 +413,34 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
 PartType::~PartType()
 { delete m_location; }
 
+double PartType::Capacity() const {
+    switch (m_class) {
+    case PC_SHORT_RANGE:
+    case PC_POINT_DEFENSE: {
+        if (const DirectFireStats* stats = boost::get<DirectFireStats>(&m_stats))
+            return stats->m_damage;
+        break;
+    }
+    case PC_MISSILES: {
+        if (const LRStats* stats = boost::get<LRStats>(&m_stats))
+            return stats->m_damage;
+        break;
+    }
+    case PC_FIGHTERS: {
+        if (const FighterStats* stats = boost::get<FighterStats>(&m_stats))
+            return stats->m_anti_ship_damage;
+        break;
+    }
+    default: {
+        if (const float* stat = boost::get<float>(&m_stats))
+            return *stat;
+        break;
+    }
+    }
+
+    return 0.0;
+}
+
 bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     if (INVALID_SHIP_SLOT_TYPE == slot_type)
         return false;
