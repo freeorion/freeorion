@@ -379,6 +379,7 @@
 		82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */; };
 		82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A11838C8340011C212 /* ConditionParser5.cpp */; };
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
+		82D563D71A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */; };
 		82E2513E1A08CCCE003DAF48 /* GLClientAndServerBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E2513D1A08CCCE003DAF48 /* GLClientAndServerBuffer.cpp */; };
 		82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E5238E192FE8CE001E2374 /* AppKit.framework */; };
 		82E52391192FE90F001E2374 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52390192FE90F001E2374 /* IOKit.framework */; };
@@ -1399,6 +1400,8 @@
 		82C96D0A16E4C1F900579E56 /* SerializeModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeModeratorAction.cpp; sourceTree = "<group>"; };
 		82D2D9A11838C8340011C212 /* ConditionParser5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser5.cpp; sourceTree = "<group>"; };
 		82D2D9A21838C8340011C212 /* ConditionParser6.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser6.cpp; sourceTree = "<group>"; };
+		82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DoubleComplexValueRefParser.cpp; sourceTree = "<group>"; };
+		82D563D61A6AEBD6007E1131 /* ParseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseImpl.cpp; sourceTree = "<group>"; };
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
@@ -2683,6 +2686,7 @@
 				825936DE147E3B1B00B840A5 /* ConditionParserImpl.h */,
 				825936DF147E3B1B00B840A5 /* Double.cpp */,
 				825936E0147E3B1B00B840A5 /* Double.h */,
+				82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */,
 				825936E1147E3B1B00B840A5 /* DoubleValueRefParser.cpp */,
 				825936E2147E3B1B00B840A5 /* EffectParser.cpp */,
 				825936E3147E3B1B00B840A5 /* EffectParser.h */,
@@ -2710,6 +2714,7 @@
 				825936F0147E3B1B00B840A5 /* MonsterFleetPlansParser.cpp */,
 				825936F1147E3B1B00B840A5 /* Parse.cpp */,
 				825936F2147E3B1B00B840A5 /* Parse.h */,
+				82D563D61A6AEBD6007E1131 /* ParseImpl.cpp */,
 				825936F3147E3B1B00B840A5 /* ParseImpl.h */,
 				825936F5147E3B1B00B840A5 /* PlanetEnvironmentValueRefParser.cpp */,
 				825936F6147E3B1B00B840A5 /* PlanetSizeValueRefParser.cpp */,
@@ -3455,6 +3460,7 @@
 				3A76049E1749A0A300363653 /* TechsParser.cpp in Sources */,
 				3A76049F1749A0AF00363653 /* UniverseObjectTypeValueRefParser.cpp in Sources */,
 				82B3265319B603C1005082AC /* ConditionParser7.cpp in Sources */,
+				82D563D71A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp in Sources */,
 				829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */,
 				82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */,
 				829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */,

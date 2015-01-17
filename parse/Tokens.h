@@ -202,6 +202,7 @@
     (NextSystemID)                              \
     (NextTurnPopGrowth)                         \
     (NextYoungerStarType)                       \
+    (None)                                      \
     (NoStar)                                    \
     (NoStringtableLookup)                       \
     (Not)                                       \
@@ -230,6 +231,8 @@
     (OwnerTradeStockpile)                       \
     (Parameters)                                \
     (Part)                                      \
+    (PartCapacity)                              \
+    (PartDamage)                                \
     (PartClass)                                 \
     (PartName)                                  \
     (Parts)                                     \
@@ -424,6 +427,7 @@
     (UniverseCentreX)                           \
     (UniverseCentreY)                           \
     (Unlock)                                    \
+    (Unowned)                                   \
     (Unproducible)                              \
     (Unresearchable)                            \
     (Value)                                     \

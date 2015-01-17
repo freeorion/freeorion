@@ -379,7 +379,7 @@ private:
 };
 
 namespace ValueRef {
-    FO_COMMON_API MeterType     NameToMeter(std::string name);
+    FO_COMMON_API MeterType     NameToMeter(const std::string& name);
     FO_COMMON_API std::string   MeterToName(MeterType meter);
 
     FO_COMMON_API std::string   ReconstructName(const std::vector<std::string>& property_name,

@@ -205,6 +205,7 @@ public:
     const std::string&      Description() const     { return m_description; }       ///< returns description, including a description of the stats and effects of this part
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
     const PartTypeStats&    Stats() const           { return m_stats; }             ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
+    double                  Capacity() const;
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
     const std::vector<ShipSlotType>&
                             MountableSlotTypes() const  { return m_mountable_slot_types; }

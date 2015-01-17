@@ -39,6 +39,7 @@ set (freeorionparse_SOURCE
     ConditionParser7.cpp
     ConditionParser.cpp
     Double.cpp
+    DoubleComplexValueRefParser.cpp
     DoubleValueRefParser.cpp
     EffectParser1.cpp
     EffectParser2.cpp

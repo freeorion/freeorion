@@ -144,6 +144,7 @@ namespace parse {
             |    tok.EnemyOf_ [ _val = AFFIL_ENEMY ]
             |    tok.AllyOf_ [ _val = AFFIL_ALLY ]
             |    tok.AnyEmpire_ [ _val = AFFIL_ANY ]
+            |    tok.None_ [ _val = AFFIL_NONE ]
             ;
         static bool once = true;
         if (once) {

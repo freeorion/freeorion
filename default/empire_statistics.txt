@@ -1,26 +1,26 @@
 Statistic name = "PP_OUTPUT" value =
     Sum property = Industry condition = And [
         Planet
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
 
 Statistic name = "RP_OUTPUT" value =
     Sum property = Research condition = And [
         Planet
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
 
 Statistic name = "PLANET_COUNT" value =
     Count condition = And [
         Planet
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
 
 Statistic name = "COLONIES_COUNT" value =
     Count condition = And [
         PopulationCenter
         Population low = 0.02
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
 
 Statistic name = "SHIP_COUNT" value =
@@ -32,7 +32,7 @@ Statistic name = "BATTLESHIP_COUNT" value =
             Ship  
             Armed
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
 
 Statistic name = "ARMED_MONSTER_COUNT" value =
@@ -42,7 +42,7 @@ Statistic name = "ARMED_MONSTER_COUNT" value =
             Monster
             Armed
         ]
-        Not OwnedBy AnyEmpire
+        Unowned
     ]
 
 Statistic name = "BUILDINGS_PRODUCED" value =
