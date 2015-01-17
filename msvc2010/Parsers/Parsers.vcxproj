@@ -79,6 +79,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <AdditionalOptions>/MP5 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -108,6 +109,7 @@
     <ClCompile Include="..\..\parse\ConditionParser6.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser7.cpp" />
     <ClCompile Include="..\..\parse\Double.cpp" />
+    <ClCompile Include="..\..\parse\DoubleComplexValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\EffectParser.cpp" />
     <ClCompile Include="..\..\parse\EffectParser1.cpp" />

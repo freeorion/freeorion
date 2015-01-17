@@ -231,6 +231,8 @@
     (OwnerTradeStockpile)                       \
     (Parameters)                                \
     (Part)                                      \
+    (PartCapacity)                              \
+    (PartDamage)                                \
     (PartClass)                                 \
     (PartName)                                  \
     (Parts)                                     \

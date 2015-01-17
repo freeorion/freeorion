@@ -115,6 +115,7 @@ namespace {
                 |   statistic
                 |   int_statistic
                 |   int_complex_variable
+                |   double_var_complex()
                 ;
 
             bound_variable_name.name("real number bound variable name (e.g., Population)");
@@ -141,6 +142,7 @@ namespace {
             debug(statistic);
             debug(int_statistic);
             debug(int_complex_variable);
+            debug(double_complex_variable);
             debug(negate_expr);
             debug(multiplicative_expr);
             debug(additive_expr);
