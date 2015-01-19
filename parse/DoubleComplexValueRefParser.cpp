@@ -17,13 +17,13 @@ namespace parse {
                 parse::lexer::instance();
             //const parse::value_ref_parser_rule<int>::type& int_value_ref =
             //    parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
-                parse::value_ref_parser<std::string>();
+            //const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
+            //    parse::value_ref_parser<std::string>();
 
             part_capacity
                 =   (
                             tok.PartCapacity_ [ _a = construct<std::string>(_1) ]
-                        >   parse::label(Name_token)   >>   string_value_ref [ _d = _1 ]
+                        >   parse::label(Name_token) >> tok.string [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
                     ) [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _d, _e) ]
                 ;
 
