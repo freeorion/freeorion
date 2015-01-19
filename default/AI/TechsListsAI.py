@@ -88,6 +88,26 @@ def tech_group_1_sparse(): #
     ]
     return result
 
+def tech_group_1_sparse_b(): # 
+    result = [
+            "LRN_ALGO_ELEGANCE",
+            "GRO_PLANET_ECOL",
+            "GRO_SUBTER_HAB",
+            "CON_ENV_ENCAPSUL",
+            "LRN_ARTIF_MINDS",
+            "SHP_WEAPON_1_2",
+            "PRO_ROBOTIC_PROD",
+            "PRO_FUSION_GEN",
+            "CON_ORBITAL_CON",
+            "PRO_ORBITAL_GEN",
+            "SHP_MIL_ROBO_CONT",
+            "SHP_WEAPON_1_3",
+            "SHP_WEAPON_1_4",
+            "SHP_ZORTRIUM_PLATE",
+            "SHP_SPACE_FLUX_DRIVE",
+    ]
+    return result
+
 
 def tech_group_2a():  # prioritizes growth & spy over weapons
     result = [
@@ -146,6 +166,24 @@ def tech_group_2_sparse():  # prioritizes growth & defense over weapons
             "SHP_WEAPON_2_2",
             "SHP_WEAPON_2_3",
             "SHP_WEAPON_2_4",
+            "SHP_DOMESTIC_MONSTER",
+            "PRO_INDUSTRY_CENTER_I",
+    ]
+    return result
+
+def tech_group_2_sparse_b():  # prioritizes growth & defense over weapons
+    result = [
+            "DEF_DEFENSE_NET_1",
+            "DEF_GARRISON_1", 
+            "SHP_WEAPON_2_1",
+            "LRN_FORCE_FIELD",
+            "SHP_WEAPON_2_2",
+            "SHP_WEAPON_2_3",
+            "SHP_WEAPON_2_4",
+            "SPY_DETECT_2",
+            "GRO_SYMBIOTIC_BIO",
+            "PRO_MICROGRAV_MAN",
+            "SHP_ASTEROID_HULLS",
             "SHP_DOMESTIC_MONSTER",
             "PRO_INDUSTRY_CENTER_I",
     ]
@@ -308,13 +346,13 @@ def sparse_galaxy_techs(index):
         result += tech_group_5()  #
     elif index == 3:
         result = tech_group_1_sparse()  # early org_hull
-        result += tech_group_2_sparse()  # prioritizes weapons over growth & defense
+        result += tech_group_2_sparse() 
         result += tech_group_3a()
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
         result += tech_group_5()  #
     elif index == 4:
-        result = tech_group_1_sparse()  # early _lrn_artif_minds
-        result += tech_group_2_sparse()  # prioritizes growth & defense over weapons
+        result = tech_group_1_sparse_b()  # early _lrn_artif_minds
+        result += tech_group_2_sparse_b() 
         result += tech_group_3a()
         result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
         result += tech_group_5()  #
