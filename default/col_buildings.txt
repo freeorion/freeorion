@@ -14,6 +14,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_ABADDONI"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -28,6 +29,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_ABADDONI"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -72,6 +74,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_CHATO"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -86,6 +89,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_CHATO"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -130,6 +134,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_CRAY"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -144,6 +149,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_CRAY"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -188,6 +194,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_DERTHREAN"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -202,6 +209,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_DERTHREAN"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -246,6 +254,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_EAXAW"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -260,6 +269,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_EAXAW"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -304,6 +314,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_EGASSEM"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -318,6 +329,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_EGASSEM"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -362,6 +374,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_ETTY"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -376,6 +389,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_ETTY"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -420,6 +434,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_GEORGE"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -434,6 +449,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_GEORGE"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -478,6 +494,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_GYSACHE"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -492,6 +509,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_GYSACHE"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -536,6 +554,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_HHHOH"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -550,6 +569,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_HHHOH"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -594,6 +614,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_HUMAN"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -608,6 +629,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_HUMAN"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -652,6 +674,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_KOBUNTURA"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -666,6 +689,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_KOBUNTURA"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -710,6 +734,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_LAENFA"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -724,6 +749,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_LAENFA"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -768,6 +794,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_MUURSH"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -782,6 +809,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_MUURSH"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -826,6 +854,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_SCYLIOR"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -840,6 +869,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_SCYLIOR"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -884,6 +914,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_SETINON"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -898,6 +929,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_SETINON"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -942,6 +974,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_SSLITH"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -956,6 +989,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_SSLITH"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -1000,6 +1034,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_TAEGHIRUS"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -1014,6 +1049,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_TAEGHIRUS"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -1058,6 +1094,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_TRITH"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -1072,6 +1109,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_TRITH"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [
@@ -1116,6 +1154,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_UGMORS"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     EnqueueLocation = And [
@@ -1130,6 +1169,7 @@ BuildingType
             OwnedBy empire = Source.Owner
             Species name = "SP_UGMORS"
             Population low = 3
+            Happiness low = 5
         ]
     ]
     effectsgroups = [

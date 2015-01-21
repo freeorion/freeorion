@@ -670,6 +670,8 @@ void Planet::Conquer(int conquerer) {
     GetMeter(METER_DEFENSE)->BackPropegate();
     GetMeter(METER_SHIELD)->SetCurrent(0.0f);
     GetMeter(METER_SHIELD)->BackPropegate();
+    GetMeter(METER_HAPPINESS)->SetCurrent(0.0f);
+    GetMeter(METER_HAPPINESS)->BackPropegate();
 }
 
 bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {

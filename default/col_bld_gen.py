@@ -80,6 +80,7 @@ t_species_condition = string.Template('''ResourceSupplyConnected empire = Source
             OwnedBy empire = Source.Owner
             Species name = "${id}"
             Population low = 3
+            Happiness low = 5
         ]''')
 
 outpath = os.getcwd()
