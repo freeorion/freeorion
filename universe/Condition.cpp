@@ -1045,7 +1045,7 @@ namespace {
         {}
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
-            if (!candidate || candidate->Unowned())
+            if (!candidate)
                 return false;
 
             switch (m_affiliation) {
