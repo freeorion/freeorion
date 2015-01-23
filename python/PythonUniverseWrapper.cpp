@@ -17,6 +17,7 @@
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 namespace {
     void                    DumpObjects(const Universe& universe)
@@ -220,6 +221,15 @@ namespace {
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
     std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
 
+    std::vector<ShipSlotType> HullSlots(const HullType& hull) {
+        std::vector<ShipSlotType> retval;
+        std::vector< HullType::Slot > slots = hull.Slots();
+        for (std::vector<HullType::Slot>::iterator s_it = slots.begin(); s_it != slots.end(); s_it++ )
+            retval.push_back(s_it->type);
+        return retval;
+    }
+    boost::function<std::vector<ShipSlotType> (const HullType&)> HullSlotsFunc =                &HullSlots;
+
     unsigned int            (HullType::*NumSlotsTotal)(void) const =                            &HullType::NumSlots;
     unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;
 
@@ -272,6 +282,9 @@ namespace FreeOrionPython {
         ;
         class_<std::map<Visibility,int> >("VisibilityIntMap")
             .def(boost::python::map_indexing_suite<std::map<Visibility, int>, true>())
+        ;
+        class_<std::vector<ShipSlotType> >("ShipSlotVec")
+            .def(boost::python::vector_indexing_suite<std::vector<ShipSlotType>, true>())
         ;
 
         ////////////////////
@@ -494,7 +507,11 @@ namespace FreeOrionPython {
             .add_property("name",               make_function(&HullType::Name,              return_value_policy<copy_const_reference>()))
             .add_property("numSlots",           make_function(NumSlotsTotal,                return_value_policy<return_by_value>()))
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
-            .add_property("slots",              make_function(&HullType::Slots,             return_internal_reference<>()))
+            .add_property("slots",              make_function(
+                                                    HullSlotsFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<ShipSlotType>, const HullType&>()
+                                                ))
             .def("productionCost",              &HullType::ProductionCost)
             .def("productionTime",              &HullType::ProductionTime)
         ;
