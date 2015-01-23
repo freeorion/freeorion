@@ -276,6 +276,7 @@ template <class FromType, class ToType>
 struct FO_COMMON_API ValueRef::StaticCast : public ValueRef::Variable<ToType>
 {
     StaticCast(const ValueRef::Variable<FromType>* value_ref);
+    StaticCast(const ValueRef::ValueRefBase<FromType>* value_ref);
     ~StaticCast();
 
     virtual bool        operator==(const ValueRef::ValueRefBase<ToType>& rhs) const;
@@ -303,6 +304,7 @@ template <class FromType>
 struct FO_COMMON_API ValueRef::StringCast : public ValueRef::Variable<std::string>
 {
     StringCast(const ValueRef::Variable<FromType>* value_ref);
+    StringCast(const ValueRef::ValueRefBase<FromType>* value_ref);
     ~StringCast();
 
     virtual bool        operator==(const ValueRef::ValueRefBase<std::string>& rhs) const;
@@ -326,7 +328,9 @@ private:
 /** Looks up a string ValueRef and returns the UserString equivalent. */
 struct FO_COMMON_API ValueRef::UserStringLookup : public ValueRef::Variable<std::string> {
     UserStringLookup(const ValueRef::Variable<std::string>* value_ref);
+    UserStringLookup(const ValueRef::ValueRefBase<std::string>* value_ref);
     ~UserStringLookup();
+
     virtual bool        operator==(const ValueRef::ValueRefBase<std::string>& rhs) const;
     virtual std::string Eval(const ScriptingContext& context) const;
     virtual bool        RootCandidateInvariant() const;
@@ -1141,6 +1145,12 @@ ValueRef::StaticCast<FromType, ToType>::StaticCast(const ValueRef::Variable<From
 {}
 
 template <class FromType, class ToType>
+ValueRef::StaticCast<FromType, ToType>::StaticCast(const ValueRef::ValueRefBase<FromType>* value_ref) :
+    ValueRef::Variable<ToType>(ValueRef::NON_OBJECT_REFERENCE),
+    m_value_ref(value_ref)
+{}
+
+template <class FromType, class ToType>
 ValueRef::StaticCast<FromType, ToType>::~StaticCast()
 { delete m_value_ref; }
 
@@ -1208,6 +1218,12 @@ void ValueRef::StaticCast<FromType, ToType>::serialize(Archive& ar, const unsign
 template <class FromType>
 ValueRef::StringCast<FromType>::StringCast(const ValueRef::Variable<FromType>* value_ref) :
     ValueRef::Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
+    m_value_ref(value_ref)
+{}
+
+template <class FromType>
+ValueRef::StringCast<FromType>::StringCast(const ValueRef::ValueRefBase<FromType>* value_ref) :
+    ValueRef::Variable<std::string>(ValueRef::NON_OBJECT_REFERENCE),
     m_value_ref(value_ref)
 {}
 
