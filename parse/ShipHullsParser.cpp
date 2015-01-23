@@ -114,7 +114,7 @@ namespace {
             common_params
                 =   parse::label(BuildCost_token)    > double_value_ref  [ _a = _1 ]
                 >   parse::label(BuildTime_token)    > int_value_ref     [ _b = _1 ]
-                >   producible                                          [ _c = _1 ]
+                >   producible                                           [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
                 >   -(

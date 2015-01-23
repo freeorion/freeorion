@@ -5,7 +5,6 @@
 #include "Label.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
-//#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -21,10 +20,9 @@ namespace {
             qi::_val_type _val;
             using phoenix::new_;
 
-            const parse::lexer& tok =                                                       parse::lexer::instance();
-
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =            parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule<StarType>::type& star_type_value_ref =       parse::value_ref_parser<StarType>();
+            const parse::lexer& tok =                                                   parse::lexer::instance();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =        parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule<StarType>::type& star_type_value_ref =   parse::value_ref_parser<StarType>();
 
             move_to
                 =    tok.MoveTo_
@@ -107,7 +105,7 @@ namespace {
 
             set_texture
                 =    tok.SetTexture_
-                >    parse::label(Name_token)    > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
+                >    parse::label(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
                 ;
 
             start
