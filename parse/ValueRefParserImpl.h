@@ -76,7 +76,8 @@ struct complex_variable_rule
             ValueRef::ValueRefBase<int>*,
             ValueRef::ValueRefBase<int>*,
             ValueRef::ValueRefBase<std::string>*,
-            ValueRef::ValueRefBase<std::string>*
+            ValueRef::ValueRefBase<std::string>*,
+            ValueRef::ValueRefBase<int>*
         >,
         parse::skipper_type
     > type;

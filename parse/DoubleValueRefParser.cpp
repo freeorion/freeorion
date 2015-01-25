@@ -50,7 +50,6 @@ namespace {
                 |   tok.NextTurnPopGrowth_
                 |   tok.Size_
                 |   tok.DistanceFromOriginalType_
-                //|   tok.DistanceToSource_    // Note: DistanceToSource will be a Source-variant property, but without an explicit Source reference, so will be treated as Source-invariant by ValueRef and parsing code. This is bad.
                 ;
 
             free_variable_name
