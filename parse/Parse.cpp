@@ -74,22 +74,16 @@ namespace {
 
             effects_group
                 =    tok.EffectsGroup_
-                >   parse::label(Scope_token)                >> parse::detail::condition_parser [ _a = _1 ]
-                >  -(
-                        parse::label(Activation_token)       >> parse::detail::condition_parser [ _b = _1 ]
-                     )
-                >  -(
-                        parse::label(StackingGroup_token)    >> tok.string [ _c = _1 ]
-                     )
-                >  -(
-                        parse::label(AccountingLabel_token)  >> tok.string [ _e = _1 ]
-                     )
+                >   parse::label(Scope_token)            >> parse::detail::condition_parser [ _a = _1 ]
+                > -(parse::label(Activation_token)       >> parse::detail::condition_parser [ _b = _1 ])
+                > -(parse::label(StackingGroup_token)    >> tok.string [ _c = _1 ])
+                > -(parse::label(AccountingLabel_token)  >> tok.string [ _e = _1 ])
                 >   parse::label(Effects_token)
                 >   (
                             '[' >> +parse::effect_parser() [ push_back(_d, _1) ] >> ']'
                         |   parse::effect_parser() [ push_back(_d, _1) ]
-                     )
-                     [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c) ]
+                    )
+                    [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c) ]
                 ;
 
             start

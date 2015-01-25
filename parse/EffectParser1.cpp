@@ -1,11 +1,10 @@
 #include "EffectParserImpl.h"
 
-#include "ConditionParserImpl.h"
 #include "EnumParser.h"
 #include "Label.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
-//#include "../universe/ValueRef.h"
+#include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
@@ -26,11 +25,10 @@ namespace {
             using phoenix::construct;
             using phoenix::push_back;
 
-            const parse::lexer& tok =                                                       parse::lexer::instance();
-
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =                  parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =            parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =       parse::value_ref_parser<std::string>();
+            const parse::lexer& tok =                                                   parse::lexer::instance();
+            const parse::value_ref_parser_rule<int>::type& int_value_ref =              parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =        parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =   parse::value_ref_parser<std::string>();
 
             set_empire_meter_1
                 =    tok.SetEmpireMeter_
@@ -49,10 +47,8 @@ namespace {
                 =    tok.GiveEmpireTech_
                 >>   parse::label(Name_token) >>     tok.string [ _a = _1 ]
                 >>   (
-                        (
-                            parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::GiveEmpireTech>(_a, _1) ]
-                        )
-                     |  eps [ _val = new_<Effect::GiveEmpireTech>(_a) ]
+                        (parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::GiveEmpireTech>(_a, _1) ])
+                     | eps [ _val = new_<Effect::GiveEmpireTech>(_a) ]
                      )
                 ;
 
@@ -61,18 +57,16 @@ namespace {
                 >>   parse::label(Name_token) >>     string_value_ref [ _a = _1 ]
                 >>   parse::label(Progress_token) >> double_value_ref [ _b = _1 ]
                 >>   (
-                        (
-                            parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ]
-                        )
+                        (parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
                      |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
                      )
                 ;
 
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
-                >    parse::label(Message_token) >> tok.string [ _a = _1 ]
-                >> -(   parse::label(Icon_token) >> tok.string [ _b = _1 ] )
-                >> -(   parse::label(Parameters_token) >> string_and_string_ref_vector [ _c = _1 ] )
+                >    parse::label(Message_token)    >> tok.string [ _a = _1 ]
+                >> -(parse::label(Icon_token)       >> tok.string [ _b = _1 ] )
+                >> -(parse::label(Parameters_token) >> string_and_string_ref_vector [ _c = _1 ] )
                 >>  (
                         (
                             (
@@ -95,9 +89,14 @@ namespace {
                 >    parse::label(Size_token)    > double_value_ref [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
                 ;
 
-            string_and_string_ref // TODO: Try to make this simpler.
+            string_and_string_ref
                 =    parse::label(Tag_token)  >> tok.string [ _a = _1 ]
-                >>   parse::label(Data_token) >> string_value_ref [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
+                >>   parse::label(Data_token)
+                >> ( int_value_ref      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int> >(_1)) ]
+                   | double_value_ref   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double> >(_1)) ]
+                   | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string> >(_1)) ]
+                   | string_value_ref   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
+                   )
                 ;
 
             string_and_string_ref_vector

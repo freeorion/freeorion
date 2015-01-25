@@ -1366,6 +1366,11 @@ ValueRef::UserStringLookup::UserStringLookup(const ValueRef::Variable<std::strin
     m_value_ref(value_ref)
 {}
 
+ValueRef::UserStringLookup::UserStringLookup(const ValueRef::ValueRefBase<std::string>* value_ref) :
+    ValueRef::Variable<std::string>(ValueRef::NON_OBJECT_REFERENCE),
+    m_value_ref(value_ref)
+{}
+
 ValueRef::UserStringLookup::~UserStringLookup()
 { delete m_value_ref; }
 

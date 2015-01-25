@@ -9,6 +9,7 @@ namespace parse {
     effect_parser_rule& effect_parser() {
         static bool once = true;
         if (once) {
+            once = false;
             detail::effect_parser
                 =    detail::effect_parser_1()
                 |    detail::effect_parser_2()
@@ -19,7 +20,6 @@ namespace parse {
 #if DEBUG_EFFECT_PARSERS
             debug(detail::effect_parser);
 #endif
-            once = false;
         }
         return detail::effect_parser;
     }

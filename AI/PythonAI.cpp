@@ -20,6 +20,7 @@
 #include <boost/timer.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
+#include <boost/python/scope.hpp>
 
 using boost::python::class_;
 using boost::python::def;
@@ -52,6 +53,7 @@ const Empire*       (*AIIntGetEmpireInt)(int) =                 &AIInterface::Ge
 
 int                 (*AIIntNewFleet)(const std::string&, int) = &AIInterface::IssueNewFleetOrder;
 int                 (*AIIntScrap)(int)                        = &AIInterface::IssueScrapOrder;
+
 
 
 namespace {
@@ -164,6 +166,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("userString",               make_function(&UserString,      return_value_policy<copy_const_reference>()));
 
     def("getGalaxySetupData",       AIInterface::GetGalaxySetupData,    return_value_policy<copy_const_reference>());
+
+    boost::python::scope().attr("INVALID_GAME_TURN") = INVALID_GAME_TURN;
 
 
     //////////////////
