@@ -1831,6 +1831,11 @@ namespace {
         {
             const std::vector<CombatEventPtr>& attacks = it->combat_events;
             const CombatInfo& combat_info = *it;
+            // If a ship was attacked multiple times during a combat in which it dies, it will get
+            // processed multiple times here.  The below set will keep it from being logged as
+            // multiple destroyed ships for its owner.
+            // TODO: fix similar issue for overlogging on attacker side
+            std::set<int> already_logged__target_ships;
             for (std::vector<CombatEventPtr>::const_iterator it = attacks.begin();
                  it != attacks.end(); ++it)
             {
@@ -1883,6 +1888,9 @@ namespace {
                 }
 
                 if (target_empire) {
+                    if (already_logged__target_ships.find(attack.target_id) != already_logged__target_ships.end())
+                        continue;
+                    already_logged__target_ships.insert(attack.target_id);
                     // record destruction of a ship with a species on it owned by defender empire
                     species_it = target_empire->SpeciesShipsLost().find(target_species_name);
                     if (species_it == target_empire->SpeciesShipsLost().end())
