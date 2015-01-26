@@ -1,4 +1,5 @@
 # This Python file uses the following encoding: utf-8
+import re
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from functools import wraps
@@ -6,6 +7,7 @@ from traceback import format_exc
 
 
 def dict_from_map(thismap):
+    """Convert C++ map to python dict."""
     return {el.key(): el.data() for el in thismap}
 
 
@@ -25,10 +27,12 @@ def tech_is_complete(tech):
     """
     return fo.getEmpire().getTechStatus(tech) == fo.techStatus.complete
 
+
 def ppstring(foo):
-    """returns a string version of lists, dicts, sets, such that entries with special characters will be
+    """
+    Returns a string version of lists, dicts, sets, such that entries with special characters will be
     printed in legible string format rather than as hex escape characters, i.e., 
-    ['Asimov α'] rather than ['Asimov \xce\xb1']"""
+    ['Asimov α'] rather than ['Asimov \xce\xb1']."""
     
     if isinstance(foo, list):
         return "[" + ",".join(map(ppstring, foo)) + "]"
@@ -43,6 +47,7 @@ def ppstring(foo):
     else:
         return str(foo)
 
+
 def chat_on_error(function):
     @wraps(function)
     def wrapper(*args, **kw):
@@ -53,6 +58,7 @@ def chat_on_error(function):
             raise
     return wrapper
 
+
 def print_error(msg, location=None, trace=True):
     """
     Sends error to host chat and print its to log.
@@ -61,12 +67,26 @@ def print_error(msg, location=None, trace=True):
     :param trace: flag if print traceback
     """
     print "possible recipients host status: %s" % [(x, fo.playerIsHost(x)) for x in fo.allPlayerIDs()]
-    recipient_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
     if location:
         message = '%s in "%s": "%s"' % (UserString('AI_ERROR_MSG', 'AI_Error: AI script error'), location, msg)
     else:
         message = '%s: "%s"' % (fo.userString('AI_ERROR_MSG'), msg)
-    fo.sendChatMessage(recipient_id, message)
-    print "\n%s\n" % message
+    chat_human(message)
     if trace:
         print format_exc()
+
+
+def remove_tags(message):
+    """Remove tags described in Font.h from message."""
+    expr = '</?(i|u|(rgba ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+ ([0-1]\.)?\d+)|rgba|left|center|right|pre)>'
+    return re.sub(expr, '', message)
+
+
+def chat_human(message):
+    """
+    Send chat message to human and print it to log.
+    Log message cleared form tags.
+    """
+    human_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
+    fo.sendChatMessage(human_id, message)
+    print "\n%s\n" % remove_tags(message)
