@@ -15,7 +15,11 @@ namespace parse {
             using phoenix::new_;
 
             const parse::lexer& tok =                                       parse::lexer::instance();
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =  parse::value_ref_parser<int>();
+
+            // the following reference to parse::value_ref_parser<int>() was causing a crash in Linux, and 
+            // so it, and direct_distance, are commented out until a fix is found.
+            // const parse::value_ref_parser_rule<int>::type& int_value_ref =  parse::value_ref_parser<int>();
+
             //const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
             //    parse::value_ref_parser<std::string>();
 
@@ -26,20 +30,20 @@ namespace parse {
                     ) [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
-            direct_distance
-                = (         tok.DirectDistanceBetween_ [ _a = construct<std::string>(_1) ]
-                        >   parse::label(Object_token) >> int_value_ref [ _b = _1 ]
-                        >   parse::label(Object_token) >> int_value_ref [ _c = _1 ]
-                  ) [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
-                ;
+//             direct_distance
+//                 = (         tok.DirectDistanceBetween_ [ _a = construct<std::string>(_1) ]
+//                         >   parse::label(Object_token) >> int_value_ref [ _b = _1 ]
+//                         >   parse::label(Object_token) >> int_value_ref [ _c = _1 ]
+//                   ) [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
+//                 ;
 
             start
                 %=  part_capacity
-                |   direct_distance
+//                 |   direct_distance
                 ;
 
             part_capacity.name("PartCapacity");
-            direct_distance.name("DirectDistanceBetween");
+//             direct_distance.name("DirectDistanceBetween");
 
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
             debug(part_capacity);
@@ -47,7 +51,7 @@ namespace parse {
         }
 
         complex_variable_rule<double>::type part_capacity;
-        complex_variable_rule<double>::type direct_distance;
+        // complex_variable_rule<double>::type direct_distance;
         complex_variable_rule<double>::type start;
     };
 
