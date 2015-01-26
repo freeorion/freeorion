@@ -507,7 +507,7 @@ namespace {
 
         // UI behavior, hidden options
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
-        db.Add("UI.design-pedia-dynamic",       UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),          true);
+        db.Add("UI.design-pedia-dynamic",       UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),          false);
         db.Add("UI.chat-panel-height",          UserStringNop("OPTIONS_DB_CHAT_PANEL_HEIGHT"),             160);
         db.Add("UI.chat-panel-width",           UserStringNop("OPTIONS_DB_CHAT_PANEL_WIDTH"),              345);
 
