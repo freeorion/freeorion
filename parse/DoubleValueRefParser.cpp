@@ -181,8 +181,14 @@ namespace {
     }
 }
 
+const double_rule& double_constant()
+{ return get_double_parser_rules().constant; }
+
 const name_token_rule& double_bound_variable_name()
 { return get_double_parser_rules().bound_variable_name; }
+
+const variable_rule<double>::type& double_bound_variable()
+{ return get_double_parser_rules().bound_variable; }
 
 const name_token_rule& double_free_variable_name()
 { return get_double_parser_rules().free_variable_name; }

@@ -36,6 +36,9 @@ typedef qi::rule<
     parse::skipper_type
 > name_token_rule;
 
+typedef parse::value_ref_parser_rule<int>::type     int_rule;
+typedef parse::value_ref_parser_rule<double>::type  double_rule;
+
 template <typename T>
 struct variable_rule
 {
@@ -209,17 +212,20 @@ void initialize_expression_parsers(
 
 const reference_token_rule&                 variable_scope();
 const name_token_rule&                      container_type();
+const int_rule&                             int_constant();
 const name_token_rule&                      int_bound_variable_name();
 const variable_rule<int>::type&             int_bound_variable();
 const name_token_rule&                      int_free_variable_name();
 const variable_rule<int>::type&             int_free_variable();
 const statistic_rule<int>::type&            int_var_statistic();
 const complex_variable_rule<int>::type&     int_var_complex();
-const complex_variable_rule<double>::type&  double_var_complex();
+const double_rule&                          double_constant();
 const name_token_rule&                      double_bound_variable_name();
+const variable_rule<double>::type&          double_bound_variable();
 const name_token_rule&                      double_free_variable_name();
 const variable_rule<double>::type&          double_free_variable();
 const statistic_rule<double>::type&         double_var_statistic();
+const complex_variable_rule<double>::type&  double_var_complex();
 
 template <typename T>
 void initialize_bound_variable_parser(

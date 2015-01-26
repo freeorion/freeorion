@@ -137,14 +137,20 @@ namespace {
     }
 }
 
+const int_rule& int_constant()
+{ return get_int_parser_rules().constant; }
+
 const name_token_rule& int_bound_variable_name()
 { return get_int_parser_rules().bound_variable_name; }
 
-const variable_rule<int>::type& int_free_variable()
-{ return get_int_parser_rules().free_variable; }
-
 const variable_rule<int>::type& int_bound_variable()
 { return get_int_parser_rules().bound_variable; }
+
+const name_token_rule& int_free_variable_name()
+{ return get_int_parser_rules().free_variable_name; }
+
+const variable_rule<int>::type& int_free_variable()
+{ return get_int_parser_rules().free_variable; }
 
 const statistic_rule<int>::type& int_var_statistic()
 { return get_int_parser_rules().statistic; }
