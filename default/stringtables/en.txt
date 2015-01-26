@@ -8287,13 +8287,13 @@ SHP_DEATH_SPORE
 Death Spores
 
 SHP_DEATH_SPORE_DESC
-Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets. Death Spores only work against Organic species.
+Unlocks the [[shippart SP_DEATH_SPORE]] which allows ships to reduce the population of planets with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SHP_BIOTERM
 Bio-Terminators
 
 SHP_BIOTERM_DESC
-Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
+Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the population of planets with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SPY_PLANET_STEALTH_MOD
 Planet Stealth Modifier
@@ -9270,13 +9270,13 @@ SP_DEATH_SPORE
 Death Spores
 
 SP_DEATH_SPORE_DESC
-A biological weapon which gradually reduces the population of a planet.
+A biological weapon which reduces the population of a planet with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SP_BIOTERM
 Bio-Terminators
 
 SP_BIOTERM_DESC
-A powerful biological weapon which quickly reduces the population of a planet.
+A powerful biological weapon which quickly reduces the population of a planet with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SP_NOVA_BOMB
 Nova Bomb
