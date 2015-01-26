@@ -508,13 +508,15 @@ namespace {
         // UI behavior, hidden options
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
         db.Add("UI.design-pedia-dynamic",       UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),          true);
+        db.Add("UI.chat-panel-height",          UserStringNop("OPTIONS_DB_CHAT_PANEL_HEIGHT"),             160);
+        db.Add("UI.chat-panel-width",           UserStringNop("OPTIONS_DB_CHAT_PANEL_WIDTH"),              345);
 
         // Other
         db.Add("auto-add-saved-designs",        UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),        true);
+
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const GG::X PANEL_WIDTH(345);
     const GG::Y PANEL_HEIGHT(160);
     const GG::X PLAYER_LIST_PANEL_WIDTH(424);
 }
@@ -534,7 +536,10 @@ ClientUI::ClientUI() :
     s_the_UI = this;
     Hotkey::ReadFromOptions(GetOptionsDB());
 
-    m_message_wnd =             new MessageWnd(GG::X0,                       GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT, PANEL_WIDTH,             PANEL_HEIGHT);
+    GG::Y panel_height = GG::Y(GetOptionsDB().Get<int>("UI.chat-panel-height"));
+    GG::X panel_width = GG::X(GetOptionsDB().Get<int>("UI.chat-panel-width"));
+
+    m_message_wnd =             new MessageWnd(GG::X0,                       GG::GUI::GetGUI()->AppHeight() - panel_height, panel_width,             panel_height);
     m_player_list_wnd =         new PlayerListWnd(m_message_wnd->Right(),    GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT, PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
     m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();

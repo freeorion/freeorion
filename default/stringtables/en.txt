@@ -1141,6 +1141,12 @@ At game start automatically add all user-saved ship designs to the player-empire
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 In the Deisgn Window, dynamically update the pedia detail page while the design name is being edited.
 
+OPTIONS_DB_CHAT_PANEL_HEIGHT
+Sets the height of the player chat panel, in pixels
+
+OPTIONS_DB_CHAT_PANEL_WIDTH
+Sets the width of the player chat panel, in pixels
+
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Sets size of system side-panel.
 
