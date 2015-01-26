@@ -573,15 +573,6 @@ namespace ValueRef {
             if (const Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_TRADE);
 
-        } else if (property_name == "DistanceToSource") {
-            if (!context.source) {
-                Logger().errorStream() << "ValueRef::Variable<double>::Eval can't find distance to source because no source was passed";
-                return 0.0;
-            }
-            double delta_x = object->X() - context.source->X();
-            double delta_y = object->Y() - context.source->Y();
-            return std::sqrt(delta_x * delta_x + delta_y * delta_y);
-
         } else if (property_name == "X") {
             return object->X();
 
@@ -965,6 +956,25 @@ namespace ValueRef {
                 return 0.0;
 
             return part_type->Capacity();
+
+        } else if (variable_name == "DirectDistanceBetween") {
+            int object1_id = INVALID_OBJECT_ID;
+            if (m_int_ref1)
+                object1_id = m_int_ref1->Eval(context);
+            TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+            if (!obj1)
+                return 0.0;
+
+            int object2_id = INVALID_OBJECT_ID;
+            if (m_int_ref2)
+                object2_id = m_int_ref2->Eval(context);
+            TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+            if (!obj2)
+                return 0.0;
+
+            double dx = obj2->X() - obj1->X();
+            double dy = obj2->Y() - obj1->Y();
+            return static_cast<float>(std::sqrt(dx*dx + dy*dy));
         }
 
         return 0.0;
@@ -1328,6 +1338,40 @@ namespace ValueRef {
                     count++;
             }
             return count;
+
+        } else if (variable_name == "JumpsBetween") {
+            int object1_id = INVALID_OBJECT_ID;
+            if (m_int_ref1)
+                object1_id = m_int_ref1->Eval(context);
+
+            int object2_id = INVALID_OBJECT_ID;
+            if (m_int_ref2)
+                object2_id = m_int_ref2->Eval(context);
+
+            int retval = GetUniverse().JumpDistanceBetweenObjects(object1_id, object2_id);
+            if (retval == INT_MAX)
+                return -1;
+            return retval;
+
+        } else if (variable_name == "JumpsBetweenByEmpireSupplyConnections") {
+            int object1_id = INVALID_OBJECT_ID;
+            if (m_int_ref1)
+                object1_id = m_int_ref1->Eval(context);
+
+            int object2_id = INVALID_OBJECT_ID;
+            if (m_int_ref2)
+                object2_id = m_int_ref2->Eval(context);
+
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref3)
+                empire_id = m_int_ref3->Eval(context);
+
+            // TODO: implement supply-connect-restriction path length determination...
+
+            int retval = GetUniverse().JumpDistanceBetweenObjects(object1_id, object2_id/*, empire_id*/);
+            if (retval == INT_MAX)
+                return -1;
+            return retval;
         }
 
         return 0;

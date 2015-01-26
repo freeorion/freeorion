@@ -86,8 +86,8 @@
     (Destination)                               \
     (Destroy)                                   \
     (Detection)                                 \
+    (DirectDistanceBetween)                     \
     (Distance)                                  \
-    (DistanceToSource)                          \
     (DistanceFromOriginalType)                  \
     (Effects)                                   \
     (EffectsGroup)                              \
@@ -154,6 +154,7 @@
     (Internal)                                  \
     (Item)                                      \
     (Jumps)                                     \
+    (JumpsBetween)                              \
     (Keymap)                                    \
     (Keys)
 

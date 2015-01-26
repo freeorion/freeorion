@@ -149,16 +149,23 @@ public:
       * that the empire with id \a empire_id can see this turn. */
     std::set<std::string>   GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
-    /** Returns the straight-line distance between the systems with the given
-      * IDs. \throw std::out_of_range This function will throw if either system
+    /** Returns the straight-line distance between the objects with the given
+      * IDs. \throw std::out_of_range This function will throw if either object
       * ID is out of range. */
-    double                  LinearDistance(int system1_id, int system2_id) const;
+    double                  LinearDistance(int object1_id, int object2_id) const;
 
     /** Returns the number of starlane jumps between the systems with the given
       * IDs. If there is no path between the systems, -1 is returned.
       * \throw std::out_of_range This function will throw if either system
       * ID is not a valid system id. */
-    short                   JumpDistance(int system1_id, int system2_id) const;
+    short                   JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
+
+    /** Returns the number of starlane jumps between any two objects, accounting
+      * for cases where one or the other are fleets / ships on starlanes between
+      * systems. Returns INT_MAX when no path exists, or either object does not
+      * exist. */
+    int                     JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
+
 
     /** Returns the sequence of systems, including \a system1_id and
       * \a system2_id, that defines the shortest path from \a system1 to

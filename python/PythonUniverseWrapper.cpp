@@ -84,14 +84,14 @@ namespace {
     }
     boost::function<double(const Universe&, int, int)> LinearDistanceFunc =                     &LinearDistance;
 
-    int                     JumpDistance(const Universe& universe, int system1_id, int system2_id) {
+    int                     JumpDistanceBetweenSystems(const Universe& universe, int system1_id, int system2_id) {
         try {
-            return universe.JumpDistance(system1_id, system2_id);
+            return universe.JumpDistanceBetweenSystems(system1_id, system2_id);
         } catch (...) {
         }
         return -1;
     }
-    boost::function<int(const Universe&, int, int)> JumpDistanceFunc =                          &JumpDistance;
+    boost::function<int(const Universe&, int, int)> JumpDistanceFunc =                          &JumpDistanceBetweenSystems;
 
     std::vector<int>        ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;

@@ -1370,10 +1370,18 @@ namespace {
 
         // Fleets
         std::vector<TemporaryPtr<UniverseObject> > empire_fleets = Objects().FindObjects(OwnedVisitor<Fleet>(empire_id));
-        if (!empire_fleets.empty()) {
+        std::vector<TemporaryPtr<UniverseObject> > nonempty_empire_fleets;
+        for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator fleet_it = empire_fleets.begin();
+                fleet_it != empire_fleets.end(); ++fleet_it)
+        {
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(*fleet_it))
+                if (!fleet->Empty())
+                    nonempty_empire_fleets.push_back(*fleet_it);
+        }
+        if (!nonempty_empire_fleets.empty()) {
             detailed_description += "\n\n" + UserString("OWNED_FLEETS") + "\n";
-            for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator fleet_it = empire_fleets.begin();
-                 fleet_it != empire_fleets.end(); ++fleet_it)
+            for (std::vector<TemporaryPtr<UniverseObject> >::const_iterator fleet_it = nonempty_empire_fleets.begin();
+                 fleet_it != nonempty_empire_fleets.end(); ++fleet_it)
             {
                 TemporaryPtr<const UniverseObject> obj = *fleet_it;
                 std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));

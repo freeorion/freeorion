@@ -239,6 +239,7 @@ struct FO_COMMON_API ValueRef::ComplexVariable : public ValueRef::Variable<T>
     explicit ComplexVariable(const std::string& variable_name,
                              const ValueRefBase<int>* int_ref1 = 0,
                              const ValueRefBase<int>* int_ref2 = 0,
+                             const ValueRefBase<int>* int_ref3 = 0,
                              const ValueRefBase<std::string>* string_ref1 = 0,
                              const ValueRefBase<std::string>* string_ref2 = 0);
 
@@ -247,6 +248,7 @@ struct FO_COMMON_API ValueRef::ComplexVariable : public ValueRef::Variable<T>
     virtual bool                    operator==(const ValueRef::ValueRefBase<T>& rhs) const;
     const ValueRefBase<int>*        IntRef1() const;
     const ValueRefBase<int>*        IntRef2() const;
+    const ValueRefBase<int>*        IntRef3() const;
     const ValueRefBase<std::string>*StringRef1() const;
     const ValueRefBase<std::string>*StringRef2() const;
     virtual T                       Eval(const ScriptingContext& context) const;
@@ -260,6 +262,7 @@ struct FO_COMMON_API ValueRef::ComplexVariable : public ValueRef::Variable<T>
 protected:
     const ValueRefBase<int>*        m_int_ref1;
     const ValueRefBase<int>*        m_int_ref2;
+    const ValueRefBase<int>*        m_int_ref3;
     const ValueRefBase<std::string>*m_string_ref1;
     const ValueRefBase<std::string>*m_string_ref2;
 
@@ -967,11 +970,13 @@ template <class T>
 ValueRef::ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
                                               const ValueRefBase<int>* int_ref1,
                                               const ValueRefBase<int>* int_ref2,
+                                              const ValueRefBase<int>* int_ref3,
                                               const ValueRefBase<std::string>* string_ref1,
                                               const ValueRefBase<std::string>* string_ref2) :
     Variable<T>(ValueRef::NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name)),
     m_int_ref1(int_ref1),
     m_int_ref2(int_ref2),
+    m_int_ref3(int_ref3),
     m_string_ref1(string_ref1),
     m_string_ref2(string_ref2)
 {
@@ -985,6 +990,7 @@ ValueRef::ComplexVariable<T>::~ComplexVariable()
 {
     delete m_int_ref1;
     delete m_int_ref2;
+    delete m_int_ref3;
     delete m_string_ref1;
     delete m_string_ref2;
 }
@@ -1019,6 +1025,15 @@ bool ValueRef::ComplexVariable<T>::operator==(const ValueRef::ValueRefBase<T>& r
             return false;
     }
 
+    if (m_int_ref3 == rhs_.m_int_ref3) {
+        // check next member
+    } else if (!m_int_ref3 || !rhs_.m_int_ref3) {
+        return false;
+    } else {
+        if (*m_int_ref3 != *(rhs_.m_int_ref3))
+            return false;
+    }
+
     if (m_string_ref1 == rhs_.m_string_ref1) {
         // check next member
     } else if (!m_string_ref1 || !rhs_.m_string_ref1) {
@@ -1049,6 +1064,10 @@ const ValueRef::ValueRefBase<int>* ValueRef::ComplexVariable<T>::IntRef2() const
 { return m_int_ref2; }
 
 template <class T>
+const ValueRef::ValueRefBase<int>* ValueRef::ComplexVariable<T>::IntRef3() const
+{ return m_int_ref3; }
+
+template <class T>
 const ValueRef::ValueRefBase<std::string>* ValueRef::ComplexVariable<T>::StringRef1() const
 { return m_string_ref1; }
 
@@ -1062,6 +1081,7 @@ bool ValueRef::ComplexVariable<T>::RootCandidateInvariant() const
     return ValueRef::Variable<T>::RootCandidateInvariant()
         && (!m_int_ref1 || m_int_ref1->RootCandidateInvariant())
         && (!m_int_ref2 || m_int_ref2->RootCandidateInvariant())
+        && (!m_int_ref3 || m_int_ref3->RootCandidateInvariant())
         && (!m_string_ref1 || m_string_ref1->RootCandidateInvariant())
         && (!m_string_ref2 || m_string_ref2->RootCandidateInvariant());
 }
@@ -1071,6 +1091,7 @@ bool ValueRef::ComplexVariable<T>::LocalCandidateInvariant() const
 {
     return (!m_int_ref1 || m_int_ref1->LocalCandidateInvariant())
         && (!m_int_ref2 || m_int_ref2->LocalCandidateInvariant())
+        && (!m_int_ref3 || m_int_ref3->LocalCandidateInvariant())
         && (!m_string_ref1 || m_string_ref1->LocalCandidateInvariant())
         && (!m_string_ref2 || m_string_ref2->LocalCandidateInvariant());
 }
@@ -1080,6 +1101,7 @@ bool ValueRef::ComplexVariable<T>::TargetInvariant() const
 {
     return (!m_int_ref1 || m_int_ref1->TargetInvariant())
         && (!m_int_ref2 || m_int_ref2->TargetInvariant())
+        && (!m_int_ref3 || m_int_ref3->TargetInvariant())
         && (!m_string_ref1 || m_string_ref1->TargetInvariant())
         && (!m_string_ref2 || m_string_ref2->TargetInvariant());
 }
@@ -1089,6 +1111,7 @@ bool ValueRef::ComplexVariable<T>::SourceInvariant() const
 {
     return (!m_int_ref1 || m_int_ref1->SourceInvariant())
         && (!m_int_ref2 || m_int_ref2->SourceInvariant())
+        && (!m_int_ref3 || m_int_ref3->SourceInvariant())
         && (!m_string_ref1 || m_string_ref1->SourceInvariant())
         && (!m_string_ref2 || m_string_ref2->SourceInvariant());
 }
@@ -1131,6 +1154,7 @@ void ValueRef::ComplexVariable<T>::serialize(Archive& ar, const unsigned int ver
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable)
         & BOOST_SERIALIZATION_NVP(m_int_ref1)
         & BOOST_SERIALIZATION_NVP(m_int_ref2)
+        & BOOST_SERIALIZATION_NVP(m_int_ref3)
         & BOOST_SERIALIZATION_NVP(m_string_ref1)
         & BOOST_SERIALIZATION_NVP(m_string_ref2);
 }

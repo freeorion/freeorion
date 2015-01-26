@@ -619,8 +619,8 @@ namespace {
     double LinearDistance(int system1_id, int system2_id)
     { return GetUniverse().LinearDistance(system1_id, system2_id); }
 
-    int JumpDistance(int system1_id, int system2_id)
-    { return GetUniverse().JumpDistance(system1_id, system2_id); }
+    int JumpDistanceBetweenSystems(int system1_id, int system2_id)
+    { return GetUniverse().JumpDistanceBetweenSystems(system1_id, system2_id); }
 
     list GetAllObjects() {
         list py_all_objects;
@@ -1200,7 +1200,7 @@ BOOST_PYTHON_MODULE(fo_universe_generator) {
     def("get_universe_width",                   GetUniverseWidth);
     def("set_universe_width",                   SetUniverseWidth);
     def("linear_distance",                      LinearDistance);
-    def("jump_distance",                        JumpDistance);
+    def("jump_distance",                        JumpDistanceBetweenSystems);
     def("get_all_objects",                      GetAllObjects);
     def("create_system",                        CreateSystem);
     def("create_planet",                        CreatePlanet);

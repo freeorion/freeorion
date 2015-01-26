@@ -112,7 +112,7 @@ namespace {
         }
         return WithTags(design->Name(), tag, data);
     }
-    
+
     /// Returns substitution string for an empire tag
     std::string EmpireString(const XMLElement& data, const std::string& tag, bool& valid) {
         int empire_id = ALL_EMPIRES;
