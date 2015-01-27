@@ -219,6 +219,7 @@ const name_token_rule&                      int_free_variable_name();
 const variable_rule<int>::type&             int_free_variable();
 const statistic_rule<int>::type&            int_var_statistic();
 const complex_variable_rule<int>::type&     int_var_complex();
+const int_rule&                             int_simple();
 const double_rule&                          double_constant();
 const name_token_rule&                      double_bound_variable_name();
 const variable_rule<double>::type&          double_bound_variable();
@@ -254,9 +255,9 @@ void initialize_numeric_statistic_parser(
     typename statistic_rule<T>::type& statistic_2,
     typename statistic_rule<T>::type& statistic_3,
     const name_token_rule& variable_name,
-    typename parse::value_ref_parser_rule<T>::type& constant,
-    typename variable_rule<T>::type& free_variable,
-    typename variable_rule<T>::type& bound_variable
+    const typename parse::value_ref_parser_rule<T>::type& constant,
+    const typename variable_rule<T>::type& free_variable,
+    const typename variable_rule<T>::type& bound_variable
     )
 {
     const parse::lexer& tok = parse::lexer::instance();
