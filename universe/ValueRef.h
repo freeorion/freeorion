@@ -1499,11 +1499,11 @@ std::string ValueRef::Operation<T>::Description() const
     if (m_op_type == COSINE)
         return "cos(" + m_operand1->Description() + ")";
     if (m_op_type == MINIMUM)
-        return "min(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+        return "min(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
     if (m_op_type == MAXIMUM)
-        return "max(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+        return "max(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
     if (m_op_type == RANDOM_UNIFORM)
-        return "random(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+        return "randomnumber(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
 
 
     bool parenthesize_lhs = false;

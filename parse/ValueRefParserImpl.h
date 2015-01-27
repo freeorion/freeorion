@@ -36,6 +36,9 @@ typedef qi::rule<
     parse::skipper_type
 > name_token_rule;
 
+typedef parse::value_ref_parser_rule<int>::type     int_rule;
+typedef parse::value_ref_parser_rule<double>::type  double_rule;
+
 template <typename T>
 struct variable_rule
 {
@@ -209,17 +212,21 @@ void initialize_expression_parsers(
 
 const reference_token_rule&                 variable_scope();
 const name_token_rule&                      container_type();
+const int_rule&                             int_constant();
 const name_token_rule&                      int_bound_variable_name();
 const variable_rule<int>::type&             int_bound_variable();
 const name_token_rule&                      int_free_variable_name();
 const variable_rule<int>::type&             int_free_variable();
 const statistic_rule<int>::type&            int_var_statistic();
 const complex_variable_rule<int>::type&     int_var_complex();
-const complex_variable_rule<double>::type&  double_var_complex();
+const int_rule&                             int_simple();
+const double_rule&                          double_constant();
 const name_token_rule&                      double_bound_variable_name();
+const variable_rule<double>::type&          double_bound_variable();
 const name_token_rule&                      double_free_variable_name();
 const variable_rule<double>::type&          double_free_variable();
 const statistic_rule<double>::type&         double_var_statistic();
+const complex_variable_rule<double>::type&  double_var_complex();
 
 template <typename T>
 void initialize_bound_variable_parser(
@@ -248,9 +255,9 @@ void initialize_numeric_statistic_parser(
     typename statistic_rule<T>::type& statistic_2,
     typename statistic_rule<T>::type& statistic_3,
     const name_token_rule& variable_name,
-    typename parse::value_ref_parser_rule<T>::type& constant,
-    typename variable_rule<T>::type& free_variable,
-    typename variable_rule<T>::type& bound_variable
+    const typename parse::value_ref_parser_rule<T>::type& constant,
+    const typename variable_rule<T>::type& free_variable,
+    const typename variable_rule<T>::type& bound_variable
     )
 {
     const parse::lexer& tok = parse::lexer::instance();

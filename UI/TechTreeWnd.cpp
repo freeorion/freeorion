@@ -36,7 +36,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const float ARC_THICKNESS = 3.0;
     GG::X   TechPanelWidth()
     { return GG::X(ClientUI::Pts()*20); }
     GG::Y   TechPanelHeight()

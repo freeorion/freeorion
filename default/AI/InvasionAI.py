@@ -236,14 +236,19 @@ def assign_invasion_values(planetIDs, missionType, fleetSupplyablePlanetIDs, emp
             if not system:
                 continue
             planet_industries = {}
-            for pid2 in system.planetIDs:
+            system_planets = [pid2 for pid2 in system.planetIDs]
+            if planetID not in system_planets:
+                # planet or system apparently has most likely been destroyed
+                planetValues[planetID] = [0, 0]
+                continue
+            for pid2 in system_planets:
                 planet2 = universe.getPlanet(pid2)
                 specName2 = (planet2 and planet2.speciesName) or ""
                 species2 = fo.getSpecies(specName2)
                 if species2 and species2.canProduceShips:
                     planet_industries[pid2] = planet2.currentMeterValue(fo.meterType.industry) + 0.1 # to prevent divide-by-zero
             industry_ratio = planet_industries[planetID] / max(planet_industries.values())
-            for pid2 in system.planetIDs:
+            for pid2 in system_planets:
                 if pid2 == planetID:
                     continue
                 planet2 = universe.getPlanet(pid2)

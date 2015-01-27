@@ -1,8 +1,8 @@
 #include "ValueRefParserImpl.h"
 
 namespace {
-    struct int_parser_rules {
-        int_parser_rules() {
+    struct simple_int_parser_rules {
+        simple_int_parser_rules() {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_val_type _val;
@@ -62,7 +62,64 @@ namespace {
                     [ _val = new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
                 ;
 
+            simple
+                =   constant
+                |   free_variable
+                |   bound_variable
+                ;
+
             initialize_bound_variable_parser<int>(bound_variable, bound_variable_name);
+
+            free_variable_name.name("integer free variable name (e.g. CurrentTurn)");
+            bound_variable_name.name("integer bound variable name (e.g., FleetID)");
+            constant.name("integer constant");
+            free_variable.name("free integer variable");
+            bound_variable.name("bound integer variable");
+            simple.name("simple integer expression (constant, free or bound variable)");
+
+#if DEBUG_VALUEREF_PARSERS
+            debug(free_variable_name);
+            debug(bound_variable_name);
+            debug(constant);
+            debug(free_variable);
+            debug(bound_variable);
+            debug(simple);
+#endif
+        }
+
+        typedef parse::value_ref_parser_rule<int>::type rule;
+        typedef variable_rule<int>::type                variable_rule;
+
+        name_token_rule     free_variable_name;
+        name_token_rule     bound_variable_name;
+        rule                constant;
+        variable_rule       free_variable;
+        variable_rule       bound_variable;
+        rule                simple;
+    };
+
+    simple_int_parser_rules& get_simple_int_parser_rules() {
+        static simple_int_parser_rules retval;
+        return retval;
+    }
+
+    struct int_parser_rules {
+        int_parser_rules() {
+            qi::_1_type _1;
+            qi::_a_type _a;
+            qi::_val_type _val;
+            using phoenix::construct;
+            using phoenix::new_;
+            using phoenix::push_back;
+            using phoenix::static_cast_;
+
+            const int_rule& simple =                        int_simple();
+            const variable_rule& bound_variable =           int_bound_variable();
+            const name_token_rule& bound_variable_name =    int_bound_variable_name();
+            const int_rule& constant =                      int_constant();
+            const variable_rule& free_variable =            int_free_variable();
+
+
             initialize_numeric_statistic_parser<int>(statistic, statistic_1, statistic_2, statistic_3,
                                                      bound_variable_name, constant, free_variable, bound_variable);
             initialize_expression_parsers<int>(function_expr,
@@ -74,18 +131,11 @@ namespace {
 
             primary_expr
                 =   '(' > expr > ')'
-                |   constant
-                |   free_variable
-                |   bound_variable
+                |   simple
                 |   statistic
                 |   int_var_complex()
                 ;
 
-            free_variable_name.name("integer free variable name (e.g. CurrentTurn)");
-            bound_variable_name.name("integer bound variable name (e.g., FleetID)");
-            constant.name("integer constant");
-            free_variable.name("free integer variable");
-            bound_variable.name("bound integer variable");
             statistic.name("integer statistic");
             function_expr.name("integer function expression");
             exponential_expr.name("integer exponential expression");
@@ -95,11 +145,6 @@ namespace {
             primary_expr.name("integer expression");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(free_variable_name);
-            debug(bound_variable_name);
-            debug(constant);
-            debug(free_variable);
-            debug(bound_variable);
             debug(statistic);
             debug(negate_expr);
             debug(multiplicative_expr);
@@ -114,11 +159,6 @@ namespace {
         typedef statistic_rule<int>::type               statistic_rule;
         typedef expression_rule<int>::type              expression_rule;
 
-        name_token_rule     free_variable_name;
-        name_token_rule     bound_variable_name;
-        rule                constant;
-        variable_rule       free_variable;
-        variable_rule       bound_variable;
         statistic_rule      statistic_1;
         statistic_rule      statistic_2;
         statistic_rule      statistic_3;
@@ -137,14 +177,23 @@ namespace {
     }
 }
 
-const name_token_rule& int_bound_variable_name()
-{ return get_int_parser_rules().bound_variable_name; }
+const int_rule& int_constant()
+{ return get_simple_int_parser_rules().constant; }
 
-const variable_rule<int>::type& int_free_variable()
-{ return get_int_parser_rules().free_variable; }
+const name_token_rule& int_bound_variable_name()
+{ return get_simple_int_parser_rules().bound_variable_name; }
 
 const variable_rule<int>::type& int_bound_variable()
-{ return get_int_parser_rules().bound_variable; }
+{ return get_simple_int_parser_rules().bound_variable; }
+
+const name_token_rule& int_free_variable_name()
+{ return get_simple_int_parser_rules().free_variable_name; }
+
+const variable_rule<int>::type& int_free_variable()
+{ return get_simple_int_parser_rules().free_variable; }
+
+const int_rule& int_simple()
+{ return get_simple_int_parser_rules().simple; }
 
 const statistic_rule<int>::type& int_var_statistic()
 { return get_int_parser_rules().statistic; }

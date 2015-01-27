@@ -81,9 +81,6 @@ namespace {
         return value;
     }
 
-    inline boost::uint32_t CharToUint32_t(char c)
-    { return c < 0 ? 256 + c : c; }
-
     /** This is used to collect data on the glyphs as they are recorded into buffers, for use in creating Glyph objects at the end
         of Font's constructor.*/
     struct TempGlyphData
