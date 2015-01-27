@@ -137,18 +137,6 @@ namespace {
         return false;
     }
 
-    bool ContainsArmedShips(int fleet_id) {
-        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
-        if (!fleet)
-            return false;
-        const std::set<int>& ship_ids = fleet->ShipIDs();
-        for (std::set<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
-            if (TemporaryPtr<const Ship> ship = GetShip(*it))
-                if (ship->IsArmed())
-                    return true;
-        return false;
-    }
-
     bool AggressionForFleet(NewFleetAggression aggression_mode, const std::vector<int>& ship_ids) {
         if (aggression_mode == FLEET_AGGRESSIVE)
             return true;

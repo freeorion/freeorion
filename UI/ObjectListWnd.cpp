@@ -51,9 +51,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    unsigned int NumColumns()
-    { return NUM_COLUMNS; }
-
     ValueRef::Variable<std::string>* StringValueRef(const std::string& token) {
         return new ValueRef::Variable<std::string>(
             ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token));
@@ -1113,24 +1110,6 @@ namespace {
         return retval;
     }
 
-    const std::string& ObjectName(TemporaryPtr<const UniverseObject> obj) {
-        if (!obj)
-            return EMPTY_STRING;
-        if (obj->ObjectType() == OBJ_SYSTEM) {
-            if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(obj))
-                return system->ApparentName(HumanClientApp::GetApp()->EmpireID());
-        }
-        return obj->PublicName(HumanClientApp::GetApp()->EmpireID());
-    }
-
-    std::pair<std::string, GG::Clr> ObjectEmpireNameAndColour(TemporaryPtr<const UniverseObject> obj) {
-        if (!obj)
-            return std::make_pair("", ClientUI::TextColor());
-        if (const Empire* empire = Empires().Lookup(obj->Owner()))
-            return std::make_pair(empire->Name(), empire->Color());
-        return std::make_pair("", ClientUI::TextColor());
-    }
-
     const GG::X PAD(3);
 }
 
@@ -1150,7 +1129,6 @@ public:
         m_expand_button(0),
         m_dot(0),
         m_icon(0),
-        m_name_label(0),
         m_controls(0),
         m_column_val_cache(),
         m_selected(false)
@@ -1346,7 +1324,6 @@ private:
     GG::Button*                     m_expand_button;
     GG::StaticGraphic*              m_dot;
     MultiTextureStaticGraphic*      m_icon;
-    CUILabel*                       m_name_label;
     std::vector<GG::Control*>       m_controls;
 
     mutable std::vector<std::string>m_column_val_cache;

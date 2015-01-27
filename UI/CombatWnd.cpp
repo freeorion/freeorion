@@ -139,14 +139,8 @@ namespace {
     btQuaternion ToCollision(const Ogre::Quaternion& q)
     { return btQuaternion(q.x, q.y, q.z, q.w); }
 
-    btVector3 ToCollision(const OpenSteer::Vec3& vec)
-    { return btVector3(vec.x, vec.y, vec.z); }
-
     Ogre::Vector3 ToOgre(const btVector3& vec)
     { return Ogre::Vector3(vec.x(), vec.y(), vec.z()); }
-
-    OpenSteer::Vec3 ToOpenSteer(const btVector3& vec)
-    { return OpenSteer::Vec3(vec.x(), vec.y(), vec.z()); }
 
     void SetNodePositionAndOrientation(Ogre::SceneNode* node, const CombatObjectPtr& combat_object) {
         node->setPosition(::ToOgre(combat_object->position()));
