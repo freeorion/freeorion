@@ -30,6 +30,8 @@ namespace Effect {
     class SetPlanetSize;
     class SetSpecies;
     class SetOwner;
+    class SetSpeciesEmpireOpinion;
+    class SetSpeciesSpeciesOpinion;
     class CreatePlanet;
     class CreateBuilding;
     class CreateShip;
@@ -372,6 +374,52 @@ public:
 
 private:
     const ValueRef::ValueRefBase<int>* m_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Sets the opinion of Species \a species for empire with id \a empire_id to
+  * \a opinion */
+class FO_COMMON_API Effect::SetSpeciesEmpireOpinion : public Effect::EffectBase {
+public:
+    SetSpeciesEmpireOpinion(const ValueRef::ValueRefBase<std::string>* species_name,
+                            const ValueRef::ValueRefBase<int>* empire_id,
+                            const ValueRef::ValueRefBase<double>* opinion);
+    virtual ~SetSpeciesEmpireOpinion();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRef::ValueRefBase<std::string>*  m_species_name;
+    const ValueRef::ValueRefBase<int>*          m_empire_id;
+    const ValueRef::ValueRefBase<double>*       m_opinion;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Sets the opinion of Species \a opinionated_species for other species
+  * \a rated_species to \a opinion */
+class FO_COMMON_API Effect::SetSpeciesSpeciesOpinion : public Effect::EffectBase {
+public:
+    SetSpeciesSpeciesOpinion(const ValueRef::ValueRefBase<std::string>* opinionated_species_name,
+                             const ValueRef::ValueRefBase<std::string>* rated_species_name,
+                             const ValueRef::ValueRefBase<double>* opinion);
+    virtual ~SetSpeciesSpeciesOpinion();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRef::ValueRefBase<std::string>*  m_opinionated_species_name;
+    const ValueRef::ValueRefBase<std::string>*  m_rated_species_name;
+    const ValueRef::ValueRefBase<double>*       m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
