@@ -14,18 +14,19 @@ namespace parse {
             using phoenix::construct;
             using phoenix::new_;
 
-            const parse::lexer& tok =                                       parse::lexer::instance();
+            const parse::lexer& tok =       parse::lexer::instance();
+            const int_rule& simple_int =    int_simple();
 
             part_capacity
-                =  (    tok.PartCapacity_ [ _a = construct<std::string>(_1) ]
+                = (     tok.PartCapacity_ [ _a = construct<std::string>(_1) ]
                      >> parse::label(Name_token) >> tok.string [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
-                   )    [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
+                  )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
              direct_distance
                 = (     tok.DirectDistanceBetween_ [ _a = construct<std::string>(_1) ]
-                     >> parse::label(Object_token) >> int_simple() [ _b = _1 ]
-                     >> parse::label(Object_token) >> int_simple() [ _c = _1 ]
+                     >> parse::label(Object_token) >> simple_int [ _b = _1 ]
+                     >> parse::label(Object_token) >> simple_int [ _c = _1 ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
