@@ -225,6 +225,18 @@ public:
       * string if there are no playable species. */
     const std::string&      RandomPlayableSpeciesName() const;
 
+    /** returns a map from species name to a set of object IDs that are the
+      * homeworld(s) of that species in the current game. */
+    std::map<std::string, std::set<int> >                           GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
+
+    /** returns a map from species name to a map from empire id to each the
+      * species' opinion of the empire */
+    const std::map<std::string, std::map<int, double> >&            GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+
+    /** returns a map from species name to a map from other species names to the
+      * opinion of the first species about the other species. */
+    const std::map<std::string, std::map<std::string, double> >&    GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+
     /** returns the instance of this singleton class; you should use the free
       * function GetSpeciesManager() instead */
     static SpeciesManager&  GetSpeciesManager();
@@ -257,18 +269,6 @@ private:
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
     void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
-
-    /** returns a map from species name to a set of object IDs that are the
-      * homeworld(s) of that species in the current game. */
-    std::map<std::string, std::set<int> >                   GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
-
-    /** returns a map from species name to a map from empire id to each the
-      * species' opinion of the empire */
-    std::map<std::string, std::map<int, double> >           GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
-
-    /** returns a map from species name to a map from other species names to the
-      * opinion of the first species about the other species. */
-    std::map<std::string, std::map<std::string, double> >   GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     std::map<std::string, Species*>                         m_species;
     std::map<std::string, std::map<int, double> >           m_species_empire_opinions;

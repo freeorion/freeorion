@@ -14,8 +14,9 @@ namespace parse {
             using phoenix::construct;
             using phoenix::new_;
 
-            const parse::lexer& tok =       parse::lexer::instance();
-            const int_rule& simple_int =    int_simple();
+            const parse::lexer& tok =                                                   parse::lexer::instance();
+            const int_rule& simple_int =                                                int_simple();
+            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =   parse::value_ref_parser<std::string>();
 
             part_capacity
                 = (     tok.PartCapacity_ [ _a = construct<std::string>(_1) ]
@@ -30,13 +31,31 @@ namespace parse {
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
+            species_empire_opinion
+                = (     tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesEmpireOpinion") ]
+                     >> parse::label(Species_token) >>  string_value_ref [ _d = _1 ]
+                     >> parse::label(Empire_token) >>   simple_int [ _b = _1 ]
+                  )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
+                ;
+
+            species_species_opinion
+                = (     tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesSpeciesOpinion") ]
+                     >> parse::label(Species_token) >>  string_value_ref [ _d = _1 ]
+                     >> parse::label(Species_token) >>  string_value_ref [ _e = _1 ]
+                  )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
+                ;
+
             start
                 %=  part_capacity
                 |   direct_distance
+                |   species_empire_opinion
+                |   species_species_opinion
                 ;
 
             part_capacity.name("PartCapacity");
             direct_distance.name("DirectDistanceBetween");
+            species_empire_opinion.name("SpeciesOpinion (of empire)");
+            species_species_opinion.name("SpeciesOpinion (of species)");
 
 #if DEBUG_DOUBLE_COMPLEX_PARSERS
             debug(part_capacity);
@@ -45,6 +64,8 @@ namespace parse {
 
         complex_variable_rule<double>::type part_capacity;
         complex_variable_rule<double>::type direct_distance;
+        complex_variable_rule<double>::type species_empire_opinion;
+        complex_variable_rule<double>::type species_species_opinion;
         complex_variable_rule<double>::type start;
     };
 
