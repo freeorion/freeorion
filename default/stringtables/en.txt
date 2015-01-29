@@ -3296,6 +3296,44 @@ ENC_EFFECTS_STR
 
 %1%'''
 
+ENC_AUTO_TIME_COST_INVARIANT_STR
+'''
+
+<u>Time and Cost</u>
+
+Time and cost to %1% this item do not vary by location.'''
+
+ENC_AUTO_TIME_COST_VARIABLE_STR
+'''
+
+<u>Time and Cost</u>
+
+Either one or both of time and cost to %1% this item varies by location.  
+In the expressions describing these, the term Source will generally refer to the respective empire's Capital, and the term Target will generally refer to the location under consideration.
+'''
+
+ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
+'''
+At location %1% the cost and time are %2% %3% over %4% turns.'''
+
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+ENC_AUTO_COST_STR
+'''
+
+<u>Cost</u>
+
+%1%'''
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+ENC_AUTO_TIME_STR
+'''
+
+<u>Time</u>
+
+%1%'''
+
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
@@ -6060,6 +6098,12 @@ root condition candidate
 DESC_STATISTIC
 statistic
 
+DESC_STAT_TYPE
+stat type
+
+DESC_SAMPLING_CONDITION
+sampling condition
+
 DESC_VAR_PLANETSIZE
 planet size
 
@@ -6243,7 +6287,11 @@ owner's top priority enqueued tech
 DESC_VAR_LASTTURNBATTLEHERE
 last turn a battle occurred here
 
+DESC_COMPLEX
+Complex Variable
 
+DESC_VARIABLE_NAME
+Variable Name
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
