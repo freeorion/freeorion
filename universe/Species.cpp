@@ -407,7 +407,7 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
 }
 
 void SpeciesManager::SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions)
-{ m_species_empire_opnions = species_empires_opinions; }
+{ m_species_empire_opinions = species_empire_opinions; }
 
 void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, double opinion)
 { m_species_empire_opinions[species_name][empire_id] = opinion; }
