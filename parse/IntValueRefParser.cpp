@@ -121,7 +121,7 @@ namespace {
 
 
             initialize_numeric_statistic_parser<int>(statistic, statistic_1, statistic_2, statistic_3,
-                                                     bound_variable_name, constant, free_variable, bound_variable);
+                                                     bound_variable_name, constant, free_variable, bound_variable, int_var_complex());
             initialize_expression_parsers<int>(function_expr,
                                                exponential_expr,
                                                multiplicative_expr,

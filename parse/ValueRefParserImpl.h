@@ -257,7 +257,8 @@ void initialize_numeric_statistic_parser(
     const name_token_rule& variable_name,
     const typename parse::value_ref_parser_rule<T>::type& constant,
     const typename variable_rule<T>::type& free_variable,
-    const typename variable_rule<T>::type& bound_variable
+    const typename variable_rule<T>::type& bound_variable,
+    const typename variable_rule<T>::type& complex_variable
     )
 {
     const parse::lexer& tok = parse::lexer::instance();
@@ -293,6 +294,7 @@ void initialize_numeric_statistic_parser(
             >> (    constant        [_c = _1 ]  // match only a subset of ValueRef types here, because parsing as a top-level
                |    free_variable   [_c = _1 ]  // ValueRef here causes deadlocks on parser init on some systems
                |    bound_variable  [_c = _1 ]  // todo: try allowing parsing of complex variables here
+               |    complex_variable[_c = _1 ]
                )
             >>  parse::label(Condition_token) >>   parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_c, _b, _1) ]
