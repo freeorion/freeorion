@@ -3270,6 +3270,8 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
     std::string species_str;
     if (m_species_name)
         species_str = m_species_name->Description();
+    if (species_str.empty())
+        species_str = UserString("DESC_PLANET_ENVIRONMENT_CUR_SPECIES");
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_PLANET_ENVIRONMENT")
         : UserString("DESC_PLANET_ENVIRONMENT_NOT"))

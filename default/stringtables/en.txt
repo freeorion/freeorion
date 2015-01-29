@@ -6539,10 +6539,13 @@ DESC_PLANET_SIZE_NOT
  that is not a %1% planet
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+ that is a %1% planet for the species %2%
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+ that is not a %1% planet for the species %2%
+
+DESC_PLANET_ENVIRONMENT_CUR_SPECIES
+that it currently has
 
 DESC_SPECIES
  that has species %1%
