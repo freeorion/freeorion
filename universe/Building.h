@@ -135,9 +135,12 @@ public:
     std::string                     Dump() const;                                           ///< returns a data file format representation of this object
 
     bool                            ProductionCostTimeLocationInvariant() const;            ///< returns true if the production cost and time are invariant (does not depend on) the location
-    float                           ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to build this building
+    float                           ProductionCost(int empire_id, int location_id) const;   ///< returns the number of production points required to build this building at this location by this empire
     float                           PerTurnCost(int empire_id, int location_id) const;      ///< returns the maximum number of production points per turn that can be spend on this building
-    int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building
+    int                             ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to build this building at this location by this empire
+    
+    const ValueRef::ValueRefBase<double>* Cost() const        { return m_production_cost; }          ///< returns the ValueRef that determines ProductionCost()
+    const ValueRef::ValueRefBase<int>*    Time() const        { return m_production_time; }          ///< returns the ValueRef that determines ProductionTime()
 
     bool                            Producible() const      { return m_producible; }        ///< returns whether this building type is producible by players and appears on the production screen
     const std::set<std::string>&    Tags() const            { return m_tags; }

@@ -1167,6 +1167,10 @@ std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen
     return std::pair<double, double>(x, y);
 }
 
+int MapWnd::SelectedPlanetID() const
+{ return m_production_wnd->SelectedPlanetID(); }
+
+
 void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const {
     data.map_left = Value(Left());
     data.map_top = Value(Top());

@@ -716,12 +716,20 @@ bool ValueRef::Statistic<T>::SourceInvariant() const
 }
 
 template <class T>
-std::string ValueRef::Statistic<T>::Description() const
-{ return UserString("DESC_STATISTIC"); }
+std::string ValueRef::Statistic<T>::Description() const {
+    std::string retval = UserString("DESC_STATISTIC") + ": [(" + UserString("DESC_STAT_TYPE") + ": " + boost::lexical_cast<std::string>(m_stat_type) + ")"; 
+    if (m_value_ref) {
+        retval += "(" + m_value_ref->Description() + ")";
+    } else {
+        retval += "(" + ValueRef::Variable<T>::Description() + ")";
+    }
+    retval += "(" + UserString("DESC_SAMPLING_CONDITION") + ": " + m_sampling_condition->Description() + ")]";
+    return retval;
+}
 
 template <class T>
 std::string ValueRef::Statistic<T>::Dump() const
-{ return "Statistic"; }
+{ return Description(); }
 
 template <class T>
 T ValueRef::Statistic<T>::Eval(const ScriptingContext& context) const
@@ -1117,8 +1125,33 @@ bool ValueRef::ComplexVariable<T>::SourceInvariant() const
 }
 
 template <class T>
-std::string ValueRef::ComplexVariable<T>::Description() const
-{ return UserString("DESC_COMPLEX"); }
+std::string ValueRef::ComplexVariable<T>::Description() const {
+    std::string variable_name;
+    if (!this->m_property_name.empty())
+        variable_name = this->m_property_name.back();
+    std::string retval = UserString("DESC_COMPLEX") + ": [(" + UserString("DESC_VARIABLE_NAME") + ": " + variable_name + ") (";
+    if (variable_name == "PartCapacity") {
+        //retval += m_string_ref1->Description();
+    } else if (variable_name == "JumpsBetween") {
+        if (m_int_ref1)
+            retval += m_int_ref1->Description() + ", ";
+        if (m_int_ref2)
+            retval += m_int_ref2->Description() + ", ";
+    } else if (false) {
+        if (m_int_ref1)
+            retval += m_int_ref1->Description() + ", ";
+        if (m_int_ref2)
+            retval += m_int_ref2->Description() + ", ";
+        if (m_int_ref2)
+            retval += m_int_ref2->Description() + ", ";
+        if (m_string_ref1)
+            retval += m_string_ref1->Description() + ", ";
+        if (m_string_ref2)
+            retval += m_string_ref2->Description();
+    }
+    retval += ")]";
+    return retval;
+}
 
 template <class T>
 std::string ValueRef::ComplexVariable<T>::Dump() const

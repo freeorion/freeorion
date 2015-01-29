@@ -92,6 +92,10 @@ public:
     /** returns the universe position (X and Y in pair) that corresponds to
       * the specified screen coordinates. */
     std::pair<double, double>   UniversePositionFromScreenCoords(GG::Pt screen_coords) const;
+
+    /** Returns the id of the currently-selected planet, or
+      * INVALID_OBJECT_ID if no planet is selected */
+    int                 SelectedPlanetID() const;
     //!@}
 
     //! \name Mutators //!@{

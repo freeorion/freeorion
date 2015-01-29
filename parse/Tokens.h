@@ -327,6 +327,7 @@
     (SetShield)                                 \
     (SetSize)                                   \
     (SetSpecies)                                \
+    (SetSpeciesOpinion)                         \
     (SetSpeed)                                  \
     (SetStarlaneSpeed)                          \
     (SetStarType)                               \
@@ -373,6 +374,7 @@
     (SpawnRate)                                 \
     (Special)                                   \
     (Species)                                   \
+    (SpeciesOpinion)                            \
     (SpeciesPlanetsBombed)                      \
     (SpeciesColoniesOwned)                      \
     (SpeciesPlanetsDepoped)                     \

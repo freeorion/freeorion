@@ -926,6 +926,9 @@ bool BuildDesignatorWnd::InWindow(const GG::Pt& pt) const
 bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
 { return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt); }
 
+int BuildDesignatorWnd::SelectedPlanetID() const
+{ return m_side_panel->SelectedPlanetID(); }
+
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
     SetBuild(queue_idx);
 

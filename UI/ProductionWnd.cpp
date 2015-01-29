@@ -611,6 +611,9 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 ProductionWnd::~ProductionWnd()
 { m_empire_connection.disconnect(); }
 
+int ProductionWnd::SelectedPlanetID() const
+{ return m_build_designator_wnd->SelectedPlanetID(); }
+
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
 { return m_production_info_panel->InWindow(pt) || m_queue_lb->InWindow(pt) || m_build_designator_wnd->InWindow(pt); }
 
