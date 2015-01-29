@@ -407,10 +407,16 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
 }
 
 void SpeciesManager::SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions)
-{}
+{ m_species_empire_opinions = species_empire_opinions; }
+
+void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, double opinion)
+{ m_species_empire_opinions[species_name][empire_id] = opinion; }
 
 void SpeciesManager::SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions)
-{}
+{ m_species_species_opinions = species_species_opinions; }
+
+void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, double opinion)
+{ m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
 std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
     std::map<std::string, std::set<int> > retval;
@@ -428,14 +434,15 @@ std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(in
     return retval;
 }
 
-std::map<std::string, std::map<int, double> > SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
-    std::map<std::string, std::map<int, double> > retval;
-    return retval;
-}
+std::map<std::string, std::map<int, double> > SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
+{ return m_species_empire_opinions; }
 
-std::map<std::string, std::map<std::string, double> > SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
-    std::map<std::string, std::map<std::string, double> > retval;
-    return retval;
+std::map<std::string, std::map<std::string, double> > SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
+{ return m_species_species_opinions; }
+
+void SpeciesManager::ClearSpeciesOpinions() {
+    m_species_empire_opinions.clear();
+    m_species_species_opinions.clear();
 }
 
 

@@ -234,7 +234,20 @@ public:
     /** sets all species to have no homeworlds.  this is useful when generating
       * a new game, when any homeworlds species had in the previous game should
       * be removed before the new game's homeworlds are added. */
-    void                    ClearSpeciesHomeworlds();
+    void    ClearSpeciesHomeworlds();
+
+    /** sets the opinions of species (indexed by name string) of empires (indexed
+      * by id) as a double-valued number. */
+    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions);
+    void    SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, double opinion);
+
+    /** sets the opinions of species (indexed by name string) of other species
+      * (indexed by name string) as a double-valued number. */
+    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions);
+    void    SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, double opinion);
+
+    /** clears all species opinion data */
+    void    ClearSpeciesOpinions();
     //@}
 
 private:
@@ -244,12 +257,6 @@ private:
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
     void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
-
-    /* */
-    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions);
-
-    /* */
-    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions);
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
@@ -263,7 +270,9 @@ private:
       * opinion of the first species about the other species. */
     std::map<std::string, std::map<std::string, double> >   GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
-    std::map<std::string, Species*> m_species;
+    std::map<std::string, Species*>                         m_species;
+    std::map<std::string, std::map<int, double> >           m_species_empire_opinions;
+    std::map<std::string, std::map<std::string, double> >   m_species_species_opinions;
 
     static SpeciesManager* s_instance;
 
