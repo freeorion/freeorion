@@ -163,13 +163,16 @@ def generateOrders(): # pylint: disable=invalid-name
     planet = None
     if planetID is not None:
         planet = universe.getPlanet(planetID)
+    aggression_name = fo.aggression.values[foAIstate.aggression].name
     print "***************************************************************************"
-    print "***************************************************************************"
+    print "**********   String for chart. Do not modify.   ***************************"
     print ("Generating Orders")
-    res_idx = ResearchAI.get_research_index()
-    print "EmpireID: " + str(empire.empireID) + " Name: " + empire.name+ "_"+str(empire.empireID) +"_pid:"+str(fo.playerID())+"_"+fo.playerName()+"_"+("RIdx_%d"%res_idx)+"_"+_aggressions.get(foAIstate.aggression, "?") + " Turn: " + str(fo.currentTurn())
-    empireColor = empire.colour
-    print "EmpireColors: %d %d %d %d"% (empireColor.r, empireColor.g, empireColor.b, empireColor.a)
+    print ("EmpireID: {empire.empireID}"
+           " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
+           " Turn: {turn}").format(empire=empire,  p_id=fo.playerID(), p_name=fo.playerName(),
+                                  res_idx=ResearchAI.get_research_index(), turn=fo.currentTurn(),
+                                  aggression=aggression_name.capitalize())
+    print "EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire)
     if planet:
         print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName
     else:
@@ -180,7 +183,7 @@ def generateOrders(): # pylint: disable=invalid-name
     if fo.currentTurn() == 1:
         declareWarOnAll()
         human_player = fo.empirePlayerID(1)
-        fo.sendChatMessage(human_player,  "%s Empire, Aggression: %s"%(empire.name, _aggressions.get(foAIstate.aggression,  "?")))
+        fo.sendChatMessage(human_player,  '%s Empire (%s):\n"Ave, Human, morituri te salutant!"' % (empire.name, aggression_name))
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
     foAIstate.split_new_fleets()
