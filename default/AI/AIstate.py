@@ -1021,6 +1021,7 @@ class AIstate(object):
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])
         self.empire_standard_fighter = std_fighter
         print "------------------------"
+        # Next string used in charts. Don't modify it!
         print "Empire Ship Count: ", shipCount
         print "Empire standard fighter summary: ", std_fighter
         print "------------------------"

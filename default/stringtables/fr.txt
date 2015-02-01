@@ -5059,6 +5059,7 @@ Préfèrent les Planètes infernales.
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
+[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC

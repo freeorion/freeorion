@@ -355,7 +355,9 @@ def set_planet_resource_foci(): #+
         print "-------------------------------------\nFinal Ratio Target (turn %4d) RP/PP : %.2f ( %.1f / %.1f ) after %d Focus changes"%( fo.currentTurn(), curTargetRP/ (curTargetPP + 0.0001), curTargetRP, curTargetPP , totalChanged)
         resource_timer.end()
     aPP, aRP = empire.productionPoints, empire.resourceProduction(fo.resourceType.research)
-    print "Current Output (turn %4d) RP/PP : %.2f ( %.1f / %.1f )"%(fo.currentTurn(), aRP/ (aPP + 0.0001), aRP, aPP ), "\n------------------------"
+    # Next string used in charts. Don't modify it!
+    print "Current Output (turn %4d) RP/PP : %.2f ( %.1f / %.1f )" % (fo.currentTurn(), aRP / (aPP + 0.0001), aRP, aPP)
+    print "------------------------"
     print "ResourcesAI Time Requirements:"
 
 

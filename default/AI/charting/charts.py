@@ -1,13 +1,24 @@
 # pylab is part of matplotlib -- http://matplotlib.org/
 # for necessary Windows dependencies see http://stackoverflow.com/a/18280786
 
+# windows installation by Cjkjvfnby http://www.freeorion.org/forum/memberlist.php?mode=viewprofile&u=34706
+#  I use current version 1.4.2 for python 2.7 *32
+#
+# If you have compiler installed
+#   pip install matplotlib
+#
+# Otherwise you need to get precompiled binaries:
+# download and install matplotlib-1.4.2.win32-py2.7.exe from http://matplotlib.org/downloads.html
+# pip install python-dateutil pyparsing pillow  # if pillow does not want to install use numpy instruction.
+# download numpy-1.9.1+mkl-cp27-none-win32.whl from  http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy
+# navigate to folder: pip install numpy-1.9.1+mkl-cp27-none-win32.whl
+# Change dataDir to '<user>/AppData/Roaming/'
+
 from pylab import *
 import os
 import sys
 from glob import glob
 import traceback
-#import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 
 dataDir = os.environ.get('HOME', "")+"/.freeorion"
 graphDir=dataDir
@@ -206,4 +217,3 @@ for plotType in doPlotTypes:
     if saveFile:
         savefig(graphDir+os.sep+plotType+"_"+fileRoot+".png")
     show()
-        

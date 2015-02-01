@@ -991,7 +991,6 @@ Círculos de sistema encapsulados
 
 OPTIONS_UI_SYSTEM_CIRCLE_SIZE
 Tamaño relativo de los círculos de sistema
-Tamaño relativo de los círculos de sistema
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Tamaño relativo del indicador de sistema de selección
@@ -2935,7 +2934,6 @@ Monofilamento Arquitectural
 
 CON_ARCH_MONOFILS_DESC
 Esencialmente indestructible y de solo unos átomos de diámetro, los filamentos de monocristal tienen muchos usos en mejorar los diseños de estructuras tradicionales en duración y economía de la construcción.  La capacidad para suspender o estresar otros materiales en configuraciones previamente imposibles también permite un mundo de nuevos diseños.  Filamentos de bajo peso y gran fuerza son usados en particular en escalas grandes orbitales que abarcan estructuras, donde antes las variaciones de gravedad a distancia eran prohibitivas.
-Esencialmente indestructible y de solo unos átomos de diámetro, los filamentos de monocristal tienen muchos usos en mejorar los diseños de estructuras tradicionales en duración y economía de la construcción.  La capacidad para suspender o estresar otros materiales en configuraciones previamente imposibles también permite un mundo de nuevos diseños.  Filamentos de bajo peso y gran fuerza son usados en particular en escalas grandes orbitales que abarcan estructuras, donde antes las variaciones de gravedad a distancia eran prohibitivas.
 
 CON_ASYMP_MATS
 Materiales Asintóticos
@@ -4098,7 +4096,6 @@ Phaser
 
 PD_PHASOR_DESC
 Punto de defensa fuerte y rápido
-Punto de defensa fuerte y rápido
 
 PD_PARTICLE_BEAM
 Rayo de Particulas
@@ -4232,7 +4229,6 @@ ST_CLOAK_4
 Ocultación de Fase
 
 ST_CLOAK_4_DESC
-Modula la frecuencia de cualquier onda emitida desde la nave para parecer radiación de fondo.
 Modula la frecuencia de cualquier onda emitida desde la nave para parecer radiación de fondo.
 
 AR_ZORTRIUM_PLATE
