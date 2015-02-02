@@ -7,15 +7,11 @@ Espanol
 #Canseco: 17-10-2010 > 10-04-2011
 
 #################
-# Common        #
+#    Common     #
 #################
-
-#Anyone can use these for basic buttons
-
 
 BROWSE_BTN
 Examinar...
-
 
 CANCEL
 Cancelar
@@ -44,7 +40,6 @@ y
 YES
 Si
 
-
 EMPIRE
 Imperio
 
@@ -56,8 +51,6 @@ Renombrar
 
 ENTER_NEW_NAME
 Introducir un nuevo nombre
-
-
 
 RESET
 Reiniciar
@@ -75,10 +68,8 @@ Nueva Flota %1%
 NEW_FLEET_NAME_NO_NUMBER
 Nueva Flota
 
-
 BOMBER
 Bombardero
-
 
 DEFAULT_EMPIRE_NAME
 El Imperio Terran
@@ -94,20 +85,63 @@ Jugador_Humano
 SD_SCOUT
 Explorador
 SD_SCOUT_DESC
-Barata y pequeña nave desarmada para reconocimiento y exploración.
+Barata y pequeña nave desarmada para reconocimiento y exploración. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.
+
+SD_SCOUT_2
+Explorador II
+
+SD_SCOUT_3
+Explorador III
+
+SD_SCOUT_4
+Explorador IV
+
+SD_SMALL_MARK_1
+Corbeta I
+SD_SMALL_MARK1_DESC
+Pequeña y barata nave con catapulta electromagnéticap.
+
+SD_SMALL_MARK_2
+Corbeta II
+SD_SMALL_MARK2_DESC
+Pequeña y barata nave con catapulta electromagnéticap.
+
+SD_MARK_1
+Fragata I
 SD_MARK1_DESC
-Asequible fragata de patrulla armada.
+Asequible fragata con catapulta electromagnética.
+
+SD_MARK_2
+Fragata II
 SD_MARK2_DESC
-Crucero con fuertes capacidades tanto defensivas como ofensivas.
+Fragata mejorada con catapulta electromagnética.
+
+SD_MARK_3
+Fragata III
 SD_MARK3_DESC
-Crucero avanzado con armas y armadura pesadas para hacer el trabajo sucio.
+Asequible fragata con laser.
+
+SD_MARK_4
+Fragata IV
 SD_MARK4_DESC
-Nave de guerra de última generación, armada y protegida con la última tecnología.  Precio acorde.
+Fragata mejorada con laser.
+
+SD_LARGE_MARK_1
+Crucero I
+
+SD_LARGE_MARK_2
+Crucero II
+
+SD_LARGE_MARK_3
+Crucero III
+
+SD_LARGE_MARK_4
+Crucero IV
 
 SD_COLONY_SHIP
 Colonizador
 SD_COLONY_SHIP_DESC
-Enorme nave desarmada capaz de transportar millones de ciudadanos con seguridad a las nuevas colonias.
+Enorme nave desarmada capaz de transportar millones de ciudadanos con seguridad a las nuevas colonias. This vessel can only be built at a colony with a population of at least three, with a shipyard.
 
 SD_OUTPOST_SHIP
 Nave de Avanzada
@@ -117,7 +151,7 @@ Nave desarmada capaz de crear puestos de avanzada en mundos inhabitables.
 SD_COLONY_BASE
 Colonia Base
 SD_COLONY_BASE_DESC
-Nave desarmada capaz de crear colonias en en el sistema en el que se produce.
+Nave desarmada capaz de crear colonias en en el sistema en el que se produce. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
 
 SD_DRAGON_TOOTH
 Diente de Dragón
@@ -616,7 +650,6 @@ no existe.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 El dispositivo no esta preparado.
 
-
 #################
 # Color Dialog  #
 #################
@@ -627,17 +660,11 @@ Nuevo
 COLOR_DLG_OLD
 Viejo
 
-
 COLOR_DLG_GREEN
 V:
 
 COLOR_DLG_BLUE
 A:
-
-
-
-
-
 
 #################
 # Intro Screen  #
@@ -647,7 +674,6 @@ A:
 
 INTRO_WINDOW_TITLE
 Menú Principal FreeOrion
-
 
 #Button names####
 
@@ -675,7 +701,6 @@ Créditos
 INTRO_BTN_EXIT
 Salir
 
-
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
@@ -683,7 +708,6 @@ Se ha superado el tiempo de espera al intentar conectar con el servidor
 
 ERR_VERSION_MISMATCH
 No se puede conectar con el servidor, este cliente esta usando una versión diferente con la siguiente configuración y/o archivos:
-
 
 ########################
 # Server Setup Screen  #
@@ -693,7 +717,6 @@ No se puede conectar con el servidor, este cliente esta usando una versión dife
 
 SCONNECT_WINDOW_TITLE
 Conectar al servidor
-
 
 #Static labels####
 
@@ -706,7 +729,6 @@ Partida Internet en:
 PLAYER_NAME_LABEL
 Nombre del jugador
 
-
 #Button names####
 
 HOST_GAME_BN
@@ -717,7 +739,6 @@ Unirse a una partida existente
 
 REFRESH_LIST_BN
 Actualizar lista
-
 
 ########################
 # Multiplayer Lobby    #
@@ -756,7 +777,6 @@ Cargar partida
 START_GAME_BN
 Iniciar partida
 
-
 ########################
 # Galaxy Setup Screen  #
 ########################
@@ -786,6 +806,7 @@ GSETUP_NUMBER_AIS
 Número de jugadores IA
 
 #Drop-down list labels and choices####
+
 GSETUP_STARS
 Estrellas
 GSETUP_SHAPE
@@ -920,8 +941,6 @@ Títulos de ventanas
 OPTIONS_TECH_SPACING
 Espacio de tecnología
 
-
-
 OPTIONS_TOOLTIP_DELAY
 Retraso de las sugerencias (ms)
 
@@ -957,7 +976,6 @@ Limitar FPS
 
 OPTIONS_MAX_FPS
 FPS Máximo
-
 
 OPTIONS_CHAT_HISTORY
 Historial de Chat
@@ -1015,7 +1033,6 @@ Mínimo zoom del icono de flota media
 
 OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
 Tamaño relativo del indicador de selección de flota
-
 
 OPTIONS_GALAXY_MAP_GAS
 Renderizado de gas del mapa de galaxia
@@ -1080,8 +1097,6 @@ Minimizar ventana
 OPTIONS_SOUND_MAXIMIZE
 Maximizar ventana
 
-
-
 OPTIONS_SOUND_FLEET_CLICK
 Click en Botón de Flota
 
@@ -1124,7 +1139,6 @@ Abrir lista desplegable
 OPTIONS_SOUND_SELECT
 Seleccionar
 
-
 OPTIONS_CONTROL_COLORS
 Controles UI
 
@@ -1152,7 +1166,6 @@ Incremento de estadística
 OPTIONS_STAT_DECREASE_COLOR
 Decrecimiento de estadística
 
-
 OPTIONS_WINDOW_COLORS
 Ventanas
 
@@ -1161,8 +1174,6 @@ Borde interior
 
 OPTIONS_OUTER_BORDER_COLOR
 Borde exterior
-
-
 
 OPTIONS_PAGE_AUTOSAVE
 Auto guardar
@@ -1205,7 +1216,6 @@ Fondo
 
 OPTIONS_COMBAT_ENABLE_GLOW
 Brillo
-
 
 OPTIONS_COMBAT_ENABLE_LENS_FLARES
 Bengalas
@@ -1253,8 +1263,6 @@ Rehacer Emplazamientos
 
 MAP_BTN_TURN_UPDATE
 Turno %1%
-
-
 
 MAP_BTN_MENU
 Menú
@@ -1338,7 +1346,6 @@ BP_INCOMPLETE_BUILDING_TOOLTIP
 
 %2%'''
 
-
 ORDER_BUIDLING_SCRAP
 Derruir Edificio
 
@@ -1355,9 +1362,6 @@ Siguiente Turno
 
 TT_CHANGE
 Cambio
-
-TT_BREAKDOWN_SUMMARY
-%1%: %2%
 
 TT_INHERENT
 Inherente
@@ -1419,7 +1423,6 @@ Tipo de nave
 
 FW_UNKNOWN_DESIGN_NAME
 Desconocido
-
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
@@ -1487,9 +1490,6 @@ Cancelar Destruir Nave
 #  Diplomacy  #
 ###############
 
-
-###############
-
 ###############
 # TechTreeWnd #
 ###############
@@ -1548,7 +1548,6 @@ Requiere
 TECH_WND_UNLOCKS
 Desbloquea
 
-
 #######################
 # ProductionInfoPanel #
 #######################
@@ -1568,7 +1567,6 @@ Proyecto estancado
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
 Proyectos en cola
 
-
 ###############
 # ResearchWnd #
 ###############
@@ -1578,8 +1576,6 @@ Investigación
 
 RESEARCH_INFO_PANEL_TITLE
 Investigación
-
-
 
 ####################
 # BuildSelectorWnd #
@@ -1603,7 +1599,6 @@ No disponible
 PRODUCTION_TOTAL_COST_STR
 %1% PP/T %2% Turnos
 
-
 PRODUCTION_TURNS_LEFT_STR
 %1% Turnos
 
@@ -1619,7 +1614,6 @@ Añadir a la cola
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Centrar en construcción
 
-
 #################
 # ProductionWnd #
 #################
@@ -1629,7 +1623,6 @@ Producción
 
 PRODUCTION_INFO_PANEL_TITLE
 Producción
-
 
 PRODUCTION_QUEUE_MULTIPLES
 %1%x
@@ -1687,12 +1680,10 @@ Limpiar Partes
 DESIGN_DELETE
 Borrar Diseño
 
-
 ################
 ## Statistics ##
 ################
-
-
+    
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -1746,8 +1737,6 @@ Sistema
 # for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
 # %1% may be an empty string for most general types of things that can be shown.
 
-
-
 # indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
 # be produced or researched (e.g. specials)
 # %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
@@ -1764,6 +1753,12 @@ ENC_EFFECTS_STR
 '''<u>Efectos</u>
 
 %1%'''
+
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
 
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
@@ -1790,7 +1785,6 @@ Ocultación: %13%
 # Battle Speed: %12%
 ##
 
-
 ENC_TECH_DETAIL_TYPE_STR
 %1% %2% - %3%
 
@@ -1801,6 +1795,7 @@ ENC_TECH_DETAIL_TYPE_STR
 ###########################################
 # ARTICLES #
 ###########################################
+
 #The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 # Functional list; do not translate. Used for logging during universe creation
@@ -1842,7 +1837,6 @@ COMBAT_DEFENSELESS
 COMBAT_LOST
  ¡Destruido!
 
-
 ####################
 # TurnProgress     #
 ####################
@@ -1881,7 +1875,6 @@ Descargando estado actual del juego ...
 ## Objects Columns ##
 #####################
 
-
 ####################
 ## Filters Dialog ##
 ####################
@@ -1890,7 +1883,6 @@ Descargando estado actual del juego ...
 ####                    S I T   R E P                    ####
 #############################################################
 
-
 #Window title####
 
 SITREP_PANEL_TITLE
@@ -1898,7 +1890,6 @@ Reporte de Situación
 
 SITREP_ERROR
 Ha ocurrido un evento desconocido.
-
 
 ## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.
@@ -1934,12 +1925,9 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 SITREP_EMPIRE_ELIMINATED
 El imperio %empire% ha sido eliminado
 
-
-
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
-
 
 TECH_VICTORY
 ha alcanzado una victoria tecnológica.
@@ -1947,11 +1935,9 @@ ha alcanzado una victoria tecnológica.
 ALL_ENEMIES_ELIMINATED_VICTORY
 ha alcanzado una victoria como único superviviente.
 
-
 #############################################################
 ####                    S P E C I E S                    ####
 #############################################################
-
 
 ### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
@@ -1964,13 +1950,9 @@ Cobardes Herbivoros.
 SP_TRITH_DESC
 Desconsolados xenófobos telépatas.
 
-
-
 #############################################################
 ####                   S P E C I A L S                   ####
 #############################################################
-
-
 
 GAIA_SPECIAL_DESC
 '''Este planeta ha sido esencialmente transformado en un organismo viviente, permitiendo que cambie y se adapte para suplir las necesidades de su población.
@@ -2006,11 +1988,9 @@ Este planeta tiene un satelite natural, cuyo periodo orbital esta en resonancia 
 MINERALS_SPECIAL
 Rico en Minerales
 
-
 #############################################################
 ####        E N U M E R A T I O N   V A L U E S          ####
 #############################################################
-
 
 # UniverseObjectTypes
 
@@ -2030,7 +2010,6 @@ OBJ_PROD_CENTER
 Centro de producción
 OBJ_SYSTEM
 Sistema
-
 
 # StarTypes
 
@@ -2072,7 +2051,6 @@ asteroides
 PT_GASGIANT
 gigante de gas
 
-
 # Planet Sizes
 
 SZ_NOWORLD
@@ -2092,7 +2070,6 @@ Asteroides
 SZ_GASGIANT
 Gigante de gas
 
-
 # PlanetEnvironments
 
 PE_UNINHABITABLE
@@ -2105,7 +2082,6 @@ PE_ADEQUATE
 adecuado
 PE_GOOD
 bueno
-
 
 # FocusTypes
 
@@ -2216,7 +2192,6 @@ enemigo
 AFFIL_ALLY
 aliado
 
-
 # UnlockableItemTypes
 
 INVALID_UNLOCKABLE_ITEM_TYPE
@@ -2239,7 +2214,6 @@ Aplicación
 TT_REFINEMENT
 Refinamiento
 
-
 # BuildTypes
 
 BT_NOT_BUILDING
@@ -2249,14 +2223,12 @@ edificio
 BT_SHIP
 nave
 
-
 # StockpileTypes
 
 ST_FOOD
 alimento
 ST_TRADE
 comercio
-
 
 # Resource Types
 
@@ -2269,14 +2241,12 @@ indústria
 RE_RESEARCH
 investigación
 
-
 # Ship Slot Types
 
 SL_EXTERNAL
 Externo
 SL_INTERNAL
 Interno
-
 
 # Ship Part Classes
 
@@ -2304,7 +2274,6 @@ PC_BATTLE_SPEED
 Velocidad de Batalla
 PC_STARLANE_SPEED
 Velocidad de Línea Estelar
-
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -2355,7 +2324,6 @@ producción de investigación
 DESC_VAR_OWNER
 dueño
 
-
 DESC_VAR_AGE
 edad en turnos
 
@@ -2365,18 +2333,9 @@ turno de creación
 DESC_VAR_CURRENTTURN
 turno actual
 
-
-
 # this one is intentionally left empty
 
-
-
-
-
-
 # six is probably more than will be needed, but just in case ...
-
-
 
 # Effects
 
@@ -2392,17 +2351,12 @@ El efecto esta activo si el origen es un objeto%1%
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 El efecto siempre esta activo
 
-
-
-
-
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 '''Grupo de Efectos %1%:
 %2%
 '''
 
 # SetMeter
-
 
 # others
 
@@ -2439,7 +2393,6 @@ Mueve el objeto al lugar de otro objeto%1%
 DESC_VICTORY
 Hace que el dueño del objeto gane la partida
 
-
 # Object Creation
 
 DESC_CREATE_PLANET
@@ -2450,7 +2403,6 @@ Crea un nuevo edificio %1%
 
 DESC_CREATE_SHIP
 Crea una nueva nave del diseño %1% que pertenece al imperio %2%
-
 
 # Conditions
 
@@ -2529,9 +2481,7 @@ DESC_SPECIES
 DESC_SPECIES_NOT
  que no contiene especies %1%
 
-
-
-
+ 
 
 DESC_FOCUS_TYPE
  que tiene un enfoque %1%
@@ -2599,6 +2549,7 @@ DESC_STATIONARY
 DESC_STATIONARY_NOT
  que no es estacionario
 
+ 
 
 DESC_AND_BETWEEN_OPERANDS
  y
@@ -2636,8 +2587,6 @@ DESC_NUMBER
 DESC_NUMBER_NOT
  si no esta entre %1% y %2% objetos%3%
 
-
-
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
 #############################################################
@@ -2654,7 +2603,6 @@ ECONOMICS_CATEGORY
 Economía
 SHIPS_CATEGORY
 Naves
-
 
 #############################################################
 ####               T E C H   T H E O R I E S             ####
@@ -3067,7 +3015,6 @@ Fundición Multi-Celular
 SHP_MULTICELL_CAST_DESC
 Incluso cuando estan inertes, los materiales orgánicos son mucho mas versátiles que un material standard.  Una nave multi-celular sin vida puede proporcionar algunas de las ventajas de materiales orgánicos sin las molestias habituales de la vida orgánica.
 
-
 SHP_HAB_MEGAFAUN_DESC
 Generalmente es poco común encontrar condiciones de vida confortables en un gigantesco monstruo espacial.  Esto es exactamente lo que debería existir en un casco orgánico, aunque puede ser controlado adecuadamente desde el interior.  El desarrollo de criaturas masivas habitables abre muchas posibilidades para el diseño de naves.
 
@@ -3113,11 +3060,9 @@ Contención Solar
 SHP_SOLAR_CONT_DESC
 Un casco construido de pura energía, aunque mas versátil que un casco sólido, tiene la desventaja de no poder recolectar la potencial energía de objetos materiales.  Aunque si fuera posible contener un casco compuesto no de pura energía sino de gases supercalientes llevando a cabo un reacción de fusión auto sostenida, las limitaciones de ambos, pura energía y materia sólida pueden ser evitados.
 
-
 #############################################################
 ####          T E C H   A P P L I C A T I O N S          ####
 #############################################################
-
 
 DOES_NOTHING_SHORT_DESC
 Sin utilidad: No hace nada
@@ -3251,22 +3196,6 @@ Cambiando el tipo de ambiente de un planeta es una tarea masiva, el reto de este
 
 GRO_TERRAFORM_SHORT_DESC
 Permite la terraformación
-
-GRO_XENOGEN_ADAPT
-Adaptación Xenogenética
-
-GRO_XENOGEN_ADAPT_DESC
-'''El estudio de otras formas de vida a veces ejemplifica las debilidades inherentes de la propia especie.  Estudiando otras formas de vida y usando el conocimiento para mejorar el propio código genético, es posible desarrollar muchas adaptaciones útiles que de otra forma serian imposibles.
-
-Incrementa la población que puede ser sostenida por planetas Pobres a 1, 2, 3, 4 y 5, y  la población que puede ser sostenida por planetas Adecuados a 5, 10, 15, 20 y 25 para planetas Diminuto, Pequeño, Medio, Grande y Gigante, respectivamente.  La Salud en planetas Pobres y Adecuados se incrementa por 5.'''
-
-GRO_ENDOPHIL_NANOMED
-Nanomedicación Endofílica
-
-GRO_ENDOPHIL_NANOMED_DESC
-'''Los Patogenos, particularmente prokaryotes, son vulnerables a la disrupción de su propio material genético - que es, si es posible de permeabilizar la membrana de la celula o la corteza de la proteina, en caso de un infección viral.  Diseñando nanorobots capazes de identificar y penetrar estos patogenos, es posible destruirlos deconstruyendo completamente su material genético.
-
-Incrementa la salud de todos los planetas por 10.'''
 
 GRO_REMOTE_TERRAFORM
 Terraformación Remota
@@ -3430,7 +3359,6 @@ Phaser
 SHP_PHASOR_DESC
 Desbloquea la parte de nave Phaser.
 
-
 SHP_INTERCEPTOR_DESC
 Desbloquea la parte de nave Interceptor.
 
@@ -3501,7 +3429,6 @@ Sensores
 
 SPY_DETECT_4_DESC
 Desbloquea la parte de nave Sensores e incrementa la detección de todos los planetas en 80.
-
 
 SPY_STEALTH_1
 Amortiguador Electromagnético
@@ -3621,11 +3548,9 @@ Modificador de Ocultación Planetaria
 SPY_PLANET_STEALTH_MOD_DESC
 Incrementa la ocultación natural de los planetas en 15, por lo que los sistemas se harán visibles a los imperios antes que sus planetas.
 
-
 #############################################################
 ####            T E C H   R E F I N E M E N T            ####
 #############################################################
-
 
 BUILDING_REFINE_SHORT_DESC
 Refinería
@@ -3652,7 +3577,6 @@ PRO_ENVIRO_MINING_DESC
 '''Muchos métodos mineros son incompatibles con planetas altamente poblados, debido al daño medioambiental.  Cuidadosas consideraciones de Ecología Planetaria son necesarias para permitir técnicas limitadas de minería para ser empleadas sin contratiempos.  La producción de minerales es menor por cada unidad de población que métodos mas extremos, aunque población adicional podría sobrepasar esto.  Adicionalmente, estas técnicas de minería limitadas son solo aplicables a mundos capaces de soportar grandes poblaciones: Excelente u óptimo para algunas razas.    Incrementa la producción de minerales en +2 por cada 10 de población en mundos enfocados a minería primaria.  Incrementa la producción de minerales en +1 por cada 10 de población en mundos enfocados en equilibrio primario y enfocados en minería secundaria.  Múltiples enfoques equilibrados son acumulativos: enfoques primarios y secundarios en minería proveen +3 a la producción de mineral por cada 10 de población.
 
 Las penalizaciones a la salud en la población en planetas con enfoque en Minería Pesada se recortan a la mitad.'''
-
 
 #############################################################
 ####                  B U I L D I N G S                  ####
@@ -3693,24 +3617,6 @@ Dique seco Orbital
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 Instalaciones astilleras expandidas orbitales que permiten la producción de mas grandes diseños de cascos de naves que un astillero básico.
-
-BLD_SHIPYARD_CON_ROBO
-Unidad de Proceso Robotico
-
-BLD_SHIPYARD_CON_ROBO_DESC
-Una planta de manufactura robótica y una instalación IA programada diseñada para producir naves complejas y automatizadas.  Esta es una mejora para el Dique Seco Orbital y permite la construcción de Cascos Roboticos.
-
-BLD_SHIPYARD_CON_ENGINE
-Bahía de Ingeniería
-
-BLD_SHIPYARD_CON_ENGINE_DESC
-Un instalación avanzada de ingeniería especializada en el ensamblaje de Motores Spaciales Fluidos.  Esta es una mejora para el Dique Seco Orbital y permite la construcción de Cascos Espaciales Fluidos.  Además, esta mejora permite a cualquier astillero en el imperio o imperios aliados producir naves con la parte de nave Torpedo Antimateria.
-
-BLD_SHIPYARD_CON_MILIT_MEGAPROC
-Megaprocesador Militar
-
-BLD_SHIPYARD_CON_MILIT_MEGAPROC_DESC
-Una instalación orbital masiva capaz de soportar la construcción de cascos extremadamente grandes.  Esta es una mejora para el Dique Seco Orbital y permite la producción de Cascos Auto-Gravitatorios.
 
 BLD_SHIPYARD_CON_NANOROBO
 Unidad de Proceso Nanorobotica
@@ -4027,7 +3933,6 @@ Colonia Base
 BLD_COLONY_BASE_DESC
 Crea una nave Colonia Base que puede ser usada para colonizar otro planeta en el mismo sistema.  Solo puede ser construida en un colonia con una población de 3 o mas.
 
-
 #############################################################
 ####           Hull/Part Description Templates           ####
 #############################################################
@@ -4043,6 +3948,7 @@ Capacidad: %1%
 
 PART_DESC_STRENGTH
 Fuerza: %1%
+
 # Detection Range: %2%
 
 PART_DESC_DIRECT_FIRE_STATS
@@ -4074,7 +3980,6 @@ Caza Ocultación: %8%
 Caza Detección: %9%
 Capacidad: %10% Cazas'''
 
-
 #############################################################
 ####                 S H I P   P A R T S                 ####
 #############################################################
@@ -4103,7 +4008,6 @@ Rayo de Particulas
 PD_PARTICLE_BEAM_DESC
 Arma de punto de defensa definitiva
 
-
 FI_INTERCEPTOR_DESC
 Doce interceptores rápidos diseñados para destruir misiles y cazas enemigos
 
@@ -4118,7 +4022,6 @@ Caza de Reconocimiento
 
 FI_RECON_DESC
 Doce cazas rápidos y desarmados diseñados para reconocimiento
-
 
 FI_BIOINTERCEPTOR_DESC
 Treinta y seis interceptores vivientes diseñados para destruir misiles y cazas enemigos.  Mucho mas efectivos que interceptores normales.  Esta parte solo puede ser construida si hay una instalación Xenocoordinadora y una Cámara Celular de Crecimiento en el imperio o en un imperio aliados.
@@ -4295,11 +4198,9 @@ Modulador de Distorsión
 SP_DISTORTION_MODULATOR_DESC
 Distingue irregularidades geométricas naturales de naves enemigas manipulando distorsiones espacio-tiempo causadas por todas las naves en la vecindad.  Todas las naves entre 0 uus tienen una ocultación máxima reducida por 20.
 
-
 #############################################################
 ####                 S H I P   H U L L S                 ####
 #############################################################
-
 
 SH_ROBOTIC
 Casco Robótico
@@ -4553,24 +4454,19 @@ Casco de Colonia Base
 SH_COLONY_BASE_DESC
 Un casco diseñado para crear una colonia en otro planeta del sistema.  No puede moverse entre sistemas o de forma rápida dentro del sistema.
 
-
 #############################################################
 ####              S P E C I E S   P I C K S              ####
 #############################################################
-
-
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
 
-
-
 #############################################################
 ####                       T A G S                       ####
 #############################################################
 
-## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented
+## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
 ## in Census pop-up, and specifies order in which they will be displayed.
 ## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
 ## since those won't be displayed in the census anyway.
@@ -4582,7 +4478,6 @@ Un casco diseñado para crear una colonia en otro planeta del sistema.  No puede
 ####           A I   S T R I N G S                       ####
 #############################################################
 
-
 ### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
 ### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
 
@@ -4593,7 +4488,6 @@ Un casco diseñado para crear una colonia en otro planeta del sistema.  No puede
 #############################################################
 ####           HOTKEYS NAMES AND DESCRIPTIONS            ####
 #############################################################
-
 
 ################
 ## Name Lists ##
