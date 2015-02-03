@@ -840,7 +840,12 @@ float ShipDesign::Defense() const {
     return total_defense;
 }
 
-float ShipDesign::Attack() const {
+//Return total damage against a target with the no shield.
+float ShipDesign::Attack() const
+    { return AdjustedAttack(0.0f); }
+
+    //Return total damage against a target with the given shield.
+float ShipDesign::AdjustedAttack(float shield) const {
     // accumulate attack stat from all weapon parts in design
     const PartTypeManager& manager = GetPartTypeManager();
 
@@ -850,11 +855,11 @@ float ShipDesign::Attack() const {
         const PartType* part = manager.GetPartType(*it);
         if (part) {
             if (part->Class() == PC_SHORT_RANGE || part->Class() == PC_POINT_DEFENSE)
-                total_attack += boost::get<DirectFireStats>(part->Stats()).m_damage;
+                total_attack += std::max(boost::get<DirectFireStats>(part->Stats()).m_damage - shield, 0.0f);
             else if (part->Class() == PC_MISSILES)
-                total_attack += boost::get<LRStats>(part->Stats()).m_damage;
+                total_attack += std::max(boost::get<LRStats>(part->Stats()).m_damage - shield, 0.0f);
             else if (part->Class() == PC_FIGHTERS)
-                total_attack += boost::get<FighterStats>(part->Stats()).m_anti_ship_damage;
+                total_attack += std::max(boost::get<FighterStats>(part->Stats()).m_anti_ship_damage - shield, 0.0f);
         }
     }
     return total_attack;
