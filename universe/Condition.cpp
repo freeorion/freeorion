@@ -5853,7 +5853,7 @@ std::string Condition::CanAddStarlaneConnection::Description(bool negated/* = fa
 }
 
 std::string Condition::CanAddStarlaneConnection::Dump() const {
-    std::string retval = DumpIndent() + "CanAddStarlaneConnection condition =\n";
+    std::string retval = DumpIndent() + "CanAddStarlaneTo condition =\n";
     ++g_indent;
         retval += m_condition->Dump();
     --g_indent;

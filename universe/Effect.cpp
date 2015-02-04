@@ -2728,6 +2728,7 @@ std::string SetDestination::Description() const {
 std::string SetDestination::Dump() const
 { return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n"; }
 
+
 ///////////////////////////////////////////////////////////
 // SetAggression                                         //
 ///////////////////////////////////////////////////////////
