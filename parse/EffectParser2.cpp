@@ -33,15 +33,15 @@ namespace {
 
             set_meter
                 =    parse::set_non_ship_part_meter_type_enum() [ _a = _1 ]
-                >>   parse::label(Value_token) >> double_value_ref [ _val = new_<Effect::SetMeter>(_a, _1) ]
+                 >>  parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetMeter>(_a, _1) ]
                 ;
 
             set_ship_part_meter
                 =    parse::set_ship_part_meter_type_enum() [ _a = _1 ]
-                >>  (
-                            set_ship_part_meter_suffix_1(_a) [ _val = _1 ]
-                        |   set_ship_part_meter_suffix_2(_a) [ _val = _1 ]
-                        |   set_ship_part_meter_suffix_3(_a) [ _val = _1 ]
+                 >> (
+                        set_ship_part_meter_suffix_1(_a) [ _val = _1 ]
+                    |   set_ship_part_meter_suffix_2(_a) [ _val = _1 ]
+                    |   set_ship_part_meter_suffix_3(_a) [ _val = _1 ]
                     )
                 ;
 
@@ -61,27 +61,21 @@ namespace {
                 ;
 
             set_empire_stockpile
-                =   (
-                            tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
-                    )
-                >>  (
+                =           tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
+                >   (
                         (
-                            parse::label(Empire_token) >> int_value_ref [ _b = _1 ]
-                        >>  parse::label(Value_token)  >> double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
+                            parse::label(Empire_token) > int_value_ref [ _b = _1 ]
+                        >   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
-                    |   (
-                            parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ]
-                        )
+                    |   (   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ] )
                     )
                 ;
 
             set_empire_capital
                 =    tok.SetEmpireCapital_
-                >>  (
-                        (
-                            parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ]
-                        )
-                    |   eps [ _val = new_<Effect::SetEmpireCapital>() ]
+                >   (
+                        (parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ])
+                    |    eps [ _val = new_<Effect::SetEmpireCapital>() ]
                     )
                 ;
 
@@ -105,6 +99,20 @@ namespace {
                 >    parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::SetOwner>(_1) ]
                 ;
 
+            //set_species_opinion
+            //    =    tok.SetSpeciesOpinion_
+            //    >    parse::label(Species_token) >   string_value_ref
+            //    > (
+            //        (   parse::label(Empire_token) >  int_value_ref
+            //         >  parse::label(Opinion_token) > double_value_ref
+            //            [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_1, _2, _3) ] )
+            //       |
+            //        (   parse::label(Species_token) > string_value_ref
+            //        >   parse::label(Opinion_token) > double_value_ref
+            //            [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_1, _2, _3) ])
+            //       )
+            //    ;
+
             start
                 %=   set_meter
                 |    set_ship_part_meter
@@ -113,6 +121,7 @@ namespace {
                 |    set_planet_type
                 |    set_planet_size
                 |    set_species
+                //|    set_species_opinion
                 |    set_owner
                 ;
 
@@ -123,6 +132,7 @@ namespace {
             set_planet_type.name("SetPlanetType");
             set_planet_size.name("SetPlanetSize");
             set_species.name("SetSpecies");
+            set_species_opinion.name("SetSpeciesOpinion");
             set_owner.name("SetOwner");
 
 
@@ -134,6 +144,7 @@ namespace {
             debug(set_planet_type);
             debug(set_planet_size);
             debug(set_species);
+            debug(set_species_opinion);
             debug(set_owner);
 #endif
         }
@@ -166,16 +177,6 @@ namespace {
             parse::skipper_type
         > set_empire_stockpile_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Effect::EffectBase* (),
-            qi::locals<
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*
-            >,
-            parse::skipper_type
-        > doubles_rule;
-
         set_meter_rule                      set_meter;
         set_meter_rule                      set_ship_part_meter;
         set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_1;
@@ -186,6 +187,7 @@ namespace {
         parse::effect_parser_rule           set_planet_type;
         parse::effect_parser_rule           set_planet_size;
         parse::effect_parser_rule           set_species;
+        parse::effect_parser_rule           set_species_opinion;
         parse::effect_parser_rule           set_owner;
         parse::effect_parser_rule           start;
     };
