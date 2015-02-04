@@ -440,6 +440,14 @@ const std::map<std::string, std::map<int, double> >& SpeciesManager::GetSpeciesE
 const std::map<std::string, std::map<std::string, double> >& SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
 { return m_species_species_opinions; }
 
+double SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
+    return 0.0;
+}
+
+double SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name, const std::string& rated_species_name) const {
+    return 0.0;
+}
+
 void SpeciesManager::ClearSpeciesOpinions() {
     m_species_empire_opinions.clear();
     m_species_species_opinions.clear();
