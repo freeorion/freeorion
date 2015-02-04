@@ -42,6 +42,7 @@
     (BuildingTypesProduced)                     \
     (BuildingTypesScrapped)                     \
     (BuildTime)                                 \
+    (CanAddStarlaneTo)                          \
     (CanColonize)                               \
     (CanProduceShips)                           \
     (Capacity)                                  \
@@ -215,6 +216,7 @@
     (Object)                                    \
     (ObjectType)                                \
     (Ocean)                                     \
+    (Opinion)                                   \
     (Or)                                        \
     (Orange)                                    \
     (Orbit)                                     \

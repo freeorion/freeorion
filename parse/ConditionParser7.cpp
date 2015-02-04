@@ -66,7 +66,7 @@ namespace {
 
             location
                 =   (tok.Location_
-                >    parse::label(Type_token)   >>
+                >    parse::label(Type_token) >
                     (
                         tok.Building_   [ _a = Condition::CONTENT_BUILDING ]
                     |   tok.Species_    [ _a = Condition::CONTENT_SPECIES ]

@@ -45,54 +45,49 @@ namespace {
 
             number
                 =    tok.Number_
-                >>  -(
-                        parse::label(Low_token)   >> int_value_ref [ _a = _1 ]
-                     )
-                >>  -(
-                        parse::label(High_token)  >> int_value_ref [ _b = _1 ]
-                     )
+                >> -(parse::label(Low_token)       > int_value_ref [ _a = _1 ])
+                >> -(parse::label(High_token)      > int_value_ref [ _b = _1 ])
                 >    parse::label(Condition_token) > parse::detail::condition_parser
                      [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
             value_test
-                =   tok.ValueTest_
-                    >> -(parse::label(Low_token)     >> double_value_ref [ _a = _1 ])
-                    >> -(parse::label(High_token)    >> double_value_ref [ _b = _1 ])
-                    >> parse::label(TestValue_token) >> double_value_ref
-                    [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
+                =    tok.ValueTest_
+                >> -(parse::label(Low_token)    > double_value_ref [ _a = _1 ])
+                >> -(parse::label(High_token)   > double_value_ref [ _b = _1 ])
+                >    parse::label(TestValue_token) > double_value_ref
+                     [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
                 ;
 
             turn
-                =  (tok.Turn_
-                    >> -(parse::label(Low_token)  >> int_value_ref [ _a = _1 ])
-                    >> -(parse::label(High_token) >> int_value_ref [ _b = _1 ]))
-                    [ _val = new_<Condition::Turn>(_a, _b) ]
+                =   (tok.Turn_
+                >> -(parse::label(Low_token)  > int_value_ref [ _a = _1 ])
+                >> -(parse::label(High_token) > int_value_ref [ _b = _1 ]))
+                     [ _val = new_<Condition::Turn>(_a, _b) ]
                 ;
 
             created_on_turn
-                =  (tok.CreatedOnTurn_
-                    >> -(parse::label(Low_token)  >> int_value_ref [ _a = _1 ])
-                    >> -(parse::label(High_token) >> int_value_ref [ _b = _1 ]))
-                    [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
+                =   (tok.CreatedOnTurn_
+                >> -(parse::label(Low_token)  > int_value_ref [ _a = _1 ])
+                >> -(parse::label(High_token) > int_value_ref [ _b = _1 ]))
+                     [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
                 ;
 
             number_of1
                 =   tok.NumberOf_
-                    >>  parse::label(Number_token)    >> int_value_ref [ _a = _1 ]
-                    >>  parse::label(Condition_token) >> parse::detail::condition_parser
+                >   parse::label(Number_token)    > int_value_ref [ _a = _1 ]
+                >   parse::label(Condition_token) > parse::detail::condition_parser
                     [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                 ;
 
             number_of2
-                =   (
-                        tok.MaximumNumberOf_ [ _b = Condition::SORT_MAX ]
+                =   (   tok.MaximumNumberOf_ [ _b = Condition::SORT_MAX ]
                     |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
                     |   tok.ModeNumberOf_    [ _b = Condition::SORT_MODE ]
                     )
-                    >>  parse::label(Number_token)    >> int_value_ref [ _a = _1 ]
-                    >>  parse::label(SortKey_token)   >> double_value_ref [ _c = _1 ]
-                    >>  parse::label(Condition_token) >> parse::detail::condition_parser
+                >   parse::label(Number_token)    > int_value_ref [ _a = _1 ]
+                >   parse::label(SortKey_token)   > double_value_ref [ _c = _1 ]
+                >   parse::label(Condition_token) > parse::detail::condition_parser
                     [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
                 ;
 
@@ -121,8 +116,14 @@ namespace {
                 [ _val = new_<Condition::ResourceSupplyConnectedByEmpire>(_a, _1) ]
                 ;
 
+            can_add_starlane
+                =    tok.CanAddStarlaneTo_
+                >    parse::label(Condition_token) > parse::detail::condition_parser
+                     [ _val = new_<Condition::CanAddStarlaneConnection>(_1) ]
+                ;
+
             start
-                %=   within_distance
+                =    within_distance
                 |    within_starlane_jumps
                 |    number
                 |    value_test
@@ -132,6 +133,7 @@ namespace {
                 |    random
                 |    owner_stockpile
                 |    resource_supply_connected
+                |    can_add_starlane
                 ;
 
             within_distance.name("WithinDistance");
@@ -144,6 +146,7 @@ namespace {
             random.name("Random");
             owner_stockpile.name("OwnerStockpile");
             resource_supply_connected.name("ResourceSupplyConnected");
+            can_add_starlane.name("CanAddStarlaneTo");
 
 #if DEBUG_CONDITION_PARSERS
             debug(within_distance);
@@ -156,6 +159,7 @@ namespace {
             debug(random);
             debug(owner_stockpile);
             debug(resource_supply_connected);
+            debug(can_add_starlane);
 #endif
         }
 
@@ -212,6 +216,7 @@ namespace {
         parse::condition_parser_rule            random;
         resource_type_double_ref_rule           owner_stockpile;
         int_ref_int_ref_rule                    resource_supply_connected;
+        parse::condition_parser_rule            can_add_starlane;
         parse::condition_parser_rule            start;
     };
 }
