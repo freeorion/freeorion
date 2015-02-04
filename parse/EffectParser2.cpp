@@ -99,19 +99,19 @@ namespace {
                 >    parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::SetOwner>(_1) ]
                 ;
 
-            //set_species_opinion
-            //    =    tok.SetSpeciesOpinion_
-            //    >    parse::label(Species_token) >   string_value_ref
-            //    > (
-            //        (   parse::label(Empire_token) >  int_value_ref
-            //         >  parse::label(Opinion_token) > double_value_ref
-            //            [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_1, _2, _3) ] )
-            //       |
-            //        (   parse::label(Species_token) > string_value_ref
-            //        >   parse::label(Opinion_token) > double_value_ref
-            //            [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_1, _2, _3) ])
-            //       )
-            //    ;
+            set_species_opinion
+                =    tok.SetSpeciesOpinion_
+                >    parse::label(Species_token) >   string_value_ref [ _a = _1 ]
+                > (
+                    (   parse::label(Empire_token) >  int_value_ref [ _c = _1 ]
+                     >  parse::label(Opinion_token) > double_value_ref
+                        [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ] )
+                   |
+                    (   parse::label(Species_token) > string_value_ref [ _b = _1 ]
+                    >   parse::label(Opinion_token) > double_value_ref
+                        [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_a, _b, _1) ])
+                   )
+                ;
 
             start
                 %=   set_meter
@@ -121,7 +121,7 @@ namespace {
                 |    set_planet_type
                 |    set_planet_size
                 |    set_species
-                //|    set_species_opinion
+                |    set_species_opinion
                 |    set_owner
                 ;
 
@@ -177,6 +177,17 @@ namespace {
             parse::skipper_type
         > set_empire_stockpile_rule;
 
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            Effect::EffectBase* (),
+            qi::locals<
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<int>*
+            >,
+            parse::skipper_type
+        > string_string_int_rule;
+
         set_meter_rule                      set_meter;
         set_meter_rule                      set_ship_part_meter;
         set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_1;
@@ -187,7 +198,7 @@ namespace {
         parse::effect_parser_rule           set_planet_type;
         parse::effect_parser_rule           set_planet_size;
         parse::effect_parser_rule           set_species;
-        parse::effect_parser_rule           set_species_opinion;
+        string_string_int_rule              set_species_opinion;
         parse::effect_parser_rule           set_owner;
         parse::effect_parser_rule           start;
     };
