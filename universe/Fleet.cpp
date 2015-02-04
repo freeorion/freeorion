@@ -256,7 +256,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     }
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
-    if (fuel < 1.0 &&
+    if (fuel < 1.0f &&
         this->SystemID() != INVALID_OBJECT_ID &&
         fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end())
     {
@@ -298,7 +298,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     //                          "  next system: " << (next_system ? next_system->Name() : "(none)");
 
 
-    bool isPostBlockade=false;
+    bool isPostBlockade = false;
     if (cur_system) {
         //Logger().debugStream() << "Fleet::MovePath starting in system "<< SystemID();
         if (flag_blockades && next_system->ID() != m_arrival_starlane && 
@@ -351,21 +351,21 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         //    Logger().debugStream() << "     at system " << cur_system->Name() << " with id " << cur_system->ID();
         //else
         //    Logger().debugStream() << "     at (" << cur_x << ", " << cur_y << ")";
-        
+
         // Make sure that there actually still is a starlane between the two systems
         // we are between
-        TemporaryPtr<const System>* prev_or_cur = NULL;
-        if(cur_system){
-            prev_or_cur = &cur_system;
-        }else if(prev_system){
-            prev_or_cur = &prev_system;
-        }else{
+        TemporaryPtr<const System> prev_or_cur;
+        if (cur_system) {
+            prev_or_cur = cur_system;
+        } else if (prev_system) {
+            prev_or_cur = prev_system;
+        } else {
             Logger().errorStream() << "Fleet::MovePath: No previous or current system!?";
         }
-        if(prev_or_cur){
-            if(!(*prev_or_cur)->HasStarlaneTo(next_system->ID())){
-                Logger().debugStream() << "Fleet::MovePath: There starlane to follow between Systems " << (*prev_or_cur)->ID() << " and " << next_system->ID()
-                << ". Abandoning the rest of the route.";
+        if (prev_or_cur) {
+            if (!prev_or_cur->HasStarlaneTo(next_system->ID())) {
+                Logger().debugStream() << "Fleet::MovePath: No starlane connection between systems " << prev_or_cur->ID() << " and " << next_system->ID()
+                                       << ". Abandoning the rest of the route.";
                 return retval;
             }
         }
