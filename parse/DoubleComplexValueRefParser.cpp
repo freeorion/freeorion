@@ -20,28 +20,32 @@ namespace parse {
 
             part_capacity
                 = (     tok.PartCapacity_ [ _a = construct<std::string>(_1) ]
-                     >> parse::label(Name_token) >> tok.string [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
+                     > parse::label(Name_token) > tok.string [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
              direct_distance
                 = (     tok.DirectDistanceBetween_ [ _a = construct<std::string>(_1) ]
-                     >> parse::label(Object_token) >> simple_int [ _b = _1 ]
-                     >> parse::label(Object_token) >> simple_int [ _c = _1 ]
+                     >  parse::label(Object_token) > simple_int [ _b = _1 ]
+                     >  parse::label(Object_token) > simple_int [ _c = _1 ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_empire_opinion
-                = (     tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesEmpireOpinion") ]
-                     >> parse::label(Species_token) >>  string_value_ref [ _d = _1 ]
-                     >> parse::label(Empire_token) >>   simple_int [ _b = _1 ]
+                = (
+                    (  tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesEmpireOpinion") ]
+                       >  parse::label(Species_token) >  string_value_ref [ _d = _1 ]
+                    )
+                  >> parse::label(Empire_token)  >  simple_int [ _b = _1 ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_species_opinion
-                = (     tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesSpeciesOpinion") ]
-                     >> parse::label(Species_token) >>  string_value_ref [ _d = _1 ]
-                     >> parse::label(Species_token) >>  string_value_ref [ _e = _1 ]
+                = (
+                    (   tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesSpeciesOpinion") ]
+                      >  parse::label(Species_token) >  string_value_ref [ _d = _1 ]
+                    )
+                  >> parse::label(Species_token) >  string_value_ref [ _e = _1 ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 

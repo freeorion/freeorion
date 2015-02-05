@@ -20,6 +20,8 @@ namespace {
                 parse::value_ref_parser<int>();
             const parse::value_ref_parser_rule<double>::type& double_value_ref =
                 parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule< int >::type& flexible_int_ref = 
+                parse::value_ref_parser_flexible_int();
 
             qi::_1_type _1;
             qi::_a_type _a;
@@ -38,44 +40,44 @@ namespace {
 
             within_starlane_jumps
                 =    tok.WithinStarlaneJumps_
-                >    parse::label(Jumps_token)     > int_value_ref [ _a = _1 ]
+                >    parse::label(Jumps_token)     > flexible_int_ref [ _a = _1 ]
                 >    parse::label(Condition_token) > parse::detail::condition_parser
                      [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
                 ;
 
             number
                 =    tok.Number_
-                >> -(parse::label(Low_token)       > int_value_ref [ _a = _1 ])
-                >> -(parse::label(High_token)      > int_value_ref [ _b = _1 ])
+                >   -(parse::label(Low_token)   >  flexible_int_ref [ _a = _1 ])
+                >   -(parse::label(High_token)  >  flexible_int_ref [ _b = _1 ])
                 >    parse::label(Condition_token) > parse::detail::condition_parser
                      [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
             value_test
                 =    tok.ValueTest_
-                >> -(parse::label(Low_token)    > double_value_ref [ _a = _1 ])
-                >> -(parse::label(High_token)   > double_value_ref [ _b = _1 ])
+                >  -(parse::label(Low_token)    > double_value_ref [ _a = _1 ])
+                >  -(parse::label(High_token)   > double_value_ref [ _b = _1 ])
                 >    parse::label(TestValue_token) > double_value_ref
                      [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
                 ;
 
             turn
-                =   (tok.Turn_
-                >> -(parse::label(Low_token)  > int_value_ref [ _a = _1 ])
-                >> -(parse::label(High_token) > int_value_ref [ _b = _1 ]))
-                     [ _val = new_<Condition::Turn>(_a, _b) ]
+                =  (tok.Turn_
+                > -(parse::label(Low_token)  > (flexible_int_ref [ _a = _1 ]))
+                > -(parse::label(High_token) > (flexible_int_ref [ _b = _1 ])))
+                    [ _val = new_<Condition::Turn>(_a, _b) ]
                 ;
 
             created_on_turn
-                =   (tok.CreatedOnTurn_
-                >> -(parse::label(Low_token)  > int_value_ref [ _a = _1 ])
-                >> -(parse::label(High_token) > int_value_ref [ _b = _1 ]))
-                     [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
+                =  (tok.CreatedOnTurn_
+                > -(parse::label(Low_token)  > flexible_int_ref [ _a = _1 ])
+                > -(parse::label(High_token) > flexible_int_ref [ _b = _1 ]))
+                    [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
                 ;
 
             number_of1
                 =   tok.NumberOf_
-                >   parse::label(Number_token)    > int_value_ref [ _a = _1 ]
+                >   parse::label(Number_token)    > flexible_int_ref [ _a = _1 ]
                 >   parse::label(Condition_token) > parse::detail::condition_parser
                     [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                 ;
@@ -85,7 +87,7 @@ namespace {
                     |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
                     |   tok.ModeNumberOf_    [ _b = Condition::SORT_MODE ]
                     )
-                >   parse::label(Number_token)    > int_value_ref [ _a = _1 ]
+                >   parse::label(Number_token)    > flexible_int_ref [ _a = _1 ]
                 >   parse::label(SortKey_token)   > double_value_ref [ _c = _1 ]
                 >   parse::label(Condition_token) > parse::detail::condition_parser
                     [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]

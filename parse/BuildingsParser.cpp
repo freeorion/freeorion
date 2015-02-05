@@ -40,8 +40,8 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =          parse::value_ref_parser<int>();
             const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule< int >::type& flexible_int_ref =     parse::value_ref_parser_flexible_int();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -78,16 +78,16 @@ namespace {
             building_type
                 =    building_prefix [ _a = _1 ]
                 >    parse::label(BuildCost_token)               > double_value_ref [ _b = _1 ]
-                >    parse::label(BuildTime_token)               > int_value_ref [ _c = _1 ]
+                >    parse::label(BuildTime_token)               > flexible_int_ref [ _c = _1 ]
                 >    producible [ _d = _1 ]
                 >    (
-                            parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _e = _1 ]
+                            parse::label(CaptureResult_token)    > parse::enum_parser<CaptureResult>() [ _e = _1 ]
                         |   eps [ _e = CR_CAPTURE ]
                      )
                 >    parse::detail::tags_parser()(_f)
-                >  -(parse::label(Location_token)               >> parse::detail::condition_parser [ _g = _1 ] )
-                >  -(parse::label(EnqueueLocation_token)        >> parse::detail::condition_parser [ _h = _1 ] )
-                >  -(parse::label(EffectsGroups_token)          >> parse::detail::effects_group_parser() [ _i = _1 ] )
+                >  -(parse::label(Location_token)                > parse::detail::condition_parser [ _g = _1 ] )
+                >  -(parse::label(EnqueueLocation_token)         > parse::detail::condition_parser [ _h = _1 ] )
+                >  -(parse::label(EffectsGroups_token)           > parse::detail::effects_group_parser() [ _i = _1 ] )
                 >    parse::label(Icon_token)                    > tok.string
                     [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _1)) ]
                 ;

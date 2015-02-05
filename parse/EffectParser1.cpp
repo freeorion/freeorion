@@ -54,8 +54,8 @@ namespace {
 
             set_empire_tech_progress
                 =    tok.SetEmpireTechProgress_
-                >    parse::label(Name_token) >     string_value_ref [ _a = _1 ]
-                >    parse::label(Progress_token) > double_value_ref [ _b = _1 ]
+                >    parse::label(Name_token)     >  string_value_ref [ _a = _1 ]
+                >    parse::label(Progress_token) >  double_value_ref [ _b = _1 ]
                 >    (
                         (parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
                      |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
@@ -64,9 +64,9 @@ namespace {
 
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
-                >    parse::label(Message_token)    > tok.string [ _a = _1 ]
-                >> -(parse::label(Icon_token)       > tok.string [ _b = _1 ] )
-                >> -(parse::label(Parameters_token) > string_and_string_ref_vector [ _c = _1 ] )
+                >    parse::label(Message_token)    >  tok.string [ _a = _1 ]
+                >  -(parse::label(Icon_token)       >  tok.string [ _b = _1 ] )
+                >  -(parse::label(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
                 >   (
                         (
                             (
@@ -90,7 +90,7 @@ namespace {
                 ;
 
             string_and_string_ref
-                =    parse::label(Tag_token)  > tok.string [ _a = _1 ]
+                =    parse::label(Tag_token)  >  tok.string [ _a = _1 ]
                 >    parse::label(Data_token)
                 >  ( int_value_ref      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int> >(_1)) ]
                    | double_value_ref   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double> >(_1)) ]
@@ -100,7 +100,7 @@ namespace {
                 ;
 
             string_and_string_ref_vector
-                =    '[' >> *string_and_string_ref [ push_back(_val, _1) ] >> ']'
+                =    '[' > *string_and_string_ref [ push_back(_val, _1) ] > ']'
                 |    string_and_string_ref [ push_back(_val, _1) ]
                 ;
 

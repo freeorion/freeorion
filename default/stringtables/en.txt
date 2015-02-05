@@ -3074,6 +3074,14 @@ Own Planets Depopulated
 PLANETS_INVADED
 Planets Invaded
 
+STATISTICS_TEST_1
+Statistics Test 1
+
+STATISTICS_TEST_2
+Statistics Test 2
+
+STATISTICS_TEST_3
+Statistics Test 3
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -6155,6 +6163,36 @@ star type
 
 DESC_VAR_VALUE
 previous value
+
+DESC_VAR_GALAXYMAXAIAGGRESSION
+the galaxy MAX AI Aggression setting
+
+DESC_VAR_GALAXYSIZE
+the galaxy size setting (# of Systems)
+
+DESC_VAR_GALAXYPLANETDENSITY
+the galaxy planet density setting
+
+DESC_VAR_GALAXYAGE
+the galaxy age setting
+
+DESC_VAR_GALAXYMONSTERFREQUENCY
+the galaxy monster frequency setting
+
+DESC_VAR_GALAXYNATIVEFREQUENCY
+the galaxy native frequency setting
+
+DESC_VAR_GALAXYSHAPE
+the galaxy shape setting
+
+DESC_VAR_GALAXYSPECIALFREQUENCY
+the galaxy special frequency setting
+
+DESC_VAR_GALAXYSTARLANEFREQUENCY
+the galaxy starlane frequency setting
+
+DESC_VAR_NON_OBJECT_REFERENCE
+a free variable
 
 DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]

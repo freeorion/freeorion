@@ -34,13 +34,13 @@ namespace {
 
             create_planet
                 =    tok.CreatePlanet_
-                >>   parse::label(Type_token)       >> planet_type_value_ref [ _a = _1 ]
-                >>   parse::label(PlanetSize_token) >> planet_size_value_ref [ _val = new_<Effect::CreatePlanet>(_a, _1) ]
+                >    parse::label(Type_token)       >  planet_type_value_ref [ _a = _1 ]
+                >    parse::label(PlanetSize_token) >  planet_size_value_ref [ _val = new_<Effect::CreatePlanet>(_a, _1) ]
                 ;
 
             create_building
                 =    tok.CreateBuilding_
-                >>   parse::label(Name_token)       >> string_value_ref [ _val = new_<Effect::CreateBuilding>(_1) ]
+                >    parse::label(Name_token)       >  string_value_ref [ _val = new_<Effect::CreateBuilding>(_1) ]
                 ;
 
             create_ship_1
@@ -53,14 +53,14 @@ namespace {
             create_ship_2
                 =    tok.CreateShip_
                 >>   parse::label(DesignName_token) >> tok.string [ _a = _1 ]
-                >>   parse::label(Empire_token)     >> int_value_ref [ _b = _1 ]
+                >>   (parse::label(Empire_token)    >  int_value_ref [ _b = _1 ])
                 >>   parse::label(Species_token)    >> string_value_ref [ _val = new_<Effect::CreateShip>(_a, _b, _1) ]
                 ;
 
             create_ship_3
                 =    tok.CreateShip_
                 >>   parse::label(DesignName_token) >> tok.string [ _a = _1 ]
-                >>   parse::label(Empire_token)     >> int_value_ref [ _val = new_<Effect::CreateShip>(_a, _1) ]
+                >>   parse::label(Empire_token)     > int_value_ref [ _val = new_<Effect::CreateShip>(_a, _1) ]
                 ;
 
             create_ship_4
@@ -70,30 +70,30 @@ namespace {
 
             create_field
                 =   tok.CreateField_
-                >>  parse::label(Type_token)        >> tok.string [ _a = _1 ]
-                >>  (
+                >   parse::label(Type_token)        >  tok.string [ _a = _1 ]
+                >   (
                         (
-                            parse::label(Size_token)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
+                            parse::label(Size_token)    >  double_value_ref [ _val = new_<Effect::CreateField>(_a, _1) ]
                         )
                     |   (
-                            parse::label(X_token)       >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_token)       >> double_value_ref [ _c = _1 ]
-                        >>  parse::label(Size_token)    >> double_value_ref [ _val = new_<Effect::CreateField>(_a, _b, _c, _1) ]
+                            parse::label(X_token)       >  double_value_ref [ _b = _1 ]
+                        >   parse::label(Y_token)       >  double_value_ref [ _c = _1 ]
+                        >   parse::label(Size_token)    >  double_value_ref [ _val = new_<Effect::CreateField>(_a, _b, _c, _1) ]
                         )
                     )
                 ;
 
             create_system
                 =   tok.CreateSystem_
-                >>  (
+                >   (
                         (
-                            parse::label(Type_token)     >> star_type_value_ref [ _a = _1 ]
-                        >>  parse::label(X_token)        >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_token)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_a, _b, _1) ]
+                            parse::label(Type_token)     >  star_type_value_ref [ _a = _1 ]
+                        >   parse::label(X_token)        >  double_value_ref [ _b = _1 ]
+                        >   parse::label(Y_token)        >  double_value_ref [ _val = new_<Effect::CreateSystem>(_a, _b, _1) ]
                         )
                     |   (
-                            parse::label(X_token)        >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_token)        >> double_value_ref [ _val = new_<Effect::CreateSystem>(_b, _1) ]
+                            parse::label(X_token)        >  double_value_ref [ _b = _1 ]
+                        >   parse::label(Y_token)        >  double_value_ref [ _val = new_<Effect::CreateSystem>(_b, _1) ]
                         )
                     )
                 ;

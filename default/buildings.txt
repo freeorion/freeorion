@@ -1,4 +1,5 @@
-include "shared_macros.txt"
+// the includes have been moved to the end of the file to minimize discrepancies in
+// the line number reported whenever there is a parsing error
 
 BuildingType
     name = "BLD_CULTURE_ARCHIVES"
@@ -1841,3 +1842,6 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/species/other-04.png"
+
+include "shared_macros.txt"
+

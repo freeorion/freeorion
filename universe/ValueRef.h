@@ -717,10 +717,25 @@ bool ValueRef::Statistic<T>::SourceInvariant() const
 
 template <class T>
 std::string ValueRef::Statistic<T>::Description() const {
-    std::string retval = UserString("DESC_STATISTIC") + ": [(" + UserString("DESC_STAT_TYPE") + ": " + boost::lexical_cast<std::string>(m_stat_type) + ")"; 
+    std::string retval = UserString("DESC_STATISTIC") + ": [(" + UserString("DESC_STAT_TYPE") + ": " + boost::lexical_cast<std::string>(m_stat_type) + ")";
+    switch (m_stat_type) {
+        case ValueRef::COUNT:              retval += "(COUNT)";            break;
+        case ValueRef::UNIQUE_COUNT:       retval += "(UNIQUE_COUNT)";     break;
+        case ValueRef::IF:                 retval += "(IF ANY)";           break;
+        case ValueRef::SUM:                retval += "(SUM)";              break;
+        case ValueRef::MEAN:               retval += "(MEAN)";             break;
+        case ValueRef::RMS:                retval += "(RMS)";              break;
+        case ValueRef::MODE:               retval += "(MODE)";             break;
+        case ValueRef::MAX:                retval += "(MAX)";              break;
+        case ValueRef::MIN:                retval += "(MIN)";              break;
+        case ValueRef::SPREAD:             retval += "(SPREAD)";           break;
+        case ValueRef::STDEV:              retval += "(STDEV)";            break;
+        case ValueRef::PRODUCT:            retval += "(PRODUCT)";          break;
+        default:                           retval += "()";                 break;
+    }
     if (m_value_ref) {
         retval += "(" + m_value_ref->Description() + ")";
-    } else {
+    } else if (!ValueRef::Variable<T>::Description().empty()){
         retval += "(" + ValueRef::Variable<T>::Description() + ")";
     }
     retval += "(" + UserString("DESC_SAMPLING_CONDITION") + ": " + m_sampling_condition->Description() + ")]";

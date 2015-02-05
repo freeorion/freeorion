@@ -1,7 +1,7 @@
 #include "Label.h"
 
 namespace {
-    static const bool PARSIG_LABELS_OPTIONAL = false;
+    static const bool PARSING_LABELS_OPTIONAL = false;
 }
 
 namespace parse {
@@ -11,7 +11,7 @@ namespace parse {
         if (it == rules.end()) {
             const lexer& l = lexer::instance();
             label_rule& retval = rules[name];
-            if (PARSIG_LABELS_OPTIONAL) {
+            if (PARSING_LABELS_OPTIONAL) {
                 retval = -(l.name_token(name) >> '=');
             } else {
                 retval =  (l.name_token(name) >> '=');

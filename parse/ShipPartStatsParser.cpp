@@ -44,7 +44,7 @@ namespace {
             using phoenix::construct;
 
             fighter_stats_prefix
-                =    parse::label(Type_token)               >> parse::enum_parser<CombatFighterType>() [ _r1 = _1 ]
+                =    parse::label(Type_token)               >  parse::enum_parser<CombatFighterType>() [ _r1 = _1 ]
                 >    parse::label(AntiShipDamage_token)     >  parse::double_ [ _r2 = _1 ]
                 >    parse::label(AntiFighterDamage_token)  >  parse::double_ [ _r3 = _1 ]
                 >    parse::label(LaunchRate_token)         >  parse::double_ [ _r4 = _1 ]
@@ -53,7 +53,7 @@ namespace {
 
             fighter_stats
                 =    fighter_stats_prefix(_a, _b, _c, _d, _e)
-                >    parse::label(Speed_token)              >> parse::double_ [ _f = _1 ]
+                >    parse::label(Speed_token)              >  parse::double_ [ _f = _1 ]
                 >    parse::label(Stealth_token)            >  parse::double_ [ _g = _1 ]
                 >    parse::label(Structure_token)          >  parse::double_ [ _h = _1 ]
                 >    parse::label(Detection_token)          >  parse::double_ [ _i = _1 ]
@@ -61,15 +61,15 @@ namespace {
                 ;
 
             lr_df_stats_prefix
-                =    parse::label(Damage_token) >> parse::double_ [ _r1 = _1 ]
+                =    parse::label(Damage_token) >  parse::double_ [ _r1 = _1 ]
                 >    parse::label(ROF_token)    >  parse::double_ [ _r2 = _1 ]
                 >    parse::label(Range_token)  >  parse::double_ [ _r3 = _1 ]
                 ;
 
             lr_df_stats
                 =    lr_df_stats_prefix(_b, _c, _d)
-                >>   (
-                            parse::label(Speed_token)     >> parse::double_ [ _e = _1 ]
+                >    (
+                            parse::label(Speed_token)     >  parse::double_ [ _e = _1 ]
                         >   parse::label(Stealth_token)   >  parse::double_ [ _f = _1 ]
                         >   parse::label(Structure_token) >  parse::double_ [ _g = _1 ]
                         >   parse::label(Capacity_token)  >  parse::int_ [ _val = construct<LRStats>(_b, _c, _d, _e, _f, _g, _1) ]
@@ -80,7 +80,7 @@ namespace {
             start
                 =    fighter_stats [ _val = _1 ]
                 |    lr_df_stats [ _val = _1 ]
-                |    (parse::label(Capacity_token) >> parse::double_ [ _val = _1 ])
+                |    (parse::label(Capacity_token) > parse::double_ [ _val = _1 ])
                 |    eps [ _val = 0.0 ]
                 ;
 
