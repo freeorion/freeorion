@@ -7,6 +7,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/Order.h"
 #include "../util/ModeratorAction.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -23,6 +24,8 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
+
+#include <sstream>
 
 std::vector<std::string> SpecialNames();
 
@@ -2211,6 +2214,9 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         moderator = true;
 
+    // Right click on an unselected row should automatically select it
+    m_list_box->SelectRow(it);
+
     // create popup menu with object commands in it
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
@@ -2220,10 +2226,35 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (!obj)
         return;
 
+    const int MENUITEM_SET_FOCUS_BASE = 20;
+    int menuitem_id = MENUITEM_SET_FOCUS_BASE;
+    std::map<std::string, int> all_foci;
     UniverseObjectType type = obj->ObjectType();
-    if (type == OBJ_PLANET)
+    if (type == OBJ_PLANET) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
 
+        const GG::ListBox::SelectionSet sel = m_list_box->Selections();
+        for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
+            ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+            if (row) {
+                TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
+                    std::vector<std::string> planet_foci = one_planet->AvailableFoci();
+                    for (std::vector<std::string>::iterator it = planet_foci.begin(); it != planet_foci.end(); ++it)
+                        all_foci[*it]++;
+                }
+            }
+        }
+        GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), 3, false, false);
+        for (std::map<std::string, int>::iterator it = all_foci.begin(); it != all_foci.end(); ++it) {
+            menuitem_id++;
+            std::stringstream out;
+            out << UserString(it->first) << " (" << it->second << ")";
+            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), menuitem_id, false, false));
+        }
+        if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
+            menu_contents.next_level.push_back(focusMenuItem);
+    }
     // moderator actions...
     if (moderator) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("MOD_DESTROY"),      10, false, false));
@@ -2243,6 +2274,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             ClientUI::GetClientUI()->ZoomToPlanetPedia(object_id);
             break;
         }
+        case 3: {
+                // should never happen, Set Focus parent menu item is disabled
+                break;
+        }
         case 10: {
             net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::DestroyUniverseObject(object_id)));
             break;
@@ -2251,8 +2286,27 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::SetOwner(object_id, ALL_EMPIRES)));
             break;
         }
-        default:
+        default: {
+            int id = popup.MenuID();
+            if (id > MENUITEM_SET_FOCUS_BASE && id <= menuitem_id) {
+                std::map<std::string, int>::iterator it = all_foci.begin();
+                std::advance(it, id - MENUITEM_SET_FOCUS_BASE - 1);
+                std::string focus = it->first;
+                const GG::ListBox::SelectionSet sel = m_list_box->Selections();
+                for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+                    if (row) {
+                        TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                        if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
+                            one_planet->SetFocus(focus);
+                            app->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(app->EmpireID(), one_planet->ID(), focus)));
+                         }
+                    }
+                }
+            }
+            Refresh();
             break;
+        }
         }
     }
 }

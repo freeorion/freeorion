@@ -2408,6 +2408,9 @@ Latest known stealth (%1%) exceeds [[DETECTION_TITLE]] (%2%).
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
 Latest known stealth is out of date. Actual stealth exceeds [[DETECTION_TITLE]] or local [[DETECTION_RANGE_TITLE]] is excessively impaired.
 
+MENUITEM_SET_FOCUS
+Set focus
+
 ## Resources Panel ##########
 
 RP_FOCUS_TOOLTIP
