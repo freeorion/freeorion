@@ -61,8 +61,8 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =          parse::value_ref_parser<int>();
             const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule< int >::type& flexible_int_ref =     parse::value_ref_parser_flexible_int();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -94,14 +94,14 @@ namespace {
 
             tech_info
                 =    tech_info_name_desc(_a, _b, _c)
-                >>  -(
-                            parse::label(TechType_token) >> parse::enum_parser<TechType>() [ _d = _1 ]
+                >  -(
+                            parse::label(TechType_token) > parse::enum_parser<TechType>() [ _d = _1 ]
                         |   eps [ _d = TT_THEORY ]
                      )
                 >    parse::label(Category_token)      > tok.string      [ _e = _1 ]
                 >    parse::label(ResearchCost_token)  > double_value_ref[ _f = _1 ]
-                >    parse::label(ResearchTurns_token) > int_value_ref   [ _g = _1 ]
-                >>   (
+                >    parse::label(ResearchTurns_token) > flexible_int_ref   [ _g = _1 ]
+                >   (
                             tok.Unresearchable_ [ _h = false ]
                         |   tok.Researchable_ [ _h = true ]
                         |   eps [ _h = true ]
@@ -111,7 +111,7 @@ namespace {
 
             prerequisites
                 =     parse::label(Prerequisites_token)
-                >>   (
+                >   (
                             '[' > +tok.string [ insert(_r1, _1) ] > ']'
                         |   tok.string [ insert(_r1, _1) ]
                      )
@@ -119,7 +119,7 @@ namespace {
 
             unlocks
                 =    parse::label(Unlock_token)
-                >>   (
+                >    (
                             '[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']'
                         |   parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
                      )
@@ -132,10 +132,10 @@ namespace {
                         >  -prerequisites(_b)
                         >  -unlocks(_c)
                         >  -(
-                                parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser() [ _d = _1 ]
+                                parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _d = _1 ]
                             )
                         >  -(
-                                parse::label(Graphic_token) >> tok.string [ _e = _1 ]
+                                parse::label(Graphic_token) > tok.string [ _e = _1 ]
                             )
                      )
                      [ insert_tech(_r1, new_<Tech>(_a, _d, _b, _c, _e)) ]

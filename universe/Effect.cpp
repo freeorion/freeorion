@@ -1115,10 +1115,11 @@ SetOwner::~SetOwner()
 { delete m_empire_id; }
 
 void SetOwner::Execute(const ScriptingContext& context) const {
-    int empire_id = m_empire_id->Eval(context);
     if (!context.effect_target)
         return;
     int initial_owner = context.effect_target->Owner();
+
+    int empire_id = m_empire_id->Eval(ScriptingContext(context, initial_owner));
     if (initial_owner == empire_id)
         return;
 
@@ -1185,15 +1186,21 @@ SetSpeciesEmpireOpinion::~SetSpeciesEmpireOpinion() {
 }
 
 void SetSpeciesEmpireOpinion::Execute(const ScriptingContext& context) const {
-    int empire_id = m_empire_id->Eval(context);
     if (!context.effect_target)
+        return;
+    if (!m_species_name || !m_opinion || !m_empire_id)
+        return;
+
+    int empire_id = m_empire_id->Eval(context);
+    if (empire_id == ALL_EMPIRES)
         return;
 
     std::string species_name = m_species_name->Eval(context);
     if (species_name.empty())
         return;
 
-    double opinion = m_opinion->Eval(context);
+    double initial_opinion = GetSpeciesManager().SpeciesEmpireOpinion(species_name, empire_id);
+    double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
 
     GetSpeciesManager().SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
 }
@@ -1234,6 +1241,11 @@ SetSpeciesSpeciesOpinion::~SetSpeciesSpeciesOpinion() {
 }
 
 void SetSpeciesSpeciesOpinion::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target)
+        return;
+    if (!m_opinionated_species_name || !m_opinion || !m_rated_species_name)
+        return;
+
     std::string opinionated_species_name = m_opinionated_species_name->Eval(context);
     if (opinionated_species_name.empty())
         return;
@@ -1242,7 +1254,8 @@ void SetSpeciesSpeciesOpinion::Execute(const ScriptingContext& context) const {
     if (rated_species_name.empty())
         return;
 
-    double opinion = m_opinion->Eval(context);
+    double initial_opinion = GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+    double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
 
     GetSpeciesManager().SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
 }
@@ -2714,6 +2727,7 @@ std::string SetDestination::Description() const {
 
 std::string SetDestination::Dump() const
 { return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n"; }
+
 
 ///////////////////////////////////////////////////////////
 // SetAggression                                         //

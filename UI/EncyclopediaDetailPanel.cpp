@@ -3,6 +3,7 @@
 #include "CUIControls.h"
 #include "DesignWnd.h"
 #include "Encyclopedia.h"
+#include "FleetWnd.h"
 #include "GraphControl.h"
 #include "Hotkeys.h"
 #include "MapWnd.h"
@@ -36,6 +37,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/GUI.h>
+#include <boost/algorithm/clamp.hpp>
 
 #include <boost/algorithm/string.hpp>
 
@@ -1801,9 +1803,7 @@ namespace {
         }
     }
 
-    std::string GetDetailedDescription(const TemporaryPtr<Ship> ship, const ShipDesign* design) {
-        GetUniverse().UpdateMeterEstimates(ship->ID());
-
+    std::string GetDetailedDescriptionBase(const ShipDesign* design) {
         std::string hull_link;
         if (!design->Hull().empty())
                 hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
@@ -1827,8 +1827,92 @@ namespace {
             if (part_it->second > 1)
                 parts_list += " x" + boost::lexical_cast<std::string>(part_it->second);
         }
+         return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR"))
+        % design->Description()
+        % hull_link
+        % parts_list);
+    }
 
-        return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+    std::string GetDetailedDescriptionStats(const TemporaryPtr<Ship> ship, const ShipDesign* design,
+                                            float enemy_DR, std::set<float> enemy_shots, float cost)
+    {
+        //The strength of a fleet is approximately weapons * armor, or
+        //(weapons - enemyShield) * armor / (enemyWeapons - shield). This
+        //depends on the enemy's weapons and shields, so we estimate the
+        //enemy technology from the turn.
+        const std::string& species = ship->SpeciesName().empty() ? "Generic" : UserString(ship->SpeciesName());
+        float structure = ship->CurrentMeterValue(METER_MAX_STRUCTURE);
+        float shield = ship->CurrentMeterValue(METER_MAX_SHIELD);
+        float attack = ship->TotalWeaponsDamage();
+        float strength = std::pow(attack * structure, 0.6f);
+        float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
+        float typical_shot = *std::max_element(enemy_shots.begin(), enemy_shots.end());
+        float typical_strength = std::pow(ship->TotalWeaponsDamage(enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f);
+        return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
+            % ""
+            % ""
+            % ""
+            % ""
+            % ""
+            % ""
+            % ""
+            % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
+            % ship->CurrentMeterValue(METER_MAX_SHIELD)
+            % ship->CurrentMeterValue(METER_DETECTION)
+            % ship->CurrentMeterValue(METER_STEALTH)
+            % ship->CurrentMeterValue(METER_BATTLE_SPEED)
+            % ship->CurrentMeterValue(METER_STARLANE_SPEED)
+            % ship->CurrentMeterValue(METER_MAX_FUEL)
+            % design->ColonyCapacity()
+            % design->TroopCapacity()
+            % attack
+            % species
+            % strength % (strength / cost)
+            % typical_shot
+            % enemy_DR
+            % typical_strength % (typical_strength / cost)).str();
+    }
+
+    std::string GetDetailedDescription(const TemporaryPtr<Ship> ship, const ShipDesign* design, float cost) {
+        GetUniverse().UpdateMeterEstimates(ship->ID());
+
+        const std::string& species = ship->SpeciesName().empty() ? "Generic" : ship->SpeciesName();
+        std::string hull_link;
+        if (!design->Hull().empty())
+                hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
+
+        std::string parts_list;
+        const std::vector<std::string>& parts = design->Parts();
+        std::map<std::string, int> non_empty_parts_count;
+        for (std::vector<std::string>::const_iterator part_it = parts.begin();
+             part_it != parts.end(); ++part_it)
+        {
+            if (part_it->empty())
+                continue;
+            non_empty_parts_count[*part_it]++;
+        }
+        for (std::map<std::string, int>::const_iterator part_it = non_empty_parts_count.begin();
+             part_it != non_empty_parts_count.end(); ++part_it)
+        {
+            if (part_it != non_empty_parts_count.begin())
+                parts_list += ", ";
+            parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, part_it->first);
+            if (part_it->second > 1)
+                parts_list += " x" + boost::lexical_cast<std::string>(part_it->second);
+        }
+
+        //The strength of a fleet is approximately weapons * armor, or
+        //(weapons - enemyShield) * armor / (enemyWeapons - shield). This
+        //depends on the enemy's weapons and shields, so we estimate the
+        //enemy technology from the turn.
+        float structure = ship->CurrentMeterValue(METER_MAX_STRUCTURE);
+        float shield = ship->CurrentMeterValue(METER_MAX_SHIELD);
+        float strength = std::pow(design->Attack() * structure, 0.6f);
+        float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
+        float typical_shot = 3 + 27 * tech_level;
+        float typical_shield = 20 * tech_level;
+        float typical_strength = std::pow(design->AdjustedAttack(typical_shield) * structure * typical_shot / std::max(typical_shot - shield, 0.0f), 0.6f);
+         return str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
         % design->Description()
         % hull_link
         % parts_list
@@ -1845,7 +1929,10 @@ namespace {
         % ship->CurrentMeterValue(METER_MAX_FUEL)
         % design->ColonyCapacity()
         % design->TroopCapacity()
-        % design->Attack());
+        % design->Attack()
+        % species
+        % strength % (strength / cost)
+        % typical_strength % (typical_strength / cost));
     }
 
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,
@@ -1872,12 +1959,58 @@ namespace {
         cost_units = UserString("ENC_PP");
         general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
 
-        TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, design_id, "",
-                                                           client_empire_id, TEMPORARY_OBJECT_ID);
+        float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
+        float typical_shot = 3 + 27 * tech_level;
+        float enemy_DR = 20 * tech_level;
+        Logger().debugStream() << "default enemy stats:: tech_level: " << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
+        std::set<float> enemy_shots;
+        enemy_shots.insert(typical_shot);
+        std::set<std::string> additional_species; // from currently selected planet and fleets, if any
+        const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+        if (const TemporaryPtr<Planet> planet = GetPlanet(map_wnd->SelectedPlanetID())) {
+            if (!planet->SpeciesName().empty())
+                additional_species.insert(planet->SpeciesName());
+        }
+        FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
+        std::set<int> chosen_ships;
+        int selected_ship = fleet_manager.SelectedShipID();
+        if (selected_ship != INVALID_OBJECT_ID) {
+            chosen_ships.insert(selected_ship);
+            if (const TemporaryPtr< Ship > this_ship = GetShip(selected_ship)) {
+                if (!additional_species.empty() && ((this_ship->CurrentMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
+                    enemy_DR = this_ship->CurrentMeterValue(METER_MAX_SHIELD);
+                    Logger().debugStream() << "Using selected ship for enemy values, DR: " << enemy_DR;
+                    enemy_shots.clear();
+                    std::vector< float > this_damage = this_ship->AllWeaponsDamage();
+                    for (std::vector< float >::iterator shot_it = this_damage.begin(); shot_it != this_damage.end(); shot_it++)
+                        Logger().debugStream() << "Weapons Dmg " << *shot_it;
+                    enemy_shots.insert(this_damage.begin(), this_damage.end());
+                }
+            }
+        } else if (fleet_manager.ActiveFleetWnd()) {
+            std::set<int> selected_fleets = fleet_manager.ActiveFleetWnd()->SelectedFleetIDs();
+            for (std::set< int >::iterator fleet_it = selected_fleets.begin(); fleet_it != selected_fleets.end(); fleet_it++) {
+                if (const TemporaryPtr<Fleet> this_fleet = GetFleet(*fleet_it)) {
+                    chosen_ships.insert(this_fleet->ShipIDs().begin(), this_fleet->ShipIDs().end());
+                }
+            }
+        }
+        for (std::set< int >::iterator ship_it = chosen_ships.begin(); ship_it != chosen_ships.end(); ship_it++)
+            if (const TemporaryPtr<Ship> this_ship = GetShip(*ship_it))
+                if (!this_ship->SpeciesName().empty())
+                    additional_species.insert(this_ship->SpeciesName());
+        std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
+        species_list.insert(species_list.begin(), "");
+        // detailed_description = GetDetailedDescription(temp, design, cost);
+        detailed_description = GetDetailedDescriptionBase(design);
+        for (std::vector< std::string >::iterator spec_it = species_list.begin(); spec_it != species_list.end(); spec_it++) {
+            TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, design_id, *spec_it,
+                                                        client_empire_id, TEMPORARY_OBJECT_ID);
+            GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+            detailed_description.append(GetDetailedDescriptionStats(temp, design, enemy_DR, enemy_shots, cost));
+            GetUniverse().Delete(TEMPORARY_OBJECT_ID);
+        }
 
-        detailed_description = GetDetailedDescription(temp, design);
-
-        GetUniverse().Delete(TEMPORARY_OBJECT_ID);
 
         // ships of this design
         std::vector<TemporaryPtr<const Ship> > design_ships;
@@ -1929,13 +2062,65 @@ namespace {
 
             GetUniverse().InsertShipDesignID(new ShipDesign(*incomplete_design), TEMPORARY_OBJECT_ID);
 
-            TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, "",
-                                                               client_empire_id, TEMPORARY_OBJECT_ID);
-            GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+            float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
+            float typical_shot = 3 + 27 * tech_level;
+            float enemy_DR = 20 * tech_level;
+            Logger().debugStream() << "default enemy stats:: tech_level: " << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
+            std::set<float> enemy_shots;
+            enemy_shots.insert(typical_shot);
+            std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
+            const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+            if (const TemporaryPtr<Planet> planet = GetPlanet(map_wnd->SelectedPlanetID())) {
+                if (!planet->SpeciesName().empty())
+                    additional_species.insert(planet->SpeciesName());
+            }
+            FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
+            std::set<int> chosen_ships;
+            int selected_ship = fleet_manager.SelectedShipID();
+            if (selected_ship != INVALID_OBJECT_ID) {
+                chosen_ships.insert(selected_ship);
+                if (const TemporaryPtr< Ship > this_ship = GetShip(selected_ship)) {
+                    if (!additional_species.empty() && ((this_ship->CurrentMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
+                        enemy_DR = this_ship->CurrentMeterValue(METER_MAX_SHIELD);
+                        Logger().debugStream() << "Using selected ship for enemy values, DR: " << enemy_DR;
+                        enemy_shots.clear();
+                        std::vector< float > this_damage = this_ship->AllWeaponsDamage();
+                        for (std::vector< float >::iterator shot_it = this_damage.begin(); shot_it != this_damage.end(); shot_it++)
+                            Logger().debugStream() << "Weapons Dmg " << *shot_it;
+                        enemy_shots.insert(this_damage.begin(), this_damage.end());
+                    }
+                }
+            } else if (fleet_manager.ActiveFleetWnd()) {
+                std::set<int> selected_fleets = fleet_manager.ActiveFleetWnd()->SelectedFleetIDs();
+                for (std::set< int >::iterator fleet_it = selected_fleets.begin(); fleet_it != selected_fleets.end(); fleet_it++) {
+                    if (const TemporaryPtr<Fleet> this_fleet = GetFleet(*fleet_it)) {
+                        chosen_ships.insert(this_fleet->ShipIDs().begin(), this_fleet->ShipIDs().end());
+                    }
+                }
+            }
+            for (std::set< int >::iterator ship_it = chosen_ships.begin(); ship_it != chosen_ships.end(); ship_it++)
+                if (const TemporaryPtr<Ship> this_ship = GetShip(*ship_it))
+                    if (!this_ship->SpeciesName().empty())
+                        additional_species.insert(this_ship->SpeciesName());
+            std::vector<std::string> species_list(additional_species.begin(), additional_species.end());
+            species_list.insert(species_list.begin(), "");
+            detailed_description = GetDetailedDescriptionBase(incomplete_design.get());
+            for (std::vector< std::string >::iterator spec_it = species_list.begin(); spec_it != species_list.end(); spec_it++) {
+                TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, *spec_it,
+                                                            client_empire_id, TEMPORARY_OBJECT_ID);
+                GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
+                detailed_description.append(GetDetailedDescriptionStats(temp, incomplete_design.get(), enemy_DR, enemy_shots, cost));
+                GetUniverse().Delete(TEMPORARY_OBJECT_ID);
+            }
 
-            detailed_description = GetDetailedDescription(temp, incomplete_design.get());
+            
+            //TemporaryPtr<Ship> temp = GetUniverse().CreateShip(client_empire_id, TEMPORARY_OBJECT_ID, "",
+            //                                                   client_empire_id, TEMPORARY_OBJECT_ID);
+            //GetUniverse().UpdateMeterEstimates(TEMPORARY_OBJECT_ID);
 
-            GetUniverse().Delete(TEMPORARY_OBJECT_ID);
+            //detailed_description = GetDetailedDescription(temp, incomplete_design.get(), cost);
+
+            //GetUniverse().Delete(TEMPORARY_OBJECT_ID);
             GetUniverse().DeleteShipDesign(TEMPORARY_OBJECT_ID);
         }
 

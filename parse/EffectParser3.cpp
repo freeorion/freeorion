@@ -31,30 +31,26 @@ namespace {
 
             move_in_orbit
                 =    tok.MoveInOrbit_
-                >>  (
+                >    parse::label(Speed_token) >  double_value_ref[ _a = _1 ]
+                >   (
+                        parse::label(Focus_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ]
+                    |
                         (
-                            parse::label(Speed_token) >> double_value_ref[ _a = _1 ]
-                        >>  parse::label(Focus_token) >> parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ]
-                        )
-                    |   (
-                            parse::label(Speed_token) >> double_value_ref [ _a = _1 ]
-                        >>  parse::label(X_token)     >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_token)     >> double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+                            parse::label(X_token)     >  double_value_ref [ _b = _1 ]
+                        >   parse::label(Y_token)     >  double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
                         )
                     )
                 ;
 
             move_towards
                 =    tok.MoveTowards_
-                >>  (
+                >    parse::label(Speed_token) > double_value_ref[ _a = _1 ]
+                >    (
+                        parse::label(Target_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
+                     |
                         (
-                            parse::label(Speed_token) >> double_value_ref[ _a = _1 ]
-                        >>  parse::label(Target_token)>> parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
-                        )
-                    |   (
-                            parse::label(Speed_token) >> double_value_ref [ _a = _1 ]
-                        >>  parse::label(X_token)     >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_token)     >> double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
+                            parse::label(X_token)     > double_value_ref [ _b = _1 ]
+                        >   parse::label(Y_token)     > double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
                         )
                     )
                 ;

@@ -5802,7 +5802,12 @@ namespace {
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            // TODO: implement this test
+            // TODO: implement this test.
+            //       - should check that there are no lanes already between candidate and all destination objects
+            //       - should check that the proposed lane is not too close to an existing system
+            //       - should check that there are no lanes already existing that cross the proposed lane
+            //       - should check that there are no lanes connecting to candidate or destination objects that are
+            //         very close in angle to the proposed lane
             return true;
         }
 
@@ -5848,7 +5853,7 @@ std::string Condition::CanAddStarlaneConnection::Description(bool negated/* = fa
 }
 
 std::string Condition::CanAddStarlaneConnection::Dump() const {
-    std::string retval = DumpIndent() + "CanAddStarlaneConnection condition =\n";
+    std::string retval = DumpIndent() + "CanAddStarlaneTo condition =\n";
     ++g_indent;
         retval += m_condition->Dump();
     --g_indent;

@@ -42,7 +42,7 @@ namespace {
             start
                 =   +(
                             alignment(_r1)
-                        >> -(
+                        >  -(
                                 tok.AlignmentEffects_
                             >   parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ phoenix::ref(*g_effects_groups) = _1 ]
                             )

@@ -131,7 +131,7 @@ void initialize_expression_parsers(
                     |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                     |   tok.Abs_    [ _c = ValueRef::ABS ]
                     )
-                    >> '(' > expr [ _val = new_<ValueRef::Operation<T> >(_c, _1) ] > ')'
+                    >> '(' >> expr [ _val = new_<ValueRef::Operation<T> >(_c, _1) ] >> ')'
                 )
             |   (
                     (
@@ -139,11 +139,11 @@ void initialize_expression_parsers(
                     |   tok.Max_            [ _c = ValueRef::MAXIMUM ]
                     |   tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]
                     )
-                    >> '(' > expr [ _a = _1 ] > ','
-                    > expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] > ')'
+                    >> '(' >> expr [ _a = _1 ] >> ','
+                    >> expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] >> ')'
                 )
             |   (
-                    lit('-') > function_expr
+                    lit('-') >> function_expr
                     [ _val = new_<ValueRef::Operation<T> >(ValueRef::NEGATE, _1) ]
                 )
             |   (
@@ -155,7 +155,7 @@ void initialize_expression_parsers(
     exponential_expr
         =   (
                 function_expr [ _a = _1 ]
-                >> '^' > function_expr
+                >> '^' >> function_expr
                 [ _val = new_<ValueRef::Operation<T> >( ValueRef::EXPONENTIATE, _a, _1 ) ]
             )
         |   function_expr [ _val = _1 ]
@@ -164,14 +164,14 @@ void initialize_expression_parsers(
     multiplicative_expr
         =   (
                 exponential_expr [ _a = _1 ]
-            >   (
+            >>   (
                    *(
                         (
                             (
                                 lit('*') [ _c = ValueRef::TIMES ]
                             |   lit('/') [ _c = ValueRef::DIVIDE ]
                             )
-                        >   exponential_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
+                        >>   exponential_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
                         ) [ _a = _b ]
                     )
                 )
@@ -185,14 +185,14 @@ void initialize_expression_parsers(
                 (
                     (
                         multiplicative_expr [ _a = _1 ]
-                    >   (
+                    >>   (
                         *(
                                 (
                                     (
                                         lit('+') [ _c = ValueRef::PLUS ]
                                     |   lit('-') [ _c = ValueRef::MINUS ]
                                     )
-                                >   multiplicative_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
+                                >>   multiplicative_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
                                 ) [ _a = _b ]
                             )
                         )
@@ -275,7 +275,7 @@ void initialize_numeric_statistic_parser(
     statistic_1
         =   (   tok.Count_  [ _b = ValueRef::COUNT ]
             |   tok.If_     [ _b = ValueRef::IF ] )
-            >>  parse::label(Condition_token) >>    parse::detail::condition_parser
+            >   parse::label(Condition_token) >    parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
 
@@ -284,7 +284,7 @@ void initialize_numeric_statistic_parser(
             >>  parse::label(Property_token)
             >>  -(container_type() [ push_back(_a, construct<std::string>(_1)) ] >> '.')
             >>  variable_name [ push_back(_a, construct<std::string>(_1)) ]
-            >>  parse::label(Condition_token) >>    parse::detail::condition_parser
+            >   parse::label(Condition_token) >     parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
 
@@ -296,7 +296,7 @@ void initialize_numeric_statistic_parser(
                |    bound_variable  [_c = _1 ]  // todo: try allowing parsing of complex variables here
                |    complex_variable[_c = _1 ]
                )
-            >>  parse::label(Condition_token) >>   parse::detail::condition_parser
+            >   parse::label(Condition_token) >    parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_c, _b, _1) ]
         ;
 

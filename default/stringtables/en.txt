@@ -2408,6 +2408,9 @@ Latest known stealth (%1%) exceeds [[DETECTION_TITLE]] (%2%).
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
 Latest known stealth is out of date. Actual stealth exceeds [[DETECTION_TITLE]] or local [[DETECTION_RANGE_TITLE]] is excessively impaired.
 
+MENUITEM_SET_FOCUS
+Set focus
+
 ## Resources Panel ##########
 
 RP_FOCUS_TOOLTIP
@@ -3074,6 +3077,14 @@ Own Planets Depopulated
 PLANETS_INVADED
 Planets Invaded
 
+STATISTICS_TEST_1
+Statistics Test 1
+
+STATISTICS_TEST_2
+Statistics Test 2
+
+STATISTICS_TEST_3
+Statistics Test 3
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -3346,17 +3357,14 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Hull: %2%
 Parts: %3%
 
-Total Attack Damage: %17%
-Structure: %8%
-[[encyclopedia SHIELDS_TITLE]]: %9%
-[[encyclopedia DETECTION_RANGE_TITLE]]: %10%
-[[encyclopedia STEALTH_TITLE]]: %11%
-Fuel Capacity: %14%
-Colonization Capacity: %15%
-Troops: %16%
-Starlane Speed: %13%
-'''
+Total Attack: %17%    Structure: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+Starlane Speed: %13%    Fuel Capacity: %14%
+[[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
+Colonization Capacity: %15%    Troops: %16%
 
+Estimated combat strength (ignoring shields): %19$.f (%20$.2f per PP)
+Against likely enemy weapons and shields: %21$.f (%22$.2f per PP)
+'''
 ## Temporarily removed
 # Direct Fire Parts: %4%
 # Missile Parts: %5%
@@ -3364,6 +3372,31 @@ Starlane Speed: %13%
 # Point Defense Parts: %7%
 # Battle Speed: %12%
 ##
+
+ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR
+'''%1%
+
+Hull: %2%
+Parts: %3%
+
+'''
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
+'''
+For species: %18%
+Total Attack: %17%    Structure: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+Starlane Speed: %13%    Fuel Capacity: %14%
+[[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
+Colonization Capacity: %15%    Troops: %16%
+Estimated combat strength (ignoring shields):  %19$.f   (%20$.2f per PP)
+Against enemy attack %21$.1f and shields %22$.1f:       %23$.f   (%24$.2f per PP)
+'''
+
+
+
+
+
 
 ENC_UNLOCKED_BY
 '''<u>Unlocked By Techs:</u>
@@ -6131,6 +6164,36 @@ star type
 
 DESC_VAR_VALUE
 previous value
+
+DESC_VAR_GALAXYMAXAIAGGRESSION
+the galaxy MAX AI Aggression setting
+
+DESC_VAR_GALAXYSIZE
+the galaxy size setting (# of Systems)
+
+DESC_VAR_GALAXYPLANETDENSITY
+the galaxy planet density setting
+
+DESC_VAR_GALAXYAGE
+the galaxy age setting
+
+DESC_VAR_GALAXYMONSTERFREQUENCY
+the galaxy monster frequency setting
+
+DESC_VAR_GALAXYNATIVEFREQUENCY
+the galaxy native frequency setting
+
+DESC_VAR_GALAXYSHAPE
+the galaxy shape setting
+
+DESC_VAR_GALAXYSPECIALFREQUENCY
+the galaxy special frequency setting
+
+DESC_VAR_GALAXYSTARLANEFREQUENCY
+the galaxy starlane frequency setting
+
+DESC_VAR_NON_OBJECT_REFERENCE
+a free variable
 
 DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]

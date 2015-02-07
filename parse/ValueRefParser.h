@@ -30,6 +30,8 @@ namespace parse {
     template <>
     value_ref_parser_rule<int>::type& value_ref_parser<int>();
 
+    value_ref_parser_rule<int>::type& value_ref_parser_flexible_int();
+
     template <>
     value_ref_parser_rule<double>::type& value_ref_parser<double>();
 

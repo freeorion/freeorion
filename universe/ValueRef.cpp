@@ -360,7 +360,14 @@ namespace ValueRef {
 std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
                                              const std::vector<std::string>& property_names)
 {
-    std::string names_size = boost::lexical_cast<std::string>(property_names.size());
+    int num_references = property_names.size();
+    if (ref_type == ValueRef::NON_OBJECT_REFERENCE)
+        num_references--;
+    for (unsigned int i = 0; i < property_names.size(); ++i)
+        if (property_names[i].empty())
+             num_references--;
+    num_references = std::max(0, num_references);
+    std::string names_size = boost::lexical_cast<std::string>(num_references);
     boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" +
                                              names_size));
 
@@ -370,11 +377,13 @@ std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
     case ValueRef::EFFECT_TARGET_VALUE_REFERENCE:       formatter % UserString("DESC_VAR_VALUE");           break;
     case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE: formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
     case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:  formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
-    case ValueRef::NON_OBJECT_REFERENCE:                formatter % "";                                     break;
+    case ValueRef::NON_OBJECT_REFERENCE:                                                                    break;
     default:                                            formatter % "???";                                  break;
     }
 
     for (unsigned int i = 0; i < property_names.size(); ++i) {
+        if (property_names[i].empty())  // apparently is empty for a ValueRef::EFFECT_TARGET_VALUE_REFERENCE
+            continue;
         std::string property_string_temp(std::string(property_names[i].c_str()));
         std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_string_temp));
         formatter % UserString(stringtable_key);
@@ -984,17 +993,7 @@ namespace ValueRef {
             if (m_string_ref1)
                 species_name = m_string_ref1->Eval(context);
 
-            const std::map<std::string, std::map<int, double> >& seo_map = GetSpeciesManager().GetSpeciesEmpireOpinionsMap();
-            std::map<std::string, std::map<int, double> >::const_iterator sp_it = seo_map.find(species_name);
-            if (sp_it == seo_map.end())
-                return 0.0;
-
-            const std::map<int, double>& emp_map = sp_it->second;
-            std::map<int, double>::const_iterator emp_it = emp_map.find(empire_id);
-            if (emp_it == emp_map.end())
-                return 0.0;
-
-            return emp_it->second;
+            return GetSpeciesManager().SpeciesEmpireOpinion(species_name, empire_id);
 
         } else if (variable_name == "SpeciesSpeciesOpinion") {
             std::string opinionated_species_name;
@@ -1005,17 +1004,7 @@ namespace ValueRef {
             if (m_string_ref2)
                 rated_species_name = m_string_ref2->Eval(context);
 
-            const std::map<std::string, std::map<std::string, double> >& sso_map = GetSpeciesManager().GetSpeciesSpeciesOpinionsMap();
-            std::map<std::string, std::map<std::string, double> >::const_iterator sp_op_it = sso_map.find(opinionated_species_name);
-            if (sp_op_it == sso_map.end())
-                return 0.0;
-
-            const std::map<std::string, double>& sp_ra_map = sp_op_it->second;
-            std::map<std::string, double>::const_iterator sp_ra_it = sp_ra_map.find(rated_species_name);
-            if (sp_ra_it == sp_ra_map.end())
-                return 0.0;
-
-            return sp_ra_it->second;
+            return GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
         }
 
         return 0.0;
@@ -1403,11 +1392,12 @@ namespace ValueRef {
             if (m_int_ref2)
                 object2_id = m_int_ref2->Eval(context);
 
-            int empire_id = ALL_EMPIRES;
-            if (m_int_ref3)
-                empire_id = m_int_ref3->Eval(context);
-
             // TODO: implement supply-connect-restriction path length determination...
+            // in the meantime, leave empire_id commented out to avoid unused var warning
+            //int empire_id = ALL_EMPIRES;
+            //if (m_int_ref3)
+            //    empire_id = m_int_ref3->Eval(context);
+
 
             int retval = GetUniverse().JumpDistanceBetweenObjects(object1_id, object2_id/*, empire_id*/);
             if (retval == INT_MAX)

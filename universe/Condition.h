@@ -1594,7 +1594,7 @@ private:
   * that a lane would be geometrically acceptable, meaning it wouldn't cross
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
-struct Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
+struct FO_COMMON_API Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
     CanAddStarlaneConnection(const ConditionBase* condition) :
         m_condition(condition)
     {}

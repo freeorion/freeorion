@@ -57,7 +57,7 @@ namespace {
             star_type
                 =    tok.Star_
                 >    parse::label(Type_token)
-                >>   (
+                >    (
                             '[' > +star_type_value_ref [ push_back(_a, _1) ] > ']'
                         |   star_type_value_ref [ push_back(_a, _1) ]
                      )
@@ -66,7 +66,7 @@ namespace {
 
             location
                 =   (tok.Location_
-                >    parse::label(Type_token)   >>
+                >    parse::label(Type_token) >
                     (
                         tok.Building_   [ _a = Condition::CONTENT_BUILDING ]
                     |   tok.Species_    [ _a = Condition::CONTENT_SPECIES ]

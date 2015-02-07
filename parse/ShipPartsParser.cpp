@@ -43,8 +43,8 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =          parse::value_ref_parser<int>();
             const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule< int >::type& flexible_int_ref =     parse::value_ref_parser_flexible_int();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -81,7 +81,7 @@ namespace {
             slots
                 =  -(
                         parse::label(MountableSlotTypes_token)
-                    >>  (
+                    >   (
                             '[' > +parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ] > ']'
                         |   parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ]
                         )
@@ -89,18 +89,18 @@ namespace {
                 ;
 
             location
-                =    parse::label(Location_token) >> parse::detail::condition_parser [ _r1 = _1 ]
+                =    parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ]
                 |    eps [ _r1 = new_<Condition::All>() ]
                 ;
 
             common_params
                 =   parse::label(BuildCost_token)    > double_value_ref  [ _a = _1 ]
-                >   parse::label(BuildTime_token)    > int_value_ref     [ _b = _1 ]
-                >   producible                                          [ _c = _1 ]
+                >   parse::label(BuildTime_token)    > flexible_int_ref  [ _b = _1 ]
+                >   producible                                           [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
                 >   -(
-                        parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser() [ _f = _1 ]
+                        parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _f = _1 ]
                      )
                 >    parse::label(Icon_token)        > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]

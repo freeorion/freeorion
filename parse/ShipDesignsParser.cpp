@@ -72,7 +72,7 @@ namespace {
                         |   tok.string [ push_back(_d, _1) ]
                      )
                 >   -(
-                        parse::label(Icon_token)     >> tok.string [ _e = _1 ]
+                        parse::label(Icon_token)     > tok.string [ _e = _1 ]
                      )
                 >    parse::label(Model_token)       > tok.string
                 [ insert(_r1, new_<ShipDesign>(_a, _b, 0, ALL_EMPIRES, _c, _d, _e, _1, _f)) ]

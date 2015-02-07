@@ -4,12 +4,8 @@ namespace {
     struct simple_int_parser_rules {
         simple_int_parser_rules() {
             qi::_1_type _1;
-            qi::_a_type _a;
             qi::_val_type _val;
-            using phoenix::construct;
             using phoenix::new_;
-            using phoenix::push_back;
-            using phoenix::static_cast_;
 
             const parse::lexer& tok =   parse::lexer::instance();
 
@@ -38,8 +34,7 @@ namespace {
                 ;
 
             constant
-                =   tok.double_ [ _val = new_<ValueRef::Constant<int> >(static_cast_<int>(_1)) ]
-                |   tok.int_    [ _val = new_<ValueRef::Constant<int> >(_1) ]
+                =   tok.int_    [ _val = new_<ValueRef::Constant<int> >(_1) ]
                 ;
 
             free_variable_name
@@ -105,13 +100,6 @@ namespace {
 
     struct int_parser_rules {
         int_parser_rules() {
-            qi::_1_type _1;
-            qi::_a_type _a;
-            qi::_val_type _val;
-            using phoenix::construct;
-            using phoenix::new_;
-            using phoenix::push_back;
-            using phoenix::static_cast_;
 
             const int_rule& simple =                        int_simple();
             const variable_rule& bound_variable =           int_bound_variable();
@@ -130,7 +118,7 @@ namespace {
                                                primary_expr);
 
             primary_expr
-                =   '(' > expr > ')'
+                =   '(' >> expr >> ')'
                 |   simple
                 |   statistic
                 |   int_var_complex()
@@ -175,6 +163,38 @@ namespace {
         static int_parser_rules retval;
         return retval;
     }
+
+    struct castable_as_int_parser_rules {
+        castable_as_int_parser_rules() {
+            qi::_1_type _1;
+            qi::_val_type _val;
+            using phoenix::new_;
+
+            castable_expr
+                = parse::value_ref_parser<double>() [ _val = new_<ValueRef::StaticCast<double, int> >(_1) ]
+                ;
+
+            flexible_int 
+                = parse::value_ref_parser<int>()
+                | castable_expr
+                ;
+
+            castable_expr.name("castable as integer expression");
+            flexible_int.name("integer or castable as integer");
+
+#if DEBUG_VALUEREF_PARSERS
+            debug(castable_expr);
+#endif
+        }
+
+        parse::value_ref_parser_rule<int>::type                castable_expr;
+        parse::value_ref_parser_rule<int>::type                flexible_int;
+    };
+
+    castable_as_int_parser_rules& get_castable_as_int_parser_rules() {
+        static castable_as_int_parser_rules retval;
+        return retval;
+    }
 }
 
 const int_rule& int_constant()
@@ -202,4 +222,7 @@ namespace parse {
     template <>
     value_ref_parser_rule<int>::type& value_ref_parser<int>()
     { return get_int_parser_rules().expr; }
+
+    value_ref_parser_rule<int>::type& value_ref_parser_flexible_int()
+    { return get_castable_as_int_parser_rules().flexible_int; }
 }

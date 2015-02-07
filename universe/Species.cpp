@@ -440,6 +440,28 @@ const std::map<std::string, std::map<int, double> >& SpeciesManager::GetSpeciesE
 const std::map<std::string, std::map<std::string, double> >& SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
 { return m_species_species_opinions; }
 
+double SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
+    std::map<std::string, std::map<int, double> >::const_iterator sp_it = m_species_empire_opinions.find(species_name);
+    if (sp_it == m_species_empire_opinions.end())
+        return 0.0;
+    const std::map<int, double>& emp_map = sp_it->second;
+    std::map<int, double>::const_iterator emp_it = emp_map.find(empire_id);
+    if (emp_it == emp_map.end())
+        return 0.0;
+    return emp_it->second;
+}
+
+double SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name, const std::string& rated_species_name) const {
+    std::map<std::string, std::map<std::string, double> >::const_iterator sp_it = m_species_species_opinions.find(opinionated_species_name);
+    if (sp_it == m_species_species_opinions.end())
+        return 0.0;
+    const std::map<std::string, double>& ra_sp_map = sp_it->second;
+    std::map<std::string, double>::const_iterator ra_sp_it = ra_sp_map.find(rated_species_name);
+    if (ra_sp_it == ra_sp_map.end())
+        return 0.0;
+    return ra_sp_it->second;
+}
+
 void SpeciesManager::ClearSpeciesOpinions() {
     m_species_empire_opinions.clear();
     m_species_species_opinions.clear();

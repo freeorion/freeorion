@@ -77,7 +77,7 @@ namespace {
 
             owned_by_1
                 =    tok.OwnedBy_
-                >>   parse::label(Empire_token) >> int_value_ref
+                >>   parse::label(Empire_token) > int_value_ref
                      [ _val = new_<Condition::EmpireAffiliation>(_1) ]
                 ;
 
@@ -95,7 +95,7 @@ namespace {
              owned_by_4
                  =   tok.OwnedBy_
                  >>  parse::label(Affiliation_token) >> parse::enum_parser<EmpireAffiliationType>() [ _a = _1 ]
-                 >>  parse::label(Empire_token)      >> int_value_ref
+                 >>  parse::label(Empire_token)      >  int_value_ref
                      [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
                  ;
 
@@ -108,19 +108,19 @@ namespace {
 
             and_
                 =    tok.And_
-                >>   '[' >> parse::detail::condition_parser [ push_back(_a, _1) ] >> +parse::detail::condition_parser [ push_back(_a, _1) ] >> lit(']')
+                >    '[' > +parse::detail::condition_parser [ push_back(_a, _1) ] > lit(']')
                         [ _val = new_<Condition::And>(_a) ]
                 ;
 
             or_
                 =    tok.Or_
-                >>   '[' >> parse::detail::condition_parser [ push_back(_a, _1) ] >> +parse::detail::condition_parser [ push_back(_a, _1) ] >> lit(']')
+                >    '[' > +parse::detail::condition_parser [ push_back(_a, _1) ] > lit(']')
                         [ _val = new_<Condition::Or>(_a) ]
                 ;
 
             not_
                 =    tok.Not_
-                >>   parse::detail::condition_parser [ _val = new_<Condition::Not>(_1) ]
+                >    parse::detail::condition_parser [ _val = new_<Condition::Not>(_1) ]
                 ;
 
             start

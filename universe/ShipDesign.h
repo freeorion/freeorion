@@ -577,6 +577,7 @@ public:
     /////// TEMPORARY ///////
     float  Defense() const;
     float  Attack() const;
+    float  AdjustedAttack(float shield) const;
     /////// TEMPORARY ///////
 
 

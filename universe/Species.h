@@ -233,9 +233,20 @@ public:
       * species' opinion of the empire */
     const std::map<std::string, std::map<int, double> >&            GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
+    /** returns opinion of species with name \a species_name about empire with
+      * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
+    double                                                          SpeciesEmpireOpinion(const std::string& species_name,
+                                                                                         int empire_id) const;
+
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
     const std::map<std::string, std::map<std::string, double> >&    GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+
+    /** returns opinion of species with name \a opinionated_species_name about
+      * other species with name \a rated_species_name or 0.0 if there is no
+      * such opinion yet recorded. */
+    double                                                          SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
+                                                                                          const std::string& rated_species_name) const;
 
     /** returns the instance of this singleton class; you should use the free
       * function GetSpeciesManager() instead */
