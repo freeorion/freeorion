@@ -79,7 +79,7 @@
       <DebugInformationFormat>
       </DebugInformationFormat>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
-      <AdditionalOptions>/MP5 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/MP3 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +141,7 @@
     <ClCompile Include="..\..\parse\SpecialsParser.cpp" />
     <ClCompile Include="..\..\parse\SpeciesParser.cpp" />
     <ClCompile Include="..\..\parse\StarTypeValueRefParser.cpp" />
+    <ClCompile Include="..\..\parse\StringComplexValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\StringValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\TechsParser.cpp" />
     <ClCompile Include="..\..\parse\Tokens.cpp" />

@@ -16,11 +16,6 @@ namespace { struct string_parser_rules {
                 |    tok.BuildingType_
                 |    tok.Focus_
                 |    tok.PreferredFocus_
-                |    tok.OwnerLeastExpensiveEnqueuedTech_
-                |    tok.OwnerMostExpensiveEnqueuedTech_
-                |    tok.OwnerMostRPCostLeftEnqueuedTech_
-                |    tok.OwnerMostRPSpentEnqueuedTech_
-                |    tok.OwnerTopPriorityEnqueuedTech_
                 ;
 
             constant
