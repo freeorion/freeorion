@@ -15,7 +15,7 @@ namespace parse {
             using phoenix::new_;
 
             const parse::lexer& tok =                                                   parse::lexer::instance();
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =              parse::value_ref_parser<int>();
+            const int_rule& int_value_ref =                                             int_simple();
             const parse::value_ref_parser_rule<std::string>::type& string_value_ref =   parse::value_ref_parser<std::string>();
 
             building_types_owned
