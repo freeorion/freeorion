@@ -598,42 +598,11 @@ BuildingType
     ]
     icon = "icons/building/generic_building.png"
 
-// the following currently causes a crash on Linux
-/*
-    buildtime = max( 5, 
-                        min value = JumpsBetween object = target.SystemID object = LocalCandidate.SystemID 
-                            condition = And [
-                                            Planet
-                                            OwnedBy empire = Source.Owner
-                                            Species name = "SP_HUMAN"
-                                            Population low = 3
-                                            Happiness low = 5
-                                            ResourceSupplyConnected empire = Source.Owner condition = Target
-                                        ]
-                    )
-
-*/
-
-//The following currently work(s) on Linux
-//    buildtime = 1 + JumpsBetween object = target.SystemID object = Source.SystemID 
-/*
-    buildtime = max( 5.0 , 2.0 * count                            condition = And [
-                                            Planet
-                                            OwnedBy empire = Source.Owner
-                                            Species name = "SP_HUMAN"
-                                            Population low = 3
-                                            Happiness low = 5
-                                            ResourceSupplyConnected empire = Source.Owner condition = Target
-                                        ]
-                    )
-*/
-    
-    
 BuildingType
     name = "BLD_COL_HUMAN"
     description = "BLD_COL_HUMAN_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 1 + JumpsBetween object = target.SystemID object = Source.SystemID 
+    buildtime = 5
     location = And [
         Planet
         OwnedBy empire = Source.Owner

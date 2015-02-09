@@ -27,6 +27,35 @@ species_list = [
     ("SP_EXOBOT", "Exobot", "icons/species/robotic-01.png")
 ]
 
+
+# the following currently causes a crash on Linux
+#
+#     buildtime = max( 5,
+#                         min value = JumpsBetween object = target.SystemID object = LocalCandidate.SystemID
+#                             condition = And [
+#                                             Planet
+#                                             OwnedBy empire = Source.Owner
+#                                             Species name = "SP_HUMAN"
+#                                             Population low = 3
+#                                             Happiness low = 5
+#                                             ResourceSupplyConnected empire = Source.Owner condition = Target
+#                                         ]
+#                     )
+#
+# the following currently work(s) on Linux
+#     buildtime = 1 + JumpsBetween object = target.SystemID object = Source.SystemID
+#
+#     buildtime = max( 5.0 , 2.0 * count                            condition = And [
+#                                             Planet
+#                                             OwnedBy empire = Source.Owner
+#                                             Species name = "SP_HUMAN"
+#                                             Population low = 3
+#                                             Happiness low = 5
+#                                             ResourceSupplyConnected empire = Source.Owner condition = Target
+#                                         ]
+#                     )
+
+
 t_main = string.Template('''BuildingType
     name = "BLD_COL_${name}"
     description = "BLD_COL_${name}_DESC"
