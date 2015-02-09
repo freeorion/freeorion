@@ -361,6 +361,7 @@
 		82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */; };
 		828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 828AB7D315F7BCDD0075BE24 /* libpng.a */; };
 		828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828C793D160778AA0075F220 /* FieldIcon.cpp */; };
+		8295CEC71A88FFF8000EE624 /* StringComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8295CEC61A88FFF8000EE624 /* StringComplexValueRefParser.cpp */; };
 		82970BEF1A0CF53A008B37EF /* TechTreeArcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */; };
 		8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */; };
 		829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */; };
@@ -1378,6 +1379,7 @@
 		828AB7D315F7BCDD0075BE24 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		828C793D160778AA0075F220 /* FieldIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldIcon.cpp; sourceTree = "<group>"; };
 		828C793E160778AA0075F220 /* FieldIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldIcon.h; sourceTree = "<group>"; };
+		8295CEC61A88FFF8000EE624 /* StringComplexValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringComplexValueRefParser.cpp; sourceTree = "<group>"; };
 		82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TechTreeArcs.cpp; sourceTree = "<group>"; };
 		82970BEE1A0CF53A008B37EF /* TechTreeArcs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TechTreeArcs.h; sourceTree = "<group>"; };
 		8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveFileDialog.cpp; sourceTree = "<group>"; };
@@ -2729,6 +2731,7 @@
 				825936FD147E3B1B00B840A5 /* SpecialsParser.cpp */,
 				825936FE147E3B1B00B840A5 /* SpeciesParser.cpp */,
 				825936FF147E3B1B00B840A5 /* StarTypeValueRefParser.cpp */,
+				8295CEC61A88FFF8000EE624 /* StringComplexValueRefParser.cpp */,
 				82593700147E3B1B00B840A5 /* StringValueRefParser.cpp */,
 				82593701147E3B1B00B840A5 /* TechsParser.cpp */,
 				82593702147E3B1B00B840A5 /* test */,
@@ -3450,6 +3453,7 @@
 				3A76046517499F7D00363653 /* ReportParseError.cpp in Sources */,
 				3A76046617499F8800363653 /* ShipDesignsParser.cpp in Sources */,
 				8246FED0194D8F83008C07B5 /* IntComplexValueRefParser.cpp in Sources */,
+				8295CEC71A88FFF8000EE624 /* StringComplexValueRefParser.cpp in Sources */,
 				3A76046717499F9600363653 /* ShipHullsParser.cpp in Sources */,
 				3A76046817499FA400363653 /* ShipPartsParser.cpp in Sources */,
 				3A76046917499FA700363653 /* ShipPartStatsParser.cpp in Sources */,
