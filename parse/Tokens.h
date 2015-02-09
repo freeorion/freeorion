@@ -35,7 +35,9 @@
     (Blue)                                      \
     (Bombard)                                   \
     (Bomber)                                    \
-    (BuildCost)                                 \
+    (BuildCost)
+
+#define TOKEN_SEQ_2                             \
     (Building)                                  \
     (BuildingTypesOwned)                        \
     (BuildingType)                              \
@@ -72,7 +74,7 @@
     (CreationTurn)                              \
     (CurrentTurn)
 
-#define TOKEN_SEQ_2                             \
+#define TOKEN_SEQ_3                             \
     (Damage)                                    \
     (Data)                                      \
     (Defense)                                   \
@@ -105,7 +107,7 @@
     (ExploredByEmpire)                          \
     (External)
 
-#define TOKEN_SEQ_3                             \
+#define TOKEN_SEQ_4                             \
     (Field)                                     \
     (FieldType)                                 \
     (Fighters)                                  \
@@ -131,7 +133,9 @@
     (GalaxyStarlaneFrequency)                   \
     (Gameplay_Description)                      \
     (GasGiant)                                  \
-    (General)                                   \
+    (General)
+
+#define TOKEN_SEQ_5                             \
     (GenerateSitrepMessage)                     \
     (GiveEmpireTech)                            \
     (Good)                                      \
@@ -141,6 +145,9 @@
     (HasSpecialSinceTurn)                       \
     (HasTag)                                    \
     (High)                                      \
+    (HighestCostEnqueuedTech)                   \
+    (HighestCostResearchableTech)               \
+    (HighestCostTransferrableTech)              \
     (Homeworld)                                 \
     (Hostile)                                   \
     (Huge)                                      \
@@ -159,16 +166,20 @@
     (Keymap)                                    \
     (Keys)
 
-#define TOKEN_SEQ_4                             \
+#define TOKEN_SEQ_6                             \
     (Label)                                     \
     (Large)                                     \
     (LastTurnBattleHere)                        \
     (LastTurnActiveInBattle)                    \
     (LaunchRate)                                \
+    (LeastHappySpecies)                         \
     (LocalCandidate)                            \
     (Location)                                  \
     (Log)                                       \
     (Low)                                       \
+    (LowestCostEnqueuedTech)                    \
+    (LowestCostResearchableTech)                \
+    (LowestCostTransferrableTech)               \
     (Max)                                       \
     (MaxDefense)                                \
     (MaxFuel)                                   \
@@ -183,12 +194,19 @@
     (Meter)                                     \
     (Min)                                       \
     (MinimumNumberOf)                           \
-    (Missiles)                                  \
+    (Missiles)
+
+#define TOKEN_SEQ_7                             \
     (Mode)                                      \
     (Model)                                     \
     (ModeNumberOf)                              \
     (Monster)                                   \
     (MonsterFleet)                              \
+    (MostHappySpecies)                          \
+    (MostPopulousSpecies)                       \
+    (MostSpentEnqueuedTech)                     \
+    (MostSpentResearchableTech)                 \
+    (MostSpentTransferrableTech)                \
     (MountableSlotTypes)                        \
     (MoveInOrbit)                               \
     (MoveTo)                                    \
@@ -212,7 +230,7 @@
     (NumberOf)                                  \
     (NumShips)                                  \
 
-#define TOKEN_SEQ_5                             \
+#define TOKEN_SEQ_8                             \
     (Object)                                    \
     (ObjectType)                                \
     (Ocean)                                     \
@@ -226,18 +244,15 @@
     (OwnedBy)                                   \
     (Owner)                                     \
     (OwnerHasTech)                              \
-    (OwnerLeastExpensiveEnqueuedTech)           \
-    (OwnerMostExpensiveEnqueuedTech)            \
-    (OwnerMostRPCostLeftEnqueuedTech)           \
-    (OwnerMostRPSpentEnqueuedTech)              \
-    (OwnerTopPriorityEnqueuedTech)              \
     (OwnerTradeStockpile)                       \
     (Parameters)                                \
     (Part)                                      \
     (PartCapacity)                              \
     (PartDamage)                                \
     (PartClass)                                 \
-    (PartName)                                  \
+    (PartName)
+
+#define TOKEN_SEQ_9                             \
     (Parts)                                     \
     (PartClassInShipDesign)                     \
     (PartsInShipDesign)                         \
@@ -266,10 +281,16 @@
     (Progress)                                  \
     (Property)
 
-#define TOKEN_SEQ_6                             \
+#define TOKEN_SEQ_10                            \
     (Radiated)                                  \
     (Radius)                                    \
     (Random)                                    \
+    (RandomColonizableSpecies)                  \
+    (RandomCompleteTech)                        \
+    (RandomControlledSpecies)                   \
+    (RandomEnqueuedTech)                        \
+    (RandomResearchableTech)                    \
+    (RandomTransferrableTech)                   \
     (RandomNumber)                              \
     (Range)                                     \
     (Reason)                                    \
@@ -288,7 +309,9 @@
     (RMS)                                       \
     (ROF)                                       \
     (RootCandidate)                             \
-    (Scope)                                     \
+    (Scope)
+
+#define TOKEN_SEQ_11                            \
     (SetAggressive)                             \
     (SetAntiFighterDamage)                      \
     (SetAntiShipDamage)                         \
@@ -321,7 +344,7 @@
     (SetPlanetType)                             \
     (SetPopulation)
 
-#define TOKEN_SEQ_7                             \
+#define TOKEN_SEQ_12                            \
     (SetRange)                                  \
     (SetRebelTroops)                            \
     (SetResearch)                               \
@@ -363,7 +386,7 @@
     (Size)                                      \
     (SizeAsDouble)
 
-#define TOKEN_SEQ_8                             \
+#define TOKEN_SEQ_13                            \
     (Slot)                                      \
     (Slots)                                     \
     (SlotType)                                  \
@@ -403,7 +426,7 @@
     (System)                                    \
     (SystemID)
 
-#define TOKEN_SEQ_9                             \
+#define TOKEN_SEQ_14                            \
     (Tag)                                       \
     (Tags)                                      \
     (Target)                                    \
@@ -420,6 +443,9 @@
     (TheEmpire)                                 \
     (Theory)                                    \
     (Tiny)                                      \
+    (TopPriorityEnqueuedTech)                   \
+    (TopPriorityResearchableTech)               \
+    (TopPriorityTransferrableTech)              \
     (Toxic)                                     \
     (Trade)                                     \
     (TradeStockpile)                            \
@@ -456,6 +482,12 @@ BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_6)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_7)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_8)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_9)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_10)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_11)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_12)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_13)
+BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_14)
+
 #undef DECLARE_TOKEN
 
 

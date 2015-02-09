@@ -1410,7 +1410,181 @@ namespace ValueRef {
 
     template <>
     std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const
-    { return "";  }
+    {
+        const std::string& variable_name = m_property_name.back();
+
+        // unindexed empire properties
+        if (variable_name == "LowestCostEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "HighestCostEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "TopPriorityEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "MostSpentEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "LowestCostResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "HighestCostResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "TopPriorityResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "MostSpentResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomCompleteTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "LowestCostTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "HighestCostTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "TopPriorityTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "MostSpentTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "MostPopulousSpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "MostHappySpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "LeastHappySpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomColonizableSpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomControlledSpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        }
+        return "";
+    }
 
 #undef IF_CURRENT_VALUE
 }

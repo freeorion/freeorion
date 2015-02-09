@@ -63,18 +63,12 @@ namespace {
                 ;
 
             free_variable
-                = (
-                        tok.Value_
-                        [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
-                  )
-                | (
-                        free_variable_name
-                        [ _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
-                  )
-                | (
-                        int_free_variable()
-                        [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
-                  )
+                =   tok.Value_
+                    [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+                |   free_variable_name
+                    [ _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+                |   int_free_variable()
+                    [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
             bound_variable
