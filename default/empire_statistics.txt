@@ -75,6 +75,7 @@ Statistic name = "PLANETS_INVADED" value =
 // the following entries are to help highlight/evaluate current limitations with statistics parsing
 // Tests 1 and 2 currently work, test 3 does not.
 
+/*
 Statistic name = "STATISTICS_TEST_1" value =
     1.0 + JumpsBetween object = source.SystemID object = MAX Value = LocalCandidate.SystemID 
                             condition = And [
@@ -89,7 +90,6 @@ Statistic name = "STATISTICS_TEST_2" value =
                                             OwnedBy empire = Source.Owner
                                         ]
 
-/*
 // The following currently causes a crash upon parsing
 Statistic name = "STATISTICS_TEST_3" value =
     1.0 + MAX Value = JumpsBetween object = source.SystemID object = LocalCandidate.SystemID 
