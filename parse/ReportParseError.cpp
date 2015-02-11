@@ -87,8 +87,11 @@ void parse::detail::pretty_print(std::ostream& os, boost::spirit::info const& wh
     boost::apply_visitor(v, what.value);
 }
 
-void parse::detail::default_send_error_string(const std::string& str)
-{ Logger().errorStream() << str; }
+void parse::detail::default_send_error_string(const std::string& str) { 
+    Logger().errorStream() << str; 
+    // output to cout also so can be better associated with any output from parser semantic action debug output
+    std::cout << str +"\n" << std::flush;
+}
 
 const char* parse::detail::s_filename = 0;
 parse::text_iterator* parse::detail::s_text_it = 0;

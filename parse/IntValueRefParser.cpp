@@ -105,7 +105,7 @@ namespace {
 
             statistic_sub_value_ref
                 =   simple
-                //|   int_var_complex
+                |   int_var_complex()
             ;
 
             initialize_numeric_statistic_parser<int>(statistic, statistic_1, statistic_2,
