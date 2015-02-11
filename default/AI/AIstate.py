@@ -182,7 +182,6 @@ class AIstate(object):
         self.__clean_fleet_missions(FleetUtilsAI.get_empire_fleet_ids())
         print "Fleets lost by system: %s" % fleetsLostBySystem
         self.update_system_status()
-        ExplorationAI.update_scout_fleets()  # should do this after clearing dead fleets, currently should be already done here
 
     def assess_self_rating(self):
         return 1

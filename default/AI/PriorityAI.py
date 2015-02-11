@@ -192,7 +192,8 @@ def calculateExplorationPriority():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     numUnexploredSystems = len( ExplorationAI.borderUnexploredSystemIDs )  #len(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
-    numScouts = sum( [ foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in ExplorationAI.currentScoutFleetIDs] ) # FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
+    numScouts = sum( [ foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(
+        EnumsAI.AIFleetMissionType.FLEET_MISSION_EXPLORATION)] ) # FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     productionQueue = empire.productionQueue
     queuedScoutShips=0
     for queue_index in range(0, len(productionQueue)):
