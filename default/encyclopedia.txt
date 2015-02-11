@@ -194,3 +194,17 @@ Article
     description = "AI_LEVELS_TEXT"
     icon = "icons/ai.png"
     
+Article
+    name = "STRUCTURE_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "STRUCTURE_TEXT"
+    icon = "icons/meter/structure.png"
+
+Article
+    name = "STARLANE_SPEED_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "METER_ARTICLE_SHORT_DESC"
+    description = "STARLANE_SPEED_TEXT"
+    icon = "icons/meter/speed.png"
+    
