@@ -28,34 +28,6 @@ species_list = [
 ]
 
 
-# the following currently causes a crash on Linux
-#
-#     buildtime = max( 5,
-#                         min value = JumpsBetween object = target.SystemID object = LocalCandidate.SystemID
-#                             condition = And [
-#                                             Planet
-#                                             OwnedBy empire = Source.Owner
-#                                             Species name = "SP_HUMAN"
-#                                             Population low = 3
-#                                             Happiness low = 5
-#                                             ResourceSupplyConnected empire = Source.Owner condition = Target
-#                                         ]
-#                     )
-#
-# the following currently work(s) on Linux
-#     buildtime = 1 + JumpsBetween object = target.SystemID object = Source.SystemID
-#
-#     buildtime = max( 5.0 , 2.0 * count                            condition = And [
-#                                             Planet
-#                                             OwnedBy empire = Source.Owner
-#                                             Species name = "SP_HUMAN"
-#                                             Population low = 3
-#                                             Happiness low = 5
-#                                             ResourceSupplyConnected empire = Source.Owner condition = Target
-#                                         ]
-#                     )
-
-
 t_main = string.Template('''BuildingType
     name = "BLD_COL_${name}"
     description = "BLD_COL_${name}_DESC"
@@ -112,6 +84,19 @@ t_species_condition = string.Template('''ResourceSupplyConnected empire = Source
             Happiness low = 5
         ]''')
 
+t_buildtime = string.Template('''max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "${id}"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )''')
+
+
 outpath = os.getcwd()
 print "Output folder:", outpath
 
@@ -125,5 +110,6 @@ with open(os.path.join(outpath, "col_buildings.txt"), "w") as f:
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=70, time=5,
                     species_condition=r"// no existing Exobot colony required!") + "\n\n")
         else:
-            f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=50, time=5,
-                    species_condition=t_species_condition.substitute(id=sp_id)) + "\n\n")
+            f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=50,
+                                      time=t_buildtime.substitute(id=sp_id),
+                                      species_condition=t_species_condition.substitute(id=sp_id)) + "\n\n")

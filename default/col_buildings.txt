@@ -2,7 +2,17 @@ BuildingType
     name = "BLD_COL_ABADDONI"
     description = "BLD_COL_ABADDONI_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_ABADDONI"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -62,7 +72,17 @@ BuildingType
     name = "BLD_COL_CHATO"
     description = "BLD_COL_CHATO_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_CHATO"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -122,7 +142,17 @@ BuildingType
     name = "BLD_COL_CRAY"
     description = "BLD_COL_CRAY_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_CRAY"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -182,7 +212,17 @@ BuildingType
     name = "BLD_COL_DERTHREAN"
     description = "BLD_COL_DERTHREAN_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_DERTHREAN"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -242,7 +282,17 @@ BuildingType
     name = "BLD_COL_EAXAW"
     description = "BLD_COL_EAXAW_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_EAXAW"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -302,7 +352,17 @@ BuildingType
     name = "BLD_COL_EGASSEM"
     description = "BLD_COL_EGASSEM_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_EGASSEM"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -362,7 +422,17 @@ BuildingType
     name = "BLD_COL_ETTY"
     description = "BLD_COL_ETTY_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_ETTY"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -422,7 +492,17 @@ BuildingType
     name = "BLD_COL_GEORGE"
     description = "BLD_COL_GEORGE_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_GEORGE"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -482,7 +562,17 @@ BuildingType
     name = "BLD_COL_GYSACHE"
     description = "BLD_COL_GYSACHE_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_GYSACHE"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -542,7 +632,17 @@ BuildingType
     name = "BLD_COL_HHHOH"
     description = "BLD_COL_HHHOH_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_HHHOH"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -602,7 +702,17 @@ BuildingType
     name = "BLD_COL_HUMAN"
     description = "BLD_COL_HUMAN_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_HUMAN"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -662,7 +772,17 @@ BuildingType
     name = "BLD_COL_KOBUNTURA"
     description = "BLD_COL_KOBUNTURA_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_KOBUNTURA"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -722,7 +842,17 @@ BuildingType
     name = "BLD_COL_LAENFA"
     description = "BLD_COL_LAENFA_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_LAENFA"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -782,7 +912,17 @@ BuildingType
     name = "BLD_COL_MUURSH"
     description = "BLD_COL_MUURSH_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_MUURSH"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -842,7 +982,17 @@ BuildingType
     name = "BLD_COL_SCYLIOR"
     description = "BLD_COL_SCYLIOR_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_SCYLIOR"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -902,7 +1052,17 @@ BuildingType
     name = "BLD_COL_SETINON"
     description = "BLD_COL_SETINON_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_SETINON"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -962,7 +1122,17 @@ BuildingType
     name = "BLD_COL_SSLITH"
     description = "BLD_COL_SSLITH_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_SSLITH"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -1022,7 +1192,17 @@ BuildingType
     name = "BLD_COL_TAEGHIRUS"
     description = "BLD_COL_TAEGHIRUS_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_TAEGHIRUS"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -1082,7 +1262,17 @@ BuildingType
     name = "BLD_COL_TRITH"
     description = "BLD_COL_TRITH_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_TRITH"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
@@ -1142,7 +1332,17 @@ BuildingType
     name = "BLD_COL_UGMORS"
     description = "BLD_COL_UGMORS_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 5
+    buildtime = max(5,
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_UGMORS"
+                Population low = 3
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
     location = And [
         Planet
         OwnedBy empire = Source.Owner
