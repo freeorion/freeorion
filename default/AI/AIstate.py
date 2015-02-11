@@ -135,6 +135,7 @@ class AIstate(object):
 
     def refresh(self):
         """turn start AIstate cleanup/refresh"""
+        universe = fo.getUniverse()
         #checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
@@ -142,6 +143,17 @@ class AIstate(object):
         exploration_center = PlanetUtilsAI.get_capital_sys_id()
         if exploration_center == -1:  # a bad state probably from an old savegame, or else empire has lost (or almost has)
             exploration_center = self.origHomeSystemID
+
+        # check if planets in cache is still present. Remove destroyed.
+        for system_id, info in sorted(self.systemStatus.items()):
+            planet_dict = info.get('planets', {})
+            cache_planet_set = set(planet_dict)
+            system_planet_set = set(universe.getSystem(system_id).planetIDs)
+            diff = cache_planet_set - system_planet_set
+            if diff:
+                print "Removing destroyed planets from systemStatus for system %s: planets to be removed: %s" % (system_id, sorted(diff))
+                for key in diff:
+                    del planet_dict[key]
 
         ExplorationAI.graphFlags.clear()
         if fo.currentTurn() < 50:
@@ -157,7 +169,6 @@ class AIstate(object):
             ExplorationAI.follow_vis_system_connections(sysID, exploration_center)
         newlyExplored = ExplorationAI.update_explored_systems()
         nametags = []
-        universe = fo.getUniverse()
         for sysID in newlyExplored:
             newsys = universe.getSystem(sysID)
             nametags.append("ID:%4d -- %20s" % (sysID, (newsys and newsys.name) or"name unknown"))  # an explored system *should* always be able to be gotten
