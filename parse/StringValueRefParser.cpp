@@ -28,7 +28,14 @@ namespace { struct string_parser_rules {
                 ;
 
             initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name);
-            initialize_nonnumeric_statistic_parser<std::string>(statistic, bound_variable_name);
+
+            statistic_sub_value_ref
+                =   constant
+                |   bound_variable
+                |   free_variable
+                ;
+
+            initialize_nonnumeric_statistic_parser<std::string>(statistic, statistic_sub_value_ref);
 
             expr
                 %=   constant
@@ -62,6 +69,7 @@ namespace { struct string_parser_rules {
         rule            constant;
         rule            free_variable;
         variable_rule   bound_variable;
+        rule            statistic_sub_value_ref;
         statistic_rule  statistic;
         rule            expr;
         rule            primary_expr;

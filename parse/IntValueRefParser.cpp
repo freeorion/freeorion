@@ -102,14 +102,15 @@ namespace {
         int_parser_rules() {
 
             const int_rule& simple =                        int_simple();
-            const variable_rule& bound_variable =           int_bound_variable();
-            const name_token_rule& bound_variable_name =    int_bound_variable_name();
-            const int_rule& constant =                      int_constant();
-            const variable_rule& free_variable =            int_free_variable();
 
+            statistic_sub_value_ref
+                =   simple
+                //|   int_var_complex
+            ;
 
-            initialize_numeric_statistic_parser<int>(statistic, statistic_1, statistic_2, statistic_3,
-                                                     bound_variable_name, constant, free_variable, bound_variable, int_var_complex());
+            initialize_numeric_statistic_parser<int>(statistic, statistic_1, statistic_2,
+                                                     statistic_sub_value_ref);
+
             initialize_expression_parsers<int>(function_expr,
                                                exponential_expr,
                                                multiplicative_expr,
@@ -149,8 +150,8 @@ namespace {
 
         statistic_rule      statistic_1;
         statistic_rule      statistic_2;
-        statistic_rule      statistic_3;
         statistic_rule      statistic;
+        rule                statistic_sub_value_ref;
         expression_rule     function_expr;
         expression_rule     exponential_expr;
         expression_rule     multiplicative_expr;

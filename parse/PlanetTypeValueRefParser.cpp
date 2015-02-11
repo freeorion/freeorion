@@ -28,7 +28,13 @@ namespace {
                 ;
 
             initialize_bound_variable_parser<PlanetType>(bound_variable, variable_name);
-            initialize_nonnumeric_statistic_parser<PlanetType>(statistic, variable_name);
+
+            statistic_sub_value_ref
+                =   constant
+                |   bound_variable
+                ;
+
+            initialize_nonnumeric_statistic_parser<PlanetType>(statistic, statistic_sub_value_ref);
 
             primary_expr
                 %=   constant
@@ -51,13 +57,14 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<PlanetType>::type rule;
-        typedef variable_rule<PlanetType>::type variable_rule;
-        typedef statistic_rule<PlanetType>::type statistic_rule;
+        typedef parse::value_ref_parser_rule<PlanetType>::type  rule;
+        typedef variable_rule<PlanetType>::type                 variable_rule;
+        typedef statistic_rule<PlanetType>::type                statistic_rule;
 
         name_token_rule variable_name;
         rule            constant;
         variable_rule   bound_variable;
+        rule            statistic_sub_value_ref;
         statistic_rule  statistic;
         rule            primary_expr;
     };

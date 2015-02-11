@@ -1,11 +1,11 @@
 Statistic name = "PP_OUTPUT" value =
-    Sum property = Industry condition = And [
+    Sum value = LocalCandidate.Industry condition = And [
         Planet
         OwnedBy empire = Source.Owner
     ]
 
 Statistic name = "RP_OUTPUT" value =
-    Sum property = Research condition = And [
+    Sum value = LocalCandidate.Research condition = And [
         Planet
         OwnedBy empire = Source.Owner
     ]
@@ -89,13 +89,16 @@ Statistic name = "STATISTICS_TEST_2" value =
                                             Planet
                                             OwnedBy empire = Source.Owner
                                         ]
+*/
 
 // The following currently causes a crash upon parsing
 Statistic name = "STATISTICS_TEST_3" value =
-    1.0 + MAX Value = JumpsBetween object = source.SystemID object = LocalCandidate.SystemID 
-                            condition = And [
-                                            Planet
-                                            OwnedBy empire = Source.Owner
-                                        ]
+    1.0 + MAX value =
+        JumpsBetween
+            object = Source.SystemID
+            object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
 
-*/

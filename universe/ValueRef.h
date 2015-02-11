@@ -182,9 +182,6 @@ private:
 template <class T>
 struct FO_COMMON_API ValueRef::Statistic : public ValueRef::Variable<T>
 {
-    Statistic(const std::vector<std::string>& property_name,
-              StatisticType stat_type,
-              const Condition::ConditionBase* sampling_condition);
     Statistic(const ValueRef::ValueRefBase<T>* value_ref,
               StatisticType stat_type,
               const Condition::ConditionBase* sampling_condition);
@@ -588,16 +585,6 @@ void ValueRef::Variable<T>::serialize(Archive& ar, const unsigned int version)
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
 template <class T>
-ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
-                                  StatisticType stat_type,
-                                  const Condition::ConditionBase* sampling_condition) :
-    Variable<T>(ValueRef::NON_OBJECT_REFERENCE, property_name),
-    m_stat_type(stat_type),
-    m_sampling_condition(sampling_condition),
-    m_value_ref(0)
-{}
-
-template <class T>
 ValueRef::Statistic<T>::Statistic(const ValueRef::ValueRefBase<T>* value_ref,
                                   StatisticType stat_type,
                                   const Condition::ConditionBase* sampling_condition) :
@@ -624,8 +611,6 @@ bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) co
     const ValueRef::Statistic<T>& rhs_ = static_cast<const ValueRef::Statistic<T>&>(rhs);
 
     if (m_stat_type != rhs_.m_stat_type)
-        return false;
-    if (this->m_property_name != rhs_.m_property_name)
         return false;
     if (this->m_value_ref != rhs_.m_value_ref)
         return false;
@@ -659,25 +644,14 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& con
                                                      std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const
 {
     object_property_values.clear();
-    //Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
-    //                       << " sampling condition: " << m_sampling_condition->Dump()
-    //                       << " property name final: " << this->PropertyName().back();
 
     if (m_value_ref) {
-        // evaluate a full ValueRef with each condition match as the LocalCandidate
+        // evaluate ValueRef with each condition match as the LocalCandidate
+        // TODO: Can / should this be paralleized?
         for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
             T property_value = m_value_ref->Eval(ScriptingContext(context, *it));
             object_property_values[*it] = property_value;
         }
-    } else {
-        // evaluate a simple property on each condition-match
-        ReferenceType original_ref_type = this->m_ref_type;
-        this->m_ref_type = ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE;
-        for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
-            T property_value = this->Variable<T>::Eval(ScriptingContext(context, *it));
-            object_property_values[*it] = property_value;
-        }
-        this->m_ref_type = original_ref_type;
     }
 }
 
