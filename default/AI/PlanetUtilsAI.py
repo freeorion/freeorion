@@ -101,7 +101,6 @@ def get_planets_in__systems_ids(system_ids):
     universe = fo.getUniverse()
     planet_ids = set()
     for system_id in system_ids:
-        planet_ids.update(foAI.foAIstate.systemStatus.get(system_id, {}).get('planets', {}))  # check if we need this
         system = universe.getSystem(system_id)
         if system is not None:
             planet_ids.update(system.planetIDs)

@@ -662,13 +662,6 @@ def generateProductionOrders():
     #availablePP = dict_from_map(productionQueue.availablePP(prodResPool))
     #allocatedPP = dict_from_map(productionQueue.allocatedPP)
     #objectsWithWastedPP = productionQueue.objectsWithWastedPP(prodResPool)
-    
-    # set the random seed (based on galaxy seed, empire ID and current turn)
-    # for game-reload consistency 
-    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(), fo.currentTurn()) + "Production"
-    random.seed(random_seed)
-
-
     currentTurn = fo.currentTurn()
     print
     print "  Total Available Production Points: " + str(totalPP)

@@ -60,9 +60,8 @@ struct statistic_rule
         parse::token_iterator,
         ValueRef::Statistic<T>* (),
         qi::locals<
-            std::vector<std::string>,
-            ValueRef::StatisticType,
-            ValueRef::ValueRefBase<T>*
+            ValueRef::ValueRefBase<T>*,
+            ValueRef::StatisticType
         >,
         parse::skipper_type
     > type;
@@ -243,9 +242,9 @@ void initialize_bound_variable_parser(
     using phoenix::push_back;
 
     bound_variable
-        =   variable_scope() [ _b = _1 ] > '.'
-        > -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-        >   variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
+        =   variable_scope() [ _b = _1 ] >> '.'
+        >>-(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
+        >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
         ;
 }
 
@@ -254,12 +253,7 @@ void initialize_numeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
     typename statistic_rule<T>::type& statistic_1,
     typename statistic_rule<T>::type& statistic_2,
-    typename statistic_rule<T>::type& statistic_3,
-    const name_token_rule& variable_name,
-    const typename parse::value_ref_parser_rule<T>::type& constant,
-    const typename variable_rule<T>::type& free_variable,
-    const typename variable_rule<T>::type& bound_variable,
-    const typename variable_rule<T>::type& complex_variable
+    const typename parse::value_ref_parser_rule<T>::type& value_ref
     )
 {
     const parse::lexer& tok = parse::lexer::instance();
@@ -267,7 +261,6 @@ void initialize_numeric_statistic_parser(
     qi::_1_type _1;
     qi::_a_type _a;
     qi::_b_type _b;
-    qi::_c_type _c;
     qi::_val_type _val;
     using phoenix::construct;
     using phoenix::new_;
@@ -282,36 +275,21 @@ void initialize_numeric_statistic_parser(
 
     statistic_2
         =       parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
-            >>  parse::label(Property_token)
-            >>  -(container_type() [ push_back(_a, construct<std::string>(_1)) ] >> '.')
-            >>  variable_name [ push_back(_a, construct<std::string>(_1)) ]
+            >>  parse::label(Value_token)     >     value_ref [ _a = _1 ]   // >> operator used here to avoid amiguity with min/max parser functions
             >   parse::label(Condition_token) >     parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
 
-    statistic_3
-        =       parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
-            >>  parse::label(Value_token)
-            >> (    constant        [_c = _1 ]  // match only a subset of ValueRef types here, because parsing as a top-level
-               |    free_variable   [_c = _1 ]  // ValueRef here causes deadlocks on parser init on some systems
-               |    bound_variable  [_c = _1 ]  // todo: try allowing parsing of complex variables here
-               |    complex_variable[_c = _1 ]
-               )
-            >   parse::label(Condition_token) >    parse::detail::condition_parser
-                [ _val = new_<ValueRef::Statistic<T> >(_c, _b, _1) ]
-        ;
-
     statistic
-        %=  statistic_1
+        =   statistic_1
         |   statistic_2
-        |   statistic_3
         ;
 }
 
 template <typename T>
 void initialize_nonnumeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
-    const name_token_rule& variable_name)
+    const typename parse::value_ref_parser_rule<T>::type& value_ref)
 {
     const parse::lexer& tok = parse::lexer::instance();
 
@@ -325,10 +303,8 @@ void initialize_nonnumeric_statistic_parser(
 
     statistic
         =       tok.Mode_ [ _b = ValueRef::MODE ]
-            >>  parse::label(Property_token)
-            >> -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-            >>  variable_name [ push_back(_a, construct<std::string>(_1)) ]
-            >>  parse::label(Condition_token) >> parse::detail::condition_parser
+            >   parse::label(Value_token)     >     value_ref [ _a = _1 ]
+            >   parse::label(Condition_token) >     parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
 }

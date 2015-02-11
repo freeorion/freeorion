@@ -3695,6 +3695,16 @@ Aggressive:
 Maniacal: 
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
 
+STRUCTURE_TITLE
+Structure
+STRUCTURE_TEXT
+'''Structure is amount of damage that ship can take until it is destroyed. Structure can be restored by repairing.'''
+
+STARLANE_SPEED_TITLE
+[[METER_STARLANE_SPEED]]
+STARLANE_SPEED_TEXT
+'''Speed on galaxy map  (uu/turn)'''
+
 AI_ERROR_MSG
 AI_Error: AI script error
 
@@ -9010,10 +9020,9 @@ This building will construct an Exobot colony at an outpost. Contrary to the col
 #############################################################
 
 HULL_DESC
-'''Starlane Speed: %1%
-Fuel Capacity: %2%
-Combat Speed: %3%
-Structure: %4%'''
+'''[[encyclopedia STARLANE_SPEED_TITLE]]: %1%
+[[encyclopedia FUEL_TITLE]]: %2%
+[[encyclopedia STRUCTURE_TITLE]]: %4%'''
 
 PART_DESC_CAPACITY
 Capacity: %1%

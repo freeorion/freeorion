@@ -130,9 +130,6 @@ def set_planet_resource_foci(): #+
     currentTurn = fo.currentTurn()
     # set the random seed (based on galaxy seed, empire ID and current turn)
     # for game-reload consistency 
-    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(), fo.currentTurn()) + "Resources"
-    random.seed(random_seed)
-
     freq = min(3, (max(5, currentTurn-80))/4.0)**(1.0/3)
     if not (limitAssessments and (abs(currentTurn - lastFociCheck[0]) < 1.5*freq) and (random.random() < 1.0/freq)):
         lastFociCheck[0]=currentTurn

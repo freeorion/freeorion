@@ -53,8 +53,8 @@ namespace parse {
             jumps_between
                 =   (
                             tok.JumpsBetween_ [ _a = construct<std::string>(_1) ]
-                        >   parse::label(Object_token) >   int_value_ref [ _b = _1 ]
-                        >   parse::label(Object_token) >   int_value_ref [ _c = _1 ]
+                        >   parse::label(Object_token) >   (int_value_ref [ _b = _1 ] | int_var_statistic() [ _b = _1 ])
+                        >   parse::label(Object_token) >   (int_value_ref [ _c = _1 ] | int_var_statistic() [ _c = _1 ])
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
