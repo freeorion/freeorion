@@ -2291,6 +2291,15 @@ ENVIRONMENT_MODIFIER
             scope = Source
             activation = And [
                 Planet
+                Planet environment = Uninhabitable
+            ]
+            accountinglabel = "UNINHABTIABLE_ENVIRONMENT_LABEL"
+            effects = SetTargetPopulation value = -999
+            
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
                 Planet environment = Hostile
             ]
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"

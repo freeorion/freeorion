@@ -11,6 +11,7 @@ import ColonisationAI
 import EnumsAI
 import MilitaryAI
 from freeorion_tools import dict_from_map, ppstring
+from TechsListsAI import EXOBOT_TECH_NAME
 
 bestMilRatingsHistory={} # dict of (rating, cost) keyed by turn
 design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
@@ -801,14 +802,18 @@ def generateProductionOrders():
                         print "Error: exception triggered and caught: ", traceback.format_exc()
 
             numExobotShips=0 #TODO: do real calc here
-            if ("BLD_EXOBOT_SHIP" in possibleBuildingTypes) and ("BLD_EXOBOT_SHIP" not in queuedBldgNames):
+            if empire.techResearched(EXOBOT_TECH_NAME) and ("BLD_COL_EXOBOT" not in queuedBldgNames):
                 if len( ColonisationAI.empire_colonizers.get("SP_EXOBOT", []))==0 or numExobotShips==0: #don't have an exobot shipyard yet
                     try:
-                        res=fo.issueEnqueueBuildingProductionOrder("BLD_EXOBOT_SHIP", homeworld.id)
-                        print "Enqueueing BLD_EXOBOT_SHIP, with result %d"%res
-                        if res:
-                            res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
-                            print "Requeueing %s to front of build queue, with result %d"%("BLD_EXOBOT_SHIP", res)
+                        for candidate_id in ColonisationAI.empire_ast_outpost_ids:
+                            candidate = universe.getPlanet(candidate_id)
+                            if candidate.systemID in empire.supplyUnobstructedSystems:
+                                res=fo.issueEnqueueBuildingProductionOrder("BLD_COL_EXOBOT", candidate_id)
+                                print "Enqueueing BLD_COL_EXOBOT, with result %d"%res
+                                if res:
+                                    res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
+                                    print "Requeueing %s to front of build queue, with result %d"%("BLD_COL_EXOBOT", res)
+                                break
                     except:
                         print "Error: exception triggered and caught: ", traceback.format_exc()
 

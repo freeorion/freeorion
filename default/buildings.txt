@@ -603,37 +603,6 @@ BuildingType
     icon = ""
 
 BuildingType
-    name = "BLD_EXOBOT_SHIP"
-    description = "BLD_EXOBOT_SHIP_DESC"
-    buildcost = 140 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = 12
-    location = And [
-        Planet
-        OwnedBy empire = Source.Owner
-        TargetPopulation low = 1
-    ]
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-            ]
-            effects = [
-                CreateShip designname = "SD_COLONY_SHIP" empire = Source.Owner species = "SP_EXOBOT"
-                GenerateSitRepMessage
-                    message = "EFFECT_EXOBOT"
-                    icon = "icons/species/robotic-01.png"
-                    parameters = tag = "planet" data = Target.ID
-                    empire = Source.Owner
-            ]
-
-        EffectsGroup
-            scope = Source
-            effects = Destroy
-    ]
-    icon = "icons/species/robotic-01.png"
-
-BuildingType
     name = "BLD_MEGALITH"
     description = "BLD_MEGALITH_DESC"
     buildcost = 250
@@ -1351,7 +1320,7 @@ BuildingType
                 InSystem id = Source.SystemID
             ]
             activation = Source
-            effects = SetTargetPopulation value = 0.1
+            effects = SetTargetPopulation value = min(Value, 0.1)
 
         EffectsGroup
             scope = InSystem id = Source.SystemID
@@ -1781,7 +1750,7 @@ BuildingType
                     parameters = tag = "planet" data = Target.ID
                     empire = Source.Owner
                 ]
-    
+
         EffectsGroup            // remove population from location
             scope = And [
                 Object id = Source.PlanetID
@@ -1843,5 +1812,6 @@ BuildingType
     ]
     icon = "icons/species/other-04.png"
 
-include "shared_macros.txt"
 
+include "shared_macros.txt"
+include "col_buildings.txt"
