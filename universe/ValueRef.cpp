@@ -801,31 +801,31 @@ namespace ValueRef {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->LeastExpensiveEnqueuedTech(true);
+            return empire->LeastExpensiveEnqueuedTech();
 
         } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->MostExpensiveEnqueuedTech(true);
+            return empire->MostExpensiveEnqueuedTech();
 
         } else if (property_name == "OwnerMostRPCostLeftEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->MostRPCostLeftEnqueuedTech(true);
+            return empire->MostRPCostLeftEnqueuedTech();
 
         } else if (property_name == "OwnerMostRPSpentEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->MostRPSpentEnqueuedTech(true);
+            return empire->MostRPSpentEnqueuedTech();
 
         } else if (property_name == "OwnerTopPriorityEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->TopPriorityEnqueuedTech(true);
+            return empire->TopPriorityEnqueuedTech();
         }
 
         Logger().errorStream() << "Variable<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -1421,6 +1421,11 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->LeastExpensiveEnqueuedTech();
+
 
         } else if (variable_name == "HighestCostEnqueuedTech") {
             int empire_id = ALL_EMPIRES;
@@ -1429,6 +1434,10 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->MostExpensiveEnqueuedTech();
 
         } else if (variable_name == "TopPriorityEnqueuedTech") {
             int empire_id = ALL_EMPIRES;
@@ -1437,6 +1446,10 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->TopPriorityEnqueuedTech();
 
         } else if (variable_name == "MostSpentEnqueuedTech") {
             int empire_id = ALL_EMPIRES;
@@ -1445,6 +1458,10 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->MostRPSpentEnqueuedTech();
 
         } else if (variable_name == "RandomEnqueuedTech") {
             int empire_id = ALL_EMPIRES;
@@ -1453,6 +1470,18 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            // get all techs on queue, randomly pick one
+            const ResearchQueue& queue = empire->GetResearchQueue();
+            std::vector<std::string> all_enqueued_techs = queue.AllEnqueuedProjects();
+            if (all_enqueued_techs.empty())
+                return "";
+            std::vector<std::string>::const_iterator tech_it = all_enqueued_techs.begin();
+            std::size_t idx = RandSmallInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
+            std::advance(tech_it, idx);
+            return *tech_it;
 
         } else if (variable_name == "LowestCostResearchableTech") {
             int empire_id = ALL_EMPIRES;
@@ -1461,6 +1490,10 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->LeastExpensiveResearchableTech();
 
         } else if (variable_name == "HighestCostResearchableTech") {
             int empire_id = ALL_EMPIRES;
@@ -1469,6 +1502,10 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->MostExpensiveResearchableTech();
 
         } else if (variable_name == "TopPriorityResearchableTech") {
             int empire_id = ALL_EMPIRES;
@@ -1477,6 +1514,10 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->TopPriorityResearchableTech();
 
         } else if (variable_name == "MostSpentResearchableTech") {
             int empire_id = ALL_EMPIRES;
@@ -1485,6 +1526,10 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->MostExpensiveResearchableTech();
 
         } else if (variable_name == "RandomResearchableTech") {
             int empire_id = ALL_EMPIRES;
