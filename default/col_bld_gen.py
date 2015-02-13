@@ -56,10 +56,34 @@ t_main = string.Template('''BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
-            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
             effects = [
                 SetSpecies name = "${id}"
                 SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "${id}"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
                 GenerateSitRepMessage
                     message = "SITREP_NEW_COLONY_ESTABLISHED"
                     icon = "${graphic}"
@@ -80,17 +104,17 @@ t_species_condition = string.Template('''ResourceSupplyConnected empire = Source
             Planet
             OwnedBy empire = Source.Owner
             Species name = "${id}"
-            Population low = 3
+            Population low = [[MIN_RECOLONIZING_SIZE]]
             Happiness low = 5
         ]''')
 
-t_buildtime = string.Template('''max(5,
+t_buildtime = string.Template('''max(5, 1 +
         min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Species name = "${id}"
-                Population low = 3
+                Population low = [[MIN_RECOLONIZING_SIZE]]
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]

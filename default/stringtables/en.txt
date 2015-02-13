@@ -7161,7 +7161,7 @@ GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
 
 GRO_LIFECYCLE_MAN_DESC
-'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, the capacity of colony ships can be greatly increased.
+'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, colonists can be transported much more efficiently, and the amount of colonists on a freshly built colony as well as the capacity of colony ships is greatly increased.
 
 Most complex organisms progress through various physiological stages during a lifetime, whether distinctly separated by metamorphoses, or blurred by continuous slow aging. In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others. By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.'''
 
@@ -8900,121 +8900,121 @@ BLD_COL_ABADDONI
 Abaddoni Colony
 
 BLD_COL_ABADDONI_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Abaddoni colony
+This building can only build at an outpost, and will upgrade that outpost to a new Abaddoni colony. Minimum build time depends on the jump distance to the nearest Abaddoni colony, and will increase the farther away it is.
 
 BLD_COL_CHATO
 Chato Colony
 
 BLD_COL_CHATO_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Chato colony
+This building can only build at an outpost, and will upgrade that outpost to a new Chato colony. Minimum build time depends on the jump distance to the nearest Chato colony, and will increase the farther away it is.
 
 BLD_COL_CRAY
 Cray Colony
 
 BLD_COL_CRAY_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Cray colony
+This building can only build at an outpost, and will upgrade that outpost to a new Cray colony. Minimum build time depends on the jump distance to the nearest Cray colony, and will increase the farther away it is.
 
 BLD_COL_DERTHREAN
 Derthrean Colony
 
 BLD_COL_DERTHREAN_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Derthrean colony
+This building can only build at an outpost, and will upgrade that outpost to a new Derthrean colony. Minimum build time depends on the jump distance to the nearest Derthrean colony, and will increase the farther away it is.
 
 BLD_COL_EAXAW
 Eaxaw Colony
 
 BLD_COL_EAXAW_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Eaxaw colony
+This building can only build at an outpost, and will upgrade that outpost to a new Eaxaw colony. Minimum build time depends on the jump distance to the nearest Eaxaw colony, and will increase the farther away it is.
 
 BLD_COL_EGASSEM
 Egassem Colony
 
 BLD_COL_EGASSEM_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Egassem colony
+This building can only build at an outpost, and will upgrade that outpost to a new Egassem colony. Minimum build time depends on the jump distance to the nearest Egassem colony, and will increase the farther away it is.
 
 BLD_COL_ETTY
 Etty Colony
 
 BLD_COL_ETTY_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Etty colony
+This building can only build at an outpost, and will upgrade that outpost to a new Etty colony. Minimum build time depends on the jump distance to the nearest Etty colony, and will increase the farther away it is.
 
 BLD_COL_GEORGE
 George Colony
 
 BLD_COL_GEORGE_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new George colony
+This building can only build at an outpost, and will upgrade that outpost to a new George colony. Minimum build time depends on the jump distance to the nearest George colony, and will increase the farther away it is.
 
 BLD_COL_GYSACHE
 Gysache Colony
 
 BLD_COL_GYSACHE_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Gysache colony
+This building can only build at an outpost, and will upgrade that outpost to a new Gysache colony. Minimum build time depends on the jump distance to the nearest Gysache colony, and will increase the farther away it is.
 
 BLD_COL_HHHOH
 Hhhoh Colony
 
 BLD_COL_HHHOH_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Hhhoh colony
+This building can only build at an outpost, and will upgrade that outpost to a new Hhhoh colony. Minimum build time depends on the jump distance to the nearest Hhhoh colony, and will increase the farther away it is.
 
 BLD_COL_HUMAN
 Human Colony
 
 BLD_COL_HUMAN_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Human colony
+This building can only build at an outpost, and will upgrade that outpost to a new Human colony. Minimum build time depends on the jump distance to the nearest Human colony, and will increase the farther away it is.
 
 BLD_COL_KOBUNTURA
 Kobuntura Colony
 
 BLD_COL_KOBUNTURA_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Kobuntura colony
+This building can only build at an outpost, and will upgrade that outpost to a new Kobuntura colony. Minimum build time depends on the jump distance to the nearest Kobuntura colony, and will increase the farther away it is.
 
 BLD_COL_LAENFA
 Laenfa Colony
 
 BLD_COL_LAENFA_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Laenfa colony
+This building can only build at an outpost, and will upgrade that outpost to a new Laenfa colony. Minimum build time depends on the jump distance to the nearest Laenfa colony, and will increase the farther away it is.
 
 BLD_COL_MUURSH
 Mu Ursh Colony
 
 BLD_COL_MUURSH_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Mu Ursh colony
+This building can only build at an outpost, and will upgrade that outpost to a new Mu Ursh colony. Minimum build time depends on the jump distance to the nearest Mu Ursh colony, and will increase the farther away it is.
 
 BLD_COL_SCYLIOR
 Scylior Colony
 
 BLD_COL_SCYLIOR_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Scylior colony
+This building can only build at an outpost, and will upgrade that outpost to a new Scylior colony. Minimum build time depends on the jump distance to the nearest Scylior colony, and will increase the farther away it is.
 
 BLD_COL_SETINON
 Setinon Colony
 
 BLD_COL_SETINON_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Setinon colony
+This building can only build at an outpost, and will upgrade that outpost to a new Setinon colony. Minimum build time depends on the jump distance to the nearest Setinon colony, and will increase the farther away it is.
 
 BLD_COL_SSLITH
 Sslith Colony
 
 BLD_COL_SSLITH_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Sslith colony
+This building can only build at an outpost, and will upgrade that outpost to a new Sslith colony. Minimum build time depends on the jump distance to the nearest Sslith colony, and will increase the farther away it is.
 
 BLD_COL_TAEGHIRUS
 Tae Ghirus Colony
 
 BLD_COL_TAEGHIRUS_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Tae Ghirus colony
+This building can only build at an outpost, and will upgrade that outpost to a new Tae Ghirus colony. Minimum build time depends on the jump distance to the nearest Tae Ghirus colony, and will increase the farther away it is.
 
 BLD_COL_TRITH
 Trith Colony
 
 BLD_COL_TRITH_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Trith colony
+This building can only build at an outpost, and will upgrade that outpost to a new Trith colony. Minimum build time depends on the jump distance to the nearest Trith colony, and will increase the farther away it is.
 
 BLD_COL_UGMORS
 Ugmors Colony
 
 BLD_COL_UGMORS_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Ugmors colony
+This building can only build at an outpost, and will upgrade that outpost to a new Ugmors colony. Minimum build time depends on the jump distance to the nearest Ugmors colony, and will increase the farther away it is.
 
 BLD_COL_EXOBOT
 Exobot Colony
