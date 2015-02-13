@@ -782,7 +782,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // Most conditions match objects independently of the other objects being
     // tested, but the number parameter for NumberOf conditions makes things
     // more complicated.  In order to match some number of the potential
-    // matchs property, both the matches and non_matches need to be checked
+    // matches property, both the matches and non_matches need to be checked
     // against the subcondition, and the total number of subcondition matches
     // counted.
     // Then, when searching NON_MATCHES, non_matches may be moved into matches
