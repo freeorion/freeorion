@@ -23,8 +23,8 @@ namespace { struct string_parser_rules {
                 ;
 
             free_variable
-                =   tok.Value_          [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
-                |   tok.GalaxySeed_     [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+                =   tok.Value_      [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+                |   tok.GalaxySeed_ [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
                 ;
 
             initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name);
@@ -33,15 +33,17 @@ namespace { struct string_parser_rules {
                 =   constant
                 |   bound_variable
                 |   free_variable
+                |   string_var_complex()
                 ;
 
             initialize_nonnumeric_statistic_parser<std::string>(statistic, statistic_sub_value_ref);
 
             expr
-                %=   constant
-                |    free_variable
-                |    bound_variable
-                |    statistic
+                =   constant
+                |   free_variable
+                |   bound_variable
+                |   statistic
+                |   string_var_complex()
                 ;
 
             bound_variable_name.name("string bound_variable name (e.g., Name)");

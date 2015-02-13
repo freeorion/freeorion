@@ -71,6 +71,7 @@ set (freeorionparse_SOURCE
     SpecialsParser.cpp
     SpeciesParser.cpp
     StarTypeValueRefParser.cpp
+    StringComplexValueRefParser.cpp
     StringValueRefParser.cpp
     TechsParser.cpp
     Tokens.cpp
