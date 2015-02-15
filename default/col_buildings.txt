@@ -1,0 +1,1952 @@
+BuildingType
+    name = "BLD_COL_ABADDONI"
+    description = "BLD_COL_ABADDONI_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_ABADDONI"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_ABADDONI"
+        Not Contains Building name = "BLD_COL_ABADDONI"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_ABADDONI"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_ABADDONI"
+        Not Contains Building name = "BLD_COL_ABADDONI"
+        Not Enqueued type = Building name = "BLD_COL_ABADDONI"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_ABADDONI"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_ABADDONI"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_ABADDONI"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/abaddonnian.png"
+                    parameters = [
+                        tag = "species" data = "SP_ABADDONI"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_CHATO"
+    description = "BLD_COL_CHATO_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_CHATO"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_CHATO"
+        Not Contains Building name = "BLD_COL_CHATO"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_CHATO"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_CHATO"
+        Not Contains Building name = "BLD_COL_CHATO"
+        Not Enqueued type = Building name = "BLD_COL_CHATO"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_CHATO"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_CHATO"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_CHATO"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/chato-matou-gormoshk.png"
+                    parameters = [
+                        tag = "species" data = "SP_CHATO"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_CRAY"
+    description = "BLD_COL_CRAY_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_CRAY"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_CRAY"
+        Not Contains Building name = "BLD_COL_CRAY"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_CRAY"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_CRAY"
+        Not Contains Building name = "BLD_COL_CRAY"
+        Not Enqueued type = Building name = "BLD_COL_CRAY"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_CRAY"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_CRAY"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_CRAY"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/cray.png"
+                    parameters = [
+                        tag = "species" data = "SP_CRAY"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_DERTHREAN"
+    description = "BLD_COL_DERTHREAN_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_DERTHREAN"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_DERTHREAN"
+        Not Contains Building name = "BLD_COL_DERTHREAN"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_DERTHREAN"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_DERTHREAN"
+        Not Contains Building name = "BLD_COL_DERTHREAN"
+        Not Enqueued type = Building name = "BLD_COL_DERTHREAN"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_DERTHREAN"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_DERTHREAN"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_DERTHREAN"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/derthrean.png"
+                    parameters = [
+                        tag = "species" data = "SP_DERTHREAN"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_EAXAW"
+    description = "BLD_COL_EAXAW_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_EAXAW"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EAXAW"
+        Not Contains Building name = "BLD_COL_EAXAW"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_EAXAW"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EAXAW"
+        Not Contains Building name = "BLD_COL_EAXAW"
+        Not Enqueued type = Building name = "BLD_COL_EAXAW"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_EAXAW"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_EAXAW"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_EAXAW"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/eaxaw.png"
+                    parameters = [
+                        tag = "species" data = "SP_EAXAW"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_EGASSEM"
+    description = "BLD_COL_EGASSEM_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_EGASSEM"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EGASSEM"
+        Not Contains Building name = "BLD_COL_EGASSEM"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_EGASSEM"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EGASSEM"
+        Not Contains Building name = "BLD_COL_EGASSEM"
+        Not Enqueued type = Building name = "BLD_COL_EGASSEM"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_EGASSEM"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_EGASSEM"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_EGASSEM"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/egassem.png"
+                    parameters = [
+                        tag = "species" data = "SP_EGASSEM"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_ETTY"
+    description = "BLD_COL_ETTY_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_ETTY"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_ETTY"
+        Not Contains Building name = "BLD_COL_ETTY"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_ETTY"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_ETTY"
+        Not Contains Building name = "BLD_COL_ETTY"
+        Not Enqueued type = Building name = "BLD_COL_ETTY"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_ETTY"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_ETTY"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_ETTY"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/etty.png"
+                    parameters = [
+                        tag = "species" data = "SP_ETTY"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_GEORGE"
+    description = "BLD_COL_GEORGE_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_GEORGE"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_GEORGE"
+        Not Contains Building name = "BLD_COL_GEORGE"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_GEORGE"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_GEORGE"
+        Not Contains Building name = "BLD_COL_GEORGE"
+        Not Enqueued type = Building name = "BLD_COL_GEORGE"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_GEORGE"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_GEORGE"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_GEORGE"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/george.png"
+                    parameters = [
+                        tag = "species" data = "SP_GEORGE"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_GYSACHE"
+    description = "BLD_COL_GYSACHE_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_GYSACHE"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_GYSACHE"
+        Not Contains Building name = "BLD_COL_GYSACHE"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_GYSACHE"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_GYSACHE"
+        Not Contains Building name = "BLD_COL_GYSACHE"
+        Not Enqueued type = Building name = "BLD_COL_GYSACHE"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_GYSACHE"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_GYSACHE"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_GYSACHE"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/gysache.png"
+                    parameters = [
+                        tag = "species" data = "SP_GYSACHE"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_HHHOH"
+    description = "BLD_COL_HHHOH_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_HHHOH"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_HHHOH"
+        Not Contains Building name = "BLD_COL_HHHOH"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_HHHOH"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_HHHOH"
+        Not Contains Building name = "BLD_COL_HHHOH"
+        Not Enqueued type = Building name = "BLD_COL_HHHOH"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_HHHOH"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_HHHOH"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_HHHOH"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/hhhoh.png"
+                    parameters = [
+                        tag = "species" data = "SP_HHHOH"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_HUMAN"
+    description = "BLD_COL_HUMAN_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_HUMAN"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_HUMAN"
+        Not Contains Building name = "BLD_COL_HUMAN"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_HUMAN"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_HUMAN"
+        Not Contains Building name = "BLD_COL_HUMAN"
+        Not Enqueued type = Building name = "BLD_COL_HUMAN"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_HUMAN"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_HUMAN"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_HUMAN"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/human.png"
+                    parameters = [
+                        tag = "species" data = "SP_HUMAN"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_KOBUNTURA"
+    description = "BLD_COL_KOBUNTURA_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_KOBUNTURA"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_KOBUNTURA"
+        Not Contains Building name = "BLD_COL_KOBUNTURA"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_KOBUNTURA"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_KOBUNTURA"
+        Not Contains Building name = "BLD_COL_KOBUNTURA"
+        Not Enqueued type = Building name = "BLD_COL_KOBUNTURA"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_KOBUNTURA"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_KOBUNTURA"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_KOBUNTURA"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/intangible-04.png"
+                    parameters = [
+                        tag = "species" data = "SP_KOBUNTURA"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_LAENFA"
+    description = "BLD_COL_LAENFA_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_LAENFA"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_LAENFA"
+        Not Contains Building name = "BLD_COL_LAENFA"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_LAENFA"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_LAENFA"
+        Not Contains Building name = "BLD_COL_LAENFA"
+        Not Enqueued type = Building name = "BLD_COL_LAENFA"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_LAENFA"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_LAENFA"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_LAENFA"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/laenfa.png"
+                    parameters = [
+                        tag = "species" data = "SP_LAENFA"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_MUURSH"
+    description = "BLD_COL_MUURSH_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_MUURSH"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_MUURSH"
+        Not Contains Building name = "BLD_COL_MUURSH"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_MUURSH"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_MUURSH"
+        Not Contains Building name = "BLD_COL_MUURSH"
+        Not Enqueued type = Building name = "BLD_COL_MUURSH"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_MUURSH"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_MUURSH"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_MUURSH"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/muursh.png"
+                    parameters = [
+                        tag = "species" data = "SP_MUURSH"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_SCYLIOR"
+    description = "BLD_COL_SCYLIOR_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_SCYLIOR"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SCYLIOR"
+        Not Contains Building name = "BLD_COL_SCYLIOR"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_SCYLIOR"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SCYLIOR"
+        Not Contains Building name = "BLD_COL_SCYLIOR"
+        Not Enqueued type = Building name = "BLD_COL_SCYLIOR"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_SCYLIOR"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_SCYLIOR"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_SCYLIOR"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/scylior.png"
+                    parameters = [
+                        tag = "species" data = "SP_SCYLIOR"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_SETINON"
+    description = "BLD_COL_SETINON_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_SETINON"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SETINON"
+        Not Contains Building name = "BLD_COL_SETINON"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_SETINON"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SETINON"
+        Not Contains Building name = "BLD_COL_SETINON"
+        Not Enqueued type = Building name = "BLD_COL_SETINON"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_SETINON"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_SETINON"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_SETINON"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/amorphous-02.png"
+                    parameters = [
+                        tag = "species" data = "SP_SETINON"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_SSLITH"
+    description = "BLD_COL_SSLITH_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_SSLITH"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SSLITH"
+        Not Contains Building name = "BLD_COL_SSLITH"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_SSLITH"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SSLITH"
+        Not Contains Building name = "BLD_COL_SSLITH"
+        Not Enqueued type = Building name = "BLD_COL_SSLITH"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_SSLITH"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_SSLITH"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_SSLITH"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/sslith.png"
+                    parameters = [
+                        tag = "species" data = "SP_SSLITH"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_TAEGHIRUS"
+    description = "BLD_COL_TAEGHIRUS_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_TAEGHIRUS"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_TAEGHIRUS"
+        Not Contains Building name = "BLD_COL_TAEGHIRUS"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_TAEGHIRUS"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_TAEGHIRUS"
+        Not Contains Building name = "BLD_COL_TAEGHIRUS"
+        Not Enqueued type = Building name = "BLD_COL_TAEGHIRUS"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_TAEGHIRUS"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_TAEGHIRUS"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_TAEGHIRUS"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/t-aeghirus.png"
+                    parameters = [
+                        tag = "species" data = "SP_TAEGHIRUS"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_TRITH"
+    description = "BLD_COL_TRITH_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_TRITH"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_TRITH"
+        Not Contains Building name = "BLD_COL_TRITH"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_TRITH"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_TRITH"
+        Not Contains Building name = "BLD_COL_TRITH"
+        Not Enqueued type = Building name = "BLD_COL_TRITH"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_TRITH"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_TRITH"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_TRITH"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/trith.png"
+                    parameters = [
+                        tag = "species" data = "SP_TRITH"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_UGMORS"
+    description = "BLD_COL_UGMORS_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_UGMORS"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_UGMORS"
+        Not Contains Building name = "BLD_COL_UGMORS"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_UGMORS"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_UGMORS"
+        Not Contains Building name = "BLD_COL_UGMORS"
+        Not Enqueued type = Building name = "BLD_COL_UGMORS"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_UGMORS"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_UGMORS"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_UGMORS"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/amorphous-06.png"
+                    parameters = [
+                        tag = "species" data = "SP_UGMORS"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
+    name = "BLD_COL_EXOBOT"
+    description = "BLD_COL_EXOBOT_DESC"
+    buildcost = 70 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EXOBOT"
+        Not Contains Building name = "BLD_COL_EXOBOT"
+        // no existing Exobot colony required!
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_EXOBOT"
+        Not Contains Building name = "BLD_COL_EXOBOT"
+        Not Enqueued type = Building name = "BLD_COL_EXOBOT"
+        // no existing Exobot colony required!
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_EXOBOT"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_EXOBOT"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/robotic-01.png"
+                    parameters = [
+                        tag = "species" data = "SP_EXOBOT"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
