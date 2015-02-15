@@ -320,11 +320,7 @@ void Texture::Load(const std::string& filename, bool mipmap/* = false*/)
     if (!fs::is_regular_file(path))
         throw BadFile("Texture \"file\" \"" + filename + "\" is not a file");
 
-#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
     std::string extension = boost::algorithm::to_lower_copy(path.extension().string());
-#else
-    std::string extension = boost::algorithm::to_lower_copy(path.extension());
-#endif
 
     ImageType image;
     try {
