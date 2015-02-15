@@ -161,7 +161,7 @@ void MultiEdit::Render()
     // clip text to client area
     BeginScissorClipping(Pt(cl_ul.x - 1, cl_ul.y), cl_lr);
 
-    Font::RenderState state;
+    Font::RenderState state(text_color_to_use);
     std::size_t first_visible_row = FirstVisibleRow();
     std::size_t last_visible_row = LastVisibleRow();
     Flags<TextFormat> text_format = TextFormat() & ~(FORMAT_TOP | FORMAT_BOTTOM) | FORMAT_VCENTER;
