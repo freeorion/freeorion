@@ -155,35 +155,6 @@ namespace {
     }
     boost::function<std::map<int,double> (const Universe&, int, int)> SystemNeighborsMapFunc =      &SystemNeighborsMapP;
 
-    int                     VisibilityP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
-        int retval;
-        //std::vector<int> retval;
-        try {
-            retval = universe.GetObjectVisibilityByEmpire(object_id, empire_id);
-            return retval;
-        } catch (...) {
-        }
-        return INVALID_VISIBILITY;
-    }
-    boost::function<int (const Universe&, int, int)> VisibilityFunc =                           &VisibilityP;
-
-    std::vector<int>        VisibilityTurnsP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
-        Universe::VisibilityTurnMap  vismap;
-        std::vector<int> retval;
-        //std::vector<int> retval;
-        try {
-            vismap = universe.GetObjectVisibilityTurnMapByEmpire(object_id, empire_id);
-            retval.push_back(vismap[VIS_NO_VISIBILITY]);
-            retval.push_back(vismap[VIS_BASIC_VISIBILITY]);
-            retval.push_back(vismap[VIS_PARTIAL_VISIBILITY]);
-            retval.push_back(vismap[VIS_FULL_VISIBILITY]);
-            return retval;
-        } catch (...) {
-        }
-        return retval;
-    }
-    boost::function<std::vector<int> (const Universe&, int, int)> VisibilityTurnsFunc =         &VisibilityTurnsP;
-
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
     const std::map<MeterType, Meter>&
                             (UniverseObject::*ObjectMeters)(void) const =                       &UniverseObject::Meters;
@@ -277,9 +248,6 @@ namespace FreeOrionPython {
         class_<std::map<int, double> >("IntDblMap")
             .def(boost::python::map_indexing_suite<std::map<int, double>,true >())
         ;
-        class_<std::map<int, Visibility> >("IntVisibilityMap")
-            .def(boost::python::map_indexing_suite<std::map<int, Visibility>,true >())
-        ;
         class_<std::map<Visibility,int> >("VisibilityIntMap")
             .def(boost::python::map_indexing_suite<std::map<Visibility, int>, true>())
         ;
@@ -354,28 +322,13 @@ namespace FreeOrionPython {
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::map<int, double>, const Universe&, int, int>()
                                                 ))
-            .def("getVisibilityMap",            make_function(
-                                                    &Universe::GetObjectVisibilityByEmpire,
-                                                    return_value_policy<return_by_value>()
-                                                ))
 
             .def("getVisibilityTurnsMap",       make_function(
                                                     &Universe::GetObjectVisibilityTurnMapByEmpire,
                                                     return_value_policy<return_by_value>()
                                                 ))
 
-            .def("getVisibilityTurns",          make_function(
-                                                    VisibilityTurnsFunc,
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int>()
-                                                ))
-
             .def("getVisibility",               make_function(
-                                                    VisibilityFunc,
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<int, const Universe&, int, int>()
-                                                ))
-            .def("getVisibilityMap",            make_function(
                                                     &Universe::GetObjectVisibilityByEmpire,
                                                     return_value_policy<return_by_value>()
                                                 ))
