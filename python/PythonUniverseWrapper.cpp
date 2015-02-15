@@ -170,7 +170,6 @@ namespace {
     std::vector<int>        VisibilityTurnsP(const Universe& universe, int object_id, int empire_id = ALL_EMPIRES) {
         Universe::VisibilityTurnMap  vismap;
         std::vector<int> retval;
-        //std::vector<int> retval;
         try {
             vismap = universe.GetObjectVisibilityTurnMapByEmpire(object_id, empire_id);
             retval.push_back(vismap[VIS_NO_VISIBILITY]);
