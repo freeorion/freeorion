@@ -135,15 +135,18 @@ def follow_vis_system_connections(start_system_id, home_system_id):
         else:
             pre_vis = "an unknown system"
         if fo.currentTurn() < 50:
-            print "*** system ID %d ( %s ) ; previously %s, new visibility_turns vector is %s " % (cur_system_id, sys_name, pre_vis, [turn for turn in universe.getVisibilityTurns(cur_system_id, empire_id)])
+            visibility_turn_list = sorted(dict_from_map(universe.getVisibilityTurnsMap(cur_system_id, empire_id)).items(),
+                                          key=lambda x: x[0].numerator)
+            visibility_info = ['%s: %s' % (vis.name, turn) for vis, turn in visibility_turn_list]
+            print "*** system ID %d ( %s ) ; previously %s, new visibility turns info: %s " % (cur_system_id, sys_name, pre_vis, visibility_info)
         status_str = "*** system ID %d ( %s ) ; " % (cur_system_id, sys_name)
-        is_visible = universe.getVisibilityTurns(cur_system_id, empire_id)[fo.visibility.partial] > 0  # more precisely, this means HAS BEEN visible
+        have_been_visible = dict_from_map(universe.getVisibilityTurnsMap(cur_system_id, empire_id)).get(fo.visibility.partial, 0) > 0
         #print "previous visTurns result: %s"% ([val for val in universe.getVisibilityTurns(cur_system_id, empire_id)], )
         #print "new visTurns result: %s"% (dictFromMap( universe.getVisibilityTurnsMap(cur_system_id, empire_id)), )
         is_connected = universe.systemsConnected(cur_system_id, home_system_id, -1)  # self.empire_id)
-        status_str += " -- is %s partially visible " % (["not", ""][is_visible])
+        status_str += " -- is %s partially visible " % (["not", ""][have_been_visible])
         status_str += " -- is %s visibly connected to homesystem " % (["not", ""][is_connected])
-        if is_visible:
+        if have_been_visible:
             sys_status = foAI.foAIstate.systemStatus.setdefault(cur_system_id, {})
             foAI.foAIstate.visInteriorSystemIDs[cur_system_id] = 1
             if cur_system_id in foAI.foAIstate.visBorderSystemIDs:
