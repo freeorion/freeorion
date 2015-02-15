@@ -1139,6 +1139,18 @@ If true, clicks on multiple fleet buttons will open multiple fleet windows at th
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
 
+OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
+At game start automatically add all user-saved ship designs to the player-empire known designs.
+
+OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
+In the Deisgn Window, dynamically update the pedia detail page while the design name is being edited.
+
+OPTIONS_DB_CHAT_PANEL_HEIGHT
+Sets the height of the player chat panel, in pixels
+
+OPTIONS_DB_CHAT_PANEL_WIDTH
+Sets the width of the player chat panel, in pixels
+
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Sets size of system side-panel.
 
@@ -1224,6 +1236,12 @@ Sets the level at or above which log messages will be output (levels in order of
 OPTIONS_DB_STRINGTABLE_FILENAME
 Sets the language-specific string table filename.
 
+OPTIONS_DB_AI_FOLDER_PATH
+Sets the path for the directory containing the AI script files, for current execution only, relative to the Resource Directory; default is "AI".  Intended to facilitate AI testing.
+
+OPTIONS_DB_AI_CONFIG
+Is available to the AI via the freeorioninterface, is set for current execution only.  Current expected use is to name an optional AI config file within the AI script folder; default is the empty string.  Intended to facilitate AI testing.
+
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
 If true, autosaves will occur during single-player games.
 
@@ -1257,8 +1275,8 @@ Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 OPTIONS_DB_QUICKSTART
 Starts a new quick-start game, bypassing the main menu.
 
-OPTIONS_DB_AUTO_FIRST_TURN
-Hits the "Turn" button automatically on the first turn; useful for debugging, especially when used with --quickstart.
+OPTIONS_DB_AUTO_N_TURNS
+Hits the "Turn" button automatically on the first N turns (up to 400 turns, defaults to zero); useful for various testing particularly with --quickstart or --load, possibly also --auto-quit.
 
 OPTIONS_DB_CHECKED_GL_VERSION
 Stores whether the OpenGL version of this system has been checked. If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true.
@@ -1287,6 +1305,11 @@ Loads the specified single-player save game.
 OPTIONS_DB_EFFECTS_THREADS_DESC
 Specifies number of threads to use in effects processing. More than one thread may lead to unpredictable crashes of the client or server.
 
+OPTIONS_DB_AUTO_QUIT
+Automatically quits once any turns specified by --auto-advance-n-turns are completed (defaults to zero), useful for various testing particularly with --quickstart or --load.
+
+OPTIONS_DB_BINARY_SERIALIZATION
+Use Binary serialization for savegames and client-server communications (which is compact/fast but may have cross-platform compatibility issues); if unchecked text xml serialization is used. Restart after changing is recommended.
 
 #################
 # File Dialog   #
@@ -1303,7 +1326,7 @@ Invalid file name.
 
 FILE_DLG_OVERWRITE_PROMPT
 '''%1% exists.
-Ok to overwrite it?'''
+OK to overwrite it?'''
 
 FILE_DLG_INVALID_FILENAME
 '''"%1%"
@@ -2177,6 +2200,11 @@ Situation reports with errors
 OPTIONS_EFFECTS_THREADS
 Effects processing threads
 
+OPTIONS_ADD_SAVED_DESIGNS
+Add All Saved Ship Designs at Game Start
+
+OPTIONS_USE_BINARY_SERIALIZATION
+Use Binary serialization
 
 ##################
 # CombatSetupWnd #
@@ -2385,7 +2413,10 @@ This planet is out of range of your empire's scanners.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 Latest known stealth (%1%) exceeds [[DETECTION_TITLE]] (%2%).
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
-Latest known stealth is out of date. Actual stealth exceeds [[DETECTION_TITLE]].
+Latest known stealth is out of date. Actual stealth exceeds [[DETECTION_TITLE]] or local [[DETECTION_RANGE_TITLE]] is excessively impaired.
+
+MENUITEM_SET_FOCUS
+Set focus
 
 ## Resources Panel ##########
 
@@ -2637,13 +2668,13 @@ Stop Exploring
 ORDER_GIVE_FLEET_TO_EMPIRE
 Give Fleet To...
 
-ORCER_CANCEL_GIVE_FLEET
+ORDER_CANCEL_GIVE_FLEET
 Cancel Giving Fleet
 
 ORDER_GIVE_PLANET_TO_EMPIRE
 Give Planet To...
 
-ORCER_CANCEL_GIVE_PLANET
+ORDER_CANCEL_GIVE_PLANET
 Cancel Giving Planet
 
 
@@ -2926,6 +2957,12 @@ Design Files
 DESIGN_SAVE
 Save Design File
 
+DESIGN_ADD
+Add Design to Empire Designs
+
+DESIGN_ADD_ALL
+Add All Saved Designs to Empire
+
 DESIGN_NAME_DEFAULT
 Custom Ship Design
 
@@ -2987,7 +3024,7 @@ DESIGN_INV_NO_HULL
 Begin a ship design by selecting its hull.
 
 DESIGN_INV_NO_NAME
-Each ship design must have a unique name.
+Design name cannot be empty.
 
 DESIGN_KNOWN
 Duplicates Existing Design
@@ -3047,6 +3084,14 @@ Own Planets Depopulated
 PLANETS_INVADED
 Planets Invaded
 
+STATISTICS_TEST_1
+Statistics Test 1
+
+STATISTICS_TEST_2
+Statistics Test 2
+
+STATISTICS_TEST_3
+Statistics Test 3
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -3073,10 +3118,10 @@ ENC_TEST
 Test
 
 ENC_GRAPH
-Graph
+[Game - Graphs]
 
 ENC_GALAXY_SETUP
-Galaxy Generation Settings
+[Game - Galaxy]
 
 ENC_GALAXY_SETUP_SETTINGS
 '''Seed: %1%
@@ -3128,7 +3173,7 @@ ENC_INCOMPETE_SHIP_DESIGN
 Incomplete Ship Design
 
 ENC_EMPIRE
-Empire
+[Game - Empires]
 
 EMPIRE_CAPITAL
 Capital: 
@@ -3197,7 +3242,7 @@ BUILDING_TYPES_SCRAPPED
 Building Types Scrapped
 
 ENC_SHIP
-Ship
+[Game - Ships]
 
 ENC_MONSTER
 Monster
@@ -3215,19 +3260,19 @@ NO_MONSTER_OBJECTS
 No Known Monsters
 
 ENC_FLEET
-Fleet
+[Game - Fleets]
 
 ENC_PLANET
-Planet
+[Game - Planets]
 
 ENC_BUILDING
-Building
+[Game - Buildings]
 
 ENC_SYSTEM
-System
+[Game - Systems]
 
 ENC_FIELD
-Field
+[Game - Fields]
 
 ENC_INDEX
 Encyclopedia Index
@@ -3269,23 +3314,64 @@ ENC_EFFECTS_STR
 
 %1%'''
 
+ENC_VERB_PRODUCE_STR
+produce
+
+ENC_VERB_RESEARCH_STR
+research
+
+ENC_AUTO_TIME_COST_INVARIANT_STR
+'''
+
+<u>Time and Cost</u>
+
+Time and cost to %1% this item do not vary by location.'''
+
+ENC_AUTO_TIME_COST_VARIABLE_STR
+'''
+
+<u>Time and Cost</u>
+
+Either one or both of time and cost to %1% this item varies by location.  
+In the expressions describing these, the term Source will generally refer to the respective empire's Capital, and the term Target will generally refer to the location under consideration.
+'''
+
+ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
+'''
+At location %1% the cost and time are %2% %3% over %4% turns.'''
+
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+ENC_AUTO_COST_STR
+'''
+
+<u>Cost</u>
+
+%1%'''
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+ENC_AUTO_TIME_STR
+'''
+
+<u>Time</u>
+
+%1%'''
+
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
 Hull: %2%
 Parts: %3%
 
-Total Attack Damage: %17%
-Structure: %8%
-[[encyclopedia SHIELDS_TITLE]]: %9%
-[[encyclopedia DETECTION_RANGE_TITLE]]: %10%
-[[encyclopedia STEALTH_TITLE]]: %11%
-Fuel Capacity: %14%
-Colonization Capacity: %15%
-Troops: %16%
-Starlane Speed: %13%
-'''
+Total Attack: %17%    Structure: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+Starlane Speed: %13%    Fuel Capacity: %14%
+[[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
+Colonization Capacity: %15%    Troops: %16%
 
+Estimated combat strength (ignoring shields): %19$.f (%20$.2f per PP)
+Against likely enemy weapons and shields: %21$.f (%22$.2f per PP)
+'''
 ## Temporarily removed
 # Direct Fire Parts: %4%
 # Missile Parts: %5%
@@ -3293,6 +3379,31 @@ Starlane Speed: %13%
 # Point Defense Parts: %7%
 # Battle Speed: %12%
 ##
+
+ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR
+'''%1%
+
+Hull: %2%
+Parts: %3%
+
+'''
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
+'''
+For species: %18%
+Total Attack: %17%    Structure: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+Starlane Speed: %13%    Fuel Capacity: %14%
+[[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
+Colonization Capacity: %15%    Troops: %16%
+Estimated combat strength (ignoring shields):  %19$.f   (%20$.2f per PP)
+Against enemy attack %21$.1f and shields %22$.1f:       %23$.f   (%24$.2f per PP)
+'''
+
+
+
+
+
 
 ENC_UNLOCKED_BY
 '''<u>Unlocked By Techs:</u>
@@ -3356,7 +3467,7 @@ Lost:
 ###########################################
 
 CATEGORY_GAME_CONCEPTS
-Game Concepts
+*Game Concepts*
 
 GROWTH_ARTICLE_SHORT_DESC
 Growth
@@ -3460,7 +3571,7 @@ DEFENSE_TEXT
 SHIELDS_TITLE
 Shields
 SHIELDS_TEXT
-'''The term Shields combines all kinds of protective forcefields. They are usually the first barrier incoming attacks have to overcome. There are two distinct types of shields that work very differently: ship shields and planetary barrier shields.
+'''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two distinct types of shields that work very differently: ship shields and planetary barrier shields.
 
 Ship shields: Reduce the damage sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if it's damage value is higher than the shield's strength.
 
@@ -3499,22 +3610,22 @@ The Troop meter on a planet represents the power of the defending ground forces.
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
 ORGANIC_SPECIES_TEXT
-'''Organic species are more or less, 'life as we know it'. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.'''
+'''Organic species are more or less, 'life as we know it'. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.'''
 
 LITHIC_SPECIES_TITLE
 Lithic Metabolism
 LITHIC_SPECIES_TEXT
-'''Lithic species are silicon or mineral-based. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+'''Lithic species are silicon or mineral-based. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.'''
 
 ROBOTIC_SPECIES_TITLE
 Robotic Metabolism
 ROBOTIC_SPECIES_TEXT
-'''Robotic species are sapient machines. These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.'''
+'''Robotic species are sapient machines. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.'''
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Metabolism
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better. Growth specials do not benefit them.
+'''Phototrophic species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star -- the bigger the better. Growth specials do not benefit them.
 
 Population changes:
 Blue Star: Tiny +3 , Small +6 , Medium +9 , Large +12 , Huge +15.
@@ -3590,6 +3701,16 @@ Aggressive:
 
 Maniacal: 
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
+
+STRUCTURE_TITLE
+Structure
+STRUCTURE_TEXT
+'''Structure is amount of damage that ship can take until it is destroyed. Structure can be restored by repairing.'''
+
+STARLANE_SPEED_TITLE
+[[METER_STARLANE_SPEED]]
+STARLANE_SPEED_TEXT
+'''Speed on galaxy map  (uu/turn)'''
 
 AI_ERROR_MSG
 AI_Error: AI script error
@@ -3968,22 +4089,22 @@ SITREP_TECH_RESEARCHED_LABEL
 Tech Researched
 
 SITREP_TECH_UNLOCKED
-%tech% has been unlocked and can now be researched
+%tech% has been unlocked and can now be researched.
 SITREP_TECH_UNLOCKED_LABEL
 Tech Unlocked
 
 SITREP_SHIP_PART_UNLOCKED
-%shippart% has been unlocked and can now be produced in ship designs
+%shippart% has been unlocked and can now be produced in ship designs.
 SITREP_SHIP_PART_UNLOCKED_LABEL
 Ship Part Unlocked
 
 SITREP_SHIP_HULL_UNLOCKED
-%shiphull% has been unlocked and can now be produced in ship designs
+%shiphull% has been unlocked and can now be produced in ship designs.
 SITREP_SHIP_HULL_UNLOCKED_LABEL
 Ship Hull Unlocked
 
 SITREP_BUILDING_TYPE_UNLOCKED
-%buildingtype% has been unlocked and can now be produced
+%buildingtype% has been unlocked and can now be produced.
 SITREP_BUILDING_TYPE_UNLOCKED_LABEL
 Building Type Unlocked
 
@@ -4171,6 +4292,11 @@ SITREP_VICTORY_BIO
 The mystery of the fearsome threat plaguing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty war fleet.
 SITREP_VICTORY_BIO_LABEL
 Victory Biological
+
+SITREP_POP_THRESHOLD
+The colony on %planet% has reached recolonizing size.
+SITREP_POP_THRESHOLD_LABEL
+Colonizing Threshold
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
 WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %planet%!
@@ -4394,7 +4520,7 @@ Chromatophores provide the race with their main form of communication. When two 
 Scyliori are without gender and reproduce in an iteroparous style. The lifespan of a Scylior is roughly 30 years in which they never stop growing, hatching with a shell diameter of only 5cm and experiencing roughly 10 percent growth each year.
 
 Society:
-The remnant of a once-mighty telepathic hive brain, referred to as the Mind is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to it's former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
+The remnant of a once-mighty telepathic hive brain, referred to as 'the Mind', is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to its former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
 
 History:
 Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
@@ -4417,14 +4543,14 @@ Prefer Swamp planets.
 '''
 
 SP_GYSACHE_DESC
-'''The Gysache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
+'''The Gysache are a herbivorous species that has always been prey. They seek to remove all that threatens them, until every place in the universe is safe.
 
 Description:
 The Gysache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
 Their oblong bodies lack anything resembling a head, instead they have three identical eye stalks that are located at the forward tip of the body. A small mouth is located at the base of them.
 
 Personality:
-The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
+The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. However, they do have a herding tendency and this keeps them together when faced with danger.
 
 Homeworld:
 Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
@@ -4449,7 +4575,7 @@ Prefer Toxic planets.
 
 SP_CHATO_DESC
 '''Description:
-The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 Centimeters in height and 10 Centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
+The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 centimeters in height and 10 centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
 
 Social Structure:
 In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
@@ -4477,10 +4603,10 @@ Prefer Desert planets.
 
 SP_TRITH_DESC
 '''Description:
-The Trith are a mixture of matter and their enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for the Trith’s rage: While the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To the grown up Trith this is merely vexing, but for young Trith it can be fatal. The Trith that gain their ability before their adolescent years are sometimes not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
+The Trith are a mixture of matter and enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for their rage: while the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To mature Trith this is merely vexing, but for young Trith it can be fatal. Sometimes, Trith that gain their telepathic ability before adolescence are not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
 
 Social Structure:
-The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought noise in the universe.
+The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought-noise in the universe.
 '''
 
 SP_HHHOH
@@ -4502,11 +4628,11 @@ Prefer Tundra planets.
 
 SP_HHHOH_DESC
 '''Description:
-Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
-Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
+Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tonnes. They have a very thick layer of white fur.
+Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws used to handle objects. When not in use, Hhhohs curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous but do not actively hunt or farm large domesticated life.
 
 Personality:
-Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
+Hhhohs describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
 '''
 
 SP_EAXAW
@@ -4527,13 +4653,13 @@ Prefer Terran planets.
 
 SP_EAXAW_DESC
 '''Description:
-The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a 3 beaked mouth that is used to dig extensive tunnel system. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the Body is musculature, the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
+The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a three-beaked mouth that is used to dig extensive tunnel systems. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the body is musculature and the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
 
 Social Structure:
 Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
 
 History:
-A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation: "All of this must go!".
+A long time ago a derelict ship of the Precursors crashed on the Eaxaw homeworld. As the Eaxaw learned some of the ship's secrets they deduced that there were other intelligent species. Their great matriarchal council soon issued its greatest proclamation: "All of this must go!"
 '''
 
 SP_DERTHREAN
@@ -4555,10 +4681,10 @@ Prefer Toxic planets.
 
 SP_DERTHREAN_DESC
 '''Description:
-The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and the plant without it is but an empty shell, yet somehow together, their neural synapses are compatible to create a reasonable being. Although the virus brings awareness to the plant, it is also toxic to its nervous system, inflicting great amounts of pain to the host, slowly murdering it the greater it spawns, and in the end, killing the plant itself, effectively meaning that the greater the intelligence of a Derthrean, the more pain he endures.
+The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and without the virus, the plant is but an empty shell yet together, their neural synapses are compatible and form a reasonable being. Although the virus brings awareness to the plant, the virus is also toxic to its nervous system, inflicting great amounts of pain, slowly destroying the plant as the virus spawns and in the end, killing it. This means that the greater the intelligence of a Derthrean, the more pain he endures.
 
 Social Structure:
-The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays the fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
+The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays a fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
 '''
 
 SP_LAENFA
@@ -4581,10 +4707,10 @@ Prefer Ocean Planets.
 
 SP_LAENFA_DESC
 '''Description:
-The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others and has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility , as they are able to swim and slither like a serpent. The increased effectiveness of attached Laenfa's telepathic communication allows them to synchronize the motions of a single vine for more effective transportation.
+The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others. A leaf has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility as they are able to swim and slither like a serpent. When Laenfa are attached, the effectiveness of their telepathic communication increases, allowing them to synchronize the motions of a single vine for more effective transportation.
 
 Social Structure:
-The Laenfa have a unified culture due to their telepathy, but as their ability to communicate telepathically weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret, but takes into account the voices of all Laenfa they are able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goal of gaining knowledge of other species and protecting knowledge of themselves.
+The Laenfa have a unified culture due to their telepathy but because their telepathic communication weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret but takes into account the voices of all Laenfa it is able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goals of gaining knowledge of other species and protecting knowledge of themselves.
 '''
 
 SP_TAEGHIRUS
@@ -4653,7 +4779,7 @@ SP_GEORGE_DESC
 '''George is a single telepathic entity that consists of multiple mobile telepathic units.
 
 Description:
-The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
+The units that make up George look like 2.5 meter long, 0.5 meter tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own. The mind of George is the sum of all the units communicating telepathically, over any distance.
 '''
 
 
@@ -4676,11 +4802,11 @@ Prefer Barren planets.
 
 SP_CRAY_DESC
 '''Description:
-The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray's language is done by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
+The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray communicate by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
 
 Social Structure:
-The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsman rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
-Day to day decisions run on an extremely complex web of favors, all Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
+The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsmen rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
+Day to day decisions run on an extremely complex web of favors. All Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
 '''
 
 
@@ -4706,7 +4832,7 @@ Prefer Desert planets.
 
 SP_ETTY_DESC
 '''Description:
-Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong scent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the scent of greater predators, they also have a powerful sense of smell.
+Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong scent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the scent of greater predators. They also have a powerful sense of smell.
 
 The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
 
@@ -4732,7 +4858,7 @@ SP_CYNOS_GAMEPLAY_DESC
 
 SP_CYNOS_DESC
 '''Description:
-The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
+The Cynos are part of a mother plant which resembles a 90-meter high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live up to 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
 
 A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant—artificial substitutes for this feed are possible, but result in the infertility of the Cyno, thus all Cyno leaving their homeworld become infertile.
 
@@ -4740,7 +4866,7 @@ Social Structure:
 Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods.
 
 Reason for Staying:
-Neither can the Cynos reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
+The Cynos cannot reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
 '''
 
 SP_PHINNERT
@@ -5031,6 +5157,7 @@ Prefer Inferno planets.
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
+[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC
@@ -5330,6 +5457,14 @@ GAIA_SPECIAL_DESC
 '''Increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15.
 
 This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
+
+WORLDTREE_SPECIAL
+World Tree
+
+WORLDTREE_SPECIAL_DESC
+'''Increases [[encyclopedia SUPPLY_TITLE]] by +1, [[encyclopedia DETECTION_RANGE_TITLE]] by +10, max Population by +1, Happiness on the planet that has the special by +5 and Happiness on all other planets owned by the same empire by +1
+
+A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it has been plantet by the Curators in ancient times.'''
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins (Excavated)
@@ -6025,6 +6160,12 @@ root condition candidate
 DESC_STATISTIC
 statistic
 
+DESC_STAT_TYPE
+stat type
+
+DESC_SAMPLING_CONDITION
+sampling condition
+
 DESC_VAR_PLANETSIZE
 planet size
 
@@ -6048,6 +6189,36 @@ star type
 
 DESC_VAR_VALUE
 previous value
+
+DESC_VAR_GALAXYMAXAIAGGRESSION
+the galaxy MAX AI Aggression setting
+
+DESC_VAR_GALAXYSIZE
+the galaxy size setting (# of Systems)
+
+DESC_VAR_GALAXYPLANETDENSITY
+the galaxy planet density setting
+
+DESC_VAR_GALAXYAGE
+the galaxy age setting
+
+DESC_VAR_GALAXYMONSTERFREQUENCY
+the galaxy monster frequency setting
+
+DESC_VAR_GALAXYNATIVEFREQUENCY
+the galaxy native frequency setting
+
+DESC_VAR_GALAXYSHAPE
+the galaxy shape setting
+
+DESC_VAR_GALAXYSPECIALFREQUENCY
+the galaxy special frequency setting
+
+DESC_VAR_GALAXYSTARLANEFREQUENCY
+the galaxy starlane frequency setting
+
+DESC_VAR_NON_OBJECT_REFERENCE
+a free variable
 
 DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]
@@ -6208,7 +6379,11 @@ owner's top priority enqueued tech
 DESC_VAR_LASTTURNBATTLEHERE
 last turn a battle occurred here
 
+DESC_COMPLEX
+Complex Variable
 
+DESC_VARIABLE_NAME
+Variable Name
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
@@ -6504,10 +6679,13 @@ DESC_PLANET_SIZE_NOT
  that is not a %1% planet
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+ that is a %1% planet for the species %2%
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+ that is not a %1% planet for the species %2%
+
+DESC_PLANET_ENVIRONMENT_CUR_SPECIES
+that it currently has
 
 DESC_SPECIES
  that has species %1%
@@ -6978,7 +7156,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the max population of Good, Adequate, & Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
+'''Increases the max population of Good, Adequate, and Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -8253,13 +8431,13 @@ SHP_DEATH_SPORE
 Death Spores
 
 SHP_DEATH_SPORE_DESC
-Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets.
+Unlocks the [[shippart SP_DEATH_SPORE]] which allows ships to reduce the population of planets with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SHP_BIOTERM
 Bio-Terminators
 
 SHP_BIOTERM_DESC
-Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
+Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the population of planets with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SPY_PLANET_STEALTH_MOD
 Planet Stealth Modifier
@@ -8499,7 +8677,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Increases max Population according to planet size-- Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Increases max Population according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -8677,7 +8855,7 @@ Transformer
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
-This building can be given the effects of a [[building BLD_PLANET_CLOAK]], a [[building BLD_BIOTERROR_PROJECTOR]], a [[building BLD_STARGATE]], a [[building BLD_PLANET_DRIVE]], or a [[building BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
+This building can be given the effects of a [[buildingtype BLD_PLANET_CLOAK]], a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
 
 BLD_PLANET_CLOAK
 Planetary Cloaking Device
@@ -8857,10 +9035,9 @@ This building will construct an Exobot colony at an outpost. Contrary to the col
 #############################################################
 
 HULL_DESC
-'''Starlane Speed: %1%
-Fuel Capacity: %2%
-Combat Speed: %3%
-Structure: %4%'''
+'''[[encyclopedia STARLANE_SPEED_TITLE]]: %1%
+[[encyclopedia FUEL_TITLE]]: %2%
+[[encyclopedia STRUCTURE_TITLE]]: %4%'''
 
 PART_DESC_CAPACITY
 Capacity: %1%
@@ -9302,9 +9479,9 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in hull types that have Robotic Hulls as a prerequisite.
+'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in one of [[shiphull SH_ROBOTIC]], [[shiphull SH_SELF_GRAVITATING]], [[shiphull SH_NANOROBOTIC]], [[shiphull SH_LOGISTICS_FACILITATOR]], [[shiphull SH_TITANIC]].
 
-Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact. 
+Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact.
 '''
 
 CO_COLONY_POD
@@ -9327,7 +9504,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Colonies can be founded on planets that already have an Outpost. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
+'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Outposts can be upgraded to colonies. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.'''
 
 GT_TROOP_POD
 Ground Troop Pod
@@ -9357,13 +9534,13 @@ SP_DEATH_SPORE
 Death Spores
 
 SP_DEATH_SPORE_DESC
-A biological weapon which gradually reduces the population of a planet.
+A biological weapon which reduces the population of a planet with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SP_BIOTERM
 Bio-Terminators
 
 SP_BIOTERM_DESC
-A powerful biological weapon which quickly reduces the population of a planet.
+A powerful biological weapon which quickly reduces the population of a planet with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SP_NOVA_BOMB
 Nova Bomb
@@ -10067,6 +10244,9 @@ SUBTERRANEAN_LABEL
 GAIA_LABEL
 '''Gaia Bonus'''
 
+WORLDTREE_LABEL
+'''World Tree Bonus'''
+
 HOMEWORLD_LABEL
 '''Homeworld'''
 
@@ -10123,6 +10303,9 @@ GREAT_RESEARCH_LABEL
 
 ULTIMATE_RESEARCH_LABEL
 '''%2% Ultimate Research'''
+
+BAD_SUPPLY_LABEL
+'''%2% Bad Supply'''
 
 AVERAGE_SUPPLY_LABEL
 '''%2% Average Supply'''
@@ -13728,4 +13911,3 @@ MONSTER_NAMES
 [[SHIP_NAME_BASQUE_MYTHOLOGY]]
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 [[SHIP_NAME_DEVS]]'''
-

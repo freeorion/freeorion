@@ -4152,7 +4152,9 @@ Bevorzugt vulkanische Planeten.
 [[BAD_RESEARCH]]
         
 [[AVERAGE_POPULATION]]
+[[AVERAGE_SUPPLY]]
 [[GOOD_GROUND_TROOPS]]
+[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC
@@ -6596,7 +6598,7 @@ GRO_SUBTER_HAB
 Unterirdische Wohnanlagen
 
 GRO_SUBTER_HAB_DESC
-'''Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5. Dieser Bonus wirkt nicht bei Planeten mit den Besonderheiten [[special TUNNELS_SPECIAL]] oder [[special TECTONIC_INSTABILITY_SPECIAL]].'''
+'''Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.'''
 
 GRO_GENOME_BANK
 Genombank
@@ -7522,7 +7524,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Increases max Population according to planet size-- Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Increases max Population according to planet size; Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
