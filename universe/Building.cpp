@@ -110,7 +110,8 @@ std::string Building::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
     os << " building type: " << m_building_type
-       << " produced by empire id: " << m_produced_by_empire_id;
+       << " produced by empire id: " << m_produced_by_empire_id
+       << " \n characteristics " << GetBuildingType(m_building_type)->Dump();
     return os.str();
 }
 
@@ -236,9 +237,9 @@ namespace {
 bool BuildingType::ProductionCostTimeLocationInvariant() const {
     if (CHEAP_AND_FAST_BUILDING_PRODUCTION)
         return true;
-    if (m_production_cost && !m_production_cost->TargetInvariant())
+    if (m_production_cost && !(m_production_cost->TargetInvariant() && m_production_cost->SourceInvariant()))
         return false;
-    if (m_production_time && !m_production_time->TargetInvariant())
+    if (m_production_time && !(m_production_time->TargetInvariant() && m_production_time->SourceInvariant()))
         return false;
     return true;
 }
@@ -330,6 +331,9 @@ BuildingTypeManager::BuildingTypeManager() {
 
     s_instance = this;
 
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings file.";
+    }
     parse::buildings(GetResourceDir() / "buildings.txt", m_building_types);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {

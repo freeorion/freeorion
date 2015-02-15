@@ -5,6 +5,9 @@
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 
+#include <boost/spirit/include/phoenix.hpp>
+
+
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
@@ -43,12 +46,12 @@ namespace {
 
             predefined_design
                 =    tok.Design_
-                >>   parse::label(Name_token) >> tok.string [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                >>   parse::label(Name_token) > tok.string [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
                 ;
 
             design_number
                 =    tok.Design_
-                >    parse::label(Design_token) > int_value_ref [ _val = new_<Condition::NumberedShipDesign>(_1) ]
+                >>   parse::label(Design_token) > int_value_ref [ _val = new_<Condition::NumberedShipDesign>(_1) ]
                 ;
 
             produced_by_empire // TODO: Lose "empire" part.

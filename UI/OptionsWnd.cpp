@@ -88,11 +88,7 @@ namespace {
                 if (!dlg.Result().empty()) {
                     fs::path path = m_return_relative_path ?
                         RelativePath(m_path, fs::path(*dlg.Result().begin())) :
-#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
                     fs::absolute(*dlg.Result().begin());
-#else
-                    fs::complete(*dlg.Result().begin());
-#endif
                     *m_edit << path.string();
                     m_edit->EditedSignal(m_edit->Text());
                 }
@@ -630,6 +626,8 @@ OptionsWnd::OptionsWnd():
     // Misc
     current_page = CreatePage(UserString("OPTIONS_PAGE_MISC"));
     IntOption(current_page, 0, "effects-threads", UserString("OPTIONS_EFFECTS_THREADS"));
+    BoolOption(current_page, 0, "auto-add-saved-designs", UserString("OPTIONS_ADD_SAVED_DESIGNS"));
+    BoolOption(current_page, 0, "binary-serialization", UserString("OPTIONS_USE_BINARY_SERIALIZATION"));  // Consider changing to Enum to support more serialization formats
     m_tabs->SetCurrentWnd(0);
 
     DoLayout();

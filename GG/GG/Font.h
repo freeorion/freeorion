@@ -41,6 +41,7 @@
 #include <stack>
 
 #include <boost/unordered_map.hpp>
+#include <boost/graph/graph_concepts.hpp>
 
 
 struct FT_FaceRec_;
@@ -48,6 +49,10 @@ typedef struct FT_FaceRec_*  FT_Face;
 typedef int FT_Error;
 
 namespace GG {
+
+class GLRGBAColorBuffer;
+class GLTexCoordBuffer;
+class GLPtBuffer;
 
 /** Returns a string of the form "<rgba r g b a>" from a Clr object with color
     channels r, b, g, a. */
@@ -312,6 +317,7 @@ public:
     struct GG_API RenderState
     {
         RenderState(); ///< Default ctor.
+        RenderState(Clr color); //< Takes default text color as parameter
 
         /** The count of open \<i> tags seen since the last \</i> seen. */
         std::size_t     use_italics;
@@ -319,8 +325,41 @@ public:
         /** The count of open \<u> tags seen since the last \</u> seen. */
         std::size_t     draw_underline;
 
-        /** The stack of text colors (as set by previous tags). */
-        std::stack<Clr> colors;
+        /** The stack of text color indexes (as set by previous tags). */
+        std::stack<int> color_index_stack;
+
+        /** All colors that have been used. **/
+        std::vector<Clr> used_colors;
+
+        /// Add color to stack and remember it has been used
+        void PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a);
+
+        /// Return to the previous used color, or remain as default
+        void PopColor();
+
+        /// Return the index of the current color in used_colors
+        int CurrentIndex() const;
+
+        const Clr& CurrentColor()  const;
+
+        /// Return true if there are no more colors to pop.
+        bool ColorsEmpty() const;
+    };
+
+    /** \brief Holds precomputed glyph position information for rendering.
+     */
+    struct RenderCache
+    {
+        boost::scoped_ptr<GLPtBuffer> vertices;
+        boost::scoped_ptr<GLTexCoordBuffer> coordinates;
+        boost::scoped_ptr<GLRGBAColorBuffer> colors;
+
+        boost::scoped_ptr<GLPtBuffer> underline_vertices;
+        boost::scoped_ptr<GLRGBAColorBuffer> underline_colors;
+
+        RenderCache();
+
+        ~RenderCache();
     };
 
     /** \name Structors */ ///@{
@@ -386,14 +425,6 @@ public:
     /** Returns the width of the glyph for the space character. */
     X    SpaceWidth() const;
 
-    /** Renders glyph for \a c and returns advance of glyph rendered.  \note
-        Just as with most string parameters throughout GG, \a c must be a
-        valid UTF-8 sequence. */
-    X    RenderGlyph(const Pt& pt, char c) const;
-
-    /** Renders glyph for \a c and returns advance of glyph rendered. */
-    X    RenderGlyph(const Pt& pt, boost::uint32_t c) const;
-
     /** Unformatted text rendering; repeatedly calls RenderGlyph, then returns
         advance of entire string. */
     X    RenderText(const Pt& pt, const std::string& text) const;
@@ -410,6 +441,17 @@ public:
                     const std::vector<LineData>& line_data, RenderState& render_state,
                     std::size_t begin_line, CPSize begin_char,
                     std::size_t end_line, CPSize end_char) const;
+
+    void PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
+                       RenderCache& cache, const std::vector<LineData>* line_data = 0,
+                       RenderState* render_state = 0) const;
+
+    void PreRenderText(const Pt& pt1, const Pt& pt2, const std::string& text,
+                       Flags<TextFormat>& format, const std::vector<LineData>& line_data,
+                       RenderState& render_state, std::size_t begin_line, CPSize begin_char,
+                       std::size_t end_line, CPSize end_char, RenderCache& cache) const;
+
+    void RenderCachedText(RenderCache& cache) const;
 
     /** Sets \a render_state as if all the text before (<i>begin_line</i>,
         <i>begin_char</i>) had just been rendered. */
@@ -528,8 +570,8 @@ private:
     void              Init(FT_Face& font);
     bool              GenerateGlyph(FT_Face font, boost::uint32_t ch);
     void              ValidateFormat(Flags<TextFormat>& format) const;
-    inline X          RenderGlyph(const Pt& pt, const Glyph& glyph,
-                                  const RenderState* render_state) const;
+    X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state,
+                                 RenderCache& cache) const;
     void              HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_color,
                                 RenderState& render_state) const;
     bool              IsDefaultFont();

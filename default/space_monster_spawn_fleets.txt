@@ -7,9 +7,9 @@ MonsterFleet
     spawnlimit = 9999
     location = And [
         Not Contains Monster
-        Not WithinStarlaneJumps 2 Contains And [
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -23,9 +23,9 @@ MonsterFleet
     location = And [
         Star type = [Blue White Yellow Orange Red]
         Not Contains Monster
-        Not WithinStarlaneJumps 1 Contains And [
+        Not WithinStarlaneJumps jumps = 1 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -41,9 +41,9 @@ MonsterFleet
             Armed
             Monster
         ]
-        Not WithinStarlaneJumps 3 Contains And [
+        Not WithinStarlaneJumps jumps = 3 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         Not Star type = NoStar
         ]
     ]
@@ -60,9 +60,9 @@ MonsterFleet
             Armed
             Monster
         ]
-        Not WithinStarlaneJumps 2 Contains And [
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -75,9 +75,9 @@ MonsterFleet
     spawnlimit = 50
     location = And [
         Not Contains Monster
-        Not WithinStarlaneJumps 2 Contains And [
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -90,9 +90,9 @@ MonsterFleet
     spawnlimit = 50
     location = And [
         Not Contains Monster
-        Not WithinStarlaneJumps 4 Contains And [
+        Not WithinStarlaneJumps jumps = 4 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -106,9 +106,9 @@ MonsterFleet
     location = And [
         Not Contains Monster
         Contains Planet type = GasGiant
-        Not WithinStarlaneJumps 3 Contains And [
+        Not WithinStarlaneJumps jumps = 3 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -122,9 +122,9 @@ MonsterFleet
     location = And [
         Not Contains Monster
         Contains Planet size = Small
-        Not WithinStarlaneJumps 2 Contains And [
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -138,9 +138,9 @@ MonsterFleet
     location = And [
         Not Contains Monster
         Contains Planet type = Asteroids
-        Not WithinStarlaneJumps 4 Contains And [
+        Not WithinStarlaneJumps jumps = 4 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -153,9 +153,9 @@ MonsterFleet
     spawnlimit = 2
     location = And [
         Not Contains Monster
-        Not WithinStarlaneJumps 4 Contains And [
+        Not WithinStarlaneJumps jumps = 4 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -169,9 +169,9 @@ MonsterFleet
     location = And [
         Not Contains Monster
         Contains Planet type = Asteroids
-        Not WithinStarlaneJumps 2 Contains And [
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -185,17 +185,17 @@ MonsterFleet
     location = And [
         Contains And [
             Planet
-            Not OwnedBy AnyEmpire
+            Unowned
             Not Planet type = [Asteroids GasGiant]
         ]
         Not Contains Or [
-                        HasSpecial name = "ANCIENT_RUINS_SPECIAL"
-                        HasSpecial name = "PANOPTICON_SPECIAL"
-                        HasSpecial name = "GAIA_SPECIAL"
-                        ]
-        Not WithinStarlaneJumps 6 And [
+            HasSpecial name = "ANCIENT_RUINS_SPECIAL"
+            HasSpecial name = "PANOPTICON_SPECIAL"
+            HasSpecial name = "GAIA_SPECIAL"
+        ]
+        Not WithinStarlaneJumps jumps = 6 condition = And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]
 
@@ -208,8 +208,8 @@ MonsterFleet
     spawnlimit = 1
     location = And [
         Not Contains Monster
-        Not WithinStarlaneJumps 4 Contains And [
+        Not WithinStarlaneJumps jumps = 4 condition = Contains And [
             Planet
-            OwnedBy AnyEmpire
+            OwnedBy affiliation = AnyEmpire
         ]
     ]

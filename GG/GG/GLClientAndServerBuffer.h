@@ -2,34 +2,17 @@
 #ifndef _GLClientAndServerBuffer_h_
 #define _GLClientAndServerBuffer_h_
 
-#ifdef _MSC_VER
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-#endif
-
-/*
- *  GLClientAndServerBuffer.h
- *  FreeOrion
- *
- *  Created by Rainer Kupke on 06.02.11.
- *  Copyright 2011. All rights reserved.
- *
- */
-
-// include OpenGL headers
-#if defined(__APPLE__) && defined(__MACH__)
-# include <OpenGL/gl.h>
-#else
-# include <GL/gl.h>
-#endif
+#include <GG/Base.h>
 
 #include <vector>
+
+namespace GG {
 
 ///////////////////////////////////////////////////////////////////////////
 // GLBufferBase common base class for Buffer classes
 ///////////////////////////////////////////////////////////////////////////
 
-class GLBufferBase
+class GG_API GLBufferBase
 {
 public:
     GLBufferBase();             // ctor
@@ -54,7 +37,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////
 
 template <class vtype> 
-class GLClientAndServerBufferBase : public GLBufferBase
+class GG_API GLClientAndServerBufferBase : public GLBufferBase
 {
 private:
     GLClientAndServerBufferBase(); // default ctor forbidden, 
@@ -93,10 +76,11 @@ protected:
 // GLRGBAColorBuffer specialized class for RGBA color values
 ///////////////////////////////////////////////////////////////////////////
 
-class GLRGBAColorBuffer : public GLClientAndServerBufferBase<unsigned char>
+class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<unsigned char>
 {
 public:
     GLRGBAColorBuffer();
+    void store(Clr color);
     void activate() const;
 };
 
@@ -104,7 +88,7 @@ public:
 // GL2DVertexBuffer specialized class for 2d vertex data
 ///////////////////////////////////////////////////////////////////////////
 
-class GL2DVertexBuffer : public GLClientAndServerBufferBase<float>
+class GG_API GL2DVertexBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
     GL2DVertexBuffer();
@@ -112,14 +96,29 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////
+// GLPtBuffer specialized class for int 2d vertex data
+///////////////////////////////////////////////////////////////////////////
+
+class GG_API GLPtBuffer : public GLClientAndServerBufferBase<int>
+{
+public:
+    GLPtBuffer();
+    void store(Pt pt);
+    void store(X x, Y y);
+    void activate() const;
+};
+
+///////////////////////////////////////////////////////////////////////////
 // GLTexCoordBuffer specialized class for texture coordinate data
 ///////////////////////////////////////////////////////////////////////////
 
-class GLTexCoordBuffer : public GLClientAndServerBufferBase<float>
+class GG_API GLTexCoordBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
     GLTexCoordBuffer();
     void activate() const;
 };
+
+}
 
 #endif

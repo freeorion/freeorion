@@ -6,6 +6,7 @@
 #include "Label.h"
 #include "../universe/ValueRef.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
@@ -34,6 +35,9 @@ typedef qi::rule<
     parse::skipper_type
 > name_token_rule;
 
+typedef parse::value_ref_parser_rule<int>::type     int_rule;
+typedef parse::value_ref_parser_rule<double>::type  double_rule;
+
 template <typename T>
 struct variable_rule
 {
@@ -55,9 +59,8 @@ struct statistic_rule
         parse::token_iterator,
         ValueRef::Statistic<T>* (),
         qi::locals<
-            std::vector<std::string>,
-            ValueRef::StatisticType,
-            Condition::ConditionBase*
+            ValueRef::ValueRefBase<T>*,
+            ValueRef::StatisticType
         >,
         parse::skipper_type
     > type;
@@ -74,7 +77,8 @@ struct complex_variable_rule
             ValueRef::ValueRefBase<int>*,
             ValueRef::ValueRefBase<int>*,
             ValueRef::ValueRefBase<std::string>*,
-            ValueRef::ValueRefBase<std::string>*
+            ValueRef::ValueRefBase<std::string>*,
+            ValueRef::ValueRefBase<int>*
         >,
         parse::skipper_type
     > type;
@@ -124,19 +128,19 @@ void initialize_expression_parsers(
                     |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                     |   tok.Abs_    [ _c = ValueRef::ABS ]
                     )
-                    >> '(' > expr [ _val = new_<ValueRef::Operation<T> >(_c, _1) ] > ')'
+                    >> '(' >> expr [ _val = new_<ValueRef::Operation<T> >(_c, _1) ] >> ')'
                 )
             |   (
                     (
-                        tok.Min_    [ _c = ValueRef::MINIMUM ]
-                    |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
-                    |   tok.Random_ [ _c = ValueRef::RANDOM_UNIFORM ]
+                        tok.Min_            [ _c = ValueRef::MINIMUM ]
+                    |   tok.Max_            [ _c = ValueRef::MAXIMUM ]
+                    |   tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]
                     )
-                    >> '(' > expr [ _a = _1 ] > ','
-                    > expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] > ')'
+                    >> '(' >> expr [ _a = _1 ] >> ','
+                    >> expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] >> ')'
                 )
             |   (
-                    lit('-') > function_expr
+                    lit('-') >> function_expr
                     [ _val = new_<ValueRef::Operation<T> >(ValueRef::NEGATE, _1) ]
                 )
             |   (
@@ -148,7 +152,7 @@ void initialize_expression_parsers(
     exponential_expr
         =   (
                 function_expr [ _a = _1 ]
-                >> '^' > function_expr
+                >> '^' >> function_expr
                 [ _val = new_<ValueRef::Operation<T> >( ValueRef::EXPONENTIATE, _a, _1 ) ]
             )
         |   function_expr [ _val = _1 ]
@@ -157,14 +161,14 @@ void initialize_expression_parsers(
     multiplicative_expr
         =   (
                 exponential_expr [ _a = _1 ]
-            >   (
+            >>   (
                    *(
                         (
                             (
                                 lit('*') [ _c = ValueRef::TIMES ]
                             |   lit('/') [ _c = ValueRef::DIVIDE ]
                             )
-                        >   exponential_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
+                        >>   exponential_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
                         ) [ _a = _b ]
                     )
                 )
@@ -178,14 +182,14 @@ void initialize_expression_parsers(
                 (
                     (
                         multiplicative_expr [ _a = _1 ]
-                    >   (
+                    >>   (
                         *(
                                 (
                                     (
                                         lit('+') [ _c = ValueRef::PLUS ]
                                     |   lit('-') [ _c = ValueRef::MINUS ]
                                     )
-                                >   multiplicative_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
+                                >>   multiplicative_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
                                 ) [ _a = _b ]
                             )
                         )
@@ -203,19 +207,24 @@ void initialize_expression_parsers(
         ;
 }
 
-const reference_token_rule&             variable_scope();
-const name_token_rule&                  container_type();
-const name_token_rule&                  int_bound_variable_name();
-const variable_rule<int>::type&         int_bound_variable();
-const name_token_rule&                  int_free_variable_name();
-const variable_rule<int>::type&         int_free_variable();
-const statistic_rule<int>::type&        int_var_statistic();
-const complex_variable_rule<int>::type& int_var_complex();
-const name_token_rule&                  double_bound_variable_name();
-const name_token_rule&                  double_free_variable_name();
-const variable_rule<double>::type&      double_free_variable();
-const statistic_rule<double>::type&     double_var_statistic();
-
+const reference_token_rule&                     variable_scope();
+const name_token_rule&                          container_type();
+const int_rule&                                 int_constant();
+const name_token_rule&                          int_bound_variable_name();
+const variable_rule<int>::type&                 int_bound_variable();
+const name_token_rule&                          int_free_variable_name();
+const variable_rule<int>::type&                 int_free_variable();
+const statistic_rule<int>::type&                int_var_statistic();
+const complex_variable_rule<int>::type&         int_var_complex();
+const int_rule&                                 int_simple();
+const double_rule&                              double_constant();
+const name_token_rule&                          double_bound_variable_name();
+const variable_rule<double>::type&              double_bound_variable();
+const name_token_rule&                          double_free_variable_name();
+const variable_rule<double>::type&              double_free_variable();
+const statistic_rule<double>::type&             double_var_statistic();
+const complex_variable_rule<double>::type&      double_var_complex();
+const complex_variable_rule<std::string>::type& string_var_complex();
 
 template <typename T>
 void initialize_bound_variable_parser(
@@ -231,77 +240,69 @@ void initialize_bound_variable_parser(
     using phoenix::push_back;
 
     bound_variable
-        =   variable_scope() [ _b = _1 ] > '.'
-        > -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-        >   variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
+        =   variable_scope() [ _b = _1 ] >> '.'
+        >>-(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
+        >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
         ;
 }
 
 template <typename T>
 void initialize_numeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
-    const name_token_rule& variable_name)
+    typename statistic_rule<T>::type& statistic_1,
+    typename statistic_rule<T>::type& statistic_2,
+    const typename parse::value_ref_parser_rule<T>::type& value_ref
+    )
 {
     const parse::lexer& tok = parse::lexer::instance();
 
     qi::_1_type _1;
     qi::_a_type _a;
     qi::_b_type _b;
-    qi::_c_type _c;
     qi::_val_type _val;
-    qi::eps_type eps;
     using phoenix::construct;
     using phoenix::new_;
     using phoenix::push_back;
-    using phoenix::val;
+
+    statistic_1
+        =   (   tok.Count_  [ _b = ValueRef::COUNT ]
+            |   tok.If_     [ _b = ValueRef::IF ] )
+            >   parse::label(Condition_token) >    parse::detail::condition_parser
+                [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
+        ;
+
+    statistic_2
+        =       parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
+            >>  parse::label(Value_token)     >     value_ref [ _a = _1 ]   // >> operator used here to avoid amiguity with min/max parser functions
+            >   parse::label(Condition_token) >     parse::detail::condition_parser
+                [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
+        ;
 
     statistic
-        =    (
-                  (
-                        (
-                            tok.Count_  [ _b = ValueRef::COUNT ]
-                        |   tok.If_     [ _b = ValueRef::IF ]
-                        )
-                   >   parse::label(Condition_token) >> parse::detail::condition_parser [ _c = _1 ]
-                  )
-              |   (
-                       parse::enum_parser<ValueRef::StatisticType>() [ _b = _1 ]
-                   >>  parse::label(Property_token)
-                   >>       -(container_type() [ push_back(_a, construct<std::string>(_1)) ] >> '.')
-                   >>       variable_name [ push_back(_a, construct<std::string>(_1)) ]
-                   >>  parse::label(Condition_token) >>   parse::detail::condition_parser [ _c = _1 ]
-                  )
-             )
-             [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]
+        =   statistic_1
+        |   statistic_2
         ;
 }
 
 template <typename T>
 void initialize_nonnumeric_statistic_parser(
     typename statistic_rule<T>::type& statistic,
-    const name_token_rule& variable_name)
+    const typename parse::value_ref_parser_rule<T>::type& value_ref)
 {
     const parse::lexer& tok = parse::lexer::instance();
 
     qi::_1_type _1;
     qi::_a_type _a;
     qi::_b_type _b;
-    qi::_c_type _c;
     qi::_val_type _val;
-    qi::eps_type eps;
     using phoenix::construct;
     using phoenix::new_;
     using phoenix::push_back;
-    using phoenix::val;
 
     statistic
-        =    (
-                  tok.Mode_ [ _b = ValueRef::MODE ]
-              >>  parse::label(Property_token)
-              >>        -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-              >>        variable_name [ push_back(_a, construct<std::string>(_1)) ]
-              >   parse::label(Condition_token) >  parse::detail::condition_parser [ _c = _1 ]
-             )
-             [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _c) ]
+        =       tok.Mode_ [ _b = ValueRef::MODE ]
+            >   parse::label(Value_token)     >     value_ref [ _a = _1 ]
+            >   parse::label(Condition_token) >     parse::detail::condition_parser
+                [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
 }

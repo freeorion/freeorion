@@ -61,8 +61,6 @@
 using namespace GG;
 
 namespace {
-    const bool VERBOSE_DEVIL_ERROR_REPORTING = true;
-
     template <class T>
     T PowerOfTwo(T input)
     {
@@ -73,6 +71,8 @@ namespace {
     }
 
 #if GG_USE_DEVIL_IMAGE_LOAD_LIBRARY
+    const bool VERBOSE_DEVIL_ERROR_REPORTING = true;
+
     void CheckILErrors(const std::string& function_call)
     {
         ILuint error;
@@ -203,16 +203,35 @@ void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords/
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         // render texture
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(tex_coords[0], tex_coords[1]);
-        glVertex(pt1.x, pt1.y);
-        glTexCoord2f(tex_coords[2], tex_coords[1]);
-        glVertex(pt2.x, pt1.y);
-        glTexCoord2f(tex_coords[0], tex_coords[3]);
-        glVertex(pt1.x, pt2.y);
-        glTexCoord2f(tex_coords[2], tex_coords[3]);
-        glVertex(pt2.x, pt2.y);
-        glEnd();
+
+        GG::Pt position_data[4];
+        GLfloat texture_coordinate_data[8];
+
+        texture_coordinate_data[2*0] = tex_coords[0];
+        texture_coordinate_data[2*0 + 1] = tex_coords[1];
+        position_data[0] = pt1;
+
+        texture_coordinate_data[2*1] = tex_coords[2];
+        texture_coordinate_data[2*1 + 1] = tex_coords[1];
+        position_data[1].x = pt2.x;
+        position_data[1].y = pt1.y;
+
+        texture_coordinate_data[2*2] = tex_coords[0];
+        texture_coordinate_data[2*2 + 1] = tex_coords[3];
+        position_data[2].x = pt1.x;
+        position_data[2].y = pt2.y;
+
+        texture_coordinate_data[2*3] = tex_coords[2];
+        texture_coordinate_data[2*3 + 1] = tex_coords[3];
+        position_data[3] = pt2;
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glVertexPointer(2, GL_INT, sizeof (GLint)*2, &position_data);
+        glTexCoordPointer(2, GL_FLOAT, 0, &texture_coordinate_data);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         if (need_min_filter_change)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);

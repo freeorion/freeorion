@@ -105,7 +105,7 @@ public:
     const std::string&      Name() const            { return m_name; };             ///< returns name of part
     const std::string&      Description() const     { return m_description; }       ///< returns description, including a description of the stats and effects of this part
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
-    double                  Capacity() const        { return m_capacity; }          ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
+    float                   Capacity() const;
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
     const std::vector<ShipSlotType>&
                             MountableSlotTypes() const  { return m_mountable_slot_types; }
@@ -459,6 +459,7 @@ public:
     /////// TEMPORARY ///////
     float  Defense() const;
     float  Attack() const;
+    float  AdjustedAttack(float shield) const;
     /////// TEMPORARY ///////
 
 
@@ -466,11 +467,11 @@ public:
     const HullType*                 GetHull() const
     { return GetHullTypeManager().GetHullType(m_hull); }                            ///< returns HullType on which design is based
 
-    const std::vector<std::string>& Parts() const           { return m_parts; }     ///< returns vector of names of all parts in design
-    std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type
-    std::vector<std::string>        Weapons() const;
+    const std::vector<std::string>& Parts() const           { return m_parts; }     ///< returns vector of names of all parts in this design, with position in vector corresponding to slot positions
+    std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
+    std::vector<std::string>        Weapons() const;                                ///< returns vector of names of weapon parts in, unrelated to slot positions
 
-    std::vector<std::string>        Tags() const;
+    std::vector<std::string>        Tags() const;                                   ///< returns tags that would apply to ships of this design, from parts or the hull (but not from species or any other source of tags)
 
     const std::string&              Icon() const            { return m_icon; }      ///< returns filename for small-size icon graphic for design
     const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design

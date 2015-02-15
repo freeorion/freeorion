@@ -73,11 +73,11 @@ def log_species_summary():
             expectation_tally = 0.0
             for p_type in natives.planet_types_for_natives[species]:
                 settleable_planets += potential_native_planet_summary[p_type]
-                expectation_tally += native_chance * 100.0 * potential_native_planet_summary[p_type] / len(natives.natives_for_planet_type[p_type])
-            expectation = expectation_tally / settleable_planets
+                expectation_tally += native_chance * 100.0 * potential_native_planet_summary[p_type] / (1E-10 + len(natives.natives_for_planet_type[p_type]))
+            expectation = expectation_tally / (1E-10 + settleable_planets)
             print "Settled natives %18s on %3d planets -- %5.1f%% of total and %5.1f%% vs %5.1f%% (actual vs expected) of %s planets" % \
-                (species, species_summary[species], 100.0 * species_summary[species] / native_potential_planet_total,
-                 100.0 * species_summary[species] / settleable_planets, expectation, [str(p_t) for p_t in natives.planet_types_for_natives[species]])
+                (species, species_summary[species], 100.0 * species_summary[species] / (1E-10 + native_potential_planet_total),
+                 100.0 * species_summary[species] / (1E-10 + settleable_planets), expectation, [str(p_t) for p_t in natives.planet_types_for_natives[species]])
     print
     native_settled_planet_total = sum(settled_native_planet_summary.values())
     print "Planet Type Summary for Native Planets (native frequency: %.1f%%)" % (inverse_native_chance and (100 * native_chance))
@@ -85,7 +85,7 @@ def log_species_summary():
     print "%-13s %5d : %5d" % ("Totals", native_potential_planet_total, native_settled_planet_total)
     for planet_type, planet_count in potential_native_planet_summary.items():
         settled_planet_count = settled_native_planet_summary.get(planet_type, 0)
-        potential_percent = 100.0 * planet_count / native_potential_planet_total
+        potential_percent = 100.0 * planet_count / (1E-10 + native_potential_planet_total)
         settled_percent = 100.0 * settled_planet_count / (1E-10 + planet_count)
         print "%-12s %5.1f%% : %5.1f%%" % (planet_type.name, potential_percent, settled_percent)
 
@@ -116,4 +116,4 @@ def log_specials_summary():
     print "\t count  | tally | % of objects"
     objects_tally = sum(specials_repeat_dist.values())
     for number, tally in specials_repeat_dist.items():
-        print "\t\t%3d | %5d | %4.1f%%" % (number, tally, 100.0 * tally / objects_tally)
+        print "\t\t%3d | %5d | %4.1f%%" % (number, tally, 100.0 * tally / (1E-10 + objects_tally))

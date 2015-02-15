@@ -7,6 +7,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/Order.h"
 #include "../util/ModeratorAction.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -23,6 +24,8 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
+
+#include <sstream>
 
 std::vector<std::string> SpecialNames();
 
@@ -50,9 +53,6 @@ namespace {
         }
     }
     bool temp_bool = RegisterOptions(&AddOptions);
-
-    unsigned int NumColumns()
-    { return NUM_COLUMNS; }
 
     ValueRef::Variable<std::string>* StringValueRef(const std::string& token) {
         return new ValueRef::Variable<std::string>(
@@ -228,6 +228,8 @@ namespace {
     const std::string&                      ConditionClassName(const Condition::ConditionBase* const condition) {
         if (dynamic_cast<const Condition::All* const>(condition))
             return ALL_CONDITION;
+        else if (dynamic_cast<const Condition::EmpireAffiliation* const>(condition))
+            return EMPIREAFFILIATION_CONDITION;
         else if (dynamic_cast<const Condition::Homeworld* const>(condition))
             return HOMEWORLD_CONDITION;
         else if (dynamic_cast<const Condition::Capital* const>(condition))
@@ -351,6 +353,12 @@ public:
             std::vector<const ValueRef::ValueRefBase<std::string>*> names;
             names.push_back(new ValueRef::Constant<std::string>(species_name));
             return new Condition::Homeworld(names);
+
+        } else if (condition_key == CANCOLONIZE_CONDITION) {
+            return new Condition::CanColonize();
+
+        } else if (condition_key == CANPRODUCESHIPS_CONDITION) {
+            return new Condition::CanProduceShips();
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
             return new Condition::HasSpecial(GetString());
@@ -1105,24 +1113,6 @@ namespace {
         return retval;
     }
 
-    const std::string& ObjectName(TemporaryPtr<const UniverseObject> obj) {
-        if (!obj)
-            return EMPTY_STRING;
-        if (obj->ObjectType() == OBJ_SYSTEM) {
-            if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(obj))
-                return system->ApparentName(HumanClientApp::GetApp()->EmpireID());
-        }
-        return obj->PublicName(HumanClientApp::GetApp()->EmpireID());
-    }
-
-    std::pair<std::string, GG::Clr> ObjectEmpireNameAndColour(TemporaryPtr<const UniverseObject> obj) {
-        if (!obj)
-            return std::make_pair("", ClientUI::TextColor());
-        if (const Empire* empire = Empires().Lookup(obj->Owner()))
-            return std::make_pair(empire->Name(), empire->Color());
-        return std::make_pair("", ClientUI::TextColor());
-    }
-
     const GG::X PAD(3);
 }
 
@@ -1142,7 +1132,6 @@ public:
         m_expand_button(0),
         m_dot(0),
         m_icon(0),
-        m_name_label(0),
         m_controls(0),
         m_column_val_cache(),
         m_selected(false)
@@ -1338,7 +1327,6 @@ private:
     GG::Button*                     m_expand_button;
     GG::StaticGraphic*              m_dot;
     MultiTextureStaticGraphic*      m_icon;
-    CUILabel*                       m_name_label;
     std::vector<GG::Control*>       m_controls;
 
     mutable std::vector<std::string>m_column_val_cache;
@@ -1623,11 +1611,15 @@ public:
         //m_visibilities[OBJ_FIELD].insert(SHOW_VISIBLE);
 
         m_header_row = new ObjectHeaderRow(GG::X1, ListRowHeight());
-        SetColHeaders(m_header_row);
+        SetColHeaders(m_header_row); // Gives ownership
 
         GG::Connect(m_header_row->ColumnsChangedSignal,         &ObjectListBox::Refresh,                this);
         GG::Connect(m_header_row->ColumnHeaderLeftClickSignal,  &ObjectListBox::SortingClicked,         this);
-        GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
+        m_obj_deleted_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
+    }
+
+    virtual ~ObjectListBox() {
+        delete m_filter_condition;
     }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2106,6 +2098,7 @@ private:
     Condition::ConditionBase*                           m_filter_condition;
     std::map<UniverseObjectType, std::set<VIS_DISPLAY> >m_visibilities;
     ObjectHeaderRow*                                    m_header_row;
+    boost::signals2::connection m_obj_deleted_connection;
 };
 
 ////////////////////////////////////////////////
@@ -2221,6 +2214,9 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         moderator = true;
 
+    // Right click on an unselected row should automatically select it
+    m_list_box->SelectRow(it);
+
     // create popup menu with object commands in it
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
@@ -2230,10 +2226,35 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (!obj)
         return;
 
+    const int MENUITEM_SET_FOCUS_BASE = 20;
+    int menuitem_id = MENUITEM_SET_FOCUS_BASE;
+    std::map<std::string, int> all_foci;
     UniverseObjectType type = obj->ObjectType();
-    if (type == OBJ_PLANET)
+    if (type == OBJ_PLANET) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
 
+        const GG::ListBox::SelectionSet sel = m_list_box->Selections();
+        for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
+            ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+            if (row) {
+                TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
+                    std::vector<std::string> planet_foci = one_planet->AvailableFoci();
+                    for (std::vector<std::string>::iterator it = planet_foci.begin(); it != planet_foci.end(); ++it)
+                        all_foci[*it]++;
+                }
+            }
+        }
+        GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), 3, false, false);
+        for (std::map<std::string, int>::iterator it = all_foci.begin(); it != all_foci.end(); ++it) {
+            menuitem_id++;
+            std::stringstream out;
+            out << UserString(it->first) << " (" << it->second << ")";
+            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), menuitem_id, false, false));
+        }
+        if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
+            menu_contents.next_level.push_back(focusMenuItem);
+    }
     // moderator actions...
     if (moderator) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("MOD_DESTROY"),      10, false, false));
@@ -2253,6 +2274,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             ClientUI::GetClientUI()->ZoomToPlanetPedia(object_id);
             break;
         }
+        case 3: {
+                // should never happen, Set Focus parent menu item is disabled
+                break;
+        }
         case 10: {
             net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::DestroyUniverseObject(object_id)));
             break;
@@ -2261,8 +2286,27 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::SetOwner(object_id, ALL_EMPIRES)));
             break;
         }
-        default:
+        default: {
+            int id = popup.MenuID();
+            if (id > MENUITEM_SET_FOCUS_BASE && id <= menuitem_id) {
+                std::map<std::string, int>::iterator it = all_foci.begin();
+                std::advance(it, id - MENUITEM_SET_FOCUS_BASE - 1);
+                std::string focus = it->first;
+                const GG::ListBox::SelectionSet sel = m_list_box->Selections();
+                for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+                    if (row) {
+                        TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                        if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
+                            one_planet->SetFocus(focus);
+                            app->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(app->EmpireID(), one_planet->ID(), focus)));
+                         }
+                    }
+                }
+            }
+            Refresh();
             break;
+        }
         }
     }
 }

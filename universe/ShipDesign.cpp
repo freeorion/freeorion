@@ -225,6 +225,9 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
 PartType::~PartType()
 { delete m_location; }
 
+float PartType::Capacity() const
+{ return m_capacity; }
+
 bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     if (INVALID_SHIP_SLOT_TYPE == slot_type)
         return false;
@@ -605,6 +608,12 @@ float ShipDesign::Defense() const {
 }
 
 float ShipDesign::Attack() const {
+    // total damage against a target with the no shield.
+    return AdjustedAttack(0.0f);
+}
+
+float ShipDesign::AdjustedAttack(float shield) const {
+    // total damage against a target with the given shield.
     // accumulate attack stat from all weapon parts in design
     const PartTypeManager& manager = GetPartTypeManager();
 
@@ -614,7 +623,7 @@ float ShipDesign::Attack() const {
         const PartType* part = manager.GetPartType(*it);
         if (part && (part->Class() == PC_SHORT_RANGE || part->Class() == PC_POINT_DEFENSE ||
                      part->Class() == PC_MISSILES    || part->Class() == PC_FIGHTERS))
-        { total_attack += part->Capacity(); }
+        { total_attack += std::max(0.0f, static_cast<float>(part->Capacity()) - shield); }
     }
     return total_attack;
 }
@@ -641,7 +650,7 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
 std::vector<std::string> ShipDesign::Weapons() const {
     std::vector<std::string> retval;
     retval.reserve(m_parts.size());
-    for (int i = 0; i < m_parts.size(); ++i) {
+    for (unsigned int i = 0; i < m_parts.size(); ++i) {
         const std::string& part_name = m_parts[i];
         const PartType* part = GetPartType(part_name);
         if (!part)

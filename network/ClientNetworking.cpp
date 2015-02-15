@@ -5,6 +5,7 @@
 #include "Networking.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -196,6 +197,10 @@ bool ClientNetworking::ConnectToServer(
 
             if (Connected()) {
                 Logger().debugStream() << "ClientNetworking::ConnectToServer : connected to server";
+                if (GetOptionsDB().Get<bool>("binary-serialization"))
+                    Logger().debugStream() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
+                else
+                    Logger().debugStream() << "ClientNetworking::ConnectToServer : this client using xml serialization.";
                 m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
                 Logger().debugStream() << "ClientNetworking::ConnectToServer : starting networking thread";
                 boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));

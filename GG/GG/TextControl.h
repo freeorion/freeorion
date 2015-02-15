@@ -75,6 +75,7 @@ public:
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
+    virtual ~TextControl();
 
     /** \name Accessors */ ///@{
     virtual Pt        MinUsableSize() const;
@@ -237,6 +238,8 @@ private:
     void ValidateFormat();      ///< ensures that the format flags are consistent
     void AdjustMinimumSize();
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr
+    void RefreshCache();
+    void PurgeCache();
 
     std::string                 m_text;
     Flags<TextFormat>           m_format;      ///< the formatting used to display the text (vertical and horizontal alignment, etc.)
@@ -250,6 +253,7 @@ private:
     boost::shared_ptr<Font>     m_font;
     Pt                          m_text_ul;     ///< stored relative to the control's UpperLeft()
     Pt                          m_text_lr;     ///< stored relative to the control's UpperLeft()
+    Font::RenderCache*          m_render_cache;///< Cache much of text rendering.
 };
 
 } // namespace GG

@@ -20,6 +20,10 @@ public:
     ~ProductionWnd();
     //@}
 
+    /** \name Accessors */ //@{
+    int             SelectedPlanetID() const;
+    //@}
+
     /** \name Mutators */ //@{
     virtual bool    InWindow(const GG::Pt& pt) const;
     virtual bool    InClient(const GG::Pt& pt) const;

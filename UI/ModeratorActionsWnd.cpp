@@ -175,6 +175,13 @@ ModeratorActionsWnd::ModeratorActionsWnd(GG::X w, GG::Y h) :
     DoLayout();
 }
 
+ModeratorActionsWnd::~ModeratorActionsWnd() {
+    delete m_star_type_drop;
+    delete m_planet_type_drop;
+    delete m_planet_size_drop;
+    delete m_empire_drop;
+}
+
 void ModeratorActionsWnd::NoActionClicked() {
     m_selected_action = MAS_NoAction;
     NoActionSelectedSignal();

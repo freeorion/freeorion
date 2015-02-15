@@ -670,6 +670,8 @@ void Planet::Conquer(int conquerer) {
     GetMeter(METER_DEFENSE)->BackPropegate();
     GetMeter(METER_SHIELD)->SetCurrent(0.0f);
     GetMeter(METER_SHIELD)->BackPropegate();
+    GetMeter(METER_HAPPINESS)->SetCurrent(0.0f);
+    GetMeter(METER_HAPPINESS)->BackPropegate();
 }
 
 bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {
@@ -691,7 +693,19 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     }
 
     // reset the planet to unowned/unpopulated
-    Reset();
+    if (!OwnedBy(empire_id)) {
+        Reset();
+    } else {
+        PopCenter::Reset();
+        for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
+            if (TemporaryPtr<Building> building = GetBuilding(*it))
+                building->Reset();
+        m_just_conquered = false;
+        m_is_about_to_be_colonized = false;
+        m_is_about_to_be_invaded = false;
+        m_is_about_to_be_bombarded = false;
+        SetOwner(ALL_EMPIRES);
+    }
 
     // if desired pop > 0, we want a colony, not an outpost, so we have to set the colony species
     if (population > 0.0)
@@ -722,7 +736,6 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
     // set colony population
     GetMeter(METER_POPULATION)->SetCurrent(population);
     GetMeter(METER_TARGET_POPULATION)->SetCurrent(population);
-    GetMeter(METER_HAPPINESS)->SetCurrent(20.0f);
     BackPropegateMeters();
 
 

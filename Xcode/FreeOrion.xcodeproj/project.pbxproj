@@ -11,6 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 829C763B1689EFF3005881B4 /* Build configuration list for PBXAggregateTarget "Configure" */;
 			buildPhases = (
+				82728DEB1A49A58D0034F4FE /* Delete existing app bundle */,
 				829C76341689EFD4005881B4 /* Version.cpp */,
 			);
 			dependencies = (
@@ -312,6 +313,8 @@
 		8289A72C19BDB45C001256C1 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8289A72A19BDB3D8001256C1 /* SDL2.framework */; };
 		828AB7D415F7BCDD0075BE24 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 828AB7D315F7BCDD0075BE24 /* libpng.a */; };
 		828C793F160778AA0075F220 /* FieldIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828C793D160778AA0075F220 /* FieldIcon.cpp */; };
+		8295CEC71A88FFF8000EE624 /* StringComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8295CEC61A88FFF8000EE624 /* StringComplexValueRefParser.cpp */; };
+		82970BEF1A0CF53A008B37EF /* TechTreeArcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */; };
 		8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */; };
 		829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */; };
 		829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */; };
@@ -330,6 +333,7 @@
 		82CE867F19BF27D0004DF6DF /* GUIController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 82CE867E19BF27D0004DF6DF /* GUIController.mm */; };
 		82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A11838C8340011C212 /* ConditionParser5.cpp */; };
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
+		82D563D71A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */; };
 		82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E5238E192FE8CE001E2374 /* AppKit.framework */; };
 		82E52391192FE90F001E2374 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52390192FE90F001E2374 /* IOKit.framework */; };
 		82E52398192FE99D001E2374 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52392192FE99C001E2374 /* Carbon.framework */; };
@@ -1174,6 +1178,9 @@
 		828AB7D315F7BCDD0075BE24 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		828C793D160778AA0075F220 /* FieldIcon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldIcon.cpp; sourceTree = "<group>"; };
 		828C793E160778AA0075F220 /* FieldIcon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FieldIcon.h; sourceTree = "<group>"; };
+		8295CEC61A88FFF8000EE624 /* StringComplexValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringComplexValueRefParser.cpp; sourceTree = "<group>"; };
+		82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TechTreeArcs.cpp; sourceTree = "<group>"; };
+		82970BEE1A0CF53A008B37EF /* TechTreeArcs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TechTreeArcs.h; sourceTree = "<group>"; };
 		8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveFileDialog.cpp; sourceTree = "<group>"; };
 		8298A1AD18F9BB980001D3DA /* SaveFileDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveFileDialog.h; sourceTree = "<group>"; };
 		829BBB6117D09017009D3735 /* ValueRefParserImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueRefParserImpl.cpp; sourceTree = "<group>"; };
@@ -1195,6 +1202,8 @@
 		82CE867E19BF27D0004DF6DF /* GUIController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GUIController.mm; sourceTree = "<group>"; };
 		82D2D9A11838C8340011C212 /* ConditionParser5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser5.cpp; sourceTree = "<group>"; };
 		82D2D9A21838C8340011C212 /* ConditionParser6.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser6.cpp; sourceTree = "<group>"; };
+		82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DoubleComplexValueRefParser.cpp; sourceTree = "<group>"; };
+		82D563D61A6AEBD6007E1131 /* ParseImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParseImpl.cpp; sourceTree = "<group>"; };
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6D15F4F720006B772D /* ShipPartStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipPartStatsParser.cpp; sourceTree = "<group>"; };
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
@@ -1506,16 +1515,12 @@
 		4710233E0CEF3AAB00A7DF2B /* GG */ = {
 			isa = PBXGroup;
 			children = (
-				2F60966C12EEAF2C00F58913 /* GroupBox.h */,
-				34C9B34711DA2ECA003695F4 /* ClrConstants.h */,
-				34BAB0C20FC5CDC400EF792E /* FontFwd.h */,
-				34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */,
-				343EC66D0F3F600800782AD3 /* StrongTypedef.h */,
 				4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */,
 				471023400CEF3AAB00A7DF2B /* Base.h */,
 				471023410CEF3AAB00A7DF2B /* BrowseInfoWnd.h */,
 				471023420CEF3AAB00A7DF2B /* Button.h */,
 				471023430CEF3AAB00A7DF2B /* Clr.h */,
+				34C9B34711DA2ECA003695F4 /* ClrConstants.h */,
 				471023440CEF3AAB00A7DF2B /* Control.h */,
 				471023450CEF3AAB00A7DF2B /* Cursor.h */,
 				471023460CEF3AAB00A7DF2B /* dialogs */,
@@ -1528,13 +1533,16 @@
 				471023500CEF3AAB00A7DF2B /* Exception.h */,
 				471023510CEF3AAB00A7DF2B /* Flags.h */,
 				471023520CEF3AAB00A7DF2B /* Font.h */,
+				34BAB0C20FC5CDC400EF792E /* FontFwd.h */,
 				471023530CEF3AAB00A7DF2B /* gen_signals.py */,
 				471023540CEF3AAB00A7DF2B /* glext.h */,
+				2F60966C12EEAF2C00F58913 /* GroupBox.h */,
 				471023550CEF3AAB00A7DF2B /* GUI.h */,
 				471023560CEF3AAB00A7DF2B /* Layout.h */,
 				471023570CEF3AAB00A7DF2B /* ListBox.h */,
 				471023580CEF3AAB00A7DF2B /* Menu.h */,
 				471023590CEF3AAB00A7DF2B /* MultiEdit.h */,
+				34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */,
 				4710235A0CEF3AAB00A7DF2B /* Ogre */,
 				4710235D0CEF3AAB00A7DF2B /* PtRect.h */,
 				4710235E0CEF3AAB00A7DF2B /* Scroll.h */,
@@ -1553,6 +1561,7 @@
 				4710236C0CEF3AAB00A7DF2B /* Slider.h */,
 				4710236D0CEF3AAB00A7DF2B /* Spin.h */,
 				4710236E0CEF3AAB00A7DF2B /* StaticGraphic.h */,
+				343EC66D0F3F600800782AD3 /* StrongTypedef.h */,
 				4710236F0CEF3AAB00A7DF2B /* StyleFactory.h */,
 				471023700CEF3AAC00A7DF2B /* TabWnd.h */,
 				471023710CEF3AAC00A7DF2B /* TextControl.h */,
@@ -1597,16 +1606,14 @@
 		471023900CEF3AAC00A7DF2B /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2F60966A12EEAF0200F58913 /* GroupBox.cpp */,
-				34C9B34311DA2E95003695F4 /* ClrConstants.cpp */,
-				34BAB1AF0FC5CFE500EF792E /* GIL */,
-				34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */,
 				471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */,
 				471023930CEF3AAC00A7DF2B /* Base.cpp */,
 				471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */,
 				471023950CEF3AAC00A7DF2B /* Button.cpp */,
+				34C9B34311DA2E95003695F4 /* ClrConstants.cpp */,
 				471023970CEF3AAC00A7DF2B /* Control.cpp */,
 				471023980CEF3AAC00A7DF2B /* Cursor.cpp */,
+				34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */,
 				471023990CEF3AAC00A7DF2B /* dialogs */,
 				4710239E0CEF3AAC00A7DF2B /* DrawUtil.cpp */,
 				4710239F0CEF3AAC00A7DF2B /* DropDownList.cpp */,
@@ -1614,6 +1621,7 @@
 				471023A10CEF3AAC00A7DF2B /* Edit.cpp */,
 				471023A20CEF3AAC00A7DF2B /* EventPump.cpp */,
 				471023A30CEF3AAC00A7DF2B /* Font.cpp */,
+				2F60966A12EEAF0200F58913 /* GroupBox.cpp */,
 				471023A40CEF3AAC00A7DF2B /* GUI.cpp */,
 				471023A50CEF3AAC00A7DF2B /* Layout.cpp */,
 				471023A60CEF3AAC00A7DF2B /* ListBox.cpp */,
@@ -1927,6 +1935,8 @@
 				34972BED0F49CBF90015C864 /* Sound.h */,
 				471D5CDE0A98A3F900DA9C21 /* SystemIcon.cpp */,
 				471D5CDF0A98A3F900DA9C21 /* SystemIcon.h */,
+				82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */,
+				82970BEE1A0CF53A008B37EF /* TechTreeArcs.h */,
 				2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */,
 				2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */,
 				471D5CE00A98A3F900DA9C21 /* TechTreeWnd.cpp */,
@@ -2271,6 +2281,7 @@
 				825936DE147E3B1B00B840A5 /* ConditionParserImpl.h */,
 				825936DF147E3B1B00B840A5 /* Double.cpp */,
 				825936E0147E3B1B00B840A5 /* Double.h */,
+				82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */,
 				825936E1147E3B1B00B840A5 /* DoubleValueRefParser.cpp */,
 				825936E2147E3B1B00B840A5 /* EffectParser.cpp */,
 				825936E3147E3B1B00B840A5 /* EffectParser.h */,
@@ -2298,6 +2309,7 @@
 				825936F0147E3B1B00B840A5 /* MonsterFleetPlansParser.cpp */,
 				825936F1147E3B1B00B840A5 /* Parse.cpp */,
 				825936F2147E3B1B00B840A5 /* Parse.h */,
+				82D563D61A6AEBD6007E1131 /* ParseImpl.cpp */,
 				825936F3147E3B1B00B840A5 /* ParseImpl.h */,
 				825936F5147E3B1B00B840A5 /* PlanetEnvironmentValueRefParser.cpp */,
 				825936F6147E3B1B00B840A5 /* PlanetSizeValueRefParser.cpp */,
@@ -2312,6 +2324,7 @@
 				825936FD147E3B1B00B840A5 /* SpecialsParser.cpp */,
 				825936FE147E3B1B00B840A5 /* SpeciesParser.cpp */,
 				825936FF147E3B1B00B840A5 /* StarTypeValueRefParser.cpp */,
+				8295CEC61A88FFF8000EE624 /* StringComplexValueRefParser.cpp */,
 				82593700147E3B1B00B840A5 /* StringValueRefParser.cpp */,
 				82593701147E3B1B00B840A5 /* TechsParser.cpp */,
 				82593702147E3B1B00B840A5 /* test */,
@@ -2546,6 +2559,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				82728DE81A49A0360034F4FE /* PBXTargetDependency */,
 			);
 			name = ClientCommon;
 			productName = Common;
@@ -2660,6 +2674,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		82728DEB1A49A58D0034F4FE /* Delete existing app bundle */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Delete existing app bundle";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"Deleting ${BUILT_PRODUCTS_DIR}/FreeOrion.app\"\nrm -rf ${BUILT_PRODUCTS_DIR}/FreeOrion.app";
+		};
 		829C76341689EFD4005881B4 /* Version.cpp */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2930,6 +2958,7 @@
 				3A76046517499F7D00363653 /* ReportParseError.cpp in Sources */,
 				3A76046617499F8800363653 /* ShipDesignsParser.cpp in Sources */,
 				8246FED0194D8F83008C07B5 /* IntComplexValueRefParser.cpp in Sources */,
+				8295CEC71A88FFF8000EE624 /* StringComplexValueRefParser.cpp in Sources */,
 				3A76046717499F9600363653 /* ShipHullsParser.cpp in Sources */,
 				3A76046817499FA400363653 /* ShipPartsParser.cpp in Sources */,
 				3A76046917499FA700363653 /* ShipPartStatsParser.cpp in Sources */,
@@ -2940,6 +2969,7 @@
 				3A76049E1749A0A300363653 /* TechsParser.cpp in Sources */,
 				3A76049F1749A0AF00363653 /* UniverseObjectTypeValueRefParser.cpp in Sources */,
 				82B3265319B603C1005082AC /* ConditionParser7.cpp in Sources */,
+				82D563D71A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp in Sources */,
 				829BBB6217D09017009D3735 /* ValueRefParserImpl.cpp in Sources */,
 				82C560D317D0CC2F00FE3B35 /* Tokens.cpp in Sources */,
 				829E16B11811181F00F7F52D /* EmpireStatsParser.cpp in Sources */,
@@ -2969,7 +2999,6 @@
 				471D5E1B0A98A99D00DA9C21 /* FleetButton.cpp in Sources */,
 				471D5E1C0A98A9A300DA9C21 /* FleetWnd.cpp in Sources */,
 				471D5E1E0A98A9AE00DA9C21 /* GalaxySetupWnd.cpp in Sources */,
-				2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */,
 				82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */,
 				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
 				820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */,
@@ -2988,6 +3017,7 @@
 				2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */,
 				471D5E260A98A9CD00DA9C21 /* ProductionWnd.cpp in Sources */,
 				343EC6650F3F5C7C00782AD3 /* QueueListBox.cpp in Sources */,
+				82970BEF1A0CF53A008B37EF /* TechTreeArcs.cpp in Sources */,
 				471D5E270A98A9CF00DA9C21 /* ResearchWnd.cpp in Sources */,
 				8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */,
 				471D5E280A98A9D100DA9C21 /* ServerConnectWnd.cpp in Sources */,
@@ -3069,6 +3099,11 @@
 			isa = PBXTargetDependency;
 			target = 82C073D8149DE46200E76876 /* Parse */;
 			targetProxy = 8237404A19BDA4120046BFD1 /* PBXContainerItemProxy */;
+		};
+		82728DE81A49A0360034F4FE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 829C76351689EFD4005881B4 /* Configure */;
+			targetProxy = 82728DE71A49A0360034F4FE /* PBXContainerItemProxy */;
 		};
 		829C763F1689F0EA005881B4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

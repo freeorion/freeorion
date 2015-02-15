@@ -374,16 +374,16 @@ float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) 
     return 0.0f;
 }
 
-float Ship::TotalWeaponsDamage() const {
+float Ship::TotalWeaponsDamage(float shield_DR /* = 0.0 */) const {
     // sum up all individual weapons' attack strengths
     float total_attack = 0.0;
-    std::vector<float> all_weapons_damage = AllWeaponsDamage();
+    std::vector<float> all_weapons_damage = AllWeaponsDamage(shield_DR);
     for (std::vector<float>::iterator it = all_weapons_damage.begin(); it != all_weapons_damage.end(); ++it)
         total_attack += *it;
     return total_attack;
 }
 
-std::vector<float> Ship::AllWeaponsDamage() const {
+std::vector<float> Ship::AllWeaponsDamage(float shield_DR /* = 0.0 */) const {
     std::vector<float> retval;
 
     const ShipDesign* design = GetShipDesign(m_design_id);
@@ -409,8 +409,8 @@ std::vector<float> Ship::AllWeaponsDamage() const {
         else if (part_class == PC_FIGHTERS)
             part_attack = this->CurrentPartMeterValue(METER_ANTI_SHIP_DAMAGE, part_name);
 
-        if (part_attack > 0.0)
-            retval.push_back(part_attack);
+        if (part_attack > shield_DR)
+            retval.push_back(part_attack-shield_DR);
     }
     return retval;
 }

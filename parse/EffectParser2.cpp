@@ -1,10 +1,11 @@
 #include "EffectParserImpl.h"
 
-#include "ConditionParserImpl.h"
 #include "EnumParser.h"
 #include "Label.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
+
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
@@ -30,26 +31,26 @@ namespace {
             const parse::value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref =   parse::value_ref_parser<PlanetSize>();
 
             set_meter
-                =    parse::set_non_ship_part_meter_type_enum() [ _a = _1 ]
-                >>   parse::label(Value_token) >> double_value_ref [ _val = new_<Effect::SetMeter>(_a, _1) ]
+                =    parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
+                >>   parse::label(Value_token) > double_value_ref [ _val = new_<Effect::SetMeter>(_a, _1) ]
                 ;
 
             set_ship_part_meter
                 =    parse::set_ship_part_meter_type_enum() [ _a = _1 ]
-                >>  (
-                            set_ship_part_meter_suffix_1(_a) [ _val = _1 ]
-                        |   set_ship_part_meter_suffix_2(_a) [ _val = _1 ]
-                        |   set_ship_part_meter_suffix_3(_a) [ _val = _1 ]
+                 >> (
+                        set_ship_part_meter_suffix_1(_a) [ _val = _1 ]
+                    |   set_ship_part_meter_suffix_2(_a) [ _val = _1 ]
+                    |   set_ship_part_meter_suffix_3(_a) [ _val = _1 ]
                     )
                 ;
 
             set_ship_part_meter_suffix_1
-                =    parse::label(PartClass_token) >> parse::enum_parser<ShipPartClass>() [ _a = _1 ] // TODO: PartClass should match "Class" from ShipPartsParser.cpp.
+                =    parse::label(PartClass_token) >  parse::enum_parser<ShipPartClass>() [ _a = _1 ] // TODO: PartClass should match "Class" from ShipPartsParser.cpp.
                 >    parse::label(Value_token)     >  double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _a, _1) ]
                 ;
 
             set_ship_part_meter_suffix_2
-                =    parse::label(FighterType_token) >> parse::enum_parser<CombatFighterType>() [ _b = _1 ]
+                =    parse::label(FighterType_token) >  parse::enum_parser<CombatFighterType>() [ _b = _1 ]
                 >    parse::label(Value_token)       >  double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _b, _1) ]
                 ;
 
@@ -59,27 +60,21 @@ namespace {
                 ;
 
             set_empire_stockpile
-                =   (
-                            tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
-                    )
-                >>  (
+                =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
+                >   (
                         (
-                            parse::label(Empire_token) >> int_value_ref [ _b = _1 ]
-                        >>  parse::label(Value_token)  >> double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
+                            parse::label(Empire_token) > int_value_ref [ _b = _1 ]
+                        >   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
-                    |   (
-                            parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ]
-                        )
+                        |   (   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ] )
                     )
                 ;
 
             set_empire_capital
                 =    tok.SetEmpireCapital_
-                >>  (
-                        (
-                            parse::label(Empire_token) >> int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ]
-                        )
-                    |   eps [ _val = new_<Effect::SetEmpireCapital>() ]
+                >   (
+                        (parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ])
+                    |    eps [ _val = new_<Effect::SetEmpireCapital>() ]
                     )
                 ;
 
@@ -103,6 +98,20 @@ namespace {
                 >    parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::SetOwner>(_1) ]
                 ;
 
+            set_species_opinion
+                =    tok.SetSpeciesOpinion_
+                >    parse::label(Species_token) >   string_value_ref [ _a = _1 ]
+                > (
+                    (   parse::label(Empire_token) >  int_value_ref [ _c = _1 ]
+                     >  parse::label(Opinion_token) > double_value_ref
+                        [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ] )
+                   |
+                    (   parse::label(Species_token) > string_value_ref [ _b = _1 ]
+                    >   parse::label(Opinion_token) > double_value_ref
+                        [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_a, _b, _1) ])
+                   )
+                ;
+
             start
                 %=   set_meter
                 |    set_ship_part_meter
@@ -111,6 +120,7 @@ namespace {
                 |    set_planet_type
                 |    set_planet_size
                 |    set_species
+                |    set_species_opinion
                 |    set_owner
                 ;
 
@@ -121,6 +131,7 @@ namespace {
             set_planet_type.name("SetPlanetType");
             set_planet_size.name("SetPlanetSize");
             set_species.name("SetSpecies");
+            set_species_opinion.name("SetSpeciesOpinion");
             set_owner.name("SetOwner");
 
 
@@ -132,6 +143,7 @@ namespace {
             debug(set_planet_type);
             debug(set_planet_size);
             debug(set_species);
+            debug(set_species_opinion);
             debug(set_owner);
 #endif
         }
@@ -168,11 +180,12 @@ namespace {
             parse::token_iterator,
             Effect::EffectBase* (),
             qi::locals<
-                ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<int>*
             >,
             parse::skipper_type
-        > doubles_rule;
+        > string_string_int_rule;
 
         set_meter_rule                      set_meter;
         set_meter_rule                      set_ship_part_meter;
@@ -184,6 +197,7 @@ namespace {
         parse::effect_parser_rule           set_planet_type;
         parse::effect_parser_rule           set_planet_size;
         parse::effect_parser_rule           set_species;
+        string_string_int_rule              set_species_opinion;
         parse::effect_parser_rule           set_owner;
         parse::effect_parser_rule           start;
     };

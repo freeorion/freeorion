@@ -4,7 +4,7 @@
 
 #include <GG/Button.h>
 
-#include "GLClientAndServerBuffer.h"
+#include <GG/GLClientAndServerBuffer.h>
 
 class ShaderProgram;
 class Fleet;

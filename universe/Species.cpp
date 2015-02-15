@@ -2,6 +2,7 @@
 
 #include "Effect.h"
 #include "Condition.h"
+#include "ValueRef.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
@@ -68,6 +69,9 @@ namespace {
     }
 }
 
+Species::~Species()
+{ delete m_location; }
+
 std::string Species::Dump() const {
     std::string retval = DumpIndent() + "Species\n";
     ++g_indent;
@@ -129,6 +133,25 @@ std::string Species::Dump() const {
     retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     --g_indent;
     return retval;
+}
+
+const Condition::ConditionBase* Species::Location() const {
+    if (!m_location) {
+        // set up a Condition structure to match popcenters that have (not uninhabitable) environment for this species
+        std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> environments_vec;
+        environments_vec.push_back(new ValueRef::Constant<PlanetEnvironment>( ::PE_UNINHABITABLE));
+        const ValueRef::Constant<std::string>* this_species_name_ref = new ValueRef::Constant<std::string>(m_name);  // m_name specifies this species
+        Condition::ConditionBase* enviro_cond = new Condition::Not(new Condition::PlanetEnvironment(environments_vec, this_species_name_ref));
+
+        Condition::ConditionBase* type_cond = new Condition::Type(new ValueRef::Constant<UniverseObjectType>( ::OBJ_POP_CENTER));
+
+        std::vector<const Condition::ConditionBase*> operands;
+        operands.push_back(enviro_cond);
+        operands.push_back(type_cond);
+
+        m_location = new Condition::And(operands);
+    }
+    return m_location;
 }
 
 PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
@@ -384,10 +407,16 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
 }
 
 void SpeciesManager::SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions)
-{}
+{ m_species_empire_opinions = species_empire_opinions; }
+
+void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, double opinion)
+{ m_species_empire_opinions[species_name][empire_id] = opinion; }
 
 void SpeciesManager::SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions)
-{}
+{ m_species_species_opinions = species_species_opinions; }
+
+void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, double opinion)
+{ m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
 std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
     std::map<std::string, std::set<int> > retval;
@@ -405,14 +434,37 @@ std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(in
     return retval;
 }
 
-std::map<std::string, std::map<int, double> > SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
-    std::map<std::string, std::map<int, double> > retval;
-    return retval;
+const std::map<std::string, std::map<int, double> >& SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
+{ return m_species_empire_opinions; }
+
+const std::map<std::string, std::map<std::string, double> >& SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
+{ return m_species_species_opinions; }
+
+double SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
+    std::map<std::string, std::map<int, double> >::const_iterator sp_it = m_species_empire_opinions.find(species_name);
+    if (sp_it == m_species_empire_opinions.end())
+        return 0.0;
+    const std::map<int, double>& emp_map = sp_it->second;
+    std::map<int, double>::const_iterator emp_it = emp_map.find(empire_id);
+    if (emp_it == emp_map.end())
+        return 0.0;
+    return emp_it->second;
 }
 
-std::map<std::string, std::map<std::string, double> > SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
-    std::map<std::string, std::map<std::string, double> > retval;
-    return retval;
+double SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name, const std::string& rated_species_name) const {
+    std::map<std::string, std::map<std::string, double> >::const_iterator sp_it = m_species_species_opinions.find(opinionated_species_name);
+    if (sp_it == m_species_species_opinions.end())
+        return 0.0;
+    const std::map<std::string, double>& ra_sp_map = sp_it->second;
+    std::map<std::string, double>::const_iterator ra_sp_it = ra_sp_map.find(rated_species_name);
+    if (ra_sp_it == ra_sp_map.end())
+        return 0.0;
+    return ra_sp_it->second;
+}
+
+void SpeciesManager::ClearSpeciesOpinions() {
+    m_species_empire_opinions.clear();
+    m_species_species_opinions.clear();
 }
 
 

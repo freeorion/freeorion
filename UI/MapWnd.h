@@ -10,7 +10,7 @@
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
 
-#include "GLClientAndServerBuffer.h"
+#include <GG/GLClientAndServerBuffer.h>
 
 class CUIButton;
 class SettableInWindowCUIButton;
@@ -92,6 +92,10 @@ public:
     /** returns the universe position (X and Y in pair) that corresponds to
       * the specified screen coordinates. */
     std::pair<double, double>   UniversePositionFromScreenCoords(GG::Pt screen_coords) const;
+
+    /** Returns the id of the currently-selected planet, or
+      * INVALID_OBJECT_ID if no planet is selected */
+    int                 SelectedPlanetID() const;
     //!@}
 
     //! \name Mutators //!@{
@@ -235,7 +239,8 @@ private:
     void            RenderSystemOverlays();                     //!< renders textures "overlayed" on systems by effects
     void            RenderSystems();                            //!< renders stars and halos
     void            RenderStarlanes();                          //!< renders the starlanes between the systems
-    void            RenderStarlanes( GL2DVertexBuffer& vertices, GLRGBAColorBuffer& colours, double thickness, bool coloured, bool doBase);
+    void            RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuffer& colours,
+                                    double thickness, bool coloured, bool doBase);
     void            RenderFields();                             //!< renders field objects
 
     /* Gets systemID path (reversed) along supplylanes via BFS, is used to
@@ -393,15 +398,15 @@ private:
 
     std::pair<int, int>                 m_line_between_systems;                             //!< set when map should render line connecting 2 systems
 
-    std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>  m_star_core_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>  m_star_halo_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>  m_galaxy_gas_quad_vertices;
-    GLTexCoordBuffer                    m_star_texture_coords;
+    std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_core_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_halo_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_galaxy_gas_quad_vertices;
+    GG::GLTexCoordBuffer                    m_star_texture_coords;
 
-    GL2DVertexBuffer                    m_starlane_vertices;
-    GLRGBAColorBuffer                   m_starlane_colors;
-    GL2DVertexBuffer                    m_RC_starlane_vertices;
-    GLRGBAColorBuffer                   m_RC_starlane_colors;
+    GG::GL2DVertexBuffer                    m_starlane_vertices;
+    GG::GLRGBAColorBuffer                   m_starlane_colors;
+    GG::GL2DVertexBuffer                    m_RC_starlane_vertices;
+    GG::GLRGBAColorBuffer                   m_RC_starlane_colors;
     std::set<int>                       m_resourceCenters;
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;

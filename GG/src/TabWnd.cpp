@@ -448,7 +448,11 @@ void TabBar::RightClicked()
     X right_side = m_left_right_button_layout->Visible() ?
         m_left_button->Left() :
         Right();
-    m_right_button->Disable(m_tab_buttons.back()->Right() <= right_side);
+    // Is there anything to the right the user may want to see?
+    bool more_to_show = m_tab_buttons.back()->Right() > right_side;
+    // Are there any tabs left to hide to the left?
+    bool more_to_hide = m_first_tab_shown < m_tab_buttons.size() - 1;
+    m_right_button->Disable( !(more_to_show && more_to_hide) );
     m_left_button->Disable(false);
 }
 

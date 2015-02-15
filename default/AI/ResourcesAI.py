@@ -1,3 +1,5 @@
+import random
+
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import AIPriorityType, get_priority_resource_types, AIFocusType
@@ -5,8 +7,8 @@ import PlanetUtilsAI
 import random
 import ColonisationAI
 import AIDependencies
-from timing import Timer
-from tools import tech_is_complete
+from freeorion_debug import Timer
+from freeorion_tools import tech_is_complete
 
 resource_timer = Timer('timer_bucket')
 
@@ -128,9 +130,6 @@ def set_planet_resource_foci(): #+
     currentTurn = fo.currentTurn()
     # set the random seed (based on galaxy seed, empire ID and current turn)
     # for game-reload consistency 
-    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d"%(fo.empireID(), fo.currentTurn()) + "Resources"
-    random.seed(random_seed)
-
     freq = min(3, (max(5, currentTurn-80))/4.0)**(1.0/3)
     if not (limitAssessments and (abs(currentTurn - lastFociCheck[0]) < 1.5*freq) and (random.random() < 1.0/freq)):
         lastFociCheck[0]=currentTurn
@@ -152,10 +151,10 @@ def set_planet_resource_foci(): #+
         planetMap.clear()
         planetMap.update( zip( empirePlanetIDs, planets))
         if useGrowth:
-            for metab, metabIncPop in ColonisationAI.empireMetabolisms.items():
-                for special in [aspec for aspec in AIDependencies.metabolismBoostMap.get(metab, []) if aspec in ColonisationAI.availableGrowthSpecials]:
+            for metab, metabIncPop in ColonisationAI.empire_metabolisms.items():
+                for special in [aspec for aspec in AIDependencies.metabolismBoostMap.get(metab, []) if aspec in ColonisationAI.available_growth_specials]:
                     rankedPlanets=[]
-                    for pid in ColonisationAI.availableGrowthSpecials[special]:
+                    for pid in ColonisationAI.available_growth_specials[special]:
                         planet = planetMap[pid]
                         cur_focus = planet.focus
                         pop = planet.currentMeterValue(fo.meterType.population)
@@ -353,7 +352,9 @@ def set_planet_resource_foci(): #+
         print "-------------------------------------\nFinal Ratio Target (turn %4d) RP/PP : %.2f ( %.1f / %.1f ) after %d Focus changes"%( fo.currentTurn(), curTargetRP/ (curTargetPP + 0.0001), curTargetRP, curTargetPP , totalChanged)
         resource_timer.end()
     aPP, aRP = empire.productionPoints, empire.resourceProduction(fo.resourceType.research)
-    print "Current Output (turn %4d) RP/PP : %.2f ( %.1f / %.1f )"%(fo.currentTurn(), aRP/ (aPP + 0.0001), aRP, aPP ), "\n------------------------"
+    # Next string used in charts. Don't modify it!
+    print "Current Output (turn %4d) RP/PP : %.2f ( %.1f / %.1f )" % (fo.currentTurn(), aRP / (aPP + 0.0001), aRP, aPP)
+    print "------------------------"
     print "ResourcesAI Time Requirements:"
 
 

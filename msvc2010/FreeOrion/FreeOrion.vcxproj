@@ -124,7 +124,6 @@
     <ClInclude Include="..\..\UI\FleetButton.h" />
     <ClInclude Include="..\..\UI\FleetWnd.h" />
     <ClInclude Include="..\..\UI\GalaxySetupWnd.h" />
-    <ClInclude Include="..\..\UI\GLClientAndServerBuffer.h" />
     <ClInclude Include="..\..\UI\GraphControl.h" />
     <ClInclude Include="..\..\UI\Hotkeys.h" />
     <ClInclude Include="..\..\UI\InfoPanels.h" />
@@ -147,6 +146,7 @@
     <ClInclude Include="..\..\UI\SitRepPanel.h" />
     <ClInclude Include="..\..\UI\Sound.h" />
     <ClInclude Include="..\..\UI\SystemIcon.h" />
+    <ClInclude Include="..\..\UI\TechTreeArcs.h" />
     <ClInclude Include="..\..\UI\TechTreeLayout.h" />
     <ClInclude Include="..\..\UI\TechTreeWnd.h" />
     <ClInclude Include="..\..\universe\Building.h" />
@@ -218,7 +218,6 @@
     <ClCompile Include="..\..\UI\FleetButton.cpp" />
     <ClCompile Include="..\..\UI\FleetWnd.cpp" />
     <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp" />
-    <ClCompile Include="..\..\UI\GLClientAndServerBuffer.cpp" />
     <ClCompile Include="..\..\UI\GraphControl.cpp" />
     <ClCompile Include="..\..\UI\Hotkeys.cpp" />
     <ClCompile Include="..\..\UI\InfoPanels.cpp" />
@@ -242,6 +241,7 @@
     <ClCompile Include="..\..\UI\SitRepPanel.cpp" />
     <ClCompile Include="..\..\UI\Sound.cpp" />
     <ClCompile Include="..\..\UI\SystemIcon.cpp" />
+    <ClCompile Include="..\..\UI\TechTreeArcs.cpp" />
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp" />
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />

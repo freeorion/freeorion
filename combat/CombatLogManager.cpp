@@ -50,9 +50,13 @@ void CombatLog::serialize(Archive& ar, const unsigned int version)
 }
 
 template
-void CombatLog::serialize<freeorion_iarchive>(freeorion_iarchive& ar, const unsigned int version);
+void CombatLog::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
 template
-void CombatLog::serialize<freeorion_oarchive>(freeorion_oarchive& ar, const unsigned int version);
+void CombatLog::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+template
+void CombatLog::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+template
+void CombatLog::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
 
 
 ////////////////////////////////////////////////

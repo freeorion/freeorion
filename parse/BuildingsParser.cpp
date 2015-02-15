@@ -42,10 +42,8 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =
-                parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =
-                parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule< int >::type& flexible_int_ref =     parse::value_ref_parser_flexible_int();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -67,7 +65,7 @@ namespace {
                 =    parse::label(Name_token)                   > tok.string [ _a = _1 ]
                 >    parse::label(Description_token)            > tok.string [ _b = _1 ]
                 >    parse::label(BuildCost_token)              > double_value_ref [ _c = _1 ]
-                >    parse::label(BuildTime_token)              > int_value_ref [ _d = _1 ]
+                >    parse::label(BuildTime_token)              > flexible_int_ref [ _d = _1 ]
                 >    producible [ _e = _1 ]
                 >    (
                             parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]

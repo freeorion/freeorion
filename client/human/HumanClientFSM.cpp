@@ -613,10 +613,6 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg) {
 ////////////////////////////////////////////////////////////
 // PlayingTurn
 ////////////////////////////////////////////////////////////
-namespace {
-    static bool once = true;
-}
-
 PlayingTurn::PlayingTurn(my_context ctx) :
     Base(ctx)
 {
@@ -641,11 +637,26 @@ PlayingTurn::PlayingTurn(my_context ctx) :
         post_event(TurnEnded());
 
     } else if (Client().GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-        if ((once && GetOptionsDB().Get<bool>("auto-advance-first-turn")) ||
-            Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled())
+        if (Client().GetClientUI()->GetMapWnd()->AutoEndTurnEnabled()) {
+            // if in-game-GUI auto turn advance enabled, set auto turn counter to 1
+            Client().InitAutoTurns(1);
+        }
+
+        if (Client().AutoTurnsLeft() <= 0 &&
+            GetOptionsDB().Get<bool>("auto-quit"))
         {
-            once = false;
+            // if no auto turns left, and supposed to quit after that, quit
+            Logger().debugStream() << "auto-quit ending game.";
+            std::cout << "auto-quit ending game." << std::endl;
+            Client().EndGame(true);
+            throw HumanClientApp::CleanQuit();
+        }
+
+        // if there are still auto turns left, advance the turn automatically,
+        // and decrease the auto turn counter
+        if (Client().AutoTurnsLeft() > 0) {
             post_event(AdvanceTurn());
+            Client().DecAutoTurns();
         }
     }
 }

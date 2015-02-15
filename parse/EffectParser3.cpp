@@ -5,7 +5,8 @@
 #include "Label.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
-//#include "../universe/ValueRef.h"
+
+#include <boost/spirit/include/phoenix.hpp>
 
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
@@ -19,10 +20,9 @@ namespace {
             qi::_val_type _val;
             using phoenix::new_;
 
-            const parse::lexer& tok =                                                       parse::lexer::instance();
-
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =            parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule<StarType>::type& star_type_value_ref =       parse::value_ref_parser<StarType>();
+            const parse::lexer& tok =                                                   parse::lexer::instance();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =        parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule<StarType>::type& star_type_value_ref =   parse::value_ref_parser<StarType>();
 
             move_to
                 =    tok.MoveTo_
@@ -31,30 +31,26 @@ namespace {
 
             move_in_orbit
                 =    tok.MoveInOrbit_
-                >>  (
+                >    parse::label(Speed_token) >  double_value_ref[ _a = _1 ]
+                >   (
+                        parse::label(Focus_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ]
+                    |
                         (
-                            parse::label(Speed_token) >> double_value_ref[ _a = _1 ]
-                        >>  parse::label(Focus_token) >> parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ]
-                        )
-                    |   (
-                            parse::label(Speed_token) >> double_value_ref [ _a = _1 ]
-                        >>  parse::label(X_token)     >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_token)     >> double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+                            parse::label(X_token)     >  double_value_ref [ _b = _1 ]
+                        >   parse::label(Y_token)     >  double_value_ref [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
                         )
                     )
                 ;
 
             move_towards
                 =    tok.MoveTowards_
-                >>  (
+                >    parse::label(Speed_token) > double_value_ref[ _a = _1 ]
+                >    (
+                        parse::label(Target_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
+                     |
                         (
-                            parse::label(Speed_token) >> double_value_ref[ _a = _1 ]
-                        >>  parse::label(Target_token)>> parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ]
-                        )
-                    |   (
-                            parse::label(Speed_token) >> double_value_ref [ _a = _1 ]
-                        >>  parse::label(X_token)     >> double_value_ref [ _b = _1 ]
-                        >>  parse::label(Y_token)     >> double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
+                            parse::label(X_token)     > double_value_ref [ _b = _1 ]
+                        >   parse::label(Y_token)     > double_value_ref [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
                         )
                     )
                 ;
@@ -105,7 +101,7 @@ namespace {
 
             set_texture
                 =    tok.SetTexture_
-                >    parse::label(Name_token)    > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
+                >    parse::label(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
                 ;
 
             start

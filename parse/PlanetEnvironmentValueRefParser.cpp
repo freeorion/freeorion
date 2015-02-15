@@ -14,15 +14,21 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             variable_name
-                %=   tok.PlanetEnvironment_
+                %=  tok.PlanetEnvironment_
                 ;
 
             constant
-                =    parse::enum_parser<PlanetEnvironment>() [ _val = new_<ValueRef::Constant<PlanetEnvironment> >(_1) ]
+                =   parse::enum_parser<PlanetEnvironment>() [ _val = new_<ValueRef::Constant<PlanetEnvironment> >(_1) ]
                 ;
 
             initialize_bound_variable_parser<PlanetEnvironment>(bound_variable, variable_name);
-            initialize_nonnumeric_statistic_parser<PlanetEnvironment>(statistic, variable_name);
+
+            statistic_sub_value_ref
+                =   constant
+                |   bound_variable
+                ;
+
+            initialize_nonnumeric_statistic_parser<PlanetEnvironment>(statistic, statistic_sub_value_ref);
 
             primary_expr
                 %=   constant
@@ -45,15 +51,16 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<PlanetEnvironment>::type rule;
-        typedef variable_rule<PlanetEnvironment>::type variable_rule;
-        typedef statistic_rule<PlanetEnvironment>::type statistic_rule;
+        typedef parse::value_ref_parser_rule<PlanetEnvironment>::type   rule;
+        typedef variable_rule<PlanetEnvironment>::type                  variable_rule;
+        typedef statistic_rule<PlanetEnvironment>::type                 statistic_rule;
 
         name_token_rule variable_name;
-        rule constant;
-        variable_rule bound_variable;
-        statistic_rule statistic;
-        rule primary_expr;
+        rule            constant;
+        variable_rule   bound_variable;
+        rule            statistic_sub_value_ref;
+        statistic_rule  statistic;
+        rule            primary_expr;
     };
 }
 

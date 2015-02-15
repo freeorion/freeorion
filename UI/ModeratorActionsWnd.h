@@ -19,6 +19,7 @@ class ModeratorActionsWnd : public CUIWnd {
 public:
     //! \name Structors //!@{
     ModeratorActionsWnd(GG::X w, GG::Y h);
+    virtual ~ModeratorActionsWnd();
     //!@}
 
     /** \name Accessors */ //@{

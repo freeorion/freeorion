@@ -4,7 +4,7 @@
 
 #include "Lexer.h"
 
-#include <boost/spirit/home/qi.hpp>
+#include <boost/spirit/include/qi.hpp>
 
 namespace parse {
     typedef boost::spirit::qi::rule<

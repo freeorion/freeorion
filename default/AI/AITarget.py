@@ -1,12 +1,12 @@
 import EnumsAI
-from EnumsAI import AITargetType
-import freeOrionAIInterface as fo # pylint: disable=import-error
+from EnumsAI import TargetType
+import freeOrionAIInterface as fo  # pylint: disable=import-error
 
-AI_TARGET_TYPE_NAMES = AITargetType()
+AI_TARGET_TYPE_NAMES = TargetType()
 
 
 class AITarget(object):
-    """stores information about AI target - its id and type"""
+    """Stores information about AI target - its id and type."""
 
     def __init__(self, target_type, target_id):
         self.target_type = target_type
@@ -48,56 +48,49 @@ class AITarget(object):
             target_name
         )
 
-    @property  # TODO consider may not want a fully functional property here, perhaps only a getter
-    def my_target_id(self):
-        return self.target_id
-
     @property
     def target_obj(self):
         """
-        returns target UniverseObject for fleets, systems, planets, buildings;
-        None for other targets
+        Returns target UniverseObject for fleets, systems, planets, buildings;
+        None for other targets.
         """
         universe = fo.getUniverse()
-        target = None
-        if self.target_type == AITargetType.TARGET_FLEET:
-            target = universe.getFleet(self.target_id)
-        elif self.target_type == AITargetType.TARGET_SYSTEM:
-            target = universe.getSystem(self.target_id)
-        elif self.target_type == AITargetType.TARGET_PLANET:
-            target = universe.getPlanet(self.target_id)
-        elif self.target_type == AITargetType.TARGET_BUILDING:
-            target = universe.getBuilding(self.target_id)
-        return target
+        if self.target_type == TargetType.TARGET_FLEET:
+            return universe.getFleet(self.target_id)
+        elif self.target_type == TargetType.TARGET_SYSTEM:
+            return universe.getSystem(self.target_id)
+        elif self.target_type == TargetType.TARGET_PLANET:
+            return universe.getPlanet(self.target_id)
+        elif self.target_type == TargetType.TARGET_BUILDING:
+            return universe.getBuilding(self.target_id)
+        return None
 
     def valid(self):
-        """returns if this object is valid"""
-
+        """Returns if this object is valid."""
         if self.target_id is None or self.target_type is None or \
-                EnumsAI.check_validity(self.target_id) == False:
+                not EnumsAI.check_validity(self.target_id):
             return False
 
-        if AITargetType.TARGET_EMPIRE == self.target_type:
+        if TargetType.TARGET_EMPIRE == self.target_type:
             return self.target_id in fo.AllEmpireIDs()
         else:
-            return None != self.target_obj
+            return self.target_obj is not None
 
     def get_required_system_ai_targets(self):
-        """returns all system AITargets required to visit in this object"""
-
+        """Returns all system AITargets required to visit in this object."""
         # TODO: add parameter turn
 
         result = []
-        if AITargetType.TARGET_SYSTEM == self.target_type:
+        if TargetType.TARGET_SYSTEM == self.target_type:
             result.append(self)
 
-        elif AITargetType.TARGET_PLANET == self.target_type:
+        elif TargetType.TARGET_PLANET == self.target_type:
             universe = fo.getUniverse()
             planet = universe.getPlanet(self.target_id)
-            ai_target = AITarget(AITargetType.TARGET_SYSTEM, planet.systemID)
+            ai_target = AITarget(TargetType.TARGET_SYSTEM, planet.systemID)
             result.append(ai_target)
 
-        elif AITargetType.TARGET_FLEET == self.target_type:
+        elif TargetType.TARGET_FLEET == self.target_type:
             # Fleet systemID is where is fleet going.
             # If fleet is going nowhere, then it is location of fleet
             universe = fo.getUniverse()
@@ -105,7 +98,6 @@ class AITarget(object):
             system_id = fleet.nextSystemID
             if system_id == -1:
                 system_id = fleet.systemID
-            ai_target = AITarget(AITargetType.TARGET_SYSTEM, system_id)
-
+            ai_target = AITarget(TargetType.TARGET_SYSTEM, system_id)
             result.append(ai_target)
         return result

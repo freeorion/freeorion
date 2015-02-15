@@ -19,8 +19,8 @@ Hull
     buildTime = 10
     tags = [ "SHINY" "EXOTIC" ]
     location = Contains And [
-        Building "BLD_SHIPYARD_BASE"
-        OwnedBy TheEmpire Source.Owner
+        Building name = "BLD_SHIPYARD_BASE"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
@@ -42,7 +42,7 @@ Hull
     slots = Slot type = Internal position = (0.50, 0.50)
     buildCost = 1
     buildTime = 3
-    location = OwnedBy TheEmpire Source.Owner
+    location = OwnedBy empire = Source.Owner
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
     icon = "icons/ship_hulls/colony_base_hull_small.png"
@@ -62,8 +62,8 @@ Hull
     buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = Contains And [
-        Building "BLD_SHIPYARD_BASE"
-        OwnedBy TheEmpire Source.Owner
+        Building name = "BLD_SHIPYARD_BASE"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
@@ -90,8 +90,8 @@ Hull
     buildCost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = Contains And [
-        Building "BLD_SHIPYARD_BASE"
-        OwnedBy TheEmpire Source.Owner
+        Building name = "BLD_SHIPYARD_BASE"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
@@ -119,8 +119,8 @@ Hull
     buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = Contains And [
-        Building "BLD_SHIPYARD_BASE"
-        OwnedBy TheEmpire Source.Owner
+        Building name = "BLD_SHIPYARD_BASE"
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
@@ -150,20 +150,20 @@ Hull
     buildTime = 2
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetStructure Value + 2
+            effects = SetStructure value = Value + 2
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -189,20 +189,20 @@ Hull
     buildTime = 2
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Not Stationary
-            effects = SetStealth Value - 30
+            effects = SetStealth value = Value - 30
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -235,18 +235,18 @@ Hull
     buildTime = 2
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_CON_GEOINT"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_CON_GEOINT"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
@@ -278,24 +278,24 @@ Hull
     buildTime = 2
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_CON_NANOROBO"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_CON_NANOROBO"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Turn low = Source.CreationTurn + 1
-            effects = SetStructure Target.MaxStructure
+            effects = SetStructure value = Target.MaxStructure
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -339,18 +339,18 @@ Hull
     buildTime = 5
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_CON_GEOINT"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_CON_GEOINT"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
@@ -377,18 +377,18 @@ Hull
     buildTime = 3
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_CON_ADV_ENGINE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
@@ -423,36 +423,36 @@ Hull
     buildTime = 15
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_CON_ADV_ENGINE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_CON_GEOINT"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_CON_GEOINT"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_CON_NANOROBO"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_CON_NANOROBO"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = And [
                 Ship
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
                 Turn low = Target.CreationTurn + 1
                 Or [
-                    OwnedBy TheEmpire Source.Owner
-                    OwnedBy AllyOf Source.Owner
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
             activation = And [
@@ -460,7 +460,7 @@ Hull
                 Turn low = Source.CreationTurn + 1
             ]
             stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
-            effects = SetStructure max(Target.Structure, Target.MaxStructure)
+            effects = SetStructure value = max(Target.Structure, Target.MaxStructure)
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -491,14 +491,14 @@ Hull
     location = And [
         Planet
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -509,7 +509,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 20
+            effects = SetStealth value = Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -535,14 +535,14 @@ Hull
     buildTime = 2
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -553,7 +553,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 20
+            effects = SetStealth value = Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -586,14 +586,14 @@ Hull
     buildTime = 3
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -604,7 +604,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 20
+            effects = SetStealth value = Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -632,14 +632,14 @@ Hull
     buildTime = 2
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -650,7 +650,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 40
+            effects = SetStealth value = Value + 40
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -676,14 +676,14 @@ Hull
     buildTime = 2
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -694,7 +694,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 20
+            effects = SetStealth value = Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -738,21 +738,21 @@ Hull
     buildTime = 3
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST_REF"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST_REF"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -763,7 +763,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 40
+            effects = SetStealth value = Value + 40
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -790,21 +790,21 @@ Hull
     buildTime = 3
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST_REF"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST_REF"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -815,12 +815,12 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 20
+            effects = SetStealth value = Value + 20
             
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetMaxShield Value + 5
+            effects = SetMaxShield value = Value + 5
             
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -864,21 +864,21 @@ Hull
     buildTime = 15
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST_REF"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST_REF"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -889,20 +889,20 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 40
+            effects = SetStealth value = Value + 40
 
         EffectsGroup
             scope = And [
-                WithinDistance 0 Source
+                WithinDistance distance = 0 condition = Source
                 Ship
                 Or [
-                    OwnedBy TheEmpire Source.Owner
-                    OwnedBy AllyOf Source.Owner
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
             activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SCATTERED_ASTEROID"
-            effects = SetMaxShield Value + 5
+            effects = SetMaxShield value = Value + 5
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -932,21 +932,21 @@ Hull
     buildTime = 3
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST"
+                OwnedBy empire = Source.Owner
             ]
         ]
         ContainedBy And [
             System 
             Contains And [
-                Building "BLD_SHIPYARD_AST_REF"
-                OwnedBy TheEmpire Source.Owner
+                Building name = "BLD_SHIPYARD_AST_REF"
+                OwnedBy empire = Source.Owner
             ]
         ]
     ]
@@ -957,7 +957,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
-            effects = SetStealth Value + 20
+            effects = SetStealth value = Value + 20
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -985,30 +985,30 @@ Hull
     buildTime = 3
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
             effects = [
-                SetStructure Value + 2
-                SetFuel Value + 0.2
-                SetDetection Value + 10
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 10
             ]
 
         EffectsGroup
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.2, 5)
+            effects = SetMaxStructure value = Value + min(Source.Age*0.2, 5)
 
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1036,18 +1036,18 @@ Hull
     buildTime = 4
     location = And [
        // Contains And [
-        //    Building "BLD_SHIPYARD_ORG_XENO_FAC"
-        //    OwnedBy TheEmpire Source.Owner
+        //    Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+        //    OwnedBy empire = Source.Owner
        // ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         [[REGULAR_HULL_DETECTION]]
@@ -1078,30 +1078,30 @@ Hull
     buildTime = 5
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_XENO_FAC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 50
+            effects = SetDetection value = Value + 50
             
         EffectsGroup
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.5, 15)
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 15)
 
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1128,34 +1128,34 @@ Hull
     buildTime = 4
     location = And [
         //Contains And [
-         //   Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-        //    OwnedBy TheEmpire Source.Owner
+         //   Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+        //    OwnedBy empire = Source.Owner
        // ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
             effects = [
-                SetStructure Value + 2
-                SetFuel Value + 0.2
-                SetDetection Value + 50
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 50
             ]
             
         EffectsGroup
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.2, 10)
+            effects = SetMaxStructure value = Value + min(Source.Age*0.2, 10)
 
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1183,34 +1183,34 @@ Hull
     buildTime = 5
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
             effects = [
-                SetStructure Value + 2
-                SetFuel Value + 0.2
-                SetDetection Value + 50
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 50
             ]
 
         EffectsGroup
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.5, 25)
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 25)
 
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1240,38 +1240,38 @@ Hull
     buildTime = 6
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_XENO_FAC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
             effects = [
-                SetStructure Value + 2
-                SetFuel Value + 0.2
-                SetDetection Value + 50
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 50
             ]
             
         EffectsGroup
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.5, 15)
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 15)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1301,30 +1301,30 @@ Hull
     buildTime = 6
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_XENO_FAC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 75
+            effects = SetDetection value = Value + 75
             
         EffectsGroup
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.5, 20)
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 20)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1353,34 +1353,34 @@ Hull
     buildTime = 6
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Turn low = Source.CreationTurn + 1
             effects = [
-                SetStructure Target.MaxStructure
-                SetFuel Value + 0.2
-                SetDetection Value + 75
+                SetStructure value = Target.MaxStructure
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 75
             ]
             
         EffectsGroup
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*0.5, 25)
+            effects = SetMaxStructure value = Value + min(Source.Age*0.5, 25)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1413,54 +1413,54 @@ Hull
     buildTime = 15
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ORG_XENO_FAC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ORG_ORB_INC"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
             scope = Source
             activation = Source
             effects = [
-                SetStructure Value + 2
-                SetFuel Value + 0.2
-                SetDetection Value + 50
+                SetStructure value = Value + 2
+                SetFuel value = Value + 0.2
+                SetDetection value = Value + 50
             ]
     
         EffectsGroup
             scope = And [
-                WithinDistance 0 Source
+                WithinDistance distance = 0 condition = Source
                 Ship
                 Or [
-                    OwnedBy TheEmpire Source.Owner
-                    OwnedBy AllyOf Source.Owner
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
             activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
             effects = [
-                SetStealth Value + 20
-                SetDetection Value + 50
+                SetStealth value = Value + 20
+                SetDetection value = Value + 50
             ]
             
         EffectsGroup
             scope = Source
             activation = Source
             accountinglabel = "ORGANIC_GROWTH"
-            effects = SetMaxStructure Value + min(Source.Age*1, 45)
+            effects = SetMaxStructure value = Value + min(Source.Age*1, 45)
             
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -1482,14 +1482,14 @@ Hull
     buildTime = 2
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ENRG_COMP"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Star type = [White Blue BlackHole]
     ]
     effectsgroups = [
@@ -1529,14 +1529,14 @@ Hull
     buildTime = 7
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ENRG_COMP"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Star type = [Blue BlackHole]
     ]
     effectsgroups = [
@@ -1572,14 +1572,14 @@ Hull
     buildTime = 5
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ENRG_COMP"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Star type = [Blue BlackHole]
     ]
     effectsgroups = [
@@ -1632,18 +1632,18 @@ Hull
     buildTime = 20
     location = And [
         Contains And [
-            Building "BLD_SHIPYARD_ENRG_COMP"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_ENRG_SOLAR"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_ENRG_SOLAR"
+            OwnedBy empire = Source.Owner
         ]
         Contains And [
-            Building "BLD_SHIPYARD_BASE"
-            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
         ]
-        OwnedBy TheEmpire Source.Owner
+        OwnedBy empire = Source.Owner
         Star type = BlackHole
     ]
     effectsgroups = [
@@ -1651,35 +1651,35 @@ Hull
             scope = Source
             activation = Star type = [Blue White Yellow Orange Red]
             stackinggroup = "STEALTH_SOLAR_STACK"
-            effects = SetStealth Value + 120
+            effects = SetStealth value = Value + 120
 
         EffectsGroup
             scope = And [
                 Ship
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
                 Or [
-                    OwnedBy TheEmpire Source.Owner
-                    OwnedBy AllyOf Source.Owner
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
             activation = And [
                 Source
                 InSystem
             ]
-            effects = SetFuel Target.MaxFuel
+            effects = SetFuel value = Target.MaxFuel
 
         EffectsGroup
             scope = And [
-                WithinDistance 0 Source
+                WithinDistance distance = 0 condition = Source
                 Ship
                 Not Or [
-                    OwnedBy TheEmpire Source.Owner
-                    OwnedBy AllyOf Source.Owner
+                    OwnedBy empire = Source.Owner
+                    OwnedBy affiliation = AllyOf empire = Source.Owner
                 ]
             ]
             activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SOLAR"
-            effects = SetStealth Value - 100
+            effects = SetStealth value = Value - 100
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
@@ -1713,13 +1713,13 @@ Hull
 
         EffectsGroup    // in systems with no other monsters, spawn trees
             scope = And [
-                Object Source.SystemID
+                Object id = Source.SystemID
                 System
                 Star type = [Blue White Yellow Orange Red]                
                 Not Number low = 2 condition = And [
                     Ship
                     Monster
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                 ]
             ]
             activation = And [
@@ -1727,7 +1727,7 @@ Hull
                 Random probability = 0.1
             ]
             stackinggroup = "TREE_GROWTH"
-            effects = CreateShip "SM_TREE"
+            effects = CreateShip designname = "SM_TREE"
         ]
     icon = ""
     graphic = "icons/monsters/floater.png"
@@ -1752,26 +1752,26 @@ Hull
             scope = Source
             activation = Turn high = 2
             effects = [
-                CreateShip "SM_TREE"
+                CreateShip designname = "SM_TREE"
                 Destroy
             ]
 
         EffectsGroup    // grow larger / stronger with age
             scope = Source
             effects = [
-                SetMaxStructure Value + Source.Age*3
-                SetStructure Value + 7
+                SetMaxStructure value = Value + Source.Age*3
+                SetStructure value = Value + 7
             ]
 
         EffectsGroup    // spawn floaters to reproduce
             scope = Source
             activation = Random probability = 0.03
             stackinggroup = "TREE_GROWTH"
-            effects = CreateShip "SM_FLOATER"
+            effects = CreateShip designname = "SM_FLOATER"
 
         EffectsGroup
             scope = And [
-                Object Source.FleetID
+                Object id = Source.FleetID
                 Fleet
             ]
             effects = SetAggressive
@@ -1882,22 +1882,22 @@ Hull
             scope = Source
             activation = Not Turn low = 1
             effects = [   
-                CreateShip "SM_DRONE"
-                CreateShip "SM_DRONE"
+                CreateShip designname = "SM_DRONE"
+                CreateShip designname = "SM_DRONE"
             ]
 
         EffectsGroup
             scope = And [
                 System
-                InSystem Source.SystemID
-                Number high = 7 And [   // Limits the factory to producing only when there are less than 7 drones in system
+                InSystem id = Source.SystemID
+                Number high = 7 condition = And [   // Limits the factory to producing only when there are less than 7 drones in system
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_DRONE_BODY"
                 ]
             ]
             activation = Random probability = .1
-            effects = CreateShip "SM_DRONE"
+            effects = CreateShip designname = "SM_DRONE"
     ]
     icon = ""
     graphic = "icons/monsters/factory.png"
@@ -1924,27 +1924,27 @@ Hull
         EffectsGroup    // merge small krills to create a medium krill
             scope = And [
                 System
-                InSystem Source.SystemID 
-                Number low = 2 high = 3 And [
+                InSystem id = Source.SystemID 
+                Number low = 2 high = 3 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
             activation = InSystem
             stackinggroup = "KRILL_1_ACTION_STACK"
-            effects = CreateShip "SM_KRILL_2"
+            effects = CreateShip designname = "SM_KRILL_2"
 
         EffectsGroup    // remove merged krills
             scope = And [
-                Number low = 2 And [
+                Number low = 2 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
-                NumberOf 2 And [
+                NumberOf number = 2 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
@@ -1962,7 +1962,7 @@ Hull
             activation = Random probability = 0.1
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = [
-                CreateShip "SM_KRILL_2"
+                CreateShip designname = "SM_KRILL_2"
                 Destroy
                 /*
                 GenerateSitRepMessage
@@ -1988,8 +1988,8 @@ Hull
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = SetDestination destination = And [
                 System
-                WithinStarlaneJumps 1 Source
-                Not InSystem Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not InSystem id = Source.SystemID
             ]
     ]
     icon = ""
@@ -2016,17 +2016,17 @@ Hull
         EffectsGroup
             scope = And [
                 System
-                InSystem Source.SystemID
-                Number low = 2 high = 3 And [
+                InSystem id = Source.SystemID
+                Number low = 2 high = 3 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
             activation = InSystem
            stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
-                CreateShip "SM_KRILL_3"
+                CreateShip designname = "SM_KRILL_3"
                 /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
@@ -2038,14 +2038,14 @@ Hull
             ]
         EffectsGroup
             scope = And [
-                Number low = 2 And [
+                Number low = 2 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
-                NumberOf 2 And [
+                NumberOf number = 2 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
@@ -2063,7 +2063,7 @@ Hull
             activation = Random probability = 0.15
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
-                CreateShip "SM_KRILL_1"
+                CreateShip designname = "SM_KRILL_1"
                 /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
@@ -2088,8 +2088,8 @@ Hull
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = SetDestination destination = And [
                 System
-                WithinStarlaneJumps 1 Source
-                Not InSystem Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not InSystem id = Source.SystemID
             ]
     ]
     icon = ""
@@ -2117,17 +2117,17 @@ Hull
         EffectsGroup
             scope = And [
                 System
-                InSystem Source.SystemID
-                Number low = 2 high = 3 And [
+                InSystem id = Source.SystemID
+                Number low = 2 high = 3 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
             activation = InSystem
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
-                CreateShip "SM_KRILL_4"
+                CreateShip designname = "SM_KRILL_4"
                 /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
@@ -2139,14 +2139,14 @@ Hull
             ]
         EffectsGroup
             scope = And [
-                Number low = 2 And [
+                Number low = 2 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
-                NumberOf 2 And [
+                NumberOf number = 2 condition = And [
                     Ship
-                    InSystem Source.SystemID
+                    InSystem id = Source.SystemID
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
@@ -2164,7 +2164,7 @@ Hull
             activation = Random probability = 0.08
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
-                CreateShip "SM_KRILL_1"
+                CreateShip designname = "SM_KRILL_1"
                 /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
@@ -2189,8 +2189,8 @@ Hull
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = SetDestination destination = And [
                 System
-                WithinStarlaneJumps 1 Source
-                Not InSystem Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not InSystem id = Source.SystemID
             ]
     ]
     icon = ""
@@ -2226,7 +2226,7 @@ Hull
             activation = Random probability = 0.06
             stackinggroup = "KRILL_4_ACTION_STACK"
             effects = [
-                CreateShip "SM_KRILL_1"
+                CreateShip designname = "SM_KRILL_1"
                 /*
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
@@ -2269,11 +2269,11 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet type = GasGiant
-                Not WithinStarlaneJumps 3 And [
+                Not WithinStarlaneJumps jumps = 3 condition = And [
                     System
                     Contains And [
                         Planet
-                        OwnedBy AnyEmpire
+                        OwnedBy affiliation = AnyEmpire
                     ]
                 ]
             ]
@@ -2293,7 +2293,7 @@ Hull
             ]
             activation = Random probability = 0.025
             effects = [
-                CreateShip "SM_KRAKEN_2" Source.Owner
+                CreateShip designname = "SM_KRAKEN_2" empire = Source.Owner
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_MATURED"
@@ -2341,7 +2341,7 @@ Hull
             ]
             activation = Random probability = 0.025
             effects = [
-                CreateShip "SM_KRAKEN_3" Source.Owner
+                CreateShip designname = "SM_KRAKEN_3" empire = Source.Owner
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_MATURED"
@@ -2409,15 +2409,16 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet size = Small
-                Not WithinStarlaneJumps 2 And [
+                Not WithinStarlaneJumps jumps = 2 condition = And [
                     System
                     Contains And [
                         Planet
-                        OwnedBy AnyEmpire
+                        OwnedBy affiliation = AnyEmpire
                     ]
                 ]
             ]
             activation = Not Turn low = 1
+            accountinglabel = "ADD_NEST_SPECIAL_EFFECT_1"
             effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
             
         [[MONSTER_MOVE_ALWAYS]]
@@ -2432,8 +2433,9 @@ Hull
                 ]
             ]
             activation = Random probability = 0.03
+            accountinglabel = "SNOWFLAKE_GROWTH_LABEL"
             effects = [
-                CreateShip "SM_SNOWFLAKE_2" Source.Owner
+                CreateShip designname = "SM_SNOWFLAKE_2" empire = Source.Owner
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_MATURED"
@@ -2481,7 +2483,7 @@ Hull
             ]
             activation = Random probability = 0.03
             effects = [
-                CreateShip "SM_SNOWFLAKE_3" Source.Owner
+                CreateShip designname = "SM_SNOWFLAKE_3" empire = Source.Owner
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_MATURED"
@@ -2548,11 +2550,11 @@ Hull
             scope = NumberOf number = 2 condition = And [
                 Planet
                 Planet type = Asteroids
-                Not WithinStarlaneJumps 4 And [
+                Not WithinStarlaneJumps jumps = 4 condition = And [
                     System
                     Contains And [
                         Planet
-                        OwnedBy AnyEmpire
+                        OwnedBy affiliation = AnyEmpire
                     ]
                 ]
             ]
@@ -2572,7 +2574,7 @@ Hull
             ]
             activation = Random probability = 0.03
             effects = [
-                CreateShip "SM_JUGGERNAUT_2" Source.Owner
+                CreateShip designname = "SM_JUGGERNAUT_2" empire = Source.Owner
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_MATURED"
@@ -2620,7 +2622,7 @@ Hull
             ]
             activation = Random probability = 0.02
             effects = [
-                CreateShip "SM_JUGGERNAUT_3" Source.Owner
+                CreateShip designname = "SM_JUGGERNAUT_3" empire = Source.Owner
                 Destroy
                 GenerateSitRepMessage
                     message = "EFFECT_TAME_MONSTER_MATURED"
@@ -2706,15 +2708,15 @@ Hull
     location = All
     effectsgroups = [
         EffectsGroup
-            scope = NumberOf 1 And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 Not Planet type = [Asteroids GasGiant]
-                InSystem Source.SystemID
+                InSystem id = Source.SystemID
             ]
             effects = [
-                SetSpecies "SP_EXPERIMENTOR"
-                SetPopulation Target.TargetPopulation
-                CreateBuilding "BLD_EXPERIMENTOR_OUTPOST"
+                SetSpecies name = "SP_EXPERIMENTOR"
+                SetPopulation value = Target.TargetPopulation
+                CreateBuilding name = "BLD_EXPERIMENTOR_OUTPOST"
             ]
 
         EffectsGroup
@@ -2807,24 +2809,24 @@ Hull
         [[EXCELLENT_VISION]]
 
         EffectsGroup
-            scope = NumberOf 4 And [
+            scope = NumberOf number = 4 condition = And [
                 Ship
-                WithinStarlaneJumps 1 Source
-                HasTag "ORGANIC"
+                WithinStarlaneJumps jumps = 1 condition = Source
+                HasTag name = "ORGANIC"
             ]
-            activation = Random 0.2
-            effects = SetOwner Source.Owner
+            activation = Random probability = 0.2
+            effects = SetOwner empire = Source.Owner
 
         EffectsGroup
-            scope = NumberOf 12 And [
+            scope = NumberOf number = 12 condition = And [
                 Ship
-                WithinStarlaneJumps 1 Source
-                HasTag "ORGANIC"
-                Not HasTag "TELEPATHIC"
-                Not OwnerHasTech "LRN_PSY_DOM"
+                WithinStarlaneJumps jumps = 1 condition = Source
+                HasTag name = "ORGANIC"
+                Not HasTag name = "TELEPATHIC"
+                Not OwnerHasTech name = "LRN_PSY_DOM"
             ]
-            activation = Random 0.8
-            effects = SetOwner Source.Owner
+            activation = Random probability = 0.8
+            effects = SetOwner empire = Source.Owner
     ]
     icon = ""
     graphic = ""
@@ -2853,17 +2855,17 @@ Hull
         [[INFINITE_FUEL]]
 
         EffectsGroup
-            scope = NumberOf 1 And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
-                InSystem Source.SystemID
-                OwnedBy AnyEmpire
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
             ]
             activation =
                 InSystem
             effects = [
-                AddSpecial "NOVA_BOMB_ACTIVATOR_SPECIAL"
-                RemoveSpecial "SUPERNOVA_SPECIAL"
+                AddSpecial name = "NOVA_BOMB_ACTIVATOR_SPECIAL"
+                RemoveSpecial name = "SUPERNOVA_SPECIAL"
             ]
 
         [[GOOD_VISION]]
@@ -2890,13 +2892,13 @@ Hull
         [[INFINITE_FUEL]]
         [[MONSTER_MOVE_PRE]]0.05[[MONSTER_MOVE_POST_NOT_OWNED]]
         EffectsGroup
-            scope = NumberOf 1 And [
+            scope = NumberOf number = 1 condition = And [
                 Ship
-                InSystem Source.SystemID
-                OwnedBy AnyEmpire
+                InSystem id = Source.SystemID
+                OwnedBy affiliation = AnyEmpire
             ]
             effects = [
-                SetFuel value - 99
+                SetFuel value = Value - 99
             ]
     ]
     icon = ""
@@ -2906,7 +2908,7 @@ REGULAR_HULL_DETECTION
 '''EffectsGroup
         scope = Source
         activation = Source
-        effects = SetDetection Value + 25
+        effects = SetDetection value = Value + 25
 '''
 
 WEAK_VISION
@@ -2914,7 +2916,7 @@ WEAK_VISION
         scope = Source
         activation = Source
         accountinglabel = "WEAK_VISION_LABEL"
-        effects = SetDetection Value + 50
+        effects = SetDetection value = Value + 50
 '''
 
 MODERATE_VISION
@@ -2922,7 +2924,7 @@ MODERATE_VISION
         scope = Source
         activation = Source
         accountinglabel = "MODERATE_VISION_LABEL"
-        effects = SetDetection Value + 75
+        effects = SetDetection value = Value + 75
 '''
 
 GOOD_VISION
@@ -2930,7 +2932,7 @@ GOOD_VISION
         scope = Source
         activation = Source
         accountinglabel = "GOOD_VISION_LABEL"
-        effects = SetDetection Value + 100
+        effects = SetDetection value = Value + 100
 '''
 
 EXCELLENT_VISION
@@ -2938,7 +2940,7 @@ EXCELLENT_VISION
         scope = Source
         activation = Source
         accountinglabel = "EXCELLENT_VISION_LABEL"
-        effects = SetDetection Value + 150
+        effects = SetDetection value = Value + 150
 '''
 
 UNOWNED_GOOD_VISION
@@ -2946,10 +2948,10 @@ UNOWNED_GOOD_VISION
         scope = Source
         activation = And [
             Source
-            Not OwnedBy AnyEmpire
+            Unowned
         ]
         accountinglabel = "GOOD_VISION_LABEL"
-        effects = SetDetection Value + 100
+        effects = SetDetection value = Value + 100
 '''
 
 
@@ -2962,7 +2964,7 @@ UNOWNED_MOVE
             activation = And [
                 Turn low = 10
                 Stationary
-                Not OwnedBy AnyEmpire
+                Unowned
                 Random probability = 0.9
                 Not And [
                     DesignHasHull name = "SH_ASTEROID"
@@ -2972,9 +2974,9 @@ UNOWNED_MOVE
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
-                Not InSystem Source.SystemID
-                WithinStarlaneJumps 1 Source
-                Not Contains Building "BLD_EXPERIMENTOR_OUTPOST"
+                Not InSystem id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
             ]
 '''
 
@@ -2988,14 +2990,15 @@ MONSTER_MOVE_ALWAYS
             activation = And [
                 Turn low = 10
                 Stationary
-                Not OwnedBy AnyEmpire
+                Unowned
             ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            accountinglabel = "MONSTER_MOVE_ALWAYS_LABEL"
             effects = SetDestination destination = And [
                 System
-                Not InSystem Source.SystemID
-                WithinStarlaneJumps 1 Source
-                Not Contains Building "BLD_EXPERIMENTOR_OUTPOST"
+                Not InSystem id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
+                Not Contains Building name = "BLD_EXPERIMENTOR_OUTPOST"
             ]
 '''
 
@@ -3007,7 +3010,7 @@ MONSTER_MOVE_PRE
             ]
             activation = And [
                 Stationary
-                Not OwnedBy AnyEmpire
+                Unowned
                 Random probability = 
 '''
 
@@ -3017,11 +3020,11 @@ MONSTER_MOVE_POST_NOT_OWNED
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
-                Not InSystem Source.SystemID
-                WithinStarlaneJumps 1 Source
+                Not InSystem id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
                 Not Contains And [
                     Planet
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                 ]
             ]
 '''
@@ -3032,15 +3035,16 @@ MONSTER_MOVE_POST
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
-                Not InSystem Source.SystemID
-                WithinStarlaneJumps 1 Source
+                Not InSystem id = Source.SystemID
+                WithinStarlaneJumps jumps = 1 condition = Source
             ]
 '''
 
 INFINITE_FUEL
 '''EffectsGroup
             scope = Source
-            effects = SetFuel Value + 1
+            accountinglabel = "INFINITE_FUEL_LABEL"
+            effects = SetFuel value = Value + 1
 '''
 
 SCAVANGE_FUEL_UNOWNED
@@ -3048,10 +3052,10 @@ SCAVANGE_FUEL_UNOWNED
             scope = Source
             activation = And [
                 Stationary
-                Not OwnedBy AnyEmpire
+                Unowned
                 Random probability = 0.6
             ]
-            effects = SetFuel Value + 1
+            effects = SetFuel value = Value + 1
 '''
 
 HUNT_BUILDINGS
@@ -3059,25 +3063,25 @@ HUNT_BUILDINGS
             scope = And [
                 Fleet
                 Object id = Source.FleetID
-                Number low = 1 And [
+                Number low = 1 condition = And [
                     System
                     Contains And [
                         Building
-                        OwnedBy AnyEmpire
+                        OwnedBy affiliation = AnyEmpire
                         Stealth high = Source.Detection
-                        WithinDistance Source.Detection Source
+                        WithinDistance distance = Source.Detection condition = Source
                     ]
                 ]
             ]
-            activation = Not OwnedBy AnyEmpire
+            activation = Unowned
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
                 Contains And [
                     Building
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                     Stealth high = Source.Detection
-                    WithinDistance Source.Detection Source
+                    WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
 '''
@@ -3087,22 +3091,22 @@ HUNT_SHIPS
             scope = And [
                 Fleet
                 Object id = Source.FleetID
-                Number low = 1 And [
+                Number low = 1 condition = And [
                     Ship
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                     Stealth high = Source.Detection
-                    WithinDistance Source.Detection Source
+                    WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
-            activation = Not OwnedBy AnyEmpire
+            activation = Unowned
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
                 Contains And [
                     Ship
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                     Stealth high = Source.Detection
-                    WithinDistance Source.Detection Source
+                    WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
 '''
@@ -3112,22 +3116,22 @@ HUNT_PLANETS
             scope = And [
                 Fleet
                 Object id = Source.FleetID
-                Number low = 1 And [
+                Number low = 1 condition = And [
                     Planet
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                     Stealth high = Source.Detection
-                    WithinDistance Source.Detection Source
+                    WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
-            activation = Not OwnedBy AnyEmpire
+            activation = Unowned
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
                 Contains And [
                     Planet
-                    OwnedBy AnyEmpire
+                    OwnedBy affiliation = AnyEmpire
                     Stealth high = Source.Detection
-                    WithinDistance Source.Detection Source
+                    WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
 '''

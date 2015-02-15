@@ -39,6 +39,7 @@ add_library(GiGi
     Edit.cpp
     EventPump.cpp
     Font.cpp
+    GLClientAndServerBuffer.cpp
     GroupBox.cpp
     GUI.cpp
     Layout.cpp

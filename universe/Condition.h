@@ -353,7 +353,7 @@ private:
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API Condition::EmpireAffiliation : public Condition::ConditionBase {
-    EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
+    EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation = AFFIL_SELF) :
         m_empire_id(empire_id),
         m_affiliation(affiliation)
     {}
@@ -878,8 +878,10 @@ private:
   * \a environments.  Note that all Building objects which are on matching
   * planets are also matched. */
 struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionBase {
-    PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments) :
-        m_environments(environments)
+    PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
+                      const ValueRef::ValueRefBase<std::string>* species_name_ref = 0) :
+        m_environments(environments),
+        m_species_name(species_name_ref)
     {}
     virtual ~PlanetEnvironment();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -898,7 +900,8 @@ struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionB
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> m_environments;
+    std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>    m_environments;
+    const ValueRef::ValueRefBase<std::string>*                          m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1591,7 +1594,7 @@ private:
   * that a lane would be geometrically acceptable, meaning it wouldn't cross
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
-struct Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
+struct FO_COMMON_API Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
     CanAddStarlaneConnection(const ConditionBase* condition) :
         m_condition(condition)
     {}
@@ -2103,7 +2106,8 @@ template <class Archive>
 void Condition::PlanetEnvironment::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_environments);
+        & BOOST_SERIALIZATION_NVP(m_environments)
+        & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
 template <class Archive>

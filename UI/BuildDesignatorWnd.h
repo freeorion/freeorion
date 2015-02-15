@@ -25,6 +25,7 @@ public:
 
     virtual bool    InWindow(const GG::Pt& pt) const;
     virtual bool    InClient(const GG::Pt& pt) const;
+    int             SelectedPlanetID() const;
     //@}
 
     /** \name Mutators */ //@{

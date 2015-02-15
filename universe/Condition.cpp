@@ -782,7 +782,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // Most conditions match objects independently of the other objects being
     // tested, but the number parameter for NumberOf conditions makes things
     // more complicated.  In order to match some number of the potential
-    // matchs property, both the matches and non_matches need to be checked
+    // matches property, both the matches and non_matches need to be checked
     // against the subcondition, and the total number of subcondition matches
     // counted.
     // Then, when searching NON_MATCHES, non_matches may be moved into matches
@@ -1045,7 +1045,7 @@ namespace {
         {}
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
-            if (!candidate || candidate->Unowned())
+            if (!candidate)
                 return false;
 
             switch (m_affiliation) {
@@ -1074,8 +1074,11 @@ namespace {
             }
 
             case AFFIL_ANY:
-                return true;
-                //return !candidate->Unowned();
+                return !candidate->Unowned();
+                break;
+
+            case AFFIL_NONE:
+                return candidate->Unowned();
                 break;
 
             default:
@@ -1136,6 +1139,10 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
         return (!negated)
             ? UserString("DESC_EMPIRE_AFFILIATION_ANY")
             : UserString("DESC_EMPIRE_AFFILIATION_ANY_NOT");
+    } else if (m_affiliation == AFFIL_NONE) {
+        return (!negated)
+            ? UserString("DESC_EMPIRE_AFFILIATION_ANY_NOT")
+            : UserString("DESC_EMPIRE_AFFILIATION_ANY");
     } else {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_EMPIRE_AFFILIATION")
@@ -1146,17 +1153,32 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
 }
 
 std::string Condition::EmpireAffiliation::Dump() const {
-    std::string retval = DumpIndent() + "OwnedBy";
-    retval += " affiliation = ";
-    switch (m_affiliation) {
-    case AFFIL_SELF:    retval += "TheEmpire";  break;
-    case AFFIL_ENEMY:   retval += "EnemyOf";    break;
-    case AFFIL_ALLY:    retval += "AllyOf";     break;
-    case AFFIL_ANY:     retval += "AnyEmpire";  break;
-    default:            retval += "?";          break;
+    std::string retval = DumpIndent();
+    if (m_affiliation == AFFIL_SELF) {
+        retval += "OwnedBy";
+        if (m_empire_id)
+            retval += " empire = " + m_empire_id->Dump();
+
+    } else if (m_affiliation == AFFIL_ANY) {
+        retval += "OwnedBy affiliation = AnyEmpire";
+
+    } else if (m_affiliation == AFFIL_NONE) {
+        retval += "Unowned";
+
+    } else if (m_affiliation == AFFIL_ENEMY) {
+        retval += "OwnedBy affilition = EnemyOf";
+        if (m_empire_id)
+            retval += " empire = " + m_empire_id->Dump();
+
+    } else if (m_affiliation == AFFIL_ALLY) {
+        retval += "OwnedBy affiliation = AllyOf";
+        if (m_empire_id)
+            retval += " empire = " + m_empire_id->Dump();
+
+    } else {
+        retval += "OwnedBy ??";
     }
-    if (m_empire_id)
-        retval += " empire = " + m_empire_id->Dump();
+
     retval += "\n";
     return retval;
 }
@@ -3101,6 +3123,7 @@ Condition::PlanetEnvironment::~PlanetEnvironment() {
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
         delete m_environments[i];
     }
+    delete m_species_name;
 }
 
 bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rhs) const {
@@ -3110,6 +3133,8 @@ bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rh
         return false;
 
     const Condition::PlanetEnvironment& rhs_ = static_cast<const Condition::PlanetEnvironment&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_species_name)
 
     if (m_environments.size() != rhs_.m_environments.size())
         return false;
@@ -3122,8 +3147,10 @@ bool Condition::PlanetEnvironment::operator==(const Condition::ConditionBase& rh
 
 namespace {
     struct PlanetEnvironmentSimpleMatch {
-        PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments) :
-            m_environments(environments)
+        PlanetEnvironmentSimpleMatch(const std::vector< ::PlanetEnvironment>& environments,
+                                     const std::string& species = "") :
+            m_environments(environments),
+            m_species(species)
         {}
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
@@ -3141,7 +3168,7 @@ namespace {
                 for (std::vector< ::PlanetEnvironment>::const_iterator it = m_environments.begin();
                         it != m_environments.end(); ++it)
                 {
-                    if (planet->EnvironmentForSpecies() == *it)
+                    if (planet->EnvironmentForSpecies(m_species) == *it)
                         return true;
                 }
             }
@@ -3149,7 +3176,8 @@ namespace {
             return false;
         }
 
-        const std::vector< ::PlanetEnvironment>& m_environments;
+        const std::vector< ::PlanetEnvironment>&    m_environments;
+        const std::string&                          m_species;
     };
 }
 
@@ -3157,7 +3185,8 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context,
                                         ObjectSet& matches, ObjectSet& non_matches,
                                         SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
+    bool simple_eval_safe = ((!m_species_name || m_species_name->LocalCandidateInvariant()) &&
+                             parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
         for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
@@ -3178,7 +3207,10 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context,
         {
             environments.push_back((*it)->Eval(parent_context));
         }
-        EvalImpl(matches, non_matches, search_domain, PlanetEnvironmentSimpleMatch(environments));
+        std::string species_name;
+        if (m_species_name)
+            species_name = m_species_name->Eval(parent_context);
+        EvalImpl(matches, non_matches, search_domain, PlanetEnvironmentSimpleMatch(environments, species_name));
     } else {
         // re-evaluate contained objects for each candidate object
         Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -3186,6 +3218,8 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::PlanetEnvironment::RootCandidateInvariant() const {
+    if (m_species_name && !m_species_name->RootCandidateInvariant())
+        return false;
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
@@ -3196,6 +3230,8 @@ bool Condition::PlanetEnvironment::RootCandidateInvariant() const {
 }
 
 bool Condition::PlanetEnvironment::TargetInvariant() const {
+    if (m_species_name && !m_species_name->TargetInvariant())
+        return false;
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
@@ -3206,6 +3242,8 @@ bool Condition::PlanetEnvironment::TargetInvariant() const {
 }
 
 bool Condition::PlanetEnvironment::SourceInvariant() const {
+    if (m_species_name && !m_species_name->SourceInvariant())
+        return false;
     for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
@@ -3229,23 +3267,32 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
             values_str += " ";
         }
     }
+    std::string species_str;
+    if (m_species_name)
+        species_str = m_species_name->Description();
+    if (species_str.empty())
+        species_str = UserString("DESC_PLANET_ENVIRONMENT_CUR_SPECIES");
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_PLANET_ENVIRONMENT")
         : UserString("DESC_PLANET_ENVIRONMENT_NOT"))
-        % values_str);
+        % values_str
+        % species_str);
 }
 
 std::string Condition::PlanetEnvironment::Dump() const {
     std::string retval = DumpIndent() + "Planet environment = ";
     if (m_environments.size() == 1) {
-        retval += m_environments[0]->Dump() + "\n";
+        retval += m_environments[0]->Dump();
     } else {
         retval += "[ ";
         for (unsigned int i = 0; i < m_environments.size(); ++i) {
             retval += m_environments[i]->Dump() + " ";
         }
-        retval += "]\n";
+        retval += "]";
     }
+    if (m_species_name)
+        retval += " species = " + m_species_name->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -3262,19 +3309,24 @@ bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) 
         Logger().errorStream() << "PlanetEnvironment::Match passed no candidate object";
         return false;
     }
-    
+
     // is it a planet or on a planet? TODO: factor out
     TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
     TemporaryPtr<const ::Building> building;
     if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
-    if (planet) {
-        ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies();
-        for (unsigned int i = 0; i < m_environments.size(); ++i) {
-            if (m_environments[i]->Eval(local_context) == env_for_planets_species)
-                return true;
-        }
+    if (!planet)
+        return false;
+
+    std::string species_name;
+    if (m_species_name)
+        species_name = m_species_name->Eval(local_context);
+
+    ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies(species_name);
+    for (unsigned int i = 0; i < m_environments.size(); ++i) {
+        if (m_environments[i]->Eval(local_context) == env_for_planets_species)
+            return true;
     }
     return false;
 }
@@ -5621,113 +5673,6 @@ bool Condition::WithinStarlaneJumps::operator==(const Condition::ConditionBase& 
 }
 
 namespace {
-    const int MANY_JUMPS(999999);
-
-    int JumpsBetweenObjects(TemporaryPtr<const UniverseObject> one, TemporaryPtr<const UniverseObject> two) {
-        if (!one || !two)
-            return MANY_JUMPS;
-
-        TemporaryPtr<const System> system_one = GetSystem(one->SystemID());
-        TemporaryPtr<const System> system_two = GetSystem(two->SystemID());
-
-        if (system_one && system_two) {
-            // both condition-matching object and candidate are / in systems.
-            // can just find the shortest path between the two systems
-            short jumps = -1;
-            try {
-                jumps = GetUniverse().JumpDistance(system_one->ID(), system_two->ID());
-            } catch (...) {
-                Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistance";
-            }
-            if (jumps != -1)    // if jumps is -1, no path exists between the systems
-                return static_cast<int>(jumps);
-            else
-                return MANY_JUMPS;
-
-        } else if (system_one) {
-            // just object one is / in a system.
-            if (TemporaryPtr<const Fleet> fleet = FleetFromObject(two)) {
-                // other object is a fleet that is between systems
-                // need to check shortest path from systems on either side of starlane fleet is on
-                short jumps1 = -1, jumps2 = -1;
-                try {
-                    if (fleet->PreviousSystemID() != -1)
-                        jumps1 = GetUniverse().JumpDistance(system_one->ID(), fleet->PreviousSystemID());
-                    if (fleet->NextSystemID() != -1)
-                        jumps2 = GetUniverse().JumpDistance(system_one->ID(), fleet->NextSystemID());
-                } catch (...) {
-                    Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistance";
-                }
-                int jumps = static_cast<int>(std::max(jumps1, jumps2));
-                if (jumps != -1) {
-                    return jumps - 1;
-                } else {
-                    // no path
-                    return MANY_JUMPS;
-                }
-            }
-
-        } else if (system_two) {
-            // just object two is a system.
-            if (TemporaryPtr<const Fleet> fleet = FleetFromObject(one)) {
-                // other object is a fleet that is between systems
-                // need to check shortest path from systems on either side of starlane fleet is on
-                short jumps1 = -1, jumps2 = -1;
-                try {
-                    if (fleet->PreviousSystemID() != -1)
-                        jumps1 = GetUniverse().JumpDistance(system_two->ID(), fleet->PreviousSystemID());
-                    if (fleet->NextSystemID() != -1)
-                        jumps2 = GetUniverse().JumpDistance(system_two->ID(), fleet->NextSystemID());
-                } catch (...) {
-                    Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistance";
-                }
-                int jumps = static_cast<int>(std::max(jumps1, jumps2));
-                if (jumps != -1) {
-                    return jumps - 1;
-                } else {
-                    // no path
-                    return MANY_JUMPS;
-                }
-            }
-        } else {
-            // neither object is / in a system
-
-            TemporaryPtr<const Fleet> fleet_one = FleetFromObject(one);
-            TemporaryPtr<const Fleet> fleet_two = FleetFromObject(two);
-
-            if (fleet_one && fleet_two) {
-                // both objects are / in a fleet.
-                // need to check all combinations of systems on either sides of
-                // starlanes condition-matching object and candidate are on
-                int fleet_one_prev_system_id = fleet_one->PreviousSystemID();
-                int fleet_one_next_system_id = fleet_one->NextSystemID();
-                int fleet_two_prev_system_id = fleet_two->PreviousSystemID();
-                int fleet_two_next_system_id = fleet_two->NextSystemID();
-                short jumps1 = -1, jumps2 = -1, jumps3 = -1, jumps4 = -1;
-                try {
-                    if (fleet_one_prev_system_id != -1 && fleet_two_prev_system_id != -1)
-                        jumps1 = GetUniverse().JumpDistance(fleet_one_prev_system_id, fleet_two_prev_system_id);
-                    if (fleet_one_prev_system_id != -1 && fleet_two_next_system_id != -1)
-                        jumps2 = GetUniverse().JumpDistance(fleet_one_prev_system_id, fleet_two_next_system_id);
-                    if (fleet_one_next_system_id != -1 && fleet_two_prev_system_id != -1)
-                        jumps3 = GetUniverse().JumpDistance(fleet_one_next_system_id, fleet_two_prev_system_id);
-                    if (fleet_one_next_system_id != -1 && fleet_two_next_system_id != -1)
-                        jumps4 = GetUniverse().JumpDistance(fleet_one_next_system_id, fleet_two_next_system_id);
-                } catch (...) {
-                    Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistance";
-                }
-                int jumps = static_cast<int>(std::max(jumps1, std::max(jumps2, std::max(jumps3, jumps4))));
-                if (jumps != -1) {
-                    return jumps - 1;
-                } else {
-                    // no path
-                    return MANY_JUMPS;
-                }
-            }
-        }
-        return MANY_JUMPS;
-    }
-
     struct WithinStarlaneJumpsSimpleMatch {
         WithinStarlaneJumpsSimpleMatch(const Condition::ObjectSet& from_objects, int jump_limit) :
             m_from_objects(from_objects),
@@ -5751,7 +5696,7 @@ namespace {
                     if (delta_x*delta_x + delta_y*delta_y == 0)
                         return true;
                 } else {
-                    int jumps = JumpsBetweenObjects(*it, candidate);
+                    int jumps = GetUniverse().JumpDistanceBetweenObjects((*it)->ID(), candidate->ID());
                     if (jumps != -1 && jumps <= m_jump_limit)
                         return true;
                 }
@@ -5857,7 +5802,12 @@ namespace {
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            // TODO: implement this test
+            // TODO: implement this test.
+            //       - should check that there are no lanes already between candidate and all destination objects
+            //       - should check that the proposed lane is not too close to an existing system
+            //       - should check that there are no lanes already existing that cross the proposed lane
+            //       - should check that there are no lanes connecting to candidate or destination objects that are
+            //         very close in angle to the proposed lane
             return true;
         }
 
@@ -5903,7 +5853,7 @@ std::string Condition::CanAddStarlaneConnection::Description(bool negated/* = fa
 }
 
 std::string Condition::CanAddStarlaneConnection::Dump() const {
-    std::string retval = DumpIndent() + "CanAddStarlaneConnection condition =\n";
+    std::string retval = DumpIndent() + "CanAddStarlaneTo condition =\n";
     ++g_indent;
         retval += m_condition->Dump();
     --g_indent;
@@ -6216,7 +6166,9 @@ namespace {
                         if (group.find(candidate->SystemID()) != group.end())
                             return true;    // test object and candidate object are in same resourse sharing group
                         else
-                            return false;   // test object is not in resource sharing group with candidate (each object can be in only one group)
+                            // test object is not in resource sharing group with candidate
+                            // as each object can be in only one group, no need to check the remaining groups
+                            break;
                     }
                     // current subcondition-matching object is not in this resource sharing group
                 }
@@ -6685,8 +6637,8 @@ bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
 ///////////////////////////////////////////////////////////
 namespace {
     const Condition::ConditionBase* GetLocationCondition(Condition::ContentType content_type,
-                                                   const std::string& name1,
-                                                   const std::string& name2)
+                                                         const std::string& name1,
+                                                         const std::string& name2)
     {
         if (name1.empty())
             return 0;
@@ -6697,7 +6649,10 @@ namespace {
             break;
         }
         case Condition::CONTENT_SPECIES: {
-            return 0;   // species have no location conditions (but their foci do...)
+            const Species* s = GetSpecies(name1);
+            if (!s)
+                return 0;
+            return s->Location();
         }
         case Condition::CONTENT_SHIP_HULL: {
             if (const HullType* h = GetHullType(name1))
@@ -6900,6 +6855,17 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
+    if (m_operands.empty()) {
+        Logger().errorStream() << "Condition::And::Eval given no operands!";
+        return;
+    }
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        if (!m_operands[i]) {
+            Logger().errorStream() << "Condition::And::Eval given null operand!";
+            return;
+        }
+    }
+
     if (search_domain == NON_MATCHES) {
         ObjectSet partly_checked_non_matches;
         partly_checked_non_matches.reserve(non_matches.size());
@@ -7048,6 +7014,17 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
+    if (m_operands.empty()) {
+        Logger().errorStream() << "Condition::Or::Eval given no operands!";
+        return;
+    }
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        if (!m_operands[i]) {
+            Logger().errorStream() << "Condition::Or::Eval given null operand!";
+            return;
+        }
+    }
+
     if (search_domain == NON_MATCHES) {
         // check each item in the non-matches set against each of the operand conditions
         // if a non-candidate item matches an operand condition, move the item to the
@@ -7183,6 +7160,11 @@ void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& mat
 {
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
+
+    if (!m_operand) {
+        Logger().errorStream() << "Condition::Not::Eval found no subcondition to evaluate!";
+        return;
+    }
 
     if (search_domain == NON_MATCHES) {
         // search non_matches set for items that don't meet the operand

@@ -397,7 +397,7 @@ namespace FreeOrionPython {
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          return_internal_reference<>()))
 
-            .add_property("numSitReps",             &Empire::NumSitRepEntries)
+            .def("numSitReps",                      &Empire::NumSitRepEntries)
             .def("getSitRep",                       make_function(
                                                         GetEmpireSitRepFunc,
                                                         return_internal_reference<>(),

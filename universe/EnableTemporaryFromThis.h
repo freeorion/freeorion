@@ -13,7 +13,7 @@ template <class T>
 class EnableTemporaryFromThis : public boost::enable_shared_from_this<T> {
 public:
     typedef EnableTemporaryFromThis<T> enable_temporary_from_this_type;
-		EnableTemporaryFromThis();
+    EnableTemporaryFromThis();
     TemporaryPtr<T> TemporaryFromThis();
     TemporaryPtr<const T> TemporaryFromThis() const;
 

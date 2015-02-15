@@ -78,10 +78,11 @@ struct FO_COMMON_API ResearchQueue {
     //@}
 
     /** \name Accessors */ //@{
-    bool            InQueue(const std::string& tech_name) const;    ///< Returns true iff \a tech is in this queue.
-    int             ProjectsInProgress() const;         ///< Returns the number of research projects currently (perhaps partially) funded.
-    float           TotalRPsSpent() const;              ///< Returns the number of RPs currently spent on the projects in this queue.
-    int             EmpireID() const { return m_empire_id; }
+    bool                        InQueue(const std::string& tech_name) const;///< Returns true iff \a tech is in this queue.
+    int                         ProjectsInProgress() const;                 ///< Returns the number of research projects currently (perhaps partially) funded.
+    float                       TotalRPsSpent() const;                      ///< Returns the number of RPs currently spent on the projects in this queue.
+    int                         EmpireID() const { return m_empire_id; }
+    std::vector<std::string>    AllEnqueuedProjects() const;
 
     // STL container-like interface
     bool            empty() const;
@@ -305,11 +306,17 @@ public:
     const std::set<std::string>&    AvailableShipParts() const;                     ///< Returns the set of ship part names this empire that the empire can currently build
     const std::set<std::string>&    AvailableShipHulls() const;                     ///< Returns the set of ship hull names that that the empire can currently build
 
-    const std::string&              TopPriorityEnqueuedTech(bool only_consider_available_techs = false) const;
-    const std::string&              MostExpensiveEnqueuedTech(bool only_consider_available_techs = false) const;
-    const std::string&              LeastExpensiveEnqueuedTech(bool only_consider_available_techs = false) const;
-    const std::string&              MostRPSpentEnqueuedTech(bool only_consider_available_techs = false) const;
-    const std::string&              MostRPCostLeftEnqueuedTech(bool only_consider_available_techs = false) const;
+    const std::string&              TopPriorityEnqueuedTech() const;
+    const std::string&              MostExpensiveEnqueuedTech() const;
+    const std::string&              LeastExpensiveEnqueuedTech() const;
+    const std::string&              MostRPSpentEnqueuedTech() const;
+    const std::string&              MostRPCostLeftEnqueuedTech() const;
+
+    const std::string&              TopPriorityResearchableTech() const;
+    const std::string&              MostExpensiveResearchableTech() const;
+    const std::string&              LeastExpensiveResearchableTech() const;
+    const std::string&              MostRPSpentResearchableTech() const;
+    const std::string&              MostRPCostLeftResearchableTech() const;
 
     const Meter*                                    GetMeter(const std::string& name) const;
     std::map<std::string, Meter>::const_iterator    meter_begin() const { return m_meters.begin(); }

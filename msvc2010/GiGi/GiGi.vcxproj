@@ -33,6 +33,7 @@
     <ClInclude Include="..\..\GG\GG\Flags.h" />
     <ClInclude Include="..\..\GG\GG\Font.h" />
     <ClInclude Include="..\..\GG\GG\FontFwd.h" />
+    <ClInclude Include="..\..\GG\GG\GLClientAndServerBuffer.h" />
     <ClInclude Include="..\..\GG\GG\glext.h" />
     <ClInclude Include="..\..\GG\GG\GroupBox.h" />
     <ClInclude Include="..\..\GG\GG\GUI.h" />
@@ -88,6 +89,7 @@
     <ClCompile Include="..\..\GG\src\Edit.cpp" />
     <ClCompile Include="..\..\GG\src\EventPump.cpp" />
     <ClCompile Include="..\..\GG\src\Font.cpp" />
+    <ClCompile Include="..\..\GG\src\GLClientAndServerBuffer.cpp" />
     <ClCompile Include="..\..\GG\src\GroupBox.cpp" />
     <ClCompile Include="..\..\GG\src\GUI.cpp" />
     <ClCompile Include="..\..\GG\src\Layout.cpp" />
@@ -207,7 +209,7 @@
       </LinkStatus>
       <TreatLinkerWarningAsErrors>
       </TreatLinkerWarningAsErrors>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;freetype253MT.lib;libpng16.lib;User32.lib</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;freetype253MT.lib;libpng16.lib;User32.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <LinkErrorReporting>NoErrorReport</LinkErrorReporting>

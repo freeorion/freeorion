@@ -29,7 +29,6 @@
 
 #include <boost/assign/list_of.hpp>
 
-
 using namespace GG;
 
 namespace {
@@ -47,11 +46,15 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
     m_clip_text(false),
     m_set_min_size(false),
     m_code_points(0),
-    m_font(font)
+    m_font(font),
+    m_render_cache(0)
 {
     ValidateFormat();
     SetText(str);
 }
+
+TextControl::~TextControl()
+{ delete m_render_cache; }
 
 Pt TextControl::MinUsableSize() const
 { return m_text_lr - m_text_ul; }
@@ -110,12 +113,33 @@ void TextControl::Render()
     Clr clr_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
     glColor(clr_to_use);
     if (m_font) {
+        if (m_render_cache == 0) {
+            RefreshCache();
+        }
         if (m_clip_text)
             BeginClipping();
-        m_font->RenderText(UpperLeft(), LowerRight(), m_text, m_format, &m_line_data);
+        glPushMatrix();
+        Pt ul = ClientUpperLeft();
+        glTranslated(Value(ul.x), Value(ul.y), 0);
+        m_font->RenderCachedText(*m_render_cache);
+        glPopMatrix();
         if (m_clip_text)
             EndClipping();
     }
+}
+
+void TextControl::RefreshCache() {
+    PurgeCache();
+    m_render_cache = new Font::RenderCache();
+    if (m_font)
+        m_font->PreRenderText(Pt(X0, Y0), Size(), m_text, m_format, *m_render_cache, &m_line_data);
+}
+
+void TextControl::PurgeCache() {
+    if(m_render_cache)
+        delete m_render_cache;
+
+    m_render_cache = 0;
 }
 
 void TextControl::SetText(const std::string& str)
@@ -134,6 +158,7 @@ void TextControl::SetText(const std::string& str)
     m_text_ul = Pt();
     m_text_lr = text_sz;
     AdjustMinimumSize();
+    PurgeCache();
     if (m_format & FORMAT_NOWRAP) {
         Resize(text_sz);
     } else {
@@ -175,6 +200,7 @@ void TextControl::SizeMove(const Pt& ul, const Pt& lr)
         m_text_ul = Pt();
         m_text_lr = text_sz;
         AdjustMinimumSize();
+        PurgeCache();
     }
     RecomputeTextBounds();
 }
@@ -187,13 +213,16 @@ void TextControl::SetTextFormat(Flags<TextFormat> format)
         SetText(m_text);
 }
 
-void TextControl::SetTextColor(Clr color)
-{ m_text_color = color; }
+void TextControl::SetTextColor(Clr color){
+    m_text_color = color;
+    PurgeCache();
+}
 
 void TextControl::SetColor(Clr c)
 {
     Control::SetColor(c);
     m_text_color = c;
+    PurgeCache();
 }
 
 void TextControl::ClipText(bool b)

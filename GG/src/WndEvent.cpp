@@ -84,7 +84,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, Flags<ModKey> mod_keys) :
     m_wheel_move(0),
     m_ticks(0),
     m_timer(0),
-    m_text(NULL)
+    m_text(0)
 {}
 
 WndEvent::WndEvent(EventType type, const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) :
@@ -97,7 +97,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const Pt& move, Flags<ModKey> m
     m_wheel_move(0),
     m_ticks(0),
     m_timer(0),
-    m_text(NULL)
+    m_text(0)
 {}
 
 WndEvent::WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_keys) :
@@ -109,7 +109,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_key
     m_wheel_move(move),
     m_ticks(0),
     m_timer(0),
-    m_text(NULL)
+    m_text(0)
 {}
 
 WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys) :
@@ -122,7 +122,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_
     m_drag_drop_wnds(drag_drop_wnds),
     m_ticks(0),
     m_timer(0),
-    m_text(NULL)
+    m_text(0)
 {}
 
 WndEvent::WndEvent(EventType type, Key key, boost::uint32_t code_point, Flags<ModKey> mod_keys) :
@@ -133,7 +133,7 @@ WndEvent::WndEvent(EventType type, Key key, boost::uint32_t code_point, Flags<Mo
     m_wheel_move(0),
     m_ticks(0),
     m_timer(0),
-    m_text(NULL)
+    m_text(0)
 {}
 
 WndEvent::WndEvent(EventType type, unsigned int ticks, Timer* timer) :
@@ -144,7 +144,7 @@ WndEvent::WndEvent(EventType type, unsigned int ticks, Timer* timer) :
     m_wheel_move(0),
     m_ticks(ticks),
     m_timer(timer),
-    m_text(NULL)
+    m_text(0)
 {}
 
 WndEvent::WndEvent (WndEvent::EventType type, const std::string* text):
@@ -159,7 +159,6 @@ m_text(text){
 
 }
 
-
 WndEvent::WndEvent(EventType type) :
     m_type(type),
     m_key(GGK_UNKNOWN),
@@ -168,7 +167,7 @@ WndEvent::WndEvent(EventType type) :
     m_wheel_move(0),
     m_ticks(0),
     m_timer(0),
-    m_text(NULL)
+    m_text(0)
 {}
 
 WndEvent::EventType WndEvent::Type() const

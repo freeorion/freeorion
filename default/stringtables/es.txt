@@ -7,19 +7,11 @@ Espanol
 #Canseco: 17-10-2010 > 10-04-2011
 
 #################
-# Common        #
+#    Common     #
 #################
-
-#Anyone can use these for basic buttons
-
-APPNAME
-FreeOrion
 
 BROWSE_BTN
 Examinar...
-
-OK
-OK
 
 CANCEL
 Cancelar
@@ -48,29 +40,17 @@ y
 YES
 Si
 
-NO
-No
-
 EMPIRE
 Imperio
 
 ALL
 Todo
 
-UNKNOWN_SYSTEM
-Sistema Desconocido
-
 RENAME
 Renombrar
 
 ENTER_NEW_NAME
 Introducir un nuevo nombre
-
-UNKNOWN_VALUE_SYMBOL
-?
-
-ERROR
-ERROR
 
 RESET
 Reiniciar
@@ -81,20 +61,15 @@ Turno
 CHAT_WHISPER
 susurrar
 
+# used to generate names for new fleets when they are created
 NEW_FLEET_NAME
 Nueva Flota %1%
 
 NEW_FLEET_NAME_NO_NUMBER
 Nueva Flota
 
-NOT_APPLICABLE
-N/A
-
 BOMBER
 Bombardero
-
-INTERCEPTOR
-Interceptor
 
 DEFAULT_EMPIRE_NAME
 El Imperio Terran
@@ -109,57 +84,87 @@ Jugador_Humano
 
 SD_SCOUT
 Explorador
-
 SD_SCOUT_DESC
-Barata y pequeña nave desarmada para reconocimiento y exploración.
+Barata y pequeña nave desarmada para reconocimiento y exploración. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs.
+
+SD_SCOUT_2
+Explorador II
+
+SD_SCOUT_3
+Explorador III
+
+SD_SCOUT_4
+Explorador IV
+
+SD_SMALL_MARK_1
+Corbeta I
+SD_SMALL_MARK1_DESC
+Pequeña y barata nave con catapulta electromagnéticap.
+
+SD_SMALL_MARK_2
+Corbeta II
+SD_SMALL_MARK2_DESC
+Pequeña y barata nave con catapulta electromagnéticap.
+
+SD_MARK_1
+Fragata I
+SD_MARK1_DESC
+Asequible fragata con catapulta electromagnética.
+
+SD_MARK_2
+Fragata II
+SD_MARK2_DESC
+Fragata mejorada con catapulta electromagnética.
+
+SD_MARK_3
+Fragata III
+SD_MARK3_DESC
+Asequible fragata con laser.
+
+SD_MARK_4
+Fragata IV
+SD_MARK4_DESC
+Fragata mejorada con laser.
+
+SD_LARGE_MARK_1
+Crucero I
+
+SD_LARGE_MARK_2
+Crucero II
+
+SD_LARGE_MARK_3
+Crucero III
+
+SD_LARGE_MARK_4
+Crucero IV
 
 SD_COLONY_SHIP
 Colonizador
-
 SD_COLONY_SHIP_DESC
-Enorme nave desarmada capaz de transportar millones de ciudadanos con seguridad a las nuevas colonias.
-
-SD_MARK1
-Mark I
-
-SD_MARK1_DESC
-Asequible fragata de patrulla armada.
-
-SD_MARK2
-Mark II
-
-SD_MARK2_DESC
-Crucero con fuertes capacidades tanto defensivas como ofensivas.
-
-SD_MARK3
-Mark III
-
-SD_MARK3_DESC
-Crucero avanzado con armas y armadura pesadas para hacer el trabajo sucio.
-
-SD_MARK4
-Mark IV
-
-SD_MARK4_DESC
-Nave de guerra de última generación, armada y protegida con la última tecnología.  Precio acorde.
+Enorme nave desarmada capaz de transportar millones de ciudadanos con seguridad a las nuevas colonias. This vessel can only be built at a colony with a population of at least three, with a shipyard.
 
 SD_OUTPOST_SHIP
 Nave de Avanzada
-
 SD_OUTPOST_SHIP_DESC
 Nave desarmada capaz de crear puestos de avanzada en mundos inhabitables.
 
 SD_COLONY_BASE
 Colonia Base
-
 SD_COLONY_BASE_DESC
-Nave desarmada capaz de crear colonias en en el sistema en el que se produce.
+Nave desarmada capaz de crear colonias en en el sistema en el que se produce. This vessel cannot travel through star lanes and can only be built at a colony with at least three population.
 
 SD_DRAGON_TOOTH
 Diente de Dragón
-
 SD_DRAGON_TOOTH_DESC
 Antiguo diseño naval con armas avanzadas y sistemas defensivos.
+
+############
+# Monsters #
+############
+
+##########
+# Fields #
+##########
 
 ##############################
 # Predefined Starting Fleets #
@@ -174,12 +179,6 @@ Flota de Batalla
 ##########################
 # Status Update Messages #
 ##########################
-
-NEW_GAME
-Generando universo e IA's ...
-
-LOADING
-Cargando ...
 
 SERVER_WONT_START
 '''El servidor no ha podido ser lanzado.
@@ -241,9 +240,6 @@ Imprime este mensaje de ayuda.
 OPTIONS_DB_GENERATE_CONFIG_XML
 Usa todas las configuraciones a partir de cualquier fichero config.xml existente y las que se den por la terminal, para generar un fichero config.xml. Esto sobreescribe el actual config.xml, si existe.
 
-OPTIONS_DB_MUSIC_OFF
-Deshabilita la música en el juego.
-
 OPTIONS_DB_BG_MUSIC
 Selecciona la música de fondo para jugar.
 
@@ -291,6 +287,9 @@ Establece la distancia de renderizado de los puntos de líneas de suministro.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
 Establece como de rápido renderizar los puntos de las líneas de suministro de flota.
+
+OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
+Alcance de detección de galaxia
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Forzar al cliente a no ejecutar un servidor, incluso cuando hace de anfitrión, jugando en solitario, etc.
@@ -387,24 +386,6 @@ Archivo de sonido que se escucha cuando el ratón pasa por encima de un icono de
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Archivo de sonido que se escucha, cuando el panel lateral del sistema se abre.
-
-OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-Archivo de sonido que se escucha, cuando un botón centrado en la agricultura es presionado.
-
-OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Archivo de sonido que se escucha, cuando un botón centrado en la indústria es presionado.
-
-OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-Archivo de sonido que se escucha, cuando un botón centrado en la investigación es presionado.
-
-OPTIONS_DB_UI_SOUND_MINING_FOCUS
-Archivo de sonido que se escucha, cuando un botón centrado en la minería es presionado.
-
-OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-Archivo de sonido que se escucha, cuando un botón centrado en el intercambio es presionado.
-
-OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-Archivo de sonido que se escucha, cuando un botón centrado en el equilibrio es presionado.
 
 OPTIONS_DB_UI_FONT
 Establece el fichero recurso de la fuente.
@@ -529,9 +510,6 @@ Establece el retraso de las notificaciones de sugerencia, en ms.
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 Si es cierto, clicks en múltiples botones de flota, abrirán múltiples ventanas al mismo tiempo. Por otra parte, abrir una ventana de flota cerraría cualquier ventana de flota abierta.
 
-OPTIONS_DB_UI_FLEET_AUTOSELECT
-Auto selecciona la flota superior cuando una ventana de flota se abre. Considera usar este marcador si usas UI.multiple-fleet-windows.
-
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Cierra ventanas abiertas como las ventanas de flota y el panel lateral de vista de sistema cuando haces click derecho en el mapa principal.
 
@@ -625,9 +603,6 @@ Usa un efecto de relleno en vez de un efecto esquemático en los objetos selecci
 OPTIONS_DB_QUICKSTART
 Comienza un nuevo juego rápido, sin pasar por el menu.
 
-OPTIONS_DB_AUTO_FIRST_TURN
-Hace click en el botón Turno automaticamente el primer turno; útil para hacer debug, especialmente cuando se usa --quickstart.
-
 OPTIONS_DB_CHECKED_GL_VERSION
 Comprueba si la versión OpenGL del sistema ha sido revisada.  Si es falso, algunas opciones de renderizado pueden ser alteradas dependiendo de la version GL, por lo que esta opción deberia estar activada.
 
@@ -675,7 +650,6 @@ no existe.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 El dispositivo no esta preparado.
 
-
 #################
 # Color Dialog  #
 #################
@@ -686,27 +660,11 @@ Nuevo
 COLOR_DLG_OLD
 Viejo
 
-COLOR_DLG_RED
-R:
-
 COLOR_DLG_GREEN
 V:
 
 COLOR_DLG_BLUE
 A:
-
-COLOR_DLG_HUE
-H:
-
-COLOR_DLG_SATURATION
-S:
-
-COLOR_DLG_VALUE
-V:
-
-COLOR_DLG_ALPHA
-A:
-
 
 #################
 # Intro Screen  #
@@ -716,7 +674,6 @@ A:
 
 INTRO_WINDOW_TITLE
 Menú Principal FreeOrion
-
 
 #Button names####
 
@@ -744,7 +701,6 @@ Créditos
 INTRO_BTN_EXIT
 Salir
 
-
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
@@ -752,7 +708,6 @@ Se ha superado el tiempo de espera al intentar conectar con el servidor
 
 ERR_VERSION_MISMATCH
 No se puede conectar con el servidor, este cliente esta usando una versión diferente con la siguiente configuración y/o archivos:
-
 
 ########################
 # Server Setup Screen  #
@@ -762,7 +717,6 @@ No se puede conectar con el servidor, este cliente esta usando una versión dife
 
 SCONNECT_WINDOW_TITLE
 Conectar al servidor
-
 
 #Static labels####
 
@@ -775,7 +729,6 @@ Partida Internet en:
 PLAYER_NAME_LABEL
 Nombre del jugador
 
-
 #Button names####
 
 HOST_GAME_BN
@@ -786,7 +739,6 @@ Unirse a una partida existente
 
 REFRESH_LIST_BN
 Actualizar lista
-
 
 ########################
 # Multiplayer Lobby    #
@@ -878,13 +830,17 @@ GSETUP_CLUSTER
 Clúster
 GSETUP_ELLIPTICAL
 Elíptica
-GSETUP_IRREGULAR
-Irregular
 GSETUP_RING
 Anillo
 
 GSETUP_NONE
 Ninguna
+GSETUP_LOW
+Baja
+GSETUP_MEDIUM
+Media
+GSETUP_HIGH
+Alta
 
 GSETUP_YOUNG
 Joven
@@ -893,53 +849,10 @@ Maduro
 GSETUP_ANCIENT
 Antigua
 
-GSETUP_FEW
-Pocas
-GSETUP_SOME
-Algunas
-GSETUP_SEVERAL
-Bastantes
-GSETUP_MANY
-Muchas
-GSETUP_VERY_MANY
-Muchísimas
-
-GSETUP_LOW
-Baja
-GSETUP_MEDIUM
-Media
-GSETUP_HIGH
-Alta
-
-GSETUP_RARE
-Raro
-GSETUP_UNCOMMON
-Incomún
-GSETUP_COMMON
-Común
-
-
-
 #Error messages####
 
 GSETUP_ERR_NOEXIST
 No existe.
-
-
-###########################
-# Empire Selection Screen #
-###########################
-
-#Window Title####
-
-ESELECT_WINDOW_TITLE
-Selección de Imperio
-
-
-#Static text####
-
-ESELECT_EMPIRE_NAME
-Nombre del Imperio:
 
 ###########################
 # About Dialog            #
@@ -982,14 +895,15 @@ GAME_MENU_SAVE_FILES
 Guardar archivos del juego
 
 ###########################
+# Save Game Dialog        #
+###########################
+
+###########################
 # Game Options            #
 ###########################
 
 OPTIONS_TITLE
 Opciones
-
-OPTIONS_AUTOSELECT_FLEET
-Seleccionar automáticamente la primera flota
 
 OPTIONS_MULTIPLE_FLEET_WNDS
 Múltiples ventanas de flota
@@ -1005,9 +919,6 @@ Un jugador
 
 OPTIONS_MULTIPLAYER
 Multijugador
-
-OPTIONS_AUTOSAVE_TO_KEEP
-Número de partidas guardadas automáticamente
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Turnos entre guardados automáticos
@@ -1029,12 +940,6 @@ Títulos de ventanas
 
 OPTIONS_TECH_SPACING
 Espacio de tecnología
-
-OPTIONS_HORIZONTAL
-Horizontal
-
-OPTIONS_VERTICAL
-Vertical
 
 OPTIONS_TOOLTIP_DELAY
 Retraso de las sugerencias (ms)
@@ -1072,9 +977,6 @@ Limitar FPS
 OPTIONS_MAX_FPS
 FPS Máximo
 
-OPTIONS_CHAT
-Chat
-
 OPTIONS_CHAT_HISTORY
 Historial de Chat
 
@@ -1106,7 +1008,7 @@ OPTIONS_UI_SYSTEM_CIRCLES
 Círculos de sistema encapsulados
 
 OPTIONS_UI_SYSTEM_CIRCLE_SIZE
-Tamaño relativo de los círculos de sistema 
+Tamaño relativo de los círculos de sistema
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Tamaño relativo del indicador de sistema de selección
@@ -1132,9 +1034,6 @@ Mínimo zoom del icono de flota media
 OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
 Tamaño relativo del indicador de selección de flota
 
-OPTIONS_GALAXY_MAP_GENERAL
-General
-
 OPTIONS_GALAXY_MAP_GAS
 Renderizado de gas del mapa de galaxia
 
@@ -1152,9 +1051,6 @@ Rango de detección del mapa de galaxia mostrando umbral de ocultación
 
 OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
 Umbral de ocultación del mapa de galaxia
-
-OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
-Alcance de detección de galaxia
 
 OPTIONS_STARLANES
 Líneas Estelares
@@ -1201,12 +1097,6 @@ Minimizar ventana
 OPTIONS_SOUND_MAXIMIZE
 Maximizar ventana
 
-OPTIONS_SOUND_CLICK
-Click
-
-OPTIONS_SOUND_ROLLOVER
-Rollover
-
 OPTIONS_SOUND_FLEET_CLICK
 Click en Botón de Flota
 
@@ -1237,24 +1127,6 @@ Abrir panel lateral
 OPTIONS_SOUND_PLANET
 Presionar en Planeta
 
-OPTIONS_SOUND_FOCUS
-Sonido de enfoque
-
-OPTIONS_SOUND_BALANCED
-Enfoque Equilibrado
-
-OPTIONS_SOUND_FARMING
-Enfoque en Agricultura
-
-OPTIONS_SOUND_INDUSTRY
-Enfoque en Indústria
-
-OPTIONS_SOUND_MINING
-Enfoque en Minería
-
-OPTIONS_SOUND_RESEARCH
-Enfoque en Investigación
-
 OPTIONS_SOUND_LIST
 Lista de sonidos
 
@@ -1266,9 +1138,6 @@ Abrir lista desplegable
 
 OPTIONS_SOUND_SELECT
 Seleccionar
-
-OPTIONS_GENERAL_COLORS
-General
 
 OPTIONS_CONTROL_COLORS
 Controles UI
@@ -1297,9 +1166,6 @@ Incremento de estadística
 OPTIONS_STAT_DECREASE_COLOR
 Decrecimiento de estadística
 
-OPTIONS_INTERIOR_COLOR
-Interior
-
 OPTIONS_WINDOW_COLORS
 Ventanas
 
@@ -1308,12 +1174,6 @@ Borde interior
 
 OPTIONS_OUTER_BORDER_COLOR
 Borde exterior
-
-OPTIONS_PAGE_VIDEO
-Video
-
-OPTIONS_PAGE_AUDIO
-Audio
 
 OPTIONS_PAGE_AUTOSAVE
 Auto guardar
@@ -1356,9 +1216,6 @@ Fondo
 
 OPTIONS_COMBAT_ENABLE_GLOW
 Brillo
-
-OPTIONS_COMBAT_ENABLE_SKYBOX
-Skybox
 
 OPTIONS_COMBAT_ENABLE_LENS_FLARES
 Bengalas
@@ -1407,12 +1264,6 @@ Rehacer Emplazamientos
 MAP_BTN_TURN_UPDATE
 Turno %1%
 
-MAP_INDICATOR_FPS
-%1% FPS
-
-MAP_SCALE_INDICATOR
-%1% uu
-
 MAP_BTN_MENU
 Menú
 
@@ -1443,10 +1294,6 @@ Sistema %1%: %2%
 RESOURCE_ALLOCATION_TOOLTIP
 Sistema %1%: %2%
 
-FOOD_PRODUCTION
-Producción de Alimento
-MINERALS_PRODUCTION
-Producción de Minerales
 INDUSTRY_PRODUCTION
 Producción Industrial
 RESEARCH_PRODUCTION
@@ -1454,10 +1301,6 @@ Producción de Investigación
 TRADE_PRODUCTION
 Producción de Comercio
 
-FOOD_CONSUMPTION
-Consumo de Alimento
-MINERALS_CONSUMPTION
-Consumo de Minerales
 INDUSTRY_CONSUMPTION
 Consumo Industrial
 RESEARCH_CONSUMPTION
@@ -1490,10 +1333,6 @@ PL_COLONIZE
 Colonizar (%1% / %2%)
 PL_SELECT_COLONY_SHIP_INSTRUCTION
 Seleccionar colonizador
-PL_TYPE_SIZE
-%1% %2%
-PL_TYPE_SIZE_ENV
-%1% %2% (%3%)
 
 ## Resources Panel ##########
 
@@ -1504,11 +1343,6 @@ Enfoque: %1%
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
 '''%1% (Incompleto)
-
-%2%'''
-
-BP_COMPLETE_BUILDING_TOOLTIP
-'''%1%
 
 %2%'''
 
@@ -1528,9 +1362,6 @@ Siguiente Turno
 
 TT_CHANGE
 Cambio
-
-TT_BREAKDOWN_SUMMARY
-%1%: %2% 
 
 TT_INHERENT
 Inherente
@@ -1561,14 +1392,6 @@ TT_RESOURCE_PRODUCTION
 
 TT_RESOURCE_ALLOCATION
 %1% consume %2%
-
-TT_SPECIES_POPULATION
-%1% [[MEDIDOR_POBLACION]]
-
-## Misc. Sidepanel##########
-
-SP_UNKNOWN_SYSTEM
-sistema desconocido
 
 SP_RENAME_PLANET
 Renombrar planeta
@@ -1601,9 +1424,6 @@ Tipo de nave
 FW_UNKNOWN_DESIGN_NAME
 Desconocido
 
-FW_SPECIES_SHIP_DESIGN_LABEL
-(%2%) %1%
-
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
 <i>Nueva Flota</i>
@@ -1633,9 +1453,13 @@ Flota de Batalla
 FW_FOREIGN_FLEET
 Flota extranjera
 
+# the name that is used for fleets that no player controls
+
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
 Nave extranjera
+
+# the name that is used for ships that no player controls
 
 SHIP_SPEED_STAT_TITLE
 Velocidad
@@ -1657,6 +1481,14 @@ Destruir Nave
 
 ORDER_CANCEL_SHIP_SCRAP
 Cancelar Destruir Nave
+
+###############
+#  Moderator  #
+###############
+
+###############
+#  Diplomacy  #
+###############
 
 ###############
 # TechTreeWnd #
@@ -1704,9 +1536,6 @@ Completado
 TECH_WND_STATUS_RESEARCHABLE
 Investigable
 
-TECH_WND_STATUS_UNRESEARCHABLE
-No Investigables
-
 TECH_WND_LIST_VIEW
 Vista de Lista
 
@@ -1718,7 +1547,6 @@ Requiere
 
 TECH_WND_UNLOCKS
 Desbloquea
-
 
 #######################
 # ProductionInfoPanel #
@@ -1739,7 +1567,6 @@ Proyecto estancado
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
 Proyectos en cola
 
-
 ###############
 # ResearchWnd #
 ###############
@@ -1749,10 +1576,6 @@ Investigación
 
 RESEARCH_INFO_PANEL_TITLE
 Investigación
-
-RESEARCH_INFO_RP
-RP
-
 
 ####################
 # BuildSelectorWnd #
@@ -1776,9 +1599,6 @@ No disponible
 PRODUCTION_TOTAL_COST_STR
 %1% PP/T %2% Turnos
 
-PRODUCTION_TURN_COST_STR
-+%1% PP
-
 PRODUCTION_TURNS_LEFT_STR
 %1% Turnos
 
@@ -1794,7 +1614,6 @@ Añadir a la cola
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Centrar en construcción
 
-
 #################
 # ProductionWnd #
 #################
@@ -1804,9 +1623,6 @@ Producción
 
 PRODUCTION_INFO_PANEL_TITLE
 Producción
-
-PRODUCTION_INFO_PP
-PP
 
 PRODUCTION_QUEUE_MULTIPLES
 %1%x
@@ -1821,19 +1637,12 @@ Ten en cuenta que las naves solo pueden ser construidas en planetas con astiller
 PRODUCTION_QUEUE_ITEM_LOCATION
 En %1%
 
-
 ###############
 #  DesignWnd  #
 ###############
 
-DESIGN_ADD_TEST
-Añadir Diseño
-
 DESIGN_NAME_DEFAULT
-
-
 DESIGN_DESCRIPTION_DEFAULT
-
 
 DESIGN_NO_PART
 Ninguna
@@ -1849,9 +1658,6 @@ Diseños Acabados
 
 DESIGN_WND_SAVED_DESIGNS
 Diseños Guardados
-
-DESIGN_WND_TEMPLATES
-Plantillas
 
 DESIGN_WND_PART_PALETTE_TITLE
 Partes de Nave
@@ -1874,12 +1680,17 @@ Limpiar Partes
 DESIGN_DELETE
 Borrar Diseño
 
+################
+## Statistics ##
+################
+    
 
-####################
-#   Encyclopedia   #
-####################
+#############################################################
+####               E N C Y C L O P E D I A               ####
+#############################################################
 
 # types of things that can be shown in encyclopedia
+
 ENC_SHIP_PART
 Parte de Nave
 
@@ -1922,22 +1733,32 @@ Edificio
 ENC_SYSTEM
 Sistema
 
-ENC_DETAIL_TYPE_STR
-%1% %2%
+# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
+# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
+# %1% may be an empty string for most general types of things that can be shown.
 
-ENC_PP
-PP
-
-ENC_RP
-RP
-
+# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
+# be produced or researched (e.g. specials)
+# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
+# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
+# %3% will be the minimum number of turns it takes to produce or research the thing shown
 ENC_COST_AND_TURNS_STR
 %3% Turnos %1% %2%/T
 
+# auto-generated location condition description
+
+# auto-generated effects description. %1% will be the auto-generated effects text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
 ENC_EFFECTS_STR
 '''<u>Efectos</u>
 
 %1%'''
+
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
 
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
@@ -1956,19 +1777,28 @@ Capacidad de Colonización: %12%
 Ocultación: %13%
 '''
 
-ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
-'''
-
-Desbloquea
-
-'''
-
-ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
-'''%1%: %2%
-'''
+## Temporarily removed
+# Direct Fire Parts: %4%
+# Missile Parts: %5%
+# Fighter Bays: %6%
+# Point Defense Parts: %7%
+# Battle Speed: %12%
+##
 
 ENC_TECH_DETAIL_TYPE_STR
 %1% %2% - %3%
+
+###########################################
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
+###########################################
+
+###########################################
+# ARTICLES #
+###########################################
+
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
+
+# Functional list; do not translate. Used for logging during universe creation
 
 ####################
 # Combat Messages  #
@@ -2007,13 +1837,9 @@ COMBAT_DEFENSELESS
 COMBAT_LOST
  ¡Destruido!
 
-
 ####################
 # TurnProgress     #
 ####################
-
-TURN_PROGRESS_WND
-Progreso del turno
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Movimiento de flotas ...
@@ -2033,23 +1859,44 @@ Ejecutando ordenes ...
 TURN_PROGRESS_PHASE_DOWNLOADING
 Descargando estado actual del juego ...
 
+########################
+# Messages Panel       #
+########################
 
 ########################
-# SitRep Panel         #
+# Players List         #
 ########################
+
+####################
+## Objects Window ##
+####################
+
+#####################
+## Objects Columns ##
+#####################
+
+####################
+## Filters Dialog ##
+####################
+
+#############################################################
+####                    S I T   R E P                    ####
+#############################################################
 
 #Window title####
 
 SITREP_PANEL_TITLE
 Reporte de Situación
 
-
-####################
-# Sit Rep Entries  #
-####################
-
 SITREP_ERROR
 Ha ocurrido un evento desconocido.
+
+## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
+## these sitreps to be presented in the SitrepPanel in the order set below.
+## Sitreps not specified below will appear in the SitrepPanel following those below.
+
+## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
+## END OF SITREP_PRIORITY_ORDER
 
 SITREP_SHIP_BUILT
 La nave %ship% ha sido producida en el sistema %system%.
@@ -2078,12 +1925,9 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 SITREP_EMPIRE_ELIMINATED
 El imperio %empire% ha sido eliminado
 
-SITREP_VICTORY
-%empire% %text%
-
-####################
-# Victory / Defeat #
-####################
+#############################################################
+####           V I C T O R Y   /   D E F E A T           ####
+#############################################################
 
 TECH_VICTORY
 ha alcanzado una victoria tecnológica.
@@ -2091,16 +1935,11 @@ ha alcanzado una victoria tecnológica.
 ALL_ENEMIES_ELIMINATED_VICTORY
 ha alcanzado una victoria como único superviviente.
 
+#############################################################
+####                    S P E C I E S                    ####
+#############################################################
 
-####################
-# Species          #
-####################
-
-SP_TRITH
-Trith
-
-SP_TRITH_DESC
-Desconsolados xenófobos telépatas.
+### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
 SP_GYSACHE
 GYSACHE
@@ -2108,12 +1947,12 @@ GYSACHE
 SP_GYSACHE_DESC
 Cobardes Herbivoros.
 
-####################
-# Specials         #
-####################
+SP_TRITH_DESC
+Desconsolados xenófobos telépatas.
 
-GAIA_SPECIAL
-Gaia
+#############################################################
+####                   S P E C I A L S                   ####
+#############################################################
 
 GAIA_SPECIAL_DESC
 '''Este planeta ha sido esencialmente transformado en un organismo viviente, permitiendo que cambie y se adapte para suplir las necesidades de su población.
@@ -2132,58 +1971,6 @@ Ruinas Antiguas
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 En este planeta se encuentran las ruinas de una antigua raza, que han sido olvidadas en los libros de historia. Proporcionan bonificación a la investigación.
 
-MINERALS_SPECIAL
-Rico en Minerales
-
-MINERALS_SPECIAL_DESCRIPTION
-Este planeta posee un rico deposito de minerales, disparando su minería y comercio.
-
-TUNNELS_SPECIAL
-Túneles naturales
-
-TUNNELS_SPECIAL_DESCRIPTION
-'''Este planeta tiene formada una red de túneles naturales, permitiendo que una porción mucho mayor del planeta pueda ser fácilmente colonizado.
-
-Incrementa la población que puede ser soportada por el planeta por 2, 4, 6, 8 o 10 para planetas de tamaño Diminuto, Pequeño, Medio, Grande o Gigante, respectivamente y con un adicional 1, 2, 3, 4 o 5 si el propietario tiene la tecnología Construcción Subterranea.'''
-
-TECHTONIC_INSTABILITY_SPECIAL
-Tectónicamente Inestable
-
-TECHTONIC_INSTABILITY_SPECIAL_DESC
-Este planeta es tectónicamente inestable. Frecuentes terremotos, tsunamis, erupciones volcánicas o impredecibles soportes bajo las placas hacen de la construcción y el desarrollo de la infraestructura general difícil.
-
-SOLID_CORE_SPECIAL
-Núcleo Solido
-
-SOLID_CORE_SPECIAL_DESC
-'''El núcleo de este planeta se ha solidificado, y tiene un campo magnético muy débil. Los vientos solares llegan a la superficie relativamente sin filtrar, dañando la salud y limitando la producción de alimento.
-
-La Salud se reduce por 5.'''
-
-HIGH_AXIAL_TILT_SPECIAL
-Alta Inclinación Axial
-
-HIGH_AXIAL_TILT_SPECIAL_DESC
-'''El eje rotatorio de este planeta esta altamente inclinado con respecto a su plano orbital. Las variaciones temporales entre las estaciones son particularmente extremas y el desarrollo de infraestructura esta significativamente impedido.
-
-El alcance del suministro de recursos de este planeta se decrementa por 1.'''
-
-SLOW_ROTATION_SPECIAL
-Rotación Muy Lenta
-
-SLOW_ROTATION_SPECIAL_DESC
-'''Este planeta rota alrededor de su eje muy lentamente, causando días y noches muy largos. La infraestructura crece, mientras que la producción de alimento y la capacidad de población se reducen.
-
-El alcance del suministro de recursos desde este planeta se decrementa por 1 y el objetivo de agricultura se decrementa por 10.'''
-
-TIDAL_LOCK_SPECIAL
-Rotación Anclada
-
-TIDAL_LOCK_SPECIAL_DESC
-'''Este planeta esta anclado con la estrella que orbita.  El día y el año duran lo mismo. En una mitad del planeta el día es perpetuo, y en la otra mitad noche perpetua.  El crecimiento de Infraestructuras se ve obstaculizado, aunque una vez establecido, la capacidad industrial se beneficia de las condiciones estables de la superficie.
-
-El alcance del suministro de recursos desde este planeta se decrementa por 1, pero la indústria se incrementa por un quinto de la población del planeta.'''
-
 ECCENTRIC_ORBIT_SPECIAL
 Órbita Excéntrica
 
@@ -2198,9 +1985,12 @@ Luna Resonante
 RESONANT_MOON_SPECIAL_DESC
 Este planeta tiene un satelite natural, cuyo periodo orbital esta en resonancia 1:1 con su periodo rotacional, causando un lado oscuro permanente que no se ve desde el planeta.  Este lado oscuro es perfecto para emplazar infraestructuras clandestinas.
 
-#######################
-# Enumeration  values #
-#######################
+MINERALS_SPECIAL
+Rico en Minerales
+
+#############################################################
+####        E N U M E R A T I O N   V A L U E S          ####
+#############################################################
 
 # UniverseObjectTypes
 
@@ -2221,7 +2011,6 @@ Centro de producción
 OBJ_SYSTEM
 Sistema
 
-
 # StarTypes
 
 STAR_BLUE
@@ -2239,7 +2028,6 @@ neutrones
 STAR_BLACK
 Agujero negro
 
-
 # PlanetTypes
 
 PT_SWAMP
@@ -2252,8 +2040,6 @@ PT_RADIATED
 irradiado
 PT_BARREN
 estéril
-PT_TUNDRA
-tundra
 PT_DESERT
 desierto
 PT_TERRAN
@@ -2264,7 +2050,6 @@ PT_ASTEROIDS
 asteroides
 PT_GASGIANT
 gigante de gas
-
 
 # Planet Sizes
 
@@ -2285,7 +2070,6 @@ Asteroides
 SZ_GASGIANT
 Gigante de gas
 
-
 # PlanetEnvironments
 
 PE_UNINHABITABLE
@@ -2299,13 +2083,10 @@ adecuado
 PE_GOOD
 bueno
 
-
 # FocusTypes
 
 INVALID_FOCUS_TYPE
 Tipo de enfoque invalido
-FOCUS_FARMING
-Agricultura
 FOCUS_INDUSTRY
 Indústria
 FOCUS_MINING
@@ -2318,21 +2099,12 @@ FOCUS_TRADE
 Comercio
 FOCUS_LOGISTICS
 Logística
-FOCUS_REPLIC_FARMING
-Replicación de Alimento
-FOCUS_REPLIC_MINING
-Replicación Mineral
 FOCUS_STEALTH
 Ocultación
-FOCUS_BIOTERROR
-Bioterror
-FOCUS_STARGATE
-Puerta Estelar
 FOCUS_PLANET_DRIVE
 Unidad de Planeta
 FOCUS_DISTORTION
 Distorsión Espacial
-
 
 # MeterTypes
 
@@ -2342,8 +2114,6 @@ METER_TARGET_POPULATION
 Población Objetivo
 METER_TARGET_HEALTH
 Salud Objetivo
-METER_TARGET_FARMING
-Agricultura Objetivo
 METER_TARGET_INDUSTRY
 Indústria Objetivo
 METER_TARGET_RESEARCH
@@ -2366,8 +2136,6 @@ METER_POPULATION
 Población
 METER_HEALTH
 Salud
-METER_FARMING
-Agricultura
 METER_INDUSTRY
 Indústria
 METER_RESEARCH
@@ -2386,8 +2154,6 @@ METER_STRUCTURE
 Estructura
 METER_DEFENSE
 Defensa
-METER_FOOD_CONSUMPTION
-Consumo de Alimento
 METER_SUPPLY
 Suministro
 METER_STEALTH
@@ -2417,7 +2183,6 @@ Cadencia de Lanzamiento
 METER_FIGHTER_WEAPON_RANGE
 Alcance de Disparo de Caza
 
-
 # EmpireAffiliationTypes
 
 AFFIL_SELF
@@ -2426,7 +2191,6 @@ AFFIL_ENEMY
 enemigo
 AFFIL_ALLY
 aliado
-
 
 # UnlockableItemTypes
 
@@ -2450,7 +2214,6 @@ Aplicación
 TT_REFINEMENT
 Refinamiento
 
-
 # BuildTypes
 
 BT_NOT_BUILDING
@@ -2460,23 +2223,17 @@ edificio
 BT_SHIP
 nave
 
-
 # StockpileTypes
 
 ST_FOOD
 alimento
-ST_MINERAL
-mineral
 ST_TRADE
 comercio
-
 
 # Resource Types
 
 RE_FOOD
 alimento
-RE_MINERALS
-mineral
 RE_TRADE
 comercio
 RE_INDUSTRY
@@ -2490,7 +2247,6 @@ SL_EXTERNAL
 Externo
 SL_INTERNAL
 Interno
-
 
 # Ship Part Classes
 
@@ -2519,10 +2275,9 @@ Velocidad de Batalla
 PC_STARLANE_SPEED
 Velocidad de Línea Estelar
 
-
-################################################
-# ValueRef, Effect, and Condition Descriptions #
-################################################
+#############################################################
+####      ValueRef, Effect, & Condition Descriptions     ####
+#############################################################
 
 # ValueRef
 
@@ -2556,98 +2311,11 @@ tipo de estrella
 DESC_VAR_VALUE
 valor previo para este medidor
 
-DESC_VAR_TARGETPOPULATION
-[[MEDIDOR_POBLACION_OBJETIVO]]
-DESC_VAR_TARGETHEALTH
-[[MEDIDOR_SALUD_OBJETIVA]]
-DESC_VAR_TARGETFARMING
-[[MEDIDOR_AGRICULTURA_OBJETIVO]]
-DESC_VAR_TARGETINDUSTRY
-[[MEDIDOR_INDUSTRIA_OBJETIVO]]
-DESC_VAR_TARGETRESEARCH
-[[MEDIDOR_INVESTIGACIÓN_OBJETIVO]]
-DESC_VAR_TARGETTRADE
-[[MEDIDOR_COMERCIO_OBJETIVO]]
-DESC_VAR_TARGETMINING
-[[MEDIDOR_MINERÍA_OBJETIVO]]
-DESC_VAR_TARGETCONSTRUCTION
-[[MEDIDOR_CONSTRUCCIÓN_OBJETIVO]]
-DESC_VAR_MAXFUEL
-[[MEDIDOR_COMBUSTIBLE_MÁXIMO]]
-DESC_VAR_MAXSHIELD
-[[MEDIDOR_ESCUDOS_MÁXIMOS]]
-DESC_VAR_MAXSTRUCTURE
-[[MEDIDOR_ESTRUCTURA_MÁXIMA]]
-DESC_VAR_MAXDEFENSE
-[[MEDIDOR_DEFENSA_MÁXIMA]]
-DESC_VAR_POPULATION
-[[MEDIDOR_POBLACIÓN]]
-DESC_VAR_HEALTH
-[[MEDIDOR_SALUD]]
-DESC_VAR_FARMING
-[[MEDIDOR_AGRICULTURA]]
-DESC_VAR_INDUSTRY
-[[MEDIDOR_INDUSTRIA]]
-DESC_VAR_RESEARCH
-[[MEDIDOR_INVESTIGACIÓN]]
-DESC_VAR_TRADE
-[[MEDIDOR_COMERCIO]]
-DESC_VAR_MINING
-[[MEDIDOR_MINERÍA]]
-DESC_VAR_CONSTRUCTION
-[[MEDIDOR_CONSTRUCCIÓN]]
-DESC_VAR_FUEL
-[[MEDIDOR_COMBUSTIBLE]]
-DESC_VAR_SHIELD
-[[MEDIDOR_ESCUDO]]
-DESC_VAR_STRUCTURE
-[[MEDIDOR_ESTRUCTURA]]
-DESC_VAR_DEFENSE
-[[MEDIDOR_DEFENSA]]
-DESC_VAR_FOOD_CONSUMPTION
-[[MEDIDOR_CONSUMO_ALIMENTO]]
-DESC_VAR_SUPPLY
-[[MEDIDOR_SUMINISTRO]]
-DESC_VAR_STEALTH
-[[MEDIDOR_SALUD]]
-DESC_VAR_DETECTION
-[[MEDIDOR_DETECCIÓN]]
-DESC_VAR_BATTLESPEED
-[[MEDIDOR_VELOCIDAD_BATALLA]]
-DESC_VAR_STARLANESPEED
-[[MEDIDOR_VELOCIDAD_LÍNEA_ESTELAR]]
-DESC_VAR_DAMAGE
-[[MEDIDOR_DAÑO]]
-DESC_VAR_ROF
-[[MEDIDOR_ROF]]
-DESC_VAR_RANGE
-[[MEDIDOR_ALCANCE]]
-DESC_VAR_SPEED
-[[MEDIDOR_VELOCIDAD]]
-DESC_VAR_CAPACITY
-[[MEDIDOR_CAPACIDAD]]
-DESC_VAR_ANTISHIPDAMAGE
-[[MEDIDOR_DAÑO_ANTI_NAVE]]
-DESC_VAR_ANTIFIGHTERDAMAGE
-[[MEDIDOR_DAÑO_ANTI_CAZA]]
-DESC_VAR_LAUNCHRATE
-[[MEDIDOR_RATIO_LANZAMIENTO]]
-DESC_VAR_FIGHTERWEAPONRANGE
-[[MEDIDOR_ALCANCE_ARMA_CAZA]]
-
 DESC_VAR_TRADESTOCKPILE
 existencias de comercio
-DESC_VAR_MINERALSTOCKPILE
-existencias de minerales
-DESC_VAR_FOODSTOCKPILE
-existencias de alimento
 
 DESC_VAR_TRADEOUTPUT
 producción de comercio
-DESC_VAR_FOODOUTPUT
-producción de alimento
-DESC_VAR_MINERALOUTPUT
-producción de minerales
 DESC_VAR_INDUSTRYOUTPUT
 producción industrial
 DESC_VAR_RESEARCHOUTPUT
@@ -2655,9 +2323,6 @@ producción de investigación
 
 DESC_VAR_OWNER
 dueño
-
-DESC_VAR_ID
-ID
 
 DESC_VAR_AGE
 edad en turnos
@@ -2669,29 +2334,8 @@ DESC_VAR_CURRENTTURN
 turno actual
 
 # this one is intentionally left empty
-DESC_VALUE_REF_MULTIPART_VARIABLE0
-%1%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE1
-%1%'s %2%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE2
-%1%'s %2%'s %3%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE3
-%1%'s %2%'s %3%'s %4%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE4
-%1%'s %2%'s %3%'s %4%'s %5%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE5
-%1%'s %2%'s %3%'s %4%'s %5%'s %6%
 
 # six is probably more than will be needed, but just in case ...
-DESC_VALUE_REF_MULTIPART_VARIABLE6
-%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
-
-
 
 # Effects
 
@@ -2707,35 +2351,12 @@ El efecto esta activo si el origen es un objeto%1%
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 El efecto siempre esta activo
 
-DESC_EFFECTS_GROUP_SCOPE_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_ACTIVATION_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_EFFECT_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-'''%1%
-'''
-
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 '''Grupo de Efectos %1%:
 %2%
 '''
 
 # SetMeter
-
-DESC_SIMPLE_SET_METER_CURRENT
-%1% %2%%3%
-
-DESC_COMPLEX_SET_METER_CURRENT
-Establecer actual %1% to %2%
-
 
 # others
 
@@ -2754,12 +2375,6 @@ Cambia el tamaño del planeta a %1%
 DESC_SET_SPECIES
 Cambia la especie del objeto a %1%
 
-DESC_ADD_OWNER
-Añade propiedad por el imperio %1% al objeto
-
-DESC_REMOVE_OWNER
-Quita propiedad por el imperio %1% al objeto
-
 DESC_DESTROY
 Destruye el objeto
 
@@ -2777,21 +2392,6 @@ Mueve el objeto al lugar de otro objeto%1%
 
 DESC_VICTORY
 Hace que el dueño del objeto gane la partida
-
-# SetTechAvailability
-
-DESC_TECH_AND_ITEMS_AFFECTED
-%1% y todos los objetos que desbloquea
-
-DESC_ITEMS_ONLY_AFFECTED
-los objetos desbloqueados por la tecnología %1%
-
-DESC_SET_TECH_AVAIL
-Hace disponible %1% al imperio %2%
-
-DESC_SET_TECH_UNAVAIL
-Hace no disponible %1% al imperio %2%
-
 
 # Object Creation
 
@@ -2815,29 +2415,11 @@ DESC_EMPIRE_AFFILIATION_SELF
 DESC_EMPIRE_AFFILIATION_SELF_NOT
  que no pertenece al imperio %1%
 
-DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- que pertenece solo al imperio %1%
-
-DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- que no solo pertenece al imperio %1%
-
 DESC_EMPIRE_AFFILIATION
  que pertenece a un %1% del imperio %2%
 
 DESC_EMPIRE_AFFILIATION_NOT
  que no pertenece a un %1% del %2% imperio
-
-DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- que pertenece solo a un %1% del %2% imperio
-
-DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
- que no solo pertenece a un %1% del %2% imperio
-
-DESC_SELF
- que es el objeto origen
-
-DESC_SELF_NOT
- que no es el objeto origen
 
 DESC_HOMEWORLD
  que es un mundo hogar
@@ -2899,6 +2481,8 @@ DESC_SPECIES
 DESC_SPECIES_NOT
  que no contiene especies %1%
 
+ 
+
 DESC_FOCUS_TYPE
  que tiene un enfoque %1%
 
@@ -2935,12 +2519,6 @@ DESC_CHANCE
 DESC_CHANCE_NOT
  con una probabilidad del 1 - %1%
 
-DESC_METER_VALUE_MAX
- que tiene un máximo %1% entre %2% y %3%
-
-DESC_METER_VALUE_MAX_NOT
- que no tiene un máximo %1% entre %2% y %3%
-
 DESC_METER_VALUE_CURRENT
  que tiene un valor actual %1% entre %2% y %3%
 
@@ -2952,18 +2530,6 @@ DESC_EMPIRE_STOCKPILE_VALUE
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
  que no pertenece a un imperio con unas existencias %1% entre %2% y %3%
-
-DESC_VISIBLE_TO_SINGLE_EMPIRE
- que es visible en el imperio %1%
-
-DESC_VISIBLE_TO_SINGLE_EMPIRE_NOT
- que no es visible en el imperio %1%
-
-DESC_VISIBLE_TO_EMPIRES
- que es visible para uno de los imperios %1%
-
-DESC_VISIBLE_TO_EMPIRES_NOT
- que no es visible para uno de los imperios %1%
 
 DESC_WITHIN_DISTANCE
  que esta entre %1% uno de los objetos%2%
@@ -2977,23 +2543,13 @@ DESC_WITHIN_STARLANE_JUMPS
 DESC_WITHIN_STARLANE_JUMPS_NOT
  que no esta a %1% saltos de líneas estelares de cualquier objeto%2%
 
-DESC_EXPLORED_BY_SINGLE_EMPIRE
- que ha sido explorado por el imperio %1%
-
-DESC_EXPLORED_BY_SINGLE_EMPIRE_NOT
- que no ha sido explorado por el imperio %1%
-
-DESC_EXPLORED_BY_EMPIRES
- que ha sido explorado por uno los imperios %1%
-
-DESC_EXPLORED_BY_EMPIRES_NOT
- que no ha sido explorado por uno los imperios %1%
-
 DESC_STATIONARY
  que es estacionario
 
 DESC_STATIONARY_NOT
  que no es estacionario
+
+ 
 
 DESC_AND_BETWEEN_OPERANDS
  y
@@ -3031,11 +2587,9 @@ DESC_NUMBER
 DESC_NUMBER_NOT
  si no esta entre %1% y %2% objetos%3%
 
-
-
-###################
-# Tech Categories #
-###################
+#############################################################
+####            T E C H   C A T A G O R I E S            ####
+#############################################################
 
 LEARNING_CATEGORY
 Aprendizaje
@@ -3050,10 +2604,9 @@ Economía
 SHIPS_CATEGORY
 Naves
 
-
-####################################
-# Theory Tech Names & Descriptions #
-####################################
+#############################################################
+####               T E C H   T H E O R I E S             ####
+#############################################################
 
 THEORY_SHORT_DESC
 Pre-requisito Teórico
@@ -3190,12 +2743,6 @@ Manipulación del Ciclo de Vida
 GRO_LIFECYCLE_MAN_DESC
 La mayoría de organismos complejos progresan a través de estados psicológicos durante su vida, claramente separados por metamorfosis o por el envejecimiento.  En muchos casos, uno o mas de estos estados son, al menos en un tiempo dado, mas útiles y deseables que otros.  Con un delicado control hormonal o mecanismos mentales, es posible acelerar o frenar cada estado, permitiendo producir individuos desarrollados y funcionales en una fracción del tiempo natural, convirtiendolos efectivamente en inmortales.
 
-GRO_EDV_ECOMAN
-Economanipulación Avanzada
-
-GRO_EDV_ECOMAN_DESC
-Incluso en un ambiente artificial, los patrones meteorológicos y los ciclos ecológicos naturales pueden salirse de madre, causando grandes cantidades de daño.  Introduciendo factores estabilizadores, los incidentes de las fuerzas ecológicas destructivas en un ambiente artificial pueden ser reducidos, permitendo modificaciones a gran escala ambiental.
-
 GRO_XENO_GENETICS
 Geneticas Xenológicas
 
@@ -3244,17 +2791,25 @@ Manufactura Microgravitacional
 PRO_MICROGRAV_MAN_DESC
 La micro-gravedad de planeta de órbita baja ofrece un gran potencial para nuevos diseños de instalaciones de manufactura, equipamiento y técnicas imposibles en la superficie de los planetas.  Los sólidos pueden ser mantenidos en su sitio con un soporte mínimo.  Líquidos y gases flotan libres, cambiando de forma solo por la tensión de la superficie, a menos que se manipulen.  El equipamiento de la fábricas puede ser organizado en 3 dimensiones.  Estas condiciones permiten grandes incrementos en la eficiencia y la productividad, si son explotados adecuadamente.
 
-PRO_PLANET_GEOL
-Geología Planetaria
+PRO_CORE_MINE
+Minería de Núcleo Profundo
 
-PRO_PLANET_GEOL_DESC
-Minerales útiles son creados en todo el volumen del planeta, bajo varias condiciones químicas y termodinámicas, incluyendo la sedimentación acuosa de la superficie, aplastando la diferenciación del núcleo y las metamorfosis a media profundidad.  Los procesos de creación como placas tectónicas, vulcanismo y corrientes de convección profunda son de igual importancia para determinar la localización final y forma de esos recursos extraibles.  Comprender estos procesos, sus efectos, causas y signos es esencial para operaciones eficientes de minería a gran escala. 
+PRO_CORE_MINE_DESC
+'''La presión y temperaturas en los mantos y núcleos de planetas terrestres crean grandes cantidades de cristal y formaciones minerales que solo aparecen en los estratos superiores de la corteza debido al vulcanismo.  Las bajas capas atmosféricas y los materiales del núcleo de planetas gaseosos contienen incluso materiales exóticos en grandes concentraciones.  Acceder a estas regiones para extraer los materiales es difícil y traicionero, pero evidentemente gratificante, comparado con las actividades mineras de la superficie.
+Minerales útiles son creados en todo el volumen del planeta, bajo varias condiciones químicas y termodinámicas, incluyendo la sedimentación acuosa de la superficie, aplastando la diferenciación del núcleo y las metamorfosis a media profundidad.  Los procesos de creación como placas tectónicas, vulcanismo y corrientes de convección profunda son de igual importancia para determinar la localización final y forma de esos recursos extraibles.  Comprender estos procesos, sus efectos, causas y signos es esencial para operaciones eficientes de minería a gran escala.
+
+Incrementa la minería objetivo en planetas con el enfoque en Minería por 5, 10, 15 y 20 para planetas Grande, Medio, Pequeño y Diminuto, respectivamente.'''
 
 PRO_ROBOTIC_PROD
 Producción Robótica
 
 PRO_ROBOTIC_PROD_DESC
 A pesar de diseños iniciales e instalaciones de alto nivel, la puesta en marcha todavía requiere de supervisión activa.  La supresión de los operadores en los procesos actuales de producción, elimina muchos problemas.  Los robots trabajan continuamente sin perpetuas demandas de mayores compensaciones económicas.  Los robots tienen una mayor tolerancia a las condiciones ambientales peligrosas en fábricas y no requieren espacio habitable adicional.  Los robots llevan a cabo las tares asignadas rápidamente, o por lo menos tan bien como han sido instruidos.
+
+PRO_EXOBOTS_DESC
+'''Exobots, como se les conoce comúnmente, son una maravilla del encuentro entre forma y función. Son robots que se diseñaron para cumplir casi cualquier trabajo industrial, en campos que van desde la electrónica a la construcción a gran escala. Fáciles de producir en masa, sirven mejor en las colonias que carecen de la infraestructura y fuerza de trabajo para dedicarse a fábricas especializadas. Cada colonia recibe un equipo estándar de exobots, aumentando su construcción durante las primeras fases del desarrollo.
+
+Incrementa la indústria objetivo en todos los planetas con el enfoque de Indústria por un quinto de la población del planeta y la minería objetivo en todos los planetas con enfoque de Minería por 10.'''
 
 PRO_FUSION_GEN
 Generación de Fusión
@@ -3298,12 +2853,6 @@ Generación de Singuralidad
 PRO_SINGULAR_GEN_DESC
 Cuando la materia es atraída hacia un singularidad por la curvatura intensa del espacio tiempo o por campos gravitacionales, la materia forma un disco de acreción y es comprimido y calentado inmensamente.  Radiaciones de alta energía emitidas desde el disco se pueden capturar y aprovechar para generar electricidad.  El horizonte del evento de la singularidad misma también emite radiación para aniquilar los pares virtuales de partícula anti-partícula que se forman cerca.  Este método de generación eléctrica es significativamente mas delicado e inestable que el usado con el disco de acreción, pero produce incluso mas producción también.
 
-PRO_ENERGY_CONV
-Conversión de Energía
-
-PRO_ENERGY_CONV_DESC
-Con escalas apropiadas y bajo condiciones específicas, la materia-energía se convierte en un fenómeno unificado.  Aplicado a mayores escalas, el control completo sobre la estructura de materia y las dinámicas de la energía son posibles.  Sin embargo, a pesar de la enorme masa de energía en reposo, convertirla directamente en energía para la generación de electricidad es generalmente menos efectivo comparado con una simple generación de fusión.
-
 PRO_ZERO_GEN
 Generación Punto Cero
 
@@ -3322,29 +2871,17 @@ Arquitectura Psicológica
 CON_ARCH_PSYCH_DESC
 La forma de una estructura o espacio inhabitado no es meramente guiado por las limitaciones físicas de los materiales con que son construidos.  Los efectos psicológicos sobre habitantes dentro u observadores fuera puede tener una mayor influencia en la consecución del diseño que la fuerza de un muro o la robustez de una fundación.
 
-CON_INFRA_ECOL
-Infraestructura Ecológica
-
-CON_INFRA_ECOL_DESC
-La infraestructura básica de un planeta establecido puede parecer que ha sido creado enteramente por los colonizadores y funcionar de acuerdo a sus diseños.  En realidad, la ecología del planeta en donde han sido construidos es el fundamento y soporte mecánico para la infraestructura añadida y a veces forma una parte integral de su función.  Comprender la interacción entre los componentes naturales y artificiales y los límites de los recursos que un sistema ecológico puede proporcionar son esenciales para el desarrollo de una infraestructura sostenible y óptima para cualquier colonia.
-
 CON_ORGANIC_STRC
 Estructura Orgánica
 
 CON_ORGANIC_STRC_DESC
 Edificios formados por minerales inanimados son funcionales y en ocasiones elegantes y los que se realizan con formas orgánicas muertas son simples y baratas.  Las estructuras vivientes actuales, pueden crecer en su forma final sin trabajo adicional, así como cierto grado de auto reparación.  Pueden también auto regular naturalmente sus medio ambientes internos o potencialmente adaptándose  a variados y cambiantes ambientes cuando sea necesario durante o después de su crecimiento inicial.
 
-CON_METRO_INFRA
-Arquitectura Metroplex
-
-CON_METRO_INFRA_DESC
-Cuando la superficie de un mundo es cubierta, un desarrollo continuo debe ocurrir encima y debajo de construcciones pre-existentes.  Hay que ser cuidadosos para asegurarse que la estabilidad de las estructuras inferiores o eclipsadas no son dañadas y que las rutas de transporte y suministro deben ser repensadas para soportar el vasto incremento de densidad de la población.  Además, nuevas cuestiones estéticas y funcionales deben ser consideradas para asegurarse de que los nuevos niveles y la combinación de todo valen el esfuerzo.
-
 CON_ARCH_MONOFILS
 Monofilamento Arquitectural
 
 CON_ARCH_MONOFILS_DESC
-Esencialmente indestructible y de solo unos átomos de diámetro, los filamentos de monocristal tienen muchos usos en mejorar los diseños de estructuras tradicionales en duración y economía de la construcción.  La capacidad para suspender o estresar otros materiales en configuraciones previamente imposibles también permite un mundo de nuevos diseños.  Filamentos de bajo peso y gran fuerza son usados en particular en escalas grandes orbitales que abarcan estructuras, donde antes las variaciones de gravedad a distancia eran prohibitivas. 
+Esencialmente indestructible y de solo unos átomos de diámetro, los filamentos de monocristal tienen muchos usos en mejorar los diseños de estructuras tradicionales en duración y economía de la construcción.  La capacidad para suspender o estresar otros materiales en configuraciones previamente imposibles también permite un mundo de nuevos diseños.  Filamentos de bajo peso y gran fuerza son usados en particular en escalas grandes orbitales que abarcan estructuras, donde antes las variaciones de gravedad a distancia eran prohibitivas.
 
 CON_ASYMP_MATS
 Materiales Asintóticos
@@ -3400,65 +2937,11 @@ Tácticas Espaciales
 SHP_SPACE_TACTICS_DESC
 Las batallas en micro-gravedad y al vacío requieren una especialización en sistemas defensivos y armas, así como las teorías tácticas que motivan su uso.
 
-SHP_SPACE_WEAPON
-Armamento Espacial
-
-SHP_SPACE_WEAPON_DESC
-El armamento terrestre básico puede ser adaptado para ser usado en el espacio y usado con cierta eficiencia.  Estas armas no son tan efectivas como el armamento especialmente diseñado para su uso en el espacio, con el paradigma del combate espacial completamente dominante sobre el combate terrestre en la mentes de los diseñadores.
-
-SHP_MAX_DISRUPT
-Disrupción Maximizada
-
-SHP_MAX_DISRUPT_DESC
-Las ideas de la ingeniería y la construcción son muy diferentes en el ambiente del espacio.  Diferentes formas estructurales son utilizadas y los principios básicos arquitecturales son drásticamente afectados por la falta de gravedad. Aplicando estas ideas al desarrollo de armamento, es posible crear armas que son muy efectivas contra la arquitectura micro-gravedad.
-
-SHP_TACT_COUNTER
-Contramedidas Tácticas
-
-SHP_TACT_COUNTER_DESC
-Debido al desconocimiento del combate espacial, no todos los eventos y posibilidades tácticos han sido llevados a cabo y sus consecuencias analizadas.  De esta forma, puede haber ciertas tácticas contra las que un imperio subdesarrollado no tendría defensa alguna.  Contramedidas Teóricas para estas tácticas motivan el desarrollo de sistemas de defensa mas avanzados y dispositivos especiales.
-
-SHP_TACT_SUPER
-Superioridad Táctica
-
-SHP_TACT_SUPER_DESC
-Muchos escenarios tácticos tienen una forma compleja de Piedra, Papel, Tijera; un defensor puede encontrarse a si mismo vulnerable a un ataque porque se preparo para otro tipo de asalto diferente.  Igualmente, un atacante puede recibir información incorrecta o inexacta sobre las defensas del oponente y encontrar que su método de ataque es inefectivo.  Desarrollando una fuerza de combate ideal para casi todos los escenarios, el riesgo de sufrir perdidas debido a las circunstancias puede ser reducido enormemente.
-
-SHP_SURGICAL_DESTRUCT
-Destrucción Quirúrgica
-
-SHP_SURGICAL_DESTRUCT_DESC
-A veces hay estrategias altamente valiosas y objetivos tácticos en una batalla que tienen una mayor importancia que cualquier nave en pleno combate y en algunas circunstancias, para cada nave en combate.  Maximizando la efectividad con un solo objetivo valioso, puede ser identificado y destruido, siendo de un gran valor estratégico.
-
-SHP_STRAT_DEFENSE
-Defensa Estratégica
-
-SHP_STRAT_DEFENSE_DESC
-Cuando la protección de un objetivo estratégico es la primaria o única preocupación en una batalla, cualquier coste en producción de material defensivo o bajas es aceptable.  Con el equipo y las tácticas adecuadas, un objetivo estratégico puede ser mas difícil de destruir.
-
-SHP_NAVIGATION
-Navegación Interestelar
-
-SHP_NAVIGATION_DESC
-Las líneas estelares forman una red relativamente restrictiva de posibles caminos, pero los viajes interestelares son complicados y peligrosos sin las adecuadas técnicas de navegación.
-
 SHP_INTSTEL_LOG
 Logística Interestelar
 
 SHP_INTSTEL_LOG_DESC
 Suministrar efectivamente naves, ordenando el movimiento general de flota e incluso organizando el movimiento de naves especificas en batalla requiere de una comprensión compleja de navegación y detección asi como los métodos de adquisición de información.
-
-SHP_ADV_NAVIGATION
-Navegación Avanzada
-
-SHP_ADV_NAVIGATION_DESC
-Los peligros de un universo desconocido son minúsculos comparados con un universo tenso con otras naves, tanto amigas como enemigas.  Integrando los efectos conocidos de otros imperios en las condiciones de líneas estelares y espacio interplanetario, métodos de navegación mas efectiva pueden ser conseguidos.
-
-SHP_NEUTRONIUM_ARM
-Armadura de Neutronio
-
-SHP_NEUTRONIUM_ARM_DESC
-El neutronio es una de las substancias mas densas del universo, tanto de forma natural como artificial.  Como tal, es extremadamente difícil incluso romperlo en trozos para transportarlo.  Mediante avanzados procesos metalúrgicos, el Neutronio puede teóricamente ser añadido a naves militares.
 
 SHP_MIL_ROBO_CONT
 Control Robótico Militar
@@ -3508,6 +2991,12 @@ Cascos de Asteroide
 SHP_ASTEROID_HULLS_DESC
 En vez de construir un casco desde cero, es mucho mas fácil usar un objeto pre-existente espacial y adaptarlo para el rol del casco de una nave.  No solo serían estas naves muy baratas de producir, sino que también serían capaces de evadir la detección de naves enemigas escondiéndose entre asteroides.
 
+SHP_HEAVY_AST_HULL
+Casco de Asteroide Pesado
+
+SHP_HEAVY_AST_HULL_DESC
+Este casco se construye a partir de un asteroide gigantesco. Tiene seis espacios externos y tres internos.  La velocidad es muy baja, pero su estructura es moderadamente alta.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
+
 SHP_ASTEROID_REFORM
 Reformación de Asteroide
 
@@ -3525,9 +3014,6 @@ Fundición Multi-Celular
 
 SHP_MULTICELL_CAST_DESC
 Incluso cuando estan inertes, los materiales orgánicos son mucho mas versátiles que un material standard.  Una nave multi-celular sin vida puede proporcionar algunas de las ventajas de materiales orgánicos sin las molestias habituales de la vida orgánica.
-
-SHP_HAB_MEGAFAUN
-Habitable Mega-Fauna
 
 SHP_HAB_MEGAFAUN_DESC
 Generalmente es poco común encontrar condiciones de vida confortables en un gigantesco monstruo espacial.  Esto es exactamente lo que debería existir en un casco orgánico, aunque puede ser controlado adecuadamente desde el interior.  El desarrollo de criaturas masivas habitables abre muchas posibilidades para el diseño de naves.
@@ -3549,12 +3035,6 @@ Bioadaptación Controlada
 
 SHP_CONT_BIOADAPT_DESC
 Es muy difícil predecir las acciones de un ser viviente a cualquier grado de certeza sin tener una comprensión intima de los patrones de comportamiento.  Emplazando una forma de vida bajo duras condiciones de desarrollo competitivas, el patrón de comportamiento puede ser manipulado, reforzado y efectivamente utilizado en la guerra.
-
-SHP_BIONEUR_SPEC
-Especialización Bio-Neural
-
-SHP_BIONEUR_SPEC_DESC
-A medida que las especies evolucionan sus capacidades mentales, los individuos cuyas mentes no están en perfecta armonía a las necesidades de sus cuerpos, no pueden competir con aquellos cuyas mentes están perfectamente especializadas con sus cuerpos.  Todas las formas de vida evolucionadas tienen un desarrollo mental casi ideal para su tipo de cuerpo.  No hay garantías para las formas de vida artificial y a veces el verdadero potencial de un este asi no es realizado debido a incompatibilidades entre mente y cuerpo.  Especializando los patrones neurales del organismo para que se adapte a su tipo de cuerpo, hace que sea posible eliminar las incompatibilidades.
 
 SHP_FRC_ENRG_COMP
 Compresión Fuerza-Energía
@@ -3580,9 +3060,9 @@ Contención Solar
 SHP_SOLAR_CONT_DESC
 Un casco construido de pura energía, aunque mas versátil que un casco sólido, tiene la desventaja de no poder recolectar la potencial energía de objetos materiales.  Aunque si fuera posible contener un casco compuesto no de pura energía sino de gases supercalientes llevando a cabo un reacción de fusión auto sostenida, las limitaciones de ambos, pura energía y materia sólida pueden ser evitados.
 
-#########################################
-# Tech Application Names & Descriptions #
-#########################################
+#############################################################
+####          T E C H   A P P L I C A T I O N S          ####
+#############################################################
 
 DOES_NOTHING_SHORT_DESC
 Sin utilidad: No hace nada
@@ -3599,23 +3079,20 @@ Desbloquea la construcción
 RESEARCH_SHORT_DESC
 Mejora la Investigación
 
-FARMING_SHORT_DESC
-Mejora la Agricultura
-
 MINING_SHORT_DESC
 Mejora la Minería
 
 INDUSTRY_SHORT_DESC
 Mejora la Indústria
 
-PRODUCTION_SHORT_DESC
-Mejora la Producción
-
 TRADE_SHORT_DESC
 Mejora el Intercambio
 
 CONSTRUCTION_SHORT_DESC
 Mejora las Infraestructuras
+
+DEFENSE_SHORT_DESC
+Mejora la Defensa
 
 METER_GROWTH_SHORT_DESC
 Mejora el  Medidor de Crecimiento
@@ -3631,9 +3108,6 @@ Mejora la  Estructura
 
 FLEET_RANGE_DESC
 Mejora el Suministro de Flota
-
-DEFENSE_SHORT_DESC
-Mejora la Defensa
 
 SHIELD_SHORT_DESC
 Mejora los Escudos
@@ -3664,33 +3138,11 @@ CON_ORBITAL_CON_DESC
 
 Incrementa el alcance de suministro de recursos para todas las colonias por 1.'''
 
-CON_SUBTER_CONST
-Construcción Subterranea
-
-CON_SUBTER_CONST_DESC
-'''Cuando el espacio es un bien escaso, el santo grial de la construcción es la habilidad para construir en el subsuelo facilmente. Técnicas modernas finalmente son posibles.
-
-Incrementa la población que puede ser sostenida por planetas Bueno por 1, 2 ,3, 4 y 5 en planetas de tamaño Diminuto, Pequeño, Medio, Grande y Gigante respectivamente.'''
-
-CON_SPACE_ELEVATOR
-Elevador Espacial
-
-CON_SPACE_ELEVATOR_DESC
-Los materiales y métodos de la nano-construcción abren nuevas posibilidades para la creación de un cable lo suficientemente fuerte para alcanzar la órbita baja.  Lanzaderas magneticamente polarizadas por cable son superiores y caras, ineficientes y altamente peligrosas.
-
 CON_CONC_CAMP
 Campos de Concentración
 
 CON_CONC_CAMP_DESC
 Habitualmente, cuando los obreros son forzados a trabajar hasta la muerte, los ciudadanos pondran algo de resistencia y tendran la simpatia y el soporte de observadores extranjeros.  Aunque, creando cuidadosamente edificios designados para apagar el fuego de la justicia y promoviendo sentimientos de futilidad y servilismo en los que estan dentro, los campos de concentración puede ser efectivamente usados sin miedo a revueltas.
-
-CON_FRC_ENRG_INFRA
-Infraestructura de Fuerza-Energía
-
-CON_FRC_ENRG_INFRA_DESC
-'''La flexibilidad y versatilidad de estructuras de fuerza energía permite a los edificios de las colonias mayor facilidad para ser reconvertidos para otros menesteres, incrementando el ratio de cambios de enfoque que pueden tener efecto.
-
-Incrementa el crecimiento del valor de los medidores de recurso por debajo del objetivo a 3 por turno y el decremento de los medidores de recurso por encima del objetivo a 5 por turno.'''
 
 CON_FRC_ENRG_CAMO
 Camuflaje Fuerza-Energía
@@ -3700,27 +3152,11 @@ CON_FRC_ENRG_CAMO_DESC
 
 Incrementa la ocultación de las estructuras por 20.'''
 
-CON_TRANSDIM_HOUSE
-Alojamiento Transdimensional
-
-CON_TRANSDIM_HOUSE_DESC
-'''Los principales factores limitadores en planetas con la capacidad de población son deseabilidad ambiental y espacio.  Transfiriendo el desarrollo básico de la infraestructura en multiples dimensiones, las limitaciones espaciales son eliminadas y bajo las condiciones ambientales ideales, la máxima población de un planeta puede ser incrementada.
-
-Incrementa la población que puede ser sostenida por Buenos mundos por 3, 6, 9, 12 y 15 para planetas Diminuto, Pequeño, Medio, Grandes y Gigantes, respectivamente.'''
-
 CON_PLANET_DRIVE
 Motor de Línea Estelar Planetario
 
 CON_PLANET_DRIVE_DESC
 Los planetas en sistemas alejados de un imperio suelen estar en peligro de ataque por flotas enemigas, aunque estos planetas pueden a veces contener recursos y especiales extremadamente valiosos.  Equipando un planeta con los medios para abrir y navegar a líneas estelares, puede ser posible mover esos planetas a lugares mas seguros en tiempos de necesidad.
-
-CON_GAL_RESOURCE_MAN
-Manejo de Recursos Galacticos
-
-CON_GAL_RESOURCE_MAN_DESC
-'''El transporte consistente y efectivo de recursos sobre grandes distancias interestelares requiere una planificación laboriosa y se complica por numerosos factores como la presencia de monstruos espaciales, imperios enemigos y fenomenos interestelares peligrosos.  Usando infraestructuras galacticas integradas, la fluida puesta en marcha de los recursos entre colonias avanzadas y primerizas puede ser conseguido, y las soluciones pueden ser encontradas para problemas particulares logísticos.
-
-Incrementa el alcance de suministro de recursos para todas las colonias por 1.'''
 
 CON_STARGATE
 Puerta Estelar
@@ -3728,79 +3164,17 @@ Puerta Estelar
 CON_STARGATE_DESC
 En imperios particularmente expansivos, la necesidad de mover naves a lugares defensivos especificos rapidamente a veces excede la factibilidad.  Creando una aceleración entre dos o mas puntos del espacio, puede ser posible mover naves a traves del imperio entere cuando es necesario, permitiendo nuevas estrategias ofensivas y defensivas.
 
-CON_MEGALITH
-Construcción de Megalito
-
-CON_MEGALITH_DESC
-Dominando técnicas avanzadas de construcción orbital, los científicos pueden crear métodos para habilitar la construcción del imponente Megalito.
-
-CON_GRAVITY_WELLS
-Pozos de gravedad Controlados
-
-CON_GRAVITY_WELLS_DESC
-Un generador de gravedad cero instalado profundamente en el núcleo del planeta, aumenta enormemente la indústria y el comercio en el sistema.
-
 CON_ART_PLANET
 Planeta Artificial
 
 CON_ART_PLANET_DESC
 Gigantes de gas y cinturones de asteroides ofrecen una oportunidad única de recursos, no solo como sitios donde adquirir valiosos - y a veces extramadamente raros - recursos, pero como materias primas dentro y fuera de si mismas para la producción de planetas artificiales.  Estos planetas ofreceran nuevos centros de producción, sistemas previamente vacios u ocupados.  Además, varias mejoras clave del planeta pueden ser modificadas o añadidas durante el proceso de construcción, permitiendo potencialmente especificar el tamaño y ambiente o ciertos especiales de planetas a ser añadidos.
 
-CON_ART_MOON
-Luna Artificial
-
-CON_ART_MOON_DESC
-Aunque los satelites naturales son ocurrencias relativamente habituales a través de los cuerpos planetarios, es verdaderamente difícil encontrar una luna con un periodo orbital igual al periodo rotacional.  Un satelite así tiene un lado constantemente dando la espalda al planeta, permitendo construir masivas instalaciones - que bajo circunstancias normales serian visibles desde la superficie - para ser construidas con un secreto absoluto, completamente invisible a la poco paranoica población del planeta.
-
-CON_TRANS_STRC
-Estructuras Transformadoras
-
-CON_TRANS_STRC_DESC
-Un obturador funciona tanto como una pared sólida como una ventana abierta, dependiendo del deseo de su usuario.  Una habitación debe ser reformada para servir a un nuevo propósito, en los límites del espacio disponible.  Este concepto puede ser extendido a la forma y estructura actual de un edificio entero o una ciudad, mecánica u orgánica.  Eliminando la necesidad de demoler y reconstruir permite infraestructuras mas grandes, flexibles y eficientes.  Una sola estructura o estructuras aisladas pueden servir para muchos propósitos simultáneos, que previamente requería mas grandes y elaborados diseños fijos.
-
 CON_PALACE_EXCLUDE
 Palacio Excluidor
 
 CON_PALACE_EXCLUDE_DESC
 Asegura que solo un palacio imperial este presente en el imperio al mismo tiempo.  Asegurate de destruir tu antiguo palacio imperial antes de construir este.
-
-GRO_SUBSPEC_TREAT
-Tratamiento Subespecializado
-
-GRO_SUBSPEC_TREAT_DESC
-'''Muchas enfermedades y heridas o manifestaciones de la misma enfermedad o herida, puede tener causas y sintomas parecidos, pero tratamientos ideales muy diferentes.  Tratando cada variación en los pacientes de acuerdo a su manifestación espefícica en vez de su categorización general, un beneficio para la salud puede ser obtenido.
-
-Incrementa la salud de todos los planetas por 5.'''
-
-GRO_INDUSTRY_FARM
-Agricultura Industrial
-
-GRO_INDUSTRY_FARM_DESC
-Métodos de agricultura tradicionales son suficientes para pequeñas poblaciones auto-suficientes sin límites significativos en el espacio disponible o tiempo.  Con mayor especialización de sociedades mas avanzadas, menos granjeros deben alimentar mas trabajadores desde mas grandes distancias, incluyendo incluso envios interestelares de alimento para colonias noveles o mayores centros industriales.  Esta dependencia en rutas de envios interestelares hacen a los mundos industriales vulnerables a bloqueos por fuerzas enemigas.  Adaptando gradualmente fábricas y añadiendo infraestructuras suplementarias durante un largo periodo de tiempo, materia y energia pueden ser usadas para favorecer el crecimiento de alimento sin coste extra, permitiendo a planetas industriales un pequeño suministro de alimento bajo demanda.
-
-GRO_SELF_ROTATING_CROPS
-Auto rotación de Cultivos
-
-GRO_SELF_ROTATING_CROPS_DESC
-'''Una producción agricola altamente intensiva desde una compresión completa del ambiente y la aplicación de este conocimiento en cultivos a medida modificados geneticamente.  Campos auto rotatorios pueden crecer continuamente, sin la necesidad tradicional de alternar a medios productivos, pero el rejuvenecimiento del suelo, aparece cada pocas temporadas.    +5 a la agricultura máxima por 10 de población en mundos enfocados en agricultura primaria.
-
-Incrementa la agricultura objetivo en planetas Bueno con el enfoque en Agricultura por la población del planeta y en planetas Adecuado con enfoque en Agricultura por la mitad de la población del planeta.'''
-
-GRO_HABITATION_DOMES
-Cúpulas Habitacionales
-
-GRO_HABITATION_DOMES_DESC
-'''Mientras que los esfuerzos para terraformar pueden hacer a los planetas mas útiles, el proceso es caro y consumista en el tiempo.  Domos habitacionales proporcionan una rápida y barata, aunque mas limitada, alternativa para incrementar la capacidad de población de mundos inhospitos, permitiendo niveles moderados de la infraestructura y capacidad de recursos a ser desarrollados.    Incrementa en +2 la población máxima de mundos con ambiente Terrible con construcción actual de al menos 20.
-
-Permite a una decima parte de la población asentarse en tipos de planeta anteriormente inhabitable, incluyendo Asteroides y Gigantes de Gas.  Muchos tipos de edificio no pueden ser construidos en estos puestos avanzados.'''
-
-GRO_SYMBIO_COHAB
-Cohabitación Symbiótica
-
-GRO_SYMBIO_COHAB_DESC
-'''Miembros de diferentes especies estan a veces en competencia con otros por el alimento y la vivienda.  Relaciones cazador-presa son comunes y puede ser difícil para seres sensibles.  Impactando un planeta de esta forma beneficia la flora nativa y la fauna en contrapartida se beneficia de la ventaja de sus efectos, es posible eliminar el antagonismo entre vidas sensibles y no sensibles.
-
-Incrementa la población que puede ser sostenida por planetas Adecuados por 4, 8, 12, 16 y 20 para planetas Diminuto, Pequeño, Medio, Grande y Gigante, respectivamente.'''
 
 GRO_GENOME_BANK
 Banco de Genomas
@@ -3814,20 +3188,6 @@ Clonación Industrial
 GRO_INDUSTRY_CLONE_DESC
 Primitivas técnicas de clonación de transferencia nuclear son poco mas que novedades para grandes organismos.  Aplicando técnicas similares para masas de producción industriales o procesos bioquímicos de ingeniería, se convierten en una posiblidad para generar docenas o millones de copias maduras de una sola copia genetica.  Las poblaciones pueden ser hechas a medida para cubrir las necesidades especificas para la sociedad.
 
-GRO_SUSPENDED_ANIMATION
-Animación Suspendida
-
-GRO_SUSPENDED_ANIMATION_DESC
-Mediante manipulación química y criónicos, los procesos de vida pueden ser detenidos sin acabar con ellos permanentemente.  Los sujetos en este estado son preservados indefinidamente, no consumen recursos y requieren poco espacio -sin vivir- de almacenamiento.  Con esta técnica, la capacidad de las naves coloniales se incrementada significativamente.
-
-GRO_ORBIT_FARMING
-Agricultura Orbital
-
-GRO_ORBIT_FARMING_DESC
-'''La fuente de energía principal para producir alimento en muchas sociedades es la radiación solar.  Atadas a un planeta, las granjas tienen un acceso muy limitado para esta energía, debido al comparativamente pequeño angulo solido sostenido por la superficie del planeta y las granjas en la superficie deben competir también con otros usos de la tierra.  Trasladando la producción a instalaciones orbitales, se consigue el acceso continuo a la energía solar, y cualquier filtración espectral no deseada por la atmosfera del planeta es eliminada.  La producción de alimento se incrementa drasticamente.
-
-Incrementa la agricultura objetivo de todos los planetas por 2, sin tener en cuenta el enfoque o ambiente.'''
-
 GRO_TERRAFORM
 Terraformar
 
@@ -3837,35 +3197,11 @@ Cambiando el tipo de ambiente de un planeta es una tarea masiva, el reto de este
 GRO_TERRAFORM_SHORT_DESC
 Permite la terraformación
 
-GRO_XENOGEN_ADAPT
-Adaptación Xenogenética
-
-GRO_XENOGEN_ADAPT_DESC
-'''El estudio de otras formas de vida a veces ejemplifica las debilidades inherentes de la propia especie.  Estudiando otras formas de vida y usando el conocimiento para mejorar el propio código genético, es posible desarrollar muchas adaptaciones útiles que de otra forma serian imposibles.
-
-Incrementa la población que puede ser sostenida por planetas Pobres a 1, 2, 3, 4 y 5, y  la población que puede ser sostenida por planetas Adecuados a 5, 10, 15, 20 y 25 para planetas Diminuto, Pequeño, Medio, Grande y Gigante, respectivamente.  La Salud en planetas Pobres y Adecuados se incrementa por 5.'''
-
-GRO_ENDOPHIL_NANOMED
-Nanomedicación Endofílica 
-
-GRO_ENDOPHIL_NANOMED_DESC
-'''Los Patogenos, particularmente prokaryotes, son vulnerables a la disrupción de su propio material genético - que es, si es posible de permeabilizar la membrana de la celula o la corteza de la proteina, en caso de un infección viral.  Diseñando nanorobots capazes de identificar y penetrar estos patogenos, es posible destruirlos deconstruyendo completamente su material genético.
-
-Incrementa la salud de todos los planetas por 10.'''
-
 GRO_REMOTE_TERRAFORM
 Terraformación Remota
 
 GRO_REMOTE_TERRAFORM_DESC
 Los métodos tradicionales tratan al planeta como una estructura e intentan alterar su ambiente mediante medios físicos y químicos.  Esto necesita que la mayoria del planeta este accesible para los terraformadores, que generalmente limita su utilidad.  Tratando el planeta como a un organismo y alterando su fisiologia indirectamente, es posible hacer uso de un esfuerzo menos intensivo, mediante métodos de terraformado que consumen mas tiempo, permitiendo puestos de avanzada en mundos pobres u hostiles hacer uso del terraformado.
-
-GRO_XENO_SYMBIOGEN
-Simbiogenesis Xenológica
-
-GRO_XENO_SYMBIOGEN_DESC
-'''A veces, la fauna nativa del planeta esta mejor adaptada al ambiente del planeta que cualquier colono que intente habitarlo.  Estos efectos adversos pueden incluir cualquier cosa desde las corrientes temporales al tamaño del planeta.  Mediante hibridación xenológica, una forma generalmente adaptada de las especies colonizadoras puede ser desarrollada con los rasgos aventajados de la fauna nativa, permitiendo que una mayor parte del planeta sea habitable.
-
-Incrementa la población que puede ser sostenida por planetas Hostil 1, 2, 3, 4 y 5, por planetas Pobre a 4, 8, 12, 16 y 20, y por planetas Adecuado a 5, 10, 15, 20 y 25 para planetas Diminuto, Pequeño, Medio, Grande y Gigante, respectivamente.  La Salud en planetas Hostil, Pobre y Adecuado se incrementa por 5.'''
 
 GRO_BIOTERROR
 Instalaciones Bioterror
@@ -3893,14 +3229,6 @@ Teóricamente es posible predecir completamente la ecología de un solo planeta 
 GRO_GAIA_TRANS_SHORT_DESC
 Permite la Transformación de Gaia
 
-GRO_NONCORP_MAN
-Manifestación No-Corporea
-
-GRO_NONCORP_MAN_DESC
-'''Mientras que transformar una población entera en seres de pura energía seria impracticable, algunas tareas están mejor destinadas a individuos capaces de manifestarse de manera no-corporea.  La tripulación de una nave, por ejemplo, no tendrán que usar espacio o raciones.  Los seres con una mayor habilidad para canalizar la energía, serán capaces de mejorar los escudos y defensas planetarios y la producción de recursos mejora generalmente.
-
-Incrementa el combustible máximo de todas las naves por 2, la defensa máxima de todos los planetas por 5, los escudo máximos de todos los planetas por 5, el objetivo de agricultura en todos los planetas con enfoque en Agricultura por un cuarto de la población del planeta, el objetivo de Minería por 10, el objetivo industrial de todos los planetas con enfoque Industrial por un cuarto de la población del planeta y el objetivo de investigación de todos los planetas con enfoque de Investigación por un quinto.'''
-
 LRN_OBSERVATORY_I
 Observatorio
 
@@ -3913,28 +3241,11 @@ Manipulación Solar
 LRN_SOLAR_MAN_DESC
 Diferentes tipos de estrella no solo tienen sus propios atributos distintivos y oportunidades para ser explotados, también tienden a dar aumento a un tipo particular de planeta.  A veces, la estrella de un tipo particular dará la bonificación deseada, pero casi seguro se carece de planetas deseables, o no estarán en un sitio oportuno en la galaxia.  Manipulando las reacciones de alta energia en el núcleo de una estrella, sería posible frenar o acelerar el proceso natural en la estrella, permitiendo cambiarla a un tipo diferente bajo demanda.
 
-LRN_XENOARCH_RESTORE
-Restauración Xenoarqueológica
-
-LRN_XENOARCH_RESTORE_DESC
-A veces es excesivamente difícil y peligroso descifrar las pistas dejadas por antiguas civilizaciones en forma de tecnología altamente avanzada.  Un mal uso de la tecnología o una activación accidental puede causar que la tecnología misma o a los arqueologos que la extraen de desaparecer.  Protegiendo la tecnología en un campo de fuerza e investigando su contenido mediante la manipulación de campos no locales, es posible recuperar con seguridad y desbloquear los misterios de la tecnología antigua.
-
-XENOARCH_RESTORE_SHORT_DESC
-Permite Tecnologías Ultra Raras
-
 LRN_DISTRIB_THOUGHT
 Red Distribuida de Computadores
 
 LRN_DISTRIB_THOUGHT_DESC
 El ciudadano medio malgasta literalmente su mente, uno de los dispositivos de computación mas finos del universo. Al hacer uso de los ciclos de inactividad del cerebro sobre una gran masa de población mediante simples transreceptores cibernéticos, los centros de investigación del mundo tienen acceso a un poder puro y duro de computación barata y abundante.
-
-LRN_AUTOLAB_I
-Autolaboratorios Básicos
-
-LRN_AUTOLAB_I_DESC
-'''Los laboratorios automatizados pueden producir investigaciones significantivas sin supervision directa, aunque sigue siendo necesario para proporcionar guia a estos laboratorios respecto a que caminos o investigaciones a seguir y extraer la información resultante para ellos.  Un centro de control especializado para facilitar estos intercambios. Consecuentemente, mientras mundos individuales desarrollan sus propios laboratorios con el coste adicional, el centro de control requiere una esfuerzo de producción significativo para ser construido.  Esto hace a los autolaboratorios más atractivos con capacidad de producción excesiva, pero fallando en los resultados de las investigaciónes y menos útil para imperios con una producción significativa en investigación, pero que fallan en capacidad industrial o capacidad de minerales.  Adicionalmente, los autolaboratorios producen mas cantidades de desechos que los laboratorios normales, impactando negativivamente en los mundos en los que son usados.
-
-Incrementa la investigación objetivo en todos los planetas por 5.'''
 
 LRN_STELLAR_TOMOGRAPHY
 Tomografía Estelar
@@ -3964,20 +3275,6 @@ Mente del Vacío
 LRN_ENCLAVE_VOID_DESC
 El estudio de la Mente del Vacío puede ser acelerada mediante ingeniería genética de la población de un mundo entero para estar en sintonía con el Vacío. Esta nueva clase sacerdotal puede transformar la estructura social total de su mundo para entender mejor y canalizar la sabiduría de la Mente del Vacío a todo el imperio.
 
-LRN_GAL_DATA_NET
-Red de Datos Galáctica
-
-LRN_GAL_DATA_NET_DESC
-'''Una masiva red de datos imperial capaz de transferir información instantaneamente entre dos lugares, en vez de mediante rutas indirectas de líneas estelares.  Este avance facilita en gran medida la investigación a traves del imperio.
-
-Multiplica investigaciones objetivo en todos los planetas con enfoque en Investigación por 2.'''
-
-LRN_COLLECTIVE_NET
-Red de Pensamiento Colectivo
-
-LRN_COLLECTIVE_NET_DESC
-Transfiriendo la mente en el ciberespacio, miles de mentes pueden actuar como una, resolviendo problemas y consiguiendo logros que una única mente no podría conseguir.
-
 LRN_ART_BLACK_HOLE
 Agujero Negro Artificial
 
@@ -3992,22 +3289,8 @@ LRN_PSY_DOM_DESC
 
 Tiene un 10% de probabilidad de tomar el control de cualquier nave enemiga entre un salto de línea estelar de una colonia perteneciente al imperio, teniendo en cuenta que la nave no es propiedad de un imperio que también tenga esta tecnología.'''
 
-LRN_RUINS_MOD
-Modificador de Ruinas Antiguas
-
-LRN_RUINS_MOD_DESC
-Debido al orden en el que los efectos de grupo son procesados, las Ruinas Antiguas especiales no pueden conseguir los efectos deseados para multiplicar la investigación en el planeta donde se encuentran.  Esta tecnología lo hace posible.
-
 MIND_CONTROL_SHORT_DESC
 Permite el Control Mental
-
-PRO_AUTOFACTORY_I
-Fábricas Automáticas Básicas.
-
-PRO_AUTOFACTORY_I_DESC
-'''La fabricas automatizadas aumentan en gran medida la producción industrial sin supervisión directa, aunque aún es necesario proporcionar orientación en estos laboratorios con respecto a lo que necesita ser producido. Un centro especializado de control es necesario para facilitar estos intercambios, y el lenguaje en el que son dirigidos, requiere una extensiva investigación previa a su puesta en marcha. Consecuentemente, el uso de fabricas automatizadas puede ser solamente practico para imperios que lleven a cabo grandes cantidades de investigación. Por otro lado, los imperios con una mínima investigación, pero con gran capacidad de producción, pueden encontrar otros métodos de mejora en la producción mas prácticos.
-
-Incrementa la indústria objetivo de todos los planetas por 5.'''
 
 PRO_HEAVY_MINING_I
 Procesadores de Minería Pesada.
@@ -4015,63 +3298,11 @@ Procesadores de Minería Pesada.
 PRO_HEAVY_MINING_I_DESC
 Cuando el incremento de la producción de minerales es la única preocupación, las consideraciones al daño medioambiental no existen y el medio ambiente de por si es conducente, el automatizado parcial de las actividades mineras a granel puede ser óptimo. Una capacidad significativa de proceso es requerida, sin embargo, implica la utilización de instalaciones centralizadas de tratamiento de minerales.
 
-PRO_ASTEROID_MINE
-Minería de Asteroide
-
-PRO_ASTEROID_MINE_DESC
-'''La extracción de recursos minerales de cuerpos subplanetarios implica desafíos y provee oportunidades bastante distintas de planetas completos.  A falta de suficiente masa para autolicuar y diferenciar, los asteroides pueden proveer mas fácil acceso a elementos mas pesados y la falta de gravedad puede hacer útil la extracción para uso en el espacio mas eficientemente.  A la inversa, el limitado tamaño del núcleo de cada asteroide requiere instalaciones de extracción portátiles auto-suficientes.  Así mismo, los desafíos de un entorno de micro-gravedad deben ser sobrepasados, requiriendo re-diseñar muchos métodos tradicionales.
-
-Permite el uso del enfoque en Minería en Asteroides.'''
-
-PRO_ORBITAL_MINE
-Minería Orbital
-
-PRO_ORBITAL_MINE_DESC
-'''En planetas solidos habitables, la minería a cielo abierto es efectiva y relativamente eficiente.  Para planetas gaseosos y terrestres que no son capaces de soportar una población considerable, la habilidad de extraer minerales usables con instalaciones espaciales es mucho más práctico. Un reto primordial de este método es superar el eje gravitacional planetario.  Una vez conseguido, vastos recursos minerales están disponibles.  Así mismo, recursos especializados en planetas inhabitables son accesibles por primera vez.
-
-Permite el uso del enfoque en Minería en puestos avanzados planetarios.'''
-
-PRO_GAS_GIANT_GEN
-Generación de Gigante de Gas
-
-PRO_GAS_GIANT_GEN_DESC
-Una vez los problemas del eje gravitacional son sobrepasados, los gigantes de gas ofrecen una oportunidad única para recolectar energía usable rápida y eficientemente.  Los métodos que toman ventaja de la atmosfera altamente densa y la circulación del cinturon de la zona permite una cantidad significativa de energía para ser facilmente acumulada y transportada para su uso en planetas cercanos.
-
-PRO_CORE_MINE
-Minería de Núcleo Profundo
-
-PRO_CORE_MINE_DESC
-'''La presión y temperaturas en los mantos y núcleos de planetas terrestres crean grandes cantidades de cristal y formaciones minerales que solo aparecen en los estratos superiores de la corteza debido al vulcanismo.  Las bajas capas atmosféricas y los materiales del núcleo de planetas gaseosos contienen incluso materiales exóticos en grandes concentraciones.  Acceder a estas regiones para extraer los materiales es difícil y traicionero, pero evidentemente gratificante, comparado con las actividades mineras de la superficie.
-
-Incrementa la minería objetivo en planetas con el enfoque en Minería por 5, 10, 15 y 20 para planetas Grande, Medio, Pequeño y Diminuto, respectivamente.'''
-
-PRO_EXOBOTS
-Exobots
-
-PRO_EXOBOTS_DESC
-'''Exobots, como se les conoce comúnmente, son una maravilla del encuentro entre forma y función. Son robots que se diseñaron para cumplir casi cualquier trabajo industrial, en campos que van desde la electrónica a la construcción a gran escala. Fáciles de producir en masa, sirven mejor en las colonias que carecen de la infraestructura y fuerza de trabajo para dedicarse a fábricas especializadas. Cada colonia recibe un equipo estándar de exobots, aumentando su construcción durante las primeras fases del desarrollo.
-
-Incrementa la indústria objetivo en todos los planetas con el enfoque de Indústria por un quinto de la población del planeta y la minería objetivo en todos los planetas con enfoque de Minería por 10.'''
-
 PRO_SOL_ORB_GEN
 Generación Solar Orbital
 
 PRO_SOL_ORB_GEN_DESC
 Los métodos tradicionales de generación solar se sustentan solamente en la energía radioactiva solar.  Poniendo generadores en la órbita baja alrededor de la misma estrella, la habilidad para recolectar la energía de fenomenos supermasivos estelares es posible y un beneficio cuantificable a la indústria puede ser obtenido.
-
-PRO_FUSION_PLANTS
-Plantas de Fusión
-
-PRO_FUSION_PLANTS_DESC
-'''Las plantas de fusión, aunque costosas de producir y mantener, se pagan fácilmente por sí mismas en mundos industrializados con demandas crecientes de energia. La dependencia de las viejas centrales nucleares de fisión se convertirá gradualmente en cosa del pasado.
-
-Incrementa la indústria objetivo en todos los planetas con enfoque en Indústria por la mitad de la población del planeta.'''
-
-PRO_HYPER_DAM
-Dique Hiperespacial
-
-PRO_HYPER_DAM_DESC
-Una vez fue el temor más grande de los físicos N-Dimensionales, ahora la meta más noble. Crear deliberadamente una ruptura hiperespacial entre nuestro universo y el próximo, pero dentro de una burbuja dimensional, separada de forma segura del espacio-tiempo conocido. Una vez que esto se alcanza, sería relativamente sencillo de utilizar el enorme flujo de energía que viajaría a través de la ruptura.
 
 PRO_INDUSTRY_CENTER_I
 Centros Industriales
@@ -4081,66 +3312,14 @@ PRO_INDUSTRY_CENTER_I_DESC
 
 El alto coste y el tiempo necesario de las instalaciones, así como el futuro alcance del potencial de crecimiento, requiere una fuerte planificación para producir in situ con una utilidad ideal futura.  Los Centros Industriales tiene un gran coste a corto plazo, tanto en producción de recursos como en tiempo, pero con una gran oportunidad para una posible expansión.  Esto los hace ideales para estrategias a largo plazo, pero poco atractivos para imperios con una planificación para una rápida victoria.'''
 
-PRO_MATENG_REPLIC
-Replicación de Matería-Energía
-
-PRO_MATENG_REPLIC_DESC
-Previas iteraciones de técnicas de ensamblado son caminos esenciales para evitar o quitar problemas desconcertantes con la manipulación de la materia.  Ninguna de esas técnicas ha cambiado fundamentalmente el método básico, que consistía en ensamblar grandes objetos a partir de pequeñas partes, siendo subsecciones prefabricadas o átomos individuales.  Convirtiendo directamente la energía pura en el objeto deseado, eliminando la necesidad de partes o materiales, el último nivel de ensamblaje flexible y eficiente es alcanzado.
-
-PRO_BLACK_HOLE_POW_GEN
-Generador de Energía de Agujero Negro
-
-PRO_BLACK_HOLE_POW_GEN_DESC
-Extraer energia de un agujero negro es significativamente mas peligroso que hacerlo de una estrella normal, pero con unas ganancias potenciales mucho mayores.  Construyendo un generador diseñado para recoger energia de colisiones particula-antiparticula en el evento del horizonte de una singularidad, tremendos beneficios para la indústria son obtenidos.
-
-PRO_NEUTRONIUM_FAC
-Instalaciones Neutronio
-
-PRO_NEUTRONIUM_FAC_DESC
-Extrayendo el neutronio de una estrella neutrón, es posible utilizarlo en la construcción de partes de nave que de otra forma serian imposibles.
-
 PRO_INDUSTRY_MOD
 Modificador de Indústria
 
-SHP_LIGHTHOUSE
-Faros Interestelares
+DEF_PLANET_CLOAK
+Dispositivo de Ocultación Planetario
 
-SHP_LIGHTHOUSE_DESC
-Naves útiles para viajar dentro y fuera de un sistema por líneas estelares.  Los faros interestelares indican la posición de la entrada de la línea estelar en el sistema, y además hace a la línea segura para navegar en ambos sentidos.  El uso de la línea se hace significativamente mas seguro.
-
-DEF_DEFENSE_NET
-Red de Defensa Planetaria
-
-DEF_DEFENSE_NET_DESC
-'''Con la exploración galáctica se abre la posibilidad de conocer nuevas razas - y nuevos enemigos.  Emplazando varias bases de defensa armadas en órbita alrededor del planeta, es posible dar capacidad defensiva al planeta sin la necesidad de naves.
-
-Incrementar la defensa máxima de todos los planetas por 5.'''
-
-DEF_HI_ENRG_FOCUS
-Enfoque de Alta Energía
-
-DEF_HI_ENRG_FOCUS_DESC
-'''Mientras que tener una multitud de satelites defensivos es superior para una gran defensa satelite en terminos de versatilidad y dependiente, es considerablemente inferior en terminos de potencia de fuego.  A veces, los escudos enemigos pueden simplemente absorber numerosos ataques debiles donde un solo ataque poderoso puede penetrar sus escudos y dañar severamente la nave.  Usando un dispositivo enfocado en alta energía, el poder de multiples satelites defensivos puede ser unificado en una poderosa arma concentrada.
-
-Incrementa la defensa máxima de todos los planetas por 15.'''
-
-DEF_PLAN_DEFLECT_SHLD
-Escudo Deflector Planetario
-
-DEF_PLAN_DEFLECT_SHLD_DESC
-Escudos Planetarios Básicos. Incrementa el escudo máximo de todos los planetas por 10.  No es acumulativo con las Escudos Barrera Planetarios.
-
-DEF_PLAN_BARRIER_SHLD
-Escudo Barrera Planetario
-
-DEF_PLAN_BARRIER_SHLD_DESC
-Escudos Planetarios Avanzados.  Incrementa el escudo máximo de todos los planetas por 45.  No es acumulativo con los Escudo Deflector Planetario.
-
-SHP_FLEET_LOGISTICS
-Logística de Flota
-
-SHP_FLEET_LOGISTICS_DESC
-Le da a los planetas la habilidad para suministrar a flotas, en sistemas a varios saltos de línea estelar lejanos.
+DEF_PLANET_CLOAK_DESC
+Ajustando fases de partes de un planeta dentro y fuera en el espacio-tiempo, su ocultación puede ser incrementada masivamente.
 
 SHP_REINFORCED_HULL
 Casco Reforzado
@@ -4162,39 +3341,11 @@ Control Avanzado de Daño
 SHP_ADV_DAM_CONT_DESC
 Restaura la salud de naves dañadas entre batallas.
 
-DEF_SYST_DEF_MINE
-Minas de Defensa de Sistema
-
-DEF_SYST_DEF_MINE_DESC
-'''Cuando naves amigas no están presentes en el sistema, las naves enemigas son libres de bloquear el sistema, parando la transferencia de recursos sin atacar directamente a las defensas del planeta, sin riesgo de dañarse a si mismos.  Una red de minas de sistema defensivas puede disuadir estas tácticas dañando naves enemigas cada turno que están en el sistema.
-
-La estructura de todas las naves que pertenezcan a un imperio enemigo que esten presentes en un sistema que contenga un planeta propiedad de un imperio que posee esta tecnología sera reducido a un ritmo de 2 por turno.
-
-Las minas tienen un vida de un turno; desaparacen en el momento que el combate empiece en el sistema y son reemplazadas a tiempo para el siguiente turno.'''
-
-DEF_PLANET_CLOAK
-Dispositivo de Ocultación Planetario
-
-DEF_PLANET_CLOAK_DESC
-Ajustando fases de partes de un planeta dentro y fuera en el espacio-tiempo, su ocultación puede ser incrementada masivamente.
-
 SHP_ION_CANNON
 Cañón de Iones
 
 SHP_ION_CANNON_DESC
 Desbloquea la parte de nave del Cañón de Iones.
-
-SHP_MASS_DRIVER
-Acelerador de Masa
-
-SHP_MASS_DRIVER_DESC
-Un proyectil capaz de lanzar objetos de tremenda masa a una velocidad relativista.
-
-SHP_DEATH_RAY
-Rayo Mortífero
-
-SHP_DEATH_RAY_DESC
-Un devastador rayo de particulas de alta-energía ultra-masiva, abriendo brechas mortales en el espacio-tiempo así como liberando un increible impacto de alta-energía.
 
 SHP_PULSE_LASER
 Laser de Pulso
@@ -4207,9 +3358,6 @@ Phaser
 
 SHP_PHASOR_DESC
 Desbloquea la parte de nave Phaser.
-
-SHP_INTERCEPTOR
-Interceptor
 
 SHP_INTERCEPTOR_DESC
 Desbloquea la parte de nave Interceptor.
@@ -4250,12 +3398,6 @@ Misil Blindado Espectral de Neutronio
 SHP_NEUTRONIUM_PLATE_SPEC_MIS_DESC
 Desbloquea la parte de nave Misil Blindado Espectral de Neutronio.
 
-SHP_DEFLECTOR
-Escudo Deflector
-
-SHP_DEFLECTOR_DESC
-Desbloquea la parte de nave del Escudo Deflector.
-
 SHP_MULTISPEC_SHIELD
 Escudo Multi-Espectral
 
@@ -4263,7 +3405,7 @@ SHP_MULTISPEC_SHIELD_DESC
 Proporciona una protección adecuada para permitir a una nave entrar en el corazón de una estrella.  Las naves en un sistema con una estrella tipo que no sea Agujero Negro y Neutron reciben una poderosa bonificación a la ocultación.
 
 SPY_DETECT_1
-Escaner Óptico 
+Escaner Óptico
 
 SPY_DETECT_1_DESC
 Todas las colonias empiezan el juego con una detección de nivel 20 y la parte de nave Escaner Óptico permite a la nave alcanzar el mismo nivel de detección.
@@ -4328,71 +3470,17 @@ Tanque de Antimateria
 SHP_ANTIMATTER_TANK_DESC
 Desbloquea la parte de nave Tanque de Antimateria.
 
-SHP_LEAD_PLATE
-Armadura de Blindaje de Plomo
-
-SHP_LEAD_PLATE_DESC
-Desbloquea la parte de nave Armadura de Blindaje de Plomo.
-
 SHP_ZORTRIUM_PLATE
 Armadura de Blindaje de Zortrium
 
 SHP_ZORTRIUM_PLATE_DESC
 Desbloquea la parte de nave  Armadura de Blindaje de Zortrium.
 
-SHP_NEUTRONIUM_PLATE
-Armadura de Blindaje de Neutronium
-
-SHP_NEUTRONIUM_PLATE_DESC
-Desbloquea la parte de nave Armadura de Blindaje de Neutronium.
-
 SPY_DIST_MOD
 Modulador de Distorsión
 
 SPY_DIST_MOD_DESC
 Todos los objetos con masa causan una curvatura en el espacio-tiempo debido a los efectos gravitacionales.  Otras fuerzas como las electromagnéticas tienen efectos geométricos similares.  Amplificando indiscriminadamente estos efectos en un area localizada, distorsiones en el espacio-tiempo causadas por naves puede ser fácilmente distinguidas del fondo electromagnético y la radiación gravitacional.
-
-SHP_ROBO_HULL
-Casco Robótico
-
-SHP_ROBO_HULL_DESC
-Este casco esta completamente automatizado y funciona bajo los principios del Control Robótico Militar.  Como el casco standard, tiene cuatro espacios externos y uno interno.  Es mas rápido que el casco standard y restaura su estructura entre combates, pero tiene una estructura máxima baja.
-
-SHP_SPACE_FLUX_HULL
-Casco Espacial Fluido
-
-SHP_SPACE_FLUX_HULL_DESC
-Este diminuto casco es capaz de alcanzar una inmensa velocidad debido a la potencia de su Motor Espacial Fluido.  Solo tiene dos espacios externos, y su estructura máxima es baja.  La ocultación es bastante elevada, pero recibe una penalización al movimiento tanto en combate como en el mapa de galaxia.
-
-SHP_SELFGRAV_HULL
-Casco Auto Gravitatorio
-
-SHP_SELFGRAV_HULL_DESC
-Este casco es inmenso, tanto en tamaño como en potencia, con ocho espacios externos y dos internos.  Es bastante robusto, con una estructura máxima elevada, pero una ocultación y velocidad bastante bajas.
-
-SHP_NANOROBO_HULL
-Casco Nano-Robotico
-
-SHP_NANOROBO_HULL_DESC
-Este casco automatizado es grande, veloz y se autorepara usando millones de nano-robots. Tiene seis espacios externos y uno interno, pero tiene una ocultación baja y es muy frágil, aunque regenera su estructura durante el combate y la restaura completamente entre combates.
-
-SHP_TITAN_HULL
-Casco Titánico
-
-SHP_TITAN_HULL_DESC
-Este extraordinario casco grande, requiere de un poco de ingeniería incluso para moverse.  Tiene sesenta espacios externos y tres internos y su estructura máxima es muy elevada, pero a costa de su velocidad y ocultación.
-
-SHP_TRANSSPACE_HULL
-Casco Trans-Espacial
-
-SHP_TRANSSPACE_HULL_DESC
-Este casco es capaz de viajar oculto y a una velocidad increíble debido a su motor Trans-Espacial.  Solo tiene un slot externo y su estructura máxima es extremadamente baja.
-
-SHP_LOGISTICS_FAC
-Facilitador de Logística
-
-SHP_LOGISTICS_FAC_DESC
-Esta nave insignia organizadora esta diseñada para organizar y dirigir transferencias de tripulación y objetos en medio de la batalla.  Tiene siete espacios externos y dos internos.  Su velocidad es baja, pero su estructura máxima muy elevada.  Además, su propia flota de cargueros ocultos permite la transferencia de material y personal durante la batalla, permitiendo a todas las naves amigas recuperar estructura durante el combate y recuperar completamente la estructura entre combates.
 
 SHP_ANTIMAT_TORP
 Torpedo Antimateria
@@ -4406,41 +3494,11 @@ Torpedo de Plasma
 SHP_PLASMA_TORP_DESC
 Misil rápido y de largo alcance con una ocultación excelente, propulsado por el Motor Trans-Espacial y armado con una devastadora cabeza de plasma.
 
-SHP_AST_HULL
-Casco de Asteroide
-
-SHP_AST_HULL_DESC
-Este casco se construye a partir de un asteroide de tamaño considerable.  Mas espacioso que el casco standard, tiene cuatro espacios externos y dos internos.  La velocidad y estructura son relativamente bajas, pero es muy barato de construir.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-SHP_SMALL_AST_HULL
-Casco de Asteroide Pequeño
-
-SHP_SMALL_AST_HULL_DESC
-Este casco se construye a partir de un asteroide muy pequeño. Solo tiene un espacio externo y otro interno.  La velocidad es muy buena, pero su estructura es muy baja.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-SHP_HEAVY_AST_HULL
-Casco de Asteroide Pesado
-
-SHP_HEAVY_AST_HULL_DESC
-Este casco se construye a partir de un asteroide gigantesco. Tiene seis espacios externos y tres internos.  La velocidad es muy baja, pero su estructura es moderadamente alta.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
 SHP_CAMO_AST_HULL
 Casco de Asteroide Camuflado
 
 SHP_CAMO_AST_HULL_DESC
 Este casco esta diseñado para parecer un asteroide real.  Tiene cuatro espacios internos, pero sin externos.  La estructura es moderada, pero la velocidad bastante baja.  Este casco recibe una tremenda bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-SHP_CAMO_AST_PARTS
-Partes de Asteroide Camufladas
-
-SHP_CAMO_AST_PARTS_DESC
-Este casco de asteroide camuflado es capaz de hacer uso de partes de asteroide camufladas en su exterior, aunque debe ser construido mas pequeño para compensar y evitar perdidas en su bonificación a la ocultación.  Solo tiene un espacio externo y otro interno.  La velocidad es moderada, pero la estructura es bastante baja.  Este casco recibe una tremenda bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-SHP_AGREG_AST_HULL
-Casco de Asteroide Agregado
-
-SHP_AGREG_AST_HULL_DESC
-Este casco masivo esta formado por la combinación de varios asteroides grandes.  Tiene quince espacios externos y cuatro internos.  La estructura es buena, pero su velocidad es muy baja.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
 
 SHP_MINIAST_SWARM
 Enjambre de Mini Asteroides
@@ -4454,71 +3512,17 @@ Casco de Asteroide Esparcido
 SHP_SCAT_AST_HULL_DESC
 Esta nave insignia se construye a partir de asteroides grandiosos, algunos de los cuales han sido combinados para formar el casco principal.  Estos asteroides protegen a  la nave principal, así como cualquier nave amiga que la acompañe, otorgando una bonificación a sus escudos para todas las naves que te pertenezcan y las naves aliadas en las cercanias.  Como el casco de asteroide compuesto,  tiene cincuenta espacios externos y cuatro internos.  La velocidad es muy baja, pero la estructura es elevada.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
 
-SHP_CRYSTAL_AST_HULL
-Casco de Asteroide Cristalizado
-
-SHP_CRYSTAL_AST_HULL_DESC
-Este robusto casco se construye a partir de asteroides grandiosos, endurecido con técnicas avanzadas de cristalización.  Como el Casco de Asteroide normal, tiene cuatro espacios externos y dos internos.  La velocidad es algo baja, pero su estructura es extremadamente alta.  Este casco recibe una gran bonificación a la ocultación en el mapa de galaxia cuando esta en un sistema con un cinturón de asteroides y en combate cuando se oculta en ellos.
-
-SHP_ROCK_PLATE
-Armadura de Blindaje de Roca
-
-SHP_ROCK_PLATE_DESC
-Una fuerte y barata alternativa a las aleaciones.  Esta parte solo puede ser construida si la Instalación Reformadora de Asteroides esta presente en un cinturón de asteroides en el imperio o imperios aliados.
-
-SHP_CRYSTAL_PLATE
-Armadura de Blindaje Cristalina
-
-SHP_CRYSTAL_PLATE_DESC
-Un blindaje increíblemente fuerte producido con técnicas avanzadas de cristalización.  Esta parte solo puede ser construida si un Módulo de Cristalización esta presente en un cinturón de asteroides en el imperio o imperios aliados.
-
 SHP_ORG_HULL
 Casco Orgánico
 
 SHP_ORG_HULL_DESC
 Este es el tipo de casco orgánico mas básico:  un casco viviente crecido a partir de la unidad de vida más básica y forjado en la batalla.  Tiene tres espacios externos y uno interno.  La ocultación es elevada y la velocidad media, pero su estructura es un poco baja.  Este casco regenera estructura y combustible entre combates.
 
-SHP_STAT_MULTICELL_HULL
-Casco Multicelular Estático
-
-SHP_STAT_MULTICELL_HULL_DESC
-Aunque empezara siendo orgánico, este casco no tiene vida, producido mediante fundición multicelular.  La versatilidad del interior y la falta de necesidad para órganos internos incrementa su capacidad, pero sin sistemas vivos para mantener la estructura es muy débil.  Tiene tres espacios externos y dos internos.  La ocultación es moderada y su velocidad buena, pero su estructura es muy baja.  A diferencia de la mayoría de cascos orgánicos, este casco no regenera ni la estructura ni el combustible entre combates.
-
-SHP_ENDOMORPH_HULL
-Casco Endomórfico
-
-SHP_ENDOMORPH_HULL_DESC
-Este casco viviente contiene componentes multicelulares sin vida para un modularidad interna mayor.  Este casco tiene cuatro espacios externos y tres internos.  La ocultación es buena y la velocidad moderada, pero la estructura es baja.  Este casco regenera estructura y combustible entre combates.
-
-SHP_SYMB_HULL
-Casco Simbiótico
-
-SHP_SYMB_HULL_DESC
-Este casco viviente existe en una relación simbiótica con su tripulación, incrementando su ocultación y velocidad.  Tiene dos espacios externos y uno interno.  La ocultación, velocidad y estructura son buenas.  Este casco regenera estructura y combustible entre combates.
-
-SHP_PROTOPLASM_HULL
-Casco Protoplásmico
-
-SHP_PROTOPLASM_HULL_DESC
-Este casco monocelular suspende sus partes internas en un citoplasma en vez de montarlos en una estructura sólida interna.  Tiene tres espacios externos e internos.  La velocidad es moderada y su ocultación alta, pero su estructura es muy baja.  Este casco regenera estructura y combustible entre combates.
-
 SHP_ENDOSYMB_HULL
 Casco Endosimbiótico
 
 SHP_ENDOSYMB_HULL_DESC
 Este casco monocelular existe en una relación simbiótica con su tripulación, suspendiendolos en citoplasma y usando sus órganos.  Tiene tres espacios externos y dos internos.  La velocidad y ocultación son buenas y su estructura moderada.  Este casco regenera estructura y combustible entre combates.
-
-SHP_RAVEN_HULL
-Casco Famélico
-
-SHP_RAVEN_HULL_DESC
-Este casco viviente surge de la sangre de sus hermanos.  Tiene cuatro espacios externos y dos internos.  La ocultación es baja, pero la velocidad y estructura elevadas.  A diferencia de la mayoría de cascos orgánicos, el Casco Famélico solo regenera combustible entre combates.
-
-SHP_BIOADAPT_HULL
-Casco Bio-Adaptivo
-
-SHP_BIOADAPT_HULL_DESC
-Este casco viviente tiene una mente y cuerpo en perfecta armonía, permitiendo que reaccione y se adapte a su entorno con una eficiencia sin parangón.  Solo tiene dos espacios internos y externos, pero la ocultación, velocidad y estructura son muy elevados.  Este casco regenera combustible y recupera completamente su estructura entre combates.
 
 SHP_SENT_HULL
 Casco Sensible
@@ -4538,51 +3542,21 @@ Biobombarderos
 SHP_BIOBOMBER_DESC
 Bombarderos vivientes diseñados para destruir naves y planetas.  Mucho mas efectivos que interceptores normales.  Esta parte solo puede ser construida si hay una Cámara de Maduración Competitiva y una Unidad de Modificación Bioneural en algún lugar del imperio o en un imperio aliado.
 
-SHP_COMP_ENRG_HULL
-Casco de Energía Comprimida
-
-SHP_COMP_ENRG_HULL_DESC
-Este casco rápido se compone enteramente de energía comprimida y solo tiene un espacio externo.  La estructura es baja, pero su ocultación y velocidad son muy elevadas.  Este casco requiere una gran cantidad de energía para se construido y solo puede hacerse en un sistema con una estrella de tipo Blanca, Azul o Agujero Negro.
-
-SHP_FRAC_ENRG_HULL
-Casco de Energía Fractal
-
-SHP_FRAC_ENRG_HULL_DESC
-Este casco, aunque pequeño, tiene una superficie fractal que le permite montar muchas mas partes que en un casco standard.  Tiene veinte espacios externos pero ninguno interno.  La ocultación es muy baja, pero su estructura y velocidad son moderadas.  Este casco requiere una enorme cantidad de energía para ser construida y solo puede hacerse en un sistema con una estrella de tipo Azul o Agujero Negro.
-
-SHP_QUANT_ENRG_HULL
-Casco de Energía Cuántica
-
-SHP_QUANT_ENRG_HULL_DESC
-Este casco magnifica las fluctuaciones de energía cuántica para incrementar su propio poder.  Tiene siete espacios externos y tres internos.  La velocidad y estructura son muy elevadas, pero su ocultación muy baja.  Este casco requiere una enorme cantidad de energía para ser construida y solo puede hacerse en un sistema con una estrella de tipo Azul o Agujero Negro.
-
-SHP_SOLAR_HULL
-Casco Solar
-
-SHP_SOLAR_HULL_DESC
-Esta majestuosa nave insignia es esencialmente un sol en miniatura y como tal es una gran fuente de combustible y visibilidad.  Todas las naves amigas recuperan completamente el combustible entre combates y todas las naves enemigas en la vecindad reciben una penalización a la ocultación.  Este casco tiene 18 espacios externos y 9 internos - una mayor capacidad interna que cualquier otro casco.  La estructura es extremadamente alta pero la velocidad y la ocultación son muy bajas.  Aun así, esta nave tiene la habilidad de entrar en una estrella y esconderse, otorgando la ocultación perfecta en el mapa de galaxia cuando esta en un sistema con una estrella cualquiera que no sea Agujero Negro o Neutrónica y en combate, cuando se esconde en esa estrella.  Esta nave requiere una cantidad tremenda de energía para construirla y debe captar energía desde colisiones partícula-antipartícula en el evento del horizonte de un Agujero Negro en su formación.
-
 SPY_PLANET_STEALTH_MOD
 Modificador de Ocultación Planetaria
 
 SPY_PLANET_STEALTH_MOD_DESC
 Incrementa la ocultación natural de los planetas en 15, por lo que los sistemas se harán visibles a los imperios antes que sus planetas.
 
-########################################
-# Tech Refinement Names & Descriptions #
-########################################
+#############################################################
+####            T E C H   R E F I N E M E N T            ####
+#############################################################
 
 BUILDING_REFINE_SHORT_DESC
 Refinería
 
 TECH_REFINE_SHORT_DESC
 Refinamiento Tecnológico
-
-PRO_ASTEROID_MINE_II
-Minas de Asteroide Avanzadas.
-
-PRO_ASTEROID_MINE_II_DESC
-La experiencia con operaciones de implementación inicial de las técnicas de minería de asteroides, permite métodos mas refinados que idear.  El mismo campo de asteroides y la población producen minerales adicionales a todos los planetas en el sistema que estén enfocados en la minería principalmente.
 
 PRO_INDUSTRY_CENTER_II
 Gran Centro Industrial
@@ -4604,9 +3578,9 @@ PRO_ENVIRO_MINING_DESC
 
 Las penalizaciones a la salud en la población en planetas con enfoque en Minería Pesada se recortan a la mitad.'''
 
-#################################
-# Building Names & Descriptions #
-#################################
+#############################################################
+####                  B U I L D I N G S                  ####
+#############################################################
 
 BLD_OBSERVATORY
 Observatorio
@@ -4644,24 +3618,6 @@ Dique seco Orbital
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 Instalaciones astilleras expandidas orbitales que permiten la producción de mas grandes diseños de cascos de naves que un astillero básico.
 
-BLD_SHIPYARD_CON_ROBO
-Unidad de Proceso Robotico
-
-BLD_SHIPYARD_CON_ROBO_DESC
-Una planta de manufactura robótica y una instalación IA programada diseñada para producir naves complejas y automatizadas.  Esta es una mejora para el Dique Seco Orbital y permite la construcción de Cascos Roboticos.
-
-BLD_SHIPYARD_CON_ENGINE
-Bahía de Ingeniería
-
-BLD_SHIPYARD_CON_ENGINE_DESC
-Un instalación avanzada de ingeniería especializada en el ensamblaje de Motores Spaciales Fluidos.  Esta es una mejora para el Dique Seco Orbital y permite la construcción de Cascos Espaciales Fluidos.  Además, esta mejora permite a cualquier astillero en el imperio o imperios aliados producir naves con la parte de nave Torpedo Antimateria. 
-
-BLD_SHIPYARD_CON_MILIT_MEGAPROC
-Megaprocesador Militar
-
-BLD_SHIPYARD_CON_MILIT_MEGAPROC_DESC
-Una instalación orbital masiva capaz de soportar la construcción de cascos extremadamente grandes.  Esta es una mejora para el Dique Seco Orbital y permite la producción de Cascos Auto-Gravitatorios.
-
 BLD_SHIPYARD_CON_NANOROBO
 Unidad de Proceso Nanorobotica
 
@@ -4680,12 +3636,6 @@ Bahia de Ingeniería Avanzada
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
 Una extremadamente bien desarrollada instalación de ingeniería que se especializa en la producción del Motor Trans-Espacial, pero también es capaz de producir el Motor Espacial Fluido.  Esta es una mejora para el Dique Seco Orbital y permite la construcción de Cascos Espaciales Fluidos y Cascos Trans-Espaciales.  Además, esta mejora permite a cualquier astillero en el imperio o imperio aliado producir naves con Torpedos Antimateria y Torpedos de Plasma.
 
-BLD_SHIPYARD_CON_MIL_LOG_ASSMBL
-Ensamblaje Logistico Militar
-
-BLD_SHIPYARD_CON_MIL_LOG_ASSMBL_DESC
-Una mejora de astillero diseñada para utilizar totalmente los avances en la construcción de cascos para la producción de naves insignia altamente especializadas.  Esta mejora utiliza las instalaciones de la Bahía de Ingeniería Avanzada, la Instalación Geointegrada, la Unidad de Proceso Nanorobotica, y el Dique Seco Orbital, han de estar presentes para la construcción de esta mejora.  Permite la producción de la Instalación de Logistica para el tipo de casco insignia.
-
 BLD_SHIPYARD_AST
 Procesador de Asteroide
 
@@ -4698,23 +3648,11 @@ Procesador de Reformación de Asteroide
 BLD_SHIPYARD_AST_REF_DESC
 Una extensiva instalación dedicada a fusionar, forjar, deconstruir y reconstruir asteroides preexistentes para formar partes de nave y cascos.  Esta es una mejora para el Astillero de Asteroide y permite la producción de Enjambres de Nano-Asteroide, Cascos de Asteroide Compuesto y Cascos de Nave Insignia de Asteroide Esparcido.  Además, esta mejora permite a cualquier astillero en el imperio o imperio aliado para producir partes de nave con Armadura Blindada de Roca.
 
-BLD_SHIPYARD_AST_CRYSTAL
-Modulo de Cristalización
-
-BLD_SHIPYARD_AST_CRYSTAL_DESC
-Una compleja instalación con la habilidad especial de cristalizar asteroides y usarlos para partes o naves.  Esta es una mejora para el Astillero de Asteroide y permite la producción de Casco de Asteroide Cristalizado.  Además, esta mejora permite a cualquier astillero del imperio o imperio aliado para producir partes de nave con Armadura Blindada de Cristal.
-
 BLD_SHIPYARD_ORG_ORB_INC
 Incubador Orbital
 
 BLD_SHIPYARD_ORG_ORB_INC_DESC
 Un astillero diseñado para cumplir las necesidades de criaturas espaciales maduras.  Las condiciones en el astillero deben cumplir las especificaciones exactas para que las naves puedan seguir con vida y desarrollarse.  Cualquier nave viva sin acabar tiene posibilidades de ser destruida si el astillero es suficientemente dañado.  Esta es una mejora para el Astillero Básico y es requerido para el desarrollo de todos los cascos orgánicos con la excepción de Casco Estáticos Multicelulares y la producción de todas las mejoras posteriores de astilleros orgánicos.
-
-BLD_SHIPYARD_ORG_IND_ORG_ASSMBL
-Ensamblaje Orgánico Industrializado
-
-BLD_SHIPYARD_ORG_IND_ORG_ASSMBL_DESC
-Una mejora de astillero capaz de aplicar técnicas de soldado multicelular a un casco.  Esta es una mejora para el Astillero Básico y permite el desarrollo de Cascos Estáticos Multicelulares.
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
 Cámara de Crecimiento Celular
@@ -4728,29 +3666,11 @@ Instalación Xenocoordinadora
 BLD_SHIPYARD_ORG_XENO_FAC_DESC
 Una instalación dedicada a crear una relación totalmente simbiótica entre la nave y su tripulación.  Esta es una mejora para el Astillero Orgánico y permite el desarrollo de Cascos Simbióticos.  La presencia de esta mejora y la mejora Cámara de Crecimiento Celular en el mismo planeta permite el desarrollo de Cascos Endosimbióticos.  La presencia de estas dos mejoras en cualquier parte del imperio o imperio aliado permite la producción de partes de nave Bio-Interceptor.
 
-BLD_SHIPYARD_ORG_COMP_MAT_CHAMB
-Cámara de Maduración Competitiva
-
-BLD_SHIPYARD_ORG_COMP_MAT_CHAMB_DESC
-Un lugar de cría en el que cascos orgánicos en desarrollo deben pelear salvaje y rudamente para sobrevivir.  Esta es una mejora para el Astillero Orgánico y permite el desarrollo de Cascos Famélicos.  La presencia de esta mejora y la mejora de Unidad de Modificación Bioneuronal en el mismo planeta permite el desarrollo de Cascos Sensibles.  La presencia de estas dos mejoras en cualquier parte del imperio o imperio aliado permite la construcción de partes de nave Bio-Bombardero.
-
-BLD_SHIPYARD_ORG_BIONEUR_MOD
-Unidad de Modificación Bioneuronal
-
-BLD_SHIPYARD_ORG_BIONEUR_MOD_DESC
-Instalaciones para la directa y precisa adaptación neurológica de la mente de un casco orgánico con su cuerpo.  Esta es una mejora para el Astillero Orgánico y permite el desarrollo de Cascos Bio-Adaptivos.  La presencia de esta mejora y la mejora de Cámara de Maduración Competitiva en el mismo planeta permite el desarrollo de Cascos Sensibles.  La presencia de estas dos mejoras en cualquier parte del imperio o imperio aliado permite la producción de partes de nave Bio-Bombardero.
-
 BLD_SHIPYARD_ENRG_COMP
 Compresor de Energía
 
 BLD_SHIPYARD_ENRG_COMP_DESC
 Un astillero altamente especializado diseñado para crear y montar partes en grandes haces de energía densamente comprimida.  Este es un proceso frágil y este astillero sufrira una majestuosa explosión si recibe aunque sea una pequeña cantidad de daño.  Esta es una mejora para el Astillero Básico y es requerido para la formación de todos los cascos de energía y futuras mejoras de astillero de casco de energía.
-
-BLD_SHIPYARD_ENRG_FOCUS
-Array de Energía Controlada Enfocada
-
-BLD_SHIPYARD_ENRG_FOCUS_DESC
-Un astillero capaz de controlar la forma de la energía para ajustarse a las especificaciones, así como conducir y magnificar diminitas fluctuaciones en la energía.  Esta es una mejora para el Compresor de Energía y permite la formación de Cascos de Energía Fractal y Cascos de Energía Cuántica.
 
 BLD_SHIPYARD_ENRG_SOLAR
 Unidad de Contención Solar
@@ -4784,9 +3704,9 @@ Centro Industrial
 BLD_INDUSTRY_CENTER_DESC
 '''Inicialmente proporciona +5 a la indústria a 100 de distancia en línea directa de la instalación, no acumulable, en mundos enfocados en la indústria.
 
-[[tech PRO_INDUSTRY_CENTRE_II]] aumenta la bonificación de refinamiento en +6 e incrementa la distancia en 200.
+[[tech PRO_INDUSTRY_CENTER_II]] aumenta la bonificación de refinamiento en +6 e incrementa la distancia en 200.
 
-[[tech PRO_INDUSTRY_CENTRE_III]] aumenta la bonificación de refinamiento en +7 e incrementa la distancia en 300.'''
+[[tech PRO_INDUSTRY_CENTER_III]] aumenta la bonificación de refinamiento en +7 e incrementa la distancia en 300.'''
 
 BLD_MEGALITH
 Megalito
@@ -4924,14 +3844,6 @@ BLD_CONC_CAMP_DESC
 
 Decrementa la población del planeta a un ritmo de 3 por turno e incrementa la indústria objetivo 5 veces la población del planeta.'''
 
-BLD_INDUSTRY_FARM
-Granjas Industriales
-
-BLD_INDUSTRY_FARM_DESC
-'''Adaptaciones a largo plazo para fábricas, rutas de envío y personal que ya existen permite la producción de alimento en regiones industriales sin coste extra mas alla del desarrollo inicial desarrollando las infraestructuras adicionales.
-
-Este edificio proporciona una bonificación a la agricultura máxima igual a 1/10 de la indústria máxima en el imperio.'''
-
 BLD_BLACK_HOLE_POW_GEN
 Generador de Energía de Agujero Negro
 
@@ -5009,18 +3921,6 @@ BLD_STARGATE_DESC
 '''Capaz de crear un atajo mediante el espacio-tiempo entre si mismo y cualquier otra puerta estelar que pertenezca al imperio.
 Para activar la puerta estelar, establece el planeta al enfoque Puerta Estelar y construye un activador de puerta estelar en el planeta en el sistema origen y una baliza de puerta estelar en un planeta con enfoque Puerta Estelar en el sistema destino.'''
 
-BLD_STARGATE_ACTIVATOR
-Activador de Puerta Estelar
-
-BLD_STARGATE_ACTIVATOR_DESC
-Designa el origen de las naves que serán enviadas a través de un puerta estelar.
-
-BLD_STARGATE_BEACON
-Baliza de Puerta Estelar
-
-BLD_STARGATE_BEACON_DESC
-Designa el destino de las naves enviadas a través de la Puerta Estelar.
-
 BLD_GAS_GIANT_GEN
 Generador de Gigante de Gas
 
@@ -5033,9 +3933,9 @@ Colonia Base
 BLD_COLONY_BASE_DESC
 Crea una nave Colonia Base que puede ser usada para colonizar otro planeta en el mismo sistema.  Solo puede ser construida en un colonia con una población de 3 o mas.
 
-###################################
-# Hull/Part Description Templates #
-###################################
+#############################################################
+####           Hull/Part Description Templates           ####
+#############################################################
 
 HULL_DESC
 '''Velocidad de Línea Estelar: %1%
@@ -5049,10 +3949,16 @@ Capacidad: %1%
 PART_DESC_STRENGTH
 Fuerza: %1%
 
+# Detection Range: %2%
+
 PART_DESC_DIRECT_FIRE_STATS
 '''Daño: %1%
 Cadencia de Disparo: %2% disparos/turno
 Alcance: %3%'''
+
+## TEMPORARILY HIDDEN
+# Rate of Fire: %2% shots/turn
+# Range: %3%
 
 PART_DESC_LR_STATS
 '''Daño: %1%
@@ -5074,33 +3980,15 @@ Caza Ocultación: %8%
 Caza Detección: %9%
 Capacidad: %10% Cazas'''
 
-##############
-# Ship Parts #
-##############
-
-SR_LASER
-Laser
-
-SR_LASER_DESC
-Poder y masa bajos
+#############################################################
+####                 S H I P   P A R T S                 ####
+#############################################################
 
 SR_ION_CANNON
 Cañón de Iones
 
 SR_ION_CANNON_DESC
 Poder y masa moderados
-
-SR_MASS_DRIVER
-Acelerador de Masa
-
-SR_MASS_DRIVER_DESC
-Un proyectil capaz de lanzar objetos de tremenda masa a una velocidad relativista.
-
-SR_DEATH_RAY
-Rayo Mortífero
-
-SR_DEATH_RAY_DESC
-Arma de corto alcance definitiva
 
 PD_PULSE_LASER
 Laser de Pulso
@@ -5112,16 +4000,13 @@ PD_PHASOR
 Phaser
 
 PD_PHASOR_DESC
-Punto de defensa fuerte y rápido 
+Punto de defensa fuerte y rápido
 
 PD_PARTICLE_BEAM
 Rayo de Particulas
 
 PD_PARTICLE_BEAM_DESC
 Arma de punto de defensa definitiva
-
-FI_INTERCEPTOR
-Interceptor
 
 FI_INTERCEPTOR_DESC
 Doce interceptores rápidos diseñados para destruir misiles y cazas enemigos
@@ -5137,9 +4022,6 @@ Caza de Reconocimiento
 
 FI_RECON_DESC
 Doce cazas rápidos y desarmados diseñados para reconocimiento
-
-FI_BIOINTERCEPTOR
-Bio-Interceptor
 
 FI_BIOINTERCEPTOR_DESC
 Treinta y seis interceptores vivientes diseñados para destruir misiles y cazas enemigos.  Mucho mas efectivos que interceptores normales.  Esta parte solo puede ser construida si hay una instalación Xenocoordinadora y una Cámara Celular de Crecimiento en el imperio o en un imperio aliados.
@@ -5250,13 +4132,7 @@ ST_CLOAK_4
 Ocultación de Fase
 
 ST_CLOAK_4_DESC
-Modula la frecuencia de cualquier onda emitida desde la nave para parecer radiación de fondo. 
-
-AR_LEAD_PLATE
-Armadura Blindada de Plomo
-
-AR_LEAD_PLATE_DESC
-Pobre defensa con gran masa
+Modula la frecuencia de cualquier onda emitida desde la nave para parecer radiación de fondo.
 
 AR_ZORTRIUM_PLATE
 Armadura Blindada de Zortrium
@@ -5316,23 +4192,15 @@ CO_SUSPEND_ANIM_POD_DESC
 
 Todas las partes de nave de clase Colonia requieren del planeta en el que son construidas de tener una población de al menos tres.'''
 
-CO_OUTPOST_MOD
-Modulo de Puesto de Avanzada
-
-CO_OUTPOST_MOD_DESC
-'''Capsula colonial con poca capacidad que permite a las naves crear un puesto de avanzada colonial con una poca población.
-
-Todas las partes de nave de clase Colonia requieren que el planeta en el que son construidas tengan una población de al menos tres.'''
-
 SP_DISTORTION_MODULATOR
 Modulador de Distorsión
 
 SP_DISTORTION_MODULATOR_DESC
 Distingue irregularidades geométricas naturales de naves enemigas manipulando distorsiones espacio-tiempo causadas por todas las naves en la vecindad.  Todas las naves entre 0 uus tienen una ocultación máxima reducida por 20.
 
-##############
-# Ship Hulls #
-##############
+#############################################################
+####                 S H I P   H U L L S                 ####
+#############################################################
 
 SH_ROBOTIC
 Casco Robótico
@@ -5585,3 +4453,44 @@ Casco de Colonia Base
 
 SH_COLONY_BASE_DESC
 Un casco diseñado para crear una colonia en otro planeta del sistema.  No puede moverse entre sistemas o de forma rápida dentro del sistema.
+
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
+
+#############################################################
+####          A C C O U N T I N G    L A B E L S         ####
+#############################################################
+
+#############################################################
+####                       T A G S                       ####
+#############################################################
+
+## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
+## in Census pop-up, and specifies order in which they will be displayed.
+## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
+## since those won't be displayed in the census anyway.
+
+## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
+##STYLISH  // add to tag order list if ever this tag is given a function
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+
+### End of Capital Names Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?

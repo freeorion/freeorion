@@ -1,4 +1,5 @@
 import math
+
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import AIstate
 import ColonisationAI
@@ -11,9 +12,9 @@ import PlanetUtilsAI
 import EnumsAI
 import ProductionAI
 import ResearchAI
-from AIDependencies import OUTPOSTING_TECH
-from timing import Timer
-from tools import tech_is_complete
+import AIDependencies
+from freeorion_debug import Timer
+from freeorion_tools import tech_is_complete
 
 prioritiees_timer = Timer('calculate_priorities()')
 
@@ -103,12 +104,14 @@ def calculateResearchPriority():
 
     industryPriority = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
 
-    gotAlgo = tech_is_complete("LRN_ALGO_ELEGANCE")
-    got_quant = tech_is_complete("LRN_QUANT_NET")
+    gotAlgo = tech_is_complete(AIDependencies.LRN_ALGO_ELEGANCE)
+    got_quant = tech_is_complete(AIDependencies.LRN_QUANT_NET)
     researchQueueList = ResearchAI.get_research_queue_techs()
-    orbGenTech = "PRO_ORBITAL_GEN"
-    got_orb_gen = tech_is_complete("PRO_ORBITAL_GEN")
-    got_solar_gen = tech_is_complete("PRO_SOL_ORB_GEN")
+    orb_gen_tech = AIDependencies.PRO_ORBITAL_GEN
+    got_orb_gen = tech_is_complete(orb_gen_tech)
+    mgrav_prod_tech = AIDependencies.PRO_MICROGRAV_MAN
+    got_mgrav_prod = tech_is_complete(mgrav_prod_tech)
+    got_solar_gen = tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN)
     
     milestone_techs = ["PRO_SENTIENT_AUTOMATION", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "SHP_WEAPON_2_4", "SHP_WEAPON_3_2", "SHP_WEAPON_4_2"  ]
     milestones_done = [mstone for mstone in milestone_techs if tech_is_complete(mstone)]
@@ -117,24 +120,27 @@ def calculateResearchPriority():
     totalPP = empire.productionPoints
     totalRP = empire.resourceProduction(fo.resourceType.research)
     industrySurge = ((foAI.foAIstate.aggression > fo.aggression.cautious) and
-                              ( (totalPP + 1.6 * totalRP) <(60* foAI.foAIstate.aggression) )  and
-                              ((orbGenTech in researchQueueList[:3] or tech_is_complete(orbGenTech)) and ColonisationAI.gotGG) and
-                              ( not (
-                                            (len(AIstate.popCtrIDs) >= 8 )))) # previously (tech_is_complete(AIDependencies.PROD_AUTO_NAME)) and
+                     ((totalPP + 1.6 * totalRP) <(50* foAI.foAIstate.aggression)) and
+                     (((orb_gen_tech in researchQueueList[:2] or got_orb_gen) and ColonisationAI.got_gg) or
+                      ((mgrav_prod_tech in researchQueueList[:2] or got_mgrav_prod) and ColonisationAI.got_ast)) and
+                     (not (len(AIstate.popCtrIDs) >= 12 )))
     # get current industry production & Target
     ownedPlanetIDs = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
     planets = map(universe.getPlanet, ownedPlanetIDs)
     targetRP = sum( map( lambda x: x.currentMeterValue(fo.meterType.targetResearch), planets) )
+    galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
+    enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
+
 
     styleIndex = empireID%2
     if foAI.foAIstate.aggression >=fo.aggression.maniacal:
         styleIndex+= 1
 
-    cutoffSets = [ [25, 45, 70, 110 ], [30, 45, 70, 150 ], [25, 45, 80, 160 ]    ]
+    cutoffSets = [ [25, 45, 70, 110 ], [30, 45, 70, 150 ], [25, 40, 80, 160 ]    ]
     cutoffs = cutoffSets[styleIndex ]
-    settings = [ [1.4, .7, .5, .4, .35 ], [1.5, 0.7, 0.6, 0.5, 0.35 ], [1.6, 0.8, 0.7, 0.6, 0.5 ]    ][styleIndex ]
+    settings = [ [1.3, .7, .5, .4, .35 ], [1.4, 0.8, 0.6, 0.5, 0.35 ], [1.4, 0.8, 0.6, 0.5, 0.4 ]    ][styleIndex ]
 
-    if (current_turn < cutoffs[0]) or (not gotAlgo) or ((styleIndex ==0) and not got_orb_gen):
+    if (current_turn < cutoffs[0]) or (not gotAlgo) or ((styleIndex ==0) and not got_orb_gen and (current_turn < cutoffs[1])):
         researchPriority = settings[0] * industryPriority # high research at beginning of game to get easy gro tech and to get research booster Algotrithmic Elegance
     elif (not got_orb_gen) or (current_turn < cutoffs[1]) :
         researchPriority = settings[1] * industryPriority# med-high research
@@ -154,15 +160,17 @@ def calculateResearchPriority():
         elif len(researchQueue) <20 and researchQueue[int(len(researchQueue)/2)].allocation > 0 :
             researchPriority *= 0.7  # closing in on end of research
     if industrySurge:
-        researchPriority *= 0.6
+        if galaxy_is_sparse and not any(enemies_sighted):
+            researchPriority *= 0.3
+        else:
+            researchPriority *= 0.7
                 
     if ((tech_is_complete("SHP_WEAPON_2_4") or
          tech_is_complete("SHP_WEAPON_4_1")) and
-            tech_is_complete("PRO_SENTIENT_AUTOMATION")):
+            tech_is_complete(AIDependencies.PROD_AUTO_NAME)):
         #industry_factor = [ [0.25, 0.2], [0.3, 0.25], [0.3, 0.25] ][styleIndex ]
         #researchPriority = min(researchPriority, industry_factor[got_solar_gen]*industryPriority)
-        #researchPriority *= 0.8
-        pass
+        researchPriority *= 0.9
     if got_quant:
         researchPriority = min(researchPriority + 0.1*industryPriority, researchPriority * 1.3)
     researchPriority = int(researchPriority)
@@ -172,7 +180,7 @@ def calculateResearchPriority():
 
     if len(enemies_sighted) < (2 + current_turn/20.0): #TODO: adjust for colonisation priority
         researchPriority *= 1.2
-    if (current_turn > 20) and (len(recent_enemies) > 2):
+    if (current_turn > 20) and (len(recent_enemies) > 3):
         researchPriority *= 0.6
     return researchPriority
 
@@ -184,7 +192,8 @@ def calculateExplorationPriority():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     numUnexploredSystems = len( ExplorationAI.borderUnexploredSystemIDs )  #len(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
-    numScouts = sum( [ foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in ExplorationAI.currentScoutFleetIDs] ) # FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
+    numScouts = sum( [ foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(
+        EnumsAI.AIFleetMissionType.FLEET_MISSION_EXPLORATION)] ) # FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     productionQueue = empire.productionQueue
     queuedScoutShips=0
     for queue_index in range(0, len(productionQueue)):
@@ -210,6 +219,7 @@ def calculateColonisationPriority():
     """calculates the demand for colony ships by colonisable planets"""
     global allottedColonyTargets, colonyGrowthBarrier
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
+    galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     totalPP=fo.getEmpire().productionPoints
     num_colonies = len( list(AIstate.popCtrIDs) )
     colonyGrowthBarrier = 2 + ((0.5+foAI.foAIstate.aggression)**2)*fo.currentTurn()/50.0 #significant for low aggression, negligible for high aggression
@@ -218,7 +228,7 @@ def calculateColonisationPriority():
     colonyCost=120*(1+ 0.06*num_colonies)
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    allottedPortion = [[0.3, 0.4],[0.6, 0.9]][any(enemies_sighted)][fo.empireID() % 2]  #
+    allottedPortion = [[[0.6, 0.8],[0.3, 0.4]],[[0.8, 0.9],[0.3, 0.4]]][galaxy_is_sparse][any(enemies_sighted)][fo.empireID() % 2]  #
     #if ( foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
     # > 2 * foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
     # allottedPortion *= 1.5
@@ -254,7 +264,7 @@ def calculateOutpostPriority():
     numOutpostPlanetIDs = len(foAI.foAIstate.colonisableOutpostIDs)
     numOutpostPlanetIDs = len( [  pid for (pid, (score, specName) ) in foAI.foAIstate.colonisableOutpostIDs if score > 1.0*baseOutpostCost/3.0 ][:allottedColonyTargets] )
     completedTechs = ResearchAI.get_completed_techs()
-    if numOutpostPlanetIDs == 0 or not OUTPOSTING_TECH in completedTechs:
+    if numOutpostPlanetIDs == 0 or not AIDependencies.OUTPOSTING_TECH in completedTechs:
         return 0
 
     outpostShipIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST)
@@ -361,6 +371,7 @@ def calculateMilitaryPriority():
         return 0# no capitol (not even a capitol-in-the-making), means can't produce any ships
         
     have_l1_weaps = (tech_is_complete("SHP_WEAPON_1_4") or
+                     (tech_is_complete("SHP_WEAPON_1_3") and tech_is_complete("SHP_MIL_ROBO_CONT")) or
                      tech_is_complete("SHP_WEAPON_2_1") or
                      tech_is_complete("SHP_WEAPON_4_1"))
     have_l2_weaps = (tech_is_complete("SHP_WEAPON_2_3") or

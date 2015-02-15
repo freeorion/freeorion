@@ -30,8 +30,7 @@
 #include <OgreRenderWindow.h>
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-#include <GL/gl.h>
-#include <GG/glext.h>
+#include <GL/glew.h>
 #elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
 #include <OpenGL/gl.h>
 #include <OpenGL/glext.h>
@@ -64,14 +63,6 @@ namespace {
             }
         }
     };
-
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-    void* aglGetProcAddress (char* symbol_name) {
-        return NSIsSymbolNameDefined(symbol_name) ?
-            NSAddressOfSymbol(NSLookupAndBindSymbol(symbol_name)) :
-            0;
-    }
-#endif
 }
 
 OgreGUI::OgreGUI(Ogre::RenderWindow* window, Ogre::Root* root,
@@ -219,31 +210,15 @@ void OgreGUI::Enter2DMode() {
     // enable alpha blending
     render_system->_setSceneBlending(SBF_SOURCE_ALPHA, SBF_ONE_MINUS_SOURCE_ALPHA);
 
-    typedef void (*BindBufferARBFn)(GLenum, GLuint);
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-    BindBufferARBFn glBindBufferARB = (BindBufferARBFn)wglGetProcAddress("glBindBufferARB");
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-    BindBufferARBFn glBindBufferARB = (BindBufferARBFn)aglGetProcAddress("_glBindBufferARB");
-#else
-    BindBufferARBFn glBindBufferARB = (BindBufferARBFn)glXGetProcAddress((const GLubyte* )"glBindBufferARB");
-#endif
-    if (glBindBufferARB) {
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-        glBindBufferARB(GL_PIXEL_PACK_BUFFER_ARB, 0);
-        glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
+    if (glBindBuffer) {
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+        glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
     }
 
-    typedef void (*UseProgramARBFn)(GLuint);
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-    UseProgramARBFn glUseProgramARB = (UseProgramARBFn)wglGetProcAddress("glUseProgramARB");
-#elif OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-    UseProgramARBFn glUseProgramARB = (UseProgramARBFn)aglGetProcAddress("_glUseProgramARB");
-#else
-    UseProgramARBFn glUseProgramARB = (UseProgramARBFn)glXGetProcAddress((const GLubyte* )"glUseProgramARB");
-#endif
-    if (glUseProgramARB)
-        glUseProgramARB(0);
+    if (glUseProgram)
+        glUseProgram(0);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);

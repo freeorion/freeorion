@@ -186,9 +186,15 @@ void GiveObjectToEmpireOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_recipient_empire_id);
 }
 
-void Serialize(freeorion_oarchive& oa, const OrderSet& order_set)
+template <class Archive>
+void Serialize(Archive& oa, const OrderSet& order_set)
 { oa << BOOST_SERIALIZATION_NVP(order_set); }
+template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const OrderSet& order_set);
+template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const OrderSet& order_set);
 
-void Deserialize(freeorion_iarchive& ia, OrderSet& order_set)
+template <class Archive>
+void Deserialize(Archive& ia, OrderSet& order_set)
 { ia >> BOOST_SERIALIZATION_NVP(order_set); }
+template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, OrderSet& order_set);
+template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, OrderSet& order_set);
 

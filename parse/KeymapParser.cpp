@@ -69,9 +69,9 @@ namespace {
 
             keymap
                 =   tok.Keymap_
-                >>  parse::label(Name_token) >> tok.string [ _a = _1 ]
-                >>  parse::label(Keys_token)
-                >>  ( '[' >> *(int_pair(_b)) >> ']' )
+                >   parse::label(Name_token) > tok.string [ _a = _1 ]
+                >   parse::label(Keys_token)
+                >   ( '[' > *(int_pair(_b)) > ']' )
                     [ insert_key_map(_r1, construct<NamedKeymaps::value_type>(_a, _b)) ]
                 ;
 

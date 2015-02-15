@@ -1114,10 +1114,11 @@ SetOwner::~SetOwner()
 { delete m_empire_id; }
 
 void SetOwner::Execute(const ScriptingContext& context) const {
-    int empire_id = m_empire_id->Eval(context);
     if (!context.effect_target)
         return;
     int initial_owner = context.effect_target->Owner();
+
+    int empire_id = m_empire_id->Eval(ScriptingContext(context, initial_owner));
     if (initial_owner == empire_id)
         return;
 
@@ -1164,6 +1165,116 @@ std::string SetOwner::Description() const {
 
 std::string SetOwner::Dump() const
 { return DumpIndent() + "SetOwner empire = " + m_empire_id->Dump() + "\n"; }
+
+
+///////////////////////////////////////////////////////////
+// SetSpeciesEmpireOpinion                               //
+///////////////////////////////////////////////////////////
+SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(const ValueRef::ValueRefBase<std::string>* species_name,
+                                                 const ValueRef::ValueRefBase<int>* empire_id,
+                                                 const ValueRef::ValueRefBase<double>* opinion) :
+    m_species_name(species_name),
+    m_empire_id(empire_id),
+    m_opinion(opinion)
+{}
+
+SetSpeciesEmpireOpinion::~SetSpeciesEmpireOpinion() {
+    delete m_species_name;
+    delete m_empire_id;
+    delete m_opinion;
+}
+
+void SetSpeciesEmpireOpinion::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target)
+        return;
+    if (!m_species_name || !m_opinion || !m_empire_id)
+        return;
+
+    int empire_id = m_empire_id->Eval(context);
+    if (empire_id == ALL_EMPIRES)
+        return;
+
+    std::string species_name = m_species_name->Eval(context);
+    if (species_name.empty())
+        return;
+
+    double initial_opinion = GetSpeciesManager().SpeciesEmpireOpinion(species_name, empire_id);
+    double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
+
+    GetSpeciesManager().SetSpeciesEmpireOpinion(species_name, empire_id, opinion);
+}
+
+std::string SetSpeciesEmpireOpinion::Description() const {
+    std::string empire_str;
+    if (m_empire_id) {
+        if (ValueRef::ConstantExpr(m_empire_id)) {
+            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+                empire_str = empire->Name();
+        } else {
+            empire_str = m_empire_id->Description();
+        }
+    }
+    return str(FlexibleFormat(UserString("DESC_SET_OWNER")) % empire_str);
+    // todo: fix
+}
+
+std::string SetSpeciesEmpireOpinion::Dump() const
+{ return DumpIndent() + "SetSpeciesEmpireOpinion empire = " + m_empire_id->Dump() + "\n"; }
+
+
+///////////////////////////////////////////////////////////
+// SetSpeciesSpeciesOpinion                              //
+///////////////////////////////////////////////////////////
+SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(const ValueRef::ValueRefBase<std::string>* opinionated_species_name,
+                                                   const ValueRef::ValueRefBase<std::string>* rated_species_name,
+                                                   const ValueRef::ValueRefBase<double>* opinion) :
+    m_opinionated_species_name(opinionated_species_name),
+    m_rated_species_name(rated_species_name),
+    m_opinion(opinion)
+{}
+
+SetSpeciesSpeciesOpinion::~SetSpeciesSpeciesOpinion() {
+    delete m_opinionated_species_name;
+    delete m_rated_species_name;
+    delete m_opinion;
+}
+
+void SetSpeciesSpeciesOpinion::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target)
+        return;
+    if (!m_opinionated_species_name || !m_opinion || !m_rated_species_name)
+        return;
+
+    std::string opinionated_species_name = m_opinionated_species_name->Eval(context);
+    if (opinionated_species_name.empty())
+        return;
+
+    std::string rated_species_name = m_rated_species_name->Eval(context);
+    if (rated_species_name.empty())
+        return;
+
+    double initial_opinion = GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+    double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
+
+    GetSpeciesManager().SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
+}
+
+std::string SetSpeciesSpeciesOpinion::Description() const {
+    std::string empire_str;
+    //if (m_empire_id) {
+    //    if (ValueRef::ConstantExpr(m_empire_id)) {
+    //        if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+    //            empire_str = empire->Name();
+    //    } else {
+    //        empire_str = m_empire_id->Description();
+    //    }
+    //}
+    return str(FlexibleFormat(UserString("DESC_SET_OWNER")) % empire_str);
+    // todo: fix
+}
+
+std::string SetSpeciesSpeciesOpinion::Dump() const
+{ return DumpIndent() + "SetSpeciesSpeciesOpinion" + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -2615,6 +2726,7 @@ std::string SetDestination::Description() const {
 
 std::string SetDestination::Dump() const
 { return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n"; }
+
 
 ///////////////////////////////////////////////////////////
 // SetAggression                                         //

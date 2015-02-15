@@ -152,7 +152,7 @@ struct GG::GUIImpl
     void HandleIdle(             Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks);
     void HandleKeyPress(         Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
     void HandleKeyRelease(       Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
-    void HandleTextInput (       const std::string* text);
+    void HandleTextInput(        const std::string* text);
     void HandleMouseMove(        Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
     void HandleMouseWheel(       Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
     void HandleMouseEnter(       Flags<ModKey> mod_keys, const GG::Pt& pos, Wnd* w);
@@ -657,7 +657,6 @@ void GUIImpl::HandleTextInput (const std::string* text) {
         GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
             WndEvent::TextInput, text));
 }
-
 
 void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks)
 {

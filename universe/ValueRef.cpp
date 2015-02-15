@@ -12,6 +12,7 @@
 #include "Universe.h"
 #include "UniverseObject.h"
 #include "Condition.h"
+#include "Enums.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../util/Random.h"
@@ -202,7 +203,7 @@ namespace {
     }
 }
 
-MeterType ValueRef::NameToMeter(std::string name) {
+MeterType ValueRef::NameToMeter(const std::string& name) {
     MeterType retval = INVALID_METER_TYPE;
     std::map<std::string, MeterType>::const_iterator it = GetMeterNameMap().find(name);
     if (it != GetMeterNameMap().end())
@@ -359,7 +360,14 @@ namespace ValueRef {
 std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
                                              const std::vector<std::string>& property_names)
 {
-    std::string names_size = boost::lexical_cast<std::string>(property_names.size());
+    int num_references = property_names.size();
+    if (ref_type == ValueRef::NON_OBJECT_REFERENCE)
+        num_references--;
+    for (unsigned int i = 0; i < property_names.size(); ++i)
+        if (property_names[i].empty())
+             num_references--;
+    num_references = std::max(0, num_references);
+    std::string names_size = boost::lexical_cast<std::string>(num_references);
     boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" +
                                              names_size));
 
@@ -369,11 +377,13 @@ std::string FormatedDescriptionPropertyNames(ValueRef::ReferenceType ref_type,
     case ValueRef::EFFECT_TARGET_VALUE_REFERENCE:       formatter % UserString("DESC_VAR_VALUE");           break;
     case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE: formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
     case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:  formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
-    case ValueRef::NON_OBJECT_REFERENCE:                formatter % "";                                     break;
+    case ValueRef::NON_OBJECT_REFERENCE:                                                                    break;
     default:                                            formatter % "???";                                  break;
     }
 
     for (unsigned int i = 0; i < property_names.size(); ++i) {
+        if (property_names[i].empty())  // apparently is empty for a ValueRef::EFFECT_TARGET_VALUE_REFERENCE
+            continue;
         std::string property_string_temp(std::string(property_names[i].c_str()));
         std::string stringtable_key("DESC_VAR_" + boost::to_upper_copy(property_string_temp));
         formatter % UserString(stringtable_key);
@@ -571,15 +581,6 @@ namespace ValueRef {
         } else if (property_name == "TradeStockpile") {
             if (const Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_TRADE);
-
-        } else if (property_name == "DistanceToSource") {
-            if (!context.source) {
-                Logger().errorStream() << "ValueRef::Variable<double>::Eval can't find distance to source because no source was passed";
-                return 0.0;
-            }
-            double delta_x = object->X() - context.source->X();
-            double delta_y = object->Y() - context.source->Y();
-            return std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
         } else if (property_name == "X") {
             return object->X();
@@ -800,31 +801,31 @@ namespace ValueRef {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->LeastExpensiveEnqueuedTech(true);
+            return empire->LeastExpensiveEnqueuedTech();
 
         } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->MostExpensiveEnqueuedTech(true);
+            return empire->MostExpensiveEnqueuedTech();
 
         } else if (property_name == "OwnerMostRPCostLeftEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->MostRPCostLeftEnqueuedTech(true);
+            return empire->MostRPCostLeftEnqueuedTech();
 
         } else if (property_name == "OwnerMostRPSpentEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->MostRPSpentEnqueuedTech(true);
+            return empire->MostRPSpentEnqueuedTech();
 
         } else if (property_name == "OwnerTopPriorityEnqueuedTech") {
             const Empire* empire = Empires().Lookup(object->Owner());
             if (!empire)
                 return "";
-            return empire->TopPriorityEnqueuedTech(true);
+            return empire->TopPriorityEnqueuedTech();
         }
 
         Logger().errorStream() << "Variable<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
@@ -930,37 +931,82 @@ namespace ValueRef {
 namespace ValueRef {
     template <>
     PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_PLANET_SIZE;
-    }
+    { return INVALID_PLANET_SIZE; }
 
     template <>
     PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_PLANET_TYPE;
-    }
+    { return INVALID_PLANET_TYPE; }
 
     template <>
     PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_PLANET_ENVIRONMENT;
-    }
+    { return INVALID_PLANET_ENVIRONMENT; }
 
     template <>
     UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_UNIVERSE_OBJECT_TYPE;
-    }
+    { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
     template <>
     StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const
-    {
-        return INVALID_STAR_TYPE;
-    }
+    { return INVALID_STAR_TYPE; }
 
     template <>
     double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     {
+        const std::string& variable_name = m_property_name.back();
+
+        if (variable_name == "PartCapacity") {
+            std::string part_type_name;
+            if (m_string_ref1)
+                part_type_name = m_string_ref1->Eval(context);
+
+            const PartType* part_type = GetPartType(part_type_name);
+            if (!part_type)
+                return 0.0;
+
+            return part_type->Capacity();
+
+        } else if (variable_name == "DirectDistanceBetween") {
+            int object1_id = INVALID_OBJECT_ID;
+            if (m_int_ref1)
+                object1_id = m_int_ref1->Eval(context);
+            TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+            if (!obj1)
+                return 0.0;
+
+            int object2_id = INVALID_OBJECT_ID;
+            if (m_int_ref2)
+                object2_id = m_int_ref2->Eval(context);
+            TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+            if (!obj2)
+                return 0.0;
+
+            double dx = obj2->X() - obj1->X();
+            double dy = obj2->Y() - obj1->Y();
+            return static_cast<float>(std::sqrt(dx*dx + dy*dy));
+
+        } else if (variable_name == "SpeciesEmpireOpinion") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1)
+                empire_id = m_int_ref1->Eval(context);
+
+            std::string species_name;
+            if (m_string_ref1)
+                species_name = m_string_ref1->Eval(context);
+
+            return GetSpeciesManager().SpeciesEmpireOpinion(species_name, empire_id);
+
+        } else if (variable_name == "SpeciesSpeciesOpinion") {
+            std::string opinionated_species_name;
+            if (m_string_ref1)
+                opinionated_species_name = m_string_ref1->Eval(context);
+
+            std::string rated_species_name;
+            if (m_string_ref2)
+                rated_species_name = m_string_ref2->Eval(context);
+
+            return GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+        }
+
         return 0.0;
     }
 
@@ -1253,12 +1299,335 @@ namespace ValueRef {
             return GetEmpirePropertyNoKey(empire_id, variable_name);
         }
 
+        // non-empire properties
+        if (variable_name == "PartsInShipDesign") {
+            int design_id = ShipDesign::INVALID_DESIGN_ID;
+            if (m_int_ref1) {
+                design_id = m_int_ref1->Eval(context);
+                if (design_id == ShipDesign::INVALID_DESIGN_ID)
+                    return 0;
+            } else {
+                return 0;
+            }
+
+            std::string part_type_name;
+            if (m_string_ref1) {
+                part_type_name = m_string_ref1->Eval(context);
+            }
+
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design)
+                return 0;
+
+            int count = 0;
+            const std::vector<std::string>& parts = design->Parts();
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                if (part_type_name.empty() && !it->empty())
+                    count++;
+                else if (!part_type_name.empty() && part_type_name == *it)
+                    count ++;
+            }
+            return count;
+
+        } else if (variable_name == "PartOfClassInShipDesign") {
+            int design_id = ShipDesign::INVALID_DESIGN_ID;
+            if (m_int_ref1) {
+                design_id = m_int_ref1->Eval(context);
+                if (design_id == ShipDesign::INVALID_DESIGN_ID)
+                    return 0;
+            } else {
+                return 0;
+            }
+
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design)
+                return 0;
+
+            std::string part_class_name;
+            if (m_string_ref1) {
+                part_class_name = m_string_ref1->Eval(context);
+            } else {
+                return 0;
+            }
+            ShipPartClass part_class = INVALID_SHIP_PART_CLASS;
+            try {
+                part_class = boost::lexical_cast<ShipPartClass>(part_class_name);
+            } catch (...) {
+                return 0;
+            }
+
+            int count = 0;
+            const std::vector<std::string>& parts = design->Parts();
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                if (it->empty())
+                    continue;
+                const PartType* part = GetPartType(*it);
+                if (!part)
+                    continue;
+                if (part->Class() == part_class)
+                    count++;
+            }
+            return count;
+
+        } else if (variable_name == "JumpsBetween") {
+            int object1_id = INVALID_OBJECT_ID;
+            if (m_int_ref1)
+                object1_id = m_int_ref1->Eval(context);
+
+            int object2_id = INVALID_OBJECT_ID;
+            if (m_int_ref2)
+                object2_id = m_int_ref2->Eval(context);
+
+            int retval = GetUniverse().JumpDistanceBetweenObjects(object1_id, object2_id);
+            if (retval == INT_MAX)
+                return -1;
+            return retval;
+
+        } else if (variable_name == "JumpsBetweenByEmpireSupplyConnections") {
+            int object1_id = INVALID_OBJECT_ID;
+            if (m_int_ref1)
+                object1_id = m_int_ref1->Eval(context);
+
+            int object2_id = INVALID_OBJECT_ID;
+            if (m_int_ref2)
+                object2_id = m_int_ref2->Eval(context);
+
+            // TODO: implement supply-connect-restriction path length determination...
+            // in the meantime, leave empire_id commented out to avoid unused var warning
+            //int empire_id = ALL_EMPIRES;
+            //if (m_int_ref3)
+            //    empire_id = m_int_ref3->Eval(context);
+
+
+            int retval = GetUniverse().JumpDistanceBetweenObjects(object1_id, object2_id/*, empire_id*/);
+            if (retval == INT_MAX)
+                return -1;
+            return retval;
+        }
+
         return 0;
     }
 
     template <>
     std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const
     {
+        const std::string& variable_name = m_property_name.back();
+
+        // unindexed empire properties
+        if (variable_name == "LowestCostEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->LeastExpensiveEnqueuedTech();
+
+
+        } else if (variable_name == "HighestCostEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->MostExpensiveEnqueuedTech();
+
+        } else if (variable_name == "TopPriorityEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->TopPriorityEnqueuedTech();
+
+        } else if (variable_name == "MostSpentEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->MostRPSpentEnqueuedTech();
+
+        } else if (variable_name == "RandomEnqueuedTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            // get all techs on queue, randomly pick one
+            const ResearchQueue& queue = empire->GetResearchQueue();
+            std::vector<std::string> all_enqueued_techs = queue.AllEnqueuedProjects();
+            if (all_enqueued_techs.empty())
+                return "";
+            std::vector<std::string>::const_iterator tech_it = all_enqueued_techs.begin();
+            std::size_t idx = RandSmallInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
+            std::advance(tech_it, idx);
+            return *tech_it;
+
+        } else if (variable_name == "LowestCostResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->LeastExpensiveResearchableTech();
+
+        } else if (variable_name == "HighestCostResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->MostExpensiveResearchableTech();
+
+        } else if (variable_name == "TopPriorityResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->TopPriorityResearchableTech();
+
+        } else if (variable_name == "MostSpentResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire = EmpireManager().Lookup(empire_id);
+            if (!empire)
+                return "";
+            return empire->MostExpensiveResearchableTech();
+
+        } else if (variable_name == "RandomResearchableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomCompleteTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "LowestCostTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "HighestCostTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "TopPriorityTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "MostSpentTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomTransferrableTech") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "MostPopulousSpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "MostHappySpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "LeastHappySpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomColonizableSpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        } else if (variable_name == "RandomControlledSpecies") {
+            int empire_id = ALL_EMPIRES;
+            if (m_int_ref1) {
+                empire_id = m_int_ref1->Eval(context);
+                if (empire_id == ALL_EMPIRES)
+                    return "";
+            }
+
+        }
         return "";
     }
 
@@ -1288,6 +1657,11 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 ValueRef::UserStringLookup::UserStringLookup(const ValueRef::Variable<std::string>* value_ref) :
     ValueRef::Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
+    m_value_ref(value_ref)
+{}
+
+ValueRef::UserStringLookup::UserStringLookup(const ValueRef::ValueRefBase<std::string>* value_ref) :
+    ValueRef::Variable<std::string>(ValueRef::NON_OBJECT_REFERENCE),
     m_value_ref(value_ref)
 {}
 
@@ -1366,11 +1740,11 @@ namespace ValueRef {
         if (m_op_type == COSINE)
             return "cos(" + m_operand1->Description() + ")";
         if (m_op_type == MINIMUM)
-            return "min(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+            return "min(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
         if (m_op_type == MAXIMUM)
-            return "max(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+            return "max(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
         if (m_op_type == RANDOM_UNIFORM)
-            return "random(" + m_operand1->Description() + ", " + m_operand1->Description() + ")";
+            return "random(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
 
 
         bool parenthesize_lhs = false;

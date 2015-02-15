@@ -119,9 +119,6 @@
     <ClCompile Include="..\..\parse\EffectParser2.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\ShipPartStatsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\KeymapParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
@@ -156,6 +153,12 @@
       <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\ConditionParser7.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\DoubleComplexValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\StringComplexValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
   </ItemGroup>

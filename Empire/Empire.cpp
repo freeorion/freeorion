@@ -235,6 +235,13 @@ int ResearchQueue::ProjectsInProgress() const
 float ResearchQueue::TotalRPsSpent() const
 { return m_total_RPs_spent; }
 
+std::vector<std::string> ResearchQueue::AllEnqueuedProjects() const {
+    std::vector<std::string> retval;
+    for (const_iterator it = begin(); it != end(); ++it)
+        retval.push_back(it->name);
+    return retval;
+}
+
 bool ResearchQueue::empty() const
 { return !m_queue.size(); }
 
@@ -1296,7 +1303,7 @@ TechStatus Empire::GetTechStatus(const std::string& name) const {
     return TS_UNRESEARCHABLE;
 }
 
-const std::string& Empire::TopPriorityEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
+const std::string& Empire::TopPriorityEnqueuedTech() const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
     ResearchQueue::const_iterator it = m_research_queue.begin();
@@ -1304,7 +1311,7 @@ const std::string& Empire::TopPriorityEnqueuedTech(bool only_consider_available_
     return tech;
 }
 
-const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
+const std::string& Empire::MostExpensiveEnqueuedTech() const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
     float biggest_cost = -99999.9f; // arbitrary small number
@@ -1328,7 +1335,7 @@ const std::string& Empire::MostExpensiveEnqueuedTech(bool only_consider_availabl
     return EMPTY_STRING;
 }
 
-const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
+const std::string& Empire::LeastExpensiveEnqueuedTech() const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
     float smallest_cost = 999999.9f; // arbitrary large number
@@ -1352,7 +1359,7 @@ const std::string& Empire::LeastExpensiveEnqueuedTech(bool only_consider_availab
     return EMPTY_STRING;
 }
 
-const std::string& Empire::MostRPSpentEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
+const std::string& Empire::MostRPSpentEnqueuedTech() const {
     float most_spent = -999999.9f;  // arbitrary small number
     std::map<std::string, float>::const_iterator best_it = m_research_progress.end();
 
@@ -1374,7 +1381,7 @@ const std::string& Empire::MostRPSpentEnqueuedTech(bool only_consider_available_
     return EMPTY_STRING;
 }
 
-const std::string& Empire::MostRPCostLeftEnqueuedTech(bool only_consider_available_techs/* = false*/) const {
+const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
     float most_left = -999999.9f;  // arbitrary small number
     std::map<std::string, float>::const_iterator best_it = m_research_progress.end();
 
@@ -1401,6 +1408,32 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech(bool only_consider_availab
 
     if (best_it != m_research_progress.end())
         return best_it->first;
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::TopPriorityResearchableTech() const {
+    if (m_research_queue.empty())
+        return EMPTY_STRING;
+    for (ResearchQueue::const_iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
+        if (this->ResearchableTech(it->name))
+            return it->name;
+    }
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::MostExpensiveResearchableTech() const {
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::LeastExpensiveResearchableTech() const {
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::MostRPSpentResearchableTech() const {
+    return EMPTY_STRING;
+}
+
+const std::string& Empire::MostRPCostLeftResearchableTech() const {
     return EMPTY_STRING;
 }
 

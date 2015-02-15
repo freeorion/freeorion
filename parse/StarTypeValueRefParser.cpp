@@ -24,7 +24,13 @@ namespace {
                 ;
 
             initialize_bound_variable_parser<StarType>(bound_variable, variable_name);
-            initialize_nonnumeric_statistic_parser<StarType>(statistic, variable_name);
+
+            statistic_sub_value_ref
+                =   constant
+                |   bound_variable
+                ;
+
+            initialize_nonnumeric_statistic_parser<StarType>(statistic, statistic_sub_value_ref);
 
             primary_expr
                 %=   constant
@@ -47,15 +53,16 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<StarType>::type rule;
-        typedef variable_rule<StarType>::type variable_rule;
-        typedef statistic_rule<StarType>::type statistic_rule;
+        typedef parse::value_ref_parser_rule<StarType>::type    rule;
+        typedef variable_rule<StarType>::type                   variable_rule;
+        typedef statistic_rule<StarType>::type                  statistic_rule;
 
         name_token_rule variable_name;
-        rule constant;
-        variable_rule bound_variable;
-        statistic_rule statistic;
-        rule primary_expr;
+        rule            constant;
+        variable_rule   bound_variable;
+        rule            statistic_sub_value_ref;
+        statistic_rule  statistic;
+        rule            primary_expr;
     };
 }
 

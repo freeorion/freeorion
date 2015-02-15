@@ -16,11 +16,13 @@
 #include "../universe/Effect.h"
 #include "../Empire/Empire.h"
 #include "TechTreeLayout.h"
+#include "TechTreeArcs.h"
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 #include <algorithm>
 
@@ -34,8 +36,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const int   MAIN_PANEL_CORNER_RADIUS = 8;
-    const float ARC_THICKNESS = 3.0;
     GG::X   TechPanelWidth()
     { return GG::X(ClientUI::Pts()*20); }
     GG::Y   TechPanelHeight()
@@ -486,9 +486,6 @@ public:
 
 private:
     class TechPanel;
-    typedef std::multimap<std::string,
-                          std::pair<std::string,
-                                    std::vector<std::pair<double, double> > > > DependencyArcsMap;
 
     class LayoutSurface : public GG::Wnd {
     public:
@@ -513,7 +510,6 @@ private:
 
     void DoLayout();    // arranges child controls (scrolls, buttons) to account for window size
 
-    void DrawArc(DependencyArcsMap::const_iterator it, const GG::Clr& color, bool with_arrow_head);
     void ScrolledSlot(int, int, int, int);
 
     void TechBrowsedSlot(const std::string& tech_name);
@@ -539,7 +535,7 @@ private:
     TechTreeLayout          m_graph;
 
     std::map<std::string, TechPanel*>   m_techs;
-    DependencyArcsMap                   m_dependency_arcs;
+    TechTreeArcs                        m_dependency_arcs;
 
     LayoutSurface* m_layout_surface;
     CUIScroll*     m_vscroll;
@@ -933,63 +929,14 @@ void TechTreeWnd::LayoutPanel::Render() {
     BeginClipping();
     glEnable(GL_LINE_SMOOTH);
 
-
-    // highlighted dependency arcs?
-    // those leading from a complete tech to an enqueued tech
-    // those leading from an enqueued tech to an enqueued tech
-    std::vector<DependencyArcsMap::const_iterator> highlighted_arcs;
-    if (const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())) {
-        const ResearchQueue& queue = empire->GetResearchQueue();
-        highlighted_arcs.reserve(queue.size());
-        for (DependencyArcsMap::const_iterator arc_it = m_dependency_arcs.begin();
-             arc_it != m_dependency_arcs.end(); ++arc_it)
-        {
-            const std::string& tech1 = arc_it->first;
-            const std::string& tech2 = arc_it->second.first;
-            if (queue.InQueue(tech2) && (queue.InQueue(tech1) || empire->GetTechStatus(tech1) == TS_COMPLETE))
-                highlighted_arcs.push_back(arc_it);
-        }
-    }
-
     // render dependency arcs
-    DoZoom(GG::Pt());
+    DoZoom(ClientUpperLeft());
 
-    // draw arcs with thick, half-alpha line
-    GG::Clr arc_colour = GG::CLR_GRAY;              arc_colour.a = 127;
-    glColor(arc_colour);
-    glLineWidth(ARC_THICKNESS * m_scale);
-    for (DependencyArcsMap::const_iterator arc_it = m_dependency_arcs.begin();
-         arc_it != m_dependency_arcs.end(); ++arc_it)
-    { DrawArc(arc_it, arc_colour, false); }
-
-    // redraw thicker highlight arcs
-    GG::Clr arc_highlight_colour = GG::CLR_WHITE;   arc_highlight_colour.a = 127;
-    glColor(arc_highlight_colour);
-    glLineWidth(ARC_THICKNESS * m_scale * 2.0);
-    for (std::vector<DependencyArcsMap::const_iterator>::const_iterator arc_it = highlighted_arcs.begin();
-         arc_it != highlighted_arcs.end(); ++arc_it)
-    { DrawArc(*arc_it, arc_colour, false); }
-
-    // retrace arcs with thinner full-alpha line
-    arc_colour.a = 255;
-    glColor(arc_colour);
-    glLineWidth(ARC_THICKNESS * m_scale * 0.5);
-    for (DependencyArcsMap::const_iterator arc_it = m_dependency_arcs.begin();
-         arc_it != m_dependency_arcs.end(); ++arc_it)
-    { DrawArc(arc_it, arc_colour, false); }
-
-    // redraw thicker highlight arcs
-    arc_highlight_colour.a = 255;
-    glColor(arc_highlight_colour);
-    glLineWidth(ARC_THICKNESS * m_scale);
-    for (std::vector<DependencyArcsMap::const_iterator>::const_iterator arc_it = highlighted_arcs.begin();
-         arc_it != highlighted_arcs.end(); ++arc_it)
-    { DrawArc(*arc_it, arc_colour, false); }
+    m_dependency_arcs.Render(m_scale);
 
     glEnable(GL_TEXTURE_2D);
     EndClipping();
 
-    glLineWidth(1.0);
     UndoZoom();
     GG::GUI::RenderWindow(m_vscroll);
     GG::GUI::RenderWindow(m_hscroll);
@@ -1041,7 +988,7 @@ void TechTreeWnd::LayoutPanel::Clear() {
     m_techs.clear();
     m_graph.Clear();
 
-    m_dependency_arcs.clear();
+    m_dependency_arcs.Reset();
 
     m_selected_tech_name.clear();
 }
@@ -1218,6 +1165,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
 
     Logger().debugStream() << "Tech Tree Layout Creating Panels";
 
+    std::set<std::string> visible_techs;
+
     // create new tech panels and new dependency arcs 
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
@@ -1235,22 +1184,11 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         GG::Connect(tech_panel->TechRightClickedSignal,     &TechTreeWnd::LayoutPanel::TechRightClickedSlot,    this);
         GG::Connect(tech_panel->TechDoubleClickedSignal,    &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
 
-        const std::vector<TechTreeLayout::Edge*> edges = m_graph.GetOutEdges(tech_name);
-        //prerequisite edge
-        for (std::vector<TechTreeLayout::Edge*>::const_iterator edge = edges.begin();
-             edge != edges.end(); edge++)
-        {
-            std::vector<std::pair<double, double> > points;
-            const std::string& from = (*edge)->GetTechFrom();
-            const std::string& to   = (*edge)->GetTechTo();
-            if (!GetTech(from) || !GetTech(to)) {
-                Logger().errorStream() << "TechTreeWnd::LayoutPanel::Layout missing arc endpoint tech";
-                continue;
-            }
-            (*edge)->ReadPoints(points);
-            m_dependency_arcs.insert(std::make_pair(from, std::make_pair(to, points)));
-        }
+        visible_techs.insert(tech_name);
     }
+
+    m_dependency_arcs.Reset(m_graph, visible_techs);
+
     // format window
     GG::Pt client_sz = ClientSize();
     GG::Pt layout_size(client_sz.x + m_graph.GetWidth(), client_sz.y + m_graph.GetHeight());
@@ -1289,37 +1227,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     // ensure that the scrolls stay on top
     MoveChildUp(m_vscroll);
     MoveChildUp(m_hscroll);
-}
-
-void TechTreeWnd::LayoutPanel::DrawArc(DependencyArcsMap::const_iterator it,
-                                       const GG::Clr& color, bool with_arrow_head)
-{
-    GG::Pt ul = UpperLeft();
-    glBegin(GL_LINE_STRIP);
-    for (unsigned int i = 0; i < it->second.second.size(); ++i) {
-        glVertex(it->second.second[i].first + ul.x, it->second.second[i].second + ul.y);
-    }
-    glEnd();
-    if (with_arrow_head) {
-        double final_point_x = Value(it->second.second.back().first + ul.x);
-        double final_point_y = Value(it->second.second.back().second + ul.y);
-        double second_to_final_point_x = Value(it->second.second[it->second.second.size() - 2].first + ul.x);
-        double second_to_final_point_y = Value(it->second.second[it->second.second.size() - 2].second + ul.y);
-        const double ARROW_LENGTH = 10 * m_scale;
-        const double ARROW_WIDTH = 9 * m_scale;
-        glEnable(GL_TEXTURE_2D);
-        glPushMatrix();
-        glTranslated(final_point_x, final_point_y, 0.0);
-        glRotated(std::atan2(final_point_y - second_to_final_point_y, final_point_x - second_to_final_point_x) * 180.0 / 3.141594, 0.0, 0.0, 1.0);
-        glTranslated(-final_point_x, -final_point_y, 0.0);
-        IsoscelesTriangle(GG::Pt(GG::X(static_cast<int>(final_point_x - ARROW_LENGTH + 0.5)),
-                                 GG::Y(static_cast<int>(final_point_y - ARROW_WIDTH / 2.0 + 0.5))),
-                          GG::Pt(GG::X(static_cast<int>(final_point_x + 0.5)),
-                                 GG::Y(static_cast<int>(final_point_y + ARROW_WIDTH / 2.0 + 0.5))),
-                          SHAPE_RIGHT, color, false);
-        glPopMatrix();
-        glDisable(GL_TEXTURE_2D);
-    }
 }
 
 void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int) {

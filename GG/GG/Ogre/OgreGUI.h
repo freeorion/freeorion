@@ -45,13 +45,13 @@
 #include <Carbon/Carbon.h>
 #endif
 
+#include <GG/GUI.h>
+
 #include <OgreRenderTargetListener.h>
 #include <OgreTimer.h>
 #include <OgreSharedPtr.h>
 #include <OgreDataStream.h>
 #include <OgreWindowEventUtilities.h>
-
-#include <GG/GUI.h>
 
 #include <boost/filesystem/path.hpp>
 
@@ -124,10 +124,10 @@ class GG_OGRE_API OgreGUI :
     public Ogre::WindowEventListener
 {
 public:
-    /** Basic ctor.  A nonzero \a window and \a root are required, and an optional
+    /** Basic ctor.  A nonzero \a window is required, and an optional
         configuration filename, \a config_filename.  If \a config_filename is
         supplied, it will be available via ConfigFileStream(). */
-    explicit OgreGUI(Ogre::RenderWindow* window, Ogre::Root* root,
+    explicit OgreGUI(Ogre::RenderWindow* window,
                      const boost::filesystem::path& config_file_path = boost::filesystem::path());
 
     /** Dtor. */
@@ -153,6 +153,12 @@ public:
         keyboard, mouse, etc. */
     boost::signals2::signal<void ()> HandleSystemEventsSignal;
 
+    /** Emitted whenever the OgreGUI's window's left and top positions change. */
+    boost::signals2::signal<void (X, Y)> WindowMovedSignal;
+
+    /** Emitted whenever the OgreGUI's AppWidth() and/or AppHeight() change. */
+    boost::signals2::signal<void (X, Y)> WindowResizedSignal;
+
     /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
         is about to close. */
     boost::signals2::signal<void ()> WindowClosingSignal;
@@ -161,11 +167,12 @@ public:
         closes or is about to close. */
     boost::signals2::signal<void ()> WindowClosedSignal;
 
+    /** Emitted when the Ogre::RenderWindow in which the OgreGUI is operating
+        gains or loses focus. */
+    boost::signals2::signal<void ()> FocusChangedSignal;
+
     /** Allows any code to access the gui framework by calling GG::OgreGUI::GetGUI(). */
     static OgreGUI* GetGUI();
-
-    /// \override
-    virtual std::vector< std::string > GetSupportedResolutions() const;
 
 protected:
     virtual void RenderBegin();
@@ -184,7 +191,6 @@ private:
     virtual void windowFocusChange(Ogre::RenderWindow* window);
 
     Ogre::RenderWindow*               m_window;
-    Ogre::Root*                       m_root;
     mutable Ogre::Timer               m_timer;
     Ogre::SharedPtr<Ogre::DataStream> m_config_file_data;
 };

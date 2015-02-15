@@ -57,7 +57,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const double    OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
     const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;         // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
 
     template <class Key, class Value> struct constant_property
@@ -650,23 +649,24 @@ namespace {
     // wrapper around Universe::distance_matrix_storage 
     // implementing functionality outside the public header
     // the cache assumes the matrix to be symmetric
-    template <class Storage, class T = typename Storage::value_type, class Row = typename Storage::row_ref> class distance_matrix_cache {
+    template <class Storage, class T = typename Storage::value_type, class Row = typename Storage::row_ref>
+    class distance_matrix_cache {
     public:
         distance_matrix_cache(Storage& the_storage) : m_storage(the_storage) {}
-        size_t size()              { 
+        size_t size() {
             boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex); 
-            return m_storage.size(); 
+            return m_storage.size();
         }
-        void resize(size_t a_size) { 
+        void resize(size_t a_size) {
             boost::unique_lock<boost::shared_mutex> guard(m_storage.m_mutex); 
             m_storage.resize(a_size);
         }
-        
+
         class row_lock {
         private:
             boost::shared_lock<boost::shared_mutex> m_lock;
             boost::unique_lock<boost::shared_mutex> m_row_lock;
-            
+
             void swap(boost::shared_lock<boost::shared_mutex>& guard, boost::unique_lock<boost::shared_mutex>& row_guard) {
                 m_lock.swap(guard);
                 m_row_lock.swap(row_guard);
@@ -684,39 +684,38 @@ namespace {
                 m_lock.unlock();
             }
         };
-        
+
     public:
         /** try to retrieve an element, lock the whole row on cache miss
           * if \a lock already holds a lock, it will be unlocked after locking the row.
           */
         boost::optional<T> get_or_lock_row(size_t row_index, size_t column_index, row_lock& lock) const {
             boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
-            
-            if (row_index < m_storage.size() && column_index < m_storage.size()) 
-            {
+
+            if (row_index < m_storage.size() && column_index < m_storage.size()) {
                 {
                     boost::shared_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[row_index]);
                     Row row_data = m_storage.m_data[row_index];  
-                    
+
                     if (column_index < row_data.size())
                         return row_data[column_index];
                 }
                 {
                     boost::shared_lock<boost::shared_mutex> column_guard(*m_storage.m_row_mutexes[column_index]);
                     Row column_data = m_storage.m_data[column_index];  
-                    
+
                     if (row_index < column_data.size())
                         return column_data[row_index];
                 }
                 {
                     boost::unique_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[row_index]);
                     Row row_data = m_storage.m_data[row_index];  
-                    
+
                     if (column_index < row_data.size()) {
                         return row_data[column_index];
                     } else {
                         lock.swap(guard, row_guard);
-                        
+
                         return boost::optional<T>();
                     }
                 }
@@ -727,23 +726,23 @@ namespace {
                 else
                     throw std::out_of_range("row_index invalid");
             }
-            
+
             return boost::optional<T>(); // unreachable
         }
-        
+
         /** replace the contents of a row with \a new_data. 
           * precondition: \a lock must hold a lock to the specified row.
           */
         void swap_and_unlock_row(size_t row_index, Row new_data, row_lock& lock) {
             if (row_index < m_storage.size()) {
                 Row row_data = m_storage.m_data[row_index];  
-                
+
                 row_data.swap(new_data);
             } else {
                 Logger().errorStream() << "distance_matrix_cache::swap_and_unlock_row passed invalid node index: " << row_index << " matrix size: " << m_storage.size();
                 throw std::out_of_range("row_index invalid");
             }
-            
+
             lock.unlock(); // only unlock on success
         }
     private:
@@ -767,8 +766,10 @@ double Universe::LinearDistance(int system1_id, int system2_id) const {
     return std::sqrt(x_dist*x_dist + y_dist*y_dist);
 }
 
-short Universe::JumpDistance(int system1_id, int system2_id) const {
-    if (system1_id == system2_id) return 0;
+short Universe::JumpDistanceBetweenSystems(int system1_id, int system2_id) const {
+    if (system1_id == system2_id)
+        return 0;
+
     try {
         distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
         distance_matrix_cache< distance_matrix_storage<short> >::row_lock cache_guard;
@@ -778,7 +779,7 @@ short Universe::JumpDistance(int system1_id, int system2_id) const {
         size_t other_index   = (std::max)(system1_index, system2_index);
         boost::optional<short> maybe_jumps = cache.get_or_lock_row(smaller_index, other_index, cache_guard); // prefer filling the smaller row/column for increased cache locality
         short jumps;
-        
+
         if (maybe_jumps) {
             // cache hit, any locks are already released
             // get_value_or() in order to silence potentially-uninitialized warning
@@ -788,7 +789,7 @@ short Universe::JumpDistance(int system1_id, int system2_id) const {
             // we are keeping the row locked during computation so other 
             // threads waiting for the same row will see a cache hit
             typedef boost::iterator_property_map<std::vector<short>::iterator, boost::identity_property_map> DistancePropertyMap;
-            
+
             std::vector<short> private_distance_buffer(m_system_jumps.size(), SHRT_MAX);
             DistancePropertyMap distance_property_map(private_distance_buffer.begin());
             boost::distance_recorder<DistancePropertyMap, boost::on_tree_edge> distance_recorder(distance_property_map);
@@ -801,10 +802,10 @@ short Universe::JumpDistance(int system1_id, int system2_id) const {
         }
         if (jumps == SHRT_MAX)  // value returned for no valid path
             return -1;
-        
+
         return jumps;
     } catch (const std::out_of_range&) {
-        Logger().errorStream() << "Universe::JumpDistance passed invalid system id(s): "
+        Logger().errorStream() << "Universe::JumpDistanceBetweenSystems passed invalid system id(s): "
                                << system1_id << " & " << system2_id;
         throw;
     }
@@ -872,6 +873,127 @@ std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int syst
                                << system1_id << " & " << system2_id;
         throw;
     }
+}
+
+namespace {
+    TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
+        TemporaryPtr<const Fleet> retval = boost::dynamic_pointer_cast<const Fleet>(obj);
+        if (!retval) {
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj))
+                retval = GetFleet(ship->FleetID());
+        }
+        return retval;
+    }
+}
+
+int Universe::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
+    TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    if (!obj1)
+        return INT_MAX;
+
+    TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    if (!obj2)
+        return INT_MAX;
+
+    TemporaryPtr<const System> system_one = GetSystem(obj1->SystemID());
+    TemporaryPtr<const System> system_two = GetSystem(obj2->SystemID());
+
+    if (system_one && system_two) {
+        // both condition-matching object and candidate are / in systems.
+        // can just find the shortest path between the two systems
+        short jumps = -1;
+        try {
+            jumps = JumpDistanceBetweenSystems(system_one->ID(), system_two->ID());
+        } catch (...) {
+            Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+        }
+        if (jumps != -1)    // if jumps is -1, no path exists between the systems
+            return static_cast<int>(jumps);
+        else
+            return INT_MAX;
+
+    } else if (system_one) {
+        // just object one is / in a system.
+        if (TemporaryPtr<const Fleet> fleet = FleetFromObject(obj2)) {
+            // other object is a fleet that is between systems
+            // need to check shortest path from systems on either side of starlane fleet is on
+            short jumps1 = -1, jumps2 = -1;
+            try {
+                if (fleet->PreviousSystemID() != -1)
+                    jumps1 = JumpDistanceBetweenSystems(system_one->ID(), fleet->PreviousSystemID());
+                if (fleet->NextSystemID() != -1)
+                    jumps2 = JumpDistanceBetweenSystems(system_one->ID(), fleet->NextSystemID());
+            } catch (...) {
+                Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+            }
+            int jumps = static_cast<int>(std::max(jumps1, jumps2));
+            if (jumps != -1) {
+                return jumps - 1;
+            } else {
+                // no path
+                return INT_MAX;
+            }
+        }
+
+    } else if (system_two) {
+        // just object two is a system.
+        if (TemporaryPtr<const Fleet> fleet = FleetFromObject(obj1)) {
+            // other object is a fleet that is between systems
+            // need to check shortest path from systems on either side of starlane fleet is on
+            short jumps1 = -1, jumps2 = -1;
+            try {
+                if (fleet->PreviousSystemID() != -1)
+                    jumps1 = JumpDistanceBetweenSystems(system_two->ID(), fleet->PreviousSystemID());
+                if (fleet->NextSystemID() != -1)
+                    jumps2 = JumpDistanceBetweenSystems(system_two->ID(), fleet->NextSystemID());
+            } catch (...) {
+                Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+            }
+            int jumps = static_cast<int>(std::max(jumps1, jumps2));
+            if (jumps != -1) {
+                return jumps - 1;
+            } else {
+                // no path
+                return INT_MAX;
+            }
+        }
+    } else {
+        // neither object is / in a system
+
+        TemporaryPtr<const Fleet> fleet_one = FleetFromObject(obj1);
+        TemporaryPtr<const Fleet> fleet_two = FleetFromObject(obj2);
+
+        if (fleet_one && fleet_two) {
+            // both objects are / in a fleet.
+            // need to check all combinations of systems on either sides of
+            // starlanes condition-matching object and candidate are on
+            int fleet_one_prev_system_id = fleet_one->PreviousSystemID();
+            int fleet_one_next_system_id = fleet_one->NextSystemID();
+            int fleet_two_prev_system_id = fleet_two->PreviousSystemID();
+            int fleet_two_next_system_id = fleet_two->NextSystemID();
+            short jumps1 = -1, jumps2 = -1, jumps3 = -1, jumps4 = -1;
+            try {
+                if (fleet_one_prev_system_id != -1 && fleet_two_prev_system_id != -1)
+                    jumps1 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_prev_system_id);
+                if (fleet_one_prev_system_id != -1 && fleet_two_next_system_id != -1)
+                    jumps2 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_next_system_id);
+                if (fleet_one_next_system_id != -1 && fleet_two_prev_system_id != -1)
+                    jumps3 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_prev_system_id);
+                if (fleet_one_next_system_id != -1 && fleet_two_next_system_id != -1)
+                    jumps4 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_next_system_id);
+            } catch (...) {
+                Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
+            }
+            int jumps = static_cast<int>(std::max(jumps1, std::max(jumps2, std::max(jumps3, jumps4))));
+            if (jumps != -1) {
+                return jumps - 1;
+            } else {
+                // no path
+                return INT_MAX;
+            }
+        }
+    }
+    return INT_MAX;
 }
 
 bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const {
@@ -2069,7 +2191,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
     // execute each effects group one by one
     std::vector< std::pair<const Effect::EffectsGroup*, Effect::TargetsCauses> >::iterator effect_group_it;
-    for (effect_group_it = dispatched_targets_causes.begin(); effect_group_it != dispatched_targets_causes.end(); ++effect_group_it)
+    for (effect_group_it = dispatched_targets_causes.begin();
+         effect_group_it != dispatched_targets_causes.end(); ++effect_group_it)
     {
         const Effect::EffectsGroup* const effects_group        = effect_group_it->first;
         Effect::TargetsCauses&            group_targets_causes = effect_group_it->second;

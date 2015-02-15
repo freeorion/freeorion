@@ -1,13 +1,24 @@
 # pylab is part of matplotlib -- http://matplotlib.org/
 # for necessary Windows dependencies see http://stackoverflow.com/a/18280786
 
+# windows installation by Cjkjvfnby http://www.freeorion.org/forum/memberlist.php?mode=viewprofile&u=34706
+#  I use current version 1.4.2 for python 2.7 *32
+#
+# If you have compiler installed
+#   pip install matplotlib
+#
+# Otherwise you need to get precompiled binaries:
+# download and install matplotlib-1.4.2.win32-py2.7.exe from http://matplotlib.org/downloads.html
+# pip install python-dateutil pyparsing pillow  # if pillow does not want to install use numpy instruction.
+# download numpy-1.9.1+mkl-cp27-none-win32.whl from  http://www.lfd.uci.edu/~gohlke/pythonlibs/#numpy
+# navigate to folder: pip install numpy-1.9.1+mkl-cp27-none-win32.whl
+# Change dataDir to '<user>/AppData/Roaming/'
+
 from pylab import *
 import os
 import sys
 from glob import glob
 import traceback
-#import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 
 dataDir = os.environ.get('HOME', "")+"/.freeorion"
 graphDir=dataDir
@@ -26,7 +37,7 @@ def show_only_some(x, pos):
   else:
     return ''
 
-doPlotTypes = ["PP"]+ [ "RP"] + ["RP_Ratio"] #+[ "ShipCount"]
+doPlotTypes = ["PP + 2RP"] + ["PP"]+ [ "RP"] + ["RP_Ratio"] #+[ "ShipCount"]
 
 
 def parse_file(file_name, ai=True):
@@ -35,7 +46,7 @@ def parse_file(file_name, ai=True):
         got_colors=False
         got_species=False
         got_name=False
-        data={"PP":[], "RP":[], "RP_Ratio":[], "ShipCount":[], "turnsP":[], "turnPP":[]}
+        data={"PP":[], "RP":[], "RP_Ratio":[], "ShipCount":[], "turnsP":[], "turnPP":[], "PP + 2RP":[]}
         details={'color':{1, 1, 1, 1}, 'name':"", 'species':""}
         with open(file_name, 'r') as lf:
             while True:
@@ -64,6 +75,7 @@ def parse_file(file_name, ai=True):
                     RPPP = parts[1].split('(')[-1].split('/')
                     data['PP'].append( float( RPPP[1]) )
                     data['RP'].append( float( RPPP[0]) )
+                    data['PP + 2RP'].append( float( RPPP[1]) + 2 * float( RPPP[0]) )
                     data['RP_Ratio'].append( float( RPPP[0])/(float( RPPP[1]) + 0.001) )
                 if "Empire Ship Count:" in line:
                     data['ShipCount'].append( int(line.split("Empire Ship Count:")[1]))
@@ -119,8 +131,10 @@ for plotType in doPlotTypes:
         caption="Research"
     elif plotType=="RP_Ratio":
         caption="Res:Prod Ratio"
+    elif plotType=="RP_Ratio":
+        caption="Res:Prod Ratio"
     else:
-        caption="Ships"
+        caption=plotType
     figure(figsize=(10, 6))
     ax=gca()
     ymin = 9999
@@ -203,4 +217,3 @@ for plotType in doPlotTypes:
     if saveFile:
         savefig(graphDir+os.sep+plotType+"_"+fileRoot+".png")
     show()
-        

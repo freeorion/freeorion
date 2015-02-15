@@ -214,6 +214,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
             return;
         }
 
+        std::string ai_config = GetOptionsDB().GetValueString("ai-config");
         // TODO: add other command line args to AI client invocation as needed
         std::vector<std::string> args;
         args.push_back("\"" + AI_CLIENT_EXE + "\"");
@@ -225,8 +226,19 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
-
+        args.push_back("--binary-serialization");
+        args.push_back(GetOptionsDB().GetValueString("binary-serialization"));
+        args.push_back("--ai-path");
+        args.push_back(GetOptionsDB().GetValueString("ai-path"));
         Logger().debugStream() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
+        Logger().debugStream() << "ai-path set to '" << GetOptionsDB().GetValueString("ai-path") << "'";
+        if (!ai_config.empty()) {
+            args.push_back("--ai-config");
+            args.push_back(ai_config);
+            Logger().debugStream() << "ai-config set to '" << ai_config << "'";
+        } else {
+            Logger().debugStream() << "ai-config not set.";
+        }
 
         m_ai_client_processes.push_back(Process(AI_CLIENT_EXE, args));
 
@@ -396,10 +408,16 @@ void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_
     case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
     case Message::DEBUG:        break;
     default:
-        Logger().errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
-                                     << msg.Type() << "\" for a non-player Message.  Terminating connection.";
-        m_networking.Disconnect(player_connection);
-        break;
+        if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
+            Logger().debugStream() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
+                                   << "connected player, who is local and so the request is being honored; server shutting down.";
+                                   Exit(1);
+        } else {
+            Logger().errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
+                                            << msg.Type() << "\" for a non-player Message.  Terminating connection.";
+            m_networking.Disconnect(player_connection);
+            break;
+        }
     }
 }
 
@@ -1804,6 +1822,11 @@ namespace {
         {
             const std::vector<CombatEventPtr>& attacks = it->combat_events;
             const CombatInfo& combat_info = *it;
+            // If a ship was attacked multiple times during a combat in which it dies, it will get
+            // processed multiple times here.  The below set will keep it from being logged as
+            // multiple destroyed ships for its owner.
+            // TODO: fix similar issue for overlogging on attacker side
+            std::set<int> already_logged__target_ships;
             for (std::vector<CombatEventPtr>::const_iterator it = attacks.begin();
                  it != attacks.end(); ++it)
             {
@@ -1856,6 +1879,9 @@ namespace {
                 }
 
                 if (target_empire) {
+                    if (already_logged__target_ships.find(attack.target_id) != already_logged__target_ships.end())
+                        continue;
+                    already_logged__target_ships.insert(attack.target_id);
                     // record destruction of a ship with a species on it owned by defender empire
                     species_it = target_empire->SpeciesShipsLost().find(target_species_name);
                     if (species_it == target_empire->SpeciesShipsLost().end())

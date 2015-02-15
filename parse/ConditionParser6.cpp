@@ -6,6 +6,9 @@
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
+#include <boost/spirit/include/phoenix.hpp>
+
+
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
@@ -42,6 +45,7 @@ namespace {
 
             qi::_1_type _1;
             qi::_a_type _a;
+            qi::_b_type _b;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -53,36 +57,33 @@ namespace {
                 ;
 
             homeworld
-                =    (
-                            tok.Homeworld_
-                        >>  parse::label(Name_token) >> string_ref_vec
-                            [ _val = new_<Condition::Homeworld>(_1) ]
-                     )
-                |    tok.Homeworld_ [ _val = new_<Condition::Homeworld>() ]
+                =    tok.Homeworld_
+                >   (
+                            parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ]
+                        |   eps [ _val = new_<Condition::Homeworld>() ]
+                    )
                 ;
 
             building
                 =    (
                             tok.Building_
-                        >> -(
-                                parse::label(Name_token) >> string_ref_vec [ _a = _1 ]
-                            )
+                        >  -(parse::label(Name_token) > string_ref_vec [ _a = _1 ])
                      )
                      [ _val = new_<Condition::Building>(_a) ]
                 ;
 
             species
                 =    tok.Species_
-                >>   (
-                            parse::label(Name_token) >> string_ref_vec [ _val = new_<Condition::Species>(_1) ]
+                >    (
+                            parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Species>(_1) ]
                         |   eps [ _val = new_<Condition::Species>() ]
                      )
                 ;
 
             focus_type
                 =    tok.Focus_
-                >>   (
-                            parse::label(Type_token) >> string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
+                >    (
+                            parse::label(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
                         |   eps [ _val = new_<Condition::FocusType>(std::vector<const ValueRef::ValueRefBase<std::string>*>()) ]
                      )
                 ;
@@ -90,8 +91,8 @@ namespace {
             planet_type
                 =    tok.Planet_
                 >>   parse::label(Type_token)
-                >>   (
-                            '[' >> +planet_type_value_ref [ push_back(_a, _1) ] >> ']'
+                >    (
+                            '[' > +planet_type_value_ref [ push_back(_a, _1) ] > ']'
                         |   planet_type_value_ref [ push_back(_a, _1) ]
                      )
                      [ _val = new_<Condition::PlanetType>(_a) ]
@@ -100,28 +101,29 @@ namespace {
             planet_size
                 =    tok.Planet_
                 >>   parse::label(Size_token)
-                >>   (
-                            '[' >> +planet_size_value_ref [ push_back(_a, _1) ] >> ']'
+                >    (
+                            '[' > +planet_size_value_ref [ push_back(_a, _1) ] > ']'
                         |   planet_size_value_ref [ push_back(_a, _1) ]
                      )
                      [ _val = new_<Condition::PlanetSize>(_a) ]
                 ;
 
             planet_environment
-                =    tok.Planet_
+                =   (tok.Planet_
                 >>   parse::label(Environment_token)
-                >>   (
-                            '[' >> +planet_environment_value_ref [ push_back(_a, _1) ] >> ']'
+                >    (
+                            '[' > +planet_environment_value_ref [ push_back(_a, _1) ] > ']'
                         |   planet_environment_value_ref [ push_back(_a, _1) ]
                      )
-                     [ _val = new_<Condition::PlanetEnvironment>(_a) ]
+                >  -(parse::label(Species_token)        >  string_value_ref [_b = _1]))
+                     [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
                 ;
 
             object_type
                 =    parse::enum_parser<UniverseObjectType>() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
                 |    (
                             tok.ObjectType_
-                        >>  parse::label(Type_token) >> universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
+                        >  parse::label(Type_token) > universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
                      )
                 ;
 
@@ -190,7 +192,10 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Condition::ConditionBase* (),
-            qi::locals<std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*> >,
+            qi::locals<
+                std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>,
+                const ValueRef::ValueRefBase<std::string>*
+            >,
             parse::skipper_type
         > planet_environment_rule;
 

@@ -924,9 +924,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_bombard_button  = new CUIButton(UserString("PL_BOMBARD"));
     GG::Connect(m_bombard_button->LeftClickedSignal, &SidePanel::PlanetPanel::ClickBombard, this);
 
-    if (m_planet_graphic)
-        MoveChildDown(m_planet_graphic);
-
     SetChildClippingMode(ClipToWindow);
 
     Refresh();
@@ -1026,10 +1023,14 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
         return;
 
-    delete m_planet_graphic;
-    m_planet_graphic = 0;
-    delete m_rotating_planet_graphic;
-    m_rotating_planet_graphic = 0;
+    if (m_planet_graphic) {
+        delete m_planet_graphic;
+        m_planet_graphic = 0;
+    }
+    if (m_rotating_planet_graphic) {
+        delete m_rotating_planet_graphic;
+        m_rotating_planet_graphic = 0;
+    }
 
     if (planet->Type() == PT_ASTEROIDS) {
         const std::vector<boost::shared_ptr<GG::Texture> >& textures = GetAsteroidTextures();
@@ -1848,7 +1849,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         menu_contents.next_level.push_back(give_away_menu);
 
         if (planet->OrderedGivenToEmpire() != ALL_EMPIRES) {
-            GG::MenuItem cancel_give_away_menu(UserString("ORCER_CANCEL_GIVE_PLANET"), 12, false, false);
+            GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_PLANET"), 12, false, false);
             menu_contents.next_level.push_back(cancel_give_away_menu);
         }
     }
@@ -1874,6 +1875,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         case 2:
         {   // colonizable/suitability report
             ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id);
+            break;
         }
 
         case 12: { // cancel give away order for this fleet
@@ -1888,6 +1890,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
                     }
                 }
             }
+            break;
         }
 
         default: { // check for menu item indicating give to other empire order

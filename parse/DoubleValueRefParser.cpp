@@ -50,7 +50,6 @@ namespace {
                 |   tok.NextTurnPopGrowth_
                 |   tok.Size_
                 |   tok.DistanceFromOriginalType_
-                //|   tok.DistanceToSource_    // Note: DistanceToSource will be a Source-variant property, but without an explicit Source reference, so will be treated as Source-invariant by ValueRef and parsing code. This is bad.
                 ;
 
             free_variable_name
@@ -64,34 +63,28 @@ namespace {
                 ;
 
             free_variable
-                = (
-                        tok.Value_
-                        [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
-                  )
-                | (
-                        free_variable_name
-                        [ _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
-                  )
-                | (
-                        int_free_variable()
-                        [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
-                  )
+                =   tok.Value_
+                    [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+                |   free_variable_name
+                    [ _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+                |   int_free_variable()
+                    [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
-            bound_variable
-                = (
-                        variable_scope() [ _b = _1 ] > '.'  // determines reference type from explicit use of Source, Target, LocalCandiate, or RootCandidate in expression
-                    >  -(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-                    >   (
-                            bound_variable_name [ push_back(_a, construct<std::string>(_1)),
-                                                  _val = new_<ValueRef::Variable<double> >(_b, _a) ]
-                        |   int_bound_variable_name() [ push_back(_a, construct<std::string>(_1)),
-                                                        _val = new_<ValueRef::StaticCast<int, double> >(new_<ValueRef::Variable<int> >(_b, _a)) ]
-                        )
-                  )
-                ;
+            initialize_bound_variable_parser<double>(bound_variable, bound_variable_name);
 
-            initialize_numeric_statistic_parser<double>(statistic, bound_variable_name);
+            statistic_sub_value_ref
+                =   constant
+                |   free_variable
+                |   bound_variable
+                |   int_bound_variable_cast
+                |   double_var_complex()
+                |   int_complex_variable_cast
+            ;
+
+            initialize_numeric_statistic_parser<double>(statistic, statistic_1, statistic_2,
+                                                        statistic_sub_value_ref);
+
             initialize_expression_parsers<double>(function_expr,
                                                   exponential_expr,
                                                   multiplicative_expr,
@@ -99,11 +92,15 @@ namespace {
                                                   expr,
                                                   primary_expr);
 
-            int_statistic
+            int_bound_variable_cast
+                =   int_bound_variable() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                ;
+
+            int_statistic_cast
                 =    int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
-            int_complex_variable
+            int_complex_variable_cast
                 =    int_var_complex() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
@@ -112,9 +109,11 @@ namespace {
                 |   constant
                 |   free_variable
                 |   bound_variable
+                |   int_bound_variable_cast
                 |   statistic
-                |   int_statistic
-                |   int_complex_variable
+                |   int_statistic_cast
+                |   double_var_complex()
+                |   int_complex_variable_cast
                 ;
 
             bound_variable_name.name("real number bound variable name (e.g., Population)");
@@ -123,8 +122,9 @@ namespace {
             free_variable.name("free real number variable");
             bound_variable.name("real number bound variable");
             statistic.name("real number statistic");
-            int_statistic.name("integer statistic");
-            int_complex_variable.name("integer complex variable");
+            int_statistic_cast.name("integer statistic");
+            int_complex_variable_cast.name("integer complex variable");
+            int_bound_variable_cast.name("integer bound variable");
             function_expr.name("real number function expression");
             exponential_expr.name("real number exponential expression");
             multiplicative_expr.name("real number multiplication expression");
@@ -139,8 +139,10 @@ namespace {
             debug(free_variable);
             debug(bound_variable);
             debug(statistic);
-            debug(int_statistic);
-            debug(int_complex_variable);
+            debug(int_statistic_cast);
+            debug(int_complex_variable_cast);
+            debug(int_complex_variable_cast);
+            debug(double_complex_variable);
             debug(negate_expr);
             debug(multiplicative_expr);
             debug(additive_expr);
@@ -159,9 +161,13 @@ namespace {
         rule                constant;
         variable_rule       free_variable;
         variable_rule       bound_variable;
+        statistic_rule      statistic_1;
+        statistic_rule      statistic_2;
         statistic_rule      statistic;
-        rule                int_statistic;
-        rule                int_complex_variable;
+        rule                statistic_sub_value_ref;
+        rule                int_bound_variable_cast;
+        rule                int_statistic_cast;
+        rule                int_complex_variable_cast;
         expression_rule     function_expr;
         expression_rule     exponential_expr;
         expression_rule     multiplicative_expr;
@@ -176,8 +182,14 @@ namespace {
     }
 }
 
+const double_rule& double_constant()
+{ return get_double_parser_rules().constant; }
+
 const name_token_rule& double_bound_variable_name()
 { return get_double_parser_rules().bound_variable_name; }
+
+const variable_rule<double>::type& double_bound_variable()
+{ return get_double_parser_rules().bound_variable; }
 
 const name_token_rule& double_free_variable_name()
 { return get_double_parser_rules().free_variable_name; }

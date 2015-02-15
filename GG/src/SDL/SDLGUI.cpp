@@ -895,7 +895,7 @@ void SDLGUI::RelayTextInput (const SDL_TextInputEvent& text, GG::Pt mouse_pos) {
     }
     std::string text_string (current, last);
     while (current != last) {
-        HandleGGEvent (TEXTINPUT, GGK_UNKNOWN, utf8::next (current, last), Flags<ModKey>(), mouse_pos, Pt (X0, Y0), &text_string);
+        HandleGGEvent(TEXTINPUT, GGK_UNKNOWN, utf8::next (current, last), Flags<ModKey>(), mouse_pos, Pt (X0, Y0), &text_string);
     }
 }
 

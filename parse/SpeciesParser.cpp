@@ -75,19 +75,18 @@ namespace {
 
             foci
                 =    parse::label(Foci_token)
-                >>   (
+                >    (
                             '[' > +focus_type [ push_back(_r1, _1) ] > ']'
                         |   focus_type [ push_back(_r1, _1) ]
                      )
                 ;
 
             effects
-                =    parse::label(EffectsGroups_token) >> parse::detail::effects_group_parser()
-                     [ _r1 = _1 ]
+                =    parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _r1 = _1 ]
                 ;
 
             environment_map_element
-                =    parse::label(Type_token)        >> parse::enum_parser<PlanetType>() [ _a = _1 ]
+                =    parse::label(Type_token)        > parse::enum_parser<PlanetType>() [ _a = _1 ]
                 >    parse::label(Environment_token) >  parse::enum_parser<PlanetEnvironment>()
                      [ _val = construct<std::pair<PlanetType, PlanetEnvironment> >(_a, _1) ]
                 ;
@@ -98,7 +97,7 @@ namespace {
                 ;
 
             environments
-                =    parse::label(Environments_token)           >> environment_map [ _r1 = _1 ]
+                =    parse::label(Environments_token) > environment_map [ _r1 = _1 ]
                 ;
 
             species_params

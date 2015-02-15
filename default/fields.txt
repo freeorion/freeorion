@@ -12,7 +12,7 @@ FieldType
                 MoveTowards speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
                 MoveInOrbit speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
 
-                SetSize Value - 0.3*(Count condition = And [
+                SetSize value = Value - 0.3*(Count condition = And [
                     System
                     WithinDistance distance = 80 condition = Source
                 ])
@@ -22,8 +22,8 @@ FieldType
             scope = WithinDistance distance = Source.Size condition = Source
             stackinggroup = "ION_STORM_STEALTH_DETECTION_REDUCTION"
             effects = [
-                SetStealth Value - 40
-                SetDetection Value - 40
+                SetStealth value = Value - 40
+                SetDetection value = Value - 40
             ]
             
         EffectsGroup    // dissipate when small
@@ -47,7 +47,7 @@ FieldType
                 MoveTowards speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
                 MoveInOrbit speed = Source.StarlaneSpeed/1.4 x = UniverseCentreX y = UniverseCentreY
 
-                SetSize Value - 0.1*(Count condition = And [
+                SetSize value = Value - 0.1*(Count condition = And [
                     System
                     WithinDistance distance = 80 condition = Source
                 ])
@@ -59,7 +59,7 @@ FieldType
                 WithinDistance distance = Source.Size condition = Source
             ]
             stackinggroup = "MOLECULAR_CLOUD_SHIELD_REDUCTION"
-            effects = SetMaxShield Value - 15
+            effects = SetMaxShield value = Value - 15
             
         EffectsGroup    // dissipate when small
             scope = Source
@@ -80,7 +80,7 @@ FieldType
                 Star type = NoStar
             ]            
             effects =
-                SetSize Value + Random(-0.8, 0.3)
+                SetSize value = Value + RandomNumber(-0.8, 0.3)
 
         EffectsGroup    // shrink slowly when in no-star system
             scope = Source
@@ -89,7 +89,7 @@ FieldType
                 Star type = NoStar
             ]            
             effects =
-                SetSize Value + Random(-0.8, 0)
+                SetSize value = Value + RandomNumber(-0.8, 0)
         
         EffectsGroup    // spawn new star when small enough
             scope = And [ 
@@ -116,7 +116,7 @@ FieldType
                 Star type = NoStar
             ]
             effects =
-                SetSize Value + Random(-0.5, 0.3)
+                SetSize value = Value + RandomNumber(-0.5, 0.3)
 
         EffectsGroup    // shrink slowly when in no-star system
             scope = Source
@@ -125,7 +125,7 @@ FieldType
                 Star type = NoStar
             ]
             effects =
-                SetSize Value + Random(-0.5, 0)
+                SetSize value = Value + RandomNumber(-0.5, 0)
         
         EffectsGroup    // spawn new star when small enough
             scope = And [
@@ -139,3 +139,4 @@ FieldType
             effects = SetStarType type = White         
     ]
     graphic = "nebulae/nebula15.png"
+    

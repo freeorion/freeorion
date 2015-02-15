@@ -8,10 +8,10 @@ import ExplorationAI
 import FleetUtilsAI
 import ProductionAI
 import ResourcesAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType
 from MilitaryAI import MinThreat
 import PlanetUtilsAI
-from tools import dict_from_map
+from freeorion_tools import dict_from_map
 
 
 ## moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -62,6 +62,7 @@ class AIstate(object):
         self.__shipRoleByDesignID = {}
         self.__fleetRoleByID = {}
         self.designStats = {}
+        self.design_rating_adjustments = {}
         self.__priorityByType = {}
 
         #self.__explorableSystemByType = {}
@@ -134,6 +135,7 @@ class AIstate(object):
 
     def refresh(self):
         """turn start AIstate cleanup/refresh"""
+        universe = fo.getUniverse()
         #checks exploration border & clears roles/missions of missing fleets & updates fleet locs & threats
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
@@ -141,6 +143,17 @@ class AIstate(object):
         exploration_center = PlanetUtilsAI.get_capital_sys_id()
         if exploration_center == -1:  # a bad state probably from an old savegame, or else empire has lost (or almost has)
             exploration_center = self.origHomeSystemID
+
+        # check if planets in cache is still present. Remove destroyed.
+        for system_id, info in sorted(self.systemStatus.items()):
+            planet_dict = info.get('planets', {})
+            cache_planet_set = set(planet_dict)
+            system_planet_set = set(universe.getSystem(system_id).planetIDs)
+            diff = cache_planet_set - system_planet_set
+            if diff:
+                print "Removing destroyed planets from systemStatus for system %s: planets to be removed: %s" % (system_id, sorted(diff))
+                for key in diff:
+                    del planet_dict[key]
 
         ExplorationAI.graphFlags.clear()
         if fo.currentTurn() < 50:
@@ -156,7 +169,6 @@ class AIstate(object):
             ExplorationAI.follow_vis_system_connections(sysID, exploration_center)
         newlyExplored = ExplorationAI.update_explored_systems()
         nametags = []
-        universe = fo.getUniverse()
         for sysID in newlyExplored:
             newsys = universe.getSystem(sysID)
             nametags.append("ID:%4d -- %20s" % (sysID, (newsys and newsys.name) or"name unknown"))  # an explored system *should* always be able to be gotten
@@ -170,7 +182,6 @@ class AIstate(object):
         self.__clean_fleet_missions(FleetUtilsAI.get_empire_fleet_ids())
         print "Fleets lost by system: %s" % fleetsLostBySystem
         self.update_system_status()
-        ExplorationAI.update_scout_fleets()  # should do this after clearing dead fleets, currently should be already done here
 
     def assess_self_rating(self):
         return 1
@@ -262,6 +273,9 @@ class AIstate(object):
         empire = fo.getEmpire()
         empireID = fo.empireID()
         destroyedObjIDs = universe.destroyedObjectIDs(empireID)
+        supply_unobstructed_systems = set(empire.supplyUnobstructedSystems)
+        min_hidden_attack = 4
+        min_hidden_health = 8
         if sysIDList is None:
             sysIDList = universe.systemIDs  # will normally look at this, the list of all known systems
 
@@ -273,6 +287,7 @@ class AIstate(object):
         myFleetsBySystem = {}
         fleetSpotPosition = {}
         sawEnemiesAtSystem = {}
+        my_milship_rating = ProductionAI.curBestMilShipRating()
         current_turn = fo.currentTurn()
         for fleetID in universe.fleetIDs:
             #if ( fleetID in self.fleetStatus ): # only looking for enemies here
@@ -301,6 +316,9 @@ class AIstate(object):
                             enemiesBySystem.setdefault(thisSysID, []).append(fleetID)
                             if not fleet.ownedBy(-1):
                                 self.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(fleetID)
+                                rating = self.rate_fleet(fleetID, self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
+                                if rating.get('overall', 0) > 0.25 * my_milship_rating:
+                                    self.misc.setdefault('dangerous_enemies_sighted', {}).setdefault(current_turn, []).append(fleetID)
         e_f_dict = [cur_e_fighters, old_e_fighters][len(cur_e_fighters) == 1]
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.empire_standard_enemy = std_fighter
@@ -391,7 +409,7 @@ class AIstate(object):
             if not partialVisTurn == current_turn:  # (universe.getVisibility(sysID, self.empireID) >= fo.visibility.partial):
                 # print "Stale visibility for system %d ( %s ) -- last seen %d, current Turn %d -- basing threat assessment on old info and lost ships"%(sysID, sysStatus.get('name', "name unknown"), partialVisTurn, currentTurn)
                 sysStatus['fleetThreat'] = int(max(enemyRating, 0.98*sysStatus.get('fleetThreat', 0), 1.1 * lostFleetRating))
-                sysStatus['totalThreat'] = (pattack + enemyAttack + sysStatus.get('monsterThreat', 0) ** 0.5) * (phealth + enemyHealth + sysStatus.get('monsterThreat', 0) ** 0.5)
+                sysStatus['totalThreat'] = ((pattack + enemyAttack + sysStatus.get('monsterThreat', 0)) ** 0.8) * ((phealth + enemyHealth + sysStatus.get('monsterThreat', 0))** 0.6)
             else:  # system considered visible #TODO: reevaluate as visibility rules change
                 enemyattack, enemyhealth, enemythreat = 0, 0, 0
                 monsterattack, monsterhealth, monsterthreat = 0, 0, 0
@@ -408,6 +426,10 @@ class AIstate(object):
                 sysStatus['fleetThreat'] = int(max(enemyattack*enemyhealth, lostFleetRating))  # fleetThreat always includes monster threat, and may not have seen stealthed enemies
                 sysStatus['monsterThreat'] = monsterattack * monsterhealth
                 sysStatus['totalThreat'] = int(max(lostFleetRating, (enemyattack + monsterattack+pattack) * (enemyhealth+monsterhealth + phealth)))
+                
+            if (partialVisTurn > 0) and (sysID not in supply_unobstructed_systems): # has been seen with Partial Vis, but is currently supply-blocked
+                sysStatus['fleetThreat'] = max(sysStatus['fleetThreat'], min_hidden_attack * min_hidden_health)
+                sysStatus['totalThreat'] = max(sysStatus['totalThreat'], ((pattack + min_hidden_attack) ** 0.8) * ((phealth + min_hidden_health) ** 0.6))
 
         #assess secondary threats (threats of surrounding systems) and update my fleet rating
         for sysID in sysIDList:
@@ -686,11 +708,10 @@ class AIstate(object):
         """rate a design, including species pilot effects
             returns dict of attacks {dmg1:count1}, attack, shields, structure"""
         weapons_grade, shields_grade = self.get_piloting_grades(species_name)
-        design_stats = dict( self.get_design_id_stats(design_id) ) #new dict so we don't modify our original data
+        design_stats = dict( self.get_design_id_stats(design_id) )  # new dict so we don't modify our original data
         myattacks = self.weight_attacks(design_stats.get('attacks', {}), weapons_grade)
         design_stats['attacks'] = myattacks
-        #mystructure = design_stats.get('structure', 1)
-        myshields = self.weight_shields(design_stats.get('shields', 0), shields_grade) #designs currently return zero shield value
+        myshields = self.weight_shields(design_stats.get('shields', 0), shields_grade)
         design_stats['attack'] = sum([a * b for a, b in myattacks.items()])
         design_stats['shields'] = myshields
         return design_stats
@@ -761,9 +782,15 @@ class AIstate(object):
         # pass
         return ship_stats
 
+    def calc_tactical_rating_adjustment(self, partslist):
+        adjust_dict = {"FU_IMPROVED_ENGINE_COUPLINGS": 0.1,
+                       "FU_N_DIMENSIONAL_ENGINE_MATRIX": 0.21
+                       }
+        return sum([adjust_dict.get(partname, 0.0) for partname in partslist])
+
     def get_design_id_stats(self, designID):
         if designID is None:
-            return {'attack':0, 'structure':0, 'shields':0, 'attacks':{}}
+            return {'attack':0, 'structure':0, 'shields':0, 'attacks':{}, 'tact_adj':0}
         elif designID in self.designStats:
             return self.designStats[designID]
         design = fo.getShipDesign(designID)
@@ -793,9 +820,10 @@ class AIstate(object):
             elif "DT_DETECTOR_1" in parts:
                 detect_bonus = 1
             #stats = {'attack':design.attack, 'structure':(design.structure + detect_bonus), 'shields':shields, 'attacks':attacks}
-            stats = {'attack': design.attack, 'structure': design.structure, 'shields': shields, 'attacks': attacks}
+            stats = {'attack': design.attack, 'structure': design.structure, 'shields': shields, 
+                     'attacks': attacks, 'tact_adj': self.calc_tactical_rating_adjustment(parts)}
         else:
-            stats = {'attack':0, 'structure':0, 'shields':0, 'attacks':{}}
+            stats = {'attack':0, 'structure':0, 'shields':0, 'attacks':{}, 'tact_adj': 0}
         self.designStats[designID] = stats
         return stats
 
@@ -997,12 +1025,13 @@ class AIstate(object):
                         mainMissionTargets = mainFleetMission.getAITargets(mainMissionType)
                         if mainMissionTargets:
                             mMT0=mainMissionTargets[0]
-                            if mMT0.target_type == AITargetType.TARGET_SYSTEM:
+                            if mMT0.target_type == TargetType.TARGET_SYSTEM:
                                 status['sysID'] = mMT0.target_id  # hmm, but might still be a fair ways from here
         self.shipCount = shipCount
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])
         self.empire_standard_fighter = std_fighter
         print "------------------------"
+        # Next string used in charts. Don't modify it!
         print "Empire Ship Count: ", shipCount
         print "Empire standard fighter summary: ", std_fighter
         print "------------------------"

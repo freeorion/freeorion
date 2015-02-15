@@ -119,6 +119,7 @@ public:
         m_preferred_focus(preferred_focus),
         m_planet_environments(planet_environments),
         m_effects(effects),
+        m_location(0),
         m_playable(params.playable),
         m_native(params.native),
         m_can_colonize(params.can_colonize),
@@ -126,6 +127,8 @@ public:
         m_tags(tags),
         m_graphic(graphic)
     {}
+
+    ~Species();
     //@}
 
     /** \name Accessors */ //@{
@@ -137,19 +140,21 @@ public:
     const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires
     const std::map<std::string, double>&    OtherSpeciesOpinions() const{ return m_other_species_opinions; }///< returns the positive/negative opinions of this species about other species
 
-    std::string                     Dump() const;                                                           ///< returns a data file format representation of this object
-    const std::vector<FocusType>&   Foci() const                        { return m_foci; }                  ///< returns the focus types this species can use
-    const std::string&              PreferredFocus() const              { return m_preferred_focus; }       ///< returns the name of the planetary focus this species prefers. Default for new colonies and may affect happiness if on a different focus?
-    const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const   { return m_planet_environments; }   ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
-    PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;         ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
+    const Condition::ConditionBase* Location() const;
+
+    std::string                     Dump() const;                                           ///< returns a data file format representation of this object
+    const std::vector<FocusType>&   Foci() const            { return m_foci; }              ///< returns the focus types this species can use
+    const std::string&              PreferredFocus() const  { return m_preferred_focus; }   ///< returns the name of the planetary focus this species prefers. Default for new colonies and may affect happiness if on a different focus?
+    const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
+    PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const  { return m_effects; }   ///< returns the EffectsGroups that encapsulate the effects that species of this type have
-    bool                            Playable() const        { return m_playable; }              ///< returns whether this species is a suitable starting species for players
-    bool                            Native() const          { return m_native; }                ///< returns whether this species is a suitable native species (for non player-controlled planets)
-    bool                            CanColonize() const     { return m_can_colonize; }          ///< returns whether this species can colonize planets
-    bool                            CanProduceShips() const { return m_can_produce_ships; }     ///< returns whether this species can produce ships
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const { return m_effects; }///< returns the EffectsGroups that encapsulate the effects that species of this type have
+    bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
+    bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
+    bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
+    bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
     const std::set<std::string>& Tags() const               { return m_tags; }
-    const std::string&              Graphic() const         { return m_graphic; }               ///< returns the name of the grapic file for this species
+    const std::string&              Graphic() const         { return m_graphic; }           ///< returns the name of the grapic file for this species
     //@}
 
     /** \name Mutators */ //@{
@@ -176,6 +181,8 @@ private:
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
+
+    mutable Condition::ConditionBase*       m_location;
 
     bool                                    m_playable;
     bool                                    m_native;
@@ -236,6 +243,29 @@ public:
       * string if there are no playable species. */
     const std::string&      RandomPlayableSpeciesName() const;
 
+    /** returns a map from species name to a set of object IDs that are the
+      * homeworld(s) of that species in the current game. */
+    std::map<std::string, std::set<int> >                           GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
+
+    /** returns a map from species name to a map from empire id to each the
+      * species' opinion of the empire */
+    const std::map<std::string, std::map<int, double> >&            GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+
+    /** returns opinion of species with name \a species_name about empire with
+      * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
+    double                                                          SpeciesEmpireOpinion(const std::string& species_name,
+                                                                                         int empire_id) const;
+
+    /** returns a map from species name to a map from other species names to the
+      * opinion of the first species about the other species. */
+    const std::map<std::string, std::map<std::string, double> >&    GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+
+    /** returns opinion of species with name \a opinionated_species_name about
+      * other species with name \a rated_species_name or 0.0 if there is no
+      * such opinion yet recorded. */
+    double                                                          SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
+                                                                                          const std::string& rated_species_name) const;
+
     /** returns the instance of this singleton class; you should use the free
       * function GetSpeciesManager() instead */
     static SpeciesManager&  GetSpeciesManager();
@@ -245,7 +275,20 @@ public:
     /** sets all species to have no homeworlds.  this is useful when generating
       * a new game, when any homeworlds species had in the previous game should
       * be removed before the new game's homeworlds are added. */
-    void                    ClearSpeciesHomeworlds();
+    void    ClearSpeciesHomeworlds();
+
+    /** sets the opinions of species (indexed by name string) of empires (indexed
+      * by id) as a double-valued number. */
+    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions);
+    void    SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, double opinion);
+
+    /** sets the opinions of species (indexed by name string) of other species
+      * (indexed by name string) as a double-valued number. */
+    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions);
+    void    SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, double opinion);
+
+    /** clears all species opinion data */
+    void    ClearSpeciesOpinions();
     //@}
 
 private:
@@ -256,25 +299,9 @@ private:
       * specified in \a species_homeworld_ids */
     void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
 
-    /* */
-    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions);
-
-    /* */
-    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions);
-
-    /** returns a map from species name to a set of object IDs that are the
-      * homeworld(s) of that species in the current game. */
-    std::map<std::string, std::set<int> >                   GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
-
-    /** returns a map from species name to a map from empire id to each the
-      * species' opinion of the empire */
-    std::map<std::string, std::map<int, double> >           GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
-
-    /** returns a map from species name to a map from other species names to the
-      * opinion of the first species about the other species. */
-    std::map<std::string, std::map<std::string, double> >   GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
-
-    std::map<std::string, Species*> m_species;
+    std::map<std::string, Species*>                         m_species;
+    std::map<std::string, std::map<int, double> >           m_species_empire_opinions;
+    std::map<std::string, std::map<std::string, double> >   m_species_species_opinions;
 
     static SpeciesManager* s_instance;
 

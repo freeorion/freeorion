@@ -1,4 +1,3 @@
-
 # pylint: disable=line-too-long
 """ The FreeOrionAI module contains the methods which can be made by the C AIInterface;
 these methods in turn activate other portions of the python AI code"""
@@ -19,9 +18,8 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from tools import UserString
-from debug_tools import chat_on_error, print_error
-from timing import Timer
+from freeorion_tools import UserString, chat_on_error, print_error
+from freeorion_debug import Timer
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)
@@ -44,9 +42,10 @@ foAIstate = None
 
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
-def initFreeOrionAI(): # pylint: disable=invalid-name
+def initFreeOrionAI():  # pylint: disable=invalid-name
     """called by client to initialize AI """
-    print "Initialized FreeOrion Python AI"
+    ai_config = fo.getAIConfigStr()
+    print "Initialized FreeOrion Python AI with ai_config string '%s'" % ai_config
     print(sys.path)
 
 
@@ -164,13 +163,16 @@ def generateOrders(): # pylint: disable=invalid-name
     planet = None
     if planetID is not None:
         planet = universe.getPlanet(planetID)
+    aggression_name = fo.aggression.values[foAIstate.aggression].name
     print "***************************************************************************"
-    print "***************************************************************************"
+    print "**********   String for chart. Do not modify.   ***************************"
     print ("Generating Orders")
-    res_idx = ResearchAI.get_research_index()
-    print "EmpireID: " + str(empire.empireID) + " Name: " + empire.name+ "_"+str(empire.empireID) +"_pid:"+str(fo.playerID())+"_"+fo.playerName()+"_"+("RIdx_%d"%res_idx)+"_"+_aggressions.get(foAIstate.aggression, "?") + " Turn: " + str(fo.currentTurn())
-    empireColor = empire.colour
-    print "EmpireColors: %d %d %d %d"% (empireColor.r, empireColor.g, empireColor.b, empireColor.a)
+    print ("EmpireID: {empire.empireID}"
+           " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
+           " Turn: {turn}").format(empire=empire,  p_id=fo.playerID(), p_name=fo.playerName(),
+                                  res_idx=ResearchAI.get_research_index(), turn=fo.currentTurn(),
+                                  aggression=aggression_name.capitalize())
+    print "EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire)
     if planet:
         print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName
     else:
@@ -181,7 +183,7 @@ def generateOrders(): # pylint: disable=invalid-name
     if fo.currentTurn() == 1:
         declareWarOnAll()
         human_player = fo.empirePlayerID(1)
-        fo.sendChatMessage(human_player,  "%s Empire, Aggression: %s"%(empire.name, _aggressions.get(foAIstate.aggression,  "?")))
+        fo.sendChatMessage(human_player,  '%s Empire (%s):\n"Ave, Human, morituri te salutant!"' % (empire.name, aggression_name))
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
     foAIstate.split_new_fleets()

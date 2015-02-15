@@ -175,6 +175,15 @@ namespace {
         species->RemoveHomeworld(homeworld_id);
     }
 
+    bool SpeciesCanColonize(const std::string& species_name) {
+        Species* species = SpeciesManager::GetSpeciesManager().GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "PythonUniverseGenerator::SpeciesCanColonize: couldn't get species " << species_name;
+            return false;
+        }
+        return species->CanColonize();
+    }
+
     list GetAllSpecies() {
         list            species_list;
         SpeciesManager& species_manager = GetSpeciesManager();
@@ -610,8 +619,8 @@ namespace {
     double LinearDistance(int system1_id, int system2_id)
     { return GetUniverse().LinearDistance(system1_id, system2_id); }
 
-    int JumpDistance(int system1_id, int system2_id)
-    { return GetUniverse().JumpDistance(system1_id, system2_id); }
+    int JumpDistanceBetweenSystems(int system1_id, int system2_id)
+    { return GetUniverse().JumpDistanceBetweenSystems(system1_id, system2_id); }
 
     list GetAllObjects() {
         list py_all_objects;
@@ -1155,6 +1164,7 @@ BOOST_PYTHON_MODULE(fo_universe_generator) {
     def("species_get_planet_environment",       SpeciesGetPlanetEnvironment);
     def("species_add_homeworld",                SpeciesAddHomeworld);
     def("species_remove_homeworld",             SpeciesRemoveHomeworld);
+    def("species_can_colonize",                 SpeciesCanColonize);
     def("get_all_species",                      GetAllSpecies);
     def("get_playable_species",                 GetPlayableSpecies);
     def("get_native_species",                   GetNativeSpecies);
@@ -1190,7 +1200,7 @@ BOOST_PYTHON_MODULE(fo_universe_generator) {
     def("get_universe_width",                   GetUniverseWidth);
     def("set_universe_width",                   SetUniverseWidth);
     def("linear_distance",                      LinearDistance);
-    def("jump_distance",                        JumpDistance);
+    def("jump_distance",                        JumpDistanceBetweenSystems);
     def("get_all_objects",                      GetAllObjects);
     def("create_system",                        CreateSystem);
     def("create_planet",                        CreatePlanet);

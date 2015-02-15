@@ -5,6 +5,7 @@
 #include "../util/Logger.h"
 #include "../util/i18n.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
@@ -19,6 +20,7 @@
 #include <boost/timer.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>
+#include <boost/python/scope.hpp>
 
 using boost::python::class_;
 using boost::python::def;
@@ -51,6 +53,7 @@ const Empire*       (*AIIntGetEmpireInt)(int) =                 &AIInterface::Ge
 
 int                 (*AIIntNewFleet)(const std::string&, int) = &AIInterface::IssueNewFleetOrder;
 int                 (*AIIntScrap)(int)                        = &AIInterface::IssueScrapOrder;
+
 
 
 namespace {
@@ -125,6 +128,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("currentTurn",              AIInterface::CurrentTurn);
 
+    def("getAIConfigStr",           AIInterface::GetAIConfigStr,    return_value_policy<return_by_value>());
+    def("getAIDir",                 AIInterface::GetAIDir,          return_value_policy<return_by_value>());
+
     def("updateMeterEstimates",     AIInterface::UpdateMeterEstimates);
     def("updateResourcePools",      AIInterface::UpdateResourcePools);
     def("updateResearchQueue",      AIInterface::UpdateResearchQueue);
@@ -160,6 +166,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("userString",               make_function(&UserString,      return_value_policy<copy_const_reference>()));
 
     def("getGalaxySetupData",       AIInterface::GetGalaxySetupData,    return_value_policy<copy_const_reference>());
+
+    boost::python::scope().attr("INVALID_GAME_TURN") = INVALID_GAME_TURN;
 
 
     //////////////////
@@ -277,7 +285,7 @@ PythonAI::PythonAI() {
 
     try {
         // tell Python the path in which to locate AI script file
-        std::string AI_path = (GetResourceDir() / "AI").string();
+        std::string AI_path = (GetResourceDir() / GetOptionsDB().GetValueString("ai-path")).string();
         std::string path_command = "sys.path.append(r'" + AI_path + "')";
         object ignored = exec(path_command.c_str(), s_main_namespace, s_main_namespace);
 

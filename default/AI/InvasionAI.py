@@ -1,3 +1,5 @@
+import math
+
 import freeOrionAIInterface as fo # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
@@ -10,8 +12,8 @@ import math
 import ProductionAI
 import ColonisationAI
 import MilitaryAI
-from tools import dict_from_map, tech_is_complete
-from timing import Timer
+from freeorion_tools import dict_from_map, tech_is_complete
+from freeorion_debug import Timer
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
 
@@ -38,7 +40,7 @@ def get_invasion_fleets():
     fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
     fleet_supplyable_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(fleet_supplyable_system_ids)
 
-    prime_invadable_system_ids = set(ColonisationAI.annexableSystemIDs)
+    prime_invadable_system_ids = set(ColonisationAI.annexable_system_ids)
     prime_invadable_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(prime_invadable_system_ids)
 
     visible_system_ids = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
@@ -107,14 +109,14 @@ def get_invasion_fleets():
             if planet_partial_vis_turn < sys_partial_vis_turn:
                 #print "rejecting %s due to stealth"%planet.name
                 continue
-            for pid2 in ColonisationAI.empireSpeciesSystems.get(sys_id,  {}).get('pids', []):
+            for pid2 in ColonisationAI.empire_species_systems.get(sys_id,  {}).get('pids', []):
                 if available_pp.get(pid2,  0) < 2: #TODO: improve troop base PP sufficiency determination
                     #print "rejecting %s due to insufficient avail PP"%planet.name
                     break
                 planet2 = universe.getPlanet(pid2)
                 if not planet2: 
                     continue
-                if (pid not in  foAI.foAIstate.qualifyingTroopBaseTargets) and (planet2.speciesName  in ColonisationAI.empireShipBuilders):
+                if (pid not in  foAI.foAIstate.qualifyingTroopBaseTargets) and (planet2.speciesName  in ColonisationAI.empire_ship_builders):
                     #print "Adding %s to Troop Bases (SpaceInvaders) potential target list, from %s"%(planet.name, planet2.name) 
                     foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid,  [pid2,  -1])
                     break
@@ -200,7 +202,7 @@ def get_invasion_targeted_planet_ids(planetIDs, missionType, empireID):
         planet = universe.getPlanet(planetID)
         # add planets that are target of a mission
         for invasionAIFleetMission in invasionAIFleetMissions:
-            aiTarget = AITarget.AITarget(EnumsAI.AITargetType.TARGET_PLANET, planetID)
+            aiTarget = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, planetID)
             if invasionAIFleetMission.has_target(missionType, aiTarget):
                 targetedPlanets.append(planetID)
 
@@ -296,10 +298,10 @@ def evaluate_invasion_planet(planetID, missionType, fleetSupplyablePlanetIDs, em
     specName=planet.speciesName
     species=fo.getSpecies(specName)
     if not species: #this call iterates over this Empire's available species with which it could colonize after an invasion
-        planetEval = ColonisationAI.assign_colonisation_values([planetID], EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, [planetID], None, empire, detail)
-        popVal = max( 0.75*planetEval.get(planetID, [0])[0], ColonisationAI.evaluate_planet(planetID, EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST, [planetID], None, empire, detail) )
+        planetEval = ColonisationAI.assign_colonisation_values([planetID], EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, None, empire, detail)
+        popVal = max( 0.75*planetEval.get(planetID, [0])[0], ColonisationAI.evaluate_planet(planetID, EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST, None, empire, detail) )
     else:
-        popVal = ColonisationAI.evaluate_planet(planetID, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, [planetID], specName, empire, detail)
+        popVal = ColonisationAI.evaluate_planet(planetID, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, specName, empire, detail)
 
     bldTally=0
     for bldType in [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]:
@@ -360,13 +362,13 @@ def evaluate_invasion_planet(planetID, missionType, fleetSupplyablePlanetIDs, em
     enemyVal=0
     if planet.owner!=-1 : #value in taking this away from an enemy
         enemyVal= 20* (planet.currentMeterValue(fo.meterType.targetIndustry) + 2*planet.currentMeterValue(fo.meterType.targetResearch))
-    if pSysID in ColonisationAI.annexableSystemIDs: #TODO: extend to rings
+    if pSysID in ColonisationAI.annexable_system_ids: #TODO: extend to rings
         supplyVal = 100
-    elif pSysID in ColonisationAI.annexableRing1:
+    elif pSysID in ColonisationAI.annexable_ring1:
         supplyVal = 200
-    elif pSysID in ColonisationAI.annexableRing2:
+    elif pSysID in ColonisationAI.annexable_ring2:
         supplyVal = 300
-    elif pSysID in ColonisationAI.annexableRing3:
+    elif pSysID in ColonisationAI.annexable_ring3:
         supplyVal = 400
     if max_path_threat > 0.5 * mil_ship_rating:
         if max_path_threat < 3 * mil_ship_rating:
@@ -423,7 +425,7 @@ def send_invasion_fleets(invasionFleetIDs, evaluatedPlanets, missionType):
                 continue
             else:
                 theseFleets = foundFleets
-        aiTarget = AITarget.AITarget(EnumsAI.AITargetType.TARGET_PLANET, pID)
+        aiTarget = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, pID)
         print "assigning invasion fleets %s to target %s"%(theseFleets, aiTarget)
         for fleetID in theseFleets:
             fleet=universe.getFleet(fleetID)
@@ -490,7 +492,7 @@ def assign_invasion_fleets_to_invade():
                 availTroopBaseFleetIDs.discard(fid2)
             availTroopBaseFleetIDs.discard(fid)
             foAI.foAIstate.qualifyingTroopBaseTargets[targetID][1] = -1 #TODO: should probably delete
-            aiTarget = AITarget.AITarget(EnumsAI.AITargetType.TARGET_PLANET, targetID)
+            aiTarget = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, targetID)
             aiFleetMission = foAI.foAIstate.get_fleet_mission(fid)
             aiFleetMission.add_target(EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, aiTarget)
     
