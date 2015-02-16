@@ -74,7 +74,7 @@ set(freeorion_HEADER
     ../../UI/FleetButton.h
     ../../UI/FleetWnd.h
     ../../UI/GalaxySetupWnd.h
-    ../../UI/GLClientAndServerBuffer.h
+    ../../GG/GG/GLClientAndServerBuffer.h
     ../../UI/GraphControl.h
     ../../UI/Hotkeys.h
     ../../UI/InfoPanels.h
@@ -125,7 +125,7 @@ set(freeorion_SOURCES
     ../../UI/FleetButton.cpp
     ../../UI/FleetWnd.cpp
     ../../UI/GalaxySetupWnd.cpp
-    ../../UI/GLClientAndServerBuffer.cpp
+    ../../GG/src/GLClientAndServerBuffer.cpp
     ../../UI/GraphControl.cpp
     ../../UI/Hotkeys.cpp
     ../../UI/InfoPanels.cpp

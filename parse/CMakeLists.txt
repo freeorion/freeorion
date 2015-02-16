@@ -21,7 +21,6 @@ set (freeorionparse_HEADER
     Parse.h
     ParseImpl.h
     ReportParseError.h
-    ShipPartStatsParser.h
     Tokens.h
     ValueRefParser.h
     ValueRefParserImpl.h
@@ -67,7 +66,6 @@ set (freeorionparse_SOURCE
     ShipDesignsParser.cpp
     ShipHullsParser.cpp
     ShipPartsParser.cpp
-    ShipPartStatsParser.cpp
     SpecialsParser.cpp
     SpeciesParser.cpp
     StarTypeValueRefParser.cpp
