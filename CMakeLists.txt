@@ -450,7 +450,6 @@ else ()
         install(
             FILES
             OIS.dll
-            OgreMain.dll
             OpenAL32.dll
             Plugin_OctreeSceneManager.dll
             Plugin_ParticleFX.dll

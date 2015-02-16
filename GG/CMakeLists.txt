@@ -47,10 +47,10 @@ option(BUILD_SDL_DRIVER
        ON)
 option(BUILD_OGRE_DRIVER
        "Builds GG Ogre support (the GiGiOgre library)."
-       ON)
+       OFF)
 option(BUILD_OGRE_OIS_PLUGIN
        "Builds OIS input plugin for the GiGiOgre library."
-       ON)
+       OFF)
 option(BUILD_DOCUMENTATION
        "Builds HTML documentation (requires Doxygen)."
        OFF)
@@ -289,21 +289,21 @@ cpack_add_component(
     DEPENDS COMPONENT_GIGI
 )
 
-cpack_add_component(
-    COMPONENT_GIGIOGRE
-    DISPLAY_NAME GiGiOgre
-    DESCRIPTION "An Ogre input driver (http://www.ogre3d.org).  Note that Ogre itself does not include proper input support.  The OIS input plugin is recommended."
-    GROUP COMPONENT_GROUP_RUNTIME
-    DEPENDS COMPONENT_GIGI
-)
+# cpack_add_component(
+#     COMPONENT_GIGIOGRE
+#     DISPLAY_NAME GiGiOgre
+#     DESCRIPTION "An Ogre input driver (http://www.ogre3d.org).  Note that Ogre itself does not include proper input support.  The OIS input plugin is recommended."
+#     GROUP COMPONENT_GROUP_RUNTIME
+#     DEPENDS COMPONENT_GIGI
+# )
 
-cpack_add_component(
-    COMPONENT_GIGIOGREPLUGIN_OIS
-    DISPLAY_NAME "GiGiOgre OIS Plugin"
-    DESCRIPTION "An Ogre plugin using OIS (http://sourceforge.net/projects/wgois)."
-    GROUP COMPONENT_GROUP_RUNTIME
-    DEPENDS COMPONENT_GIGIOGRE
-)
+# cpack_add_component(
+#     COMPONENT_GIGIOGREPLUGIN_OIS
+#     DISPLAY_NAME "GiGiOgre OIS Plugin"
+#     DESCRIPTION "An Ogre plugin using OIS (http://sourceforge.net/projects/wgois)."
+#     GROUP COMPONENT_GROUP_RUNTIME
+#     DEPENDS COMPONENT_GIGIOGRE
+# )
 
 cpack_add_component(
     COMPONENT_GIGI_DEVEL
@@ -321,21 +321,21 @@ cpack_add_component(
     DEPENDS COMPONENT_GIGI_DEVEL COMPONENT_GIGISDL
 )
 
-cpack_add_component(
-    COMPONENT_GIGIOGRE_DEVEL
-    DISPLAY_NAME "GiGiOgre"
-    DESCRIPTION "The files necessary to do development with GiGiOgre."
-    GROUP COMPONENT_GROUP_DEVEL
-    DEPENDS COMPONENT_GIGI_DEVEL COMPONENT_GIGIOGRE
-)
+# cpack_add_component(
+#     COMPONENT_GIGIOGRE_DEVEL
+#     DISPLAY_NAME "GiGiOgre"
+#     DESCRIPTION "The files necessary to do development with GiGiOgre."
+#     GROUP COMPONENT_GROUP_DEVEL
+#     DEPENDS COMPONENT_GIGI_DEVEL COMPONENT_GIGIOGRE
+# )
 
-cpack_add_component(
-    COMPONENT_GIGIOGREPLUGIN_OIS_DEVEL
-    DISPLAY_NAME "GiGiOgre OIS Plugin"
-    DESCRIPTION "The files necessary to do development with GiGiOgre's OIS Plugin.  Only required for users who are statically linking against Ogre, and want to link to the OIS plugin at link-time."
-    GROUP COMPONENT_GROUP_DEVEL
-    DEPENDS COMPONENT_GIGIOGRE_DEVEL COMPONENT_GIGIOGREPLUGIN_OIS
-)
+# cpack_add_component(
+#     COMPONENT_GIGIOGREPLUGIN_OIS_DEVEL
+#     DISPLAY_NAME "GiGiOgre OIS Plugin"
+#     DESCRIPTION "The files necessary to do development with GiGiOgre's OIS Plugin.  Only required for users who are statically linking against Ogre, and want to link to the OIS plugin at link-time."
+#     GROUP COMPONENT_GROUP_DEVEL
+#     DEPENDS COMPONENT_GIGIOGRE_DEVEL COMPONENT_GIGIOGREPLUGIN_OIS
+# )
 
 cpack_add_component_group(
     COMPONENT_GROUP_RUNTIME

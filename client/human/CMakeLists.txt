@@ -13,7 +13,6 @@ if (NOT OPENGL_GLU_FOUND)
 endif ()
 
 find_package(OpenAL REQUIRED)
-find_package(OGRE REQUIRED)
 # Use pkg config to find sdl2 details,
 # since there is no official FindSDL2.cmake
 INCLUDE(FindPkgConfig)
@@ -30,7 +29,6 @@ include_directories(
     ${OPENGL_INCLUDE_DIR}
     ${GLEW_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIR}
-    ${OGRE_INCLUDE_DIRS}
     ${SDL2_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
@@ -164,7 +162,6 @@ set(freeorion_LINK_LIBS
     ${GLEW_LIBRARIES}
     ${OPENAL_LIBRARY}
     ${Boost_LIBRARIES}
-    ${OGRE_LIBRARIES}
     ${SDL2_LIBRARIES}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
