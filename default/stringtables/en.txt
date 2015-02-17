@@ -9505,7 +9505,7 @@ Ground Troop Pod
 GT_TROOP_POD_DESC
 '''Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet. 
   * The troops can only be used for one invasion.  
-  * The ships carrying troops during an invation come in for a fast hard landing and are unusable afterwards.'''
+  * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
 
 SP_DISTORTION_MODULATOR
 Distortion Modulator
