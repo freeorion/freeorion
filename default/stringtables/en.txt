@@ -3652,7 +3652,7 @@ FUEL_TEXT
 SUPPLY_TITLE
 Supply
 SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures. A set of systems with supply connections between them are called a 'Resource Group'.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.  A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes.  If PP is currently being wasted within the Reo
+'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures. A set of systems with supply connections between them are called a 'Resource Group'.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.  A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes.  If PP is currently being wasted within the Resource Group the outer bands of the core starlanes will be a contrasting color.
 
 The supply meter on a planet represents the number of star-lanes supply can reach.'''
 
