@@ -343,8 +343,8 @@ void HumanClientApp::StartServer() {
 #endif
 
     std::vector<std::string> args;
-    std::string ai_config = GetOptionsDB().GetValueString("ai-config");
-    std::string ai_path = GetOptionsDB().GetValueString("ai-path");
+    std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
+    std::string ai_path = GetOptionsDB().Get<std::string>("ai-path");
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource-dir");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
