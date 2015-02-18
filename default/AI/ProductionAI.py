@@ -350,7 +350,7 @@ def addMarkDesigns():
     #testhull = fo.getHullType("SH_BASIC_MEDIUM")
     #print "testhull: %s, structure: %.1f ; stealth: %.1f ; slots: %s" % (testhull.name, testhull.structure, testhull.stealth, [slot.name for slot in testhull.slots])
     #testpart = fo.getPartType(srb2%4)
-    #print "testpart: %s, class: %s ; capacity: %.1f ; slottypes: %s" % (testpart.partClass.name, testpart.name, testpart.capacity, [slot.name for slot in testpart.mountableSlotTypes])
+    #print "testpart: %s, class: %s ; capacity: %.1f ; slottypes: %s" % (testpart.name, testpart.partClass.name, testpart.capacity, [slot.name for slot in testpart.mountableSlotTypes])
 
     if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]:
         maxEM= 8
