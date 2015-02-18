@@ -4,8 +4,6 @@ namespace {
     struct double_parser_rules {
         double_parser_rules() {
             qi::_1_type _1;
-            qi::_a_type _a;
-            qi::_b_type _b;
             qi::_val_type _val;
             using phoenix::construct;
             using phoenix::new_;
