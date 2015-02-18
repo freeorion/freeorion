@@ -154,10 +154,10 @@ namespace AIInterface {
     { return AIClientApp::GetApp()->CurrentTurn(); }
 
     std::string GetAIConfigStr()
-    { return GetOptionsDB().GetValueString("ai-config"); }
+    { return GetOptionsDB().Get<std::string>("ai-config"); }
 
     std::string GetAIDir()
-    { return (GetResourceDir() / GetOptionsDB().GetValueString("ai-path")).string(); }
+    { return (GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string(); }
 
     const GalaxySetupData&  GetGalaxySetupData()
     { return AIClientApp::GetApp()->GetGalaxySetupData(); }

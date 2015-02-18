@@ -214,7 +214,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
             return;
         }
 
-        std::string ai_config = GetOptionsDB().GetValueString("ai-config");
+        std::string ai_config = GetOptionsDB().Get<std::string>("ai-config");
         // TODO: add other command line args to AI client invocation as needed
         std::vector<std::string> args;
         args.push_back("\"" + AI_CLIENT_EXE + "\"");
@@ -229,9 +229,9 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         args.push_back("--binary-serialization");
         args.push_back(GetOptionsDB().GetValueString("binary-serialization"));
         args.push_back("--ai-path");
-        args.push_back(GetOptionsDB().GetValueString("ai-path"));
+        args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
         Logger().debugStream() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
-        Logger().debugStream() << "ai-path set to '" << GetOptionsDB().GetValueString("ai-path") << "'";
+        Logger().debugStream() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
         if (!ai_config.empty()) {
             args.push_back("--ai-config");
             args.push_back(ai_config);

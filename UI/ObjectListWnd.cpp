@@ -1137,6 +1137,14 @@ public:
         m_selected(false)
     {
         SetChildClippingMode(ClipToClient);
+        TemporaryPtr<const ResourceCenter> rcobj = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
+        if (rcobj)
+            GG::Connect(rcobj->ResourceCenterChangedSignal, &ObjectPanel::RCChanged, this);
+    }
+
+    void RCChanged() {
+        RefreshCache();
+        Refresh();
     }
 
     std::string         SortKey(std::size_t column) const {
