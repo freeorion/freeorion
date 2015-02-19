@@ -416,7 +416,7 @@ namespace FreeOrionPython {
         class_<ShipDesign, noncopyable>("shipDesign", no_init)
             .add_property("id",                 make_function(&ShipDesign::ID,              return_value_policy<return_by_value>()))
             .def("name",                        make_function(&ShipDesign::Name,            return_value_policy<copy_const_reference>()))
-            .add_property("description",        make_function(&ShipDesign::Description,     return_value_policy<copy_const_reference>()))
+            .def("description",                 make_function(&ShipDesign::Description,     return_value_policy<copy_const_reference>()))
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,  return_value_policy<return_by_value>()))
             .add_property("battleSpeed",        make_function(&ShipDesign::BattleSpeed,     return_value_policy<return_by_value>()))
             .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,   return_value_policy<return_by_value>()))
@@ -452,7 +452,7 @@ namespace FreeOrionPython {
             .def("productionCost",              &PartType::ProductionCost)
             .def("productionTime",              &PartType::ProductionTime)
             .def("canMountInSlotType",          &PartType::CanMountInSlotType)
-            .def("capacity",                    &PartType::Capacity)
+            .add_property("capacity",           make_function(&PartType::Capacity,          return_value_policy<return_by_value>()))
         ;
         def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>());
 
