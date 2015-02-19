@@ -394,7 +394,7 @@ def get_colony_fleets():
     global cur_best_mil_ship_rating
     colonization_timer.start("Getting best milship rating")
 
-    cur_best_mil_ship_rating = ProductionAI.curBestMilShipRating()
+    cur_best_mil_ship_rating = ProductionAI.cur_best_mil_ship_rating()
     colonization_timer.start('Getting avail colony fleets')
 
     all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)

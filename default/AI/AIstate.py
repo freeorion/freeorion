@@ -287,7 +287,7 @@ class AIstate(object):
         myFleetsBySystem = {}
         fleetSpotPosition = {}
         sawEnemiesAtSystem = {}
-        my_milship_rating = ProductionAI.curBestMilShipRating()
+        my_milship_rating = ProductionAI.cur_best_mil_ship_rating()
         current_turn = fo.currentTurn()
         for fleetID in universe.fleetIDs:
             #if ( fleetID in self.fleetStatus ): # only looking for enemies here
@@ -882,7 +882,7 @@ class AIstate(object):
                           AIFleetMissionType.FLEET_MISSION_INVASION
                           ]:
                 thisRating = self.get_rating(fleetID)
-                if float(thisRating.get('overall', 0))/thisRating.get('nships', 1) >= 0.5 * ProductionAI.curBestMilShipRating():
+                if float(thisRating.get('overall', 0))/thisRating.get('nships', 1) >= 0.5 * ProductionAI.cur_best_mil_ship_rating():
                     makeAggressive = True
             else:
                 makeAggressive = True

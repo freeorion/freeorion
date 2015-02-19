@@ -48,7 +48,7 @@ def get_design_cost(cur_turn, design, pid):
 
 
 #get key routines declared for import by others before completing present imports, to avoid circularity problems
-def curBestMilShipRating():
+def cur_best_mil_ship_rating():
     if (fo.currentTurn()+1) in bestMilRatingsHistory:
         bestMilRatingsHistory.clear()
     if fo.currentTurn() not in bestMilRatingsHistory:
