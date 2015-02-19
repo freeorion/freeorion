@@ -190,7 +190,8 @@ namespace {
     boost::function<std::vector<int> (const ShipDesign&)> DirectFireStatsFunc =                 &DirectFireStatsP;
 
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
-    std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
+    // The following (PartsSlotType) is not currently used, but left as an example for this kind of wrapper
+    //std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
 
     std::vector<ShipSlotType> HullSlots(const HullType& hull) {
         std::vector<ShipSlotType> retval;
@@ -417,7 +418,6 @@ namespace FreeOrionPython {
         class_<ShipDesign, noncopyable>("shipDesign", no_init)
             .add_property("id",                 make_function(&ShipDesign::ID,              return_value_policy<return_by_value>()))
             .def("name",                        make_function(&ShipDesign::Name,            return_value_policy<copy_const_reference>()))
-            .add_property("description",        make_function(&ShipDesign::Description,     return_value_policy<copy_const_reference>()))
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,  return_value_policy<return_by_value>()))
             .add_property("battleSpeed",        make_function(&ShipDesign::BattleSpeed,     return_value_policy<return_by_value>()))
             .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,   return_value_policy<return_by_value>()))
@@ -440,7 +440,6 @@ namespace FreeOrionPython {
                                                     boost::mpl::vector<std::vector<int>, const ShipDesign&>()
                                                 ))
 
-            .def("partsInSlotType",             PartsSlotType,                              return_value_policy<return_by_value>())
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
         ;
         def("validShipDesign",                  ValidDesignHullAndParts);
