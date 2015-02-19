@@ -176,7 +176,8 @@ namespace {
     bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;
 
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
-    std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
+    // The following (PartsSlotType) is not currently used, but left as an example for this kind of wrapper
+    //std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
 
     std::vector<int>        AttackStatsP(const ShipDesign& ship_design) {
         const std::vector<std::string>& partslist = ship_design.Parts();
@@ -439,7 +440,6 @@ namespace FreeOrionPython {
                                                     boost::mpl::vector<std::vector<int>, const ShipDesign&>()
                                                 ))
 
-            .def("partsInSlotType",             PartsSlotType,                              return_value_policy<return_by_value>())
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
         ;
         def("validShipDesign",                  ValidDesignHullAndParts);
