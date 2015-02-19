@@ -384,7 +384,7 @@ def calculateMilitaryPriority():
     mySystems = set( AIstate.popCtrSystemIDs ).union( AIstate.outpostSystemIDs )
     targetSystems = set( PlanetUtilsAI.get_systems(targetPlanetIDs) )
 
-    curShipRating = ProductionAI.curBestMilShipRating()
+    curShipRating = ProductionAI.cur_best_mil_ship_rating()
     cSRR = curShipRating**0.5
 
     defense_ships_needed = 0

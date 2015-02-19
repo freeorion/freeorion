@@ -327,7 +327,7 @@ def evaluate_invasion_planet(planetID, missionType, fleetSupplyablePlanetIDs, em
     sysPThrt = system_status.get('planetThreat', 0 )
     sysTotThrt = sysFThrt + sysMThrt + sysPThrt
     max_path_threat = sysFThrt
-    mil_ship_rating = ProductionAI.curBestMilShipRating()
+    mil_ship_rating = ProductionAI.cur_best_mil_ship_rating()
     for path_sys_id in leastJumpsPath:
         path_leg_status = foAI.foAIstate.systemStatus.get(path_sys_id, {})
         path_leg_threat = path_leg_status.get('fleetThreat', 1000 ) + path_leg_status.get('monsterThreat', 0 )

@@ -397,7 +397,7 @@ class AIFleetMission(object):
                 if order_type == AIFleetOrderType.ORDER_MOVE:
                     this_system_id = fleet_order.target.target_id
                     this_status = foAI.foAIstate.systemStatus.setdefault(this_system_id, {})
-                    if this_status.get('monsterThreat', 0) > fo.currentTurn() * ProductionAI.curBestMilShipRating()/4.0:
+                    if this_status.get('monsterThreat', 0) > fo.currentTurn() * ProductionAI.cur_best_mil_ship_rating()/4.0:
                         first_mission = self.get_mission_types()[0] if self.get_mission_types() else AIFleetMissionType.FLEET_MISSION_INVALID
                         if (first_mission not in (AIFleetMissionType.FLEET_MISSION_ATTACK,
                                                    AIFleetMissionType.FLEET_MISSION_MILITARY,
