@@ -448,17 +448,22 @@ namespace FreeOrionPython {
 
         class_<PartType, noncopyable>("partType", no_init)
             .add_property("name",               make_function(&PartType::Name,              return_value_policy<copy_const_reference>()))
-            .add_property("class",              &PartType::Class)
+            .add_property("partClass",          &PartType::Class)
+            .add_property("capacity",           &PartType::Capacity)
+            .add_property("mountableSlotTypes", make_function(&PartType::MountableSlotTypes,return_value_policy<return_by_value>()))
             .def("productionCost",              &PartType::ProductionCost)
             .def("productionTime",              &PartType::ProductionTime)
             .def("canMountInSlotType",          &PartType::CanMountInSlotType)
-            .add_property("capacity",           make_function(&PartType::Capacity,          return_value_policy<return_by_value>()))
         ;
         def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>());
 
         class_<HullType, noncopyable>("hullType", no_init)
             .add_property("name",               make_function(&HullType::Name,              return_value_policy<copy_const_reference>()))
             .add_property("numSlots",           make_function(NumSlotsTotal,                return_value_policy<return_by_value>()))
+            .add_property("structure",          &HullType::Structure)
+            .add_property("stealth",            &HullType::Stealth)
+            .add_property("fuel",               &HullType::Fuel)
+            .add_property("starlaneSpeed",      &HullType::StarlaneSpeed)
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
             .add_property("slots",              make_function(
                                                     HullSlotsFunc,

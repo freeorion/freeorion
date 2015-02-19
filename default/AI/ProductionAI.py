@@ -346,6 +346,14 @@ def addMarkDesigns():
     isList=["", is1, is2, is3, is4, is5]
     ar1, ar2, ar3, ar4, ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE", "AR_NEUTRONIUM_PLATE"
     arList = ["", ar1, ar2, ar3, ar4, ar5]
+    
+    empire = fo.getEmpire()
+    print "Available Hulls: %s" % ([hull for hull in empire.availableShipHulls])
+    print "Available Ship Parts: %s" % ([hull for hull in empire.availableShipParts])
+    testhull = fo.getHullType("SH_BASIC_MEDIUM")
+    print "testhull: %s, structure: %.1f ; stealth: %.1f ; slots: %s" % (testhull.name, testhull.structure, testhull.stealth, [slot.name for slot in testhull.slots])
+    testpart = fo.getPartType(srb2%4)
+    print "testpart: %s, class: %s ; capacity: %.1f ; slottypes: %s" % (testpart.name, testpart.partClass.name, testpart.capacity, [slot.name for slot in testpart.mountableSlotTypes])
 
     if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]:
         maxEM= 8
