@@ -2584,7 +2584,6 @@ void DesignWnd::MainPanel::ReregisterDesigns() {
     }
 }
 
-
 void DesignWnd::MainPanel::Sanitize() {
     SetHull(0);
     m_design_name->SetText(UserString("DESIGN_NAME_DEFAULT"));
