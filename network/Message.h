@@ -16,9 +16,6 @@
 #include <map>
 #include <vector>
 
-struct CombatData;
-class CombatOrder;
-struct CombatSetupGroup;
 class EmpireManager;
 class SpeciesManager;
 class CombatLogManager;
@@ -40,7 +37,6 @@ namespace Moderator {
     class ModeratorAction;
 }
 
-typedef std::vector<CombatOrder> CombatOrderSet;
 typedef std::map<int, ShipDesign*> ShipDesignMap;
 
 /** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
@@ -78,10 +74,6 @@ public:
         TURN_PROGRESS,          ///< sent to clients to display a turn progress message
         PLAYER_STATUS,          ///< sent to clients to inform them that a player has some status, such as having finished playing a turn and submitted orders, or is resolving combat, or is playing a turn normally
         CLIENT_SAVE_DATA,       ///< sent to the server in response to a server request for the data needed to create a save file
-        COMBAT_START,           ///< sent to clients when a combat is about to start
-        COMBAT_TURN_UPDATE,     ///< sent to clients when a combat round has been resolved
-        COMBAT_TURN_ORDERS,     ///< sent to the server by a client that has combat orders to be processed at the end of a combat turn
-        COMBAT_END,             ///< sent to clients when a combat is concluded
         PLAYER_CHAT,            ///< sent when one player sends a chat message to another in multiplayer
         DIPLOMACY,              ///< sent by players to server or server to players to make or convey diplomatic proposals or declarations, or to accept / reject proposals from other players
         DIPLOMATIC_STATUS,      ///< sent by server to players to inform of mid-turn diplomatic status changes
@@ -362,21 +354,6 @@ FO_COMMON_API Message ServerLobbyChatMessage(int sender, int receiver, const std
 /** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
 FO_COMMON_API Message StartMPGameMessage(int player_id);
 
-/** creates a COMBAT_START message.  This message should only be sent by the server.*/
-FO_COMMON_API Message ServerCombatStartMessage(int receiver, int empire_id,
-                                 const CombatData& combat_data,
-                                 const std::vector<CombatSetupGroup>& setup_groups,
-                                 const ShipDesignMap& foreign_designs);
-
-/** creates a COMBAT_TURN_UPDATE message.  This message should only be sent by the server.*/
-FO_COMMON_API Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data);
-
-/** creates a COMBAT_END message.  This message should only be sent by the server.*/
-FO_COMMON_API Message ServerCombatEndMessage(int receiver);
-
-/** creates a COMBAT_TURN_ORDERS message.*/
-FO_COMMON_API Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders);
-
 
 ////////////////////////////////////////////////
 // Message data extractors
@@ -426,17 +403,6 @@ FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticStatusUpdate
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
                         std::string& reason_string, int& empire_id);
-
-FO_COMMON_API void ExtractMessageData(const Message& msg, CombatData& combat_data,
-                        std::vector<CombatSetupGroup>& setup_groups,
-                        ShipDesignMap& foreign_designs);
-
-FO_COMMON_API void ExtractMessageData(const Message& msg, CombatOrderSet& order_set);
-
-FO_COMMON_API void ExtractMessageData(const Message& msg, CombatData& combat_data);
-
-void ExtractMessageData(const Message& msg, System*& system,
-                        std::map<int, UniverseObject*>& combat_universe);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& directory);
 

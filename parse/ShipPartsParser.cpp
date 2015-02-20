@@ -3,11 +3,13 @@
 
 #include "ConditionParserImpl.h"
 #include "EnumParser.h"
+#include "Double.h"
 #include "Label.h"
 #include "Parse.h"
 #include "ParseImpl.h"
 #include "ShipPartStatsParser.h"
 #include "ValueRefParser.h"
+#include "../universe/ShipDesign.h"
 
 #include "../universe/Condition.h"
 
@@ -26,9 +28,13 @@ namespace std {
 
 namespace {
     struct insert_ {
-        template <typename Arg1, typename Arg2>
+#if BOOST_VERSION < 105600
+        template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };
+#else
+        typedef void result_type;
+#endif
 
         void operator()(std::map<std::string, PartType*>& part_types, PartType* part_type) const {
             if (!part_types.insert(std::make_pair(part_type->Name(), part_type)).second) {
@@ -108,7 +114,10 @@ namespace {
 
             part_type
                 =    part_type_prefix(_a, _b, _c)
-                >    parse::detail::part_stats_parser() [ _d = _1 ]
+                >    (  ( parse::label(Capacity_token)  >> parse::double_ [ _d = _1 ])
+                      | ( parse::label(Damage_token)    >> parse::double_ [ _d = _1 ])
+                      |   eps [ _d = 0.0 ]
+                     )
                 >    slots(_f)
                 >    common_params [ _e = _1 ]
                     [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f)) ]
@@ -182,7 +191,7 @@ namespace {
                 std::string,
                 std::string,
                 ShipPartClass,
-                PartTypeStats,
+                double,
                 PartHullCommonParams,
                 std::vector<ShipSlotType>
             >,

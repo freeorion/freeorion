@@ -1,6 +1,5 @@
 #include "ClientApp.h"
 
-#include "../combat/CombatOrder.h"
 #include "../util/Logger.h"
 #include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
@@ -70,9 +69,6 @@ TemporaryPtr<UniverseObject> ClientApp::EmpireKnownObject(int object_id, int emp
 const OrderSet& ClientApp::Orders() const
 { return m_orders; }
 
-const CombatOrderSet& ClientApp::CombatOrders() const
-{ return m_combat_orders; }
-
 const ClientNetworking& ClientApp::Networking() const
 { return m_networking; }
 
@@ -121,21 +117,8 @@ void ClientApp::StartTurn() {
     m_orders.Reset();
 }
 
-void ClientApp::SendCombatSetup() {
-    m_networking.SendMessage(CombatTurnOrdersMessage(m_networking.PlayerID(), m_combat_orders));
-    m_combat_orders.clear();
-}
-
-void ClientApp::StartCombatTurn() {
-    m_networking.SendMessage(CombatTurnOrdersMessage(m_networking.PlayerID(), m_combat_orders));
-    m_combat_orders.clear();
-}
-
 OrderSet& ClientApp::Orders()
 { return m_orders; }
-
-CombatOrderSet& ClientApp::CombatOrders()
-{ return m_combat_orders; }
 
 ClientNetworking& ClientApp::Networking()
 { return m_networking; }

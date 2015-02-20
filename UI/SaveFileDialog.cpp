@@ -649,7 +649,7 @@ void SaveFileDialog::Init() {
     GG::Connect(m_file_list->DoubleClickedSignal,               &SaveFileDialog::DoubleClickRow,    this);
     GG::Connect(m_name_edit->EditedSignal,                      &SaveFileDialog::FileNameEdited,    this);
     GG::Connect(m_current_dir_edit->EditedSignal,               &SaveFileDialog::DirectoryEdited,   this);
-    GG::Connect(HumanClientApp::GetApp()->FocusChangedSignal,   &SaveFileDialog::UpdatePreviewList, this);
+    GG::Connect(GG::GUI::GetGUI()->FocusChangedSignal,          &SaveFileDialog::UpdatePreviewList, this );
 
     if (!m_load_only) {
         m_name_edit->SetText(std::string("save-") + FilenameTimestamp());

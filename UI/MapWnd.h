@@ -239,7 +239,8 @@ private:
     void            RenderSystemOverlays();                     //!< renders textures "overlayed" on systems by effects
     void            RenderSystems();                            //!< renders stars and halos
     void            RenderStarlanes();                          //!< renders the starlanes between the systems
-    void            RenderStarlanes( GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuffer& colours, double thickness, bool coloured, bool doBase);
+    void            RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuffer& colours,
+                                    double thickness, bool coloured, bool doBase);
     void            RenderFields();                             //!< renders field objects
 
     /* Gets systemID path (reversed) along supplylanes via BFS, is used to

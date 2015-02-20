@@ -76,24 +76,14 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
 
-    float GetMainStat(ShipPartClass part_class, PartTypeStats part_stats)  {
-        switch (part_class) {
+    float GetMainStat(const PartType* part_type)  {
+        if (!part_type)
+            return 0.0f;
+        switch (part_type->Class()) {
             case PC_SHORT_RANGE:
-            case PC_POINT_DEFENSE: {
-                const DirectFireStats& stats = boost::get<DirectFireStats>(part_stats);
-                return stats.m_damage; //stats.m_ROF stats.m_range
-                break;
-            }
-            case PC_MISSILES: {
-                const LRStats& stats = boost::get<LRStats>(part_stats);
-                return stats.m_damage; //stats.m_ROF stats.m_range stats.m_speed stats.m_stealth stats.m_structure stats.m_capacity
-                break;
-            }
-            case PC_FIGHTERS: {
-                const FighterStats& stats = boost::get<FighterStats>(part_stats);
-                return stats.m_anti_ship_damage; //stats.m_anti_fighter_damage stats.m_launch_rate stats.m_fighter_weapon_range stats.m_speed stats.m_stealth stats.m_structure stats.m_detection stats.m_capacity
-                break;
-            }
+            case PC_POINT_DEFENSE:
+            case PC_MISSILES:
+            case PC_FIGHTERS:
             case PC_SHIELD:
             case PC_DETECTION:
             case PC_STEALTH:
@@ -105,7 +95,7 @@ namespace {
             case PC_RESEARCH:
             case PC_INDUSTRY:
             case PC_TRADE:
-                return boost::get<float>(part_stats);
+                return part_type->Capacity();
                 break;
             case PC_GENERAL:
             case PC_BOMBARD:
@@ -556,7 +546,7 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
              check_it != this_group.end(); ++check_it )
         {
             const PartType* ref_part = *check_it;
-            if ((GetMainStat(pclass, checkPart->Stats())      <  GetMainStat(pclass, ref_part->Stats())) &&
+            if ((GetMainStat(checkPart) < GetMainStat(ref_part)) &&
                 (checkPart->ProductionCost(empire_id, loc_id) >= ref_part->ProductionCost(empire_id, loc_id)) &&
                 (checkPart->ProductionTime(empire_id, loc_id) >= ref_part->ProductionTime(empire_id, loc_id)))
             {
@@ -641,7 +631,7 @@ void PartsListBox::Populate() {
             if (already_added.find(part) != already_added.end())
                 continue;
             already_added.insert(part);
-            sorted_group.insert(std::make_pair(GetMainStat(pclass, part->Stats()), part));
+            sorted_group.insert(std::make_pair(GetMainStat(part), part));
         }
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox

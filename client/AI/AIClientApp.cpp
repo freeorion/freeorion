@@ -9,7 +9,6 @@
 #include "../../network/Message.h"
 #include "../util/Random.h"
 
-#include "../../universe/CombatData.h"
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
 #include "../../universe/Universe.h"
@@ -257,29 +256,6 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::TURN_PROGRESS:
     case Message::PLAYER_STATUS:
-        break;
-
-    case Message::COMBAT_START: {
-        CombatData combat_data;
-        std::vector<CombatSetupGroup> setup_groups;
-        Universe::ShipDesignMap foreign_designs;
-        ExtractMessageData(msg, combat_data, setup_groups, foreign_designs);
-        // TODO: Do we need to do anything here, like decide on overall goals
-        // for this combat, so we don't have to figure such things out each
-        // turn?
-        m_AI->GenerateCombatSetupOrders(combat_data);
-        break;
-    }
-
-    case Message::COMBAT_TURN_UPDATE: {
-        CombatData combat_data;
-        ExtractMessageData(msg, combat_data);
-        m_AI->GenerateCombatOrders(combat_data);
-        break;
-    }
-
-    case Message::COMBAT_END:
-        // TODO: If we grabbed any other resources on COMBAT_START, release them here.
         break;
 
     case Message::END_GAME: {

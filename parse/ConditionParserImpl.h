@@ -4,6 +4,7 @@
 
 #include "ConditionParser.h"
 
+#include <boost/spirit/include/phoenix.hpp>
 
 #define DEBUG_CONDITION_PARSERS 0
 

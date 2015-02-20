@@ -26,105 +26,6 @@ namespace Effect {
 }
 class Empire;
 
-/** Part stats for the PC_SHORT_RANGE and PC_POINT_DEFENSE part classes. */
-struct FO_COMMON_API DirectFireStats {
-    DirectFireStats();
-    DirectFireStats(float damage,
-                    float ROF,
-                    float range);
-
-    float m_damage;
-    float m_ROF;
-    float m_range;
-
-    /** The factor by which PD damage should be multiplied when used in
-        defense of the ship firing it. */
-    static const float PD_SELF_DEFENSE_FACTOR;
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int) {
-        ar  & BOOST_SERIALIZATION_NVP(m_damage)
-            & BOOST_SERIALIZATION_NVP(m_ROF)
-            & BOOST_SERIALIZATION_NVP(m_range);
-    }
-};
-
-/** Part stats for the PC_MISSILES part class. */
-struct FO_COMMON_API LRStats {
-    LRStats();
-    LRStats(float damage,
-            float ROF,
-            float range,
-            float speed,
-            float stealth,
-            float structure,
-            int capacity);
-
-    float m_damage;
-    float m_ROF;
-    float m_range;
-    float m_speed;
-    float m_stealth;
-    float m_structure;
-    int m_capacity;
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int) {
-        ar  & BOOST_SERIALIZATION_NVP(m_damage)
-            & BOOST_SERIALIZATION_NVP(m_ROF)
-            & BOOST_SERIALIZATION_NVP(m_range)
-            & BOOST_SERIALIZATION_NVP(m_speed)
-            & BOOST_SERIALIZATION_NVP(m_stealth)
-            & BOOST_SERIALIZATION_NVP(m_structure)
-            & BOOST_SERIALIZATION_NVP(m_capacity);
-    }
-};
-
-/** Part stats for the PC_FIGHTERS part class. */
-struct FO_COMMON_API FighterStats {
-    FighterStats();
-    FighterStats(CombatFighterType type,
-                 float anti_ship_damage,
-                 float anti_fighter_damage,
-                 float launch_rate,
-                 float fighter_weapon_range,
-                 float speed,
-                 float stealth,
-                 float structure,
-                 float detection,
-                 int capacity);
-
-    CombatFighterType   m_type;
-    float               m_anti_ship_damage;
-    float               m_anti_fighter_damage;
-    float               m_launch_rate;
-    float               m_fighter_weapon_range;
-    float               m_speed;
-    float               m_stealth;
-    float               m_structure;
-    float               m_detection;
-    int                 m_capacity;
-
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int) {
-        ar  & BOOST_SERIALIZATION_NVP(m_type)
-            & BOOST_SERIALIZATION_NVP(m_anti_ship_damage)
-            & BOOST_SERIALIZATION_NVP(m_anti_fighter_damage)
-            & BOOST_SERIALIZATION_NVP(m_launch_rate)
-            & BOOST_SERIALIZATION_NVP(m_fighter_weapon_range)
-            & BOOST_SERIALIZATION_NVP(m_speed)
-            & BOOST_SERIALIZATION_NVP(m_stealth)
-            & BOOST_SERIALIZATION_NVP(m_structure)
-            & BOOST_SERIALIZATION_NVP(m_detection)
-            & BOOST_SERIALIZATION_NVP(m_capacity);
-    }
-};
-
-/** A variant type containing all ShipPartClass-specific stats for a PartType.
-  * Note that most parts need only a single value to represent their
-  * capabilities.  This is represented by the float variant. */
-typedef boost::variant<float, DirectFireStats, LRStats, FighterStats> PartTypeStats;
-
 /** Common parameters for PartType and HullType constructors.  Used as temporary
   * storage for parsing to reduce number of sub-items parsed per item. */
 struct PartHullCommonParams {
@@ -170,7 +71,7 @@ public:
         m_name("invalid part type"),
         m_description("indescribable"),
         m_class(INVALID_SHIP_PART_CLASS),
-        m_stats(1.0),
+        m_capacity(0.0),
         m_production_cost(0),
         m_production_time(0),
         m_mountable_slot_types(),
@@ -180,13 +81,13 @@ public:
         m_icon()
     {}
     PartType(const std::string& name, const std::string& description,
-             ShipPartClass part_class, const PartTypeStats& stats,
+             ShipPartClass part_class, double capacity,
              const PartHullCommonParams& common_params,
              std::vector<ShipSlotType> mountable_slot_types) :
         m_name(name),
         m_description(description),
         m_class(part_class),
-        m_stats(stats),
+        m_capacity(capacity),
         m_production_cost(common_params.production_cost),
         m_production_time(common_params.production_time),
         m_producible(common_params.producible),
@@ -204,8 +105,7 @@ public:
     const std::string&      Name() const            { return m_name; };             ///< returns name of part
     const std::string&      Description() const     { return m_description; }       ///< returns description, including a description of the stats and effects of this part
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
-    const PartTypeStats&    Stats() const           { return m_stats; }             ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
-    double                  Capacity() const;
+    float                   Capacity() const;
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
     const std::vector<ShipSlotType>&
                             MountableSlotTypes() const  { return m_mountable_slot_types; }
@@ -228,7 +128,7 @@ private:
     std::string                             m_name;
     std::string                             m_description;
     ShipPartClass                           m_class;
-    PartTypeStats                           m_stats;
+    double                                  m_capacity;
     const ValueRef::ValueRefBase<double>*   m_production_cost;
     const ValueRef::ValueRefBase<int>*      m_production_time;
     bool                                    m_producible;
@@ -556,24 +456,6 @@ public:
     bool                            IsArmed() const         { return m_is_armed; }
     bool                            IsMonster() const       { return m_is_monster; }
 
-    /** Return maps from ranges to stats for various types of weapons in design */
-    const std::multimap<float, const PartType*>& SRWeapons() const { return m_SR_weapons; }
-    const std::multimap<float, const PartType*>& LRWeapons() const { return m_LR_weapons; }
-    const std::multimap<float, const PartType*>& PDWeapons() const { return m_PD_weapons; }
-    /** Returns the set of Fighter weapons in this design. */
-    const std::vector<const PartType*>&           FWeapons() const  { return m_F_weapons; }
-
-    float  MinSRRange() const          { return m_min_SR_range; }
-    float  MaxSRRange() const          { return m_max_SR_range; }
-    float  MinLRRange() const          { return m_min_LR_range; }
-    float  MaxLRRange() const          { return m_max_LR_range; }
-    float  MinPDRange() const          { return m_min_PD_range; }
-    float  MaxPDRange() const          { return m_max_PD_range; }
-    float  MinWeaponRange() const      { return m_min_weapon_range; }
-    float  MaxWeaponRange() const      { return m_max_weapon_range; }
-    float  MinNonPDWeaponRange() const { return m_min_non_PD_weapon_range; }
-    float  MaxNonPDWeaponRange() const { return m_max_non_PD_weapon_range; }
-
     /////// TEMPORARY ///////
     float  Defense() const;
     float  Attack() const;
@@ -585,10 +467,11 @@ public:
     const HullType*                 GetHull() const
     { return GetHullTypeManager().GetHullType(m_hull); }                            ///< returns HullType on which design is based
 
-    const std::vector<std::string>& Parts() const           { return m_parts; }     ///< returns vector of names of all parts in design
-    std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type
+    const std::vector<std::string>& Parts() const           { return m_parts; }     ///< returns vector of names of all parts in this design, with position in vector corresponding to slot positions
+    std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
+    std::vector<std::string>        Weapons() const;                                ///< returns vector of names of weapon parts in, unrelated to slot positions
 
-    std::vector<std::string>        Tags() const;
+    std::vector<std::string>        Tags() const;                                   ///< returns tags that would apply to ships of this design, from parts or the hull (but not from species or any other source of tags)
 
     const std::string&              Icon() const            { return m_icon; }      ///< returns filename for small-size icon graphic for design
     const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
@@ -656,20 +539,6 @@ private:
     bool    m_is_production_location;
 
     bool    m_producible;
-    std::multimap<float, const PartType*>  m_SR_weapons;
-    std::multimap<float, const PartType*>  m_LR_weapons;
-    std::multimap<float, const PartType*>  m_PD_weapons;
-    std::vector<const PartType*>           m_F_weapons;
-    float   m_min_SR_range;
-    float   m_max_SR_range;
-    float   m_min_LR_range;
-    float   m_max_LR_range;
-    float   m_min_PD_range;
-    float   m_max_PD_range;
-    float   m_min_weapon_range;
-    float   m_max_weapon_range;
-    float   m_min_non_PD_weapon_range;
-    float   m_max_non_PD_weapon_range;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -755,7 +624,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_class)
-        & BOOST_SERIALIZATION_NVP(m_stats)
+        & BOOST_SERIALIZATION_NVP(m_capacity)
         & BOOST_SERIALIZATION_NVP(m_production_cost)
         & BOOST_SERIALIZATION_NVP(m_production_time)
         & BOOST_SERIALIZATION_NVP(m_mountable_slot_types)

@@ -77,6 +77,24 @@ struct SpeciesParams {
     bool    can_produce_ships;
 };
 
+/** Used by parser due to limits on number of sub-items per parsed main item. */
+struct SpeciesStrings {
+    SpeciesStrings() :
+        name(),
+        desc(),
+        gameplay_desc()
+    {}
+    SpeciesStrings(const std::string& name_, const std::string& desc_,
+                   const std::string& gameplay_desc_) :
+        name(name_),
+        desc(desc_),
+        gameplay_desc(gameplay_desc_)
+    {}
+    std::string             name;
+    std::string             desc;
+    std::string             gameplay_desc;
+};
+
 /** A predefined type of population that can exist on a PopulationCenter.
   * Species have associated sets of EffectsGroups, and various other 
   * properties that affect how the object on which they reside functions.
@@ -86,7 +104,7 @@ class FO_COMMON_API Species {
 public:
     /** \name Structors */ //@{
     /** basic ctor */
-    Species(const std::string& name, const std::string& description, const std::string& gameplay_description,
+    Species(const SpeciesStrings& strings,
             const std::vector<FocusType>& foci,
             const std::string& preferred_focus,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
@@ -94,9 +112,9 @@ public:
             const SpeciesParams& params,
             const std::set<std::string>& tags,
             const std::string& graphic) :
-        m_name(name),
-        m_description(description),
-        m_gameplay_description(gameplay_description),
+        m_name(strings.name),
+        m_description(strings.desc),
+        m_gameplay_description(strings.gameplay_desc),
         m_foci(foci),
         m_preferred_focus(preferred_focus),
         m_planet_environments(planet_environments),
@@ -114,9 +132,9 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const            { return m_name; }                      ///< returns the unique name for this type of species
-    const std::string&              Description() const     { return m_description; }               ///< returns a text description of this type of species
-    const std::string&              GameplayDescription() const { return m_gameplay_description; }  ///< returns a text description of this type of species
+    const std::string&              Name() const                        { return m_name; }                  ///< returns the unique name for this type of species
+    const std::string&              Description() const                 { return m_description; }           ///< returns a text description of this type of species
+    const std::string&              GameplayDescription() const         { return m_gameplay_description; }  ///< returns a text description of this type of species
 
     const std::set<int>&                    Homeworlds() const          { return m_homeworlds; }            ///< returns the ids of objects that are homeworlds for this species
     const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires

@@ -16,10 +16,8 @@
 #include <boost/format.hpp>
 
 class ClientNetworking;
-class Combat;
 class Fleet;
 class IntroScreen;
-class CombatWnd;
 class MapWnd;
 class MessageWnd;
 class PlayerListWnd;
@@ -54,7 +52,6 @@ public:
     PlayerListWnd*          GetPlayerListWnd();                         //!< Returns the players list window.
     IntroScreen*            GetIntroScreen();                           //!< Returns the intro screen / splash window.
     MultiPlayerLobbyWnd*    GetMultiPlayerLobbyWnd();                   //!< Returns the multiplayer lobby window.
-    CombatWnd*              GetCombatWnd();                             //!< Returns the combat window (may be null?).
 
     void    GetSaveGameUIData(SaveGameUIData& data) const;              //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
@@ -222,7 +219,6 @@ private:
     MessageWnd*             m_message_wnd;          //!< the messages / chat display
     PlayerListWnd*          m_player_list_wnd;      //!< the players list
     IntroScreen*            m_intro_screen;         //!< splash screen / main menu when starting program
-    CombatWnd*              m_combat_wnd;           //!< 3D combat view
     MultiPlayerLobbyWnd*    m_multiplayer_lobby_wnd;//!< the multiplayer lobby
 
     PrefixedTextures    m_prefixed_textures;

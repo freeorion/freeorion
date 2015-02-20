@@ -6,11 +6,14 @@ message("-- Configuring GiGiSDL")
 
 set(SDL_BUILDING_LIBRARY true)
 
-find_package(SDL REQUIRED)
+# Use pkg config to find sdl2 details,
+# since there is no official FindSDL2.cmake
+INCLUDE(FindPkgConfig)
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 
-include_directories(${SDL_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIR})
 
-set(GiGiSDL_LINK_LIBS GiGi ${SDL_LIBRARY})
+set(GiGiSDL_LINK_LIBS GiGi ${SDL2_LIBRARIES})
 add_library(GiGiSDL SDLGUI.cpp)
 
 if (USE_STATIC_LIBS)

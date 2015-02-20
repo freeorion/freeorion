@@ -6,7 +6,7 @@
 #include "../../util/Process.h"
 #include "../../UI/ClientUI.h"
 
-#include <GG/Ogre/OgreGUI.h>
+#include <GG/SDL/SDLGUI.h>
 
 #include <string>
 #include <map>
@@ -20,18 +20,13 @@ struct PreviewInformation;
 /** the application framework class for the human player FreeOrion client. */
 class HumanClientApp :
     public ClientApp,
-    public GG::OgreGUI
+    public GG::SDLGUI
 {
 public:
     class CleanQuit : public std::exception {};
 
     /** \name Structors */ //@{
-    HumanClientApp(Ogre::Root* root,
-                   Ogre::RenderWindow* window,
-                   Ogre::SceneManager* scene_manager,
-                   Ogre::Camera* camera,
-                   Ogre::Viewport* viewport,
-                   const boost::filesystem::path& ois_input_cfg_file_path);
+    HumanClientApp(int width, int height, bool calculate_FPS, const std::string& name, int x, int y, bool fullscreen, bool fake_mode_change);
     virtual ~HumanClientApp();
     //@}
 
@@ -62,10 +57,6 @@ public:
     void                InitAutoTurns(int auto_turns);                  ///< Initialize auto turn counter
     void                DecAutoTurns(int n = 1);                        ///< Decrease auto turn counter
 
-    Ogre::SceneManager* SceneManager();
-    Ogre::Camera*       Camera();
-    Ogre::Viewport*     Viewport();
-
     boost::shared_ptr<ClientUI>
                         GetClientUI() { return m_ui; }
 
@@ -73,19 +64,18 @@ public:
 
     float               GLVersion() const;
 
-    virtual void        Enter2DMode();
-    virtual void        Exit2DMode();
     virtual void        StartTurn();
-
-    virtual void        Exit(int code);
 
     void                HandleSaveGameDataRequest();
     //@}
 
-    static std::pair<int, int>  GetWindowWidthHeight(Ogre::RenderSystem* render_system);
+    static std::pair<int, int>  GetWindowWidthHeight();
     static std::pair<int, int>  GetWindowLeftTop();
 
     static HumanClientApp*      GetApp();               ///< returns HumanClientApp pointer to the single instance of the app
+
+protected:
+    virtual void Initialize();
 
 private:
     virtual void    HandleSystemEvents();
@@ -111,10 +101,6 @@ private:
     bool                        m_game_started;         ///< true when a game is currently in progress
     bool                        m_connected;            ///< true if we are in a state in which we are supposed to be connected to the server
     int                         m_auto_turns;           ///< auto turn counter
-    Ogre::Root*                 m_root;
-    Ogre::SceneManager*         m_scene_manager;
-    Ogre::Camera*               m_camera;
-    Ogre::Viewport*             m_viewport;
 };
 
 #endif // _HumanClientApp_h_

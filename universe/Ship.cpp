@@ -75,40 +75,12 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
 
             switch (part->Class()) {
             case PC_SHORT_RANGE:
+            case PC_MISSILES:
+            case PC_FIGHTERS:
             case PC_POINT_DEFENSE: {
                 m_part_meters[std::make_pair(METER_DAMAGE,              part->Name())];
                 m_part_meters[std::make_pair(METER_ROF,                 part->Name())];
                 m_part_meters[std::make_pair(METER_RANGE,               part->Name())];
-                break;
-            }
-            case PC_MISSILES: {
-                std::pair<std::size_t, std::size_t>& part_missiles =
-                    m_missiles[part_names[i]];
-                ++part_missiles.first;
-                part_missiles.second += boost::get<LRStats>(part->Stats()).m_capacity;
-                m_part_meters[std::make_pair(METER_DAMAGE,              part->Name())];
-                m_part_meters[std::make_pair(METER_ROF,                 part->Name())];
-                m_part_meters[std::make_pair(METER_RANGE,               part->Name())];
-                m_part_meters[std::make_pair(METER_SPEED,               part->Name())];
-                m_part_meters[std::make_pair(METER_STEALTH,             part->Name())];
-                m_part_meters[std::make_pair(METER_STRUCTURE,           part->Name())];
-                m_part_meters[std::make_pair(METER_CAPACITY,            part->Name())];
-                break;
-            }
-            case PC_FIGHTERS: {
-                std::pair<std::size_t, std::size_t>& part_fighters =
-                    m_fighters[part_names[i]];
-                ++part_fighters.first;
-                part_fighters.second += boost::get<FighterStats>(part->Stats()).m_capacity;
-                m_part_meters[std::make_pair(METER_ANTI_SHIP_DAMAGE,    part->Name())];
-                m_part_meters[std::make_pair(METER_ANTI_FIGHTER_DAMAGE, part->Name())];
-                m_part_meters[std::make_pair(METER_LAUNCH_RATE,         part->Name())];
-                m_part_meters[std::make_pair(METER_FIGHTER_WEAPON_RANGE,part->Name())];
-                m_part_meters[std::make_pair(METER_SPEED,               part->Name())];
-                m_part_meters[std::make_pair(METER_STEALTH,             part->Name())];
-                m_part_meters[std::make_pair(METER_STRUCTURE,           part->Name())];
-                m_part_meters[std::make_pair(METER_DETECTION,           part->Name())];
-                m_part_meters[std::make_pair(METER_CAPACITY,            part->Name())];
                 break;
             }
             default:
@@ -157,8 +129,6 @@ void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id)
                 this->m_name =              copied_ship->m_name;
 
             this->m_design_id =             copied_ship->m_design_id;
-            this->m_fighters =              copied_ship->m_fighters;
-            this->m_missiles =              copied_ship->m_missiles;
             for (PartMeterMap::const_iterator it = copied_ship->m_part_meters.begin();
                  it != copied_ship->m_part_meters.end(); ++it)
             { this->m_part_meters[it->first]; }
@@ -243,20 +213,6 @@ std::string Ship::Dump() const {
        << " species name: " << m_species_name
        << " produced by empire id: " << m_produced_by_empire_id
        << " fighters: ";
-    //typedef std::map<std::string, std::pair<std::size_t, std::size_t> > ConsumablesMap;
-    for (ConsumablesMap::const_iterator it = m_fighters.begin(); it != m_fighters.end();) {
-        const std::string& part_name = it->first;
-        int num_consumables_available = it->second.second;
-        ++it;
-        os << part_name << ": " << num_consumables_available << (it == m_fighters.end() ? "" : ", ");
-    }
-    os << " missiles: ";
-    for (ConsumablesMap::const_iterator it = m_missiles.begin(); it != m_missiles.end();) {
-        const std::string& part_name = it->first;
-        int num_consumables_available = it->second.second;
-        ++it;
-        os << part_name << ": " << num_consumables_available << (it == m_missiles.end() ? "" : ", ");
-    }
     //typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
     os << " part meters: ";
     for (PartMeterMap::const_iterator it = m_part_meters.begin(); it != m_part_meters.end();) {
@@ -475,43 +431,6 @@ void Ship::Resupply() {
     }
 
     fuel_meter->SetCurrent(max_fuel_meter->Current());
-
-    for (ConsumablesMap::iterator it = m_fighters.begin();
-         it != m_fighters.end(); ++it)
-    {
-        const PartType* part_type = GetPartType(it->first);
-        if (part_type)
-            it->second.second = it->second.first *
-                boost::get<FighterStats>(part_type->Stats()).m_capacity;
-    }
-
-    for (ConsumablesMap::iterator it = m_missiles.begin();
-         it != m_missiles.end(); ++it)
-    {
-        const PartType* part_type = GetPartType(it->first);
-        if (part_type)
-            it->second.second = it->second.first *
-                boost::get<LRStats>(part_type->Stats()).m_capacity;
-    }
-}
-
-void Ship::AddFighters(const std::string& part_name, std::size_t n) {
-    const PartType* part_type = GetPartType(part_name);
-    if (!part_type) return;
-    assert(m_fighters[part_name].second + n <=
-           m_fighters[part_name].first *
-           boost::get<FighterStats>(part_type->Stats()).m_capacity);
-    m_fighters[part_name].second += n;
-}
-
-void Ship::RemoveFighters(const std::string& part_name, std::size_t n) {
-    assert(m_fighters[part_name].second < n);
-    m_fighters[part_name].second -= n;
-}
-
-void Ship::RemoveMissiles(const std::string& part_name, std::size_t n) {
-    assert(m_missiles[part_name].second < n);
-    m_missiles[part_name].second -= n;
 }
 
 void Ship::SetSpecies(const std::string& species_name) {

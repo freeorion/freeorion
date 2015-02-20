@@ -17,7 +17,6 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
-            qi::_d_type _d;
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;

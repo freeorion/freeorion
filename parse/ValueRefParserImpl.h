@@ -8,7 +8,6 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
-
 namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
@@ -107,13 +106,12 @@ void initialize_expression_parsers(
     typename expression_rule<T>::type&              multiplicative_expr,
     typename expression_rule<T>::type&              additive_expr,
     typename parse::value_ref_parser_rule<T>::type& expr,
-    typename parse::value_ref_parser_rule<T>::type& primary_expr         )
+    typename parse::value_ref_parser_rule<T>::type& primary_expr)
 {
     qi::_1_type _1;
     qi::_a_type _a;
     qi::_b_type _b;
     qi::_c_type _c;
-    qi::_r1_type _r1;
     qi::_val_type _val;
     qi::lit_type lit;
     using phoenix::new_;

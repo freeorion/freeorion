@@ -7,7 +7,6 @@ namespace {
     struct planet_type_parser_rules {
         planet_type_parser_rules() {
             qi::_1_type _1;
-            qi::_a_type _a;
             qi::_val_type _val;
             using phoenix::new_;
             using phoenix::push_back;

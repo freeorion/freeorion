@@ -17,8 +17,6 @@ Part
     description = "SR_WEAPON_1_1_DESC"
     class = ShortRange
     damage = 3
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
@@ -30,8 +28,6 @@ Part
     description = "SR_WEAPON_1_2_DESC"
     class = ShortRange
     damage = 4
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
@@ -43,8 +39,6 @@ Part
     description = "SR_WEAPON_1_3_DESC"
     class = ShortRange
     damage = 5
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
@@ -56,8 +50,6 @@ Part
     description = "SR_WEAPON_1_4_DESC"
     class = ShortRange
     damage = 6
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
@@ -69,8 +61,6 @@ Part
     description = "SR_WEAPON_2_1_DESC"
     class = ShortRange
     damage = 5
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
@@ -82,8 +72,6 @@ Part
     description = "SR_WEAPON_2_2_DESC"
     class = ShortRange
     damage = 7
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
@@ -95,8 +83,6 @@ Part
     description = "SR_WEAPON_2_3_DESC"
     class = ShortRange
     damage = 9
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
@@ -108,8 +94,6 @@ Part
     description = "SR_WEAPON_2_4_DESC"
     class = ShortRange
     damage = 11
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
@@ -121,8 +105,6 @@ Part
     description = "SR_WEAPON_3_1_DESC"
     class = ShortRange
     damage = 9
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
@@ -134,8 +116,6 @@ Part
     description = "SR_WEAPON_3_2_DESC"
     class = ShortRange
     damage = 12
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
@@ -147,8 +127,6 @@ Part
     description = "SR_WEAPON_3_3_DESC"
     class = ShortRange
     damage = 15
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
@@ -160,8 +138,6 @@ Part
     description = "SR_WEAPON_3_4_DESC"
     class = ShortRange
     damage = 18
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
@@ -173,8 +149,6 @@ Part
     description = "SR_WEAPON_4_1_DESC"
     class = ShortRange
     damage = 15
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
@@ -186,8 +160,6 @@ Part
     description = "SR_WEAPON_4_2_DESC"
     class = ShortRange
     damage = 20
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
@@ -199,8 +171,6 @@ Part
     description = "SR_WEAPON_4_3_DESC"
     class = ShortRange
     damage = 25
-    ROF = 1
-    range = 60
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
@@ -212,8 +182,6 @@ Part
     description = "SR_WEAPON_4_4_DESC"
     class = ShortRange
     damage = 30
-    ROF = 1
-    range = 50
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4

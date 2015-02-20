@@ -3,7 +3,6 @@
 #include "CUIControls.h"
 #include "FleetWnd.h"
 #include "IntroScreen.h"
-#include "CombatWnd.h"
 #include "MapWnd.h"
 #include "ChatWnd.h"
 #include "PlayerListWnd.h"
@@ -427,14 +426,7 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             1024,   RangedValidator<int>(800, 2560));
-        db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            768,    RangedValidator<int>(600, 1600));
-        db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    1024,   RangedValidator<int>(800, 2560));
-        db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   768,    RangedValidator<int>(600, 1600));
-        db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     0,      RangedValidator<int>(-10240, 10240));
-        db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      0,      RangedValidator<int>(-10240, 10240));
-
-        db.Add('c', "color-depth",      UserStringNop("OPTIONS_DB_COLOR_DEPTH"),           32,     RangedStepValidator<int>(8, 16, 32));
+        db.Add('c', "color-depth",      UserStringNop("OPTIONS_DB_COLOR_DEPTH"),           24,     RangedStepValidator<int>(8, 16, 32));
         db.Add("show-fps",              UserStringNop("OPTIONS_DB_SHOW_FPS"),              false);
         db.Add("limit-fps",             UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
         db.Add("max-fps",               UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,   RangedStepValidator<double>(1.0, 10.0, 200.0));
@@ -530,7 +522,6 @@ ClientUI::ClientUI() :
     m_message_wnd(0),
     m_player_list_wnd(0),
     m_intro_screen(0),
-    m_combat_wnd(0),
     m_multiplayer_lobby_wnd(0)
 {
     s_the_UI = this;
@@ -544,13 +535,6 @@ ClientUI::ClientUI() :
     m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
-
-
-    if (GetOptionsDB().Get<bool>("tech-demo")) {
-        if (HumanClientApp* app = HumanClientApp::GetApp()) {
-            m_combat_wnd =  new CombatWnd(app->SceneManager(), app->Camera(), app->Viewport());
-        }
-    }
 }
 
 ClientUI::~ClientUI() {
@@ -559,7 +543,6 @@ ClientUI::~ClientUI() {
     delete m_player_list_wnd;
     delete m_intro_screen;
     delete m_multiplayer_lobby_wnd;
-    delete m_combat_wnd;
     s_the_UI = 0;
 }
 
@@ -577,9 +560,6 @@ IntroScreen* ClientUI::GetIntroScreen()
 
 MultiPlayerLobbyWnd* ClientUI::GetMultiPlayerLobbyWnd()
 { return m_multiplayer_lobby_wnd; }
-
-CombatWnd* ClientUI::GetCombatWnd()
-{ return m_combat_wnd; }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { m_map_wnd->GetSaveGameUIData(data); }

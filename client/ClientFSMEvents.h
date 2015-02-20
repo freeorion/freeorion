@@ -35,9 +35,6 @@ struct MessageEventBase
     (TurnPartialUpdate)                        \
     (TurnProgress)                             \
     (PlayerStatus)                             \
-    (CombatStart)                              \
-    (CombatRoundUpdate)                        \
-    (CombatEnd)                                \
     (PlayerChat)                               \
     (Diplomacy)                                \
     (DiplomaticStatusUpdate)                   \

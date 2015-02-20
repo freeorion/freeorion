@@ -4,7 +4,6 @@
 #include "ServerApp.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "../universe/CombatData.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../network/ServerNetworking.h"
@@ -142,15 +141,6 @@ namespace {
         }
     }
 }
-
-
-////////////////////////////////////////////////////////////
-// ResolveCombat
-////////////////////////////////////////////////////////////
-ResolveCombat::ResolveCombat(TemporaryPtr<System> system, std::set<int>& empire_ids) :
-    m_system(system),
-    m_empire_ids()
-{ std::swap(m_empire_ids, empire_ids); }
 
 ////////////////////////////////////////////////////////////
 // MessageEventBase
@@ -1423,8 +1413,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
 // ProcessingTurn
 ////////////////////////////////////////////////////////////
 ProcessingTurn::ProcessingTurn(my_context c) :
-    my_base(c),
-    m_combat_empire_ids()
+    my_base(c)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurn"; }
 
 ProcessingTurn::~ProcessingTurn()
@@ -1473,195 +1462,3 @@ sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
     return discard_event();
 }
 
-
-////////////////////////////////////////////////////////////
-// ProcessingTurnIdle
-////////////////////////////////////////////////////////////
-ProcessingTurnIdle::ProcessingTurnIdle(my_context c) :
-    my_base(c)
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurnIdle"; }
-
-ProcessingTurnIdle::~ProcessingTurnIdle()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ProcessingTurnIdle"; }
-
-sc::result ProcessingTurnIdle::react(const ResolveCombat& u) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurnIdle.ResolveCombat";
-
-    context<ProcessingTurn>().m_combat_system = u.m_system;
-    ResolveCombat& mu = const_cast<ResolveCombat&>(u);
-    std::swap(context<ProcessingTurn>().m_combat_empire_ids, mu.m_empire_ids);
-    return transit<ResolvingCombat>();
-}
-
-
-////////////////////////////////////////////////////////////
-// ResolvingCombat
-////////////////////////////////////////////////////////////
-ResolvingCombat::ResolvingCombat(my_context c) :
-    my_base(c)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat";
-
-    ServerApp& server = Server();
-
-    std::map<int, std::vector<CombatSetupGroup> > setup_groups;
-    server.m_current_combat =
-        new CombatData(context<ProcessingTurn>().m_combat_system, setup_groups);
-    context<ProcessingTurn>().m_combat_system = TemporaryPtr<System>();
-
-    // TODO: For now, we're just sending all designs to everyone.  Reconsider
-    // this later.
-    std::map<int, Universe::ShipDesignMap> foreign_designs;
-    for (std::map<int, std::vector<CombatSetupGroup> >::const_iterator it = setup_groups.begin();
-         it != setup_groups.end();
-         ++it) {
-        for (std::size_t i = 0; i < it->second.size(); ++i) {
-            for (std::set<int>::const_iterator ship_it = it->second[i].m_ships.begin();
-                 ship_it != it->second[i].m_ships.end();
-                 ++ship_it) {
-                ShipDesign* design = const_cast<ShipDesign*>(GetShip(*ship_it)->Design());
-                for (std::set<int>::const_iterator empire_it =
-                         context<ProcessingTurn>().m_combat_empire_ids.begin();
-                     empire_it != context<ProcessingTurn>().m_combat_empire_ids.end();
-                     ++empire_it) {
-                    foreign_designs[*empire_it][design->ID()] = design;
-                }
-            }
-        }
-    }
-
-    server.ClearEmpireCombatTurns();
-
-    std::cerr << "ResolvingCombat: waiting for orders from empires ";
-
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
-         it != server.m_networking.established_end(); ++it)
-    {
-        int player_id = (*it)->PlayerID();
-        int empire_id = server.PlayerEmpireID(player_id);
-        if (context<ProcessingTurn>().m_combat_empire_ids.find(empire_id) !=
-            context<ProcessingTurn>().m_combat_empire_ids.end())
-        {
-            assert(!setup_groups[empire_id].empty());
-            (*it)->SendMessage(
-                ServerCombatStartMessage(
-                    player_id,
-                    empire_id,
-                    *server.m_current_combat,
-                    setup_groups[empire_id],
-                    foreign_designs[empire_id]));
-            server.AddEmpireCombatTurn(empire_id);
-            std::cerr << empire_id << " ";
-        }
-    }
-    std::cerr << "\n";
-}
-
-ResolvingCombat::~ResolvingCombat() {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ResolvingCombat";
-
-    context<ProcessingTurn>().m_combat_empire_ids.clear();
-}
-
-sc::result ResolvingCombat::react(const CombatTurnOrders& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat.CombatTurnOrders";
-
-    ServerApp& server = Server();
-    const Message& message = msg.m_message;
- 
-    CombatOrderSet* order_set = new CombatOrderSet;
-
-    ExtractMessageData(message, *order_set);
-
-    // check order validity -- all orders must originate from this empire in order to be considered valid
-    Empire* empire = Empires().Lookup(server.PlayerEmpireID(message.SendingPlayer()));
-    assert(empire);
-    for (CombatOrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
-        const CombatOrder& order = *it;
-        int owner_id = ALL_EMPIRES;
-        if (order.Type() == CombatOrder::SHIP_ORDER ||
-            order.Type() == CombatOrder::SETUP_PLACEMENT_ORDER) {
-            if (TemporaryPtr<UniverseObject> object = GetUniverseObject(order.ID())) {
-                assert(!object->Unowned());
-                owner_id = object->Owner();
-            }
-        } else if (order.Type() == CombatOrder::FIGHTER_ORDER) {
-            CombatFighterPtr combat_fighter =
-                server.m_current_combat->m_pathing_engine.FindLeader(order.ID());
-            if (combat_fighter)
-                owner_id = combat_fighter->Owner();
-        } else {
-            assert(!"Unknown CombatOrder type!");
-        }
-        if (owner_id == ALL_EMPIRES) {
-            throw std::runtime_error(
-                "ResolvingCombat.CombatTurnOrders : Player \"" + empire->PlayerName() +
-                "\" attempted to issue combat orders for an object that does not exist!  "
-                "Terminating...");
-        } else if (owner_id != empire->EmpireID()) {
-            throw std::runtime_error(
-                "ResolvingCombat.CombatTurnOrders : Player \"" + empire->PlayerName() +
-                "\" attempted to issue combat orders for an object it does not own!  Terminating...");
-        }
-
-        // TODO: check legality of placement orders, and check that mission
-        // orders are given to the right kind of object (e.g. ship missions
-        // given to ships, not fighters).
-    }
-
-    Logger().debugStream() << "ResolvingCombat.CombatTurnOrders : Received combat orders from player " << message.SendingPlayer();
-
-    server.SetEmpireCombatTurnOrders(empire->EmpireID(), order_set);
-
-    std::cerr << "received orderd for empire " << empire->EmpireID() << '\n';
-
-    if (server.AllCombatOrdersReceived()) {
-        std::cerr << "all orders received; processing turn\n";
-        Logger().debugStream() << "ResolvingCombat.CombatTurnOrders : All orders received.  Processing combat turn....";
-        server.ProcessCombatTurn();
-
-        std::cerr << "turn complete; sending out updates to empires ";
-
-        for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
-             it != server.m_networking.established_end();
-             ++it)
-        {
-            int player_id = (*it)->PlayerID();
-            int empire_id = server.PlayerEmpireID(player_id);
-            if (context<ProcessingTurn>().m_combat_empire_ids.find(empire_id) !=
-                context<ProcessingTurn>().m_combat_empire_ids.end())
-            {
-                (*it)->SendMessage(
-                    ServerCombatUpdateMessage(player_id, empire_id, *server.m_current_combat));
-                std::cerr << empire_id << " ";
-            }
-        }
-        std::cerr << "\n";
-
-        if (server.CombatTerminated())
-        {std::cerr << "this combat is over\n";
-            return transit<ProcessingTurnIdle>();
-        }
-    }
-
-    return discard_event();
-}
-
-sc::result ResolvingCombat::react(const CombatComplete& cc) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat.CombatComplete";
-    ServerApp& server = Server();
-    delete server.m_current_combat;
-    server.m_current_combat = 0;
-    const std::set<int>& combat_empire_ids = context<ProcessingTurn>().m_combat_empire_ids;
-
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
-         it != server.m_networking.established_end(); ++it)
-    {
-        int player_id = (*it)->PlayerID();
-        int empire_id = server.PlayerEmpireID(player_id);
-        if (combat_empire_ids.find(empire_id) != combat_empire_ids.end())
-        { (*it)->SendMessage(ServerCombatEndMessage(player_id)); }
-    }
-
-    return transit<ProcessingTurnIdle>();
-}

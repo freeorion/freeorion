@@ -6,7 +6,6 @@
 #include "../combat/CombatEvents.h"
 #include "../combat/CombatLogManager.h"
 #include "../universe/Building.h"
-#include "../universe/CombatData.h"
 #include "../universe/Effect.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
@@ -117,7 +116,6 @@ ServerSaveGameData::ServerSaveGameData(int current_turn, const std::map<int, std
 ////////////////////////////////////////////////
 ServerApp::ServerApp() :
     IApp(),
-    m_current_combat(0),
     m_networking(m_io_service,
                  boost::bind(&ServerApp::HandleNonPlayerMessage, this, _1, _2),
                  boost::bind(&ServerApp::HandleMessage, this, _1, _2),
@@ -260,9 +258,6 @@ Universe& ServerApp::GetUniverse()
 EmpireManager& ServerApp::Empires()
 { return m_empires; }
 
-CombatData* ServerApp::CurrentCombat()
-{ return m_current_combat; }
-
 TemporaryPtr<UniverseObject> ServerApp::GetUniverseObject(int object_id)
 { return m_universe.Objects().Object(object_id); }
 
@@ -374,16 +369,12 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg, player_connection));        break;
     case Message::SAVE_GAME:                m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
     case Message::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
-    case Message::COMBAT_TURN_ORDERS:       m_fsm->process_event(CombatTurnOrders(msg, player_connection)); break;
     case Message::CLIENT_SAVE_DATA:         m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
     case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
     case Message::REQUEST_NEW_OBJECT_ID:    m_fsm->process_event(RequestObjectID(msg, player_connection));  break;
     case Message::REQUEST_NEW_DESIGN_ID:    m_fsm->process_event(RequestDesignID(msg, player_connection));  break;
     case Message::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
-
-    // TODO: For prototyping only.
-    case Message::COMBAT_END:               m_fsm->process_event(CombatComplete());         break;
 
     case Message::ERROR_MSG:
     case Message::DEBUG:                    break;
@@ -2750,19 +2741,7 @@ void ServerApp::ProcessCombats() {
             continue;
         }
 
-        // TODO: Until there is a fully-implemented interactive combat system
-        // to use, we autoresolve anyway, unless we're testing the
-        // in-development 3D system.
-        if (GetOptionsDB().Get<bool>("test-3d-combat")) { // Duplicates check above?
-            m_fsm->process_event(
-                ResolveCombat(GetSystem(combat_info.system_id), combat_info.empire_ids));
-            while (m_current_combat) {
-                m_io_service.run_one();
-                m_networking.HandleNextEvent();
-            }
-        } else {
-            AutoResolveCombat(combat_info);
-        }
+        AutoResolveCombat(combat_info);
     }
 
     BackProjectSystemCombatInfoObjectMeters(combats);
@@ -3174,97 +3153,6 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //    empires.EliminateEmpire(it->second);
     //    RemoveEmpireTurn(it->second);
     //}
-}
-
-void ServerApp::AddEmpireCombatTurn(int empire_id)
-{ m_combat_turn_sequence[empire_id] = 0; }
-
-void ServerApp::ClearEmpireCombatTurns() {
-    ClearEmpireCombatTurnOrders();
-    m_combat_turn_sequence.clear();
-}
-
-void ServerApp::SetEmpireCombatTurnOrders(int empire_id, CombatOrderSet* order_set)
-{ m_combat_turn_sequence[empire_id] = order_set; }
-
-void ServerApp::ClearEmpireCombatTurnOrders() {
-    for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
-         it != m_combat_turn_sequence.end();
-         ++it) {
-        delete it->second;
-        it->second = 0;
-    }
-}
-
-bool ServerApp::AllCombatOrdersReceived() {
-    for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
-         it != m_combat_turn_sequence.end();
-         ++it) {
-        if (!it->second)
-            return false;
-    }
-    return true;
-}
-
-void ServerApp::ProcessCombatTurn() {
-    PathingEngine& pathing_engine = m_current_combat->m_pathing_engine;
-
-    // apply combat orders
-    for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
-         it != m_combat_turn_sequence.end(); ++it)
-    {
-        for (std::size_t i = 0; i < it->second->size(); ++i) {
-            const CombatOrder& order = (*it->second)[i];
-            switch (order.Type()) {
-            case CombatOrder::SHIP_ORDER: {
-                CombatShipPtr combat_ship = pathing_engine.FindShip(order.ID());
-                if (!order.Append())
-                    combat_ship->ClearMissions();
-                combat_ship->AppendMission(order.GetShipMission());
-                break;
-            }
-            case CombatOrder::FIGHTER_ORDER: {
-                CombatFighterPtr combat_fighter = pathing_engine.FindLeader(order.ID());
-                if (!order.Append())
-                    combat_fighter->ClearMissions();
-                combat_fighter->AppendMission(order.GetFighterMission());
-                break;
-            }
-            case CombatOrder::SETUP_PLACEMENT_ORDER: {
-                CombatShipPtr combat_ship = pathing_engine.FindShip(order.ID());
-                assert(combat_ship);
-                combat_ship->setPosition(order.GetPositionAndDirection().first);
-                combat_ship->regenerateOrthonormalBasis(-order.GetPositionAndDirection().first,
-                                                        OpenSteer::Vec3(0.0, 0.0, 1.0));
-                break;
-            }
-            }
-        }
-    }
-
-    // clear applied combat orders
-    ClearEmpireCombatTurnOrders();
-
-    // process combat turn
-    if (m_current_combat->m_combat_turn_number) {
-        pathing_engine.TurnStarted(m_current_combat->m_combat_turn_number);
-        const std::size_t MIN_ITERATIONS = 60;
-        const std::size_t ITERATIONS =
-            std::max(MIN_ITERATIONS,
-                     PathingEngine::SECONDS_PER_TURN * PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC);
-        const double ITERATION_DURATION = 1.0 * PathingEngine::SECONDS_PER_TURN / ITERATIONS;
-        for (std::size_t i = 0; i < ITERATIONS; ++i) {
-            pathing_engine.Update(ITERATION_DURATION, true);
-        }
-    }
-
-    // increment combat turn number
-    ++m_current_combat->m_combat_turn_number;
-}
-
-bool ServerApp::CombatTerminated() {
-    // TODO
-    return false;
 }
 
 void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {

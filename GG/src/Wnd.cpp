@@ -1010,6 +1010,10 @@ void Wnd::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_ke
 void Wnd::KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
+void Wnd::TextInput (const std::string* text)
+{ if (!Interactive()) ForwardEventToParent(); }
+
+
 void Wnd::GainingFocus() {}
 
 void Wnd::LosingFocus() {}
@@ -1099,6 +1103,9 @@ void Wnd::HandleEvent(const WndEvent& event)
             break;
         case WndEvent::KeyRelease:
             KeyRelease(event.GetKey(), event.KeyCodePoint(), event.ModKeys());
+            break;
+        case WndEvent::TextInput:
+            TextInput(event.GetText());
             break;
         case WndEvent::GainingFocus:
             GainingFocus();

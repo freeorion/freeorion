@@ -175,23 +175,22 @@ namespace {
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
     bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;
 
-    std::vector<int>        DirectFireStatsP(const ShipDesign& ship_design) {
+    const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
+    // The following (PartsSlotType) is not currently used, but left as an example for this kind of wrapper
+    //std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
+
+    std::vector<int>        AttackStatsP(const ShipDesign& ship_design) {
         const std::vector<std::string>& partslist = ship_design.Parts();
         std::vector<int> results;
         for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); part_it++){
             const PartType* part = GetPartType(*part_it);
             if (part && part->Class() == PC_SHORT_RANGE) { // TODO: handle other weapon classes when they are implemented
-                const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
-                results.push_back(stats.m_damage);
+                results.push_back(part->Capacity());
             }
         }
         return results;
     }
-    boost::function<std::vector<int> (const ShipDesign&)> DirectFireStatsFunc =                 &DirectFireStatsP;
-
-    const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
-    // The following (PartsSlotType) is not currently used, but left as an example for this kind of wrapper
-    //std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
+    boost::function<std::vector<int> (const ShipDesign&)> AttackStatsFunc =                 &AttackStatsP;
 
     std::vector<ShipSlotType> HullSlots(const HullType& hull) {
         std::vector<ShipSlotType> retval;
@@ -418,6 +417,7 @@ namespace FreeOrionPython {
         class_<ShipDesign, noncopyable>("shipDesign", no_init)
             .add_property("id",                 make_function(&ShipDesign::ID,              return_value_policy<return_by_value>()))
             .def("name",                        make_function(&ShipDesign::Name,            return_value_policy<copy_const_reference>()))
+            .def("description",                 make_function(&ShipDesign::Description,     return_value_policy<copy_const_reference>()))
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,  return_value_policy<return_by_value>()))
             .add_property("battleSpeed",        make_function(&ShipDesign::BattleSpeed,     return_value_policy<return_by_value>()))
             .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,   return_value_policy<return_by_value>()))
@@ -434,8 +434,8 @@ namespace FreeOrionPython {
             .def("perTurnCost",                 &ShipDesign::PerTurnCost)
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
-            .add_property("directFireStats",    make_function(
-                                                    DirectFireStatsFunc,
+            .add_property("attackStats",        make_function(
+                                                    AttackStatsFunc,
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const ShipDesign&>()
                                                 ))

@@ -8,11 +8,9 @@
 #include "ClientUI.h"
 #include "CUISpin.h"
 #include "CUISlider.h"
+#include "GraphicsSystem.h"
 #include "Sound.h"
 #include "Hotkeys.h"
-
-#include <OgreRoot.h>
-#include <OgreRenderSystem.h>
 
 #include <GG/GUI.h>
 #include <GG/Layout.h>
@@ -608,14 +606,6 @@ OptionsWnd::OptionsWnd():
     ColorOption(current_page, 1, "UI.tech-progress-background", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
     m_tabs->SetCurrentWnd(0);
 
-    // combat settings tab
-    current_page = CreatePage(UserString("OPTIONS_PAGE_COMBAT"));
-    BoolOption(current_page, 0, "combat.enable-glow",       UserString("OPTIONS_COMBAT_ENABLE_GLOW"));
-    BoolOption(current_page, 0, "combat.enable-skybox",     UserString("OPTIONS_COMBAT_ENABLE_SKYBOX"));
-    BoolOption(current_page, 0, "combat.enable-lens-flare", UserString("OPTIONS_COMBAT_ENABLE_LENS_FLARES"));
-    BoolOption(current_page, 0, "combat.filled-selection",  UserString("OPTIONS_COMBAT_FILLED_SELECTION"));
-    m_tabs->SetCurrentWnd(0);
-
     // Ausosave settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUTOSAVE"));
     BoolOption(current_page, 0, "autosave.single-player", UserString("OPTIONS_SINGLEPLAYER"));
@@ -973,29 +963,9 @@ void OptionsWnd::ResolutionOption(CUIListBox* page, int indentation_level) {
         boost::dynamic_pointer_cast<const RangedValidator<int> >(
             GetOptionsDB().GetValidator("app-top-windowed"));
 
-    Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
-    if (!render_system) {
-        Logger().errorStream() << "OptionsWnd::ResolutionOption couldn't get render system!";
-        return;
-    }
-
-
     // compile list of resolutions available on this system
-    std::vector<std::string> resolutions;
-    Ogre::ConfigOptionMap& renderer_options = render_system->getConfigOptions();
 
-    for (Ogre::ConfigOptionMap::iterator it = renderer_options.begin(); it != renderer_options.end(); ++it) {
-        // only concerned with video mode options
-        if (it->first != "Video Mode")
-            continue;
-
-        for (unsigned int i = 0; i < it->second.possibleValues.size(); ++i) {
-            resolutions.push_back(it->second.possibleValues[i]);
-            if (resolutions.back().find_first_of("@") == std::string::npos)
-                resolutions.back() += " @ 32";
-        }
-    }
-
+    std::vector<std::string> resolutions = GG::GUI::GetGUI()->GetSupportedResolutions();
 
     // find text representation of current fullscreen resolution selection
     int colour_depth = GetOptionsDB().Get<int>("color-depth");
@@ -1046,6 +1016,12 @@ void OptionsWnd::ResolutionOption(CUIListBox* page, int indentation_level) {
 
     // fullscreen / windowed toggle
     BoolOption(page, indentation_level, "fullscreen",            UserString("OPTIONS_FULLSCREEN"));
+    // Fake mode change is not possible without the opengl frame buffer extension
+    if (GG::SDLGUI::GetGUI()->FramebuffersAvailable()) {
+        BoolOption(page, indentation_level, "fake-mode-change",       UserString("OPTIONS_FAKE_MODE_CHANGE"));
+    } else {
+        GetOptionsDB().Set<bool>("fake-mode-change", false);
+    }
     IntOption(page, indentation_level,  "fullscreen-monitor-id", UserString("OPTIONS_FULLSCREEN_MONITOR_ID"));
 
 

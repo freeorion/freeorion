@@ -6,13 +6,17 @@ project(freeorion)
 message("-- Configuring freeorion")
 
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
 
 if (NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL GLU library not found.")
 endif ()
 
 find_package(OpenAL REQUIRED)
-find_package(OGRE REQUIRED)
+# Use pkg config to find sdl2 details,
+# since there is no official FindSDL2.cmake
+INCLUDE(FindPkgConfig)
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 find_package(Bullet REQUIRED)
@@ -23,8 +27,9 @@ endif()
 
 include_directories(
     ${OPENGL_INCLUDE_DIR}
+    ${GLEW_INCLUDE_DIRS}
     ${OPENAL_INCLUDE_DIR}
-    ${OGRE_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
     ${BULLET_INCLUDE_DIRS}
@@ -54,11 +59,6 @@ set(freeorion_HEADER
     ../../UI/BuildDesignatorWnd.h
     ../../UI/ChatWnd.h
     ../../UI/ClientUI.h
-    ../../UI/CollisionMeshConverter.h
-    ../../UI/CombatCamera.h
-    ../../UI/CombatSetupWnd.h
-    ../../UI/CombatWndFwd.h
-    ../../UI/CombatWnd.h
     ../../UI/CUIControls.h
     ../../UI/CUIDrawUtil.h
     ../../UI/CUISlider.h
@@ -68,11 +68,11 @@ set(freeorion_HEADER
     ../../UI/DesignWnd.h
     ../../UI/EncyclopediaDetailPanel.h
     ../../UI/Encyclopedia.h
-    ../../UI/EntityRenderer.h
     ../../UI/FieldIcon.h
     ../../UI/FleetButton.h
     ../../UI/FleetWnd.h
     ../../UI/GalaxySetupWnd.h
+    ../../GG/GG/GLClientAndServerBuffer.h
     ../../UI/GraphControl.h
     ../../UI/Hotkeys.h
     ../../UI/InfoPanels.h
@@ -113,21 +113,17 @@ set(freeorion_SOURCES
     ../../UI/BuildDesignatorWnd.cpp
     ../../UI/ChatWnd.cpp
     ../../UI/ClientUI.cpp
-    ../../UI/CollisionMeshConverter.cpp
-    ../../UI/CombatCamera.cpp
-    ../../UI/CombatSetupWnd.cpp
-    ../../UI/CombatWnd.cpp
     ../../UI/CUIControls.cpp
     ../../UI/CUIDrawUtil.cpp
     ../../UI/CUIStyle.cpp
     ../../UI/CUIWnd.cpp
     ../../UI/DesignWnd.cpp
     ../../UI/EncyclopediaDetailPanel.cpp
-    ../../UI/EntityRenderer.cpp
     ../../UI/FieldIcon.cpp
     ../../UI/FleetButton.cpp
     ../../UI/FleetWnd.cpp
     ../../UI/GalaxySetupWnd.cpp
+    ../../GG/src/GLClientAndServerBuffer.cpp
     ../../UI/GraphControl.cpp
     ../../UI/Hotkeys.cpp
     ../../UI/InfoPanels.cpp
@@ -159,15 +155,14 @@ set(freeorion_SOURCES
 set(freeorion_LINK_LIBS
     freeorioncommon
     freeorionparse
-    pagedgeometry
     GiGi
-    GiGiOgre
-    GiGiOgrePlugin_OIS
+    GiGiSDL
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
+    ${GLEW_LIBRARIES}
     ${OPENAL_LIBRARY}
     ${Boost_LIBRARIES}
-    ${OGRE_LIBRARIES}
+    ${SDL2_LIBRARIES}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
     ${BULLET_LIBRARIES}
@@ -177,10 +172,6 @@ set(freeorion_LINK_LIBS
 
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
-    list(APPEND
-        freeorion_LINK_LIBS
-        ${GLEW_LIBRARIES}
-    )
     list(APPEND freeorion_SOURCES ${CMAKE_BINARY_DIR}/win32_resources.rc)
 endif ()
 
@@ -193,11 +184,6 @@ target_link_libraries(freeorion
     ${freeorion_LINK_LIBS}
 )
 
-configure_file(
-    ${CMAKE_SOURCE_DIR}/ogre_plugins.cfg.in
-    ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
-)
-
 install(
     TARGETS freeorion
     RUNTIME DESTINATION bin
@@ -206,7 +192,6 @@ install(
 
 install(
     FILES
-    ${CMAKE_BINARY_DIR}/ogre_plugins.cfg
     DESTINATION share/freeorion
     COMPONENT COMPONENT_FREEORION
 )

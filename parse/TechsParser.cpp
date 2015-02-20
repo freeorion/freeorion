@@ -24,9 +24,13 @@ namespace {
     std::map<std::string, TechCategory*>* g_categories = 0;
 
     struct insert_tech_ {
-        template <typename Arg1, typename Arg2>
+#if BOOST_VERSION < 105600
+        template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };
+#else
+        typedef void result_type;
+#endif
 
         void operator()(TechManager::TechContainer& techs, Tech* tech) const {
             g_categories_seen->insert(tech->Category());
@@ -44,9 +48,13 @@ namespace {
     const boost::phoenix::function<insert_tech_> insert_tech;
 
     struct insert_category_ {
-        template <typename Arg1, typename Arg2>
+#if BOOST_VERSION < 105600
+        template <typename Arg1, typename Arg2> // Phoenix v2
         struct result
         { typedef void type; };
+#else
+        typedef void result_type;
+#endif
 
         void operator()(std::map<std::string, TechCategory*>& categories, TechCategory* category) const {
             if (!categories.insert(std::make_pair(category->name, category)).second) {

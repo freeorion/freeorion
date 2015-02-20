@@ -1,6 +1,4 @@
-#ifdef FREEORION_WIN32
 #include <GL/glew.h>
-#endif
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -27,7 +25,6 @@
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
-#include "../../universe/CombatData.h"
 #include "../../universe/Planet.h"
 #include "../../universe/Species.h"
 #include "../../Empire/Empire.h"
@@ -37,12 +34,6 @@
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
-#include <GG/Ogre/Plugins/OISInput.h>
-
-#include <OgreRenderWindow.h>
-#include <OgreRoot.h>
-
-#include <OIS/OISMouse.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -104,6 +95,13 @@ namespace {
         db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
         db.Add("UI.mouse-click-repeat-delay",   UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),         360,    RangedValidator<int>(0, 1000));
         db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
+
+        db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             1024,   RangedValidator<int>(800, 2560));
+        db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            768,    RangedValidator<int>(600, 1600));
+        db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    1024,   RangedValidator<int>(800, 2560));
+        db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   768,    RangedValidator<int>(600, 1600));
+        db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     SDL_WINDOWPOS_CENTERED,      RangedValidator<int>(-10240, 10240));
+        db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      50,                          RangedValidator<int>(-10240, 10240));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -165,23 +163,14 @@ namespace {
     }
 }
 
-HumanClientApp::HumanClientApp(Ogre::Root* root,
-                               Ogre::RenderWindow* window,
-                               Ogre::SceneManager* scene_manager,
-                               Ogre::Camera* camera,
-                               Ogre::Viewport* viewport,
-                               const boost::filesystem::path& ois_input_cfg_file_path) :
+HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name, int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
-    OgreGUI(window, ois_input_cfg_file_path),
+    SDLGUI(width, height, calculate_fps, name, x, y, fullscreen, fake_mode_change),
     m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),
     m_connected(false),
-    m_auto_turns(0),
-    m_root(root),
-    m_scene_manager(scene_manager),
-    m_camera(camera),
-    m_viewport(viewport)
+    m_auto_turns(0)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -225,22 +214,13 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("UI.mouse-click-repeat-delay"),
                                 GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
 
-    GG::Connect(WindowMovedSignal,      &HumanClientApp::HandleWindowMove,      this);
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
+    GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);
+    GG::Connect(WindowMovedSignal,      &HumanClientApp::HandleWindowMove,      this);
+    /* TODO: Wire these signals if theyare needed
     GG::Connect(WindowClosingSignal,    &HumanClientApp::HandleWindowClosing,   this);
     GG::Connect(WindowClosedSignal,     &HumanClientApp::HandleWindowClose,     this);
-    GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);
-
-    unsigned int width, height, c;
-    int left, top;
-    window->getMetrics(width, height, c, left, top);
-    Logger().debugStream() << "HumanClientApp::HumanClientApp window size: " << width << "x" << height << " at " << left << "x" << top;
-
-
-#ifdef FREEORION_WIN32
-    GLenum error = glewInit();
-    assert(error == GLEW_OK);
-#endif
+    */
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
@@ -272,6 +252,9 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 
     InitAutoTurns(GetOptionsDB().Get<int>("auto-advance-n-turns"));
 
+    if (fake_mode_change && !FramebuffersAvailable()) {
+        Logger().errorStream() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
+    }
     m_fsm->initiate();
 }
 
@@ -677,14 +660,6 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     }
 }
 
-Ogre::SceneManager* HumanClientApp::SceneManager()
-{ return m_scene_manager; }
-
-Ogre::Camera* HumanClientApp::Camera()
-{ return m_camera; }
-
-Ogre::Viewport* HumanClientApp::Viewport()
-{ return m_viewport; }
 
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     int left(0), top(0);
@@ -703,10 +678,8 @@ std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     return std::make_pair(left, top);
 }
 
-std::pair<int, int> HumanClientApp::GetWindowWidthHeight(Ogre::RenderSystem* render_system) {
+std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     int width(800), height(600);
-    if (!render_system)
-        return std::make_pair(width, height);
 
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
     if (!fullscreen) {
@@ -723,79 +696,19 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight(Ogre::RenderSystem* ren
     }
 
     GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
-
-    // parse list of available resolutions, pick the largest,
-    // which should be the monitor size
-    Ogre::StringVector possible_modes;
-    Ogre::ConfigOptionMap& renderer_options = render_system->getConfigOptions();
-    for (Ogre::ConfigOptionMap::iterator it = renderer_options.begin(); it != renderer_options.end(); ++it) {
-        if (it->first != "Video Mode")
-            continue;
-        possible_modes = it->second.possibleValues;
-    }
-    // for each most, parse the text and check if it is the biggest
-    // yet seen.
-    for (Ogre::StringVector::iterator it = possible_modes.begin(); it != possible_modes.end(); ++it) {
-        std::istringstream iss(*it);
-        char x;
-        int cur_width(-1), cur_height(-1);
-        iss >> cur_width >> std::ws >> x >> std::ws >> cur_height;
-
-        //std::cout << cur_width << ", " << cur_height << std::endl;
-
-        if (cur_width > width || cur_height > height) {
-            width = cur_width;
-            height = cur_height;
-            GetOptionsDB().Set<int>("app-width", width);
-            GetOptionsDB().Set<int>("app-height", height);
-        }
-    }
-
-    return std::make_pair(width, height);
+    GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("fullscreen-monitor-id"));
+    GetOptionsDB().Set("app-width", Value(default_resolution.x));
+    GetOptionsDB().Set("app-height", Value(default_resolution.y));
+    GetOptionsDB().Commit();
+    return std::make_pair(Value(default_resolution.x), Value(default_resolution.y));
 }
 
 void HumanClientApp::Reinitialize() {
-    Ogre::RenderSystem* render_system = m_root->getRenderSystem();
-    if (!render_system)
-        return;
-
-    std::pair<int, int> width_height = GetWindowWidthHeight(render_system);
-    unsigned int width(width_height.first), height(width_height.second);
-    std::pair<int, int> left_top = GetWindowLeftTop();
-    int left(left_top.first), top(left_top.second);
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
-
-    Ogre::RenderWindow* window = this->GetRenderWindow();
-    if (!window) {
-        Logger().errorStream() << "HumanClientApp::Reinitialize unable to get render window";
-        return;
-    }
-
-    if (fullscreen) {
-        window->setFullscreen(true, width, height);
-    } else {
-        if (window->isFullScreen())
-            window->setFullscreen(false, width, height);
-
-        unsigned int cur_width, cur_height, cur_colour_depth;
-        int cur_left, cur_top;
-        window->getMetrics(cur_width, cur_height, cur_colour_depth, cur_left, cur_top);
-
-        if (width != cur_width || height != cur_height)
-            window->resize(width, height);
-
-        if (left != cur_left || top != cur_top)
-            window->reposition(left, top);
-    }
-
-#ifdef FREEORION_MACOSX
-    // These lines seem to be necessary on OSX to make fullscreen / windowed
-    // transitions better.  There are still reportedly issues going from
-    // fullscreen to windowed, however.
-    HandleWindowResize(GG::X(window->getWidth()), GG::Y(window->getHeight()));
-    if (OgreGUI* ogui = dynamic_cast<OgreGUI*>(GG::GUI::GetGUI()))
-        ogui->WindowResizedSignal(GG::X(window->getWidth()), GG::Y(window->getHeight()));
-#endif
+    bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
+    std::pair<int, int> size = GetWindowWidthHeight();
+    SetVideoMode (GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
+    HandleWindowResize (GG::X (size.first), GG::Y (size.second));
 }
 
 float HumanClientApp::GLVersion() const
@@ -805,67 +718,13 @@ namespace {
     static bool enter_2d_mode_log_done(false);
 }
 
-void HumanClientApp::Enter2DMode() {
-    Ogre::RenderWindow* window = this->GetRenderWindow();
-    if (!window) {
-        Logger().errorStream() << "HumanClientApp::Enter2DMode couldn't get render window...";
-        return;
-    }
-    unsigned int width, height, c;
-    int left, top;
-    window->getMetrics(width, height, c, left, top);
-
-    if (!enter_2d_mode_log_done) {
-        enter_2d_mode_log_done = true;
-        Logger().debugStream() << "HumanClientApp::Enter2DMode()";
-    }
-    OgreGUI::Enter2DMode();
-
-    glDisable(GL_DEPTH_TEST);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_2D);
-
-    glDisable(GL_LIGHT0);
-    glDisable(GL_LIGHT1);
-    glDisable(GL_LIGHT2);
-    glDisable(GL_LIGHT3);
-    glDisable(GL_LIGHT4);
-    glDisable(GL_LIGHT5);
-    glDisable(GL_LIGHT6);
-    glDisable(GL_LIGHT7);
-
-    float ambient_light[] = {0.2f, 0.2f, 0.2f, 1.0f};
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_light);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glViewport(0, 0, width, height);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    // set up coordinates with origin in upper-left and +x and +y directions right and down, respectively
-    // the depth of the viewing volume is only 1 (from 0.0 to 1.0)
-    glOrtho(0.0, width, height, 0.0, 0.0, width);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-}
-
-void HumanClientApp::Exit2DMode()
-{ OgreGUI::Exit2DMode(); }
-
 void HumanClientApp::StartTurn() {
     ClientApp::StartTurn();
     m_fsm->process_event(TurnEnded());
 }
 
 void HumanClientApp::HandleSystemEvents() {
-    OgreGUI::HandleSystemEvents();
+    SDLGUI::HandleSystemEvents();
     if (m_connected && !m_networking.Connected()) {
         m_connected = false;
         DisconnectedFromServer();
@@ -877,7 +736,7 @@ void HumanClientApp::HandleSystemEvents() {
 }
 
 void HumanClientApp::RenderBegin() {
-    OgreGUI::RenderBegin();
+    SDLGUI::RenderBegin();
     Sound::GetSound().DoFrame();
 }
 
@@ -899,9 +758,6 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg));       break;
     case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg));            break;
     case Message::PLAYER_STATUS:        m_fsm->process_event(::PlayerStatus(msg));          break;
-    case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg));             break;
-    case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg));       break;
-    case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg));               break;
     case Message::PLAYER_CHAT:          m_fsm->process_event(PlayerChat(msg));              break;
     case Message::DIPLOMACY:            m_fsm->process_event(Diplomacy(msg));               break;
     case Message::DIPLOMATIC_STATUS:    m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
@@ -925,14 +781,11 @@ void HumanClientApp::HandleSaveGameDataRequest() {
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     //Logger().debugStream() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
 
-    // for some reason on Linux, the value returned by window->getMetrics(...)
-    // in OgreGUI::windowMoved and eventually passed here is incorrect, so needs
-    // to be ignored...
-#ifndef FREEORION_LINUX
-    GetOptionsDB().Set<int>("app-left-windowed", Value(w));
-    GetOptionsDB().Set<int>("app-top-windowed", Value(h));
-    GetOptionsDB().Commit();
-#endif
+    if(!Fullscreen()) {
+        GetOptionsDB().Set<int> ("app-left-windowed", Value (w));
+        GetOptionsDB().Set<int> ("app-top-windowed", Value (h));
+        GetOptionsDB().Commit();
+    }
 }
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
@@ -948,17 +801,11 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
 
     // store resize if window is not full-screen (so that fullscreen
     // resolution doesn't overwrite windowed resolution)
-    Ogre::RenderWindow* window = this->GetRenderWindow();
-    if (!window) {
-        Logger().errorStream() << "HumanClientApp::HandleWindowResize couldn't get render window...";
-        return;
+    if (!GetOptionsDB().Get<bool>("fullscreen")) {
+        GetOptionsDB().Set<int>("app-width-windowed", Value(w));
+        GetOptionsDB().Set<int>("app-height-windowed", Value(h));
     }
 
-    if (window->isFullScreen())
-        return;
-
-    GetOptionsDB().Set<int>("app-width-windowed", Value(w));
-    GetOptionsDB().Set<int>("app-height-windowed", Value(h));
     GetOptionsDB().Commit();
 }
 
@@ -973,41 +820,8 @@ void HumanClientApp::HandleWindowClose() {
 
 void HumanClientApp::HandleFocusChange() {
     Logger().debugStream() << "HumanClientApp::HandleFocusChange()";
-    const Ogre::Root::PluginInstanceList& ogre_plugins_list = m_root->getInstalledPlugins();
 
-    // get OIS plugin
-    OISInput* ois;
-    for (Ogre::Root::PluginInstanceList::const_iterator it = ogre_plugins_list.begin();
-         it != ogre_plugins_list.end(); ++it)
-    {
-        if (ois = dynamic_cast<OISInput*>(*it))
-            break;
-    }
-    OIS::Mouse* mouse = 0;
-    if (ois)
-        mouse = ois->GetMouse();
-    if (mouse) {
-        //OIS::MouseState mouse_state = mouse->getMouseState();
-        //OIS::MouseEvent mouse_event(mouse, mouse_state);
-        //OIS::MouseListener* ml = ois;
-        //for (OIS::MouseButtonID id = OIS::MB_Left; id <= OIS::MB_Button7; id = OIS::MouseButtonID(id + 1))
-        //    ml->mouseReleased(mouse_event, id);
-        mouse->capture();
-    }
-
-    OIS::Keyboard* keyboard = 0;
-    if (ois)
-        keyboard = ois->GetKeyboard();
-    if (keyboard) {
-        //OIS::KeyListener* kl = ois;
-        //for (OIS::KeyCode key_code = OIS::KC_ESCAPE; key_code <= OIS::KC_MEDIASELECT;
-        //     key_code = OIS::KeyCode(key_code + 1))
-        //{
-        //    OIS::KeyEvent key_event(keyboard, key_code, '\0');
-        //    kl->keyReleased(key_event);
-        //}
-        keyboard->capture();
-    }
+    // TODO: Does SDL need some action here?
 
     CancelDragDrop();
     ClearEventState();
@@ -1187,7 +1001,6 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     m_universe.Clear();
     m_empires.Clear();
     m_orders.Reset();
-    m_combat_orders.clear();
     GetCombatLogManager().Clear();
 
     if (!suppress_FSM_reset)
@@ -1226,24 +1039,10 @@ void HumanClientApp::DisconnectedFromServer() {
     m_fsm->process_event(Disconnection());
 }
 
-void HumanClientApp::Exit(int code) {
-    if (code) {
-        Logger().debugStream() << "Initiating Exit (code " << code << " - error termination)";
-        exit(code);
-    } else {
-        Logger().debugStream() << "Initiating Exit (code " << code << " - normal termination)";
-
-#if defined(FREEORION_MACOSX)
-        // FIXME - terminate is called during the stack unwind if CleanQuit is thrown,
-        //  so use exit() for now (this appears to be OS X specific)
-        exit(code);
-#elif defined(FREEORION_WIN32)
-        exit(code); // throwing CleanQuit isn't caught anywhere for some reason on Win7
-#else
-        throw CleanQuit();
-#endif
-    }
-}
-
 HumanClientApp* HumanClientApp::GetApp()
 { return dynamic_cast<HumanClientApp*>(GG::GUI::GetGUI()); }
+
+void HumanClientApp::Initialize() {
+
+}
+

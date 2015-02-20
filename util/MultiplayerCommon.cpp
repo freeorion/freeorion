@@ -133,8 +133,6 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
 ////////////////////////////////////////////////////
 // MultiplayerLobbyData
 /////////////////////////////////////////////////////
-
-
 std::string MultiplayerLobbyData::Dump() const {
     std::stringstream stream;
     for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_players.begin();
@@ -156,85 +154,3 @@ std::string MultiplayerLobbyData::Dump() const {
     return stream.str();
 }
 
-
-////////////////////////////////////////////////
-// CombatSetupRegion
-////////////////////////////////////////////////
-CombatSetupRegion::CombatSetupRegion(float centroid_x, float centroid_y, float radius) :
-    m_type(ELLIPSE),
-    m_radius_begin(),
-    m_radius_end(),
-    m_centroid(),
-    m_radial_axis(radius),
-    m_tangent_axis(radius),
-    m_theta_begin(),
-    m_theta_end()
-{
-    m_centroid[0] = centroid_x;
-    m_centroid[1] = centroid_y;
-}
-
-CombatSetupRegion::CombatSetupRegion(float centroid_x, float centroid_y,
-                                     float radial_axis, float tangent_axis) :
-    m_type(ELLIPSE),
-    m_radius_begin(),
-    m_radius_end(),
-    m_centroid(),
-    m_radial_axis(radial_axis),
-    m_tangent_axis(tangent_axis),
-    m_theta_begin(),
-    m_theta_end()
-{
-    m_centroid[0] = centroid_x;
-    m_centroid[1] = centroid_y;
-}
-
-CombatSetupRegion::CombatSetupRegion(float centroid_x, float centroid_y,
-                                     float radial_axis, float tangent_axis,
-                                     float theta_begin, float theta_end) :
-    m_type(PARTIAL_ELLIPSE),
-    m_radius_begin(),
-    m_radius_end(),
-    m_centroid(),
-    m_radial_axis(radial_axis),
-    m_tangent_axis(tangent_axis),
-    m_theta_begin(theta_begin),
-    m_theta_end(theta_end)
-{
-    m_centroid[0] = centroid_x;
-    m_centroid[1] = centroid_y;
-}
-
-
-////////////////////////////////////////////////
-// PointInRegion()
-////////////////////////////////////////////////
-bool PointInRegion(double point[2], const CombatSetupRegion& region)
-{
-    bool retval = false;
-    switch (region.m_type) {
-    case CombatSetupRegion::RING: {
-        double range = std::sqrt(point[0] * point[0] + point[1] * point[1]);
-        retval = region.m_radius_begin < range && range < region.m_radius_end;
-        break;
-    }
-    case CombatSetupRegion::ELLIPSE: {
-        double theta_major = std::atan2(region.m_centroid[1], region.m_centroid[0]);
-        retval = PointInEllipse(point[0], point[1],
-                                region.m_centroid[0], region.m_centroid[1],
-                                region.m_radial_axis, region.m_tangent_axis,
-                                theta_major);
-        break;
-    }
-    case CombatSetupRegion::PARTIAL_ELLIPSE: {
-        double theta_major = std::atan2(region.m_centroid[1], region.m_centroid[0]);
-        retval = PointInPartialEllipse(point[0], point[1],
-                                       region.m_centroid[0], region.m_centroid[1],
-                                       region.m_radial_axis, region.m_tangent_axis,
-                                       theta_major,
-                                       region.m_theta_begin, region.m_theta_end);
-        break;
-    }
-    }
-    return retval;
-}

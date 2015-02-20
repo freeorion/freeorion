@@ -101,6 +101,7 @@ public:
         DragDropLeave,
         KeyPress,
         KeyRelease,
+        TextInput,
         GainingFocus,
         LosingFocus,
         TimerFiring
@@ -134,6 +135,10 @@ public:
         parameters (unsigned int, Timer*), eg TimerFiring(). */
     WndEvent(EventType type, unsigned int ticks, Timer* timer);
 
+    /** Constructs an WndEvent that is used to invoke a function taking an unicode text vector as a
+     parameter, eg TextInput().* */
+    explicit WndEvent(EventType type, const std::string* text);
+
     /** Constructs an WndEvent that is used to invoke a function taking no
         parameters, eg GainingFocus(). */
     explicit WndEvent(EventType type);
@@ -148,6 +153,7 @@ public:
     const std::map<Wnd*, Pt>& DragDropWnds() const; ///< returns the drag-and-drop wnds represented by the WndEvent, if any
     unsigned int              Ticks() const;        ///< returns the number of ticks represented by the WndEvent. if any
     Timer*                    GetTimer() const;     ///< returns the Timer represented by the WndEvent. if any
+    const std::string*        GetText() const;      ///< returns the utf8 text represented by the WndEvent, if any
 
 private:
     EventType          m_type;
@@ -160,6 +166,7 @@ private:
     std::map<Wnd*, Pt> m_drag_drop_wnds;
     unsigned int       m_ticks;
     Timer*             m_timer;
+    const std::string* m_text;
 };
 
 } // namespace GG

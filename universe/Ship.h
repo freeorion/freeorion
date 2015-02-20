@@ -12,10 +12,6 @@ class ShipDesign;
 /** a class representing a single FreeOrion ship */
 class FO_COMMON_API Ship : public UniverseObject {
 public:
-    // map from part type name to (number of parts in the design of that type,
-    // number of fighters (or missiles) available of that type) pairs
-    typedef std::map<std::string, std::pair<std::size_t, std::size_t> > ConsumablesMap;
-
     typedef std::map<std::pair<MeterType, std::string>, Meter>          PartMeterMap;
 
     /** \name Accessors */ //@{
@@ -45,9 +41,6 @@ public:
     const std::string&          SpeciesName() const         { return m_species_name; }
     float                       Speed() const;
 
-    const ConsumablesMap&       Fighters() const            { return m_fighters; }
-    const ConsumablesMap&       Missiles() const            { return m_missiles; }
-
     virtual TemporaryPtr<UniverseObject>
                                 Accept(const UniverseObjectVisitor& visitor) const;
 
@@ -74,10 +67,6 @@ public:
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
 
     void            Resupply();
-
-    void            AddFighters(const std::string& part_name, std::size_t n);
-    void            RemoveFighters(const std::string& part_name, std::size_t n);
-    void            RemoveMissiles(const std::string& part_name, std::size_t n);
 
     void            SetSpecies(const std::string& species_name);
 
@@ -122,8 +111,6 @@ private:
     int             m_ordered_invade_planet_id;
     int             m_ordered_bombard_planet_id;
     int             m_last_turn_active_in_combat;
-    ConsumablesMap  m_fighters;
-    ConsumablesMap  m_missiles;
     PartMeterMap    m_part_meters;
     std::string     m_species_name;
     int             m_produced_by_empire_id;

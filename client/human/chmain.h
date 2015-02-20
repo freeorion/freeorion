@@ -6,6 +6,6 @@
 #include <vector>
 
 int mainConfigOptionsSetup(const std::vector<std::string>& args);
-int mainSetupAndRunOgre();
+int mainSetupAndRun();
 
 #endif

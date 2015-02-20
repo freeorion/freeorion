@@ -36,12 +36,6 @@ AIBase::~AIBase()
 void AIBase::GenerateOrders()
 { AIInterface::DoneTurn(); }
 
-void AIBase::GenerateCombatSetupOrders(const CombatData& combat_data)
-{ AIInterface::CombatSetup(); }
-
-void AIBase::GenerateCombatOrders(const CombatData& combat_data)
-{ AIInterface::DoneCombatTurn(); }
-
 void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 {}
 
@@ -891,21 +885,9 @@ namespace AIInterface {
         AIClientApp::GetApp()->StartTurn(); // encodes order sets and sends turn orders message.  "done" the turn for the client, but "starts" the turn for the server
     }
 
-    void CombatSetup() {
-        Logger().debugStream() << "AIInterface::CombatSetup()";
-        AIClientApp::GetApp()->SendCombatSetup();
-    }
+    void LogOutput(const std::string& log_text)
+    { Logger().debugStream() << log_text; }
 
-    void DoneCombatTurn() {
-        Logger().debugStream() << "AIInterface::DoneCombatTurn()";
-        AIClientApp::GetApp()->StartCombatTurn(); // encodes combat order sets and sends combat turn orders message.  "done" the combat turn for the client, but "starts" the combat turn for the server
-    }
-
-    void LogOutput(const std::string& log_text) {
-        Logger().debugStream() << log_text;
-    }
-
-    void ErrorOutput(const std::string& error_text) {
-        Logger().errorStream() << error_text;
-    }
+    void ErrorOutput(const std::string& error_text)
+    { Logger().errorStream() << error_text; }
 } // namespace AIInterface

@@ -819,6 +819,10 @@ Sets the background track to play.
 OPTIONS_DB_FULLSCREEN
 Start the game in fullscreen. Clicking Apply may cause this to take effect, or may require a restart.
 
+OPTIONS_DB_FAKE_MODE_CHANGE
+'''Do not really change the resolution of the screen. Render the game to an offscreen buffer of the desired resolution and scale that buffer to fill the screen instead.
+Avoids certain issues with real screen mode changes, which are known to appear on linux.'''
+
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Select which monitor to use in fullscreen mode. Primary monitor should be index 0. May require a restart to take effect.
 
@@ -1813,7 +1817,7 @@ OPTIONS_VIDEO_MODE
 Full-Screen Video Mode
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Sets bits per pixel and full-screen resolution.
+Sets bits per pixel and full-screen resolution. Clicking Apply may cause this to take effect, or may require a restart.
 
 OPTIONS_VIDEO_MODE_WINDOWED
 Windowed Video Mode
@@ -1838,6 +1842,9 @@ Window Top Position
 
 OPTIONS_FULLSCREEN
 Fullscreen
+
+OPTIONS_FAKE_MODE_CHANGE
+Fake resolution change
 
 OPTIONS_FULLSCREEN_MONITOR_ID
 Fullscreen Monitor ID
@@ -7149,7 +7156,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Increases the max population of Good, Adequate and Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
+'''Increases the max population of Good, Adequate, and Poor planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.'''
 
 GRO_GENETIC_MED
 Genetic Medicine
@@ -8670,7 +8677,7 @@ BLD_GAIA_TRANS
 Gaia Transformation
 
 BLD_GAIA_TRANS_DESC
-'''Increases max Population according to planet size; Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
+'''Increases max Population according to planet size: Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 

@@ -797,7 +797,7 @@ class AIstate(object):
         detect_bonus = 0
         if design:
             attacks = {}
-            for attack in list(design.directFireStats):
+            for attack in list(design.attackStats):
                 attacks[attack] = attacks.get(attack, 0) + 1
             parts = design.parts
             shields = 0

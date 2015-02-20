@@ -593,12 +593,11 @@ Font::RenderState::RenderState() :
 }
 
 Font::RenderState::RenderState (Clr color):
-use_italics(0),
-draw_underline(0)
+    use_italics(0),
+    draw_underline(0)
 {
     PushColor(color.r, color.g, color.b, color.a);
 }
-
 
 void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
 {
@@ -632,11 +631,11 @@ bool Font::RenderState::ColorsEmpty() const
 
 // Must be here for scoped_ptr deleter to work
 Font::RenderCache::RenderCache() :
-vertices(new GG::GLPtBuffer()),
-coordinates(new GG::GLTexCoordBuffer()),
-colors(new GG::GLRGBAColorBuffer()),
-underline_vertices(new GG::GLPtBuffer()),
-underline_colors(new GG::GLRGBAColorBuffer())
+    vertices(new GG::GLPtBuffer()),
+    coordinates(new GG::GLTexCoordBuffer()),
+    colors(new GG::GLRGBAColorBuffer()),
+    underline_vertices(new GG::GLPtBuffer()),
+    underline_colors(new GG::GLRGBAColorBuffer())
 {}
 
 // Must be here for scoped_ptr deleter to work
@@ -795,7 +794,7 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
     cache.coordinates->createServerBuffer();
     cache.colors->createServerBuffer();
     RenderCachedText(cache);
-    
+
     return pt.x - orig_x;
 }
 

@@ -184,6 +184,7 @@ protected:
     virtual void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    virtual void TextInput(const std::string* text);
     virtual void GainingFocus();
     virtual void LosingFocus();
 

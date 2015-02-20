@@ -134,14 +134,6 @@ public:
       * disconnects eliminated players. */
     void    CheckForEmpireEliminationOrVictory();
 
-    void    AddEmpireCombatTurn(int empire_id);
-    void    ClearEmpireCombatTurns();
-    void    SetEmpireCombatTurnOrders(int empire_id, CombatOrderSet* order_set);
-    void    ClearEmpireCombatTurnOrders();
-    bool    AllCombatOrdersReceived();
-    void    ProcessCombatTurn();
-    bool    CombatTerminated();
-
     /** Intializes single player game universe, sends out initial game state to
       * clients, and signals clients to start first turn */
     void    NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data);
@@ -171,7 +163,6 @@ public:
     ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
     TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);
 
-    CombatData*                 CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
     ServerNetworking&           Networking();     ///< returns the networking object for the server
 
     std::string                 GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
@@ -244,7 +235,6 @@ private:
 
     Universe                m_universe;
     EmpireManager           m_empires;
-    CombatData*             m_current_combat;
     ServerNetworking        m_networking;
     ServerFSM*              m_fsm;
     std::map<int, int>      m_player_empire_ids;    ///< map from player id to empire id that the player controls.
@@ -258,7 +248,6 @@ private:
       * that turn. */
     std::map<int, OrderSet*>                m_turn_sequence;
 
-    std::map<int, CombatOrderSet*>          m_combat_turn_sequence;
     std::map<int, std::set<std::string> >   m_victors;              ///< for each player id, the victory types that player has achived
     std::set<int>                           m_eliminated_players;   ///< ids of players whose connections have been severed by the server after they were eliminated
 
@@ -274,7 +263,6 @@ private:
     friend struct WaitingForTurnEndIdle;
     friend struct WaitingForSaveData;
     friend struct ProcessingTurn;
-    friend struct ResolvingCombat;
 };
 
 // template implementations
