@@ -5,6 +5,7 @@ these methods in turn activate other portions of the python AI code"""
 import pickle  # Python object serialization library
 import sys
 import random
+from freeorion_debug import extend_free_orion_AI_interface  # update fo in import
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 #pylint: disable=relative-import
 import AIstate
