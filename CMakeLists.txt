@@ -384,14 +384,7 @@ else ()
         COMPONENT COMPONENT_FREEORION
     )
 
-    install(
-        FILES
-        ${CMAKE_SOURCE_DIR}/OISInput.cfg
-        DESTINATION share/freeorion/default
-        COMPONENT COMPONENT_FREEORION
-    )
-
-    install(
+     install(
         FILES
         ${CMAKE_SOURCE_DIR}/freeorion.desktop
         DESTINATION share/applications
