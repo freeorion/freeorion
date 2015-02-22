@@ -1,7 +1,7 @@
 Français
 
 #This is the French String Table file for FreeOrion.
-#Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction et amélioration en cours (09/2014). Version FR complète prévue pour release 0.4.5.
+#Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction et amélioration en cours (02/2015). Version FR complète prévue pour release 0.4.5.
 
 #################
 #    Common     #
@@ -135,7 +135,7 @@ NEW_FLEET_NAME_NO_NUMBER
 Flotte
 
 EMPTY_SPACE
-Espace intersidéral
+Espace Interstellaire
 
 UNEXPLORED_REGION
 Région Inexplorée
@@ -225,22 +225,22 @@ SD_SMALL_MARK2_DESC
 Corvette légère avec canon mitrailleur amélioré.
 
 SD_MARK_1
-Fregate I
+Frigate I
 SD_MARK1_DESC
 Frégate patrouilleuse avec canon mitrailleur standard.
 
 SD_MARK_2
-Fregate II
+Frigate II
 SD_MARK2_DESC
 Frégate patrouilleuse avec canon mitrailleur amélioré.
 
 SD_MARK_3
-Fregate III
+Frigate III
 SD_MARK3_DESC
 Frégate patrouilleuse avec laser de base.
 
 SD_MARK_4
-Fregate IV
+Frigate IV
 SD_MARK4_DESC
 Frégate patrouilleuse avec laser amélioré.
 
@@ -267,17 +267,17 @@ Chasseur croiseur d'élite avec blindage et lasers améliorés.
 SD_ROBOTIC1
 Robocruiser I
 SD_ROBOTIC1_DESC
-Chasseur robotique avec canon mitrailleur massif. Ne peut être construit que dans une colonie possédant un Astroport Orbital.
+Chasseur robotique avec canon mitrailleur massif. Ne peut être construit que dans une colonie possédant une Cale Sèche Orbitale.
 
 SD_ROBOTIC2
 Robocruiser II
 SD_ROBOTIC2_DESC
-Chasseur robotique avec lasers et blindage renforcé. Ne peut être construit que dans une colonie possédant un Astroport Orbital.
+Chasseur robotique avec lasers et blindage renforcé. Ne peut être construit que dans une colonie possédant une Cale Sèche Orbitale.
 
 SD_ROBOTIC3
 Robocruiser III
 SD_ROBOTIC3_DESC
-Chasseur robotique d'élite avec lasers améliorés. Ne peut être construit que dans une colonie possédant un Astroport Orbital.
+Chasseur robotique d'élite avec lasers améliorés. Ne peut être construit que dans une colonie possédant une Cale Sèche Orbitale.
 
 SD_ORGANIC1
 Organic I
@@ -420,29 +420,29 @@ SD_OUTPOST_BASE_DESC
 Astronef pionnier non-armé pouvant créer un avant-poste dans un monde inhabitable. dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
 
 SD_TROOP_DROP
-Troop Drop
+Parachutage d'Infanterie
 SD_TROOP_DROP_DESC
-Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète dans un même système.
+Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
 
 SD_SMALL_TROOP_SHIP
-Small Troop Ship
+Petit Vaisseau d'Infanterie
 SD_SMALL_TROOP_SHIP_DESC
-Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète.
+Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète.
 
 SD_TROOP_SHIP
-Troop Ship
+Vaisseau d'Infanterie
 SD_TROOP_SHIP_DESC
-Transporte 6 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète.
+Transporte 6 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète.
 
 SD_ORG_TROOP_SHIP
-Organic Troop Ship
+Vaisseau d'Infanterie Organic
 SD_ORG_TROOP_SHIP_DESC
-Transporte 8 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète. Les vaisseaux organiques ne peuvent être construits que sur des planètes possédant un Incubateur Orbital.
+Transporte 8 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Les vaisseaux organiques ne peuvent être construits que sur des planètes possédant un Incubateur Orbital.
 
 SD_ENG_TROOP_SHIP
-Energy Troop Ship
+Vaisseau d'Infanterie Energy
 SD_ENG_TROOP_SHIP_DESC
-Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et de l'équipement pouvant être utilisés pour envahir une planète. Ce vaisseau ne peut être construit que dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
+Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ce vaisseau ne peut être construit que dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
 SD_ENG1
 Energy I
@@ -1112,7 +1112,7 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
 Fixe la vitesse d'animation des cercles entourant les icônes de systèmes stellaire sélectionnés.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
-Fixe la taille des icônes de système stellaire au-dessous de laquelle les minuscules icônes affichées auront une taille fixe.
+Fixe la taille des icônes de système stellaire au-dessous de laquelle les icônes minimales affichées auront une taille fixe.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Fixe le délai, en millisecondes, d'apparition dans l'interface utilisateur des bulles d'information lors du survol par le curseur.
@@ -1140,6 +1140,12 @@ Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef 
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 Dans la fenêtre de Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
+
+OPTIONS_DB_CHAT_PANEL_HEIGHT
+Fixe la hauteur du panneau de discussion du joueur, en pixels
+
+OPTIONS_DB_CHAT_PANEL_WIDTH
+Fixe la largeur du panneau de discussion du joueur, en pixels
 
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Fixe la taille du panneau latéral de description de système stellaire.
@@ -1894,7 +1900,7 @@ OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
 Ni/s de l'animation de sélection d'un système
 
 OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
-Seuil de taille de l'icône minuscule d'un système
+Seuil de taille de l'icône minimale d'un système
 
 OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
 Couleur du nom d'un système sans empire
@@ -2400,7 +2406,10 @@ Cette planète est hors de portée des détecteurs de votre empire.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
 La dernière furtivité connue (%1%) dépasse votre [[DETECTION_TITLE]] (%2%).
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
-La dernière furtivité connue est obsolète.  La furtivité réelle dépasse votre [[DETECTION_TITLE]].
+La dernière furtivité connue est obsolète.  La furtivité réelle dépasse votre [[DETECTION_TITLE]] ou le [[DETECTION_RANGE_TITLE]] local est fortement perturbé.
+
+MENUITEM_SET_FOCUS
+Régler focus
 
 ## Resources Panel ##########
 
@@ -3068,6 +3077,14 @@ Planètes impériales dépeuplées
 PLANETS_INVADED
 Planètes envahies
 
+STATISTICS_TEST_1
+Statistics Test 1
+
+STATISTICS_TEST_2
+Statistics Test 2
+
+STATISTICS_TEST_3
+Statistics Test 3
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -3290,23 +3307,64 @@ ENC_EFFECTS_STR
 
 %1%'''
 
+ENC_VERB_PRODUCE_STR
+produire
+
+ENC_VERB_RESEARCH_STR
+rechercher
+
+ENC_AUTO_TIME_COST_INVARIANT_STR
+'''
+
+<u>Temps et Coût</u>
+
+Le temps et le coût pour %1% cet objet ne varient pas selon le lieu.'''
+
+ENC_AUTO_TIME_COST_VARIABLE_STR
+'''
+
+<u>Temps et Coût</u>
+
+Le temps et/ou le coût pour %1% cet objet varient selon le lieu.  
+Dans les expressions décrivant ces variations, le terme Source correspond à la Capitale de l'empire en question, et le terme Cible correspond au lieu pris en considération.
+'''
+
+ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
+'''
+Sur %1%, le coût et le temps sont de %2% %3% sur %4% tours.'''
+
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+ENC_AUTO_COST_STR
+'''
+
+<u>Coût</u>
+
+%1%'''
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+ENC_AUTO_TIME_STR
+'''
+
+<u>Temps</u>
+
+%1%'''
+
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
 Coque : %2%
 Équipement : %3%
 
-Dommage : %17%
-Résistance : %8%
-[[encyclopedia SHIELDS_TITLE]] : %9%
-[[encyclopedia DETECTION_RANGE_TITLE]] : %10%
-[[encyclopedia STEALTH_TITLE]] : %11%
-Capacité en carburant : %14%
-Colons à bord : %15%
-Troupes à bord : %16%
-Vitesse : %13%
-'''
+Dommage : %17%      Résistance : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
+                   Vitesse : %13%    Capacité Carburant : %14%
+[[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
+         Colons à bord : %15%      Troupes à bord : %16%
 
+Estimation force de combat (sans boucliers): %19$.f (%20$.2f par PP)
+Contre la plupart des armes et boucliers ennemis: %21$.f (%22$.2f par PP)
+'''
 ## Temporarily removed
 # Direct Fire Parts : %4%
 # Missile Parts : %5%
@@ -3314,6 +3372,31 @@ Vitesse : %13%
 # Point Defense Parts : %7%
 # Battle Speed : %12%
 ##
+
+ENC_SHIP_DESIGN_DESCRIPTION_BASE_STR
+'''%1%
+
+Coque: %2%
+Équipement: %3%
+
+'''
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
+'''
+Pour espèce : %18%
+               Dommage : %17%      Résistance : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
+                   Vitesse : %13%    Capacité Carburant : %14%
+[[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
+         Colons à bord : %15%      Troupes à bord : %16%
+Estimation force de combat (sans boucliers) :  %19$.f   (%20$.2f par PP)
+Contre les dommages %21$.1f et boucliers %22$.1f ennemis :  %23$.f   (%24$.2f par PP)
+'''
+
+
+
+
+
 
 ENC_UNLOCKED_BY
 '''<u>Débloqué par tech. :</u>
@@ -3569,7 +3652,7 @@ FUEL_TEXT
 SUPPLY_TITLE
 Approvisionnement
 SUPPLY_TEXT
-'''Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes peuvent échanger des ressources matérielles de sorte que la capacité de Production d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures. Les lignes d'approvisionnement peuvent également servir à ravitailler les astronefs en [[encyclopedia FUEL_TITLE]].
+'''Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes peuvent échanger des ressources matérielles de sorte que la capacité de Production d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures. Un ensemble de systèmes reliés par des lignes d'approvisionnement est appelé un 'Groupe Ressource'. Les lignes d'approvisionnement peuvent également servir à ravitailler les astronefs en [[encyclopedia FUEL_TITLE]]. Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les plus directes reliant les systèmes producteurs de ressources de chaque Groupe Ressource) auront une épaisseur plus importante que les Voies spatiales non-essentielles. Si les PP sont gaspillés au sein d'un Groupe Ressource, les bandes extérieures des Voies Spatiales auront une couleur spécifique.
 
 L'indicateur 'Approvisionnement' d'une planète représente le nombre de Voies spatiales que l'approvisionnement peut emprunter.'''
 
@@ -3577,7 +3660,7 @@ L'indicateur 'Approvisionnement' d'une planète représente le nombre de Voies s
 FLEET_UPKEEP_TITLE
 Entretien des flottes
 FLEET_UPKEEP_TEXT
-'''Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et [[buildingtype BLD_EXOBOT_SHIP]] augmentent quant à eux de 6% pour chaque planète que l'empire possède.'''
+'''Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et de toutes les structures de colonisation augmentent quant à eux de 6% pour chaque planète que l'empire possède.'''
 
 EVACUATION_TITLE
 Évacuation
@@ -3611,6 +3694,16 @@ Aggressif:
 
 Maniaque: 
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
+
+STRUCTURE_TITLE
+Résistance
+STRUCTURE_TEXT
+'''La Résistance indique la quantité de dommages qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation.'''
+
+STARLANE_SPEED_TITLE
+[[METER_STARLANE_SPEED]]
+STARLANE_SPEED_TEXT
+'''Vitesse sur la carte galactique  (uu/tour)'''
 
 AI_ERROR_MSG
 AI_Error: AI script error
@@ -3945,6 +4038,7 @@ SITREP_SHIP_HULL_UNLOCKED
 SITREP_BUILDING_TYPE_UNLOCKED
 SITREP_PLANET_CAPTURED
 SITREP_PLANET_COLONIZED
+SITREP_NEW_COLONY_ESTABLISHED
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 EFFECT_CONC_CAMP_COMLETE
@@ -3953,7 +4047,6 @@ EFFECT_TERRAFORM
 EFFECT_TAME_MONSTER_HATCHED
 EFFECT_TAME_MONSTER_MATURED
 SITREP_BUILDING_BUILT
-EFFECT_EXOBOT
 SITREP_SHIP_BUILT
 SITREP_SHIP_BATCH_BUILT
 EFFECT_EVACUEES
@@ -3969,12 +4062,12 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION'''
 ## END OF SITREP_PRIORITY_ORDER
 
 SITREP_SHIP_BUILT
-Dans %system% : un %shipdesign%, baptisé '%ship%', a été produit.
+Dans %system% : un astronef %shipdesign%, baptisé '%ship%', a été produit.
 SITREP_SHIP_BUILT_LABEL
 Astronef produit
 
 SITREP_SHIP_BATCH_BUILT
-Dans %system% : %rawtext% %shipdesign% ont été produits.
+Dans %system% : %rawtext% astronefs %shipdesign% ont été produits.
 SITREP_SHIP_BATCH_BUILT_LABEL
 Lot d'astronefs produit
 
@@ -4013,7 +4106,7 @@ Un %combat% s'est déroulé dans le système %system%.
 SITREP_COMBAT_SYSTEM_LABEL
 Combat dans système
 SITREP_COMBAT_SYSTEM_ENEMY
-Un %combat% avec %empire% s'est déroulé dans %system%.
+Un %combat% contre %empire% s'est déroulé dans %system%.
 SITREP_COMBAT_SYSTEM_ENEMY_LABEL
 Combat dans système
 COMBAT
@@ -4025,17 +4118,17 @@ SITREP_OBJECT_DESTROYED_AT_SYSTEM_LABEL
 Objet détruit
 
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM
-Dans %system% : un %shipdesign% (l'astronef '%ship%' de %empire%) a été détruit.
+Dans %system% : un %shipdesign% ('%ship%' appartenant à %empire%) a été détruit.
 SITREP_OWN_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef détruit
 
 SITREP_SHIP_DESTROYED_AT_SYSTEM
-Dans %system% : un %shipdesign% (l'astronef '%ship%' de %empire%) a été détruit.
+Dans %system% : un %shipdesign% ('%ship%' appartenant à %empire%) a été détruit.
 SITREP_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef impérial détruit
 
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
-Dans %system% : un %shipdesign% a été détruit.
+Dans %system% : un astronef %shipdesign% a été détruit.
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
 Astronef libre détruit
 
@@ -4075,12 +4168,12 @@ SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Objet endommagé
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-Dans %system% : le %shipdesign% '%ship%' de %empire% a été endommagé.
+Dans %system% : l'astronef %shipdesign% '%ship%' de %empire% a été endommagé.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Astronef impérial endommagé
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
-Dans %system% : un %shipdesign% a été endommagé.
+Dans %system% : un astronef %shipdesign% a été endommagé.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Astronef libre endommagé
 
@@ -4118,6 +4211,11 @@ La planète %planet% a été colonisée.
 SITREP_PLANET_COLONIZED_LABEL
 Planète colonisée
 
+SITREP_NEW_COLONY_ESTABLISHED
+Une nouvelle colonie %species% s'est établie sur %planet%.
+SITREP_NEW_COLONY_ESTABLISHED_LABEL
+Nouvelle Colonie Établie
+
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 La flotte %fleet% (%rawtext% astronefs) a atteint le système %system%.
 SITREP_FLEET_ARRIVED_AT_DESTINATION_LABEL
@@ -4134,7 +4232,7 @@ SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Monstres arrivés à destination
 
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
-Un %shipdesign% (l'astronef '%ship%' de %empire%) a atteint le système %system%.
+Un %shipdesign% ('%ship%' appartenant à %empire%) a atteint le système %system%.
 SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Astronef arrivé à destination
 
@@ -4149,7 +4247,7 @@ SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte impériale arrivée à destination
 
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
-Un %shipdesign% (astronef '%ship%' de %empire%) a atteint le système %system%.
+Un %shipdesign% ('%ship%' appartenant à %empire%) a atteint le système %system%.
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION_LABEL
 Astronef étranger arrivé à destination
 
@@ -4236,7 +4334,7 @@ EFFECT_CONC_CAMP_COMLETE_LABEL
 EFFECT_DRYDOCK_SHIP_REPAIR
 L'astronef '%ship%' a été réparé par la structure %building% sur la planète %planet%.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
-Réparation Astroport
+Réparation en Cale Sèche
 
 EFFECT_MONSTER_SPAWNING
 Un %predefinedshipdesign% est apparu dans le système %system%!
@@ -4293,11 +4391,6 @@ Le système %system% a perdu sa population suite à une attaque biologique.
 EFFECT_BIOWEAPON_LABEL
 Attaque par armes biologiques
 
-EFFECT_EXOBOT
-Un Colon Galactique Exobot a été construit sur la planète %planet%.
-EFFECT_EXOBOT_LABEL
-Astronef Exobot
-
 EFFECT_EVACUEES
 Des évacués se sont établis sur la planète %planet%.
 EFFECT_EVACUEES_LABEL
@@ -4324,11 +4417,9 @@ EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
 
 HEAD_ON_A_SPIKE_MESSAGE
-La capital de l'empire %empire% est tombée.
-
+La capitale de l'empire %empire% est tombée.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Capitale d'Empire capturée
-
 
 
 #############################################################
@@ -5288,7 +5379,7 @@ SP_EXOBOT_GAMEPLAY_DESC
 '''
 
 SP_EXOBOT_DESC
-'''Bien que moins efficaces que des citoyens classiques, les Exobots peuvent coloniser les planètes inhospitalières, et y construire d'autres exobots.
+'''Bien que moins efficaces que des citoyens classiques, les Exobots peuvent coloniser les planètes inhospitalières, et y construire d'autres Exobots.
 '''
 
 SP_EXPERIMENTOR
@@ -5360,6 +5451,14 @@ GAIA_SPECIAL_DESC
 
 Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population.'''
 
+WORLDTREE_SPECIAL
+Arbre Planétaire
+
+WORLDTREE_SPECIAL_DESC
+'''Accroît l'[[encyclopedia SUPPLY_TITLE]] de +1, le [[encyclopedia DETECTION_RANGE_TITLE]] de +10, la Population max de +1, le Bonheur de +5 sur la planète présentant cette Particularité et de +1 sur toutes les autres planètes appartenant au même empire.
+
+Un arbre gigantesque s'est développé à un tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre a été planté par les Curateurs dans les temps ancestraux.'''
+
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruines Ancestrales (Exhumées)
 
@@ -5409,7 +5508,7 @@ Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, c
 PHILOSOPHER_SPECIAL
 Planète Métaphysique
 PHILOSOPHER_SPECIAL_DESC
-'''Aussi longtemps que la Planète Métaphysique demeure inhabitée, toutes les planètes habitées du même système stellaire voient leur [[encyclopedia RESEARCH_TITLE]] accrue de 5 points. L'indicateur d'[[encyclopedia INFRASTRUCTURE_TITLE]] d'une colonie installée sur une Planète Métaphysique est réduit de 20 points.
+'''Aussi longtemps que la Planète Métaphysique demeure inhabitée, toutes les planètes habitées du même système stellaire voient leur [[encyclopedia RESEARCH_TITLE]] accrue de 5 points. L'indicateur [[encyclopedia INFRASTRUCTURE_TITLE]] d'une colonie installée sur une Planète Métaphysique est réduit de 20 points.
 
 L'unique et dernier représentant d'une espèce vagabonde de taille planétaire a trouvé sa dernière demeure près de cette étoile, autour de laquelle il orbite comme une planète normale. Âgé de milliers d'années, il a perdu l'envie et la capacité de voyager et se consacre désormais à méditer sur tous les mystères de l'univers qu'il a rencontré au cours de sa longue existence. Déroutant et légèrement perturbé, il refuse de communiquer avec quiconque n'étant ni de sa taille ni de de sa forme, ne laissant pas aux savants d'autres choix que de l'interroger via la voix de la planète sur laquelle ils résident. Sans surprise, coloniser la Planète Métaphysique la perturbe gravement et provoque un mutisme profond. La construction à sa surface s'avère difficile, comme il pouvait l'être présumé sur une entité vivante.'''
 
@@ -5777,21 +5876,21 @@ Contrôle psychique des astronefs ennemis.
 INVALID_METER_TYPE
 Type d'indicateur invalide
 METER_TARGET_POPULATION
-Indicateur Population
+Population sur Planète Cible
 METER_TARGET_HEALTH
-Indicateur Santé
+Santé sur Planète Cible
 METER_TARGET_INDUSTRY
-Indicateur Industrie
+Industrie sur Planète Cible
 METER_TARGET_RESEARCH
-Indicateur Recherche
+Recherche sur Planète Cible
 METER_TARGET_TRADE
-Indicateur Commerce
+Commerce sur Planète Cible
 METER_TARGET_MINING
-Indicateur Extraction
+Extraction sur Planète Cible
 METER_TARGET_CONSTRUCTION
-Indicateur Infrastructure
+Infrastructure sur Planète Cible
 METER_TARGET_HAPPINESS
-Indicateur Bonheur
+Bonheur sur Planète Cible
 METER_MAX_FUEL
 Max Carburant
 METER_MAX_SHIELD
@@ -6043,16 +6142,22 @@ DESC_VAR_SOURCE
 source
 
 DESC_VAR_TARGET
-indicateur
+cible
 
 DESC_VAR_LOCAL_CANDIDATE
-Candidat aux conditions locales
+candidat aux conditions locales
 
 DESC_VAR_ROOT_CANDIDATE
-Candidat aux conditions d'origine
+candidat aux conditions d'origine
 
 DESC_STATISTIC
 statistique
+
+DESC_STAT_TYPE
+type de statistique
+
+DESC_SAMPLING_CONDITION
+état d'échantillonnage
 
 DESC_VAR_PLANETSIZE
 taille de la planète
@@ -6064,7 +6169,7 @@ DESC_VAR_PLANETTYPE
 type de planète
 
 DESC_VAR_NEXTBETTERPLANETTYPE
-Meilleur type suivant de planète pour l'espèce
+meilleur type de planète suivant pour l'espèce
 
 DESC_VAR_PLANETENVIRONMENT
 environnement de la planète
@@ -6077,6 +6182,36 @@ type d'étoile
 
 DESC_VAR_VALUE
 valeur précédente
+
+DESC_VAR_GALAXYMAXAIAGGRESSION
+valeur d'Aggressivité max d'IA de la galaxie
+
+DESC_VAR_GALAXYSIZE
+valeur de taille de la galaxie (# de Systèmes)
+
+DESC_VAR_GALAXYPLANETDENSITY
+valeur de densité planétaire de la galaxie
+
+DESC_VAR_GALAXYAGE
+valeur d'âge de la galaxie
+
+DESC_VAR_GALAXYMONSTERFREQUENCY
+valeur de fréquence des monstres de la galaxie
+
+DESC_VAR_GALAXYNATIVEFREQUENCY
+valeur de fréquence des indigènes de la galaxie
+
+DESC_VAR_GALAXYSHAPE
+valeur de forme de la galaxie
+
+DESC_VAR_GALAXYSPECIALFREQUENCY
+valeur de fréquence des particularités de la galaxie
+
+DESC_VAR_GALAXYSTARLANEFREQUENCY
+valeur de fréquence des voies spatiales de la galaxie
+
+DESC_VAR_NON_OBJECT_REFERENCE
+une variable libre
 
 DESC_VAR_TARGETPOPULATION
 [[METER_TARGET_POPULATION]]
@@ -6237,7 +6372,11 @@ technologie prioritaire
 DESC_VAR_LASTTURNBATTLEHERE
 dernier tour où une bataille s'est déroulée ici
 
+DESC_COMPLEX
+Variable Complexe
 
+DESC_VARIABLE_NAME
+Nom de la Variable
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
@@ -6491,10 +6630,10 @@ DESC_TYPE_NOT
  qui n'est pas un(e) %1%
 
 DESC_BUILDING
- qui est une structure %1%
+ étant une structure %1%
 
 DESC_BUILDING_NOT
- qui n'est pas une structure %1%
+ n'étant pas une structure %1%
 
 DESC_SPECIAL
  qui présente la Particularité %1%
@@ -6521,10 +6660,10 @@ DESC_CONTAINS_NOT
  qui ne contient pas un objet%1%
 
 DESC_PLANET_TYPE
- qui est une planète %1%
+ qui est un astre de type %1%
 
 DESC_PLANET_TYPE_NOT
- qui n'est pas une planète %1%
+ qui n'est pas un astre de type %1%
 
 DESC_PLANET_SIZE
  qui est une planète %1%
@@ -6533,10 +6672,13 @@ DESC_PLANET_SIZE_NOT
  qui n'est pas une planète %1%
 
 DESC_PLANET_ENVIRONMENT
- qui est une planète %1%
+ qui est une planète %1% pour l'espèce %2%
 
 DESC_PLANET_ENVIRONMENT_NOT
- qui n'est pas une planète %1%
+ qui n'est pas une planète %1% pour l'espèce %2%
+ 
+DESC_PLANET_ENVIRONMENT_CUR_SPECIES
+qui y habite
 
 DESC_SPECIES
  qui héberge l'espèce %1%
@@ -6551,10 +6693,10 @@ DESC_ENQUEUED_NOT
  où l'empire %1% n'a pas entre %2% et %3% projets dans la file d'attente de production
  
 DESC_ENQUEUED_BUILDING
- où l'empire %1% a entre %2% et %3% %4% structures dans la file d'attente de production
+ où l'empire %1% a entre %2% et %3% structures %4% dans la file d'attente de production
  
 DESC_ENQUEUED_BUILDING_NOT
- où l'empire %1% n'a pas entre %2% et %3% %4% structures dans la file d'attente de production
+ où l'empire %1% n'a pas entre %2% et %3% structures %4% dans la file d'attente de production
  
 DESC_ENQUEUED_DESIGN
  où l'empire %1% a entre %2% et %3% %4% astronefs dans la file d'attente de production
@@ -6569,10 +6711,10 @@ DESC_FOCUS_TYPE_NOT
  qui n'a pas un focus sur %1%
 
 DESC_STAR_TYPE
- qui est un système avec une étoile %1% 
+ qui est un système avec un astre de type %1% 
 
 DESC_STAR_TYPE_NOT
- qui n'est pas un système avec une étoile %1%
+ qui n'est pas un système avec un astre de type %1%
 
 DESC_DESIGN_HAS_HULL
  qui contient la coque %1%
@@ -6623,22 +6765,22 @@ DESC_PRODUCED_BY_EMPIRE_NOT
  qui n'a pas pas été produit par l'empire %1%
 
 DESC_METER_VALUE_CURRENT
- qui a un(e) %1% actuel(le) compris(e) entre %2% et %3%
+ qui a un indicateur %1% compris entre %2% et %3%
 
 DESC_METER_VALUE_CURRENT_NOT
- qui n'a pas un(e) %1% actuel(le) compris(e) entre %2% et %3%
+ qui n'a pas un indicateur %1% compris entre %2% et %3%
 
 DESC_SHIP_PART_METER_VALUE_CURRENT
- qui a un(e) %2% %1% actuel(le) compris(e) entre %3% et %4%
+ qui a un(e) %2% %1% compris(e) entre %3% et %4%
 
 DESC_SHIP_PART_METER_VALUE_CURRENT_NOT
- qui n'a pas un(e) %2% %1% actuel(le) compris(e) entre %3% et %4%
+ qui n'a pas un(e) %2% %1% compris(e) entre %3% et %4%
 
 DESC_EMPIRE_METER_VALUE_CURRENT
- si l'empire %4% a un(e) %1% actuel(le) compris(e) entre %2% et %3%
+ si l'empire %4% a un(e) %1% compris(e) entre %2% et %3%
 
 DESC_EMPIRE_METER_VALUE_CURRENT_NOT
- si l'empire %4% n'a pas un(e) %1% actuel(le) compris(e) entre %2% et %3%
+ si l'empire %4% n'a pas un(e) %1% compris(e) entre %2% et %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE
  qui appartient à un empire possédant un stock de %1% entre %2% and %3%
@@ -6683,7 +6825,7 @@ DESC_EXPLORED_BY_EMPIRE_NOT
  qui n'a pas été exploré par l'empire %1%
 
 DESC_STATIONARY
- qui est statinnaire
+ qui est stationnaire
 
 DESC_STATIONARY_NOT
  qui est en mouvement
@@ -6779,10 +6921,10 @@ DESC_VALUE_TEST_NOT
  quand la %1% n'est pas comprise entre %2% et %3%
 
 DESC_CONTAINED_BY
- contenu(s) dans un objet%1%
+ situé dans un objet%1%
 
 DESC_CONTAINED_BY_NOT
- non contenu(s) dans un objet%1%
+ non situé dans un objet%1%
 
 DESC_IN_SYSTEM
  présent dans le système %1%
@@ -6897,7 +7039,7 @@ LRN_ARTIF_MINDS
 Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-'''Augmente l'objectif [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes de 2.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 2 sur toutes les planètes.
 
 Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinie , ils leur manquent une qualité essentielle : la conscience. Avec le développement d'une véritable intelligence artificielle, cette qualité peut être synthétisée, modifiée. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de metaparadigmes.
 
@@ -6966,11 +7108,11 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente la cible [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes par une mise au point de la recherche de 0,5 par population.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.5 par population sur toutes les planètes réglées sur le Focus Recherche.
 
-Un réseau massif de donnés, à l'échelle de l'empire, en mesure de transférer des informations instantanément entre deux endroits quelconques, plutôt que par la voie longue et indirecte des voies spatiales. Ce progrès facilite grandement la recherche dans tout l'empire.
+Un réseau massif de donnés, à l'échelle de l'empire, en mesure de transférer des informations instantanément entre deux endroits, plutôt que par la voie longue et indirecte des voies spatiales. Ce progrès facilite grandement la recherche dans tout l'empire.
 
-Chaque particule est inextricablement liée au niveau quantique à chaque particule avec laquelle elle a déjà précédemment interagi. De vieilles idées mécanistes concernant la cause et l'effet ne sont plus applicable pas à ce niveau, car les particules peuvent désormais "communiquer" instantanément à travers des distances énormes. Quand une compréhension approfondie de ce phénomène est acquise, l'action sélectionnée, à petite échelle, sur une distance entre deux points peut être réalisée instantanément et les limites de vitesse relativiste obsolète ne s'appliquent plus au transfert de l'information.'''
+Chaque particule est inextricablement liée au niveau quantique à chaque particule avec laquelle elle a déjà précédemment interagi. De vieilles idées mécanistes concernant la cause et l'effet ne sont plus applicables pas à ce niveau, car les particules peuvent désormais "communiquer" instantanément sur des distances énormes. Quand une compréhension approfondie de ce phénomène est acquise, l'action sélectionnée, à petite échelle, sur une distance entre deux points peut être réalisée instantanément et les limites de vitesse relativiste obsolète ne s'appliquent plus au transfert de l'information.'''
 
 LRN_TRANSCEND
 Singularité Transcendentale
@@ -6997,11 +7139,11 @@ Génie Génétique
 GRO_GENETIC_ENG_DESC
 '''La palette génétique est aussi variée que les formes de vies dont elle est issue. Les gènes peuvent être extraits, copiés et réintroduits dans les génomes pour créer des organismes transgéniques avec des combinaisons de caractères naturellement absents ou impossibles. Grâce à l'altération directe des bases aminées codantes, les gènes peuvent aussi être modifiés avant réintroduction ce qui permet la création de gènes entièrement nouveaux. Les techniques sont limitées, cependant, à de légères modifications de gènes existants accessibles à la recherche.'''
 
-CON_ENV_ENCAPSUL
-Encapsulation Environnementale
+CON_REMOTE_COL
+Colonisation Lointaine
 
-CON_ENV_ENCAPSUL_DESC
-'''Permet de placer des stations inhabitées sur les planètes inhabitables, y compris les ceintures d'astéroïdes et les géantes gazeuses. Rares sont les structures qu'on peut construire aux avant-postes. Les avant-postes étant peu coûteux, ils constituent, quoique ne produisant rien, le moyen le plus rapide de revendiquer la possession de planètes.'''
+CON_REMOTE_COL_DESC
+'''Fonder de nouvelles colonies au-delà de la zone d'approvisionnement des mondes déjà établis est une entreprise complexe. Cela requiert des astronefs de colonisation pouvant transporter tout l'équipement nécessaire à l'édification d'une colonie autonome, ainsi qu'un contigent initial de colons.'''
 
 GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
@@ -7019,7 +7161,7 @@ GRO_LIFECYCLE_MAN
 Manipulation du Cycle de Vie
 
 GRO_LIFECYCLE_MAN_DESC
-'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, the capacity of colony ships can be greatly increased.
+'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, colonists can be transported much more efficiently, and the amount of colonists on a freshly built colony as well as the capacity of colony ships is greatly increased.
 
 La plupart des organismes complexes passent par divers états physiologiques durant le temps de leur vie, que ces états soient séparés par des métamorphoses ou qu'ils se fondent dans un lent vieillissement continu. Dans de nombreux cas, un ou plusieurs de ces états sont, au moins à un moment donné, plus utiles et souhaitables que d'autres. Par le contrôle délicat des mécanismes hormonaux ou mentaux, il devient posssible de prolonger ou de d'écourter chaque état, permettant la formation d'individus pleinement développés et fonctionnels en bien moins de temps que la Nature, et la conservation indéfinie de ces individus dans cette plénitude, c'est à dire l'immortalité.'''
 
@@ -7109,7 +7251,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Augmente la cible [[encyclopedia INDUSTRY_TITLE]] sur toutes les planètes par une mise au point de l'industrie de 0,1 par population.
+'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.1 par population sur toutes les planètes réglées sur le Focus Industrie.
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -7118,7 +7260,7 @@ Bien qu'au départ un haut niveau en conception et en configuration d'usine requ
 PRO_EXOBOTS
 Exobots
 PRO_EXOBOTS_DESC
-Permet la construction d'exobots optimisés pour l'industrie sur des planètes hostiles.
+Permet la construction de colonies d'Exobots optimisés pour l'industrie sur des planètes hostiles.
 
 PRO_RAPID_EXO_PROD
 Production Accélérée d'Exobots
@@ -7130,7 +7272,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Augmente la cible [[encyclopedia INDUSTRY_TITLE]] sur toutes les planètes par une mise au point de l'industrie de 0,2 par population.
+'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.2 par population sur toutes les planètes réglées sur le Focus Industrie.
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -7154,7 +7296,7 @@ PRO_SENTIENT_AUTOMATION
 Automates Adaptatifs
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Augmente la cible [[encyclopedia INDUSTRY_TITLE]] sur toutes les planètes par 5.
+'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 5 sur toutes les planètes.
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -7672,7 +7814,7 @@ LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente la cible [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes par une mise au point de la recherche de 0,1 par population.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.1 par population sur toutes les planètes, quel que soit le Focus choisi.
 
 Le citoyen moyen gaspille litteralement son esprit, de loin l'un des plus fins esprits informatiques de l'univers. En puisant dans les cycles inactifs du cerveau d'une population suffisament large, par le biais d'un réseau de simple émetteurs-récepteurs cybernetics, les centres de recherche d'un monde peuvent accéder à une puissance de calcul abondante et à bas prix.'''
 
@@ -8162,7 +8304,7 @@ SHP_ROOT_ARMOR
 Blindage
 
 SHP_ROOT_ARMOR_DESC
-La recherche d'alliages spéciaux permet d'équiper les coques de navires d'un blindage ce qui améliore considérablement leur durabilité, en particulier dans les batailles.
+La recherche d'alliages spéciaux permet d'équiper les coques des astronefs d'un blindage, améliorant considérablement leur durabilité, en particulier dans les batailles.
 
 SHP_ZORTRIUM_PLATE
 Blindage Zortrium
@@ -8282,13 +8424,13 @@ SHP_DEATH_SPORE
 Spores Mortelles
 
 SHP_DEATH_SPORE_DESC
-Débloque l'équipement Spores Mortelles, qui permet de réduire quelque peu la population des planètes. Les Spores Mortelles n'agissent que contre les espèces organiques.
+Débloque l'équipement [[shippart SP_DEATH_SPORE]], permettant aux astronefs de réduire la population planétaire des espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SHP_BIOTERM
 Bio-Terminateurs
 
 SHP_BIOTERM_DESC
-Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
+Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the population of planets with [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SPY_PLANET_STEALTH_MOD
 Modificateur de Furtivité Planétaire
@@ -8375,7 +8517,7 @@ BLD_SHIPYARD_BASE_DESC
 Installation orbitale pour l'assemblage d'engins spatiaux de qualité militaire. Permet la production d'astronefs dans le système où il se trouve. Peut être amélioré par la production de structures supplémentaires dans le même système.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
-Cale de Rabout Orbitale
+Cale Sèche Orbitale
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 '''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, fully repairing all structural damage each turn, as long as no combat has taken place in system that turn.
@@ -8500,11 +8642,6 @@ Un [[tech PRO_INDUSTRY_CENTER_II]] double ce bonus de base.
 
 Un [[tech PRO_INDUSTRY_CENTER_III]] accroît encore le bonus, qui passe au triple du bonus de base.'''
 
-BLD_EXOBOT_SHIP
-Colonie Originelle Exobot
-BLD_EXOBOT_SHIP_DESC
-'''Constructing the first group of exobots is a major production. However, once established on their own planet, they will be able to build themselves. The cost of this building increases as the empire expands to reflect the upkeep costs of a large empire.'''
-
 BLD_MEGALITH
 Mégalithe
 
@@ -8557,7 +8694,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente la cible [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes par une mise au point de la recherche de 0,75 par population.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.75 par population sur toutes les planètes réglées sur le Focus Recherche. 
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
@@ -8654,7 +8791,7 @@ BLD_CONC_CAMP_REMNANT_DESC
 Though the local authorities may try to hide these remnants of old [[buildingtype BLD_CONC_CAMP]], the populace is still aware of their presence.
 
 BLD_BLACK_HOLE_POW_GEN
-Convertisseur de Rayonnement Hawking
+Générateur Hawking
 
 BLD_BLACK_HOLE_POW_GEN_DESC
 Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population. This building can be built at an outpost, but must be in a black hole system.
@@ -8759,28 +8896,153 @@ Détonateur de Bombe Nova
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all Nova Bombs within one starlane jump.
 
+BLD_COL_ABADDONI
+Colonie Abaddoni
+
+BLD_COL_ABADDONI_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Abaddoni. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Abaddoni, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_CHATO
+Colonie Chato
+
+BLD_COL_CHATO_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Chato. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Chato, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_CRAY
+Colonie Cray
+
+BLD_COL_CRAY_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Cray. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Cray, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_DERTHREAN
+Colonie Derthrean
+
+BLD_COL_DERTHREAN_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Derthrean. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Derthrean, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_EAXAW
+Colonie Eaxaw
+
+BLD_COL_EAXAW_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Eaxaw. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Eaxaw, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_EGASSEM
+Colonie Egassem
+
+BLD_COL_EGASSEM_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Egassem. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Egassem, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_ETTY
+Colonie Etty
+
+BLD_COL_ETTY_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Etty. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Etty, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_GEORGE
+Colonie George
+
+BLD_COL_GEORGE_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie George. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie George, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_GYSACHE
+Colonie Gysache
+
+BLD_COL_GYSACHE_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Gysache. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Gysache, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_HHHOH
+Colonie Hhhoh
+
+BLD_COL_HHHOH_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Hhhoh. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Hhhoh, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_HUMAN
+Colonie Humaine
+
+BLD_COL_HUMAN_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Humaine. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Humaine, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_KOBUNTURA
+Colonie Kobuntura
+
+BLD_COL_KOBUNTURA_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Kobuntura. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Kobuntura, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_LAENFA
+Colonie Laenfa
+
+BLD_COL_LAENFA_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Laenfa. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Laenfa, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_MUURSH
+Colonie Mu Ursh
+
+BLD_COL_MUURSH_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Mu Ursh. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Mu Ursh, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_SCYLIOR
+Colonie Scylior
+
+BLD_COL_SCYLIOR_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Scylior. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Scylior, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_SETINON
+Colonie Setinon
+
+BLD_COL_SETINON_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Setinon. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Setinon, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_SSLITH
+Colonie Sslith
+
+BLD_COL_SSLITH_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Sslith. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Sslith, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_TAEGHIRUS
+Colonie Tae Ghirus
+
+BLD_COL_TAEGHIRUS_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Tae Ghirus. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Tae Ghirus, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_TRITH
+Colonie Trith
+
+BLD_COL_TRITH_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Trith. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Trith, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_UGMORS
+Colonie Ugmors
+
+BLD_COL_UGMORS_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Ugmors. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Ugmors, et augmentera proportionnellement à son éloignement.
+
+BLD_COL_EXOBOT
+Colonie Exobot
+
+BLD_COL_EXOBOT_DESC
+Cette structure créera une colonie Exobot sur un avant-poste. Contrairement aux structures coloniales des autres espèces, une colonie Exobot ne requiert pas une autre colonie Exobot déjà existante dans la zone d'approvisionnement, étant donné que les Exobots sont directement construits sur la planète colonisée. Cependant, leur prix de fabrication étant élevé, les Exobots ont besoin d'une planète appartenant à l'empire dans la zone d'approvisionnement.
+
 
 #############################################################
 ####           Hull/Part Description Templates           ####
 #############################################################
 
 HULL_DESC
-'''Vitesse sur Voies spatiales : %1%
-Contenance carburant : %2%
-Vitesse au combat : %3%
-Résistance : %4%'''
+'''[[encyclopedia STARLANE_SPEED_TITLE]] : %1%
+[[encyclopedia FUEL_TITLE]] : %2%
+[[encyclopedia STRUCTURE_TITLE]] : %4%'''
 
 PART_DESC_CAPACITY
 Capacité : %1%
 
 PART_DESC_STRENGTH
-Puissance : %1%
+Résistance : %1%
 
 PART_DESC_SHIELD_STRENGTH
-Shield Strength: %1%
+Résistance Bouclier: %1%
 
 PART_DESC_DETECTION
-'''Detection Strength: %1%'''
+'''Puissance Détection: %1%'''
 # Detection Range: %2%
 
 PART_DESC_DIRECT_FIRE_STATS
@@ -9235,13 +9497,15 @@ CO_OUTPOST_POD
 Module d'Avant-Poste
 
 CO_OUTPOST_POD_DESC
-'''Les modules avant-poste vous permettent d'établir des stations non habités. Elles peuvent être placées sur des planètes inhabitables. Elles ne sont pas habitées et ne produisent normalement pas de resources, mais elles offrent la visions de lignes d'[[encyclopedia SUPPLY_TITLE]] quand la bonne technologie est exploitée. Des colonies peuvent être fondées sur des planètes déjà pourvues d'un avant-poste.'''
+'''Les modules d'avant-poste vous permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune population et ne produisent normalement pas de ressources, mais offrent une extension des lignes d'[[encyclopedia SUPPLY_TITLE]] quand la bonne technologie est exploitée. Les modules d'avant-poste peuvent évoluer en colonies. Le coût de cet équipement augmente à mesure que l'empire s'étend, compte tenu de la complexité logistique inhérente à tout grand empire.'''
 
 GT_TROOP_POD
 Module d'Infanterie
 
 GT_TROOP_POD_DESC
-Transporte une brigade d'[[encyclopedia TROOP_TITLE]] avec équipement pour être déployé sur une planète.
+'''Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être déployés sur une planète. 
+  * Les troupes d'infanterie ne peuvent être utilisées que pour une seule invasion.  
+  * Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et périlleux, ce qui les rend inutilisables par la suite.'''
 
 SP_DISTORTION_MODULATOR
 Modulateur de Distorsion
@@ -9262,16 +9526,16 @@ SP_VOID
 Perforeur du Vide
 
 SP_DEATH_SPORE
-Spores Mortels
+Spores Mortelles
 
 SP_DEATH_SPORE_DESC
-Une arme biologique qui réduit petit à petit la population d'une planète.
+Une arme biologique réduisant la population planétaire des espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SP_BIOTERM
 Bio-Terminateurs
 
 SP_BIOTERM_DESC
-Une puissante arme biologique qui réduit rapidement la population d'une planète.
+Une puissante arme biologique réduisant rapidement la population planétaire des espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]].
 
 SP_NOVA_BOMB
 Bombe Nova
@@ -9960,6 +10224,9 @@ POOR_ENVIRONMENT_LABEL
 HOSTILE_ENVIRONMENT_LABEL
 '''%1% Environnement hostile'''
 
+UNINHABTIABLE_ENVIRONMENT_LABEL
+'''%1% Environnement inhabitable'''
+
 ENV_ENCAPSUL_LABEL
 '''%1% Encapsulation de l'environnement'''
 
@@ -9971,6 +10238,9 @@ SUBTERRANEAN_LABEL
 
 GAIA_LABEL
 '''Bonus Gaia'''
+
+WORLDTREE_LABEL
+'''Bonus Arbre Planétaire'''
 
 HOMEWORLD_LABEL
 '''Monde natal'''
