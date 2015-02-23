@@ -4006,7 +4006,7 @@ Object Property Value
 #Window title####
 
 SITREP_PANEL_TITLE
-Situation Report
+Situation Report - Initial turn
 
 SITREP_PANEL_TITLE_TURN
 Situation Report - Turn %1%

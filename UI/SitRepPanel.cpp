@@ -345,16 +345,80 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
+namespace {
+    /* Sort empire's sitreps for each turn */
+    std::map<int, std::list<SitRepEntry> > GetSitRepsSortedByTurn(int empire_id, std::set<std::string> hidden_sitrep_templates) {
+        std::map<int, std::list<SitRepEntry> > turns;
+        bool verbose_sitrep = GetOptionsDB().Get<bool>("verbose-sitrep");
+        std::set<Empire*> sr_empires;
+        Empire* empire = Empires().Lookup(empire_id);
+        if (empire) {
+            sr_empires.insert(empire);
+        } else {
+            // Moderator mode, sort sitreps from all empires
+            EmpireManager& empires = Empires();
+            for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it)
+                sr_empires.insert(it->second);
+        }
+        for (std::set<Empire*>::iterator it = sr_empires.begin(); it != sr_empires.end(); it++) {
+            for (Empire::SitRepItr sitrep_it = (*it)->SitRepBegin(); sitrep_it != (*it)->SitRepEnd(); ++sitrep_it) {
+                if (!verbose_sitrep) {
+                    if (!sitrep_it->Validate())
+                        continue;
+                }
+                if (hidden_sitrep_templates.find(sitrep_it->GetTemplateString()) != hidden_sitrep_templates.end())
+                    continue;
+                turns[sitrep_it->GetTurn()].push_back(*sitrep_it);
+            }
+        }
+        return turns;
+    }
+}
+
+int SitRepPanel::GetNextNonEmptySitrepsTurn(const std::map<int, std::list<SitRepEntry> >& turns, int turn, bool forward) const {
+    // All sitreps filtered out ?
+    if (turns.size() == 0)
+        return INVALID_GAME_TURN;
+    // Only one turn with visible sitreps
+    if (turns.size() == 1)
+        return turns.begin()->first;
+    // Before first turn with visible sitreps
+    if (turn < turns.begin()->first)
+        return turns.begin()->first;
+    // After last turn with visible sitreps
+    if (turn > (--turns.end())->first)
+        return (--turns.end())->first;
+
+    // Search a suitable turn
+    std::map<int, std::list<SitRepEntry> >::const_iterator it = turns.find(turn);
+    if (it != turns.end()) {
+        int step = forward ? 1 : -1;
+
+        for (std::advance(it, step); it != turns.end(); std::advance(it, step)) {
+            if (it->second.size() > 0)
+                return it->first;
+        }
+    }
+
+    // Not found, choose a default value
+    int ret = forward ? (--turns.end())->first : turns.begin()->first;
+    if (turn != ret || turns.find(ret) == turns.end())
+        ret = turns.begin()->first;
+    return ret;
+}
+
 void SitRepPanel::CloseClicked()
 { ClosingSignal(); }
 
 void SitRepPanel::PrevClicked() {
-    m_showing_turn = std::max(1, m_showing_turn - 1);
+    std::map<int, std::list<SitRepEntry> > turns = GetSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID(), m_hidden_sitrep_templates);
+    m_showing_turn = GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false);
     Update();
 }
 
 void SitRepPanel::NextClicked() {
-    m_showing_turn = std::min(CurrentTurn(), std::max(1, m_showing_turn + 1));
+    std::map<int, std::list<SitRepEntry> > turns = GetSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID(), m_hidden_sitrep_templates);
+    m_showing_turn = GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true);
     Update();
 }
 
@@ -424,56 +488,32 @@ void SitRepPanel::FilterClicked() {
     Update();
 }
 
-void SitRepPanel::GetTurnSitrepsFromEmpire(std::list<SitRepEntry>& append_list, int empire_id) const {
-    // get id(s) of empires to get sitreps for
-    std::vector<int> empire_ids;
-    if (empire_id != ALL_EMPIRES) {
-        if (Empires().Lookup(empire_id))
-            empire_ids.push_back(empire_id);
-    } else {
-        for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-            empire_ids.push_back(it->first);
-    }
-
-    for (std::vector<int>::const_iterator it = empire_ids.begin(); it != empire_ids.end(); ++it) {
-        const Empire* empire = Empires().Lookup(*it);
-        if (!empire)
-            continue;
-
-        // loop through sitreps and add to current list
-        for (Empire::SitRepItr sitrep_it = empire->SitRepBegin();
-             sitrep_it != empire->SitRepEnd(); ++sitrep_it)
-        {
-            if (!GetOptionsDB().Get<bool>("verbose-sitrep")) {
-                if (!sitrep_it->Validate())
-                    continue;
-            }
-            if (m_showing_turn != INVALID_GAME_TURN && m_showing_turn != sitrep_it->GetTurn())
-                continue;
-            if (m_hidden_sitrep_templates.find(sitrep_it->GetTemplateString()) != m_hidden_sitrep_templates.end())
-                continue;
-            append_list.push_back(*sitrep_it);
-        }
-    }
-}
-
 void SitRepPanel::Update() {
     Logger().debugStream() << "SitRepPanel::Update()";
     m_sitreps_lb->Clear();
 
+    // Get back to sane default
     if (m_showing_turn == INVALID_GAME_TURN)
-        this->SetName(UserString("SITREP_PANEL_TITLE"));
-    else
-        this->SetName(boost::io::str(FlexibleFormat(UserString("SITREP_PANEL_TITLE_TURN")) % m_showing_turn));
-
+        m_showing_turn = 1;
 
     // get sitrep entries for this client's player empire, or for all empires
     // if this client is an observer or moderator.
     // todo: double check that no-empire players are actually moderator or
     //       observers, instead of just passing the client empire id.
-    std::list<SitRepEntry> currentTurnSitreps;
-    GetTurnSitrepsFromEmpire(currentTurnSitreps, HumanClientApp::GetApp()->EmpireID());
+    std::map<int, std::list<SitRepEntry> > turns = GetSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID(), m_hidden_sitrep_templates);
 
+    std::list<SitRepEntry> currentTurnSitreps;
+    if (turns.find(m_showing_turn) != turns.end())
+        currentTurnSitreps = turns[m_showing_turn];
+    if (currentTurnSitreps.size() == 0) {
+        m_showing_turn = GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false);
+        currentTurnSitreps = turns[m_showing_turn];
+    }
+
+    if (m_showing_turn < 1)
+        this->SetName(UserString("SITREP_PANEL_TITLE"));
+    else
+        this->SetName(boost::io::str(FlexibleFormat(UserString("SITREP_PANEL_TITLE_TURN")) % m_showing_turn));
 
     // order sitreps for display
     std::vector<SitRepEntry> orderedSitreps;
@@ -504,20 +544,22 @@ void SitRepPanel::Update() {
          sitrep_it != orderedSitreps.end(); sitrep_it++)
     { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it)); }
 
-    // if at first turn, disable back button
-    if (CurrentTurn() >= 1 && m_showing_turn > 1) {
-        m_prev_turn_button->Disable(false);
-    } else {
+    // if at first turn with visible sitreps, disable back button
+    int firstTurnWithSR = GetNextNonEmptySitrepsTurn(turns, m_showing_turn, false);
+    if ((m_showing_turn < 1) || (turns.size() < 2) || (m_showing_turn == firstTurnWithSR)) {
         m_prev_turn_button->Disable();
+    } else {
+        m_prev_turn_button->Disable(false);
     }
 
-    // if at current turn, disable forward button
-    if (CurrentTurn() >= 1 && m_showing_turn < CurrentTurn()) {
-        m_next_turn_button->Disable(false);
-        m_last_turn_button->Disable(false);
-    } else {
+    // if at last turn with visible sitreps, disable forward button
+    int lastTurnWithSR = GetNextNonEmptySitrepsTurn(turns, m_showing_turn, true);
+    if ((turns.size() < 2) || (m_showing_turn == lastTurnWithSR)) {
         m_next_turn_button->Disable();
         m_last_turn_button->Disable();
+    } else {
+        m_next_turn_button->Disable(false);
+        m_last_turn_button->Disable(false);
     }
 }
 
@@ -532,33 +574,6 @@ void SitRepPanel::SetHiddenSitRepTemplates(const std::set<std::string>& template
 }
 
 int SitRepPanel::NumVisibleSitrepsThisTurn() const {
-    int count = 0;
-
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-
-    // which empires to count sitreps for?
-    std::vector<int> empire_ids;
-    if (HumanClientApp::GetApp()->Empires().Lookup(client_empire_id)) {
-        empire_ids.push_back(client_empire_id);
-    } else {
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it)
-            empire_ids.push_back(it->first);
-    }
-
-    for (std::vector<int>::const_iterator empire_it = empire_ids.begin();
-         empire_it != empire_ids.end(); ++empire_it)
-    {
-        const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(*empire_it);
-        if (!empire)
-            continue;
-
-        for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
-            if (CurrentTurn() != sitrep_it->GetTurn())
-                continue;
-            if (m_hidden_sitrep_templates.find(sitrep_it->GetTemplateString()) != m_hidden_sitrep_templates.end())
-                continue;
-            ++count;
-        }
-    }
-    return count;
+    std::map<int, std::list<SitRepEntry> > turns = GetSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID(), m_hidden_sitrep_templates);
+    return turns[CurrentTurn()].size();
 }

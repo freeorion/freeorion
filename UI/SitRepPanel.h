@@ -43,7 +43,8 @@ private:
 
     void            DoLayout();
 
-    void            GetTurnSitrepsFromEmpire(std::list<SitRepEntry>& append_list, int empire_id) const;
+    int             GetNextNonEmptySitrepsTurn(const std::map<int, std::list<SitRepEntry> >& turns,
+                                               int turn, bool forward) const;   ///< Return next turn with sitreps
 
     GG::ListBox*            m_sitreps_lb;
     GG::Button*             m_prev_turn_button;
