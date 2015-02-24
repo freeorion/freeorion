@@ -12,6 +12,7 @@ import EnumsAI
 import MilitaryAI
 from freeorion_tools import dict_from_map, ppstring
 from TechsListsAI import EXOBOT_TECH_NAME
+from freeorion_tools import print_error
 
 bestMilRatingsHistory={} # dict of (rating, cost) keyed by turn
 design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
@@ -688,17 +689,11 @@ def generateProductionOrders():
             if not tSys: continue
             claimedStars.setdefault( tSys.starType, []).append(sysID)
 
-
-    try: addScoutDesigns()
-    except: print "Error: exception triggered and caught: ", traceback.format_exc()
-    try: addTroopDesigns()
-    except: print "Error: exception triggered and caught: ", traceback.format_exc()
-    try: addMarkDesigns()
-    except: print "Error: exception triggered and caught: ", traceback.format_exc()
-    try: addColonyDesigns()
-    except: print "Error: exception triggered and caught: ", traceback.format_exc()
-    try: addOutpostDesigns()
-    except: print "Error: exception triggered and caught: ", traceback.format_exc()
+    for add_function in (addScoutDesigns, addTroopDesigns, addMarkDesigns, addColonyDesigns, addOutpostDesigns):
+        try:
+            add_function()
+        except Exception as e:
+            print_error(e, trace=True)
 
     if (currentTurn in [1, 4]) and ((productionQueue.totalSpent < totalPP) or (len(productionQueue) <=3)):
         bestDesignID, bestDesign, buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)

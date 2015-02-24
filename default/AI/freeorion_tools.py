@@ -1,9 +1,15 @@
 # This Python file uses the following encoding: utf-8
 import re
+import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from functools import wraps
 from traceback import format_exc
+
+
+# color wrappers for chat:
+RED = '<rgba 255 0 0 255>%s</rgba>'
+WHITE = '<rgba 255 255 255 255>%s</rgba>'
 
 
 def dict_from_map(thismap):
@@ -59,21 +65,22 @@ def chat_on_error(function):
     return wrapper
 
 
-def print_error(msg, location=None, trace=True):
+def print_error(exception, location=None, trace=True):
     """
     Sends error to host chat and print its to log.
-    :param msg: message text
+    :param exception: message text or exception
+    :type exception: Exception
     :param location: text that describes error location
     :param trace: flag if print traceback
     """
     print "possible recipients host status: %s" % [(x, fo.playerIsHost(x)) for x in fo.allPlayerIDs()]
     if location:
-        message = '%s in "%s": "%s"' % (UserString('AI_ERROR_MSG', 'AI_Error: AI script error'), location, msg)
+        message = '%s in "%s": "%s"' % (UserString('AI_ERROR_MSG', 'AI_Error: AI script error'), location, exception)
     else:
-        message = '%s: "%s"' % (fo.userString('AI_ERROR_MSG'), msg)
-    chat_human(message)
+        message = '%s: "%s"' % (fo.userString('AI_ERROR_MSG'), exception)
+    chat_human(RED % message)
     if trace:
-        print format_exc()
+        sys.stderr.write(format_exc())
 
 
 def remove_tags(message):
