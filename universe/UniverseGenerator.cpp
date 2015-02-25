@@ -907,7 +907,7 @@ namespace {
             Logger().errorStream() << "CullAngularlyTooCloseLanes got different size vectors of lane sets and systems.  Doing nothing.";
             return;
         }
-        
+
         if (numSys < 3) return;  // nothing worth doing for less than three systems
 
         //Logger().debugStream() << "Culling Too Close Angularly Lanes";
@@ -1006,8 +1006,7 @@ namespace {
                                     if (mag1 > mag2) {
                                         lanesToRemoveSet.insert(lane1);
                                         break;  // don't need to check any more lanes against lane1, since lane1 has been removed
-                                    }
-                                    else {
+                                    } else {
                                         lanesToRemoveSet.insert(lane2);
                                     }
                                 }
