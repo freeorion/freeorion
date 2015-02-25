@@ -118,7 +118,7 @@ namespace {
                 ;
 
             can_add_starlane
-                =    tok.CanAddStarlaneTo_
+                =    tok.CanAddStarlanesTo_
                 >    parse::label(Condition_token) > parse::detail::condition_parser
                      [ _val = new_<Condition::CanAddStarlaneConnection>(_1) ]
                 ;
@@ -147,7 +147,7 @@ namespace {
             random.name("Random");
             owner_stockpile.name("OwnerStockpile");
             resource_supply_connected.name("ResourceSupplyConnected");
-            can_add_starlane.name("CanAddStarlaneTo");
+            can_add_starlane.name("CanAddStarlanesTo");
 
 #if DEBUG_CONDITION_PARSERS
             debug(within_distance);

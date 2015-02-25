@@ -44,7 +44,7 @@
     (BuildingTypesProduced)                     \
     (BuildingTypesScrapped)                     \
     (BuildTime)                                 \
-    (CanAddStarlaneTo)                          \
+    (CanAddStarlanesTo)                         \
     (CanColonize)                               \
     (CanProduceShips)                           \
     (Capacity)                                  \
