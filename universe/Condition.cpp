@@ -5794,24 +5794,372 @@ bool Condition::CanAddStarlaneConnection::operator==(const Condition::ConditionB
 }
 
 namespace {
+    // check if two destination systems, connected to the same origin system
+    // would have starlanes too close angularly to eachother
+    bool LanesAngularlyTooClose(TemporaryPtr<const UniverseObject> sys1,
+                                TemporaryPtr<const UniverseObject> lane1_sys2,
+                                TemporaryPtr<const UniverseObject> lane2_sys2)
+    {
+        if (!sys1 || !lane1_sys2 || !lane2_sys2)
+            return true;
+        if (sys1 == lane1_sys2 || sys1 == lane2_sys2 || lane1_sys2 == lane2_sys2)
+            return true;
+
+        float dx1 = lane1_sys2->X() - sys1->X();
+        float dy1 = lane1_sys2->Y() - sys1->Y();
+        float mag = std::sqrt(dx1*dx1 + dy1*dy1);
+        if (mag == 0.0f)
+            return true;
+        dx1 /= mag;
+        dy1 /= mag;
+
+        float dx2 = lane2_sys2->X() - sys1->X();
+        float dy2 = lane2_sys2->Y() - sys1->Y();
+        mag = std::sqrt(dx2*dx2 + dy2*dy2);
+        if (mag == 0.0f)
+            return true;
+        dx2 /= mag;
+        dy2 /= mag;
+
+
+        const float MAX_LANE_DOT_PRODUCT = 0.98f;   // magic limit copied from CullAngularlyTooCloseLanes in UniverseGenerator
+
+        float dp = (dx1 * dx2) + (dy1 * dy2);
+        return dp < MAX_LANE_DOT_PRODUCT;   // if dot product too high after normalizing vectors, angles are adequately separated
+    }
+
+    // check the distance between a system and a (possibly nonexistant)
+    // starlane between two other systems. distance here is how far the third
+    // system is from the line passing through the lane endpoint systems, as
+    // long as the third system is closer to either end point than the endpoints
+    // are to eachother. if the third system is further than the endpoints, than
+    // the distance to the line is not considered and the lane is considered
+    // acceptable
+    bool ObjectTooCloseToLane(TemporaryPtr<const UniverseObject> lane_end_sys1,
+                              TemporaryPtr<const UniverseObject> lane_end_sys2,
+                              TemporaryPtr<const UniverseObject> obj)
+    {
+        if (!lane_end_sys1 || !lane_end_sys2 || !obj)
+            return true;
+        if (lane_end_sys1 == lane_end_sys2 || obj == lane_end_sys1 || obj == lane_end_sys2)
+            return true;
+
+        // check distances (squared) between object and lane-end systems
+        float v_12_x = lane_end_sys2->X() - lane_end_sys1->X();
+        float v_12_y = lane_end_sys2->Y() - lane_end_sys1->Y();
+        float v_o1_x = lane_end_sys1->X() - obj->X();
+        float v_o1_y = lane_end_sys1->Y() - obj->Y();
+        float v_o2_x = lane_end_sys2->X() - obj->X();
+        float v_o2_y = lane_end_sys2->Y() - obj->Y();
+
+        float dist2_12 = v_12_x*v_12_x + v_12_y*v_12_y;
+        float dist2_o1 = v_o1_x*v_o1_x + v_o1_y*v_o1_y;
+        float dist2_o2 = v_o2_x*v_o2_x + v_o2_y*v_o2_y;
+
+        // object to zero-length lanes
+        if (dist2_12 == 0.0f || dist2_o1 == 0.0f || dist2_o2 == 0.0f)
+            return true;
+
+        // if object is further from either of the lane end systems than they
+        // are from eachother, it is fine, regardless of the right-angle
+        // distance to the line between the systems
+        if (dist2_12 < dist2_o1 || dist2_12 < dist2_o2)
+            return false;
+
+
+        // check right-angle distance between obj and lane
+
+        // normalize vector components of lane vector
+        float mag_12 = std::sqrt(dist2_12);
+        if (mag_12 == 0.0f)
+            return true;
+        v_12_x /= mag_12;
+        v_12_y /= mag_12;
+
+        // distance to point from line from vector projection / dot products
+        //.......O
+        //      /|
+        //     / |
+        //    /  |d
+        //   /   |
+        //  /a___|___
+        // 1         2
+        // (1O).(12) = |1O| |12| cos(a)
+        // d = |1O| cos(a) = (1O).(12) / |12|
+        // d = -(O1).(12 / |12|)
+
+        const float MIN_PERP_DIST = 10; // magic limit, in units of universe units (uu)
+
+        float perp_dist = std::abs(v_o1_x*v_12_x + v_o1_y*v_12_y);
+
+        return perp_dist < MIN_PERP_DIST;
+    }
+
+    inline float CrossProduct(float dx1, float dy1, float dx2, float dy2)
+    { return dx1*dy2 - dy1*dx2; }
+
+    bool LanesCross(TemporaryPtr<const System> lane1_end_sys1,
+                    TemporaryPtr<const System> lane1_end_sys2,
+                    TemporaryPtr<const System> lane2_end_sys1,
+                    TemporaryPtr<const System> lane2_end_sys2)
+    {
+        // are all endpoints valid systems?
+        if (!lane1_end_sys1 || !lane1_end_sys2 || !lane2_end_sys1 || !lane2_end_sys2)
+            return true;
+
+        // is either lane degenerate (same start and endpoints)
+        if (lane1_end_sys1 == lane1_end_sys2 || lane2_end_sys1 == lane2_end_sys2)
+            return true;
+
+        // do the two lanes share endpoints?
+        bool share_endpoint_1 = lane1_end_sys1 == lane2_end_sys1 || lane1_end_sys1 == lane2_end_sys2;
+        bool share_endpoint_2 = lane1_end_sys2 == lane2_end_sys1 || lane1_end_sys2 == lane2_end_sys2;
+        if (share_endpoint_1 && share_endpoint_2)
+            return true;    // two copies of the same lane?
+        if (share_endpoint_1 || share_endpoint_2)
+            return false;   // one common endpoing, but not both common, so can't cross in middle
+
+        // calculate vector components for lanes
+        // lane 1
+        float v_11_12_x = lane1_end_sys2->X() - lane1_end_sys1->X();
+        float v_11_12_y = lane1_end_sys2->Y() - lane1_end_sys1->Y();
+        // lane 2
+        float v_21_22_x = lane2_end_sys2->X() - lane2_end_sys1->X();
+        float v_21_22_y = lane2_end_sys2->Y() - lane2_end_sys1->Y();
+
+        // calculate vector components from lane 1 system 1 to lane 2 endpoints
+        // lane 1 endpoint 1 to lane 2 endpoint 1
+        float v_11_21_x = lane2_end_sys1->X() - lane1_end_sys1->X();
+        float v_11_21_y = lane2_end_sys1->Y() - lane1_end_sys1->Y();
+        // lane 1 endpoint 1 to lane 2 endpoint 2
+        float v_11_22_x = lane2_end_sys2->X() - lane1_end_sys1->X();
+        float v_11_22_y = lane2_end_sys2->Y() - lane2_end_sys2->Y();
+
+        // find cross products of vectors to check on which sides of lane 1 the
+        // endpoints of lane 2 are located...
+        float cp_1_21 = CrossProduct(v_11_12_x, v_11_12_y, v_11_21_x, v_11_21_y);
+        float cp_1_22 = CrossProduct(v_11_12_x, v_11_12_y, v_11_22_x, v_11_22_y);
+        if (cp_1_21*cp_1_22 >= 0) // product of same sign numbers is positive, of different sign numbers is negative
+            return false;   // if same sign, points are on same side of line, so can't cross it
+
+        // calculate vector components from lane 2 system 1 to lane 1 endpoints
+        // lane 2 endpoint 1 to lane 1 endpoint 1
+        float v_21_11_x = -v_11_21_x;
+        float v_21_11_y = -v_11_21_y;
+        // lane 2 endpoint 1 to lane 1 endpoint 2
+        float v_21_12_x = lane1_end_sys2->X() - lane2_end_sys1->X();
+        float v_21_12_y = lane1_end_sys2->Y() - lane2_end_sys1->Y();
+
+        // find cross products of vectors to check on which sides of lane 2 the
+        // endpoints of lane 1 are located...
+        float cp_2_11 = CrossProduct(v_21_22_x, v_21_22_y, v_21_11_x, v_21_11_y);
+        float cp_2_12 = CrossProduct(v_21_22_x, v_21_22_y, v_21_12_x, v_21_12_y);
+        if (cp_2_11*cp_2_12 >= 0)
+            return false;
+
+        // endpoints of both lines are on opposite sides of the other line, so
+        // the lines must cross
+
+        return true;
+    }
+
+    bool LaneCrossesExistingLane(TemporaryPtr<const System> lane_end_sys1,
+                                 TemporaryPtr<const System> lane_end_sys2)
+    {
+        if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
+            return true;
+
+        const ObjectMap& objects = Objects();
+        std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
+
+        // loop over all existing lanes in all systems, checking if a lane
+        // beween the specified systems would cross any of the existing lanes
+        for (std::vector<TemporaryPtr<const System> >::iterator sys_it = systems.begin();
+             sys_it != systems.end(); ++sys_it)
+        {
+            TemporaryPtr<const System> system = *sys_it;
+            if (system == lane_end_sys1 || system == lane_end_sys2)
+                continue;
+
+            const std::map<int, bool>& sys_existing_lanes = system->StarlanesWormholes();
+
+            // check all existing lanes of currently-being-checked system
+            for (std::map<int, bool>::const_iterator lane_it = sys_existing_lanes.begin();
+                 lane_it != sys_existing_lanes.end(); ++lane_it)
+            {
+                TemporaryPtr<const System> lane_end_sys3 = GetSystem(lane_it->first);
+                if (!lane_end_sys3)
+                    continue;
+                // don't need to check against existing lanes that include one
+                // of the endpoints of the lane is one of the specified systems
+                if (lane_end_sys3 == lane_end_sys1 || lane_end_sys3 == lane_end_sys2)
+                    continue;
+
+                if (LanesCross(lane_end_sys1, lane_end_sys2, system, lane_end_sys3))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool LaneTooCloseToOtherSystem(TemporaryPtr<const System> lane_end_sys1,
+                                   TemporaryPtr<const System> lane_end_sys2)
+    {
+        if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
+            return true;
+
+        const ObjectMap& objects = Objects();
+        std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
+
+        // loop over all existing systems, checking if each is too close to a
+        // lane between the specified lane endpoints
+        for (std::vector<TemporaryPtr<const System> >::iterator sys_it = systems.begin();
+             sys_it != systems.end(); ++sys_it)
+        {
+            TemporaryPtr<const System> system = *sys_it;
+            if (system == lane_end_sys1 || system == lane_end_sys2)
+                continue;
+
+            if (ObjectTooCloseToLane(lane_end_sys1, lane_end_sys2, system))
+                return true;
+        }
+
+        return false;
+    }
+
     struct CanAddStarlaneConnectionSimpleMatch {
         CanAddStarlaneConnectionSimpleMatch(const Condition::ObjectSet& destination_objects) :
-            m_destination_objects(destination_objects)
-        {}
+            m_destination_systems()
+        {
+            // get (one of each of) set of systems that are or that contain any
+            // destination objects
+            std::set<TemporaryPtr<const System> > dest_systems;
+            for (Condition::ObjectSet::const_iterator it = destination_objects.begin();
+                 it != destination_objects.end(); ++it)
+            {
+                if (TemporaryPtr<const System> sys = GetSystem((*it)->SystemID()))
+                    dest_systems.insert(sys);
+            }
+            std::copy(dest_systems.begin(), dest_systems.end(), std::inserter(m_destination_systems, m_destination_systems.end()));
+        }
 
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            // TODO: implement this test.
-            //       - should check that there are no lanes already between candidate and all destination objects
-            //       - should check that the proposed lane is not too close to an existing system
-            //       - should check that there are no lanes already existing that cross the proposed lane
-            //       - should check that there are no lanes connecting to candidate or destination objects that are
-            //         very close in angle to the proposed lane
+
+            // get system from candidate
+            TemporaryPtr<const System> candidate_sys = boost::dynamic_pointer_cast<const System>(candidate);
+            if (!candidate_sys)
+                candidate_sys = GetSystem(candidate->SystemID());
+            if (!candidate_sys)
+                return false;
+
+
+            // check if candidate is one of the destination systems
+            for (std::vector<TemporaryPtr<const System> >::const_iterator it = m_destination_systems.begin();
+                 it != m_destination_systems.end(); ++it)
+            {
+                if (candidate_sys->ID() == (*it)->ID())
+                    return false;
+            }
+
+
+            // check if candidate already has a lane to any of the destination systems
+            for (std::vector<TemporaryPtr<const System> >::const_iterator it = m_destination_systems.begin();
+                 it != m_destination_systems.end(); ++it)
+            {
+                if (candidate_sys->HasStarlaneTo((*it)->ID()))
+                    return false;
+            }
+
+
+            const std::map<int, bool>& candidate_already_existing_lanes = candidate_sys->StarlanesWormholes();
+
+
+            // check if any of the proposed lanes are too close to any already-
+            // present lanes of the candidate system
+            for (std::map<int, bool>::const_iterator it = candidate_already_existing_lanes.begin();
+                 it != candidate_already_existing_lanes.end(); ++it)
+            {
+                TemporaryPtr<const System> candidate_existing_lane_end_sys = GetSystem(it->first);
+                if (!candidate_existing_lane_end_sys)
+                    continue;
+
+                // check this existing lane against potential lanes to all destination systems
+                for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
+                     dest_it != m_destination_systems.end(); ++dest_it)
+                {
+                    TemporaryPtr<const System> dest_sys = *dest_it;
+
+                    if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys))
+                        return false;
+                }
+            }
+
+
+            // check if any of the proposed lanes are too close to any already-
+            // present lanes of any of the destination systems
+            for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
+                 dest_it != m_destination_systems.end(); ++dest_it)
+            {
+                TemporaryPtr<const System> dest_sys = *dest_it;
+
+                const std::map<int, bool>& destination_already_existing_lanes = dest_sys->StarlanesWormholes();
+
+                // check this destination system's existing lanes against a lane
+                // to the candidate system
+                for (std::map<int, bool>::const_iterator dest_lane_it = destination_already_existing_lanes.begin();
+                     dest_lane_it != destination_already_existing_lanes.end(); ++dest_lane_it)
+                {
+                    TemporaryPtr<const System> dest_lane_end_sys = GetSystem(dest_lane_it->first);
+                    if (!dest_lane_end_sys)
+                        continue;
+
+                    if (LanesAngularlyTooClose(dest_sys, candidate_sys, dest_lane_end_sys))
+                        return false;
+                }
+            }
+
+
+            // check if any of the proposed lanes are too close to eachother
+            for (std::vector<TemporaryPtr<const System> >::const_iterator it1 = m_destination_systems.begin();
+                 it1 != m_destination_systems.end(); ++it1)
+            {
+                TemporaryPtr<const System> dest_sys1 = *it1;
+
+                // don't need to check a lane in both directions, so start at one past it1
+                std::vector<TemporaryPtr<const System> >::const_iterator it2 = it1; it2++;
+                for (; it2 != m_destination_systems.end(); ++it2) {
+                    TemporaryPtr<const System> dest_sys2 = *it2;
+                    if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2))
+                        return false;
+                }
+            }
+
+
+            // check that the proposed lanes are not too close to any existing
+            // system they are not connected to
+            for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
+                 dest_it != m_destination_systems.end(); ++dest_it)
+            {
+                if (LaneTooCloseToOtherSystem(candidate_sys, *dest_it))
+                    return false;
+            }
+
+
+            // check that there are no lanes already existing that cross the proposed lanes
+            for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
+                 dest_it != m_destination_systems.end(); ++dest_it)
+            {
+                if (LaneCrossesExistingLane(candidate_sys, *dest_it))
+                    return false;
+            }
+
             return true;
         }
 
-        const Condition::ObjectSet& m_destination_objects;
+        std::vector<TemporaryPtr<const System> > m_destination_systems;
     };
 }
 
@@ -5847,13 +6195,12 @@ bool Condition::CanAddStarlaneConnection::SourceInvariant() const
 
 std::string Condition::CanAddStarlaneConnection::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
-        ? UserString("DESC_CAN_ADD_STARLANE_CONNECTION")
-        : UserString("DESC_CAN_ADD_STARLANE_CONNECTION_NOT"))
+        ? UserString("DESC_CAN_ADD_STARLANE_CONNECTION") : UserString("DESC_CAN_ADD_STARLANE_CONNECTION_NOT"))
         % m_condition->Description());
 }
 
 std::string Condition::CanAddStarlaneConnection::Dump() const {
-    std::string retval = DumpIndent() + "CanAddStarlaneTo condition =\n";
+    std::string retval = DumpIndent() + "CanAddStarlanesTo condition =\n";
     ++g_indent;
         retval += m_condition->Dump();
     --g_indent;
