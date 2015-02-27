@@ -15,7 +15,7 @@
 #include "../universe/Special.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
-#include "../universe/PythonUniverseGenerator.h"
+#include "../python/server/PythonUniverseGenerator.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"

@@ -2,9 +2,9 @@
 #ifndef _PythonUniverseGenerator_h_
 #define _PythonUniverseGenerator_h_
 
-#include "Universe.h"
-#include "UniverseGenerator.h"
-#include "../util/MultiplayerCommon.h"
+#include "../../universe/Universe.h"
+#include "../../universe/UniverseGenerator.h"
+#include "../../util/MultiplayerCommon.h"
 
 
 // Initializes, runs and cleans up the Python universe generator
