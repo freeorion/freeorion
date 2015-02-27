@@ -121,27 +121,8 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);
  * their target values. */
 void SetNativePopulationValues(ObjectMap& object_map);
     
-/** Adds start-of-game specials to objects. */
-void AddStartingSpecials(Universe& universe, GalaxySetupOption specials_freq);
-
-/** Adds non-empire-affiliated native populations to planets. */
-void GenerateNatives(Universe& universe, GalaxySetupOption freq);
-
-/** Adds space monsters to systems. */
-void GenerateSpaceMonsters(Universe& universe, GalaxySetupOption freq);
-
 /** Creates starlanes and adds them systems already generated. */
 void GenerateStarlanes(GalaxySetupOption freq);
-
-/** Picks systems to host homeworlds, generates planets for them, stores
- * the ID's of the homeworld planets into the homeworld vector. */
-void GenerateHomeworlds(Universe& universe, int players, std::vector<int>& homeworld_planet_ids);
-
-/** Names the planets in each system, based on the system's name. */
-void NamePlanets(Universe& universe);
-
-/** Creates some initial fields in universe. */
-void GenerateFields(Universe& universe, GalaxySetupOption freq);
 
 /** Sets empire homeworld
  * This includes setting ownership, capital, species,
