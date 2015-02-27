@@ -12,9 +12,6 @@
 // Minimum distance between systems in universe units [0.0, m_universe_width]
 const double    MIN_SYSTEM_SEPARATION       = 35.0;
 
-// Minimum distance between home systems in universe units [0.0, m_universe_width]
-const double    MIN_HOME_SYSTEM_SEPARATION  = 200.0;
-
 struct PlayerSetupData;
 
 // Class representing a position on the galaxy map, used
