@@ -100,6 +100,7 @@
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\network\ServerNetworking.h" />
     <ClInclude Include="..\..\python\PythonWrappers.h" />
+    <ClInclude Include="..\..\python\server\PythonUniverseGenerator.h" />
     <ClInclude Include="..\..\server\SaveLoad.h" />
     <ClInclude Include="..\..\server\ServerApp.h" />
     <ClInclude Include="..\..\server\ServerFSM.h" />
@@ -116,7 +117,6 @@
     <ClInclude Include="..\..\universe\Planet.h" />
     <ClInclude Include="..\..\universe\PopCenter.h" />
     <ClInclude Include="..\..\universe\Predicates.h" />
-    <ClInclude Include="..\..\universe\PythonUniverseGenerator.h" />
     <ClInclude Include="..\..\universe\ResourceCenter.h" />
     <ClInclude Include="..\..\universe\Ship.h" />
     <ClInclude Include="..\..\universe\ShipDesign.h" />
@@ -155,11 +155,11 @@
     <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp" />
+    <ClCompile Include="..\..\python\server\PythonUniverseGenerator.cpp" />
     <ClCompile Include="..\..\server\dmain.cpp" />
     <ClCompile Include="..\..\server\SaveLoad.cpp" />
     <ClCompile Include="..\..\server\ServerApp.cpp" />
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
-    <ClCompile Include="..\..\universe\PythonUniverseGenerator.cpp" />
     <ClCompile Include="..\..\universe\UniverseGenerator.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
   </ItemGroup>

@@ -51,6 +51,12 @@
     <Filter Include="Source Files\python">
       <UniqueIdentifier>{249f8c81-16de-4b81-90d5-4088dfdb7369}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\python\server">
+      <UniqueIdentifier>{c3307031-3277-4f7d-b6a3-8558cba6a1d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\python\server">
+      <UniqueIdentifier>{14c6a328-5856-4286-977d-0b6dc165fe97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\CombatSystem.h">
@@ -212,14 +218,14 @@
     <ClInclude Include="..\..\python\PythonWrappers.h">
       <Filter>Header Files\python</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\PythonUniverseGenerator.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\UniverseGenerator.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\server\PythonUniverseGenerator.h">
+      <Filter>Header Files\python\server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -250,14 +256,14 @@
     <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp">
       <Filter>Source Files\python</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\PythonUniverseGenerator.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\universe\UniverseGenerator.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp">
       <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\server\PythonUniverseGenerator.cpp">
+      <Filter>Source Files\python\server</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
