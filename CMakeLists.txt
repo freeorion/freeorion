@@ -150,7 +150,7 @@ set (freeorioncommon_HEADER
     universe/Planet.h
     universe/PopCenter.h
     universe/Predicates.h
-    universe/PythonUniverseGenerator.h
+    python/server/PythonUniverseGenerator.h
     universe/ResourceCenter.h
     universe/ShipDesign.h
     universe/Ship.h
