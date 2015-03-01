@@ -334,6 +334,7 @@
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
 		82D563D71A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */; };
 		82D7B5A01AA3666F00A85842 /* PythonServerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */; };
+		82D7B5A31AA37C9000A85842 /* PythonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B5A11AA37C9000A85842 /* PythonFramework.cpp */; };
 		82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E5238E192FE8CE001E2374 /* AppKit.framework */; };
 		82E52391192FE90F001E2374 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52390192FE90F001E2374 /* IOKit.framework */; };
 		82E52398192FE99D001E2374 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52392192FE99C001E2374 /* Carbon.framework */; };
@@ -1159,6 +1160,8 @@
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
 		82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonServerWrapper.cpp; sourceTree = "<group>"; };
 		82D7B59F1AA3666F00A85842 /* PythonServerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonServerWrapper.h; sourceTree = "<group>"; };
+		82D7B5A11AA37C9000A85842 /* PythonFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonFramework.cpp; sourceTree = "<group>"; };
+		82D7B5A21AA37C9000A85842 /* PythonFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonFramework.h; sourceTree = "<group>"; };
 		82E250AD19C2317700F0E2F2 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGLEW.a; sourceTree = "<group>"; };
 		82E5238E192FE8CE001E2374 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		82E52390192FE90F001E2374 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -2136,6 +2139,8 @@
 				824CE19F1AA0C28A00111CD9 /* PythonUniverseGenerator.h */,
 				82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */,
 				82D7B59F1AA3666F00A85842 /* PythonServerWrapper.h */,
+				82D7B5A11AA37C9000A85842 /* PythonFramework.cpp */,
+				82D7B5A21AA37C9000A85842 /* PythonFramework.h */,
 			);
 			path = server;
 			sourceTree = "<group>";
@@ -2708,6 +2713,7 @@
 				47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */,
 				471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */,
 				82D7B5A01AA3666F00A85842 /* PythonServerWrapper.cpp in Sources */,
+				82D7B5A31AA37C9000A85842 /* PythonFramework.cpp in Sources */,
 				471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */,
 				2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */,
 				2F6096CE12EF046500F58913 /* ClientApp.cpp in Sources */,
