@@ -47,6 +47,8 @@ set (freeoriond_SOURCE
     ../python/PythonEnumWrapper.cpp
     ../python/PythonLoggingWrapper.cpp
     ../python/PythonUniverseWrapper.cpp
+    ../python/server/PythonFramework.cpp
+    ../python/server/PythonServerWrapper.cpp
     ../python/server/PythonUniverseGenerator.cpp
     ../universe/UniverseGenerator.cpp
 )
