@@ -227,6 +227,12 @@
     <ClInclude Include="..\..\python\server\PythonUniverseGenerator.h">
       <Filter>Header Files\python\server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\python\server\PythonFramework.h">
+      <Filter>Header Files\python\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\server\PythonServerWrapper.h">
+      <Filter>Header Files\python\server</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\ServerNetworking.cpp">
@@ -263,6 +269,12 @@
       <Filter>Source Files\python</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\server\PythonUniverseGenerator.cpp">
+      <Filter>Source Files\python\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\server\PythonFramework.cpp">
+      <Filter>Source Files\python\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\server\PythonServerWrapper.cpp">
       <Filter>Source Files\python\server</Filter>
     </ClCompile>
   </ItemGroup>
