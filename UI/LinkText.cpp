@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "../util/Logger.h"
 #include "../util/VarText.h"
+#include "../util/i18n.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
@@ -447,3 +448,11 @@ void TextLinker::MarkLinks() {
 }
 
 const LinkDecorator TextLinker::DEFAULT_DECORATOR;
+
+
+
+std::string LinkTaggedText(const std::string& tag, const std::string& stringtable_entry)
+{ return "<" + tag + " " + stringtable_entry + ">" + UserString(stringtable_entry) + "</" + tag + ">"; }
+
+std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text)
+{ return "<" + tag + " " + boost::lexical_cast<std::string>(id) + ">" + text + "</" + tag + ">"; }

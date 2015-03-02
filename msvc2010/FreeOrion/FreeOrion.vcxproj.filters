@@ -49,6 +49,12 @@
     <Filter Include="Source Files\util">
       <UniqueIdentifier>{4fba4d8e-44f9-4cb3-8914-7aff0a18b6da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UI\CombatReport">
+      <UniqueIdentifier>{595eb208-938f-4560-aa0c-0d706f821421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\CombatReport">
+      <UniqueIdentifier>{039411a6-01bf-4e77-b491-f746f5f7fc1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\client\ClientApp.h">
@@ -345,6 +351,18 @@
     <ClInclude Include="..\..\UI\TechTreeArcs.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\CombatReport\CombatLogWnd.h">
+      <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatReport\CombatReportData.h">
+      <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatReport\CombatReportWnd.h">
+      <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatReport\GraphicalSummary.h">
+      <Filter>Header Files\UI\CombatReport</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico">
@@ -492,6 +510,18 @@
     </ClCompile>
     <ClCompile Include="..\..\UI\TechTreeArcs.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatReport\CombatLogWnd.cpp">
+      <Filter>Source Files\UI\CombatReport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatReport\CombatReportData.cpp">
+      <Filter>Source Files\UI\CombatReport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatReport\CombatReportWnd.cpp">
+      <Filter>Source Files\UI\CombatReport</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatReport\GraphicalSummary.cpp">
+      <Filter>Source Files\UI\CombatReport</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

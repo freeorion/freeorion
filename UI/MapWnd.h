@@ -21,6 +21,7 @@ class DesignWnd;
 class ProductionWnd;
 class ResearchWnd;
 class EncyclopediaDetailPanel;
+class CombatReportWnd;
 class ObjectListWnd;
 class ModeratorActionsWnd;
 struct SaveGameUIData;
@@ -382,6 +383,7 @@ private:
     EncyclopediaDetailPanel*    m_pedia_panel;      //!< encyclpedia panel
     ObjectListWnd*              m_object_list_wnd;  //!< filterable list of objects in universe
     ModeratorActionsWnd*        m_moderator_wnd;    //!< buttons to select moderator actions
+    CombatReportWnd*            m_combat_report_wnd;//!< shows graphical reports of combats
 
     std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 

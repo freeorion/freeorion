@@ -588,6 +588,11 @@ OptionsWnd::OptionsWnd():
     ColorOption(current_page, 0, "UI.stat-increase-color",      UserString("OPTIONS_STAT_INCREASE_COLOR"));
     ColorOption(current_page, 0, "UI.stat-decrease-color",      UserString("OPTIONS_STAT_DECREASE_COLOR"));
 
+    CreateSectionHeader(current_page, 0, UserString("OPTIONS_COMBAT_COLORS"));
+    ColorOption(current_page, 0, "UI.combat.summary.dead-color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
+    ColorOption(current_page, 0, "UI.combat.summary.wound-color", UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
+    ColorOption(current_page, 0, "UI.combat.summary.health-color", UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
+
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_TECH_COLORS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_KNOWN_TECH_COLORS"));
     ColorOption(current_page, 1, "UI.known-tech",        UserString("OPTIONS_FILL_COLOR"));

@@ -111,6 +111,10 @@
     <ClInclude Include="..\..\UI\BuildDesignatorWnd.h" />
     <ClInclude Include="..\..\UI\ChatWnd.h" />
     <ClInclude Include="..\..\UI\ClientUI.h" />
+    <ClInclude Include="..\..\UI\CombatReport\CombatLogWnd.h" />
+    <ClInclude Include="..\..\UI\CombatReport\CombatReportData.h" />
+    <ClInclude Include="..\..\UI\CombatReport\CombatReportWnd.h" />
+    <ClInclude Include="..\..\UI\CombatReport\GraphicalSummary.h" />
     <ClInclude Include="..\..\UI\CUIControls.h" />
     <ClInclude Include="..\..\UI\CUIDrawUtil.h" />
     <ClInclude Include="..\..\UI\CUISlider.h" />
@@ -208,6 +212,10 @@
     <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp" />
     <ClCompile Include="..\..\UI\ChatWnd.cpp" />
     <ClCompile Include="..\..\UI\ClientUI.cpp" />
+    <ClCompile Include="..\..\UI\CombatReport\CombatLogWnd.cpp" />
+    <ClCompile Include="..\..\UI\CombatReport\CombatReportData.cpp" />
+    <ClCompile Include="..\..\UI\CombatReport\CombatReportWnd.cpp" />
+    <ClCompile Include="..\..\UI\CombatReport\GraphicalSummary.cpp" />
     <ClCompile Include="..\..\UI\CUIControls.cpp" />
     <ClCompile Include="..\..\UI\CUIDrawUtil.cpp" />
     <ClCompile Include="..\..\UI\CUIStyle.cpp" />

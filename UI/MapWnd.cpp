@@ -9,6 +9,7 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
+#include "CombatReport/CombatReportWnd.h"
 #include "FleetButton.h"
 #include "FleetWnd.h"
 #include "InfoPanels.h"
@@ -547,6 +548,7 @@ MapWnd::MapWnd() :
     m_pedia_panel(0),
     m_object_list_wnd(0),
     m_moderator_wnd(0),
+    m_combat_report_wnd(0),
     m_starlane_endpoints(),
     m_stationary_fleet_buttons(),
     m_departing_fleet_buttons(),
@@ -1046,6 +1048,11 @@ MapWnd::MapWnd() :
     GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
     GG::GUI::GetGUI()->Register(m_moderator_wnd);
     m_moderator_wnd->Hide();
+    
+    // Combat report
+    m_combat_report_wnd = new CombatReportWnd();
+    GG::GUI::GetGUI()->Register(m_combat_report_wnd);
+    m_combat_report_wnd->Hide();
 
     // research window
     m_research_wnd = new ResearchWnd(AppWidth(), AppHeight() - m_toolbar->Height());
@@ -1138,6 +1145,7 @@ MapWnd::~MapWnd() {
     delete m_production_wnd;
     delete m_design_wnd;
     delete m_side_panel;
+    delete m_combat_report_wnd;
 }
 
 void MapWnd::DoLayout() {
@@ -2079,6 +2087,8 @@ void MapWnd::InitTurn() {
             ShowSitRep();
     }
 
+    m_combat_report_wnd->Hide();
+
     if (m_object_list_wnd->Visible())
         m_object_list_wnd->Refresh();
 
@@ -2859,9 +2869,9 @@ void MapWnd::ShowPlanet(int planet_id) {
 }
 
 void MapWnd::ShowCombatLog(int log_id) {
-    if (!m_pedia_panel->Visible())
-        TogglePedia();
-    m_pedia_panel->SetCombatLog(log_id);
+    m_combat_report_wnd->SetLog( log_id );
+    m_combat_report_wnd->Show();
+    GG::GUI::GetGUI()->MoveUp(m_combat_report_wnd);
 }
 
 void MapWnd::ShowTech(const std::string& tech_name) {

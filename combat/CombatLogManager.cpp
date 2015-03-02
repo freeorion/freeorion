@@ -1,8 +1,80 @@
 #include "CombatLogManager.h"
+#include "../universe/Meter.h"
 #include "../universe/UniverseObject.h"
 #include "../util/Serialize.h"
 #include "../util/Serialize.ipp"
 #include "CombatEvents.h"
+
+
+namespace {
+    static float MaxHealth(const UniverseObject& object) {
+        if ( object.ObjectType() == OBJ_SHIP ) {
+            return object.CurrentMeterValue(METER_MAX_STRUCTURE);
+        } else if ( object.ObjectType() == OBJ_PLANET ) {
+            const Meter* defense = object.GetMeter(METER_MAX_DEFENSE);
+            const Meter* shield = object.GetMeter(METER_MAX_SHIELD);
+            const Meter* construction = object.UniverseObject::GetMeter(METER_TARGET_CONSTRUCTION);
+
+            float ret = 0.0;
+            if(defense) {
+                ret += defense->Current();
+            }
+            if(shield) {
+                ret += shield->Current();
+            }
+            if(construction) {
+                ret += construction->Current();
+            }
+            return ret;
+        } else {
+            return 0.0;
+        }
+    }
+
+    static float CurrentHealth(const UniverseObject& object) {
+        if ( object.ObjectType() == OBJ_SHIP ) {
+            return object.CurrentMeterValue(METER_STRUCTURE);
+        } else if ( object.ObjectType() == OBJ_PLANET ) {
+            const Meter* defense = object.GetMeter(METER_DEFENSE);
+            const Meter* shield = object.GetMeter(METER_SHIELD);
+            const Meter* construction = object.UniverseObject::GetMeter(METER_CONSTRUCTION);
+
+            float ret = 0.0;
+            if(defense) {
+                ret += defense->Current();
+            }
+            if(shield) {
+                ret += shield->Current();
+            }
+            if(construction) {
+                ret += construction->Current();
+            }
+            return ret;
+        } else {
+            return 0.0;
+        }
+    }
+
+    static void FillState(CombatParticipantState& state, const UniverseObject& object) {
+        state.current_health = CurrentHealth(object);
+        state.max_health = MaxHealth(object);
+    };
+}
+
+CombatParticipantState::CombatParticipantState():
+current_health(0.0f),
+max_health(0.0f)
+{
+
+}
+
+
+CombatParticipantState::CombatParticipantState(const UniverseObject& object):
+current_health(0.0f),
+max_health(0.0f)
+{
+    FillState(*this, object);
+}
 
 ////////////////////////////////////////////////
 // CombatLog
@@ -25,9 +97,18 @@ CombatLog::CombatLog(const CombatInfo& combat_info) :
     object_ids = combat_info.destroyed_object_ids;
     for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
          it != combat_info.objects.const_end(); ++it)
-    { object_ids.insert(it->ID()); }
+    {
+        object_ids.insert(it->ID());
+        participant_states[it->ID()] = CombatParticipantState(**it);
+    }
 }
 
+template <class Archive>
+void CombatParticipantState::serialize(Archive& ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_NVP(current_health)
+       & BOOST_SERIALIZATION_NVP(max_health);
+}
 
 template <class Archive>
 void CombatLog::serialize(Archive& ar, const unsigned int version)
@@ -47,6 +128,12 @@ void CombatLog::serialize(Archive& ar, const unsigned int version)
     & BOOST_SERIALIZATION_NVP(damaged_object_ids)
     & BOOST_SERIALIZATION_NVP(destroyed_object_ids)
     & BOOST_SERIALIZATION_NVP(combat_events);
+
+    // Store state of fleet at this battle.
+    // Used to show summaries of past battles.
+    if(version >= 1) {
+        ar & BOOST_SERIALIZATION_NVP(participant_states);
+    }
 }
 
 template

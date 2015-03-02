@@ -48,7 +48,6 @@ public:
 
     void            SetText(const std::string& text, bool lookup_in_stringtable = true);
     void            SetPlanet(int planet_id);
-    void            SetCombatLog(int log_id);
     void            SetItem(TemporaryPtr<const Planet> planet);
     void            SetTech(const std::string& tech_name);
     void            SetItem(const Tech* tech);

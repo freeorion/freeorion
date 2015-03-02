@@ -1,0 +1,66 @@
+#ifndef COMBATREPORTDATA_H
+#define COMBATREPORTDATA_H
+
+#include "../universe/TemporaryPtr.h"
+
+#include <GG/Clr.h>
+
+#include <vector>
+
+class AttackEvent;
+class CombatParticipantState;
+class Empire;
+class UniverseObject;
+
+// Data on what happened on single object in the combat
+struct ParticipantSummary {
+    int object_id;
+    int empire_id;
+    std::vector<AttackEvent*> attacks;
+    std::vector<AttackEvent*> attacks_against;
+
+    float current_health;
+    float max_health;
+
+    ParticipantSummary();
+
+    ParticipantSummary(int object_id, int empire_id, const CombatParticipantState& state);
+};
+
+// A summary of what happened to a side in the combat
+// (an empire or neutral)
+struct CombatSummary {
+public:
+    // Should be auto_ptr, but don't have c++11
+    typedef boost::shared_ptr<ParticipantSummary> ParticipantSummaryPtr;
+    // Participant summaries have vectors inside them,
+    // so we don't want to have to copy them around while sorting
+    // therefore we store them with pointers
+    typedef std::vector< ParticipantSummaryPtr > UnitSummaries;
+
+    Empire* empire;
+    UnitSummaries unit_summaries;
+    float total_current_health;
+    float total_max_health;
+    float max_max_health;
+    float max_current_health;
+
+    CombatSummary();
+
+    CombatSummary(int empire_id);
+
+    GG::Clr SideColor() const;
+
+    std::string SideName() const;
+
+    unsigned DestroyedUnits() const;
+
+    // Adds a summary of a unit to the summary of its side
+    // and aggregates its data.
+    void AddUnit(int unit_id, const CombatParticipantState& state);
+
+    // Sorts the units of this side in some sensible fashion
+    void Sort();
+};
+
+#endif // COMBATREPORTDATA_H

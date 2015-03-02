@@ -158,4 +158,11 @@ private:
     std::string     m_raw_text;
 };
 
+
+/// Helper for generating a link string with content from a stringtable entry
+std::string LinkTaggedText(const std::string& tag, const std::string& stringtable_entry);
+
+/// Helper for generating a link string
+std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text);
+
 #endif // _LinkText_h_

@@ -59,6 +59,10 @@ set(freeorion_HEADER
     ../../UI/BuildDesignatorWnd.h
     ../../UI/ChatWnd.h
     ../../UI/ClientUI.h
+    ../../UI/CombatReport/GraphicalSummary.h
+    ../../UI/CombatReport/CombatLogWnd.h
+    ../../UI/CombatReport/CombatReportData.h
+    ../../UI/CombatReport/CombatReportWnd.h
     ../../UI/CUIControls.h
     ../../UI/CUIDrawUtil.h
     ../../UI/CUISlider.h
@@ -113,6 +117,10 @@ set(freeorion_SOURCES
     ../../UI/BuildDesignatorWnd.cpp
     ../../UI/ChatWnd.cpp
     ../../UI/ClientUI.cpp
+    ../../UI/CombatReport/GraphicalSummary.cpp
+    ../../UI/CombatReport/CombatLogWnd.cpp
+    ../../UI/CombatReport/CombatReportData.cpp
+    ../../UI/CombatReport/CombatReportWnd.cpp
     ../../UI/CUIControls.cpp
     ../../UI/CUIDrawUtil.cpp
     ../../UI/CUIStyle.cpp
