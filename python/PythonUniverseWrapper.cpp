@@ -254,6 +254,18 @@ namespace FreeOrionPython {
         class_<std::vector<ShipSlotType> >("ShipSlotVec")
             .def(boost::python::vector_indexing_suite<std::vector<ShipSlotType>, true>())
         ;
+        class_<std::map<MeterType, Meter> >("MeterTypeMeterMap")
+            .def(boost::python::map_indexing_suite<std::map<MeterType, Meter>, true>())
+        ;
+        // typedef std::map<std::pair<MeterType, std::string>, Meter>          PartMeterMap;
+        class_<std::pair<MeterType, std::string> >("MeterTypeStringPair")
+            .add_property("meterType",  &std::pair<MeterType, std::string>::first)
+            .add_property("string",     &std::pair<MeterType, std::string>::second)
+        ;
+        class_<Ship::PartMeterMap>("MeterTypeStringPairMeterMap")
+            .def(boost::python::map_indexing_suite<Ship::PartMeterMap, true>())
+        ;
+
 
         ////////////////////
         //    Universe    //
