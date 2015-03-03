@@ -213,6 +213,7 @@
     (MoveTowards)                               \
     (Name)                                      \
     (Native)                                    \
+    (NearestSystemID)                           \
     (Neutron)                                   \
     (NextBetterPlanetType)                      \
     (NextCloserToOriginalPlanetType)            \
