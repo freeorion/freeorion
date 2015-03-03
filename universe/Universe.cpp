@@ -1023,6 +1023,28 @@ std::multimap<double, int> Universe::ImmediateNeighbors(int system_id, int empir
     return std::multimap<double, int>();
 }
 
+int Universe::NearestSystemTo(double x, double y) const {
+    double min_dist2 = DBL_MAX;
+    int min_dist2_sys_id = INVALID_OBJECT_ID;
+
+    std::vector<TemporaryPtr<const System> > systems = m_objects.FindObjects<System>();
+
+    for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin();
+         sys_it != systems.end(); ++sys_it)
+    {
+        double xs = (*sys_it)->X();
+        double ys = (*sys_it)->Y();
+        double dist2 = (xs-x)*(xs-x) + (ys-y)*(ys-y);
+        if (dist2 == 0.0) {
+            return (*sys_it)->ID();
+        } else if (dist2 < min_dist2) {
+            min_dist2 = dist2;
+            min_dist2_sys_id = (*sys_it)->ID();
+        }
+    }
+    return min_dist2_sys_id;
+}
+
 int Universe::GenerateObjectID() {
     if (m_last_allocated_object_id + 1 < MAX_ID)
         return ++m_last_allocated_object_id;

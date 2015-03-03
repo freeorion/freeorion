@@ -713,6 +713,13 @@ namespace ValueRef {
                 return fleet->PreviousSystemID();
             else
                 return INVALID_OBJECT_ID;
+
+        } else if (property_name == "NearestSystemID") {
+            if (object->SystemID() != INVALID_OBJECT_ID)
+                return object->SystemID();
+
+            return GetUniverse().NearestSystemTo(object->X(), object->Y());
+
         } else if (property_name == "NumShips") {
             if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
                 return fleet->NumShips();

@@ -217,6 +217,10 @@ public:
       * ID is out of range. */
     std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
+    /** Returns the id of the System object that is closest to the specified
+      * (\a x, \a y) location on the map, by direct-line distance. */
+    int                                     NearestSystemTo(double x, double y) const;
+
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */

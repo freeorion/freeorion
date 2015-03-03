@@ -164,18 +164,31 @@ std::string UniverseObject::Dump() const {
        << this->ID() << ": "
        << this->Name();
     if (system) {
-       os << "  at: " << system->Name();
+        const std::string& sys_name = system->Name();
+        if (sys_name.empty())
+            os << "  at: (System " << system->ID() << ")";
+        else
+            os << "  at: " << sys_name;
     } else {
         os << "  at: (" << this->X() << ", " << this->Y() << ")";
+        int near_id = GetUniverse().NearestSystemTo(this->X(), this->Y());
+        TemporaryPtr<const System> system = GetSystem(near_id);
+        if (system) {
+            const std::string& sys_name = system->Name();
+            if (sys_name.empty())
+                os << " nearest (System " << system->ID() << ")";
+            else
+                os << " nearest " << system->Name();
+        }
     }
     if (Unowned()) {
-        os << " (Unowned) ";
+        os << " owner: (Unowned) ";
     } else {
-        std::string empire_name = EmpireManager().GetEmpireName(m_owner_empire_id);
+        std::string empire_name = Empires().GetEmpireName(m_owner_empire_id);
         if (!empire_name.empty())
-            os << "owner: " << empire_name;
+            os << " owner: " << empire_name;
         else
-            os << "owner: (Unknown Empire)";
+            os << " owner: (Unknown Empire)";
     }
     os << " created on turn: " << m_created_on_turn
        << " specials: ";
