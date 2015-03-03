@@ -5,6 +5,7 @@ these methods in turn activate other portions of the python AI code"""
 import pickle  # Python object serialization library
 import sys
 import random
+from freeorion_debug.interactive_shell import handle_debug_chat
 from freeorion_debug import extend_free_orion_AI_interface  # update fo in import
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 #pylint: disable=relative-import
@@ -114,7 +115,8 @@ def prepareForSave(): # pylint: disable=invalid-name
 @chat_on_error
 def handleChatMessage(senderID, messageText): # pylint: disable=invalid-name
     """called by client to handle chat messages"""
-    print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
+    # print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
+    handle_debug_chat(senderID, messageText)
 
 
 # called when this player recives a diplomatic message update from the server, such as if another player
