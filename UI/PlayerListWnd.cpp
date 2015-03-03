@@ -176,7 +176,7 @@ namespace {
             // if player has an empire, get its name and colour.  (Some player types might not have empires...)
             GG::Clr empire_color = ClientUI::TextColor();
             std::string empire_name;
-            const Empire* empire = Empires().Lookup(player_info.empire_id);
+            const Empire* empire = GetEmpire(player_info.empire_id);
             if (empire) {
                 empire_color = empire->Color();
                 empire_name = empire->Name();
@@ -624,7 +624,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     const PlayerInfo& clicked_player_info = clicked_player_it->second;
     int clicked_empire_id = clicked_player_info.empire_id;
 
-    if (!Empires().Lookup(clicked_empire_id)) {
+    if (!GetEmpire(clicked_empire_id)) {
         Logger().errorStream() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
                                << clicked_empire_id << " for player " << clicked_player_id
                                << " but couldn't find such an empire";
@@ -662,7 +662,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         }
     }
 
-    menu_contents.next_level.push_back(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % Empires().Lookup(clicked_empire_id)->Name()), 5, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), 5, false, false));
 
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
 

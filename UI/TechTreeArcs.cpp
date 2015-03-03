@@ -78,7 +78,7 @@ public:
         std::set<std::string> highlights;
 
         // We highlight lines that lead to techs that are queued for research
-        if (const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())) {
+        if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID())) {
             const ResearchQueue& queue = empire->GetResearchQueue();
             for(std::map<std::string, std::set<std::string> >::const_iterator set_it = m_edges_to_show.begin();
                 set_it != m_edges_to_show.end(); ++set_it) {

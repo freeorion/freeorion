@@ -579,7 +579,7 @@ namespace ValueRef {
                 return object->InitialMeterValue(meter_type);
 
         } else if (property_name == "TradeStockpile") {
-            if (const Empire* empire = Empires().Lookup(object->Owner()))
+            if (const Empire* empire = GetEmpire(object->Owner()))
                 return empire->ResourceStockpile(RE_TRADE);
 
         } else if (property_name == "X") {
@@ -765,7 +765,7 @@ namespace ValueRef {
 
         } else if (property_name == "OwnerName") {
             int owner_empire_id = object->Owner();
-            if (Empire* empire = Empires().Lookup(owner_empire_id))
+            if (Empire* empire = GetEmpire(owner_empire_id))
                 return empire->Name();
             return "";
 
@@ -798,31 +798,31 @@ namespace ValueRef {
             return "";
 
         } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
-            const Empire* empire = Empires().Lookup(object->Owner());
+            const Empire* empire = GetEmpire(object->Owner());
             if (!empire)
                 return "";
             return empire->LeastExpensiveEnqueuedTech();
 
         } else if (property_name == "OwnerMostExpensiveEnqueuedTech") {
-            const Empire* empire = Empires().Lookup(object->Owner());
+            const Empire* empire = GetEmpire(object->Owner());
             if (!empire)
                 return "";
             return empire->MostExpensiveEnqueuedTech();
 
         } else if (property_name == "OwnerMostRPCostLeftEnqueuedTech") {
-            const Empire* empire = Empires().Lookup(object->Owner());
+            const Empire* empire = GetEmpire(object->Owner());
             if (!empire)
                 return "";
             return empire->MostRPCostLeftEnqueuedTech();
 
         } else if (property_name == "OwnerMostRPSpentEnqueuedTech") {
-            const Empire* empire = Empires().Lookup(object->Owner());
+            const Empire* empire = GetEmpire(object->Owner());
             if (!empire)
                 return "";
             return empire->MostRPSpentEnqueuedTech();
 
         } else if (property_name == "OwnerTopPriorityEnqueuedTech") {
-            const Empire* empire = Empires().Lookup(object->Owner());
+            const Empire* empire = GetEmpire(object->Owner());
             if (!empire)
                 return "";
             return empire->TopPriorityEnqueuedTech();
@@ -1015,7 +1015,7 @@ namespace ValueRef {
         static std::map<int, int> EMPTY_INT_INT_MAP;
 
         const std::map<std::string, int>& GetEmpireStringIntMap(int empire_id, const std::string& parsed_map_name) {
-            Empire* empire = Empires().Lookup(empire_id);
+            Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return EMPTY_STRING_INT_MAP;
 
@@ -1048,7 +1048,7 @@ namespace ValueRef {
         }
 
         const std::map<int, int>& GetEmpireIntIntMap(int empire_id, const std::string& parsed_map_name) {
-            Empire* empire = Empires().Lookup(empire_id);
+            Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return EMPTY_INT_INT_MAP;
 
@@ -1069,7 +1069,7 @@ namespace ValueRef {
         }
 
         int GetEmpirePropertyNoKeyImpl(int empire_id, const std::string& parsed_property_name) {
-            Empire* empire = Empires().Lookup(empire_id);
+            Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return 0;
 
@@ -1421,7 +1421,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             return empire->LeastExpensiveEnqueuedTech();
@@ -1434,7 +1434,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             return empire->MostExpensiveEnqueuedTech();
@@ -1446,7 +1446,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             return empire->TopPriorityEnqueuedTech();
@@ -1458,7 +1458,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             return empire->MostRPSpentEnqueuedTech();
@@ -1470,7 +1470,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             // get all techs on queue, randomly pick one
@@ -1490,7 +1490,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             return empire->LeastExpensiveResearchableTech();
@@ -1502,7 +1502,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             return empire->MostExpensiveResearchableTech();
@@ -1514,7 +1514,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             return empire->TopPriorityResearchableTech();
@@ -1526,7 +1526,7 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = EmpireManager().Lookup(empire_id);
+            const Empire* empire = GetEmpire(empire_id);
             if (!empire)
                 return "";
             return empire->MostExpensiveResearchableTech();

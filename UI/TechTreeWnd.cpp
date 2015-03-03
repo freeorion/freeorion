@@ -65,7 +65,7 @@ namespace {
             return false;
 
         // check tech status
-        const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+        const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
         if (!empire)
             return true;    // if no empire, techs have no status, so just return true
         if (statuses_shown.find(empire->GetTechStatus(tech_name)) == statuses_shown.end())
@@ -100,7 +100,7 @@ namespace {
 // TechPanelRowBrowseWnd //
 ///////////////////////////
 boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id) {
-    const Empire* empire = Empires().Lookup(empire_id);
+    const Empire* empire = GetEmpire(empire_id);
     const Tech* tech = GetTech(tech_name);
     if (!tech) {
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
@@ -795,7 +795,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    if (const Empire* empire = Empires().Lookup(client_empire_id)) {
+    if (const Empire* empire = GetEmpire(client_empire_id)) {
         m_status = empire->GetTechStatus(m_tech_name);
         m_enqueued = empire->GetResearchQueue().InQueue(m_tech_name);
 
@@ -1571,7 +1571,7 @@ void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const G
 void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     if ((*it)->Disabled())
         return;
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
 
@@ -1826,7 +1826,7 @@ void TechTreeWnd::CenterOnTech(const std::string& tech_name) {
     // ensure tech exists and is visible
     const Tech* tech = ::GetTech(tech_name);
     if (!tech) return;
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire)
         ShowStatus(empire->GetTechStatus(tech_name));
     ShowCategory(tech->Category());
@@ -1864,7 +1864,7 @@ void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name,
 {
     const Tech* tech = GetTech(tech_name);
     if (!tech) return;
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     TechStatus tech_status = TS_UNRESEARCHABLE;
     if (empire)
         tech_status = empire->GetTechStatus(tech_name);

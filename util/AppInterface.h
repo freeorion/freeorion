@@ -6,6 +6,7 @@
 #include "../universe/Universe.h"
 
 class EmpireManager;
+class Empire;
 class Universe;
 class UniverseObject;
 class ObjectMap;
@@ -23,11 +24,13 @@ class FO_COMMON_API IApp {
 public:
     virtual ~IApp();
 
-    static IApp*      GetApp(); ///< returns a IApp pointer to the singleton instance of the app
+    static IApp* GetApp(); ///< returns a IApp pointer to the singleton instance of the app
 
     virtual Universe& GetUniverse() = 0;  ///< returns applications copy of Universe
 
     virtual EmpireManager& Empires() = 0; ///< returns the set of known Empires for this application
+
+    virtual Empire* GetEmpire(int id) = 0;
 
     virtual TemporaryPtr<UniverseObject> GetUniverseObject(int object_id) = 0;
 
@@ -63,6 +66,10 @@ private:
 /** Accessor for the App's empire manager */
 inline EmpireManager& Empires()
 { return IApp::GetApp()->Empires(); }
+
+/** Accessor for Empires */
+inline Empire* GetEmpire(int id)
+{ return IApp::GetApp()->GetEmpire(id); }
 
 /** Accessor for the App's universe object */
 inline Universe& GetUniverse()

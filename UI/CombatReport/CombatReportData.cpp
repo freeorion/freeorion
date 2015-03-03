@@ -43,7 +43,7 @@ CombatSummary::CombatSummary():
     total_current_health(-1) {}
 
 CombatSummary::CombatSummary(int empire_id):
-    empire(Empires().Lookup(empire_id)),
+    empire(GetEmpire(empire_id)),
     total_current_health(0) {}
 
 GG::Clr CombatSummary::SideColor() const {

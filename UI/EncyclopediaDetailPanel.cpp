@@ -821,7 +821,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
 
 namespace {
     int DefaultLocationForEmpire(int empire_id) {
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().debugStream() << "DefaultLocationForEmpire: Unable to get empire with ID: " << empire_id;
             return INVALID_OBJECT_ID;
@@ -1263,7 +1263,7 @@ namespace {
             empire_id = boost::lexical_cast<int>(item_name);
         } catch(...)
         {}
-        Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << item_name;
             return;
@@ -1344,7 +1344,7 @@ namespace {
              it != empire_ships_destroyed.end(); ++it)
         {
             std::string num_str = boost::lexical_cast<std::string>(it->second);
-            const Empire* target_empire = Empires().Lookup(it->first);
+            const Empire* target_empire = GetEmpire(it->first);
             std::string target_empire_name;
             if (target_empire)
                 target_empire_name = target_empire->Name();
@@ -2082,7 +2082,7 @@ namespace {
         name = planet->PublicName(planet_id);
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire) {
             return;
         }
@@ -2343,7 +2343,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 int empire_id = empire_it->first;
 
                 GG::Clr empire_clr = GG::CLR_WHITE;
-                if (const Empire* empire = Empires().Lookup(empire_id))
+                if (const Empire* empire = GetEmpire(empire_id))
                     empire_clr = empire->Color();
 
                 const std::map<int, double>& empire_line = empire_it->second;

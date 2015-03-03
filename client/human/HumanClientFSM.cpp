@@ -406,7 +406,7 @@ boost::statechart::result PlayingGame::react(const VictoryDefeat& msg) {
     int empire_id;
     ExtractMessageData(msg.m_message, victory_or_defeat, reason_string, empire_id);
 
-    const Empire* empire = Empires().Lookup(empire_id);
+    const Empire* empire = GetEmpire(empire_id);
     std::string empire_name = UserString("UNKNOWN_EMPIRE");
     if (empire)
         empire_name = empire->Name();

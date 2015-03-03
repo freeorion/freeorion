@@ -145,7 +145,7 @@ std::string Tech::Dump() const {
 
 namespace {
     TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
             return TemporaryPtr<const UniverseObject>();
@@ -543,7 +543,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
     // initialize working list with 1st order prereqs
     std::set<std::string> cur_prereqs = tech->Prerequisites();
     std::copy(cur_prereqs.begin(), cur_prereqs.end(), std::back_inserter(prereqs_list));
-    const Empire* empire = Empires().Lookup(empire_id);
+    const Empire* empire = GetEmpire(empire_id);
 
     // traverse list, appending new prereqs to it, and putting unique prereqs into set
     for (std::list<std::string>::iterator it = prereqs_list.begin(); it != prereqs_list.end(); ++it) {

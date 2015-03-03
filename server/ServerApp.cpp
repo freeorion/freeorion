@@ -258,6 +258,9 @@ Universe& ServerApp::GetUniverse()
 EmpireManager& ServerApp::Empires()
 { return m_empires; }
 
+Empire* ServerApp::GetEmpire(int id)
+{ return m_empires.GetEmpire(id); }
+
 TemporaryPtr<UniverseObject> ServerApp::GetUniverseObject(int object_id)
 { return m_universe.Objects().Object(object_id); }
 
@@ -679,7 +682,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
         const PlayerConnectionPtr player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
         int empire_id = PlayerEmpireID(player_id);
-        if (Empires().Lookup(empire_id))
+        if (GetEmpire(empire_id))
             AddEmpireTurn(empire_id);
     }
 
@@ -1083,7 +1086,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 
         // add empires to turn processing, and restore saved orders and UI data or save state data
-        if (Empires().Lookup(empire_id)) {
+        if (GetEmpire(empire_id)) {
             AddEmpireTurn(empire_id);
         } else {
             Logger().errorStream() << "ServerApp::LoadGameInit couldn't find empire with id " << empire_id << " to add to turn processing";
@@ -1346,7 +1349,7 @@ namespace {
         const std::set<int>& fleet_ids = system->FleetIDs();
         if (fleet_ids.empty())
             return; // no fleets to be seen
-        if (empire_id != ALL_EMPIRES && !Empires().Lookup(empire_id))
+        if (empire_id != ALL_EMPIRES && !GetEmpire(empire_id))
             return; // no such empire
 
         // for visible fleets by an empire, check visibility of fleets by that empire
@@ -1419,7 +1422,7 @@ namespace {
         const std::set<int>& planet_ids = system->PlanetIDs();
         if (planet_ids.empty())
             return; // no planets to be seen
-        if (empire_id != ALL_EMPIRES && !Empires().Lookup(empire_id))
+        if (empire_id != ALL_EMPIRES && !GetEmpire(empire_id))
             return; // no such empire
 
         // for visible planets by an empire, check visibility of planet by that empire
@@ -1750,7 +1753,7 @@ namespace {
             for (std::set<int>::const_iterator empire_it = empire_ids.begin();
                  empire_it != empire_ids.end(); ++empire_it)
             {
-                if (Empire* empire = Empires().Lookup(*empire_it))
+                if (Empire* empire = GetEmpire(*empire_it))
                     empire->AddSitRepEntry(CreateCombatSitRep(combat_info.system_id, log_id, EnemyId(*empire_it, empire_ids)));
             }
 
@@ -1759,7 +1762,7 @@ namespace {
                  empire_known_destroyed_objects_it != combat_info.destroyed_object_knowers.end(); ++empire_known_destroyed_objects_it)
             {
                 int empire_id = empire_known_destroyed_objects_it->first;
-                Empire* empire = Empires().Lookup(empire_id);
+                Empire* empire = GetEmpire(empire_id);
                 if (!empire)
                     continue;
 
@@ -1804,7 +1807,7 @@ namespace {
                     //Logger().debugStream() << "Yep.";
                     // empire knows about object, so generate a sitrep about it
                     int empire_id = empire_it->first;
-                    Empire* empire = Empires().Lookup(empire_id);
+                    Empire* empire = GetEmpire(empire_id);
                     if (!empire)
                         continue;
                     //Logger().debugStream() << "Creating sitrep.";
@@ -1842,7 +1845,7 @@ namespace {
                 if (!attacker)
                     continue;
                 int attacker_empire_id = attacker->Owner();
-                Empire* attacker_empire = Empires().Lookup(attacker_empire_id);
+                Empire* attacker_empire = GetEmpire(attacker_empire_id);
 
                 TemporaryPtr<const Ship> target_ship = GetShip(attack.target_id);
                 if (!target_ship)
@@ -1850,7 +1853,7 @@ namespace {
                 int target_empire_id = target_ship->Owner();
                 int target_design_id = target_ship->DesignID();
                 const std::string& target_species_name = target_ship->SpeciesName();
-                Empire* target_empire = Empires().Lookup(target_empire_id);
+                Empire* target_empire = GetEmpire(target_empire_id);
 
                 std::map<int, int>::iterator map_it;
                 std::map<std::string, int>::iterator species_it;
@@ -1916,7 +1919,7 @@ namespace {
             for (std::map<int, double>::const_iterator empire_it = it->second.begin();
                  empire_it != it->second.end(); ++empire_it)
             {
-                Empire* invader_empire = Empires().Lookup(empire_it->first);
+                Empire* invader_empire = GetEmpire(empire_it->first);
                 if (!invader_empire)
                     continue;
 
@@ -2103,7 +2106,7 @@ namespace {
             newly_colonize_planet_ids.push_back(planet_id);
 
             // sitrep about colonization
-            Empire* empire = Empires().Lookup(colonizing_empire_id);
+            Empire* empire = GetEmpire(colonizing_empire_id);
             if (!empire) {
                 Logger().errorStream() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
             } else {
@@ -2260,7 +2263,7 @@ namespace {
             for (std::set<int>::const_iterator empire_it = all_involved_empires.begin();
                  empire_it != all_involved_empires.end(); ++empire_it)
             {
-                if (Empire* empire = Empires().Lookup(*empire_it))
+                if (Empire* empire = GetEmpire(*empire_it))
                     empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id, EnemyId(*empire_it, all_involved_empires)));
             }
 
@@ -2279,7 +2282,7 @@ namespace {
                     for (std::set<int>::const_iterator empire_it = all_involved_empires.begin();
                          empire_it != all_involved_empires.end(); ++empire_it)
                     {
-                        if (Empire* empire = Empires().Lookup(*empire_it))
+                        if (Empire* empire = GetEmpire(*empire_it))
                             empire->AddSitRepEntry(CreatePlanetCapturedSitRep(planet_id, victor_id));
                     }
 
@@ -2475,7 +2478,7 @@ namespace {
             }
 
             // record scrapping in empire stats
-            Empire* scrapping_empire = Empires().Lookup(ship->Owner());
+            Empire* scrapping_empire = GetEmpire(ship->Owner());
             if (scrapping_empire) {
                 std::map<int, int>& designs_scrapped = scrapping_empire->ShipDesignsScrapped();
                 if (designs_scrapped.find(ship->DesignID()) != designs_scrapped.end())
@@ -2509,7 +2512,7 @@ namespace {
                 system->Remove(building->ID());
 
             // record scrapping in empire stats
-            Empire* scrapping_empire = Empires().Lookup(building->Owner());
+            Empire* scrapping_empire = GetEmpire(building->Owner());
             if (scrapping_empire) {
                 std::map<std::string, int>& buildings_scrapped = scrapping_empire->BuildingTypesScrapped();
                 if (buildings_scrapped.find(building->BuildingTypeName()) != buildings_scrapped.end())

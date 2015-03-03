@@ -449,7 +449,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     int     prev_eta =                  first_node.eta;
     int     next_sys_id =               INVALID_OBJECT_ID;
 
-    const Empire* empire = Empires().Lookup(empireID);
+    const Empire* empire = GetEmpire(empireID);
     std::set<int> unobstructed;
     bool s_flag = false;
     bool calc_s_flag = false;
@@ -1818,7 +1818,7 @@ void MapWnd::RenderVisibilityRadii() {
             empire_position_max_detection_ranges.begin();
          it != empire_position_max_detection_ranges.end(); ++it)
     {
-        if (const Empire* empire = Empires().Lookup(it->first.first)) {
+        if (const Empire* empire = GetEmpire(it->first.first)) {
             GG::Clr circle_colour = empire->Color();
             circle_colour.a = 8*GetOptionsDB().Get<int>("UI.detection-range-opacity");
 
@@ -2103,7 +2103,7 @@ void MapWnd::InitTurn() {
     // empire is recreated each turn based on turn update from server, so
     // connections of signals emitted from the empire must be remade each turn
     // (unlike connections to signals from the sidepanel)
-    Empire* this_client_empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* this_client_empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
         GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this);
         GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this);
@@ -2532,7 +2532,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const Empire* this_client_empire = Empires().Lookup(client_empire_id);
+    const Empire* this_client_empire = GetEmpire(client_empire_id);
     std::set<int> underAllocResSys;
 
     std::map<std::set<int>, std::set<int> > resPoolSystems;//map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
@@ -3171,7 +3171,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
-    const Empire* empire = Empires().Lookup(fleet->Owner());
+    const Empire* empire = GetEmpire(fleet->Owner());
     if (empire)
         line_colour = empire->Color();
     else if (fleet->Unowned() && fleet->HasMonsters())
@@ -3216,7 +3216,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     }
 
     //std::cout << "creating projected fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
-    const Empire* empire = Empires().Lookup(fleet->Owner());
+    const Empire* empire = GetEmpire(fleet->Owner());
 
     // get move path to show.  if there isn't one, show nothing
     std::list<MovePathNode> path = fleet->MovePath(travel_route, true);
@@ -4537,7 +4537,7 @@ bool MapWnd::ReturnToMap() {
 
 bool MapWnd::EndTurn() {
     Logger().debugStream() << "MapWnd::EndTurn";
-    const Empire *empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire *empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire) {
         double RP = empire->ResourceProduction(RE_RESEARCH);
         double PP = empire->ResourceProduction(RE_INDUSTRY);
@@ -4866,7 +4866,7 @@ void MapWnd::ShowProduction() {
     // if no system is currently shown in sidepanel, default to this empire's
     // home system (ie. where the capital is)
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
-        if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
+        if (const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID()))
             if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
@@ -4971,7 +4971,7 @@ bool MapWnd::KeyboardZoomOut() {
 }
 
 void MapWnd::RefreshTradeResourceIndicator() {
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_trade->SetValue(0.0);
         return;
@@ -4985,7 +4985,7 @@ void MapWnd::RefreshTradeResourceIndicator() {
 
 void MapWnd::RefreshFleetResourceIndicator() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+    Empire* empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
     if (!empire) {
         m_fleet->SetValue(0.0);
         return;
@@ -5010,7 +5010,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
-    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_research->SetValue(0.0);
         m_research_wasted->Hide();
@@ -5042,7 +5042,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
 }
 
 void MapWnd::RefreshDetectionIndicator() {
-    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
     m_detection->SetValue(empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
@@ -5053,7 +5053,7 @@ void MapWnd::RefreshDetectionIndicator() {
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
-    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_industry->SetValue(0.0);
         m_industry_wasted->Hide();
@@ -5085,7 +5085,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 }
 
 void MapWnd::RefreshPopulationIndicator() {
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         m_population->SetValue(0.0);
         return;
@@ -5131,7 +5131,7 @@ void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {
 
 void MapWnd::UpdateEmpireResourcePools() {
     //std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    Empire *empire = HumanClientApp::GetApp()->GetEmpire( HumanClientApp::GetApp()->EmpireID() );
     /* Recalculate stockpile, available, production, predicted change of
      * resources.  When resource pools update, they emit ChangeSignal, which is
      * connected to MapWnd::Refresh???ResourceIndicator, which updates the
@@ -5143,7 +5143,7 @@ void MapWnd::UpdateEmpireResourcePools() {
 }
 
 bool MapWnd::ZoomToHomeSystem() {
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return false;
     int home_id = empire->CapitalID();
@@ -5274,7 +5274,7 @@ bool MapWnd::ZoomToNextFleet() {
 
 bool MapWnd::ZoomToSystemWithWastedPP() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+    const Empire* empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
     if (!empire)
         return false;
 
@@ -5444,7 +5444,7 @@ void MapWnd::DispatchFleetsExploring() {
     Logger().debugStream() << "MapWnd::DispatchFleetsExploring called";
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+    const Empire *empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
     if (!empire) return;
     const std::set<int> destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 

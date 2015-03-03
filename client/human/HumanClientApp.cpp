@@ -896,7 +896,7 @@ void HumanClientApp::Autosave() {
 
     // get empire name, filtered for filename acceptability
     int client_empire_id = EmpireID();
-    const Empire* empire = Empires().Lookup(client_empire_id);
+    const Empire* empire = GetEmpire(client_empire_id);
     std::string empire_name;
     if (empire)
         empire_name = empire->Name();

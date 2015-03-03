@@ -50,6 +50,9 @@ const GalaxySetupData& ClientApp::GetGalaxySetupData() const
 EmpireManager& ClientApp::Empires()
 { return m_empires; }
 
+Empire* ClientApp::GetEmpire(int id)
+{ return m_empires.GetEmpire(id); }
+
 TemporaryPtr<UniverseObject> ClientApp::GetUniverseObject(int object_id)
 { return GetUniverse().Objects().Object(object_id); }
 

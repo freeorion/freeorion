@@ -113,10 +113,10 @@ namespace AIInterface {
     }
 
     const Empire* GetEmpire()
-    { return AIClientApp::GetApp()->Empires().Lookup(AIClientApp::GetApp()->EmpireID()); }
+    { return AIClientApp::GetApp()->GetEmpire(AIClientApp::GetApp()->EmpireID()); }
 
     const Empire* GetEmpire(int empire_id)
-    { return AIClientApp::GetApp()->Empires().Lookup(empire_id); }
+    { return AIClientApp::GetApp()->GetEmpire(empire_id); }
 
     int EmpirePlayerID(int empire_id) {
         int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
@@ -217,7 +217,7 @@ namespace AIInterface {
 
     void UpdateResearchQueue() {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = ::GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "AIInterface::UpdateResearchQueue : couldn't get empire with id " << empire_id;
             return;
@@ -227,7 +227,7 @@ namespace AIInterface {
 
     void UpdateProductionQueue() {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = ::GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "AIInterface::UpdateProductionQueue : couldn't get empire with id " << empire_id;
             return;
@@ -623,7 +623,7 @@ namespace AIInterface {
     int IssueGiveObjectToEmpireOrder(int object_id, int recipient_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
-        if (Empires().Lookup(recipient_id) == 0) {
+        if (GetEmpire(recipient_id) == 0) {
             Logger().errorStream() << "AIInterface::IssueGiveObjectToEmpireOrder : given invalid recipient empire id";
             return 0;
         }
@@ -733,7 +733,7 @@ namespace AIInterface {
 
     int IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
 
         if (!empire->ProducibleItem(BT_BUILDING, item_name, location_id)) {
             Logger().errorStream() << "AIInterface::IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
@@ -748,7 +748,7 @@ namespace AIInterface {
 
     int IssueEnqueueShipProductionOrder(int design_id, int location_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
 
         if (!empire->ProducibleItem(BT_SHIP, design_id, location_id)) {
             Logger().errorStream() << "AIInterface::IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
@@ -763,7 +763,7 @@ namespace AIInterface {
 
     int IssueChangeProductionQuantityOrder(int queue_index, int new_quantity, int new_blocksize) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
@@ -788,7 +788,7 @@ namespace AIInterface {
         }
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (old_queue_index < 0 || static_cast<int>(queue.size()) <= old_queue_index) {
@@ -816,7 +816,7 @@ namespace AIInterface {
 
     int IssueDequeueProductionOrder(int queue_index) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {

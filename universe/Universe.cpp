@@ -2379,7 +2379,7 @@ namespace {
                 retval[empire_it->first] = strength;
             }
         } else {
-            if (const Empire* empire = Empires().Lookup(empire_id))
+            if (const Empire* empire = GetEmpire(empire_id))
                 if (const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH"))
                     retval[empire_id] = meter->Current();
         }
@@ -2504,7 +2504,7 @@ namespace {
         {
             int detecting_empire_id = detecting_empire_it->first;
             double detection_strength = 0.0;
-            const Empire* empire = Empires().Lookup(detecting_empire_id);
+            const Empire* empire = GetEmpire(detecting_empire_id);
             if (!empire)
                 continue;
             const Meter* meter = empire->GetMeter("METER_DETECTION_STRENGTH");
@@ -3208,7 +3208,7 @@ void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
         Logger().errorStream() << "SetEmpireKnowledgeOfDestroyedObject called with INVALID_OBJECT_ID";
         return;
     }
-    if (!Empires().Lookup(empire_id)) {
+    if (!GetEmpire(empire_id)) {
         Logger().errorStream() << "SetEmpireKnowledgeOfDestroyedObject called for invalid empire id: " << empire_id;
         return;
     }
@@ -3222,7 +3222,7 @@ void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
     }
     if (empire_id == ALL_EMPIRES)
         return;
-    if (!Empires().Lookup(empire_id))
+    if (!GetEmpire(empire_id))
         Logger().errorStream() << "SetEmpireKnowledgeOfShipDesign called for invalid empire id: " << empire_id;
 
     m_empire_known_ship_design_ids[empire_id].insert(ship_design_id);
@@ -3526,7 +3526,7 @@ namespace {
     // one in ShipDesign, one in Tech, one in Building, one here...
     // TODO: Eliminate duplication
     TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
             return TemporaryPtr<const UniverseObject>();

@@ -1392,7 +1392,7 @@ void SidePanel::PlanetPanel::Refresh() {
     // colour planet name with owner's empire colour
     m_empire_colour = GG::CLR_ZERO;
     if (!planet->Unowned() && m_planet_name) {
-        if (Empire* planet_empire = Empires().Lookup(planet->Owner())) {
+        if (Empire* planet_empire = GetEmpire(planet->Owner())) {
             m_empire_colour = planet_empire->Color();
             m_planet_name->SetTextColor(planet_empire->Color());
         } else {
@@ -1655,7 +1655,7 @@ void SidePanel::PlanetPanel::Refresh() {
     ClearBrowseInfoWnd();
 
     if (client_empire_id != ALL_EMPIRES) {
-        Empire* client_empire = Empires().Lookup(client_empire_id);
+        Empire* client_empire = GetEmpire(client_empire_id);
         Visibility visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
         Universe::VisibilityTurnMap visibility_turn_map = GetUniverse().GetObjectVisibilityTurnMapByEmpire(m_planet_id, client_empire_id);
         float client_empire_detection_strength = client_empire->GetMeter("METER_DETECTION_STRENGTH")->Current();

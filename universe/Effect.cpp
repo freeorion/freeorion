@@ -128,7 +128,7 @@ namespace {
     void ExploreSystem(int system_id, TemporaryPtr<const UniverseObject> target_object) {
         if (!target_object)
             return;
-        if (Empire* empire = Empires().Lookup(target_object->Owner()))
+        if (Empire* empire = GetEmpire(target_object->Owner()))
             empire->AddExploredSystem(system_id);
     }
 
@@ -808,7 +808,7 @@ SetEmpireMeter::~SetEmpireMeter() {
 void SetEmpireMeter::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
-    Empire* empire = Empires().Lookup(empire_id);
+    Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         Logger().debugStream() << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
         return;
@@ -829,7 +829,7 @@ std::string SetEmpireMeter::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
                 empire_str = empire->Name();
         } else {
             empire_str = m_empire_id->Description();
@@ -875,7 +875,7 @@ SetEmpireStockpile::~SetEmpireStockpile() {
 void SetEmpireStockpile::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
-    Empire* empire = Empires().Lookup(empire_id);
+    Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         Logger().debugStream() << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
         return;
@@ -889,7 +889,7 @@ std::string SetEmpireStockpile::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
                 empire_str = empire->Name();
         } else {
             empire_str = m_empire_id->Description();
@@ -933,7 +933,7 @@ SetEmpireCapital::~SetEmpireCapital()
 void SetEmpireCapital::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
-    Empire* empire = Empires().Lookup(empire_id);
+    Empire* empire = GetEmpire(empire_id);
     if (!empire)
         return;
 
@@ -948,7 +948,7 @@ std::string SetEmpireCapital::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
                 empire_str = empire->Name();
         } else {
             empire_str = m_empire_id->Description();
@@ -1154,7 +1154,7 @@ std::string SetOwner::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
                 empire_str = empire->Name();
         } else {
             empire_str = m_empire_id->Description();
@@ -1208,7 +1208,7 @@ std::string SetSpeciesEmpireOpinion::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
                 empire_str = empire->Name();
         } else {
             empire_str = m_empire_id->Description();
@@ -1263,7 +1263,7 @@ std::string SetSpeciesSpeciesOpinion::Description() const {
     std::string empire_str;
     //if (m_empire_id) {
     //    if (ValueRef::ConstantExpr(m_empire_id)) {
-    //        if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+    //        if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
     //            empire_str = empire->Name();
     //    } else {
     //        empire_str = m_empire_id->Description();
@@ -1496,7 +1496,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     if (m_empire_id) {
         empire_id = m_empire_id->Eval(context);
         if (empire_id != ALL_EMPIRES) {
-            empire = Empires().Lookup(empire_id);
+            empire = GetEmpire(empire_id);
             if (!empire) {
                 Logger().errorStream() << "CreateShip::Execute couldn't get empire with id " << empire_id;
                 return;
@@ -1554,7 +1554,7 @@ std::string CreateShip::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
                 empire_str = empire->Name();
         } else {
             empire_str = m_empire_id->Description();
@@ -2806,7 +2806,7 @@ SetEmpireTechProgress::~SetEmpireTechProgress() {
 
 void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
     if (!m_empire_id) return;
-    Empire* empire = Empires().Lookup(m_empire_id->Eval(context));
+    Empire* empire = GetEmpire(m_empire_id->Eval(context));
     if (!empire) return;
 
     if (!m_tech_name) {
@@ -2835,7 +2835,7 @@ std::string SetEmpireTechProgress::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
                 empire_str = empire->Name();
         } else {
             empire_str = m_empire_id->Description();
@@ -2891,7 +2891,7 @@ GiveEmpireTech::~GiveEmpireTech()
 
 void GiveEmpireTech::Execute(const ScriptingContext& context) const {
     if (!m_empire_id) return;
-    Empire* empire = Empires().Lookup(m_empire_id->Eval(context));
+    Empire* empire = GetEmpire(m_empire_id->Eval(context));
     if (!empire) return;
 
     const Tech* tech = GetTech(m_tech_name);
@@ -2907,7 +2907,7 @@ std::string GiveEmpireTech::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
-            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+            if (const Empire* empire = GetEmpire(m_empire_id->Eval()))
                 empire_str = empire->Name();
         } else {
             empire_str = m_empire_id->Description();
@@ -2965,7 +2965,7 @@ GenerateSitRepMessage::~GenerateSitRepMessage() {
 void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     Empire* empire = 0;
     if (m_recipient_empire_id)
-        empire = Empires().Lookup(m_recipient_empire_id->Eval(context));
+        empire = GetEmpire(m_recipient_empire_id->Eval(context));
     if (!empire && m_affiliation != AFFIL_ANY) return;
 
     std::vector<std::pair<std::string, std::string> > parameter_tag_values;
@@ -3008,7 +3008,7 @@ std::string GenerateSitRepMessage::Description() const {
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_recipient_empire_id))
             empire_id = m_recipient_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_recipient_empire_id->Description();

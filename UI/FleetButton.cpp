@@ -227,7 +227,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
     } else {
         // single empire owner
-        if (const Empire* empire = Empires().Lookup(owner_id))
+        if (const Empire* empire = GetEmpire(owner_id))
             SetColor(empire->Color());
         else
             SetColor(GG::CLR_GRAY); // should never be necessary... but just in case

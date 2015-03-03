@@ -97,7 +97,7 @@ namespace {
                 return;
             m_initialized = true;
 
-            const Empire* empire = Empires().Lookup(m_empire_id);
+            const Empire* empire = GetEmpire(m_empire_id);
 
             boost::shared_ptr<GG::Texture>                  texture;
             std::string                                     name_text;
@@ -167,7 +167,7 @@ namespace {
         TemporaryPtr<const UniverseObject> source;
         if (empire_id == ALL_EMPIRES)
             return source;
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return source;
 
@@ -273,7 +273,7 @@ namespace {
             m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id, m_location_id);
             push_back(m_panel);
 
-            if (const Empire* empire = Empires().Lookup(m_empire_id)) {
+            if (const Empire* empire = GetEmpire(m_empire_id)) {
                 if (!empire->ProducibleItem(m_item, m_location_id)) {
                     this->Disable(true);
                     m_panel->Disable(true);
@@ -558,7 +558,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
         // ensure signal connection set up properly, without actually
         // repopulating the list, as would be dine in Refresh()
         m_empire_ship_designs_changed_signal.disconnect();
-        if (const Empire* empire = Empires().Lookup(m_empire_id))
+        if (const Empire* empire = GetEmpire(m_empire_id))
             m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
                                                                &BuildDesignatorWnd::BuildSelector::Refresh,
                                                                this,
@@ -574,7 +574,7 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
 
     m_empire_ship_designs_changed_signal.disconnect();
-    if (const Empire* empire = Empires().Lookup(m_empire_id))
+    if (const Empire* empire = GetEmpire(m_empire_id))
         m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
                                                            &BuildDesignatorWnd::BuildSelector::Refresh,
                                                            this,
@@ -657,7 +657,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!building_type || !building_type->Producible())
         return false;
 
-    const Empire* empire = Empires().Lookup(m_empire_id);
+    const Empire* empire = GetEmpire(m_empire_id);
     if (!empire)
         return true;
 
@@ -680,7 +680,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!design || !design->Producible())
         return false;
 
-    const Empire* empire = Empires().Lookup(m_empire_id);
+    const Empire* empire = GetEmpire(m_empire_id);
     if (!empire)
         return true;
 
@@ -694,7 +694,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 
 void BuildDesignatorWnd::BuildSelector::PopulateList() {
     //std::cout << "BuildDesignatorWnd::BuildSelector::PopulateList start" << std::endl;
-    Empire* empire = Empires().Lookup(m_empire_id);
+    Empire* empire = GetEmpire(m_empire_id);
     if (!empire)
         return;
 
@@ -935,7 +935,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
     const ObjectMap& objects = GetUniverse().Objects();
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id);
+    const Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         Logger().errorStream() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
         return;
@@ -955,7 +955,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
 
 void BuildDesignatorWnd::SetBuild(int queue_idx) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id);
+    const Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         Logger().errorStream() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << empire_id;
         return;
@@ -1126,7 +1126,7 @@ void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::str
                                             int num_to_build)
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested item name: " << item << std::endl;
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->EnqueuableItem(build_type, item, BuildLocation()))
         AddNamedBuildToQueueSignal(build_type, item, num_to_build, BuildLocation());
 }
@@ -1135,7 +1135,7 @@ void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id,
                                             int num_to_build)
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested design id: " << design_id << std::endl;
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->ProducibleItem(build_type, design_id, BuildLocation()))
         AddIDedBuildToQueueSignal(build_type, design_id, num_to_build, BuildLocation());
 }

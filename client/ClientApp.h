@@ -50,6 +50,7 @@ public:
     Universe&                   GetUniverse();  ///< returns client's local copy of Universe
     GalaxySetupData&            GetGalaxySetupData();
     EmpireManager&              Empires();      ///< returns the set of known Empires
+    Empire*                     GetEmpire(int id);
     TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
     ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
     TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);

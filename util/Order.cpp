@@ -30,7 +30,7 @@ Order::Order() :
 {}
 
 void Order::ValidateEmpireID() const {
-    if (!(Empires().Lookup(EmpireID())))
+    if (!(GetEmpire(EmpireID())))
         throw std::runtime_error("Invalid empire ID specified for order.");
 }
 
@@ -878,7 +878,7 @@ ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name,
 void ResearchQueueOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
-    Empire* empire = Empires().Lookup(EmpireID());
+    Empire* empire = GetEmpire(EmpireID());
     if (!empire) return;
     if (m_remove)
         empire->RemoveTechFromQueue(m_tech_name);
@@ -999,7 +999,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
 void ProductionQueueOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
-    Empire* empire = Empires().Lookup(EmpireID());
+    Empire* empire = GetEmpire(EmpireID());
     try {
         if (m_build_type == BT_BUILDING)
             empire->PlaceBuildInQueue(BT_BUILDING, m_item_name, m_number, m_location);
@@ -1092,7 +1092,7 @@ void ShipDesignOrder::ExecuteImpl() const {
 
     Universe& universe = GetUniverse();
 
-    Empire* empire = Empires().Lookup(EmpireID());
+    Empire* empire = GetEmpire(EmpireID());
     if (m_delete_design_from_empire) {
         // player is ordering empire to forget about a particular design
         if (!empire->ShipDesignKept(m_design_id)) {

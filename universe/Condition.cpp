@@ -1125,7 +1125,7 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_empire_id))
             empire_id = m_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -3618,7 +3618,7 @@ namespace {
                 }
 
             } else {
-                const Empire* empire = Empires().Lookup(m_empire_id);
+                const Empire* empire = GetEmpire(m_empire_id);
                 if (!empire) return false;
                 count = NumberOnQueue(empire->GetProductionQueue(), m_build_type,
                                       candidate->ID(), m_name, m_design_id);
@@ -3705,7 +3705,7 @@ std::string Condition::Enqueued::Description(bool negated/* = false*/) const {
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_empire_id))
             empire_id = m_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -4629,7 +4629,7 @@ std::string Condition::ProducedByEmpire::Description(bool negated/* = false*/) c
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_empire_id))
             empire_id = m_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -5069,7 +5069,7 @@ namespace {
         bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            const Empire* empire = Empires().Lookup(m_empire_id);
+            const Empire* empire = GetEmpire(m_empire_id);
             if (!empire)
                 return false;
             const Meter* meter = empire->GetMeter(m_meter);
@@ -5132,7 +5132,7 @@ std::string Condition::EmpireMeterValue::Description(bool negated/* = false*/) c
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_empire_id))
             empire_id = m_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -5221,7 +5221,7 @@ namespace {
             if (candidate->Unowned())
                 return false;
 
-            const Empire* empire = Empires().Lookup(candidate->Owner());
+            const Empire* empire = GetEmpire(candidate->Owner());
             if (!empire)
                 return false;
 
@@ -5343,7 +5343,7 @@ bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
     if (candidate->Unowned())
         return false;
 
-    if (const Empire* empire = Empires().Lookup(candidate->Owner()))
+    if (const Empire* empire = GetEmpire(candidate->Owner()))
         return empire->TechResearched(m_name);
     else
         return false;
@@ -5387,7 +5387,7 @@ bool Condition::OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& loc
     if (candidate->Unowned())
         return false;
 
-    if (const Empire* empire = Empires().Lookup(candidate->Owner()))
+    if (const Empire* empire = GetEmpire(candidate->Owner()))
         return empire->BuildingTypeAvailable(m_name);
     else
         return false;
@@ -5431,7 +5431,7 @@ bool Condition::OwnerHasShipDesignAvailable::Match(const ScriptingContext& local
     if (candidate->Unowned())
         return false;
 
-    if (const Empire* empire = Empires().Lookup(candidate->Owner()))
+    if (const Empire* empire = GetEmpire(candidate->Owner()))
         return empire->ShipDesignAvailable(m_id);
     else
         return false;
@@ -5505,7 +5505,7 @@ std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) co
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_empire_id))
             empire_id = m_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -6250,7 +6250,7 @@ namespace {
             if (!candidate)
                 return false;
 
-            const Empire* empire = Empires().Lookup(m_empire_id);
+            const Empire* empire = GetEmpire(m_empire_id);
             if (!empire)
                 return false;
             return empire->HasExploredSystem(candidate->ID());
@@ -6293,7 +6293,7 @@ std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) c
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_empire_id))
             empire_id = m_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -6391,8 +6391,7 @@ namespace {
             if (!candidate)
                 return false;
 
-            const EmpireManager& empires = Empires();
-            const Empire* empire = empires.Lookup(m_empire_id);
+            const Empire* empire = GetEmpire(m_empire_id);
             if (!empire)
                 return false;
 
@@ -6437,7 +6436,7 @@ std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = fal
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_empire_id))
             empire_id = m_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();
@@ -6497,7 +6496,7 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const Empire* empire = Empires().Lookup(m_empire_id);
+            const Empire* empire = GetEmpire(m_empire_id);
             if (!empire)
                 return false;
             const std::set<std::set<int> >& groups = empire->ResourceSupplyGroups();
@@ -6585,7 +6584,7 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Description(bool negated
         int empire_id = ALL_EMPIRES;
         if (ValueRef::ConstantExpr(m_empire_id))
             empire_id = m_empire_id->Eval();
-        if (const Empire* empire = Empires().Lookup(empire_id))
+        if (const Empire* empire = GetEmpire(empire_id))
             empire_str = empire->Name();
         else
             empire_str = m_empire_id->Description();

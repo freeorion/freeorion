@@ -46,13 +46,18 @@ namespace {
         boost::format templ("<rgba %d %d %d 255>%s</rgba>");
         return (templ % static_cast<int>(color.r) % static_cast<int>(color.g) % static_cast<int>(color.b) % content).str();
     }
-    
+
     /// Adds color tags to name_o according to the empires in owner_empire_ids
     std::string ColorNameByOwners(const std::string& name_o, std::set<int>& owner_empire_ids, const EmpireManager& empires) {
         if (owner_empire_ids.size() < 1) {
             return name_o;
+
         } else if(owner_empire_ids.size() == 1) {
-            return ColorTag(name_o, empires.Lookup(*owner_empire_ids.begin())->Color());
+            const Empire* empire = GetEmpire(*owner_empire_ids.begin());
+            if (!empire)
+                return name_o;
+            return ColorTag(name_o, empire->Color());
+
         } else {
             // We will split the name into pieces.
             // To avoid splitting multi-byte glyphs, we need to convert it to 32-bit form,
@@ -64,6 +69,7 @@ namespace {
             unsigned extra = name.size() - owner_count*piece_length; // letters that would be left over
             std::string retval;
             int start = 0;
+
             for (std::set<int>::iterator it = owner_empire_ids.begin(); it != owner_empire_ids.end(); ++it) {
                 int current_length = piece_length;
                 if (extra > 0) { // Use left over letters as long as we have them
@@ -73,7 +79,13 @@ namespace {
                 // Now we convert a piece of the name back into utf8 and wrap it in tags.
                 std::string  piece;
                 utf8::utf32to8(name.begin() + start, name.begin() + start + current_length, std::back_inserter(piece));
-                retval += ColorTag(piece, empires.Lookup(*it)->Color());
+
+                GG::Clr empire_clr = ClientUI::TextColor();
+                const Empire* empire = GetEmpire(*owner_empire_ids.begin());
+                if (empire)
+                    empire_clr = empire->Color();
+
+                retval += ColorTag(piece, empire_clr);
                 start += current_length;
             }
             return retval;
@@ -208,7 +220,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     GG::Clr text_color = ClientUI::SystemNameTextColor();
     if (has_player_planet) {
         if (owner_empire_ids.size() == 1)
-            text_color = Empires().Lookup(*owner_empire_ids.begin())->Color();
+            text_color = GetEmpire(*owner_empire_ids.begin())->Color();
     } else if (has_neutrals) {
         text_color = ClientUI::TextColor();
     }

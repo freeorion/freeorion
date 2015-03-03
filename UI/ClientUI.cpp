@@ -754,7 +754,7 @@ bool ClientUI::ZoomToShipDesign(int design_id) {
 }
 
 bool ClientUI::ZoomToEmpire(int empire_id) {
-    if (!Empires().Lookup(empire_id))
+    if (!GetEmpire(empire_id))
         return false;
     m_map_wnd->ShowEmpire(empire_id);
     return true;

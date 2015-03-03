@@ -1174,7 +1174,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
                client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
     {
         // store empire orders and resume waiting for more
-        const Empire* empire = Empires().Lookup(server.PlayerEmpireID(player_id));
+        const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
             Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
             server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
@@ -1350,7 +1350,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // going on here with the two possible sets of orders.  apparently the
     // received orders are ignored if there are already existing orders?
     boost::shared_ptr<OrderSet> order_set;
-    if (const Empire* empire = Empires().Lookup(server.PlayerEmpireID(player_id))) {
+    if (const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id))) {
         OrderSet* existing_orders = server.m_turn_sequence[empire->EmpireID()];
         if (existing_orders)
             order_set.reset(new OrderSet(*existing_orders));

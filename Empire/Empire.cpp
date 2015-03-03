@@ -119,7 +119,7 @@ namespace {
         allocated_pp.clear();
 
         //Logger().debugStream() << "queue size: " << queue.size();
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return;
 
@@ -283,7 +283,7 @@ ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const {
 
 void ResearchQueue::Update(float RPs, const std::map<std::string, float>& research_progress) {
     // status of all techs for this empire
-    const Empire* empire = Empires().Lookup(m_empire_id);
+    const Empire* empire = GetEmpire(m_empire_id);
     if (!empire)
         return;
     TechManager& tech_manager = GetTechManager();
@@ -707,7 +707,7 @@ const ProductionQueue::Element& ProductionQueue::operator[](int i) const {
 }
 
 ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
-    const Empire* empire = Empires().Lookup(m_empire_id);
+    const Empire* empire = GetEmpire(m_empire_id);
     if (!empire)
         return end();
     for (const_iterator it = begin(); it != end(); ++it) {
@@ -725,7 +725,7 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
 }
 
 void ProductionQueue::Update() {
-    const Empire* empire = Empires().Lookup(m_empire_id);
+    const Empire* empire = GetEmpire(m_empire_id);
     if (!empire) {
         Logger().errorStream() << "ProductionQueue::Update passed null empire.  doing nothing.";
         m_projects_in_progress = 0;
@@ -1060,7 +1060,7 @@ ProductionQueue::Element& ProductionQueue::operator[](int i) {
 }
 
 ProductionQueue::iterator ProductionQueue::UnderfundedProject() {
-    const Empire* empire = Empires().Lookup(m_empire_id);
+    const Empire* empire = GetEmpire(m_empire_id);
     if (!empire)
         return end();
 
@@ -2399,7 +2399,7 @@ void Empire::ConquerProductionQueueItemsAtLocation(int location_id, int empire_i
     Logger().debugStream() << "Empire::ConquerProductionQueueItemsAtLocation: conquering items located at "
                            << location_id << " to empire " << empire_id;
 
-    Empire* to_empire = Empires().Lookup(empire_id);    // may be null
+    Empire* to_empire = GetEmpire(empire_id);    // may be null
     if (!to_empire && empire_id != ALL_EMPIRES) {
         Logger().errorStream() << "Couldn't get empire with id " << empire_id;
         return;

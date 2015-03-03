@@ -59,7 +59,7 @@ namespace {
             GG::ListBox::Row(),
             tech_name(queue_element.name)
         {
-            const Empire* empire = Empires().Lookup(queue_element.empire_id);
+            const Empire* empire = GetEmpire(queue_element.empire_id);
 
             const Tech* tech = GetTech(tech_name);
             double per_turn_cost = tech ? tech->PerTurnCost(queue_element.empire_id) : 1;
@@ -257,8 +257,8 @@ void ResearchWnd::Refresh() {
     // since empire object is recreated based on turn update from server, 
     // connections of signals emitted from the empire must be remade
     m_empire_connection.disconnect();
-    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-    if (Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID()))
+
+    if (Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
         m_empire_connection = GG::Connect(empire->GetResearchQueue().ResearchQueueChangedSignal,
                                           &ResearchWnd::ResearchQueueChangedSlot, this);
     Update();
@@ -291,7 +291,7 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name, position)));
-        if (Empire* empire = Empires().Lookup(empire_id))
+        if (Empire* empire = GetEmpire(empire_id))
             empire->UpdateResearchQueue();
     }
 }
@@ -309,7 +309,7 @@ void ResearchWnd::ResearchQueueChangedSlot() {
 }
 
 void ResearchWnd::UpdateQueue() {
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
 
@@ -330,7 +330,7 @@ void ResearchWnd::UpdateQueue() {
 }
 
 void ResearchWnd::UpdateInfoPanel() {
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
@@ -351,7 +351,7 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
     if (!m_enabled)
         return;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = Empires().Lookup(empire_id);
+    Empire* empire = GetEmpire(empire_id);
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
@@ -393,7 +393,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
         orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name)));
-    if (Empire* empire = Empires().Lookup(empire_id))
+    if (Empire* empire = GetEmpire(empire_id))
         empire->UpdateResearchQueue();
 }
 

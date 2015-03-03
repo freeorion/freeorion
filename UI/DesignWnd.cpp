@@ -185,7 +185,7 @@ namespace {
         /* Causes the human client Empire to add all saved designs. */
         void LoadAllSavedDesigns() {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
-            if (const Empire* empire = Empires().Lookup(empire_id)) {
+            if (const Empire* empire = GetEmpire(empire_id)) {
                 Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns";
                 for (std::map<std::string, ShipDesign*>::iterator savedit = begin();
                     savedit != end(); ++savedit)
@@ -564,7 +564,7 @@ void PartsListBox::Populate() {
     const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id);  // may be 0
+    const Empire* empire = GetEmpire(empire_id);  // may be 0
 
     int cur_col = NUM_COLUMNS;
     PartsListBoxRow* cur_row = 0;
@@ -1421,7 +1421,7 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
     m_empire_designs_changed_signal.disconnect();
 
     // connect signal to update this list if the empire's designs change
-    if (const Empire* empire = Empires().Lookup(m_empire_id_shown))
+    if (const Empire* empire = GetEmpire(m_empire_id_shown))
         m_empire_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal, &BasesListBox::Populate,    this);
 
     if (refresh_list)
@@ -1473,7 +1473,7 @@ void BasesListBox::PopulateWithEmptyHulls() {
     const bool showing_available = m_availabilities_shown.first;
     const bool showing_unavailable = m_availabilities_shown.second;
     Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
-    const Empire* empire = Empires().Lookup(m_empire_id_shown); // may return 0
+    const Empire* empire = GetEmpire(m_empire_id_shown); // may return 0
     Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
 
     //Logger().debugStream() << "... hulls in list: ";
@@ -1549,7 +1549,7 @@ void BasesListBox::PopulateWithCompletedDesigns() {
 
     const bool showing_available = m_availabilities_shown.first;
     const bool showing_unavailable = m_availabilities_shown.second;
-    const Empire* empire = Empires().Lookup(m_empire_id_shown); // may return 0
+    const Empire* empire = GetEmpire(m_empire_id_shown); // may return 0
     const Universe& universe = GetUniverse();
 
     Logger().debugStream() << "BasesListBox::PopulateWithCompletedDesigns for empire " << m_empire_id_shown;
@@ -1728,7 +1728,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
             return;
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return;
 
@@ -2528,7 +2528,7 @@ int DesignWnd::MainPanel::GetCompleteDesignID() const
 
 bool DesignWnd::MainPanel::CurrentDesignIsRegistered(std::string& design_name) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id); // Had better not return 0 if we're designing a ship.
+    const Empire* empire = GetEmpire(empire_id); // Had better not return 0 if we're designing a ship.
     if (!empire) {
         Logger().errorStream() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
         return false;
@@ -2563,7 +2563,7 @@ void DesignWnd::MainPanel::ReregisterDesigns() {
     Logger().debugStream() << "DesignWnd::MainPanel::ReregisterDesigns";
     m_completed_design_dump_strings.clear();
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id); // may return 0
+    const Empire* empire = GetEmpire(empire_id); // may return 0
     if (empire) {
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
             if (const ShipDesign* design = GetShipDesign(*it)) {
@@ -2582,7 +2582,7 @@ void DesignWnd::MainPanel::Sanitize() {
     m_empire_designs_changed_signal.disconnect();
     // connect signal to update this list if the empire's designs change
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (const Empire* empire = Empires().Lookup(empire_id)) {
+    if (const Empire* empire = GetEmpire(empire_id)) {
         Logger().debugStream() << "DesignWnd::MainPanel::Sanitize";
         if ((CurrentTurn() == 1) && GetOptionsDB().Get<bool>("auto-add-saved-designs")) { // otherwise can be manually triggered by right click context menu
             GetSavedDesignsManager().LoadAllSavedDesigns(); 
@@ -3165,7 +3165,7 @@ void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 
 void DesignWnd::AddDesign() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id);
+    const Empire* empire = GetEmpire(empire_id);
     if (!empire) return;
 
     std::vector<std::string> parts = m_main_panel->Parts();

@@ -85,7 +85,7 @@ namespace {
     std::set<std::string> EmpireSitRepTemplateStrings(int empire_id) {
         std::set<std::string> template_set;
 
-        Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(empire_id);
+        Empire *empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
         if (!empire)
             return template_set;
 
@@ -132,7 +132,7 @@ namespace {
         virtual std::string Decorate(const std::string& target, const std::string& content) const {
             GG::Clr color = ClientUI::DefaultLinkColor();
             int id = CastStringToInt(target);
-            Empire* empire = Empires().Lookup(id);
+            Empire* empire = GetEmpire(id);
             if (empire)
                 color = empire->Color();
             return GG::RgbaTag(color) + content + "</rgba>";
@@ -351,7 +351,7 @@ namespace {
         std::map<int, std::list<SitRepEntry> > turns;
         bool verbose_sitrep = GetOptionsDB().Get<bool>("verbose-sitrep");
         std::set<Empire*> sr_empires;
-        Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = GetEmpire(empire_id);
         if (empire) {
             sr_empires.insert(empire);
         } else {

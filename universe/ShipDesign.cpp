@@ -147,7 +147,7 @@ namespace {
     // Looks like there are at least 3 SourceForEmpire functions lying around - one in ShipDesign, one in Tech, and one in Building
     // TODO: Eliminate duplication
     TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
             return TemporaryPtr<const UniverseObject>();
@@ -685,7 +685,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     if (this->CanColonize() && !species->CanColonize())
         return false;
 
-    Empire* empire = Empires().Lookup(empire_id);
+    Empire* empire = GetEmpire(empire_id);
     if (!empire) {
         Logger().debugStream() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;

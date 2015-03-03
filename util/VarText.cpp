@@ -123,7 +123,7 @@ namespace {
             valid = false;
             return UserString("ERROR");
         }
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "SubstituteAndAppend couldn't get empire with ID " << empire_id;
             valid = false;

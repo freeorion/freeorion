@@ -42,7 +42,8 @@ public:
 
     /** \name Accessors */ //@{
     /** Returns the empire whose ID is \a ID, or 0 if none exists. */
-    const Empire*       Lookup(int ID) const;
+    const Empire*       GetEmpire(int id) const;
+    const std::string&  GetEmpireName(int id) const;
 
     const_iterator      begin() const;
     const_iterator      end() const;
@@ -62,7 +63,7 @@ public:
 
     /** \name Mutators */ //@{
     /** Returns the empire whose ID is \a id, or 0 if none exists. */
-    Empire*     Lookup(int id);
+    Empire*     GetEmpire(int id);
 
     iterator    begin();
     iterator    end();

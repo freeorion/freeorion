@@ -36,7 +36,7 @@ std::string CountsToText(const std::map<int, int>& count_per_empire, std::string
     std::stringstream ss;
     for (std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
         std::string owner_string = UserString("NEUTRAL");
-        if (const Empire* owner = Empires().Lookup(it->first))
+        if (const Empire* owner = GetEmpire(it->first))
             owner_string = GG::RgbaTag(owner->Color()) + owner->Name() + "</rgba>";
         ss << owner_string << ": " << it->second;
         ++it;
@@ -93,7 +93,7 @@ public:
         int object_id = CastStringToInt(object_id_str);
         TemporaryPtr<const UniverseObject> object = Objects().Object(object_id);
         if (object && !object->Unowned())
-            empire = Empires().Lookup(object->Owner());
+            empire = GetEmpire(object->Owner());
         if (empire)
             color = empire->Color();
 
@@ -169,7 +169,7 @@ void CombatLogWnd::SetLog(int log_id) {
             int owner_id = object?object->Owner():ALL_EMPIRES;
             std::string owner_string = " ";
             if ( owner_id != ALL_EMPIRES ) {
-                Empire* owner = Empires().Lookup(owner_id);
+                Empire* owner = GetEmpire(owner_id);
                 if ( owner ) {
                     owner_string += owner->Name() + " ";
                 }

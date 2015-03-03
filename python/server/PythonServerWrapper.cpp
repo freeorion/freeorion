@@ -264,7 +264,7 @@ namespace {
 
     // Wrappers for Empire class member functions
     void EmpireSetName(int empire_id, const std::string& name) {
-        Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "PythonUniverseGenerator::EmpireSetName: couldn't get empire with ID " << empire_id;
             return;
@@ -273,7 +273,7 @@ namespace {
     }
 
     bool EmpireSetHomeworld(int empire_id, int planet_id, const std::string& species_name) {
-        Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "PythonUniverseGenerator::EmpireSetHomeworld: couldn't get empire with ID " << empire_id;
             return false;
@@ -282,7 +282,7 @@ namespace {
     }
 
     void EmpireUnlockItem(int empire_id, UnlockableItemType item_type, const std::string& item_name) {
-        Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "PythonUniverseGenerator::EmpireUnlockItem: couldn't get empire with ID " << empire_id;
             return;
@@ -294,7 +294,7 @@ namespace {
     void EmpireAddShipDesign(int empire_id, const std::string& design_name) {
         Universe& universe = GetUniverse();
 
-        Empire* empire = Empires().Lookup(empire_id);
+        Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "PythonUniverseGenerator::EmpireAddShipDesign: couldn't get empire with ID " << empire_id;
             return;
@@ -711,7 +711,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        const Empire* empire = Empires().Lookup(empire_id);
+        const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             Logger().errorStream() << "PythonUniverseGenerator::CreateBuilding: couldn't get empire with ID " << empire_id;
             return INVALID_OBJECT_ID;
@@ -783,7 +783,7 @@ namespace {
         // if we got the id of an actual empire, get the empire object and check if it exists
         Empire* empire = 0;
         if (empire_id != ALL_EMPIRES) {
-            empire = Empires().Lookup(empire_id);
+            empire = GetEmpire(empire_id);
             if (!empire) {
                 Logger().errorStream() << "PythonUniverseGenerator::CreateShip: couldn't get empire with ID " << empire_id;
                 return INVALID_OBJECT_ID;
@@ -1047,7 +1047,7 @@ namespace {
             return false;
         }
 
-        if (!Empires().Lookup(empire_id)) {
+        if (!GetEmpire(empire_id)) {
             Logger().errorStream() << "PythonUniverseGenerator::PlanetMakeOutpost: couldn't get empire with ID " << empire_id;
             return false;
         }
@@ -1062,7 +1062,7 @@ namespace {
             return false;
         }
         
-        if (!Empires().Lookup(empire_id)) {
+        if (!GetEmpire(empire_id)) {
             Logger().errorStream() << "PythonUniverseGenerator::PlanetMakeColony: couldn't get empire with ID " << empire_id;
             return false;
         }

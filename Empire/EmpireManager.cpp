@@ -11,6 +11,8 @@
 namespace {
     std::pair<int, int> DiploKey(int id1, int ind2)
     { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
+
+    const std::string EMPTY_STRING;
 }
 
 DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo() :
@@ -35,9 +37,14 @@ const EmpireManager& EmpireManager::operator=(EmpireManager& rhs) {
     return *this;
 }
 
-const Empire* EmpireManager::Lookup(int id) const {
+const Empire* EmpireManager::GetEmpire(int id) const {
     const_iterator it = m_empire_map.find(id);
     return it == m_empire_map.end() ? 0 : it->second;
+}
+
+const std::string& EmpireManager::GetEmpireName(int id) const {
+    const_iterator it = m_empire_map.find(id);
+    return it == m_empire_map.end() ? EMPTY_STRING : it->second->Name();
 }
 
 EmpireManager::const_iterator EmpireManager::begin() const
@@ -60,8 +67,8 @@ std::string EmpireManager::Dump() const {
     for (std::map<std::pair<int, int>, DiplomaticStatus>::const_iterator it = m_empire_diplomatic_statuses.begin();
          it != m_empire_diplomatic_statuses.end(); ++it)
     {
-        const Empire* empire1 = Lookup(it->first.first);
-        const Empire* empire2 = Lookup(it->first.second);
+        const Empire* empire1 = GetEmpire(it->first.first);
+        const Empire* empire2 = GetEmpire(it->first.second);
         if (!empire1 || !empire2)
             continue;
         retval += " * " + empire1->Name() + " / " + empire2->Name() + " : ";
@@ -75,7 +82,7 @@ std::string EmpireManager::Dump() const {
     return retval;
 }
 
-Empire* EmpireManager::Lookup(int id) {
+Empire* EmpireManager::GetEmpire(int id) {
     iterator it = m_empire_map.find(id);
     return it == end() ? 0 : it->second;
 }
@@ -92,7 +99,7 @@ void EmpireManager::BackPropegateMeters() {
 }
 
 void EmpireManager::EliminateEmpire(int id) {
-    if (Empire* emp = Lookup(id)) {
+    if (Empire* emp = GetEmpire(id)) {
         emp->EliminationCleanup();
         m_eliminated_empires.insert(id);
     } else {

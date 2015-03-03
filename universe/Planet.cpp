@@ -813,7 +813,7 @@ void Planet::PopGrowthProductionResearchPhase() {
     // check for planets with zero population.  If they have a species set, then
     // they probably just starved
     if (!SpeciesName().empty() && GetMeter(METER_POPULATION)->Current() == 0.0) {
-        if (Empire* empire = Empires().Lookup(this->Owner())) {
+        if (Empire* empire = GetEmpire(this->Owner())) {
             // generate starvation sitrep for empire that owns this depopulated planet
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
 

@@ -159,6 +159,7 @@ public:
     static ServerApp*           GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
     Universe&                   GetUniverse();    ///< returns server's copy of Universe
     EmpireManager&              Empires();        ///< returns the server's copy of the Empires
+    Empire*                     GetEmpire(int id);
     TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
     ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
     TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);

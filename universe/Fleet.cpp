@@ -247,7 +247,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     int owner = this->Owner();
-    const Empire* empire = Empires().Lookup(owner);
+    const Empire* empire = GetEmpire(owner);
     std::set<int> fleet_supplied_systems;
     std::set<int> unobstructed_systems;
     if (empire) {
@@ -825,7 +825,7 @@ void Fleet::MovementPhase() {
         return;
     }
 
-    Empire* empire = Empires().Lookup(fleet->Owner());
+    Empire* empire = GetEmpire(fleet->Owner());
     std::set<int> supply_unobstructed_systems;
     if (empire)
         supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(),
@@ -1207,7 +1207,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         return false;
     }
 
-    const Empire* empire = Empires().Lookup(this->Owner());
+    const Empire* empire = GetEmpire(this->Owner());
     if (empire) {  
         std::set<int> unobstructed_systems = empire->SupplyUnobstructedSystems();
         if (unobstructed_systems.find(start_system_id) != unobstructed_systems.end())
@@ -1265,7 +1265,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         }
         bool can_see;
         if (!fleet->Unowned()) {
-            can_see = (Empires().Lookup(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowestShipStealth);
+            can_see = (GetEmpire(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowestShipStealth);
         } else {
             can_see = (monsterDetection >= lowestShipStealth);
         }

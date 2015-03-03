@@ -1425,7 +1425,7 @@ void FleetDataPanel::Refresh() {
         m_fleet_icon = new MultiTextureStaticGraphic(icons, styles);
         AttachChild(m_fleet_icon);
 
-        if (Empire* empire = Empires().Lookup(fleet->Owner()))
+        if (Empire* empire = GetEmpire(fleet->Owner()))
             m_fleet_icon->SetColor(empire->Color());
         else if (fleet->Unowned() && fleet->HasMonsters())
             m_fleet_icon->SetColor(GG::CLR_RED);
@@ -3373,7 +3373,7 @@ std::string FleetWnd::TitleText() const {
 
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system
-    if (const Empire* empire = Empires().Lookup(m_empire_id)) {
+    if (const Empire* empire = GetEmpire(m_empire_id)) {
         if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
             const std::string& sys_name = system->ApparentName(client_empire_id);
             return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %

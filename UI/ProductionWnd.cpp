@@ -242,7 +242,7 @@ namespace {
     // ProductionItemBrowseWnd //
     /////////////////////////////
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemBrowseWnd(const ProductionQueue::Element& elem) {
-        //const Empire* empire = Empires().Lookup(elem.empire_id);
+        //const Empire* empire = GetEmpire(elem.empire_id);
 
         std::string main_text;
         std::string item_name;
@@ -329,7 +329,7 @@ namespace {
             queue_index(queue_index_),
             m_build(elem)
         {
-            const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+            const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
             double total_cost(1.0);
             int minimum_turns(1.0);
             if (empire)
@@ -471,7 +471,7 @@ namespace {
 
         GG::Clr location_clr = clr;
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* this_client_empire = Empires().Lookup(client_empire_id);
+        const Empire* this_client_empire = GetEmpire(client_empire_id);
         if (this_client_empire && system_selected) {
             m_location_text = new ShadowedTextControl(location_text, ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
@@ -647,10 +647,11 @@ void ProductionWnd::Refresh() {
     // since empire object is recreated based on turn update from server, 
     // connections of signals emitted from the empire must be remade
     m_empire_connection.disconnect();
-    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-    if (Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID()))
+
+    if (Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
         m_empire_connection = GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,
                                           &ProductionWnd::ProductionQueueChangedSlot, this);
+
     UpdateInfoPanel();
     UpdateQueue();
 
@@ -700,7 +701,7 @@ void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) 
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = Empires().Lookup(client_empire_id);
+    Empire* empire = GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -723,7 +724,7 @@ void ProductionWnd::ProductionQueueChangedSlot() {
 
 void ProductionWnd::UpdateQueue() {
     Logger().debugStream() << "ProductionWnd::UpdateQueue()";
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
 
@@ -746,7 +747,7 @@ void ProductionWnd::UpdateQueue() {
 }
 
 void ProductionWnd::UpdateInfoPanel() {
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
     const ProductionQueue& queue = empire->GetProductionQueue();
@@ -761,7 +762,7 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string&
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = Empires().Lookup(client_empire_id);
+    Empire* empire = GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -776,7 +777,7 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = Empires().Lookup(client_empire_id);
+    Empire* empire = GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -791,7 +792,7 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = Empires().Lookup(client_empire_id);
+    Empire* empire = GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -805,7 +806,7 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = Empires().Lookup(client_empire_id);
+    Empire* empire = GetEmpire(client_empire_id);
     if (!empire)
         return;
 
@@ -819,7 +820,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = Empires().Lookup(client_empire_id);
+    Empire* empire = GetEmpire(client_empire_id);
     if (!empire)
         return;
 

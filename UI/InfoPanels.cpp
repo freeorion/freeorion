@@ -128,7 +128,7 @@ namespace {
         const Empire* empire = 0;
 
         if (empire_id != ALL_EMPIRES) {
-            empire = Empires().Lookup(empire_id);
+            empire = GetEmpire(empire_id);
 
             if (!empire) {
                 Logger().errorStream() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire was not found";
@@ -1348,7 +1348,7 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     // get owner, connect its production queue changed signal to update this panel
     TemporaryPtr<const UniverseObject> planet = GetUniverseObject(m_planet_id);
     if (planet) {
-        if (const Empire* empire = Empires().Lookup(planet->Owner())) {
+        if (const Empire* empire = GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
             GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
         }
@@ -1442,7 +1442,7 @@ void BuildingsPanel::Update() {
     }
 
     // get in-progress buildings
-    const Empire* empire = Empires().Lookup(planet->Owner());
+    const Empire* empire = GetEmpire(planet->Owner());
     if (!empire)
         return;
 
@@ -2503,7 +2503,7 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
         // Research use is nonlocalized, so importing / exporting doesn't make sense to display
         abort = true;
     } else {
-        empire = Empires().Lookup(m_empire_id);
+        empire = GetEmpire(m_empire_id);
         if (!empire)
             abort = true;
     }
@@ -2847,7 +2847,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         switch (info_it->cause_type) {
         case ECT_TECH: {
             name.clear();
-            if (empire = Empires().Lookup(source->Owner()))
+            if (empire = GetEmpire(source->Owner()))
                 name = empire->Name();
             const std::string& label_template = (info_it->custom_label.empty()
                 ? UserString("TT_TECH")
