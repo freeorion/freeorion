@@ -686,13 +686,16 @@ void SDLGUI::HandleSystemEvents()
                 send_to_gg = true;
             gg_event = (event.type == SDL_KEYDOWN) ? KEYPRESS : KEYRELEASE;
             break;
+
         case SDL_TEXTINPUT:
-            RelayTextInput(event.text, mouse_pos);
+            RelayTextInput(event.text, mouse_pos);  // calls HandleGGEvent repeated to process
             break;
+
         case SDL_MOUSEMOTION:
             send_to_gg = true;
             gg_event = MOUSEMOVE;
             break;
+
         case SDL_MOUSEBUTTONDOWN:
             send_to_gg = true;
             switch (event.button.button) {
@@ -702,6 +705,7 @@ void SDLGUI::HandleSystemEvents()
             }
             mod_keys = GetSDLModKeys();
             break;
+
         case SDL_MOUSEBUTTONUP:
             send_to_gg = true;
             switch (event.button.button) {
@@ -711,19 +715,21 @@ void SDLGUI::HandleSystemEvents()
             }
             mod_keys = GetSDLModKeys();
             break;
+
         case SDL_MOUSEWHEEL:
             send_to_gg = true;
             gg_event = MOUSEWHEEL;
             mouse_rel = Pt(X(event.wheel.x), Y(event.wheel.y));
             mod_keys = GetSDLModKeys();
             break;
+
         case SDL_WINDOWEVENT:
             send_to_gg = false;
             switch (event.window.event) {
                 case SDL_WINDOWEVENT_SIZE_CHANGED:
                     // Alt-tabbing and other things give dubious resize events while in fullscreen mode.
                     // ignore them
-                    if(!m_fullscreen) {
+                    if (!m_fullscreen) {
                         m_app_width = X(event.window.data1);
                         m_app_height = Y(event.window.data2);
                     }
@@ -735,7 +741,7 @@ void SDLGUI::HandleSystemEvents()
                 case SDL_WINDOWEVENT_RESIZED:
                     // Alt-tabbing and other things give dubious resize events while in fullscreen mode.
                     // ignore them
-                    if(!m_fullscreen) {
+                    if (!m_fullscreen) {
                         WindowResizedSignal (X (event.window.data1), Y (event.window.data2));
                     }
                     break;
@@ -843,7 +849,8 @@ void SDLGUI::Run()
     }
 }
 
-std::vector<std::string> SDLGUI::GetSupportedResolutions() const {
+std::vector<std::string> SDLGUI::GetSupportedResolutions() const
+{
     std::vector<std::string> mode_vec;
 
     unsigned valid_mode_count = SDL_GetNumDisplayModes(m_display_id);
@@ -865,12 +872,11 @@ std::vector<std::string> SDLGUI::GetSupportedResolutions() const {
     return mode_vec;
 }
 
-Pt SDLGUI::GetDefaultResolution (int display_id) {
-    return GetDefaultResolutionStatic(display_id);
-}
+Pt SDLGUI::GetDefaultResolution (int display_id)
+{ return GetDefaultResolutionStatic(display_id); }
 
-Pt SDLGUI::GetDefaultResolutionStatic (int display_id) {
-
+Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
+{
     // Must initialize sdl here to be able to query the default screen resolution
     if (!SDL_WasInit(SDL_INIT_VIDEO)) {
         if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -885,21 +891,22 @@ Pt SDLGUI::GetDefaultResolutionStatic (int display_id) {
     return resolution;
 }
 
-
-void SDLGUI::RelayTextInput (const SDL_TextInputEvent& text, GG::Pt mouse_pos) {
+void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos)
+{
     const char *current = text.text;
     const char *last = current;
-    //text is zero terminated, find the end
-    while (*last) {
-        ++last;
-    }
-    std::string text_string (current, last);
-    while (current != last) {
-        HandleGGEvent(TEXTINPUT, GGK_UNKNOWN, utf8::next (current, last), Flags<ModKey>(), mouse_pos, Pt (X0, Y0), &text_string);
-    }
+    // text is zero terminated, find the end
+    while (*last)
+    { ++last; }
+    std::string text_string(current, last);
+
+    // pass each utf-8 character as a separate event
+    while (current != last)
+    { HandleGGEvent(TEXTINPUT, GGK_UNKNOWN, utf8::next(current, last), Flags<ModKey>(), mouse_pos, Pt (X0, Y0), &text_string); }
 }
 
-void SDLGUI::ResetFramebuffer() {
+void SDLGUI::ResetFramebuffer()
+{
     m_framebuffer.reset(NULL);
     if (m_fake_mode_change && m_fullscreen) {
         try {
@@ -911,11 +918,11 @@ void SDLGUI::ResetFramebuffer() {
     }
 }
 
-void SDLGUI::Enter2DMode() {
-    Enter2DModeImpl(Value(AppWidth()), Value(AppHeight()));
-}
+void SDLGUI::Enter2DMode()
+{ Enter2DModeImpl(Value(AppWidth()), Value(AppHeight())); }
 
-void SDLGUI::Exit2DMode() {
+void SDLGUI::Exit2DMode()
+{
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 
@@ -925,6 +932,5 @@ void SDLGUI::Exit2DMode() {
     glPopAttrib();
 }
 
-bool SDLGUI::FramebuffersAvailable() const {
-    return GLEW_EXT_framebuffer_object && GLEW_EXT_packed_depth_stencil;
-}
+bool SDLGUI::FramebuffersAvailable() const
+{ return GLEW_EXT_framebuffer_object && GLEW_EXT_packed_depth_stencil; }

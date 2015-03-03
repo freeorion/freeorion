@@ -1010,15 +1010,17 @@ void Wnd::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_ke
 void Wnd::KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
-void Wnd::TextInput (const std::string* text)
+void Wnd::TextInput(const std::string* text)
 { if (!Interactive()) ForwardEventToParent(); }
 
+void Wnd::GainingFocus()
+{}
 
-void Wnd::GainingFocus() {}
+void Wnd::LosingFocus()
+{}
 
-void Wnd::LosingFocus() {}
-
-void Wnd::TimerFiring(unsigned int ticks, Timer* timer) {}
+void Wnd::TimerFiring(unsigned int ticks, Timer* timer)
+{}
 
 bool Wnd::EventFilter(Wnd* w, const WndEvent& event)
 { return false; }

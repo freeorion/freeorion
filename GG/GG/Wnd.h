@@ -837,7 +837,7 @@ protected:
     /** Respond to text input regardless of the method. Focus window only.
         A window may receive TextInput() messages passed up to it from its
         children. */
-    virtual void TextInput (const std::string* text);
+    virtual void TextInput(const std::string* text);
 
     /** Respond to this window gaining the input focus. */
     virtual void GainingFocus();

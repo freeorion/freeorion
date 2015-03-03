@@ -197,6 +197,7 @@ protected:
     virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
     virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
     virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    virtual void TextInput(const std::string* text);
 
     /** Recreates the vertical and horizontal scrolls as needed. */
     void RecreateScrolls();

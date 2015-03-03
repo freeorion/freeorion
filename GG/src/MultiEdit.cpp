@@ -974,6 +974,18 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
         EditedSignal(Text());
 }
 
+void MultiEdit::TextInput(const std::string* text) {
+    if (Disabled()) {
+        TextControl::TextInput(text);
+        return;
+    }
+
+    if (!text || !Interactive() || m_style & MULTI_READ_ONLY)
+        return;
+
+    Edit::TextInput(text);
+}
+
 void MultiEdit::RecreateScrolls()
 {
     delete m_vscroll;

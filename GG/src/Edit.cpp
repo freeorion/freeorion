@@ -338,33 +338,33 @@ void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     X xpos = ScreenToWindow(pt).x - PIXEL_MARGIN; // x coord for mouse position within text space
     CPSize idx = CharIndexOf(xpos);
     if (m_in_double_click_mode) {
-            std::pair<CPSize, CPSize> word_indices =
-                GetDoubleButtonDownDragWordIndices(idx);
-            if (word_indices.first == word_indices.second) {
-                if (idx < m_double_click_cursor_pos.first) {
-                    m_cursor_pos.second = idx;
-                    m_cursor_pos.first = m_double_click_cursor_pos.second;
-                } else if (m_double_click_cursor_pos.second < idx) {
-                    m_cursor_pos.second = idx;
-                    m_cursor_pos.first = m_double_click_cursor_pos.first;
-                } else {
-                    m_cursor_pos = m_double_click_cursor_pos;
-                }
+        std::pair<CPSize, CPSize> word_indices =
+            GetDoubleButtonDownDragWordIndices(idx);
+        if (word_indices.first == word_indices.second) {
+            if (idx < m_double_click_cursor_pos.first) {
+                m_cursor_pos.second = idx;
+                m_cursor_pos.first = m_double_click_cursor_pos.second;
+            } else if (m_double_click_cursor_pos.second < idx) {
+                m_cursor_pos.second = idx;
+                m_cursor_pos.first = m_double_click_cursor_pos.first;
             } else {
-                if (word_indices.first <= m_double_click_cursor_pos.first) {
-                    m_cursor_pos.second = word_indices.first;
-                    m_cursor_pos.first = m_double_click_cursor_pos.second;
-                } else {
-                    m_cursor_pos.second = word_indices.second;
-                    m_cursor_pos.first = m_double_click_cursor_pos.first;
-                }
+                m_cursor_pos = m_double_click_cursor_pos;
             }
         } else {
-            // when a single-click drag occurs, move m_cursor_pos.second to where the mouse is, which selects a range of characters
-            m_cursor_pos.second = idx;
-            if (xpos < 0 || Size().x - 2 * PIXEL_MARGIN < xpos) // if we're dragging past the currently visible text
-                AdjustView();
+            if (word_indices.first <= m_double_click_cursor_pos.first) {
+                m_cursor_pos.second = word_indices.first;
+                m_cursor_pos.first = m_double_click_cursor_pos.second;
+            } else {
+                m_cursor_pos.second = word_indices.second;
+                m_cursor_pos.first = m_double_click_cursor_pos.first;
+            }
         }
+    } else {
+        // when a single-click drag occurs, move m_cursor_pos.second to where the mouse is, which selects a range of characters
+        m_cursor_pos.second = idx;
+        if (xpos < 0 || Size().x - 2 * PIXEL_MARGIN < xpos) // if we're dragging past the currently visible text
+            AdjustView();
+    }
 }
 
 void Edit::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
@@ -375,121 +375,124 @@ void Edit::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 
 void Edit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
-    if (!Disabled()) {
-        bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
-        bool emit_signal = false;
-        bool numlock_on = mod_keys & MOD_KEY_NUM;
-
-        if (!numlock_on) {
-            // convert keypad keys into corresponding non-number keys
-            switch (key) {
-            case GGK_KP0:       key = GGK_INSERT;   break;
-            case GGK_KP1:       key = GGK_END;      break;
-            case GGK_KP2:       key = GGK_DOWN;     break;
-            case GGK_KP3:       key = GGK_PAGEDOWN; break;
-            case GGK_KP4:       key = GGK_LEFT;     break;
-            case GGK_KP5:                           break;
-            case GGK_KP6:       key = GGK_RIGHT;    break;
-            case GGK_KP7:       key = GGK_HOME;     break;
-            case GGK_KP8:       key = GGK_UP;       break;
-            case GGK_KP9:       key = GGK_PAGEUP;   break;
-            case GGK_KP_PERIOD: key = GGK_DELETE;   break;
-            default:                                break;
-            }
-        }
-        switch (key) {
-        case GGK_HOME:
-            m_first_char_shown = CP0;
-            if (shift_down)
-                m_cursor_pos.second = CP0;
-            else
-                m_cursor_pos.second = m_cursor_pos.first = CP0;
-            break;
-        case GGK_LEFT:
-            if (MultiSelected() && !shift_down) {
-                m_cursor_pos.second = m_cursor_pos.first = std::min(m_cursor_pos.first, m_cursor_pos.second);
-            } else if (0 < m_cursor_pos.second) {
-                --m_cursor_pos.second;
-                X extent = GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent;
-                while (0 < m_cursor_pos.second && extent == GetLineData()[0].char_data[Value(m_cursor_pos.second - 1)].extent)
-                    --m_cursor_pos.second;
-                if (!shift_down)
-                    m_cursor_pos.first = m_cursor_pos.second;
-            }
-            AdjustView();
-            break;
-        case GGK_RIGHT:
-            if (MultiSelected() && !shift_down) {
-                m_cursor_pos.second = m_cursor_pos.first = std::max(m_cursor_pos.first, m_cursor_pos.second);
-            } else if (m_cursor_pos.second < Length()) {
-                X extent = GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent;
-                while (m_cursor_pos.second < Length() && extent == GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent)
-                    ++m_cursor_pos.second;
-                if (!shift_down)
-                    m_cursor_pos.first = m_cursor_pos.second;
-            }
-            AdjustView();
-            break;
-        case GGK_END:
-            if (shift_down)
-                m_cursor_pos.second = Length();
-            else
-                m_cursor_pos.second = m_cursor_pos.first = Length();
-            AdjustView();
-            break;
-        case GGK_BACKSPACE:
-            if (MultiSelected()) {
-                ClearSelected();
-                emit_signal = true;
-            } else if (0 < m_cursor_pos.first) {
-                m_cursor_pos.second = --m_cursor_pos.first;
-                Erase(0, m_cursor_pos.first);
-                emit_signal = true;
-            }
-            AdjustView();
-            break;
-        case GGK_DELETE:
-            if (MultiSelected()) {
-                ClearSelected();
-                emit_signal = true;
-            } else if (m_cursor_pos.first < Length()) {
-                Erase(m_cursor_pos.first);
-                emit_signal = true;
-            }
-            AdjustView();
-            break;
-        case GGK_RETURN:
-        case GGK_KP_ENTER:
-            FocusUpdateSignal(Text());
-            TextControl::KeyPress(key, key_code_point, mod_keys);
-            m_recently_edited = false;
-            break;
-        default:
-            // Do actual text input in TextInput.
-            break;
-        }
-        if (emit_signal)
-            EditedSignal(Text());
-    } else {
+    if (Disabled()) {
         TextControl::KeyPress(key, key_code_point, mod_keys);
-    }
-}
-
-void Edit::TextInput (const std::string* text) {
-    if (text == NULL) {
         return;
     }
-    if (MultiSelected()) {
-        ClearSelected();
+
+    bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
+    bool emit_signal = false;
+    bool numlock_on = mod_keys & MOD_KEY_NUM;
+
+    if (!numlock_on) {
+        // convert keypad keys into corresponding non-number keys
+        switch (key) {
+        case GGK_KP0:       key = GGK_INSERT;   break;
+        case GGK_KP1:       key = GGK_END;      break;
+        case GGK_KP2:       key = GGK_DOWN;     break;
+        case GGK_KP3:       key = GGK_PAGEDOWN; break;
+        case GGK_KP4:       key = GGK_LEFT;     break;
+        case GGK_KP5:                           break;
+        case GGK_KP6:       key = GGK_RIGHT;    break;
+        case GGK_KP7:       key = GGK_HOME;     break;
+        case GGK_KP8:       key = GGK_UP;       break;
+        case GGK_KP9:       key = GGK_PAGEUP;   break;
+        case GGK_KP_PERIOD: key = GGK_DELETE;   break;
+        default:                                break;
+        }
     }
-    Insert (0, m_cursor_pos.first, *text);
-    m_cursor_pos.second = ++m_cursor_pos.first;
-    if (LastVisibleChar() <= m_cursor_pos.first) {
+
+    switch (key) {
+    case GGK_HOME:
+        m_first_char_shown = CP0;
+        if (shift_down)
+            m_cursor_pos.second = CP0;
+        else
+            m_cursor_pos.second = m_cursor_pos.first = CP0;
+        break;
+    case GGK_LEFT:
+        if (MultiSelected() && !shift_down) {
+            m_cursor_pos.second = m_cursor_pos.first = std::min(m_cursor_pos.first, m_cursor_pos.second);
+        } else if (0 < m_cursor_pos.second) {
+            --m_cursor_pos.second;
+            X extent = GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent;
+            while (0 < m_cursor_pos.second && extent == GetLineData()[0].char_data[Value(m_cursor_pos.second - 1)].extent)
+                --m_cursor_pos.second;
+            if (!shift_down)
+                m_cursor_pos.first = m_cursor_pos.second;
+        }
         AdjustView();
+        break;
+    case GGK_RIGHT:
+        if (MultiSelected() && !shift_down) {
+            m_cursor_pos.second = m_cursor_pos.first = std::max(m_cursor_pos.first, m_cursor_pos.second);
+        } else if (m_cursor_pos.second < Length()) {
+            X extent = GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent;
+            while (m_cursor_pos.second < Length() && extent == GetLineData()[0].char_data[Value(m_cursor_pos.second)].extent)
+                ++m_cursor_pos.second;
+            if (!shift_down)
+                m_cursor_pos.first = m_cursor_pos.second;
+        }
+        AdjustView();
+        break;
+    case GGK_END:
+        if (shift_down)
+            m_cursor_pos.second = Length();
+        else
+            m_cursor_pos.second = m_cursor_pos.first = Length();
+        AdjustView();
+        break;
+    case GGK_BACKSPACE:
+        if (MultiSelected()) {
+            ClearSelected();
+            emit_signal = true;
+        } else if (0 < m_cursor_pos.first) {
+            m_cursor_pos.second = --m_cursor_pos.first;
+            Erase(0, m_cursor_pos.first);
+            emit_signal = true;
+        }
+        AdjustView();
+        break;
+    case GGK_DELETE:
+        if (MultiSelected()) {
+            ClearSelected();
+            emit_signal = true;
+        } else if (m_cursor_pos.first < Length()) {
+            Erase(m_cursor_pos.first);
+            emit_signal = true;
+        }
+        AdjustView();
+        break;
+    case GGK_RETURN:
+    case GGK_KP_ENTER:
+        FocusUpdateSignal(Text());
+        TextControl::KeyPress(key, key_code_point, mod_keys);
+        m_recently_edited = false;
+        break;
+    default:
+        // Do actual text input in TextInput.
+        break;
     }
-    EditedSignal(Text());
+
+    if (emit_signal)
+        EditedSignal(Text());
 }
 
+void Edit::TextInput(const std::string* text) {
+    if (Disabled()) {
+        TextControl::TextInput(text);
+        return;
+    }
+
+    if (!text || !Interactive())
+        return;
+
+    AcceptPastedText(*text);
+
+    m_cursor_pos.second = ++m_cursor_pos.first;
+    if (LastVisibleChar() <= m_cursor_pos.first)
+        AdjustView();
+}
 
 void Edit::GainingFocus()
 { m_recently_edited = false; }
