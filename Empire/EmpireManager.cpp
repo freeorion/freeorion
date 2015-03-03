@@ -27,6 +27,9 @@ DiplomaticStatusUpdateInfo::DiplomaticStatusUpdateInfo(int empire1_id_, int empi
     diplo_status(status)
 {}
 
+EmpireManager::EmpireManager()
+{}
+
 EmpireManager::~EmpireManager()
 { Clear(); }
 

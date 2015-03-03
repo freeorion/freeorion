@@ -100,6 +100,8 @@ public:
     mutable DiploSignalType DiplomaticMessageChangedSignal;
 
 private:
+    EmpireManager();
+
     /** Adds the given empire to the manager. */
     void        InsertEmpire(Empire* empire);
     void        GetDiplomaticMessagesToSerialize(std::map<std::pair<int, int>, DiplomaticMessage>& messages,
@@ -109,6 +111,9 @@ private:
     std::set<int>                                   m_eliminated_empires;
     std::map<std::pair<int, int>, DiplomaticStatus> m_empire_diplomatic_statuses;
     std::map<std::pair<int, int>, DiplomaticMessage>m_diplomatic_messages;
+
+    friend class ClientApp;
+    friend class ServerApp;
 
     friend class boost::serialization::access;
     template <class Archive>
