@@ -249,7 +249,7 @@ void Edit::AcceptPastedText(const std::string& text)
     if (modified_text) {
         // moves cursor to end of pasted text
         CPSize text_span(utf8::distance(text.begin(), text.end()));
-        CPSize new_cursor_pos = std::max(CP0, std::min(Length() - 1, m_cursor_pos.second + text_span));
+        CPSize new_cursor_pos = std::max(CP0, std::min(Length(), m_cursor_pos.second + text_span));
         m_cursor_pos.second = new_cursor_pos;
 
         // ensure nothing is selected after pasting
@@ -489,7 +489,6 @@ void Edit::TextInput(const std::string* text) {
 
     AcceptPastedText(*text);
 
-    m_cursor_pos.second = ++m_cursor_pos.first;
     if (LastVisibleChar() <= m_cursor_pos.first)
         AdjustView();
 }
