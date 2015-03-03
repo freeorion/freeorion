@@ -2,6 +2,7 @@
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../Empire/EmpireManager.h"
 #include "Meter.h"
 #include "System.h"
 #include "Special.h"
@@ -161,10 +162,22 @@ std::string UniverseObject::Dump() const {
 
     os << boost::lexical_cast<std::string>(this->ObjectType()) << " "
        << this->ID() << ": "
-       << this->Name()
-       << (system ? ("  at: " + system->Name()) : "")
-       << " owner: " << m_owner_empire_id
-       << " created on turn: " << m_created_on_turn
+       << this->Name();
+    if (system) {
+       os << "  at: " << system->Name();
+    } else {
+        os << "  at: (" << this->X() << ", " << this->Y() << ")";
+    }
+    if (Unowned()) {
+        os << " (Unowned) ";
+    } else {
+        std::string empire_name = EmpireManager().GetEmpireName(m_owner_empire_id);
+        if (!empire_name.empty())
+            os << "owner: " << empire_name;
+        else
+            os << "owner: (Unknown Empire)";
+    }
+    os << " created on turn: " << m_created_on_turn
        << " specials: ";
     for (std::map<std::string, int>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
         os << "(" << it->first << ", " << it->second << ") ";
