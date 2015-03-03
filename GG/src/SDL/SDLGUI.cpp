@@ -520,11 +520,11 @@ void SDLGUI::Exit(int code)
     throw QuitSignal(code);
 }
 
-void SDLGUI::SetWindowTitle (const std::string& title) {
-    SDL_SetWindowTitle(m_window, title.c_str());
-}
+void SDLGUI::SetWindowTitle(const std::string& title)
+{ SDL_SetWindowTitle(m_window, title.c_str()); }
 
-void SDLGUI::SetVideoMode (X width, Y height, bool fullscreen, bool fake_mode_change) {
+void SDLGUI::SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change)
+{
     m_fullscreen = fullscreen;
     // Only allow fake mode change if the necessary extensions are supported
     m_fake_mode_change = fake_mode_change && FramebuffersAvailable();
@@ -688,7 +688,7 @@ void SDLGUI::HandleSystemEvents()
             break;
 
         case SDL_TEXTINPUT:
-            RelayTextInput(event.text, mouse_pos);  // calls HandleGGEvent repeated to process
+            RelayTextInput(event.text, mouse_pos);  // calls HandleGGEvent repeatedly to process
             break;
 
         case SDL_MOUSEMOTION:
