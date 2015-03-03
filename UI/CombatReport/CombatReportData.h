@@ -7,8 +7,8 @@
 
 #include <vector>
 
-class AttackEvent;
-class CombatParticipantState;
+struct AttackEvent;
+struct CombatParticipantState;
 class Empire;
 class UniverseObject;
 
