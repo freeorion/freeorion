@@ -153,7 +153,7 @@ namespace {
         }
         return retval;
     }
-    boost::function<std::map<int,double> (const Universe&, int, int)> SystemNeighborsMapFunc =      &SystemNeighborsMapP;
+    boost::function<std::map<int, double> (const Universe&, int, int)> SystemNeighborsMapFunc = &SystemNeighborsMapP;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
     const std::map<MeterType, Meter>&
@@ -262,10 +262,18 @@ namespace FreeOrionPython {
             .add_property("meterType",  &std::pair<MeterType, std::string>::first)
             .add_property("string",     &std::pair<MeterType, std::string>::second)
         ;
-        class_<Ship::PartMeterMap>("MeterTypeStringPairMeterMap")
-            .def(boost::python::map_indexing_suite<Ship::PartMeterMap, true>())
+        class_<Ship::PartMeterMap>("ShipPartMeterMap")
+            .def(boost::python::map_indexing_suite<Ship::PartMeterMap>())
         ;
 
+        ///////////////
+        //   Meter   //
+        ///////////////
+        class_<Meter, noncopyable>("meter", no_init)
+            .add_property("current",            &Meter::Current)
+            .add_property("initial",            &Meter::Initial)
+            .add_property("dump",               &Meter::Dump)
+        ;
 
         ////////////////////
         //    Universe    //
@@ -376,6 +384,7 @@ namespace FreeOrionPython {
             .def("hasTag",                      &UniverseObject::HasTag)
             .add_property("meters",             make_function(ObjectMeters,                 return_internal_reference<>()))
             .def("getMeter",                    make_function(ObjectGetMeter,               return_internal_reference<>()))
+            .add_property("dump",               &UniverseObject::Dump)
         ;
 
         ///////////////////
@@ -453,6 +462,7 @@ namespace FreeOrionPython {
                                                 ))
 
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
+            .add_property("dump",               &ShipDesign::Dump)
         ;
         def("validShipDesign",                  ValidDesignHullAndParts);
         def("validShipDesign",                  ValidDesignDesign);
@@ -508,6 +518,7 @@ namespace FreeOrionPython {
             .def("perTurnCost",                 &BuildingType::PerTurnCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
             .def("canBeProduced",               &BuildingType::ProductionLocation)  //(int empire_id, int location_id)
+            .add_property("dump",               &BuildingType::Dump)
         ;
         def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>());
         ////////////////////
@@ -582,6 +593,7 @@ namespace FreeOrionPython {
         class_<FieldType, noncopyable>("fieldType", no_init)
             .add_property("name",               make_function(&FieldType::Name,             return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&FieldType::Description,      return_value_policy<copy_const_reference>()))
+            .add_property("dump",               &FieldType::Dump)
         ;
         def("getFieldType",                     &GetFieldType,                           return_value_policy<reference_existing_object>());
 
@@ -592,6 +604,7 @@ namespace FreeOrionPython {
         class_<Special, noncopyable>("special", no_init)
             .add_property("name",               make_function(&Special::Name,           return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&Special::Description,    return_value_policy<copy_const_reference>()))
+            .add_property("dump",               &Special::Dump)
         ;
         def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>());
 
@@ -609,6 +622,7 @@ namespace FreeOrionPython {
             .add_property("tags",               make_function(&Species::Tags,           return_value_policy<return_by_value>()))
             // TODO: const std::vector<FocusType>& Species::Foci()
             .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
+            .add_property("dump",               &Species::Dump)
         ;
         def("getSpecies",                       &GetSpecies,                            return_value_policy<reference_existing_object>());
     }
