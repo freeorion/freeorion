@@ -108,14 +108,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
     CompileSaveGamePreviewData(server_save_game_data, player_save_game_data, empire_save_game_data, save_preview_data);
 
     try {
-#ifdef FREEORION_WIN32
-        // convert UTF-8 file name to UTF-16
-        fs::path::string_type file_name_native;
-        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
-        fs::path path = fs::path(file_name_native);
-#else
-        fs::path path = fs::path(filename);
-#endif
+        fs::path path = FilenameToPath(filename);
         // A relative path should be relative to the save directory.
         if (path.is_relative()) {
             path = GetSaveDir()/path;
@@ -185,14 +178,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     universe.Clear();
 
     try {
-#ifdef FREEORION_WIN32
-        // convert UTF-8 file name to UTF-16
-        fs::path::string_type file_name_native;
-        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
-        fs::path path = fs::path(file_name_native);
-#else
-        fs::path path = fs::path(filename);
-#endif
+        const fs::path path = FilenameToPath(filename);
         fs::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)
@@ -274,14 +260,7 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
     SaveGamePreviewData ignored_save_preview_data;
 
     try {
-#ifdef FREEORION_WIN32
-        // convert UTF-8 file name to UTF-16
-        fs::path::string_type file_name_native;
-        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
-        fs::path path = fs::path(file_name_native);
-#else
-        fs::path path = fs::path(filename);
-#endif
+        fs::path path = FilenameToPath(filename);
         fs::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)
@@ -318,14 +297,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
     GalaxySetupData     ignored_galaxy_setup_data;
 
     try {
-#ifdef FREEORION_WIN32
-        // convert UTF-8 file name to UTF-16
-        fs::path::string_type file_name_native;
-        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
-        fs::path path = fs::path(file_name_native);
-#else
-        fs::path path = fs::path(filename);
-#endif
+        fs::path path = FilenameToPath(filename);
         fs::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)
@@ -368,14 +340,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
     GalaxySetupData                 ignored_galaxy_setup_data;
 
     try {
-#ifdef FREEORION_WIN32
-        // convert UTF-8 file name to UTF-16
-        fs::path::string_type file_name_native;
-        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
-        fs::path path = fs::path(file_name_native);
-#else
-        fs::path path = fs::path(filename);
-#endif
+        fs::path path = FilenameToPath(filename);
         Logger().debugStream() << "LoadEmpireSaveGameData: filename: " << filename << " path:" << path;
         fs::ifstream ifs(path, std::ios_base::binary);
 

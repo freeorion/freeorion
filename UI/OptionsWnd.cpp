@@ -108,14 +108,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-#if defined(_WIN32)
-            // convert UTF-8 file name to UTF-16
-            fs::path::string_type file_name_native;
-            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
-            fs::path path = fs::path(file_name_native);
-#else
-            fs::path path = fs::path(file);
-#endif
+            fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
                 fs::exists(path) && !fs::is_directory(path);
         } catch (std::exception ex) {
@@ -127,14 +120,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-#if defined(_WIN32)
-            // convert UTF-8 file name to UTF-16
-            fs::path::string_type file_name_native;
-            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
-            fs::path path = fs::path(file_name_native);
-#else
-            fs::path path = fs::path(file);
-#endif
+            fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
                 fs::exists(path) && !fs::is_directory(path);
         } catch (std::exception ex) {
@@ -146,14 +132,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-#if defined(_WIN32)
-            // convert UTF-8 file name to UTF-16
-            fs::path::string_type file_name_native;
-            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
-            fs::path path = fs::path(file_name_native);
-#else
-            fs::path path = fs::path(file);
-#endif
+            fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
                 fs::exists(path) && !fs::is_directory(path);
         } catch (std::exception ex) {
@@ -165,14 +144,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-#if defined(_WIN32)
-            // convert UTF-8 file name to UTF-16
-            fs::path::string_type file_name_native;
-            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
-            fs::path path = fs::path(file_name_native);
-#else
-            fs::path path = fs::path(file);
-#endif
+            fs::path path = FilenameToPath(file);
             return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
                 fs::exists(path) && !fs::is_directory(path);
         } catch (std::exception ex) {
@@ -184,14 +156,7 @@ namespace {
         // putting this in try-catch block prevents crash with error output along the lines of:
         // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
         try {
-#if defined(_WIN32)
-            // convert UTF-8 file name to UTF-16
-            fs::path::string_type file_name_native;
-            utf8::utf8to16(file.begin(), file.end(), std::back_inserter(file_name_native));
-            fs::path path = fs::path(file_name_native);
-#else
-            fs::path path = fs::path(file);
-#endif
+            fs::path path = FilenameToPath(file);
             return fs::exists(path) && fs::is_directory(path);
         } catch (std::exception ex) {
         }

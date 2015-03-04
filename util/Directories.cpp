@@ -269,16 +269,8 @@ const fs::path GetBinDir() {
 
 void InitBinDir(const std::string& argv0) {
     try {
-#if defined(FREEORION_WIN32)
-        // convert UTF-8 to UTF-16
-        boost::filesystem::path::string_type binary_native;
-        utf8::utf8to16(argv0.begin(), argv0.end(), std::back_inserter(binary_native));
-        fs::path binary_file = fs::system_complete(fs::path(binary_native));
-#else
-        fs::path binary_file = fs::system_complete(fs::path(argv0));
-#endif
+        fs::path binary_file = fs::system_complete(FilenameToPath(argv0));
         bin_dir = binary_file.branch_path();
-
     } catch (fs::filesystem_error err) {
         bin_dir = fs::initial_path();
     }
@@ -289,25 +281,15 @@ void InitBinDir(const std::string& argv0) {
 #endif
 
 const fs::path GetResourceDir() {
-    // if resource dir option has been set, use specified location.  otherwise,
+    // if resource dir option has been set, use specified location. otherwise,
     // use default location
     std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource-dir");
-#if defined(FREEORION_WIN32)
-    // convert UTF-8 directory string to UTF-16
-    boost::filesystem::path::string_type directory_native;
-    utf8::utf8to16(options_resource_dir.begin(), options_resource_dir.end(), std::back_inserter(directory_native));
-    // verify directory validity.  if not, try again with default
-    if (fs::is_directory(fs::path(directory_native)) && fs::exists(fs::path(directory_native)))
-        return fs::path(directory_native);
-    options_resource_dir = GetOptionsDB().GetDefault<std::string>("resource-dir");
-    utf8::utf8to16(options_resource_dir.begin(), options_resource_dir.end(), std::back_inserter(directory_native));
-    return fs::path(directory_native);
-#else
-    if (options_resource_dir.empty() || !fs::is_directory(fs::path(options_resource_dir)) || !fs::exists(fs::path(options_resource_dir)))
-        return fs::path(GetOptionsDB().GetDefault<std::string>("resource-dir"));
+    fs::path dir = FilenameToPath(options_resource_dir);
+
+    if (options_resource_dir.empty() || !fs::is_directory(dir) || !fs::exists(dir))
+        return FilenameToPath(GetOptionsDB().GetDefault<std::string>("resource-dir"));
     else
-        return fs::path(options_resource_dir);
-#endif
+        return dir;
 }
 
 const fs::path GetConfigPath() {
@@ -321,14 +303,7 @@ const fs::path GetSaveDir() {
     std::string options_save_dir = GetOptionsDB().Get<std::string>("save-dir");
     if (options_save_dir.empty())
         options_save_dir = GetOptionsDB().GetDefault<std::string>("save-dir");
-#if defined(FREEORION_WIN32)
-    // convert UTF-8 directory string to UTF-16
-    boost::filesystem::path::string_type directory_native;
-    utf8::utf8to16(options_save_dir.begin(), options_save_dir.end(), std::back_inserter(directory_native));
-    return fs::path(directory_native);
-#else
-    return fs::path(options_save_dir);
-#endif
+    return FilenameToPath(options_save_dir);
 }
 
 fs::path RelativePath(const fs::path& from, const fs::path& to) {
@@ -360,6 +335,17 @@ std::string PathString(const fs::path& path) {
     std::string retval;
     utf8::utf16to8(native_string.begin(), native_string.end(), std::back_inserter(retval));
     return retval;
+#endif
+}
+
+const fs::path FilenameToPath(const std::string& path_str) {
+#if defined(FREEORION_WIN32)
+    // convert UTF-8 directory string to UTF-16
+    boost::filesystem::path::string_type directory_native;
+    utf8::utf8to16(path_str.begin(), path_str.end(), std::back_inserter(directory_native));
+    return fs::path(directory_native);
+#else
+    return fs::path(path_str);
 #endif
 }
 

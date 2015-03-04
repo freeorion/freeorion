@@ -1,6 +1,7 @@
 #include "StringTable.h"
 
 #include "Logger.h"
+#include "Directories.h"
 
 #include <GG/utf8/checked.h>
 
@@ -61,15 +62,8 @@ namespace {
     }
 }
 
-
 void StringTable_::Load() {
-#ifndef FREEORION_WIN32
-    boost::filesystem::path path(m_filename);
-#else
-    boost::filesystem::path::string_type native_filename;
-    utf8::utf8to16(m_filename.begin(), m_filename.end(), std::back_inserter(native_filename));
-    boost::filesystem::path path(native_filename);
-#endif
+    boost::filesystem::path path = FilenameToPath(m_filename);
     std::string file_contents;
 
     bool read_success = read_file(path, file_contents);

@@ -21,6 +21,8 @@ FO_COMMON_API void InitDirs(const std::string& argv0);
   * <li>This directory is the only one that can be considered writable!</ul> */
 FO_COMMON_API const boost::filesystem::path GetUserDir();
 
+FO_COMMON_API const boost::filesystem::path FilenameToPath(const std::string& path_str);
+
 /** Returns the directory that contains all game content files, such as string
   * table files, in-game tech, building, special, etc. definition files, and
   * graphics files. */

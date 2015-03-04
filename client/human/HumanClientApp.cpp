@@ -555,14 +555,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame";
 
     if (!filename.empty()) {
-#if defined(FREEORION_WIN32)
-        boost::filesystem::path::string_type file_name_native;
-        utf8::utf8to16(filename.begin(), filename.end(), std::back_inserter(file_name_native));
-        boost::filesystem::path file_path(file_name_native);
-#else
-        boost::filesystem::path file_path(filename);
-#endif
-        if (!exists(file_path)) {
+        if (!exists(FilenameToPath(filename))) {
             std::string msg = "HumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
                             + filename + "\" to load; aborting.";
             Logger().fatalStream() << msg;

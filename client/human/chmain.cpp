@@ -156,16 +156,8 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
                 !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
             {
                 Logger().debugStream() << "Default Resources directory missing or does not contain expected files. Cannot start game.";
-
-                std::string path_string;
-#if defined(FREEORION_WIN32)
-                boost::filesystem::path::string_type path_string_native = GetResourceDir().native();
-                utf8::utf16to8(path_string_native.begin(), path_string_native.end(), std::back_inserter(path_string));
-#else
-                path_string = GetResourceDir().string();
-#endif
                 throw std::runtime_error("Unable to load game resources at default location: " +
-                                         path_string + " : Install may be broken.");
+                                         PathString(GetResourceDir()) + " : Install may be broken.");
             }
         }
 
