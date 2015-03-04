@@ -45,11 +45,9 @@ void FlushLoadedStringTables()
 { stringtables.clear(); }
 
 const std::string& UserString(const std::string& str) {
-    const StringTable_& string_table = GetStringTable();
-    if (string_table.StringExists(str))
+    if (GetStringTable().StringExists(str))
         return GetStringTable().String(str);
-    else
-        return GetDefaultStringTable().String(str);
+    return GetDefaultStringTable().String(str);
 }
 
 void UserStringList(const std::string& str_list, std::list<std::string>& strings) {
@@ -58,6 +56,12 @@ void UserStringList(const std::string& str_list, std::list<std::string>& strings
     while (std::getline(template_stream, item)) {
         strings.push_back(item);
     }
+}
+
+bool UserStringExists(const std::string& str) {
+    if (GetStringTable().StringExists(str))
+        return true;
+    return GetDefaultStringTable().StringExists(str);
 }
 
 boost::format FlexibleFormat(const std::string &string_to_format) {
