@@ -333,13 +333,8 @@ const fs::path GetSaveDir() {
 
 fs::path RelativePath(const fs::path& from, const fs::path& to) {
     fs::path retval;
-#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
     fs::path from_abs = fs::absolute(from);
     fs::path to_abs = fs::absolute(to);
-#else
-    fs::path from_abs = fs::complete(from);
-    fs::path to_abs = fs::complete(to);
-#endif
     fs::path::iterator from_it = from_abs.begin();
     fs::path::iterator end_from_it = from_abs.end();
     fs::path::iterator to_it = to_abs.begin();
