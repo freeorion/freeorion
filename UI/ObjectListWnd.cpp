@@ -105,9 +105,12 @@ namespace {
             col_types[UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE")] =StringCastedValueRef<int>("LastTurnActiveInBattle");
 
             col_types[UserStringNop("SIZE_AS_DOUBLE")] =            StringCastedValueRef<double>("SizeAsDouble");
-            col_types[UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE")]=StringCastedValueRef<double>("DistanceFromOriginalType");
             col_types[UserStringNop("NEXT_TURN_POP_GROWTH")] =      StringCastedValueRef<double>("NextTurnPopGrowth");
 
+            col_types[UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE")]=StringCastedValueRef<double>("DistanceFromOriginalType");
+            col_types[UserStringNop("PLANET_TYPE")] =               UserStringCastedValueRef<PlanetType>("PlanetType");
+            col_types[UserStringNop("ORIGINAL_TYPE")] =             UserStringCastedValueRef<PlanetType>("OriginalType");
+            col_types[UserStringNop("NEXT_TOWARDS_ORIGINAL_TYPE")]= UserStringCastedValueRef<PlanetType>("NextCloserToOriginalPlanetType");
 
 
             for (MeterType meter = MeterType(0); meter <= METER_STARLANE_SPEED;
