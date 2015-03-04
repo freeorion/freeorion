@@ -321,6 +321,10 @@
 		82AB1D13194D97A1009C8220 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		82B3265319B603C1005082AC /* ConditionParser7.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B3265219B603C1005082AC /* ConditionParser7.cpp */; };
 		82B4313414A74E07003EEE42 /* UniverseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B4313314A74E07003EEE42 /* UniverseGenerator.cpp */; };
+		82B9AEA11AA71CCC00486B2A /* CombatLogWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9AE991AA71CCC00486B2A /* CombatLogWnd.cpp */; };
+		82B9AEA21AA71CCC00486B2A /* CombatReportData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9AE9B1AA71CCC00486B2A /* CombatReportData.cpp */; };
+		82B9AEA31AA71CCC00486B2A /* CombatReportWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9AE9D1AA71CCC00486B2A /* CombatReportWnd.cpp */; };
+		82B9AEA41AA71CCC00486B2A /* GraphicalSummary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9AE9F1AA71CCC00486B2A /* GraphicalSummary.cpp */; };
 		82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B9D445180C53FE0032F86D /* GraphControl.cpp */; };
 		82BB623E19BEDF1700A0E281 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
 		82BB623F19BEDF6F00A0E281 /* freeorionparse.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 82C07438149DE46200E76876 /* freeorionparse.dylib */; };
@@ -1142,6 +1146,14 @@
 		829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmpireStatsParser.cpp; sourceTree = "<group>"; };
 		82B3265219B603C1005082AC /* ConditionParser7.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser7.cpp; sourceTree = "<group>"; };
 		82B4313314A74E07003EEE42 /* UniverseGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseGenerator.cpp; sourceTree = "<group>"; };
+		82B9AE991AA71CCC00486B2A /* CombatLogWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatLogWnd.cpp; sourceTree = "<group>"; };
+		82B9AE9A1AA71CCC00486B2A /* CombatLogWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatLogWnd.h; sourceTree = "<group>"; };
+		82B9AE9B1AA71CCC00486B2A /* CombatReportData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatReportData.cpp; sourceTree = "<group>"; };
+		82B9AE9C1AA71CCC00486B2A /* CombatReportData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatReportData.h; sourceTree = "<group>"; };
+		82B9AE9D1AA71CCC00486B2A /* CombatReportWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatReportWnd.cpp; sourceTree = "<group>"; };
+		82B9AE9E1AA71CCC00486B2A /* CombatReportWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatReportWnd.h; sourceTree = "<group>"; };
+		82B9AE9F1AA71CCC00486B2A /* GraphicalSummary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicalSummary.cpp; sourceTree = "<group>"; };
+		82B9AEA01AA71CCC00486B2A /* GraphicalSummary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicalSummary.h; sourceTree = "<group>"; };
 		82B9D445180C53FE0032F86D /* GraphControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphControl.cpp; sourceTree = "<group>"; };
 		82B9D446180C53FE0032F86D /* GraphControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphControl.h; sourceTree = "<group>"; };
 		82BB838115AAD16C006F635F /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
@@ -1735,6 +1747,7 @@
 				34972BE70F49CBE80015C864 /* ChatWnd.h */,
 				471D5CA90A98A3F900DA9C21 /* ClientUI.cpp */,
 				471D5CAA0A98A3F900DA9C21 /* ClientUI.h */,
+				82B9AE981AA71CCC00486B2A /* CombatReport */,
 				471D5CAD0A98A3F900DA9C21 /* CUIControls.cpp */,
 				471D5CAE0A98A3F900DA9C21 /* CUIControls.h */,
 				471D5CAF0A98A3F900DA9C21 /* CUIDrawUtil.cpp */,
@@ -2322,6 +2335,21 @@
 			name = "System Frameworks";
 			sourceTree = "<group>";
 		};
+		82B9AE981AA71CCC00486B2A /* CombatReport */ = {
+			isa = PBXGroup;
+			children = (
+				82B9AE991AA71CCC00486B2A /* CombatLogWnd.cpp */,
+				82B9AE9A1AA71CCC00486B2A /* CombatLogWnd.h */,
+				82B9AE9B1AA71CCC00486B2A /* CombatReportData.cpp */,
+				82B9AE9C1AA71CCC00486B2A /* CombatReportData.h */,
+				82B9AE9D1AA71CCC00486B2A /* CombatReportWnd.cpp */,
+				82B9AE9E1AA71CCC00486B2A /* CombatReportWnd.h */,
+				82B9AE9F1AA71CCC00486B2A /* GraphicalSummary.cpp */,
+				82B9AEA01AA71CCC00486B2A /* GraphicalSummary.h */,
+			);
+			path = CombatReport;
+			sourceTree = "<group>";
+		};
 		82ED913F194F5C96002F0A4A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -2869,10 +2897,12 @@
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */,
 				471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */,
+				82B9AEA21AA71CCC00486B2A /* CombatReportData.cpp in Sources */,
 				471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */,
 				471D5E150A98A97D00DA9C21 /* CUIControls.cpp in Sources */,
 				471D5E160A98A98700DA9C21 /* CUIDrawUtil.cpp in Sources */,
 				471D5E180A98A98B00DA9C21 /* CUIStyle.cpp in Sources */,
+				82B9AEA31AA71CCC00486B2A /* CombatReportWnd.cpp in Sources */,
 				471D5E1A0A98A99600DA9C21 /* CUIWnd.cpp in Sources */,
 				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
 				343EC6630F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp in Sources */,
@@ -2880,7 +2910,9 @@
 				471D5E1B0A98A99D00DA9C21 /* FleetButton.cpp in Sources */,
 				471D5E1C0A98A9A300DA9C21 /* FleetWnd.cpp in Sources */,
 				471D5E1E0A98A9AE00DA9C21 /* GalaxySetupWnd.cpp in Sources */,
+				82B9AEA41AA71CCC00486B2A /* GraphicalSummary.cpp in Sources */,
 				82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */,
+				82B9AEA11AA71CCC00486B2A /* CombatLogWnd.cpp in Sources */,
 				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
 				820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */,
 				470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */,
