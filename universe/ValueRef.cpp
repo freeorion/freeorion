@@ -1651,12 +1651,6 @@ namespace ValueRef {
         double temp = m_value_ref->Eval(context);
         return DoubleToString(temp, 3, false);
     }
-
-    template <>
-    std::string StringCast<int>::Eval(const ScriptingContext& context) const
-    {
-        return boost::lexical_cast<std::string>(m_value_ref->Eval(context));
-    }
 }
 
 ///////////////////////////////////////////////////////////

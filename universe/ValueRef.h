@@ -1299,17 +1299,23 @@ bool ValueRef::StringCast<FromType>::operator==(const ValueRef::ValueRefBase<std
     return true;
 }
 
+template <class FromType>
+std::string ValueRef::StringCast<FromType>::Eval(const ScriptingContext& context) const
+{
+    if (!m_value_ref)
+        return "";
+    std::string retval;
+    try {
+        retval = boost::lexical_cast<std::string>(m_value_ref->Eval(context));
+    } catch (...) {
+    }
+    return retval;
+}
+
 namespace ValueRef {
     template <>
     std::string StringCast<double>::Eval(const ScriptingContext& context) const;
-
-    template <>
-    std::string StringCast<int>::Eval(const ScriptingContext& context) const;
 }
-
-template <class FromType>
-std::string ValueRef::StringCast<FromType>::Eval(const ScriptingContext& context) const
-{ return boost::lexical_cast<std::string>(m_value_ref->Eval(context)); }
 
 template <class FromType>
 bool ValueRef::StringCast<FromType>::RootCandidateInvariant() const
