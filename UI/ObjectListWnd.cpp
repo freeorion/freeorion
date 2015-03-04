@@ -112,6 +112,10 @@ namespace {
             col_types[UserStringNop("ORIGINAL_TYPE")] =             UserStringCastedValueRef<PlanetType>("OriginalType");
             col_types[UserStringNop("NEXT_TOWARDS_ORIGINAL_TYPE")]= UserStringCastedValueRef<PlanetType>("NextCloserToOriginalPlanetType");
 
+            col_types[UserStringNop("PLANET_SIZE")] =               UserStringCastedValueRef<PlanetSize>("PlanetSize");
+            col_types[UserStringNop("PLANET_ENVIRONMENT")] =        UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
+            //col_types[UserStringNop("OBJECT_TYPE2")] =              UserStringCastedValueRef<UniverseObjectType>("ObjectType");
+            col_types[UserStringNop("STAR_TYPE")] =                 UserStringCastedValueRef<StarType>("StarType");
 
             for (MeterType meter = MeterType(0); meter <= METER_STARLANE_SPEED;
                  meter = MeterType(meter + 1))

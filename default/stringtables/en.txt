@@ -4043,6 +4043,15 @@ Original Planet Type
 NEXT_TOWARDS_ORIGINAL_TYPE
 Next Towards Original Planet Type
 
+PLANET_SIZE
+Planet Size
+
+PLANET_ENVIRONMENT
+Planet Environment
+
+STAR_TYPE
+Star Type
+
 NEXT_TURN_POP_GROWTH
 Next Turn Population Growth
 
