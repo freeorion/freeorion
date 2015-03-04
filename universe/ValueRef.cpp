@@ -25,6 +25,7 @@
 
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
+bool UserStringExists(const std::string& str);
 
 namespace {
     TemporaryPtr<const UniverseObject> FollowReference(std::vector<std::string>::const_iterator first,
@@ -1691,7 +1692,9 @@ bool ValueRef::UserStringLookup::operator==(const ValueRef::ValueRefBase<std::st
 
 std::string ValueRef::UserStringLookup::Eval(const ScriptingContext& context) const {
     std::string ref_val = m_value_ref ? m_value_ref->Eval(context) : "";
-    return ref_val.empty() ? "" : UserString(ref_val);
+    if (ref_val.empty() || !UserStringExists(ref_val))
+        return "";
+    return UserString(ref_val);
 }
 
 bool ValueRef::UserStringLookup::RootCandidateInvariant() const
