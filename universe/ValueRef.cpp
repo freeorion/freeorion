@@ -13,6 +13,7 @@
 #include "UniverseObject.h"
 #include "Condition.h"
 #include "Enums.h"
+#include "Tech.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../util/Random.h"
@@ -1416,6 +1417,56 @@ namespace ValueRef {
         return 0;
     }
 
+    namespace {
+        std::vector<std::string> TechsResearchedByEmpire(int empire_id) {
+            std::vector<std::string> retval;
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return retval;
+            for (TechManager::iterator tech_it = GetTechManager().begin();
+                 tech_it != GetTechManager().end(); ++tech_it)
+            {
+                if (empire->TechResearched((*tech_it)->Name()))
+                    retval.push_back((*tech_it)->Name());
+            }
+            return retval;
+        }
+
+        std::vector<std::string> TechsResearchableByEmpire(int empire_id) {
+            std::vector<std::string> retval;
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return retval;
+            for (TechManager::iterator tech_it = GetTechManager().begin();
+                 tech_it != GetTechManager().end(); ++tech_it)
+            {
+                if (empire->ResearchableTech((*tech_it)->Name()))
+                    retval.push_back((*tech_it)->Name());
+            }
+            return retval;
+        }
+
+        std::vector<std::string> TransferrableTechs(int sender_empire_id, int receipient_empire_id) {
+            std::vector<std::string> sender_researched_techs = TechsResearchedByEmpire(sender_empire_id);
+            std::vector<std::string> recepient_researchable = TechsResearchableByEmpire(receipient_empire_id);
+
+            std::vector<std::string> retval;
+
+            if (sender_researched_techs.empty() || recepient_researchable.empty())
+                return retval;
+
+            // find intersection of two lists
+            std::sort(sender_researched_techs.begin(), sender_researched_techs.end());
+            std::sort(recepient_researchable.begin(), recepient_researchable.end());
+            std::set_intersection(sender_researched_techs.begin(), sender_researched_techs.end(),
+                                  recepient_researchable.begin(), recepient_researchable.end(),
+                                  std::back_inserter(retval));
+
+            // find techs common to both lists
+            return retval;
+        }
+    }
+
     template <>
     std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const
     {
@@ -1433,7 +1484,6 @@ namespace ValueRef {
             if (!empire)
                 return "";
             return empire->LeastExpensiveEnqueuedTech();
-
 
         } else if (variable_name == "HighestCostEnqueuedTech") {
             int empire_id = ALL_EMPIRES;
@@ -1546,6 +1596,17 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
+
+            std::vector<std::string> researchable_techs = TechsResearchableByEmpire(empire_id);
+            if (researchable_techs.empty())
+                return "";
+            std::vector<std::string>::const_iterator tech_it = researchable_techs.begin();
+            std::size_t idx = RandSmallInt(0, static_cast<int>(researchable_techs.size()) - 1);
+            std::advance(tech_it, idx);
+            return *tech_it;
 
         } else if (variable_name == "RandomCompleteTech") {
             int empire_id = ALL_EMPIRES;
@@ -1554,14 +1615,40 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
+
+            std::vector<std::string> complete_techs = TechsResearchedByEmpire(empire_id);
+            if (complete_techs.empty())
+                return "";
+            std::vector<std::string>::const_iterator tech_it = complete_techs.begin();
+            std::size_t idx = RandSmallInt(0, static_cast<int>(complete_techs.size()) - 1);
+            std::advance(tech_it, idx);
+            return *tech_it;
 
         } else if (variable_name == "LowestCostTransferrableTech") {
-            int empire_id = ALL_EMPIRES;
+            int empire1_id = ALL_EMPIRES;
             if (m_int_ref1) {
-                empire_id = m_int_ref1->Eval(context);
-                if (empire_id == ALL_EMPIRES)
+                empire1_id = m_int_ref1->Eval(context);
+                if (empire1_id == ALL_EMPIRES)
                     return "";
             }
+
+            int empire2_id = ALL_EMPIRES;
+            if (m_int_ref2) {
+                empire2_id = m_int_ref2->Eval(context);
+                if (empire2_id == ALL_EMPIRES)
+                    return "";
+            }
+
+            std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id);
+            if (sendable_techs.empty())
+                return "";
+            std::vector<std::string>::const_iterator tech_it = sendable_techs.begin();
+            std::size_t idx = RandSmallInt(0, static_cast<int>(sendable_techs.size()) - 1);
+            std::advance(tech_it, idx);
+            return *tech_it;
 
         } else if (variable_name == "HighestCostTransferrableTech") {
             int empire_id = ALL_EMPIRES;
@@ -1570,6 +1657,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         } else if (variable_name == "TopPriorityTransferrableTech") {
             int empire_id = ALL_EMPIRES;
@@ -1578,6 +1668,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         } else if (variable_name == "MostSpentTransferrableTech") {
             int empire_id = ALL_EMPIRES;
@@ -1586,6 +1679,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         } else if (variable_name == "RandomTransferrableTech") {
             int empire_id = ALL_EMPIRES;
@@ -1594,6 +1690,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         } else if (variable_name == "MostPopulousSpecies") {
             int empire_id = ALL_EMPIRES;
@@ -1602,6 +1701,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         } else if (variable_name == "MostHappySpecies") {
             int empire_id = ALL_EMPIRES;
@@ -1610,6 +1712,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         } else if (variable_name == "LeastHappySpecies") {
             int empire_id = ALL_EMPIRES;
@@ -1618,6 +1723,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         } else if (variable_name == "RandomColonizableSpecies") {
             int empire_id = ALL_EMPIRES;
@@ -1626,6 +1734,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         } else if (variable_name == "RandomControlledSpecies") {
             int empire_id = ALL_EMPIRES;
@@ -1634,6 +1745,9 @@ namespace ValueRef {
                 if (empire_id == ALL_EMPIRES)
                     return "";
             }
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire)
+                return "";
 
         }
         return "";
@@ -1691,7 +1805,9 @@ bool ValueRef::UserStringLookup::operator==(const ValueRef::ValueRefBase<std::st
 }
 
 std::string ValueRef::UserStringLookup::Eval(const ScriptingContext& context) const {
-    std::string ref_val = m_value_ref ? m_value_ref->Eval(context) : "";
+    if (!m_value_ref)
+        return "";
+    std::string ref_val = m_value_ref->Eval(context);
     if (ref_val.empty() || !UserStringExists(ref_val))
         return "";
     return UserString(ref_val);
