@@ -1651,26 +1651,80 @@ namespace ValueRef {
             return *tech_it;
 
         } else if (variable_name == "HighestCostTransferrableTech") {
-            int empire_id = ALL_EMPIRES;
+            int empire1_id = ALL_EMPIRES;
             if (m_int_ref1) {
-                empire_id = m_int_ref1->Eval(context);
-                if (empire_id == ALL_EMPIRES)
+                empire1_id = m_int_ref1->Eval(context);
+                if (empire1_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = GetEmpire(empire_id);
-            if (!empire)
+
+            int empire2_id = ALL_EMPIRES;
+            if (m_int_ref2) {
+                empire2_id = m_int_ref2->Eval(context);
+                if (empire2_id == ALL_EMPIRES)
+                    return "";
+            }
+
+            std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id);
+            if (sendable_techs.empty())
                 return "";
 
+            std::string retval;
+            float highest_cost = 0.0f;
+            for (std::vector<std::string>::const_iterator tech_it = sendable_techs.begin();
+                 tech_it != sendable_techs.end(); ++tech_it)
+            {
+                const Tech* tech = GetTech(*tech_it);
+                if (!tech)
+                    continue;
+                float rc = tech->ResearchCost(empire2_id);
+                if (rc > highest_cost) {
+                    highest_cost = rc;
+                    retval = *tech_it;
+                }
+            }
+            return retval;
+
         } else if (variable_name == "TopPriorityTransferrableTech") {
-            int empire_id = ALL_EMPIRES;
+            int empire1_id = ALL_EMPIRES;
             if (m_int_ref1) {
-                empire_id = m_int_ref1->Eval(context);
-                if (empire_id == ALL_EMPIRES)
+                empire1_id = m_int_ref1->Eval(context);
+                if (empire1_id == ALL_EMPIRES)
                     return "";
             }
-            const Empire* empire = GetEmpire(empire_id);
-            if (!empire)
+
+            int empire2_id = ALL_EMPIRES;
+            if (m_int_ref2) {
+                empire2_id = m_int_ref2->Eval(context);
+                if (empire2_id == ALL_EMPIRES)
+                    return "";
+            }
+            const Empire* empire2 = GetEmpire(empire2_id);
+            if (!empire2)
                 return "";
+
+            std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id);
+            if (sendable_techs.empty())
+                return "";
+
+            std::string retval = *sendable_techs.begin();   // pick first tech by default, hopefully to be replaced below
+            int position_of_top_found_tech = INT_MAX;
+
+            // search queue to find which transferrable tech is at the top of the list
+            const ResearchQueue& queue = empire2->GetResearchQueue();
+            for (std::vector<std::string>::const_iterator tech_it = sendable_techs.begin();
+                 tech_it != sendable_techs.end(); ++tech_it)
+            {
+                ResearchQueue::const_iterator queue_it = queue.find(*tech_it);
+                if (queue_it == queue.end())
+                    continue;
+                int queue_pos = std::distance(queue.begin(), queue_it);
+                if (queue_pos < position_of_top_found_tech) {
+                    retval = *tech_it;
+                    position_of_top_found_tech = queue_pos;
+                }
+            }
+            return retval;
 
         } else if (variable_name == "MostSpentTransferrableTech") {
             int empire_id = ALL_EMPIRES;
