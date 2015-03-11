@@ -72,7 +72,7 @@ using boost::python::len;
 
 
 // Helper stuff (classes, functions etc.) exposed to the
-// universe generator Python scripts
+// server side Python scripts
 namespace {
     // Functions that return various important constants
     int     AllEmpires()
@@ -511,10 +511,10 @@ namespace {
     }
 
     // Wrappers for the various universe object classes member funtions
-    // This should provide a more safe and consistent set of universe generation
+    // This should provide a more safe and consistent set of server side
     // functions to scripters. All wrapper functions work with object ids, so
     // handling with object references and passing them between the languages is
-    // avoided
+    // avoided.
     //
     // Wrappers for common UniverseObject class member funtions
     object GetName(int object_id) {
@@ -1081,35 +1081,32 @@ namespace {
 
 void WrapServerAPI() {
     class_<SystemPosition>("SystemPosition", init<double, double>())
-    .def_readwrite("x", &SystemPosition::x)
-    .def_readwrite("y", &SystemPosition::y);
+        .def_readwrite("x", &SystemPosition::x)
+        .def_readwrite("y", &SystemPosition::y);
 
     class_<std::vector<SystemPosition> >("SystemPositionVec")
-    .def(vector_indexing_suite<std::vector<SystemPosition>, true>());
+        .def(vector_indexing_suite<std::vector<SystemPosition>, true>());
 
     class_<PlayerSetupData>("PlayerSetupData")
-    .def_readonly("player_name",        &PlayerSetupData::m_player_name)
-    .def_readonly("empire_name",        &PlayerSetupData::m_empire_name)
-    .def_readonly("empire_color",       &PlayerSetupData::m_empire_color)
-    .def_readonly("starting_species",   &PlayerSetupData::m_starting_species_name);
-
-    class_<std::map<int, PlayerSetupData>, noncopyable>("PlayerSetupDataMap", no_init)
-    .def(map_indexing_suite<std::map<int, PlayerSetupData>, true>());
+        .def_readonly("player_name",        &PlayerSetupData::m_player_name)
+        .def_readonly("empire_name",        &PlayerSetupData::m_empire_name)
+        .def_readonly("empire_color",       &PlayerSetupData::m_empire_color)
+        .def_readonly("starting_species",   &PlayerSetupData::m_starting_species_name);
 
     class_<ItemSpec>("ItemSpec", init<UnlockableItemType, const std::string&>())
-    .def_readonly("type",   &ItemSpec::type)
-    .def_readonly("name",   &ItemSpec::name);
+        .def_readonly("type",   &ItemSpec::type)
+        .def_readonly("name",   &ItemSpec::name);
 
     class_<FleetPlanWrapper>("FleetPlan", init<const std::string&, const list&>())
-    .def("name",            &FleetPlanWrapper::Name)
-    .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
+        .def("name",            &FleetPlanWrapper::Name)
+        .def("ship_designs",    &FleetPlanWrapper::ShipDesigns);
 
     class_<MonsterFleetPlanWrapper>("MonsterFleetPlan", init<const std::string&, const list&, double, int>())
-    .def("name",            &MonsterFleetPlanWrapper::Name)
-    .def("ship_designs",    &MonsterFleetPlanWrapper::ShipDesigns)
-    .def("spawn_rate",      &MonsterFleetPlanWrapper::SpawnRate)
-    .def("spawn_limit",     &MonsterFleetPlanWrapper::SpawnLimit)
-    .def("location",        &MonsterFleetPlanWrapper::Location);
+        .def("name",            &MonsterFleetPlanWrapper::Name)
+        .def("ship_designs",    &MonsterFleetPlanWrapper::ShipDesigns)
+        .def("spawn_rate",      &MonsterFleetPlanWrapper::SpawnRate)
+        .def("spawn_limit",     &MonsterFleetPlanWrapper::SpawnLimit)
+        .def("location",        &MonsterFleetPlanWrapper::Location);
 
     def("user_string",                          make_function(&UserString,      return_value_policy<copy_const_reference>()));
     def("roman_number",                         RomanNumber);
@@ -1120,6 +1117,9 @@ void WrapServerAPI() {
     def("large_meter_value",                    LargeMeterValue);
     def("invalid_position",                     InvalidPosition);
 
+    def("get_galaxy_setup_data",                GetGalaxySetupData,             return_value_policy<reference_existing_object>());
+    def("current_turn",                         CurrentTurn);
+    
     def("base_star_type_dist",                  BaseStarTypeDist);
     def("universe_age_mod_to_star_type_dist",   UniverseAgeModToStarTypeDist);
     def("density_mod_to_planet_size_dist",      DensityModToPlanetSizeDist);

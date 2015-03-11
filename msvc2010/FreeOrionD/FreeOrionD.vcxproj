@@ -100,9 +100,9 @@
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\network\ServerNetworking.h" />
     <ClInclude Include="..\..\python\PythonWrappers.h" />
-    <ClInclude Include="..\..\python\server\PythonFramework.h" />
+    <ClInclude Include="..\..\python\server\PythonServer.h" />
+    <ClInclude Include="..\..\python\server\PythonServerFramework.h" />
     <ClInclude Include="..\..\python\server\PythonServerWrapper.h" />
-    <ClInclude Include="..\..\python\server\PythonUniverseGenerator.h" />
     <ClInclude Include="..\..\server\SaveLoad.h" />
     <ClInclude Include="..\..\server\ServerApp.h" />
     <ClInclude Include="..\..\server\ServerFSM.h" />
@@ -157,9 +157,9 @@
     <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp" />
-    <ClCompile Include="..\..\python\server\PythonFramework.cpp" />
+    <ClCompile Include="..\..\python\server\PythonServer.cpp" />
+    <ClCompile Include="..\..\python\server\PythonServerFramework.cpp" />
     <ClCompile Include="..\..\python\server\PythonServerWrapper.cpp" />
-    <ClCompile Include="..\..\python\server\PythonUniverseGenerator.cpp" />
     <ClCompile Include="..\..\server\dmain.cpp" />
     <ClCompile Include="..\..\server\SaveLoad.cpp" />
     <ClCompile Include="..\..\server\ServerApp.cpp" />

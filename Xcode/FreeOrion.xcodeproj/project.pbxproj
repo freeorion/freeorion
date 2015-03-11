@@ -289,7 +289,7 @@
 		822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822EB0FD170832240083EB38 /* CombatLogManager.cpp */; };
 		8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */; };
 		8246FED0194D8F83008C07B5 /* IntComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8246FECF194D8F83008C07B5 /* IntComplexValueRefParser.cpp */; };
-		824CE1A01AA0C28A00111CD9 /* PythonUniverseGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 824CE19E1AA0C28A00111CD9 /* PythonUniverseGenerator.cpp */; };
+		824CE1A01AA0C28A00111CD9 /* PythonServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 824CE19E1AA0C28A00111CD9 /* PythonServer.cpp */; };
 		8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE315FCEFDD00523C1C /* Field.cpp */; };
 		8257A8D71A90BA610006777D /* GLClientAndServerBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8257A8D61A90BA610006777D /* GLClientAndServerBuffer.cpp */; };
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
@@ -338,7 +338,7 @@
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
 		82D563D71A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */; };
 		82D7B5A01AA3666F00A85842 /* PythonServerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */; };
-		82D7B5A31AA37C9000A85842 /* PythonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B5A11AA37C9000A85842 /* PythonFramework.cpp */; };
+		82D7B5A31AA37C9000A85842 /* PythonServerFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B5A11AA37C9000A85842 /* PythonServerFramework.cpp */; };
 		82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E5238E192FE8CE001E2374 /* AppKit.framework */; };
 		82E52391192FE90F001E2374 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52390192FE90F001E2374 /* IOKit.framework */; };
 		82E52398192FE99D001E2374 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52392192FE99C001E2374 /* Carbon.framework */; };
@@ -994,8 +994,8 @@
 		82483B7A15F4F24100D27614 /* libboost_date_time.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_date_time.a; sourceTree = "<group>"; };
 		82483B7B15F4F26200D27614 /* libFreeImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage.a; sourceTree = "<group>"; };
 		824C0B7C15F61C45002081C2 /* libboost_chrono.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_chrono.a; sourceTree = "<group>"; };
-		824CE19E1AA0C28A00111CD9 /* PythonUniverseGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonUniverseGenerator.cpp; sourceTree = "<group>"; };
-		824CE19F1AA0C28A00111CD9 /* PythonUniverseGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonUniverseGenerator.h; sourceTree = "<group>"; };
+		824CE19E1AA0C28A00111CD9 /* PythonServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonServer.cpp; sourceTree = "<group>"; };
+		824CE19F1AA0C28A00111CD9 /* PythonServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonServer.h; sourceTree = "<group>"; };
 		8250FDE115FCEFC400523C1C /* ConditionParser4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser4.cpp; sourceTree = "<group>"; };
 		8250FDE215FCEFC400523C1C /* FieldsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldsParser.cpp; sourceTree = "<group>"; };
 		8250FDE315FCEFDD00523C1C /* Field.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Field.cpp; sourceTree = "<group>"; };
@@ -1172,8 +1172,8 @@
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
 		82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonServerWrapper.cpp; sourceTree = "<group>"; };
 		82D7B59F1AA3666F00A85842 /* PythonServerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonServerWrapper.h; sourceTree = "<group>"; };
-		82D7B5A11AA37C9000A85842 /* PythonFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonFramework.cpp; sourceTree = "<group>"; };
-		82D7B5A21AA37C9000A85842 /* PythonFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonFramework.h; sourceTree = "<group>"; };
+		82D7B5A11AA37C9000A85842 /* PythonServerFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonServerFramework.cpp; sourceTree = "<group>"; };
+		82D7B5A21AA37C9000A85842 /* PythonServerFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonServerFramework.h; sourceTree = "<group>"; };
 		82E250AD19C2317700F0E2F2 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGLEW.a; sourceTree = "<group>"; };
 		82E5238E192FE8CE001E2374 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		82E52390192FE90F001E2374 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -2148,12 +2148,12 @@
 		824CE19D1AA0C28A00111CD9 /* server */ = {
 			isa = PBXGroup;
 			children = (
-				824CE19E1AA0C28A00111CD9 /* PythonUniverseGenerator.cpp */,
-				824CE19F1AA0C28A00111CD9 /* PythonUniverseGenerator.h */,
+				82D7B5A11AA37C9000A85842 /* PythonServerFramework.cpp */,
+				82D7B5A21AA37C9000A85842 /* PythonServerFramework.h */,
 				82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */,
 				82D7B59F1AA3666F00A85842 /* PythonServerWrapper.h */,
-				82D7B5A11AA37C9000A85842 /* PythonFramework.cpp */,
-				82D7B5A21AA37C9000A85842 /* PythonFramework.h */,
+				824CE19E1AA0C28A00111CD9 /* PythonServer.cpp */,
+				824CE19F1AA0C28A00111CD9 /* PythonServer.h */,
 			);
 			path = server;
 			sourceTree = "<group>";
@@ -2741,7 +2741,7 @@
 				47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */,
 				471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */,
 				82D7B5A01AA3666F00A85842 /* PythonServerWrapper.cpp in Sources */,
-				82D7B5A31AA37C9000A85842 /* PythonFramework.cpp in Sources */,
+				82D7B5A31AA37C9000A85842 /* PythonServerFramework.cpp in Sources */,
 				471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */,
 				2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */,
 				2F6096CE12EF046500F58913 /* ClientApp.cpp in Sources */,
@@ -2751,7 +2751,7 @@
 				828843341850A2550023C4D7 /* PythonLoggingWrapper.cpp in Sources */,
 				82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */,
 				82182CFA185B506200D70FF2 /* PythonUniverseWrapper.cpp in Sources */,
-				824CE1A01AA0C28A00111CD9 /* PythonUniverseGenerator.cpp in Sources */,
+				824CE1A01AA0C28A00111CD9 /* PythonServer.cpp in Sources */,
 				82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

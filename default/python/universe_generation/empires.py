@@ -1,6 +1,6 @@
 import random
 
-import fo_universe_generator as fo
+import freeorion as fo
 
 import names
 import starsystems
@@ -35,13 +35,6 @@ def get_starting_species_pool():
     # this way we have somewhat, but not absolutely strict even distribution of starting species at least when there
     # is only a few number of players (some species can occur twice at max while others not at all)
     pool = fo.get_playable_species() * 2
-
-    # check all players setup data for players that have their starting species already set, and remove one instance
-    # of that species from our initial pool to preserve correct distribution (as it has already been picked once)
-    for psd_entry in fo.get_player_setup_data():
-        species = psd_entry.data().starting_species
-        if species in pool:
-            pool.remove(species)
 
     # randomize order in initial pool so we don't get the same species all the time
     random.shuffle(pool)
@@ -204,7 +197,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     # give homeworld starting buildings
     # use the list provided in starting_buildings.txt
     print "Player", player_name, ": add starting buildings to homeworld"
-    for building in util.load_string_list("../starting_buildings.txt"):
+    for building in util.load_string_list("../../starting_buildings.txt"):
         fo.create_building(building, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.

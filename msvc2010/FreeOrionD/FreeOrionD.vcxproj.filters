@@ -224,13 +224,13 @@
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\python\server\PythonUniverseGenerator.h">
-      <Filter>Header Files\python\server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\python\server\PythonFramework.h">
-      <Filter>Header Files\python\server</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\python\server\PythonServerWrapper.h">
+      <Filter>Header Files\python\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\server\PythonServer.h">
+      <Filter>Header Files\python\server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\server\PythonServerFramework.h">
       <Filter>Header Files\python\server</Filter>
     </ClInclude>
   </ItemGroup>
@@ -268,13 +268,13 @@
     <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp">
       <Filter>Source Files\python</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\python\server\PythonUniverseGenerator.cpp">
-      <Filter>Source Files\python\server</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\python\server\PythonFramework.cpp">
-      <Filter>Source Files\python\server</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\python\server\PythonServerWrapper.cpp">
+      <Filter>Source Files\python\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\server\PythonServer.cpp">
+      <Filter>Source Files\python\server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\server\PythonServerFramework.cpp">
       <Filter>Source Files\python\server</Filter>
     </ClCompile>
   </ItemGroup>

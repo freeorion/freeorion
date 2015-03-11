@@ -1,6 +1,6 @@
 import random
 
-import fo_universe_generator as fo
+import freeorion as fo
 
 from starnames import name_star_systems
 from galaxy import calc_star_system_positions
@@ -20,7 +20,7 @@ def error_report():
     return error_list
 
 
-def create_universe():
+def create_universe(psd_map):
     """
     Main universe generation function invoked from C++ code.
     """
@@ -28,8 +28,7 @@ def create_universe():
 
     # fetch universe and player setup data
     gsd = fo.get_galaxy_setup_data()
-    psd_list = fo.get_player_setup_data()
-    total_players = len(psd_list)
+    total_players = len(psd_map)
 
     # initialize RNG
     seed_rng(gsd.seed)
@@ -70,9 +69,8 @@ def create_universe():
 
     # set up empires for each player
     seed_rng(seed_pool.pop())
-    for psd_entry, home_system in zip(psd_list, home_systems):
-        empire = psd_entry.key()
-        psd = psd_entry.data()
+    for empire, psd in psd_map.iteritems():
+        home_system = home_systems.pop()
         if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
             report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 

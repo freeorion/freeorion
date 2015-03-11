@@ -15,8 +15,9 @@
 #include "../universe/Special.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
-#include "../python/server/PythonUniverseGenerator.h"
 #include "../Empire/Empire.h"
+#include "../python/server/PythonServerFramework.h"
+#include "../python/server/PythonServer.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -135,10 +136,13 @@ ServerApp::ServerApp() :
 
     GG::Connect(Empires().DiplomaticStatusChangedSignal,  &ServerApp::HandleDiplomaticStatusChange, this);
     GG::Connect(Empires().DiplomaticMessageChangedSignal, &ServerApp::HandleDiplomaticMessageChange,this);
+
+    PythonInit();
 }
 
 ServerApp::~ServerApp() {
     Logger().debugStream() << "ServerApp::~ServerApp";
+    PythonCleanup();
     CleanupAIs();
     delete m_fsm;
 }
@@ -2927,6 +2931,10 @@ void ServerApp::PostCombatProcessTurns() {
     empires.BackPropegateMeters();
 
 
+    // execute turn events implemented as Python scripts
+    ExecuteScriptedTurnEvents();
+
+
     // check for loss of empire capitals
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
         int capital_id = empire_it->second->CapitalID();
@@ -2937,7 +2945,6 @@ void ServerApp::PostCombatProcessTurns() {
             empire_it->second->SetCapitalID(INVALID_OBJECT_ID);
         }
     }
-
 
 
     // store any changes in objects from various progress functions

@@ -1,6 +1,6 @@
 import sys
 import random
-import fo_universe_generator as fo
+import freeorion as fo
 import planets
 import util
 

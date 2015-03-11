@@ -785,6 +785,9 @@ Cannot generate game with no active players.
 SERVER_UNIVERSE_GENERATION_ERRORS
 Universe generation completed with errors. See log files for detailed error messages. Game can start, but gameplay will probably be impaired.
 
+SERVER_TURN_EVENTS_ERRORS
+Python scripted turn events executed with errors. See log files for detailed error messages. Game can continue, but gameplay will probably be impaired.
+
 ######################################
 # Command Line and OptionsDB Options #
 ######################################

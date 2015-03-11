@@ -1,5 +1,5 @@
 import random
-import fo_universe_generator as fo
+import freeorion as fo
 import util
 import statistics
 
