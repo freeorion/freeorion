@@ -1,32 +1,17 @@
 #include "UniverseGenerator.h"
 
-//#include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Random.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
-//#include "../util/MultiplayerCommon.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
-//#include "Building.h"
-//#include "Fleet.h"
 #include "Planet.h"
-//#include "Ship.h"
-//#include "ShipDesign.h"
 #include "System.h"
-//#include "Field.h"
-//#include "UniverseObject.h"
-//#include "Effect.h"
-//#include "Predicates.h"
-//#include "Special.h"
 #include "Species.h"
 #include "ValueRef.h"
-
-//#include <boost/algorithm/string/classification.hpp>
-//#include <boost/algorithm/string/split.hpp>
-//#include <boost/filesystem/fstream.hpp>
 
 
 DataTableMap& UniverseDataTables() {
