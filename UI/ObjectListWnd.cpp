@@ -2219,6 +2219,34 @@ void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it) {
     ClientUI::GetClientUI()->ZoomToObject(object_id);
 }
 
+std::set<int> ObjectListWnd::SelectedObjectIDs() const {
+    std::set<int> sel_ids;
+    const GG::ListBox::SelectionSet sel = m_list_box->Selections();
+    for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
+        ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+        if (row) {
+            int selected_object_id = row->ObjectID();
+            if (selected_object_id != INVALID_OBJECT_ID)
+                sel_ids.insert(selected_object_id);
+        }
+    }
+    return sel_ids;
+}
+
+void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
+    for (GG::ListBox::iterator it = m_list_box->begin(); it != m_list_box->end(); ++it) {
+        ObjectRow *row = dynamic_cast<ObjectRow *>(*it);
+        if (row) {
+            int selected_object_id = row->ObjectID();
+            if (selected_object_id != INVALID_OBJECT_ID) {
+                if (sel_ids.find(selected_object_id) != sel_ids.end()) {
+                    m_list_box->SelectRow(it);
+                }
+            }
+        }
+    }
+}
+
 void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     int object_id = ObjectInRow(it);
     if (object_id == INVALID_OBJECT_ID)
@@ -2319,7 +2347,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     }
                 }
             }
+            std::set<int> sel_ids = SelectedObjectIDs();
             Refresh();
+            SetSelectedObjects(sel_ids);
+            ObjectSelectionChanged(m_list_box->Selections());
             break;
         }
         }

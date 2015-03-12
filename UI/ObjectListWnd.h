@@ -35,6 +35,9 @@ private:
     void            ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     int             ObjectInRow(GG::ListBox::iterator it) const;
 
+    void            SetSelectedObjects(std::set<int> sel_ids);
+    std::set<int>   SelectedObjectIDs() const;
+
     void            FilterClicked();
     void            CollapseExpandClicked();
     virtual void    CloseClicked();
