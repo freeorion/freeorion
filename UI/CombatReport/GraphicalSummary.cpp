@@ -120,7 +120,7 @@ public:
         CombatSummaryMap::const_iterator side_summary_it = m_summaries.find(participant.empire_id);
 
         if( side_summary_it == m_summaries.end() ) {
-            Logger().errorStream() << "The empire of the object " << participant.object_id
+            ErrorLogger() << "The empire of the object " << participant.object_id
                                    << " is not known to be in this battle. (empire_id = " << participant.empire_id << ")";
             return GG::Pt(GG::X(10), GG::Y(10));
         }
@@ -642,7 +642,7 @@ void GraphicalSummaryWnd::Render()
 void GraphicalSummaryWnd::MakeSummaries(int log_id) {
     m_summaries.clear();
     if(!CombatLogAvailable(log_id)) {
-        Logger().errorStream() << "CombatReportWnd::CombatReportPrivate::MakeSummaries: Could not find log: " << log_id;
+        ErrorLogger() << "CombatReportWnd::CombatReportPrivate::MakeSummaries: Could not find log: " << log_id;
     } else {
         const CombatLog& log = GetCombatLog(log_id);
         for( std::set<int>::const_iterator it = log.object_ids.begin(); it != log.object_ids.end(); ++it) {
@@ -657,13 +657,13 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
                 if ( it != log.participant_states.end() ) {
                     m_summaries[owner_id].AddUnit(object_id, it->second);
                 } else {
-                    Logger().errorStream() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
+                    ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
                 }
             }
         }
 
         for(std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it ) {
-            Logger().debugStream() << "MakeSummaries: empire " << it->first
+            DebugLogger() << "MakeSummaries: empire " << it->first
                                    << " total health: " << it->second.total_current_health
                                    << " max health: " << it->second.total_max_health
                                    << " units: " << it->second.unit_summaries.size();

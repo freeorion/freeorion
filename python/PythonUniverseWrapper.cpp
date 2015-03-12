@@ -21,7 +21,7 @@
 
 namespace {
     void                    DumpObjects(const Universe& universe)
-    { Logger().debugStream() << universe.Objects().Dump(); }
+    { DebugLogger() << universe.Objects().Dump(); }
 
     // We're returning the result of operator-> here so that python doesn't
     // need to deal with our TemporaryPtr class.
@@ -116,10 +116,10 @@ namespace {
     boost::function<std::vector<int>(const Universe&, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
     bool                    SystemsConnectedP(const Universe& universe, int system1_id, int system2_id, int empire_id=ALL_EMPIRES) {
-        //Logger().debugStream() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
+        //DebugLogger() << "SystemsConnected!(" << system1_id << ", " << system2_id << ")";
         try {
             bool retval = universe.SystemsConnected(system1_id, system2_id, empire_id);
-            //Logger().debugStream() << "SystemsConnected! retval: " << retval;
+            //DebugLogger() << "SystemsConnected! retval: " << retval;
             return retval;
         } catch (...) {
         }

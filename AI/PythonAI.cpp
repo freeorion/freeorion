@@ -219,7 +219,7 @@ static char         s_python_home[MAXPATHLEN];
 static char         s_python_program_name[MAXPATHLEN];
 #endif
 PythonAI::PythonAI() {
-    Logger().debugStream() << "PythonAI::PythonAI()";
+    DebugLogger() << "PythonAI::PythonAI()";
     // in order to expose a getter for it to Python, s_save_state_string must be static, and not a member
     // variable of class PythonAI, because the exposing is done outside the PythonAI class and there is no
     // access to a pointer to PythonAI
@@ -232,25 +232,25 @@ PythonAI::PythonAI() {
 #ifdef FREEORION_MACOSX
         strcpy(s_python_home, GetPythonHome().string().c_str());
         Py_SetPythonHome(s_python_home);
-        Logger().debugStream() << "Python home set to " << Py_GetPythonHome();
+        DebugLogger() << "Python home set to " << Py_GetPythonHome();
 
         strcpy(s_python_program_name, (GetPythonHome() / "Python").string().c_str());
         Py_SetProgramName(s_python_program_name);
-        Logger().debugStream() << "Python program name set to " << Py_GetProgramFullPath();
+        DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
 #endif
         Py_Initialize();                // initializes Python interpreter, allowing Python functions to be called from C++
-        Logger().debugStream() << "Python initialized";
+        DebugLogger() << "Python initialized";
 
-        Logger().debugStream() << "Python version: " << Py_GetVersion();
-        Logger().debugStream() << "Python prefix: " << Py_GetPrefix();
-        Logger().debugStream() << "Python module search path: " << Py_GetPath();
+        DebugLogger() << "Python version: " << Py_GetVersion();
+        DebugLogger() << "Python prefix: " << Py_GetPrefix();
+        DebugLogger() << "Python module search path: " << Py_GetPath();
 
-        Logger().debugStream() << "Initializing C++ interfaces for Python";
+        DebugLogger() << "Initializing C++ interfaces for Python";
 
         initfreeOrionLogger();          // allows the "freeOrionLogger" C++ module to be imported within Python code
         initfreeOrionAIInterface();     // allows the "freeOrionAIInterface" C++ module to be imported within Python code
     } catch (...) {
-        Logger().errorStream() << "Unable to initialize Python interpreter.";
+        ErrorLogger() << "Unable to initialize Python interpreter.";
         return;
     }
 
@@ -259,7 +259,7 @@ PythonAI::PythonAI() {
         object main_module = import("__main__");
         s_main_namespace = extract<dict>(main_module.attr("__dict__"));
     } catch (error_already_set err) {
-        Logger().errorStream() << "Unable to set up main namespace in Python.";
+        ErrorLogger() << "Unable to set up main namespace in Python.";
         PyErr_Print();
         return;
     }
@@ -279,7 +279,7 @@ PythonAI::PythonAI() {
                                     "print ('Python stdout and stderr redirected')";
         object ignored = exec(logger_script.c_str(), s_main_namespace, s_main_namespace);
     } catch (error_already_set err) {
-        Logger().errorStream() << "Unable to redirect Python stdout and stderr.";
+        ErrorLogger() << "Unable to redirect Python stdout and stderr.";
         return;
     }
 
@@ -300,11 +300,11 @@ PythonAI::PythonAI() {
         return;
     }
 
-    Logger().debugStream() << "Initialized Python AI";
+    DebugLogger() << "Initialized Python AI";
 }
 
 PythonAI::~PythonAI() {
-    Logger().debugStream() << "Cleaning up / destructing Python AI";
+    DebugLogger() << "Cleaning up / destructing Python AI";
     Py_Finalize();      // stops Python interpreter and release its resources
     s_ai = 0;
     s_main_namespace = dict();
@@ -312,23 +312,23 @@ PythonAI::~PythonAI() {
 }
 
 void PythonAI::GenerateOrders() {
-    Logger().debugStream() << "PythonAI::GenerateOrders : initializing turn";
+    DebugLogger() << "PythonAI::GenerateOrders : initializing turn";
     AIInterface::InitTurn();
 
     boost::timer order_timer;
     try {
         // call Python function that generates orders for current turn
-        //Logger().debugStream() << "PythonAI::GenerateOrders : getting generate orders object";
+        //DebugLogger() << "PythonAI::GenerateOrders : getting generate orders object";
         object generateOrdersPythonFunction = s_ai_module.attr("generateOrders");
-        //Logger().debugStream() << "PythonAI::GenerateOrders : generating orders";
+        //DebugLogger() << "PythonAI::GenerateOrders : generating orders";
         generateOrdersPythonFunction();
     } catch (error_already_set err) {
         PyErr_Print();
-        //Logger().debugStream() << "PythonAI::GenerateOrders : python error caught and printed";
+        //DebugLogger() << "PythonAI::GenerateOrders : python error caught and printed";
         AIInterface::DoneTurn();
-        //Logger().debugStream() << "PythonAI::GenerateOrders : done with error";
+        //DebugLogger() << "PythonAI::GenerateOrders : done with error";
     }
-    Logger().debugStream() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0);
+    DebugLogger() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0);
 }
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
@@ -373,7 +373,7 @@ void PythonAI::StartNewGame() {
 }
 
 void PythonAI::ResumeLoadedGame(const std::string& save_state_string) {
-    //Logger().debugStream() << "PythonAI::ResumeLoadedGame(" << save_state_string << ")";
+    //DebugLogger() << "PythonAI::ResumeLoadedGame(" << save_state_string << ")";
     s_save_state_string = save_state_string;
     try {
         // call Python function that deals with the new state string sent by the server
@@ -393,6 +393,6 @@ const std::string& PythonAI::GetSaveStateString() {
     } catch (error_already_set err) {
         PyErr_Print();
     }
-    //Logger().debugStream() << "PythonAI::GetSaveStateString() returning: " << s_save_state_string;
+    //DebugLogger() << "PythonAI::GetSaveStateString() returning: " << s_save_state_string;
     return s_save_state_string;
 }

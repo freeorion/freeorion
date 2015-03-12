@@ -691,7 +691,7 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
         }
 
     } catch (const boost::bad_lexical_cast&) {
-        Logger().errorStream() << "EncyclopediaDetailPanel::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+        ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
     }
 }
 
@@ -736,7 +736,7 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
             this->SetGraph(data);
         }
     } catch (const boost::bad_lexical_cast&) {
-        Logger().errorStream() << "EncyclopediaDetailPanel::HandleLinkDoubleClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+        ErrorLogger() << "EncyclopediaDetailPanel::HandleLinkDoubleClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
     }
 }
 
@@ -823,7 +823,7 @@ namespace {
     int DefaultLocationForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
-            Logger().debugStream() << "DefaultLocationForEmpire: Unable to get empire with ID: " << empire_id;
+            DebugLogger() << "DefaultLocationForEmpire: Unable to get empire with ID: " << empire_id;
             return INVALID_OBJECT_ID;
         }
         // get a location where the empire might build something.
@@ -943,7 +943,7 @@ namespace {
     {
         const PartType* part = GetPartType(item_name);
         if (!part) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << item_name;
             return;
         }
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -998,7 +998,7 @@ namespace {
     {
         const HullType* hull = GetHullType(item_name);
         if (!hull) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << item_name;
             return;
         }
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1044,7 +1044,7 @@ namespace {
     {
         const Tech* tech = GetTech(item_name);
         if (!tech) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find tech with name " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find tech with name " << item_name;
             return;
         }
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1133,7 +1133,7 @@ namespace {
     {
         const BuildingType* building_type = GetBuildingType(item_name);
         if (!building_type) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << item_name;
             return;
         }
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1195,7 +1195,7 @@ namespace {
     {
         const Special* special = GetSpecial(item_name);
         if (!special) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << item_name;
             return;
         }
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1265,7 +1265,7 @@ namespace {
         {}
         Empire* empire = GetEmpire(empire_id);
         if (!empire) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << item_name;
             return;
         }
 
@@ -1593,7 +1593,7 @@ namespace {
     {
         const Species* species = GetSpecies(item_name);
         if (!species) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << item_name;
             return;
         }
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1696,7 +1696,7 @@ namespace {
     {
         const FieldType* field_type = GetFieldType(item_name);
         if (!field_type) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find fiedl type with name " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find fiedl type with name " << item_name;
             return;
         }
 
@@ -1855,7 +1855,7 @@ namespace {
         int design_id = boost::lexical_cast<int>(item_name);
         const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>(item_name));
         if (!design) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find ShipDesign with id " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find ShipDesign with id " << item_name;
             return;
         }
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1872,7 +1872,7 @@ namespace {
         float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
         float typical_shot = 3 + 27 * tech_level;
         float enemy_DR = 20 * tech_level;
-        Logger().debugStream() << "default enemy stats:: tech_level: " << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
+        DebugLogger() << "default enemy stats:: tech_level: " << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
         std::set<float> enemy_shots;
         enemy_shots.insert(typical_shot);
         std::set<std::string> additional_species; // from currently selected planet and fleets, if any
@@ -1889,11 +1889,11 @@ namespace {
             if (const TemporaryPtr< Ship > this_ship = GetShip(selected_ship)) {
                 if (!additional_species.empty() && ((this_ship->CurrentMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
                     enemy_DR = this_ship->CurrentMeterValue(METER_MAX_SHIELD);
-                    Logger().debugStream() << "Using selected ship for enemy values, DR: " << enemy_DR;
+                    DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
                     std::vector< float > this_damage = this_ship->AllWeaponsDamage();
                     for (std::vector< float >::iterator shot_it = this_damage.begin(); shot_it != this_damage.end(); shot_it++)
-                        Logger().debugStream() << "Weapons Dmg " << *shot_it;
+                        DebugLogger() << "Weapons Dmg " << *shot_it;
                     enemy_shots.insert(this_damage.begin(), this_damage.end());
                 }
             }
@@ -1975,7 +1975,7 @@ namespace {
             float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
             float typical_shot = 3 + 27 * tech_level;
             float enemy_DR = 20 * tech_level;
-            Logger().debugStream() << "default enemy stats:: tech_level: " << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
+            DebugLogger() << "default enemy stats:: tech_level: " << tech_level << "   DR: " << enemy_DR << "   attack: " << typical_shot;
             std::set<float> enemy_shots;
             enemy_shots.insert(typical_shot);
             std::set<std::string> additional_species; // TODO: from currently selected planet and ship, if any
@@ -1992,11 +1992,11 @@ namespace {
                 if (const TemporaryPtr< Ship > this_ship = GetShip(selected_ship)) {
                     if (!additional_species.empty() && ((this_ship->CurrentMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
                         enemy_DR = this_ship->CurrentMeterValue(METER_MAX_SHIELD);
-                        Logger().debugStream() << "Using selected ship for enemy values, DR: " << enemy_DR;
+                        DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                         enemy_shots.clear();
                         std::vector< float > this_damage = this_ship->AllWeaponsDamage();
                         for (std::vector< float >::iterator shot_it = this_damage.begin(); shot_it != this_damage.end(); shot_it++)
-                            Logger().debugStream() << "Weapons Dmg " << *shot_it;
+                            DebugLogger() << "Weapons Dmg " << *shot_it;
                         enemy_shots.insert(this_damage.begin(), this_damage.end());
                     }
                 }
@@ -2051,7 +2051,7 @@ namespace {
 
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(id);
         if (!obj) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << item_name;
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << item_name;
             return;
         }
 
@@ -2059,7 +2059,7 @@ namespace {
         name = obj->PublicName(client_empire_id);
         general_type = GeneralTypeOfObject(obj->ObjectType());
         if (general_type.empty()) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << item_name << ")";
+            ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << item_name << ")";
             return;
         }
     }
@@ -2661,7 +2661,7 @@ Encyclopedia::Encyclopedia() :
 {
     parse::encyclopedia_articles(GetResourceDir() / "encyclopedia.txt", *this);
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "(Category) Encyclopedia Articles:";
+        DebugLogger() << "(Category) Encyclopedia Articles:";
         for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
              category_it = articles.begin(); category_it != articles.end(); ++category_it)
         {
@@ -2669,7 +2669,7 @@ Encyclopedia::Encyclopedia() :
             const std::vector<EncyclopediaArticle>& article_vec = category_it->second;
             for (std::vector<EncyclopediaArticle>::const_iterator article_it = article_vec.begin();
                  article_it != article_vec.end(); ++article_it)
-            { Logger().debugStream() << "(" << UserString(category) << ") : " << UserString(article_it->name); }
+            { DebugLogger() << "(" << UserString(category) << ") : " << UserString(article_it->name); }
         }
     }
 }

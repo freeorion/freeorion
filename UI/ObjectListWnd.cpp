@@ -509,7 +509,7 @@ private:
         try {
             enum_val = boost::lexical_cast<T>(text);
         } catch (...) {
-            Logger().errorStream() << "ConditionWidget::GetEnum unable to convert text to enum type: " << text;
+            ErrorLogger() << "ConditionWidget::GetEnum unable to convert text to enum type: " << text;
         }
         return enum_val;
     }
@@ -2094,7 +2094,7 @@ private:
         if (object_id == INVALID_OBJECT_ID)
             return;
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
-        Logger().debugStream() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
+        DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
         if (!obj)
             return;
 
@@ -2189,21 +2189,21 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
 
         GG::ListBox::Row* row = *it;
         if (!row) {
-            Logger().errorStream() << "ObjectListWnd::ObjectSelectionChanged couldn't get row";
+            ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get row";
             continue;
         }
         if (row->empty()) {
-            Logger().errorStream() << "ObjectListWnd::ObjectSelectionChanged got empty row";
+            ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged got empty row";
             continue;
         }
         GG::Control* control = (*row)[0];
         if (!control) {
-            Logger().errorStream() << "ObjectListWnd::ObjectSelectionChanged couldn't get control from row";
+            ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get control from row";
             continue;
         }
         ObjectPanel* data_panel = dynamic_cast<ObjectPanel*>(control);
         if (!data_panel) {
-            Logger().errorStream() << "ObjectListWnd::ObjectSelectionChanged couldn't get ObjectPanel from control";
+            ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get ObjectPanel from control";
             continue;
         }
         data_panel->Select(select_this_row);
@@ -2265,7 +2265,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
-    //Logger().debugStream() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
+    //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
     if (!obj)
         return;
 

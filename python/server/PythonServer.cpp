@@ -33,13 +33,13 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
         std::string new_seed = boost::posix_time::to_simple_string(ltime);
         boost::hash<std::string> string_hash;
         std::size_t h = string_hash(new_seed);
-        Logger().debugStream() << "CreateUniverse:: using clock for Seed:" << new_seed;
+        DebugLogger() << "CreateUniverse:: using clock for Seed:" << new_seed;
         seed = static_cast<unsigned int>(h);
         // store seed in galaxy setup data
         ServerApp::GetApp()->GetGalaxySetupData().m_seed = boost::lexical_cast<std::string>(seed);
     }
     Seed(seed);
-    Logger().debugStream() << "GenerateUniverse with seed: " << seed;
+    DebugLogger() << "GenerateUniverse with seed: " << seed;
 
     // Reset the universe object for a new universe
     universe.ResetUniverse();
@@ -55,7 +55,7 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
         ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
     }
 
-    Logger().debugStream() << "Applying first turn effects and updating meters";
+    DebugLogger() << "Applying first turn effects and updating meters";
 
     // Apply effects for 1st turn.
     universe.ApplyAllEffectsAndUpdateMeters();
@@ -64,7 +64,7 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     universe.BackPropegateObjectMeters();
     Empires().BackPropegateMeters();
 
-    Logger().debugStream() << "Re-applying first turn meter effects and updating meters";
+    DebugLogger() << "Re-applying first turn meter effects and updating meters";
 
     // Re-apply meter effects, so that results depending on meter values can be
     // re-checked after initial setting of those meter values
@@ -78,8 +78,8 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     Empires().BackPropegateMeters();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
-        Logger().debugStream() << universe.Objects().Dump();
+        DebugLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
+        DebugLogger() << universe.Objects().Dump();
     }
 
     universe.UpdateEmpireObjectVisibilities();

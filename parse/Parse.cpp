@@ -242,7 +242,7 @@ namespace parse {
                     break;
 
                 //const std::string& matched_text = match.str();  // [[MACRO_KEY]] '''macro text'''
-                //Logger().debugStream() << "found macro definition:\n" << matched_text;
+                //DebugLogger() << "found macro definition:\n" << matched_text;
 
                 // get macro key and macro text from match
                 const std::string& macro_key = match[1];
@@ -250,14 +250,14 @@ namespace parse {
                 const std::string& macro_text = match[2];
                 assert(macro_text != "");
 
-                //Logger().debugStream() << "key: " << macro_key;
-                //Logger().debugStream() << "text:\n" << macro_text;
+                //DebugLogger() << "key: " << macro_key;
+                //DebugLogger() << "text:\n" << macro_text;
 
                 // store macro
                 if (macros.find(macro_key) == macros.end()) {
                     macros[macro_key] = macro_text;
                 } else {
-                    Logger().errorStream() << "Duplicate macro key foud: " << macro_key << ".  Ignoring duplicate.";
+                    ErrorLogger() << "Duplicate macro key foud: " << macro_key << ".  Ignoring duplicate.";
                 }
 
                 // remove macro definition from text by replacing with whitespace that is ignored by later parsing
@@ -266,7 +266,7 @@ namespace parse {
                 text_it = text.end() - match.suffix().length();
             }
         } catch (const std::exception& e) {
-            Logger().errorStream() << "Exception caught regex parsing script file: " << e.what();
+            ErrorLogger() << "Exception caught regex parsing script file: " << e.what();
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
@@ -282,7 +282,7 @@ namespace parse {
                 retval.insert(match[1]);
             }
         } catch (const std::exception& e) {
-            Logger().errorStream() << "Exception caught regex parsing script file: " << e.what();
+            ErrorLogger() << "Exception caught regex parsing script file: " << e.what();
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return retval;
         }
@@ -292,7 +292,7 @@ namespace parse {
     bool macro_deep_referenced_in_text(const std::string& macro_to_find, const std::string& text,
                                        const std::map<std::string, std::string>& macros)
     {
-        //Logger().debugStream() << "Checking if " << macro_to_find << " deep referenced in text: " << text;
+        //DebugLogger() << "Checking if " << macro_to_find << " deep referenced in text: " << text;
         // check of text directly references macro_to_find
         std::set<std::string> macros_directly_referenced_in_input_text = macros_directly_referenced_in_text(text);
         if (macros_directly_referenced_in_input_text.empty())
@@ -307,7 +307,7 @@ namespace parse {
             const std::string& direct_referenced_macro_key = *direct_refs_it;
             std::map<std::string, std::string>::const_iterator macro_it = macros.find(direct_referenced_macro_key);
             if (macro_it == macros.end()) {
-                Logger().errorStream() << "macro_deep_referenced_in_text couldn't find referenced macro: " << direct_referenced_macro_key;
+                ErrorLogger() << "macro_deep_referenced_in_text couldn't find referenced macro: " << direct_referenced_macro_key;
                 continue;
             }
             const std::string& macro_text = macro_it->second;
@@ -324,7 +324,7 @@ namespace parse {
              macro_it != macros.end(); ++macro_it)
         {
             if (macro_deep_referenced_in_text(macro_it->first, macro_it->second, macros))
-                Logger().errorStream() << "Cyclic macro found: " << macro_it->first << " references itself (eventually)";
+                ErrorLogger() << "Cyclic macro found: " << macro_it->first << " references itself (eventually)";
         }
     }
 
@@ -341,7 +341,7 @@ namespace parse {
                 if (macro_lookup_it != macros.end()) {
                     // verify that macro is safe: check for cyclic reference of macro to itself
                     if (macro_deep_referenced_in_text(macro_key, macro_lookup_it->second, macros)) {
-                        Logger().errorStream() << "Skipping cyclic macro reference: " << macro_key;
+                        ErrorLogger() << "Skipping cyclic macro reference: " << macro_key;
                         position += match.length();
                     } else {
                         // insert macro text in place of reference
@@ -351,25 +351,25 @@ namespace parse {
                         // be matched on the next pass
                     }
                 } else {
-                    Logger().errorStream() << "Unresolved macro reference: " << macro_key;
+                    ErrorLogger() << "Unresolved macro reference: " << macro_key;
                     position += match.length();
                 }
             }
         } catch (const std::exception& e) {
-            Logger().errorStream() << "Exception caught regex parsing script file: " << e.what();
+            ErrorLogger() << "Exception caught regex parsing script file: " << e.what();
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
     }
 
     void macro_substitution(std::string& text) {
-        //Logger().debugStream() << "macro_substitution for text:" << text;
+        //DebugLogger() << "macro_substitution for text:" << text;
         std::map<std::string, std::string> macros;
 
         parse_and_erase_macros_from_text(text, macros);
         check_for_cyclic_macro_references(macros);
 
-        //Logger().debugStream() << "after macro pasring text:" << text;
+        //DebugLogger() << "after macro pasring text:" << text;
 
         // recursively expand macro keys: replace [[MACRO_KEY]] in other macro
         // text with the macro text corresponding to MACRO_KEY.
@@ -381,7 +381,7 @@ namespace parse {
         // the macro text corresponding to MACRO_KEY
         replace_macro_references(text, macros);
 
-        //Logger().debugStream() << "after macro substitution text: " << text;
+        //DebugLogger() << "after macro substitution text: " << text;
     }
 
     bool read_file(const boost::filesystem::path& path, std::string& file_contents) {
@@ -413,7 +413,7 @@ namespace parse {
 
     void file_substitution(std::string& text, const boost::filesystem::path& file_search_path) {
         if (!boost::filesystem::is_directory(file_search_path)) {
-            Logger().errorStream() << "File parsing include substitution given search path that is not a director: " << file_search_path.string();
+            ErrorLogger() << "File parsing include substitution given search path that is not a director: " << file_search_path.string();
             return;
         }
         try {
@@ -431,7 +431,7 @@ namespace parse {
                     std::string missing_file_pathstring = insert_file_path.string();
                     if (missing_include_files.find(missing_file_pathstring) == missing_include_files.end()) {
                         missing_include_files.insert(missing_file_pathstring);
-                        Logger().errorStream() << "File parsing include substitution failed to read file at path: " << insert_file_path.string();
+                        ErrorLogger() << "File parsing include substitution failed to read file at path: " << insert_file_path.string();
                     }
                     continue;
                 }
@@ -444,7 +444,7 @@ namespace parse {
                 // be matched on the next pass
             }
         } catch (const std::exception& e) {
-            Logger().errorStream() << "Exception caught regex parsing script file: " << e.what();
+            ErrorLogger() << "Exception caught regex parsing script file: " << e.what();
             std::cerr << "Exception caught regex parsing script file: " << e.what() << std::endl;
             return;
         }
@@ -479,7 +479,7 @@ namespace parse {
 
             bool read_success = read_file(path, file_contents);
             if (!read_success) {
-                Logger().errorStream() << "Unable to open data file " << filename;
+                ErrorLogger() << "Unable to open data file " << filename;
                 return;
             }
 

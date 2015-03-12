@@ -221,7 +221,7 @@ namespace {
         void operator()(GG::ListBox::iterator it) {
             const GG::ListBox::Row* row = *it;
             if (!row) {
-                Logger().errorStream() << "ResolutionDropListIndexSetOptionFunctor couldn't get row from passed ListBox iterator";
+                ErrorLogger() << "ResolutionDropListIndexSetOptionFunctor couldn't get row from passed ListBox iterator";
                 return;
             }
             int w, h, bpp;
@@ -241,7 +241,7 @@ namespace {
             m_max_fps_spin(max_fps_spin)
         {}
         void operator()(bool b) {
-            Logger().debugStream() << "LimitFPSSetOptionFunction: bool: " << b;
+            DebugLogger() << "LimitFPSSetOptionFunction: bool: " << b;
             m_max_fps_spin->Disable(!b);
         }
         CUISpin<double>* m_max_fps_spin;

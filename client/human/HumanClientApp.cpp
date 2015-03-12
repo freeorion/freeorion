@@ -140,9 +140,9 @@ namespace {
     void SetGLVersionDependentOptionDefaults() {
         // get OpenGL version string and parse to get version number
         float version_number = GetGLVersion();
-        Logger().debugStream() << "OpenGL Version Number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+        DebugLogger() << "OpenGL Version Number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
         if (version_number < 1.5) {
-            Logger().errorStream() << "OpenGL Version is less than 2.0 (official required) or 1.5 (usually works).  FreeOrion may crash when trying to start a game.";
+            ErrorLogger() << "OpenGL Version is less than 2.0 (official required) or 1.5 (usually works).  FreeOrion may crash when trying to start a game.";
         }
 
         // only execute default option setting once
@@ -180,7 +180,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDir() / "freeorion.log").string());
 
     InitLogger(HUMAN_CLIENT_LOG_FILENAME, "%d %p Client : %m%n");
-    Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
+    SetLoggerPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
@@ -230,14 +230,14 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     std::map<std::string, std::map<int, int> > named_key_maps;
     parse::keymaps(GetResourceDir() / "keymaps.txt", named_key_maps);
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "Keymaps:";
+        DebugLogger() << "Keymaps:";
         for (std::map<std::string, std::map<int, int> >::const_iterator km_it = named_key_maps.begin();
              km_it != named_key_maps.end(); ++km_it)
         {
-            Logger().debugStream() << "Keymap name = \"" << km_it->first << "\"";
+            DebugLogger() << "Keymap name = \"" << km_it->first << "\"";
             const std::map<int, int>& key_map = km_it->second;
             for (std::map<int, int>::const_iterator keys_it = key_map.begin(); keys_it != key_map.end(); ++keys_it)
-                Logger().debugStream() << "    " << char(keys_it->first) << " : " << char(keys_it->second);
+                DebugLogger() << "    " << char(keys_it->first) << " : " << char(keys_it->second);
         }
     }
     std::map<std::string, std::map<int, int> >::const_iterator km_it = named_key_maps.find("TEST");
@@ -253,7 +253,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     InitAutoTurns(GetOptionsDB().Get<int>("auto-advance-n-turns"));
 
     if (fake_mode_change && !FramebuffersAvailable()) {
-        Logger().errorStream() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
+        ErrorLogger() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
     }
     m_fsm->initiate();
 }
@@ -314,7 +314,7 @@ namespace {
 
 void HumanClientApp::StartServer() {
     std::string SERVER_CLIENT_EXE = ServerClientExe();
-    Logger().debugStream() << "HumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
+    DebugLogger() << "HumanClientApp::StartServer: " << SERVER_CLIENT_EXE;
 
 #ifdef FREEORION_MACOSX
     // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
@@ -338,14 +338,14 @@ void HumanClientApp::StartServer() {
     if (ai_path != GetOptionsDB().GetDefaultValueString("ai-path")) {
         args.push_back("--ai-path");
         args.push_back(ai_path);
-        Logger().debugStream() << "ai-path set to '" << ai_path << "'";
+        DebugLogger() << "ai-path set to '" << ai_path << "'";
     }
     if (!ai_config.empty()) {
         args.push_back("--ai-config");
         args.push_back(ai_config);
-        Logger().debugStream() << "ai-config set to '" << ai_config << "'";
+        DebugLogger() << "ai-config set to '" << ai_config << "'";
     } else {
-        Logger().debugStream() << "ai-config not set.";
+        DebugLogger() << "ai-config not set.";
     }
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
@@ -358,7 +358,7 @@ void HumanClientApp::FreeServer() {
 }
 
 void HumanClientApp::KillServer() {
-    Logger().debugStream() << "HumanClientApp::KillServer()";
+    DebugLogger() << "HumanClientApp::KillServer()";
     m_server_process.Kill();
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
@@ -370,7 +370,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         try {
             StartServer();
         } catch (const std::runtime_error& err) {
-            Logger().errorStream() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
+            ErrorLogger() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
             ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
@@ -394,7 +394,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     }
     m_connected = !failed;
     if (!failed && (quickstart || ended_with_ok)) {
-        Logger().debugStream() << "HumanClientApp::NewSinglePlayerGame : Connected to server";
+        DebugLogger() << "HumanClientApp::NewSinglePlayerGame : Connected to server";
 
         SinglePlayerSetupData setup_data;
         setup_data.m_new_game = true;
@@ -471,16 +471,16 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         m_networking.SendMessage(HostSPGameMessage(setup_data));
         m_fsm->process_event(HostSPGameRequested());
     } else {
-        Logger().debugStream() << "HumanClientApp::NewSinglePlayerGame killing server due to canceled game or server connection failure";
+        DebugLogger() << "HumanClientApp::NewSinglePlayerGame killing server due to canceled game or server connection failure";
         if (m_networking.Connected()) {
-            Logger().debugStream() << "HumanClientApp::NewSinglePlayerGame Sending server shutdown message.";
+            DebugLogger() << "HumanClientApp::NewSinglePlayerGame Sending server shutdown message.";
             m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
             boost::this_thread::sleep(boost::posix_time::seconds(1));
             m_networking.DisconnectFromServer();
             if (!m_networking.Connected())
-                Logger().debugStream() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
+                DebugLogger() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
             else
-                Logger().errorStream() << "HumanClientApp::NewSinglePlayerGame Unexpectedly still connected to server...?";
+                ErrorLogger() << "HumanClientApp::NewSinglePlayerGame Unexpectedly still connected to server...?";
         }
         KillServer();
     }
@@ -488,7 +488,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
 void HumanClientApp::MultiPlayerGame() {
     if (m_networking.Connected()) {
-        Logger().errorStream() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
+        ErrorLogger() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
         return;
     }
 
@@ -506,7 +506,7 @@ void HumanClientApp::MultiPlayerGame() {
                 StartServer();
                 FreeServer();
             } catch (const std::runtime_error& err) {
-                Logger().errorStream() << "Couldn't start server.  Got error message: " << err.what();
+                ErrorLogger() << "Couldn't start server.  Got error message: " << err.what();
                 ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
                 return;
             }
@@ -545,20 +545,20 @@ void HumanClientApp::SaveGame(const std::string& filename) {
     Message response_msg;
     m_networking.SendSynchronousMessage(HostSaveGameMessage(PlayerID(), filename), response_msg);
     if (response_msg.Type() != Message::SAVE_GAME) {
-        Logger().errorStream() << "HumanClientApp::SaveGame sent synchronous HostSaveGameMessage, but received back message of wrong type: " << response_msg.Type();
+        ErrorLogger() << "HumanClientApp::SaveGame sent synchronous HostSaveGameMessage, but received back message of wrong type: " << response_msg.Type();
         throw std::runtime_error("HumanClientApp::SaveGame synchronous message received invalid response message type");
     }
     HandleSaveGameDataRequest();
 }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
-    Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame";
+    DebugLogger() << "HumanClientApp::LoadSinglePlayerGame";
 
     if (!filename.empty()) {
         if (!exists(FilenameToPath(filename))) {
             std::string msg = "HumanClientApp::LoadSinglePlayerGame() given a nonexistent file \""
                             + filename + "\" to load; aborting.";
-            Logger().fatalStream() << msg;
+            DebugLogger() << msg;
             std::cerr << msg << '\n';
             abort();
         }
@@ -574,7 +574,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     }
 
     if (filename.empty()) {
-        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame has empty filename. Aborting load.";
+        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame has empty filename. Aborting load.";
         return;
     }
 
@@ -584,29 +584,29 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         // delay to make sure old game is fully cleaned up before attempting to start a new one
         boost::this_thread::sleep(boost::posix_time::seconds(3));
     } else {
-        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
+        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
     }
 
     if (!GetOptionsDB().Get<bool>("force-external-server")) {
-        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
+        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
         StartServer();
-        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Server started";
+        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Server started";
     } else {
-        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
+        DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
     }
 
-    Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
+    DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
     unsigned int start_time = Ticks();
     while (!m_networking.ConnectToLocalHostServer()) {
         if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-            Logger().errorStream() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
+            ErrorLogger() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             KillServer();
             return;
         }
     }
 
-    Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Connected to server";
+    DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connected to server";
 
     m_connected = true;
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
@@ -627,14 +627,14 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewInformation& previews){
     std::string  generic_directory = fs::path(directory).generic_string();
     if(!m_networking.Connected()){
-        Logger().debugStream() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
+        DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
         StartServer();
 
-        Logger().debugStream() << "HumanClientApp::RequestSavePreviews Connecting to server";
+        DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
         unsigned int start_time = Ticks();
         while (!m_networking.ConnectToLocalHostServer()) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-                Logger().errorStream() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
+                ErrorLogger() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 KillServer();
                 return;
@@ -642,14 +642,14 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         }
         m_connected = true;
     }
-    Logger().debugStream() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
+    DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     Message response;
     m_networking.SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
     if(response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
         ExtractMessageData(response, previews);
-        Logger().debugStream() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
+        DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
     }else{
-        Logger().errorStream() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << EnumToString(response.Type());
+        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << EnumToString(response.Type());
     }
 }
 
@@ -758,7 +758,7 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg));        break;
     case Message::END_GAME:             m_fsm->process_event(::EndGame(msg));               break;
     default:
-        Logger().errorStream() << "HumanClientApp::HandleMessage : Received an unknown message type \""
+        ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \""
                                << msg.Type() << "\".";
     }
 }
@@ -772,7 +772,7 @@ void HumanClientApp::HandleSaveGameDataRequest() {
 }
 
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
-    //Logger().debugStream() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
+    //DebugLogger() << "HumanClientApp::HandleWindowMove(" << Value(w) << ", " << Value(h) << ")";
 
     if(!Fullscreen()) {
         GetOptionsDB().Set<int> ("app-left-windowed", Value (w));
@@ -782,7 +782,7 @@ void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
 }
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
-    //Logger().debugStream() << "HumanClientApp::HandleWindowResize(" << Value(w) << ", " << Value(h) << ")";
+    //DebugLogger() << "HumanClientApp::HandleWindowResize(" << Value(w) << ", " << Value(h) << ")";
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (MapWnd* map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
@@ -803,16 +803,16 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
 }
 
 void HumanClientApp::HandleWindowClosing()
-{ Logger().debugStream() << "HumanClientApp::HandleWindowClosing()"; }
+{ DebugLogger() << "HumanClientApp::HandleWindowClosing()"; }
 
 void HumanClientApp::HandleWindowClose() {
-    Logger().debugStream() << "HumanClientApp::HandleWindowClose()";
+    DebugLogger() << "HumanClientApp::HandleWindowClose()";
     EndGame();
     Exit(0);
 }
 
 void HumanClientApp::HandleFocusChange() {
-    Logger().debugStream() << "HumanClientApp::HandleFocusChange()";
+    DebugLogger() << "HumanClientApp::HandleFocusChange()";
 
     // TODO: Does SDL need some action here?
 
@@ -848,10 +848,10 @@ namespace {
                 files_by_write_time.insert(std::make_pair(t, file_path));
             }
 
-            //Logger().debugStream() << "files by write time:";
+            //DebugLogger() << "files by write time:";
             //for (std::multimap<std::time_t, path>::const_iterator it = files_by_write_time.begin();
             //     it != files_by_write_time.end(); ++it)
-            //{ Logger().debugStream() << it->first << " : " << it->second.filename(); }
+            //{ DebugLogger() << it->first << " : " << it->second.filename(); }
 
             int num_to_delete = files_by_write_time.size() - files_limit + 1;   // +1 because will add a new file after deleting, bringing number back up to limit
             if (num_to_delete <= 0)
@@ -867,7 +867,7 @@ namespace {
                 ++num_deleted;
             }
         } catch (...) {
-            Logger().errorStream() << "Error removing oldest files";
+            ErrorLogger() << "Error removing oldest files";
         }
     }
 }
@@ -936,7 +936,7 @@ void HumanClientApp::Autosave() {
         if (!exists(autosave_dir_path))
             boost::filesystem::create_directories(autosave_dir_path);
     } catch (const std::exception& e) {
-        Logger().errorStream() << "Autosave unable to check / create autosave directory: " << e.what();
+        ErrorLogger() << "Autosave unable to check / create autosave directory: " << e.what();
         std::cerr << "Autosave unable to check / create autosave directory: " << e.what() << std::endl;
     }
 
@@ -945,11 +945,11 @@ void HumanClientApp::Autosave() {
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
-    Logger().debugStream() << "Autosaving to: " << path_string;
+    DebugLogger() << "Autosaving to: " << path_string;
     try {
         SaveGame(path_string);
     } catch (const std::exception& e) {
-        Logger().errorStream() << "Autosave failed: " << e.what();
+        ErrorLogger() << "Autosave failed: " << e.what();
         std::cerr << "Autosave failed: " << e.what() << std::endl;
     }
 }
@@ -967,22 +967,22 @@ std::string HumanClientApp::SelectSaveFile() {
 }
 
 void HumanClientApp::EndGame(bool suppress_FSM_reset) {
-    Logger().debugStream() << "HumanClientApp::EndGame";
+    DebugLogger() << "HumanClientApp::EndGame";
     m_game_started = false;
 
     if (m_networking.Connected()) {
-        Logger().debugStream() << "HumanClientApp::EndGame Sending server shutdown message.";
+        DebugLogger() << "HumanClientApp::EndGame Sending server shutdown message.";
         m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
         boost::this_thread::sleep(boost::posix_time::seconds(1));
         m_networking.DisconnectFromServer();
         if (!m_networking.Connected())
-            Logger().debugStream() << "HumanClientApp::EndGame Disconnected from server.";
+            DebugLogger() << "HumanClientApp::EndGame Disconnected from server.";
         else
-            Logger().errorStream() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
+            ErrorLogger() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
     }
 
     if (!m_server_process.Empty()) {
-        Logger().debugStream() << "HumanClientApp::EndGame Terminated server process.";
+        DebugLogger() << "HumanClientApp::EndGame Terminated server process.";
         m_server_process.RequestTermination();
     }
 
@@ -1020,15 +1020,15 @@ void HumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("limit-fps")) {
         double fps = GetOptionsDB().Get<double>("max-fps");
         SetMaxFPS(fps);
-        Logger().debugStream() << "Limited FPS to " << fps;
+        DebugLogger() << "Limited FPS to " << fps;
     } else {
         SetMaxFPS(0.0); // disable fps limit
-        Logger().debugStream() << "Disabled FPS limit";
+        DebugLogger() << "Disabled FPS limit";
     }
 }
 
 void HumanClientApp::DisconnectedFromServer() {
-    Logger().debugStream() << "HumanClientApp::DisconnectedFromServer";
+    DebugLogger() << "HumanClientApp::DisconnectedFromServer";
     m_fsm->process_event(Disconnection());
 }
 

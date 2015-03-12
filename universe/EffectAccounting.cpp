@@ -15,7 +15,7 @@ Effect::EffectCause::EffectCause(EffectsCauseType cause_type_, const std::string
     specific_cause(specific_cause_),
     custom_label(custom_label_)
 {
-    //Logger().debugStream() << "EffectCause(" << cause_type << ", " << specific_cause << ", " << custom_label << ")";
+    //DebugLogger() << "EffectCause(" << cause_type << ", " << specific_cause << ", " << custom_label << ")";
 }
 
 Effect::AccountingInfo::AccountingInfo() :

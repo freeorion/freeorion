@@ -92,7 +92,7 @@ void parse::detail::pretty_print(std::ostream& os, boost::spirit::info const& wh
 }
 
 void parse::detail::default_send_error_string(const std::string& str) { 
-    Logger().errorStream() << str; 
+    ErrorLogger() << str; 
     // output to cout also so can be better associated with any output from parser semantic action debug output
     std::cout << str +"\n" << std::flush;
 }
@@ -107,7 +107,7 @@ boost::function<void (const std::string&)> parse::report_error_::send_error_stri
 
 namespace {
     std::vector<parse::text_iterator> LineStarts() {
-        //Logger().debugStream() << "line starts start";
+        //DebugLogger() << "line starts start";
         using namespace parse;
 
         std::vector<text_iterator> retval;
@@ -136,19 +136,19 @@ namespace {
                 ++it;
         }
 
-        //Logger().debugStream() << "line starts end.  num lines: " << retval.size();
+        //DebugLogger() << "line starts end.  num lines: " << retval.size();
         //for (unsigned int i = 0; i < retval.size(); ++i) {
         //    text_iterator line_end = retval[i];
         //    while (line_end != detail::s_end && *line_end != '\r' && *line_end != '\n')
         //        ++line_end;
-        //    Logger().debugStream() << " line " << i+1 << ": " << std::string(retval[i], line_end);
+        //    DebugLogger() << " line " << i+1 << ": " << std::string(retval[i], line_end);
         //}
         return retval;
     }
 }
 
 std::pair<parse::text_iterator, unsigned int> parse::report_error_::line_start_and_line_number(text_iterator error_position) const {
-    //Logger().debugStream() << "line_start_and_line_number start ... looking for: " << std::string(error_position, error_position + 20);
+    //DebugLogger() << "line_start_and_line_number start ... looking for: " << std::string(error_position, error_position + 20);
     if (error_position == detail::s_begin)
         return std::make_pair(detail::s_begin, 1);
 
@@ -158,13 +158,13 @@ std::pair<parse::text_iterator, unsigned int> parse::report_error_::line_start_a
     // at or past the error position
     for (unsigned int index = 0; index < line_starts.size(); ++index) {
         if (std::distance(line_starts[index], error_position) < 0 && index > 0) {
-            //Logger().debugStream() << "line_start_and_line_number early end";
+            //DebugLogger() << "line_start_and_line_number early end";
             return std::make_pair(line_starts[index-1], index); // return start of previous line, which contained the error_position text
         }
-        //Logger().debugStream() << "line: " << index + 1 << " distance: " << std::distance(line_starts[index], error_position) << " : " << get_line(line_starts[index]);
+        //DebugLogger() << "line: " << index + 1 << " distance: " << std::distance(line_starts[index], error_position) << " : " << get_line(line_starts[index]);
     }
 
-    //Logger().debugStream() << "line_start_and_line_number end";
+    //DebugLogger() << "line_start_and_line_number end";
     return std::make_pair(detail::s_begin, 1);
 }
 
@@ -176,7 +176,7 @@ std::string parse::report_error_::get_line(text_iterator line_start) const {
 }
 
 std::string parse::report_error_::get_lines_before(text_iterator line_start) const {
-    //Logger().debugStream() << "get_lines_before start";
+    //DebugLogger() << "get_lines_before start";
 
     std::vector<parse::text_iterator> all_line_starts = LineStarts();
     unsigned int target_line = 1;
@@ -187,10 +187,10 @@ std::string parse::report_error_::get_lines_before(text_iterator line_start) con
         }
     }
     if (target_line <= 1) {
-        //Logger().debugStream() << "get_lines_before early end";
+        //DebugLogger() << "get_lines_before early end";
         return "";
     }
-    //Logger().debugStream() << "get_lines_before line " << target_line;
+    //DebugLogger() << "get_lines_before line " << target_line;
 
     const unsigned int NUM_LINES = 5;
     unsigned int retval_first_line = 1;
@@ -198,12 +198,12 @@ std::string parse::report_error_::get_lines_before(text_iterator line_start) con
     if (retval_last_line > NUM_LINES)
         retval_first_line = retval_last_line - NUM_LINES + 1;
 
-    //Logger().debugStream() << "get_lines_before showing lines " << retval_first_line << " to " << retval_last_line;
+    //DebugLogger() << "get_lines_before showing lines " << retval_first_line << " to " << retval_last_line;
     return std::string(all_line_starts[retval_first_line-1], all_line_starts[retval_last_line]);    // start of first line to start of line after first line
 }
 
 std::string parse::report_error_::get_lines_after(text_iterator line_start) const {
-    //Logger().debugStream() << "get_lines_after start";
+    //DebugLogger() << "get_lines_after start";
 
     std::vector<parse::text_iterator> all_line_starts = LineStarts();
     unsigned int target_line = 1;
@@ -214,10 +214,10 @@ std::string parse::report_error_::get_lines_after(text_iterator line_start) cons
         }
     }
     if (target_line >= all_line_starts.size()) {
-        //Logger().debugStream() << "get_lines_after early end";
+        //DebugLogger() << "get_lines_after early end";
         return "";
     }
-    //Logger().debugStream() << "get_lines_after line " << target_line;
+    //DebugLogger() << "get_lines_after line " << target_line;
 
     const unsigned int NUM_LINES = 5;
     unsigned int retval_first_line = target_line + 1;
@@ -229,7 +229,7 @@ std::string parse::report_error_::get_lines_after(text_iterator line_start) cons
     if (retval_last_line < all_line_starts.size())
         last_it = all_line_starts[retval_last_line];
 
-    //Logger().debugStream() << "get_lines_after showing lines " << retval_first_line << " to " << retval_last_line;
+    //DebugLogger() << "get_lines_after showing lines " << retval_first_line << " to " << retval_last_line;
     return std::string(all_line_starts[retval_first_line-1], last_it);
 }
 
@@ -238,7 +238,7 @@ void parse::report_error_::generate_error_string(const token_iterator& first,
                                                  const boost::spirit::info& rule_name,
                                                  std::string& str) const
 {
-    //Logger().debugStream() << "generate_error_string";
+    //DebugLogger() << "generate_error_string";
     std::stringstream is;
 
     text_iterator line_start;
@@ -261,7 +261,7 @@ void parse::report_error_::generate_error_string(const token_iterator& first,
 
     boost::tie(line_start, line_number) = line_start_and_line_number(text_it);
     std::size_t column_number = std::distance(line_start, text_it);
-    //Logger().debugStream() << "generate_error_string found line number: " << line_number << " column number: " << column_number;
+    //DebugLogger() << "generate_error_string found line number: " << line_number << " column number: " << column_number;
 
     is << detail::s_filename << ":" << line_number << ":" << column_number << ": "
        << "Parse error.  Expected";

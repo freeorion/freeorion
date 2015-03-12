@@ -31,7 +31,7 @@ namespace {
     void SendMessageToAllPlayers(const Message& message) {
         ServerApp* server = ServerApp::GetApp();
         if (!server) {
-            Logger().errorStream() << "SendMessageToAllPlayers couldn't get server.";
+            ErrorLogger() << "SendMessageToAllPlayers couldn't get server.";
             return;
         }
         ServerNetworking& networking = server->Networking();
@@ -48,14 +48,14 @@ namespace {
     void SendMessageToHost(const Message& message) {
         ServerApp* server = ServerApp::GetApp();
         if (!server) {
-            Logger().errorStream() << "SendMessageToHost couldn't get server.";
+            ErrorLogger() << "SendMessageToHost couldn't get server.";
             return;
         }
         ServerNetworking& networking = server->Networking();
 
         ServerNetworking::established_iterator host_it = networking.GetPlayer(networking.HostPlayerID());
         if (host_it == networking.established_end()) {
-            Logger().errorStream() << "SendMessageToHost couldn't get host player.";
+            ErrorLogger() << "SendMessageToHost couldn't get host player.";
             return;
         }
 
@@ -81,7 +81,7 @@ namespace {
         } else {
             // for loading saved games, get host / human player's name from save file
             if (!single_player_setup_data.m_players.empty())
-                Logger().errorStream() << "GetHostNameFromSinglePlayerSetupData got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
+                ErrorLogger() << "GetHostNameFromSinglePlayerSetupData got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
 
 
             std::vector<PlayerSaveGameData> player_save_game_data;
@@ -101,7 +101,7 @@ namespace {
     }
 
     void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
-        Logger().debugStream() << "PlayerSetupData:";
+        DebugLogger() << "PlayerSetupData:";
         for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it) {
             std::stringstream ss;
             ss << boost::lexical_cast<std::string>(it->first) << " : "
@@ -114,7 +114,7 @@ namespace {
             default:                                        ss << "<invalid client type>, ";
             }
             ss << it->second.m_starting_species_name;
-            Logger().debugStream() << " ... " << ss.str();
+            DebugLogger() << " ... " << ss.str();
         }
     }
 
@@ -175,7 +175,7 @@ void ServerFSM::unconsumed_event(const sc::event_base &event) {
         most_derived_message_type_str = BOOST_PP_STRINGIZE(name);
     BOOST_PP_SEQ_FOR_EACH(MESSAGE_EVENT_CASE, _, MESSAGE_EVENTS);
 #undef MESSAGE_EVENT_CASE
-    Logger().errorStream() << "ServerFSM : A " << most_derived_message_type_str << " event was passed to "
+    ErrorLogger() << "ServerFSM : A " << most_derived_message_type_str << " event was passed to "
         "the ServerFSM.  This event is illegal in the FSM's current state.  It is being ignored.";
 }
 
@@ -199,7 +199,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
                 m_server.m_eliminated_players.find(id) == m_server.m_eliminated_players.end())
     {
         // player abnormally disconnected during a regular game
-        Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id)
+        DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id)
                                << ", named \"" << player_connection->PlayerName() << "\"; server terminating.";
         std::string message = player_connection->PlayerName();
         for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
@@ -212,7 +212,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
 
     // independently of everything else, if there are no humans left, it's time to terminate
     if (m_server.m_networking.empty() || m_server.m_ai_client_processes.size() == m_server.m_networking.NumEstablishedPlayers()) {
-        Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
+        DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
         // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
         boost::this_thread::sleep(boost::posix_time::seconds(2));
         m_server.Exit(1);
@@ -225,13 +225,13 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
 ////////////////////////////////////////////////////////////
 Idle::Idle(my_context c) :
     my_base(c)
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) Idle"; }
 
 Idle::~Idle()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~Idle"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~Idle"; }
 
 sc::result Idle::react(const HostMPGame& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostMPGame";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) Idle.HostMPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -239,28 +239,28 @@ sc::result Idle::react(const HostMPGame& msg) {
     std::string host_player_name = message.Text();
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
-        Logger().errorStream() << "Idle::react(const HostMPGame& msg) got an empty host player name";
+        ErrorLogger() << "Idle::react(const HostMPGame& msg) got an empty host player name";
         return discard_event();
     }
 
-    Logger().debugStream() << "Idle::react(HostMPGame) about to establish host";
+    DebugLogger() << "Idle::react(HostMPGame) about to establish host";
 
     int host_player_id = server.m_networking.NewPlayerID();
     player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER);
     server.m_networking.SetHostPlayerID(host_player_id);
 
-    Logger().debugStream() << "Idle::react(HostMPGame) about to send acknowledgement to host";
+    DebugLogger() << "Idle::react(HostMPGame) about to send acknowledgement to host";
     player_connection->SendMessage(HostMPAckMessage(host_player_id));
 
     server.m_single_player_game = false;
 
-    Logger().debugStream() << "Idle::react(HostMPGame) about to transit to MPLobby";
+    DebugLogger() << "Idle::react(HostMPGame) about to transit to MPLobby";
 
     return transit<MPLobby>();
 }
 
 sc::result Idle::react(const HostSPGame& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostSPGame";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) Idle.HostSPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -280,7 +280,7 @@ sc::result Idle::react(const HostSPGame& msg) {
     }
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
-        Logger().errorStream() << "Idle::react(const HostSPGame& msg) got an empty host player name or couldn't find a human player";
+        ErrorLogger() << "Idle::react(const HostSPGame& msg) got an empty host player name or couldn't find a human player";
         return discard_event();
     }
 
@@ -306,7 +306,7 @@ MPLobby::MPLobby(my_context c) :
     m_lobby_data(new MultiplayerLobbyData()),
     m_server_save_game_data(new ServerSaveGameData())
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby";
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
     const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(server.m_networking.HostPlayerID()));
@@ -330,24 +330,24 @@ MPLobby::MPLobby(my_context c) :
 }
 
 MPLobby::~MPLobby()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~MPLobby"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~MPLobby"; }
 
 sc::result MPLobby::react(const Disconnection& d) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.Disconnection";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.Disconnection";
     ServerApp& server = Server();
     PlayerConnectionPtr& player_connection = d.m_player_connection;
 
-    Logger().debugStream() << "MPLobby::react(Disconnection) player id: " << player_connection->PlayerID();
-    Logger().debugStream() << "Remaining player ids: ";
+    DebugLogger() << "MPLobby::react(Disconnection) player id: " << player_connection->PlayerID();
+    DebugLogger() << "Remaining player ids: ";
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     {
-        Logger().debugStream() << " ... " << (*it)->PlayerID();
+        DebugLogger() << " ... " << (*it)->PlayerID();
     }
 
     // if there are no humans left, it's time to terminate
     if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
-        Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
+        DebugLogger() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
         server.Exit(1);
     }
 
@@ -368,7 +368,7 @@ sc::result MPLobby::react(const Disconnection& d) {
         }
     }
     if (!player_was_in_lobby) {
-        Logger().debugStream() << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
+        DebugLogger() << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
         return discard_event();
     }
 
@@ -384,12 +384,12 @@ sc::result MPLobby::react(const Disconnection& d) {
 
 namespace {
     GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData> >& psd) {
-        //Logger().debugStream() << "finding colours for empire of player " << player_name;
+        //DebugLogger() << "finding colours for empire of player " << player_name;
         const std::vector<GG::Clr>& empire_colours = EmpireColors();
         GG::Clr empire_colour = GG::Clr(192, 192, 192, 255);
         for (std::vector<GG::Clr>::const_iterator it = empire_colours.begin(); it != empire_colours.end(); ++it) {
             const GG::Clr& possible_colour = *it;
-            //Logger().debugStream() << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
+            //DebugLogger() << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
 
             // check if any other player / empire is using this colour
             bool colour_is_new = true;
@@ -409,14 +409,14 @@ namespace {
                 break;
             }
 
-            //Logger().debugStream() << " ... colour already used.";
+            //DebugLogger() << " ... colour already used.";
         }
         return empire_colour;
     }
 }
 
 sc::result MPLobby::react(const JoinGame& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.JoinGame";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.JoinGame";
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
     const Message& message = msg.m_message;
@@ -456,7 +456,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
 }
 
 sc::result MPLobby::react(const LobbyUpdate& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyUpdate";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.LobbyUpdate";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
 
@@ -519,7 +519,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
         // drop connections which have no lobby data
         if (!found_player_lobby_data) {
-            Logger().errorStream() << "No player setup data for player " << player_id << " in MPLobby::react(const LobbyUpdate& msg)";
+            ErrorLogger() << "No player setup data for player " << player_id << " in MPLobby::react(const LobbyUpdate& msg)";
             player_connections_to_drop.push_back(player_connection);
             continue;
         }
@@ -660,7 +660,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 }
 
 sc::result MPLobby::react(const LobbyChat& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyChat";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.LobbyChat";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
 
@@ -677,7 +677,7 @@ sc::result MPLobby::react(const LobbyChat& msg) {
 }
 
 sc::result MPLobby::react(const StartMPGame& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.StartMPGame";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.StartMPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -704,7 +704,7 @@ sc::result MPLobby::react(const StartMPGame& msg) {
                          GetCombatLogManager(),     server.m_galaxy_setup_data);
                 int seed = 0;
                 try {
-                    Logger().debugStream() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed;
+                    DebugLogger() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed;
                     seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
                 } catch (...) {
                     try {
@@ -732,7 +732,7 @@ sc::result MPLobby::react(const StartMPGame& msg) {
             // othewrise, transit to waiting for mp joiners
         }
     } else {
-        Logger().errorStream() << "(ServerFSM) MPLobby.StartMPGame : Player #" << message.SendingPlayer()
+        ErrorLogger() << "(ServerFSM) MPLobby.StartMPGame : Player #" << message.SendingPlayer()
                                << " attempted to initiate a game load, but is not the host.  Terminating connection.";
         server.m_networking.Disconnect(player_connection);
         return discard_event();
@@ -748,14 +748,14 @@ sc::result MPLobby::react(const StartMPGame& msg) {
 }
 
 sc::result MPLobby::react(const HostMPGame& msg) {
-    Logger().errorStream() << "MPLobby::react(const HostMPGame& msg) recived HostMPGame message but is already in the MP Lobby.  Aborting connection";
+    ErrorLogger() << "MPLobby::react(const HostMPGame& msg) recived HostMPGame message but is already in the MP Lobby.  Aborting connection";
     msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_HOSTING_GAME"), true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
 }
 
 sc::result MPLobby::react(const HostSPGame& msg) {
-    Logger().errorStream() << "MPLobby::react(const HostSPGame& msg) recived HostSPGame message but is already in the MP Lobby.  Aborting connection";
+    ErrorLogger() << "MPLobby::react(const HostSPGame& msg) recived HostSPGame message but is already in the MP Lobby.  Aborting connection";
     msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_HOSTING_GAME"), true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
@@ -771,7 +771,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     m_server_save_game_data(new ServerSaveGameData()),
     m_num_expected_players(0)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForSPGameJoiners";
 
     context<ServerFSM>().m_single_player_setup_data.reset();
     ServerApp& server = Server();
@@ -806,7 +806,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         // server needs to populate single player setup data's m_players
         // with data from the save file.
         if (!players.empty()) {
-            Logger().errorStream() << "WaitingForSPGameJoiners::WaitingForSPGameJoiners got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
+            ErrorLogger() << "WaitingForSPGameJoiners::WaitingForSPGameJoiners got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
             players.clear();
         }
 
@@ -855,10 +855,10 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 }
 
 WaitingForSPGameJoiners::~WaitingForSPGameJoiners()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForSPGameJoiners"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~WaitingForSPGameJoiners"; }
 
 sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.JoinGame";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForSPGameJoiners.JoinGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -874,7 +874,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
         // verify that player name was expected
         if (m_expected_ai_player_names.find(player_name) == m_expected_ai_player_names.end()) {
             // unexpected ai player
-            Logger().errorStream() << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
+            ErrorLogger() << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected player
@@ -891,7 +891,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
         int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
-            Logger().errorStream() << "WaitingForSPGameJoiners::react(const JoinGame& msg): A human player attempted to join the game but there was not enough room.  Terminating connection.";
+            ErrorLogger() << "WaitingForSPGameJoiners::react(const JoinGame& msg): A human player attempted to join the game but there was not enough room.  Terminating connection.";
             // TODO: send message to attempted joiner saying game is full
             server.m_networking.Disconnect(player_connection);
         } else {
@@ -900,7 +900,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {
-        Logger().errorStream() << "WaitingForSPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
+        ErrorLogger() << "WaitingForSPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
         return discard_event();
     }
 
@@ -909,7 +909,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
 }
 
 sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
     // if all expected players have connected, proceed to start new or load game
@@ -937,7 +937,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
 }
 
 sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.LoadSaveFileFailed";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForSPGameJoiners.LoadSaveFileFailed";
     return transit<Idle>();
 }
 
@@ -952,7 +952,7 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     m_server_save_game_data(context<ServerFSM>().m_server_save_game_data),
     m_num_expected_players(0)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForMPGameJoiners";
     context<ServerFSM>().m_lobby_data.reset();
     context<ServerFSM>().m_player_save_game_data.clear();
     context<ServerFSM>().m_server_save_game_data.reset();
@@ -980,10 +980,10 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
 }
 
 WaitingForMPGameJoiners::~WaitingForMPGameJoiners()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForMPGameJoiners"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~WaitingForMPGameJoiners"; }
 
 sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners.JoinGame";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForMPGameJoiners.JoinGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -999,7 +999,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
         // verify that player name was expected
         if (m_expected_ai_player_names.find(player_name) == m_expected_ai_player_names.end()) {
             // unexpected ai player
-            Logger().errorStream() << "WaitingForMPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
+            ErrorLogger() << "WaitingForMPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected player
@@ -1017,7 +1017,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
                                         server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
-            Logger().errorStream() << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
+            ErrorLogger() << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected human player
@@ -1025,7 +1025,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {
-        Logger().errorStream() << "WaitingForMPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
+        ErrorLogger() << "WaitingForMPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
         return discard_event();
     }
 
@@ -1038,7 +1038,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 }
 
 sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners.CheckStartConditions";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForMPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
@@ -1058,13 +1058,13 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
 ////////////////////////////////////////////////////////////
 PlayingGame::PlayingGame(my_context c) :
     my_base(c)
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame"; }
 
 PlayingGame::~PlayingGame()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~PlayingGame"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~PlayingGame"; }
 
 sc::result PlayingGame::react(const PlayerChat& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.PlayerChat";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.PlayerChat";
     ServerApp& server = Server();
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
@@ -1081,7 +1081,7 @@ sc::result PlayingGame::react(const PlayerChat& msg) {
 }
 
 sc::result PlayingGame::react(const Diplomacy& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.Diplomacy";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.Diplomacy";
     const Message& message = msg.m_message;
 
     DiplomaticMessage diplo_message;
@@ -1092,7 +1092,7 @@ sc::result PlayingGame::react(const Diplomacy& msg) {
 }
 
 sc::result PlayingGame::react(const ModeratorAct& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.ModeratorAct";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.ModeratorAct";
     const Message& message = msg.m_message;
     int player_id = message.SendingPlayer();
     ServerApp& server = Server();
@@ -1103,7 +1103,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     Moderator::ModeratorAction* action = 0;
     ExtractMessageData(message, action);
 
-    Logger().debugStream() << "PlayingGame::react(ModeratorAct): " << (action ? action->Dump() : "(null)");
+    DebugLogger() << "PlayingGame::react(ModeratorAct): " << (action ? action->Dump() : "(null)");
 
     if (action) {
         // execute action
@@ -1128,14 +1128,14 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
 WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
     my_base(c)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEnd";
 }
 
 WaitingForTurnEnd::~WaitingForTurnEnd()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEnd"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~WaitingForTurnEnd"; }
 
 sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
 
@@ -1147,7 +1147,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
     if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers cannot submit orders. ignore.
-        Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
+        ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
                                << msg.m_player_connection->PlayerName()
                                << "(player id: " << message.SendingPlayer() << ") "
                                << "who is an observer and should not be sending orders. Orders being ignored.";
@@ -1156,7 +1156,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
     } else if (client_type == Networking::INVALID_CLIENT_TYPE) {
         // ??? lingering connection? shouldn't get to here. ignore.
-        Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
+        ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
                                << msg.m_player_connection->PlayerName()
                                << "(player id: " << message.SendingPlayer() << ") "
                                << "who has an invalid player type. The server is confused, and the orders being ignored.";
@@ -1166,7 +1166,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
         // if the moderator ends the turn, it is done, regardless of what
         // players are doing or haven't done
-        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Moderator ended turn.";
+        if (TRACE_EXECUTION) DebugLogger() << "WaitingForTurnEnd.TurnOrders : Moderator ended turn.";
         post_event(ProcessTurn());
         return transit<ProcessingTurn>();
 
@@ -1176,7 +1176,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         // store empire orders and resume waiting for more
         const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
-            Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
+            ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
             server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
             return discard_event();
         }
@@ -1184,11 +1184,11 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
             OrderPtr order = it->second;
             if (!order) {
-                Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
+                ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
                 continue;
             }
             if (empire->EmpireID() != order->EmpireID()) {
-                Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
+                ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
                                        << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
                                        << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
                 server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
@@ -1196,7 +1196,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             }
         }
 
-        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << message.SendingPlayer();
+        if (TRACE_EXECUTION) DebugLogger() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << message.SendingPlayer();
 
         server.SetEmpireTurnOrders(empire->EmpireID(), order_set);
     }
@@ -1223,7 +1223,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     // this piece of code only makes sense on Windows systems
 #ifdef FREEORION_WIN32
     if (server.IsLocalHumanPlayer(player_id)) {
-        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Orders received from local human player, raising AI process priority";
+        if (TRACE_EXECUTION) DebugLogger() << "WaitingForTurnEnd.TurnOrders : Orders received from local human player, raising AI process priority";
         server.SetAIsProcessPriorityToLow(false);
     }
 #endif
@@ -1235,19 +1235,19 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 }
 
 sc::result WaitingForTurnEnd::react(const RequestObjectID& msg) {
-    //if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
+    //if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
     Server().m_networking.SendMessage(DispatchObjectIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateObjectID()));
     return discard_event();
 }
 
 sc::result WaitingForTurnEnd::react(const RequestDesignID& msg) {
-    //if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
+    //if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
     Server().m_networking.SendMessage(DispatchDesignIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateDesignID()));
     return discard_event();
 }
 
 sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.CheckTurnEndConditions";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEnd.CheckTurnEndConditions";
     ServerApp& server = Server();
     // is there a moderator in the game?  If so, do nothing, as the turn does
     // not proceed until the moderator orders it
@@ -1258,7 +1258,7 @@ sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
     // processing turn.
     if (server.AllOrdersReceived()) {
         // if all players have submitted orders, proceed to turn processing
-        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : All orders received.";
+        if (TRACE_EXECUTION) DebugLogger() << "WaitingForTurnEnd.TurnOrders : All orders received.";
         post_event(ProcessTurn());
         return transit<ProcessingTurn>();
     }
@@ -1273,21 +1273,21 @@ sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c) {
 WaitingForTurnEndIdle::WaitingForTurnEndIdle(my_context c) :
     my_base(c)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEndIdle";
 }
 
 WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEndIdle"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~WaitingForTurnEndIdle"; }
 
 sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (!server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
         return discard_event();
-        Logger().errorStream() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << message.SendingPlayer()
+        ErrorLogger() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << message.SendingPlayer()
                                << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
         player_connection->SendMessage(ErrorMessage(UserStringNop("NON_HOST_SAVE_REQUEST_IGNORED"), false));
         return discard_event();
@@ -1305,7 +1305,7 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
 WaitingForSaveData::WaitingForSaveData(my_context c) :
     my_base(c)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForSaveData";
 
     ServerApp& server = Server();
     for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
@@ -1320,10 +1320,10 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
 }
 
 WaitingForSaveData::~WaitingForSaveData()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForSaveData"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~WaitingForSaveData"; }
 
 sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData.ClientSaveData";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForSaveData.ClientSaveData";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -1340,7 +1340,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     try {
         ExtractMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
     } catch (const std::exception& e) {
-        Logger().debugStream() << "WaitingForSaveData::react(const ClientSaveData& msg) received invalid save data from player " << player_connection->PlayerName();
+        DebugLogger() << "WaitingForSaveData::react(const ClientSaveData& msg) received invalid save data from player " << player_connection->PlayerName();
         player_connection->SendMessage(ErrorMessage(UserStringNop("INVALID_CLIENT_SAVE_DATA_RECEIVED"), false));
 
         // TODO: use whatever portion of message data was extracted, and leave the rest as defaults.
@@ -1357,7 +1357,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
         else
             order_set.reset(new OrderSet(received_orders));
     } else {
-        Logger().errorStream() << "WaitingForSaveData::react(const ClientSaveData& msg) couldn't get empire for player " << player_id;
+        ErrorLogger() << "WaitingForSaveData::react(const ClientSaveData& msg) couldn't get empire for player " << player_id;
         order_set.reset(new OrderSet(received_orders));
     }
 
@@ -1395,16 +1395,16 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
                     );
 
         } catch (const std::exception&) {
-            Logger().debugStream() << "Catch std::exception&";
+            DebugLogger() << "Catch std::exception&";
             SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
         }
         
-        Logger().debugStream() << "Finished ClientSaveData from within if.";
+        DebugLogger() << "Finished ClientSaveData from within if.";
         context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();
     }
     
-    Logger().debugStream() << "Finished ClientSaveData from outside of if.";
+    DebugLogger() << "Finished ClientSaveData from outside of if.";
     return discard_event();
 }
 
@@ -1414,13 +1414,13 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
 ////////////////////////////////////////////////////////////
 ProcessingTurn::ProcessingTurn(my_context c) :
     my_base(c)
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurn"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ProcessingTurn"; }
 
 ProcessingTurn::~ProcessingTurn()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ProcessingTurn"; }
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~ProcessingTurn"; }
 
 sc::result ProcessingTurn::react(const ProcessTurn& u) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurn.ProcessTurn";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ProcessingTurn.ProcessTurn";
 
     ServerApp& server = Server();
 
@@ -1458,7 +1458,7 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
 }
 
 sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurn.CheckTurnEndConditions";
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ProcessingTurn.CheckTurnEndConditions";
     return discard_event();
 }
 

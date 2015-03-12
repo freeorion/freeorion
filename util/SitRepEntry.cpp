@@ -187,7 +187,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
 SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
     TemporaryPtr<const UniverseObject> obj = GetEmpireKnownObject(object_id, empire_id);
     if (!obj) {
-        Logger().debugStream() << "Object " << object_id << " does not exist!!!";
+        DebugLogger() << "Object " << object_id << " does not exist!!!";
         return GenericCombatDestroyedObjectSitrep(combat_system_id);
     }
 

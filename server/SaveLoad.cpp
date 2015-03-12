@@ -100,7 +100,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
               const SpeciesManager& species_manager, const CombatLogManager& combat_log_manager,
               const GalaxySetupData& galaxy_setup_data, bool multiplayer)
 {
-    Logger().debugStream() << "SaveGame:: filename: " << filename;
+    DebugLogger() << "SaveGame:: filename: " << filename;
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
@@ -112,7 +112,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
         // A relative path should be relative to the save directory.
         if (path.is_relative()) {
             path = GetSaveDir()/path;
-            Logger().debugStream() << "Made save path relative to save dir. Is now: " << path;
+            DebugLogger() << "Made save path relative to save dir. Is now: " << path;
         }
 
         if (multiplayer) {
@@ -151,7 +151,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             Serialize(oa, universe);
         }
     } catch (const std::exception& e) {
-        Logger().errorStream() << UserString("UNABLE_TO_WRITE_SAVE_FILE") << " SaveGame exception: " << ": " << e.what();
+        ErrorLogger() << UserString("UNABLE_TO_WRITE_SAVE_FILE") << " SaveGame exception: " << ": " << e.what();
         throw e;
     }
 }
@@ -186,62 +186,62 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         if (use_binary) {
             freeorion_bin_iarchive ia ( ifs );
             //freeorion_iarchive ia(ifs);
-            Logger().debugStream() << "LoadGame : Passing Preview Data";
+            DebugLogger() << "LoadGame : Passing Preview Data";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
 
-            Logger().debugStream() << "LoadGame : Reading Galaxy Setup Data";
+            DebugLogger() << "LoadGame : Reading Galaxy Setup Data";
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
 
-            Logger().debugStream() << "LoadGame : Reading Server Save Game Data";
+            DebugLogger() << "LoadGame : Reading Server Save Game Data";
             ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
-            Logger().debugStream() << "LoadGame : Reading Player Save Game Data";
+            DebugLogger() << "LoadGame : Reading Player Save Game Data";
             ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
 
-            Logger().debugStream() << "LoadGame : Reading Empire Save Game Data (Ignored)";
+            DebugLogger() << "LoadGame : Reading Empire Save Game Data (Ignored)";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
-            Logger().debugStream() << "LoadGame : Reading Empires Data";
+            DebugLogger() << "LoadGame : Reading Empires Data";
             ia >> BOOST_SERIALIZATION_NVP(empire_manager);
-            Logger().debugStream() << "LoadGame : Reading Species Data";
+            DebugLogger() << "LoadGame : Reading Species Data";
             ia >> BOOST_SERIALIZATION_NVP(species_manager);
-            Logger().debugStream() << "LoadGame : Reading Combat Logs";
+            DebugLogger() << "LoadGame : Reading Combat Logs";
             ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
-            Logger().debugStream() << "LoadGame : Reading Universe Data";
+            DebugLogger() << "LoadGame : Reading Universe Data";
             Deserialize(ia, universe);
         } else {
             freeorion_xml_iarchive ia ( ifs );
-            Logger().debugStream() << "LoadGame : Passing Preview Data";
+            DebugLogger() << "LoadGame : Passing Preview Data";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
 
-            Logger().debugStream() << "LoadGame : Reading Galaxy Setup Data";
+            DebugLogger() << "LoadGame : Reading Galaxy Setup Data";
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
 
-            Logger().debugStream() << "LoadGame : Reading Server Save Game Data";
+            DebugLogger() << "LoadGame : Reading Server Save Game Data";
             ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
-            Logger().debugStream() << "LoadGame : Reading Player Save Game Data";
+            DebugLogger() << "LoadGame : Reading Player Save Game Data";
             ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
 
-            Logger().debugStream() << "LoadGame : Reading Empire Save Game Data (Ignored)";
+            DebugLogger() << "LoadGame : Reading Empire Save Game Data (Ignored)";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
-            Logger().debugStream() << "LoadGame : Reading Empires Data";
+            DebugLogger() << "LoadGame : Reading Empires Data";
             ia >> BOOST_SERIALIZATION_NVP(empire_manager);
-            Logger().debugStream() << "LoadGame : Reading Species Data";
+            DebugLogger() << "LoadGame : Reading Species Data";
             ia >> BOOST_SERIALIZATION_NVP(species_manager);
-            Logger().debugStream() << "LoadGame : Reading Combat Logs";
+            DebugLogger() << "LoadGame : Reading Combat Logs";
             ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
-            Logger().debugStream() << "LoadGame : Reading Universe Data";
+            DebugLogger() << "LoadGame : Reading Universe Data";
             Deserialize(ia, universe);
         }
     } catch (const std::exception& e) {
         if (alternate_serialization) {
-            Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadGame exception: " << ": " << e.what();
+            ErrorLogger() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadGame exception: " << ": " << e.what();
             throw e;
         } else {
             LoadGame(filename, server_save_game_data, player_save_game_data, universe, empire_manager,
                     species_manager, combat_log_manager, galaxy_setup_data, true);
-            Logger().debugStream() << "LoadGame: alternate serialization used to load game file " << filename;
+            DebugLogger() << "LoadGame: alternate serialization used to load game file " << filename;
         }
     }
-    Logger().debugStream() << "LoadGame : Done loading save file";
+    DebugLogger() << "LoadGame : Done loading save file";
 }
 
 void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
@@ -279,10 +279,10 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
         // skipping additional deserialization which is not needed for this function
     } catch (const std::exception& e) {
         if (alternate_serialization) {
-            Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadGalaxySetupData exception: " << ": " << e.what();
+            ErrorLogger() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadGalaxySetupData exception: " << ": " << e.what();
             throw e;
         } else {
-            Logger().debugStream() << "LoadGalaxySetupData: trying alternate serialization.";
+            DebugLogger() << "LoadGalaxySetupData: trying alternate serialization.";
             LoadGalaxySetupData(filename, galaxy_setup_data, true);
         }
     }
@@ -320,10 +320,10 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
         // skipping additional deserialization which is not needed for this function
     } catch (const std::exception& e) {
         if (alternate_serialization) {
-            Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadPlayerSaveGameData exception: " << ": " << e.what();
+            ErrorLogger() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadPlayerSaveGameData exception: " << ": " << e.what();
             throw e;
         } else {
-            Logger().debugStream() << "LoadPlayerSaveGameData: trying alternate serialization";
+            DebugLogger() << "LoadPlayerSaveGameData: trying alternate serialization";
             LoadPlayerSaveGameData(filename, player_save_game_data, true);
         }
     }
@@ -341,7 +341,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
 
     try {
         fs::path path = FilenameToPath(filename);
-        Logger().debugStream() << "LoadEmpireSaveGameData: filename: " << filename << " path:" << path;
+        DebugLogger() << "LoadEmpireSaveGameData: filename: " << filename << " path:" << path;
         fs::ifstream ifs(path, std::ios_base::binary);
 
         if (!ifs)
@@ -366,10 +366,10 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
         // skipping additional deserialization which is not needed for this function
     } catch (const std::exception& e) {
         if (alternate_serialization) {
-            Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadEmpireSaveGameData exception: " << ": " << e.what();
+            ErrorLogger() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadEmpireSaveGameData exception: " << ": " << e.what();
             throw e;
         } else {
-            Logger().debugStream() << "LoadEmpireSaveGameData: trying alternate serialization";
+            DebugLogger() << "LoadEmpireSaveGameData: trying alternate serialization";
             LoadEmpireSaveGameData(filename, empire_save_game_data, true);
         }
     }

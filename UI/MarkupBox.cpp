@@ -59,7 +59,7 @@ namespace {
         GG::Flags<GG::TextFormat> fmt = GG::FORMAT_NONE;
         ClientUI::GetFont()->DetermineLines(text, fmt, GG::X1, line_data);
         if (line_data.empty()) {
-            Logger().debugStream() << "ParseMarkupText line data empty!  raw text:" << text;
+            DebugLogger() << "ParseMarkupText line data empty!  raw text:" << text;
             return retval;
         }
 

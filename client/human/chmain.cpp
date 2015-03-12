@@ -146,7 +146,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
             !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
             !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
         {
-            Logger().debugStream() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
+            DebugLogger() << "Resources directory from config.xml missing or does not contain expected files. Resetting to default.";
 
             GetOptionsDB().Set<std::string>("resource-dir", "");
 
@@ -155,7 +155,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
                 !boost::filesystem::exists(GetResourceDir() / "credits.xml") ||
                 !boost::filesystem::exists(GetResourceDir() / "data" / "art" / "misc" / "missing.png"))
             {
-                Logger().debugStream() << "Default Resources directory missing or does not contain expected files. Cannot start game.";
+                DebugLogger() << "Default Resources directory missing or does not contain expected files. Cannot start game.";
                 throw std::runtime_error("Unable to load game resources at default location: " +
                                          PathString(GetResourceDir()) + " : Install may be broken.");
             }
@@ -248,22 +248,22 @@ int mainSetupAndRun() {
         // do nothing
         std::cout << "mainSetupAndRun caught CleanQuit" << std::endl;
     } catch (const std::invalid_argument& e) {
-        Logger().errorStream() << "main() caught exception(std::invalid_argument): " << e.what();
+        ErrorLogger() << "main() caught exception(std::invalid_argument): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
     } catch (const std::runtime_error& e) {
-        Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
+        ErrorLogger() << "main() caught exception(std::runtime_error): " << e.what();
         std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
     } catch (const  boost::io::format_error& e) {
-        Logger().errorStream() << "main() caught exception(boost::io::format_error): " << e.what();
+        ErrorLogger() << "main() caught exception(boost::io::format_error): " << e.what();
         std::cerr << "main() caught exception(boost::io::format_error): " << e.what() << std::endl;
     } catch (const GG::ExceptionBase& e) {
-        Logger().errorStream() << "main() caught exception(" << e.type() << "): " << e.what();
+        ErrorLogger() << "main() caught exception(" << e.type() << "): " << e.what();
         std::cerr << "main() caught exception(" << e.type() << "): " << e.what() << std::endl;
     } catch (const std::exception& e) {
-        Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
+        ErrorLogger() << "main() caught exception(std::exception): " << e.what();
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
     } catch (...) {
-        Logger().errorStream() << "main() caught unknown exception.";
+        ErrorLogger() << "main() caught unknown exception.";
         std::cerr << "main() caught unknown exception." << std::endl;
     }
 

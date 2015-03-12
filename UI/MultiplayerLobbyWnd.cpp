@@ -530,9 +530,9 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg) {
 
 namespace {
     void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
-        Logger().debugStream() << "PlayerSetupData:";
+        DebugLogger() << "PlayerSetupData:";
         for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it)
-            Logger().debugStream() << boost::lexical_cast<std::string>(it->first) << " : "
+            DebugLogger() << boost::lexical_cast<std::string>(it->first) << " : "
                                    << it->second.m_player_name << ", "
                                    << it->second.m_client_type << ", "
                                    << it->second.m_starting_species_name;
@@ -817,7 +817,7 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
             if (dynamic_cast<const EmptyPlayerRow*>(*it)) {
                 // ignore empty player row
             } else {
-                Logger().errorStream() << "MultiPlayerLobbyWnd::PlayerDataAcceptable found not empty player row with unrecognized client type?!";
+                ErrorLogger() << "MultiPlayerLobbyWnd::PlayerDataAcceptable found not empty player row with unrecognized client type?!";
                 return false;
             }
         }

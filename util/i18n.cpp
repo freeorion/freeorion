@@ -70,7 +70,7 @@ boost::format FlexibleFormat(const std::string &string_to_format) {
         retval.exceptions(boost::io::no_error_bits);
         return retval;
     } catch (const std::exception& e) {
-        Logger().errorStream() << "FlexibleFormat caught exception when formatting: " << e.what();
+        ErrorLogger() << "FlexibleFormat caught exception when formatting: " << e.what();
     }
     boost::format retval(UserString("ERROR"));
     retval.exceptions(boost::io::no_error_bits);

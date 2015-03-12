@@ -335,10 +335,10 @@ const boost::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
 
 GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const {
     if (button_number < 1) {
-        Logger().errorStream() << "SystemIcon::NthFleetButtonUpperLeft passed button number less than 1... treating as if = 1";
+        ErrorLogger() << "SystemIcon::NthFleetButtonUpperLeft passed button number less than 1... treating as if = 1";
         button_number = 1;
     } else if (button_number >= MAX_TRIES) {
-        Logger().errorStream() << "SystemIcon::NthFleetButtonUpperLeft passed too large a button number.  treating as if = 1";
+        ErrorLogger() << "SystemIcon::NthFleetButtonUpperLeft passed too large a button number.  treating as if = 1";
         button_number = 1;
     }
 

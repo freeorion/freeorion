@@ -95,7 +95,7 @@ std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const st
         if (TemporaryPtr<const UniverseObject> obj = Object(*it))
             result.push_back(obj);
         else
-            Logger().errorStream() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << *it;
     return result;
 }
 
@@ -105,7 +105,7 @@ std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const std::vec
         if (TemporaryPtr<UniverseObject> obj = Object(*it))
             result.push_back(obj);
         else
-            Logger().errorStream() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+            ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << *it;
     return result;
 }
 
@@ -198,7 +198,7 @@ boost::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
     std::map<int, boost::shared_ptr<UniverseObject> >::iterator it = m_objects.find(id);
     if (it == m_objects.end())
         return boost::shared_ptr<UniverseObject>();
-    //Logger().debugStream() << "Object was removed: " << it->second->Dump();
+    //DebugLogger() << "Object was removed: " << it->second->Dump();
     // object found, so store pointer for later...
     boost::shared_ptr<UniverseObject> result = it->second;
     // and erase from pointer maps

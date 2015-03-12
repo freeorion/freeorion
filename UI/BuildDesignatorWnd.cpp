@@ -122,7 +122,7 @@ namespace {
                 break;
             }
             default:
-                Logger().errorStream() << "ProductionItemPanel::Init got invalid item type";
+                ErrorLogger() << "ProductionItemPanel::Init got invalid item type";
                 texture = ClientUI::GetTexture("");
             }
 
@@ -724,7 +724,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 
 
     // populate list with building types
-    //Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
+    //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
     if (m_build_types_shown.find(BT_BUILDING) != m_build_types_shown.end()) {
         BuildingTypeManager& manager = GetBuildingTypeManager();
         // craete and insert rows...
@@ -751,7 +751,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     }
 
     // populate with ship designs
-    //Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding ship designs";
+    //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding ship designs";
     if (m_build_types_shown.find(BT_SHIP) != m_build_types_shown.end()) {
         // get ids of designs to show... for specific empire, or for all empires
         std::vector<int> design_ids;
@@ -796,7 +796,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         if (initial_scroll_pos < m_buildable_items->NumRows())
             m_buildable_items->BringRowIntoView(boost::next(m_buildable_items->begin(), initial_scroll_pos));
     }
-    //Logger().debugStream() << "Done";
+    //DebugLogger() << "Done";
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,
@@ -812,7 +812,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
     if (build_type == BT_BUILDING) {
         const BuildingType* building_type = GetBuildingType(item.name);
         if (!building_type) {
-            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to get building type: " << item.name;
+            ErrorLogger() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to get building type: " << item.name;
             return;
         }
         DisplayBuildingTypeSignal(building_type);
@@ -820,7 +820,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
     } else if (build_type == BT_SHIP) {
         const ShipDesign* design = GetShipDesign(item.design_id);
         if (!design) {
-            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to find design with id " << item.design_id;
+            ErrorLogger() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to find design with id " << item.design_id;
             return;
         }
         DisplayShipDesignSignal(design);
@@ -937,7 +937,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);
     if (!empire) {
-        Logger().errorStream() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
+        ErrorLogger() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
         return;
     }
 
@@ -957,7 +957,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);
     if (!empire) {
-        Logger().errorStream() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << empire_id;
+        ErrorLogger() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << empire_id;
         return;
     }
     const ProductionQueue& queue = empire->GetProductionQueue();
@@ -1031,7 +1031,7 @@ void BuildDesignatorWnd::Clear() {
 }
 
 void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list) {
-    Logger().errorStream() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
+    ErrorLogger() << "BuildDesignatorWnd::ShowType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->ShowType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->SetCheck();
@@ -1047,7 +1047,7 @@ void BuildDesignatorWnd::ShowAllTypes(bool refresh_list) {
 }
 
 void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list) {
-    Logger().debugStream() << "BuildDesignatorWnd::HideType(" << boost::lexical_cast<std::string>(type) << ")";
+    DebugLogger() << "BuildDesignatorWnd::HideType(" << boost::lexical_cast<std::string>(type) << ")";
     if (type == BT_BUILDING || type == BT_SHIP) {
         m_build_selector->HideType(type, refresh_list);
         m_build_selector->m_build_type_buttons[type]->SetCheck(false);
@@ -1167,7 +1167,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
 
     TemporaryPtr<const System> sys = GetSystem(system_id);   // only checking visible objects for this clients empire (and not the latest known objects) as an empire shouldn't be able to use a planet or system it can't currently see as a production location
     if (!sys) {
-        Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
+        ErrorLogger() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;
     }
 

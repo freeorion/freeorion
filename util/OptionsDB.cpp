@@ -134,8 +134,8 @@ void OptionsDB::Commit()
     } else {
         std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
         std::cerr << PathString(GetConfigPath()) << std::endl;
-        Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-        Logger().errorStream() << PathString(GetConfigPath());
+        ErrorLogger() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
+        ErrorLogger() << PathString(GetConfigPath());
     }
 }
 
@@ -385,7 +385,7 @@ void OptionsDB::SetFromXML(const XMLDoc& doc) {
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
-    Logger().debugStream() << "Setting from XML";
+    DebugLogger() << "Setting from XML";
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
     if (elem.NumChildren()) {
@@ -396,13 +396,13 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
 
         if (it == m_options.end()) {
-            Logger().errorStream() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  You may need to delete your config.xml if it is out of date";
+            ErrorLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  You may need to delete your config.xml if it is out of date";
             return;
         }
 
         Option& option = it->second;
         //if (!option.flag && option.value.empty()) {
-        //    Logger().errorStream() << "The value member of option \"" << option.name << "\" in config.xml is undefined.";
+        //    ErrorLogger() << "The value member of option \"" << option.name << "\" in config.xml is undefined.";
         //    return;
         //}
 
@@ -412,7 +412,7 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
             try {
                 option.SetFromString(elem.Text());
             } catch (const std::exception& e) {
-                Logger().errorStream() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attemptimg to set option \"" << option_name << "\": " << e.what();
+                ErrorLogger() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attemptimg to set option \"" << option_name << "\": " << e.what();
             }
         }
     }

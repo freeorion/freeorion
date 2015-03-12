@@ -30,7 +30,7 @@ void PopCenter::Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis
     if (copied_object == this)
         return;
     if (!copied_object) {
-        Logger().errorStream() << "PopCenter::Copy passed a null object";
+        ErrorLogger() << "PopCenter::Copy passed a null object";
         return;
     }
 
@@ -40,7 +40,7 @@ void PopCenter::Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis
 }
 
 void PopCenter::Init() {
-    //Logger().debugStream() << "PopCenter::Init";
+    //DebugLogger() << "PopCenter::Init";
     AddMeter(METER_POPULATION);
     AddMeter(METER_TARGET_POPULATION);
     AddMeter(METER_HAPPINESS);
@@ -70,7 +70,7 @@ float PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
         return meter->Current() + NextTurnPopGrowth();
 
     } else if (meter_type == METER_TARGET_POPULATION) {
-        Logger().debugStream() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type.  Returning meter->Current()";
+        DebugLogger() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type.  Returning meter->Current()";
         return meter->Current();
 
     } else if (meter_type == METER_HAPPINESS) {
@@ -88,7 +88,7 @@ float PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
         else
             return current_meter_value;
     } else {
-        Logger().errorStream() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
+        ErrorLogger() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
         return 0.0f;
     }
 }
@@ -120,7 +120,7 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
     float new_pop = cur_pop + pop_growth;
 
     //if (cur_pop > 0.0)
-    //    Logger().debugStream() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;
+    //    DebugLogger() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;
 
     if (new_pop >= MINIMUM_POP_CENTER_POPULATION) {
         GetMeter(METER_POPULATION)->SetCurrent(new_pop);
@@ -151,7 +151,7 @@ void PopCenter::Depopulate() {
 void PopCenter::SetSpecies(const std::string& species_name) {
     const Species* species = GetSpecies(species_name);
     if (!species && !species_name.empty()) {
-        Logger().errorStream() << "PopCenter::SetSpecies couldn't get species with name " << species_name;
+        ErrorLogger() << "PopCenter::SetSpecies couldn't get species with name " << species_name;
     }
     m_species_name = species_name;
 }

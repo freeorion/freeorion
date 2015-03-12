@@ -58,7 +58,7 @@ void Building::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire
         return;
     TemporaryPtr<const Building> copied_building = boost::dynamic_pointer_cast<const Building>(copied_object);
     if (!copied_building) {
-        Logger().errorStream() << "Building::Copy passed an object that wasn't a Building";
+        ErrorLogger() << "Building::Copy passed an object that wasn't a Building";
         return;
     }
 
@@ -213,7 +213,7 @@ namespace {
     TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
-            Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
+            DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
             return TemporaryPtr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
@@ -332,14 +332,14 @@ BuildingTypeManager::BuildingTypeManager() {
     s_instance = this;
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings file.";
+        DebugLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings file.";
     }
     parse::buildings(GetResourceDir() / "buildings.txt", m_building_types);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "Building Types:";
+        DebugLogger() << "Building Types:";
         for (iterator it = begin(); it != end(); ++it) {
-            Logger().debugStream() << " ... " << it->first;
+            DebugLogger() << " ... " << it->first;
         }
     }
 }

@@ -50,7 +50,7 @@ float ResourcePool::GroupProduction(int object_id) const {
     }
 
     // default return case:
-    Logger().debugStream() << "ResourcePool::GroupProduction passed unknown object id: " << object_id;
+    DebugLogger() << "ResourcePool::GroupProduction passed unknown object id: " << object_id;
     return 0.0;
 }
 
@@ -80,7 +80,7 @@ std::map<std::set<int>, float> ResourcePool::Available() const {
 }
 
 float ResourcePool::GroupAvailable(int object_id) const {
-    Logger().debugStream() << "ResourcePool::GroupAvailable(" << object_id << ")";
+    DebugLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
     // available is stockpile + production in this group
 
     if (m_stockpile_object_id == INVALID_OBJECT_ID)
@@ -101,7 +101,7 @@ float ResourcePool::GroupAvailable(int object_id) const {
     }
 
     // default return case:
-    Logger().debugStream() << "ResourcePool::GroupAvailable passed unknown object id: " << object_id;
+    DebugLogger() << "ResourcePool::GroupAvailable passed unknown object id: " << object_id;
     return 0.0;
 }
 
@@ -128,12 +128,12 @@ void ResourcePool::SetStockpile(float d)
 { m_stockpile = d; }
 
 void ResourcePool::Update() {
-    //Logger().debugStream() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
+    //DebugLogger() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
     // sum production from all ResourceCenters in each group, for resource point type appropriate for this pool
     MeterType meter_type = ResourceToMeter(m_type);
 
     if (INVALID_METER_TYPE == meter_type)
-        Logger().errorStream() << "ResourcePool::Update() called when m_type can't be converted to a valid MeterType";
+        ErrorLogger() << "ResourcePool::Update() called when m_type can't be converted to a valid MeterType";
 
     // zero to start...
     m_connected_object_groups_resource_production.clear();

@@ -128,7 +128,7 @@ ClientNetworking& ClientApp::Networking()
 
 std::string ClientApp::GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) {
     if (!object) {
-        Logger().errorStream() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
+        ErrorLogger() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
         return std::string();
     }
 

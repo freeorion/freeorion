@@ -147,7 +147,7 @@ namespace {
     TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
-            Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
+            DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
             return TemporaryPtr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
@@ -336,7 +336,7 @@ TechManager::TechManager() {
         }
         std::string error_str = "ERROR: The following categories were defined in techs.txt, but no "
             "techs were defined that fell within them:" + stream.str();
-        Logger().errorStream() << error_str;
+        ErrorLogger() << error_str;
         std::cerr << error_str << std::endl;
     }
 
@@ -347,19 +347,19 @@ TechManager::TechManager() {
         }
         std::string error_str = "ERROR: The following categories were never defined in techs.txt, but some "
             "techs were defined that fell within them:" + stream.str();
-        Logger().errorStream() << error_str;
+        ErrorLogger() << error_str;
         std::cerr << error_str << std::endl;
     }
 
     std::string illegal_dependency_str = FindIllegalDependencies();
     if (!illegal_dependency_str.empty()) {
-        Logger().errorStream() << illegal_dependency_str;
+        ErrorLogger() << illegal_dependency_str;
         throw std::runtime_error(illegal_dependency_str.c_str());
     }
 
     std::string cycle_str = FindFirstDependencyCycle();
     if (!cycle_str.empty()) {
-        Logger().errorStream() << cycle_str;
+        ErrorLogger() << cycle_str;
         throw std::runtime_error(cycle_str.c_str());
     }
 
@@ -374,7 +374,7 @@ TechManager::TechManager() {
 
     std::string redundant_dependency = FindRedundantDependency();
     if (!redundant_dependency.empty())
-        Logger().errorStream() << redundant_dependency;
+        ErrorLogger() << redundant_dependency;
 
 #ifdef OUTPUT_TECH_LIST
     for (iterator it = begin(); it != end(); ++it) {

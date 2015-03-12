@@ -761,7 +761,7 @@ void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
                >> BOOST_SERIALIZATION_NVP(fatal);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  "
                                << "Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -780,7 +780,7 @@ void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
             ia >> BOOST_SERIALIZATION_NVP(lobby_data);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& "
                                << "lobby_data) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -807,14 +807,14 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 
             boost::timer deserialize_timer;
             ia >> BOOST_SERIALIZATION_NVP(empires);
-            Logger().debugStream() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
             ia >> BOOST_SERIALIZATION_NVP(species)
             >> BOOST_SERIALIZATION_NVP(combat_logs);
 
             deserialize_timer.restart();
             Deserialize(ia, universe);
-            Logger().debugStream() << "ExtractMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
 
             ia >> BOOST_SERIALIZATION_NVP(players)
@@ -841,14 +841,14 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 
             boost::timer deserialize_timer;
             ia >> BOOST_SERIALIZATION_NVP(empires);
-            Logger().debugStream() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
             ia >> BOOST_SERIALIZATION_NVP(species)
                >> BOOST_SERIALIZATION_NVP(combat_logs);
 
             deserialize_timer.restart();
             Deserialize(ia, universe);
-            Logger().debugStream() << "ExtractMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+            DebugLogger() << "ExtractMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
 
             ia >> BOOST_SERIALIZATION_NVP(players)
@@ -869,7 +869,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
         }
 
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
                                << "int& current_turn, EmpireManager& empires, Universe& universe, "
                                << "std::map<int, PlayerInfo>& players, OrderSet& orders, "
                                << "bool& loaded_game_data, bool& ui_data_available, "
@@ -882,7 +882,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 }
 
 void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type) {
-    Logger().debugStream() << "ExtractMessageData() from " << player_name << " client type " << client_type;
+    DebugLogger() << "ExtractMessageData() from " << player_name << " client type " << client_type;
     try {
         std::istringstream is(msg.Text());
         if (GetOptionsDB().Get<bool>("binary-serialization")) {
@@ -895,7 +895,7 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
                >> BOOST_SERIALIZATION_NVP(client_type);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, std::string& player_name, "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& player_name, "
                                << "Networking::ClientType client_type) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -914,7 +914,7 @@ void ExtractMessageData(const Message& msg, OrderSet& orders) {
             Deserialize(ia, orders);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  "
                                << "Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -950,7 +950,7 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
             ia >> BOOST_SERIALIZATION_NVP(players);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, int& "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, int& "
                                << "current_turn, EmpireManager& empires, Universe& universe, "
                                << "std::map<int, PlayerInfo>& players) failed!  Message:\n"
                                << msg.Text() << "\n"
@@ -973,7 +973,7 @@ void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
             Deserialize(ia, universe);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, "
                                << "Universe& universe) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -989,39 +989,39 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
         std::istringstream is(msg.Text());
         if (GetOptionsDB().Get<bool>("binary-serialization")) {
             freeorion_bin_iarchive ia(is);
-            Logger().debugStream() << "deserializing orders";
+            DebugLogger() << "deserializing orders";
             Deserialize(ia, orders);
-            Logger().debugStream() << "checking for ui data";
+            DebugLogger() << "checking for ui data";
             ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
             if (ui_data_available) {
-                Logger().debugStream() << "deserializing UI data";
+                DebugLogger() << "deserializing UI data";
                 ia >> BOOST_SERIALIZATION_NVP(ui_data);
             }
-            Logger().debugStream() << "checking for save state string";
+            DebugLogger() << "checking for save state string";
             ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available) {
-                Logger().debugStream() << "deserializing save state string";
+                DebugLogger() << "deserializing save state string";
                 ia >> BOOST_SERIALIZATION_NVP(save_state_string);
             }
         } else {
             freeorion_xml_iarchive ia(is);
-            Logger().debugStream() << "deserializing orders";
+            DebugLogger() << "deserializing orders";
             Deserialize(ia, orders);
-            Logger().debugStream() << "checking for ui data";
+            DebugLogger() << "checking for ui data";
             ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
             if (ui_data_available) {
-                Logger().debugStream() << "deserializing UI data";
+                DebugLogger() << "deserializing UI data";
                 ia >> BOOST_SERIALIZATION_NVP(ui_data);
             }
-            Logger().debugStream() << "checking for save state string";
+            DebugLogger() << "checking for save state string";
             ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available) {
-                Logger().debugStream() << "deserializing save state string";
+                DebugLogger() << "deserializing save state string";
                 ia >> BOOST_SERIALIZATION_NVP(save_state_string);
             }
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, OrderSet& orders, "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, OrderSet& orders, "
                                << "bool& ui_data_available, SaveGameUIData& ui_data, "
                                << "bool& save_state_string_available, std::string& save_state_string) "
                                << "failed!  Message:\n"
@@ -1042,7 +1042,7 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
             ia >> BOOST_SERIALIZATION_NVP(phase_id);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
                                << "phase_id) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -1063,7 +1063,7 @@ void ExtractMessageData(const Message& msg, int& about_player_id, Message::Playe
                >> BOOST_SERIALIZATION_NVP(status);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, int& about_player_id "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, int& about_player_id "
                                << "Message::PlayerStatus&) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -1082,7 +1082,7 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data) {
             ia >> BOOST_SERIALIZATION_NVP(setup_data);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& "
                                << "setup_data) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -1105,7 +1105,7 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
                >> BOOST_SERIALIZATION_NVP(reason_player_name);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, "
                                << "std::string& reason_player_name) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -1124,7 +1124,7 @@ void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_act
             ia >> BOOST_SERIALIZATION_NVP(mod_action);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
                                << "failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -1144,7 +1144,7 @@ void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_
                >> BOOST_SERIALIZATION_NVP(empire_name);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
                                << "empire_name) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -1163,7 +1163,7 @@ void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
             ia >> BOOST_SERIALIZATION_NVP(diplo_message);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, DiplomaticMessage& "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticMessage& "
                                << "diplo_message) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -1186,7 +1186,7 @@ void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_up
                >> BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, DiplomaticStatusUpdate& "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticStatusUpdate& "
                                << "diplo_update) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
@@ -1211,7 +1211,7 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
                >> BOOST_SERIALIZATION_NVP(empire_id);
         }
     } catch (const std::exception& err) {
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
+        ErrorLogger() << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
                                << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
                                << "Message:\n"
                                << msg.Text() << "\n"
@@ -1235,7 +1235,7 @@ void ExtractMessageData(const Message& msg, PreviewInformation& previews) {
             ia >> BOOST_SERIALIZATION_NVP(previews);
         }
     }catch(const std::exception& err){
-        Logger().errorStream() << "ExtractMessageData(const Message& msg, PreviewInformation& previews"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, PreviewInformation& previews"
         << ") failed!  "
         << "Message:\n"
         << msg.Text() << "\n"

@@ -64,13 +64,13 @@ namespace {
         try {
             object_id = boost::lexical_cast<int>(data.Attribute("value"));
         } catch (const std::exception&) {
-            Logger().errorStream() << "UniverseObjectString couldn't cast \"" << data.Attribute("value") << "\" to int for object ID.";
+            ErrorLogger() << "UniverseObjectString couldn't cast \"" << data.Attribute("value") << "\" to int for object ID.";
             valid = false;
             return UserString("ERROR");
         }
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
-            //Logger().errorStream() << "UniverseObjectString couldn't get object with ID " << object_id;
+            //ErrorLogger() << "UniverseObjectString couldn't get object with ID " << object_id;
             valid = false;
             return UserString("ERROR");
         }
@@ -88,13 +88,13 @@ namespace {
         try {
             design_id = boost::lexical_cast<int>(data.Attribute("value"));
         } catch (const std::exception&) {
-            Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << data.Attribute("value") << "\" to int for ship design ID.";
+            ErrorLogger() << "SubstituteAndAppend couldn't cast \"" << data.Attribute("value") << "\" to int for ship design ID.";
             valid = false;
             return UserString("ERROR");
         }
         const ShipDesign* design = GetShipDesign(design_id);
         if (!design) {
-            Logger().errorStream() << "SubstituteAndAppend couldn't get ship design with ID " << design_id;
+            ErrorLogger() << "SubstituteAndAppend couldn't get ship design with ID " << design_id;
             valid = false;
             return UserString("ERROR");
         }
@@ -106,7 +106,7 @@ namespace {
         const std::string& design_name = data.Attribute("value");
         const ShipDesign* design = GetPredefinedShipDesign(design_name);
         if (!design) {
-            Logger().errorStream() << "SubstituteAndAppend couldn't get predefined ship design with name " << design_name;
+            ErrorLogger() << "SubstituteAndAppend couldn't get predefined ship design with name " << design_name;
             valid = false;
             return UserString("ERROR");
         }
@@ -119,13 +119,13 @@ namespace {
         try {
             empire_id = boost::lexical_cast<int>(data.Attribute("value"));
         } catch (const std::exception&) {
-            Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << data.Attribute("value") << "\" to int for empire ID.";
+            ErrorLogger() << "SubstituteAndAppend couldn't cast \"" << data.Attribute("value") << "\" to int for empire ID.";
             valid = false;
             return UserString("ERROR");
         }
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
-            Logger().errorStream() << "SubstituteAndAppend couldn't get empire with ID " << empire_id;
+            ErrorLogger() << "SubstituteAndAppend couldn't get empire with ID " << empire_id;
             valid = false;
             return UserString("ERROR");
         }
@@ -226,7 +226,7 @@ namespace {
             if (substituter != SubstitutionMap().end()) {
                 m_str += substituter->second(token_elem, tag, m_valid);
             } else {
-                Logger().errorStream() << "SubstituteAndAppend::operator(): No substitution scheme defined for tag: " << tag << " from token: " << token;
+                ErrorLogger() << "SubstituteAndAppend::operator(): No substitution scheme defined for tag: " << tag << " from token: " << token;
                 m_str += UserString("ERROR");
                 m_valid = false;
             }
@@ -343,6 +343,6 @@ void VarText::GenerateVarText() const {
     try {
         parse(template_str.c_str(), *(non_var[StringAppend(m_text)] | var));
     } catch (const std::exception&) {
-        Logger().errorStream() << "VarText::GenerateVartText caught exception when parsing template string: " << m_template_string;
+        ErrorLogger() << "VarText::GenerateVartText caught exception when parsing template string: " << m_template_string;
     }
 }

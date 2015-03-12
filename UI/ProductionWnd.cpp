@@ -161,14 +161,14 @@ namespace {
             amOn = false;
             //Hide();
             //Render();
-            Logger().debugStream() << "QuantSelector:  selection made ";
+            DebugLogger() << "QuantSelector:  selection made ";
             if (it != end()) {
                 quant = boost::polymorphic_downcast<const QuantRow*>(*it)->Quant();
                 if (amBlockType) {
-                    Logger().debugStream() << "Blocksize Selector:  selection changed to " << quant;
+                    DebugLogger() << "Blocksize Selector:  selection changed to " << quant;
                     blocksize = quant;
                 } else {
-                    Logger().debugStream() << "Quantity Selector:  selection changed to " << quant;
+                    DebugLogger() << "Quantity Selector:  selection changed to " << quant;
                     quantity = quant;
                 }
             }
@@ -574,7 +574,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_build_designator_wnd(0),
     m_order_issuing_enabled(false)
 {
-    Logger().debugStream() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
+    DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
                            << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
 
     m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_INFO_PANEL_TITLE"),
@@ -723,7 +723,7 @@ void ProductionWnd::ProductionQueueChangedSlot() {
 }
 
 void ProductionWnd::UpdateQueue() {
-    Logger().debugStream() << "ProductionWnd::UpdateQueue()";
+    DebugLogger() << "ProductionWnd::UpdateQueue()";
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;

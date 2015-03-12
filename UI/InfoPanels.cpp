@@ -116,11 +116,11 @@ namespace {
       * object \a obj. */
     double ObjectResourceConsumption(TemporaryPtr<const UniverseObject> obj, ResourceType resource_type, int empire_id = ALL_EMPIRES) {
         if (!obj) {
-            Logger().errorStream() << "ObjectResourceConsumption passed a null object";
+            ErrorLogger() << "ObjectResourceConsumption passed a null object";
             return 0.0;
         }
         if (resource_type == INVALID_RESOURCE_TYPE) {
-            Logger().errorStream() << "ObjectResourceConsumption passed a INVALID_RESOURCE_TYPE";
+            ErrorLogger() << "ObjectResourceConsumption passed a INVALID_RESOURCE_TYPE";
             return 0.0;
         }
 
@@ -131,12 +131,12 @@ namespace {
             empire = GetEmpire(empire_id);
 
             if (!empire) {
-                Logger().errorStream() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire was not found";
+                ErrorLogger() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire was not found";
                 return 0.0;     // requested a specific empire, but didn't find it in this client, so production is 0.0
             }
 
             if (!obj->OwnedBy(empire_id)) {
-                Logger().debugStream() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire doesn't own the object";
+                DebugLogger() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire doesn't own the object";
                 return 0.0;     // if the empire doesn't own the object, assuming it can't be consuming any of the empire's resources.  May need to revisit this assumption later.
             }
         }
@@ -450,7 +450,7 @@ void PopulationPanel::Update() {
     TemporaryPtr<const UniverseObject>   obj = GetUniverseObject(m_popcenter_id);
 
     if (!pop || !obj) {
-        Logger().errorStream() << "PopulationPanel::Update couldn't get PopCenter or couldn't get UniverseObject";
+        ErrorLogger() << "PopulationPanel::Update couldn't get PopCenter or couldn't get UniverseObject";
         return;
     }
 
@@ -484,12 +484,12 @@ void PopulationPanel::Refresh() {
 TemporaryPtr<const PopCenter> PopulationPanel::GetPopCenter() const {
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_popcenter_id);
     if (!obj) {
-        Logger().errorStream() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
+        ErrorLogger() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
         return TemporaryPtr<const PopCenter>();
     }
     TemporaryPtr<const PopCenter> pop = boost::dynamic_pointer_cast<const PopCenter>(obj);
     if (!pop) {
-        Logger().errorStream() << "PopulationPanel failed casting an object pointer to a PopCenter pointer";
+        ErrorLogger() << "PopulationPanel failed casting an object pointer to a PopCenter pointer";
         return TemporaryPtr<const PopCenter>();
     }
     return pop;
@@ -733,14 +733,14 @@ void ResourcePanel::Update() {
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {
-        Logger().errorStream() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
+        ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
     }
 
 
     //std::cout << "ResourcePanel::Update() object: " << obj->Name() << std::endl;
-    //Logger().debugStream() << "ResourcePanel::Update()";
-    //Logger().debugStream() << obj->Dump();
+    //DebugLogger() << "ResourcePanel::Update()";
+    //DebugLogger() << obj->Dump();
 
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
@@ -890,7 +890,7 @@ void MilitaryPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void MilitaryPanel::Update() {
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!obj) {
-        Logger().errorStream() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
+        ErrorLogger() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
         return;
     }
 
@@ -1090,7 +1090,7 @@ void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<G
 
 void MultiIconValueIndicator::Update() {
     if (m_icons.size() != m_meter_types.size()) {
-        Logger().errorStream() << "MultiIconValueIndicator::Update has inconsitent numbers of icons and meter types";
+        ErrorLogger() << "MultiIconValueIndicator::Update has inconsitent numbers of icons and meter types";
         return;
     }
 
@@ -1101,11 +1101,11 @@ void MultiIconValueIndicator::Update() {
             int object_id = m_object_ids[j];
             TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
             if (!obj) {
-                Logger().errorStream() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
+                ErrorLogger() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
                 continue;
             }
-            //Logger().debugStream() << "MultiIconValueIndicator::Update object:";
-            //Logger().debugStream() << obj->Dump();
+            //DebugLogger() << "MultiIconValueIndicator::Update object:";
+            //DebugLogger() << obj->Dump();
             sum += obj->InitialMeterValue(m_meter_types[i].first);
         }
         m_icons[i]->SetValue(sum);
@@ -1287,7 +1287,7 @@ void MultiMeterStatusBar::Update() {
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
-        Logger().errorStream() << "MultiMeterStatusBar couldn't get object with id " << m_object_id;
+        ErrorLogger() << "MultiMeterStatusBar couldn't get object with id " << m_object_id;
         return;
     }
 
@@ -1339,7 +1339,7 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     SetName("BuildingsPanel");
 
     if (m_columns < 1) {
-        Logger().errorStream() << "Attempted to create a BuidingsPanel with less than 1 column";
+        ErrorLogger() << "Attempted to create a BuidingsPanel with less than 1 column";
         m_columns = 1;
     }
 
@@ -1402,7 +1402,7 @@ void BuildingsPanel::Update() {
 
     TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet) {
-        Logger().errorStream() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
+        ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
     }
     const std::set<int>& buildings = planet->BuildingIDs();
@@ -1428,7 +1428,7 @@ void BuildingsPanel::Update() {
 
         TemporaryPtr<const Building> building = GetBuilding(object_id);
         if (!building) {
-            Logger().errorStream() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << planet->Name();
+            ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << planet->Name();
             continue;
         }
 
@@ -1816,7 +1816,7 @@ void SpecialsPanel::Update() {
     // get specials to display
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
-        Logger().errorStream() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
+        ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;
     }
     const std::map<std::string, int>& specials = obj->Specials();
@@ -2162,7 +2162,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     AttachChild(m_tags_list);
 
     // determine tag order
-    //Logger().debugStream() << "Census Tag Order: " << UserString("CENSUS_TAG_ORDER");
+    //DebugLogger() << "Census Tag Order: " << UserString("CENSUS_TAG_ORDER");
     std::istringstream tag_stream(UserString("CENSUS_TAG_ORDER"));
     std::vector<std::string> tag_order;
     std::copy(std::istream_iterator<std::string>(tag_stream), 
@@ -2172,7 +2172,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     // add tags/characteristics rows
     //for (std::map<std::string, float>::const_iterator it = tag_counts.begin(); it != tag_counts.end(); ++it) {
     for (std::vector<std::string>::iterator it = tag_order.begin(); it != tag_order.end(); ++it) {
-        //Logger().debugStream() << "Census checking for tag '"<< *it <<"'";
+        //DebugLogger() << "Census checking for tag '"<< *it <<"'";
         std::map<std::string, float>::const_iterator it2 = tag_counts.find(*it);
         if (it2 != tag_counts.end()) {
             GG::ListBox::Row* row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
@@ -2419,7 +2419,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         // don't add summary entries for objects that consume no resource.  (otherwise there would be a loooong pointless list of 0's
         if (allocation <= 0.0) {
             if (allocation < 0.0)
-                Logger().errorStream() << "object " << obj->Name() << " is reported having negative " << boost::lexical_cast<std::string>(m_resource_type) << " consumption";
+                ErrorLogger() << "object " << obj->Name() << " is reported having negative " << boost::lexical_cast<std::string>(m_resource_type) << " consumption";
             continue;
         }
 
@@ -2638,7 +2638,7 @@ void MeterBrowseWnd::Initialize() {
     // get objects and meters to verify that they exist
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
-        Logger().errorStream() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
+        ErrorLogger() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
         return;
     }
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
@@ -2749,7 +2749,7 @@ void MeterBrowseWnd::UpdateSummary() {
 
     if (primary_meter && secondary_meter) {
         if (!m_current_value || !m_next_turn_value || !m_change_value) {
-            Logger().errorStream() << "MeterBrowseWnd::UpdateSummary has primary and secondary meters, but is missing one or more controls to display them";
+            ErrorLogger() << "MeterBrowseWnd::UpdateSummary has primary and secondary meters, but is missing one or more controls to display them";
             return;
         }
 
@@ -2773,7 +2773,7 @@ void MeterBrowseWnd::UpdateSummary() {
         breakdown_total = obj->InitialMeterValue(m_primary_meter_type);
         breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     } else {
-        Logger().errorStream() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
+        ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
         return;
     }
 
@@ -2796,7 +2796,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // get object and meter, aborting if not valid
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
-        Logger().errorStream() << "MeterBrowseWnd::UpdateEffectLabelsAndValues couldn't get object with id " << m_object_id;
+        ErrorLogger() << "MeterBrowseWnd::UpdateEffectLabelsAndValues couldn't get object with id " << m_object_id;
         return;
     }
 
@@ -2889,7 +2889,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             break;
         }
         case ECT_SPECIES: {
-            //Logger().debugStream() << "Effect Species Meter Browse Wnd effect cause " << info_it->specific_cause << " custom label: " << info_it->custom_label;
+            //DebugLogger() << "Effect Species Meter Browse Wnd effect cause " << info_it->specific_cause << " custom label: " << info_it->custom_label;
             const std::string& label_template = (info_it->custom_label.empty()
                 ? UserString("TT_SPECIES")
                 : UserString(info_it->custom_label));
@@ -2996,7 +2996,7 @@ namespace {
         // set summary label
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_source_object_id);
         if (!obj) {
-            Logger().errorStream() << "MeterModifiersIndicatorBrowseWnd couldn't get object with id " << m_source_object_id;
+            ErrorLogger() << "MeterModifiersIndicatorBrowseWnd couldn't get object with id " << m_source_object_id;
             m_summary_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_TARGETS_BREAKDOWN_SUMMARY")) %
                                                     MeterToUserString(m_meter_type) %
                                                     DoubleToString(0.0, 3, false)));

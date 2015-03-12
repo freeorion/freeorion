@@ -112,10 +112,10 @@ PartTypeManager::PartTypeManager() {
     parse::ship_parts(GetResourceDir() / "ship_parts.txt", m_parts);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "Part Types:";
+        DebugLogger() << "Part Types:";
         for (iterator it = begin(); it != end(); ++it) {
             const PartType* p = it->second;
-            Logger().debugStream() << " ... " << p->Name() << " class: " << p->Class();
+            DebugLogger() << " ... " << p->Name() << " class: " << p->Class();
         }
     }
 }
@@ -149,7 +149,7 @@ namespace {
     TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
-            Logger().debugStream() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
+            DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
             return TemporaryPtr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
@@ -393,10 +393,10 @@ HullTypeManager::HullTypeManager() {
     parse::ship_hulls(GetResourceDir() / "ship_hulls.txt", m_hulls);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "Hull Types:";
+        DebugLogger() << "Hull Types:";
         for (iterator it = begin(); it != end(); ++it) {
             const HullType* h = it->second;
-            Logger().debugStream() << " ... " << h->Name();
+            DebugLogger() << " ... " << h->Name();
         }
     }
 }
@@ -497,8 +497,8 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     }
 
     if (!ValidDesign(m_hull, m_parts)) {
-        Logger().errorStream() << "constructing an invalid ShipDesign!";
-        Logger().errorStream() << Dump();
+        ErrorLogger() << "constructing an invalid ShipDesign!";
+        ErrorLogger() << Dump();
     }
     BuildStatCaches();
 }
@@ -687,7 +687,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 
     Empire* empire = GetEmpire(empire_id);
     if (!empire) {
-        Logger().debugStream() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
+        DebugLogger() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
 
@@ -703,7 +703,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     // apply hull location conditions to potential location
     const HullType* hull = GetHull();
     if (!hull) {
-        Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
+        ErrorLogger() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
         return false;
     }
     if (!hull->Location()->Eval(ScriptingContext(source), location))
@@ -717,7 +717,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 
         const PartType* part = GetPartType(part_name);
         if (!part) {
-            Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
+            ErrorLogger() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
             return false;
         }
         if (!part->Location()->Eval(ScriptingContext(source), location))
@@ -734,13 +734,13 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
     // ensure hull type exists and has at least enough slots for passed parts
     const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
     if (!hull_type) {
-        Logger().debugStream() << "ShipDesign::ValidDesign: hull not found: " << hull;
+        DebugLogger() << "ShipDesign::ValidDesign: hull not found: " << hull;
         return false;
     }
 
     unsigned int size = parts.size();
     if (size > hull_type->NumSlots()) {
-        Logger().debugStream() << "ShipDesign::ValidDesign: given " << size << " parts for hull with " << hull_type->NumSlots() << " slots";
+        DebugLogger() << "ShipDesign::ValidDesign: given " << size << " parts for hull with " << hull_type->NumSlots() << " slots";
         return false;
     }
 
@@ -755,14 +755,14 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
 
         const PartType* part = part_manager.GetPartType(part_name);
         if (!part) {
-            Logger().debugStream() << "ShipDesign::ValidDesign: part not found: " << part_name;
+            DebugLogger() << "ShipDesign::ValidDesign: part not found: " << part_name;
             return false;
         }
 
         // verify part can mount in indicated slot
         ShipSlotType slot_type = slots[i].type;
         if (!(part->CanMountInSlotType(slot_type))) {
-            Logger().debugStream() << "ShipDesign::ValidDesign: part " << part_name << " can't be mounted in " << boost::lexical_cast<std::string>(slot_type) << " slot";
+            DebugLogger() << "ShipDesign::ValidDesign: part " << part_name << " can't be mounted in " << boost::lexical_cast<std::string>(slot_type) << " slot";
             return false;
         }
     }
@@ -773,7 +773,7 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
 void ShipDesign::BuildStatCaches() {
     const HullType* hull = GetHullType(m_hull);
     if (!hull) {
-        Logger().errorStream() << "ShipDesign::BuildStatCaches couldn't get hull with name " << m_hull;
+        ErrorLogger() << "ShipDesign::BuildStatCaches couldn't get hull with name " << m_hull;
         return;
     }
 
@@ -794,7 +794,7 @@ void ShipDesign::BuildStatCaches() {
 
         const PartType* part = GetPartType(*it);
         if (!part) {
-            Logger().errorStream() << "ShipDesign::BuildStatCaches couldn't get part with name " << *it;
+            ErrorLogger() << "ShipDesign::BuildStatCaches couldn't get part with name " << *it;
             continue;
         }
 
@@ -918,22 +918,22 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     s_instance = this;
 
-    Logger().debugStream() << "Initializing PredefinedShipDesignManager";
+    DebugLogger() << "Initializing PredefinedShipDesignManager";
 
     parse::ship_designs(GetResourceDir() / "premade_ship_designs.txt", m_ship_designs);
 
     parse::ship_designs(GetResourceDir() / "space_monsters.txt", m_monster_designs);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "Predefined Ship Designs:";
+        DebugLogger() << "Predefined Ship Designs:";
         for (iterator it = begin(); it != end(); ++it) {
             const ShipDesign* d = it->second;
-            Logger().debugStream() << " ... " << d->Name();
+            DebugLogger() << " ... " << d->Name();
         }
-        Logger().debugStream() << "Monster Ship Designs:";
+        DebugLogger() << "Monster Ship Designs:";
         for (iterator it = begin_monsters(); it != end_monsters(); ++it) {
             const ShipDesign* d = it->second;
-            Logger().debugStream() << " ... " << d->Name();
+            DebugLogger() << " ... " << d->Name();
         }
     }
 }
@@ -955,7 +955,7 @@ void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
         const std::string& design_name = *it;
         std::map<std::string, ShipDesign*>::const_iterator design_it = m_ship_designs.find(design_name);
         if (design_it == m_ship_designs.end()) {
-            Logger().errorStream() << "Couldn't find predefined ship design with name " << design_name << " to add to empire";
+            ErrorLogger() << "Couldn't find predefined ship design with name " << design_name << " to add to empire";
             continue;
         }
 
@@ -966,12 +966,12 @@ void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
 
         // safety / santiy check
         if (design_it->first != d->Name(false))
-            Logger().errorStream() << "Predefined ship design name in map (" << design_it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
+            ErrorLogger() << "Predefined ship design name in map (" << design_it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
 
         int design_id = this->GetDesignID(design_name);
 
         if (design_id == ShipDesign::INVALID_DESIGN_ID) {
-            Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
+            ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
             continue;
         } else {
             universe.SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
@@ -994,12 +994,12 @@ namespace {
         {
             const ShipDesign* existing_design = it->second;
             if (!existing_design) {
-                Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found an invalid design in the Universe";
+                ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found an invalid design in the Universe";
                 continue;
             }
 
             if (DesignsTheSame(*existing_design, *design)) {
-                Logger().debugStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found there already is an exact duplicate of a design to be added, so is not re-adding it";
+                DebugLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found there already is an exact duplicate of a design to be added, so is not re-adding it";
                 design_generic_ids[design->Name(false)] = existing_design->ID();
                 return; // design already added; don't need to do so again
             }
@@ -1009,7 +1009,7 @@ namespace {
         // generate id for new design
         int new_design_id = GetNewDesignID();
         if (new_design_id == ShipDesign::INVALID_DESIGN_ID) {
-            Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse Unable to get new design id";
+            ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse Unable to get new design id";
             return;
         }
 
@@ -1020,13 +1020,13 @@ namespace {
                                           design->Hull(), design->Parts(), design->Icon(),
                                           design->Model(), design->LookupInStringtable(), monster);
         if (!copy) {
-            Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();
+            ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();
             return;
         }
 
         bool success = universe.InsertShipDesignID(copy, new_design_id);
         if (!success) {
-            Logger().errorStream() << "Empire::AddShipDesign Unable to add new design to universe";
+            ErrorLogger() << "Empire::AddShipDesign Unable to add new design to universe";
             delete copy;
             return;
         }

@@ -20,7 +20,7 @@ namespace {
         m_device = alcOpenDevice(0);    /* currently only select the default output device - usually a NULL-terminated
                                          * string desctribing a device can be passed here (of type ALchar*) */
         if (m_device == 0) {
-            Logger().errorStream() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
+            ErrorLogger() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
         } else {
             m_context = alcCreateContext(m_device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
                                                          // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
@@ -31,7 +31,7 @@ namespace {
                 alGenSources(num_sources, sources);
                 error_code = alGetError();
                 if(error_code != AL_NO_ERROR) {
-                    Logger().errorStream() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+                    ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
                     alcMakeContextCurrent(0);
                     alcDestroyContext(m_context);
                 } else {
@@ -39,7 +39,7 @@ namespace {
                     alGenBuffers(2, music_buffers);
                     error_code = alGetError();
                     if (error_code != AL_NO_ERROR) {
-                        Logger().errorStream() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+                        ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
                         alDeleteBuffers(2, music_buffers);
                         alcMakeContextCurrent(0);
                         alcDestroyContext(m_context);
@@ -47,7 +47,7 @@ namespace {
                         for (int i = 0; i < num_sources; ++i) {
                             alSourcei(sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
                         }
-                        Logger().debugStream() << "OpenAL initialized. Version "
+                        DebugLogger() << "OpenAL initialized. Version "
                                                << alGetString(AL_VERSION)
                                                << "Renderer "
                                                << alGetString(AL_RENDERER)
@@ -58,7 +58,7 @@ namespace {
                     }
                 }
             } else {
-                Logger().errorStream() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
+                ErrorLogger() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
             }
         }
     }
@@ -110,7 +110,7 @@ namespace {
                 alBufferData(bufferName, ogg_format, array, static_cast < ALsizei > (bytes), ogg_freq);
                 m_openal_error = alGetError();
                 if (m_openal_error != AL_NONE)
-                    Logger().errorStream() << "RefillBuffer: OpenAL ERROR: " << alGetString(m_openal_error);
+                    ErrorLogger() << "RefillBuffer: OpenAL ERROR: " << alGetString(m_openal_error);
             } else {
                 ov_clear(ogg_file); // the app might think we still have something to play.
                 delete [] array;
@@ -237,17 +237,17 @@ void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
             }
             else
             {
-                Logger().errorStream() << "PlayMusic: unable to open file " << filename.c_str() << " possibly not a .ogg vorbis file. Aborting\n";
+                ErrorLogger() << "PlayMusic: unable to open file " << filename.c_str() << " possibly not a .ogg vorbis file. Aborting\n";
                 m_music_name.clear(); //just in case
                 ov_clear(&m_ogg_file);
             }
         }
         else
-            Logger().errorStream() << "PlayMusic: unable to open file " << filename.c_str() << " I/O Error. Aborting\n";
+            ErrorLogger() << "PlayMusic: unable to open file " << filename.c_str() << " I/O Error. Aborting\n";
     }
     m_openal_error = alGetError();
     if (m_openal_error != AL_NONE)
-        Logger().errorStream() << "PlayMusic: OpenAL ERROR: " << alGetString(m_openal_error);
+        ErrorLogger() << "PlayMusic: OpenAL ERROR: " << alGetString(m_openal_error);
 }
 
 void Sound::StopMusic()
@@ -333,13 +333,13 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
                     }
                     else
                     {
-                        Logger().errorStream() << "PlaySound: unable to open file " << filename.c_str() << " too big to buffer. Aborting\n";
+                        ErrorLogger() << "PlaySound: unable to open file " << filename.c_str() << " too big to buffer. Aborting\n";
                     }
                     ov_clear(&ogg_file);
                 }
                 else
                 {
-                    Logger().errorStream() << "PlaySound: unable to open file " << filename.c_str() << " possibly not a .ogg vorbis file. Aborting\n";
+                    ErrorLogger() << "PlaySound: unable to open file " << filename.c_str() << " possibly not a .ogg vorbis file. Aborting\n";
                 }
             }
         }
@@ -355,11 +355,11 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
                 }
             }
             if (!found_source)
-                Logger().errorStream() << "PlaySound: Could not find aviable source - playback aborted\n";
+                ErrorLogger() << "PlaySound: Could not find aviable source - playback aborted\n";
         }
         source_state = alGetError();
         if (source_state != AL_NONE)
-            Logger().errorStream() << "PlaySound: OpenAL ERROR: " << alGetString(source_state);
+            ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(source_state);
             /* it's important to check for errors, as some functions won't work properly if
              * they're called when there is a unchecked previous error. */
     }
@@ -374,7 +374,7 @@ void Sound::FreeSound(const boost::filesystem::path& path) {
         alDeleteBuffers(1, &(it->second));
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
-            Logger().errorStream() << "FreeSound: OpenAL ERROR: " << alGetString(m_openal_error);
+            ErrorLogger() << "FreeSound: OpenAL ERROR: " << alGetString(m_openal_error);
         else
             m_buffers.erase(it); /* we don't erase if there was an error, as the buffer may not have been
                                     removed - potential memory leak */
@@ -390,7 +390,7 @@ void Sound::FreeAllSounds() {
         alDeleteBuffers(1, &(it->second));
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE) {
-            Logger().errorStream() << "FreeAllSounds: OpenAL ERROR: " << alGetString(m_openal_error);
+            ErrorLogger() << "FreeAllSounds: OpenAL ERROR: " << alGetString(m_openal_error);
             ++it;
         } else {
             std::map<std::string, ALuint>::iterator temp = it;
@@ -412,7 +412,7 @@ void Sound::SetMusicVolume(int vol) {
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
-            Logger().errorStream() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
+            ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
     }
 }
 
@@ -428,7 +428,7 @@ void Sound::SetUISoundsVolume(int vol) {
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
-            Logger().errorStream() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
+            ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
     }
 }
 

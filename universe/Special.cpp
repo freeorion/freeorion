@@ -15,10 +15,10 @@ namespace {
         SpecialManager() {
             parse::specials(GetResourceDir() / "specials.txt", m_specials);
             if (GetOptionsDB().Get<bool>("verbose-logging")) {
-                Logger().debugStream() << "Specials:";
+                DebugLogger() << "Specials:";
                 for (std::map<std::string, Special*>::iterator it = m_specials.begin();
                     it != m_specials.end(); ++it)
-                { Logger().debugStream() << " ... " << it->first; }
+                { DebugLogger() << " ... " << it->first; }
             }
         }
         ~SpecialManager() {

@@ -56,19 +56,19 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         g_app(); // Calls ServerApp::Run() to run app (intialization and main process loop)
 
     } catch (const std::invalid_argument& e) {
-        Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
+        ErrorLogger() << "main() caught exception(std::invalid_arg): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
         return 1;
     } catch (const std::runtime_error& e) {
-        Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
+        ErrorLogger() << "main() caught exception(std::runtime_error): " << e.what();
         std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
         return 1;
     } catch (const std::exception& e) {
-        Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
+        ErrorLogger() << "main() caught exception(std::exception): " << e.what();
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
         return 1;
     } catch (...) {
-        Logger().errorStream() << "main() caught unknown exception.";
+        ErrorLogger() << "main() caught unknown exception.";
         std::cerr << "main() caught unknown exception." << std::endl;
         return 1;
     }

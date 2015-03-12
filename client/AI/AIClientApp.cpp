@@ -43,19 +43,19 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     }
 
     InitLogger(AICLIENT_LOG_FILENAME, "%d %p AI : %m%n");
-    Logger().debug(PlayerName() + " logger initialized.");
+    DebugLogger() << PlayerName() + " logger initialized.";
 }
 
 AIClientApp::~AIClientApp() {
     delete m_AI;
-    Logger().debug("Shutting down " + PlayerName() + " logger...");
+    DebugLogger() << "Shutting down " + PlayerName() + " logger...";
 }
 
 void AIClientApp::operator()()
 { Run(); }
 
 void AIClientApp::Exit(int code) {
-    Logger().fatalStream() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
+    DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     exit(code);
 }
 
@@ -73,18 +73,18 @@ void AIClientApp::Run() {
     int tries = 0;
     volatile bool connected = false;
     while (tries < MAX_TRIES) {
-        Logger().debugStream() << "Attempting to contact server";
+        DebugLogger() << "Attempting to contact server";
         connected = Networking().ConnectToLocalHostServer();
         if (!connected) {
             std::cerr << "FreeOrion AI client server contact attempt " << tries + 1 << " failed." << std::endl;
-            Logger().errorStream() << "Server contact attempt " << tries + 1 << " failed";
+            ErrorLogger() << "Server contact attempt " << tries + 1 << " failed";
         } else {
             break;
         }
         ++tries;
     }
     if (!connected) {
-        Logger().fatalStream() << "AIClientApp::Initialize : Failed to connect to localhost server after " << MAX_TRIES << " tries.  Exiting.";
+        DebugLogger() << "AIClientApp::Initialize : Failed to connect to localhost server after " << MAX_TRIES << " tries.  Exiting.";
         Exit(1);
     }
 
@@ -106,10 +106,10 @@ void AIClientApp::Run() {
 }
 
 void AIClientApp::HandleMessage(const Message& msg) {
-    //Logger().debugStream() << "AIClientApp::HandleMessage " << msg.Type();
+    //DebugLogger() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
     case Message::ERROR_MSG : {
-        Logger().errorStream() << "AIClientApp::HandleMessage : Received ERROR message from server: " << msg.Text();
+        ErrorLogger() << "AIClientApp::HandleMessage : Received ERROR message from server: " << msg.Text();
         break;
     }
 
@@ -117,12 +117,12 @@ void AIClientApp::HandleMessage(const Message& msg) {
         const std::string& text = msg.Text();
         int host_id = Networking::INVALID_PLAYER_ID;
         if (text.empty()) {
-            Logger().errorStream() << "AIClientApp::HandleMessage for HOST_ID : Got empty message text?!";
+            ErrorLogger() << "AIClientApp::HandleMessage for HOST_ID : Got empty message text?!";
         } else {
             try {
                 host_id = boost::lexical_cast<int>(text);
             } catch (...) {
-                Logger().errorStream() << "AIClientApp::HandleMessage for HOST_ID : Couldn't parese message text: " << text;
+                ErrorLogger() << "AIClientApp::HandleMessage for HOST_ID : Couldn't parese message text: " << text;
             }
         }
         m_networking.SetHostPlayerID(host_id);
@@ -132,10 +132,10 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::JOIN_GAME: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             if (PlayerID() == Networking::INVALID_PLAYER_ID) {
-                Logger().debugStream() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
+                DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
                 m_networking.SetPlayerID(msg.ReceivingPlayer());
             } else {
-                Logger().errorStream() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";
+                ErrorLogger() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";
             }
         }
         break;
@@ -143,7 +143,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::GAME_START: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
-            Logger().debugStream() << "AIClientApp::HandleMessage : Received GAME_START message; starting AI turn...";
+            DebugLogger() << "AIClientApp::HandleMessage : Received GAME_START message; starting AI turn...";
             bool single_player_game;        // ignored
             bool loaded_game_data;
             bool ui_data_available;         // ignored
@@ -159,17 +159,17 @@ void AIClientApp::HandleMessage(const Message& msg) {
                                ui_data,                 state_string_available, save_state_string,
                                m_galaxy_setup_data);
 
-            Logger().debugStream() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
+            DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
             GetUniverse().InitializeSystemGraph(m_empire_id);
 
-            Logger().debugStream() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
+            DebugLogger() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
             if (loaded_game_data) {
-                Logger().debugStream() << "Message::GAME_START save_state_string: " << save_state_string;
+                DebugLogger() << "Message::GAME_START save_state_string: " << save_state_string;
                 m_AI->ResumeLoadedGame(save_state_string);
                 Orders().ApplyOrders();
             } else {
-                Logger().debugStream() << "Message::GAME_START Starting New Game!";
+                DebugLogger() << "Message::GAME_START Starting New Game!";
                 // % Distribution of aggression levels
                 // Aggression   :  0   1   2   3   4   5   (0=Beginner, 5=Maniacal)
                 //                __  __  __  __  __  __
@@ -200,9 +200,9 @@ void AIClientApp::HandleMessage(const Message& msg) {
                     boost::hash<std::string> string_hash;
                     std::size_t h = string_hash(g_seed);
                     my_seed = 3 * static_cast<unsigned int>(h) * static_cast<unsigned int>(string_hash(emp_name));
-                    Logger().debugStream() << "Message::GAME_START getting " << emp_name << " AI aggression, RNG Seed: " << my_seed;
+                    DebugLogger() << "Message::GAME_START getting " << emp_name << " AI aggression, RNG Seed: " << my_seed;
                 } catch (...) {
-                    Logger().debugStream() << "Message::GAME_START getting " << emp_name << " AI aggression, could not initialise RNG.";
+                    DebugLogger() << "Message::GAME_START getting " << emp_name << " AI aggression, could not initialise RNG.";
                 }
 
                 int rand_num = 0;
@@ -218,7 +218,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
                     // if (rand_num > 91 && this_aggr > 0) this_aggr--;
                 }
 
-                Logger().debugStream() << "Message::GAME_START setting AI aggression as " << this_aggr << " (from rnd " << rand_num << "; max aggression " << m_max_aggression << ")";
+                DebugLogger() << "Message::GAME_START setting AI aggression as " << this_aggr << " (from rnd " << rand_num << "; max aggression " << m_max_aggression << ")";
 
                 m_AI->SetAggression(this_aggr);
                 m_AI->StartNewGame();
@@ -229,22 +229,22 @@ void AIClientApp::HandleMessage(const Message& msg) {
     }
 
     case Message::SAVE_GAME: {
-        //Logger().debugStream() << "AIClientApp::HandleMessage Message::SAVE_GAME";
+        //DebugLogger() << "AIClientApp::HandleMessage Message::SAVE_GAME";
         Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), m_AI->GetSaveStateString()));
-        //Logger().debugStream() << "AIClientApp::HandleMessage sent save data message";
+        //DebugLogger() << "AIClientApp::HandleMessage sent save data message";
         break;
     }
 
     case Message::TURN_UPDATE: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
-            //Logger().debugStream() << "AIClientApp::HandleMessage : extracting turn update message data";
+            //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
             ExtractMessageData(msg,                     m_empire_id,        m_current_turn,
                                m_empires,               m_universe,         GetSpeciesManager(),
                                GetCombatLogManager(),   m_player_info);
-            //Logger().debugStream() << "AIClientApp::HandleMessage : generating orders";
+            //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
             GetUniverse().InitializeSystemGraph(m_empire_id);
             m_AI->GenerateOrders();
-            //Logger().debugStream() << "AIClientApp::HandleMessage : done handling turn update message";
+            //DebugLogger() << "AIClientApp::HandleMessage : done handling turn update message";
         }
         break;
     }
@@ -259,7 +259,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
 
     case Message::END_GAME: {
-        Logger().debugStream() << "Message::END_GAME : Exiting";
+        DebugLogger() << "Message::END_GAME : Exiting";
         Exit(0);
         break;
     }
@@ -283,9 +283,9 @@ void AIClientApp::HandleMessage(const Message& msg) {
     }
 
     default: {
-        Logger().errorStream() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
+        ErrorLogger() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
         break;
     }
     }
-    //Logger().debugStream() << "AIClientApp::HandleMessage done";
+    //DebugLogger() << "AIClientApp::HandleMessage done";
 }

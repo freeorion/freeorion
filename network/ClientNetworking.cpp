@@ -165,7 +165,7 @@ bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
     boost::posix_time::seconds timeout/* = boost::posix_time::seconds(5)*/)
 {
-    Logger().debugStream() << "ClientNetworking::ConnectToServer : attempting to connect to server at "
+    DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at "
                            << ip_address;
 
     using namespace boost::asio::ip;
@@ -178,7 +178,7 @@ bool ClientNetworking::ConnectToServer(
 
     try {
         for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-            Logger().debugStream() << "tcp::resolver::iterator host_name: " << it->host_name()
+            DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
                                    << "  address: " << it->endpoint().address()
                                    << "  port: " << it->endpoint().port();
 
@@ -196,24 +196,24 @@ bool ClientNetworking::ConnectToServer(
             m_io_service.reset();
 
             if (Connected()) {
-                Logger().debugStream() << "ClientNetworking::ConnectToServer : connected to server";
+                DebugLogger() << "ClientNetworking::ConnectToServer : connected to server";
                 if (GetOptionsDB().Get<bool>("binary-serialization"))
-                    Logger().debugStream() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
+                    DebugLogger() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
                 else
-                    Logger().debugStream() << "ClientNetworking::ConnectToServer : this client using xml serialization.";
+                    DebugLogger() << "ClientNetworking::ConnectToServer : this client using xml serialization.";
                 m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
-                Logger().debugStream() << "ClientNetworking::ConnectToServer : starting networking thread";
+                DebugLogger() << "ClientNetworking::ConnectToServer : starting networking thread";
                 boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
                 break;
             } else {
-                Logger().debugStream() << "ClientNetworking::ConnectToServer : no connection yet...";
+                DebugLogger() << "ClientNetworking::ConnectToServer : no connection yet...";
             }
         }
         if (!Connected())
-            Logger().debugStream() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
+            DebugLogger() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
 
     } catch (const std::exception& e) {
-        Logger().errorStream() << "ClientNetworking::ConnectToServer unable to connect to server at "
+        ErrorLogger() << "ClientNetworking::ConnectToServer unable to connect to server at "
                                << ip_address << " due to exception: " << e.what();
     }
     return Connected();
@@ -244,7 +244,7 @@ void ClientNetworking::DisconnectFromServer() {
 }
 
 void ClientNetworking::SetPlayerID(int player_id) {
-    Logger().debugStream() << "ClientNetworking::SetPlayerID: player id set to: " << player_id;
+    DebugLogger() << "ClientNetworking::SetPlayerID: player id set to: " << player_id;
     m_player_id = player_id;
 }
 
@@ -253,35 +253,35 @@ void ClientNetworking::SetHostPlayerID(int host_player_id)
 
 void ClientNetworking::SendMessage(Message message) {
     if (!Connected()) {
-        Logger().errorStream() << "ClientNetworking::SendMessage can't send message when not connected";
+        ErrorLogger() << "ClientNetworking::SendMessage can't send message when not connected";
         return;
     }
     if (TRACE_EXECUTION)
-        Logger().debugStream() << "ClientNetworking::SendMessage() : "
+        DebugLogger() << "ClientNetworking::SendMessage() : "
                                << "sending message " << message;
     m_io_service.post(boost::bind(&ClientNetworking::SendMessageImpl, this, message));
 }
 
 void ClientNetworking::GetMessage(Message& message) {
     if (!MessageAvailable()) {
-        Logger().errorStream() << "ClientNetworking::GetMessage can't get message if none available";
+        ErrorLogger() << "ClientNetworking::GetMessage can't get message if none available";
         return;
     }
     m_incoming_messages.PopFront(message);
     if (TRACE_EXECUTION)
-        Logger().debugStream() << "ClientNetworking::GetMessage() : received message "
+        DebugLogger() << "ClientNetworking::GetMessage() : received message "
                                << message;
 }
 
 void ClientNetworking::SendSynchronousMessage(Message message, Message& response_message) {
     if (TRACE_EXECUTION)
-        Logger().debugStream() << "ClientNetworking::SendSynchronousMessage : sending message "
+        DebugLogger() << "ClientNetworking::SendSynchronousMessage : sending message "
                                << message;
     SendMessage(message);
     // note that this is a blocking operation
     m_incoming_messages.EraseFirstSynchronousResponse(response_message);
     if (TRACE_EXECUTION)
-        Logger().debugStream() << "ClientNetworking::SendSynchronousMessage : received "
+        DebugLogger() << "ClientNetworking::SendSynchronousMessage : received "
                                << "response message " << response_message;
 }
 
@@ -292,7 +292,7 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
     if (error) {
         if (!m_cancel_retries) {
             if (TRACE_EXECUTION)
-                Logger().debugStream() << "ClientNetworking::HandleConnection : connection "
+                DebugLogger() << "ClientNetworking::HandleConnection : connection "
                                        << "error ... retrying";
             m_socket.async_connect(**it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                      it,
@@ -301,7 +301,7 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
         }
     } else {
         if (TRACE_EXECUTION)
-            Logger().debugStream() << "ClientNetworking::HandleConnection : connected";
+            DebugLogger() << "ClientNetworking::HandleConnection : connected";
         timer->cancel();
         boost::mutex::scoped_lock lock(m_mutex);
         m_connected = true;
@@ -315,11 +315,11 @@ void ClientNetworking::HandleException(const boost::system::system_error& error)
     if (error.code() == boost::asio::error::eof ||
         error.code() == boost::asio::error::connection_reset ||
         error.code() == boost::asio::error::operation_aborted) {
-        Logger().debugStream() << "ClientNetworking::NetworkingThread() : Networking thread "
+        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread "
                                << "will be terminated due to disconnect exception \""
                                << error.what() << "\"";
     } else {
-        Logger().errorStream() << "ClientNetworking::NetworkingThread() : Networking thread "
+        ErrorLogger() << "ClientNetworking::NetworkingThread() : Networking thread "
                                << "will be terminated due to unhandled exception \""
                                << error.what() << "\"";
     }
@@ -348,7 +348,7 @@ void ClientNetworking::NetworkingThread() {
     boost::mutex::scoped_lock lock(m_mutex);
     m_connected = false;
     if (TRACE_EXECUTION)
-        Logger().debugStream() << "ClientNetworking::NetworkingThread() : Networking thread "
+        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread "
                                << "terminated.";
 }
 

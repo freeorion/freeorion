@@ -233,7 +233,7 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
 
 void Species::AddHomeworld(int homeworld_id) {
     if (!GetUniverseObject(homeworld_id))
-        Logger().debugStream() << "Species asked to add homeworld id " << homeworld_id << " but there is no such object in the Universe";
+        DebugLogger() << "Species asked to add homeworld id " << homeworld_id << " but there is no such object in the Universe";
     if (m_homeworlds.find(homeworld_id) != m_homeworlds.end())
         return;
     m_homeworlds.insert(homeworld_id);
@@ -242,7 +242,7 @@ void Species::AddHomeworld(int homeworld_id) {
 
 void Species::RemoveHomeworld(int homeworld_id) {
     if (m_homeworlds.find(homeworld_id) == m_homeworlds.end()) {
-        Logger().debugStream() << "Species asked to remove homeworld id " << homeworld_id << " but doesn't have that id as a homeworld";
+        DebugLogger() << "Species asked to remove homeworld id " << homeworld_id << " but doesn't have that id as a homeworld";
         return;
     }
     m_homeworlds.erase(homeworld_id);
@@ -289,10 +289,10 @@ SpeciesManager::SpeciesManager() {
     s_instance = this;
     parse::species(GetResourceDir() / "species.txt", m_species);
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "Species:";
+        DebugLogger() << "Species:";
         for (iterator it = begin(); it != end(); ++it) {
             const Species* s = it->second;
-            Logger().debugStream() << " ... " << s->Name() << "  \t" <<
+            DebugLogger() << " ... " << s->Name() << "  \t" <<
                 (s->Playable() ?        "Playable " : "         ") <<
                 (s->Native() ?          "Native " : "       ") <<
                 (s->CanProduceShips() ? "CanProduceShips " : "                ") <<
@@ -401,7 +401,7 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
         if (species) {
             species->SetHomeworlds(homeworlds);
         } else {
-            Logger().errorStream() << "SpeciesManager::SetSpeciesHomeworlds couldn't find a species with name " << species_name << " to assign homeworlds to";
+            ErrorLogger() << "SpeciesManager::SetSpeciesHomeworlds couldn't find a species with name " << species_name << " to assign homeworlds to";
         }
     }
 }
@@ -424,7 +424,7 @@ std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(in
         const std::string species_name = it->first;
         const Species* species = it->second;
         if (!species) {
-            Logger().errorStream() << "SpeciesManager::GetSpeciesHomeworldsMap found a null species pointer in SpeciesManager?!";
+            ErrorLogger() << "SpeciesManager::GetSpeciesHomeworldsMap found a null species pointer in SpeciesManager?!";
             continue;
         }
         const std::set<int>& homeworld_ids = species->Homeworlds();

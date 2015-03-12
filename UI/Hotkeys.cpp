@@ -72,7 +72,7 @@ void Hotkey::AddHotkey(const std::string& name, const std::string& description, 
     if (IsTypingSafe(key, mod)) {
         s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, key, mod)));
     } else {
-        Logger().errorStream() << "Hotkey::AddHotkey attempted to set a hotkey that is not safe to use while typing.";
+        ErrorLogger() << "Hotkey::AddHotkey attempted to set a hotkey that is not safe to use while typing.";
         s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, GG::GGK_UNKNOWN, GG::MOD_KEY_NONE)));
     }
 }
@@ -202,7 +202,7 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
 
         std::string options_db_name = "UI.hotkeys." + hotkey.m_name;
         if (!db.OptionExists(options_db_name)) {
-            Logger().errorStream() << "Hotkey::ReadFromOptions : no option for " << options_db_name;
+            ErrorLogger() << "Hotkey::ReadFromOptions : no option for " << options_db_name;
             continue;
         }
         std::string option_string = db.Get<std::string>(options_db_name);
@@ -212,13 +212,13 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
             continue;
 
         if (key_modkey_pair.first == GG::EnumMap<GG::Key>::BAD_VALUE) {
-            Logger().errorStream() << "Hotkey::ReadFromOptions : Invalid key spec: '"
+            ErrorLogger() << "Hotkey::ReadFromOptions : Invalid key spec: '"
                                    << option_string << "' for hotkey " << hotkey.m_name;
             continue;
         }
 
         if (!IsTypingSafe(key_modkey_pair.first, key_modkey_pair.second)) {
-            Logger().errorStream() << "Hotkey::ReadFromOptions : Typing-unsafe key spec: '"
+            ErrorLogger() << "Hotkey::ReadFromOptions : Typing-unsafe key spec: '"
                                    << option_string << "' for hotkey " << hotkey.m_name;
             continue;
         }
@@ -297,7 +297,7 @@ bool Hotkey::IsDefault() const
 
 void Hotkey::SetHotkey(const Hotkey& hotkey, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!IsTypingSafe(key, mod)) {
-        Logger().debugStream() << "Hotkey::SetHotkey: Typing-unsafe hotkey requested: "
+        DebugLogger() << "Hotkey::SetHotkey: Typing-unsafe hotkey requested: "
                                << mod << " + " << key << " for hotkey " << hotkey.m_name;
         return;
     }

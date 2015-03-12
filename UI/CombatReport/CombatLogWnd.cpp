@@ -115,7 +115,7 @@ void CombatLogWnd::SetLog(int log_id) {
     std::stringstream detailed_description;
     bool available = CombatLogAvailable(log_id);
     if (!available) {
-        Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find combat log with id: " << log_id;
+        ErrorLogger() << "EncyclopediaDetailPanel::Refresh couldn't find combat log with id: " << log_id;
         return;
     }
     const CombatLog& log = GetCombatLog(log_id);

@@ -42,7 +42,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
 
     if (!m_species_name.empty() && !GetSpecies(m_species_name))
-        Logger().debugStream() << "Ship created with invalid species name: " << m_species_name;
+        DebugLogger() << "Ship created with invalid species name: " << m_species_name;
 
     SetOwner(empire_id);
 
@@ -69,7 +69,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
         if (part_names[i] != "") {
             const PartType* part = GetPartType(part_names[i]);
             if (!part) {
-                Logger().errorStream() << "Ship::Ship couldn't get part with name " << part_names[i];
+                ErrorLogger() << "Ship::Ship couldn't get part with name " << part_names[i];
                 continue;
             }
 
@@ -106,7 +106,7 @@ void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id)
         return;
     TemporaryPtr<const Ship> copied_ship = boost::dynamic_pointer_cast<const Ship>(copied_object);
     if (!copied_ship) {
-        Logger().errorStream() << "Ship::Copy passed an object that wasn't a Ship";
+        ErrorLogger() << "Ship::Copy passed an object that wasn't a Ship";
         return;
     }
 
@@ -426,7 +426,7 @@ void Ship::Resupply() {
     Meter* fuel_meter = UniverseObject::GetMeter(METER_FUEL);
     const Meter* max_fuel_meter = UniverseObject::GetMeter(METER_MAX_FUEL);
     if (!fuel_meter || !max_fuel_meter) {
-        Logger().errorStream() << "Ship::Resupply couldn't get fuel meters!";
+        ErrorLogger() << "Ship::Resupply couldn't get fuel meters!";
         return;
     }
 
@@ -435,7 +435,7 @@ void Ship::Resupply() {
 
 void Ship::SetSpecies(const std::string& species_name) {
     if (!GetSpecies(species_name))
-        Logger().errorStream() << "Ship::SetSpecies couldn't get species with name " << species_name;
+        ErrorLogger() << "Ship::SetSpecies couldn't get species with name " << species_name;
     m_species_name = species_name;
 }
 

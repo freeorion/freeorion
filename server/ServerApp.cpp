@@ -69,7 +69,7 @@ namespace {
                 if (subdirectory.find(savedir) == 0){
                     list.push_back(subdirectory.substr(savedir.length()));
                 } else {
-                    Logger().errorStream() << "ListSaveSubfolders Expected a subdirectory of " << GetSaveDir() << " got " << subdirectory;
+                    ErrorLogger() << "ListSaveSubfolders Expected a subdirectory of " << GetSaveDir() << " got " << subdirectory;
                 }
             }
         }
@@ -130,7 +130,7 @@ ServerApp::ServerApp() :
     InitLogger(SERVER_LOG_FILENAME, "%d %p Server : %m%n");
     int options_db_log_priority = PriorityValue(GetOptionsDB().Get<std::string>("log-level"));
     if (options_db_log_priority)
-        Logger().setPriority(options_db_log_priority);
+        SetLoggerPriority(options_db_log_priority);
 
     m_fsm->initiate();
 
@@ -141,7 +141,7 @@ ServerApp::ServerApp() :
 }
 
 ServerApp::~ServerApp() {
-    Logger().debugStream() << "ServerApp::~ServerApp";
+    DebugLogger() << "ServerApp::~ServerApp";
     PythonCleanup();
     CleanupAIs();
     delete m_fsm;
@@ -151,7 +151,7 @@ void ServerApp::operator()()
 { Run(); }
 
 void ServerApp::Exit(int code) {
-    Logger().debugStream() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
+    DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     CleanupAIs();
     exit(code);
 }
@@ -172,7 +172,7 @@ namespace {
 #endif
 
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data, int max_aggression) {
-    Logger().debugStream() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << max_aggression;
+    DebugLogger() << "ServerApp::CreateAIClients: " << player_setup_data.size() << " player (maybe not all AIs) at max aggression: " << max_aggression;
     // check if AI clients are needed for given setup data
     bool need_AIs = false;
     for (int i = 0; i < static_cast<int>(player_setup_data.size()); ++i) {
@@ -214,7 +214,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         // check that AIs have a name, as they will be sorted later based on it
         std::string player_name = psd.m_player_name;
         if (player_name.empty()) {
-            Logger().errorStream() << "ServerApp::CreateAIClients can't create a player with no name.";
+            ErrorLogger() << "ServerApp::CreateAIClients can't create a player with no name.";
             return;
         }
 
@@ -234,19 +234,19 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         args.push_back(GetOptionsDB().GetValueString("binary-serialization"));
         args.push_back("--ai-path");
         args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
-        Logger().debugStream() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
-        Logger().debugStream() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
+        DebugLogger() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
+        DebugLogger() << "ai-path set to '" << GetOptionsDB().Get<std::string>("ai-path") << "'";
         if (!ai_config.empty()) {
             args.push_back("--ai-config");
             args.push_back(ai_config);
-            Logger().debugStream() << "ai-config set to '" << ai_config << "'";
+            DebugLogger() << "ai-config set to '" << ai_config << "'";
         } else {
-            Logger().debugStream() << "ai-config not set.";
+            DebugLogger() << "ai-config not set.";
         }
 
         m_ai_client_processes.push_back(Process(AI_CLIENT_EXE, args));
 
-        Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
+        DebugLogger() << "done starting " << AI_CLIENT_EXE;
     }
 
     // set initial AI process priority to low
@@ -279,7 +279,7 @@ ServerNetworking& ServerApp::Networking()
 
 std::string ServerApp::GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) {
     if(!object) {
-        Logger().errorStream() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
+        ErrorLogger() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
         return std::string();
     }
 
@@ -293,7 +293,7 @@ int ServerApp::GetNewDesignID()
 { return m_universe.GenerateDesignID(); }
 
 void ServerApp::Run() {
-    Logger().debugStream() << "FreeOrion server waiting for network events";
+    DebugLogger() << "FreeOrion server waiting for network events";
     std::cout << "FreeOrion server waiting for network events" << std::endl;
     while (1) {
         if (m_io_service.run_one())
@@ -307,7 +307,7 @@ void ServerApp::CleanupAIs() {
     if (m_ai_client_processes.empty() && m_networking.empty())
         return;
 
-    Logger().debugStream() << "ServerApp::CleanupAIs() telling AIs game is ending";
+    DebugLogger() << "ServerApp::CleanupAIs() telling AIs game is ending";
 
     bool ai_connection_lingering = false;
     try {
@@ -319,28 +319,28 @@ void ServerApp::CleanupAIs() {
             }
         }
     } catch (...) {
-        Logger().errorStream() << "ServerApp::CleanupAIs() exception while sending end game messages";
+        ErrorLogger() << "ServerApp::CleanupAIs() exception while sending end game messages";
     }
 
     if (ai_connection_lingering) {
         // time for AIs to react?
-        Logger().debugStream() << "ServerApp::CleanupAIs() waiting 1 second for AI processes to clean up...";
+        DebugLogger() << "ServerApp::CleanupAIs() waiting 1 second for AI processes to clean up...";
         boost::this_thread::sleep(boost::posix_time::seconds(1));
     }
 
-    Logger().debugStream() << "ServerApp::CleanupAIs() killing " << m_ai_client_processes.size() << " AI clients.";
+    DebugLogger() << "ServerApp::CleanupAIs() killing " << m_ai_client_processes.size() << " AI clients.";
     try {
         for (std::vector<Process>::iterator it = m_ai_client_processes.begin();
             it != m_ai_client_processes.end(); ++it)
         { it->Kill(); }
     } catch (...) {
-        Logger().errorStream() << "ServerApp::CleanupAIs() exception while killing processes";
+        ErrorLogger() << "ServerApp::CleanupAIs() exception while killing processes";
     }
 
     try {
         m_ai_client_processes.clear();
     } catch (...) {
-        Logger().errorStream() << "ServerApp::CleanupAIs() exception while clearing client processes";
+        ErrorLogger() << "ServerApp::CleanupAIs() exception while clearing client processes";
     }
 }
 
@@ -348,12 +348,12 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
     for (std::vector<Process>::iterator it = m_ai_client_processes.begin(); it != m_ai_client_processes.end(); ++it) {
         if(!(it->SetLowPriority(set_to_low))) {
             if (set_to_low)
-                Logger().errorStream() << "ServerApp::SetAIsProcessPriorityToLow : failed to lower priority for AI process";
+                ErrorLogger() << "ServerApp::SetAIsProcessPriorityToLow : failed to lower priority for AI process";
             else
 #ifdef FREEORION_WIN32
-                Logger().errorStream() << "ServerApp::SetAIsProcessPriorityToLow : failed to raise priority for AI process";
+                ErrorLogger() << "ServerApp::SetAIsProcessPriorityToLow : failed to raise priority for AI process";
 #else
-                Logger().errorStream() << "ServerApp::SetAIsProcessPriorityToLow : cannot raise priority for AI process, requires superuser privileges on this system";
+                ErrorLogger() << "ServerApp::SetAIsProcessPriorityToLow : cannot raise priority for AI process, requires superuser privileges on this system";
 #endif
         }
     }
@@ -361,13 +361,13 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
 
 void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
-        Logger().errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID ("
+        ErrorLogger() << "ServerApp::HandleMessage : Received an message with a sender ID ("
                                << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
                                << player_connection->PlayerID() << ".  Ignoring.";
         return;
     }
 
-    //Logger().debugStream() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
+    //DebugLogger() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
 
     switch (msg.Type()) {
     case Message::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg, player_connection));       break;
@@ -391,7 +391,7 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
     
     default:
-        Logger().errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
+        ErrorLogger() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
         m_networking.Disconnect(player_connection);
         break;
     }
@@ -401,10 +401,10 @@ void ServerApp::HandleShutdownMessage(Message& msg, PlayerConnectionPtr player_c
     int player_id = player_connection->PlayerID();
     bool is_host = m_networking.PlayerIsHost(player_id);
     if (!is_host) {
-        Logger().debugStream() << "ServerApp::HandleShutdownMessage rejecting shut down message from non-host player";
+        DebugLogger() << "ServerApp::HandleShutdownMessage rejecting shut down message from non-host player";
         return;
     }
-    Logger().debugStream() << "ServerApp::HandleShutdownMessage shutting down";
+    DebugLogger() << "ServerApp::HandleShutdownMessage shutting down";
     Exit(1);
 }
 
@@ -416,11 +416,11 @@ void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_
     case Message::DEBUG:        break;
     default:
         if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
-            Logger().debugStream() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
+            DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
                                    << "connected player, who is local and so the request is being honored; server shutting down.";
                                    Exit(1);
         } else {
-            Logger().errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
+            ErrorLogger() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                             << msg.Type() << "\" for a non-player Message.  Terminating connection.";
             m_networking.Disconnect(player_connection);
             break;
@@ -435,7 +435,7 @@ void ServerApp::SelectNewHost() {
     int new_host_id = Networking::INVALID_PLAYER_ID;
     int old_host_id = m_networking.HostPlayerID();
 
-    Logger().debugStream() << "ServerApp::SelectNewHost old host id: " << old_host_id;
+    DebugLogger() << "ServerApp::SelectNewHost old host id: " << old_host_id;
 
     // scan through players for a human to host
     for (ServerNetworking::established_iterator players_it = m_networking.established_begin();
@@ -450,7 +450,7 @@ void ServerApp::SelectNewHost() {
 
     if (new_host_id == Networking::INVALID_PLAYER_ID) {
         // couldn't find a host... abort
-        Logger().debugStream() << "ServerApp::SelectNewHost : Host disconnected and couldn't find a replacement.";
+        DebugLogger() << "ServerApp::SelectNewHost : Host disconnected and couldn't find a replacement.";
         m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_UNABLE_TO_SELECT_HOST"), false));
     }
 
@@ -504,10 +504,10 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
                 }
             }
             if (!found_matched_name_connection)
-                Logger().errorStream() << "ServerApp::NewSPGameInit couldn't find player setup data for player with name: " << player_name;
+                ErrorLogger() << "ServerApp::NewSPGameInit couldn't find player setup data for player with name: " << player_name;
         } else {
             // do nothing for any other player type, until another player type is implemented
-            Logger().errorStream() << "ServerApp::NewSPGameInit skipping unsupported client type in player setup data";
+            ErrorLogger() << "ServerApp::NewSPGameInit skipping unsupported client type in player setup data";
         }
     }
 
@@ -548,7 +548,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                 }
             }
             if (!found_matched_id_connection)
-                Logger().errorStream() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: " << player_id;
+                ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: " << player_id;
 
         } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All AI player setup data, as determined from their client type, is
@@ -572,14 +572,14 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                 }
             }
             if (!found_matched_name_connection)
-                Logger().errorStream() << "ServerApp::NewMPGameInit couldn't find player setup data for AI player with name: " << player_name;
+                ErrorLogger() << "ServerApp::NewMPGameInit couldn't find player setup data for AI player with name: " << player_name;
 
         } else {
             // do nothing for any other player type, until another player type
             // is implemented.  human observers don't need to be put into the
             // map of id to player setup data, as they don't need empires to be
             // created for them.
-            Logger().errorStream() << "ServerApp::NewMPGameInit skipping unsupported client type in player setup data";
+            ErrorLogger() << "ServerApp::NewMPGameInit skipping unsupported client type in player setup data";
         }
     }
 
@@ -588,19 +588,19 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
 
 void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
                             const std::map<int, PlayerSetupData>& player_id_setup_data) {
-    Logger().debugStream() << "ServerApp::NewGameInit";
+    DebugLogger() << "ServerApp::NewGameInit";
 
     m_galaxy_setup_data = galaxy_setup_data;
 
     // ensure some reasonable inputs
     if (player_id_setup_data.empty()) {
-        Logger().errorStream() << "ServerApp::NewGameInit passed empty player_id_setup_data.  Aborting";
+        ErrorLogger() << "ServerApp::NewGameInit passed empty player_id_setup_data.  Aborting";
         m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
     // ensure number of players connected and for which data are provided are consistent
     if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size())
-        Logger().debugStream() << "ServerApp::NewGameInit has " << m_networking.NumEstablishedPlayers() << " established players but " << player_id_setup_data.size() << " entries in player setup data.";
+        DebugLogger() << "ServerApp::NewGameInit has " << m_networking.NumEstablishedPlayers() << " established players but " << player_id_setup_data.size() << " entries in player setup data.";
 
     // validate some connection info / determine which players need empires created
     std::map<int, PlayerSetupData> active_players_id_setup_data;
@@ -613,20 +613,20 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
         std::map<int, PlayerSetupData>::const_iterator player_id_setup_data_it = player_id_setup_data.find(player_id);
         if (player_id_setup_data_it == player_id_setup_data.end()) {
-            Logger().errorStream() << "ServerApp::NewGameInit couldn't find player setup data for player with ID " << player_id;
+            ErrorLogger() << "ServerApp::NewGameInit couldn't find player setup data for player with ID " << player_id;
             return;
         }
         const PlayerSetupData& psd = player_id_setup_data_it->second;
         if (psd.m_client_type != client_type) {
-            Logger().errorStream() << "ServerApp::NewGameInit found inconsistent client type between player connection (" << client_type << ") and player setup data (" << psd.m_client_type << ")";
+            ErrorLogger() << "ServerApp::NewGameInit found inconsistent client type between player connection (" << client_type << ") and player setup data (" << psd.m_client_type << ")";
             return;
         }
         if (psd.m_player_name != player_connection->PlayerName()) {
-            Logger().errorStream() << "ServerApp::NewGameInit found inconsistent player names: " << psd.m_player_name << " and " << player_connection->PlayerName();
+            ErrorLogger() << "ServerApp::NewGameInit found inconsistent player names: " << psd.m_player_name << " and " << player_connection->PlayerName();
             return;
         }
         if (player_connection->PlayerName().empty()) {
-            Logger().errorStream() << "ServerApp::NewGameInit found player connection with empty name!";
+            ErrorLogger() << "ServerApp::NewGameInit found player connection with empty name!";
             return;
         }
 
@@ -637,12 +637,12 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
         {
             // do nothing
         } else {
-            Logger().errorStream() << "ServerApp::NewGameInit found player connection with unsupported client type.";
+            ErrorLogger() << "ServerApp::NewGameInit found player connection with unsupported client type.";
         }
     }
 
     if (active_players_id_setup_data.empty()) {
-        Logger().errorStream() << "ServerApp::NewGameInit found no active players!";
+        ErrorLogger() << "ServerApp::NewGameInit found no active players!";
         m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
@@ -659,7 +659,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
 
     // create universe and empires for players
-    Logger().debugStream() << "ServerApp::NewGameInit: Creating Universe";
+    DebugLogger() << "ServerApp::NewGameInit: Creating Universe";
     m_networking.SendMessage(TurnProgressMessage(Message::GENERATING_UNIVERSE));
 
 
@@ -692,7 +692,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
 
     // compile information about players to send out to other players at start of game.
-    Logger().debugStream() << "ServerApp::NewGameInit: Compiling PlayerInfo for each player";
+    DebugLogger() << "ServerApp::NewGameInit: Compiling PlayerInfo for each player";
     std::map<int, PlayerInfo> player_info_map;
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
@@ -708,7 +708,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
 
     // update visibility information to ensure data sent out is up-to-date
-    Logger().debugStream() << "ServerApp::NewGameInit: Updating first-turn Empire stuff";
+    DebugLogger() << "ServerApp::NewGameInit: Updating first-turn Empire stuff";
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
     
     // initialize empire owned object counters
@@ -733,7 +733,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
     m_universe.UpdateStatRecords();
 
     // send new game start messages
-    Logger().debugStream() << "ServerApp::NewGameInit: Sending GameStartMessages to players";
+    DebugLogger() << "ServerApp::NewGameInit: Sending GameStartMessages to players";
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
@@ -782,7 +782,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
             }
         } else {
             // do nothing for any other player type, until another player type is implemented
-            Logger().errorStream() << "ServerApp::LoadSPGameInit skipping unsupported client type in player save game data";
+            ErrorLogger() << "ServerApp::LoadSPGameInit skipping unsupported client type in player save game data";
         }
     }
 
@@ -790,17 +790,17 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
 }
 
 void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection){
-    Logger().debugStream() << "ServerApp::UpdateSavePreviews: ServerApp UpdateSavePreviews";
+    DebugLogger() << "ServerApp::UpdateSavePreviews: ServerApp UpdateSavePreviews";
 
     std::string directory_name;
     ExtractMessageData(msg, directory_name);
 
-    Logger().debugStream() << "ServerApp::UpdateSavePreviews: Got preview request for directory: " << directory_name;
+    DebugLogger() << "ServerApp::UpdateSavePreviews: Got preview request for directory: " << directory_name;
     
     fs::path directory = GetSaveDir() / directory_name;
     // Do not allow a relative path to lead outside the save directory.
     if(!IsInside(directory, GetSaveDir())) {
-        Logger().errorStream() << "ServerApp::UpdateSavePreviews: Tried to load previews from "
+        ErrorLogger() << "ServerApp::UpdateSavePreviews: Tried to load previews from "
                                << directory_name
                                << " which is outside the allowed save directory. Defaulted to the save directory, "
                                << directory;
@@ -812,9 +812,9 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     preview_information.folder = directory_name;
     ListSaveSubdirectories( preview_information.subdirectories);
     LoadSaveGamePreviews(directory_name, m_single_player_game? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION, preview_information.previews);
-    Logger().debugStream() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size() << " previews in response.";
+    DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size() << " previews in response.";
     player_connection->SendMessage(DispatchSavePreviewsMessage(player_connection->PlayerID(), preview_information));
-    Logger().debugStream() << "ServerApp::UpdateSavePreviews: Previews sent.";
+    DebugLogger() << "ServerApp::UpdateSavePreviews: Previews sent.";
 }
 
 namespace {
@@ -824,13 +824,13 @@ namespace {
         // matching what this PlayerSetupData say
         ServerNetworking::const_established_iterator established_player_it = sn.GetPlayer(id);
         if (established_player_it == sn.established_end()) {
-            Logger().errorStream() << "ServerApp::LoadMPGameInit couldn't find player connection for "
+            ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find player connection for "
                                     << "human player setup data with player id: " << id;
             return false;
         }
         const PlayerConnectionPtr player_connection = *established_player_it;
         if (player_connection->GetClientType() != Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            Logger().errorStream() << "ServerApp::LoadMPGameInit found player connection of wrong type "
+            ErrorLogger() << "ServerApp::LoadMPGameInit found player connection of wrong type "
                                     << "for human player setup data with player id: " << id;
             return false;
         }
@@ -860,7 +860,7 @@ namespace {
     {
         // safety check: setup data has valid empire assigned
         if (psd.m_save_game_empire_id == ALL_EMPIRES) {
-            Logger().errorStream() << "ServerApp::LoadMPGameInit got player setup data for human player "
+            ErrorLogger() << "ServerApp::LoadMPGameInit got player setup data for human player "
                                     << "with no empire assigned...";
             return;
         }
@@ -875,7 +875,7 @@ namespace {
         if (index != -1) {
             player_id_to_save_game_data_index.push_back(std::make_pair(setup_data_player_id, index));
         } else {
-            Logger().errorStream() << "ServerApp::LoadMPGameInit couldn't find save game data for "
+            ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
                                    << "human player with assigned empire id: " << psd.m_save_game_empire_id;
         }
     }
@@ -917,7 +917,7 @@ namespace {
 
         // safety check: setup data has valid empire assigned
         if (psd.m_save_game_empire_id == ALL_EMPIRES) {
-            Logger().errorStream() << "ServerApp::LoadMPGameInit got player setup data for AI player "
+            ErrorLogger() << "ServerApp::LoadMPGameInit got player setup data for AI player "
                                     << "with no empire assigned...";
             return;
         }
@@ -925,11 +925,11 @@ namespace {
         // get ID of name-matched AI player
         int player_id = AIPlayerIDWithName(sn, psd.m_player_name);
         if (player_id == Networking::INVALID_PLAYER_ID) {
-            Logger().errorStream() << "ServerApp::LoadMPGameInit couldn't find expected AI player with name " << psd.m_player_name;
+            ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find expected AI player with name " << psd.m_player_name;
             return;
         }
 
-        Logger().debugStream() << "ServerApp::LoadMPGameInit matched player named " << psd.m_player_name
+        DebugLogger() << "ServerApp::LoadMPGameInit matched player named " << psd.m_player_name
                                << " to setup data player id " << player_id
                                << " with setup data empire id " << psd.m_save_game_empire_id;
 
@@ -938,7 +938,7 @@ namespace {
         if (index != -1) {
             player_id_to_save_game_data_index.push_back(std::make_pair(player_id, index));
         } else {
-            Logger().errorStream() << "ServerApp::LoadMPGameInit couldn't find save game data for "
+            ErrorLogger() << "ServerApp::LoadMPGameInit couldn't find save game data for "
                                    << "human player with assigned empire id: " << psd.m_save_game_empire_id;
         }
     }
@@ -994,21 +994,21 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                              const std::vector<std::pair<int, int> >& player_id_to_save_game_data_index,
                              boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
-    Logger().debugStream() << "ServerApp::LoadGameInit";
+    DebugLogger() << "ServerApp::LoadGameInit";
 
     // ensure some reasonable inputs
     if (player_save_game_data.empty()) {
-        Logger().errorStream() << "ServerApp::LoadGameInit passed empty player save game data.  Aborting";
+        ErrorLogger() << "ServerApp::LoadGameInit passed empty player save game data.  Aborting";
         m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
 
     // ensure number of players connected and for which data are provided are consistent
     if (player_id_to_save_game_data_index.size() != player_save_game_data.size()) {
-        Logger().errorStream() << "ServerApp::LoadGameInit passed index mapping and player save game data are of different sizes...";
+        ErrorLogger() << "ServerApp::LoadGameInit passed index mapping and player save game data are of different sizes...";
     }
     if (m_networking.NumEstablishedPlayers() != player_save_game_data.size()) {
-        Logger().errorStream() << "ServerApp::LoadGameInit has " << m_networking.NumEstablishedPlayers() << " established players but " << player_save_game_data.size() << " entries in player save game data.  Could be ok... so not aborting, but might crash";
+        ErrorLogger() << "ServerApp::LoadGameInit has " << m_networking.NumEstablishedPlayers() << " established players but " << player_save_game_data.size() << " entries in player save game data.  Could be ok... so not aborting, but might crash";
     }
 
     // validate some connection info
@@ -1020,10 +1020,10 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         if (client_type != Networking::CLIENT_TYPE_AI_PLAYER &&
             client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER)
         {
-            Logger().errorStream() << "ServerApp::LoadGameInit found player connection with unsupported client type.";
+            ErrorLogger() << "ServerApp::LoadGameInit found player connection with unsupported client type.";
         }
         if (player_connection->PlayerName().empty()) {
-            Logger().errorStream() << "ServerApp::LoadGameInit found player connection with empty name!";
+            ErrorLogger() << "ServerApp::LoadGameInit found player connection with empty name!";
         }
     }
 
@@ -1048,7 +1048,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         const PlayerConnectionPtr player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
         if (player_id == Networking::INVALID_PLAYER_ID) {
-            Logger().errorStream() << "LoadGameInit got invalid player id from connection";
+            ErrorLogger() << "LoadGameInit got invalid player id from connection";
             continue;
         }
 
@@ -1065,7 +1065,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             break;
         }
         if (player_save_game_data_index == -1) {
-            Logger().debugStream() << "No save game data index for player with id " << player_id;
+            DebugLogger() << "No save game data index for player with id " << player_id;
             continue;
         }
 
@@ -1077,7 +1077,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             empire_id = psgd.m_empire_id;               // can't use GetPlayerEmpireID here because m_player_empire_ids hasn't been set up yet.
             player_id_save_game_data[player_id] = psgd; // store by player ID for easier access later
         } catch (...) {
-            Logger().errorStream() << "ServerApp::LoadGameInit couldn't find save game data with index " << player_save_game_data_index;
+            ErrorLogger() << "ServerApp::LoadGameInit couldn't find save game data with index " << player_save_game_data_index;
             continue;
         }
 
@@ -1093,7 +1093,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         if (GetEmpire(empire_id)) {
             AddEmpireTurn(empire_id);
         } else {
-            Logger().errorStream() << "ServerApp::LoadGameInit couldn't find empire with id " << empire_id << " to add to turn processing";
+            ErrorLogger() << "ServerApp::LoadGameInit couldn't find empire with id " << empire_id << " to add to turn processing";
         }
     }
 
@@ -1119,7 +1119,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 
     // compile information about players to send out to other players at start of game.
-    Logger().debugStream() << "ServerApp::CommonGameInit: Compiling PlayerInfo for each player";
+    DebugLogger() << "ServerApp::CommonGameInit: Compiling PlayerInfo for each player";
     std::map<int, PlayerInfo> player_info_map;
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
@@ -1129,16 +1129,16 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         int empire_id = PlayerEmpireID(player_id);
         if (empire_id == ALL_EMPIRES)
-            Logger().errorStream() << "ServerApp::CommonGameInit: couldn't find an empire for player with id " << player_id;
+            ErrorLogger() << "ServerApp::CommonGameInit: couldn't find an empire for player with id " << player_id;
 
 
         // validate some connection info
         Networking::ClientType client_type = player_connection->GetClientType();
         if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            Logger().errorStream() << "ServerApp::CommonGameInit found player connection with unsupported client type.";
+            ErrorLogger() << "ServerApp::CommonGameInit found player connection with unsupported client type.";
         }
         if (player_connection->PlayerName().empty()) {
-            Logger().errorStream() << "ServerApp::CommonGameInit found player connection with empty name!";
+            ErrorLogger() << "ServerApp::CommonGameInit found player connection with empty name!";
         }
 
 
@@ -1151,7 +1151,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 
     // assemble player state information, and send game start messages
-    Logger().debugStream() << "ServerApp::CommonGameInit: Sending GameStartMessages to players";
+    DebugLogger() << "ServerApp::CommonGameInit: Sending GameStartMessages to players";
 
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
@@ -1172,7 +1172,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         // get empire ID for player. safety check on it.
         int empire_id = PlayerEmpireID(player_id);
         if (empire_id != psgd.m_empire_id) {
-            Logger().errorStream() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
+            ErrorLogger() << "LoadGameInit got inconsistent empire ids between player save game data and result of PlayerEmpireID";
         }
 
         // restore saved orders.  these will be re-executed on client and
@@ -1209,7 +1209,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             player_info_map, m_galaxy_setup_data));
         } else {
-            Logger().errorStream() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
+            ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
     }
 }
@@ -1232,7 +1232,7 @@ int ServerApp::EmpirePlayerID(int empire_id) const {
 bool ServerApp::IsLocalHumanPlayer(int player_id) {
     ServerNetworking::const_established_iterator it = m_networking.GetPlayer(player_id);
     if (it == m_networking.established_end()) {
-        Logger().errorStream() << "ServerApp::IsLocalHumanPlayer : could not get player connection for player id " << player_id;
+        ErrorLogger() << "ServerApp::IsLocalHumanPlayer : could not get player connection for player id " << player_id;
         return false;
     }
 
@@ -1261,14 +1261,14 @@ void ServerApp::ClearEmpireTurnOrders() {
 
 bool ServerApp::AllOrdersReceived() {
     // debug output
-    Logger().debugStream() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn;
+    DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn;
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin();
          it != m_turn_sequence.end(); ++it)
     {
         if (!it->second)
-            Logger().debugStream() << " ... no orders from empire id: " << it->first;
+            DebugLogger() << " ... no orders from empire id: " << it->first;
         else
-            Logger().debugStream() << " ... have orders from empire id: " << it->first;
+            DebugLogger() << " ... have orders from empire id: " << it->first;
     }
 
     // Loop through to find empire ID and check for valid orders pointer
@@ -1306,7 +1306,7 @@ namespace {
                 int player_id =         player_connection->PlayerID();
                 int empire_id =         server_app->PlayerEmpireID(player_id);
                 if (empire_id == ALL_EMPIRES || player_id == Networking::INVALID_PLAYER_ID)
-                    Logger().errorStream() << "HumanControlledEmpires couldn't get a human player id or empire id";
+                    ErrorLogger() << "HumanControlledEmpires couldn't get a human player id or empire id";
                 else
                     retval.insert(empire_id);
             }
@@ -1680,7 +1680,7 @@ namespace {
                      object_it != object_ids.end(); ++object_it)
                 {
                     int object_id = *object_it;
-                    //Logger().debugStream() << "Setting knowledge of destroyed object " << object_id
+                    //DebugLogger() << "Setting knowledge of destroyed object " << object_id
                     //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
 
@@ -1720,7 +1720,7 @@ namespace {
                      empire_it != empire_ids.end(); ++empire_it)
                 {
                     int empire_id = *empire_it;
-                    //Logger().debugStream() << "Setting knowledge of destroyed object " << fleet_id
+                    //DebugLogger() << "Setting knowledge of destroyed object " << fleet_id
                     //                       << " for empire " << empire_id;
                     universe.SetEmpireKnowledgeOfDestroyedObject(fleet_id, empire_id);
                 }
@@ -1774,11 +1774,11 @@ namespace {
                 for (std::set<int>::const_iterator dest_obj_it = destroyed_object_ids.begin();
                      dest_obj_it != destroyed_object_ids.end(); ++dest_obj_it)
                 {
-                    //Logger().debugStream() << "Creating destroyed object sitrep for empire " << empire_id << " and object " << *dest_obj_it;
+                    //DebugLogger() << "Creating destroyed object sitrep for empire " << empire_id << " and object " << *dest_obj_it;
                     //if (TemporaryPtr<UniverseObject> obj = GetEmpireKnownObject(*dest_obj_it, empire_id)) {
-                    //    Logger().debugStream() << "Object known to empire: " << obj->Dump();
+                    //    DebugLogger() << "Object known to empire: " << obj->Dump();
                     //} else {
-                    //    Logger().debugStream() << "Object not known to empire";
+                    //    DebugLogger() << "Object not known to empire";
                     //}
                     empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(*dest_obj_it, combat_info.system_id,
                                                                              empire_id));
@@ -1791,30 +1791,30 @@ namespace {
                  object_it != combat_info.damaged_object_ids.end(); ++object_it)
             {
                 int damaged_object_id = *object_it;
-                //Logger().debugStream() << "Checking object " << damaged_object_id << " for damaged sitrep";
+                //DebugLogger() << "Checking object " << damaged_object_id << " for damaged sitrep";
                 // is object destroyed? If so, don't need a damage sitrep
                 if (combat_info.destroyed_object_ids.find(damaged_object_id) != combat_info.destroyed_object_ids.end()) {
-                    //Logger().debugStream() << "Object is destroyed and doesn't need a sitrep.";
+                    //DebugLogger() << "Object is destroyed and doesn't need a sitrep.";
                     continue;
                 }
                 // which empires know about this object?
                 for (std::map<int, ObjectMap>::const_iterator empire_it = combat_info.empire_known_objects.begin();
                      empire_it != combat_info.empire_known_objects.end(); ++empire_it)
                 {
-                    //Logger().debugStream() << "Checking if empire " << empire_it->first << " knows about the object.";
+                    //DebugLogger() << "Checking if empire " << empire_it->first << " knows about the object.";
                     // does this empire know about this object?
                     const ObjectMap& objects = empire_it->second;
                     if (!objects.Object(damaged_object_id)) {
-                        //Logger().debugStream() << "Nope.";
+                        //DebugLogger() << "Nope.";
                         continue;
                     }
-                    //Logger().debugStream() << "Yep.";
+                    //DebugLogger() << "Yep.";
                     // empire knows about object, so generate a sitrep about it
                     int empire_id = empire_it->first;
                     Empire* empire = GetEmpire(empire_id);
                     if (!empire)
                         continue;
-                    //Logger().debugStream() << "Creating sitrep.";
+                    //DebugLogger() << "Creating sitrep.";
                     empire->AddSitRepEntry(CreateCombatDamagedObjectSitRep(damaged_object_id, combat_info.system_id,
                                                                            empire_id));
                 }
@@ -1941,37 +1941,37 @@ namespace {
     bool ColonizePlanet(int ship_id, int planet_id) {
         TemporaryPtr<Ship> ship = GetShip(ship_id);
         if (!ship) {
-            Logger().errorStream() << "ColonizePlanet couldn't get ship with id " << ship_id;
+            ErrorLogger() << "ColonizePlanet couldn't get ship with id " << ship_id;
             return false;
         }
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
-            Logger().errorStream() << "ColonizePlanet couldn't get planet with id " << planet_id;
+            ErrorLogger() << "ColonizePlanet couldn't get planet with id " << planet_id;
             return false;
         }
 
         // get species to colonize with: species of ship
         const std::string& species_name = ship->SpeciesName();
         if (species_name.empty()) {
-            Logger().errorStream() << "ColonizePlanet ship has no species";
+            ErrorLogger() << "ColonizePlanet ship has no species";
             return false;
         }
 
         const ShipDesign* design = ship->Design();
         if (!design) {
-            Logger().errorStream() << "ColonizePlanet couldn't find ship's design!";
+            ErrorLogger() << "ColonizePlanet couldn't find ship's design!";
             return false;
         }
         double colonist_capacity = design->ColonyCapacity();
 
         if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
-            Logger().errorStream() << "ColonizePlanet nonzero colonist capacity and planet that ship's species can't colonize";
+            ErrorLogger() << "ColonizePlanet nonzero colonist capacity and planet that ship's species can't colonize";
             return false;
         }
 
         // get empire to give ownership of planet to
         if (ship->Unowned()) {
-            Logger().errorStream() << "ColonizePlanet couldn't get an empire to colonize with";
+            ErrorLogger() << "ColonizePlanet couldn't get an empire to colonize with";
             return false;
         }
         int empire_id = ship->Owner();
@@ -1981,7 +1981,7 @@ namespace {
         // colonize planet by calling Planet class Colonize member function
         // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
         if (!planet->Colonize(empire_id, species_name, colonist_capacity)) {
-            Logger().errorStream() << "ColonizePlanet: couldn't colonize planet";
+            ErrorLogger() << "ColonizePlanet: couldn't colonize planet";
             return false;
         }
 
@@ -2062,13 +2062,13 @@ namespace {
             int planet_id = planet_it->first;
             TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
             if (!planet) {
-                Logger().errorStream() << "HandleColonization couldn't get planet with id " << planet_id;
+                ErrorLogger() << "HandleColonization couldn't get planet with id " << planet_id;
                 continue;
             }
             int system_id = planet->SystemID();
             TemporaryPtr<const System> system = GetSystem(system_id);
             if (!system) {
-                Logger().errorStream() << "HandleColonization couldn't get system with id " << system_id;
+                ErrorLogger() << "HandleColonization couldn't get system with id " << system_id;
                 continue;
             }
 
@@ -2112,7 +2112,7 @@ namespace {
             // sitrep about colonization
             Empire* empire = GetEmpire(colonizing_empire_id);
             if (!empire) {
-                Logger().errorStream() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
+                ErrorLogger() << "HandleColonization couldn't get empire with id " << colonizing_empire_id;
             } else {
                 empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet_id));
             }
@@ -2191,7 +2191,7 @@ namespace {
             if (system)
                 system->Remove(ship->ID());
 
-            Logger().debugStream() << "HandleInvasion has accounted for "<< design->TroopCapacity()
+            DebugLogger() << "HandleInvasion has accounted for "<< design->TroopCapacity()
                                    << " troops to invade " << planet->Name()
                                    << " and is destroying ship " << ship->ID()
                                    << " named " << ship->Name();
@@ -2207,7 +2207,7 @@ namespace {
              planet_it != planets.end(); ++planet_it) {
             TemporaryPtr<Planet> planet = *planet_it;
             if (!planet) {
-                Logger().errorStream() << "HandleInvasion couldn't get planet";
+                ErrorLogger() << "HandleInvasion couldn't get planet";
                 continue;
             }
             if (planet->CurrentMeterValue(METER_TROOPS) > 0.0) {
@@ -2241,17 +2241,17 @@ namespace {
                     continue;   // if troops all belong to planet owner, not a combat.
 
                 } else {
-                    //Logger().debugStream() << "Ground combat on " << planet->Name() << " was unopposed";
+                    //DebugLogger() << "Ground combat on " << planet->Name() << " was unopposed";
                     if (planet_initial_owner_id != ALL_EMPIRES)
                         all_involved_empires.insert(planet_initial_owner_id);
                     if (empire_with_troops_id != ALL_EMPIRES)
                         all_involved_empires.insert(empire_with_troops_id);
                 }
             } else {
-                Logger().debugStream() << "Ground combat troops on " << planet->Name() << " :";
+                DebugLogger() << "Ground combat troops on " << planet->Name() << " :";
                 for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
                      empire_it != empires_troops.end(); ++empire_it)
-                { Logger().debugStream() << " ... empire: " << empire_it->first << " : " << empire_it->second; }
+                { DebugLogger() << " ... empire: " << empire_it->first << " : " << empire_it->second; }
 
                 // create sitreps for all empires involved in battle
                 for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
@@ -2290,26 +2290,26 @@ namespace {
                             empire->AddSitRepEntry(CreatePlanetCapturedSitRep(planet_id, victor_id));
                     }
 
-                    Logger().debugStream() << "Empire conquers planet";
+                    DebugLogger() << "Empire conquers planet";
                     for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
                          empire_it != empires_troops.end(); ++empire_it)
-                    { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+                    { DebugLogger() << " empire: " << empire_it->first << ": " << empire_it->second; }
 
 
                 } else if (!planet->Unowned() && victor_id == ALL_EMPIRES) {
                     planet->Conquer(ALL_EMPIRES);
-                    Logger().debugStream() << "Independents conquer planet";
+                    DebugLogger() << "Independents conquer planet";
                     for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
                          empire_it != empires_troops.end(); ++empire_it)
-                    { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+                    { DebugLogger() << " empire: " << empire_it->first << ": " << empire_it->second; }
 
                     // TODO: planet lost to rebels sitrep
                 } else {
                     // defender held theh planet
-                    Logger().debugStream() << "Defender holds planet";
+                    DebugLogger() << "Defender holds planet";
                     for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
                          empire_it != empires_troops.end(); ++empire_it)
-                    { Logger().debugStream() << " empire: " << empire_it->first << ": " << empire_it->second; }
+                    { DebugLogger() << " empire: " << empire_it->first << ": " << empire_it->second; }
                 }
 
                 // regardless of whether battle resulted in conquering, it did
@@ -2453,7 +2453,7 @@ namespace {
         //    TemporaryPtr<Ship> ship = *it;
         //    if (!ship->OrderedScrapped())
         //        continue;
-        //    Logger().debugStream() << "... ship: " << ship->ID() << " ordered scrapped";
+        //    DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
         //}
         //// end debug
 
@@ -2465,7 +2465,7 @@ namespace {
             if (!ship->OrderedScrapped())
                 continue;
 
-            Logger().debugStream() << "... ship: " << ship->ID() << " ordered scrapped";
+            DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
 
             TemporaryPtr<System> system = GetSystem(ship->SystemID());
             if (system)
@@ -2540,7 +2540,7 @@ namespace {
              it != GetUniverse().Objects().end<Planet>(); ++it)
         {
             if (it->IsAboutToBeBombarded()) {
-                //Logger().debugStream() << "CleanUpBombardmentStateInfo: " << it->Name() << " was about to be bombarded";
+                //DebugLogger() << "CleanUpBombardmentStateInfo: " << it->Name() << " was about to be bombarded";
                 it->ResetIsAboutToBeBombarded();
             }
         }
@@ -2581,7 +2581,7 @@ void ServerApp::PreCombatProcessTurns() {
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
 
 
-    Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
+    DebugLogger() << "ServerApp::ProcessTurns executing orders";
 
     // inform players of order execution
     m_networking.SendMessage(TurnProgressMessage(Message::PROCESSING_ORDERS));
@@ -2594,7 +2594,7 @@ void ServerApp::PreCombatProcessTurns() {
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         OrderSet* order_set = it->second;
         if (!order_set) {
-            Logger().debugStream() << "No OrderSet for empire " << it->first;
+            DebugLogger() << "No OrderSet for empire " << it->first;
             continue;
         }
         for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it)
@@ -2620,20 +2620,20 @@ void ServerApp::PreCombatProcessTurns() {
     // player notifications
     m_networking.SendMessage(TurnProgressMessage(Message::COLONIZE_AND_SCRAP));
 
-    Logger().debugStream() << "ServerApp::ProcessTurns colonization";
+    DebugLogger() << "ServerApp::ProcessTurns colonization";
     HandleColonization();
 
-    Logger().debugStream() << "ServerApp::ProcessTurns invasion";
+    DebugLogger() << "ServerApp::ProcessTurns invasion";
     HandleInvasion();
 
-    Logger().debugStream() << "ServerApp::ProcessTurns gifting";
+    DebugLogger() << "ServerApp::ProcessTurns gifting";
     HandleGifting();
 
-    Logger().debugStream() << "ServerApp::ProcessTurns scrapping";
+    DebugLogger() << "ServerApp::ProcessTurns scrapping";
     HandleScrapping();
 
 
-    Logger().debugStream() << "ServerApp::ProcessTurns movement";
+    DebugLogger() << "ServerApp::ProcessTurns movement";
     // process movement phase
 
     // player notifications
@@ -2691,7 +2691,7 @@ void ServerApp::PreCombatProcessTurns() {
 
 void ServerApp::ProcessCombats() {
     ScopedTimer timer("ServerApp::ProcessCombats", true);
-    Logger().debugStream() << "ServerApp::ProcessCombats";
+    DebugLogger() << "ServerApp::ProcessCombats";
     m_networking.SendMessage(TurnProgressMessage(Message::COMBAT));
 
     std::set<int> human_controlled_empire_ids = HumanControlledEmpires(this, m_networking);
@@ -2715,11 +2715,11 @@ void ServerApp::ProcessCombats() {
 
         //// DEBUG
         //const System* combat_system = combat_info.GetSystem();
-        //Logger().debugStream() << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
-        //Logger().debugStream() << combat_info.objects.Dump();
+        //DebugLogger() << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
+        //DebugLogger() << combat_info.objects.Dump();
         //for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin(); eko_it != combat_info.empire_known_objects.end(); ++eko_it) {
-        //    Logger().debugStream() << "known objects for empire " << eko_it->first;
-        //    Logger().debugStream() << eko_it->second.Dump();
+        //    DebugLogger() << "known objects for empire " << eko_it->first;
+        //    DebugLogger() << eko_it->second.Dump();
         //}
         //// END DEBUG
 
@@ -2828,12 +2828,12 @@ void ServerApp::PostCombatProcessTurns() {
 
     // notify players that production and growth is being processed
     m_networking.SendMessage(TurnProgressMessage(Message::EMPIRE_PRODUCTION));
-    Logger().debugStream() << "ServerApp::PostCombatProcessTurns effects and meter updates";
+    DebugLogger() << "ServerApp::PostCombatProcessTurns effects and meter updates";
 
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
-        Logger().debugStream() << objects.Dump();
+        DebugLogger() << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
+        DebugLogger() << objects.Dump();
     }
 
     // execute all effects and update meters prior to production, research, etc.
@@ -2845,12 +2845,12 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.InitializeSystemGraph();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
-        Logger().debugStream() << objects.Dump();
+        DebugLogger() << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
+        DebugLogger() << objects.Dump();
     }
 
 
-    Logger().debugStream() << "ServerApp::PostCombatProcessTurns empire resources updates";
+    DebugLogger() << "ServerApp::PostCombatProcessTurns empire resources updates";
 
 
     // Determine how much of each resource is available, and determine how to
@@ -2879,11 +2879,11 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
-        Logger().debugStream() << objects.Dump();
+        DebugLogger() << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
+        DebugLogger() << objects.Dump();
     }
 
-    Logger().debugStream() << "ServerApp::PostCombatProcessTurns queue progress checking";
+    DebugLogger() << "ServerApp::PostCombatProcessTurns queue progress checking";
 
     // Consume distributed resources to planets and on queues, create new
     // objects for completed production and give techs to empires that have
@@ -2899,8 +2899,8 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
-        Logger().debugStream() << objects.Dump();
+        DebugLogger() << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
+        DebugLogger() << objects.Dump();
     }
 
     // Execute meter-related effects on objects created this turn, so that new
@@ -2910,8 +2910,8 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.ApplyMeterEffectsAndUpdateMeters();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
-        Logger().debugStream() << objects.Dump();
+        DebugLogger() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
+        DebugLogger() << objects.Dump();
     }
 
     // Population growth or loss, resource current meter growth, etc.
@@ -2922,8 +2922,8 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
-        Logger().debugStream() << objects.Dump();
+        DebugLogger() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
+        DebugLogger() << objects.Dump();
     }
 
     // store initial values of meters for this turn.
@@ -2963,15 +2963,15 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
-        Logger().debugStream() << objects.Dump();
+        DebugLogger() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
+        DebugLogger() << objects.Dump();
     }
 
 
     // update current turn number so that following visibility updates and info
     // sent to players will have updated turn associated with them
     ++m_current_turn;
-    Logger().debugStream() << "ServerApp::PostCombatProcessTurns Turn number incremented to " << m_current_turn;
+    DebugLogger() << "ServerApp::PostCombatProcessTurns Turn number incremented to " << m_current_turn;
 
 
     // new turn visibility update
@@ -3003,7 +3003,7 @@ void ServerApp::PostCombatProcessTurns() {
                                         m_networking.PlayerIsHost(player_id));
     }
 
-    Logger().debugStream() << "ServerApp::PostCombatProcessTurns Sending turn updates to players";
+    DebugLogger() << "ServerApp::PostCombatProcessTurns Sending turn updates to players";
     // send new-turn updates to all players
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
@@ -3015,7 +3015,7 @@ void ServerApp::PostCombatProcessTurns() {
                                               m_universe,               GetSpeciesManager(),
                                               GetCombatLogManager(),    players));
     }
-    Logger().debugStream() << "ServerApp::PostCombatProcessTurns done";
+    DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }
 
 void ServerApp::CheckForEmpireEliminationOrVictory() {
@@ -3028,11 +3028,11 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //    int empire_id = it->first;
     //    if (empires.Eliminated(empire_id))
     //        continue;   // don't double-eliminate an empire
-    //    Logger().debugStream() << "empire " << empire_id << " not yet eliminated";
+    //    DebugLogger() << "empire " << empire_id << " not yet eliminated";
 
     //    if (!EmpireEliminated(empire_id))
     //        continue;
-    //    Logger().debugStream() << " ... but IS eliminated this turn";
+    //    DebugLogger() << " ... but IS eliminated this turn";
 
     //    int elim_player_id = EmpirePlayerID(empire_id);
     //    eliminations[elim_player_id] = empire_id;
@@ -3093,7 +3093,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
 
     //                Empire* empire = GetPlayerEmpire(victor_player_id);
     //                if (!empire) {
-    //                    Logger().errorStream() << "Trying to grant victory to a missing empire!";
+    //                    ErrorLogger() << "Trying to grant victory to a missing empire!";
     //                    continue;
     //                }
     //                const std::string& victor_empire_name = empire->Name();
@@ -3128,7 +3128,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //    int elim_empire_id = it->second;
     //    Empire* empire = empires.Lookup(elim_empire_id);
     //    if (!empire) {
-    //        Logger().errorStream() << "Trying to eliminate a missing empire!";
+    //        ErrorLogger() << "Trying to eliminate a missing empire!";
     //        continue;
     //    }
     //    const std::string& elim_empire_name = empire->Name();
@@ -3156,7 +3156,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //    for (std::vector<UniverseObject*>::iterator obj_it = object_vec.begin(); obj_it != object_vec.end(); ++obj_it)
     //        (*obj_it)->SetOwner(ALL_EMPIRES);
 
-    //    Logger().debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
+    //    DebugLogger() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
     //    m_eliminated_players.insert(it->first);
     //    m_networking.Disconnect(it->first);
 

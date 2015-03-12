@@ -41,7 +41,7 @@ System::System(StarType star, const std::string& name, double x, double y) :
 {
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
 
-    //Logger().debugStream() << "System::System(" << star << ", " << orbits << ", " << name << ", " << x << ", " << y << ")";
+    //DebugLogger() << "System::System(" << star << ", " << orbits << ", " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
         throw std::invalid_argument("System::System : Attempted to create a system \"" +
                                     Name() + "\" with an invalid star type.");
@@ -62,7 +62,7 @@ System::System(StarType star, const std::map<int, bool>& lanes_and_holes,
 {
     m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
 
-    //Logger().debugStream() << "System::System(" << star << ", " << orbits << ", (StarlaneMap), " << name << ", " << x << ", " << y << ")";
+    //DebugLogger() << "System::System(" << star << ", " << orbits << ", (StarlaneMap), " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
         throw std::invalid_argument("System::System : Attempted to create a system \"" +
                                     Name() + "\" with an invalid star type.");
@@ -90,7 +90,7 @@ void System::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
         return;
     TemporaryPtr<const System> copied_system = boost::dynamic_pointer_cast<const System>(copied_object);
     if (!copied_system) {
-        Logger().errorStream() << "System::Copy passed an object that wasn't a System";
+        ErrorLogger() << "System::Copy passed an object that wasn't a System";
         return;
     }
 
@@ -241,10 +241,10 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
                 return this->PublicName(empire_id);
         }
         if (blank_unexplored_and_none) {
-            //Logger().debugStream() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< EMPTY_STRING;
+            //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< EMPTY_STRING;
             return EMPTY_STRING;
         }
-        //Logger().debugStream() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< UserString("EMPTY_SPACE");
+        //DebugLogger() << "System::ApparentName No-Star System (" << ID() << "), returning name "<< UserString("EMPTY_SPACE");
         return UserString("EMPTY_SPACE");
     }
 
@@ -317,11 +317,11 @@ TemporaryPtr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor
 
 void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
     if (!obj) {
-        Logger().errorStream() << "System::Insert() : Attempted to place a null object in a System";
+        ErrorLogger() << "System::Insert() : Attempted to place a null object in a System";
         return;
     }
     if (orbit < -1 || orbit >= static_cast<int>(m_orbits.size())) {
-        Logger().errorStream() << "System::Insert() : Attempted to place an object in invalid orbit";
+        ErrorLogger() << "System::Insert() : Attempted to place an object in invalid orbit";
         return;
     }
 
@@ -386,13 +386,13 @@ void System::Insert(TemporaryPtr<UniverseObject> obj, int orbit/* = -1*/) {
         m_fields.insert(obj->ID());
         break;
     case OBJ_SYSTEM:
-        Logger().errorStream() << "System::Insert inserting a system into another system...??";
+        ErrorLogger() << "System::Insert inserting a system into another system...??";
         break;
     case OBJ_BUILDING:
         m_buildings.insert(obj->ID());
         break;
     default:
-        Logger().errorStream() << "System::Insert inserting an unknown object type";
+        ErrorLogger() << "System::Insert inserting an unknown object type";
     }
     m_objects.insert(obj->ID());
 
@@ -437,7 +437,7 @@ void System::Remove(int id) {
 void System::SetStarType(StarType type) {
     m_star = type;
     if (m_star <= INVALID_STAR_TYPE || NUM_STAR_TYPES <= m_star)
-        Logger().errorStream() << "System::SetStarType set star type to " << boost::lexical_cast<std::string>(type);
+        ErrorLogger() << "System::SetStarType set star type to " << boost::lexical_cast<std::string>(type);
     StateChangedSignal();
 }
 
@@ -446,7 +446,7 @@ void System::AddStarlane(int id) {
         m_starlanes_wormholes[id] = false;
         StateChangedSignal();
         if (GetOptionsDB().Get<bool>("verbose-logging"))
-            Logger().debugStream() << "Added starlane from system " << this->Name() << " (" << this->ID() << ") system " << id;
+            DebugLogger() << "Added starlane from system " << this->Name() << " (" << this->ID() << ") system " << id;
     }
 }
 
@@ -579,7 +579,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
     {
         TemporaryPtr<const Fleet> fleet = *it;
         if (fleet->SystemID() != INVALID_OBJECT_ID) {
-            Logger().errorStream() << "System::VisibleStarlanesWormholes somehow got a moving fleet that had a valid system id?";
+            ErrorLogger() << "System::VisibleStarlanesWormholes somehow got a moving fleet that had a valid system id?";
             continue;
         }
 
@@ -599,7 +599,7 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
         if (other_lane_end_sys_id != INVALID_OBJECT_ID) {
             std::map<int, bool>::const_iterator lane_it = m_starlanes_wormholes.find(other_lane_end_sys_id);
             if (lane_it == m_starlanes_wormholes.end()) {
-                Logger().errorStream() << "System::VisibleStarlanesWormholes found an owned fleet moving along a starlane connected to this system that isn't also connected to one of this system's starlane-connected systems...?";
+                ErrorLogger() << "System::VisibleStarlanesWormholes found an owned fleet moving along a starlane connected to this system that isn't also connected to one of this system's starlane-connected systems...?";
                 continue;
             }
             retval[other_lane_end_sys_id] = lane_it->second;
@@ -641,7 +641,7 @@ double StarlaneEntranceOrbitalPosition(int from_system, int to_system) {
     TemporaryPtr<const System> system_1 = GetSystem(from_system);
     TemporaryPtr<const System> system_2 = GetSystem(to_system);
     if (!system_1 || !system_2) {
-        Logger().errorStream() << "StarlaneEntranceOrbitalPosition passed invalid system id";
+        ErrorLogger() << "StarlaneEntranceOrbitalPosition passed invalid system id";
         return 0.0;
     }
     return std::atan2(system_2->Y() - system_1->Y(), system_2->X() - system_1->X());

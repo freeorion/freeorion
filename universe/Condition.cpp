@@ -381,7 +381,7 @@ void Condition::Number::Eval(const ScriptingContext& parent_context,
          )
        )
     {
-        Logger().errorStream() << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
+        ErrorLogger() << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
     } else if (
                 !local_context.condition_root_candidate
                 && !(
@@ -390,7 +390,7 @@ void Condition::Number::Eval(const ScriptingContext& parent_context,
                     )
               )
     {
-        Logger().errorStream() << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
+        ErrorLogger() << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
     }
 
     if (!local_context.condition_root_candidate && !this->RootCandidateInvariant()) {
@@ -674,7 +674,7 @@ namespace {
 
         // for other SoringMethods, need sort key values
         if (!sort_key) {
-            Logger().errorStream() << "TransferSortedObjects given null sort_key";
+            ErrorLogger() << "TransferSortedObjects given null sort_key";
             return;
         }
 
@@ -770,7 +770,7 @@ namespace {
                 }
             }
         } else {
-            Logger().debugStream() << "TransferSortedObjects given unknown sort method";
+            DebugLogger() << "TransferSortedObjects given unknown sort method";
         }
     }
 }
@@ -1186,7 +1186,7 @@ std::string Condition::EmpireAffiliation::Dump() const {
 bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "EmpireAffiliation::Match passed no candidate object";
+        ErrorLogger() << "EmpireAffiliation::Match passed no candidate object";
         return false;
     }
 
@@ -1221,7 +1221,7 @@ void Condition::Source::GetDefaultInitialCandidateObjects(const ScriptingContext
 {
     if (parent_context.source)
         condition_non_targets.push_back(parent_context.source);
-    //Logger().debugStream() << "Condition::ConditionBase::Eval will check at most one source object rather than " << Objects().NumObjects() << " total objects";
+    //DebugLogger() << "Condition::ConditionBase::Eval will check at most one source object rather than " << Objects().NumObjects() << " total objects";
 }
 
 ///////////////////////////////////////////////////////////
@@ -1447,7 +1447,7 @@ std::string Condition::Homeworld::Dump() const {
 bool Condition::Homeworld::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Homeworld::Match passed no candidate object";
+        ErrorLogger() << "Homeworld::Match passed no candidate object";
         return false;
     }
 
@@ -1512,7 +1512,7 @@ std::string Condition::Capital::Dump() const
 bool Condition::Capital::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Capital::Match passed no candidate object";
+        ErrorLogger() << "Capital::Match passed no candidate object";
         return false;
     }
     int candidate_id = candidate->ID();
@@ -1548,7 +1548,7 @@ std::string Condition::Monster::Dump() const
 bool Condition::Monster::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Monster::Match passed no candidate object";
+        ErrorLogger() << "Monster::Match passed no candidate object";
         return false;
     }
 
@@ -1581,7 +1581,7 @@ std::string Condition::Armed::Dump() const
 bool Condition::Armed::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Armed::Match passed no candidate object";
+        ErrorLogger() << "Armed::Match passed no candidate object";
         return false;
     }
 
@@ -1703,7 +1703,7 @@ std::string Condition::Type::Dump() const {
 bool Condition::Type::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Type::Match passed no candidate object";
+        ErrorLogger() << "Type::Match passed no candidate object";
         return false;
     }
 
@@ -1750,7 +1750,7 @@ void Condition::Type::GetDefaultInitialCandidateObjects(const ScriptingContext& 
     }
     if (found_type) {
         //if (int(condition_non_targets.size()) < Objects().NumObjects()) {
-        //    Logger().debugStream() << "Condition::Type::GetBaseNonMatches will provide " << condition_non_targets.size() 
+        //    DebugLogger() << "Condition::Type::GetBaseNonMatches will provide " << condition_non_targets.size() 
         //                            << " objects of type " << GetType()->Eval() << " rather than " << Objects().NumObjects() << " total objects";
         //}
     } else {
@@ -1914,7 +1914,7 @@ void Condition::Building::GetDefaultInitialCandidateObjects(const ScriptingConte
 bool Condition::Building::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Building::Match passed no candidate object";
+        ErrorLogger() << "Building::Match passed no candidate object";
         return false;
     }
 
@@ -2066,7 +2066,7 @@ std::string Condition::HasSpecial::Dump() const {
 bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "HasSpecial::Match passed no candidate object";
+        ErrorLogger() << "HasSpecial::Match passed no candidate object";
         return false;
     }
     int low = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
@@ -2104,7 +2104,7 @@ std::string Condition::HasTag::Dump() const
 bool Condition::HasTag::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "HasTag::Match passed no candidate object";
+        ErrorLogger() << "HasTag::Match passed no candidate object";
         return false;
     }
 
@@ -2209,7 +2209,7 @@ std::string Condition::CreatedOnTurn::Dump() const {
 bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "CreatedOnTurn::Match passed no candidate object";
+        ErrorLogger() << "CreatedOnTurn::Match passed no candidate object";
         return false;
     }
     int low = (m_low ? std::max(0, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
@@ -2355,7 +2355,7 @@ void Condition::Contains::GetDefaultInitialCandidateObjects(const ScriptingConte
 bool Condition::Contains::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Contains::Match passed no candidate object";
+        ErrorLogger() << "Contains::Match passed no candidate object";
         return false;
     }
 
@@ -2508,7 +2508,7 @@ std::string Condition::ContainedBy::Dump() const {
 bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "ContainedBy::Match passed no candidate object";
+        ErrorLogger() << "ContainedBy::Match passed no candidate object";
         return false;
     }
 
@@ -2627,7 +2627,7 @@ std::string Condition::InSystem::Dump() const {
 bool Condition::InSystem::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "InSystem::Match passed no candidate object";
+        ErrorLogger() << "InSystem::Match passed no candidate object";
         return false;
     }
     int system_id = (m_system_id ? m_system_id->Eval(local_context) : INVALID_OBJECT_ID);
@@ -2746,7 +2746,7 @@ void Condition::ObjectID::GetDefaultInitialCandidateObjects(const ScriptingConte
 bool Condition::ObjectID::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "ObjectID::Match passed no candidate object";
+        ErrorLogger() << "ObjectID::Match passed no candidate object";
         return false;
     }
 
@@ -2913,7 +2913,7 @@ void Condition::PlanetType::GetDefaultInitialCandidateObjects(const ScriptingCon
 bool Condition::PlanetType::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "PlanetType::Match passed no candidate object";
+        ErrorLogger() << "PlanetType::Match passed no candidate object";
         return false;
     }
 
@@ -3098,7 +3098,7 @@ void Condition::PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingCon
 bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "PlanetSize::Match passed no candidate object";
+        ErrorLogger() << "PlanetSize::Match passed no candidate object";
         return false;
     }
 
@@ -3306,7 +3306,7 @@ void Condition::PlanetEnvironment::GetDefaultInitialCandidateObjects(const Scrip
 bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "PlanetEnvironment::Match passed no candidate object";
+        ErrorLogger() << "PlanetEnvironment::Match passed no candidate object";
         return false;
     }
 
@@ -3493,7 +3493,7 @@ std::string Condition::Species::Dump() const {
 bool Condition::Species::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Species::Match passed no candidate object";
+        ErrorLogger() << "Species::Match passed no candidate object";
         return false;
     }
 
@@ -3779,7 +3779,7 @@ std::string Condition::Enqueued::Dump() const {
 bool Condition::Enqueued::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Enqueued::Match passed no candidate object";
+        ErrorLogger() << "Enqueued::Match passed no candidate object";
         return false;
     }
     int empire_id = (m_empire_id ?  m_empire_id->Eval(local_context) :  ALL_EMPIRES);
@@ -3943,7 +3943,7 @@ std::string Condition::FocusType::Dump() const {
 bool Condition::FocusType::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "FocusType::Match passed no candidate object";
+        ErrorLogger() << "FocusType::Match passed no candidate object";
         return false;
     }
 
@@ -4107,7 +4107,7 @@ std::string Condition::StarType::Dump() const {
 bool Condition::StarType::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "StarType::Match passed no candidate object";
+        ErrorLogger() << "StarType::Match passed no candidate object";
         return false;
     }
 
@@ -4151,7 +4151,7 @@ std::string Condition::DesignHasHull::Dump() const
 bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "DesignHasHull::Match passed no candidate object";
+        ErrorLogger() << "DesignHasHull::Match passed no candidate object";
         return false;
     }
 
@@ -4276,7 +4276,7 @@ std::string Condition::DesignHasPart::Dump() const
 bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "DesignHasPart::Match passed no candidate object";
+        ErrorLogger() << "DesignHasPart::Match passed no candidate object";
         return false;
     }
 
@@ -4405,7 +4405,7 @@ std::string Condition::DesignHasPartClass::Dump() const
 bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "DesignHasPartClass::Match passed no candidate object";
+        ErrorLogger() << "DesignHasPartClass::Match passed no candidate object";
         return false;
     }
 
@@ -4445,7 +4445,7 @@ std::string Condition::PredefinedShipDesign::Dump() const
 bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "PredefinedShipDesign::Match passed no candidate object";
+        ErrorLogger() << "PredefinedShipDesign::Match passed no candidate object";
         return false;
     }
 
@@ -4550,7 +4550,7 @@ std::string Condition::NumberedShipDesign::Dump() const
 bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "NumberedShipDesign::Match passed no candidate object";
+        ErrorLogger() << "NumberedShipDesign::Match passed no candidate object";
         return false;
     }
     return NumberedShipDesignSimpleMatch(m_design_id->Eval(local_context))(candidate);
@@ -4647,7 +4647,7 @@ std::string Condition::ProducedByEmpire::Dump() const
 bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "ProducedByEmpire::Match passed no candidate object";
+        ErrorLogger() << "ProducedByEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -4886,7 +4886,7 @@ std::string Condition::MeterValue::Dump() const {
 bool Condition::MeterValue::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "MeterValue::Match passed no candidate object";
+        ErrorLogger() << "MeterValue::Match passed no candidate object";
         return false;
     }
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
@@ -5020,7 +5020,7 @@ std::string Condition::ShipPartMeterValue::Dump() const {
 bool Condition::ShipPartMeterValue::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "ShipPartMeterValue::Match passed no candidate object";
+        ErrorLogger() << "ShipPartMeterValue::Match passed no candidate object";
         return false;
     }
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
@@ -5170,7 +5170,7 @@ std::string Condition::EmpireMeterValue::Dump() const {
 bool Condition::EmpireMeterValue::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "EmpireMeterValue::Match passed no candidate object";
+        ErrorLogger() << "EmpireMeterValue::Match passed no candidate object";
         return false;
     }
     int empire_id = (m_empire_id ? m_empire_id->Eval(local_context) : candidate->Owner());
@@ -5297,7 +5297,7 @@ std::string Condition::EmpireStockpileValue::Dump() const {
 bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "EmpireStockpileValue::Match passed no candidate object";
+        ErrorLogger() << "EmpireStockpileValue::Match passed no candidate object";
         return false;
     }
 
@@ -5336,7 +5336,7 @@ std::string Condition::OwnerHasTech::Dump() const
 bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "OwnerHasTech::Match passed no candidate object";
+        ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
     }
 
@@ -5380,7 +5380,7 @@ std::string Condition::OwnerHasBuildingTypeAvailable::Dump() const
 bool Condition::OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "OwnerHasBuildingTypeAvailable::Match passed no candidate object";
+        ErrorLogger() << "OwnerHasBuildingTypeAvailable::Match passed no candidate object";
         return false;
     }
 
@@ -5424,7 +5424,7 @@ std::string Condition::OwnerHasShipDesignAvailable::Dump() const
 bool Condition::OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "OwnerHasShipDesignAvailable::Match passed no candidate object";
+        ErrorLogger() << "OwnerHasShipDesignAvailable::Match passed no candidate object";
         return false;
     }
 
@@ -5523,7 +5523,7 @@ std::string Condition::VisibleToEmpire::Dump() const
 bool Condition::VisibleToEmpire::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "VisibleToEmpire::Match passed no candidate object";
+        ErrorLogger() << "VisibleToEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -5637,7 +5637,7 @@ std::string Condition::WithinDistance::Dump() const {
 bool Condition::WithinDistance::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "WithinDistance::Match passed no candidate object";
+        ErrorLogger() << "WithinDistance::Match passed no candidate object";
         return false;
     }
 
@@ -5762,7 +5762,7 @@ std::string Condition::WithinStarlaneJumps::Dump() const {
 bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "WithinStarlaneJumps::Match passed no candidate object";
+        ErrorLogger() << "WithinStarlaneJumps::Match passed no candidate object";
         return false;
     }
 
@@ -6210,7 +6210,7 @@ std::string Condition::CanAddStarlaneConnection::Dump() const {
 bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "CanAddStarlaneConnection::Match passed no candidate object";
+        ErrorLogger() << "CanAddStarlaneConnection::Match passed no candidate object";
         return false;
     }
 
@@ -6311,7 +6311,7 @@ std::string Condition::ExploredByEmpire::Dump() const
 bool Condition::ExploredByEmpire::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "ExploredByEmpire::Match passed no candidate object";
+        ErrorLogger() << "ExploredByEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -6336,7 +6336,7 @@ std::string Condition::Stationary::Dump() const
 bool Condition::Stationary::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Stationary::Match passed no candidate object";
+        ErrorLogger() << "Stationary::Match passed no candidate object";
         return false;
     }
 
@@ -6454,7 +6454,7 @@ std::string Condition::FleetSupplyableByEmpire::Dump() const
 bool Condition::FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "FleetSupplyableByEmpire::Match passed no candidate object";
+        ErrorLogger() << "FleetSupplyableByEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -6566,7 +6566,7 @@ bool Condition::ResourceSupplyConnectedByEmpire::SourceInvariant() const
 bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "ResourceSupplyConnectedByEmpire::Match passed no candidate object";
+        ErrorLogger() << "ResourceSupplyConnectedByEmpire::Match passed no candidate object";
         return false;
     }
 
@@ -6624,7 +6624,7 @@ std::string Condition::CanColonize::Dump() const
 bool Condition::CanColonize::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "CanColonize::Match passed no candidate object";
+        ErrorLogger() << "CanColonize::Match passed no candidate object";
         return false;
     }
 
@@ -6633,7 +6633,7 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
     if (candidate->ObjectType() == OBJ_PLANET) {
         TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
-            Logger().errorStream() << "CanColonize couldn't cast supposedly planet candidate";
+            ErrorLogger() << "CanColonize couldn't cast supposedly planet candidate";
             return false;
         }
         species_name = planet->SpeciesName();
@@ -6641,12 +6641,12 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
         TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
-            Logger().errorStream() << "CanColonize couldn't cast supposedly building candidate";
+            ErrorLogger() << "CanColonize couldn't cast supposedly building candidate";
             return false;
         }
         TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID());
         if (!planet) {
-            Logger().errorStream() << "CanColonize couldn't get building's planet";
+            ErrorLogger() << "CanColonize couldn't get building's planet";
             return false;
         }
         species_name = planet->SpeciesName();
@@ -6654,7 +6654,7 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
         TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
-            Logger().errorStream() << "CanColonize couldn't cast supposedly ship candidate";
+            ErrorLogger() << "CanColonize couldn't cast supposedly ship candidate";
             return false;
         }
         species_name = ship->SpeciesName();
@@ -6664,7 +6664,7 @@ bool Condition::CanColonize::Match(const ScriptingContext& local_context) const 
         return false;
     const ::Species* species = GetSpecies(species_name);
     if (!species) {
-        Logger().errorStream() << "CanColonize couldn't get species: " << species_name;
+        ErrorLogger() << "CanColonize couldn't get species: " << species_name;
         return false;
     }
     return species->CanColonize();
@@ -6688,7 +6688,7 @@ std::string Condition::CanProduceShips::Dump() const
 bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "CanProduceShips::Match passed no candidate object";
+        ErrorLogger() << "CanProduceShips::Match passed no candidate object";
         return false;
     }
 
@@ -6697,7 +6697,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
     if (candidate->ObjectType() == OBJ_PLANET) {
         TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
-            Logger().errorStream() << "CanProduceShips couldn't cast supposedly planet candidate";
+            ErrorLogger() << "CanProduceShips couldn't cast supposedly planet candidate";
             return false;
         }
         species_name = planet->SpeciesName();
@@ -6705,12 +6705,12 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
         TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
-            Logger().errorStream() << "CanProduceShips couldn't cast supposedly building candidate";
+            ErrorLogger() << "CanProduceShips couldn't cast supposedly building candidate";
             return false;
         }
         TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID());
         if (!planet) {
-            Logger().errorStream() << "CanProduceShips couldn't get building's planet";
+            ErrorLogger() << "CanProduceShips couldn't get building's planet";
             return false;
         }
         species_name = planet->SpeciesName();
@@ -6718,7 +6718,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
     } else if (candidate->ObjectType() == OBJ_SHIP) {
         TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
-            Logger().errorStream() << "CanProduceShips couldn't cast supposedly ship candidate";
+            ErrorLogger() << "CanProduceShips couldn't cast supposedly ship candidate";
             return false;
         }
         species_name = ship->SpeciesName();
@@ -6728,7 +6728,7 @@ bool Condition::CanProduceShips::Match(const ScriptingContext& local_context) co
         return false;
     const ::Species* species = GetSpecies(species_name);
     if (!species) {
-        Logger().errorStream() << "CanProduceShips couldn't get species: " << species_name;
+        ErrorLogger() << "CanProduceShips couldn't get species: " << species_name;
         return false;
     }
     return species->CanProduceShips();
@@ -6835,7 +6835,7 @@ std::string Condition::OrderedBombarded::Dump() const
 bool Condition::OrderedBombarded::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "OrderedBombarded::Match passed no candidate object";
+        ErrorLogger() << "OrderedBombarded::Match passed no candidate object";
         return false;
     }
 
@@ -6965,7 +6965,7 @@ std::string Condition::ValueTest::Dump() const {
 bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "ValueTest::Match passed no candidate object";
+        ErrorLogger() << "ValueTest::Match passed no candidate object";
         return false;
     }
     if (!m_value_ref)
@@ -7154,7 +7154,7 @@ std::string Condition::Location::Dump() const {
 bool Condition::Location::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Location::Match passed no candidate object";
+        ErrorLogger() << "Location::Match passed no candidate object";
         return false;
     }
 
@@ -7202,12 +7202,12 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
     ScriptingContext local_context(parent_context, no_object);
 
     if (m_operands.empty()) {
-        Logger().errorStream() << "Condition::And::Eval given no operands!";
+        ErrorLogger() << "Condition::And::Eval given no operands!";
         return;
     }
     for (unsigned int i = 0; i < m_operands.size(); ++i) {
         if (!m_operands[i]) {
-            Logger().errorStream() << "Condition::And::Eval given null operand!";
+            ErrorLogger() << "Condition::And::Eval given null operand!";
             return;
         }
     }
@@ -7361,12 +7361,12 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
     ScriptingContext local_context(parent_context, no_object);
 
     if (m_operands.empty()) {
-        Logger().errorStream() << "Condition::Or::Eval given no operands!";
+        ErrorLogger() << "Condition::Or::Eval given no operands!";
         return;
     }
     for (unsigned int i = 0; i < m_operands.size(); ++i) {
         if (!m_operands[i]) {
-            Logger().errorStream() << "Condition::Or::Eval given null operand!";
+            ErrorLogger() << "Condition::Or::Eval given null operand!";
             return;
         }
     }
@@ -7508,7 +7508,7 @@ void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& mat
     ScriptingContext local_context(parent_context, no_object);
 
     if (!m_operand) {
-        Logger().errorStream() << "Condition::Not::Eval found no subcondition to evaluate!";
+        ErrorLogger() << "Condition::Not::Eval found no subcondition to evaluate!";
         return;
     }
 

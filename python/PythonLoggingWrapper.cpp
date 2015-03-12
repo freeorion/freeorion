@@ -20,7 +20,7 @@ namespace {
         for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
             if (text[i] == '\0') break;
             if (text[i] == '\n' || i == MAX_SINGLE_CHUNK_TEXT_SIZE - 1) {
-                Logger().debugStream() << log_buffer;
+                DebugLogger() << log_buffer;
                 log_buffer = "";
             } else {
                 log_buffer += text[i];
@@ -38,7 +38,7 @@ namespace {
         for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
             if (text[i] == '\0') break;
             if (text[i] == '\n' || i == MAX_SINGLE_CHUNK_TEXT_SIZE - 1) {
-                Logger().errorStream() << error_buffer;
+                ErrorLogger() << error_buffer;
                 error_buffer = "";
             } else {
                 error_buffer += text[i];

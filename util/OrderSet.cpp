@@ -25,7 +25,7 @@ int OrderSet::IssueOrder(OrderPtr order) {
 }
 
 void OrderSet::ApplyOrders() {
-    Logger().debugStream() << "OrderSet::ApplyOrders() executing " << m_orders.size() << " orders";
+    DebugLogger() << "OrderSet::ApplyOrders() executing " << m_orders.size() << " orders";
     for (OrderMap::iterator it = m_orders.begin(); it != m_orders.end(); ++it)
         it->second->Execute();
 }

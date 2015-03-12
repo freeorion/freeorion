@@ -131,7 +131,7 @@ void Process::Impl::Kill() {
             LocalFree(buf);
         }
         boost::algorithm::trim(err_str);
-        Logger().errorStream() << "Process::Impl::Kill : Error terminating process: " << err_str;
+        ErrorLogger() << "Process::Impl::Kill : Error terminating process: " << err_str;
     }
 
     if (m_process_info.hProcess && !CloseHandle(m_process_info.hProcess)) {
@@ -144,7 +144,7 @@ void Process::Impl::Kill() {
             LocalFree(buf);
         }
         boost::algorithm::trim(err_str);
-        Logger().errorStream() << "Process::Impl::Kill : Error closing process handle: " << err_str;
+        ErrorLogger() << "Process::Impl::Kill : Error closing process handle: " << err_str;
     }
 
     if (m_process_info.hThread && !CloseHandle(m_process_info.hThread)) {
@@ -157,7 +157,7 @@ void Process::Impl::Kill() {
             LocalFree(buf);
         }
         boost::algorithm::trim(err_str);
-        Logger().errorStream() << "Process::Impl::Kill : Error closing thread handle: " << err_str;
+        ErrorLogger() << "Process::Impl::Kill : Error closing thread handle: " << err_str;
     }
 
     m_process_info.hProcess = 0;

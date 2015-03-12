@@ -114,7 +114,7 @@ namespace {
                 doc.ReadDoc(ifs);
                 ifs.close();
             } catch (const std::exception& e) {
-                Logger().errorStream() << "GetRotatingPlanetData: error reading artdir/planets/planets.xml: " << e.what();
+                ErrorLogger() << "GetRotatingPlanetData: error reading artdir/planets/planets.xml: " << e.what();
             }
 
             if (doc.root_node.ContainsChild("GLPlanets")) {
@@ -803,7 +803,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
     TemporaryPtr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet) {
-        Logger().errorStream() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
+        ErrorLogger() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
     }
 
@@ -822,7 +822,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     for (EmpireManager::const_iterator empire_it = empire_manager.begin(); empire_it != empire_manager.end(); ++empire_it) {
         const Empire* empire = empire_it->second;
         if (!empire) {
-            Logger().errorStream() << "PlanetPanel::PlanetPanel got null empire pointer for id " << empire_it->first;
+            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << empire_it->first;
             continue;
         }
         if (empire->CapitalID() == m_planet_id) {
@@ -1350,7 +1350,7 @@ void SidePanel::PlanetPanel::Refresh() {
 
     TemporaryPtr<Planet> planet = GetPlanet(m_planet_id);
     if (!planet) {
-        Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
+        DebugLogger() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
         DetachChild(m_planet_name);
         delete m_planet_name;           m_planet_name = 0;
@@ -1674,7 +1674,7 @@ void SidePanel::PlanetPanel::Refresh() {
             }
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SEEN");
-                Logger().errorStream() << "Empire " << client_empire_id << " knows about planet " << planet->Name() <<
+                ErrorLogger() << "Empire " << client_empire_id << " knows about planet " << planet->Name() <<
                                           " (id: " << m_planet_id << ") without having seen it before!";
             }
 
@@ -2093,11 +2093,11 @@ void SidePanel::PlanetPanel::ClickColonize() {
             ship = GetShip(AutomaticallyChosenColonyShip(m_planet_id));
 
         if (!ship) {
-            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
+            ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
             return;
         }
         if (!ship->OwnedBy(empire_id)) {
-            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by this client's empire.";
+            ErrorLogger() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by this client's empire.";
             return;
         }
 
@@ -2207,37 +2207,37 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::ite
     // all this funciton needs to do is emit FocusChangedSignal.  The code
     // preceeding that determines which focus was selected from the iterator 
     // parameter, does some safety checks, and disables UI sounds
-    Logger().debugStream() << "SidePanel::PlanetPanel::FocusDropListSelectionChanged";
+    DebugLogger() << "SidePanel::PlanetPanel::FocusDropListSelectionChanged";
     if (m_focus_drop->CurrentItem() == m_focus_drop->end()) {
-        Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged passed end / invalid interator";
+        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged passed end / invalid interator";
         return;
     }
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
-    Logger().debugStream() << "Got temporary Ptr.";
+    DebugLogger() << "Got temporary Ptr.";
     if (!obj) {
-        Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged couldn't get object with id " << m_planet_id;
+        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't get object with id " << m_planet_id;
         return;
     }
     TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
-    Logger().debugStream() << "Got resource center.";
+    DebugLogger() << "Got resource center.";
     if (!res) {
-        Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
+        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
         return;
     }
 
     std::size_t i = m_focus_drop->IteratorToIndex(selected);
-    Logger().debugStream() << "Got selected index (" << i << ")";
+    DebugLogger() << "Got selected index (" << i << ")";
     if (i >= res->AvailableFoci().size()) {
-        Logger().errorStream() << "PlanetPanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
+        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
         return;
     }
-    Logger().debugStream() << "Finished checking focus.";
+    DebugLogger() << "Finished checking focus.";
 
     Sound::TempUISoundDisabler sound_disabler;
-    Logger().debugStream() << "About to send focus-changed signal.";
+    DebugLogger() << "About to send focus-changed signal.";
     FocusChangedSignal(res->AvailableFoci().at(i));
-    Logger().debugStream() << "Done!.";
+    DebugLogger() << "Done!.";
 }
 
 void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
@@ -2352,13 +2352,13 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         int planet_id = *planet_it;
         TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
         if (!planet) {
-            Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
+            ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
             continue;
         }
         int system_id = planet->SystemID();
         TemporaryPtr<const System> system = GetSystem(system_id);
         if (!system) {
-            Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
+            ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find system of planet" << planet->Name();
             continue;
         }
         orbits_planets.insert(std::make_pair(system->OrbitOfPlanet(planet_id), planet_id));
@@ -2505,7 +2505,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
 }
 
 void SidePanel::PlanetPanelContainer::PlanetLeftClicked(int planet_id) {
-    //Logger().debugStream() << "SidePanel::PlanetPanelContainer::PlanetLeftClicked(" << planet_id << ")";
+    //DebugLogger() << "SidePanel::PlanetPanelContainer::PlanetLeftClicked(" << planet_id << ")";
     PlanetSelectedSignal(planet_id);
 }
 
@@ -2734,7 +2734,7 @@ void SidePanel::Refresh() {
     // connect state changed and insertion signals for planets and fleets in system
     TemporaryPtr<const System> system = GetSystem(s_system_id);
     if (!system) {
-        Logger().errorStream() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
+        ErrorLogger() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
     }
 

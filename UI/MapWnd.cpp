@@ -78,10 +78,10 @@ namespace {
 
     double ZoomScaleFactor(double steps_in) {
         if (steps_in > ZOOM_IN_MAX_STEPS) {
-            Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
+            ErrorLogger() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
             steps_in = ZOOM_IN_MAX_STEPS;
         } else if (steps_in < ZOOM_IN_MIN_STEPS) {
-            Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") lower than minimum (" << ZOOM_IN_MIN_STEPS << "), so using min";
+            ErrorLogger() << "ZoomScaleFactor passed steps in (" << steps_in << ") lower than minimum (" << ZOOM_IN_MIN_STEPS << "), so using min";
             steps_in = ZOOM_IN_MIN_STEPS;
         }
         return std::pow(ZOOM_STEP_SIZE, steps_in);
@@ -222,7 +222,7 @@ namespace {
         TemporaryPtr<const UniverseObject> prev = GetEmpireKnownObject(lane.first, empire_id);
         TemporaryPtr<const UniverseObject> next = GetEmpireKnownObject(lane.second, empire_id);
         if (!next || !prev) {
-            Logger().errorStream() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
+            ErrorLogger() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
             return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
         }
 
@@ -435,9 +435,9 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     if (path.empty() || path.size() == 1)
         return; // nothing to draw.  need at least two nodes at different locations to draw a line
 
-    //Logger().debugStream() << "move_line path: ";
+    //DebugLogger() << "move_line path: ";
     //for (std::list<MovePathNode>::const_iterator it = path.begin(); it != path.end(); ++it)
-    //    Logger().debugStream() << " ... " << it->object_id << " (" << it->x << ", " << it->y << ") eta: " << it->eta << " turn_end: " << it->turn_end;
+    //    DebugLogger() << " ... " << it->object_id << " (" << it->x << ", " << it->y << ") eta: " << it->eta << " turn_end: " << it->turn_end;
 
 
     // draw lines connecting points of interest along path.  only draw a line if the previous and
@@ -496,7 +496,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         // get lane end points
         std::map<std::pair<int, int>, LaneEndpoints>::const_iterator ends_it = lane_end_points_map.find(lane_ids);
         if (ends_it == lane_end_points_map.end()) {
-            Logger().errorStream() << "couldn't get endpoints of lane for move line";
+            ErrorLogger() << "couldn't get endpoints of lane for move line";
             break;
         }
         const LaneEndpoints& lane_endpoints = ends_it->second;
@@ -1606,7 +1606,7 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::C
     if (vertices.empty())
         return; // nothing to draw.  need at least two nodes at different locations to draw a line
     if (vertices.size() % 2 == 1) {
-        Logger().errorStream() << "RenderMovementLine given an odd number of vertices to render?!";
+        ErrorLogger() << "RenderMovementLine given an odd number of vertices to render?!";
         return;
     }
 
@@ -2035,7 +2035,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
 
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
-    Logger().debugStream() << "Initializing turn " << turn_number;
+    DebugLogger() << "Initializing turn " << turn_number;
     ScopedTimer init_timer("MapWnd::InitTurn", true);
 
     Universe& universe = GetUniverse();
@@ -2123,22 +2123,22 @@ void MapWnd::InitTurn() {
     boost::timer timer;
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePools();
-    Logger().debugStream() << "MapWnd::InitTurn updating resource pools time: " << (timer.elapsed() * 1000.0);
+    DebugLogger() << "MapWnd::InitTurn updating resource pools time: " << (timer.elapsed() * 1000.0);
 
 
     timer.restart();
     m_research_wnd->Refresh();
-    Logger().debugStream() << "MapWnd::InitTurn research wnd refresh time: " << (timer.elapsed() * 1000.0);
+    DebugLogger() << "MapWnd::InitTurn research wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
     timer.restart();
     SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
-    Logger().debugStream() << "MapWnd::InitTurn sidepanel refresh time: " << (timer.elapsed() * 1000.0);
+    DebugLogger() << "MapWnd::InitTurn sidepanel refresh time: " << (timer.elapsed() * 1000.0);
 
 
     timer.restart();
     m_production_wnd->Refresh();
-    Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
+    DebugLogger() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
     if (turn_number == 1 && this_client_empire) {
@@ -2161,12 +2161,12 @@ void MapWnd::InitTurn() {
     RefreshFleetResourceIndicator();
     RefreshPopulationIndicator();
     RefreshDetectionIndicator();
-    Logger().debugStream() << "MapWnd::InitTurn indicators refresh time: " << (timer.elapsed() * 1000.0);
+    DebugLogger() << "MapWnd::InitTurn indicators refresh time: " << (timer.elapsed() * 1000.0);
 
     timer.restart();
     FleetUIManager::GetFleetUIManager().RefreshAll();
     DispatchFleetsExploring();
-    Logger().debugStream() << "MapWnd::InitTurn fleet UI refresh and exploring dispatch time: " << (timer.elapsed() * 1000.0);
+    DebugLogger() << "MapWnd::InitTurn fleet UI refresh and exploring dispatch time: " << (timer.elapsed() * 1000.0);
 
     HumanClientApp* app = HumanClientApp::GetApp();
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
@@ -2191,7 +2191,7 @@ void MapWnd::InitTurn() {
 }
 
 void MapWnd::MidTurnUpdate() {
-    Logger().debugStream() << "MapWnd::MidTurnUpdate";
+    DebugLogger() << "MapWnd::MidTurnUpdate";
     ScopedTimer timer("MapWnd::MidTurnUpdate", true);
 
     GetUniverse().InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
@@ -2210,7 +2210,7 @@ void MapWnd::MidTurnUpdate() {
 }
 
 void MapWnd::InitTurnRendering() {
-    Logger().debugStream() << "MapWnd::InitTurnRendering";
+    DebugLogger() << "MapWnd::InitTurnRendering";
     ScopedTimer timer("MapWnd::InitTurnRendering", true);
 
     if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
@@ -2328,7 +2328,7 @@ void MapWnd::InitTurnRendering() {
 }
 
 void MapWnd::InitSystemRenderingBuffers() {
-    Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers";
+    DebugLogger() << "MapWnd::InitSystemRenderingBuffers";
     ScopedTimer timer("MapWnd::InitSystemRenderingBuffers", true);
 
     // clear out all the old buffers
@@ -2352,7 +2352,7 @@ void MapWnd::InitSystemRenderingBuffers() {
         int system_id = it->first;
         TemporaryPtr<const System> system = GetSystem(system_id);
         if (!system) {
-            Logger().errorStream() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
+            ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
         }
 
@@ -2517,7 +2517,7 @@ std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<
 }
 
 void MapWnd::InitStarlaneRenderingBuffers() {
-    Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
+    DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
     ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", true);
 
     // clear old buffers
@@ -2562,7 +2562,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 if (!planet)
                     continue;
 
-                //Logger().debugStream() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
+                //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
                 resPoolSystems[it->first].insert(system_id);
@@ -2571,10 +2571,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     underAllocResSys.insert(system_id);
             }
             thisPool += ")";
-            //Logger().debugStream() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << it->second << " PP available";
-            //Logger().debugStream() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << allocatedPP[it->first] << " PP allocated";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << it->second << " PP available";
+            //DebugLogger() << "Empire " << empire_id << "; ResourcePool[RE_INDUSTRY] resourceGroup (" << thisPool << ") has (" << allocatedPP[it->first] << " PP allocated";
         }
-        //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
+        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 1";
         for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++){
             for (std::set<std::set<int> >::const_iterator rgIt = resGroups.begin(); rgIt != resGroups.end(); ++rgIt) {
                 bool placedPool = false;
@@ -2589,7 +2589,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     break;
             }
         }//TODO: could add double checking that pool was successfully linked to a group, but *shouldn't* be necessary I think
-        //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
+        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 2";
 
         std::set<std::pair<int, int> > resource_supply_lanes (this_client_empire->SupplyStarlaneTraversals()) ;
         for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++){
@@ -2597,7 +2597,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != resPoolSysIt->second.end(); startSys++) 
                 thisPoolCtrs += boost::lexical_cast<std::string>(*startSys) +", ";
             thisPoolCtrs += ")";
-            //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << thisPoolCtrs << ")";
+            //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << thisPoolCtrs << ")";
 
             resGroupCores[ resPoolSysIt->first ].insert(*(resPoolSysIt->second.begin())); // if pool only has one sys, ensure it is added to core
             resGrpCoreMembers.insert(*(resPoolSysIt->second.begin()));
@@ -2606,9 +2606,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != lastSys; startSys++) {//ok since resPoolSysIt->second cannot be empty
                 std::set<int>::iterator nextSys = startSys;
                 for (std::set<int>::iterator endSys=++nextSys; endSys!=resPoolSysIt->second.end(); endSys++) {
-                    //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*startSys) << " to "<< (*endSys) ;
+                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers getting path from sys "<< (*startSys) << " to "<< (*endSys) ;
                     std::vector<int> path = GetLeastJumps(*startSys, *endSys, resPoolToGroupMap[resPoolSysIt->first], resource_supply_lanes, Objects());
-                    //Logger().debugStream() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
+                    //DebugLogger() << "                 MapWnd::InitStarlaneRenderingBuffers got path, length: "<< path.size();
                     for (std::vector<int>::iterator pathSys = path.begin(); pathSys!= path.end(); pathSys++) {
                         resGroupCores[ resPoolSysIt->first ].insert(*pathSys);
                         resGrpCoreMembers.insert(*pathSys);
@@ -2617,13 +2617,13 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 }
             }
         }
-        //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
+        //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection Round 3";
 
         for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++)
             if (underAllocResSys.find( *(resPoolSysIt->second.begin())  ) != underAllocResSys.end())
                 underAllocResGrpCoreMembers.insert( resGroupCores[ resPoolSysIt->first ].begin(), resGroupCores[ resPoolSysIt->first ].end() );
     }
-    //Logger().debugStream() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
+    //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
 
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
     m_starlane_endpoints.clear();
@@ -2637,7 +2637,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
         TemporaryPtr<const System> start_system = GetSystem(system_id);
         if (!start_system) {
-            Logger().errorStream() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
+            ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
         }
 
@@ -2705,7 +2705,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 m_starlane_colors.store(lane_colour);
                 m_starlane_colors.store(lane_colour);
 
-                //Logger().debugStream() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
+                //DebugLogger() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
             }
 
 
@@ -2973,7 +2973,7 @@ void MapWnd::SelectSystem(int system_id) {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
     TemporaryPtr<const System> system = GetSystem(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
-        Logger().errorStream() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
+        ErrorLogger() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         system_id = INVALID_OBJECT_ID;
     }
 
@@ -3111,7 +3111,7 @@ void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
             // get all (moving) fleets represented by fleet button for this fleet
             std::map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
             if (it == m_fleet_buttons.end()) {
-                Logger().errorStream() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
+                ErrorLogger() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
                 return;
             }
             const std::vector<int>& wnd_fleet_ids = it->second->Fleets();
@@ -3164,7 +3164,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
 
     TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet) {
-        Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
+        ErrorLogger() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
     }
     //std::cout << "creating fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
@@ -3182,22 +3182,22 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     std::list<MovePathNode> path = fleet->MovePath(route, true);
     std::list<int>::iterator route_it = route.begin();
     if (!route.empty() && (++route_it) != route.end()) {
-        //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" checking for blockade at system "<< route.front() << 
+        //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" checking for blockade at system "<< route.front() << 
         //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
         if (fleet->SystemID() == route.front() && fleet->BlockadedAtSystem(route.front(), *route_it)) { //adjust ETAs if necessary
             //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-            //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
+            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
             //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
             if (route_it != route.end() && !( (*route_it == fleet->ArrivalStarlane())  || 
                 (empire && empire->UnrestrictedLaneTravel(fleet->SystemID(), *route_it)) ) )
             {
                 for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
-                    //Logger().debugStream() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << it->object_id <<
+                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" node obj " << it->object_id <<
                     //                            ", node lane end " << it->lane_end_id << ", is post-blockade (" << it->post_blockade << ")";
                     it->eta++;
                 }
             } else {
-                //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" slips through second block check";
+                //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" slips through second block check";
             }
         }
     }
@@ -3211,7 +3211,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     // ensure passed fleet exists
     TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet) {
-        Logger().errorStream() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
+        ErrorLogger() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
     }
 
@@ -3234,13 +3234,13 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     if (!travel_route.empty() && (++route_it) != travel_route.end()) {
         if (fleet->SystemID() == travel_route.front() && fleet->BlockadedAtSystem(travel_route.front(), *route_it)) { //adjust ETAs if necessary
             //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-            //Logger().debugStream() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
+            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
             //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
             if (route_it != travel_route.end() && !((*route_it == fleet->ArrivalStarlane()) || 
                 (empire && empire->UnrestrictedLaneTravel(fleet->SystemID(), *route_it))))
             {
                 for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
-                    //Logger().debugStream() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << it->object_id <<
+                    //DebugLogger() <<   "MapWnd::SetFleetMovementLine fleet id " << fleet_id << " node obj " << it->object_id <<
                     //                            ", node lane end " << it->lane_end_id << ", is post-blockade (" << it->post_blockade << ")";
                     it->eta++;
                 }
@@ -3296,7 +3296,7 @@ void MapWnd::DoSystemIconsLayout() {
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
-            Logger().errorStream() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
+            ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
             continue;
         }
 
@@ -3313,7 +3313,7 @@ void MapWnd::DoFieldIconsLayout() {
     {
         TemporaryPtr<const Field> field = GetField(field_it->first);
         if (!field) {
-            Logger().errorStream() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_it->first;
+            ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_it->first;
             continue;
         }
 
@@ -3334,7 +3334,7 @@ void MapWnd::DoFleetButtonsLayout() {
         // calculate system icon position
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
-            Logger().errorStream() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << it->first;
+            ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << it->first;
             continue;
         }
 
@@ -3344,7 +3344,7 @@ void MapWnd::DoFleetButtonsLayout() {
         // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
         std::map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
         if (sys_it == m_system_icons.end()) {
-            Logger().errorStream() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
+            ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
             continue;
         }
         const SystemIcon* system_icon = sys_it->second;
@@ -3364,7 +3364,7 @@ void MapWnd::DoFleetButtonsLayout() {
         // calculate system icon position
         TemporaryPtr<const System> system = GetSystem(it->first);
         if (!system) {
-            Logger().errorStream() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << it->first;
+            ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << it->first;
             continue;
         }
 
@@ -3374,7 +3374,7 @@ void MapWnd::DoFleetButtonsLayout() {
         // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
         std::map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
         if (sys_it == m_system_icons.end()) {
-            Logger().errorStream() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
+            ErrorLogger() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
             continue;
         }
         const SystemIcon* system_icon = sys_it->second;
@@ -3398,7 +3398,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
         // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
         if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
-            Logger().errorStream() << "DoFleetButtonsLayout couldn't get first fleet for button";
+            ErrorLogger() << "DoFleetButtonsLayout couldn't get first fleet for button";
             continue;
         }
 
@@ -3460,7 +3460,7 @@ void MapWnd::RefreshFleetButtons() {
         int object_id = obj->ID();
 
         if (verbose_logging)
-            Logger().debugStream() << "ordered-to-move fleet id: " << object_id;
+            DebugLogger() << "ordered-to-move fleet id: " << object_id;
 
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
@@ -3469,7 +3469,7 @@ void MapWnd::RefreshFleetButtons() {
             continue;
 
         if (verbose_logging)
-            Logger().debugStream() << " ... not stale, not destroyed";
+            DebugLogger() << " ... not stale, not destroyed";
 
         // skip fleets outside systems
         if (obj->SystemID() == INVALID_OBJECT_ID)
@@ -3477,12 +3477,12 @@ void MapWnd::RefreshFleetButtons() {
 
         TemporaryPtr<const System> system = GetSystem(obj->SystemID());
         if (!system) {
-            Logger().errorStream() << "couldn't get system with id " << obj->SystemID() << " of an departing fleet named " << obj->Name() << " in RefreshFleetButtons()";
+            ErrorLogger() << "couldn't get system with id " << obj->SystemID() << " of an departing fleet named " << obj->Name() << " in RefreshFleetButtons()";
             continue;
         }
 
         if (verbose_logging)
-            Logger().debugStream() << " ... at system " << system->Name() << " (" << system->ID() << ")";
+            DebugLogger() << " ... at system " << system->Name() << " (" << system->ID() << ")";
 
         // skip empty fleets
         TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
@@ -3506,7 +3506,7 @@ void MapWnd::RefreshFleetButtons() {
         int object_id = obj->ID();
 
         if (verbose_logging)
-            Logger().debugStream() << "stationary fleet id: " << object_id;
+            DebugLogger() << "stationary fleet id: " << object_id;
 
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
@@ -3515,7 +3515,7 @@ void MapWnd::RefreshFleetButtons() {
             continue;
 
         if (verbose_logging)
-            Logger().debugStream() << " ... not stale, not destroyed";
+            DebugLogger() << " ... not stale, not destroyed";
 
         // skip fleets outside systems
         if (obj->SystemID() == INVALID_OBJECT_ID)
@@ -3523,12 +3523,12 @@ void MapWnd::RefreshFleetButtons() {
 
         TemporaryPtr<const System> system = GetSystem(obj->SystemID());
         if (!system) {
-            Logger().errorStream() << "couldn't get system of a stationary fleet in RefreshFleetButtons()";
+            ErrorLogger() << "couldn't get system of a stationary fleet in RefreshFleetButtons()";
             continue;
         }
 
         if (verbose_logging)
-            Logger().debugStream() << " ... at system " << system->Name() << " (" << system->ID() << ")";
+            DebugLogger() << " ... at system " << system->Name() << " (" << system->ID() << ")";
 
         // skip empty fleets
         TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
@@ -3558,7 +3558,7 @@ void MapWnd::RefreshFleetButtons() {
             continue;
 
         if (obj->SystemID() != INVALID_OBJECT_ID) {
-            Logger().errorStream() << "a fleet that was supposed to be moving had a valid system in RefreshFleetButtons()";
+            ErrorLogger() << "a fleet that was supposed to be moving had a valid system in RefreshFleetButtons()";
             continue;
         }
 
@@ -4055,7 +4055,7 @@ void MapWnd::BuildingRightClicked(int building_id) {
 }
 
 void MapWnd::ReplotProjectedFleetMovement(bool append) {
-    Logger().debugStream() << "MapWnd::ReplotProjectedFleetMovement" << (append?" append":"");
+    DebugLogger() << "MapWnd::ReplotProjectedFleetMovement" << (append?" append":"");
     for (std::map<int, MovementLineData>::iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it) {
         MovementLineData& data = it->second;
         if (!data.path.empty()) {
@@ -4071,7 +4071,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
     if (!FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         return;
 
-    Logger().debugStream() << "PlotFleetMovement " << (execute_move?" execute":"") << (append?" append":"");
+    DebugLogger() << "PlotFleetMovement " << (execute_move?" execute":"") << (append?" append":"");
     
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
@@ -4083,7 +4083,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
         TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
-            Logger().errorStream() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << *it;
+            ErrorLogger() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << *it;
             continue;
         }
 
@@ -4153,7 +4153,7 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
     // get possible fleets to select from, and a pointer to one of those fleets
     const std::vector<int>& btn_fleets = fleet_btn->Fleets();
     if (btn_fleets.empty()) {
-        Logger().errorStream() << "Clicked FleetButton contained no fleets!";
+        ErrorLogger() << "Clicked FleetButton contained no fleets!";
         return;
     }
     TemporaryPtr<const Fleet> first_fleet = GetFleet(btn_fleets[0]);
@@ -4231,7 +4231,7 @@ void MapWnd::FleetButtonRightClicked(const FleetButton* fleet_btn) {
     // get fleets represented by clicked button
     const std::vector<int> btn_fleets = fleet_btn->Fleets();
     if (btn_fleets.empty()) {
-        Logger().errorStream() << "Clicked FleetButton contained no fleets!";
+        ErrorLogger() << "Clicked FleetButton contained no fleets!";
         return;
     }
 
@@ -4384,9 +4384,9 @@ void MapWnd::HandleEmpireElimination(int empire_id)
 
 void MapWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
     if (obj)
-        Logger().debugStream() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
+        DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
-        Logger().debugStream() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
+        DebugLogger() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
     if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
         std::map<int, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet->ID());
         if (it1 != m_fleet_lines.end())
@@ -4536,7 +4536,7 @@ bool MapWnd::ReturnToMap() {
 }
 
 bool MapWnd::EndTurn() {
-    Logger().debugStream() << "MapWnd::EndTurn";
+    DebugLogger() << "MapWnd::EndTurn";
     const Empire *empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire) {
         double RP = empire->ResourceProduction(RE_RESEARCH);
@@ -4544,8 +4544,8 @@ bool MapWnd::EndTurn() {
         int turn_number = CurrentTurn();
         float ratio = (RP/(PP+0.0001));
         const GG::Clr color = empire->Color();
-        Logger().debugStream() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio << " (" << RP << "/" << PP << ")";
-        Logger().debugStream() << "EmpireColors: " << static_cast<int>(color.r)
+        DebugLogger() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio << " (" << RP << "/" << PP << ")";
+        DebugLogger() << "EmpireColors: " << static_cast<int>(color.r)
                                             << " " << static_cast<int>(color.g)
                                             << " " << static_cast<int>(color.b)
                                             << " " << static_cast<int>(color.a);
@@ -5026,7 +5026,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double totalProduction = empire->ResourceProduction(RE_RESEARCH);
     double totalWastedRP = totalProduction - totalRPSpent;
     if (totalWastedRP > 0.05) {
-        Logger().debugStream()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: " 
+        DebugLogger()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: " 
                                 << totalRPSpent << " and RP Production: " << totalProduction << ", wasting " << totalWastedRP;
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
@@ -5069,7 +5069,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
     double totalWastedPP = totalProduction - totalPPSpent;
     if (totalWastedPP > 0.05) {
-        Logger().debugStream()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: " 
+        DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: " 
                                 << totalPPSpent << " and Industry Production: " << totalProduction << ", wasting " << totalWastedPP;
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
@@ -5441,7 +5441,7 @@ namespace { //helper function for DispatchFleetsExploring
 };
 
 void MapWnd::DispatchFleetsExploring() {
-    Logger().debugStream() << "MapWnd::DispatchFleetsExploring called";
+    DebugLogger() << "MapWnd::DispatchFleetsExploring called";
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire *empire = HumanClientApp::GetApp()->GetEmpire(empire_id);
@@ -5469,7 +5469,7 @@ void MapWnd::DispatchFleetsExploring() {
     if (fleet_idle.empty())
         return;
 
-    Logger().debugStream() << "MapWnd::DispatchFleetsExploring There is " << fleet_idle.size() << "ships to dispatch";
+    DebugLogger() << "MapWnd::DispatchFleetsExploring There is " << fleet_idle.size() << "ships to dispatch";
 
     //list all unexplored systems by taking the neighboors of explored systems because ObjectMap does not list them all.
     std::set<int> candidates_unknown_systems;
@@ -5497,7 +5497,7 @@ void MapWnd::DispatchFleetsExploring() {
         }
     }
 
-    Logger().debugStream() << "MapWnd::DispatchFleetsExploring There is " << unknown_systems.size() << "unknown systems";
+    DebugLogger() << "MapWnd::DispatchFleetsExploring There is " << unknown_systems.size() << "unknown systems";
 
     // send each ship to the nearest unexplored system where no other ship has
     // been ordered so far
@@ -5566,13 +5566,13 @@ void MapWnd::DispatchFleetsExploring() {
             if (!remaining_system_to_explore || min_dist == DBL_MAX) {
                 if (fleet->Fuel() == fleet->MaxFuel() && far_min_dist != DBL_MAX) {
                     //we have full fuel and no unknown planet in range. We can go to a far system, but we will have to wait for resupply
-                    Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
+                    DebugLogger() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
                     systems_order_sent.insert(far_system_id);
                     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), far_system_id)));
                 } else {
                     //no unknown planet in range. Let's try to get home to resupply
                     std::pair<int, int> pair = GetNearestSupplyPoint(empire, fleet->SystemID());
-                    Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Fleet " << fleet->ID() << " going to resupply at " << pair.first;
+                    DebugLogger() << "MapWnd::DispatchFleetsExploring : Fleet " << fleet->ID() << " going to resupply at " << pair.first;
                     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), pair.first)));
                 }
                 i = nbr_fleet_to_send; //stop the loop since every fleet will have order
@@ -5581,7 +5581,7 @@ void MapWnd::DispatchFleetsExploring() {
 
         if (min_dist != DBL_MAX) {
             //there is an unexplored system rechable
-            Logger().debugStream() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << better_fleet_id << " is " << end_system_id;
+            DebugLogger() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << better_fleet_id << " is " << end_system_id;
             systems_order_sent.insert(end_system_id);
             fleet_idle.erase(better_fleet_id);
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, better_fleet_id, start_system_id, end_system_id)));

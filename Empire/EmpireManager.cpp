@@ -106,7 +106,7 @@ void EmpireManager::EliminateEmpire(int id) {
         emp->EliminationCleanup();
         m_eliminated_empires.insert(id);
     } else {
-        Logger().errorStream() << "Tried to eliminate nonexistant empire with ID " << id;
+        ErrorLogger() << "Tried to eliminate nonexistant empire with ID " << id;
     }
 }
 
@@ -121,14 +121,14 @@ Empire* EmpireManager::CreateEmpire(int empire_id, const std::string& name,
 
 void EmpireManager::InsertEmpire(Empire* empire) {
     if (!empire) {
-        Logger().errorStream() << "EmpireManager::InsertEmpire passed null empire";
+        ErrorLogger() << "EmpireManager::InsertEmpire passed null empire";
         return;
     }
 
     int empire_id = empire->EmpireID();
 
     if (m_empire_map.find(empire_id) != m_empire_map.end()) {
-        Logger().errorStream() << "EmpireManager::InsertEmpire passed empire with id (" << empire_id << ") for which there already is an empire.";
+        ErrorLogger() << "EmpireManager::InsertEmpire passed empire with id (" << empire_id << ") for which there already is an empire.";
         return;
     }
 
@@ -151,7 +151,7 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) co
         m_empire_diplomatic_statuses.find(DiploKey(empire1, empire2));
     if (it != m_empire_diplomatic_statuses.end())
         return it->second;
-    Logger().errorStream() << "Couldn't find diplomatic status between empires " << empire1 << " and " << empire2;
+    ErrorLogger() << "Couldn't find diplomatic status between empires " << empire1 << " and " << empire2;
     return INVALID_DIPLOMATIC_STATUS;
 }
 
@@ -168,7 +168,7 @@ const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(int empire1, int em
     if (it != m_diplomatic_messages.end())
         return it->second;
     static DiplomaticMessage DEFAULT_DIPLOMATIC_MESSAGE;
-    Logger().errorStream() << "Couldn't find diplomatic message between empires " << empire1 << " and " << empire2;
+    ErrorLogger() << "Couldn't find diplomatic message between empires " << empire1 << " and " << empire2;
     return DEFAULT_DIPLOMATIC_MESSAGE;
 }
 
@@ -198,7 +198,7 @@ void EmpireManager::RemoveDiplomaticMessage(int empire1, int empire2) {
         DiplomaticMessageChangedSignal(empire1, empire2);
         return;
     }
-    Logger().errorStream() << "Was no diplomatic message entry between empires " << empire1 << " and " << empire2;
+    ErrorLogger() << "Was no diplomatic message entry between empires " << empire1 << " and " << empire2;
     m_diplomatic_messages[key] = DiplomaticMessage(empire1, empire2, DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE);
 }
 
@@ -307,7 +307,7 @@ const std::vector<GG::Clr>& EmpireColors() {
             doc.ReadDoc(ifs);
             ifs.close();
         } else {
-            Logger().errorStream() << "Unable to open data file " << file_name;
+            ErrorLogger() << "Unable to open data file " << file_name;
             return colors;
         }
 

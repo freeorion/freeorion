@@ -269,7 +269,7 @@ private:
         } else if( m_name == "number_of_humans" ){
             return UserString("SAVE_NUMBER_HUMANS_TITLE");
         } else {
-            Logger().errorStream() << "SaveFileColumn::Title Error: no such preview field: " << m_name;
+            ErrorLogger() << "SaveFileColumn::Title Error: no such preview field: " << m_name;
             return "???";
         }
     }
@@ -500,9 +500,9 @@ private:
                     break;
                 }
             }
-            Logger().errorStream() << "SaveFileListBox::FilterColumns: Column not found: " << *it;
+            ErrorLogger() << "SaveFileListBox::FilterColumns: Column not found: " << *it;
         }
-        Logger().debugStream() << "SaveFileDialog::FilterColumns: Visible columns: " << columns.size();
+        DebugLogger() << "SaveFileDialog::FilterColumns: Visible columns: " << columns.size();
         return columns;
     }
 
@@ -703,10 +703,10 @@ void SaveFileDialog::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::F
 }
 
 void SaveFileDialog::Confirm() {
-    Logger().debugStream() << "SaveFileDialog::Confirm: Confirming";
+    DebugLogger() << "SaveFileDialog::Confirm: Confirming";
 
     if (!CheckChoiceValidity()) {
-        Logger().debugStream() << "SaveFileDialog::Confirm: Invalid choice. abort.";
+        DebugLogger() << "SaveFileDialog::Confirm: Invalid choice. abort.";
         return;
     }
 
@@ -716,11 +716,11 @@ void SaveFileDialog::Confirm() {
     if (!choice.empty()) {
         fs::path chosen = current_dir / choice;
         if (fs::is_directory(chosen)) {
-            Logger().debugStream() << "SaveFileDialog::Confirm: " << chosen << " is a directory. Listing content.";
+            DebugLogger() << "SaveFileDialog::Confirm: " << chosen << " is a directory. Listing content.";
             UpdateDirectory(PathString(chosen));
             return;
         } else {
-            Logger().debugStream() << "SaveFileDialog::Confirm: File " << chosen << " chosen.";
+            DebugLogger() << "SaveFileDialog::Confirm: File " << chosen << " chosen.";
             // If not loading and file exists, ask to confirm override
             // Use Result() to ensure we are using the extension.
             if ( !m_load_only && fs::exists(fs::path(Result())) ) {
@@ -732,7 +732,7 @@ void SaveFileDialog::Confirm() {
             }
         }
     } else {
-        Logger().debugStream() << "SaveFileDialog::Confirm: Returning no file.";
+        DebugLogger() << "SaveFileDialog::Confirm: Returning no file.";
     }
 
     CloseClicked();
@@ -776,7 +776,7 @@ void SaveFileDialog::DoubleClickRow(GG::ListBox::iterator row) {
 }
 
 void SaveFileDialog::Cancel() {
-    Logger().debugStream() << "SaveFileDialog::Cancel: Dialog Canceled";
+    DebugLogger() << "SaveFileDialog::Cancel: Dialog Canceled";
     m_name_edit->SetText ( "" );
     CloseClicked();
 }
@@ -787,7 +787,7 @@ void SaveFileDialog::SelectionChanged(const GG::ListBox::SelectionSet& selection
         SaveFileRow* save_row = boost::polymorphic_downcast<SaveFileRow*> ( row );
         m_name_edit -> SetText ( save_row->Filename() );
     } else {
-        Logger().debugStream() << "SaveFileDialog::SelectionChanged: Unexpected selection size: " << selections.size();
+        DebugLogger() << "SaveFileDialog::SelectionChanged: Unexpected selection size: " << selections.size();
     }
     CheckChoiceValidity();
 }
@@ -808,7 +808,7 @@ void SaveFileDialog::DirectoryDropdownSelect(GG::DropDownList::iterator selectio
 }
 
 void SaveFileDialog::UpdatePreviewList() {
-    Logger().debugStream() << "SaveFileDialog::UpdatePreviewList";
+    DebugLogger() << "SaveFileDialog::UpdatePreviewList";
 
     m_file_list->Clear();
     // Needed because there is a bug in ListBox, where the headers
@@ -907,7 +907,7 @@ std::string SaveFileDialog::GetDirPath() const{
 
         // We should now be sure that the path is SERVER/whatever
         if (dir.length() < SERVER_LABEL.size()) {
-            Logger().errorStream() << "SaveFileDialog::GetDirPath: Error decorating directory for server: not long enough";
+            ErrorLogger() << "SaveFileDialog::GetDirPath: Error decorating directory for server: not long enough";
             return ".";
         } else {
             // Translate the server label into the standard relative path marker the server understands

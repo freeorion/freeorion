@@ -227,7 +227,7 @@ void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (sel_link == -1)
         return;
     if (sel_link < 0 || sel_link >= static_cast<int>(m_links.size())) {
-        Logger().errorStream() << "TextLinker::LClick_ found out of bounds sel_link!";
+        ErrorLogger() << "TextLinker::LClick_ found out of bounds sel_link!";
         return;
     }
 
@@ -242,7 +242,7 @@ void TextLinker::RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (sel_link == -1)
         return;
     if (sel_link < 0 || sel_link >= static_cast<int>(m_links.size())) {
-        Logger().errorStream() << "TextLinker::RClick_ found out of bounds sel_link!";
+        ErrorLogger() << "TextLinker::RClick_ found out of bounds sel_link!";
         return;
     }
 
@@ -257,7 +257,7 @@ void TextLinker::LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     if (sel_link == -1)
         return;
     if (sel_link < 0 || sel_link >= static_cast<int>(m_links.size())) {
-        Logger().errorStream() << "TextLinker::DoubleClick_ found out of bounds sel_link!";
+        ErrorLogger() << "TextLinker::DoubleClick_ found out of bounds sel_link!";
         return;
     }
 

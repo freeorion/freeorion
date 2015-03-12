@@ -113,7 +113,7 @@ namespace {
 
             const ClientApp* app = ClientApp::GetApp();
             if (!app) {
-                Logger().errorStream() << "PlayerDataPanel::Render couldn't get client app!";
+                ErrorLogger() << "PlayerDataPanel::Render couldn't get client app!";
                 return;
             }
             if (m_player_id != app->PlayerID()) {
@@ -160,7 +160,7 @@ namespace {
         void            Update() {
             const ClientApp* app = ClientApp::GetApp();
             if (!app) {
-                Logger().errorStream() << "PlayerDataPanel::Update couldn't get client app!";
+                ErrorLogger() << "PlayerDataPanel::Update couldn't get client app!";
                 return;
             }
 
@@ -168,7 +168,7 @@ namespace {
 
             std::map<int, PlayerInfo>::const_iterator player_it = players.find(m_player_id);
             if (player_it == players.end()) {
-                Logger().errorStream() << "PlayerDataPanel::Update couldn't find player with id " << m_player_id;
+                ErrorLogger() << "PlayerDataPanel::Update couldn't find player with id " << m_player_id;
                 return;
             }
             const PlayerInfo& player_info = player_it->second;
@@ -496,7 +496,7 @@ void PlayerListWnd::Refresh() {
 
     const ClientApp* app = ClientApp::GetApp();
     if (!app) {
-        Logger().errorStream() << "PlayerListWnd::Refresh couldn't get client app!";
+        ErrorLogger() << "PlayerListWnd::Refresh couldn't get client app!";
         return;
     }
     const std::map<int, PlayerInfo>& players = app->Players();
@@ -530,7 +530,7 @@ void PlayerListWnd::SetSelectedPlayers(const std::set<int>& player_ids) {
     for (GG::ListBox::iterator it = m_player_list->begin(); it != m_player_list->end(); ++it) {
         PlayerRow* row = dynamic_cast<PlayerRow*>(*it);
         if (!row) {
-            Logger().errorStream() << "PlayerRow::SetSelectedPlayers couldn't cast a listbow row to PlayerRow?";
+            ErrorLogger() << "PlayerRow::SetSelectedPlayers couldn't cast a listbow row to PlayerRow?";
             continue;
         }
 
@@ -570,21 +570,21 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
 
         GG::ListBox::Row* row = *it;
         if (!row) {
-            Logger().errorStream() << "PlayerListWnd::PlayerSelectionChanged couldn't get row";
+            ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get row";
             continue;
         }
         if (row->empty()) {
-            Logger().errorStream() << "PlayerListWnd::PlayerSelectionChanged got empty row";
+            ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged got empty row";
             continue;
         }
         GG::Control* control = (*row)[0];
         if (!control) {
-            Logger().errorStream() << "PlayerListWnd::PlayerSelectionChanged couldn't get control from row";
+            ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get control from row";
             continue;
         }
         PlayerDataPanel* data_panel = dynamic_cast<PlayerDataPanel*>(control);
         if (!data_panel) {
-            Logger().errorStream() << "PlayerListWnd::PlayerSelectionChanged couldn't get PlayerDataPanel from control";
+            ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get PlayerDataPanel from control";
             continue;
         }
         data_panel->Select(select_this_row);
@@ -606,7 +606,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         return;
     const ClientApp* app = ClientApp::GetApp();
     if (!app) {
-        Logger().errorStream() << "PlayerListWnd::PlayerRightClicked couldn't get client app!";
+        ErrorLogger() << "PlayerListWnd::PlayerRightClicked couldn't get client app!";
         return;
     }
     int client_player_id = app->PlayerID();
@@ -618,14 +618,14 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     const std::map<int, PlayerInfo>& players = app->Players();
     std::map<int, PlayerInfo>::const_iterator clicked_player_it = players.find(clicked_player_id);
     if (clicked_player_it == players.end()) {
-        Logger().errorStream() << "PlayerListWnd::PlayerRightClicked couldn't find player with id " << clicked_player_id;
+        ErrorLogger() << "PlayerListWnd::PlayerRightClicked couldn't find player with id " << clicked_player_id;
         return;
     }
     const PlayerInfo& clicked_player_info = clicked_player_it->second;
     int clicked_empire_id = clicked_player_info.empire_id;
 
     if (!GetEmpire(clicked_empire_id)) {
-        Logger().errorStream() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
+        ErrorLogger() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
                                << clicked_empire_id << " for player " << clicked_player_id
                                << " but couldn't find such an empire";
         return;
@@ -636,7 +636,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         // get diplomatic status between client and clicked empires
         DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
         if (diplo_status == INVALID_DIPLOMATIC_STATUS && clicked_player_id != client_player_id) {
-            Logger().errorStream() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
+            ErrorLogger() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
             return;
         }
         DiplomaticMessage existing_message = Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);

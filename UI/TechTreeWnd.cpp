@@ -1059,7 +1059,7 @@ void TechTreeWnd::LayoutPanel::ShowTech(const std::string& tech_name)
 void TechTreeWnd::LayoutPanel::CenterOnTech(const std::string& tech_name) {
     std::map<std::string, TechPanel*>::const_iterator it = m_techs.find(tech_name);
     if (it == m_techs.end()) {
-        Logger().debugStream() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << tech_name
+        DebugLogger() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << tech_name
                                << " due to lack of such a tech panel";
         return;
     }
@@ -1129,7 +1129,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     // cleanup old data for new layout
     Clear();
 
-    Logger().debugStream() << "Tech Tree Layout Preparing Tech Data";
+    DebugLogger() << "Tech Tree Layout Preparing Tech Data";
 
     // create a node for every tech
     TechManager& manager = GetTechManager();
@@ -1156,14 +1156,14 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         }
     }
 
-    Logger().debugStream() << "Tech Tree Layout Doing Graph Layout";
+    DebugLogger() << "Tech Tree Layout Doing Graph Layout";
 
     //calculate layout
     m_graph.DoLayout(static_cast<int>(WIDTH + RANK_SEP),
                      static_cast<int>(HEIGHT + NODE_SEP),
                      static_cast<int>(X_MARGIN));
 
-    Logger().debugStream() << "Tech Tree Layout Creating Panels";
+    DebugLogger() << "Tech Tree Layout Creating Panels";
 
     std::set<std::string> visible_techs;
 
@@ -1197,7 +1197,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     m_vscroll->SizeScroll(0, Value(layout_size.y - 1), std::max(50, Value(std::min(layout_size.y / 10, client_sz.y))), Value(client_sz.y));
     m_hscroll->SizeScroll(0, Value(layout_size.x - 1), std::max(50, Value(std::min(layout_size.x / 10, client_sz.x))), Value(client_sz.x));
 
-    Logger().debugStream() << "Tech Tree Layout Done";
+    DebugLogger() << "Tech Tree Layout Done";
 
     // restore save data
     if (keep_position) {
@@ -1473,7 +1473,7 @@ void TechTreeWnd::TechListBox::Populate() {
     if (!Visible())
         return;
 
-    Logger().debugStream() << "Tech List Box Populating";
+    DebugLogger() << "Tech List Box Populating";
 
     double creation_elapsed = 0.0;
     double insertion_elapsed = 0.0;
@@ -1511,9 +1511,9 @@ void TechTreeWnd::TechListBox::Populate() {
         }
     }
 
-    Logger().debugStream() << "Tech List Box Done Populating";
-    Logger().debugStream() << "    Creation time=" << (creation_elapsed * 1000) << "ms";
-    Logger().debugStream() << "    Insertion time=" << (insertion_elapsed * 1000) << "ms";
+    DebugLogger() << "Tech List Box Done Populating";
+    DebugLogger() << "    Creation time=" << (creation_elapsed * 1000) << "ms";
+    DebugLogger() << "    Insertion time=" << (insertion_elapsed * 1000) << "ms";
 }
 
 void TechTreeWnd::TechListBox::ShowCategory(const std::string& category) {

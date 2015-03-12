@@ -1101,7 +1101,7 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const {
         return EMPTY_STRING;
     const CUIDropDownList::Row* row = *row_it;
     if (!row) {
-        Logger().errorStream() << "SpeciesSelector::CurrentSpeciesName couldn't get current item due to invalid Row pointer";
+        ErrorLogger() << "SpeciesSelector::CurrentSpeciesName couldn't get current item due to invalid Row pointer";
         return EMPTY_STRING;
     }
     return row->Name();
@@ -1125,7 +1125,7 @@ void SpeciesSelector::SelectSpecies(const std::string& species_name) {
             }
         }
     }
-    Logger().errorStream() << "SpeciesSelector::SelectSpecies was unable to find a species in the list with name " << species_name;
+    ErrorLogger() << "SpeciesSelector::SelectSpecies was unable to find a species in the list with name " << species_name;
 }
 
 void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names) {
@@ -1143,7 +1143,7 @@ void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names) 
                 selection_changed = false;
             }
         } else {
-            Logger().errorStream() << "SpeciesSelector::SpeciesSelector couldn't find species with name: " << species_name;
+            ErrorLogger() << "SpeciesSelector::SpeciesSelector couldn't find species with name: " << species_name;
         }
     }
     if (selection_changed)
@@ -1209,7 +1209,7 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr) {
             return;
         }
     }
-    Logger().errorStream() << "EmpireColorSelector::SelectColor was unable to find a requested color!";
+    ErrorLogger() << "EmpireColorSelector::SelectColor was unable to find a requested color!";
 }
 
 void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
@@ -1217,7 +1217,7 @@ void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it) {
     if (row && !row->empty())
         ColorChangedSignal((*row)[0]->Color());
     else
-        Logger().errorStream() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row!";
+        ErrorLogger() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row!";
 }
 
 

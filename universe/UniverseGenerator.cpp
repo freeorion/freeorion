@@ -98,7 +98,7 @@ void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
                 --i; //try again for same star
             } else {
                 attempts=0; //give up on this star, move on to next
-                Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                DebugLogger() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
             }
             continue;
         }
@@ -160,7 +160,7 @@ void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
                 --i; //try again for same star
             } else {
                 attempts=0; //give up on this star, move on to next
-                Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                DebugLogger() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
             }
             continue;
         }
@@ -177,11 +177,11 @@ void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned
                                 unsigned int stars, double width, double height)
 {
     if (stars < 1) {
-        Logger().errorStream() << "ClusterGalaxyCalcPositions requested for 0 stars";
+        ErrorLogger() << "ClusterGalaxyCalcPositions requested for 0 stars";
         return;
     }
     if (clusters < 1) {
-        Logger().errorStream() << "ClusterGalaxyCalcPositions requested for 0 clusters. defaulting to 1";
+        ErrorLogger() << "ClusterGalaxyCalcPositions requested for 0 clusters. defaulting to 1";
         clusters = 1;
     }
     
@@ -256,7 +256,7 @@ void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned
                 --i; //try again for same star
             } else {
                 attempts=0; //give up on this star, move on to next
-                Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                DebugLogger() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
             }
             continue;
         }
@@ -297,7 +297,7 @@ void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned in
                 --i; //try again for same star
             } else {
                 attempts=0; //give up on this star, move on to next
-                Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                DebugLogger() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
             }
             continue;
         }
@@ -313,7 +313,7 @@ void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned in
 void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned int stars,
                               double width, double height)
 {
-    Logger().debugStream() << "IrregularGalaxyPositions";
+    DebugLogger() << "IrregularGalaxyPositions";
 
     unsigned int positions_placed = 0;
     for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
@@ -321,7 +321,7 @@ void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned i
         double x = width * RandZeroToOne();
         double y = height * RandZeroToOne();
 
-        Logger().debugStream() << "... potential position: (" << x << ", " << y << ")";
+        DebugLogger() << "... potential position: (" << x << ", " << y << ")";
 
         // reject positions outside of galaxy: minimum 0, maximum height or width.  shouldn't be a problem,
         // but I'm copying this from one of the other generation functions and figure it might as well remain
@@ -337,7 +337,7 @@ void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned i
                 --i; //try again for same star
             } else {
                 attempts=0; //give up on this star, move on to next
-                Logger().debugStream() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
+                DebugLogger() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
             }
             continue;
         }
@@ -345,14 +345,14 @@ void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned i
         // Add the new star location.
         positions.push_back(SystemPosition(x, y));
 
-        Logger().debugStream() << "... added system at (" << x << ", " << y << ") after " << attempts << " attempts";
+        DebugLogger() << "... added system at (" << x << ", " << y << ") after " << attempts << " attempts";
 
         positions_placed++;
 
         // Note that attempts is reset for every star.
         attempts = 0;
     }
-    Logger().debugStream() << "... placed " << positions_placed << " systems";
+    DebugLogger() << "... placed " << positions_placed << " systems";
 }
 
 
@@ -644,14 +644,14 @@ namespace {
 
         s_instance = this;
 
-        Logger().debugStream() << "Initializing FleetPlanManager";
+        DebugLogger() << "Initializing FleetPlanManager";
 
         parse::fleet_plans(GetResourceDir() / "starting_fleets.txt", m_plans);
 
 #ifdef OUTPUT_PLANS_LIST
-        Logger().debugStream() << "Starting Fleet Plans:";
+        DebugLogger() << "Starting Fleet Plans:";
         for (iterator it = begin(); it != end(); ++it)
-            Logger().debugStream() << " ... " << (*it)->Name();
+            DebugLogger() << " ... " << (*it)->Name();
 #endif
     }
 
@@ -695,14 +695,14 @@ namespace {
 
         s_instance = this;
 
-        Logger().debugStream() << "Initializing MonsterFleetPlanManager";
+        DebugLogger() << "Initializing MonsterFleetPlanManager";
 
         parse::monster_fleet_plans(GetResourceDir() / "space_monster_spawn_fleets.txt", m_plans);
 
 //#ifdef OUTPUT_PLANS_LIST
-        Logger().debugStream() << "Starting Monster Fleet Plans:";
+        DebugLogger() << "Starting Monster Fleet Plans:";
         for (iterator it = begin(); it != end(); ++it)
-            Logger().debugStream() << " ... " << (*it)->Name() << " spawn rate: " << (*it)->SpawnRate() << " spawn limit: " << (*it)->SpawnLimit();
+            DebugLogger() << " ... " << (*it)->Name() << " spawn rate: " << (*it)->SpawnRate() << " spawn limit: " << (*it)->SpawnLimit();
 //#endif
     }
 
@@ -833,13 +833,13 @@ namespace {
         int numSys = systems.size();
         // make sure data is consistent
         if (static_cast<int>(laneSetArray.size()) != numSys) {
-            Logger().errorStream() << "CullAngularlyTooCloseLanes got different size vectors of lane sets and systems.  Doing nothing.";
+            ErrorLogger() << "CullAngularlyTooCloseLanes got different size vectors of lane sets and systems.  Doing nothing.";
             return;
         }
 
         if (numSys < 3) return;  // nothing worth doing for less than three systems
 
-        //Logger().debugStream() << "Culling Too Close Angularly Lanes";
+        //DebugLogger() << "Culling Too Close Angularly Lanes";
 
         // loop through systems
         for (curSys = 0; curSys < numSys; curSys++) {
@@ -1087,7 +1087,7 @@ void GenerateStarlanes(GalaxySetupOption freq) {
     // pass systems to Delauney Triangulation routine, getting array of triangles back
     std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
     if (!triList ||triList->empty()) {
-        Logger().errorStream() << "Got no list or blank list of triangles from Triangulation.";
+        ErrorLogger() << "Got no list or blank list of triangles from Triangulation.";
         return;
     }
 
@@ -1141,14 +1141,14 @@ void GenerateStarlanes(GalaxySetupOption freq) {
     // cleanup
     delete triList;
 
-    //Logger().debugStream() << "Extracted Potential Starlanes from Triangulation";
+    //DebugLogger() << "Extracted Potential Starlanes from Triangulation";
 
     double maxStarlaneLength = UniverseDataTables()["MaxStarlaneLength"][0][0];
     CullTooLongLanes(maxStarlaneLength, potentialLaneSetArray, sys_vec);
 
     CullAngularlyTooCloseLanes(0.98, potentialLaneSetArray, sys_vec);
 
-    //Logger().debugStream() << "Culled Agularly Too Close Lanes";
+    //DebugLogger() << "Culled Agularly Too Close Lanes";
 
     laneSetArray = potentialLaneSetArray;
 
@@ -1181,7 +1181,7 @@ void GenerateStarlanes(GalaxySetupOption freq) {
             sys_vec[n]->AddStarlane(sys_vec[*it]->ID()); // System::AddStarlane() expects a system ID
     }
     
-    Logger().debugStream() << "Initializing System Graph";
+    DebugLogger() << "Initializing System Graph";
     GetUniverse().InitializeSystemGraph();
 }
 
@@ -1229,18 +1229,18 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
     if (home_planet)
         home_system = GetSystem(home_planet->SystemID());
     if (!home_planet || !home_system) {
-        Logger().errorStream() << "UniverseGenerator::SetEmpireHomeworld: couldn't get homeworld or system for empire" << empire->EmpireID();
+        ErrorLogger() << "UniverseGenerator::SetEmpireHomeworld: couldn't get homeworld or system for empire" << empire->EmpireID();
         return false;
     }
 
-    Logger().debugStream() << "UniverseGenerator::SetEmpireHomeworld: setting " << home_system->ID()
+    DebugLogger() << "UniverseGenerator::SetEmpireHomeworld: setting " << home_system->ID()
                            << " (planet " <<  home_planet->ID()
                            << ") to be home system for empire " << empire->EmpireID();
 
     // get species, check if it exists
     Species* species = GetSpeciesManager().GetSpecies(species_name);
     if (!species) {
-        Logger().errorStream() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \""
+        ErrorLogger() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \""
                                << species_name << "\" to set with homeworld id " << home_planet->ID();
         return false;
     }
@@ -1275,7 +1275,7 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
 
 void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
 {
-    Logger().debugStream() << "Initializing " << player_setup_data.size() << " empires";
+    DebugLogger() << "Initializing " << player_setup_data.size() << " empires";
 
     // copy empire colour table, so that individual colours can be removed after they're used
     std::vector<GG::Clr> colors = EmpireColors();
@@ -1287,7 +1287,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
     {
         int         player_id =     setup_data_it->first;
         if (player_id == Networking::INVALID_PLAYER_ID)
-            Logger().errorStream() << "Universe::InitEmpires player id (" << player_id << ") is invalid";
+            ErrorLogger() << "Universe::InitEmpires player id (" << player_id << ") is invalid";
         // use player ID for empire ID so that the calling code can get the
         // correct empire for each player ID  in player_setup_data
         int         empire_id =     player_id;
@@ -1316,7 +1316,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         // set generic default empire name
         std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(empire_id);
 
-        Logger().debugStream() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
+        DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
                                << " for player: " << player_name << " (with player id: " << player_id << ")";
 
         // create new Empire object through empire manager

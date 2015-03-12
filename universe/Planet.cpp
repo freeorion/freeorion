@@ -70,7 +70,7 @@ Planet::Planet() :
     m_last_turn_attacked_by_ship(-1),
     m_surface_texture()
 {
-    //Logger().debugStream() << "Planet::Planet()";
+    //DebugLogger() << "Planet::Planet()";
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
     // in functional form by deserialization.  Also assumes planet-specific meters don't need to be re-added.
 }
@@ -94,7 +94,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_last_turn_attacked_by_ship(-1),
     m_surface_texture()
 {
-    //Logger().debugStream() << "Planet::Planet(" << type << ", " << size <<")";
+    //DebugLogger() << "Planet::Planet(" << type << ", " << size <<")";
     UniverseObject::Init();
     PopCenter::Init();
     ResourceCenter::Init();
@@ -123,7 +123,7 @@ void Planet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_i
         return;
     TemporaryPtr<const Planet> copied_planet = boost::dynamic_pointer_cast<const Planet>(copied_object);
     if (!copied_planet) {
-        Logger().errorStream() << "Planet::Copy passed an object that wasn't a Planet";
+        ErrorLogger() << "Planet::Copy passed an object that wasn't a Planet";
         return;
     }
 
@@ -251,7 +251,7 @@ PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/
         species = GetSpecies(species_name);
     }
     if (!species) {
-        Logger().errorStream() << "Planet::EnvironmentForSpecies couldn't get species with name \"" << species_name << "\"";
+        ErrorLogger() << "Planet::EnvironmentForSpecies couldn't get species with name \"" << species_name << "\"";
         return PE_UNINHABITABLE;
     }
     return species->GetPlanetEnvironment(m_type);
@@ -268,7 +268,7 @@ PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_nam
         species = GetSpecies(species_name);
     }
     if (!species) {
-        Logger().errorStream() << "Planet::NextBetterPlanetTypeForSpecies couldn't get species with name \"" << species_name << "\"";
+        ErrorLogger() << "Planet::NextBetterPlanetTypeForSpecies couldn't get species with name \"" << species_name << "\"";
         return m_type;
     }
     return species->NextBetterPlanetType(m_type);
@@ -324,7 +324,7 @@ namespace {
     PlanetType LoopPlanetTypeIncrement(PlanetType initial_type, int step) {
         // avoid too large steps that would mess up enum arithmatic
         if (std::abs(step) >= PT_ASTEROIDS) {
-            Logger().debugStream() << "LoopPlanetTypeIncrement giving too large step: " << step;
+            DebugLogger() << "LoopPlanetTypeIncrement giving too large step: " << step;
             return initial_type;
         }
         // some types can't be terraformed
@@ -643,7 +643,7 @@ void Planet::Conquer(int conquerer) {
             building->SetOwner(conquerer);
         } else if (cap_result == CR_DESTROY) {
             // destroy object
-            //Logger().debugStream() << "Planet::Conquer destroying object: " << building->Name();
+            //DebugLogger() << "Planet::Conquer destroying object: " << building->Name();
             this->RemoveBuilding(building->ID());
             if (TemporaryPtr<System> system = GetSystem(this->SystemID()))
                 system->Remove(building->ID());
@@ -682,12 +682,12 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         // check if specified species exists and get reference
         species = GetSpecies(species_name);
         if (!species) {
-            Logger().errorStream() << "Planet::Colonize couldn't get species already on planet with name: " << species_name;
+            ErrorLogger() << "Planet::Colonize couldn't get species already on planet with name: " << species_name;
             return false;
         }
         // check if specified species can colonize this planet
         if (EnvironmentForSpecies(species_name) < PE_HOSTILE) {
-            Logger().errorStream() << "Planet::Colonize: can't colonize planet already populated by species " << species_name;
+            ErrorLogger() << "Planet::Colonize: can't colonize planet already populated by species " << species_name;
             return false;
         }
     }
@@ -730,7 +730,7 @@ bool Planet::Colonize(int empire_id, const std::string& species_name, double pop
         if (!found_preference)
             SetFocus(*available_foci.begin());
     } else {
-        Logger().debugStream() << "Planet::Colonize unable to find a focus to set for species " << species_name;
+        DebugLogger() << "Planet::Colonize unable to find a focus to set for species " << species_name;
     }
 
     // set colony population

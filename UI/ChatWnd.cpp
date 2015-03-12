@@ -316,14 +316,14 @@ void MessageWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_player_id, int recipient_player_id) {
     const ClientApp* app = ClientApp::GetApp();
     if (!app) {
-        Logger().errorStream() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
+        ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't get client app!";
         return;
     }
 
     const std::map<int, PlayerInfo>& players = app->Players();
     std::map<int, PlayerInfo>::const_iterator player_it = players.find(sender_player_id);
     if (player_it == players.end()) {
-        Logger().errorStream() << "MessageWnd::HandlePlayerChatMessage couldn't message sending player with id: " << sender_player_id;
+        ErrorLogger() << "MessageWnd::HandlePlayerChatMessage couldn't message sending player with id: " << sender_player_id;
         return;
     }
 
@@ -377,7 +377,7 @@ void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
         phase_str = UserString("TURN_PROGRESS_STARTING_AIS");
         break;
     default:
-        Logger().errorStream() << "MessageWnd::HandleTurnPhaseUpdate got unknown turn phase id";
+        ErrorLogger() << "MessageWnd::HandleTurnPhaseUpdate got unknown turn phase id";
         return;
         break;
     }

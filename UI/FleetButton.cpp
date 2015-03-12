@@ -170,7 +170,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     for (std::vector<int>::const_iterator it = fleet_IDs.begin(); it != fleet_IDs.end(); ++it) {
         TemporaryPtr<const Fleet> fleet = GetFleet(*it);
         if (!fleet) {
-            Logger().errorStream() << "FleetButton::FleetButton couldn't get fleet with id " << *it;
+            ErrorLogger() << "FleetButton::FleetButton couldn't get fleet with id " << *it;
             continue;
         }
         m_fleets.push_back(*it);

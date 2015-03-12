@@ -43,7 +43,7 @@ namespace {
     /// returns true on success, false if preview data could not be found
     bool LoadSaveGamePreviewData( const fs::path& path, FullPreview& full, bool alternate_serialization ) {
         if ( !fs::exists ( path ) ) {
-            Logger().debugStream() << "LoadSaveGamePreviewData: Save file note found: " << path.string();
+            DebugLogger() << "LoadSaveGamePreviewData: Save file note found: " << path.string();
             return false;
         }
 
@@ -57,29 +57,29 @@ namespace {
         try {
             if (use_binary) {
                 freeorion_bin_iarchive ia ( ifs );
-                Logger().debugStream() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
+                DebugLogger() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
                 ia >> BOOST_SERIALIZATION_NVP ( full.preview );
                 ia >> BOOST_SERIALIZATION_NVP ( full.galaxy );
             } else {
                 freeorion_xml_iarchive ia ( ifs );
-                Logger().debugStream() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
+                DebugLogger() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
                 ia >> BOOST_SERIALIZATION_NVP ( full.preview );
                 ia >> BOOST_SERIALIZATION_NVP ( full.galaxy );
             }
         } catch ( const std::exception& e ) {
             if (alternate_serialization) {
-                Logger().errorStream() << "LoadSaveGamePreviewData: Failed to read preview of " << path.string() << " because: " << e.what();
+                ErrorLogger() << "LoadSaveGamePreviewData: Failed to read preview of " << path.string() << " because: " << e.what();
                 return false;
             } else {
-                Logger().debugStream() << "LoadSaveGamePreviewData trying alternate_serialization";
+                DebugLogger() << "LoadSaveGamePreviewData trying alternate_serialization";
                 return LoadSaveGamePreviewData (path, full, true);
             }
         }
         if ( full.preview.Valid() ) {
-            Logger().debugStream() << "LoadSaveGamePreviewData: Successfully loaded preview from:" << path.string();
+            DebugLogger() << "LoadSaveGamePreviewData: Successfully loaded preview from:" << path.string();
             return true;
         } else {
-            Logger().debugStream() << "LoadSaveGamePreviewData: Passing save file with no preview: " << path.string();
+            DebugLogger() << "LoadSaveGamePreviewData: Passing save file with no preview: " << path.string();
             return false;
         }
     }
@@ -190,7 +190,7 @@ std::string ColumnInPreview ( const FullPreview& full, const std::string& name, 
     } else if ( name == "number_of_humans" ) {
         return boost::lexical_cast<std::string> ( full.preview.number_of_human_players );
     } else {
-        Logger().errorStream() << "FullPreview::Value Error: no such preview field: " << name;
+        ErrorLogger() << "FullPreview::Value Error: no such preview field: " << name;
         return "??";
     }
 }
@@ -209,11 +209,11 @@ void LoadSaveGamePreviews ( const fs::path& orig_path, const std::string& extens
     }
 
     if ( !fs::exists ( path ) ) {
-        Logger().errorStream() << "SaveFileListBox::LoadSaveGamePreviews: Save Game directory \"" << path << "\" not found";
+        ErrorLogger() << "SaveFileListBox::LoadSaveGamePreviews: Save Game directory \"" << path << "\" not found";
         return;
     }
     if ( !fs::is_directory ( path ) ) {
-        Logger().errorStream() << "SaveFileListBox::LoadSaveGamePreviews: Save Game directory \"" << path << "\" was not a directory";
+        ErrorLogger() << "SaveFileListBox::LoadSaveGamePreviews: Save Game directory \"" << path << "\" was not a directory";
         return;
     }
 
@@ -227,7 +227,7 @@ void LoadSaveGamePreviews ( const fs::path& orig_path, const std::string& extens
                 }
             }
         } catch ( const std::exception& e ) {
-            Logger().errorStream() << "SaveFileListBox::LoadSaveGamePreviews: Failed loading preview from " << it->path() << " because: " << e.what();
+            ErrorLogger() << "SaveFileListBox::LoadSaveGamePreviews: Failed loading preview from " << it->path() << " because: " << e.what();
         }
     }
 }

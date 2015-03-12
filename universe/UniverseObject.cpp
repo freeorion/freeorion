@@ -29,7 +29,7 @@ UniverseObject::UniverseObject() :
     m_meters(),
     m_created_on_turn(-1)
 {
-    //Logger().debugStream() << "UniverseObject::UniverseObject()";
+    //DebugLogger() << "UniverseObject::UniverseObject()";
     m_created_on_turn = CurrentTurn();
 }
 
@@ -56,7 +56,7 @@ void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visi
     if (copied_object == this)
         return;
     if (!copied_object) {
-        Logger().errorStream() << "UniverseObject::Copy passed a null object";
+        ErrorLogger() << "UniverseObject::Copy passed a null object";
         return;
     }
 
@@ -257,7 +257,7 @@ float UniverseObject::NextTurnCurrentMeterValue(MeterType type) const
 
 void UniverseObject::AddMeter(MeterType meter_type) {
     if (INVALID_METER_TYPE == meter_type)
-        Logger().errorStream() << "UniverseObject::AddMeter asked to add invalid meter type!";
+        ErrorLogger() << "UniverseObject::AddMeter asked to add invalid meter type!";
     else
         m_meters[meter_type];
 }
@@ -295,7 +295,7 @@ void UniverseObject::MoveTo(int object_id)
 
 void UniverseObject::MoveTo(TemporaryPtr<UniverseObject> object) {
     if (!object) {
-        Logger().errorStream() << "UniverseObject::MoveTo : attempted to move to a null object.";
+        ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
         return;
     }
     MoveTo(object->X(), object->Y());
@@ -303,7 +303,7 @@ void UniverseObject::MoveTo(TemporaryPtr<UniverseObject> object) {
 
 void UniverseObject::MoveTo(double x, double y) {
     if (x < 0.0 || GetUniverse().UniverseWidth() < x || y < 0.0 || GetUniverse().UniverseWidth() < y)
-        Logger().debugStream() << "UniverseObject::MoveTo : Placing object \"" + m_name + "\" off the map area.";
+        DebugLogger() << "UniverseObject::MoveTo : Placing object \"" + m_name + "\" off the map area.";
 
     if (m_x == x && m_y == y)
         return;
@@ -338,7 +338,7 @@ void UniverseObject::SetOwner(int id) {
 }
 
 void UniverseObject::SetSystem(int sys) {
-    //Logger().debugStream() << "UniverseObject::SetSystem(int sys)";
+    //DebugLogger() << "UniverseObject::SetSystem(int sys)";
     if (sys != m_system_id) {
         m_system_id = sys;
         StateChangedSignal();

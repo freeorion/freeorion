@@ -15,7 +15,7 @@ public:
     {}
     ~ScopedTimerImpl() {
         if (m_timer.elapsed() * 1000.0 > 1 && ( m_always_output || GetOptionsDB().Get<bool>("verbose-logging")))
-            Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
+            DebugLogger() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
     }
     boost::timer    m_timer;
     std::string     m_name;

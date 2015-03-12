@@ -68,7 +68,7 @@ namespace {
                 ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(data);
             }
         } catch (const boost::bad_lexical_cast&) {
-            Logger().errorStream() << "SitrepPanel.cpp HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+            ErrorLogger() << "SitrepPanel.cpp HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
         }
     }
 
@@ -489,7 +489,7 @@ void SitRepPanel::FilterClicked() {
 }
 
 void SitRepPanel::Update() {
-    Logger().debugStream() << "SitRepPanel::Update()";
+    DebugLogger() << "SitRepPanel::Update()";
     m_sitreps_lb->Clear();
 
     // Get back to sane default
@@ -525,9 +525,9 @@ void SitRepPanel::Update() {
              sitrep_it != currentTurnSitreps.end(); sitrep_it++)
         {
             if (sitrep_it->GetTemplateString() == *template_it) {
-                //Logger().debugStream() << "saving into orderedSitreps -  sitrep of template "<<*template_it<<" with full string "<< sitrep_it->GetText();
+                //DebugLogger() << "saving into orderedSitreps -  sitrep of template "<<*template_it<<" with full string "<< sitrep_it->GetText();
                 orderedSitreps.push_back(*sitrep_it);
-                //Logger().debugStream()<< "deleting above sitrep from currentTurnSitreps";
+                //DebugLogger()<< "deleting above sitrep from currentTurnSitreps";
                 sitrep_it = --currentTurnSitreps.erase(sitrep_it);
             }
         }

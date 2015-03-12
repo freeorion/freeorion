@@ -196,11 +196,11 @@ namespace {
                 TemporaryPtr<const Ship> ship = *ship_it;
 
                 if (ship->SystemID() != system->ID()) {
-                    Logger().errorStream() << "CreateNewFleetsForShips passed ships with inconsistent system ids";
+                    ErrorLogger() << "CreateNewFleetsForShips passed ships with inconsistent system ids";
                     continue;
                 }
                 if (!ship->OwnedBy(client_empire_id)) {
-                    Logger().errorStream() << "CreateNewFleetsForShips passed ships not owned by this client's empire";
+                    ErrorLogger() << "CreateNewFleetsForShips passed ships not owned by this client's empire";
                     return;
                 }
 
@@ -232,7 +232,7 @@ namespace {
         if (   systems_containing_new_fleets.size() != 1
             || *systems_containing_new_fleets.begin() == INVALID_OBJECT_ID)
         {
-            Logger().errorStream() << "CreateNewFleetsForShips got ships in invalid or inconsistent system(s)";
+            ErrorLogger() << "CreateNewFleetsForShips got ships in invalid or inconsistent system(s)";
             return;
         }
 
@@ -265,7 +265,7 @@ namespace {
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids,
                                  NewFleetAggression aggression)
     {
-        Logger().debugStream() << "CreateNewFleetFromShips with " << ship_ids.size();
+        DebugLogger() << "CreateNewFleetFromShips with " << ship_ids.size();
         std::vector<std::vector<int> > ship_id_groups;
         ship_id_groups.push_back(ship_ids);
 
@@ -276,7 +276,7 @@ namespace {
                                            int design_id,
                                            NewFleetAggression aggression)
     {
-        Logger().debugStream() << "CreateNewFleetFromShipsWithDesign with " << ship_ids.size()
+        DebugLogger() << "CreateNewFleetFromShipsWithDesign with " << ship_ids.size()
                                << " ship ids and design id: " << design_id;
         if (ship_ids.empty() || design_id == ShipDesign::INVALID_DESIGN_ID)
             return;
@@ -301,7 +301,7 @@ namespace {
     void CreateNewFleetsFromShipsForEachDesign(const std::set<int>& ship_ids,
                                                NewFleetAggression aggression)
     {
-        Logger().debugStream() << "CreateNewFleetsFromShipsForEachDesign with "
+        DebugLogger() << "CreateNewFleetsFromShipsForEachDesign with "
                                << ship_ids.size() << " ship ids";
         if (ship_ids.empty())
             return;
@@ -336,13 +336,13 @@ namespace {
 
         TemporaryPtr<Fleet> target_fleet = GetFleet(fleet_id);
         if (!target_fleet) {
-            Logger().errorStream() << "MergeFleetsIntoFleet couldn't get a fleet with id " << fleet_id;
+            ErrorLogger() << "MergeFleetsIntoFleet couldn't get a fleet with id " << fleet_id;
             return;
         }
 
         TemporaryPtr<const System> system = GetSystem(target_fleet->SystemID());
         if (!system) {
-            Logger().errorStream() << "MergeFleetsIntoFleet couldn't get system for the target fleet";
+            ErrorLogger() << "MergeFleetsIntoFleet couldn't get system for the target fleet";
             return;
         }
 
@@ -946,7 +946,7 @@ double ShipDataPanel::StatValue(MeterType stat_name) const {
         if (ship->UniverseObject::GetMeter(stat_name)) {
             return ship->InitialMeterValue(stat_name);
         }
-        Logger().errorStream() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
+        ErrorLogger() << "ShipDataPanel::StatValue couldn't get stat of name: " << boost::lexical_cast<std::string>(stat_name);
     }
     return 0.0;
 }
@@ -1317,7 +1317,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
 }
 
 void FleetDataPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
-    Logger().debugStream() << "FleetWnd::AcceptDrops with " << wnds.size() << " wnds at pt: " << pt;
+    DebugLogger() << "FleetWnd::AcceptDrops with " << wnds.size() << " wnds at pt: " << pt;
     std::vector<int> ship_ids;
     ship_ids.reserve(wnds.size());
     for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it)
@@ -1326,7 +1326,7 @@ void FleetDataPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt
     std::string id_list;
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
         id_list += boost::lexical_cast<std::string>(*it) + " ";
-    Logger().debugStream() << "FleetWnd::AcceptDrops found " << ship_ids.size() << " ship ids: " << id_list;
+    DebugLogger() << "FleetWnd::AcceptDrops found " << ship_ids.size() << " ship ids: " << id_list;
 
     if (ship_ids.empty())
         return;
@@ -1706,7 +1706,7 @@ public:
                         it->second = ValidShipTransfer(ship, target_fleet);
             } else {
                 // no valid drop type string
-                Logger().errorStream() << "FleetsListBox unrecognized drop type: " << it->first->DragDropDataType();
+                ErrorLogger() << "FleetsListBox unrecognized drop type: " << it->first->DragDropDataType();
             }
         }
     }
@@ -2064,13 +2064,13 @@ public:
 
             TemporaryPtr<const Ship> ship = GetShip(ship_row->ShipID());
             if (!ship) {
-                Logger().errorStream() << "ShipsListBox::DropsAcceptable couldn't get ship for ship row";
+                ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get ship for ship row";
                 continue;
             }
 
             TemporaryPtr<const Fleet> fleet = GetFleet(ship->FleetID());
             if (!fleet) {
-                Logger().errorStream() << "ShipsListBox::DropsAcceptable couldn't get fleet with id " << ship->FleetID();
+                ErrorLogger() << "ShipsListBox::DropsAcceptable couldn't get fleet with id " << ship->FleetID();
                 continue;
             }
 
@@ -2234,7 +2234,7 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
         if (fleet && !fleet->Empty()) {
             m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this, boost::signals2::at_front);
         } else {
-            Logger().debugStream() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
+            DebugLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
     }
 }
@@ -2248,7 +2248,7 @@ void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids) {
     for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         ShipRow* row = dynamic_cast<ShipRow*>(*it);
         if (!row) {
-            Logger().errorStream() << "FleetDetailPanel::SetSelectedShips couldn't cast a listbow row to ShipRow?";
+            ErrorLogger() << "FleetDetailPanel::SetSelectedShips couldn't cast a listbow row to ShipRow?";
             continue;
         }
 
@@ -2284,7 +2284,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
             }
         }
         if (!hasRow) {
-            Logger().errorStream() << "FleetDetailPanel::SelectedShipIDs tried to get invalid ship row selection;";
+            ErrorLogger() << "FleetDetailPanel::SelectedShipIDs tried to get invalid ship row selection;";
             continue;
         }
         GG::ListBox::Row* row = **sel_it;
@@ -2342,7 +2342,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
             ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((**it)[0]);
             ship_panel->Select(rows.find(it) != rows.end());
         } catch (const std::exception& e) {
-            Logger().errorStream() << "FleetDetailPanel::ShipSelectionChanged caught exception: " << e.what();
+            ErrorLogger() << "FleetDetailPanel::ShipSelectionChanged caught exception: " << e.what();
             continue;
         }
     }
@@ -2620,7 +2620,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     if (selected_fleet_id != INVALID_OBJECT_ID &&
         m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
     {
-        Logger().errorStream() << "FleetWnd::Init couldn't find requested selected fleet with id " << selected_fleet_id;
+        ErrorLogger() << "FleetWnd::Init couldn't find requested selected fleet with id " << selected_fleet_id;
         selected_fleet_id = INVALID_OBJECT_ID;
     }
 
@@ -2931,7 +2931,7 @@ void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids) {
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         FleetRow* row = dynamic_cast<FleetRow*>(*it);
         if (!row) {
-            Logger().errorStream() << "FleetWnd::SetSelectedFleets couldn't cast a listbow row to FleetRow?";
+            ErrorLogger() << "FleetWnd::SetSelectedFleets couldn't cast a listbow row to FleetRow?";
             continue;
         }
 
@@ -3026,7 +3026,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
             FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>((**it)[0]);
             fleet_panel->Select(rows.find(it) != rows.end());
         } catch (const std::exception& e) {
-            Logger().errorStream() << "FleetWnd::FleetSelectionChanged caught exception: " << e.what();
+            ErrorLogger() << "FleetWnd::FleetSelectionChanged caught exception: " << e.what();
             continue;
         }
     }
@@ -3353,12 +3353,12 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {
         return INVALID_OBJECT_ID;
 
     try {
-        //Logger().debugStream() << "FleetWnd::FleetInRow casting iterator to fleet row";
+        //DebugLogger() << "FleetWnd::FleetInRow casting iterator to fleet row";
         if (FleetRow* fleet_row = dynamic_cast<FleetRow*>(*it)) {
             return fleet_row->FleetID();
         }
     } catch (const std::exception& e) {
-        Logger().errorStream() << "FleetInRow caught exception: " << e.what();
+        ErrorLogger() << "FleetInRow caught exception: " << e.what();
     }
 
     return INVALID_OBJECT_ID;
@@ -3394,7 +3394,7 @@ std::string FleetWnd::TitleText() const {
 }
 
 void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids) {
-    Logger().debugStream() << "FleetWnd::CreateNewFleetFromDrops with " << ship_ids.size() << " ship ids";
+    DebugLogger() << "FleetWnd::CreateNewFleetFromDrops with " << ship_ids.size() << " ship ids";
 
     if (ship_ids.empty())
         return;
@@ -3414,8 +3414,8 @@ void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
 { SelectedShipsChangedSignal(); }
 
 void FleetWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
-    Logger().debugStream() << "FleetWnd::UniverseObjectDeleted";
-    Logger().debugStream().flush();
+    DebugLogger() << "FleetWnd::UniverseObjectDeleted";
+    DebugLogger().flush();
 
     // check if deleted object was a fleet.  if not, abort.
     TemporaryPtr<const Fleet> deleted_fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
@@ -3436,14 +3436,14 @@ void FleetWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
             break;
         }
     }
-    Logger().debugStream() << "FleetWnd::UniverseObjectDeleted done";
-    Logger().debugStream().flush();
+    DebugLogger() << "FleetWnd::UniverseObjectDeleted done";
+    DebugLogger().flush();
 }
 
 void FleetWnd::SystemChangedSlot() {
     TemporaryPtr<const System> system = GetSystem(m_system_id);
     if (!system) {
-        Logger().errorStream() << "FleetWnd::SystemChangedSlot called but couldn't get System with id " << m_system_id;
+        ErrorLogger() << "FleetWnd::SystemChangedSlot called but couldn't get System with id " << m_system_id;
         return;
     }
 

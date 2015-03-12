@@ -32,20 +32,20 @@ namespace {
             double distance = 0.0;
             for (std::list<int>::const_iterator it = begin; it != end; ++it) {
                 std::list<int>::const_iterator next_it = it;    ++next_it;
-                //Logger().debugStream() << "Fleet::SetRoute() new route has system id " << *it;
+                //DebugLogger() << "Fleet::SetRoute() new route has system id " << *it;
                 
                 if (next_it == end)
                     break;  // current system is the last on the route, so don't need to add any additional distance.
                     
                     TemporaryPtr<const System> cur_sys = GetSystem(*it);
                 if (!cur_sys) {
-                    Logger().errorStream() << "Fleet::SetRoute() couldn't get system with id " << *it;
+                    ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *it;
                     return distance;
                 }
                 
                 TemporaryPtr<const System> next_sys = GetSystem(*next_it);
                 if (!next_sys) {
-                    Logger().errorStream() << "Fleet::SetRoute() couldn't get system with id " << *next_it;
+                    ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *next_it;
                     return distance;
                 }
                 
@@ -116,7 +116,7 @@ void Fleet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id
         return;
     TemporaryPtr<const Fleet> copied_fleet = boost::dynamic_pointer_cast<const Fleet>(copied_object);
     if (!copied_fleet) {
-        Logger().errorStream() << "Fleet::Copy passed an object that wasn't a Fleet";
+        ErrorLogger() << "Fleet::Copy passed an object that wasn't a Fleet";
         return;
     }
 
@@ -159,7 +159,7 @@ void Fleet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id
                         travel_distance -= GetUniverse().ShortestPath(travel_route.back(),
                                                                       copied_fleet_route.back()).second;
                     } catch (...) {
-                        Logger().debugStream() << "Fleet::Copy couldn't find route to system(s):"
+                        DebugLogger() << "Fleet::Copy couldn't find route to system(s):"
                                                << " travel route back: " << travel_route.back()
                                                << " or copied fleet route back: " << copied_fleet_route.back();
                     }
@@ -243,7 +243,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     float fuel =       Fuel();
     float max_fuel =   MaxFuel();
 
-    //Logger().debugStream() << "Fleet " << this->Name() << " movePath fuel: " << fuel << " sys id: " << this->SystemID();
+    //DebugLogger() << "Fleet " << this->Name() << " movePath fuel: " << fuel << " sys id: " << this->SystemID();
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     int owner = this->Owner();
@@ -269,10 +269,10 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     }
 
     // blockade debug logging
-    //Logger().debugStream() << "Fleet::MovePath for fleet " << this->Name() << " ID(" << this->ID() <<") and route:";
+    //DebugLogger() << "Fleet::MovePath for fleet " << this->Name() << " ID(" << this->ID() <<") and route:";
     //for (std::list<int>::const_iterator route_it = route.begin(); route_it != route.end(); route_it++)
-    //    Logger().debugStream() << "Fleet::MovePath ... " << *route_it;
-    //Logger().debugStream() << "Fleet::MovePath END of Route ";
+    //    DebugLogger() << "Fleet::MovePath ... " << *route_it;
+    //DebugLogger() << "Fleet::MovePath END of Route ";
 
     // get iterator pointing to TemporaryPtr<System> on route that is the first after where this fleet is currently.
     // if this fleet is in a system, the iterator will point to the system after the current in the route
@@ -289,30 +289,30 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     TemporaryPtr<const System> prev_system = GetSystem(this->PreviousSystemID());// may be 0 if this fleet is not moving or ordered to move
     TemporaryPtr<const System> next_system = GetSystem(*route_it);               // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
-        Logger().errorStream() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for this fleet " << this->Name();
+        ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for this fleet " << this->Name();
         return retval;
     }
 
-    //Logger().debugStream() << "initial cur system: " << (cur_system ? cur_system->Name() : "(none)") <<
+    //DebugLogger() << "initial cur system: " << (cur_system ? cur_system->Name() : "(none)") <<
     //                          "  prev system: " << (prev_system ? prev_system->Name() : "(none)") <<
     //                          "  next system: " << (next_system ? next_system->Name() : "(none)");
 
 
     bool isPostBlockade = false;
     if (cur_system) {
-        //Logger().debugStream() << "Fleet::MovePath starting in system "<< SystemID();
+        //DebugLogger() << "Fleet::MovePath starting in system "<< SystemID();
         if (flag_blockades && next_system->ID() != m_arrival_starlane && 
             (unobstructed_systems.find(cur_system->ID()) == unobstructed_systems.end())) 
         {
-            //Logger().debugStream() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
+            //DebugLogger() << "Fleet::MovePath checking blockade from "<< cur_system->ID() << " to "<< next_system->ID();
             if (BlockadedAtSystem(cur_system->ID(), next_system->ID())){
                 // blockade debug logging
-                //Logger().debugStream() <<   "Fleet::MovePath finds system " <<cur_system->Name() << " (" <<cur_system->ID() <<
+                //DebugLogger() <<   "Fleet::MovePath finds system " <<cur_system->Name() << " (" <<cur_system->ID() <<
                 //                            ") blockaded for fleet " << this->Name();
                 isPostBlockade = true;
             } else {
                 // blockade debug logging
-                //Logger().debugStream() <<   "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID() <<
+                //DebugLogger() <<   "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID() <<
                 //                            ") NOT blockaded for fleet " << this->Name();
             }
         }
@@ -346,11 +346,11 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         // each loop iteration moves the current position to the next location of interest along the move
         // path, and then adds a node at that position.
 
-        //Logger().debugStream() << " starting iteration";
+        //DebugLogger() << " starting iteration";
         //if (cur_system)
-        //    Logger().debugStream() << "     at system " << cur_system->Name() << " with id " << cur_system->ID();
+        //    DebugLogger() << "     at system " << cur_system->Name() << " with id " << cur_system->ID();
         //else
-        //    Logger().debugStream() << "     at (" << cur_x << ", " << cur_y << ")";
+        //    DebugLogger() << "     at (" << cur_x << ", " << cur_y << ")";
 
         // Make sure that there actually still is a starlane between the two systems
         // we are between
@@ -360,11 +360,11 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         } else if (prev_system) {
             prev_or_cur = prev_system;
         } else {
-            Logger().errorStream() << "Fleet::MovePath: No previous or current system!?";
+            ErrorLogger() << "Fleet::MovePath: No previous or current system!?";
         }
         if (prev_or_cur) {
             if (!prev_or_cur->HasStarlaneTo(next_system->ID())) {
-                Logger().debugStream() << "Fleet::MovePath: No starlane connection between systems " << prev_or_cur->ID() << " and " << next_system->ID()
+                DebugLogger() << "Fleet::MovePath: No starlane connection between systems " << prev_or_cur->ID() << " and " << next_system->ID()
                                        << ". Abandoning the rest of the route.";
                 return retval;
             }
@@ -377,16 +377,16 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             if (fleet_supplied_systems.find(cur_system->ID()) != fleet_supplied_systems.end()) {
                 // current system has fuel supply.  replenish fleet's supply and don't restrict movement
                 fuel = max_fuel;
-                //Logger().debugStream() << " ... at system with fuel supply.  replenishing and continuing movement";
+                //DebugLogger() << " ... at system with fuel supply.  replenishing and continuing movement";
 
             } else {
                 // current system has no fuel supply.  require fuel to proceed
                 if (fuel >= 1.0) {
-                    //Logger().debugStream() << " ... at system without fuel supply.  consuming unit of fuel to proceed";
+                    //DebugLogger() << " ... at system without fuel supply.  consuming unit of fuel to proceed";
                     fuel -= 1.0;
 
                 } else {
-                    //Logger().debugStream() << " ... at system without fuel supply.  have insufficient fuel to continue moving";
+                    //DebugLogger() << " ... at system without fuel supply.  have insufficient fuel to continue moving";
                     turns_taken = ETA_OUT_OF_RANGE;
                     break;
                 }
@@ -396,7 +396,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
         // find distance to next system along path from current position
         double dist_to_next_system = std::sqrt((next_x - cur_x)*(next_x - cur_x) + (next_y - cur_y)*(next_y - cur_y));
-        //Logger().debugStream() << " ... dist to next system: " << dist_to_next_system;
+        //DebugLogger() << " ... dist to next system: " << dist_to_next_system;
 
 
         // move ship as far as it can go this turn, or to next system, whichever is closer, and deduct
@@ -404,7 +404,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         if (turn_dist_remaining >= FLEET_MOVEMENT_EPSILON) {
             double dist_travelled_this_step = std::min(turn_dist_remaining, dist_to_next_system);
 
-            //Logger().debugStream() << " ... fleet moving " << dist_travelled_this_step << " this iteration.  dist to next system: " << dist_to_next_system << " and turn_dist_remaining: " << turn_dist_remaining;
+            //DebugLogger() << " ... fleet moving " << dist_travelled_this_step << " this iteration.  dist to next system: " << dist_to_next_system << " and turn_dist_remaining: " << turn_dist_remaining;
 
             double x_dist = next_x - cur_x;
             double y_dist = next_y - cur_y;
@@ -429,7 +429,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
         // check if fleet can move any further this turn
         if (turn_dist_remaining < FLEET_MOVEMENT_EPSILON) {
-            //Logger().debugStream() << " ... fleet can't move further this turn.";
+            //DebugLogger() << " ... fleet can't move further this turn.";
             turn_dist_remaining = 0.0;      // to prevent any possible precision-related errors
             end_turn_at_cur_position = true;
         }
@@ -442,7 +442,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             cur_x = cur_system->X();    // update positions to ensure no round-off-errors
             cur_y = cur_system->Y();
 
-            //Logger().debugStream() << " ... arrived at system: " << cur_system->Name();
+            //DebugLogger() << " ... arrived at system: " << cur_system->Name();
 
 
             bool clear_exit = cur_system->ID() == m_arrival_starlane; //just part of the test for the moment
@@ -453,21 +453,21 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                 // update next system on route and distance to it from current position
                 next_system = GetEmpireKnownSystem(*route_it, owner);
                 if (next_system) {
-                    //Logger().debugStream() << "Fleet::MovePath checking unrestriced lane travel";
+                    //DebugLogger() << "Fleet::MovePath checking unrestriced lane travel";
                     clear_exit = clear_exit || (next_system && next_system->ID() == m_arrival_starlane) ||
                     (empire && empire->UnrestrictedLaneTravel(cur_system->ID(), next_system->ID()));
                 }
             }
             if (flag_blockades && !clear_exit) {
-                //Logger().debugStream() <<   "Fleet::MovePath checking blockades at system "<<cur_system->Name() << " ("<<cur_system->ID() <<
+                //DebugLogger() <<   "Fleet::MovePath checking blockades at system "<<cur_system->Name() << " ("<<cur_system->ID() <<
                 //                            ") for fleet " << this->Name() <<" travelling to system "<< (*route_it);
                 if (BlockadedAtSystem(cur_system->ID(), next_system->ID())) {
                     // blockade debug logging
-                    //Logger().debugStream() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
+                    //DebugLogger() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
                     //                            ") blockaded for fleet " << this->Name();
                     isPostBlockade = true;
                 } else {
-                    //Logger().debugStream() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
+                    //DebugLogger() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
                     //                            ") NOT blockaded for fleet " << this->Name();
                 }
             }
@@ -476,7 +476,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                 break;
 
             if (!next_system) {
-                Logger().errorStream() << "Fleet::MovePath couldn't get system with id " << *route_it;
+                ErrorLogger() << "Fleet::MovePath couldn't get system with id " << *route_it;
                 break;
             }
             next_x = next_system->X();
@@ -499,7 +499,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         }
 
         // blockade debug logging
-        //Logger().debugStream() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID() << " adding node at sysID " <<
+        //DebugLogger() << "Fleet::MovePath for fleet " << this->Name() << " id " << this->ID() << " adding node at sysID " <<
         //                        (cur_system ? cur_system->ID() : INVALID_OBJECT_ID) << " with post blockade status " << isPostBlockade <<
         //                        " and ETA " << turns_taken;
 
@@ -515,7 +515,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         // reset the distance remaining to be travelled during the current (now
         // next) turn for the next loop iteration
         if (end_turn_at_cur_position) {
-            //Logger().debugStream() << " ... end of simulated turn " << turns_taken;
+            //DebugLogger() << " ... end of simulated turn " << turns_taken;
             ++turns_taken;
             turn_dist_remaining = this->Speed();
         }
@@ -526,7 +526,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     if (turns_taken == TOO_LONG)
         turns_taken = ETA_NEVER;
     // blockade debug logging
-    //Logger().debugStream() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" adding node at sysID "<<
+    //DebugLogger() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" adding node at sysID "<<
     //                    (cur_system  ? cur_system->ID()  : INVALID_OBJECT_ID) << " with post blockade status " << isPostBlockade <<
     //                    " and ETA " << turns_taken;
 
@@ -535,7 +535,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                            (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
                            (next_system ? next_system->ID() : INVALID_OBJECT_ID), isPostBlockade);
     retval.push_back(final_pos);
-    //Logger().debugStream() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" is complete";
+    //DebugLogger() << "Fleet::MovePath for fleet " << this->Name()<<" id "<<this->ID()<<" is complete";
 
     return retval;
 }
@@ -582,7 +582,7 @@ float Fleet::Fuel() const {
         TemporaryPtr<const Ship> ship = *ship_it;
         const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
         if (!meter) {
-            Logger().errorStream() << "Fleet::Fuel skipping ship with no fuel meter";
+            ErrorLogger() << "Fleet::Fuel skipping ship with no fuel meter";
             continue;
         }
         if (!ship->OrderedScrapped()) {
@@ -611,7 +611,7 @@ float Fleet::MaxFuel() const {
         TemporaryPtr<const Ship> ship = *ship_it;
         const Meter* meter = ship->UniverseObject::GetMeter(METER_MAX_FUEL);
         if (!meter) {
-            Logger().errorStream() << "Fleet::MaxFuel skipping ship with no max fuel meter";
+            ErrorLogger() << "Fleet::MaxFuel skipping ship with no max fuel meter";
             continue;
         }
         if (!ship->OrderedScrapped()) {
@@ -729,7 +729,7 @@ TemporaryPtr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor)
 { return visitor.Visit(boost::const_pointer_cast<Fleet>(boost::static_pointer_cast<const Fleet>(TemporaryFromThis()))); }
 
 void Fleet::SetRoute(const std::list<int>& route) {
-    //Logger().debugStream() << "Fleet::SetRoute() ";
+    //DebugLogger() << "Fleet::SetRoute() ";
 
     if (UnknownRoute())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an unknown route.");
@@ -757,7 +757,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
         if (SystemID() != route.front()) {
             TemporaryPtr<const System> starting_system = GetSystem(route.front());
             if (!starting_system) {
-                Logger().errorStream() << "Fleet::SetRoute couldn't get system with id " << route.front();
+                ErrorLogger() << "Fleet::SetRoute couldn't get system with id " << route.front();
                 return;
             }
             double dist_x = starting_system->X() - this->X();
@@ -817,11 +817,11 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev) {
 }
 
 void Fleet::MovementPhase() {
-    //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
+    //DebugLogger() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
     TemporaryPtr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(TemporaryFromThis());
     if (fleet != this) {
-        Logger().errorStream() << "Fleet::MovementPhase was passed a TemporaryPtr different from itself.";
+        ErrorLogger() << "Fleet::MovementPhase was passed a TemporaryPtr different from itself.";
         return;
     }
 
@@ -963,7 +963,7 @@ void Fleet::MovementPhase() {
             if (fleet->m_travel_route.front() == system->ID()) {
                 m_travel_route.erase(m_travel_route.begin());
             } else {
-                Logger().errorStream() << "Encountered a system not on our route.";
+                ErrorLogger() << "Encountered a system not on our route.";
                 // TODO: Notify the suer with a sitrep?
             }
 
@@ -971,7 +971,7 @@ void Fleet::MovementPhase() {
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {
-                //Logger().debugStream() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
+                //DebugLogger() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0;
                 for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
                      ship_it != ships.end(); ++ship_it)
@@ -1018,7 +1018,7 @@ void Fleet::MovementPhase() {
         // there is another system later on the path to aim for.  find it
         for (; next_it != move_path.end(); ++next_it) {
             if (GetSystem(next_it->object_id)) {
-                //Logger().debugStream() << "___ setting m_next_system to " << next_it->object_id;
+                //DebugLogger() << "___ setting m_next_system to " << next_it->object_id;
                 fleet->m_next_system = next_it->object_id;
                 break;
             }
@@ -1060,7 +1060,7 @@ void Fleet::ResetTargetMaxUnpairedMeters() {
 void Fleet::CalculateRouteTo(int target_system_id) {
     std::list<int> route;
 
-    //Logger().debugStream() << "Fleet::CalculateRoute";
+    //DebugLogger() << "Fleet::CalculateRoute";
     if (target_system_id == INVALID_OBJECT_ID) {
         SetRoute(route);
         return; 
@@ -1079,7 +1079,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         try {
             path = GetUniverse().ShortestPath(m_prev_system, target_system_id, this->Owner());
         } catch (...) {
-            Logger().debugStream() << "Fleet::CalculateRoute couldn't find route to system(s):"
+            DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
             << " fleet's previous: " << m_prev_system << " or moving to: " << target_system_id;
         }
         SetRoute(path.first);
@@ -1105,7 +1105,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
     //
     //    // safety check: ensure supposedly visible object actually exists in known universe.
     //    if (!GetSystem(m_next_system)) {
-    //        Logger().errorStream() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
+    //        ErrorLogger() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
     //        return; // abort if object doesn't exist in known universe... can't path to it if it's not there, even if it's considered visible for some reason...
     //    }
     //
@@ -1120,17 +1120,17 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         try {
             path1 = GetUniverse().ShortestPath(m_next_system, dest_system_id, this->Owner());
         } catch (...) {
-            Logger().debugStream() << "Fleet::CalculateRoute couldn't find route to system(s):"
+            DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                                    << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
         }
         const std::list<int>& sys_list1 = path1.first;
         if (sys_list1.empty()) {
-            Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
+            ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(sys_list1.front());
         if (!obj) {
-            Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
+            ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
             return;
         }
         double dist_x = obj->X() - this->X();
@@ -1141,17 +1141,17 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         try {
             path2 = GetUniverse().ShortestPath(m_prev_system, dest_system_id, this->Owner());
         } catch (...) {
-            Logger().debugStream() << "Fleet::CalculateRoute couldn't find route to system(s):"
+            DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                                    << " fleet's previous: " << m_prev_system << " or destination: " << dest_system_id;
         }
         const std::list<int>& sys_list2 = path2.first;
         if (sys_list2.empty()) {
-            Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
+            ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
         obj = GetUniverseObject(sys_list2.front());
         if (!obj) {
-            Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
+            ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
             return;
         }
         dist_x = obj->X() - this->X();
@@ -1171,7 +1171,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         try {
             path = GetUniverse().ShortestPath(m_next_system, dest_system_id, this->Owner());
         } catch (...) {
-            Logger().debugStream() << "Fleet::CalculateRoute couldn't find route to system(s):"
+            DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                                    << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
         }
         SetRoute(path.first);
@@ -1193,7 +1193,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
       * who did. */
 
     if (m_arrival_starlane == start_system_id) {
-        //Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " has cleared blockade flag for system (" << start_system_id << ")";
+        //DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " has cleared blockade flag for system (" << start_system_id << ")";
         return false;
     }
     bool not_yet_in_system = SystemID() != start_system_id;
@@ -1203,7 +1203,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     // reinforce a preexisting blockade, and may possibly contribute to detection
     TemporaryPtr<System> current_system = GetSystem(start_system_id);
     if (!current_system) {
-        Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << start_system_id << ") but can't retrieve system copy";
+        DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << start_system_id << ") but can't retrieve system copy";
         return false;
     }
 
@@ -1215,7 +1215,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         if (empire->UnrestrictedLaneTravel(start_system_id, dest_system_id)) {
             return false;
         } else {
-            //Logger().debugStream() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
+            //DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering travel from system (" << start_system_id << ") to system (" << dest_system_id << ")";
         }
     }
 

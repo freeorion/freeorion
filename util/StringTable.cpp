@@ -68,7 +68,7 @@ void StringTable_::Load() {
 
     bool read_success = read_file(path, file_contents);
     if (!read_success) {
-        Logger().errorStream() << "StringTable_::Load failed to read file at path: " << path.string();
+        ErrorLogger() << "StringTable_::Load failed to read file at path: " << path.string();
         return;
     }
 
@@ -123,7 +123,7 @@ void StringTable_::Load() {
                             m_strings[key] = match_it->str();
                             boost::algorithm::replace_all(m_strings[key], "\\n", "\n");
                         } else {
-                            Logger().errorStream() << "Duplicate string ID found: '" << key
+                            ErrorLogger() << "Duplicate string ID found: '" << key
                                                    << "' in file: '" << m_filename
                                                    << "'.  Ignoring duplicate.";
                         }
@@ -138,7 +138,7 @@ void StringTable_::Load() {
 
         well_formed = it == end;
     } catch (std::exception& e) {
-        Logger().errorStream() << "Exception caught regex parsing Stringtable: " << e.what();
+        ErrorLogger() << "Exception caught regex parsing Stringtable: " << e.what();
         std::cerr << "Exception caught regex parsing Stringtable: " << e.what() << std::endl;
         return;
     }
@@ -148,7 +148,7 @@ void StringTable_::Load() {
         for (std::map<std::string, std::string>::iterator map_it = m_strings.begin();
              map_it != m_strings.end(); ++map_it)
         {
-            //Logger().debugStream() << "Checking key expansion for: " << map_it->first;
+            //DebugLogger() << "Checking key expansion for: " << map_it->first;
             std::size_t position = 0; // position in the definition string, past the already processed part
             smatch match;
             std::map<std::string, std::size_t> cyclic_reference_check;
@@ -157,29 +157,29 @@ void StringTable_::Load() {
             std::string cumulative_subsititions;
             while (regex_search(map_it->second.begin() + position, map_it->second.end(), match, KEYEXPANSION)) {
                 position += match.position();
-                //Logger().debugStream() << "checking next internal keyword match: " << match[1] << " with matchlen " << match.length();
+                //DebugLogger() << "checking next internal keyword match: " << match[1] << " with matchlen " << match.length();
                 if (match[1].length() != match.length() - 4)
-                    Logger().errorStream() << "Positional error in key expansion: " << match[1] << " with length: " << match[1].length() << "and matchlen: " << match.length();
+                    ErrorLogger() << "Positional error in key expansion: " << match[1] << " with length: " << match[1].length() << "and matchlen: " << match.length();
                 // clear out any keywords that have been fully processed
                 for (std::map< std::string, std::size_t >::iterator ref_check_it = cyclic_reference_check.begin(); 
                      ref_check_it != cyclic_reference_check.end(); )
                 {
                     if (ref_check_it->second <= position) {
-                        //Logger().debugStream() << "Popping from cyclic ref check: " << ref_check_it->first;
+                        //DebugLogger() << "Popping from cyclic ref check: " << ref_check_it->first;
                         cyclic_reference_check.erase(ref_check_it++);
                     } else if (ref_check_it->second < position + match.length()) {
-                        Logger().errorStream() << "Expansion error in key expansion: [[" << ref_check_it->first << "]] having end " << ref_check_it->second;
-                        Logger().errorStream() << "         currently at expansion text position " << position << " with match length: " << match.length();
-                        Logger().errorStream() << "         of current expansion text:" << map_it->second;
-                        Logger().errorStream() << "         from keyword "<< map_it->first << " with raw text:" << rawtext;
-                        Logger().errorStream() << "         and cumulative substitions: " << cumulative_subsititions;
+                        ErrorLogger() << "Expansion error in key expansion: [[" << ref_check_it->first << "]] having end " << ref_check_it->second;
+                        ErrorLogger() << "         currently at expansion text position " << position << " with match length: " << match.length();
+                        ErrorLogger() << "         of current expansion text:" << map_it->second;
+                        ErrorLogger() << "         from keyword "<< map_it->first << " with raw text:" << rawtext;
+                        ErrorLogger() << "         and cumulative substitions: " << cumulative_subsititions;
                         // will also trigger further error logging below
                         ref_check_it++;
                     } else
                         ref_check_it++;
                 }
                 if (cyclic_reference_check.find(match[1]) == cyclic_reference_check.end()) {
-                    //Logger().debugStream() << "Pushing to cyclic ref check: " << match[1];
+                    //DebugLogger() << "Pushing to cyclic ref check: " << match[1];
                     cyclic_reference_check[match[1]] = position + match.length();
                     std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[1]);
                     if (map_lookup_it != m_strings.end()) {
@@ -194,15 +194,15 @@ void StringTable_::Load() {
                         }
                         // replace recursively -- do not skip past substitution
                     } else {
-                        Logger().errorStream() << "Unresolved key expansion: " << match[1] << " in: " << m_filename << ".";
+                        ErrorLogger() << "Unresolved key expansion: " << match[1] << " in: " << m_filename << ".";
                         position += match.length();
                     }
                 } else {
-                    Logger().errorStream() << "Cyclic key expansion: " << match[1] << " in: " << m_filename << "."
+                    ErrorLogger() << "Cyclic key expansion: " << match[1] << " in: " << m_filename << "."
                                            << "         at expansion text position " << position;
-                    Logger().errorStream() << "         of current expansion text:" << map_it->second;
-                    Logger().errorStream() << "         from keyword "<< map_it->first << " with raw text:" << rawtext;
-                    Logger().errorStream() << "         and cumulative substitions: " << cumulative_subsititions;
+                    ErrorLogger() << "         of current expansion text:" << map_it->second;
+                    ErrorLogger() << "         from keyword "<< map_it->first << " with raw text:" << rawtext;
+                    ErrorLogger() << "         and cumulative substitions: " << cumulative_subsititions;
                     position += match.length();
                 }
             }
@@ -223,12 +223,12 @@ void StringTable_::Load() {
                     map_it->second.replace(position, match.length(), substitution);
                     position += substitution.length();
                 } else {
-                    Logger().errorStream() << "Unresolved reference: " << match[2] << " in: " << m_filename << ".";
+                    ErrorLogger() << "Unresolved reference: " << match[2] << " in: " << m_filename << ".";
                     position += match.length();
                 }
             }
         }
     } else {
-        Logger().errorStream() << "StringTable file \"" << m_filename << "\" is malformed around line " << std::count(file_contents.begin(), it, '\n');
+        ErrorLogger() << "StringTable file \"" << m_filename << "\" is malformed around line " << std::count(file_contents.begin(), it, '\n');
     }
 }

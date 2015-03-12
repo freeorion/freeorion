@@ -76,7 +76,7 @@ void Field::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id
         return;
     TemporaryPtr<const Field> copied_field = boost::dynamic_pointer_cast<const Field>(copied_object);
     if (!copied_field) {
-        Logger().errorStream() << "Field::Copy passed an object that wasn't a Field";
+        ErrorLogger() << "Field::Copy passed an object that wasn't a Field";
         return;
     }
 
@@ -227,9 +227,9 @@ FieldTypeManager::FieldTypeManager() {
     parse::fields(GetResourceDir() / "fields.txt", m_field_types);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        Logger().debugStream() << "Field Types:";
+        DebugLogger() << "Field Types:";
         for (iterator it = begin(); it != end(); ++it) {
-            Logger().debugStream() << " ... " << it->first;
+            DebugLogger() << " ... " << it->first;
         }
     }
 }

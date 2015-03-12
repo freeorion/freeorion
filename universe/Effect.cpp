@@ -138,18 +138,18 @@ namespace {
      * previous location, and may not be valid for its new location. */
     void UpdateFleetRoute(TemporaryPtr<Fleet> fleet, int new_next_system, int new_previous_system) {
         if (!fleet) {
-            Logger().errorStream() << "UpdateFleetRoute passed a null fleet pointer";
+            ErrorLogger() << "UpdateFleetRoute passed a null fleet pointer";
             return;
         }
 
         TemporaryPtr<const System> next_system = GetSystem(new_next_system);
         if (!next_system) {
-            Logger().errorStream() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
+            ErrorLogger() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
         }
 
         if (new_previous_system != INVALID_OBJECT_ID && !GetSystem(new_previous_system)) {
-            Logger().errorStream() << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
+            ErrorLogger() << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
         }
 
         fleet->SetNextAndPreviousSystems(new_next_system, new_previous_system);
@@ -243,11 +243,11 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
 
     TemporaryPtr<UniverseObject> source = GetUniverseObject(source_id);
     if (!source && m_activation) {
-        Logger().errorStream() << "EffectsGroup::GetTargetSet passed invalid source object with id " << source_id;
+        ErrorLogger() << "EffectsGroup::GetTargetSet passed invalid source object with id " << source_id;
         return;
     }
     if (!m_scope) {
-        Logger().errorStream() << "EffectsGroup::GetTargetSet didn't find a valid scope condition to use...";
+        ErrorLogger() << "EffectsGroup::GetTargetSet didn't find a valid scope condition to use...";
     }
 
     // if there is an activation condition, evaluate it on the source object,
@@ -441,16 +441,16 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
         Effect::TargetSet                  targets               = targets_and_cause.target_set;
 
         if (log_verbose) {
-            Logger().debugStream() << "ExecuteEffects effectsgroup: \n" << Dump();
-            Logger().debugStream() << "ExecuteEffects Targets before: ";
+            DebugLogger() << "ExecuteEffects effectsgroup: \n" << Dump();
+            DebugLogger() << "ExecuteEffects Targets before: ";
             for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                Logger().debugStream() << " ... " << (*t_it)->Dump();
+                DebugLogger() << " ... " << (*t_it)->Dump();
         }
 
         if (log_verbose) {
-            Logger().debugStream() << "ExecuteEffects Targets after: ";
+            DebugLogger() << "ExecuteEffects Targets after: ";
             for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                Logger().debugStream() << " ... " << (*t_it)->Dump();
+                DebugLogger() << " ... " << (*t_it)->Dump();
         }
 
         // for non-meter effects, can do default batch execute
@@ -565,7 +565,7 @@ std::string SetMeter::Description() const {
     ValueRef::OpType op;
     double const_operand;
     boost::tie(simple, op, const_operand) = SimpleMeterModification(m_meter, m_value);
-    //Logger().debugStream() << "SetMeter::Description " << simple << " / " << op << " / " << const_operand;
+    //DebugLogger() << "SetMeter::Description " << simple << " / " << op << " / " << const_operand;
     if (simple) {
         char op_char = '+';
         switch (op) {
@@ -644,7 +644,7 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
     m_value(value)
 {
     if (m_part_class == PC_FIGHTERS)
-        Logger().errorStream() << "SetShipPartMeter passed ShipPartClass of PC_FIGHTERS, which is invalid";
+        ErrorLogger() << "SetShipPartMeter passed ShipPartClass of PC_FIGHTERS, which is invalid";
 }
 
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
@@ -672,19 +672,19 @@ SetShipPartMeter::~SetShipPartMeter()
 
 void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().debugStream() << "SetShipPartMeter::Execute passed null target pointer";
+        DebugLogger() << "SetShipPartMeter::Execute passed null target pointer";
         return;
     }
 
     TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target);
     if (!ship) {
-        Logger().errorStream() << "SetShipPartMeter::Execute acting on non-ship target:";
+        ErrorLogger() << "SetShipPartMeter::Execute acting on non-ship target:";
         context.effect_target->Dump();
         return;
     }
 
     if (m_part_class == PC_FIGHTERS && !m_part_name.empty()) {
-        Logger().debugStream() << "SetShipPartMeter::Execute aborting due to part class being PC_FIGHTERS and part name being not empty";
+        DebugLogger() << "SetShipPartMeter::Execute aborting due to part class being PC_FIGHTERS and part name being not empty";
         return;
     }
 
@@ -706,7 +706,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
 
         const PartType* target_part = GetPartType(target_part_name);
         if (!target_part) {
-            Logger().errorStream() << "SetShipPartMeter::Execute couldn't get part type: " << target_part_name;
+            ErrorLogger() << "SetShipPartMeter::Execute couldn't get part type: " << target_part_name;
             continue;
         }
 
@@ -810,13 +810,13 @@ void SetEmpireMeter::Execute(const ScriptingContext& context) const {
 
     Empire* empire = GetEmpire(empire_id);
     if (!empire) {
-        Logger().debugStream() << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
+        DebugLogger() << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
         return;
     }
 
     Meter* meter = empire->GetMeter(m_meter);
     if (!meter) {
-        Logger().debugStream() << "SetEmpireMeter::Execute empire " << empire->Name() << " doesn't have a meter named " << m_meter;
+        DebugLogger() << "SetEmpireMeter::Execute empire " << empire->Name() << " doesn't have a meter named " << m_meter;
         return;
     }
 
@@ -877,7 +877,7 @@ void SetEmpireStockpile::Execute(const ScriptingContext& context) const {
 
     Empire* empire = GetEmpire(empire_id);
     if (!empire) {
-        Logger().debugStream() << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
+        DebugLogger() << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
         return;
     }
 
@@ -1285,26 +1285,26 @@ CreatePlanet::CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type,
     m_type(type),
     m_size(size)
 {
-    Logger().debugStream() << "CreatePlanet::CreatePlanet";
-    Logger().debugStream() << "    type: " << (m_type ? m_type->Dump() : "no type");
-    Logger().debugStream() << "    size: " << (m_size ? m_size->Dump() : "no size");
-    Logger().debugStream() << Dump();
+    DebugLogger() << "CreatePlanet::CreatePlanet";
+    DebugLogger() << "    type: " << (m_type ? m_type->Dump() : "no type");
+    DebugLogger() << "    size: " << (m_size ? m_size->Dump() : "no size");
+    DebugLogger() << Dump();
 }
 
 CreatePlanet::~CreatePlanet() {
-    Logger().debugStream() << "CreatePlanet::~CreatePlanet";
+    DebugLogger() << "CreatePlanet::~CreatePlanet";
     delete m_type;
     delete m_size;
 }
 
 void CreatePlanet::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "CreatePlanet::Execute passed no target object";
+        ErrorLogger() << "CreatePlanet::Execute passed no target object";
         return;
     }
     TemporaryPtr<System> location = GetSystem(context.effect_target->SystemID());
     if (!location) {
-        Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
+        ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
     }
 
@@ -1318,20 +1318,20 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     PlanetSize size = m_size->Eval(ScriptingContext(context, target_size));
     PlanetType type = m_type->Eval(ScriptingContext(context, target_type));
     if (size == INVALID_PLANET_SIZE || type == INVALID_PLANET_TYPE) {
-        Logger().errorStream() << "CreatePlanet::Execute got invalid size or type of planet to create...";
+        ErrorLogger() << "CreatePlanet::Execute got invalid size or type of planet to create...";
         return;
     }
 
     // determine if and which orbits are available
     std::set<int> free_orbits = location->FreeOrbits();
     if (free_orbits.empty()) {
-        Logger().errorStream() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
+        ErrorLogger() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
         return;
     }
 
     TemporaryPtr<Planet> planet = GetUniverse().CreatePlanet(type, size);
     if (!planet) {
-        Logger().errorStream() << "CreatePlanet::Execute unable to create new Planet object";
+        ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;
     }
 
@@ -1353,7 +1353,7 @@ std::string CreatePlanet::Description() const {
 
 std::string CreatePlanet::Dump() const
 {
-    Logger().debugStream() << "CreatePlanet::Dump()";
+    DebugLogger() << "CreatePlanet::Dump()";
     return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + "\n";
 }
 
@@ -1370,7 +1370,7 @@ CreateBuilding::~CreateBuilding()
 
 void CreateBuilding::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "CreateBuilding::Execute passed no target object";
+        ErrorLogger() << "CreateBuilding::Execute passed no target object";
         return;
     }
     TemporaryPtr<Planet> location = boost::dynamic_pointer_cast<Planet>(context.effect_target);
@@ -1378,20 +1378,20 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         if (TemporaryPtr<Building> location_building = boost::dynamic_pointer_cast<Building>(context.effect_target))
             location = GetPlanet(location_building->PlanetID());
     if (!location) {
-        Logger().errorStream() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
+        ErrorLogger() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
         return;
     }
 
     std::string building_type_name = m_building_type_name->Eval(context);
     const BuildingType* building_type = GetBuildingType(building_type_name);
     if (!building_type) {
-        Logger().errorStream() << "CreateBuilding::Execute couldn't get building type: " << building_type_name;
+        ErrorLogger() << "CreateBuilding::Execute couldn't get building type: " << building_type_name;
         return;
     }
 
     TemporaryPtr<Building> building = GetUniverse().CreateBuilding(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
     if (!building) {
-        Logger().errorStream() << "CreateBuilding::Execute couldn't create building!";
+        ErrorLogger() << "CreateBuilding::Execute couldn't create building!";
         return;
     }
 
@@ -1461,13 +1461,13 @@ CreateShip::~CreateShip() {
 
 void CreateShip::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "CreateShip::Execute passed null target";
+        ErrorLogger() << "CreateShip::Execute passed null target";
         return;
     }
 
     TemporaryPtr<System> system = GetSystem(context.effect_target->SystemID());
     if (!system) {
-        Logger().errorStream() << "CreateShip::Execute passed a target not in a system";
+        ErrorLogger() << "CreateShip::Execute passed a target not in a system";
         return;
     }
 
@@ -1475,19 +1475,19 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     if (m_design_id) {
         design_id = m_design_id->Eval(context);
         if (!GetShipDesign(design_id)) {
-            Logger().errorStream() << "CreateShip::Execute couldn't get ship design with id: " << design_id;
+            ErrorLogger() << "CreateShip::Execute couldn't get ship design with id: " << design_id;
             return;
         }
     } else {
         const ShipDesign* ship_design = GetPredefinedShipDesign(m_design_name);
         if (!ship_design) {
-            Logger().errorStream() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name;
+            ErrorLogger() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name;
             return;
         }
         design_id = ship_design->ID();
     }
     if (design_id == ShipDesign::INVALID_DESIGN_ID) {
-        Logger().errorStream() << "CreateShip::Execute got invalid ship design id: -1";
+        ErrorLogger() << "CreateShip::Execute got invalid ship design id: -1";
         return;
     }
 
@@ -1498,7 +1498,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
         if (empire_id != ALL_EMPIRES) {
             empire = GetEmpire(empire_id);
             if (!empire) {
-                Logger().errorStream() << "CreateShip::Execute couldn't get empire with id " << empire_id;
+                ErrorLogger() << "CreateShip::Execute couldn't get empire with id " << empire_id;
                 return;
             }
         }
@@ -1508,7 +1508,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     if (m_species_name) {
         species_name = m_species_name->Eval(context);
         if (!species_name.empty() && !GetSpecies(species_name)) {
-            Logger().errorStream() << "CreateShip::Execute couldn't get species with which to create a ship";
+            ErrorLogger() << "CreateShip::Execute couldn't get species with which to create a ship";
             return;
         }
     }
@@ -1630,14 +1630,14 @@ CreateField::~CreateField()
 
 void CreateField::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "CreateField::Execute passed null target";
+        ErrorLogger() << "CreateField::Execute passed null target";
         return;
     }
     TemporaryPtr<UniverseObject> target = context.effect_target;
 
     const FieldType* field_type = GetFieldType(m_field_type_name);
     if (!field_type) {
-        Logger().errorStream() << "CreateField::Execute couldn't get field type with name: " << m_field_type_name;
+        ErrorLogger() << "CreateField::Execute couldn't get field type with name: " << m_field_type_name;
         return;
     }
 
@@ -1645,11 +1645,11 @@ void CreateField::Execute(const ScriptingContext& context) const {
     if (m_size)
         size = m_size->Eval(context);
     if (size < 1.0) {
-        Logger().errorStream() << "CreateField::Execute given very small / negative size: " << size << "  ... so resetting to 1.0";
+        ErrorLogger() << "CreateField::Execute given very small / negative size: " << size << "  ... so resetting to 1.0";
         size = 1.0;
     }
     if (size > 10000) {
-        Logger().errorStream() << "CreateField::Execute given very large size: " << size << "  ... so resetting to 10000";
+        ErrorLogger() << "CreateField::Execute given very large size: " << size << "  ... so resetting to 10000";
         size = 10000;
     }
 
@@ -1666,7 +1666,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
 
     TemporaryPtr<Field> field = GetUniverse().CreateField(m_field_type_name, x, y, size);
     if (!field) {
-        Logger().errorStream() << "CreateField::Execute couldn't create field!";
+        ErrorLogger() << "CreateField::Execute couldn't create field!";
         return;
     }
 
@@ -1735,7 +1735,7 @@ CreateSystem::~CreateSystem() {
 
 void CreateSystem::Execute(const ScriptingContext& context) const {
     //if (!context.effect_target) {
-    //    Logger().errorStream() << "CreateSystem::Execute passed null target";
+    //    ErrorLogger() << "CreateSystem::Execute passed null target";
     //    return;
     //}
     //TemporaryPtr<const UniverseObject> target = context.effect_target;
@@ -1760,7 +1760,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
 
     TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, GenerateSystemName(), x, y);
     if (!system) {
-        Logger().errorStream() << "CreateSystem::Execute couldn't create system!";
+        ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
     }
 }
@@ -1801,7 +1801,7 @@ Destroy::Destroy()
 
 void Destroy::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "Destroy::Execute passed no target object";
+        ErrorLogger() << "Destroy::Execute passed no target object";
         return;
     }
     GetUniverse().EffectDestroy(context.effect_target->ID());
@@ -1823,7 +1823,7 @@ AddSpecial::AddSpecial(const std::string& name) :
 
 void AddSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "AddSpecial::Execute passed no target object";
+        ErrorLogger() << "AddSpecial::Execute passed no target object";
         return;
     }
     context.effect_target->AddSpecial(m_name);
@@ -1845,7 +1845,7 @@ RemoveSpecial::RemoveSpecial(const std::string& name) :
 
 void RemoveSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "RemoveSpecial::Execute pass no target object.";
+        ErrorLogger() << "RemoveSpecial::Execute pass no target object.";
         return;
     }
     context.effect_target->RemoveSpecial(m_name);
@@ -1871,7 +1871,7 @@ AddStarlanes::~AddStarlanes()
 void AddStarlanes::Execute(const ScriptingContext& context) const {
     // get target system
     if (!context.effect_target) {
-        Logger().errorStream() << "AddStarlanes::Execute passed no target object";
+        ErrorLogger() << "AddStarlanes::Execute passed no target object";
         return;
     }
     TemporaryPtr<System> target_system = boost::dynamic_pointer_cast<System>(context.effect_target);
@@ -1933,7 +1933,7 @@ RemoveStarlanes::~RemoveStarlanes()
 void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     // get target system
     if (!context.effect_target) {
-        Logger().errorStream() << "AddStarlanes::Execute passed no target object";
+        ErrorLogger() << "AddStarlanes::Execute passed no target object";
         return;
     }
     TemporaryPtr<System> target_system = boost::dynamic_pointer_cast<System>(context.effect_target);
@@ -1995,13 +1995,13 @@ SetStarType::~SetStarType()
 
 void SetStarType::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "SetStarType::Execute given no target object";
+        ErrorLogger() << "SetStarType::Execute given no target object";
         return;
     }
     if (TemporaryPtr<System> s = boost::dynamic_pointer_cast<System>(context.effect_target))
         s->SetStarType(m_type->Eval(ScriptingContext(context, s->GetStarType())));
     else
-        Logger().errorStream() << "SetStarType::Execute given a non-system target";
+        ErrorLogger() << "SetStarType::Execute given a non-system target";
 }
 
 std::string SetStarType::Description() const {
@@ -2027,7 +2027,7 @@ MoveTo::~MoveTo()
 
 void MoveTo::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "MoveTo::Execute given no target object";
+        ErrorLogger() << "MoveTo::Execute given no target object";
         return;
     }
 
@@ -2119,7 +2119,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             } else {
                 // TODO: need to do something else to get updated previous/next
                 // systems if the destination is a field.
-                Logger().errorStream() << "Effect::MoveTo::Execute couldn't find a way to set the previous and next systems for the target fleet!";
+                ErrorLogger() << "Effect::MoveTo::Execute couldn't find a way to set the previous and next systems for the target fleet!";
             }
         }
 
@@ -2342,7 +2342,7 @@ MoveInOrbit::~MoveInOrbit() {
 
 void MoveInOrbit::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "MoveInOrbit::Execute given no target object";
+        ErrorLogger() << "MoveInOrbit::Execute given no target object";
         return;
     }
     TemporaryPtr<UniverseObject> target = context.effect_target;
@@ -2504,7 +2504,7 @@ MoveTowards::~MoveTowards() {
 
 void MoveTowards::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "MoveTowards::Execute given no target object";
+        ErrorLogger() << "MoveTowards::Execute given no target object";
         return;
     }
     TemporaryPtr<UniverseObject> target = context.effect_target;
@@ -2664,13 +2664,13 @@ SetDestination::~SetDestination()
 
 void SetDestination::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "SetDestination::Execute given no target object";
+        ErrorLogger() << "SetDestination::Execute given no target object";
         return;
     }
 
     TemporaryPtr<Fleet> target_fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
-        Logger().errorStream() << "SetDestination::Execute acting on non-fleet target:";
+        ErrorLogger() << "SetDestination::Execute acting on non-fleet target:";
         context.effect_target->Dump();
         return;
     }
@@ -2737,13 +2737,13 @@ SetAggression::SetAggression(bool aggressive) :
 
 void SetAggression::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "SetAggression::Execute given no target object";
+        ErrorLogger() << "SetAggression::Execute given no target object";
         return;
     }
 
     TemporaryPtr<Fleet> target_fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
-        Logger().errorStream() << "SetAggression::Execute acting on non-fleet target:";
+        ErrorLogger() << "SetAggression::Execute acting on non-fleet target:";
         context.effect_target->Dump();
         return;
     }
@@ -2767,7 +2767,7 @@ Victory::Victory(const std::string& reason_string) :
 
 void Victory::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        Logger().errorStream() << "Victory::Execute given no target object";
+        ErrorLogger() << "Victory::Execute given no target object";
         return;
     }
     GetUniverse().EffectVictory(context.effect_target->ID(), m_reason_string);
@@ -2810,7 +2810,7 @@ void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
     if (!empire) return;
 
     if (!m_tech_name) {
-        Logger().errorStream() << "SetEmpireTechProgress::Execute has not tech name to evaluate";
+        ErrorLogger() << "SetEmpireTechProgress::Execute has not tech name to evaluate";
         return;
     }
     std::string tech_name = m_tech_name->Eval(context);
@@ -2819,7 +2819,7 @@ void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
 
     const Tech* tech = GetTech(tech_name);
     if (!tech) {
-        Logger().errorStream() << "SetEmpireTechProgress::Execute couldn't get tech with name " << tech_name;
+        ErrorLogger() << "SetEmpireTechProgress::Execute couldn't get tech with name " << tech_name;
         return;
     }
 
@@ -2896,7 +2896,7 @@ void GiveEmpireTech::Execute(const ScriptingContext& context) const {
 
     const Tech* tech = GetTech(m_tech_name);
     if (!tech) {
-        Logger().errorStream() << "GiveEmpireTech::Execute couldn't get tech with name " << m_tech_name;
+        ErrorLogger() << "GiveEmpireTech::Execute couldn't get tech with name " << m_tech_name;
         return;
     }
 

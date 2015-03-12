@@ -51,7 +51,7 @@ Moderator::SetOwner::SetOwner(int object_id, int new_owner_empire_id) :
 void Moderator::SetOwner::Execute() const {
     TemporaryPtr<UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
-        Logger().errorStream() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
+        ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
         return;
     }
     obj->SetOwner(m_new_owner_empire_id);
@@ -81,12 +81,12 @@ Moderator::AddStarlane::AddStarlane(int system_1_id, int system_2_id) :
 void Moderator::AddStarlane::Execute() const {
     TemporaryPtr<System> sys1 = GetSystem(m_id_1);
     if (!sys1) {
-        Logger().errorStream() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_1;
+        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
     TemporaryPtr<System> sys2 = GetSystem(m_id_2);
     if (!sys2) {
-        Logger().errorStream() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_2;
+        ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
     }
     sys1->AddStarlane(m_id_2);
@@ -117,12 +117,12 @@ Moderator::RemoveStarlane::RemoveStarlane(int system_1_id, int system_2_id) :
 void Moderator::RemoveStarlane::Execute() const {
     TemporaryPtr<System> sys1 = GetSystem(m_id_1);
     if (!sys1) {
-        Logger().errorStream() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
+        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
     TemporaryPtr<System> sys2 = GetSystem(m_id_2);
     if (!sys2) {
-        Logger().errorStream() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
+        ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
     }
     sys1->RemoveStarlane(m_id_2);
@@ -183,7 +183,7 @@ namespace {
 void Moderator::CreateSystem::Execute() const {
     TemporaryPtr<System> system = GetUniverse().CreateSystem(m_star_type, GenerateSystemName(), m_x, m_y);
     if (!system) {
-        Logger().errorStream() << "CreateSystem::Execute couldn't create system!";
+        ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
     }
 }
@@ -216,20 +216,20 @@ Moderator::CreatePlanet::CreatePlanet(int system_id, PlanetType planet_type, Pla
 void Moderator::CreatePlanet::Execute() const {
     TemporaryPtr<System> location = GetSystem(m_system_id);
     if (!location) {
-        Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
+        ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
     }
 
     //  determine if and which orbits are available
     std::set<int> free_orbits = location->FreeOrbits();
     if (free_orbits.empty()) {
-        Logger().errorStream() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
+        ErrorLogger() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
         return;
     }
 
     TemporaryPtr<Planet> planet = GetUniverse().CreatePlanet(m_planet_type, m_planet_size);
     if (!planet) {
-        Logger().errorStream() << "CreatePlanet::Execute unable to create new Planet object";
+        ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;
     }
 

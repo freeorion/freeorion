@@ -155,10 +155,10 @@ void TechTreeLayout::Edge::ReadPoints(std::vector<std::pair<double,double> > & p
 }
 
 void TechTreeLayout::Edge::Debug() const {
-    Logger().debugStream() << "Edge " << m_from << "-> " << m_to << ": ";
+    DebugLogger() << "Edge " << m_from << "-> " << m_to << ": ";
     for(std::vector<std::pair<double,double> >::const_iterator p = m_points.begin(); p != m_points.end(); p++)
-        Logger().debugStream() << "(" << (*p).first << "," << (*p).second << ") ";
-    Logger().debugStream() << "\n";
+        DebugLogger() << "(" << (*p).first << "," << (*p).second << ") ";
+    DebugLogger() << "\n";
 }
 
 ///////////////////////
@@ -206,7 +206,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         max_node_depth = std::max(max_node_depth, (*it)->GetDepth());
 
     //2. create placeholder nodes
-    Logger().debugStream() << "TechTreeLayout::DoLayout creaing place holder nodes...";
+    DebugLogger() << "TechTreeLayout::DoLayout creaing place holder nodes...";
     std::vector<Node*> raw_nodes = m_nodes; // just iterator over initial nodes, not also over the placeholders
     for (std::vector<Node*>::iterator it = raw_nodes.begin(); it != raw_nodes.end(); ++it)
         (*it)->CreatePlaceHolder(m_nodes);
@@ -305,7 +305,7 @@ const GG::Y TechTreeLayout::GetHeight() const
 const TechTreeLayout::Node* TechTreeLayout::GetNode(const std::string & name) const {
     std::map< std::string, TechTreeLayout::Node*>::const_iterator item = m_node_map.find(name);
     if (item == m_node_map.end()) {
-        Logger().debugStream() << "TechTreeLayout::getNode: missing node " << name << "\n";
+        DebugLogger() << "TechTreeLayout::getNode: missing node " << name << "\n";
         Debug();
         throw "node missing";
     } else {
@@ -316,7 +316,7 @@ const TechTreeLayout::Node* TechTreeLayout::GetNode(const std::string & name) co
 void TechTreeLayout::AddNode(const std::string& tech, GG::X width, GG::Y height) {
     assert(width > 0 && height > 0 && GetTech(tech));
     TechTreeLayout::Node* node = new TechTreeLayout::Node(tech, width, height);
-    //Logger().debugStream() << "Adding Node: " << node << " for tech " << tech;
+    //DebugLogger() << "Adding Node: " << node << " for tech " << tech;
     m_nodes.push_back(node);
     m_node_map[tech] = node;
 }
@@ -331,7 +331,7 @@ void TechTreeLayout::AddEdge(const std::string& parent, const std::string& child
 const std::vector<TechTreeLayout::Edge*>& TechTreeLayout::GetOutEdges(const std::string& name) const {
     std::map< std::string, TechTreeLayout::Node*>::const_iterator item = m_node_map.find(name);
     if (item == m_node_map.end()) {
-        Logger().debugStream() << "TechTreeLayout::getNode: missing node " << name << "\n";
+        DebugLogger() << "TechTreeLayout::getNode: missing node " << name << "\n";
         Debug();
         throw "node missing";
     } else {
@@ -397,26 +397,26 @@ TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes)
     assert(parent != 0 && child != 0);
     // ensure passed in nodes are valid
     if (!parent)
-        Logger().errorStream() << "Node::Node passed null parent";
+        ErrorLogger() << "Node::Node passed null parent";
     if (!child)
-        Logger().errorStream() << "Node::Node passed null child";
+        ErrorLogger() << "Node::Node passed null child";
     if (!parent || !child)
         return;
 
-    //Logger().debugStream() << "Node::Node given parent " << parent
+    //DebugLogger() << "Node::Node given parent " << parent
     //                       << " and child: " << child;
 
-    //Logger().debugStream() << "Node::Node given parent with depth " << parent->m_depth
+    //DebugLogger() << "Node::Node given parent with depth " << parent->m_depth
     //                       << "  and child with depth: " << child->m_depth;
 
     // ensure there is space to insert node between parent and child nodes
     if (child->m_depth <= parent->m_depth + 1) {
-        Logger().errorStream() << "no space to insert a dummy node!";
+        ErrorLogger() << "no space to insert a dummy node!";
         m_depth = child->m_depth;
         return;
     }
 
-    //Logger().debugStream() << "Node::Node adding dummy node: " << this
+    //DebugLogger() << "Node::Node adding dummy node: " << this
     //                       << "  between parent node tech: " << parent->m_tech
     //                       << "  and child node tech: " << child->m_tech;
 
@@ -562,7 +562,7 @@ bool TechTreeLayout::Node::operator<(const TechTreeLayout::Node& y) const {
 }
 
 void TechTreeLayout::Node::AddChild(Node* node) {
-    //Logger().debugStream() << "Node::AddChild this node: " << this << " for tech: " << m_tech << "  with child node: " << node << "  for tech: " << node->GetTech();
+    //DebugLogger() << "Node::AddChild this node: " << this << " for tech: " << m_tech << "  with child node: " << node << "  for tech: " << node->GetTech();
     assert(node);
     m_children.push_back(node);
     node->m_parents.push_back(this);
@@ -619,21 +619,21 @@ void TechTreeLayout::Node::SetDepthRecursive(int depth) {
 }
 
 void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
-    //Logger().debugStream() << "Creating PlaceHolder for node " << this;
-    //Logger().debugStream().flush();
-    //Logger().debugStream() << "  for tech: " << m_tech;
-    //Logger().debugStream().flush();
-    //Logger().debugStream() << "  which has " << m_children.size() << " children:";
-    //Logger().debugStream().flush();
+    //DebugLogger() << "Creating PlaceHolder for node " << this;
+    //DebugLogger().flush();
+    //DebugLogger() << "  for tech: " << m_tech;
+    //DebugLogger().flush();
+    //DebugLogger() << "  which has " << m_children.size() << " children:";
+    //DebugLogger().flush();
     //for (unsigned int i = 0; i < m_children.size(); ++i) {
     //    Node*& child = m_children[i];
-    //    Logger().debugStream() << "      child: " << child << " with tech: " << child->GetTech();
+    //    DebugLogger() << "      child: " << child << " with tech: " << child->GetTech();
     //}
 
 
     for (unsigned int i = 0; i < m_children.size(); ++i) {
         Node* child = m_children[i];
-        //Logger().debugStream() << "   processing child: " << child << " with tech: " << child->GetTech();
+        //DebugLogger() << "   processing child: " << child << " with tech: " << child->GetTech();
 
 
         Node* current_parent_node = this;
@@ -646,7 +646,7 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
         }
 
 
-        //Logger().debugStream() << "Dummy nodes from " << UserString(this->m_tech) << " to child: " << UserString(child->GetTech());
+        //DebugLogger() << "Dummy nodes from " << UserString(this->m_tech) << " to child: " << UserString(child->GetTech());
         //int dummy_nodes_added = 0;
         while (current_parent_node->m_depth + 1 < child->m_depth) {
             // there is at least one column gap beween the horizontal positions
@@ -654,25 +654,25 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*>& nodes) {
             //
             // to fill the gap visually, create dummy node(s) in the columns
             // between them.
-            //Logger().debugStream() << "next column depth: " << current_parent_node->m_depth + 1
+            //DebugLogger() << "next column depth: " << current_parent_node->m_depth + 1
             //                       << "  child_depth: " << child->m_depth;
-            //Logger().debugStream() << "current_parent_node: " << current_parent_node
+            //DebugLogger() << "current_parent_node: " << current_parent_node
             //                       << " child: " << child;
             Node* dummy_node = new Node(current_parent_node, child, nodes);
-            //Logger().debugStream() << "new dummy node depth: " << dummy_node->m_depth;
+            //DebugLogger() << "new dummy node depth: " << dummy_node->m_depth;
             current_parent_node = dummy_node;
             //++dummy_nodes_added;
         }
-        //Logger().debugStream() << "done adding dummy nodes.  current_parent node depth + 1: " << current_parent_node->m_depth + 1 << "  child depth: " << child->m_depth;
+        //DebugLogger() << "done adding dummy nodes.  current_parent node depth + 1: " << current_parent_node->m_depth + 1 << "  child depth: " << child->m_depth;
         //if (dummy_nodes_added > 0) {
-        //    Logger().debugStream() << "added " << dummy_nodes_added << " dummy nodes for from tech " << UserString(m_tech);
+        //    DebugLogger() << "added " << dummy_nodes_added << " dummy nodes for from tech " << UserString(m_tech);
         //}
 
-        //Logger().debugStream() << " node now has " << m_children.size() << " children:";
-        //Logger().debugStream().flush();
+        //DebugLogger() << " node now has " << m_children.size() << " children:";
+        //DebugLogger().flush();
         //for (unsigned int i = 0; i < m_children.size(); ++i) {
         //    Node*& child = m_children[i];
-        //    Logger().debugStream() << "      child: " << child << " with tech: " << child->GetTech();
+        //    DebugLogger() << "      child: " << child << " with tech: " << child->GetTech();
         //}
     }
     m_children_rows = std::max(m_children_rows, NODE_CELL_HEIGHT);
@@ -744,20 +744,20 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
 }
 
 void TechTreeLayout::Node::Debug() const {
-    Logger().debugStream() << "Tech - " << m_tech << " (" << m_x << "," << m_y << ") #" << m_depth << "\n";
-    Logger().debugStream() << "  Parents - ";
+    DebugLogger() << "Tech - " << m_tech << " (" << m_x << "," << m_y << ") #" << m_depth << "\n";
+    DebugLogger() << "  Parents - ";
     for (int i = m_parents.size(); i --> 0; )
-        Logger().debugStream() << m_parents[i]->m_tech << "#" << m_parents[i]->m_depth;
+        DebugLogger() << m_parents[i]->m_tech << "#" << m_parents[i]->m_depth;
 
-    Logger().debugStream() << "\n";
-    Logger().debugStream() << "  Children - ";
+    DebugLogger() << "\n";
+    DebugLogger() << "  Children - ";
     for (int i = m_children.size(); i --> 0; )
-        Logger().debugStream() << m_children[i]->m_tech << "#" << m_children[i]->m_depth;;
+        DebugLogger() << m_children[i]->m_tech << "#" << m_children[i]->m_depth;;
 
-    Logger().debugStream() << "\n";
+    DebugLogger() << "\n";
 
     for (int i = m_out_edges.size(); i-->0; ) {
-        Logger().debugStream() << "     - ";
+        DebugLogger() << "     - ";
         m_out_edges[i]->Debug();
     }
 }

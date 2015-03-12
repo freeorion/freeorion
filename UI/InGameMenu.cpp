@@ -128,13 +128,13 @@ void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point,
 }
 
 void InGameMenu::Save() {
-    Logger().debugStream() << "InGameMenu::Save";
+    DebugLogger() << "InGameMenu::Save";
 
     HumanClientApp* app = HumanClientApp::GetApp();
     if (!app)
         return;
     if (!app->CanSaveNow()) {
-        Logger().errorStream() << "InGameMenu::Save aborting; Client app can't save now";
+        ErrorLogger() << "InGameMenu::Save aborting; Client app can't save now";
         return;
     }
 
@@ -148,7 +148,7 @@ void InGameMenu::Save() {
         // When saving in multiplayer, you cannot see the old saves or
         // browse directories, only give a save file name.
         if (app->SinglePlayerGame()) {
-            Logger().debugStream() << "... running save file dialog";
+            DebugLogger() << "... running save file dialog";
             SaveFileDialog dlg(SAVE_GAME_EXTENSION);
             dlg.Run();
             filename = dlg.Result();
@@ -158,17 +158,17 @@ void InGameMenu::Save() {
         }
         if (!filename.empty()) {
             if (!app->CanSaveNow()) {
-                Logger().errorStream() << "InGameMenu::Save aborting; Client app can't save now";
+                ErrorLogger() << "InGameMenu::Save aborting; Client app can't save now";
                 throw std::runtime_error(UserString("UNABLE_TO_SAVE_NOW_TRY_AGAIN"));
             }
-            Logger().debugStream() << "... initiating save to " << filename ;
+            DebugLogger() << "... initiating save to " << filename ;
             app->SaveGame(filename);
             CloseClicked();
-            Logger().debugStream() << "... save done";
+            DebugLogger() << "... save done";
         }
     
     } catch (const std::exception& e) {
-        Logger().errorStream() << "Exception thrown attempting save: " << e.what();
+        ErrorLogger() << "Exception thrown attempting save: " << e.what();
         ClientUI::MessageBox(e.what(), true);
     }
 }

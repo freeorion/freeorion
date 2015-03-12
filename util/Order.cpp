@@ -63,12 +63,12 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
 {
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object);
     if (!obj) {
-        Logger().errorStream() << "RenameOrder::RenameOrder() : Attempted to rename nonexistant object with id " << object;
+        ErrorLogger() << "RenameOrder::RenameOrder() : Attempted to rename nonexistant object with id " << object;
         return;
     }
 
     if (m_name.empty()) {
-        Logger().errorStream() << "RenameOrder::RenameOrder() : Attempted to name an object \"\".";
+        ErrorLogger() << "RenameOrder::RenameOrder() : Attempted to name an object \"\".";
         // make order do nothing
         m_object = INVALID_OBJECT_ID;
         return;
@@ -81,19 +81,19 @@ void RenameOrder::ExecuteImpl() const {
     TemporaryPtr<UniverseObject> obj = GetUniverseObject(m_object);
 
     if (!obj) {
-        Logger().errorStream() << "Attempted to rename nonexistant object with id " << m_object;
+        ErrorLogger() << "Attempted to rename nonexistant object with id " << m_object;
         return;
     }
 
     // verify that empire specified in order owns specified object
     if (!obj->OwnedBy(EmpireID())) {
-        Logger().errorStream() << "Empire specified in rename order does not own specified object.";
+        ErrorLogger() << "Empire specified in rename order does not own specified object.";
         return;
     }
 
     // disallow the name "", since that denotes an unknown object
     if (m_name == "") {
-        Logger().errorStream() << "Name \"\" specified in rename order is invalid.";
+        ErrorLogger() << "Name \"\" specified in rename order is invalid.";
         return;
     }
 
@@ -140,12 +140,12 @@ void NewFleetOrder::ExecuteImpl() const {
     ValidateEmpireID();
 
     if (m_system_id == INVALID_OBJECT_ID) {
-        Logger().errorStream() << "Empire attempted to create a new fleet outside a system";
+        ErrorLogger() << "Empire attempted to create a new fleet outside a system";
         return;
     }
     TemporaryPtr<System> system = GetSystem(m_system_id);
     if (!system) {
-        Logger().errorStream() << "Empire attempted to create a new fleet in a nonexistant system";
+        ErrorLogger() << "Empire attempted to create a new fleet in a nonexistant system";
         return;
     }
 
@@ -155,7 +155,7 @@ void NewFleetOrder::ExecuteImpl() const {
         || m_fleet_names.size() != m_ship_id_groups.size()
         || m_fleet_names.size() != m_aggressives.size())
     {
-        Logger().errorStream() << "NewFleetOrder has inconsistent data container sizes...";
+        ErrorLogger() << "NewFleetOrder has inconsistent data container sizes...";
         return;
     }
 
@@ -181,15 +181,15 @@ void NewFleetOrder::ExecuteImpl() const {
             // verify that empire is not trying to take ships from somebody else's fleet
             TemporaryPtr<Ship> ship = GetShip(ship_ids[i]);
             if (!ship) {
-                Logger().errorStream() << "Empire attempted to create a new fleet with an invalid ship";
+                ErrorLogger() << "Empire attempted to create a new fleet with an invalid ship";
                 continue;
             }
             if (!ship->OwnedBy(EmpireID())) {
-                Logger().errorStream() << "Empire attempted to create a new fleet with ships from another's fleet.";
+                ErrorLogger() << "Empire attempted to create a new fleet with ships from another's fleet.";
                 continue;
             }
             if (ship->SystemID() != m_system_id) {
-                Logger().errorStream() << "Empire attempted to make a new fleet from ship in the wrong system";
+                ErrorLogger() << "Empire attempted to make a new fleet from ship in the wrong system";
                 continue;
             }
             validated_ships.push_back(ship);
@@ -256,19 +256,19 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
     // perform sanity checks
     TemporaryPtr<const Fleet> fleet = GetFleet(FleetID());
     if (!fleet) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
+        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
         return;
     }
 
     TemporaryPtr<const System> destination_system = GetSystem(DestinationSystemID());
     if (!destination_system) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists / is known to exist";
+        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists / is known to exist";
         return;
     }
 
     // verify that empire specified in order owns specified fleet
     if (!fleet->OwnedBy(EmpireID()) ) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
+        ErrorLogger() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
         return;
     }
 
@@ -287,25 +287,25 @@ void FleetMoveOrder::ExecuteImpl() const {
 
     TemporaryPtr<Fleet> fleet = GetFleet(FleetID());
     if (!fleet) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
+        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
         return;
     }
 
     TemporaryPtr<const System> destination_system = GetEmpireKnownSystem(DestinationSystemID(), EmpireID());
     if (!destination_system) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system is known to that empire";
+        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system is known to that empire";
         return;
     }
 
     // reject empty routes
     if (m_route.empty()) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move on empty route";
+        ErrorLogger() << "Empire with id " << EmpireID() << " ordered fleet to move on empty route";
         return;
     }
 
     // verify that empire specified in order owns specified fleet
     if (!fleet->OwnedBy(EmpireID()) ) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
+        ErrorLogger() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
         return;
     }
 
@@ -316,7 +316,7 @@ void FleetMoveOrder::ExecuteImpl() const {
         if (fleet_sys_id != INVALID_OBJECT_ID) {
             // fleet is in a system.  Its move path should also start from that system.
             if (fleet_sys_id != m_start_system) {
-                Logger().errorStream() << "Empire with id " << EmpireID() << " ordered a fleet to move from a system with id " << m_start_system <<
+                ErrorLogger() << "Empire with id " << EmpireID() << " ordered a fleet to move from a system with id " << m_start_system <<
                                         " that it is not at.  Fleet is located at system with id " << fleet_sys_id;
                 return;
             }
@@ -324,7 +324,7 @@ void FleetMoveOrder::ExecuteImpl() const {
             // fleet is not in a system.  Its move path should start from the next system it is moving to.
             int next_system = fleet->NextSystemID();
             if (next_system != m_start_system) {
-                Logger().errorStream() << "Empire with id " << EmpireID() << " ordered a fleet to move starting from a system with id " << m_start_system <<
+                ErrorLogger() << "Empire with id " << EmpireID() << " ordered a fleet to move starting from a system with id " << m_start_system <<
                                         ", but the fleet's next destination is system with id " << next_system;
                 return;
             }
@@ -333,7 +333,7 @@ void FleetMoveOrder::ExecuteImpl() const {
         // We should append and there is something to append to
         int last_system = fleet->TravelRoute().back();
         if (last_system != m_start_system) {
-            Logger().errorStream() << "Empire with id " << EmpireID() << " ordered a fleet to continue from system with id " << m_start_system <<
+            ErrorLogger() << "Empire with id " << EmpireID() << " ordered a fleet to continue from system with id " << m_start_system <<
             ", but the fleet's current route won't lead there, it leads to system " << last_system;
             return;
         }
@@ -356,7 +356,7 @@ void FleetMoveOrder::ExecuteImpl() const {
     // check destination validity: disallow movement that's out of range
     std::pair<int, int> eta = fleet->ETA(fleet->MovePath(route_list));
     if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE) {
-        Logger().debugStream() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
+        DebugLogger() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
         return;
     }
     
@@ -364,7 +364,7 @@ void FleetMoveOrder::ExecuteImpl() const {
     for (std::list<int>::iterator it = route_list.begin(); it != route_list.end(); ++it) {
         waypoints += std::string(" ") + boost::lexical_cast<std::string>(*it);
     }
-    Logger().debugStream() << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " to " << waypoints;
+    DebugLogger() << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " to " << waypoints;
 
     fleet->SetRoute(route_list);
 }
@@ -389,17 +389,17 @@ void FleetTransferOrder::ExecuteImpl() const {
     // look up the destination fleet
     TemporaryPtr<Fleet> target_fleet = GetFleet(DestinationFleet());
     if (!target_fleet) {
-        Logger().errorStream() << "Empire attempted to move ships to a nonexistant fleet";
+        ErrorLogger() << "Empire attempted to move ships to a nonexistant fleet";
         return;
     }
     // check that destination fleet is owned by empire
     if (!target_fleet->OwnedBy(EmpireID())) {
-        Logger().errorStream() << "Empire attempted to move ships to a fleet it does not own";
+        ErrorLogger() << "Empire attempted to move ships to a fleet it does not own";
         return;
     }
     // verify that fleet is in a system
     if (target_fleet->SystemID() == INVALID_OBJECT_ID) {
-        Logger().errorStream() << "Empire attempted to transfer ships to/from fleet(s) not in a system";
+        ErrorLogger() << "Empire attempted to transfer ships to/from fleet(s) not in a system";
         return;
     }
 
@@ -481,62 +481,62 @@ void ColonizeOrder::ExecuteImpl() const {
 
     TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
     if (!ship->CanColonize()) { // verifies that species exists and can colonize and that ship design can colonize
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship that can't colonize";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl got ship that can't colonize";
         return;
     }
     if (!ship->OwnedBy(empire_id)) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return;
     }
     const ShipDesign* design = ship->Design();
     if (!design) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't find ship's design!";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't find ship's design!";
         return;
     }
     double colonist_capacity = design->ColonyCapacity();
 
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
     if (planet->CurrentMeterValue(METER_POPULATION) > 0.0) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that already has population";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that already has population";
         return;
     }
     if (!planet->Unowned() && planet->Owner() != empire_id) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that owned by another empire";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that owned by another empire";
         return;
     }
     if (planet->OwnedBy(empire_id) && colonist_capacity == 0.0) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that is already owned by empire and colony ship with zero capcity";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that is already owned by empire and colony ship with zero capcity";
         return;
     }
     if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
         return;
     }
     if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity and planet that ship's species can't colonize";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity and planet that ship's species can't colonize";
         return;
     }
 
     int ship_system_id = ship->SystemID();
     if (ship_system_id == INVALID_OBJECT_ID) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given id of ship not in a system";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl given id of ship not in a system";
         return;
     }
     int planet_system_id = planet->SystemID();
     if (ship_system_id != planet_system_id) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl given ids of ship and planet not in the same system";
         return;
     }
     if (planet->IsAboutToBeColonized()) {
-        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given id planet that is already being colonized";
+        ErrorLogger() << "ColonizeOrder::ExecuteImpl given id planet that is already being colonized";
         return;
     }
 
@@ -550,21 +550,21 @@ void ColonizeOrder::ExecuteImpl() const {
 bool ColonizeOrder::UndoImpl() const {
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
-        Logger().errorStream() << "ColonizeOrder::UndoImpl couldn't get planet with id " << m_planet;
+        ErrorLogger() << "ColonizeOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
     }
     if (!planet->IsAboutToBeColonized()) {
-        Logger().errorStream() << "ColonizeOrder::UndoImpl planet is not about to be colonized...";
+        ErrorLogger() << "ColonizeOrder::UndoImpl planet is not about to be colonized...";
         return false;
     }
 
     TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
-        Logger().errorStream() << "ColonizeOrder::UndoImpl couldn't get ship with id " << m_ship;
+        ErrorLogger() << "ColonizeOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
     }
     if (ship->OrderedColonizePlanet() != m_planet) {
-        Logger().errorStream() << "ColonizeOrder::UndoImpl ship is not about to colonize planet";
+        ErrorLogger() << "ColonizeOrder::UndoImpl ship is not about to colonize planet";
         return false;
     }
 
@@ -598,57 +598,57 @@ void InvadeOrder::ExecuteImpl() const {
 
     TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
+        ErrorLogger() << "InvadeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
     if (!ship->HasTroops()) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl got ship that can't invade";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl got ship that can't invade";
         return;
     }
     if (!ship->OwnedBy(empire_id)) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return;
     }
 
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
+        ErrorLogger() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
     if (planet->Unowned() && planet->CurrentMeterValue(METER_POPULATION) == 0.0) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl given unpopulated planet";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given unpopulated planet";
         return;
     }
     if (planet->CurrentMeterValue(METER_SHIELD) > 0.0) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet with shield > 0";
         return;
     }
     if (planet->OwnedBy(empire_id)) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
         return;
     }
     if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
         return;
     }
     if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_BASIC_VISIBILITY) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
         //return;
     }
 
     int ship_system_id = ship->SystemID();
     if (ship_system_id == INVALID_OBJECT_ID) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl given id of ship not in a system";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given id of ship not in a system";
         return;
     }
     int planet_system_id = planet->SystemID();
     if (ship_system_id != planet_system_id) {
-        Logger().errorStream() << "InvadeOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        ErrorLogger() << "InvadeOrder::ExecuteImpl given ids of ship and planet not in the same system";
         return;
     }
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
-    Logger().debugStream() << "InvadeOrder::ExecuteImpl set for ship " << m_ship << " "
+    DebugLogger() << "InvadeOrder::ExecuteImpl set for ship " << m_ship << " "
                            << ship->Name() << " to invade planet " << m_planet << " " << planet->Name();
     planet->SetIsAboutToBeInvaded(true);
     ship->SetInvadePlanet(m_planet);
@@ -660,17 +660,17 @@ void InvadeOrder::ExecuteImpl() const {
 bool InvadeOrder::UndoImpl() const {
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
-        Logger().errorStream() << "InvadeOrder::UndoImpl couldn't get planet with id " << m_planet;
+        ErrorLogger() << "InvadeOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
     }
 
     TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
-        Logger().errorStream() << "InvadeOrder::UndoImpl couldn't get ship with id " << m_ship;
+        ErrorLogger() << "InvadeOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
     }
     if (ship->OrderedInvadePlanet() != m_planet) {
-        Logger().errorStream() << "InvadeOrder::UndoImpl ship is not about to invade planet";
+        ErrorLogger() << "InvadeOrder::UndoImpl ship is not about to invade planet";
         return false;
     }
 
@@ -704,49 +704,49 @@ void BombardOrder::ExecuteImpl() const {
 
     TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl couldn't get ship with id " << m_ship;
+        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
     if (!ship->CanBombard()) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl got ship that can't bombard";
+        ErrorLogger() << "BombardOrder::ExecuteImpl got ship that can't bombard";
         return;
     }
     if (!ship->OwnedBy(empire_id)) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
+        ErrorLogger() << "BombardOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return;
     }
 
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl couldn't get planet with id " << m_planet;
+        ErrorLogger() << "BombardOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
     if (planet->OwnedBy(empire_id)) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+        ErrorLogger() << "BombardOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
         return;
     }
     if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
+        ErrorLogger() << "BombardOrder::ExecuteImpl given planet owned by an empire not at war with order-issuing empire";
         return;
     }
     if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_BASIC_VISIBILITY) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+        ErrorLogger() << "BombardOrder::ExecuteImpl given planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
         //return;
     }
 
     int ship_system_id = ship->SystemID();
     if (ship_system_id == INVALID_OBJECT_ID) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl given id of ship not in a system";
+        ErrorLogger() << "BombardOrder::ExecuteImpl given id of ship not in a system";
         return;
     }
     int planet_system_id = planet->SystemID();
     if (ship_system_id != planet_system_id) {
-        Logger().errorStream() << "BombardOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        ErrorLogger() << "BombardOrder::ExecuteImpl given ids of ship and planet not in the same system";
         return;
     }
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
-    Logger().debugStream() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
+    DebugLogger() << "BombardOrder::ExecuteImpl set for ship " << m_ship << " "
                            << ship->Name() << " to bombard planet " << m_planet << " " << planet->Name();
     planet->SetIsAboutToBeBombarded(true);
     ship->SetBombardPlanet(m_planet);
@@ -758,17 +758,17 @@ void BombardOrder::ExecuteImpl() const {
 bool BombardOrder::UndoImpl() const {
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
-        Logger().errorStream() << "BombardOrder::UndoImpl couldn't get planet with id " << m_planet;
+        ErrorLogger() << "BombardOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
     }
 
     TemporaryPtr<Ship> ship = GetShip(m_ship);
     if (!ship) {
-        Logger().errorStream() << "BombardOrder::UndoImpl couldn't get ship with id " << m_ship;
+        ErrorLogger() << "BombardOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
     }
     if (ship->OrderedBombardPlanet() != m_planet) {
-        Logger().errorStream() << "BombardOrder::UndoImpl ship is not about to bombard planet";
+        ErrorLogger() << "BombardOrder::UndoImpl ship is not about to bombard planet";
         return false;
     }
 
@@ -800,12 +800,12 @@ void DeleteFleetOrder::ExecuteImpl() const {
     TemporaryPtr<Fleet> fleet = GetFleet(FleetID());
 
     if (!fleet) {
-        Logger().errorStream() << "Illegal fleet id specified in fleet delete order: " << FleetID();
+        ErrorLogger() << "Illegal fleet id specified in fleet delete order: " << FleetID();
         return;
     }
 
     if (!fleet->OwnedBy(EmpireID())) {
-        Logger().errorStream() << "Empire attempted to issue deletion order to another's fleet.";
+        ErrorLogger() << "Empire attempted to issue deletion order to another's fleet.";
         return;
     }
 
@@ -840,12 +840,12 @@ void ChangeFocusOrder::ExecuteImpl() const {
     TemporaryPtr<Planet> planet = GetPlanet(PlanetID());
 
     if (!planet) {
-        Logger().errorStream() << "Illegal planet id specified in change planet focus order.";
+        ErrorLogger() << "Illegal planet id specified in change planet focus order.";
         return;
     }
 
     if (!planet->OwnedBy(EmpireID())) {
-        Logger().errorStream() << "Empire attempted to issue change planet focus to another's planet.";
+        ErrorLogger() << "Empire attempted to issue change planet focus to another's planet.";
         return;
     }
 
@@ -915,7 +915,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, con
     m_new_index(INVALID_INDEX)
 {
     if (m_build_type == BT_SHIP) {
-        Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for a BT_SHIP with a name, not a design id";
+        ErrorLogger() << "Attempted to construct a ProductionQueueOrder for a BT_SHIP with a name, not a design id";
     }
 }
 
@@ -932,7 +932,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int
     m_new_index(INVALID_INDEX)
 {
     if (m_build_type == BT_BUILDING) {
-        Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name";
+        ErrorLogger() << "Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name";
     }
 }
 
@@ -949,7 +949,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quanti
     m_new_index(INVALID_INDEX)
 {
     if (m_build_type == BT_BUILDING) {
-        Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for changing quantity &/or blocksize of a BT_BUILDING";
+        ErrorLogger() << "Attempted to construct a ProductionQueueOrder for changing quantity &/or blocksize of a BT_BUILDING";
     }
 }
 
@@ -966,7 +966,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quanti
     m_new_index(INVALID_INDEX)
 {
     if (m_build_type == BT_BUILDING) {
-        Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for changing quantity of a BT_BUILDING";
+        ErrorLogger() << "Attempted to construct a ProductionQueueOrder for changing quantity of a BT_BUILDING";
     }
 }
 
@@ -1006,7 +1006,7 @@ void ProductionQueueOrder::ExecuteImpl() const {
         else if (m_build_type == BT_SHIP)
             empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
         else if (m_new_blocksize != INVALID_QUANTITY) {
-            Logger().debugStream() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
+            DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
             empire->SetBuildQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
         }
         else if (m_new_quantity != INVALID_QUANTITY)
@@ -1016,9 +1016,9 @@ void ProductionQueueOrder::ExecuteImpl() const {
         else if (m_index != INVALID_INDEX)
             empire->RemoveBuildFromQueue(m_index);
         else
-            Logger().errorStream() << "Malformed ProductionQueueOrder.";
+            ErrorLogger() << "Malformed ProductionQueueOrder.";
     } catch (const std::exception& e) {
-        Logger().errorStream() << "Build order execution threw exception: " << e.what();
+        ErrorLogger() << "Build order execution threw exception: " << e.what();
     }
 }
 
@@ -1096,7 +1096,7 @@ void ShipDesignOrder::ExecuteImpl() const {
     if (m_delete_design_from_empire) {
         // player is ordering empire to forget about a particular design
         if (!empire->ShipDesignKept(m_design_id)) {
-            Logger().errorStream() << "Tried to remove a ShipDesign that the empire wasn't remembering";
+            ErrorLogger() << "Tried to remove a ShipDesign that the empire wasn't remembering";
             return;
         }
         empire->RemoveShipDesign(m_design_id);
@@ -1104,7 +1104,7 @@ void ShipDesignOrder::ExecuteImpl() const {
     } else if (m_create_new_design) {
         // check if a design with this ID already exists
         if (universe.GetShipDesign(m_design_id)) {
-            Logger().errorStream() << "Tried to create a new ShipDesign with an id of an already-existing ShipDesign";
+            ErrorLogger() << "Tried to create a new ShipDesign with an id of an already-existing ShipDesign";
             return;
         }
         ShipDesign* new_ship_design = new ShipDesign(m_name, m_description,
@@ -1121,16 +1121,16 @@ void ShipDesignOrder::ExecuteImpl() const {
         const std::set<int>& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(EmpireID());
         std::set<int>::iterator design_it = empire_known_design_ids.find(m_design_id);
         if (design_it == empire_known_design_ids.end()) {
-            Logger().errorStream() << "Tried to rename/redescribe a ShipDesign that this empire hasn't seen";
+            ErrorLogger() << "Tried to rename/redescribe a ShipDesign that this empire hasn't seen";
             return;
         }
         const ShipDesign* design = GetShipDesign(*design_it);
         if (!design) {
-            Logger().errorStream() << "Tried to rename/redescribe a ShipDesign that doesn't exist (but this empire has seen it)!";
+            ErrorLogger() << "Tried to rename/redescribe a ShipDesign that doesn't exist (but this empire has seen it)!";
             return;
         }
         if (design->DesignedByEmpire() != EmpireID()) {
-            Logger().errorStream() << "Tried to rename/redescribe a ShipDesign that isn't owned by this empire!";
+            ErrorLogger() << "Tried to rename/redescribe a ShipDesign that isn't owned by this empire!";
             return;
         }
         GetUniverse().RenameShipDesign(m_design_id, m_name, m_description);
@@ -1145,7 +1145,7 @@ void ShipDesignOrder::ExecuteImpl() const {
 
         // check if empire is already remembering the design
         if (empire->ShipDesignKept(m_design_id)) {
-            Logger().errorStream() << "Tried to remember a ShipDesign that was already being remembered";
+            ErrorLogger() << "Tried to remember a ShipDesign that was already being remembered";
             return;
         }
 
@@ -1154,7 +1154,7 @@ void ShipDesignOrder::ExecuteImpl() const {
         if (empire_known_design_ids.find(m_design_id) != empire_known_design_ids.end()) {
             empire->AddShipDesign(m_design_id);
         } else {
-            Logger().errorStream() << "Tried to remember a ShipDesign that this empire hasn't seen";
+            ErrorLogger() << "Tried to remember a ShipDesign that this empire hasn't seen";
             return;
         }
 
@@ -1181,7 +1181,7 @@ void ScrapOrder::ExecuteImpl() const {
     if (TemporaryPtr<Ship> ship = GetShip(m_object_id)) {
         if (ship->SystemID() != INVALID_OBJECT_ID && ship->OwnedBy(empire_id)) {
             ship->SetOrderedScrapped(true);
-            //Logger().debugStream() << "ScrapOrder::ExecuteImpl empire: " << empire_id
+            //DebugLogger() << "ScrapOrder::ExecuteImpl empire: " << empire_id
             //                       << " on ship: " << ship->ID() << " at system: " << ship->SystemID()
             //                       << " ... ordered scrapped?: " << ship->OrderedScrapped();
         }

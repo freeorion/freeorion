@@ -1506,7 +1506,7 @@ template <class T>
 std::string ValueRef::Operation<T>::Description() const
 {
     if (m_op_type == NEGATE) {
-        //Logger().debugStream() << "Operation is negation";
+        //DebugLogger() << "Operation is negation";
         if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
             OpType op_type = rhs->GetOpType();
             if (op_type == PLUS     || op_type == MINUS ||

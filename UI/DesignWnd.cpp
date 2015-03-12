@@ -166,7 +166,7 @@ namespace {
                         }
                     }
                 } catch (...) {
-                    Logger().errorStream() << "Failed to parse designs in " << PathString(*it);
+                    ErrorLogger() << "Failed to parse designs in " << PathString(*it);
                     continue;
                 }
             }
@@ -186,7 +186,7 @@ namespace {
         void LoadAllSavedDesigns() {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
             if (const Empire* empire = GetEmpire(empire_id)) {
-                Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns";
+                DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
                 for (std::map<std::string, ShipDesign*>::iterator savedit = begin();
                     savedit != end(); ++savedit)
                 {
@@ -201,16 +201,16 @@ namespace {
                         }
                     }
                     if (!already_got) {
-                        Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << savedit->second->Name();
+                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << savedit->second->Name();
                         int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
                         HumanClientApp::GetApp()->Orders().IssueOrder(
                             OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *(savedit->second))));
                     } else {
-                        Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << savedit->second->Name();
+                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << savedit->second->Name();
                     }
                 }
             } else {
-                Logger().debugStream() << "SavedDesignsManager::LoadAllSavedDesigns HumanClient Does Not Control an Empire";
+                DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns HumanClient Does Not Control an Empire";
             }
         }
 
@@ -245,7 +245,7 @@ namespace {
             ofs << design->Dump();
 
         } catch (const std::exception& e) {
-            Logger().errorStream() << "Error writing design file.  Exception: " << ": " << e.what();
+            ErrorLogger() << "Error writing design file.  Exception: " << ": " << e.what();
             ClientUI::MessageBox(e.what(), true);
         }
     }
@@ -344,7 +344,7 @@ PartControl::PartControl(const PartType* part) :
         GG::X part_left = (Width() - PART_CONTROL_WIDTH) / 2;
         GG::Y part_top = (Height() - PART_CONTROL_HEIGHT) / 2;
 
-        //Logger().debugStream() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
+        //DebugLogger() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
         m_icon = new GG::StaticGraphic(ClientUI::PartIcon(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_icon->MoveTo(GG::Pt(part_left, part_top));
         m_icon->Resize(GG::Pt(PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT));
@@ -355,7 +355,7 @@ PartControl::PartControl(const PartType* part) :
         SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
 
 
-        //Logger().debugStream() << "PartControl::PartControl part name: " << m_part->Name();
+        //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new IconTextBrowseWnd(ClientUI::PartIcon(m_part->Name()),
@@ -1363,7 +1363,7 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     if (wnds.empty())
         return;
     if (!wnds.size() == 1)
-        Logger().errorStream() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
+        ErrorLogger() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
     const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list as BasesListBost doesn't allow selection, so dragging is only one-at-a-time
     const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
     if (!control)
@@ -1433,7 +1433,7 @@ void BasesListBox::Populate() {
     //if (!Empty() && !Visible())
     //    return;
 
-    Logger().debugStream() << "BasesListBox::Populate";
+    DebugLogger() << "BasesListBox::Populate";
 
     // populate list as appropriate for types of bases shown
     if (m_showing_empty_hulls)
@@ -1472,13 +1472,13 @@ void BasesListBox::PopulateWithEmptyHulls() {
 
     const bool showing_available = m_availabilities_shown.first;
     const bool showing_unavailable = m_availabilities_shown.second;
-    Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
+    DebugLogger() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
     const Empire* empire = GetEmpire(m_empire_id_shown); // may return 0
-    Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
+    DebugLogger() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
 
-    //Logger().debugStream() << "... hulls in list: ";
+    //DebugLogger() << "... hulls in list: ";
     //for (std::set<std::string>::const_iterator it = m_hulls_in_list.begin(); it != m_hulls_in_list.end(); ++it)
-    //    Logger().debugStream() << "... ... hull: " << *it;
+    //    DebugLogger() << "... ... hull: " << *it;
 
     // loop through all hulls, determining if they need to be added to list
     std::set<std::string> hulls_to_add;
@@ -1508,23 +1508,23 @@ void BasesListBox::PopulateWithEmptyHulls() {
         }
     }
 
-    //Logger().debugStream() << "... hulls to remove from list: ";
+    //DebugLogger() << "... hulls to remove from list: ";
     //for (std::set<std::string>::const_iterator it = hulls_to_remove.begin(); it != hulls_to_remove.end(); ++it)
-    //    Logger().debugStream() << "... ... hull: " << *it;
-    //Logger().debugStream() << "... hulls to add to list: ";
+    //    DebugLogger() << "... ... hull: " << *it;
+    //DebugLogger() << "... hulls to add to list: ";
     //for (std::set<std::string>::const_iterator it = hulls_to_add.begin(); it != hulls_to_add.end(); ++it)
-    //    Logger().debugStream() << "... ... hull: " << *it;
+    //    DebugLogger() << "... ... hull: " << *it;
 
 
     // loop through list, removing rows as appropriate
     for (iterator it = begin(); it != end(); ) {
         iterator temp_it = it++;
-        //Logger().debugStream() << " row index: " << i;
+        //DebugLogger() << " row index: " << i;
         if (const HullAndPartsListBoxRow* row = dynamic_cast<const HullAndPartsListBoxRow*>(*temp_it)) {
             const std::string& current_row_hull = row->Hull();
-            //Logger().debugStream() << " current row hull: " << current_row_hull;
+            //DebugLogger() << " current row hull: " << current_row_hull;
             if (hulls_to_remove.find(current_row_hull) != hulls_to_remove.end()) {
-                //Logger().debugStream() << " ... removing";
+                //DebugLogger() << " ... removing";
                 m_hulls_in_list.erase(current_row_hull);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
                 delete Erase(temp_it);
             }
@@ -1552,7 +1552,7 @@ void BasesListBox::PopulateWithCompletedDesigns() {
     const Empire* empire = GetEmpire(m_empire_id_shown); // may return 0
     const Universe& universe = GetUniverse();
 
-    Logger().debugStream() << "BasesListBox::PopulateWithCompletedDesigns for empire " << m_empire_id_shown;
+    DebugLogger() << "BasesListBox::PopulateWithCompletedDesigns for empire " << m_empire_id_shown;
 
     // remove preexisting rows
     Clear();
@@ -1591,7 +1591,7 @@ void BasesListBox::PopulateWithCompletedDesigns() {
 void BasesListBox::PopulateWithSavedDesigns() {
     ScopedTimer scoped_timer("BasesListBox::PopulateWithSavedDesigns");
 
-    Logger().debugStream() << "BasesListBox::PopulateWithSavedDesigns";
+    DebugLogger() << "BasesListBox::PopulateWithSavedDesigns";
 
     // remove preexisting rows
     Clear();
@@ -1674,7 +1674,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        Logger().debugStream() << "BasesListBox::BaseRightClicked on design id : " << design_id;
+        DebugLogger() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
         // create popup menu with a commands in it
         GG::MenuItem menu_contents;
@@ -1734,7 +1734,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
 
         DesignRightClickedSignal(design);
 
-        Logger().debugStream() << "BasesListBox::BaseRightClicked on design name : " << design_name;
+        DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design_name;
 
         // create popup menu with a commands in it
         GG::MenuItem menu_contents;
@@ -1748,7 +1748,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
             switch (popup.MenuID()) {
 
             case 1: {   // add design
-                Logger().debugStream() << "BasesListBox::BaseRightClicked Add Saved Design" << design_name;
+                DebugLogger() << "BasesListBox::BaseRightClicked Add Saved Design" << design_name;
                 int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
@@ -1756,7 +1756,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
             }
 
             case 2: {   // add all saved designs
-                Logger().debugStream() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
+                DebugLogger() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
                 manager.LoadAllSavedDesigns();
                 break;
             }
@@ -2237,7 +2237,7 @@ void SlotControl::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& p
         ++it;
         for (; it != wnds.end(); ++it)
             delete *it;
-        Logger().errorStream() << "SlotControl::AcceptDrops given multiple wnds unexpectedly...";
+        ErrorLogger() << "SlotControl::AcceptDrops given multiple wnds unexpectedly...";
     }
 
     const GG::Wnd* wnd = *(wnds.begin());
@@ -2530,7 +2530,7 @@ bool DesignWnd::MainPanel::CurrentDesignIsRegistered(std::string& design_name) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id); // Had better not return 0 if we're designing a ship.
     if (!empire) {
-        Logger().errorStream() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
+        ErrorLogger() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
         return false;
     }
 
@@ -2560,7 +2560,7 @@ void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void DesignWnd::MainPanel::ReregisterDesigns() {
-    Logger().debugStream() << "DesignWnd::MainPanel::ReregisterDesigns";
+    DebugLogger() << "DesignWnd::MainPanel::ReregisterDesigns";
     m_completed_design_dump_strings.clear();
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id); // may return 0
@@ -2583,7 +2583,7 @@ void DesignWnd::MainPanel::Sanitize() {
     // connect signal to update this list if the empire's designs change
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (const Empire* empire = GetEmpire(empire_id)) {
-        Logger().debugStream() << "DesignWnd::MainPanel::Sanitize";
+        DebugLogger() << "DesignWnd::MainPanel::Sanitize";
         if ((CurrentTurn() == 1) && GetOptionsDB().Get<bool>("auto-add-saved-designs")) { // otherwise can be manually triggered by right click context menu
             GetSavedDesignsManager().LoadAllSavedDesigns(); 
         }
@@ -2596,9 +2596,9 @@ void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int sl
 { SetPart(GetPartType(part_name), slot); }
 
 void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot, bool emit_signal /* = false */) {
-    //Logger().debugStream() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
+    //DebugLogger() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
     if (slot > m_slots.size()) {
-        Logger().errorStream() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
+        ErrorLogger() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
         return;
     }
     m_slots[slot]->SetPart(part);
@@ -2618,7 +2618,7 @@ void DesignWnd::MainPanel::AddPart(const PartType* part) {
         return;
 
     if (!AddPartWithSwapping(part, FindSlotForPartWithSwapping(part)))
-        Logger().debugStream() << "DesignWnd::MainPanel::AddPart("
+        DebugLogger() << "DesignWnd::MainPanel::AddPart("
                                << (part ? part->Name() : "no part")
                                << ") couldn't find a slot for the part";
 }
@@ -2948,7 +2948,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     std::vector<std::string> parts =    this->Parts();
 
     if (!ShipDesign::ValidDesign(hull, parts)) {
-        Logger().errorStream() << "DesignWnd::MainPanel::RefreshIncompleteDesign attempting to create an invalid design.";
+        ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign attempting to create an invalid design.";
         m_incomplete_design.reset();
         return;
     }
@@ -2971,7 +2971,7 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
         // replicate it now.  hopefully catching any exception here will
         // prevent crashes and instead just cause the incomplete design details
         // to not update when expected.
-        Logger().errorStream() << "DesignWnd::MainPanel::RefreshIncompleteDesign caught exception: " << e.what();
+        ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign caught exception: " << e.what();
     }
 }
 
@@ -3011,7 +3011,7 @@ void DesignWnd::MainPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const 
         ++it;
         for (; it != wnds.end(); ++it)
             delete *it;
-        Logger().errorStream() << "DesignWnd::MainPanel::AcceptDrops given multiple wnds unexpectedly...";
+        ErrorLogger() << "DesignWnd::MainPanel::AcceptDrops given multiple wnds unexpectedly...";
     }
 
     const GG::Wnd* wnd = *(wnds.begin());
@@ -3172,7 +3172,7 @@ void DesignWnd::AddDesign() {
     const std::string& hull_name = m_main_panel->Hull();
 
     if (!ShipDesign::ValidDesign(hull_name, parts)) {
-        Logger().errorStream() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
+        ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
         return;
     }
 
@@ -3197,7 +3197,7 @@ void DesignWnd::AddDesign() {
     m_main_panel->ReregisterDesigns();
     m_main_panel->DesignChangedSignal();
 
-    Logger().debugStream() << "Added new design: " << design.Name();
+    DebugLogger() << "Added new design: " << design.Name();
 }
 
 void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)

@@ -127,7 +127,7 @@ private:
                      // we can eventually highlight them
                      m_edges_to_show[from].insert(to);
                      if (!GetTech(from) || !GetTech(to)) {
-                         Logger().errorStream() << "TechTreeArcs::FillArcBuffer missing arc endpoint tech " << from << "->" << to;
+                         ErrorLogger() << "TechTreeArcs::FillArcBuffer missing arc endpoint tech " << from << "->" << to;
                          continue;
                      }
                      (*edge)->ReadPoints(points);

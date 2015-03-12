@@ -18,7 +18,7 @@ namespace {
     void CHECK_ERROR(const char* fn, const char* e) {
         GLenum error = glGetError();
         if (error != GL_NO_ERROR) {
-            Logger().errorStream() << fn << " () :"
+            ErrorLogger() << fn << " () :"
                                    << " GL error on " << e << ": "
                                    << "'" << gluErrorString(error) << "'";
         }

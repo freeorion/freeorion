@@ -25,17 +25,23 @@ void InitLogger(const std::string& logFile, const std::string& pattern)
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
     layout->setConversionPattern(pattern);
     appender->setLayout(layout);
-    Logger().setAdditivity(false);  // make appender the only appender used...
-    Logger().setAppender(appender);
-    Logger().setAdditivity(true);   // ...but allow the addition of others later
-    Logger().setPriority(log4cpp::Priority::DEBUG);
+    log4cpp::Category::getRoot().setAdditivity(false);  // make appender the only appender used...
+    log4cpp::Category::getRoot().setAppender(appender);
+    log4cpp::Category::getRoot().setAdditivity(true);   // ...but allow the addition of others later
+    log4cpp::Category::getRoot().setPriority(log4cpp::Priority::DEBUG);
 
-    Logger().debugStream() << "Logger initialized";
-    Logger().debugStream() << FreeOrionVersionString();
+    DebugLogger() << "Logger initialized";
+    DebugLogger() << FreeOrionVersionString();
 }
 
-log4cpp::Category& Logger()
-{ return log4cpp::Category::getRoot(); }
+void SetLoggerPriority(int priority)
+{ log4cpp::Category::getRoot().setPriority(priority); }
+
+log4cpp::CategoryStream DebugLogger()
+{ return log4cpp::Category::getRoot().debugStream(); }
+
+log4cpp::CategoryStream ErrorLogger()
+{ return log4cpp::Category::getRoot().errorStream(); }
 
 int PriorityValue(const std::string& name)
 {

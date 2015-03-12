@@ -70,7 +70,7 @@ const std::string GetPythonTurnEventsDir()
 { return GetPythonDir() + "/turn_events"; }
 
 bool PythonInit() {
-    Logger().debugStream() << "Initializing server Python interface";
+    DebugLogger() << "Initializing server Python interface";
 
     try {
 #ifdef FREEORION_MACOSX
@@ -81,22 +81,22 @@ bool PythonInit() {
         // are really required, but better save than sorry.. ;)
         strcpy(s_python_home, GetPythonHome().string().c_str());
         Py_SetPythonHome(s_python_home);
-        Logger().debugStream() << "Python home set to " << Py_GetPythonHome();
+        DebugLogger() << "Python home set to " << Py_GetPythonHome();
         strcpy(s_python_program_name, (GetPythonHome() / "Python").string().c_str());
         Py_SetProgramName(s_python_program_name);
-        Logger().debugStream() << "Python program name set to " << Py_GetProgramFullPath();
+        DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
 #endif
         // initializes Python interpreter, allowing Python functions to be called from C++
         Py_Initialize();
-        Logger().debugStream() << "Python initialized";
-        Logger().debugStream() << "Python version: " << Py_GetVersion();
-        Logger().debugStream() << "Python prefix: " << Py_GetPrefix();
-        Logger().debugStream() << "Python module search path: " << Py_GetPath();
-        Logger().debugStream() << "Initializing C++ interfaces for Python";
+        DebugLogger() << "Python initialized";
+        DebugLogger() << "Python version: " << Py_GetVersion();
+        DebugLogger() << "Python prefix: " << Py_GetPrefix();
+        DebugLogger() << "Python module search path: " << Py_GetPath();
+        DebugLogger() << "Initializing C++ interfaces for Python";
         initfo_logger();              // allows the "fo_logger" C++ module to be imported within Python code
     }
     catch (...) {
-        Logger().errorStream() << "Unable to initialize Python interpreter";
+        ErrorLogger() << "Unable to initialize Python interpreter";
         return false;
     }
 
@@ -105,7 +105,7 @@ bool PythonInit() {
         initfreeorion();
     }
     catch (...) {
-        Logger().errorStream() << "Unable to initialize freeorion interface";
+        ErrorLogger() << "Unable to initialize freeorion interface";
         return false;
     }
 
@@ -115,7 +115,7 @@ bool PythonInit() {
         s_python_namespace = extract<dict>(py_main.attr("__dict__"));
     }
     catch (error_already_set err) {
-        Logger().errorStream() << "Unable to set up main namespace in Python";
+        ErrorLogger() << "Unable to set up main namespace in Python";
         PyErr_Print();
         return false;
     }
@@ -133,7 +133,7 @@ bool PythonInit() {
     "sys.stderr = errLogger()\n"
     "print ('Python stdout and stderr redirected')";
     if (!PythonExecScript(script)) {
-        Logger().errorStream() << "Unable to redirect Python stdout and stderr";
+        ErrorLogger() << "Unable to redirect Python stdout and stderr";
         return false;
     }
 
@@ -155,7 +155,7 @@ bool PythonInit() {
         s_python_module_universe_generator = import("universe_generator");
     }
     catch (error_already_set err) {
-        Logger().errorStream() << "Unable to import universe generator script";
+        ErrorLogger() << "Unable to import universe generator script";
         PyErr_Print();
         return false;
     }
@@ -173,12 +173,12 @@ bool PythonInit() {
         s_python_module_turn_events = import("turn_events");
     }
     catch (error_already_set err) {
-        Logger().errorStream() << "Unable to import turn events script";
+        ErrorLogger() << "Unable to import turn events script";
         PyErr_Print();
         return false;
     }
 
-    Logger().debugStream() << "Server Python interface successfully initialized!";
+    DebugLogger() << "Server Python interface successfully initialized!";
     return true;
 }
 
@@ -196,7 +196,7 @@ bool PythonSetCurrentDir(const std::string dir) {
     "os.chdir(r'" + dir + "')\n"
     "print 'Python current directory set to', os.getcwd()";
     if (!PythonExecScript(script)) {
-        Logger().errorStream() << "Unable to set Python current directory";
+        ErrorLogger() << "Unable to set Python current directory";
         return false;
     }
     return true;
@@ -205,7 +205,7 @@ bool PythonSetCurrentDir(const std::string dir) {
 bool PythonAddToSysPath(const std::string dir) {
     std::string command = "sys.path.append(r'" + dir + "')";
     if (!PythonExecScript(command)) {
-        Logger().errorStream() << "Unable to set universe generator script dir";
+        ErrorLogger() << "Unable to set universe generator script dir";
         return false;
     }
     return true;
@@ -219,14 +219,14 @@ void PythonCleanup() {
     s_python_module_turn_events = object();
     s_python_module_universe_generator = object();
 
-    Logger().debugStream() << "Cleaned up server Python interface";
+    DebugLogger() << "Cleaned up server Python interface";
 }
 
 bool PythonExecuteTurnEvents() {
     bool success;
     object f = s_python_module_turn_events.attr("execute_turn_events");
     if (!f) {
-        Logger().errorStream() << "Unable to call Python function execute_turn_events ";
+        ErrorLogger() << "Unable to call Python function execute_turn_events ";
         return false;
     }
     try { success = f(); }
@@ -241,7 +241,7 @@ std::vector<std::string> PythonErrorReport() {
     std::vector<std::string> err_list;
     object f = s_python_module_universe_generator.attr("error_report");
     if (!f) {
-        Logger().errorStream() << "Unable to call Python function error_report ";
+        ErrorLogger() << "Unable to call Python function error_report ";
         return err_list;
     }
 
@@ -268,7 +268,7 @@ bool PythonCreateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
 
     object f = s_python_module_universe_generator.attr("create_universe");
     if (!f) {
-        Logger().errorStream() << "Unable to call Python function create_universe ";
+        ErrorLogger() << "Unable to call Python function create_universe ";
         return false;
     }
 

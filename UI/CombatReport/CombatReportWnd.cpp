@@ -47,11 +47,11 @@ private:
     CombatLogWnd* m_log; //< Detailed log
 
     void SetFocus(int id){
-        Logger().debugStream() << "SetFocus " << id;
+        DebugLogger() << "SetFocus " << id;
     }
     
     void RectangleEnter(int data) {
-        Logger().debugStream() << "RectangleHover " << data;
+        DebugLogger() << "RectangleHover " << data;
         SetFocus(data);
     }
 };

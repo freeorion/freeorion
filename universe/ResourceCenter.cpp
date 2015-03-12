@@ -37,7 +37,7 @@ void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visi
     if (copied_object == this)
         return;
     if (!copied_object) {
-        Logger().errorStream() << "ResourceCenter::Copy passed a null object";
+        ErrorLogger() << "ResourceCenter::Copy passed a null object";
         return;
     }
 
@@ -50,7 +50,7 @@ void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visi
 }
 
 void ResourceCenter::Init() {
-    //Logger().debugStream() << "ResourceCenter::Init";
+    //DebugLogger() << "ResourceCenter::Init";
     AddMeter(METER_INDUSTRY);
     AddMeter(METER_RESEARCH);
     AddMeter(METER_TRADE);
@@ -108,7 +108,7 @@ float ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
     case METER_TRADE:       target_meter_type = METER_TARGET_TRADE;         break;
     case METER_CONSTRUCTION:target_meter_type = METER_TARGET_CONSTRUCTION;  break;
     default:
-        Logger().errorStream() << "ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type";
+        ErrorLogger() << "ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type";
         return 0.0f;
     }
 
@@ -143,7 +143,7 @@ void ResourceCenter::SetFocus(const std::string& focus) {
         ResourceCenterChangedSignal();
         return;
     }
-    Logger().errorStream() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << Dump();
+    ErrorLogger() << "ResourceCenter::SetFocus Exploiter!-- unavailable focus " << focus << " attempted to be set for object w/ dump string: " << Dump();
 }
 
 void ResourceCenter::ClearFocus() {

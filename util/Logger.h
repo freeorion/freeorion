@@ -10,8 +10,10 @@
  * If the file already exists it will be deleted. */
 FO_COMMON_API void InitLogger(const std::string& logFile, const std::string& pattern);
 
-/** Accessor for the App's logger */
-FO_COMMON_API log4cpp::Category& Logger();
+/** Accessors for the App's logger */
+FO_COMMON_API void SetLoggerPriority(int priority);
+FO_COMMON_API log4cpp::CategoryStream DebugLogger();
+FO_COMMON_API log4cpp::CategoryStream ErrorLogger();
 
 extern int g_indent;
 
