@@ -135,12 +135,12 @@ def follow_vis_system_connections(start_system_id, home_system_id):
         else:
             pre_vis = "an unknown system"
         if fo.currentTurn() < 50:
-            visibility_turn_list = sorted(dict_from_map(universe.getVisibilityTurnsMap(cur_system_id, empire_id)).items(),
+            visibility_turn_list = sorted(universe.getVisibilityTurnsMap(cur_system_id, empire_id).items(),
                                           key=lambda x: x[0].numerator)
             visibility_info = ['%s: %s' % (vis.name, turn) for vis, turn in visibility_turn_list]
             print "*** system ID %d ( %s ) ; previously %s, new visibility turns info: %s " % (cur_system_id, sys_name, pre_vis, visibility_info)
         status_str = "*** system ID %d ( %s ) ; " % (cur_system_id, sys_name)
-        has_been_visible = dict_from_map(universe.getVisibilityTurnsMap(cur_system_id, empire_id)).get(fo.visibility.partial, 0) > 0
+        has_been_visible = universe.getVisibilityTurnsMap(cur_system_id, empire_id).get(fo.visibility.partial, 0) > 0
         is_connected = universe.systemsConnected(cur_system_id, home_system_id, -1)  # self.empire_id)
         status_str += " -- is %s partially visible " % (["not", ""][has_been_visible])
         status_str += " -- is %s visibly connected to homesystem " % (["not", ""][is_connected])

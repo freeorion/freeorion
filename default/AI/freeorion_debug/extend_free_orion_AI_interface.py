@@ -57,6 +57,14 @@ FLEET = 'F'
 SHIP_DESIGN = 'D'
 
 
+def to_map(method):
+    def wrapper(*args):
+        return dict_from_map(method(*args))
+    return wrapper
+
+fo.universe.getVisibilityTurnsMap = to_map(fo.universe.getVisibilityTurnsMap)
+
+
 def to_str(prefix, id, name):
     return '{}{}<{}>'.format(prefix, id, name)
 

@@ -41,8 +41,8 @@ class AIFleetOrder(object):
                 # colonise planet
                 if TargetType.TARGET_PLANET == target_type:
                     planet = universe.getPlanet(self.target.target_id)
-                    sys_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
-                    planet_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
+                    sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
+                    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
                     if not (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned):
                         self.executed = True
                         self.execution_completed = True
@@ -58,8 +58,8 @@ class AIFleetOrder(object):
                 # colonise planet
                 if TargetType.TARGET_PLANET == target_type:
                     planet = universe.getPlanet(self.target.target_id)
-                    sys_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
-                    planet_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
+                    sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
+                    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
                     if not (planet_partial_vis_turn == sys_partial_vis_turn and planet.unowned or (planet.ownedBy(fo.empireID()) and not planet.currentMeterValue(fo.meterType.population))):
                         self.executed = True
                         self.execution_completed = True

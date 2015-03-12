@@ -428,8 +428,8 @@ class AIFleetMission(object):
 
                 if last_order and last_order.order_type == AIFleetOrderType.ORDER_COLONISE:
                     planet = universe.getPlanet(last_order.target.target_id)
-                    sys_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, fo.empireID())).get(fo.visibility.partial, -9999)
-                    planet_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.id, fo.empireID())).get(fo.visibility.partial, -9999)
+                    sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
+                    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
                     if planet_partial_vis_turn == sys_partial_vis_turn and not planet.currentMeterValue(fo.meterType.population):
                         print "Potential Error: Fleet %d has tentatively completed its colonize mission but will wait to confirm population." % self.target_id
                         print "    Order details are %s" % last_order

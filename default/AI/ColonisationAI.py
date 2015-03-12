@@ -337,7 +337,7 @@ def survey_universe():
                 if spec_name == "":
                     unowned_empty_planet_ids.add(pid)
             else:
-                partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(pid, empire_id)).get(fo.visibility.partial, -9999)
+                partial_vis_turn = universe.getVisibilityTurnsMap(pid, empire_id).get(fo.visibility.partial, -9999)
                 if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
                     foAI.foAIstate.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(pid)
                     
@@ -720,7 +720,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     
     empire_research_list = [element.tech for element in empire.researchQueue]
     if planet is None:
-        vis_map = dict_from_map(universe.getVisibilityTurnsMap(planet_id, empire.empireID))
+        vis_map = universe.getVisibilityTurnsMap(planet_id, empire.empireID)
         print "Planet %d object not available; visMap: %s" % (planet_id, vis_map)
         return 0
     detail.append("%s : " % planet.name)
@@ -759,8 +759,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     elif fleet_threat_ratio + neighbor_threat_ratio + monster_threat_ratio > 0.2 * ship_limit:
         thrt_factor = 0.8
 
-    sys_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(this_sysid, empire.empireID)).get(fo.visibility.partial, -9999)
-    planet_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet_id, empire.empireID)).get(fo.visibility.partial, -9999)
+    sys_partial_vis_turn = universe.getVisibilityTurnsMap(this_sysid, empire.empireID).get(fo.visibility.partial, -9999)
+    planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet_id, empire.empireID).get(fo.visibility.partial, -9999)
 
     if planet_partial_vis_turn < sys_partial_vis_turn:
         print "Colonization AI couldn't get current info on planet id %d (was stealthed at last sighting)" % planet_id

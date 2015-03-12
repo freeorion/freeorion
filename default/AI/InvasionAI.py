@@ -104,8 +104,8 @@ def get_invasion_fleets():
             if not planet: 
                 continue
             sys_id = planet.systemID
-            sys_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, empire_id)).get(fo.visibility.partial, -9999)
-            planet_partial_vis_turn = dict_from_map(universe.getVisibilityTurnsMap(pid, empire_id)).get(fo.visibility.partial, -9999)
+            sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, empire_id).get(fo.visibility.partial, -9999)
+            planet_partial_vis_turn = universe.getVisibilityTurnsMap(pid, empire_id).get(fo.visibility.partial, -9999)
             if planet_partial_vis_turn < sys_partial_vis_turn:
                 #print "rejecting %s due to stealth"%planet.name
                 continue
@@ -288,8 +288,8 @@ def evaluate_invasion_planet(planetID, missionType, fleetSupplyablePlanetIDs, em
         print "invasion AI couldn't access any info for planet id %d"%planetID
         return [0, 0]
 
-    sysPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planet.systemID, empireID)).get(fo.visibility.partial, -9999)
-    planetPartialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(planetID, empireID)).get(fo.visibility.partial, -9999)
+    sysPartialVisTurn = universe.getVisibilityTurnsMap(planet.systemID, empireID).get(fo.visibility.partial, -9999)
+    planetPartialVisTurn = universe.getVisibilityTurnsMap(planetID, empireID).get(fo.visibility.partial, -9999)
 
     if planetPartialVisTurn < sysPartialVisTurn:
         print "invasion AI couldn't get current info on planet id %d (was stealthed at last sighting)"%planetID

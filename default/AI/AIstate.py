@@ -308,7 +308,7 @@ class AIstate(object):
                         for count, sum_stats in e_rating['summary']:
                             if sum_stats[0] > 0:
                                 e_f_dict.setdefault(sum_stats, [0])[0] += count
-                    partialVisTurn = dict_from_map(universe.getVisibilityTurnsMap(fleetID, empireID)).get(fo.visibility.partial, -9999)
+                    partialVisTurn = universe.getVisibilityTurnsMap(fleetID, empireID).get(fo.visibility.partial, -9999)
                     if partialVisTurn >= current_turn - 1:  # only interested in immediately recent data
                         if not dead_fleet:
                             sawEnemiesAtSystem[fleet.systemID] = True
@@ -344,7 +344,7 @@ class AIstate(object):
                         continue
 
             #update threats
-            sysVisDict = dict_from_map(universe.getVisibilityTurnsMap(sysID, fo.empireID()))
+            sysVisDict = universe.getVisibilityTurnsMap(sysID, fo.empireID())
             partialVisTurn = sysVisDict.get(fo.visibility.partial, -9999)
             enemyRatings = []
             enemyRating = 0
