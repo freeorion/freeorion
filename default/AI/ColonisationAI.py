@@ -275,10 +275,19 @@ def survey_universe():
             continue
         empire_has_colony_in_sys = False
         empire_has_pop_ctr_in_sys = False
+        local_ast = False
+        local_gg = False
+        empire_has_qualifying_planet = False
         for pid in sys.planetIDs:
             planet = universe.getPlanet(pid)
             if not planet:
                 continue
+            if pid in foAI.foAIstate.colonisablePlanetIDs:
+                empire_has_qualifying_planet = True
+            if planet.size == fo.planetSize.asteroids:
+                local_ast = True
+            elif planet.size == fo.planetSize.gasGiant:
+                local_gg = True
             spec_name = planet.speciesName
             this_spec = fo.getSpecies(spec_name)
             owner_id = planet.owner
@@ -296,6 +305,7 @@ def survey_universe():
                         empire_ast_outpost_ids.add(pid)
                 else:
                     empire_pop_ctrs.add(pid)
+                    empire_has_qualifying_planet = True
                     AIstate.popCtrIDs.append(pid)
                     empire_species_systems.setdefault(sys_id, {}).setdefault('pids', []).append(pid)
                     empire_has_pop_ctr_in_sys = True
@@ -315,10 +325,6 @@ def survey_universe():
                             yard_here = [pid]
                         if this_spec.canColonize:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
-                if planet.size == fo.planetSize.asteroids:
-                    got_ast = True
-                elif planet.size == fo.planetSize.gasGiant:
-                    got_gg = True
                 if planet.focus == EnumsAI.AIFocusType.FOCUS_INDUSTRY:
                     empire_status['industrialists'] += planet_population
                 elif planet.focus == EnumsAI.AIFocusType.FOCUS_RESEARCH:
@@ -341,6 +347,12 @@ def survey_universe():
                 if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
                     foAI.foAIstate.misc.setdefault('enemies_sighted', {}).setdefault(current_turn, []).append(pid)
                     
+        if empire_has_qualifying_planet:
+            if local_ast:
+                got_ast = True
+            elif local_gg:
+                got_gg = True
+
         if empire_has_colony_in_sys:
             if empire_has_pop_ctr_in_sys:
                 AIstate.popCtrSystemIDs.append(sys_id)
@@ -542,14 +554,15 @@ def get_colony_fleets():
 
     print
     print "Settleable Colony Planets (score,species) | ID | Name | Specials:"
-    for planet_id, score in sorted_planets:
+    for planet_id, (score, spec) in sorted_planets:
         if score > 0.5:
-            print "   %15s | %5s | %s | %s " % (score, planet_id, universe.getPlanet(planet_id).name, list(universe.getPlanet(planet_id).specials))
+            print "   %15s | %5s | %s | %s " % ((score, spec), planet_id, universe.getPlanet(planet_id).name, list(universe.getPlanet(planet_id).specials))
     print
 
     sorted_planets = [(planet_id, score) for planet_id, score in sorted_planets if score[0] > 0]
     # export planets for other AI modules
-    foAI.foAIstate.colonisablePlanetIDs = sorted_planets
+    foAI.foAIstate.colonisablePlanetIDs.clear() 
+    foAI.foAIstate.colonisablePlanetIDs.update(sorted_planets)
 
     # get outpost fleets
     all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
@@ -569,7 +582,8 @@ def get_colony_fleets():
 
     sorted_outposts = [(planet_id, score) for planet_id, score in sorted_outposts if score[0] > 0]
     # export outposts for other AI modules
-    foAI.foAIstate.colonisableOutpostIDs = sorted_outposts
+    foAI.foAIstate.colonisableOutpostIDs.clear()
+    foAI.foAIstate.colonisableOutpostIDs.update(sorted_outposts)
     colonization_timer.end()
 
 
@@ -1207,10 +1221,10 @@ def assign_colony_fleets_to_colonise():
             ai_fleet_mission.add_target(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, ai_target)
 
     # assign fleet targets to colonisable planets
-    send_colony_ships(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    send_colony_ships(AIstate.colonyFleetIDs, foAI.foAIstate.colonisablePlanetIDs.items(), AIFleetMissionType.FLEET_MISSION_COLONISATION)
 
     # assign fleet targets to colonisable outposts
-    send_colony_ships(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST)
+    send_colony_ships(AIstate.outpostFleetIDs, foAI.foAIstate.colonisableOutpostIDs.items(), AIFleetMissionType.FLEET_MISSION_OUTPOST)
 
 
 def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):

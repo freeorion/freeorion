@@ -1,4 +1,5 @@
 import copy
+from collections import OrderedDict as odict
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -19,9 +20,7 @@ from freeorion_tools import dict_from_map
 # global variables
 # foodStockpileSize = 1  # food stored per population
 minimalColoniseValue = 3  # minimal value for a planet to be colonised
-# colonisablePlanetIDs = []  # moved into AIstate
 colonyTargetedSystemIDs = []
-# colonisableOutpostIDs = []  # moved into AIstate
 outpostTargetedSystemIDs = []
 opponentPlanetIDs = []
 opponentSystemIDs = []
@@ -56,8 +55,8 @@ class AIstate(object):
         # 'global' (?) variables
         #self.foodStockpileSize = 1    # food stored per population
         self.minimalColoniseValue = 3  # minimal value for a planet to be colonised
-        self.colonisablePlanetIDs = []
-        self.colonisableOutpostIDs = []  #
+        self.colonisablePlanetIDs = odict()
+        self.colonisableOutpostIDs = odict()  #
         self.__aiMissionsByFleetID = {}
         self.__shipRoleByDesignID = {}
         self.__fleetRoleByID = {}

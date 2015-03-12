@@ -161,9 +161,9 @@ def calculateResearchPriority():
             researchPriority *= 0.7  # closing in on end of research
     if industrySurge:
         if galaxy_is_sparse and not any(enemies_sighted):
-            researchPriority *= 0.3
+            researchPriority *= 0.5
         else:
-            researchPriority *= 0.7
+            researchPriority *= 0.8
                 
     if ((tech_is_complete("SHP_WEAPON_2_4") or
          tech_is_complete("SHP_WEAPON_4_1")) and
@@ -181,7 +181,7 @@ def calculateResearchPriority():
     if len(enemies_sighted) < (2 + current_turn/20.0): #TODO: adjust for colonisation priority
         researchPriority *= 1.2
     if (current_turn > 20) and (len(recent_enemies) > 3):
-        researchPriority *= 0.6
+        researchPriority *= 0.8
     return researchPriority
 
 
@@ -225,7 +225,7 @@ def calculateColonisationPriority():
     colonyGrowthBarrier = 2 + ((0.5+foAI.foAIstate.aggression)**2)*fo.currentTurn()/50.0 #significant for low aggression, negligible for high aggression
     if num_colonies > colonyGrowthBarrier:
         return 0.0
-    colonyCost=120*(1+ 0.06*num_colonies)
+    colonyCost =  AIDependencies.COLONY_POD_COST * (1 + AIDependencies.COLONY_POD_UPKEEP * num_colonies)
     turnsToBuild=8#TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
     allottedPortion = [[[0.6, 0.8],[0.3, 0.4]],[[0.8, 0.9],[0.3, 0.4]]][galaxy_is_sparse][any(enemies_sighted)][fo.empireID() % 2]  #
@@ -241,7 +241,7 @@ def calculateColonisationPriority():
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
     allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
 
-    numColonisablePlanetIDs = len( [  pid for (pid, (score, specName) ) in foAI.foAIstate.colonisablePlanetIDs if score > 60 ][:allottedColonyTargets+2] )
+    numColonisablePlanetIDs = len( [  pid for (pid, (score, specName) ) in foAI.foAIstate.colonisablePlanetIDs.items() if score > 60 ][:allottedColonyTargets+2] )
     if numColonisablePlanetIDs == 0: return 1
 
     colonyshipIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION)
@@ -259,10 +259,10 @@ def calculateColonisationPriority():
 
 def calculateOutpostPriority():
     """calculates the demand for outpost ships by colonisable planets"""
-    baseOutpostCost=80
+    baseOutpostCost = AIDependencies.OUTPOST_POD_COST
 
     numOutpostPlanetIDs = len(foAI.foAIstate.colonisableOutpostIDs)
-    numOutpostPlanetIDs = len( [  pid for (pid, (score, specName) ) in foAI.foAIstate.colonisableOutpostIDs if score > 1.0*baseOutpostCost/3.0 ][:allottedColonyTargets] )
+    numOutpostPlanetIDs = len( [  pid for (pid, (score, specName) ) in foAI.foAIstate.colonisableOutpostIDs.items() if score > 1.0*baseOutpostCost/3.0 ][:allottedColonyTargets] )
     completedTechs = ResearchAI.get_completed_techs()
     if numOutpostPlanetIDs == 0 or not AIDependencies.OUTPOSTING_TECH in completedTechs:
         return 0
@@ -297,7 +297,7 @@ def calculateInvasionPriority():
         return 0.0
     
     if len(foAI.foAIstate.colonisablePlanetIDs) > 0:
-        bestColonyScore = max( 2, foAI.foAIstate.colonisablePlanetIDs[0][1][0] )
+        bestColonyScore = max( 2, foAI.foAIstate.colonisablePlanetIDs.items()[0][1][0] )
     else:
         bestColonyScore = 2
 
@@ -379,7 +379,7 @@ def calculateMilitaryPriority():
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
         
     allottedInvasionTargets = 1+ int(fo.currentTurn()/25)
-    targetPlanetIDs = [pid for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] + [pid for pid, pscore in foAI.foAIstate.colonisablePlanetIDs[:allottedColonyTargets] ] + [pid for pid, pscore in foAI.foAIstate.colonisableOutpostIDs[:allottedColonyTargets] ]
+    targetPlanetIDs = [pid for pid, pscore, trp in AIstate.invasionTargets[:allottedInvasionTargets] ] + [pid for pid, pscore in foAI.foAIstate.colonisablePlanetIDs.items()[:allottedColonyTargets] ] + [pid for pid, pscore in foAI.foAIstate.colonisableOutpostIDs.items()[:allottedColonyTargets] ]
 
     mySystems = set( AIstate.popCtrSystemIDs ).union( AIstate.outpostSystemIDs )
     targetSystems = set( PlanetUtilsAI.get_systems(targetPlanetIDs) )

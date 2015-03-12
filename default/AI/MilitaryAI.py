@@ -194,7 +194,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
 
     safety_factor = get_safety_factor()
 
-    top_target_planets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets] if pscore > 20] + [pid for pid, pscore in foAI.foAIstate.colonisablePlanetIDs[:10] if pscore > 20]
+    top_target_planets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets] if pscore > 20] + [pid for pid, (pscore, spec) in foAI.foAIstate.colonisablePlanetIDs.items()[:10] if pscore > 20]
     top_target_planets.extend(foAI.foAIstate.qualifyingTroopBaseTargets.keys())
     top_target_systems = []
     for sys_id in AIstate.invasionTargetedSystemIDs + PlanetUtilsAI.get_systems(top_target_planets):

@@ -749,10 +749,13 @@ def generateProductionOrders():
             print
             print "Buildings already in Production Queue:"
             capitolQueuedBldgs=[]
+            queued_exobot_locs = []
             for element in [e for e in productionQueue if (e.buildType == EnumsAI.AIEmpireProductionTypes.BT_BUILDING)]:
                 bldgExpense += element.allocation
                 if element.locationID==homeworld.id:
                     capitolQueuedBldgs.append ( element )
+                if element.name == "BLD_COL_EXOBOT":
+                    queued_exobot_locs.append(element.locationID)
             for bldg in capitolQueuedBldgs:
                 print "    " + bldg.name + " turns:" + str(bldg.turnsLeft) + " PP:" + str(bldg.allocation)
             if not capitolQueuedBldgs: print "None"
@@ -801,20 +804,21 @@ def generateProductionOrders():
                         print "Error: exception triggered and caught: ", traceback.format_exc()
 
             numExobotShips=0 #TODO: do real calc here
-            if empire.techResearched(EXOBOT_TECH_NAME) and ("BLD_COL_EXOBOT" not in queuedBldgNames):
-                if len( ColonisationAI.empire_colonizers.get("SP_EXOBOT", []))==0 or numExobotShips==0: #don't have an exobot shipyard yet
-                    try:
-                        for candidate_id in ColonisationAI.empire_ast_outpost_ids:
-                            candidate = universe.getPlanet(candidate_id)
-                            if candidate.systemID in empire.supplyUnobstructedSystems:
-                                res=fo.issueEnqueueBuildingProductionOrder("BLD_COL_EXOBOT", candidate_id)
-                                print "Enqueueing BLD_COL_EXOBOT, with result %d"%res
-                                if res:
-                                    res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
-                                    print "Requeueing %s to front of build queue, with result %d"%("BLD_COL_EXOBOT", res)
-                                break
-                    except:
-                        print "Error: exception triggered and caught: ", traceback.format_exc()
+            num_queued_exobots = len(queued_exobot_locs)
+            if empire.techResearched(EXOBOT_TECH_NAME) and num_queued_exobots < 2:
+                potential_locs = []
+                for pid, (score, this_spec) in foAI.foAIstate.colonisablePlanetIDs.items():
+                    if this_spec == "SP_EXOBOT" and pid not in queued_exobot_locs:
+                        candidate = universe.getPlanet(pid)
+                        if candidate.systemID in empire.supplyUnobstructedSystems:
+                            potential_locs.append( (score, pid) )
+                if potential_locs:
+                    candidate_id = sorted(potential_locs)[-1][-1]
+                    res=fo.issueEnqueueBuildingProductionOrder("BLD_COL_EXOBOT", candidate_id)
+                    print "Enqueueing BLD_COL_EXOBOT, with result %d"%res
+                    #if res:
+                    #    res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
+                    #    print "Requeueing %s to front of build queue, with result %d"%("BLD_COL_EXOBOT", res)
 
             if ("BLD_IMPERIAL_PALACE" in possibleBuildingTypes) and ("BLD_IMPERIAL_PALACE" not in (capitalBldgs+queuedBldgNames)):
                 res=fo.issueEnqueueBuildingProductionOrder("BLD_IMPERIAL_PALACE", homeworld.id)
@@ -1523,7 +1527,7 @@ def generateProductionOrders():
                 if pid not in ColonisationAI.empire_shipyards:
                     #print "Planet %s not in empireShipyards"%(ppstring(PlanetUtilsAI.planet_name_ids([pid])))
                     continue
-                if pid in local_drydocks:
+                if pid in local_drydocks or pid in queued_locs:
                     break
                 planet = universe.getPlanet(pid)
                 res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
@@ -1723,12 +1727,11 @@ def generateProductionOrders():
         bestDesignID, bestDesign, buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION, list(pSet))
         speciesMap = {}
         for loc in (buildChoices or []):
-            thisSpec = universe.getPlanet(loc).speciesName
-            speciesMap.setdefault(thisSpec, []).append( loc)
+            this_spec = universe.getPlanet(loc).speciesName
+            speciesMap.setdefault(this_spec, []).append( loc)
         colonyBuildChoices=[]
-        for pid, score_Spec_tuple in foAI.foAIstate.colonisablePlanetIDs:
-            score, thisSpec = score_Spec_tuple
-            colonyBuildChoices.extend( int(math.ceil(score))*[pid2 for pid2 in speciesMap.get(thisSpec, []) if pid2 in pSet] )
+        for pid, (score, this_spec) in foAI.foAIstate.colonisablePlanetIDs.items():
+            colonyBuildChoices.extend( int(math.ceil(score))*[pid2 for pid2 in speciesMap.get(this_spec, []) if pid2 in pSet] )
 
         localPriorities = {}
         localPriorities.update( filteredPriorities )

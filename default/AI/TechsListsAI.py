@@ -54,7 +54,7 @@ def tech_group_1a(): # early org_hull
     return result
 
 
-def tech_group_1b():  # early _lrn_artif_minds
+def tech_group_1b():  # early _lrn_artif_minds and SHP_MIL_ROBO_CONT
     result = [
             "LRN_ALGO_ELEGANCE",
             "LRN_ARTIF_MINDS",
@@ -92,12 +92,13 @@ def tech_group_1_sparse_b(): #
             "GRO_SUBTER_HAB",
             "LRN_ARTIF_MINDS",
             "SHP_WEAPON_1_2",
+            "CON_ORBITAL_CON",
             "PRO_ROBOTIC_PROD",
             "PRO_FUSION_GEN",
-            "CON_ORBITAL_CON",
             "PRO_ORBITAL_GEN",
-            "SHP_MIL_ROBO_CONT",
+            "GRO_SYMBIOTIC_BIO",
             "SHP_WEAPON_1_3",
+            "SHP_MIL_ROBO_CONT",
             "SHP_WEAPON_1_4",
             "SHP_ZORTRIUM_PLATE",
             "SHP_SPACE_FLUX_DRIVE",
@@ -108,13 +109,13 @@ def tech_group_1_sparse_b(): #
 def tech_group_2a():  # prioritizes growth & spy over weapons
     result = [
             "SHP_ZORTRIUM_PLATE",
-            "LRN_FORCE_FIELD",
             "DEF_DEFENSE_NET_1",
             "DEF_GARRISON_1", 
             "PRO_ROBOTIC_PROD",
             "SHP_SPACE_FLUX_DRIVE",
             "PRO_FUSION_GEN",
             "GRO_SYMBIOTIC_BIO",
+            "LRN_FORCE_FIELD",
             "SPY_DETECT_2",
             "SHP_WEAPON_2_1",
             "SHP_WEAPON_2_2",
@@ -130,10 +131,10 @@ def tech_group_2b():  # prioritizes weapons over growth & spy
             "SHP_ZORTRIUM_PLATE",
             "PRO_ROBOTIC_PROD",
             "SHP_SPACE_FLUX_DRIVE",
+            "PRO_FUSION_GEN",
             "LRN_FORCE_FIELD",
             "DEF_DEFENSE_NET_1",
             "DEF_GARRISON_1",
-            "PRO_FUSION_GEN",
             "SHP_WEAPON_2_1",
             "SHP_WEAPON_2_2",
             "SHP_WEAPON_2_3",
@@ -147,23 +148,23 @@ def tech_group_2b():  # prioritizes weapons over growth & spy
 
 def tech_group_2_sparse():  # prioritizes growth & defense over weapons
     result = [
-            "PRO_FUSION_GEN",
             "CON_ORBITAL_CON",
+            "PRO_FUSION_GEN",
             "SHP_ZORTRIUM_PLATE",
+            "GRO_SYMBIOTIC_BIO",
             "LRN_FORCE_FIELD",
+            "PRO_INDUSTRY_CENTER_I",
             "DEF_DEFENSE_NET_1",
             "DEF_GARRISON_1", 
             "PRO_ORBITAL_GEN",
             "PRO_MICROGRAV_MAN",
             "SHP_ASTEROID_HULLS",
             "SPY_DETECT_2",
-            "GRO_SYMBIOTIC_BIO",
             "SHP_WEAPON_2_1",
             "SHP_WEAPON_2_2",
             "SHP_WEAPON_2_3",
             "SHP_WEAPON_2_4",
             "SHP_DOMESTIC_MONSTER",
-            "PRO_INDUSTRY_CENTER_I",
     ]
     return result
 
@@ -171,21 +172,20 @@ def tech_group_2_sparse_b():  # prioritizes growth & defense over weapons
     result = [
             "DEF_DEFENSE_NET_1",
             "DEF_GARRISON_1", 
+            "PRO_INDUSTRY_CENTER_I",
             "SHP_WEAPON_2_1",
             "LRN_FORCE_FIELD",
             "SHP_WEAPON_2_2",
             "SHP_WEAPON_2_3",
             "SHP_WEAPON_2_4",
             "SPY_DETECT_2",
-            "GRO_SYMBIOTIC_BIO",
             "PRO_MICROGRAV_MAN",
             "SHP_ASTEROID_HULLS",
             "SHP_DOMESTIC_MONSTER",
-            "PRO_INDUSTRY_CENTER_I",
     ]
     return result
 
-def tech_group_3a(): # without SHP_ASTEROID_REFORM
+def tech_group_3a(): # no plasma weaps yet
     result = [
             "SHP_DOMESTIC_MONSTER",
             "SHP_ORG_HULL",
@@ -200,7 +200,6 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "LRN_PHYS_BRAIN",
             "LRN_TRANSLING_THT",
             "SHP_BASIC_DAM_CONT",
-            "GRO_XENO_HYBRIDS",
             "PRO_INDUSTRY_CENTER_II",
             "SHP_INTSTEL_LOG",
             "SHP_FLEET_REPAIR",
@@ -214,6 +213,7 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
             "SHP_HEAVY_AST_HULL",
             "SHP_DEFLECTOR_SHIELD",
             "LRN_QUANT_NET",
+            "GRO_XENO_HYBRIDS",
             "SHP_DEUTERIUM_TANK",
             "SPY_DETECT_3",
             "SHP_REINFORCED_HULL",
@@ -238,14 +238,69 @@ def tech_group_3a(): # without SHP_ASTEROID_REFORM
     return result
 
 
-def tech_group_3b():  # with SHP_ASTEROID_REFORM
+def tech_group_3b():  # with plasma weaps
     result = tech_group_3a()
-    #result += [ "SHP_ASTEROID_REFORM", "SHP_HEAVY_AST_HULL" ]
+    insert_idx = min(30, len(result)//2) if "GRO_XENO_HYBRIDS" not in result else 1 + result.index("GRO_XENO_HYBRIDS")
+    result.insert(insert_idx, "SHP_WEAPON_3_4")
     return result
 
+def tech_group_3_sparse(): # no plasma weaps yet
+    result = [
+            "SHP_DOMESTIC_MONSTER",
+            "SHP_ORG_HULL",
+            "GRO_GENETIC_ENG",
+            "GRO_GENETIC_MED",
+            "DEF_DEFENSE_NET_2",
+            "DEF_DEFENSE_NET_REGEN_1",
+            "PRO_SENTIENT_AUTOMATION",
+            "DEF_PLAN_BARRIER_SHLD_1",
+            "PRO_EXOBOTS",
+            "GRO_XENO_GENETICS",
+            "LRN_PHYS_BRAIN",
+            "LRN_TRANSLING_THT",
+            "SHP_BASIC_DAM_CONT",
+            "PRO_INDUSTRY_CENTER_II",
+            "SHP_INTSTEL_LOG",
+            "SHP_FLEET_REPAIR",
+            "PRO_ORBITAL_GEN",
+            "PRO_SOL_ORB_GEN",
+            "DEF_GARRISON_2",
+            "PRO_MICROGRAV_MAN",
+            "SHP_ASTEROID_HULLS",
+            "SHP_IMPROVED_ENGINE_COUPLINGS",
+            "SHP_ASTEROID_REFORM",
+            "SHP_HEAVY_AST_HULL",
+            "SHP_DEFLECTOR_SHIELD",
+            "SHP_WEAPON_3_1",
+            "SHP_WEAPON_3_2",
+            "SHP_WEAPON_3_3",
+            "SHP_WEAPON_3_4",
+            "LRN_QUANT_NET",
+            "GRO_XENO_HYBRIDS",
+            "SHP_DEUTERIUM_TANK",
+            "SPY_DETECT_3",
+            "SHP_REINFORCED_HULL",
+            "SHP_DIAMOND_PLATE",
+            "DEF_DEFENSE_NET_REGEN_2",
+            "DEF_PLAN_BARRIER_SHLD_2",
+            "DEF_DEFENSE_NET_3",
+            "CON_CONTGRAV_ARCH",
+            "CON_ORBITAL_HAB",
+            "CON_FRC_ENRG_STRC", 
+            "DEF_SYST_DEF_MINE_1",
+            "DEF_GARRISON_3",
+            "DEF_PLAN_BARRIER_SHLD_3",
+            "CON_NDIM_STRC", 
+            "SHP_N_DIMENSIONAL_ENGINE_MATRIX",
+            "GRO_LIFECYCLE_MAN",
+            "SHP_MULTICELL_CAST",
+            "SHP_ENDOCRINE_SYSTEMS",
+            "SHP_CONT_BIOADAPT",
+            "SPY_STEALTH_1",
+    ]
+    return result
 
-def tech_group_4a():  # later plasma weaps    [ no longer: & w/o SHP_ENRG_BOUND_MAN ]
-            # "CON_NDIM_STRC", 
+def tech_group_4a():  # later plasma weaps
     result = [
             "SHP_WEAPON_3_1",
             "SHP_WEAPON_3_2",
@@ -257,16 +312,9 @@ def tech_group_4a():  # later plasma weaps    [ no longer: & w/o SHP_ENRG_BOUND_
     return result
 
 
-def tech_group_4b():  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
+def tech_group_4b():
     result = [
-            "SHP_WEAPON_3_1",
-            "SHP_WEAPON_3_2",
-            "SHP_WEAPON_3_3",
             "SHP_WEAPON_3_4",
-            "SHP_DIAMOND_PLATE",
-            ]
-            # "CON_NDIM_STRC", 
-    result += [
             "SHP_FRC_ENRG_COMP",
             "SHP_ENRG_BOUND_MAN",
             ]
@@ -326,31 +374,31 @@ def sparse_galaxy_techs(index):
         result = tech_group_1a()  # early org_hull
         result += tech_group_2a()  # prioritizes growth & defense over weapons
         result += tech_group_3a()
-        result += tech_group_4a()  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
+        result += tech_group_4a()
         result += tech_group_5()  #
     elif index == 1:
         result = tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
         result += tech_group_3a()
-        result += tech_group_4a()  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
+        result += tech_group_4a()
         result += tech_group_5()  #
     elif index == 2:
         result = tech_group_1_sparse()  # early _lrn_artif_minds
         result += tech_group_2_sparse()  # prioritizes growth & defense over weapons
         result += tech_group_3a()
-        result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
+        result += tech_group_4a()
         result += tech_group_5()  #
     elif index == 3:
-        result = tech_group_1_sparse()  # early org_hull
-        result += tech_group_2_sparse() 
+        result = tech_group_1_sparse_b()  # early org_hull
+        result += tech_group_2_sparse_b() 
         result += tech_group_3a()
-        result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
+        result += tech_group_4a()
         result += tech_group_5()  #
     elif index == 4:
         result = tech_group_1_sparse_b()  # early _lrn_artif_minds
         result += tech_group_2_sparse_b() 
-        result += tech_group_3a()
-        result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
+        result += tech_group_3b()  # faster plasma weaps
+        result += tech_group_4b()
         result += tech_group_5()  #
     return result
 
@@ -366,32 +414,32 @@ def primary_meta_techs(index = 0):
     if index == 0:
         result = tech_group_1a()  # early org_hull
         result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3b()  # without SHP_ASTEROID_REFORM
-        result += tech_group_4a()  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
+        result += tech_group_3a()
+        result += tech_group_4a()
         result += tech_group_5()  #
     elif index == 1:
         result = tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3b()  # without SHP_ASTEROID_REFORM
-        result += tech_group_4a()  # later plasma weaps & w/o SHP_ENRG_BOUND_MAN
+        result += tech_group_3a()
+        result += tech_group_4a()
         result += tech_group_5()  #
     elif index == 2:
         result = tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3b()  # without SHP_ASTEROID_REFORM
-        result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
+        result += tech_group_3a()
+        result += tech_group_4a()
         result += tech_group_5()  #
     elif index == 3:
         result = tech_group_1b()  # 
         result += tech_group_2b()  # prioritizes weapons over growth & defense
-        result += tech_group_3b()  # without SHP_ASTEROID_REFORM
-        result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
+        result += tech_group_3b()  # 3a plus early plasma weaps
+        result += tech_group_4b()
         result += tech_group_5()  #
     elif index == 4:
         result = tech_group_1a()  # early _lrn_artif_minds
         result += tech_group_2a()  # prioritizes growth & defense over weapons
-        result += tech_group_3b()  # 3a plus SHP_ASTEROID_REFORM
-        result += tech_group_4b()  # faster plasma weaps & with SHP_ENRG_BOUND_MAN
+        result += tech_group_3b()  # 3a plus early plasma weaps
+        result += tech_group_4b()
         result += tech_group_5()  #
 
     return result
