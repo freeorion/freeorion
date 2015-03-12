@@ -14,7 +14,7 @@ from freeorion_tools import dict_from_map, ppstring
 from TechsListsAI import EXOBOT_TECH_NAME
 from freeorion_tools import print_error
 
-bestMilRatingsHistory={} # dict of (rating, cost) keyed by turn
+bestMilRatingsHistory = {}  # dict of (rating, cost) keyed by turn
 design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
 shipTypeMap = {EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.AIShipDesignTypes.explorationShip,
                EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST: EnumsAI.AIShipDesignTypes.outpostShip,
@@ -26,11 +26,10 @@ shipTypeMap = {EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.A
                EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION: EnumsAI.AIShipDesignTypes.troopBase,
                                         }
 
-#TODO: dynamic lookup of hull stats
-hullStats = {
-             }
+# TODO: dynamic lookup of hull stats
+hullStats = {}
 
-doDoubleShields=False
+doDoubleShields = False
 
 
 def get_design_cost(cur_turn, design, pid):
@@ -40,80 +39,77 @@ def get_design_cost(cur_turn, design, pid):
         design_cost_cache.clear()
         cost_cache = {}
         design_cost_cache[cur_turn] = cost_cache
-    loc_invariant = True #TODO: check actual loc invariance of design cost
+    loc_invariant = True  # TODO: check actual loc invariance of design cost
     if loc_invariant:
         loc = -1
     else:
         loc = pid
-    return float(cost_cache.setdefault( (design.id, loc), design.productionCost(fo.empireID(), pid) ) )# float() so as to not return actual reference
+    return cost_cache.setdefault((design.id, loc), design.productionCost(fo.empireID(), pid))
 
 
-#get key routines declared for import by others before completing present imports, to avoid circularity problems
+# get key routines declared for import by others before completing present imports, to avoid circularity problems
+
+def update_best_mil_ship_rating():
+    mil_build_choices = getBestShipRatings()
+    if not mil_build_choices:
+        bestMilRatingsHistory[fo.currentTurn()] = (0.00001, 1)
+        return 0.00001
+    top = mil_build_choices[0]
+    best_design_id, best_design, build_choices = top[2], top[3], [top[1]]
+    # bestShip, best_design, build_choices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
+    if best_design is None:
+        bestMilRatingsHistory[fo.currentTurn()] = (0.00001, 1)
+        return 0.00001  # empire cannot currently produce any military ships, don't make zero though, to avoid divide-by-zero
+    # stats = foAI.foAIstate.get_design_id_stats(best_design.id)
+    ship_info = [(-1, best_design_id, ColonisationAI.empire_species_by_planet.get(build_choices[0], ''))]
+    stats = foAI.foAIstate.rate_psuedo_fleet(ship_info)
+    cost = best_design.productionCost(fo.empireID(), build_choices[0])
+    bestMilRatingsHistory[fo.currentTurn()] = (stats['overall'], cost)
+
 def cur_best_mil_ship_rating():
-    if (fo.currentTurn()+1) in bestMilRatingsHistory:
-        bestMilRatingsHistory.clear()
     if fo.currentTurn() not in bestMilRatingsHistory:
-        milBuildChoices = getBestShipRatings()
-        if not milBuildChoices:
-            bestMilRatingsHistory[fo.currentTurn()] = (0.00001, 1)
-            return 0.00001
-        top = milBuildChoices[0]
-        bestDesignID, bestDesign, buildChoices = top[2], top[3], [top[1]]
-        #bestShip, bestDesign, buildChoices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-        if bestDesign is None:
-            bestMilRatingsHistory[ fo.currentTurn() ] = (0.00001, 1)
-            return 0.00001  # empire cannot currently produce any military ships, don't make zero though, to avoid divide-by-zero
-        #stats = foAI.foAIstate.get_design_id_stats(bestDesign.id)
-        stats = foAI.foAIstate.get_weighted_design_stats(bestDesignID, ColonisationAI.empire_species_by_planet.get(buildChoices[0], ''))
-        foAI.foAIstate.adjust_stats_vs_enemy(stats)
-        cost = bestDesign.productionCost(fo.empireID(), buildChoices[0])
-        bestMilRatingsHistory[ fo.currentTurn() ] = ( stats['attack'] * stats['structure'], cost )  # TODO: use newstyle rating
-    return bestMilRatingsHistory[ fo.currentTurn() ][0]
+        update_best_mil_ship_rating()
+    return bestMilRatingsHistory[ fo.currentTurn()][0]
 
 
 def curBestMilShipCost():
-    if (fo.currentTurn()+1) in bestMilRatingsHistory:
-        bestMilRatingsHistory.clear()
     if fo.currentTurn() not in bestMilRatingsHistory:
-        _ = cur_best_mil_ship_rating()
-    return bestMilRatingsHistory[ fo.currentTurn() ][1]
+        update_best_mil_ship_rating()
+    return bestMilRatingsHistory[fo.currentTurn()][1]
 
 
 def getBestShipInfo(priority, loc=None):
-    """returns designID, design, buildLocList"""
+    """ Returns 3 item tuple: designID, design, buildLocList."""
     empire = fo.getEmpire()
-    empireID = empire.empireID
-    capitolID = PlanetUtilsAI.get_capital()
+    empire_id = empire.empireID
     if loc is None:
-        shipyards=set()
+        planet_ids = set()
         for yardlist in ColonisationAI.empire_ship_builders.values():
-            shipyards.update(yardlist)
-        shipyards.discard(capitolID)
-        planetIDs = [capitolID] + list(shipyards)
+            planet_ids.update(yardlist)
     elif isinstance(loc, list):
-        planetIDs=loc
+        planet_ids = loc
     elif isinstance(loc, int):
-        planetIDs=[loc]
-    else: #problem
+        planet_ids = [loc]
+    else:  # problem
         return None, None, None
-    theseDesignIDs = []
-    designNameBases= shipTypeMap.get(priority, ["nomatch"])
-    for baseName in designNameBases:
-        theseDesignIDs.extend([(designNameBases[baseName]+fo.getShipDesign(shipDesign).name(False) , shipDesign ) for shipDesign in empire.availableShipDesigns if baseName in fo.getShipDesign(shipDesign).name(False) ] )
-    if not theseDesignIDs:
-        return None, None, None #must be missing a Shipyard (or checking for outpost ship but missing tech)
-    #ships = [ ( fo.getShipDesign(shipDesign).name(False), shipDesign) for shipDesign in theseDesignIDs ]
+    these_design_ids = []
+    design_name_bases = shipTypeMap.get(priority, ["nomatch"])
+    for base_name in design_name_bases:
+        these_design_ids.extend([(design_name_bases[base_name] + fo.getShipDesign(design).name(False), design) for design in empire.availableShipDesigns if base_name in fo.getShipDesign(design).name(False)])
+    if not these_design_ids:
+        return None, None, None  # must be missing a Shipyard (or checking for outpost ship but missing tech)
+    # ships = [(fo.getShipDesign(design).name(False), design) for design in these_design_ids]
 
-    for _ , shipDesignID in sorted( theseDesignIDs, reverse=True):
-        shipDesign = fo.getShipDesign(shipDesignID)
-        validLocs=[]
-        for pid in planetIDs:
+    for _, design_id in sorted(these_design_ids, reverse=True):
+        design = fo.getShipDesign(design_id)
+        valid_locs = []
+        for pid in planet_ids:
             if pid is None:
                 continue
-            if shipDesign.productionLocationForEmpire(empireID, pid):
-                validLocs.append(pid)
-        if validLocs:
-            return shipDesignID, shipDesign, validLocs
+            if design.productionLocationForEmpire(empire_id, pid):
+                valid_locs.append(pid)
+        if valid_locs:
+            return design_id, design, valid_locs
     return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
 
 
