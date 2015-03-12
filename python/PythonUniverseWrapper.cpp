@@ -556,7 +556,7 @@ namespace FreeOrionPython {
             .add_property("InitialOrbitalPosition",         &Planet::InitialOrbitalPosition)
             .def("OrbitalPositionOnTurn",                   &Planet::OrbitalPositionOnTurn)
             .add_property("RotationalPeriod",               &Planet::RotationalPeriod)
-            .add_property("AxialTilt",                      &Planet::AxialTilt)
+            //.add_property("AxialTilt",                      &Planet::AxialTilt)
             .add_property("buildingIDs",                    make_function(&Planet::BuildingIDs,     return_internal_reference<>()))
         ;
 
@@ -566,10 +566,10 @@ namespace FreeOrionPython {
         class_<System, bases<UniverseObject>, noncopyable>("system", no_init)
             .add_property("starType",           &System::GetStarType)
             .add_property("numStarlanes",       &System::NumStarlanes)
-            .add_property("numWormholes",       &System::NumWormholes)
+            .add_property("numWormholes",       &System::NumWormholes, "Currently unused.")
             .def("HasStarlaneToSystemID",       &System::HasStarlaneTo)
-            .def("HasWormholeToSystemID",       &System::HasWormholeTo)
-            .add_property("starlanesWormholes", make_function(&System::StarlanesWormholes,  return_value_policy<return_by_value>()))
+            .def("HasWormholeToSystemID",       &System::HasWormholeTo, "Currently unused.")
+            .add_property("starlanesWormholes", make_function(&System::StarlanesWormholes,  return_value_policy<return_by_value>()), "Currently unused.")
             .add_property("planetIDs",          make_function(&System::PlanetIDs,           return_value_policy<return_by_value>()))
             .add_property("buildingIDs",        make_function(&System::BuildingIDs,         return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(&System::FleetIDs,            return_value_policy<return_by_value>()))
