@@ -192,7 +192,8 @@ def getBestShipRatings(loc=None, verbose = False):
     locDetail.sort(reverse=True)
     
     # Since we haven't yet implemented a way to target military ship construction at/near particular locations
-    # where they are most in need, we want to distribute the construction across the Resource Group, preferentially choosing
+    # where they are most in need, and also because our rating system is presumably useful-but-not-perfect, we want to 
+    # distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
     # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
     # we want some chance of choosing  those alternate designs/locations.
     
