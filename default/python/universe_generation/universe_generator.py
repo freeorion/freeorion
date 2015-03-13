@@ -69,8 +69,7 @@ def create_universe(psd_map):
 
     # set up empires for each player
     seed_rng(seed_pool.pop())
-    for empire, psd in psd_map.iteritems():
-        home_system = home_systems.pop()
+    for empire, psd, home_system in zip(psd_map.keys(), psd_map.values(), home_systems):
         if not setup_empire(empire, psd.empire_name, home_system, psd.starting_species, psd.player_name):
             report_error("Python create_universe: couldn't set up empire for player %s" % psd.player_name)
 
