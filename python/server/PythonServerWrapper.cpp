@@ -19,6 +19,7 @@
 #include "../../util/Random.h"
 #include "../../util/i18n.h"
 #include "../../util/OptionsDB.h"
+#include "../../util/SitRepEntry.h"
 #include "../../parse/Parse.h"
 
 #include "../../Empire/Empire.h"
@@ -89,6 +90,40 @@ namespace {
 
     double  InvalidPosition()
     { return UniverseObject::INVALID_POSITION; }
+
+    // Wrappers for generating sitrep messages
+    void GenerateSitRep(int empire_id,
+                        const std::string& template_string,
+                        const dict& py_params,
+                        const std::string& icon) {
+        std::vector<std::pair<std::string, std::string> > params;
+
+        if (py_params) {
+            for (int i = 0; i < len(py_params); i++) {
+                std::string k = extract<std::string>(py_params.keys()[i]);
+                std::string v = extract<std::string>(py_params.values()[i]);
+                params.push_back(std::make_pair(k, v));
+            }
+        }
+
+        if (empire_id == ALL_EMPIRES) {
+            for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+                it->second->AddSitRepEntry(CreateSitRep(template_string, icon, params));
+            }
+        } else {
+            Empire* empire = GetEmpire(empire_id);
+            if (!empire) {
+                ErrorLogger() << "PythonServerWrapper::GenerateSitRep: couldn't get empire with ID " << empire_id;
+                return;
+            }
+            empire->AddSitRepEntry(CreateSitRep(template_string, icon, params));
+        }
+    }
+
+    void GenerateSitRep1(int empire_id,
+                         const std::string& template_string,
+                         const std::string& icon)
+    { GenerateSitRep(empire_id, template_string, dict(), icon); }
 
     // Functions exposed to Python to access the universe tables
     int BaseStarTypeDist(StarType star_type)
@@ -1119,7 +1154,9 @@ void WrapServerAPI() {
 
     def("get_galaxy_setup_data",                GetGalaxySetupData,             return_value_policy<reference_existing_object>());
     def("current_turn",                         CurrentTurn);
-    
+    def("generate_sitrep",                      GenerateSitRep);
+    def("generate_sitrep",                      GenerateSitRep1);
+
     def("base_star_type_dist",                  BaseStarTypeDist);
     def("universe_age_mod_to_star_type_dist",   UniverseAgeModToStarTypeDist);
     def("density_mod_to_planet_size_dist",      DensityModToPlanetSizeDist);
