@@ -190,6 +190,18 @@ def getBestShipRatings(loc=None, verbose = False):
     if not locDetail:
         return []
     locDetail.sort(reverse=True)
+    
+    # Since we haven't yet implemented a way to target military ship construction at/near particular locations
+    # where they are most in need, we want to distribute the construction across the Resource Group, preferentially choosing
+    # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
+    # we want some chance of choosing  those alternate designs/locations.
+    
+    # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistic mechanics type 
+    # partition function.  'tally' will compute the normalization constant.
+    # so first go through and calculate the tally as well as convert each individual contribution to
+    # the running total up to that point, to facilitate later sampling.  Then those running totals are
+    # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
+    # used to select the chosen design/loc 
     tally = 0
     idx = 0
     for detail in locDetail:
