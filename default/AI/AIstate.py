@@ -116,6 +116,8 @@ class AIstate(object):
         for std_attrib in ['empire_standard_fighter', 'empire_standard_enemy']:
             if std_attrib not in state_dict:
                 self.__dict__[std_attrib] = (4, ((4, 1),), 0.0, 10.0)
+        self.colonisablePlanetIDs = odict()
+        self.colonisableOutpostIDs = odict()                
 
     def __del__(self):  # TODO: confirm if anything about boost interface really requires this
         """destructor"""
