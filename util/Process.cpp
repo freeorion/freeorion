@@ -62,8 +62,14 @@ bool Process::SetLowPriority(bool low) {
 }
 
 void Process::Kill() {
-    if (m_impl)
+    DebugLogger() << "Process::Kill";
+    if (m_impl) {
+        DebugLogger() << "Process::Kill calling m_impl->Kill()";
         m_impl->Kill();
+    } else {
+        DebugLogger() << "Process::Kill found no m_impl";
+    }
+    DebugLogger() << "Process::Kill calling RequestTermination()";
     RequestTermination();
 }
 
@@ -192,7 +198,7 @@ Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv
 
     case 0: { // child process side of fork
         execv(cmd.c_str(), &args[0]);
-        perror("execv failed");
+        perror(("execv failed: " + cmd).c_str());
         break;
     }
 
@@ -213,9 +219,16 @@ bool Process::Impl::SetLowPriority(bool low) {
 }
 
 void Process::Impl::Kill() {
+    if (m_free) {
+        DebugLogger() << "Process::Impl::Kill called but m_free is true so returning with no action";
+        return;
+    }
     int status;
-    kill(m_process_id, SIGHUP); 
+    DebugLogger() << "Process::Impl::Kill calling kill(m_process_id, SIGKILL)";
+    kill(m_process_id, SIGKILL); 
+    DebugLogger() << "Process::Impl::Kill calling waitpid(m_process_id, &status, 0)";
     waitpid(m_process_id, &status, 0);
+    DebugLogger() << "Process::Impl::Kill done";
 }
 
 #endif

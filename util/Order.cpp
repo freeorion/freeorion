@@ -880,8 +880,10 @@ void ResearchQueueOrder::ExecuteImpl() const {
 
     Empire* empire = GetEmpire(EmpireID());
     if (!empire) return;
-    if (m_remove)
+    if (m_remove) {
+        DebugLogger() << "ResearchQueueOrder::ExecuteImpl: removing from queue tech: " << m_tech_name;
         empire->RemoveTechFromQueue(m_tech_name);
+    }
     else
         empire->PlaceTechInQueue(m_tech_name, m_position);
 }
@@ -1013,8 +1015,10 @@ void ProductionQueueOrder::ExecuteImpl() const {
             empire->SetBuildQuantity(m_index, m_new_quantity);
         else if (m_new_index != INVALID_INDEX)
             empire->MoveBuildWithinQueue(m_index, m_new_index);
-        else if (m_index != INVALID_INDEX)
+        else if (m_index != INVALID_INDEX) {
+            DebugLogger() << "ProductionQueueOrder removing build from index " << m_index;
             empire->RemoveBuildFromQueue(m_index);
+        }
         else
             ErrorLogger() << "Malformed ProductionQueueOrder.";
     } catch (const std::exception& e) {
