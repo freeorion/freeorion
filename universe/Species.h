@@ -242,6 +242,7 @@ public:
     /** returns the name of a playable species in this manager, or an empty
       * string if there are no playable species. */
     const std::string&      RandomPlayableSpeciesName() const;
+    const std::string&      SequentialPlayableSpeciesName(int id) const;
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */

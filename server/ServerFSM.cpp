@@ -443,7 +443,10 @@ sc::result MPLobby::react(const JoinGame& msg) {
     player_setup_data.m_client_type =           client_type;
     player_setup_data.m_empire_name =           GenerateEmpireName(m_lobby_data->m_players);
     player_setup_data.m_empire_color =          GetUnusedEmpireColour(m_lobby_data->m_players);
-    player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+    if (m_lobby_data->m_seed!="")
+        player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
+    else
+        player_setup_data.m_starting_species_name = sm.SequentialPlayableSpeciesName(player_id);
 
     // after setting all details, push into lobby data
     m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
@@ -593,8 +596,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 psd.m_player_name = UserString("AI_PLAYER") + "_" + boost::lexical_cast<std::string>(AI_count++);
             if (psd.m_empire_name.empty())
                 psd.m_empire_name = GenerateEmpireName(m_lobby_data->m_players);
-            if (psd.m_starting_species_name.empty())
-                psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+            if (psd.m_starting_species_name.empty()) {
+                if (m_lobby_data->m_seed!="")
+                    psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+                else
+                    psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(AI_count);
+            }
 
         } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             if (psd.m_empire_color == GG::Clr(0, 0, 0, 0))

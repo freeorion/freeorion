@@ -382,6 +382,18 @@ const std::string& SpeciesManager::RandomPlayableSpeciesName() const {
     return it->first;
 }
 
+const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
+    if (NumPlayableSpecies() <= 0)
+        return EMPTY_STRING;
+
+    int species_idx = id % NumPlayableSpecies();
+    DebugLogger() << "SpeciesManager::SequentialPlayableSpeciesName has " << NumPlayableSpecies() << " and is given id " << id << " yielding index " << species_idx;
+    playable_iterator it = playable_begin();
+    std::advance(it, species_idx);
+    return it->first;
+}
+
+
 void SpeciesManager::ClearSpeciesHomeworlds() {
     for (std::map<std::string, Species*>::iterator it = m_species.begin(); it != m_species.end(); ++it)
         it->second->SetHomeworlds(std::set<int>());
