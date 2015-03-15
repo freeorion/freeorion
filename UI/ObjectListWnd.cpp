@@ -386,7 +386,7 @@ public:
             std::vector< const Condition::ConditionBase*> operands1;
             operands1.push_back( new Condition::Type( new ValueRef::Constant<UniverseObjectType> (OBJ_PLANET)) );
             const std::string& text = GetString();
-            if (text == "Any") {
+            if (text == UserString("CONDITION_ANY")) {
                 std::vector<const ValueRef::ValueRefBase<PlanetType>*> copytype;
                 copytype.push_back( new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
                 operands1.push_back( new Condition::Not(new Condition::PlanetType(copytype)));
@@ -405,7 +405,7 @@ public:
         } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
             std::vector< const Condition::ConditionBase*> operands1;
             const std::string& text = GetString();
-            if (text == "Any") {
+            if (text == UserString("CONDITION_ANY")) {
                 std::vector<const ValueRef::ValueRefBase<PlanetType>*> copytype;
                 copytype.push_back( new ValueRef::Constant<PlanetType>(PT_GASGIANT));
                 operands1.push_back( new Condition::Not(new Condition::PlanetType(copytype)));
@@ -782,7 +782,7 @@ private:
 
             GG::ListBox::iterator row_it = m_string_drop->end();
             if (condition_key == GGWITHPTYPE_CONDITION || condition_key == ASTWITHPTYPE_CONDITION )
-                row_it = m_string_drop->Insert(new StringRow("Any", GG::Y(ClientUI::Pts()), false));
+                row_it = m_string_drop->Insert(new StringRow(UserString("CONDITION_ANY"), GG::Y(ClientUI::Pts()), false));
             for (std::vector<std::string>::iterator string_it = type_strings.begin();
                  string_it != type_strings.end(); ++string_it)
             {

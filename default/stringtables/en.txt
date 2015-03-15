@@ -4127,6 +4127,9 @@ Gas Giant with Planet of type
 CONDITION_PTYPE_W_AST
 Asteroids with Planet of type
 
+CONDITION_ANY
+Any
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
