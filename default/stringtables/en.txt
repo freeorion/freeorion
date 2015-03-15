@@ -3403,11 +3403,6 @@ Estimated combat strength (ignoring shields):  %19$.f   (%20$.2f per PP)
 Against enemy attack %21$.1f and shields %22$.1f:       %23$.f   (%24$.2f per PP)
 '''
 
-
-
-
-
-
 ENC_UNLOCKED_BY
 '''<u>Unlocked By Techs:</u>
 
@@ -3822,7 +3817,7 @@ STARLANE_SPEED_TEXT
 AI_ERROR_MSG
 AI_Error: AI script error
 
-# Functional list; do not translate. Used for logging during universe creation
+# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 GROWTH_SPECIALS_LIST
 '''CRYSTALS_SPECIAL
 FRUIT_SPECIAL
@@ -4122,6 +4117,15 @@ Star Type
 
 CONDITION_METERVALUE
 Object Property Value
+
+CONDITION_HAS_GROWTH_SPECIAL
+Has Any Growth Special
+
+CONDITION_PTYPE_W_GG
+Gas Giant with Planet of type
+
+CONDITION_PTYPE_W_AST
+Asteroids with Planet of type
 
 #############################################################
 ####                    S I T   R E P                    ####

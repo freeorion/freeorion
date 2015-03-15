@@ -39,6 +39,8 @@ namespace {
         default_columns_widths.push_back(std::make_pair("OBJECT_TYPE",  5*12));
         default_columns_widths.push_back(std::make_pair("OWNER",        10*12));
         default_columns_widths.push_back(std::make_pair("SPECIES",      8*12));
+        default_columns_widths.push_back(std::make_pair("PLANET_TYPE",      8*12));
+        default_columns_widths.push_back(std::make_pair("SIZE_AS_DOUBLE",            8*12));
         for (unsigned int i = default_columns_widths.size(); i < NUM_COLUMNS; ++i)
             default_columns_widths.push_back(std::make_pair("", 8*12));   // arbitrary default width
 
@@ -209,6 +211,9 @@ namespace {
     const std::string FOCUSTYPE_CONDITION(UserStringNop("CONDITION_FOCUSTYPE"));
     const std::string STARTYPE_CONDITION(UserStringNop("CONDITION_STARTYPE"));
     const std::string METERVALUE_CONDITION(UserStringNop("CONDITION_METERVALUE"));
+    const std::string HASGROWTHSPECIAL_CONDITION(UserStringNop("CONDITION_HAS_GROWTH_SPECIAL"));
+    const std::string GGWITHPTYPE_CONDITION(UserStringNop("CONDITION_PTYPE_W_GG"));
+    const std::string ASTWITHPTYPE_CONDITION(UserStringNop("CONDITION_PTYPE_W_AST"));
 
     template <class enumT>
     ValueRef::ValueRefBase<enumT>*          CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
@@ -218,19 +223,7 @@ namespace {
         return new ValueRef::Constant<enumT>(enumT(-1));
     }
 
-    Condition::ConditionBase*               CopyCondition(const Condition::ConditionBase* const condition) {
-        if (dynamic_cast<const Condition::Source* const>(condition)) {
-            return new Condition::Source();
-
-        } else if (dynamic_cast<const Condition::Homeworld* const>(condition)) {
-            return new Condition::Homeworld();
-
-        } else if (dynamic_cast<const Condition::Building* const>(condition)) {
-
-        }
-
-        return new Condition::All();
-    }
+    std::map<std::string, std::string> object_list_cond_description_map;
 
     const std::string&                      ConditionClassName(const Condition::ConditionBase* const condition) {
         if (dynamic_cast<const Condition::All* const>(condition))
@@ -281,7 +274,12 @@ namespace {
             return STARTYPE_CONDITION;
         else if (dynamic_cast<const Condition::MeterValue* const>(condition))
             return METERVALUE_CONDITION;
-        else return EMPTY_STRING;
+
+        std::map< std::string, std::string >::iterator desc_it = object_list_cond_description_map.find(condition->Description());
+        if (desc_it != object_list_cond_description_map.end())
+            return desc_it->second;
+
+        return EMPTY_STRING;
     }
 
     template <typename enumT>
@@ -296,23 +294,24 @@ namespace {
 ////////////////////////////////////////////////
 // ConditionWidget
 ////////////////////////////////////////////////
+const GG::X CONDITION_WIDGET_WIDTH(380);
+
 class ConditionWidget : public GG::Control {
 public:
     ConditionWidget(GG::X x, GG::Y y, const Condition::ConditionBase* initial_condition = 0) :
-        GG::Control(x, y, GG::X(380), GG::Y1, GG::INTERACTIVE),
+        GG::Control(x, y, CONDITION_WIDGET_WIDTH, GG::Y1, GG::INTERACTIVE),
         m_class_drop(0),
         m_string_drop(0),
         m_param_spin1(0),
         m_param_spin2(0)
     {
-        Condition::ConditionBase* init_condition = 0;
         if (!initial_condition) {
-            init_condition = new Condition::All();
+            Condition::ConditionBase* init_condition = new Condition::All();
+            Init(init_condition);
+            delete init_condition;
         } else {
-            init_condition = CopyCondition(initial_condition);
+            Init(initial_condition);
         }
-        Init(init_condition);
-        delete init_condition;
     }
 
     ~ConditionWidget() {
@@ -369,6 +368,58 @@ public:
 
         } else if (condition_key == HASSPECIAL_CONDITION) {
             return new Condition::HasSpecial(GetString());
+
+        } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
+            std::vector< const Condition::ConditionBase*> operands;
+            // determine sitrep order
+            std::istringstream template_stream(UserString("GROWTH_SPECIALS_LIST"));
+            for (std::istream_iterator<std::string> stream_it = std::istream_iterator<std::string>(template_stream);
+                 stream_it != std::istream_iterator<std::string>(); stream_it++)
+            {
+                operands.push_back(new Condition::HasSpecial(*stream_it));
+            }
+            Condition::Or* this_cond =  new Condition::Or(operands);
+            object_list_cond_description_map[this_cond->Description()] = HASGROWTHSPECIAL_CONDITION;
+            return this_cond;
+
+        } else if (condition_key == ASTWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_ASTEROIDS ContainedBy And [System Contains PlanetType X]]
+            std::vector< const Condition::ConditionBase*> operands1;
+            operands1.push_back( new Condition::Type( new ValueRef::Constant<UniverseObjectType> (OBJ_PLANET)) );
+            const std::string& text = GetString();
+            if (text == "Any") {
+                std::vector<const ValueRef::ValueRefBase<PlanetType>*> copytype;
+                copytype.push_back( new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
+                operands1.push_back( new Condition::Not(new Condition::PlanetType(copytype)));
+            } else
+                operands1.push_back( new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
+            std::vector< const Condition::ConditionBase*> operands2;
+            operands2.push_back( new Condition::Type( new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM)));
+            std::vector<const ValueRef::ValueRefBase<PlanetType>*> maintype;
+            maintype.push_back( new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
+            operands2.push_back( new Condition::Contains( new Condition::PlanetType(maintype)));
+            operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
+            Condition::And* this_cond =  new Condition::And(operands1);
+            object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
+            return this_cond;
+
+        } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
+            std::vector< const Condition::ConditionBase*> operands1;
+            const std::string& text = GetString();
+            if (text == "Any") {
+                std::vector<const ValueRef::ValueRefBase<PlanetType>*> copytype;
+                copytype.push_back( new ValueRef::Constant<PlanetType>(PT_GASGIANT));
+                operands1.push_back( new Condition::Not(new Condition::PlanetType(copytype)));
+            } else
+                operands1.push_back( new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
+            std::vector< const Condition::ConditionBase*> operands2;
+            operands2.push_back( new Condition::Type( new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM)));
+            std::vector<const ValueRef::ValueRefBase<PlanetType>*> maintype;
+            maintype.push_back( new ValueRef::Constant<PlanetType>(PT_GASGIANT));
+            operands2.push_back( new Condition::Contains( new Condition::PlanetType(maintype)));
+            operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
+            Condition::And* this_cond =  new Condition::And(operands1);
+            object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
+            return this_cond;
 
         } else if (condition_key == HASTAG_CONDITION) {
             return new Condition::HasTag(GetString());
@@ -526,13 +577,19 @@ private:
     }
 
     GG::X   DropListWidth() const
+    { return GG::X(ClientUI::Pts()*18); }
+
+    GG::X   ParamsDropListWidth() const
+    { return CONDITION_WIDGET_WIDTH - DropListWidth(); }
+
+    GG::X   SpinDropListWidth() const
     { return GG::X(ClientUI::Pts()*16); }
 
     GG::Y   DropListHeight() const
     { return GG::Y(ClientUI::Pts() + 4); }
 
     int   DropListDropHeight() const
-    { return 10; }
+    { return 12; }
 
     void    Init(const Condition::ConditionBase* init_condition) {
         // fill droplist with basic types of conditions and select appropriate row
@@ -542,15 +599,16 @@ private:
         AttachChild(m_class_drop);
 
         std::vector<std::string> row_keys;
-        row_keys.push_back(ALL_CONDITION);              row_keys.push_back(EMPIREAFFILIATION_CONDITION);
-        row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(PLANETTYPE_CONDITION);
-        row_keys.push_back(HOMEWORLD_CONDITION);        row_keys.push_back(CAPITAL_CONDITION);
+        row_keys.push_back(ALL_CONDITION);              row_keys.push_back(PLANETTYPE_CONDITION);
+        row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(HASGROWTHSPECIAL_CONDITION);
+        row_keys.push_back(GGWITHPTYPE_CONDITION);      row_keys.push_back(ASTWITHPTYPE_CONDITION);
+        row_keys.push_back(FOCUSTYPE_CONDITION);        row_keys.push_back(STARTYPE_CONDITION);
+        row_keys.push_back(HASTAG_CONDITION);           row_keys.push_back(SPECIES_CONDITION);
+        row_keys.push_back(HASSPECIAL_CONDITION);       row_keys.push_back(EMPIREAFFILIATION_CONDITION);
         row_keys.push_back(MONSTER_CONDITION);          row_keys.push_back(ARMED_CONDITION);
         row_keys.push_back(STATIONARY_CONDITION);       row_keys.push_back(CANPRODUCESHIPS_CONDITION);
-        row_keys.push_back(CANCOLONIZE_CONDITION);      row_keys.push_back(HASSPECIAL_CONDITION);
-        row_keys.push_back(HASTAG_CONDITION);           row_keys.push_back(SPECIES_CONDITION);
-        row_keys.push_back(FOCUSTYPE_CONDITION);        row_keys.push_back(STARTYPE_CONDITION);
-        row_keys.push_back(METERVALUE_CONDITION);
+        row_keys.push_back(CANCOLONIZE_CONDITION);      row_keys.push_back(HOMEWORLD_CONDITION);
+        row_keys.push_back(METERVALUE_CONDITION);       row_keys.push_back(CAPITAL_CONDITION);
 
         SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
@@ -609,7 +667,8 @@ private:
             condition_key == STATIONARY_CONDITION ||
             condition_key == CANPRODUCESHIPS_CONDITION ||
             condition_key == CANCOLONIZE_CONDITION ||
-            condition_key == MONSTER_CONDITION)
+            condition_key == MONSTER_CONDITION ||
+            condition_key == HASGROWTHSPECIAL_CONDITION)
         {
             // no params
             param_widget_top += m_class_drop->Height();
@@ -620,7 +679,7 @@ private:
             // droplist of valid species
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -639,7 +698,7 @@ private:
             // droplist of valid specials
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -658,7 +717,7 @@ private:
             // droplist of valid tags
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -687,7 +746,7 @@ private:
             // droplist of valid sizes
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -707,11 +766,13 @@ private:
             if (!m_string_drop->Empty())
                 m_string_drop->Select(0);
 
-        } else if (condition_key == PLANETTYPE_CONDITION) {
+        } else if (condition_key == PLANETTYPE_CONDITION ||
+                   condition_key == GGWITHPTYPE_CONDITION ||
+                   condition_key == ASTWITHPTYPE_CONDITION ) {
             // droplist of valid types
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             std::vector< ::PlanetType> planet_types;
@@ -720,6 +781,8 @@ private:
             std::vector<std::string> type_strings = StringsFromEnums(planet_types);
 
             GG::ListBox::iterator row_it = m_string_drop->end();
+            if (condition_key == GGWITHPTYPE_CONDITION || condition_key == ASTWITHPTYPE_CONDITION )
+                row_it = m_string_drop->Insert(new StringRow("Any", GG::Y(ClientUI::Pts()), false));
             for (std::vector<std::string>::iterator string_it = type_strings.begin();
                  string_it != type_strings.end(); ++string_it)
             {
@@ -733,7 +796,7 @@ private:
             // droplist of valid types
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -757,7 +820,7 @@ private:
             // droplist of valid foci
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -785,7 +848,7 @@ private:
             // droplist of meter types
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(ParamsDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
             param_widget_left = GG::X0;
             param_widget_top = m_string_drop->Height() + GG::Y(Value(PAD));
@@ -807,13 +870,13 @@ private:
 
             m_param_spin1 = new CUISpin<int>(0, 1, 0, 1000, true);
             m_param_spin1->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_param_spin1->Resize(GG::Pt(DropListWidth(), m_param_spin1->Height()));
+            m_param_spin1->Resize(GG::Pt(SpinDropListWidth(), m_param_spin1->Height()));
             AttachChild(m_param_spin1);
-            param_widget_left = DropListWidth() + PAD;
+            param_widget_left = SpinDropListWidth() + PAD;
 
             m_param_spin2 = new CUISpin<int>(0, 1, 0, 1000, true);
             m_param_spin2->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_param_spin2->Resize(GG::Pt(DropListWidth(), m_param_spin2->Height()));
+            m_param_spin2->Resize(GG::Pt(SpinDropListWidth(), m_param_spin2->Height()));
             AttachChild(m_param_spin2);
 
             param_widget_top += m_param_spin1->Height();
@@ -821,7 +884,7 @@ private:
             // droplist of empires
             m_string_drop = new CUIDropDownList(DropListDropHeight());
             m_string_drop->MoveTo(GG::Pt(param_widget_left, param_widget_top));
-            m_string_drop->Resize(GG::Pt(DropListWidth(), DropListHeight()));
+            m_string_drop->Resize(GG::Pt(SpinDropListWidth(), DropListHeight()));
             AttachChild(m_string_drop);
 
             param_widget_top += m_string_drop->Height();
@@ -945,7 +1008,7 @@ private:
 
 
         // TODO: Add multiple condition widgets initialized for input condition
-        m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3));
+        m_condition_widget = new ConditionWidget(GG::X(3), m_filters_layout->Height() + GG::Y(3), condition_filter);
         m_cancel_button = new CUIButton(UserString("CANCEL"));
         m_apply_button = new CUIButton(UserString("APPLY"));
 
