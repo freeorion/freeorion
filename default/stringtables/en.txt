@@ -8644,9 +8644,9 @@ BLD_IMPERIAL_PALACE_DESC
 
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
 
-BLD_SUPER_TESTERS
+BLD_SUPER_TEST
 Super-Tester Takeover
-BLD_SUPER_TESTERS_DESC
+BLD_SUPER_TEST_DESC
 '''Switches the species of the planet to Super-Testers. For Official Testing Purposes, or for cheating.'''
 
 BLD_SHIPYARD_BASE
@@ -9160,6 +9160,12 @@ Exobot Colony
 
 BLD_COL_EXOBOT_DESC
 This building will construct an Exobot colony at an outpost. Contrary to the colony buildings of other species, an Exobot colony does not need an already existing Exobot colony within supply range, as the Exobots are constructed as part of the colony directly planetside. However, because of that they are more expensive to build, and they still need an empire owned planet within supply range.
+
+BLD_COL_SUPER_TEST
+Super Tester Colony
+
+BLD_COL_SUPER_TEST_DESC
+This building can only build at an outpost, and will upgrade that outpost to a new Super Tester colony. Minimum build time depends on the jump distance to the nearest Super Tester colony, and will increase the farther away it is.
 
 
 #############################################################

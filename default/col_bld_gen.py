@@ -4,6 +4,7 @@ import string
 
 
 species_list = [
+    ("SP_SUPER_TEST", "Super Tester", "icons/species/other-04.png"),
     ("SP_ABADDONI", "Abaddoni", "icons/species/abaddonnian.png"),
     ("SP_CHATO", "Chato", "icons/species/chato-matou-gormoshk.png"),
     ("SP_CRAY", "Cray", "icons/species/cray.png"),
@@ -127,7 +128,7 @@ print "Output folder:", outpath
 with open(os.path.join(outpath, "col_buildings.txt"), "w") as f:
     for species in species_list:
         sp_id = species[0]
-        sp_name = sp_id.split("_")[1]
+        sp_name = sp_id.split("_", 1)[1]
         sp_desc_name = species[1]
         sp_graphic = species[2]
         if sp_id == "SP_EXOBOT":

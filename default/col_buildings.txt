@@ -1,4 +1,98 @@
 BuildingType
+    name = "BLD_COL_SUPER_TEST"
+    description = "BLD_COL_SUPER_TEST_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = max(5, 1 +
+        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_SUPER_TEST"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SUPER_TEST"
+        Not Contains Building name = "BLD_COL_SUPER_TEST"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_SUPER_TEST"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_SUPER_TEST"
+        Not Contains Building name = "BLD_COL_SUPER_TEST"
+        Not Enqueued type = Building name = "BLD_COL_SUPER_TEST"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_SUPER_TEST"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_SUPER_TEST"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_SUPER_TEST"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/other-04.png"
+                    parameters = [
+                        tag = "species" data = "SP_SUPER_TEST"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/building/generic_building.png"
+
+BuildingType
     name = "BLD_COL_ABADDONI"
     description = "BLD_COL_ABADDONI_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
