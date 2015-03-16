@@ -61,17 +61,16 @@ def cluster_stars(positions, num_star_groups):
     clusters = [[], []]
     clusters[0] = assign_clusters(all_coords, centers)  # assign clusters based on init centers
     old_c = 0
-    for loop in range(1):  # main loop to try getting some convergence of center assignments
+    num_convergence_loops = 1 # if full convergence is deemed important then use a higher humber here
+    for loop in range(num_convergence_loops):  # main loop to try getting some convergence of center assignments
         recalc_centers(centers, all_coords, clusters[old_c])  # get new centers
         clusters[1-old_c] = assign_clusters(all_coords, centers)  # assign clusters based on new centers
         if clusters[0] == clusters[1]:
             break  # stop iterating if no change in cluster assignments
         old_c = 1-old_c
     else:
-        # TODO: this check will never work loop will be always 0.
-        # if loop > 0: #if here at loop 0, then didn't try for convergence
-        #     print "falling through system clustering iteration loop without convergence"
-        pass
+        if loop > 0: #if here at loop 0, then didn't try for convergence
+            print "falling through system clustering iteration loop without convergence"
     return clusters[1 - old_c]
 
 
