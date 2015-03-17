@@ -47,7 +47,7 @@ namespace {
     int MIN_SIDE_BAR_WIDTH = 100;
     int MIN_SIDE_BAR_HEIGHT = 40;
 
-    const float EPSILON = 0.00001;
+    const float EPSILON = 0.00001f;
 
     const std::string OPTIONS_ROOT = "UI.combat.summary.graph.";
 
