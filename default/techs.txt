@@ -2074,7 +2074,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 20 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     prerequisites = "SHP_ASTEROID_REFORM"
     unlock = [
@@ -2152,7 +2152,10 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 145 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
-    prerequisites = "SHP_MINIAST_SWARM"
+    prerequisites = [
+        "SHP_MINIAST_SWARM"
+        "SHP_HEAVY_AST_HULL"
+	]
     unlock = [
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
