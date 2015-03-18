@@ -175,6 +175,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
 #endif
+#ifdef FREEORION_MACOSX
+    SDL_SetHint(SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK, "1");
+#endif
     m_fsm = new HumanClientFSM(*this);
 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDir() / "freeorion.log").string());
