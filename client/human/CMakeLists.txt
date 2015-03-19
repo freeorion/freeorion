@@ -19,7 +19,6 @@ INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
-find_package(Bullet REQUIRED)
 
 if(WIN32)
     find_package(GLEW REQUIRED)
@@ -32,7 +31,6 @@ include_directories(
     ${SDL2_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
-    ${BULLET_INCLUDE_DIRS}
 
     ${CMAKE_SOURCE_DIR}/PagedGeometry/include
 )
@@ -43,7 +41,6 @@ endif()
 
 add_definitions(-DFREEORION_BUILD_HUMAN)
 
-link_directories(${BULLET_LIB_DIR})
 
 if (CMAKE_COMPILER_IS_GNUCXX)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
@@ -173,7 +170,6 @@ set(freeorion_LINK_LIBS
     ${SDL2_LIBRARIES}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
-    ${BULLET_LIBRARIES}
     ${ZLIB_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
