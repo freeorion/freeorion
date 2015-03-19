@@ -804,7 +804,14 @@ BuildingType
                 System
             ]
             activation = Star type = Red
-            effects = SetStarType type = BlackHole
+            effects = [
+			    SetStarType type = BlackHole
+                GenerateSitRepMessage
+                    message = "EFFECT_BLACKHOLE"
+                    icon = "icons/building/blackhole.png"
+                    parameters = tag = "planet" data = Source.SystemID
+                    empire = Source.Owner
+				]
 
         EffectsGroup
             scope = Source
