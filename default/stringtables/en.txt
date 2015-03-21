@@ -4185,6 +4185,7 @@ EFFECT_CONC_CAMP_COMLETE
 EFFECT_GAIAN_TERRAFORM
 EFFECT_TERRAFORM
 EFFECT_BLACKHOLE
+EFFECT_ART_PLANET
 EFFECT_TAME_MONSTER_HATCHED
 EFFECT_TAME_MONSTER_MATURED
 SITREP_BUILDING_BUILT
@@ -4493,8 +4494,13 @@ EFFECT_TERRAFORM_LABEL
 Terraform
 
 EFFECT_BLACKHOLE
-%planet% has been collapsed to create a Black Hole.
-EFFECT_TERRAFORM_LABEL
+%system% has been collapsed to create a black hole.
+EFFECT_BLACKHOLE_LABEL
+Black Hole
+
+EFFECT_ART_PLANET
+%planet% has been turned into an artificial planet.
+EFFECT_ART_PLANET_LABEL
 Black Hole
 
 EFFECT_STARVATION
@@ -7877,7 +7883,9 @@ CON_ART_PLANET
 Artificial Planet
 
 CON_ART_PLANET_DESC
-Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centers for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
+'''Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centers for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
+
+On its own, the tech allows for construction of the basic [[buildingtype BLD_ART_PLANET]]. If the empire also has [[tech GRO_GAIA_TRANS]], then [[buildingtype BLD_ART_PARADISE_PLANET]] may be built. If the empire has [[tech PRO_EXOBOTS]] then [[buildingtype BLD_ART_FACTORY_PLANET]] can be built.'''
 
 CON_PALACE_EXCLUDE
 Palace Excluder
@@ -8971,6 +8979,18 @@ Artificial Planet
 
 BLD_ART_PLANET_DESC
 Forms an artificial planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+
+BLD_ART_FACTORY_PLANET
+Artificial Factory World
+
+BLD_ART_FACTORY_PLANET_DESC
+Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with Exobots. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+
+BLD_ART_PARADISE_PLANET
+Artificial Paradise World
+
+BLD_ART_PARADISE_PLANET_DESC
+Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets—the planet will have the Gaia special which will terraform it to suit its inhabitants. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
 
 BLD_ART_MOON
 Artificial Moon

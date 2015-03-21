@@ -1795,13 +1795,17 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
-    researchcost = 500 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 300 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
     prerequisites = [
         "CON_ART_HEAVENLY"
         "CON_GAL_INFRA"
     ]
-    unlock = Item type = Building name = "BLD_ART_PLANET"
+    unlock = [
+        Item type = Building name = "BLD_ART_PLANET"
+        Item type = Building name = "BLD_ART_FACTORY_PLANET"
+        Item type = Building name = "BLD_ART_PARADISE_PLANET"
+        ]
 
 
 //########################################################

@@ -805,11 +805,11 @@ BuildingType
             ]
             activation = Star type = Red
             effects = [
-			    SetStarType type = BlackHole
+                SetStarType type = BlackHole
                 GenerateSitRepMessage
                     message = "EFFECT_BLACKHOLE"
                     icon = "icons/building/blackhole.png"
-                    parameters = tag = "planet" data = Source.SystemID
+                    parameters = tag = "system" data = Source.SystemID
                     empire = Source.Owner
 				]
 
@@ -1238,13 +1238,16 @@ BuildingType
 BuildingType
     name = "BLD_ART_PLANET"
     description = "BLD_ART_PLANET_DESC"
-    buildcost = 2000
-    buildtime = 15
+    buildcost = 800
+    buildtime = 8
     location = And [
         Planet
         Not Contains Building name = "BLD_ART_PLANET"
+        Not Contains Building name = "BLD_ART_FACTORY_PLANET"
+        Not Contains Building name = "BLD_ART_PARADISE_PLANET"
         OwnedBy empire = Source.Owner
         Planet type = [Asteroids GasGiant]
+        Population high = 0
     ]
     effectsgroups = [
         EffectsGroup
@@ -1253,14 +1256,100 @@ BuildingType
                 Planet
             ]
             activation = Source
-            effects = SetPlanetType type = Barren
+            effects = [
+                SetPlanetType type = Barren
+                GenerateSitRepMessage
+                    message = "EFFECT_ART_PLANET"
+                    icon = "icons/specials_large/tidal_lock.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+                ]
 
         EffectsGroup
             scope = Source
             activation = Source
             effects = Destroy
     ]
-    icon = ""
+    icon = "icons/specials_huge/tidal_lock.png"
+
+BuildingType
+    name = "BLD_ART_FACTORY_PLANET"
+    description = "BLD_ART_FACTORY_PLANET_DESC"
+    buildcost = 800 + ( 70 * [[COLONY_UPKEEP_MULTIPLICATOR]] )
+    buildtime = 12
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_ART_PLANET"
+        Not Contains Building name = "BLD_ART_FACTORY_PLANET"
+        Not Contains Building name = "BLD_ART_PARADISE_PLANET"
+        OwnedBy empire = Source.Owner
+        Planet type = [Asteroids GasGiant]
+        OwnerHasTech name = "PRO_EXOBOTS"
+        Population high = 0
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Source
+            effects = [
+                SetPlanetType type = Barren
+                SetSpecies name = "SP_EXOBOT"
+                SetPopulation value = 1
+                GenerateSitRepMessage
+                    message = "EFFECT_ART_PLANET"
+                    icon = "icons/species/robotic-01.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = Destroy
+    ]
+    icon = "icons/species/robotic-01.png"
+
+BuildingType
+    name = "BLD_ART_PARADISE_PLANET"
+    description = "BLD_ART_PARADISE_PLANET_DESC"
+    buildcost = 1000
+    buildtime = 10
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_ART_PLANET"
+        Not Contains Building name = "BLD_ART_FACTORY_PLANET"
+        Not Contains Building name = "BLD_ART_PARADISE_PLANET"
+        OwnedBy empire = Source.Owner
+        Planet type = [Asteroids GasGiant]
+        OwnerHasTech name = "GRO_GAIA_TRANS"
+        Population high = 0
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Source
+            effects = [
+                SetPlanetType type = Barren
+                AddSpecial name = "GAIA_SPECIAL"
+                GenerateSitRepMessage
+                    message = "EFFECT_ART_PLANET"
+                    icon = "icons/specials_large/gaia.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+                ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = Destroy
+    ]
+    icon = "icons/specials_huge/gaia.png"
 
 BuildingType
     name = "BLD_ART_MOON"
