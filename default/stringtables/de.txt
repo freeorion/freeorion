@@ -250,37 +250,37 @@ Monster
 SM_KRILL_1
 Kleiner Krillschwarm
 SM_KRILL_1_DESC
-'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen um sich schnell zu vermehren.'''
+'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.'''
 
 SM_KRILL_2
 Mittlerer Krillschwarm
 SM_KRILL_2_DESC
-'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen um sich schnell zu vermehren.'''
+'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.'''
 
 SM_KRILL_3
 Großer Krillschwarm
 SM_KRILL_3_DESC
-'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Wenn ihre Anzahl hoch genug ist, beginnen sie ein aggressives Verhalten gegenüber Schiffen zu zeigen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen um sich schnell zu vermehren.'''
+'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Wenn ihre Anzahl hoch genug ist, beginnen sie ein aggressives Verhalten gegenüber Schiffen zu zeigen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.'''
 
 SM_KRILL_4
 Krillplage
 SM_KRILL_4_DESC
-'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Das Verhalten der des Krill ändert sich radikal, sobald ein kritischer Bestand von ungefähr 10 Millionen Individuen überschritten wurde. Der normalerweise scheue Krill attackiert nun Schiffe und orbitale Strukturen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen um sich schnell zu vermehren.'''
+'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Das Verhalten der des Krill ändert sich radikal, sobald ein kritischer Bestand von ungefähr 10 Millionen Individuen überschritten wurde. Der normalerweise scheue Krill attackiert nun Schiffe und orbitale Strukturen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.'''
 
 SM_TREE
 Dysonwald
 SM_TREE_DESC
-'''Der Dysonwald setzt sich aus vielerlei im Weltraum entwickelten "Bäume" mit dichtem Astwerk zusammen. Die Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Sie dehnen sich aus und es wird schwierig sie mit fortschreitendem Alter auszurotten. Von Zeit zu Zeit senden sie Samen aus um andere Sterne zu besiedeln.'''
+'''Der Dysonwald setzt sich aus vielerlei im Weltraum entwickelten "Bäumen" mit dichtem Astwerk zusammen. Die Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Sie dehnen sich aus und es wird schwierig sie mit fortschreitendem Alter auszurotten. Von Zeit zu Zeit senden sie Samen aus um andere Sterne zu besiedeln.'''
 
 SM_SEED
 Dysonsamen
 SM_SEED_DESC
-Dysonwälder produzieren von Zeit zu Zeit Samen, welche über die Sternstraßen neue Wälder um andere Sterne gründen können.
+Dysonwälder produzieren von Zeit zu Zeit Samen, welche sich über die Sternstraßen verbreiten, um neue Wälder in anderen Sternensystemen gründen können.
 
 SM_FLOATER
 Schwimmer
 SM_FLOATER_DESC
-Gasgefüllt Knollartiger Beutel, der im Weltraum umhertreibt.
+Gasgefüllter knollartiger Beutel, der im Weltraum umhertreibt.
 
 SM_DRAGON
 Vakuumdrache
@@ -290,12 +290,12 @@ Schreckliches, riesiges Monster, das im Raum auf Beutezug umherschleicht.
 SM_DRONE
 Drohne
 SM_DRONE_DESC
-'''Als Werkzeug eines vergessenen Krieges erfüllt die Drohnen immer noch seinen ursprünglichen Zweck: gedankenlos Schiffe in Reichweite angreifen.'''
+'''Als Werkzeug eines vergessenen Krieges erfüllen die Drohnen immer noch ihren ursprünglichen Zweck: gedankenlos Schiffe in Reichweite angreifen.'''
 
 SM_DRONE_FACTORY
 Drohnenfabrik
 SM_DRONE_FACTORY_DESC
-In einem lang vergessenen Krieg erbaut um die vor ewigen Zeiten verschwundenen Erbauer zu schützen erfüllt die Drohnenfabrik erstaunlicherweise immer noch ihre Funktion langsam neue Drohnen zu erstellen.
+In einem lang vergessenen Krieg erbaut, um die vor ewigen Zeiten verschwundenen Erbauer zu schützen, erfüllt die Drohnenfabrik erstaunlicherweise immer noch ihre Funktion, langsam neue Drohnen zu erstellen.
 
 SM_GUARD_1
 Wache
@@ -325,7 +325,7 @@ Ein gewaltiges, mittelschweres Weltraummonster.
 SM_KRAKEN_3
 Großer Kraken
 SM_KRAKEN_3_DESC
-Ein gewaltiges, mittelschweres Weltraummonster.
+Ein gewaltiges, schweres Weltraummonster.
 
 SM_BLACK_KRAKEN
 Schwarzer Kraken
@@ -425,7 +425,7 @@ FLD_ION_STORM
 Ionensturm
 
 FLD_ION_STORM_DESC
-Magnetischer Wirbel von relativistisch geladene Teilschen welcher die Sensoren einschränken kann und Schiffe und Planete beschädigt.
+Magnetischer Wirbel von relativistisch geladene Teilchen welcher die Sensoren einschränken kann und Schiffe und Planete beschädigt.
 
 FLD_MOLECULAR_CLOUD
 Molekularwolke
@@ -590,7 +590,7 @@ OPTIONS_DB_UI_GALAXY_MAP_POPUP
 Entscheidet ob ein Kontextmenü in der Galaxiekarte angezeigt werden soll.
 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Verwende schicke optimierte OpenGL 1.5 Zeicheneffekte für Systeme auf der Galaxiekarte verwenden. Kann bei älteren Grafikkarten Abstürze verursachen.
+Verwende schicke optimierte OpenGL 1.5 Zeicheneffekte für Systeme auf der Galaxiekarte. Kann bei älteren Grafikkarten Abstürze verursachen.
 
 OPTIONS_DB_STARLANE_THICKNESS
 Setzt die Breite der Sternstraßen in Pixeln fest.
@@ -599,28 +599,28 @@ OPTIONS_DB_STARLANE_CORE
 Breitenmultiplikator für die Hauptsternstraßen des Imperiums.
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
-Entscheidet ob Sternstraßen mit der Imperiumsfarbe gefärbt werden solle, wenn dieses Ressourcen über diese Sternstraßen tauschen kann.
+Entscheidet, ob Sternstraßen mit der Imperiumsfarbe gefärbt werden soll, wenn dieses Ressourcen über diese Sternstraßen tauschen kann.
 
 OPTIONS_DB_UNOWNED_STARLANE_COLOUR
-Setzt die Grundfarbe in der Sternstraßen gezeichnet werden.
+Setzt die Grundfarbe, in der Sternstraßen gezeichnet werden.
 
 OPTIONS_DB_FLEET_SUPPLY_LINES
-Entscheidet ob Flottenversorgungslinien mit Anzeigern in Imperiumsfarbe dargestellt werden sollen.
+Entscheidet, ob Flottenversorgungslinien mit Anzeigern in Imperiumsfarbe dargestellt werden sollen.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
-Setzt wie breite Flottenversorgungslinien gezeichnet werden sollen.
+Setzt, wie breite Flottenversorgungslinien gezeichnet werden sollen.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING
-Setzt in welchem Abstand die Punkte für Flottenversorgungslinien gezeichnet werden sollen.
+Setzt, in welchem Abstand die Punkte für Flottenversorgungslinien gezeichnet werden sollen.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
-Setzt wie schnell die Punkte der Flottenversorgungslinien gezeichnet werden sollen.
+Setzt, wie schnell die Punkte der Flottenversorgungslinien gezeichnet werden sollen.
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
-Entscheidet ob auf der Galaxiekarte die Aufklärungsreichweite als Kreis um Objekte angezeigt werden.
+Entscheidet, ob auf der Galaxiekarte die Aufklärungsreichweite als Kreis um Objekte angezeigt wird.
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY
-Sets detection circle transparency.
+Setzt die Transparenz des Kreises, der die Aufklärungsreichweite anzeigt.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Zwinge den Client dazu keinen Server zu starten, selbst wenn ein Spiel auf dem lokalen Rechner eröffnet wird, im Einzelspielermodus gespielt wird, usw.
@@ -815,13 +815,13 @@ OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Setzt die Größe der Systemsymbole.
 
 OPTIONS_DB_UI_SYSTEM_FOG
-Entscheidet ob Kriegsnebel mit Rasterlinienschattierung über Systemsymbole gezeichnet werden soll.
+Entscheidet, ob Kriegsnebel mit Rasterlinienschattierung über Systemsymbole gezeichnet werden soll.
 
 OPTIONS_DB_UI_SYSTEM_FOG_SPACING
 Setzt den Abstand in Pixeln zwischen den Rasterlinien des Kriegsnebels.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLES
-Entscheidet ob Kreise um Systeme gezeichnet werden sollen.
+Entscheidet, ob Kreise um Systeme gezeichnet werden sollen.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
 Setzt die Größe der Kreise um Systeme auf der Karte, relativ zur Größe der Systemsymbole.
@@ -836,7 +836,7 @@ OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
 Setzt die minimale Vergrößerungsstufe ab der kleine Flottensymbole auf der Galaxiekarte angezeigt werden.
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Setzt die minimale Vergrößerungsstufe ab der winzige Flottensymbole angezeigt werden. Bei noch kleineren Vergrößerungen werden auf der Galaxiekarte keine Flottensymbole mehr angezeigt.
+Setzt die minimale Vergrößerungsstufe, ab der winzige Flottensymbole angezeigt werden. Bei noch kleineren Vergrößerungen werden auf der Galaxiekarte keine Flottensymbole mehr angezeigt.
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Setzt die Größe des Flottenauswahlindikators (relativ zum Flottensymbol).
@@ -869,11 +869,11 @@ OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
 Setzt die Größe der am kleinsten gezeichneten rotierenden Planeten im Seitenfenster.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
-Setzt ob Planeten im Seitenfenster gezeigt werden sollen.
+Setzt, ob Planeten im Seitenfenster gezeigt werden sollen.
 
 OPTIONS_DB_GAMESETUP_SEED
 '''Die Saat wird zur zufälligen Erzeugung der Galaxie verwendet.
-Galaxien, welche mit den gleichen Einstellungen und die gleichen Saat erzeugt worden sind, werden identisch sein.'''
+Galaxien, welche mit den gleichen Einstellungen und der gleichen Saat erzeugt worden sind, werden identisch sein.'''
 
 OPTIONS_DB_GAMESETUP_STARS
 '''Die ungefähre Anzahl der Systeme, die in der Galaxie  erzeugt werden soll.
@@ -930,7 +930,7 @@ OPTIONS_DB_SAVE_DIR
 Das Verzeichnis in welchem die Spielstände gespeichert und geladen werden.
 
 OPTIONS_DB_RESOURCE_DIR
-Setzt das Stammverzeichnis für die Spielressoucen (Spielinhalte und Daten)
+Setzt das Stammverzeichnis für die Spielressoucen (Spielinhalte und Daten).
 
 OPTIONS_DB_LOG_LEVEL
 Setzt den Grad ab dem Meldungen im Log aufgezeichnet werden. (Grade in abfallender Gesprächigkeit: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)
@@ -978,7 +978,7 @@ OPTIONS_DB_CHECKED_GL_VERSION
 Speichert ob die OpenGL Version des Systems überprüft wurde. Wenn nicht, werden einige Zeichenoptionen abhängig von der GL Version angepasst, nachdem die Version überprüft wurde.
 
 OPTIONS_DB_RESET_FSSIZE
-Speichert ob der Vollbildmodus zu den gespeicherten Wert zurückgesetzt werden soll. Wenn nicht gesetzt wird die gespeicherte Auflösung genutzt, ansonsten wird die höchste Auflösung genutzt, welche unterstützt wird.
+Speichert ob der Vollbildmodus zu den gespeicherten Wert zurückgesetzt werden soll. Wenn nicht gesetzt, wird die gespeicherte Auflösung genutzt, ansonsten wird die höchste Auflösung genutzt, welche unterstützt wird.
 
 OPTIONS_DB_AUTO_EFFECT_DESC
 Entscheidet ob automatisch erzeugte Texte in die Beschreibung von Technologien, Gebäuden und Schiffsteilen eingefügt werden.
@@ -1425,7 +1425,7 @@ OPTIONS_FULLSCREEN
 Vollbild
 
 OPTIONS_FULLSCREEN_MONITOR_ID
-Vollkbild Monitor ID
+Vollbild Monitor ID
 
 OPTIONS_SHOW_FPS
 Zeige FPS
@@ -2139,7 +2139,7 @@ SHIP_DAMAGE_STAT_TITLE
 Schaden
 
 SHIP_DAMAGE_STAT_MAIN
-Gesamter Schaden der die Waffen des Schiffes pro Kampfrunde anrichten.
+Gesamter Schaden, den die Waffen des Schiffes pro Kampfrunde anrichten.
 
 SHIP_SPEED_STAT_TITLE
 Geschwindigkeit
@@ -2198,7 +2198,7 @@ Erkundung beenden
 ###############
 
 MOD_NONE
-Keine Handlung des Noderators
+Keine Handlung des Moderators
 
 MOD_CREATE_PLANET
 Planet hinzufügen
@@ -2740,7 +2740,7 @@ Frieden ist der diplomatische Zustand zwischen Imperien, in welchem beide Partei
 OUTPOSTS_TITLE
 Außenposten
 OUTPOSTS_TEXT
-'''Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auf, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.'''
+'''Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auch, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.'''
 
 GROWTH_FOCUS_TITLE
 Wachstumsfokus
@@ -2825,9 +2825,9 @@ Imperien haben eines Erkennungsstärke Mass.'''
 DETECTION_RANGE_TITLE
 Erkennungsreichweite
 DETECTION_RANGE_TEXT
-'''The Detection Range represents the number of uus sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
+'''Die Erkennungsreichweite sagt aus, wie weit die Sensoren reichen. Ein Imperium kann nur Objekte erkennen, deren  [[encyclopedia STEALTH_TITLE]] kleiner oder gleich der [[encyclopedia DETECTION_TITLE]] sind und innerhalb der Erkennungsreichweite eines eigenen Raumschiffes oder Planeten liegt.
 
-Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles in the Galaxy Map section of the Options menu.'''
+Raumschiffe und Planeten haben einen Erkennungsreichweitenanzeiger. Es gibt im Optionsmenü die Möglichkeit, die Erkennungsreichweite für die Galaxiekarte anzuzeigen oder auszublenden.'''
 
 TROOP_TITLE
 Truppen
@@ -2837,24 +2837,24 @@ TROOP_TEXT
 Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationierten Einheiten wieder. Ein Angreifer muss mit einem höheren Truppenwert angreifen, wenn er einen Planeten erfolgreich erobern will.'''
 
 ORGANIC_SPECIES_TITLE
-Organic Metabolism
+Organischer Stoffwechsel
 ORGANIC_SPECIES_TEXT
-'''Organic species are more or less, 'life as we know it'.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
+'''Organische Spezies meint mehr oder weniger "Leben, wie wir es kennen". Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein organischer Wachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist.'''
 
 LITHIC_SPECIES_TITLE
-Lithic Metabolism
+Lithischer Stoffwechsel
 LITHIC_SPECIES_TEXT
-'''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+'''Lithische Spezies sind Silizium- oder Mineral-basierend. Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein lithischer Wachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist.'''
 
 ROBOTIC_SPECIES_TITLE
-Robotic Metabolism
+Roboter Stoffwechsel
 ROBOTIC_SPECIES_TEXT
-'''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
+'''Roboterspezies sind intelligente Maschinen. Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein Roboterwachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist. Roboterwachstums-Boni sind markiert mit einem kleinen roten "R" in der Ecke.'''
 
 PHOTOTROPHIC_SPECIES_TITLE
-Phototrophic Metabolism
+Phototropher Stoffwechsel
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better.  Growth specials do not benefit them.
+'''Phototrophe Spezies leben hauptsächlich oder vollständig durch Sonnelicht. Die maximalen Bevölkerungen dieser Spezies sind stark beeinflusst von der Helligkeit des Sternes im jeweiligen System - umso heller, desto besser. Es gibt keine speziellen Wachstumsboni.
 
 Population changes:
 Blue Star: Tiny +3 , Small +6 , Medium +9 , Large +12 , Huge +15.
@@ -2888,27 +2888,29 @@ FUEL_TEXT
 SUPPLY_TITLE
 Versorgung
 SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
+'''Versorgungslinien werden durch in den Imperiumsfarben markierte Sternenstraßen angezeigt. Planeten, die durch Versorgungslinien verbunden sind, teilen ihre physikalischen Ressourcen -- die erzeugte Produktion eines Planeten kann von anderen verbundenen Planeten genutzt werden, um Schiffe oder Gebäude zu herzustellen. Versorgungslinien können außerdem die [[encyclopedia FUEL_TITLE]] von Raumschiffen auffüllen.
 
-The supply meter on a planet represents the number of star-lanes supply can reach.'''
+Der Versorgungsgrad eines Planeten zeigt die Entfernung an, die die Versorgung erreicht.'''
 
 
 FLEET_UPKEEP_TITLE
 Flotten Unterhalt
 FLEET_UPKEEP_TEXT
-'''Die Unterhaltskosten einer Flotte sind mehr als die summe der Kosten aller Schiffe, da die Betriebs- und Verwaltungskosten von mehreren Schiffen dazu kommen. Wenn neue Schiffe produziert werden, steigen die Kosten um 1% für jedes Schiff im besitzt des Imperiums. Die Kosten von [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] und [[shippart CO_OUTPOST_POD]] im Gegensatz steigen um 6% für jeden Planeten im besitzt des Imperiums.'''
+'''Die Unterhaltskosten einer Flotte sind mehr als die Summe der Kosten aller Schiffe, da die Betriebs- und Verwaltungskosten von mehreren Schiffen dazu kommen. Wenn neue Schiffe produziert werden, steigen die Kosten um 1% für jedes Schiff im Besitz des Imperiums. Die Kosten von [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] und [[shippart CO_OUTPOST_POD]] im Gegensatz steigen um 6% für jeden Planeten im Besitz des Imperiums.'''
 
 EVACUATION_TITLE
 Evakuierung
 EVACUATION_TEXT
-'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
-During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''
+'''Das [[buildingtype BLD_EVACUATION]]sprojekt, wenn es gebaut wird, entfernt die Bevölkerung vom Planeten. Jede Runde wird ein Anteil entfernt. Wenn es kolonisierte Planeten derselben Spezies mit genügend freiem Platz gibt, die über die Versorgungslinien verbunden sind, wird einer zufällig ausgesucht und die Bevölkerung dorthin evakuiert. Ist kein entsprechender Planet vorhanden, wird die Bevölkerung in den Weiten des Alls verschwinden.
+Während der Evakuierung fällt die Produktion auf Null. Wenn die Kolonie leer ist, entsteht ein [[encyclopedia OUTPOSTS_TITLE]]. Er gehört demselben Imperium und kann wieder kolonisiert werden, sobald sich das [[buildingtype BLD_EVACUATION]] selbst gelöscht hat'''
 
 AI_LEVELS_TITLE
-KI Aggression Levels
+KI-Aggressionsniveau
 
 AI_LEVELS_TEXT
-'''KI aggression levels are meant to be roughly akin to difficulty levels, but not exactly, particularly in that they are differentiated in various aspects of risk-taking and aggression, with only some actual limitations being applied to the lower level ones. They can all still play pretty well, but the lower aggression ones may be a bit easier to manage, even if not necessarily easier to actually take over. The more aggressive ones do a bit better over the course of a game.
+'''Das KI-Aggressionsniveau bestimmt grob das Schwierigkeitslevel.
+
+ are meant to be roughly akin to difficulty levels, but not exactly, particularly in that they are differentiated in various aspects of risk-taking and aggression, with only some actual limitations being applied to the lower level ones. They can all still play pretty well, but the lower aggression ones may be a bit easier to manage, even if not necessarily easier to actually take over. The more aggressive ones do a bit better over the course of a game.
 
 AIs rename their capitol planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
 The current prefixes are:
@@ -2991,7 +2993,7 @@ TURN_PROGRESS_PHASE_ORDERS
 Führe Befehle aus
 
 TURN_PROGRESS_COLONIZE_AND_SCRAP
-Kolonisation, Invasion, und Verschrottung
+Kolonisation, Invasion und Verschrottung
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Lade und entpacke neue Spielzustände
@@ -3009,10 +3011,10 @@ TURN_BEGIN
 Beginne Runde %1%
 
 ERROR_PROCESSING_SERVER_MESSAGE
-Error processing message from server
+Fehler bei der Verarbeitung einer Server-Nachricht.
 
 ERROR_EARLY_TURN_UPDATE
-Received unexpected turn update from server.
+Unerwartetes Rundenupdate vom Server.
 
 ########################
 # Messages Panel       #
@@ -3222,37 +3224,37 @@ Schiff des Imperiums zerstört
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM
 Ein %shipdesign% wurde auf %system% zerstört.
 SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM_LABEL
-Unowned Ship Destroyed
+Fremdes Schiff zerstört
 
 SITREP_FLEET_DESTROYED_AT_SYSTEM
-The %empire% fleet %fleet% was destroyed at %system%.
+Die %empire% Flotte %fleet% wurde in %system% zerstört.
 SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL
-Empire Fleet Destroyed
+Imperiumsflotte wurde zerstört
 
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM
-The fleet %fleet% was destroyed at %system%.
+Die Flotte %fleet% wurde in %system% zerstört.
 SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM_LABEL
-Unowned Fleet Destroyed
+Fremde Flotte zerstört
 
 SITREP_PLANET_DESTROYED_AT_SYSTEM
-The %empire% planet %planet% was destroyed at %system%.
+Der zu %empire% gehörende Planet %planet% wurde in %system% zerstört.
 SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL
-Empire Planet Destroyed
+Imperiumsplanet wurde zerstört
 
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM
-The planet %planet% was destroyed at %system%.
+Der Planet %planet% wurde in %system% zerstört.
 SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM_LABEL
-Unowned Planet Destroyed
+Fremder Planet zerstört
 
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-The %empire% building %building% on planet %planet% was destroyed at %system%.
+Das %empire% gehörende Gebäude %building% auf dem Planeten %planet% wurde in %system% zerstört.
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
-Empire Building Destroyed
+Imperiumsgebäude zerstört
 
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
-The building %building% on planet %planet% was destroyed at %system%.
+Das Gebäude %building% auf dem Planeten %planet% wurde in %system% zerstört.
 SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM_LABEL
-Unowned Building Destroyed
+Fremdes Gebäude zerstört
 
 SITREP_OBJECT_DAMAGED_AT_SYSTEM
 Ein Objekt wurde in %system% beschädigt.
@@ -3262,32 +3264,32 @@ Objekt beschädigt
 SITREP_SHIP_DAMAGED_AT_SYSTEM
 Das %empire% %shipdesign% '%ship%' wurde in %system% beschädigt.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
-Empire Ship Damaged
+Imperiumsschiff beschädigt
 
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM
 Ein %shipdesign% wurde in %system% beschädigt.
 SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM_LABEL
-Unowned Ship Damaged
+Fremdes Schiff beschädigt
 
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
-Der Planet %planet% im System %system% vom Imperium %empire% ist Bombardiert worden.
+Der Planet %planet% im System %system% vom Imperium %empire% ist bombardiert worden.
 SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
-Imperium Planet Bombardiert
+Imperiumsplanet bombardiert
 
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
-Der Planet %planet% von %system% ist Bombardiert worden.
+Der Planet %planet% von %system% ist bombardiert worden.
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
-Unbekannter Planet Bombardiert
+Unbekannter Planet bombardiert
 
 SITREP_GROUND_BATTLE
-A ground battle occurred on %planet%.
+Ein Bodenangriff fand auf %planet% statt.
 SITREP_GROUND_BATTLE_LABEL
-Ground Battle
+Bodenangriff
 
 SITREP_PLANET_CAPTURED
 %planet% wurde von %empire% erobert.
 SITREP_PLANET_CAPTURED_LABEL
-Planet Captured
+Planet erobert
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
 Die Siedlung auf %planet% wurde ausgelöscht.
@@ -3375,17 +3377,17 @@ EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
 Trockendockreparatur
 
 EFFECT_MONSTER_SPAWNING
-A %predefinedshipdesign% was spawned in %system%!
+Ein %predefinedshipdesign% ist in %system% aufgetaucht!
 EFFECT_MONSTER_SPAWNING_LABEL
-Monster Spawn
+Monster aufgetaucht
 
 EFFECT_GAIAN_TERRAFORM
-The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.
+Der Gaiaplanet %planet% hat sich eigenständig terraformiert zu besseren Lebensbedingungen für seine Einwohner.
 EFFECT_GAIAN_TERRAFORM_LABEL
-Gaia Terraform
+Gaia terraformiert
 
 EFFECT_TERRAFORM
-%planet% wurde Terraformiert.
+%planet% wurde terraformiert.
 EFFECT_TERRAFORM_LABEL
 Terraform
 
@@ -3395,69 +3397,69 @@ EFFECT_STARVATION_LABEL
 Hungersnot
 
 EFFECT_TAME_MONSTER_HATCHED
-A tamed %predefinedshipdesign% is ready for service at %planet%.
+Ein gezähmtes %predefinedshipdesign% ist auf %planet% bereit zum Dienst.
 EFFECT_TAME_MONSTER_HATCHED_LABEL
-Monster Hatched
+Monster ausgebrütet
 
 EFFECT_TAME_MONSTER_MATURED
-A tame monster has matured into a more formidable %predefinedshipdesign% in the %system% system.
+Ein gezähmtes Monster ist im %system% zu dem stärkeren %predefinedshipdesign% gereift.
 EFFECT_TAME_MONSTER_MATURED_LABEL
-Monster Matured
+Monster gereift
 
 EFFECT_GATEWAY_VOID_DESTROY
-The %buildingtype% at %planet% destroyed the %fleet% fleet.
+Das %buildingtype% auf %planet% zerstörte die Flotte %fleet%.
 EFFECT_GATEWAY_VOID_DESTROY_LABEL
-Gateway Void Destroy
+Zerstörung durch Tor zur Leere
 
 EFFECT_DERELICT_MINERALS
-Twenty minerals were scavenged from an abandoned derelict at %system%.
+Zwanzig Minerale wurde in  %system% von einem herrenlosen Wrack eingesammelt.
 EFFECT_DERELICT_MINERALS_LABEL
-Derelict Minerals
+Wrack-Minerale
 
 EFFECT_DERELICT_MAP
 Informationen über die Gegend sind in einem verlassenes Wrack auf %system% gefunden worden.
 EFFECT_DERELICT_MAP_LABEL
-Karte aus eines Wrackes
+Karte aus einem Wrack
 
 EFFECT_DERELICT_FUEL
-Schiffe sind durch restlichen Treibstoff von verlassene Wracks auf %system% aufgetankt worden.
+Schiffe sind durch restlichen Treibstoff von verlassenen Wracks auf %system% aufgetankt worden.
 EFFECT_DERELICT_FUEL_LABEL
 Treibstoff aus Wrack
 
 EFFECT_BIOWEAPON
-%system% hat einiges von seiner Bevölkerung durch einen Biologischen Angrif verloren!
+%system% hat einiges von seiner Bevölkerung durch einen biologischen Angriff verloren!
 EFFECT_BIOWEAPON_LABEL
-Biowaffen Angrif
+Biowaffen-Angriff
 
 EFFECT_EXOBOT
-An Exobot colony ship has been built atEine Exobotskolonie wurde auf %planet% errichtet.
+Eine Exobotkolonie wurde auf %planet% errichtet.
 EFFECT_EXOBOT_LABEL
 Exobotschiff
 
 EFFECT_EVACUEES
-Evacuees have settled at %planet%.
+Evakuierte siedelten auf %planet%.
 EFFECT_EVACUEES_LABEL
-Evacuees
+Evakuierung
 
 EFFECT_STARGATE
-The fleet %fleet% has traveled by Stargate to the %system% system.
+Die Flotte %fleet% reiste durch das Sternentor ins %system% System.
 EFFECT_STARGATE_LABEL
-Stargate Use
+Sternentor genutzt
 
 EFFECT_PSY_DOM
-The %empire% ship %ship% has been psychically controlled!
+Das Schiff  %ship% der %empire% wurde psychisch kontrolliert!
 EFFECT_PSY_DOM_LABEL
-Psychogenic Domination
+Psychogenetische Beherrschung
 
 EFFECT_MINES
-The ships of %empire% fleet %fleet% have taken %rawtext% points of structure damage from mines in the %system% system.
+Die Schiffe der Flotte %fleet% von %empire%  haben  %rawtext% Punkte Strukturschaden von Minen im %system% System davongetragen.
 EFFECT_MINES_LABEL
-System Mines
+Systemminen
 
 EFFECT_MINES_SHIP_DESTROYED
 The %empire% ship %ship% has been destroyed by mines in the %system% system!
 EFFECT_MINES_SHIP_DESTROYED_LABEL
-System Mines Destroyed Ship
+Systemminem zerstörten Schiff
 
 
 
@@ -3527,7 +3529,7 @@ SP_HUMAN_DESC
 SP_SCYLIOR
 Scylior
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Besitzt drei Tentakel, aquatischen Nautilus.
+'''Besitzt drei Tentakel, aquatischer Nautilus.
 Bevorzugt ozeanische Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -5049,7 +5051,7 @@ Kolonisten
 PC_BATTLE_SPEED
 Kampf Geschwindigkeit
 PC_STARLANE_SPEED
-Sternstraße Geschwindigkeit
+Sternstraßen Geschwindigkeit
 PC_GENERAL
 Sonstiges
 
@@ -5704,16 +5706,16 @@ DESC_STATIONARY_NOT
  welches sich bewegt
 
 DESC_CAN_COLONIZE
- ein Spezies sein dass Kolonisieren kann
+ eine Spezies, die Kolonisieren kann
 
 DESC_CAN_COLONIZE_NOT
- without a species that can colonize
+ ohne eine Spezies, die Kolonisieren kann
 
 DESC_CAN_PRODUCE_SHIPS
- von einem Spezies dass Schiffe produzieren kann
+ von einer Spezies, die Schiffe produzieren kann
 
 DESC_CAN_PRODUCE_SHIPS_NOT
- without a species that can produce ships
+ ohne eine Spezies, die Schiffe produzieren kann
 
 DESC_SUPPLY_CONNECTED_FLEET
  that is in a system where the %1% empire can provide fleet supply
@@ -5884,7 +5886,7 @@ LRN_TRANSLING_THT
 Translinguistisches Denken
 
 LRN_TRANSLING_THT_DESC
-'''Does nothing. Later this can enable peaceful acquistion of native planets.
+'''Tut nichts. Später kann es ermöglichen, bewohnte Planeten friedlich zu übernehmen.
 
 Schwache Denker kämpfen mit den oder akzeptieren die Beschränkungen der Sprache, die sie erlernt haben; durchschnittliche Denker fühlen sich durch die etablierten Ausdrucksmöglichkeiten eingeengt; außergewöhnliche Denker können die Grenzen der Sprache überwinden und schaffen und analysieren Gedanken an der Grenze des Transzendenten. Doch lediglich großartige Denker bleiben isoliert und nutzlos, denn wie sollen sie ohne eine adequate Sprache ihre Geistesblitze ausdrücken?'''
 
@@ -5910,10 +5912,10 @@ LRN_XENOARCH
 Xenoarchäologie
 
 XENOARCH_SHORT_DESC
-Allows discoveries from Ruins
+Erlaubt Entdeckungen aus Uralten Ruinen.
 
 LRN_XENOARCH_DESC
-'''Allows discoveries from [[special ANCIENT_RUINS_SPECIAL]].
+'''Erlaubt Entdeckungen aus [[special ANCIENT_RUINS_SPECIAL]].
 
 Die gegenwärtigen Imperien, Rassen und Einzelsternzivilisationen sind nicht die ersten oder einzigen Wesen, die in dieser Galaxie gelebt haben. Überbleibsel, Ruinen und Gerüchte über die Alten finden sich auf verlassenen Planeten, leblosen Asteroiden oder treiben im leeren Weltraum. Der Fund und die Entzifferung solcher Hinweise bietet die Möglichkeit, alte Geheimnisse neu zu entdecken, von ihnen zu lernen oder auch vor altem Wissen gewarnt zu werden.
 
@@ -5929,7 +5931,7 @@ LRN_EVERYTHING
 Die einheitliche Theorie
 
 LRN_EVERYTHING_DESC
-Frühe, naive Theorien beschreiben Teilmengen der vier fundamentalen Naturkräften: Elektromagnetismus, die starke und die schwache Kernkraft sowie die Gravitation. Ein vollständiges Bezugssystem, welches all diese Kräfte als Sonderfälle einer einzigen Wechselwirkung darstellen kann ist der heilige Gral der Wissenschaft. Diese Theorie beschreibt die ersten Momente des Universums, die verzerrtesten Tiefen einer Singularität, die engsten Windungen versteckter Dimensionen und das endgültige Schicksal des Kosmos. Und doch können immer noch Ebenen des Seins über das hinaus "existieren", was beobachtet werden und durch die Wissenschaft beschrieben werden kann...
+Frühe, naive Theorien beschreiben Teilmengen der vier fundamentalen Naturkräften: Elektromagnetismus, die starke und die schwache Kernkraft sowie die Gravitation. Ein vollständiges Bezugssystem, welches all diese Kräfte als Sonderfälle einer einzigen Wechselwirkung darstellen kann, ist der heilige Gral der Wissenschaft. Diese Theorie beschreibt die ersten Momente des Universums, die verzerrtesten Tiefen einer Singularität, die engsten Windungen versteckter Dimensionen und das endgültige Schicksal des Kosmos. Und doch können immer noch Ebenen des Seins über das hinaus "existieren", was beobachtet werden und durch die Wissenschaft beschrieben werden kann...
 
 LRN_FORCE_FIELD
 Kraftfeldharmonik
@@ -5943,19 +5945,19 @@ LRN_MIND_VOID
 Der Geist der Leere
 
 LRN_MIND_VOID_DESC
-Wir sind nicht allein im Kosmos... aber könnte es noch mehr als das geben? Viele Kulturen besitzen Mythen, Legenden oder eine inbrünstige Überzeugung von der Existenz eines höheren Bewußtseins. Ob als liebender oder zorniger Gott, oder ein entfernter Beobachter, es besteht kein Zweifel, dass etwas, vielleicht das Universum selbst, auf irgend eine Art und Weise lebt, wacht, beobachtet.
+Wir sind nicht allein im Kosmos... Aber könnte es noch mehr als das geben? Viele Kulturen besitzen Mythen, Legenden oder eine inbrünstige Überzeugung von der Existenz eines höheren Bewußtseins. Ob als liebender oder zorniger Gott, oder ein entfernter Beobachter, es besteht kein Zweifel, dass etwas, vielleicht das Universum selbst, auf irgend eine Art und Weise lebt, wacht, beobachtet.
 
 LRN_TIME_MECH
 Zeitmechanik
 
 LRN_TIME_MECH_DESC
-Was sind das "Jetzt", die "Zukunft" und die "Vergangenheit"? Das Zwillingsparadoxon der speziellen Relativitätstheorie oder das theoretische "Wurmloch" an seiner Stelle kann man Frühform der "Zeitreise" verstehen. Die direkte Manipulation der Raumzeit und des Zeitflusses erlauben es, diese Effekte nutzbar zu machen und zu verstärken. Eingriffe in die Zeit können die Vergangenheit des von uns wahrgenommenen Universums zwar nicht wahrnehmlich verändern, sie können jedoch Zeitalter komprimieren oder Augenblicke zu willkürlichen Längen ausdehnen; die Nutzung der Zeit ist also nur durch beschränktes Material und die eigene Geduld limitiert...
+Was sind das "Jetzt", die "Zukunft" und die "Vergangenheit"? Das Zwillingsparadoxon der speziellen Relativitätstheorie oder das theoretische "Wurmloch" an seiner Stelle kann man als Frühform der "Zeitreise" verstehen. Die direkte Manipulation der Raumzeit und des Zeitflusses erlauben es, diese Effekte nutzbar zu machen und zu verstärken. Eingriffe in die Zeit können die Vergangenheit des von uns wahrgenommenen Universums zwar nicht wahrnehmlich verändern, sie können jedoch Zeitalter komprimieren oder Augenblicke zu willkürlichen Längen ausdehnen; die Nutzung der Zeit ist also nur durch beschränktes Material und die eigene Geduld limitiert...
 
 LRN_NDIM_SUBSPACE
 N-Dimensionaler Subraum
 
 LRN_NDIM_SUBSPACE_DESC
-Frühe Superstringtheorien sprachen von 10, 11 oder 26-dimensionalen Universen, wobei alle anderen außer den 4 Makrodimensionen so sehr "verdrillt" sind, das sie nicht sichtbar sind. Diese und weitere Dimensionen können nun aufgedreht und geöffnet werden, neue Ebenen und Blasen geschaffen werden, die es zuvor nicht gab; die Oberfläche des Raums selbst kann gedehnt und durch Materie durchbrochen werden, hin zu Ebenen der Existenz, die zuvor unter der Oberfläche von unserer beschränkten Wahrnehmung verborgen lagen.
+Frühe Superstringtheorien sprachen von 10, 11 oder 26-dimensionalen Universen, wobei alle anderen außer den 4 Makrodimensionen so sehr "verdrillt" sind, das sie nicht sichtbar sind. Diese und weitere Dimensionen können nun aufgedreht und geöffnet werden, neue Ebenen und Blasen geschaffen werden, die es zuvor nicht gab; die Oberfläche des Raums selbst kann gedehnt und durch Materie durchbrochen werden, hin zu Ebenen der Existenz, die zuvor unter der Oberfläche unserer beschränkten Wahrnehmung verborgen lagen.
 
 LRN_UNIF_CONC
 Vereintes Bewusstsein
@@ -5966,7 +5968,7 @@ LRN_UNIF_CONC_DESC
 Telepathische Verständigung zwischen Individuen oder Gedanken-Maschine Schnittstellen erlauben nur einfachsten, trivialsten und oberflächlichsten Austausch von Ideen. Wirklich vereinte Gedanken arbeiten als ein einziges Bewußtsein mit den gesamten Fähigkeiten und Wissen seiner Einzelteile, wie ein neues, einzigartiges Wesen. Diese Verschmelzung bietet ein gewaltiges Potential, doch auch ein nicht unwesentliches Risiko, insofern dass sich eine Einheit nicht wieder lösen kann. Alternativ kann es auch sein, dass ein Geist die anderen dominiert, kontrolliert oder zerstört anstatt eine gleiche, harmonische Vereinigung zu formen.'''
 
 LRN_QUANT_NET
-Quantum Networking
+Quanten Netzwerk
 
 LRN_QUANT_NET_DESC
 '''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
@@ -5979,7 +5981,7 @@ LRN_TRANSCEND
 Transzendenz
 
 LRN_TRANSCEND_DESC
-Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwollend oder böse und tyrannisch verhält? Behandelt ein Gott Sterbliche mit Sorgfalt und Liebe, Hass und Leid oder distanzierter Gleichgültigkeit? Ist ein Gott sich den unendlich vielen unbedeutenden Affären des physischen Universums bewußt, oder ist eine wahre Gottheit eine Entität fern jeder Beschreibung, das weder die Sterblichen verstehen, noch umgekehrt?
+Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwollend oder böse und tyrannisch verhält? Behandelt ein Gott Sterbliche mit Sorgfalt und Liebe, Hass und Leid oder distanzierter Gleichgültigkeit? Ist ein Gott sich der unendlich vielen unbedeutenden Affären des physischen Universums bewußt, oder ist eine wahre Gottheit eine Entität fern jeder Beschreibung, das weder die Sterblichen verstehen, noch umgekehrt?
 
 GRO_MEDICAL_PATH
 Medizinische Pathologie
@@ -6004,7 +6006,7 @@ CON_ENV_ENCAPSUL
 Habitate
 
 CON_ENV_ENCAPSUL_DESC
-Ummantelte und versiegelte Räume zur Beherbergung eines bestimmten Lebensraums sind für Raumreisen, die Besiedelung gefährlicher Planeten oder die Erhaltung der natürlichen Vielfalt auf stark industrialisierten Welten unerlässlich. Die Aufrechterhaltung der erwünschten Bedingungen ist nicht so simpel, wie es erscheinen mag, da es in vielen Fällen keine äußere Quelle für reine Materialien oder Organismen gibt. Es ist daher notwendig, eine selbstständige Umwelt, oft ein ganzes Ökosystem, zu erschaffen, das fähig ist, seine Abfälle wieder zu verwerten und alle seine Bedürfnisse selbst zu decken.
+Ummantelte und versiegelte Räume zur Beherbergung eines bestimmten Lebensraums sind für Raumreisen, die Besiedelung gefährlicher Planeten oder die Erhaltung der natürlichen Vielfalt auf stark industrialisierten Welten unerlässlich. Die Aufrechterhaltung der erwünschten Bedingungen ist nicht so simpel, wie es erscheinen mag, da es in vielen Fällen keine äußere Quelle für reine Materialien oder Organismen gibt. Es ist daher notwendig, eine selbständige Umwelt, oft ein ganzes Ökosystem, zu erschaffen, das fähig ist, seine Abfälle wieder zu verwerten und alle seine Bedürfnisse selbst zu decken.
 
 GRO_SYMBIOTIC_BIO
 Symbiotische Biologie
@@ -6036,7 +6038,7 @@ GRO_XENO_GENETICS
 Xenogenetik
 
 GRO_XENO_GENETICS_DESC
-'''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_ADEQUATE]] & [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10, sowie Planeten des Typs [[PE_HOSTILE]]; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.
+'''Erhöht die maximale Bevölkerung von Planeten des Typs [[PE_ADEQUATE]] & [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10, sowie Planeten des Typs [[PE_HOSTILE]]; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
@@ -6096,13 +6098,13 @@ PRO_MICROGRAV_MAN_DESC
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
-Die geringe Gravitation im niedrigen Orbit eines Planeten bietet großes Potential für einen neuartigen Aufbau für Fabriken, Ausrüstung und Techniken, die auf der Oberfläche des Planeten unmöglich wären. Feststoffe können mit minimalem Aufwand in Position gehalten werden. Flüssigkeiten und Gase treiben frei und werden nur durch die Oberflächenspannung verformt, sofern keine anderweitige Manipulation stattfindet. Die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewähren bei sinnvollem Einsatz einen deutlichen Anstieg der Produktion und dessen Effizienz.'''
+Die geringe Gravitation im niedrigen Orbit eines Planeten bietet großes Potential für einen neuartigen Aufbau von Fabriken, Ausrüstung und Techniken, die auf der Oberfläche des Planeten unmöglich wären. Feststoffe können mit minimalem Aufwand in Position gehalten werden. Flüssigkeiten und Gase treiben frei und werden nur durch die Oberflächenspannung verformt, sofern keine anderweitige Manipulation stattfindet. Die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewähren bei sinnvollem Einsatz einen deutlichen Anstieg der Produktion und dessen Effizienz.'''
 
 PRO_CORE_MINE
 Tiefenbergbau
 
 PRO_CORE_MINE_DESC
-'''Some sort of very aggressive mining goes here.
+'''Ermöglicht eine aggressive Art des Bergbaus.
 
 Der Druck und die Temperatur in Mantel und Kern terrestrischer Planeten erzeugt eine gewaltige Masse an Kristall- und Mineralverbindungen, die nur durch Vulkanismus an die Oberfläche gelangen. Die tieferen Atmosphärenschichten und Kernmaterialien von Gasplaneten enthalten noch exotischere Materialien und das in hohen Konzentrationen. Der Zugang zu den Materialien in diesen Regionen ist schwierig und riskant, aber im Vergleich zu traditionellen Oberflächenbergbau sehr vielversprechend.
 
@@ -6114,9 +6116,9 @@ Automatisierung
 PRO_ROBOTIC_PROD_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.1 per Population.
 
-Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Siedlungn einsetzen, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Siedlung erhält einen Standartsatz Exobots, welche die frühe Entwicklung der Siedlung maßgeblich beschleunigen.
+Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Siedlungen eingesetzt werden, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Siedlung erhält einen Standardsatz Exobots, welche die frühe Entwicklung der Siedlung maßgeblich beschleunigen.
 
-Obwohl das erste grundsätzliche Design von Produkten und der Aufbau von Fabriken noch aktiv überwacht werden muss, werden durch den Abzug von Arbeitern aus der Produktion viele Flaschenhälse beseitigt. Roboter arbeiten durchgehend und haben keine ständig steigenden Lohnansprüche. Sie sind besser für gefährliche Arbeitsbedingungen geeignet und brauchen keinen zusätzlichen Wohnraum außerhalb der Fabrik. Die ihnen zugewiesenen Aufgaben führen Roboter fehlerlos aus, zumindest aber so gut, wie sie instruiert wurden.'''
+Obwohl das erste grundsätzliche Design von Produkten und der Aufbau von Fabriken noch aktiv überwacht werden muss, werden durch den Abzug von Arbeitern aus der Produktion viele Engpässe beseitigt. Roboter arbeiten durchgehend und haben keine ständig steigenden Lohnansprüche. Sie sind besser für gefährliche Arbeitsbedingungen geeignet und brauchen keinen zusätzlichen Wohnraum außerhalb der Fabrik. Die ihnen zugewiesenen Aufgaben führen Roboter fehlerlos aus, zumindest aber so gut, wie sie instruiert wurden.'''
 
 PRO_EXOBOTS
 Exobots
@@ -6137,7 +6139,7 @@ PRO_FUSION_GEN_DESC
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
-Explosive beziehungsweise unkontrollierte thermonukleare Reaktionen sind recht einfach auszulösen, von kleinen taktischen Sprengköpfen hin zu unvorstellbaren stellaren Höllenfeuern. Kontrollierbare, stabile und in der Praxis einsetzbare Energieerzeugung ist um einiges schwieriger zu erreichen. Die Kontrolle des Fusionsprozesses bleibt nichtsdestotrotz erstrebenswert, da er nahezu unbegrenzt Energie erzeugt und eventuell keine Abfallprodukte anfallen.'''
+Explosive beziehungsweise unkontrollierte thermonukleare Reaktionen sind recht einfach auszulösen, von kleinen taktischen Sprengköpfen hin zu unvorstellbaren stellaren Höllenfeuern. Kontrollierbare, stabile und in der Praxis einsetzbare Energieerzeugung ist um einiges schwieriger zu erreichen. Die Kontrolle des Fusionsprozesses bleibt nichtdestotrotz erstrebenswert, da er nahezu unbegrenzt Energie erzeugt und eventuell keine Abfallprodukte anfallen.'''
 
 PRO_NANOTECH_PROD
 Nanotechnische Produktion
@@ -6183,7 +6185,7 @@ PRO_SINGULAR_GEN
 Singularitätskonstruktion
 
 PRO_SINGULAR_GEN_DESC
-'''Harnessing energy from a black hole is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains. By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
+'''Die Energie eines Schwarzen Loches nutzbar zu machen, ist um einiges gefährlicher, als von einem normalen Stern, doch hat dies das Potential für wesentlich höhere Erträge. Einen Generator zu bauen, um die Energie der Teilchen-Antiteilchen-Kollision am Ereignishorizont anzuzuzapfen, kann einen gewaltigen Beitrag zur Erhöhung der industriellen Produktion leisten.
 
 Wenn Materie durch eine intensive Raumzeitkrümmung oder ein Gravitationsfeld zu einer Singularität hingezogen wird, formt sie eine Gasscheibe, die sich stark erhitzt und komprimiert wird. Die Scheibe sendet eine hochenergetische Strahlung aus, die aufgefangen und zur Energiegewinnung verwandt werden kann. Der Ereignishorizont der Singularität sendet ebenfalls eine Strahlung aus, die durch die Vernichtung von Partikel-Antipartikelpaaren, die sich in der Nähe des Ereignishorizontes bilden, entsteht. Diese Variante der Energieerzeugung ist wesentlich heikler und instabiler als die aus der Strahlung der Gasscheibe, aber erzeugt auch deutlich mehr Energie.'''
 
@@ -6221,13 +6223,13 @@ CON_ARCH_MONOFILS
 Monofilament Architektur
 
 CON_ARCH_MONOFILS_DESC
-Praktisch unzerbrechliche Einzelkristallfilamente, die im Durchmesser nur wenige Atome messen, können die Dauerhaftigkeit und Kostengünstigkeit traditioneller Baumethoden verbessern. Die Fähigkeit, diese stärker belastbaren Materialien in vorher unmögliche Anordnungen anzubringen, eröffnet völlig neue Möglichkeiten. Leichte und zugleich zugfeste Filamente finden besondere Verwendung in großen orbitalen oder von der Oberfläche in den Orbit reichenden Gebäuden, bei denen die Veränderung der Schwerkraft entlang der Achse zuvor sehr hinderlich waren.
+Praktisch unzerbrechliche Einzelkristallfilamente, die im Durchmesser nur wenige Atome messen, können traditionelle Baumethoden dauerhafter und kostengünstiger machen. Die Fähigkeit, diese stärker belastbaren Materialien in vorher unmöglichen Anordnungen anzubringen, eröffnet völlig neue Möglichkeiten. Leichte und zugleich zugfeste Filamente finden besondere Verwendung in großen orbitalen oder von der Oberfläche in den Orbit reichenden Gebäuden, bei denen die Veränderung der Schwerkraft entlang der Achse zuvor sehr hinderlich war.
 
 CON_ASYMP_MATS
 Asymptotische Materialien
 
 CON_ASYMP_MATS_DESC
-Sobald gewisse Leistungsgrenzen überschritten werden, wird die relative Messung der physikalischen Eigenschaften von Materialien außer auf exponentiellen oder logarithmischen Skalen unhandlich. Genau wie bei der Supraleitfähigkeit in der Elektronik werden die Zugstärke, Härte, Dichte, Elastizität, der Refraktionsindex und andere mechanische Eigenschaften von Materialien praktisch grenzenlos kontrollierbar. Durch die Beseitigung aller vorigen Hindernisse öffnen sich neue Möglichkeiten für Gebäude, so dass sie im gleichen Maße wie der Fortschritt der Materialtechnik verbessert werden können.
+Sobald gewisse Leistungsgrenzen überschritten werden, wird die relative Messung der physikalischen Eigenschaften von Materialien außer auf exponentiellen oder logarithmischen Skalen unhandlich. Genau wie bei der Supraleitfähigkeit in der Elektronik werden die Zugstärke, Härte, Dichte, Elastizität, der Refraktionsindex und andere mechanische Eigenschaften von Materialien praktisch grenzenlos kontrollierbar. Durch die Beseitigung aller vorherigen Hindernisse öffnen sich neue Möglichkeiten für Gebäude, so dass sie im gleichen Maße wie der Fortschritt der Materialtechnik verbessert werden können.
 
 CON_FRC_ENRG_STRC
 Force-Energy Structures
@@ -6271,7 +6273,7 @@ Transzendente Architektur
 CON_TRANS_ARCH_DESC
 '''Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
 
-Der Inbegriff von Design vereint optimale Funktionalität mit Formschönheit. Eine transzendiertes Gebäude erweitert und inspiriert die Gedanken seiner Bewohner oder Betrachter - durch seine Form, Platzierung, Substanz und Integration, ob durch überwältige Größe, perfekte Hervorhebung einer Idee, Sichtweise oder das Fehlen einer solchen, oder durch bloße Einfachheit und Zweckdienlichkeit.'''
+Der Inbegriff von Design vereint optimale Funktionalität mit Formschönheit. Ein transzendiertes Gebäude erweitert und inspiriert die Gedanken seiner Bewohner oder Betrachter - durch seine Form, Platzierung, Substanz und Integration, ob durch überwältige Größe, perfekte Hervorhebung einer Idee, Sichtweise oder das Fehlen einer solchen, oder durch bloße Einfachheit und Zweckdienlichkeit.'''
 
 CON_ORBITAL_HAB
 Orbitale Wohnanlagen
@@ -6287,7 +6289,7 @@ CON_NDIM_STRC_DESC
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
-Von allen bizzaren Kunststücken der angewandten Physik hat die Fähigkeit, den Raum in sich selbst zu falten, den direktesten und tiefgreifendsten Einfluss auf die Form und das Design von Gebäuden. Das Potential ist endlos, und das wortwörtlich: Flure biegen sich zurück an ihren Beginn oder werden so verdreht, dass ihre Decke der Boden wird. Darüber hinaus löst sich das Konzept des Städtewachstums in Wohlgefallen auf, da eine beliebige Anzahl Personen in einem willkürlich kleinen Volumen untergebracht werden können, sicher in einer angrenzenden Existenzebene untergebracht.'''
+Von allen bizzaren Kunststücken der angewandten Physik hat die Fähigkeit, den Raum in sich selbst zu falten, den direktesten und tiefgreifendsten Einfluss auf die Form und das Design von Gebäuden. Das Potential ist endlos, und das wortwörtlich: Flure biegen sich zurück an ihren Beginn oder werden so verdreht, dass ihre Decke der Boden wird. Darüber hinaus löst sich das Konzept des Städtewachstums in Wohlgefallen auf, da eine beliebige Anzahl Personen in einem willkürlich kleinen Volumen sicher in einer angrenzenden Existenzebene untergebracht werden können.'''
 
 SHP_GAL_EXPLO
 Galaktische Erkundung
@@ -6616,7 +6618,7 @@ GRO_TERRAFORM
 Terraforming
 
 GRO_TERRAFORM_DESC
-Die Umwelt eines Planeten zu verändern is eine gewaltige Aufgabe, die Herausforderung ist zu einem großen Teil logistischer Natur. Die exakte Methode hängt sehr stark von der Art des Planeten ab der verändert werden soll und was das erwünschte Resultat ist. Auf jeden Fall muss ein großer Teil der Oberfläche des gesamten Planeten und seiner Atmosphäre, in andere Moleküle umgewandelt, ins Weltall entsorgt oder unter der Kruste vergraben werden. Für diesen Prozess muss ein Großteil des Planeten für die Terraformer erreichbar sein und er kann nicht nicht auf Welten mit einer maximalen Bevölkerung von weniger als eins durchgeführt werden.
+Die Umwelt eines Planeten zu verändern is eine gewaltige Aufgabe, die Herausforderung ist zu einem großen Teil logistischer Natur. Die exakte Methode hängt sehr stark von der Art des Planeten ab, der verändert werden soll und was das erwünschte Resultat ist. Auf jeden Fall muss ein großer Teil der Oberfläche des gesamten Planeten und seiner Atmosphäre, in andere Moleküle umgewandelt, ins Weltall entsorgt oder unter der Kruste vergraben werden. Für diesen Prozess muss ein Großteil des Planeten für die Terraformer erreichbar sein und er kann nicht auf Welten mit einer maximalen Bevölkerung von weniger als eins durchgeführt werden.
 
 GRO_TERRAFORM_SHORT_DESC
 Ermöglicht Terraforming
@@ -6631,7 +6633,7 @@ GRO_BIOTERROR
 Bioterroranlage
 
 GRO_BIOTERROR_DESC
-Ein Forschungszentrum erschaffen um sicher die gefährlichsten Biologischen Waffen zu entwickeln, versteckt vor neugierigen Augen. Biologische Waffen wirken zu langsam um in einem offenen miliärischen Konflikt wirksam zu sein, als Terrorwaffe sind sie unerreicht, eine langsam wachsende Kontamination verbreitet Angst und Schrecken vor ihr, Bilder von Verzweifelten Personen in Quarantäne gehalten durch ihre eigene Regierung sähen Verzweiflung jenseits der betroffenen Gebiete. Jedoch müssen größte Sicherheitsmaßnahmen eingehalten werden, wenn man solche Organismen entwickelt, um sicherzustellen, dass sie nicht versehentlich freigesetzt werden, außerdem ist strikte Geheimhaltung notwendig um nicht zu riskieren, dass Diplomatische Beziehungen mit anderen Imperien un der eigenen Bevölkerung leiden.
+Ein Forschungszentrum erschaffen, um sicher die gefährlichsten Biologischen Waffen zu entwickeln, versteckt vor neugierigen Augen. Biologische Waffen wirken zu langsam um in einem offenen miliärischen Konflikt wirksam zu sein, als Terrorwaffe sind sie unerreicht, eine langsam wachsende Kontamination verbreitet Angst und Schrecken. Bilder von verzweifelten Personen, in Quarantäne gehalten durch ihre eigene Regierung, säen Verzweiflung jenseits der betroffenen Gebiete. Jedoch müssen größte Sicherheitsmaßnahmen eingehalten werden, wenn man solche Organismen entwickelt, um sicherzustellen, dass sie nicht versehentlich freigesetzt werden. Außerdem ist strikte Geheimhaltung notwendig, um nicht zu riskieren, dass diplomatische Beziehungen mit anderen Imperien und zur eigenen Bevölkerung leiden.
 
 GRO_REMOTE_TERRAFORM_SHORT_DESC
 Allows remote terraforming
@@ -6679,7 +6681,7 @@ Stellartomographie
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus per Population by 1, 0.75, 0.5, or 0.2 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
 
-Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im inneren eines Sterns rekonstruieren. Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.'''
+Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im Inneren eines Sterns rekonstruieren. Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.'''
 
 LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
@@ -6699,7 +6701,7 @@ LRN_ENCLAVE_VOID
 Enklave der Leere
 
 LRN_ENCLAVE_VOID_DESC
-Das Studium des Geistes der Leere könnte beschleunigt werden, indem man die Bevölkerung einer ganzen Welt genetisch so manipuliert, dass sie auf die Leere abgestimmt wird. Diese neue Priesterklasse könnte die Sozialstruktur ihrer Welt auf eine Weise umstellen, dass sie die Weisheit des Geistes der Leere besser verstehen können und an das ganze Imperium weiterleiten können.
+Das Studium des Geistes der Leere könnte beschleunigt werden, indem man die Bevölkerung einer ganzen Welt genetisch so manipuliert, dass sie auf die Leere abgestimmt wird. Diese neue Priesterklasse könnte die Sozialstruktur ihrer Welt auf eine Weise umstellen, dass sie die Weisheit des Geistes der Leere besser verstehen und an das ganze Imperium weiterleiten können.
 
 LRN_ART_BLACK_HOLE
 Künstliches schwarzes Loch
@@ -6736,7 +6738,7 @@ Industriezentren
 PRO_INDUSTRY_CENTER_I_DESC
 '''Industrielle Prozesse zwischen Planeten und Sternensystemen können in großen, zentralisierten Komplexen koordiniert werden.
 
-Die Baukosten, die Bauzeit dieses Gebäudes und auch sein zukünftiges Wachstumspotential setzen eine sorgfältige Planung voraus um an einem Ort zu produzieren der in der ZUkunft am nützlichsten sein wird. Um grosse Gewinnspannen zu ermöglichen, sind entsprechende Vorinvestitionen unvermeidlich, sowohl was die Baustoffe, als auch die Bauzeit betrifft. Dagegen sind die wissenschaftlichen Vorraussetzungen minimal; dieses Gebäude ist damit für Produktions-orientierte Strategien geeignet, nicht aber auf Forschung ausgerichtete Imperien.'''
+Die Baukosten, die Bauzeit dieses Gebäudes und auch sein zukünftiges Wachstumspotential setzen eine sorgfältige Planung voraus, um an einem Ort zu produzieren der in der Zukunft am nützlichsten sein wird. Um große Gewinnspannen zu ermöglichen, sind entsprechende Vorinvestitionen unvermeidlich, sowohl was die Baustoffe, als auch die Bauzeit betrifft. Dagegen sind die wissenschaftlichen Vorraussetzungen minimal; dieses Gebäude ist damit für produktionsorientierte Strategien geeignet, nicht aber für auf Forschung ausgerichtete Imperien.'''
 
 PRO_INDUSTRY_MOD
 Industry Modifier
@@ -6941,7 +6943,7 @@ SHP_WEAPON_2_4_DESC
 SHP_WEAPON_3_1
 Plasmakanone 1
 SHP_WEAPON_3_1_DESC
-'''Entsperrt den Plasmakanone, eine leistungsfähigere Schiffswaffe als den Laser.'''
+'''Entsperrt die Plasmakanone, eine leistungsfähigere Schiffswaffe als der Laser.'''
 
 SHP_WEAPON_3_2
 Plasmakanone 2
@@ -6982,7 +6984,7 @@ SHP_ION_CANNON
 Ionenkanone
 
 SHP_ION_CANNON_DESC
-Schaltet den Schiffsteil Ionenkanone frei.
+Schaltet das Schiffsteil Ionenkanone frei.
 
 SHP_WEAPON_1
 Massenkatapult
@@ -7000,7 +7002,7 @@ SHP_PULSE_LASER
 Impulslaser
 
 SHP_PULSE_LASER_DESC
-Schaltet den Schiffsteil Impulslaser frei.
+Schaltet das Schiffsteil Impulslaser frei.
 
 SHP_PHASOR
 Phasor
@@ -7030,7 +7032,7 @@ SHP_NUCLEAR_MISSILE
 Nuklearrakete
 
 SHP_NUCLEAR_MISSILE_DESC
-Schaltet den Schiffsteil Nuklearrakete frei.
+Schaltet das Schiffsteil Nuklearrakete frei.
 
 SHP_NEUTRONIUM_PLATE_NUC_MIS
 Neutronium Plated Nuclear Missile
@@ -7092,7 +7094,7 @@ The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_TITLE]] 
 
 
 SPY_STEALTH_1
-Elektromagneti scher Dämpfer
+Elektromagnetischer Dämpfer
 
 SPY_STEALTH_1_DESC
 Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
@@ -7141,13 +7143,13 @@ SHP_DEUTERIUM_TANK
 Deuteriumtank
 
 SHP_DEUTERIUM_TANK_DESC
-Schaltet den Schiffsteil Deuteriumtank frei.
+Schaltet das Schiffsteil Deuteriumtank frei.
 
 SHP_ANTIMATTER_TANK
 Antimaterietank
 
 SHP_ANTIMATTER_TANK_DESC
-Schaltet den Schiffsteil Antimaterietank frei.
+Schaltet das Schiffsteil Antimaterietank frei.
 
 SHP_ROOT_ARMOR
 Panzerplatten
@@ -7303,7 +7305,7 @@ PRO_INDUSTRY_CENTER_II
 Erweitertes Industriezentrum
 
 PRO_INDUSTRY_CENTER_II_DESC
-Ein zentralisieres Management verstreuter Industrieprozesse verbessert die Reichweite und die Größe der industriellen Produktion.
+Ein zentralisiertes Management verstreuter Industrieprozesse verbessert die Reichweite und die Größe der industriellen Produktion.
 
 PRO_INDUSTRY_CENTER_III
 Hochentwickeltes Industriezentrum
@@ -7328,7 +7330,7 @@ BLD_EVACUATION
 Evakuierung
 
 BLD_EVACUATION_DESC
-Entfernt die Bevölkerung dieser Planet über mehrere Runde. Wenn einen ersatz Planet verfügbar ist mit der gleichen Spezies und genügend Platz, wird die Bevölkerung dorthin befördert.
+Entfernt die Bevölkerung dieses Planeten über mehrere Runden. Wenn einen Ersatzplanet mit der gleichen Spezies und genügend Platz verfügbar ist, wird die Bevölkerung dorthin befördert.
 
 BLD_OBSERVATORY
 Observatorium
@@ -7363,13 +7365,13 @@ BLD_SHIPYARD_BASE
 Einfache Werft
 
 BLD_SHIPYARD_BASE_DESC
-Orbitale Produktionanlage für den Bau interstellarer militärischer Raumschiffe. Diese Werft muss existieren um Schiffe auf diesem Planeten produzieren zu können. Sie kann durch den Bau zusätzlicher Gebäude im selben System aufgerüstet werden. Es können keine Werftaufrüstungen gebaut werden ohne das diese Werft verfügbar ist.
+Orbitale Produktionsanlage für den Bau interstellarer militärischer Raumschiffe. Diese Werft muss existieren, um Schiffe auf diesem Planeten produzieren zu können. Sie kann durch den Bau zusätzlicher Gebäude im selben System aufgerüstet werden. Es können keine Werftaufrüstungen gebaut werden, ohne daß diese Werft verfügbar ist.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
 Orbitales Trockendock
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''Dies is eine Aufrüstung der [[buildingtype BLD_SHIPYARD_BASE]]. Diese wird für die Herstellung aller größeren Schiffshüllen und weitere Werftsaufrüstungen benötigt. Diese Erweiterung bietet auch die Reparaturfähigkeit beschädigte Schiffe in einer einzigen Runde zu reparieren.
+'''Dies ist eine Aufrüstung der [[buildingtype BLD_SHIPYARD_BASE]]. Diese wird für die Herstellung aller größeren Schiffshüllen und weitere Werftaufrüstungen benötigt. Diese Erweiterung bietet auch die Fähigkeit beschädigte Schiffe in einer einzigen Runde zu reparieren.
 
 When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 
@@ -7425,9 +7427,9 @@ BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
 Zellwachstum Kammer
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-'''Das ist eine verbesserung vom [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] und ermöglicht die Entwicklung von [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s und [[shiphull SH_BIOADAPTIVE]]s. Das Vorhandensein dieser Verbesserung und die [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] gleicher mass auf dem Planet erlaubt die Entwickelung des [[shiphull SH_ENDOSYMBIOTIC]] und [[shiphull SH_SENTIENT]].
+'''Das ist eine Verbesserung vom [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] und ermöglicht die Entwicklung von [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s und [[shiphull SH_BIOADAPTIVE]]s. Das Vorhandensein dieser Verbesserung und die [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] auf dem Planeten erlaubt die Entwicklung des [[shiphull SH_ENDOSYMBIOTIC]] und [[shiphull SH_SENTIENT]].
 
-Eine Werft Verbesserung die darauf Zielt, die Größe von einzelligen Organismen, um wirklich massiven Proportionen zu erhöhen.'''
+Eine Werft Verbesserung die darauf zielt, die Größe von einzelligen Organismen um wirklich massive Proportionen zu erhöhen.'''
 
 BLD_SHIPYARD_ORG_XENO_FAC
 Xenocoordination Facility
@@ -7485,7 +7487,7 @@ BLD_INDUSTRY_CENTER
 Industriezentrum
 
 BLD_INDUSTRY_CENTER_DESC
-'''Gibt am Anfang einen Bonus von 0.2 pro Bevölkerung auf [[encyclopedia INDUSTRY_TITLE]] für alle über [[encyclopedia SUPPLY_TITLE]] verbundenen Planeten mit Industrie.
+'''Gibt einen Bonus von 0.2 pro Bevölkerung auf [[encyclopedia INDUSTRY_TITLE]] für alle über [[encyclopedia SUPPLY_TITLE]] verbundenen Planeten mit Industrie.
 
 Die [[tech PRO_INDUSTRY_CENTER_II]] Aufrüstung verdoppelt den Bonus.
 
@@ -7510,7 +7512,7 @@ Weltraumlift
 BLD_SPACE_ELEVATOR_DESC
 '''Doubles [[encyclopedia SUPPLY_TITLE]] line range on the planet on which it is built.
 
-Die Nanokonstruktion eröffnen die Möglichkeit Kabel zu erschaffen, welche zugfest genug ist um über den geostationären Orbit zu reichen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und hochgefährlichen Raketenstarts überlegen. Ein enormes und nahezu unzerreissbares Kabel, dass an einem Ende mit einem Satelliten im niedrigen geostationären Orbit verbunden ist, und an dessen Ende zum Planeten hin sich eine Startplatform befindet.'''
+Die Nanokonstruktion eröffnet die Möglichkeit Kabel zu erschaffen, welche zugfest genug sind, um über den geostationären Orbit zu reichen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und hochgefährlichen Raketenstarts überlegen. Ein enormes und nahezu unzerreissbares Kabel, das an einem Ende mit einem Satelliten im niedrigen geostationären Orbit verbunden ist, und an dessen Ende zum Planeten hin sich eine Startplattform befindet.'''
 
 BLD_GENOME_BANK
 Genombank
@@ -7550,7 +7552,7 @@ Enklave der Leere
 BLD_ENCLAVE_VOID_DESC
 '''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.75 per Population.
 
-Die Bevölkerung eines ganzen Planeten wird genetisch auf den Geist der Leere ausgerichtet und widmen sich ganz der Aufgabe, seine Weisheit dem Imperium mitzuteilen. Die Mitglieder der Enklave der Leere werden als Priester erachtet und als Vermittler höherer Weisheit. In allen wichtigen Angelegenheiten des Imperiums wird ihr Rat eingeholt. Botschafter der Enklave können auch ausgesandt werden, um bei Forschungsprojekten des Imperiums mitzuwirken.'''
+Die Bevölkerung eines ganzen Planeten wird genetisch auf den Geist der Leere ausgerichtet und widmet sich ganz der Aufgabe, seine Weisheit dem Imperium mitzuteilen. Die Mitglieder der Enklave der Leere werden als Priester erachtet und als Vermittler höherer Weisheit. In allen wichtigen Angelegenheiten des Imperiums wird ihr Rat eingeholt. Botschafter der Enklave können auch ausgesandt werden, um bei Forschungsprojekten des Imperiums mitzuwirken.'''
 
 BLD_ART_BLACK_HOLE
 Künstliches schwarzes Loch
@@ -7824,7 +7826,7 @@ SR_WEAPON_1_4_DESC
 SR_WEAPON_2_1
 Laser 1
 SR_WEAPON_2_1_DESC
-'''Der Laser, eine viel leistungsfähigere Schiffswaffe als das Massenkatapult.'''
+'''Der Laser, eine viel leistungsfähigere Schiffswaffe als der Massenkatapult.'''
 
 SR_WEAPON_2_2
 Laser 2
@@ -7842,44 +7844,44 @@ SR_WEAPON_2_4_DESC
 '''Laser, auf Stufe 4 verbessert.'''
 
 SR_WEAPON_3_1
-Plasma Cannon 1
+Plasmakanone 1
 SR_WEAPON_3_1_DESC
-'''The Plasma Cannon, a more powerful ship's weapon than the Laser.'''
+'''Die Plasmakanone, eine viel leistungsfähigere Schiffswaffe als der Laser.'''
 
 SR_WEAPON_3_2
-Plasma Cannon 2
+Plasmakanone 2
 SR_WEAPON_3_2_DESC
-'''Plasma Cannon, refined to level 2.'''
+'''Plasmakanone, auf Stufe 2 verbessert.'''
 
 SR_WEAPON_3_3
-Plasma Cannon 3
+Plasmakanone 3
 SR_WEAPON_3_3_DESC
-'''Plasma Cannon, refined to level 3.'''
+'''Plasmakanone, auf Stufe 3 verbessert.'''
 
 SR_WEAPON_3_4
-Plasma Cannon 4
+Plasmakanone 4
 SR_WEAPON_3_4_DESC
-'''Plasma Cannon, refined to level 4.'''
+'''Plasmakanone, auf Stufe 4 verbessert.'''
 
 SR_WEAPON_4_1
-Death Ray 1
+Todesstrahl 1
 SR_WEAPON_4_1_DESC
-'''The Death Ray, the ultimate ship's weapon.'''
+'''Der Todesstrahl, die ultimative Schiffswaffe.'''
 
 SR_WEAPON_4_2
-Death Ray 2
+Todesstrahl 2
 SR_WEAPON_4_2_DESC
-'''Death Ray, refined to level 2.'''
+'''Todesstrahl, auf Stufe 2 verbessert.'''
 
 SR_WEAPON_4_3
-Death Ray 3
+Todesstrahl 3
 SR_WEAPON_4_3_DESC
-'''Death Ray, refined to level 3.'''
+'''Todesstrahl, auf Stufe 3 verbessert.'''
 
 SR_WEAPON_4_4
-Death Ray 4
+Todesstrahl 4
 SR_WEAPON_4_4_DESC
-'''Death Ray, refined to level 4. The ultimate refinement of the ultimate weapon.'''
+'''Todesstrahl, auf Stufe 4 verbessert. Die ultimative Verbesserung der ultimativen Waffe.'''
 
 SR_WEAPON_2
 Laser
@@ -7900,7 +7902,7 @@ SR_WEAPON_1_DESC
 A projectile weapon capable of launching objects of tremendous mass at relativistic speeds.
 
 SR_WEAPON_4
-Death Ray
+Todesstrahl
 
 SR_WEAPON_4_DESC
 Ultimate short range weapon
@@ -8045,13 +8047,13 @@ FU_DEUTERIUM_TANK
 Deuterium-Tank
 
 FU_DEUTERIUM_TANK_DESC
-Kleine Steigerung von Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Sperrig und verwundbar durch Beschuss.
+Kleine Steigerung der Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Sperrig und verwundbar durch Beschuss.
 
 FU_ANTIMATTER_TANK
 Antimaterietank
 
 FU_ANTIMATTER_TANK_DESC
-Moderate Steigerung von Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Kompakt und geringe Masse.
+Moderate Steigerung der Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Kompakt und geringe Masse.
 
 FU_ZERO_FUEL
 Zero-Point Fuel Generator
@@ -8092,28 +8094,28 @@ ST_CLOAK_4_DESC
 Modulates the frequency of any matter waves emitted from the ship to match that of the background radiation. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
 AR_STD_PLATE
-Standard Panzerplatten
+Standardpanzerplatten
 
 AR_STD_PLATE_DESC
-'''Grund Panzerplatten bieten nur mässige Erweiterung zur Dauerhaftigkeit eines Schiffsrumpfes.'''
+'''Standardpanzerplatten bieten nur mässige Erweiterung zur Widerstandsfähigkeit eines Schiffsrumpfes.'''
 
 AR_ZORTRIUM_PLATE
 Zortrium Panzerplatten
 
 AR_ZORTRIUM_PLATE_DESC
-'''Stärkere Abwehr als standard Panzerplatten.'''
+'''Stärkere Abwehr als Standardpanzerplatten.'''
 
 AR_DIAMOND_PLATE
 Diamant Panzerplatten
 
 AR_DIAMOND_PLATE_DESC
-'''Stärkere Abwehr als zortrium Panzerplatten.'''
+'''Stärkere Abwehr als Zortrium Panzerplatten.'''
 
 AR_XENTRONIUM_PLATE
 Xentronium Panzerplatten
 
 AR_XENTRONIUM_PLATE_DESC
-'''Äusserst Stark und dauerhafte Panzerplatten.'''
+'''Äusserst starke und dauerhafte Panzerplatten.'''
 
 AR_ROCK_PLATE
 Gestein Panzerplatten
@@ -8185,15 +8187,15 @@ Besiedlungsmodul
 CO_COLONY_POD_DESC
 '''Grundlegende Einrichtungen für Siedler um die Reise zu einem neuen Planeten zu überleben. Ermöglicht es einem Schiff neue Welten zu besiedeln.
 
-Alle Siedlungschiffstypen benötigen auf dem Planet wo sie gebaut wurden eine Bevölkerung von mindestens 3.'''
+Alle Siedlungschiffstypen benötigen auf dem Planet, wo sie gebaut werden sollen, eine Bevölkerung von mindestens 3.'''
 
 CO_SUSPEND_ANIM_POD
 Kälteschlaf Besiedlungsmodul
 
 CO_SUSPEND_ANIM_POD_DESC
-'''Siedler werden während der Reise im Kälteschlaf gehalten, was die Notwendigkeit zur Versorgung beseitigt und die Anzahl der Kolonisten, die transportiert werden können, dramatisch erhöht.
+'''Siedler werden während der Reise im Kälteschlaf gehalten, was die Notwendigkeit zur Versorgung beseitigt und die Anzahl der Kolonisten, die transportiert werden können, drastisch erhöht.
 
-Alle Siedlungschiffstypen benötigen auf dem Planet wo sie gebaut wurden eine Bevölkerung von mindestens 3.'''
+Alle Siedlungschiffstypen benötigen auf dem Planet, wo sie gebaut werden sollen, eine Bevölkerung von mindestens 3.'''
 
 CO_OUTPOST_POD
 Outpost Module
@@ -8486,14 +8488,14 @@ Kleiner Standardrumpf
 SH_BASIC_SMALL_DESC
 '''Ein kleiner interstellarer Standardrumpf. Verglichen mit anderen Standardrümpfen, kann er einen Sprung mehr ausführen.
 
-Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] um ein solches Schiff zu bauen.'''
+Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''
 
 SH_BASIC_MEDIUM
 Mittelgroßer Standardrumpf
 SH_BASIC_MEDIUM_DESC
 '''Ein mittelgroßer Schiffsrumpf für interstellare Reisen.
 
-Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] um ein solches Schiff zu bauen.'''
+Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''
 
 SH_STANDARD
 Großer Basisrumpf
@@ -8501,7 +8503,7 @@ Großer Basisrumpf
 SH_STANDARD_DESC
 '''Ein großer Schiffsrumpf für interstellare Reisen.
 
-Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]] um ein solches Schiff zu bauen.'''
+Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''
 
 SH_XENTRONIUM
 Xentronium Hull
@@ -8513,30 +8515,30 @@ SH_COLONY_BASE
 Siedlungsbasis Rumpf
 
 SH_COLONY_BASE_DESC
-Ein Rumpf konzipiert zum gründen einer Siedlung auf einem anderen Planet dieses Systems. Er kann nicht zwischen Systeme navigieren oder sich schnell im System bewegen.
+Ein Rumpf konzipiert zum Gründen einer Siedlung auf einem anderen Planet dieses Systems. Er kann nicht zwischen Systeme navigieren oder sich schnell im System bewegen.
 
 SH_FLOATER_BODY
-Gebrechlichen Körper
+Gebrechlicher Körper
 
 SH_FLOATER_BODY_DESC
-Kleiner gebrechlichen Körper, der keine nennenswerten Schäden standhält.
+Kleiner gebrechlicher Körper, der keinen nennenswerten Schäden standhält.
 
 SH_TREE_BODY
-Immobilen Körper
+Immobiler Körper
 
 SH_TREE_BODY_DESC
 Starrer baumförmigen Körper, der nicht in der Lage ist, sich zwischen den Systemen zu bewegen.
 
 SH_STRONG_MONSTER_BODY
-Kräftigen Körper
+Kräftiger Körper
 
 SH_STRONG_MONSTER_BODY_DESC
-Großen starken Körper mit furchterregenden natürlichen Waffen und starke natürliche Rüstung.
+Großer starker Körper mit furchterregenden natürlichen Waffen und starker natürlicher Rüstung.
 
 SH_GUARD_MONSTER_BODY
 Wache Rumpf
 SH_GUARD_MONSTER_BODY_DESC
-Ein starker Rumpf für Monsters der Wächterklasse.
+Ein starker Rumpf für Monster der Wächterklasse.
 
 SH_KRILL_1_BODY
 Krillkörper 1
@@ -8569,22 +8571,22 @@ SH_IMMOBILE_FACTORY_DESC
 Drohnenfabrik
 
 SH_KRAKEN_1_BODY
-Larval Kraken Body
+Larvalkrakenkörper
 SH_KRAKEN_1_BODY_DESC
-Ein gewaltiger mittelgewicht Weltraummonster.
+Ein gewaltiges mittelgewichtiges Weltraummonster.
 
 SH_KRAKEN_2_BODY
-Kraken Body
+Krakenkörper
 SH_KRAKEN_2_BODY_DESC
-Ein gewaltiger mittelgewicht Weltraummonster.
+Ein gewaltiges mittelgewichtiges Weltraummonster.
 
 SH_KRAKEN_3_BODY
-Great Kraken Body
+Großer Krakenkörper
 SH_KRAKEN_3_BODY_DESC
-Ein gewaltiger mittelgewicht Weltraummonster.
+Ein gewaltiges mittelgewichtiges Weltraummonster.
 
 SH_BLACK_KRAKEN_BODY
-Black Kraken Body
+Schwarzkrakenkörper
 SH_BLACK_KRAKEN_BODY_DESC
 A monstrous black Kraken with an unnatural aura about it.
 
@@ -8665,7 +8667,7 @@ GOOD_INDUSTRY
 '''+	Gute [[encyclopedia INDUSTRY_TITLE]]: 150%'''
 
 GREAT_INDUSTRY
-'''++	Grosse [[encyclopedia INDUSTRY_TITLE]]: 200%'''
+'''++	Große [[encyclopedia INDUSTRY_TITLE]]: 200%'''
 
 ULTIMATE_INDUSTRY
 '''+++	Perfekte [[encyclopedia INDUSTRY_TITLE]]: 400%'''
@@ -8683,7 +8685,7 @@ GOOD_RESEARCH
 '''+	Gute [[encyclopedia RESEARCH_TITLE]]: 150%'''
 
 GREAT_RESEARCH
-'''++	Grosse [[encyclopedia RESEARCH_TITLE]]: 200%'''
+'''++	Große [[encyclopedia RESEARCH_TITLE]]: 200%'''
 
 ULTIMATE_RESEARCH
 '''+++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 400%'''
@@ -8696,13 +8698,13 @@ BAD_GROUND_TROOPS
 '''−	Schlechte Boden[[encyclopedia TROOP_TITLE]]: -50%'''
 
 AVERAGE_GROUND_TROOPS
-'''	Mittelmässige Boden[[encyclopedia TROOP_TITLE]]: 100%'''
+'''	Mittelmäßige Boden[[encyclopedia TROOP_TITLE]]: 100%'''
 
 GOOD_GROUND_TROOPS
 '''+	Gute Boden[[encyclopedia TROOP_TITLE]]: 150%.'''
 
 GREAT_GROUND_TROOPS
-'''++	Grosse Boden[[encyclopedia TROOP_TITLE]]: 200%.'''
+'''++	Große Boden[[encyclopedia TROOP_TITLE]]: 200%.'''
 
 ULTIMATE_GROUND_TROOPS
 '''+++	Perfekte Boden[[encyclopedia TROOP_TITLE]]: 300%.'''
@@ -8714,7 +8716,7 @@ GOOD_DETECTION
 '''+	Gute [[encyclopedia DETECTION_RANGE_TITLE]]: +25 Bonus.'''
 
 GREAT_DETECTION
-'''++	Grosse [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.'''
+'''++	Große [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.'''
 
 ULTIMATE_DETECTION
 '''+++	Perfekte [[encyclopedia DETECTION_RANGE_TITLE]]: +100 Bonus.'''
@@ -8723,7 +8725,7 @@ BAD_STEALTH
 '''−	Schlechte [[encyclopedia STEALTH_TITLE]]: −15 Malus.'''
 
 AVERAGE_STEALTH
-'''	Mittelmässige [[encyclopedia STEALTH_TITLE]].'''
+'''	Mittelmäßige [[encyclopedia STEALTH_TITLE]].'''
 
 GOOD_STEALTH
 '''+	Gute [[encyclopedia STEALTH_TITLE]]: +15 Bonus.'''
@@ -8747,7 +8749,7 @@ BAD_POPULATION
 '''−	Arme Bevölkerung 75%'''
 
 AVERAGE_POPULATION
-'''	Mittelmässige Bevölkerung'''
+'''	Mittelmäßige Bevölkerung'''
 
 GOOD_POPULATION
 '''+	Gesunde Bevölkerung 125%'''
@@ -8764,7 +8766,7 @@ NARROW_EP
 
 
 STANDARD_CONSTRUCTION_LABEL
-'''%1% Mittelmässige [[encyclopedia INFRASTRUCTURE_TITLE]]'''
+'''%1% Mittelmäßige [[encyclopedia INFRASTRUCTURE_TITLE]]'''
 
 GOOD_ENVIRONMENT_LABEL
 '''%1% Gute Umgebung'''
@@ -8803,13 +8805,13 @@ FOCUS_HEAVY_MINING_LABEL
 '''%1% Massenbergbau Fokus'''
 
 BAD_MINING_LABEL
-'''%1% Schlechten Bergbau'''
+'''%1% Schlechter Bergbau'''
 
 GOOD_MINING_LABEL
-'''%1% Guten Bergbau'''
+'''%1% Guter Bergbau'''
 
 GREAT_MINING_LABEL
-'''%1% Besten Bergbau'''
+'''%1% Bester Bergbau'''
 
 ULTIMATE_MINING_LABEL
 '''%1% Top Bergbau'''
@@ -8848,7 +8850,7 @@ BAD_TROOPS_LABEL
 '''%2% Schlechte Bodentruppe'''
 
 AVERAGE_TROOPS_LABEL
-'''%2% Mittelmässige Bodentruppe'''
+'''%2% Mittelmäßige Bodentruppe'''
 
 GOOD_TROOPS_LABEL
 '''%2% Gute Bodentruppe'''
@@ -8887,13 +8889,13 @@ ORBITAL_HAB_LABEL
 '''Orbitale Wohnanlagen'''
 
 NDIM_STRC_LABEL
-'''N-Dimensionale Strukturen'''
+'''N-dimensionale Strukturen'''
 
 WEAK_VISION_LABEL
 '''Schwache Sicht'''
 
 MODERATE_VISION_LABEL
-'''Mittelmässige Sicht'''
+'''Mittelmäßige Sicht'''
 
 GOOD_VISION_LABEL
 '''Gute Sicht'''
