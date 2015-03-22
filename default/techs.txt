@@ -907,7 +907,7 @@ Tech
     short_description = "VICTORY_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 25000 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 500 * GalaxySize * [[TECH_COST_MULTIPLIER]]
     researchturns = 20
     prerequisites = [
         "CON_TRANS_ARCH"
