@@ -18,26 +18,23 @@ version = "0.4.4+"
 wc_rev = "???"
 
 try:
-    svn_proc = sp.Popen(["svn", "info"], stdout=sp.PIPE)
-    svn_info = svn_proc.communicate()[0]
+    git_proc = sp.Popen(["git", "describe", "--always"], stdout=sp.PIPE)
+    wc_rev = git_proc.communicate()[0].strip()
 
-    for line in svn_info.splitlines():
-        if line.startswith("Last Changed Rev:"):
-            wc_rev = line.rpartition(" ")[2]
 except:
     try:
-        svn_proc = sp.Popen(["SubWCRev.exe", "."], stdout=sp.PIPE)
-        svn_info = svn_proc.communicate()[0]
+        git_proc = sp.Popen(["SubWCRev.exe", "."], stdout=sp.PIPE)
+        git_info = git_proc.communicate()[0]
 
-        for line in svn_info.splitlines():
+        for line in git_info.splitlines():
             if line.startswith("Last committed at revision"):
                 wc_rev = line.rpartition(" ")[2]
     except:
-        print "WARNING: No properly installed SVN client found"
+        print "WARNING: No properly installed Git client found"
 
 if wc_rev == "???" and os.path.exists(outfile):
-	print "WARNING: Can't determine SVN working copy revision, %s not updated!" % outfile
-	quit()
+        print "WARNING: Can't determine Git working copy revision, %s not updated!" % outfile
+        quit()
 
 try:
     template_file = open(infile)
