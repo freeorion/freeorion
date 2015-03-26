@@ -1,0 +1,75 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Mac OSX
+.DS_Store
+
+# Xcode
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+
+# PyCharm
+*.idea/
+
+# FreeOrion specific
+*.zip
+/util/Version.cpp
+
+# FreeOrion Xcode project
+/Xcode/dep/
+/Xcode/build/
+
+# FreeOrion MSVC2010 project
+*.pdb
+*.log
+*.tlog
+*.cache
+*.lastbuildstate
+*.unsuccessfulbuild
+*.manifest
+*.user
+*.suo
+*.sdf
+*.exp
+*.opensdf
+*.pyc
+msvc2010/FreeOrion/Release/FreeOrion.res
