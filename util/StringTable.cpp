@@ -9,6 +9,8 @@
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
+#include <iostream>
+
 
 // static(s)
 const std::string StringTable_::S_DEFAULT_FILENAME = "en.txt";
