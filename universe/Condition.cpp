@@ -1977,11 +1977,11 @@ namespace {
             if (m_name.empty())
                 return !candidate->Specials().empty();
 
-            std::map<std::string, int>::const_iterator it = candidate->Specials().find(m_name);
+            std::map<std::string, std::pair<int, float> >::const_iterator it = candidate->Specials().find(m_name);
             if (it == candidate->Specials().end())
                 return false;
 
-            int special_since_turn = it->second;
+            int special_since_turn = it->second.first;
 
             return m_low_turn <= special_since_turn && special_since_turn <= m_high_turn;
         }

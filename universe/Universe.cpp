@@ -635,12 +635,10 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
             return std::set<std::string>();
         // all specials visible
         std::set<std::string> retval;
-        const std::map<std::string, int>& specials = obj->Specials();
-        for (std::map<std::string, int>::const_iterator it = specials.begin();
+        const std::map<std::string, std::pair<int, float> >& specials = obj->Specials();
+        for (std::map<std::string, std::pair<int, float> >::const_iterator it = specials.begin();
              it != specials.end(); ++it)
-        {
-            retval.insert(it->first);
-        }
+        { retval.insert(it->first); }
         return retval;
     }
 }
@@ -1878,8 +1876,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         int source_object_id = obj_it->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
-        const std::map<std::string, int>& specials = obj_it->Specials();
-        for (std::map<std::string, int>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
+        const std::map<std::string, std::pair<int, float> >& specials = obj_it->Specials();
+        for (std::map<std::string, std::pair<int, float> >::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
             const std::string& special_name = special_it->first;
             const Special*     special      = GetSpecial(special_name);
             if (!special) {
@@ -2647,12 +2645,10 @@ namespace {
                 // objects
                 universe.SetEmpireObjectVisibility(empire_it->first, obj_it->ID(), VIS_FULL_VISIBILITY);
                 // specials on objects
-                const std::map<std::string, int>& specials = obj_it->Specials();
-                for (std::map<std::string, int>::const_iterator special_it = specials.begin();
+                const std::map<std::string, std::pair<int, float> >& specials = obj_it->Specials();
+                for (std::map<std::string, std::pair<int, float> >::const_iterator special_it = specials.begin();
                      special_it != specials.end(); ++special_it)
-                {
-                    universe.SetEmpireSpecialVisibility(empire_it->first, obj_it->ID(), special_it->first);
-                }
+                { universe.SetEmpireSpecialVisibility(empire_it->first, obj_it->ID(), special_it->first); }
             }
         }
     }
@@ -2929,7 +2925,7 @@ namespace {
                 TemporaryPtr<const UniverseObject> obj = objects.Object(object_id);
                 if (!obj)
                     continue;
-                const std::map<std::string, int>& all_object_specials = obj->Specials();
+                const std::map<std::string, std::pair<int, float> >& all_object_specials = obj->Specials();
                 if (all_object_specials.empty())
                     continue;
 
@@ -2937,7 +2933,7 @@ namespace {
 
                 // check all object's specials.
                 std::vector<std::string> potentially_detectable_object_specials;
-                for (std::map<std::string, int>::const_iterator special_it = all_object_specials.begin();
+                for (std::map<std::string, std::pair<int, float> >::const_iterator special_it = all_object_specials.begin();
                      special_it != all_object_specials.end(); ++special_it)
                 {
                     const Special* special = GetSpecial(special_it->first);

@@ -1817,8 +1817,15 @@ std::string Destroy::Dump() const
 ///////////////////////////////////////////////////////////
 // AddSpecial                                            //
 ///////////////////////////////////////////////////////////
-AddSpecial::AddSpecial(const std::string& name) :
-    m_name(name)
+AddSpecial::AddSpecial(const std::string& name, float capacity) :
+    m_name(new ValueRef::Constant<std::string>(name)),
+    m_capacity(new ValueRef::Constant<double>(capacity))
+{}
+
+AddSpecial::AddSpecial(const ValueRef::ValueRefBase<std::string>* name,
+                       const ValueRef::ValueRefBase<double>* capacity) :
+    m_name(name),
+    m_capacity(capacity)
 {}
 
 void AddSpecial::Execute(const ScriptingContext& context) const {
@@ -1826,14 +1833,24 @@ void AddSpecial::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "AddSpecial::Execute passed no target object";
         return;
     }
-    context.effect_target->AddSpecial(m_name);
+
+    std::string name = (m_name ? m_name->Eval(context) : "");
+    float capacity = (m_capacity ? m_capacity->Eval(context) : 0.0f);
+
+    context.effect_target->AddSpecial(name, capacity);
 }
 
-std::string AddSpecial::Description() const
-{ return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % UserString(m_name)); }
+std::string AddSpecial::Description() const {
+    std::string name = (m_name ? m_name->Description() : "");
+    std::string capacity = (m_capacity ? m_capacity->Description() : "1.0");
 
-std::string AddSpecial::Dump() const
-{ return DumpIndent() + "AddSpecial name = \"" + m_name + "\"\n"; }
+    return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % UserString(name) % capacity);
+}
+
+std::string AddSpecial::Dump() const {
+    return DumpIndent() + "AddSpecial name = " +  (m_name ? m_name->Dump() : "") +
+        " capacity = " + (m_capacity ? m_capacity->Dump() : "0.0") +  "\n";
+}
 
 
 ///////////////////////////////////////////////////////////

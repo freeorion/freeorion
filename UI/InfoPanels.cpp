@@ -1819,11 +1819,11 @@ void SpecialsPanel::Update() {
         ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;
     }
-    const std::map<std::string, int>& specials = obj->Specials();
+    const std::map<std::string, std::pair<int, float> >& specials = obj->Specials();
 
 
     // get specials and use them to create specials icons
-    for (std::map<std::string, int>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
+    for (std::map<std::string, std::pair<int, float> >::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(it->first);
         GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::SpecialIcon(special->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));

@@ -60,9 +60,10 @@ public:
 
     virtual int                 SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
-    const std::map<std::string, int>&   Specials() const;                           ///< returns the names of Specials and the turn on which each was attached to this object
+    const std::map<std::string, std::pair<int, float> >&   Specials() const;        ///< returns the Specials attached to this object
     bool                        HasSpecial(const std::string& name) const;          ///< returns true iff this object has a special with the indicated \a name
     int                         SpecialAddedOnTurn(const std::string& name) const;  ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
+    float                       SpecialCapacity(const std::string& name) const;     ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
     virtual std::set<std::string>   Tags() const;                                   ///< returns all tags this object has
     virtual bool                    HasTag(const std::string& name) const;          ///< returns true iff this object has the tag with the indicated \a name
@@ -125,8 +126,9 @@ public:
     virtual void            SetOwner(int id);                       ///< sets the empire that owns this object
 
     void                    SetSystem(int sys);                     ///< assigns this object to a System.  does not actually move object in universe
-    virtual void            AddSpecial(const std::string& name);    ///< adds the Special \a name to this object, if it is not already present
+    virtual void            AddSpecial(const std::string& name, float capacity = 0.0f); ///< adds the Special \a name to this object, if it is not already present
     virtual void            RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
+    void                    SetSpecialCapacity(const std::string& name, float capacity);
 
     /** Performs the movement that this object is responsible for this object's
       * actions during the movement phase of a turn. */
@@ -180,19 +182,19 @@ protected:
     void                    Copy(TemporaryPtr<const UniverseObject> copied_object, Visibility vis,
                                  const std::set<std::string>& visible_specials);///< used by public UniverseObject::Copy and derived classes' ::Copy methods
 
-    std::string                 m_name;
+    std::string             m_name;
 
 private:
     std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
-    int                         m_id;
-    double                      m_x;
-    double                      m_y;
-    int                         m_owner_empire_id;
-    int                         m_system_id;
-    std::map<std::string, int>  m_specials;
-    std::map<MeterType, Meter>  m_meters;
-    int                         m_created_on_turn;
+    int                                             m_id;
+    double                                          m_x;
+    double                                          m_y;
+    int                                             m_owner_empire_id;
+    int                                             m_system_id;
+    std::map<std::string, std::pair<int, float> >   m_specials; // map from special name to pair of (turn added, capacity)
+    std::map<MeterType, Meter>                      m_meters;
+    int                                             m_created_on_turn;
 
     friend class boost::serialization::access;
     template <class Archive>

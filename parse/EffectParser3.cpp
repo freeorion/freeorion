@@ -17,11 +17,13 @@ namespace {
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
+            qi::_c_type _c;
             qi::_val_type _val;
             using phoenix::new_;
 
             const parse::lexer& tok =                                                   parse::lexer::instance();
             const parse::value_ref_parser_rule<double>::type& double_value_ref =        parse::value_ref_parser<double>();
+            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =   parse::value_ref_parser<std::string>();
             const parse::value_ref_parser_rule<StarType>::type& star_type_value_ref =   parse::value_ref_parser<StarType>();
 
             move_to
@@ -74,9 +76,15 @@ namespace {
                 >    parse::label(Reason_token) > tok.string [ _val = new_<Effect::Victory>(_1) ]
                 ;
 
-            add_special
+            add_special_1
                 =    tok.AddSpecial_
                 >    parse::label(Name_token) > tok.string [ _val = new_<Effect::AddSpecial>(_1) ]
+                ;
+
+            add_special_2
+                =    tok.AddSpecial_
+                >>   parse::label(Name_token) >> string_value_ref [ _c = _1 ]
+                >>   parse::label(Capacity_token) > double_value_ref [ _val = new_<Effect::AddSpecial>(_c, _1) ]
                 ;
 
             remove_special
@@ -112,7 +120,8 @@ namespace {
                 |    set_aggression
                 |    destroy
                 |    victory
-                |    add_special
+                |    add_special_2
+                |    add_special_1
                 |    remove_special
                 |    add_starlanes
                 |    remove_starlanes
@@ -127,7 +136,8 @@ namespace {
             set_aggression.name("SetAggression");
             destroy.name("Destroy");
             victory.name("Victory");
-            add_special.name("AddSpecial");
+            add_special_1.name("AddSpecial");
+            add_special_2.name("AddSpecial");
             remove_special.name("RemoveSpecial");
             add_starlanes.name("AddStarlanes");
             remove_starlanes.name("RemoveStarlanes");
@@ -142,7 +152,8 @@ namespace {
             debug(set_aggression);
             debug(destroy);
             debug(victory);
-            debug(add_special);
+            debug(add_special_1);
+            debug(add_special_2);
             debug(remove_special);
             debug(add_starlanes);
             debug(remove_starlanes);
@@ -156,19 +167,21 @@ namespace {
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<double>*
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<std::string>*
             >,
             parse::skipper_type
-        > doubles_rule;
+        > doubles_string_rule;
 
         parse::effect_parser_rule           move_to;
-        doubles_rule                        move_in_orbit;
-        doubles_rule                        move_towards;
+        doubles_string_rule                 move_in_orbit;
+        doubles_string_rule                 move_towards;
         parse::effect_parser_rule           set_destination;
         parse::effect_parser_rule           set_aggression;
         parse::effect_parser_rule           destroy;
         parse::effect_parser_rule           victory;
-        parse::effect_parser_rule           add_special;
+        parse::effect_parser_rule           add_special_1;
+        doubles_string_rule                 add_special_2;
         parse::effect_parser_rule           remove_special;
         parse::effect_parser_rule           add_starlanes;
         parse::effect_parser_rule           remove_starlanes;

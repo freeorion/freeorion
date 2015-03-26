@@ -82,12 +82,11 @@ void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visi
         this->m_y =                     copied_object->m_y;
 
         this->m_specials.clear();
-        for (std::map<std::string, int>::const_iterator copied_special_it = copied_object->m_specials.begin();
+        for (std::map<std::string, std::pair<int, float> >::const_iterator copied_special_it = copied_object->m_specials.begin();
              copied_special_it != copied_object->m_specials.end(); ++copied_special_it)
         {
-            if (visible_specials.find(copied_special_it->first) != visible_specials.end()) {
-                this->m_specials[copied_special_it->first] = copied_special_it->second;
-            }
+            if (visible_specials.find(copied_special_it->first) != visible_specials.end())
+            { this->m_specials[copied_special_it->first] = copied_special_it->second; }
         }
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
@@ -133,17 +132,24 @@ int UniverseObject::Owner() const
 int UniverseObject::SystemID() const
 { return m_system_id; }
 
-const std::map<std::string, int>& UniverseObject::Specials() const
+const std::map<std::string, std::pair<int, float> >& UniverseObject::Specials() const
 { return m_specials; }
 
 bool UniverseObject::HasSpecial(const std::string& name) const
 { return m_specials.find(name) != m_specials.end(); }
 
 int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
-    std::map<std::string, int>::const_iterator it = m_specials.find(name);
+    std::map<std::string, std::pair<int, float> >::const_iterator it = m_specials.find(name);
     if (it == m_specials.end())
         return INVALID_GAME_TURN;
-    return it->second;
+    return it->second.first;
+}
+
+float UniverseObject::SpecialCapacity(const std::string& name) const {
+    std::map<std::string, std::pair<int, float> >::const_iterator it = m_specials.find(name);
+    if (it == m_specials.end())
+        return INVALID_GAME_TURN;
+    return it->second.second;
 }
 
 std::set<std::string> UniverseObject::Tags() const
@@ -192,8 +198,8 @@ std::string UniverseObject::Dump() const {
     }
     os << " created on turn: " << m_created_on_turn
        << " specials: ";
-    for (std::map<std::string, int>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
-        os << "(" << it->first << ", " << it->second << ") ";
+    for (std::map<std::string, std::pair<int, float> >::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
+        os << "(" << it->first << ", " << it->second.first << ", " << it->second.second << ") ";
     os << "  Meters: ";
     for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
         os << UserString(EnumToString(it->first))
@@ -345,8 +351,15 @@ void UniverseObject::SetSystem(int sys) {
     }
 }
 
-void UniverseObject::AddSpecial(const std::string& name)
-{ m_specials[name] = CurrentTurn(); }
+void UniverseObject::AddSpecial(const std::string& name, float capacity)
+{ m_specials[name] = std::make_pair(CurrentTurn(), capacity); }
+
+void UniverseObject::SetSpecialCapacity(const std::string& name, float capacity) {
+    if (m_specials.find(name) != m_specials.end())
+        m_specials[name].second = capacity;
+    else
+        AddSpecial(name, capacity);
+}
 
 void UniverseObject::RemoveSpecial(const std::string& name)
 { m_specials.erase(name); }

@@ -565,14 +565,17 @@ private:
 /** Adds the Special with the name \a name to the target object. */
 class FO_COMMON_API Effect::AddSpecial : public Effect::EffectBase {
 public:
-    AddSpecial(const std::string& name);
+    explicit AddSpecial(const std::string& name, float capacity = 1.0f);
+    explicit AddSpecial(const ValueRef::ValueRefBase<std::string>* name,
+                        const ValueRef::ValueRefBase<double>* capacity = 0);
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
 private:
-    std::string m_name;
+    const ValueRef::ValueRefBase<std::string>*  m_name;
+    const ValueRef::ValueRefBase<double>*       m_capacity;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1040,7 +1043,8 @@ template <class Archive>
 void Effect::AddSpecial::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_capacity);
 }
 
 template <class Archive>

@@ -161,7 +161,7 @@ namespace {
 
     std::vector<std::string> ObjectSpecials(const UniverseObject& object) {
         std::vector<std::string> retval;
-        for (std::map<std::string, int>::const_iterator it = object.Specials().begin();
+        for (std::map<std::string, std::pair<int, float> >::const_iterator it = object.Specials().begin();
              it != object.Specials().end(); ++it)
         { retval.push_back(it->first); }
         return retval;
