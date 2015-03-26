@@ -381,11 +381,11 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 
 void OptionsDB::SetFromXML(const XMLDoc& doc) {
     for (int i = 0; i < doc.root_node.NumChildren(); ++i)
-        SetFromXMLRecursive(doc.root_node.Child(i), "");
+    { SetFromXMLRecursive(doc.root_node.Child(i), ""); }
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
-    DebugLogger() << "Setting from XML";
+    //DebugLogger() << "Setting from XML";
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
     if (elem.NumChildren()) {
