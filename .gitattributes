@@ -1,0 +1,43 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+# Normalize all detected text files to LF line endings when checking in.
+* text=auto
+
+# MSVC specific files are plain text, but should be treated as binary
+# files, as they are not intended to be human editable. Also the line
+# endings should be always CRLF.
+# MS Visual Studio solution format
+*.sln text eol=crlf -merge
+# MS Visual Studio project format (XML based)
+*.vcxproj text eol=crlf -merge
+# MS Visual Studio filter format (XML based)
+*.vcxproj.filters text eol=crlf -merge
+
+# Windows Resource File format
+*.rc text eol=crlf
+
+# MSVC specific files are plain text, but should be treated as binary
+# files, as they are not intended to be human editable. Also the line
+# endings should be always LF.
+# Max OS X property list
+*.plist text eol=lf -merge
+# Xcode interface builder format (XML based)
+*.xib text eol=lf -merge
+# Xcode project file (property list based)
+*.pbxproj text eol=lf -merge
+# Xcode build actions and configurations (XML based)
+*.xcscheme text eol=lf -merge
+
+# Binary files should be detected by default, but just stay save and tell
+# git that they are not text and are not diff-able
+# Windows Icon image format
+*.ico binary
+# Apple Icon Image format
+*.icns binary
+# Ogre 3d geometry format
+*.mesh binary
+# Ogg audio container format
+*.ogg binary
+# Portable network graphics format
+*.png binary
+# TrueType file format
+*.ttf binary
