@@ -72,7 +72,8 @@ void Hotkey::AddHotkey(const std::string& name, const std::string& description, 
     if (IsTypingSafe(key, mod)) {
         s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, key, mod)));
     } else {
-        ErrorLogger() << "Hotkey::AddHotkey attempted to set a hotkey that is not safe to use while typing.";
+        ErrorLogger() << "Hotkey::AddHotkey attempted to set a hotkey that is not safe to use while typing: "
+                      << "name: " << name << " key/mod: " << key << " / " << mod;
         s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, GG::GGK_UNKNOWN, GG::MOD_KEY_NONE)));
     }
 }
@@ -284,7 +285,7 @@ bool Hotkey::IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod) {
         return true;
     if (key >= GG::GGK_F1 && key <= GG::GGK_F15)
         return true;
-    if (key == GG::GGK_TAB || key == GG::GGK_ESCAPE)
+    if (key == GG::GGK_TAB || key == GG::GGK_ESCAPE || key == GG::GGK_UNKNOWN)
         return true;
     return false;
 }
