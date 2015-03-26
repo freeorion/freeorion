@@ -37,7 +37,6 @@ if (WIN32)
         -D_SCL_SECURE_NO_DEPRECATE
         -D_CRT_NONSTDC_NO_DEPRECATE
         -DBOOST_ALL_DYN_LINK
-        -DLOG4CPP_STLPORT_AND_BOOST_BUILD
         -DFREEORION_WIN32
         -D_WIN32_WINNT=0x0501
     )
@@ -116,8 +115,6 @@ include_directories(
     ${ZLIB_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}
     GG
-    log4cpp
-    OpenSteer/include
 )
 
 if (FREEORION_RELEASE)
@@ -275,7 +272,6 @@ target_link_libraries(freeorioncommon
     ${Boost_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${OPENGL_LIBRARIES}
-    log4cpp
 )
 
 set_target_properties(freeorioncommon
@@ -293,7 +289,6 @@ endif ()
 ########################################
 # Recurse Into Sources                 #
 ########################################
-add_subdirectory(log4cpp)
 add_subdirectory(parse)
 add_subdirectory(server)
 add_subdirectory(client/AI)
