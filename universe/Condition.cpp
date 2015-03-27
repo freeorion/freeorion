@@ -1181,11 +1181,8 @@ std::string Condition::EmpireAffiliation::Dump() const {
         if (m_empire_id)
             retval += " empire = " + m_empire_id->Dump();
 
-    } else if (m_affiliation == AFFIL_CAN_SEE_TARGET) {
-        retval += "OwnedBy affiliation = CanSeeTarget";
-
-    } else if (m_affiliation == AFFIL_CAN_SEE_SOURCE) {
-        retval += "OwnedBy affiliation = CanSeeSource";
+    } else if (m_affiliation == AFFIL_CAN_SEE) {
+        retval += "OwnedBy affiliation = CanSee";
 
     } else {
         retval += "OwnedBy ??";
