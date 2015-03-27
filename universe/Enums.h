@@ -175,14 +175,13 @@ GG_ENUM(GalaxySetupOption,
 /** types of diplomatic empire affiliations to another empire*/
 GG_ENUM(EmpireAffiliationType,
     INVALID_EMPIRE_AFFIL_TYPE = -1,
-    AFFIL_SELF,             ///< the given empire iteslf
-    AFFIL_ENEMY,            ///< enemies of the given empire
-    AFFIL_ALLY,             ///< allies of the given empire
-    AFFIL_ANY,              ///< any empire
-    AFFIL_NONE,             ///< no empire
-    AFFIL_CAN_SEE_TARGET,   ///< special case enum used to specify empires that can see the target object within an effect execution
-    AFFIL_CAN_SEE_SOURCE,   ///< special case enum used to specify empires that can see the source object within a condition evaluation or effect execution
-    NUM_AFFIL_TYPES         ///< keep last, the number of affiliation types
+    AFFIL_SELF,     ///< the given empire iteslf
+    AFFIL_ENEMY,    ///< enemies of the given empire
+    AFFIL_ALLY,     ///< allies of the given empire
+    AFFIL_ANY,      ///< any empire
+    AFFIL_NONE,     ///< no empire
+    AFFIL_CAN_SEE,  ///< special case enum used to specify empires that can detect particular objects, for use in effects or conditions
+    NUM_AFFIL_TYPES ///< keep last, the number of affiliation types
 )
 
 /** diplomatic statuses */

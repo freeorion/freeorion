@@ -47,6 +47,7 @@
     (CanAddStarlanesTo)                         \
     (CanColonize)                               \
     (CanProduceShips)                           \
+    (CanSee)                                    \
     (Capacity)                                  \
     (Capital)                                   \
     (Capture)                                   \
@@ -85,7 +86,7 @@
     (DesignHasPart)                             \
     (DesignHasPartClass)                        \
     (DesignID)                                  \
-    (DesignName)                                \
+    (DesignName)                                \*
     (Destination)                               \
     (Destroy)                                   \
     (Detection)                                 \
