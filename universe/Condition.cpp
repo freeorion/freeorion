@@ -1081,13 +1081,8 @@ namespace {
                 return candidate->Unowned();
                 break;
 
-            case AFFIL_CAN_SEE_TARGET: {
-                int candidate_owner_id = candidate->Owner();
-                return false;
-                break;
-            }
-
-            case AFFIL_CAN_SEE_SOURCE: {
+            case AFFIL_CAN_SEE: {
+                // todo...
                 return false;
                 break;
             }
