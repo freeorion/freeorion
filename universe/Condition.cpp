@@ -1081,6 +1081,17 @@ namespace {
                 return candidate->Unowned();
                 break;
 
+            case AFFIL_CAN_SEE_TARGET: {
+                int candidate_owner_id = candidate->Owner();
+                return false;
+                break;
+            }
+
+            case AFFIL_CAN_SEE_SOURCE: {
+                return false;
+                break;
+            }
+
             default:
                 return false;
                 break;
@@ -1174,6 +1185,12 @@ std::string Condition::EmpireAffiliation::Dump() const {
         retval += "OwnedBy affiliation = AllyOf";
         if (m_empire_id)
             retval += " empire = " + m_empire_id->Dump();
+
+    } else if (m_affiliation == AFFIL_CAN_SEE_TARGET) {
+        retval += "OwnedBy affiliation = CanSeeTarget";
+
+    } else if (m_affiliation == AFFIL_CAN_SEE_SOURCE) {
+        retval += "OwnedBy affiliation = CanSeeSource";
 
     } else {
         retval += "OwnedBy ??";

@@ -140,11 +140,13 @@ namespace parse {
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<EmpireAffiliationType>::type retval
-            =    tok.TheEmpire_ [ _val = AFFIL_SELF ]
-            |    tok.EnemyOf_ [ _val = AFFIL_ENEMY ]
-            |    tok.AllyOf_ [ _val = AFFIL_ALLY ]
-            |    tok.AnyEmpire_ [ _val = AFFIL_ANY ]
-            |    tok.None_ [ _val = AFFIL_NONE ]
+            =    tok.TheEmpire_     [ _val = AFFIL_SELF ]
+            |    tok.EnemyOf_       [ _val = AFFIL_ENEMY ]
+            |    tok.AllyOf_        [ _val = AFFIL_ALLY ]
+            |    tok.AnyEmpire_     [ _val = AFFIL_ANY ]
+            |    tok.None_          [ _val = AFFIL_NONE ]
+            |    tok.CanSeeTarget   [ _val = AFFIL_CAN_SEE_TARGET ]
+            |    tok.CanSeeSource   [ _val = AFFIL_CAN_SEE_SOURCE ]
             ;
         static bool once = true;
         if (once) {
