@@ -86,7 +86,7 @@
     (DesignHasPart)                             \
     (DesignHasPartClass)                        \
     (DesignID)                                  \
-    (DesignName)                                \*
+    (DesignName)                                \
     (Destination)                               \
     (Destroy)                                   \
     (Detection)                                 \
