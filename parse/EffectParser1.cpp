@@ -1,5 +1,6 @@
 #include "EffectParserImpl.h"
 
+#include "ConditionParserImpl.h"
 #include "EnumParser.h"
 #include "Label.h"
 #include "ValueRefParser.h"
@@ -68,18 +69,28 @@ namespace {
                 >  -(parse::label(Icon_token)       >  tok.string [ _b = _1 ] )
                 >  -(parse::label(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
                 >   (
-                        (
-                            (
-                                parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
-                            |   eps [ _d = AFFIL_SELF ]
+                        (   // empire id specified, optionally with an affiliation type:
+                            // useful to specify a single recipient empire, or the allies
+                            // or enemies of a single empire
+                            (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+                            |   eps [ _d = AFFIL_SELF ] 
                             )
-                        >>  parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
+                        >>  parse::label(Empire_token) > int_value_ref
+                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
                         )
-                    |   (
-                            parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
-                        |   eps [ _d = AFFIL_ANY ]
+                    |   (   // condition specified, with an affiliation type of CanSee:
+                            // used to specify CanSee affiliation
+                            parse::label(Affiliation_token) >>  tok.CanSee_
+                        >   parse::label(Condition_token)   >   parse::detail::condition_parser
+                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1) ]
                         )
-                        [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d) ]
+                    |   (   // no empire id or condition specified, with or without an
+                            // affiliation type: useful to specify no or all empires
+                            (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
+                            |   eps [ _d = AFFIL_ANY ]
+                            )
+                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d) ]
+                        )
                     )
                 ;
 

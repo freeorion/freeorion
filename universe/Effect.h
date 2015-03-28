@@ -848,20 +848,30 @@ public:
                           EmpireAffiliationType affiliation);
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
-                          EmpireAffiliationType affiliation);
+                          EmpireAffiliationType affiliation,
+                          const Condition::ConditionBase* condition = 0);
     virtual ~GenerateSitRepMessage();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    const std::string&                  MessageString() const       { return m_message_string; }
+    const std::string&                  Icon() const                { return m_icon; }
+    const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >&
+                                        MessageParameters() const   { return m_message_parameters; }
+    const ValueRef::ValueRefBase<int>*  RecipientID() const         { return m_recipient_empire_id; }
+    const Condition::ConditionBase*     GetCondition() const        { return m_condition; }
+    EmpireAffiliationType               Affiliation() const         { return m_affiliation; }
+
 private:
-    std::string                                     m_message_string;
-    std::string                                     m_icon;
+    std::string                                         m_message_string;
+    std::string                                         m_icon;
     std::vector<std::pair<std::string,
-    const ValueRef::ValueRefBase<std::string>*> >   m_message_parameters;
-    const ValueRef::ValueRefBase<int>*              m_recipient_empire_id;
-    EmpireAffiliationType                           m_affiliation;
+        const ValueRef::ValueRefBase<std::string>*> >   m_message_parameters;
+    const ValueRef::ValueRefBase<int>*                  m_recipient_empire_id;
+    const Condition::ConditionBase*                     m_condition;
+    EmpireAffiliationType                               m_affiliation;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1148,6 +1158,7 @@ void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int ve
         & BOOST_SERIALIZATION_NVP(m_icon)
         & BOOST_SERIALIZATION_NVP(m_message_parameters)
         & BOOST_SERIALIZATION_NVP(m_recipient_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_condition)
         & BOOST_SERIALIZATION_NVP(m_affiliation);
 }
 
