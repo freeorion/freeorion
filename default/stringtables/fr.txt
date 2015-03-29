@@ -192,7 +192,7 @@ Astronef petit, économique, mais non-armé, spécialement conçu pour la reconn
 SD_AST_SCOUT
 Scout Astéroïdal
 SD_AST_SCOUT_DESC
-Petit éclaireur économique mais non-armé, usiné à partir d'une enveloppe asteroïdale, conçu pour la reconnaissance et l'exploration. Des recherches basées sur le [[encyclopedia DETECTION_RANGE_TITLE]] débloqueront de nouveaux équipements. Les Vaisseaux Astéroïdaux ne peuvent être construit que dans les systèmes possédant un Processeur.Astéroïdal.
+Petit éclaireur économique mais non-armé, usiné à partir d'une enveloppe asteroïdale, conçu pour la reconnaissance et l'exploration. Des recherches basées sur le [[encyclopedia DETECTION_RANGE_TITLE]] débloqueront de nouveaux équipements. Les Vaisseaux Astéroïdaux ne peuvent être construit que dans les systèmes possédant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_SCOUT_2
 Scout II
@@ -267,17 +267,17 @@ Chasseur croiseur d'élite avec blindage et lasers améliorés.
 SD_ROBOTIC1
 Robocruiser I
 SD_ROBOTIC1_DESC
-Chasseur robotique avec canon mitrailleur massif. Ne peut être construit que dans une colonie possédant une Cale Sèche Orbitale.
+Chasseur robotique avec canon mitrailleur massif. Ne peut être construit que dans une colonie possédant une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC2
 Robocruiser II
 SD_ROBOTIC2_DESC
-Chasseur robotique avec lasers et blindage renforcé. Ne peut être construit que dans une colonie possédant une Cale Sèche Orbitale.
+Chasseur robotique avec lasers et blindage renforcé. Ne peut être construit que dans une colonie possédant une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC3
 Robocruiser III
 SD_ROBOTIC3_DESC
-Chasseur robotique d'élite avec lasers améliorés. Ne peut être construit que dans une colonie possédant une Cale Sèche Orbitale.
+Chasseur robotique d'élite avec lasers améliorés. Ne peut être construit que dans une colonie possédant une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ORGANIC1
 Organic I
@@ -312,27 +312,27 @@ Chasseur organique avec boucliers. Efficace contre les ennemis peu armés.
 SD_AST_1
 Rock I
 SD_AST_1_DESC
-Un vaisseau astéroïdal équipé de lasers. Ne peut être construit que dans un système possédant un Processeur Astéroïdal.
+Un vaisseau astéroïdal équipé de lasers. Ne peut être construit que dans un système possédant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_2
 Rock II
 SD_AST_2_DESC
-Un vaisseau astéroïdal équipé de canons à plasma. Ne peut être construit que dans un système possédant un Processeur Astéroïdal.
+Un vaisseau astéroïdal équipé de canons à plasma. Ne peut être construit que dans un système possédant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_3
 Rock III
 SD_AST_3_DESC
-Un vaisseau astéroïdal équipé de canons à plasma améliorés et d'une couche de blindage astéroïdal. Ne peut être construit que dans un système possédant un Processeur Astéroïdal.
+Un vaisseau astéroïdal équipé de canons à plasma améliorés et d'une couche de blindage astéroïdal. Ne peut être construit que dans un système possédant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_HEAVY_AST_1
 Big Rock I
 SD_HEAVY_AST_1_DESC
-Un vaisseau astéroïdal massif équipé de canons à plasma. Ne peut être construit que dans un système possédant un Processeur Astéroïdal.
+Un vaisseau astéroïdal massif équipé de canons à plasma. Ne peut être construit que dans un système possédant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_HEAVY_AST_2
 Big Rock II
 SD_HEAVY_AST_2_DESC
-Un vaisseau astéroïdal massif équipé de canons à plasma améliorés et d'un blindage en alliage astéroïdal. Ne peut être construit que dans un système possédant un Processeur Astéroïdal.
+Un vaisseau astéroïdal massif équipé de canons à plasma améliorés et d'un blindage en alliage astéroïdal. Ne peut être construit que dans un système possédant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_CRYSTAL
 Crystal
@@ -372,27 +372,27 @@ Un bâtiment de guerre exotique, basé sur l'énergie fractale.
 SD_COLONY_SHIP
 Colon Galactique
 SD_COLONY_SHIP_DESC
-Astronef non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un Chantier Spatial.
+Astronef non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_COLONY_SHIP
 Colon Galactique Organic
 SD_ORG_COLONY_SHIP_DESC
-Astronef organique non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un Incubateur Orbital.
+Astronef organique non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_CRYONIC_COLONY_SHIP
 Colon Galactique Cryogenic
 SD_CRYONIC_COLONY_SHIP_DESC
-Astronef non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un Chantier Spatial.
+Astronef non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_CRYOCOL_SHIP
 Colon Galactique Cryo-Organic
 SD_ORG_CRYOCOL_SHIP_DESC
-Astronef organique non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un Incubateur Orbital.
+Astronef organique non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_CRYOCOL_SHIP
 Colon Galactique Cryo-Astéroïdal
 SD_AST_CRYOCOL_SHIP_DESC
-Astronef astéroïdal non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, possédant un Chantier Spatial, et dans un système avec un Processeur Astéroïdal.
+Astronef astéroïdal non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, possédant un [[buildingtype BLD_SHIPYARD_BASE]], et dans un système avec un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_OUTPOST_SHIP
 Pionnier Galactique
@@ -402,7 +402,7 @@ Astronef pionnier non-armé pouvant créer un avant-poste dans un monde inhabita
 SD_ORG_OUTPOST_SHIP
 Pionnier Galactique Organic
 SD_ORG_OUTPOST_SHIP_DESC
-Astronef organique pionnier pouvant créer un avant-poste dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un Incubateur Orbital.
+Astronef organique pionnier pouvant créer un avant-poste dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_COLONY_BASE
 Colon Stellaire
@@ -437,7 +437,7 @@ Transporte 6 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant êt
 SD_ORG_TROOP_SHIP
 Vaisseau d'Infanterie Organic
 SD_ORG_TROOP_SHIP_DESC
-Transporte 8 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Les vaisseaux organiques ne peuvent être construits que sur des planètes possédant un Incubateur Orbital.
+Transporte 8 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Les vaisseaux organiques ne peuvent être construits que sur des planètes possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ENG_TROOP_SHIP
 Vaisseau d'Infanterie Energy
@@ -785,6 +785,9 @@ Le serveur ne peut générer une partie sans joueur actif.
 SERVER_UNIVERSE_GENERATION_ERRORS
 L'Univers généré contient des erreurs. Consultez le fichier log pour le détail des messages d'erreur. La partie peut débuter, mais le gameplay en sera probablement impacté.
 
+SERVER_TURN_EVENTS_ERRORS
+Les événements de tour scriptés contiennent des erreurs. Consultez le fichier log pour le détail des messages d'erreur. La partie peut continuer, mais le gameplay en sera probablement impacté.
+
 ######################################
 # Command Line and OptionsDB Options #
 ######################################
@@ -818,6 +821,10 @@ Désigne la musique à jouer en arrière-plan.
 
 OPTIONS_DB_FULLSCREEN
 Démarre le jeu en mode plein écran. Cliquer sur le bouton Appliquer suffira à basculer en plein écran, ou bien un redémarrage du jeu sera nécessaire.
+
+OPTIONS_DB_FAKE_MODE_CHANGE
+'''Ne modifie pas réellement la résolution d'écran. Envoie le jeu dans un tampon-mémoire hors-écran, et ce à la résolution désirée, puis adapte ce tampon-mémoire à la taille d'écran.
+Permet d'éviter certains problèmes liés à la modification dynamique de résolution d'écran, lesquels sont susceptibles de se produire sous Linux.'''
 
 OPTIONS_DB_FULLSCREEN_MONITOR_ID
 Sélectionne le moniteur à utiliser en mode plein écran. L'écran primaire doit être numéroté 0. Peut nécessiter le redémarrage du jeu pour prendre effet.
@@ -1813,7 +1820,7 @@ OPTIONS_VIDEO_MODE
 Mode plein écran
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Fixe la résolution du mode plein écran et fixe le nombre de bits par pixel.
+Fixe la résolution du mode plein écran et le nombre de bits par pixel. Cliquer sur Appliquer peut enregistrer directement le réglage, ou bien nécessiter un redémarrage.
 
 OPTIONS_VIDEO_MODE_WINDOWED
 Mode fenêtré
@@ -1838,6 +1845,9 @@ Distance au bord supérieur de l'écran
 
 OPTIONS_FULLSCREEN
 Plein écran
+
+OPTIONS_FAKE_MODE_CHANGE
+Modification factice de résolution
 
 OPTIONS_FULLSCREEN_MONITOR_ID
 Numéro du moniteur plein écran
@@ -3393,11 +3403,6 @@ Estimation force de combat (sans boucliers) :  %19$.f   (%20$.2f par PP)
 Contre les dommages %21$.1f et boucliers %22$.1f ennemis :  %23$.f   (%24$.2f par PP)
 '''
 
-
-
-
-
-
 ENC_UNLOCKED_BY
 '''<u>Débloqué par tech. :</u>
 
@@ -3446,6 +3451,10 @@ La planète %2% de l'empire %1% a été mise en déroute
 ENC_COMBAT_DESTROYED_STR
 Le vaisseau %2% de %1% a été détruit
 
+###########################################
+# Combat Report #
+###########################################
+
 NEUTRAL
 Neutre
 
@@ -3454,6 +3463,106 @@ Forces initiales
 
 COMBAT_SUMMARY_DESTROYED
 Pertes:
+
+COMBAT_REPORT_TITLE
+Rapport de Combat
+
+COMBAT_SUMMARY
+Résumé
+
+COMBAT_SUMMARY_PARTICIPANT_RELATIVE
+Barres:Relatives
+
+COMBAT_SUMMARY_PARTICIPANT_RELATIVE_TIP
+'''Les largeurs des barres sont relatives à la santé.'''
+
+COMBAT_SUMMARY_PARTICIPANT_EQUAL
+Barres:Égales
+
+COMBAT_SUMMARY_PARTICIPANT_EQUAL_TIP
+'''Les largeurs des barres sont égales. Cliquez ici pour un mode plus excitant!'''
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL
+Si activé, les barres des combattants seront adaptées horizontalement pour être proportionnelles à la santé.
+
+COMBAT_SUMMARY_HEALTH_SMOOTH
+Santé:Précise
+
+COMBAT_SUMMARY_HEALTH_SMOOTH_TIP
+'''La santé d'un astronef est représentée via une interpolation précise'''
+
+COMBAT_SUMMARY_HEALTH_BAR
+Santé:Barre
+
+COMBAT_SUMMARY_HEALTH_BAR_TIP
+'''La santé d'un astronef est représentée par une barre bicolore'''
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
+Si activé, la couleur des barres des combattants sera interpolée précisément selon le pourcentage restant de santé.
+
+COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
+Hauteur Barre:Proportionnelle
+
+COMBAT_SUMMARY_BAR_HEIGHT_EQUAL
+Hauteur Barre:Égale
+
+COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL_TIP
+Les barres des combattants seront adaptées pour afficher la santé max, relative aux autres bâtiments de la flotte.
+
+COMBAT_SUMMARY_BAR_HEIGHT_EQUAL_TIP
+Les barres des combattants sont égales.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
+Si activé, les barres des combattants seront adaptées verticalement pour être proportionnelles à la santé max.
+
+COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
+Hauteur Graphique:Proportionnelle
+
+COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL
+Hauteur Graphique:Égale
+
+COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL_TIP
+Les graphiques des empires belligérants sont adaptés selon la plus haute santé max au sein des flottes.
+
+COMBAT_SUMMARY_GRAPH_HEIGHT_EQUAL_TIP
+Les graphiques des empires belligérants sont égaux.
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_GRAPH_HEIGHT_PROPORTIONAL
+Si activé, les graphiques des empires belligérants seront adaptés selon la santé max des astronefs.
+
+OPTIONS_COMBAT_COLORS
+Couleurs de Combat
+
+OPTIONS_COMBAT_SUMMARY_DEAD_COLOR
+Unités perdues
+
+OPTIONS_COMBAT_SUMMARY_WOUND_COLOR
+Dommages
+
+OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR
+Santé
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_DEAD_COLOR
+Couleur des unités perdues dans le graphique de résumé du combat
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_WOUND_COLOR
+Couleur des dommages dans le graphique de résumé du combat
+
+OPTIONS_DB_UI_COMBAT_SUMMARY_HEALTH_COLOR
+Couleur de la santé dans le graphique de résumé du combat
+
+COMBAT_LOG
+Log
+
+COMBAT_FLEET_HEALTH_AXIS_LABEL
+%1% Santé Flotte: %2%/%3%
+
+COMBAT_UNIT_HEALTH_AXIS_LABEL
+'''Unité
+santé'''
+
+COMBAT_DESTROYED_LABEL
+Perdues: %1%
 
 ###########################################
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
@@ -3621,11 +3730,11 @@ PHOTOTROPHIC_SPECIES_TEXT
 '''Les espèces phototropiques vivent principalement, si ce n'est entièrement, de la lumière stellaire. La population maximale de ces espèces est fortement influencée par la luminosité de leur étoile -- plus elle est importante, plus elle est bénéfique. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
 
 Influence sur la population / taille planète:
-*Étoile Bleue: Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Énorme +15.
-*Étoile Blanche: Minuscule +1.5 ; Petite +3 ; Moyenne +4.5 ; Grande +6 ; Énorme +7.5.
+*Étoile Bleue: Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+*Étoile Blanche: Minuscule +1.5 ; Petite +3 ; Moyenne +4.5 ; Grande +6 ; Immense +7.5.
 *Étoile Jaune, Étoile Orange: Aucune influence.
-*Étoile Rouge, Étoile à Neutrons: Minuscule -1 ; Petite -2 ; Moyenne -3 ; Grande -4 ; Énorme -5.
-*Trou Noir, Pas d'Étoile: Minuscule -10 ; Petite -20 ; Moyenne -30 ; Grande -40 ; Énorme -50.'''
+*Étoile Rouge, Étoile à Neutrons: Minuscule -1 ; Petite -2 ; Moyenne -3 ; Grande -4 ; Immense -5.
+*Trou Noir, Pas d'Étoile: Minuscule -10 ; Petite -20 ; Moyenne -30 ; Grande -40 ; Immense -50.'''
 
 SELF_SUSTAINING_SPECIES_TITLE
 Métabolisme Autosuffisant
@@ -3708,7 +3817,7 @@ STARLANE_SPEED_TEXT
 AI_ERROR_MSG
 AI_Error: AI script error
 
-# Functional list; do not translate. Used for logging during universe creation
+# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 GROWTH_SPECIALS_LIST
 '''CRYSTALS_SPECIAL
 FRUIT_SPECIAL
@@ -3918,10 +4027,28 @@ LAST_TURN_ACTIVE_IN_BATTLE
 Dern. Tour Bataille
 
 SIZE_AS_DOUBLE
-Size As Number
+Taille numér.
 
 DISTANCE_FROM_ORIGINAL_TYPE
 Distance Planète type d'origine
+
+PLANET_TYPE
+Type Planète
+
+ORIGINAL_TYPE
+Type de Planète Originale
+
+NEXT_TOWARDS_ORIGINAL_TYPE
+Prochain Type de Planète Originale
+
+PLANET_SIZE
+Taille Planète
+
+PLANET_ENVIRONMENT
+Environnement Planètaire
+
+STAR_TYPE
+Type d'Étoile
 
 NEXT_TURN_POP_GROWTH
 Croiss. Pop. au Prochain Tour
@@ -3991,6 +4118,18 @@ Type d'étoile
 CONDITION_METERVALUE
 Valeur Indicateur Objet
 
+CONDITION_HAS_GROWTH_SPECIAL
+Ayant une Particularité Croissance
+
+CONDITION_PTYPE_W_GG
+Géante Gazeuse avec Planète de type
+
+CONDITION_PTYPE_W_AST
+Astéroides avec Planète de type
+
+CONDITION_ANY
+Tout
+
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
@@ -3999,7 +4138,7 @@ Valeur Indicateur Objet
 #Window title####
 
 SITREP_PANEL_TITLE
-Rapport de situation
+Rapport de situation - Tour initial
 
 SITREP_PANEL_TITLE_TURN
 Rapport de situation - Tour %1%
@@ -4039,11 +4178,14 @@ SITREP_BUILDING_TYPE_UNLOCKED
 SITREP_PLANET_CAPTURED
 SITREP_PLANET_COLONIZED
 SITREP_NEW_COLONY_ESTABLISHED
+SITREP_POP_THRESHOLD
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 EFFECT_CONC_CAMP_COMLETE
 EFFECT_GAIAN_TERRAFORM
 EFFECT_TERRAFORM
+EFFECT_BLACKHOLE
+EFFECT_ART_PLANET
 EFFECT_TAME_MONSTER_HATCHED
 EFFECT_TAME_MONSTER_MATURED
 SITREP_BUILDING_BUILT
@@ -4350,6 +4492,16 @@ EFFECT_TERRAFORM
 La planète %planet% a été terraformée.
 EFFECT_TERRAFORM_LABEL
 Terraformation
+
+EFFECT_BLACKHOLE
+Effondrement du système %system% afin de créer un Trou Noir.
+EFFECT_BLACKHOLE_LABEL
+Trou Noir
+
+EFFECT_ART_PLANET
+La planète %planet% a été transformée en planète artificielle.
+EFFECT_ART_PLANET_LABEL
+Trou Noir
 
 EFFECT_STARVATION
 La famine sévit sur la planète %planet%.
@@ -5447,7 +5599,7 @@ GAIA_SPECIAL
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Accroît le plafond de population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Énorme +15.
+'''Accroît le plafond de population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
 Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population.'''
 
@@ -5633,7 +5785,7 @@ Un avant-poste des Expérimentateurs est implanté dans ce système et doit êtr
 PROBIOTIC_SPECIAL
 Soupe Probiotique
 PROBIOTIC_SPECIAL_DESC
-'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète abritant une Soupe Probiotique privilégie la Croissance, toutes les planètes à population organique qui lui sont reliées reçoivent le même bonus.
 
 La grande diversité d'organismes unicellulaires qu'offre la planète, contribue à améliorer la santé et la préservation de tous types de vie organique.'''
@@ -5641,7 +5793,7 @@ La grande diversité d'organismes unicellulaires qu'offre la planète, contribue
 FRUIT_SPECIAL
 Fruits d'Eden
 FRUIT_SPECIAL_DESC
-'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète hébergeant des Fruits d'Eden privilégie la Croissance, toutes les planètes à population organique qui lui sont reliées reçoivent le même bonus.
 
 Ce qui revêt l'apparence d'une forêt ordinaire s'avère être en réalité un organisme symbiotique de la taille d'un continent. Les fruits de ces arbres contiennent des substances organiques étonnamment complexes ainsi que bénéfiques à tous types de vie organique.'''
@@ -5649,7 +5801,7 @@ Ce qui revêt l'apparence d'une forêt ordinaire s'avère être en réalité un 
 SPICE_SPECIAL
 Épice Ki
 SPICE_SPECIAL_DESC
-'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète disposant de champs d'Épice Ki privilégie la Croissance, toutes les planètes à population organique qui lui sont reliées reçoivent le même bonus.
 
 Produite uniquement par l'écosystème de cette planète, l'Épice Ki a la propriété de prolonger la vie, d'éclairer l'esprit, ou encore d'aiguiser les capacités sensorielles des êtres organiques.'''
@@ -5657,7 +5809,7 @@ Produite uniquement par l'écosystème de cette planète, l'Épice Ki a la propr
 MONOPOLE_SPECIAL
 Aimants Monopolaires
 MONOPOLE_SPECIAL_DESC
-'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète dotée d'Aimants Monopolaires privilégie la Croissance, toutes les planètes à population robotique qui lui sont reliées reçoivent le même bonus. 
 
 Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
@@ -5667,7 +5819,7 @@ Les Aimants Monopolaires rendent les robots plus forts !'''
 SUPERCONDUCTOR_SPECIAL
 Supraconducteurs Ambiants
 SUPERCONDUCTOR_SPECIAL_DESC
-'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète dotée de Supraconducteurs Ambiants privilégie la Croissance, toutes les planètes à population robotique qui lui sont reliées reçoivent le même bonus. 
 
 Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
@@ -5677,7 +5829,7 @@ Les Supraconducteurs Ambiants rendent les robots meilleurs !'''
 POSITRONIUM_SPECIAL
 Cendres Positroniques
 POSITRONIUM_SPECIAL_DESC
-'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète recouverte de Cendres Positroniques privilégie la Croissance, toutes les planètes à population robotique qui lui sont reliées reçoivent le même bonus. 
 
 Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
@@ -5687,7 +5839,7 @@ Les Cendres Positroniques rendent les robots plus intelligents !'''
 MINERALS_SPECIAL
 Profusion Minière
 MINERALS_SPECIAL_DESC
-'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète bénéficiant d'une Profusion Minière privilégie la Croissance, toutes les planètes à population lithique qui lui sont reliées reçoivent le même bonus.
 
 Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
@@ -5697,7 +5849,7 @@ Cette planète abrite de riches gisements de minerai qui accélèrent significat
 CRYSTALS_SPECIAL
 Cristaux Silmalins
 CRYSTALS_SPECIAL_DESC
-'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète disposant de Cristaux Silmalins privilégie la Croissance, toutes les planètes à population lithique qui lui sont reliées reçoivent le même bonus.
 
 Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
@@ -5707,7 +5859,7 @@ Cette planète abrite de riches gisements de minerai qui accélèrent significat
 ELERIUM_SPECIAL
 Elerium Originel
 ELERIUM_SPECIAL_DESC
-'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 Lorsqu'une planète disposant d'Elerium Originel privilégie la Croissance, toutes les planètes à population lithique qui lui sont reliées reçoivent le même bonus.
 
 Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
@@ -5807,7 +5959,7 @@ Moyenne,
 SZ_LARGE
 Grande,
 SZ_HUGE
-Énorme,
+Immense,
 SZ_ASTEROIDS
 Astéroïdes
 SZ_GASGIANT
@@ -5989,10 +6141,10 @@ ALIGN_ENVIRONMENT_MODIFICATION_DESC
 Usage de la terraformation ou autres actions environnementales à grande échelle.
 
 ALIGN_BIOLOGICAL_ALTERATION
-Altération biologique 
+Modification biologique 
 
 ALIGN_BIOLOGICAL_ALTERATION_DESC
-Usage de l'altération et de l'ingéniérie biologique.
+Usage de la modification et de l'ingéniérie biologique.
 
 ALIGN_MECHANIZATION
 Mécanisation 
@@ -6515,6 +6667,21 @@ Définit le propriétaire de l'objet comme vainqueur de la partie
 DESC_GENERATE_SITREP
 Génère un message de rapport de situation pour l'empire %1%
 
+DESC_GENERATE_SITREP_ALLIES
+Génère un message de rapport de situation pour les alliés de l'empire %1%
+
+DESC_GENERATE_SITREP_ENEMIES
+Génère un message de rapport de situation pour les ennemis de l'empire %1%
+
+DESC_GENERATE_SITREP_ALL
+Génère un message de rapport de situation pour tous les empires
+
+DESC_GENERATE_SITREP_NONE
+Génère un message de rapport de situation sans destinataires
+
+DESC_GENERATE_SITREP_CAN_SEE
+Génère un message de rapport de situation pour les empires pouvant détecter un objet %2%
+
 DESC_SET_EMPIRE_TECH_PROGRESS
 Définit la progression de la recherche de la technologie %1% à %2% pour l'empire %3%
 
@@ -7009,23 +7176,23 @@ LRN_PHYS_BRAIN
 Cartographie Cérébrale
 
 LRN_PHYS_BRAIN_DESC
-Les structures et leurs fonctions dans le cerveau sont déterminés. Les interactions électrochimiques et la nature quantique de la pensée et la mémorisation sont comprises.  Avec la compréhension des fonctions cérébrales, le renforcement et la transformation de celles-ci devient possible, et donne naissance à de nouvelles idées sur les limites de la pensée, de son expression, et de son remplacement.
+Les structures cérébrales ainsi que leurs fonctions sont déterminées. La nature électrochimique et quantique de la pensée, tout comme la mémorisation, sont comprises. Avec la connaissance totale des fonctions cérébrales, le renforcement et la transformation de celles-ci deviennent possibles, et donnent naissance à de nouveaux concepts sur les limites de la pensée, son expression, et ses possibilités de substitution.
 
 LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente l'objectif [[encyclopedia RESEARCH_TITLE]] sur toutes les planètes concentré sur la recherche de 0,25 par population.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.1 par population sur toutes les planètes réglées sur le Focus Recherche.
 
-Avec une difficulté grandissante dans les problèmes d'analyse des données, les mesures traditionnelles des performances algorithmique deviennent moins utile en raison des limites de la complexité irréductible.  À ce stade, des mesures de forme et de fonction algorithmique deviennent significatifs; esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisé.'''
+Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
 
 LRN_TRANSLING_THT
 Translinguistique
 
 LRN_TRANSLING_THT_DESC
-'''Sans effet immédiat, mais permettra par la suite l'acquisition pacifique de planètes indigènes.
+'''Sans effet dans l'immédiat, mais permettra par la suite l'acquisition pacifique de planètes indigènes.
 
-Les faibles d'esprit luttent ou acceptent les limites de la langue qu'ils ont apprise. Les esprits normaux se sentent limités par les concepts qu'ils ont les moyens d'exprimer. Les vrais grands esprits se libèrent des limites de la langue, formant et analysant des pensées à la limite de la transcendance. Mais les grands esprits sont isolés et inutiles, car sans la langue pour exprimer des pensées, comment peuvent-ils partager leurs idées?'''
+Les faibles d'esprit luttent contre ou acceptent les limites de la langue qu'ils ont apprise. Les esprits plus évolués se sentent limités par les concepts qu'ils parviennent à exprimer. Les vrais grands esprits se libèrent du carcan du langage, formant et analysant des pensées aux frontières du transcendental. Mais ces grands esprits se retrouvent souvent isolés et désoeuvrés, car sans langage pour exprimer des pensées, comment pourraient-ils bien partager leurs profondes idées?'''
 
 LRN_PSIONICS
 Psionique
@@ -7033,7 +7200,7 @@ Psionique
 LRN_PSIONICS_DESC
 '''Les coûts de la [[encyclopedia RESEARCH_TITLE]] sont grandement réduits si l'empire comprend une espèce télépathique.
 
-A travers l'introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers autour de lui, en contournant les limitations physiques du corps. Des puissances telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinesie et la psychoenergie peuvent remplacer ou dépasser des alternatives biologiques ou  technologiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la modification de personnalité et la possession ont de grandes conséquences sur la relation entre les êtres psioniques et les autres.'''
+Via une introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers qui l'entoure, en s'affranchissant des limitations physiques du corps. Des facultés cérébrales telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinésie et la psychoénergie peuvent remplacer ou dépasser les possibilités biologiques ou technologiques classiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la possession et la modification de personnalité, ont un fort impact sur la relation entre les êtres maîtrisant ces facultés et les autres.'''
 
 LRN_ARTIF_MINDS
 Intelligences Artificielles
@@ -7041,9 +7208,9 @@ Intelligences Artificielles
 LRN_ARTIF_MINDS_DESC
 '''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 2 sur toutes les planètes.
 
-Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinie , ils leur manquent une qualité essentielle : la conscience. Avec le développement d'une véritable intelligence artificielle, cette qualité peut être synthétisée, modifiée. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de metaparadigmes.
+Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinies, ils leur manquent cependant une qualité essentielle: la conscience. Bien que la définition complète du concept de conscience reste insaisissable, cette qualité peut être toutefois synthétisée et modifiée de manière convaincante. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de métaparadigmes.
 
-Des IA sont à même d'entrer toutes les données découvertes par des chercheurs actifs en un seul réseau de traitement automatique de données, ces données peuvent être analysées et de nouvelles données obtenues par un centre de recherche entièrement automatisé. Chaque planète peut contenir de telles structures, indépendamment des professions de la population, ce qui donne un bonus à la recherche sur tous les mondes.'''
+Des IA sont à même de compiler toutes les données découvertes par la Recherche en un seul réseau de traitement automatique, ces données pouvant être analysées afin d'en faire émerger de nouvelles, le tout via un centre de recherche entièrement automatisé. Chaque planète peut héberger de telles structures, indépendamment des professions de la population, donnant ainsi un bonus de Recherche dans tout l'empire.'''
 
 LRN_XENOARCH
 Xénoarchéologie
@@ -7054,55 +7221,55 @@ Permet les découvertes dans les Ruines
 LRN_XENOARCH_DESC
 '''Permet les découvertes dans les [[special ANCIENT_RUINS_SPECIAL]].
 
-Les empires, peuples et civilisations mono-stellaires contemporains ne sont pas les premiers êtres, ni les seuls, à avoir vécu dans cette galaxie. On peut trouver, sur des planètes désertées, des astéroïdes sans vie, ou dérivant dans l'espace des vestiges, des ruines et des rumeurs des anciens. Rechercher et déchiffrer ces indices rend hautement probable la révélation de secrets, l'apprentissage d'utiles leçons, ou la délivrance d'avertissements venus d'anciens savoirs.
+Les empires, peuples et civilisations mono-stellaires contemporains ne sont pas les premiers êtres, ni les seuls, à avoir vécu dans cette galaxie. Les vestiges, les ruines et les mythes des Anciens peuvent être découverts sur des planètes abandonnées, des astéroïdes sans vie, ou tout simplement dérivant dans l'espace. Rechercher et déchiffrer ces indices rend hautement probable la révélation de secrets, l'apprentissage de précieuses connaissances, ou d' avertissements salutaires, provenant d'anciens savoirs.
 
-Lorsqu'il s'agit de technologies très avancées, il est souvent extrèmement difficile, et périlleux, de déchiffrer les indices laissés par d'anciennes civilisations. Le mauvais usage, ou l'activation accidentelle de cette technologie peut causer la perte de ladite technologie et/ou des archéologues découvreurs. En confinant avec un maximum de sécurité la découverte au moyen d'un champ de force et en testant ses effets par manipulation à distance, il demeure cependant possible de percer sans risque les mystère de la technologie des anciens.'''
+Dans les cas de technologies très avancées, il est souvent extrêmement difficile et périlleux de déchiffrer les indices laissés par d'anciennes civilisations. Le mauvais usage ou l'activation accidentelle de cette technologie, peuvent causer la perte de ladite technologie et/ou des archéologues explorateurs. En confinant avec un maximum de sécurité la découverte au sein d'un champ de force et en testant ses effets par manipulation à distance, il devient alors possible de percer sans risque les mystères de la technologie des Anciens.'''
 
 LRN_GRAVITONICS
 Gravitonique
 
 LRN_GRAVITONICS_DESC
-Analogue à la "charge de couleur" de la chromodynamique quantique, il existe plusieurs types de graviton. Avec la force attractive graviton, les "anti-graviton", "graviton-droit" et "graviton-gauche" peuvent être combinés pour fléchir  la surface de l'espace-temps arbitrairement. Cette manipulation autorise le contrôle de la force de gravité, ce qui permet des structures, des constructions et des recherches impossible avant, même théoriquement.
+Analogue à la "charge de couleur" de la chromodynamique quantique, il existe plusieurs types de graviton. Avec la force attractive du graviton, les "anti-graviton", "graviton-droit" et "graviton-gauche" peuvent être combinés pour courber et tordre arbitrairement la surface de l'espace-temps. Cette manipulation autorise le contrôle de la force de gravité, permettant ainsi de bâtir de nouvelles structures, d'inventer de nouveaux équipements,  d'entreprendre de nouvelles recherches, l'ensemble s'avérant impossible par le passé, même théoriquement.
 
 LRN_EVERYTHING
 Théorie du Tout
 
 LRN_EVERYTHING_DESC
-Au début, des théories naïves décrivaient des sous-ensembles des quatre forces fondamentales de la nature: l'électromagnétisme, les forces nucléaires forte et faible, et la gravité. Une théorie globale exprimant toutes les forces comme des cas particuliers d'une seule interaction représente un Saint-Graal de la science. Cette théorie décrit les premiers instants de l'univers, les profondeurs les plus déformées d'une singularité, la plus exigüe des dimensions cachées et le destin final du cosmos. Pourtant, il peut encore "exister" des couches d'existence au-delà de ce qui peut être observés et décrits par la science ...
+Au commencement, les théories primordiales décrivaient les sous-ensembles des quatre forces fondamentales de la nature: l'électromagnétisme, les forces nucléaires forte et faible, et la gravité. Une théorie globale exprimant toutes les forces comme des cas particuliers d'une seule interaction représente le Saint-Graal de la science. Cette théorie décrit les premiers instants de l'univers, les profondeurs les plus déformées d'une singularité, la plus exigüe des dimensions cachées et le destin final du cosmos. Pourtant, il peut encore "exister" des couches de réalité au-delà de ce qui peut être observé et décrit par la science...
 
 LRN_FORCE_FIELD
 Harmonique des Champs de Force
 
 LRN_FORCE_FIELD_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10 and unlocks basic ship shielding technology. [[encyclopedia SHIELDS_TITLE]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than armor. However, there can only be one active shield generator on a ship, so shield parts do not stack.
+'''Augmente les [[encyclopedia SHIELDS_TITLE]] max de 10 sur toutes les planètes et débloque la technologie de base pour les boucliers d'astronef. Les [[encyclopedia SHIELDS_TITLE]] sont en général plus chers que les blindages, en raison de la technologie nécessaire pour les fabriquer, les boucliers procurant une bien meilleure défense qu'un simple blindage. Cependant, il ne peut y avoir qu'un seul bouclier actif par astronef, rendant par conséquent impossible l'addition de plusieurs boucliers.
 
-Comme l'analyse du son de Fourier, l'électromagnétisme, les interactions fortes et faibles peuvent être exprimées sous la forme de superpositions d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, les forces peuvent être contrôlé pour défendre, attaquer, contenir ou soutenir.'''
+Tout comme l'analyse du son de Fourier, l'électromagnétisme ainsi que les interactions fortes et faibles peuvent être exprimées sous la forme de superpositions d'ondes d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, ces forces peuvent être contrôlées pour défendre, attaquer, contenir ou soutenir.'''
 
 LRN_MIND_VOID
 Esprit du Vide
 
 LRN_MIND_VOID_DESC
-Nous ne sommes pas seuls dans le cosmos ... mais pourquoi la recherche devrait être limité de telle sorte? De nombreuses cultures ont des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou un observateur détaché, il est clair que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, observant.
+Nous ne sommes pas seuls dans le cosmos... mais pourquoi la recherche d'autres existences devrait se limiter à un unique paradigme? De nombreuses cultures possèdent des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou bien un observateur détaché, il est indéniable que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, et observe.
 
 LRN_TIME_MECH
 Mécanique Temporelle
 
 LRN_TIME_MECH_DESC
-Qu'est ce que "maintenant", "le futur" et "le passé"? Le double paradoxe de la relativité ou la théorie du "trou de ver" , suggère les premières formes de "voyage dans le temps". La manipulation directe des fluxs spatio-temporelle permet d'exploiter et d'agrandir ces effets. Les incursions temporelles ne peut pas modifier sensiblement le passé de l'univers que nous percevons. Ils peuvent, toutefois, compresser le temps ou étendre des instants d'une durée arbitraire, aux applications limitées seulement par nos ressources, et notre propre patience ...
+Qu'est-ce que "le présent", "le futur" et "le passé"? Le double paradoxe de la relativité ou bien la théorie du "trou de ver", suggèrent les premières formes de "voyage dans le temps". La manipulation directe des flux spatio-temporels permet de contrôler et d'amplifier ces effets. Les incursions temporelles ne peuvent pas modifier d'une manière perceptible le passé de l'univers que nous observons. Cependant, ces manipulations peuvent compresser le temps ou allonger arbitrairement la durée des instants, en vue d'applications limitées seulement par nos ressources, ainsi que notre propre patience ...
 
 LRN_NDIM_SUBSPACE
 Espace Multidimensionnel
 
 LRN_NDIM_SUBSPACE_DESC
-Les premiers théoriciens des super-cordes ont parlé d'univers à 10, 11 ou 26 dimensions, mais avec tous les 4 macrodimensions "boucle" si étroite qu'elles sont invisibles. Celles-ci et d'autres dimensions peuvent maintenant être uncurled et ouvert, et la surface de l'espace lui-même peuvent être étirée et percée par des déplacements de matière vers ou en provenance de niveaux d'existence précédemment cachées par notre perception limitée, ou la création de couches ou des bulles où il n'en existait pas auparavant.
+Les premiers théoriciens des super-cordes mentionnaient des univers à 10, 11 ou 26 dimensions, mais chacun d'eux présentaient 4 macro-dimensions "imbriquées" si étroitement qu'elles demeuraient invisibles. Ces dernières et d'autres dimensions de même type peuvent désormais être séparées et ouvertes: la surface de l'espace lui-même peut être étiré et transpercé par de la matière en mouvement, en direction ou en provenance de niveaux d'existence précédemment dissimulés sous la surface de notre perception limitée. Cette manipulation des macro-dimensions est à même de créer de nouvelles couches ou bulles dimensionnelles, où seul le néant faisait loi auparavant.
 
 LRN_UNIF_CONC
 Conscience Unifiée 
 
 LRN_UNIF_CONC_DESC
-'''En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, leurs actions parfaitement unifiées et dirigées pour le bien de l'ensemble.
+'''En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, leurs actions étant parfaitement unifiées et orientées pour le bien de l'ensemble.
 
-La communication télépathique entre individus, qu'elle soit directe ou assistée par les machines, n'a permis que les échanges de pensées et d'idées les plus élémentaires, triviaux et superficiels. Des esprits véritablement reliés fonctionnent comme une unique conscience, avec la somme des facultés et des connaissances de ses parties, et agissent comme une nouvelle entité. Ceci donne un grand potentiel, mais fait aussi courir le grave risque que l'esprit ainsi formé refuse sa propre destruction, laquelle est nécessaire pour que chacun des esprits communicants retrouve son intégrité. Autre péril : un des esprits communicants peut vouloir dominer, contrôler, voire détruire l'autre, interdisant la formation d'une union équitable et harmonieuse.'''
+La communication télépathique entre individus ou interfaces d'intelligences artificielles, n'a jamais permis que les plus basiques et élémentaires échanges de pensées et d'idées. Des esprits véritablement reliés fonctionnent comme une unique conscience, utilisant la somme des facultés et des connaissances de ses parties constituantes, et agissent comme une nouvelle entité. Cela implique un grand potentiel, mais également un risque substantiel, dans la mesure où l'esprit unifié peut refuser sa propre destruction, laquelle est nécessaire pour que chacun des esprits reliés puisse retrouver son indépendance. D'autre part, il peut arriver qu'un des esprits veuille dominer, contrôler, voire détruire les autres, plutôt que de former une union harmonieuse et équitable.'''
 
 LRN_QUANT_NET
 Réseau Quantique
@@ -7110,118 +7277,118 @@ Réseau Quantique
 LRN_QUANT_NET_DESC
 '''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.5 par population sur toutes les planètes réglées sur le Focus Recherche.
 
-Un réseau massif de donnés, à l'échelle de l'empire, en mesure de transférer des informations instantanément entre deux endroits, plutôt que par la voie longue et indirecte des voies spatiales. Ce progrès facilite grandement la recherche dans tout l'empire.
+Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
-Chaque particule est inextricablement liée au niveau quantique à chaque particule avec laquelle elle a déjà précédemment interagi. De vieilles idées mécanistes concernant la cause et l'effet ne sont plus applicables pas à ce niveau, car les particules peuvent désormais "communiquer" instantanément sur des distances énormes. Quand une compréhension approfondie de ce phénomène est acquise, l'action sélectionnée, à petite échelle, sur une distance entre deux points peut être réalisée instantanément et les limites de vitesse relativiste obsolète ne s'appliquent plus au transfert de l'information.'''
+Chaque particule est inextricablement liée au niveau quantique à toute particule avec laquelle elle a déjà interagi. Les vieilles idées mécanistes concernant la cause et la conséquence ne sont plus applicables à ce niveau, les particules pouvant "communiquer" instantanément sur de vastes distances. Lorsque la compréhension approfondie de ce phénomène est acquise, certaines actions de petite échelle entre deux lieux distants peuvent être réalisées instantanément, tandis que les limites obsolètes de la vitesse relativiste ne s'appliquent plus au transfert de l'information.'''
 
 LRN_TRANSCEND
 Singularité Transcendentale
 
 LRN_TRANSCEND_DESC
-Qu'est-ce que la divinité ? Est-ce qu'un dieu se soucie du moral et bienveillant ou du malveillant et tyrannique ? Est-ce qu'un dieu traite les mortels avec attention et amour, haine et souffrance ou indifférence ? Est-ce qu'un dieu est même seulement conscient des affaires infiniment minuscules de l'univers physique, ou la vraie divinité est-elle au-delà de toute description, et son incompréhension par les mortels également incompréhension des mortels ?
+Qu'est-ce que la divinité? Est-ce qu'un dieu se soucie de ce qui est moral et bienveillant ou bien malveillant et tyrannique? Est-ce qu'un dieu traite les mortels avec amour et attention, haine et souffrance, ou simple indifférence ? Est-ce qu'un dieu est même seulement conscient des affaires infiniment insignifiantes de l'univers physique? Peut-être que la vraie divinité se situe au-delà de toute description, l'incompréhension étant finalement réciproque...
 
 GRO_MEDICAL_PATH
 Pathologie Médicale
 
 GRO_MEDICAL_PATH_DESC
-'''Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments. By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
-Le traitement des maladies et des blessures requiert une connaissance approfondie de leurs causes. C'est en étudiant les subtilités et complexités de diverse affections qu'on parvient à développer des traitements bien plus efficaces.'''
+'''De nombreux traumas et maladies, ou les signes d'un même trauma ou maladie, peuvent résulter de causes et symptômes très semblables, mais nécessiter des traitements recommandés très différents. En soignant les maux de chaque individu selon les manifestations spécifiques observées plutôt qu'en se référant à la catégorisation générale de la maladie, un bénéfice sanitaire important peut en être retiré.
+Le traitement des traumas et des maladies requiert une connaissance approfondie de leurs causes. Étudier les subtilités et intrications des diverses affections permet de développer des traitements bien plus efficaces.'''
 
 GRO_PLANET_ECOL
 Écologie Planétaire
 
 GRO_PLANET_ECOL_DESC
-L'agriculture et la science médicale peuvent augmenter considérablement la survie et permettre d'abord d'importants accroissements de population. Par la suite, toutefois, la croissance démographique se trouve limitée par la capacité d'accueil de la planète et du réseau vivant qui la constitue. Comprendre l'écosystème local et les contraintes qu'il subit permet la conservation et l'amélioration de l'environnement planétaire au bénéfice des générations futures.
+L'agriculture et la science médicale peuvent considérablement augmenter les chances de survie et entraîner d'importants accroissements de population ainsi que de production de nourriture. Toutefois, la croissance démographique se trouve limitée par la capacité en ressources naturelles de la planète et des biosphères qui la constituent. Comprendre les écosystèmes naturels et les contraintes qu'il subissent, permet la conservation et l'amélioration de l'environnement planétaire, au bénéfice des générations futures.
 
 GRO_GENETIC_ENG
 Génie Génétique
 
 GRO_GENETIC_ENG_DESC
-'''La palette génétique est aussi variée que les formes de vies dont elle est issue. Les gènes peuvent être extraits, copiés et réintroduits dans les génomes pour créer des organismes transgéniques avec des combinaisons de caractères naturellement absents ou impossibles. Grâce à l'altération directe des bases aminées codantes, les gènes peuvent aussi être modifiés avant réintroduction ce qui permet la création de gènes entièrement nouveaux. Les techniques sont limitées, cependant, à de légères modifications de gènes existants accessibles à la recherche.'''
+'''La palette génétique est aussi variée que les formes de vies qui en émergent. Les gènes peuvent être extraits, copiés et réintroduits dans les génomes afin de créer des organismes transgéniques possédant des combinaisons de caractères absents ou impossibles à l'état naturel. Grâce à la modification directe des bases aminées codantes, les gènes peuvent également être transformés avant réintroduction, permettant ainsi la création de gènes entièrement nouveaux. Cependant, les techniques sont limitées à de légères modifications des gènes existants et accessibles à la recherche.'''
 
 CON_REMOTE_COL
 Colonisation Lointaine
 
 CON_REMOTE_COL_DESC
-'''Fonder de nouvelles colonies au-delà de la zone d'approvisionnement des mondes déjà établis est une entreprise complexe. Cela requiert des astronefs de colonisation pouvant transporter tout l'équipement nécessaire à l'édification d'une colonie autonome, ainsi qu'un contigent initial de colons.'''
+'''Fonder de nouvelles colonies au-delà de la zone d'approvisionnement des mondes déjà établis est une entreprise complexe. Cela requiert des astronefs de colonisation pouvant transporter tout l'équipement nécessaire à l'édification d'une colonie autonome, ainsi qu'un contingent initial de colons.'''
 
 GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Accroît le plafond de population des planètes parfaites, convenables et pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.'''
+'''Accroît le plafond de population des planètes parfaites, convenables et pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.'''
 
 GRO_GENETIC_MED
 Médecine Génétique
 
 GRO_GENETIC_MED_DESC
-'''Si le Génie Génétique traditionnel altère les codes génétiques puis fait croître l'organisme à partir de son embryon, des techniques similaires peuvent êre appliquées à des individus déjà adultes. L'objectif de ces traitements peut être l'amélioration de l'apparence ou des performances, la correction ou la prévention des dysfonctionnements de l'organisme, ou la lutte contre le vieillissement des individus traités. Ce perfectionnement des techniques a non seulement réduit considérablement (d'un génération à quelques mois, jours ou heures) le délai entre l'altération du gène et ses résultats, mais il a augmenté dans les mêmes proportions le nombre et les effets des altérations possibles.'''
+'''Le Génie Génétique traditionnel altère les codes génétiques, puis fait croître l'organisme modifié depuis l'état embryonnaire. Toutefois, des techniques similaires peuvent être appliquées à des individus déjà adultes. L'objectif de ces traitements peut viser à l'amélioration de l'apparence ou des performances, la correction ou la prévention des dysfonctionnements de l'organisme, ou la lutte contre le vieillissement des individus traités. Réduire le délai entre la modification du gène et les résultats (d'une génération à seulement quelques mois, jours ou heures), augmente dans les mêmes proportions le nombre des possibles et des effets de la modification génétique.'''
 
 GRO_LIFECYCLE_MAN
 Manipulation du Cycle de Vie
 
 GRO_LIFECYCLE_MAN_DESC
-'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, colonists can be transported much more efficiently, and the amount of colonists on a freshly built colony as well as the capacity of colony ships is greatly increased.
+'''Grâce aux manipulations chimiques et cryogéniques, les processus vitaux peuvent être interrompus de façon provisoire. Dans cet état, les organismes sont conservés indéfiniment, ne consomment aucune ressource et ne nécessitent qu'un très petit (non-vital) espace de stockage. À l'aide de cette technique, les colons peuvent voyager d'une manière bien plus efficace, tandis que sont grandement accrus le nombre initial de colons au sein d'une nouvelle colonie ainsi que la capacité d'accueil des astronefs de colonisation.
 
-La plupart des organismes complexes passent par divers états physiologiques durant le temps de leur vie, que ces états soient séparés par des métamorphoses ou qu'ils se fondent dans un lent vieillissement continu. Dans de nombreux cas, un ou plusieurs de ces états sont, au moins à un moment donné, plus utiles et souhaitables que d'autres. Par le contrôle délicat des mécanismes hormonaux ou mentaux, il devient posssible de prolonger ou de d'écourter chaque état, permettant la formation d'individus pleinement développés et fonctionnels en bien moins de temps que la Nature, et la conservation indéfinie de ces individus dans cette plénitude, c'est à dire l'immortalité.'''
+La plupart des organismes complexes passent par divers états physiologiques au cours de leur existence, que la différenciation de ces états se fassent soit par métamorphose, soit par un lent vieillissement continu. Dans de nombreux cas, un ou plusieurs de ces états sont, au moins à un moment donné, plus utiles et souhaitables que d'autres. Par le contrôle subtil des mécanismes hormonaux ou psychiques, il devient alors possible de considérablement écourter ou prolonger chaque état, permettant ainsi la formation d'individus pleinement développés et fonctionnels en une fraction du temps normalement nécessaire à la Nature, et de conserver ces individus indéfiniment fonctionnels, devenant par conséquent immortels.'''
 
 GRO_ADV_ECOMAN
 Éco-Manipulation Avancée
 
 GRO_ADV_ECOMAN_DESC
-Même dans un environnement artificiel, les conditions météorologiques et les cycles écologiques naturels peuvent passer hors de contrôle, causant d'importants dégâts. En introduisant des facteurs de stabilisation, les incidents de forces destructrices écologiques dans des environnements artificiels peuvent être réduits, permettant des modifications environnementales à grande échelle.
+Même dans un environnement artificiel, les conditions météorologiques et les cycles écologiques naturels peuvent devenir incontrôlables, causant d'importants dégâts. En introduisant des facteurs de stabilisation, les risques d'incidents liés aux forces naturelles destructrices au sein d'environnements artificiels peuvent être diminués, permettant ainsi des modifications environnementales à grande échelle.
 
 GRO_XENO_GENETICS
 Génétique Xénobiologique
 
 GRO_XENO_GENETICS_DESC
-'''Accroît le plafond de population des planètes convenables et pauvres selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Énorme +10 et celui planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population des planètes convenables et pauvres selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10 et celui des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
-The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
+L'étude d'autres formes de vie révèle souvent les faiblesses inhérentes de sa propre espèce. Analyser les caractéristiques d'autres formes de vie et utiliser les connaissances acquises afin d'améliorer son propre code génétique, permet le développement de nouvelles capacités d'adaptation, qui autrement relèveraient de l'impossible.
 
-La science génétique est d'abord limitée par le nombre, lui même limité, des organismes naturels dont elle dispose. En outre, ses actions sont conditionnées par les contraintes physiques posées par les mécanismes de stockage du code génétique, d'altération et d'expression des gènes chez l'individu adulte. En observant ces mécanismes au sein d'organismes et d'écosystèmes entièrement différents, de grandes idées ou révélations ont pu voir le jour, impulsant de nouveaux développements pour les organismes plus familiers.'''
+La science génétique est en premier lieu limitée par le nombre des organismes naturels dont elle dispose. En outre, ses actions sont conditionnées par les contraintes physiques induites par les mécanismes de stockage du code génétique, ainsi que par la modification et l'expression des gènes chez les individus adultes. En observant ces mêmes mécanismes au sein d'écosystèmes entièrement différents et peuplés d'organismes allogènes, de grands concepts ou révélations peuvent émerger, impulsant de nouveaux développements pour les organismes génétiquement plus familiers.'''
 
 GRO_NANOTECH_MED
 Médecine Nanotechnique
 
 GRO_NANOTECH_MED_DESC
-'''Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections. By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.
+'''Les agents infectieux, notamment les procaryotes, sont vulnérables aux perturbations internes de leur matériel génétique - ce qui est le cas lors d'une infection virale, si l'on parvient à pénétrer la membrane cellulaire ou la protéïne de revêtement. En produisant des nanorobots capables d'identifier et de pénétrer de tels agents pathogènes, il deviendrait alors possible de détruire totalement ces derniers en démantelant leur matériel génétique.
 
-Si les techniques génétique peuvent réparer ou annuler les effets de mutations nuisibles ou indésirables ou corriger des déséquilibres biochimiques, traiter les traumatismes physiques majeurs et les défauts congénitaux non génétiques, exige des mesures correctives. Les nanotechnologies peuvent être utilisées pour accomplir ces tâches, avec deux avantages importants : les corrections peuvent être faites sans chirurgie invasive, sans risque ni effets secondaires, et la réaction au traitement est énormément réduite, puisque les outils de la correction demeurent en place et prêts à opérer.'''
+Tandis que la modification génétique peut réparer ou annuler les effets de mutations nuisibles ou indésirées, ou bien corriger des déséquilibres biochimiques, le traitement des traumatismes physiques majeurs et des défauts congénitaux non génétiques exige cependant des mesures correctives. Les nanotechnologies peuvent être utilisées pour accomplir ces tâches, avec deux avantages considérables: les corrections peuvent être effectuées sans chirurgie invasive, risques ou effets secondaires, et le temps de mise en place du traitement est grandement réduit, puisque les outils de correction demeurent en place et prêts à opérer.'''
 
 GRO_ECO_METAMORPH
 Métamorphose Écologique
 
 GRO_ECO_METAMORPH_DESC
-Often, it is helpful to think of an ecosystem as a gigantic organism in and of itself, with predator-prey relationships acting as negative feedback loops, with newly introduced species acting as symbiotes or parasites, with populations acting as systems and individuals acting as cells. In this sense, every planet is alive, and as such, goes through various phases of "life". By manipulating these phases as one would in a biological organism, it would be possible to affect a planets environment with comparative ease and efficiency.
+Un écosystème est la plupart du temps pensé comme un organisme gigantesque et autonome, les relations prédateurs-proies agissant comme des boucles de rétroaction positives-négatives, permettant l'introduction de nouvelles espèces soit symbiotiques soit parasitaires, au sein de populations organisées en systèmes où chaque individu agit comme une cellule. Par conséquent, chaque planète est vivante, et passe par diverses phases de "vie". En manipulant ces phases de la même manière que pour un organisme biologique, il deviendrait alors possible de modifier un environnement planétaire avec une relative facilité et efficacité.
 
 GRO_XENO_HYBRIDS
 Hybridation Xénobiologique
 
 GRO_XENO_HYBRIDS_DESC
-'''Accroît le plafond de population des planètes pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5 et celui des planètes pauvres hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Énorme +10.
+'''Accroît le plafond de population des planètes pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5 et celui des planètes hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
 
-Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
+La plupart du temps, la faune native d'une planète est beaucoup mieux adaptée à l'environnement d'une planète que tout colons qui tenteraient de la peupler. Pour une espèce exogène, l'hostilité d'un environnement regroupe de nombreuses causes, des cycles météorologiques en passant par la taille de la planète. Grâce à l'hybridation xénobiologique, il est possible de créer une espèce colonisatrice adaptée génétiquement car disposant des caractéritiques avantageuses de la faune native, rendant ainsi plus facile et efficace la colonisation d'une planète peu accueillante.
 
-Aussi bien compris qu'il soit, ou aussi adéquatement amélioré, tout système biologique demeure limité par sa nature héritée. Les structures et les fondements la physiologie ne peuvent être altérées au delà des limites de la biologie propre à telle ou telle planète. Toutefois, grâce à la compréhension d'autres biologies, des sytèmes différents peuvent fusionner pour former une biologie hybride entièrement nouvelle, possédant des caractéristiques et des aptitudes potentielles bien meilleures que chacune de ses composantes.'''
+En dépit de son niveau de compréhension, ou de l'amélioration de ses capacités d'adaptation, tout système biologique demeure limité par sa nature inhérente. Les structures et la physiologie de base ne peuvent être modifiées au delà des limites de la biologie propre à une planète donnée. Toutefois, grâce à la compréhension d'autres biologies, des systèmes différents peuvent fusionner pour former une biologie hybride entièrement nouvelle, possédant des caractéristiques et des aptitudes potentielles bien plus évoluées que chacune de ses composantes.'''
 
 GRO_NANO_CYBERNET
 Cybernétique Nanotechnique
 
 GRO_NANO_CYBERNET_DESC
-Après avoir appliqué les nanotechnologies pour corriger les défauts ou les blessures, l'étape suivante est d'augmenter ou de remplacer les sytèmes naturels biochimiques par des systèmes artificiels supérieurs. Plutôt que simplement la repousse de membres perdus ou la réparation d'organes endommagés, les améliorations sont capables d'en faire croître rapidement d'autres pour répondre à leurs besoins à chaque instant. Les Systèmes biologiques anciens, comme les muscles et les tendons, jusqu aux petits organes, ou aux enzymes peuvent aussi être remplacés, apportant une force, une endurance et une souplesse augmentéés.
+Après avoir utilisé les nanotechnologies pour corriger les défauts ou soigner les traumas, l'étape suivante consiste à améliorer ou remplacer les systèmes naturels biochimiques par des systèmes artificiels supérieurs. Plutôt que la simple repousse de membres perdus ou la réparation d'organes endommagés, ces améliorations permettent à l'envi la croissance rapide de nouveaux membres ou organes. Les systèmes biologiques archaïques, comme les muscles et les tendons, jusqu'aux organites et enzymes, peuvent aussi être remplacés, permettant ainsi une amélioration considérable de la force, de l'endurance et de la flexibilité.
 
 GRO_TRANSORG_SENT
 Sensibilité Trans-Organique
 
 GRO_TRANSORG_SENT_DESC
-Sentience as we know it is always observed as being inextricably tied to biological life. By grasping the true nature and origin of sentience itself, it would be possible to create conscious entities that could not possibly be classified as life as we know it.
+La sensibilité telle que nous la connaissons a toujours été inextricablement liée à la vie biologique. En comprenant la vraie nature et l'origine de la sensibilité elle-même, il deviendrait alors possible de créer des entités conscientes qui ne pourraient être cataloguées en tant que vie biologique telle que nous la connaissons.
 
 GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.2 per Population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
+'''Increases max [[encyclopedia FUEL_TITLE]] on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.2 per Population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
@@ -7414,13 +7581,13 @@ CON_ORBITAL_HAB
 Habitation Orbitale
 
 CON_ORBITAL_HAB_DESC
-'''Accroît le plafond de population de toutes les planètes habitables selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.'''
+'''Accroît le plafond de population de toutes les planètes habitables selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.'''
 
 CON_NDIM_STRC
 Structures Multidimensionnelles
 
 CON_NDIM_STRC_DESC
-'''Accroît le plafond de population des planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Énorme +10.
+'''Accroît le plafond de population des planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -7731,7 +7898,9 @@ CON_ART_PLANET
 Planète Artificielle
 
 CON_ART_PLANET_DESC
-Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centers for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
+'''Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centers for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
+
+On its own, the tech allows for construction of the basic [[buildingtype BLD_ART_PLANET]]. If the empire also has [[tech GRO_GAIA_TRANS]], then [[buildingtype BLD_ART_PARADISE_PLANET]] may be built. If the empire has [[tech PRO_EXOBOTS]] then [[buildingtype BLD_ART_FACTORY_PLANET]] can be built.'''
 
 CON_PALACE_EXCLUDE
 Palais Unique
@@ -7743,7 +7912,7 @@ GRO_SUBTER_HAB
 Habitat Souterrain
 
 GRO_SUBTER_HAB_DESC
-'''Accroît le plafond de population de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.'''
+'''Accroît le plafond de population de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.'''
 
 GRO_GENOME_BANK
 Banque du Génome
@@ -7785,7 +7954,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Accroît le plafond de population des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -8505,9 +8674,9 @@ BLD_IMPERIAL_PALACE_DESC
 
 Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire.''' 
 
-BLD_SUPER_TESTERS
+BLD_SUPER_TEST
 Super-Tester Takeover
-BLD_SUPER_TESTERS_DESC
+BLD_SUPER_TEST_DESC
 '''Switches the species of the planet to Super-Testers.  For Official Testing Purposes, or for cheating.'''
 
 BLD_SHIPYARD_BASE
@@ -8670,7 +8839,7 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Accroît le plafond de population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Énorme +15.
+'''Accroît le plafond de population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
 Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
 
@@ -8730,7 +8899,7 @@ BLD_CLONING_CENTER
 Centre de Clonage
 
 BLD_CLONING_CENTER_DESC
-'''Accroît le plafond de population de toutes les planètes selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Énorme +5.
+'''Accroît le plafond de population de toutes les planètes selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving population.'''
 
@@ -8825,6 +8994,18 @@ Planète Artificielle
 
 BLD_ART_PLANET_DESC
 Forms an artificial planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+
+BLD_ART_FACTORY_PLANET
+Planète Usine Artificielle
+
+BLD_ART_FACTORY_PLANET_DESC
+Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with Exobots. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+
+BLD_ART_PARADISE_PLANET
+Planète Paradisiaque Artificielle
+
+BLD_ART_PARADISE_PLANET_DESC
+Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets—the planet will have the Gaia special which will terraform it to suit its inhabitants. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
 
 BLD_ART_MOON
 Lune Artificielle
@@ -9021,6 +9202,12 @@ Colonie Exobot
 
 BLD_COL_EXOBOT_DESC
 Cette structure créera une colonie Exobot sur un avant-poste. Contrairement aux structures coloniales des autres espèces, une colonie Exobot ne requiert pas une autre colonie Exobot déjà existante dans la zone d'approvisionnement, étant donné que les Exobots sont directement construits sur la planète colonisée. Cependant, leur prix de fabrication étant élevé, les Exobots ont besoin d'une planète appartenant à l'empire dans la zone d'approvisionnement.
+
+BLD_COL_SUPER_TEST
+Colonie Super Testeurs
+
+BLD_COL_SUPER_TEST_DESC
+Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle colonie Super Testeurs. Le délai minimum nécessaire à la construction dépend de la distance de la plus proche colonie Super Testeurs, et augmentera proportionnellement à son éloignement.
 
 
 #############################################################
@@ -10360,7 +10547,7 @@ LARGE_PLANET_LABEL
 '''Grande planète'''
 
 HUGE_PLANET_LABEL
-'''Énorme planète'''
+'''Immense planète'''
 
 GAS_GIANT_LABEL
 '''Géante gazeuse'''
