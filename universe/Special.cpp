@@ -2,6 +2,7 @@
 
 #include "Effect.h"
 #include "Condition.h"
+#include "ValueRef.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
@@ -49,21 +50,38 @@ namespace {
 /////////////////////////////////////////////////
 // Special                                     //
 /////////////////////////////////////////////////
-Special::~Special()
-{ delete m_location; }
+Special::~Special() {
+    delete m_stealth;
+    delete m_initial_capacity;
+    delete m_location;
+}
 
 std::string Special::Dump() const {
     std::string retval = DumpIndent() + "Special\n";
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent() + "stealth = " + boost::lexical_cast<std::string>(m_stealth) + "\n";
+
+    if (m_stealth)
+        retval += DumpIndent() + "stealth = " + m_stealth->Dump() + "\n";
+
     retval += DumpIndent() + "spawnrate = " + boost::lexical_cast<std::string>(m_spawn_rate) + "\n"
            +  DumpIndent() + "spawnlimit = " + boost::lexical_cast<std::string>(m_spawn_limit) + "\n";
-    retval += DumpIndent() + "location = \n";
-    ++g_indent;
-        retval += m_location->Dump();
-    --g_indent;
+
+    if (m_initial_capacity) {
+        retval += DumpIndent() + "initialcapacity = ";
+        ++g_indent;
+            retval += m_initial_capacity->Dump();
+        --g_indent;
+    }
+
+    if (m_location) {
+        retval += DumpIndent() + "location =\n";
+        ++g_indent;
+            retval += m_location->Dump();
+        --g_indent;
+    }
+
     if (m_effects.size() == 1) {
         retval += DumpIndent() + "effectsgroups =\n";
         ++g_indent;

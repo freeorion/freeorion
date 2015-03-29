@@ -27,6 +27,9 @@
 *.out
 *.app
 
+# Python
+*.py[cod]
+
 # Mac OSX
 .DS_Store
 
@@ -71,5 +74,4 @@ DerivedData
 *.sdf
 *.exp
 *.opensdf
-*.pyc
 msvc2010/FreeOrion/Release/FreeOrion.res

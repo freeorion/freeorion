@@ -2,6 +2,7 @@
 #include "Double.h"
 #include "Int.h"
 #include "Label.h"
+#include "ValueRefParser.h"
 #include "Parse.h"
 #include "ParseImpl.h"
 #include "../universe/Special.h"
@@ -39,7 +40,8 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            const parse::lexer& tok =                                               parse::lexer::instance();
+            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -52,6 +54,7 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_g_type _g;
+            qi::_h_type _h;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::eps_type eps;
@@ -64,27 +67,23 @@ namespace {
                 ;
 
             spawn
-                =    (
-                            parse::label(SpawnRate_token)   > parse::double_ [ _r1 = _1 ]
+                =    (      parse::label(SpawnRate_token)   > parse::double_ [ _r1 = _1 ]
                         |   eps [ _r1 = 1.0 ]
                      )
-                >    (
-                            parse::label(SpawnLimit_token)  > parse::int_ [ _r2 = _1 ]
+                >    (      parse::label(SpawnLimit_token)  > parse::int_ [ _r2 = _1 ]
                         |   eps [ _r2 = 9999 ]
                      )
                 ;
 
             special
                 =    special_prefix(_a, _b)
-                >    (
-                            parse::label(Stealth_token)     > parse::double_ [ _g = _1 ]
-                        |   eps [ _g = 0.001 ]
-                     )
+                >  -(parse::label(Stealth_token)            > double_value_ref [ _g = _1 ])
                 >    spawn(_c, _d)
+                >  -(parse::label(Capacity_token)           > double_value_ref [ _h = _1 ])
                 >  -(parse::label(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
                 >  -(parse::label(EffectsGroups_token)      > parse::detail::effects_group_parser() [ _f = _1 ])
                 >    parse::label(Graphic_token)            > tok.string
-                [ insert(_r1, new_<Special>(_a, _b, _g, _f, _c, _d, _e, _1)) ]
+                [ insert(_r1, new_<Special>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
                 ;
 
             start
@@ -126,7 +125,8 @@ namespace {
                 int,
                 Condition::ConditionBase*,
                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                double
+                ValueRef::ValueRefBase<double>*,
+                ValueRef::ValueRefBase<double>*
             >,
             parse::skipper_type
         > special_rule;

@@ -6667,6 +6667,21 @@ Causes the object's owner to win the game
 DESC_GENERATE_SITREP
 Generates a SitRep message for empire %1%
 
+DESC_GENERATE_SITREP_ALLIES
+Generates a SitRep message for allies of empire %1%
+
+DESC_GENERATE_SITREP_ENEMIES
+Generates a SitRep message for enemies of empire %1%
+
+DESC_GENERATE_SITREP_ALL
+Generates a SitRep message for all empires
+
+DESC_GENERATE_SITREP_NONE
+Generates a SitRep message for no recipients
+
+DESC_GENERATE_SITREP_CAN_SEE
+Generates a SitRep message for empires that can detect an object %2%
+
 DESC_SET_EMPIRE_TECH_PROGRESS
 Sets the research progress of tech %1% to %2% for empire %3%
 

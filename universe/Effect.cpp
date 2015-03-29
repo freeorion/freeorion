@@ -2956,18 +2956,21 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(recipient_empire_id),
-    m_affiliation(affiliation)
+    m_affiliation(affiliation),
+    m_condition(0)
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
                                              const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
-                                             EmpireAffiliationType affiliation) :
+                                             EmpireAffiliationType affiliation,
+                                             const Condition::ConditionBase* condition) :
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(0),
-    m_affiliation(affiliation)
+    m_affiliation(affiliation),
+    m_condition(condition)
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage() {
@@ -2980,42 +2983,125 @@ GenerateSitRepMessage::~GenerateSitRepMessage() {
 }
 
 void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
-    Empire* empire = 0;
+    int recipient_id = ALL_EMPIRES;
     if (m_recipient_empire_id)
-        empire = GetEmpire(m_recipient_empire_id->Eval(context));
-    if (!empire && m_affiliation != AFFIL_ANY) return;
+        recipient_id = m_recipient_empire_id->Eval(context);
 
+    // track any ship designs used in message, which any recipients must be
+    // made aware of so sitrep won't have errors
+    std::set<int> ship_design_ids_to_inform_receipits_of;
+
+    // TODO: should any referenced object IDs being made known at basic visibility?
+
+
+    // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string> > parameter_tag_values;
     for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::const_iterator it =
          m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
     {
         parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(context)));
+
+        // special case for ship designs: make sure sitrep recipient knows about the design
+        // so the sitrep won't have errors about unknown designs being referenced
         if (it->first == VarText::PREDEFINED_DESIGN_TAG) {
             if (const ShipDesign* design = GetPredefinedShipDesign(it->second->Eval(context))) {
                 int design_id = design->ID();
-                if (!empire) {
-                    // ensure all empires aware of ship design
-                    for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
-                        GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_it->first);
-                } else if (m_affiliation == AFFIL_SELF) {
-                    // ensure empire has knowledge of the design
-                    GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire->EmpireID());
-                }
+                ship_design_ids_to_inform_receipits_of.insert(design_id);
             }
         }
     }
 
-    if (!empire) {
-        // send to all empires
+    // whom to send to?
+    std::set<int> recipient_empire_ids;
+    switch (m_affiliation) {
+    case AFFIL_SELF: {
+        // add just specified empire
+        if (recipient_id != ALL_EMPIRES)
+            recipient_empire_ids.insert(recipient_id);
+        break;
+    }
+
+    case AFFIL_ALLY: {
+        // add allies of specified empire
+        for (EmpireManager::const_iterator emp_it = Empires().begin();
+             emp_it != Empires().end(); ++emp_it)
+        {
+            if (emp_it->first == recipient_id || recipient_id == ALL_EMPIRES)
+                continue;
+
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, emp_it->first);
+            if (status == DIPLO_PEACE)
+                recipient_empire_ids.insert(emp_it->first);
+        }
+        break;
+    }
+
+    case AFFIL_ENEMY: {
+        // add enemies of specified empire
+        for (EmpireManager::const_iterator emp_it = Empires().begin();
+             emp_it != Empires().end(); ++emp_it)
+        {
+            if (emp_it->first == recipient_id || recipient_id == ALL_EMPIRES)
+                continue;
+
+            DiplomaticStatus status = Empires().GetDiplomaticStatus(recipient_id, emp_it->first);
+            if (status == DIPLO_WAR)
+                recipient_empire_ids.insert(emp_it->first);
+        }
+        break;
+    }
+
+    case AFFIL_CAN_SEE: {
+        // evaluate condition
+        Condition::ObjectSet condition_matches;
+        if (m_condition)
+            m_condition->Eval(context, condition_matches);
+
+        // add empires that can see any condition-matching object
+        for (EmpireManager::iterator empire_it = Empires().begin();
+             empire_it != Empires().end(); ++empire_it)
+        {
+            int empire_id = empire_it->first;
+            for (Condition::ObjectSet::iterator obj_it = condition_matches.begin();
+                 obj_it != condition_matches.end(); ++obj_it)
+            {
+                if ((*obj_it)->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
+                    recipient_empire_ids.insert(empire_id);
+                    break;
+                }
+            }
+        }
+        break;
+    }
+
+    case AFFIL_NONE:
+        // add no empires
+        break;
+
+    case AFFIL_ANY:
+    default: {
+        // add all empires
         for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
-            empire_it->second->AddSitRepEntry(CreateSitRep(m_message_string, m_icon, parameter_tag_values));
-    } else if (m_affiliation == AFFIL_SELF) {
-        // send to just single empire
+            recipient_empire_ids.insert(empire_it->first);
+        break;
+    }
+    }
+
+
+    // send to recipient empires
+    for (std::set<int>::const_iterator emp_it = recipient_empire_ids.begin();
+         emp_it != recipient_empire_ids.end(); ++emp_it)
+    {
+        Empire* empire = GetEmpire(*emp_it);
+        if (!empire)
+            continue;
+
         empire->AddSitRepEntry(CreateSitRep(m_message_string, m_icon, parameter_tag_values));
-    } else if (m_affiliation == AFFIL_ENEMY) {
-        // send to enemies of single empire
-    } else if (m_affiliation == AFFIL_ALLY) {
-        // send to allies
+
+        // also inform of any ship designs recipients should know about
+        for (std::set<int>::const_iterator design_it = ship_design_ids_to_inform_receipits_of.begin();
+             design_it != ship_design_ids_to_inform_receipits_of.end(); ++design_it)
+        { GetUniverse().SetEmpireKnowledgeOfShipDesign(*design_it, *emp_it); }
     }
 }
 
@@ -3030,7 +3116,25 @@ std::string GenerateSitRepMessage::Description() const {
         else
             empire_str = m_recipient_empire_id->Description();
     }
-    return str(FlexibleFormat(UserString("DESC_GENERATE_SITREP")) % empire_str);
+
+    std::string condition_str;
+    if (m_condition)
+        condition_str = m_condition->Description();
+
+    // pick appropriate sitrep text...
+    std::string desc_template;
+    switch (m_affiliation) {
+    case AFFIL_ALLY:    desc_template = UserString("DESC_GENERATE_SITREP_ALLIES");  break;
+    case AFFIL_ENEMY:   desc_template = UserString("DESC_GENERATE_SITREP_ENEMIES"); break;
+    case AFFIL_CAN_SEE: desc_template = UserString("DESC_GENERATE_SITREP_CAN_SEE"); break;
+    case AFFIL_NONE:    desc_template = UserString("DESC_GENERATE_SITREP_NONE");    break;
+    case AFFIL_ANY:     desc_template = UserString("DESC_GENERATE_SITREP_ALL");     break;
+    case AFFIL_SELF:
+    default:
+        desc_template = UserString("DESC_GENERATE_SITREP");
+    }
+
+    return str(FlexibleFormat(desc_template) % empire_str % condition_str);
 }
 
 std::string GenerateSitRepMessage::Dump() const {
@@ -3057,11 +3161,14 @@ std::string GenerateSitRepMessage::Dump() const {
     case AFFIL_ENEMY:   retval += "EnemyOf";    break;
     case AFFIL_ALLY:    retval += "AllyOf";     break;
     case AFFIL_ANY:     retval += "AnyEmpire";  break;
+    case AFFIL_CAN_SEE: retval += "CanSee";     break;
     default:            retval += "?";          break;
     }
 
     if (m_recipient_empire_id)
         retval += "\n" + DumpIndent() + "empire = " + m_recipient_empire_id->Dump() + "\n";
+    if (m_condition)
+        retval += "\n" + DumpIndent() + "condition = " + m_condition->Dump() + "\n";
     --g_indent;
 
     return retval;
