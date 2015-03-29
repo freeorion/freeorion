@@ -2912,7 +2912,7 @@ namespace {
             const Meter* detection_meter = empire->GetMeter("METER_DETECTION_STRENGTH");
             if (!detection_meter)
                 continue;
-            double detection_strength = detection_meter->Current();
+            float detection_strength = detection_meter->Current();
 
             // every object empire has visibility of might have specials
             for (Universe::ObjectVisibilityMap::const_iterator obj_it = obj_vis_map.begin();
@@ -2939,10 +2939,14 @@ namespace {
                     const Special* special = GetSpecial(special_it->first);
                     if (!special)
                         continue;
-                    double special_stealth = special->Stealth();
-                    // if special is 0 stealth, or has stealth less than empire's
-                    // detection strength, mark as visible
-                    if (special_stealth <= 0.0 || special_stealth <= detection_strength) {
+
+                    float stealth = 0.0f;
+                    const ValueRef::ValueRefBase<double>* special_stealth = special->Stealth();
+                    if (special_stealth)
+                        stealth = special_stealth->Eval(ScriptingContext(obj));
+
+                    // if special is 0 stealth, or has stealth less than empire's detection strength, mark as visible
+                    if (stealth <= 0.0f || stealth <= detection_strength) {
                         visible_specials.insert(special_it->first);
                         //DebugLogger() << "Special " << special_it->first << " on " << obj->Name() << " is visible to empire " << empire_id;
                     }

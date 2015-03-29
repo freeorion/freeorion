@@ -27,9 +27,8 @@ UniverseObject::UniverseObject() :
     m_owner_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
     m_meters(),
-    m_created_on_turn(-1)
+    m_created_on_turn(INVALID_GAME_TURN)
 {
-    //DebugLogger() << "UniverseObject::UniverseObject()";
     m_created_on_turn = CurrentTurn();
 }
 
@@ -42,7 +41,7 @@ UniverseObject::UniverseObject(const std::string name, double x, double y) :
     m_owner_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
     m_meters(),
-    m_created_on_turn(-1)
+    m_created_on_turn(INVALID_GAME_TURN)
 {
     m_created_on_turn = CurrentTurn();
 }
