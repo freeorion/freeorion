@@ -3121,22 +3121,20 @@ std::string GenerateSitRepMessage::Description() const {
     if (m_condition)
         condition_str = m_condition->Description();
 
-
     // pick appropriate sitrep text...
+    std::string desc_template;
+    switch (m_affiliation) {
+    case AFFIL_ALLY:    desc_template = UserString("DESC_GENERATE_SITREP_ALLIES");  break;
+    case AFFIL_ENEMY:   desc_template = UserString("DESC_GENERATE_SITREP_ENEMIES"); break;
+    case AFFIL_CAN_SEE: desc_template = UserString("DESC_GENERATE_SITREP_CAN_SEE"); break;
+    case AFFIL_NONE:    desc_template = UserString("DESC_GENERATE_SITREP_NONE");    break;
+    case AFFIL_ANY:     desc_template = UserString("DESC_GENERATE_SITREP_ALL");     break;
+    case AFFIL_SELF:
+    default:
+        desc_template = UserString("DESC_GENERATE_SITREP");
+    }
 
-    //DESC_GENERATE_SITREP_ALLIES
-    //Generates a SitRep message for allies of empire %1%
-
-    //DESC_GENERATE_SITREP_ENEMIES
-    //Generates a SitRep message for enemies of empire %1%
-
-    //DESC_GENERATE_SITREP_ALL
-    //Generates a SitRep message for all empires
-
-    //DESC_GENERATE_SITREP_CAN_SEE
-    //Generates a SitRep message for empires that can detect an object %1%
-
-    return str(FlexibleFormat(UserString("DESC_GENERATE_SITREP")) % empire_str);
+    return str(FlexibleFormat(desc_template) % empire_str % condition_str);
 }
 
 std::string GenerateSitRepMessage::Dump() const {
