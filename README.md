@@ -1,6 +1,6 @@
 ## Synopsis
 
-This is the official main repository of the FreeOrion project.
+Source code repository of the FreeOrion project.
 
 FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game. 
 
