@@ -10600,6 +10600,17 @@ Preferred Focus Selected
 ROBOTIC_INTERFACE_EFFECT
 Robotic crew network
 
+SHIELD_INTERFERENCE
+Shield Cross-Interference
+
+DETECTOR_INTERFERENCE
+Detector Cross-Interference
+
+CLOAK_INTERFERENCE
+Cloak Cross-Interference
+
+TRANSPATIAL_CLOAK_INTERACTION
+Transpatial Drive - Cloak Interaction
 
 #############################################################
 ####                       T A G S                       ####
