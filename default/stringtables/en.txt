@@ -8666,6 +8666,14 @@ BLD_CULTURE_ARCHIVES_DESC
 
 Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
 
+BLD_CULTURE_LIBRARY
+Cultural Library
+
+BLD_CULTURE_LIBRARY_DESC
+'''Increases target [[encyclopedia RESEARCH_TITLE]] by 5.
+
+Stores the accumulated knowledge from thousands of years of life on this planet, giving a bonuses to research. This building will be destroyed when the population of the high tech natives reaches zero.'''
+
 BLD_IMPERIAL_PALACE
 Imperial Palace
 
