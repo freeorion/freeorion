@@ -109,8 +109,6 @@ class AIFleetOrder(object):
                 else:
                     return False
             # split fleet
-            elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.order_type:
-                return TargetType.TARGET_SHIP == target_type and self.ship_in_fleet()
             elif AIFleetOrderType.ORDER_ATTACK == self.order_type:
                 return target_type in (TargetType.TARGET_SYSTEM, TargetType.TARGET_PLANET)
             elif AIFleetOrderType.ORDER_DEFEND == self.order_type:

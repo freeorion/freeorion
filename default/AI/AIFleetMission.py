@@ -438,12 +438,6 @@ class AIFleetMission(object):
                             source_target = last_order.fleet
                             target_target = last_order.target
                             print "        source target validity: %s; target target validity: %s " % (source_target.valid, target_target.valid)
-                            if EnumsAI.TargetType.TARGET_SHIP == source_target.target_type:
-                                ship_id = source_target.target_id
-                                ship = universe.getShip(ship_id)
-                                if not ship:
-                                    print "Ship id %d not a valid ship id" % ship_id
-                                print "        source target Ship (%d), species %s, can%s colonize" % (ship_id, ship.speciesName, ["not", ""][ship.canColonize])
                         return  # colonize order must not have completed yet
                 clearAll = True
                 last_sys_target = -1

@@ -61,20 +61,11 @@ class AITarget(object):
             return universe.getSystem(self.target_id)
         elif self.target_type == TargetType.TARGET_PLANET:
             return universe.getPlanet(self.target_id)
-        elif self.target_type == TargetType.TARGET_BUILDING:
-            return universe.getBuilding(self.target_id)
         return None
 
     def valid(self):
         """Returns if this object is valid."""
-        if self.target_id is None or self.target_type is None or \
-                not EnumsAI.check_validity(self.target_id):
-            return False
-
-        if TargetType.TARGET_EMPIRE == self.target_type:
-            return self.target_id in fo.AllEmpireIDs()
-        else:
-            return self.target_obj is not None
+        return self.target_type is not None and EnumsAI.check_validity(self.target_id)
 
     def get_required_system_ai_targets(self):
         """Returns all system AITargets required to visit in this object."""

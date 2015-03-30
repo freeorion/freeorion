@@ -211,15 +211,14 @@ def get_ship_roles_types():
 
 
 class TargetType(object):
-    TARGET_INVALID = -1
-    TARGET_BUILDING = 0
-    TARGET_TECHNOLOGY = 1
+    # TARGET_BUILDING = 0
+    # TARGET_TECHNOLOGY = 1
     TARGET_PLANET = 2
     TARGET_SYSTEM = 3
-    TARGET_SHIP = 4
+    # TARGET_SHIP = 4
     TARGET_FLEET = 5
-    TARGET_EMPIRE = 6
-    TARGET_ALL_OTHER_EMPIRES = 7
+    # TARGET_EMPIRE = 6
+    # TARGET_ALL_OTHER_EMPIRES = 7
     TargetTypeNames = ["building", "technology", "planet", "system", "ship", "fleet", "empire", "Opponents", "invalid"]
 
     def name(self, targettype):
