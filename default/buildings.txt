@@ -83,6 +83,31 @@ BuildingType
     icon = "icons/building/archive.png"
 
 BuildingType
+    name = "BLD_CULTURE_LIBRARY"
+    description = "BLD_CULTURE_LIBRARY_DESC"
+    buildcost = 200
+    buildtime = 1
+    tags = "ANTIQUATED"
+    location = Not All
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            effects = SetTargetResearch value = Value + 5
+
+	EffectsGroup	// Destroy cultural library when the species is no longer present
+	    scope = Source
+            activation = ContainedBy And [
+                Object id = Source.PlanetID
+                Population high = 0
+            ]
+            effects = Destroy
+    ]
+    icon = "icons/building/archive.png"
+
+BuildingType
     name = "BLD_IMPERIAL_PALACE"
     description = "BLD_IMPERIAL_PALACE_DESC"
     buildcost = 10

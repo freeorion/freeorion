@@ -22,6 +22,11 @@ Special
                 SetMaxTroops value = Value + 10
                 SetDetection value = Value + 20
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = RemoveSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
     ]
     graphic = "icons/tech/categories/learning.png"
 
@@ -47,6 +52,24 @@ Special
                 SetMaxTroops value = Value + 30
                 SetDetection value = Value + 60
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = Turn low = 1 high = 1
+            effects = CreateBuilding name = "BLD_CULTURE_LIBRARY"
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Random probability = 0.2
+                Turn low = 1 high = 1
+            ]
+            effects = CreateBuilding name = "BLD_SCANNING_FACILITY"
+
+        EffectsGroup
+            scope = Source
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = RemoveSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
     ]
     graphic = "icons/tech/categories/learning.png"
 
