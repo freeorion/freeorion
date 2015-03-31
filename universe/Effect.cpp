@@ -2956,8 +2956,8 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(recipient_empire_id),
-    m_affiliation(affiliation),
-    m_condition(0)
+    m_condition(0),
+    m_affiliation(affiliation)
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
@@ -2969,8 +2969,8 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(0),
-    m_affiliation(affiliation),
-    m_condition(condition)
+    m_condition(condition),
+    m_affiliation(affiliation)
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage() {
