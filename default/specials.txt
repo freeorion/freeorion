@@ -610,7 +610,7 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-	    Not Planet size = [tiny huge]
+        Not Planet size = [tiny huge]
         Not ContainedBy And [
             System 
             Contains Capital
@@ -627,11 +627,11 @@ Special
         EffectsGroup
             scope = Source
             activation = Source
-	        effects = [
-		        SetDetection value = Value + 10
-		        SetMaxSupply value = Value + 1
-		        SetTargetHappiness value = Value + 5
-	        ]
+            effects = [
+                SetDetection value = Value + 10
+                SetMaxSupply value = Value + 1
+                SetTargetHappiness value = Value + 5
+            ]
         EffectsGroup
             scope = And [
                 Planet
