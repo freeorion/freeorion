@@ -963,7 +963,51 @@ namespace ValueRef {
     {
         const std::string& variable_name = m_property_name.back();
 
-        if (variable_name == "PartCapacity") {
+        if (variable_name == "HullFuel") {
+            std::string hull_type_name;
+            if (m_string_ref1)
+                hull_type_name = m_string_ref1->Eval(context);
+
+            const HullType* hull_type = GetHullType(hull_type_name);
+            if (!hull_type)
+                return 0.0;
+
+            return hull_type->Fuel();
+
+        } else if (variable_name == "HullStealth") {
+            std::string hull_type_name;
+            if (m_string_ref1)
+                hull_type_name = m_string_ref1->Eval(context);
+
+            const HullType* hull_type = GetHullType(hull_type_name);
+            if (!hull_type)
+                return 0.0;
+
+            return hull_type->Stealth();
+
+        } else if (variable_name == "HullStructure") {
+            std::string hull_type_name;
+            if (m_string_ref1)
+                hull_type_name = m_string_ref1->Eval(context);
+
+            const HullType* hull_type = GetHullType(hull_type_name);
+            if (!hull_type)
+                return 0.0f;
+
+            return hull_type->Structure();
+
+        } else if (variable_name == "HullStarlaneSpeed") {
+            std::string hull_type_name;
+            if (m_string_ref1)
+                hull_type_name = m_string_ref1->Eval(context);
+
+            const HullType* hull_type = GetHullType(hull_type_name);
+            if (!hull_type)
+                return 0.0;
+
+            return hull_type->StarlaneSpeed();
+
+        } else if (variable_name == "PartCapacity") {
             std::string part_type_name;
             if (m_string_ref1)
                 part_type_name = m_string_ref1->Eval(context);
