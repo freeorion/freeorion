@@ -1755,7 +1755,6 @@ namespace {
         float shield = ship->CurrentMeterValue(METER_MAX_SHIELD);
         float attack = ship->TotalWeaponsDamage();
         float strength = std::pow(attack * structure, 0.6f);
-        float tech_level = boost::algorithm::clamp(CurrentTurn() / 400.0f, 0.0f, 1.0f);
         float typical_shot = *std::max_element(enemy_shots.begin(), enemy_shots.end());
         float typical_strength = std::pow(ship->TotalWeaponsDamage(enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f);
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))

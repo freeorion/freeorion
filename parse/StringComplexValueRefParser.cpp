@@ -16,7 +16,6 @@ namespace parse {
 
             const parse::lexer& tok =                                                   parse::lexer::instance();
             const int_rule& simple_int =                                                int_simple();
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =   parse::value_ref_parser<std::string>();
 
 
             lowest_cost_enqueued_tech
