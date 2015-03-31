@@ -1677,7 +1677,7 @@ BuildingType
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "5"
-                        ]
+                    ]
             ]
 
         EffectsGroup
@@ -1697,7 +1697,7 @@ BuildingType
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
-                        ]
+                    ]
             ]
 
         EffectsGroup
@@ -1720,7 +1720,7 @@ BuildingType
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "5"
-                        ]
+                    ]
             ]
 
         EffectsGroup
@@ -1740,7 +1740,7 @@ BuildingType
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
-                        ]
+                    ]
             ]
 
         EffectsGroup
@@ -1763,7 +1763,7 @@ BuildingType
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "5"
-                        ]
+                    ]
             ]
 
         EffectsGroup
@@ -1783,7 +1783,7 @@ BuildingType
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
-                        ]
+                    ]
             ]
 
         EffectsGroup
@@ -1804,7 +1804,7 @@ BuildingType
                         tag = "predefinedshipdesign" data = "SM_COSMIC_DRAGON"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "3"
-                        ]
+                    ]
             ]
     ]
     icon = ""
