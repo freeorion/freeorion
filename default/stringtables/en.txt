@@ -7954,7 +7954,7 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Increases the max population on Hostile planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10.
+'''Increases the max population on Hostile planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -8151,7 +8151,7 @@ DEF_ROOT_DEFENSE
 Self Defense
 
 DEF_ROOT_DEFENSE_DESC
-'''Increases max [[encyclopedia TROOP_TITLE]] on all planets by 2.
+'''Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population.
 
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
@@ -9699,6 +9699,14 @@ Ground Troop Pod
 
 GT_TROOP_POD_DESC
 '''Carries 2 units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet. 
+  * The troops can only be used for one invasion.  
+  * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
+
+GT_TROOP_POD_2
+Advanced Ground Troop Pod
+
+GT_TROOP_POD_2_DESC
+'''Carries 4 units of cybernetically advanced ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet.
   * The troops can only be used for one invasion.  
   * The ships carrying troops during an invasion come in for a fast hard landing and are unusable afterwards.'''
 

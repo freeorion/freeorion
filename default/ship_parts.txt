@@ -13,6 +13,17 @@ Part
     icon = "icons/ship_parts/troops.png"
 
 Part
+    name = "GT_TROOP_POD_2"
+    description = "GT_TROOP_POD_2_DESC"
+    class = Troops
+    capacity = 4
+    mountableSlotTypes = [External Internal]
+    buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/troops.png"
+
+Part
     name = "SR_WEAPON_1_1"
     description = "SR_WEAPON_1_1_DESC"
     class = ShortRange
