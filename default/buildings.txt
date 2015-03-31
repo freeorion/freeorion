@@ -97,13 +97,13 @@ BuildingType
             ]
             effects = SetTargetResearch value = Value + 5
 
-    EffectsGroup    // Destroy cultural library when the species is no longer present
-        scope = Source
-            activation = ContainedBy And [
-                Object id = Source.PlanetID
-                Population high = 0
-            ]
-            effects = Destroy
+        EffectsGroup    // Destroy cultural library when the species is no longer present
+            scope = Source
+                activation = ContainedBy And [
+                    Object id = Source.PlanetID
+                    Population high = 0
+                ]
+                effects = Destroy
     ]
     icon = "icons/building/archive.png"
 
