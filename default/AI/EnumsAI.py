@@ -210,28 +210,6 @@ def get_ship_roles_types():
     return range(0, 9)
 
 
-class TargetType(object):
-    # TARGET_BUILDING = 0
-    # TARGET_TECHNOLOGY = 1
-    TARGET_PLANET = 2
-    TARGET_SYSTEM = 3
-    # TARGET_SHIP = 4
-    TARGET_FLEET = 5
-    # TARGET_EMPIRE = 6
-    # TARGET_ALL_OTHER_EMPIRES = 7
-    TargetTypeNames = ["building", "technology", "planet", "system", "ship", "fleet", "empire", "Opponents", "invalid"]
-
-    def name(self, targettype):
-        try:
-            return self.TargetTypeNames[targettype]
-        except IndexError:
-            return "invalidTargetType"
-
-
-def get_target_types():
-    return range(0, 8)
-
-
 class AIEmpireProductionTypes(object):
     INVALID_BUILD_TYPE = -1
     BT_NOT_BUILDING = 0  # ///< no building is taking place

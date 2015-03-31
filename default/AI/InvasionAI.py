@@ -12,7 +12,7 @@ import math
 import ProductionAI
 import ColonisationAI
 import MilitaryAI
-from freeorion_tools import dict_from_map, tech_is_complete
+from freeorion_tools import tech_is_complete
 from freeorion_debug import Timer
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
@@ -202,7 +202,7 @@ def get_invasion_targeted_planet_ids(planetIDs, missionType, empireID):
         planet = universe.getPlanet(planetID)
         # add planets that are target of a mission
         for invasionAIFleetMission in invasionAIFleetMissions:
-            aiTarget = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, planetID)
+            aiTarget = AITarget.TargetPlanet(planetID)
             if invasionAIFleetMission.has_target(missionType, aiTarget):
                 targetedPlanets.append(planetID)
 
@@ -425,7 +425,7 @@ def send_invasion_fleets(invasionFleetIDs, evaluatedPlanets, missionType):
                 continue
             else:
                 theseFleets = foundFleets
-        aiTarget = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, pID)
+        aiTarget = AITarget.TargetPlanet(pID)
         print "assigning invasion fleets %s to target %s"%(theseFleets, aiTarget)
         for fleetID in theseFleets:
             fleet=universe.getFleet(fleetID)
@@ -492,7 +492,7 @@ def assign_invasion_fleets_to_invade():
                 availTroopBaseFleetIDs.discard(fid2)
             availTroopBaseFleetIDs.discard(fid)
             foAI.foAIstate.qualifyingTroopBaseTargets[targetID][1] = -1 #TODO: should probably delete
-            aiTarget = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, targetID)
+            aiTarget = AITarget.TargetPlanet(targetID)
             aiFleetMission = foAI.foAIstate.get_fleet_mission(fid)
             aiFleetMission.add_target(EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, aiTarget)
     

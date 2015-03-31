@@ -12,7 +12,7 @@ import InvasionAI
 import PlanetUtilsAI
 import math
 from freeorion_tools import dict_from_map
-from AITarget import AITarget
+from AITarget import TargetSystem, TargetFleet, TargetPlanet, AITarget
 from EnumsAI import FLEET_MISSION_TYPES, AIFleetMissionType, AIFleetOrderType
 
 ORDERS_FOR_MISSION = {
@@ -49,7 +49,7 @@ class AIFleetMission(object):
     def __init__(self, fleet_id):
         self.orders = []
         self.mission_type = EnumsAI.AIMissionType.FLEET_MISSION
-        self.target = AITarget(EnumsAI.TargetType.TARGET_FLEET, fleet_id)
+        self.target = TargetFleet(fleet_id)
         self._mission_types = {}
         for mt in FLEET_MISSION_TYPES:
             self._mission_types[mt] = []
@@ -57,6 +57,7 @@ class AIFleetMission(object):
         self.target_type = self.target.target_type
 
     def __setstate__(self, state_dict):
+        # TODO fix me
         self.__dict__.update(state_dict)  # update attributes
         #print "Fleet mission unpickle: passed %s"%state_dict
         for attrib, default in [('orders', state_dict.get('_AIFleetMission__aiFleetOrders', [])),
@@ -219,7 +220,7 @@ class AIFleetMission(object):
         if not target.valid:
             return False
         if mission_type == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
-            if target.target_type == EnumsAI.TargetType.TARGET_SYSTEM:
+            if isinstance(target, TargetSystem):
                 empire = fo.getEmpire()
                 if not empire.hasExploredSystem(target.target_id):
                     return True
@@ -228,8 +229,8 @@ class AIFleetMission(object):
             fleet = universe.getFleet(self.target_id)
             if not fleet.hasOutpostShips:
                 return False
-            if target.target_type == EnumsAI.TargetType.TARGET_PLANET:
-                planet = universe.getPlanet(target.target_id)
+            if isinstance(target, TargetPlanet):
+                planet = target.target_obj
                 if planet.unowned:
                     return True
         elif mission_type in [ AIFleetMissionType.FLEET_MISSION_COLONISATION, AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION]:
@@ -237,8 +238,8 @@ class AIFleetMission(object):
             fleet = universe.getFleet(self.target_id)
             if not fleet.hasColonyShips:
                 return False
-            if target.target_type == EnumsAI.TargetType.TARGET_PLANET:
-                planet = universe.getPlanet(target.target_id)
+            if isinstance(target, TargetPlanet):
+                planet =target.target_object
                 population = planet.currentMeterValue(fo.meterType.population)
                 if planet.unowned or (planet.owner == fleet.owner and population == 0):
                     return True
@@ -247,13 +248,13 @@ class AIFleetMission(object):
             fleet = universe.getFleet(self.target_id)
             if not fleet.hasTroopShips:
                 return False
-            if target.target_type == EnumsAI.TargetType.TARGET_PLANET:
-                planet = universe.getPlanet(target.target_id)
+            if isinstance(target, TargetPlanet):
+                planet = target.target_obj
                 if not planet.unowned or planet.owner != fleet.owner:  # TODO remove latter portion of this check in light of invasion retargeting, or else correct logic
                     return True
         elif mission_type in [AIFleetMissionType.FLEET_MISSION_MILITARY, AIFleetMissionType.FLEET_MISSION_SECURE, AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE]:
             universe = fo.getUniverse()
-            if target.target_type == EnumsAI.TargetType.TARGET_SYSTEM:
+            if isinstance(target, TargetSystem):
                 return True
         # TODO: implement other mission types
         return False
@@ -354,7 +355,7 @@ class AIFleetMission(object):
                                                 verbose=False)
         for fid in found_fleets:
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id)
-        target = AITarget(EnumsAI.TargetType.TARGET_PLANET, target_id)
+        target = TargetPlanet(target_id)
         self.add_target(AIFleetMissionType.FLEET_MISSION_INVASION, target)
         self.generate_fleet_orders()
 
@@ -555,7 +556,7 @@ class AIFleetMission(object):
         # if fleet is in some system = fleet.system_id >=0, then also generate system AIFleetOrders
         if system_id >= 0:
             # system in where fleet is
-            system_target = AITarget(EnumsAI.TargetType.TARGET_SYSTEM, system_id)
+            system_target = TargetSystem(system_id)
             # if mission aiTarget has required system where fleet is, then generate fleet_order from this aiTarget
             # for all targets in all mission types get required systems to visit
             for mission_type in self.get_mission_types():
@@ -594,9 +595,9 @@ class AIFleetMission(object):
         fleet = fo.getUniverse().getFleet(self.target_id)
         system_id = fleet.systemID
         if system_id >= 0:
-            return AITarget(EnumsAI.TargetType.TARGET_SYSTEM, system_id)
+            return TargetSystem(system_id)
         else:  # in starlane, so return next system
-            return AITarget(EnumsAI.TargetType.TARGET_SYSTEM, fleet.nextSystemID)
+            return TargetSystem(fleet.nextSystemID)
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.target == other.target
