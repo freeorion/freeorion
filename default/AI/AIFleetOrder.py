@@ -5,7 +5,7 @@ import FreeOrionAI as foAI
 import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
-from AITarget import TargetPlanet, TargetSystem, TargetFleet
+from universe_object import Planet, System, Fleet
 from freeorion_tools import dict_from_map
 
 AIFleetOrderTypeNames = AIFleetOrderType()
@@ -39,7 +39,7 @@ class AIFleetOrder(object):
             # outpost
             if AIFleetOrderType.ORDER_OUTPOST == self.order_type:
                 # colonise planet
-                if isinstance(self.target, TargetPlanet):
+                if isinstance(self.target, Planet):
                     planet = universe.getPlanet(self.target.target_id)
                     sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
                     planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
@@ -56,7 +56,7 @@ class AIFleetOrder(object):
             elif AIFleetOrderType.ORDER_COLONISE == self.order_type:
 
                 # colonise planet
-                if isinstance(self.target, TargetPlanet):
+                if isinstance(self.target, Planet):
                     planet = universe.getPlanet(self.target.target_id)
                     sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
                     planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
@@ -72,7 +72,7 @@ class AIFleetOrder(object):
             # invade
             elif AIFleetOrderType.ORDER_INVADE == self.order_type:
                 # invade planet
-                if isinstance(self.target, TargetPlanet):
+                if isinstance(self.target, Planet):
                     planet = universe.getPlanet(self.target.target_id)
                     planet_population = planet.currentMeterValue(fo.meterType.population)
                     if planet.unowned and not planet_population:
@@ -88,14 +88,14 @@ class AIFleetOrder(object):
             # military
             elif AIFleetOrderType.ORDER_MILITARY == self.order_type:
                 fleet = universe.getFleet(fleet_id)
-                return fleet.hasArmedShips and isinstance(self.target, TargetSystem)
+                return fleet.hasArmedShips and isinstance(self.target, System)
             # move to system
             elif AIFleetOrderType.ORDER_MOVE == self.order_type:
-                return isinstance(self.target, TargetSystem)
+                return isinstance(self.target, System)
             # resupply
             elif AIFleetOrderType.ORDER_RESUPPLY == self.order_type:
                 # move to system
-                if isinstance(self.target, TargetSystem):
+                if isinstance(self.target, System):
                     empire = fo.getEmpire()
                     return self.target.target_id in empire.fleetSupplyableSystemIDs
                 else:
@@ -103,16 +103,16 @@ class AIFleetOrder(object):
             # repair
             elif AIFleetOrderType.ORDER_REPAIR == self.order_type:
                 # move to system
-                if isinstance(self.target, TargetSystem):
+                if isinstance(self.target, System):
                     empire = fo.getEmpire()
                     return self.target.target_id in empire.fleetSupplyableSystemIDs  # TODO: check for drydock still there/owned
                 else:
                     return False
             # split fleet
             elif AIFleetOrderType.ORDER_ATTACK == self.order_type:
-                return isinstance(self.target, (TargetSystem, TargetPlanet))
+                return isinstance(self.target, (System, Planet))
             elif AIFleetOrderType.ORDER_DEFEND == self.order_type:
-                return isinstance(self.target, (TargetSystem, TargetPlanet))
+                return isinstance(self.target, (System, Planet))
         else:
             if verbose:
                 print "\t\t order not valid: fleet validity: %s and target validity %s" % (self.fleet.valid, self.target.valid)
@@ -153,7 +153,7 @@ class AIFleetOrder(object):
         # colonise
         #
         elif AIFleetOrderType.ORDER_COLONISE == self.order_type:  # TODO: check for separate fleet holding colony ships
-            if isinstance(self.fleet, TargetFleet):
+            if isinstance(self.fleet, Fleet):
                 ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
                 if ship_id is None:
                     ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, AIShipRoleType.SHIP_ROLE_BASE_COLONISATION)
@@ -166,7 +166,7 @@ class AIFleetOrder(object):
         # invade
         #
         elif AIFleetOrderType.ORDER_INVADE == self.order_type:  # TODO: check for separate fleet holding invasion ships
-            if isinstance(self.fleet, TargetFleet):
+            if isinstance(self.fleet, Fleet):
                 ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, AIShipRoleType.SHIP_ROLE_MILITARY_INVASION, False)
                 if ship_id is None:
                     ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, AIShipRoleType.SHIP_ROLE_BASE_INVASION)
@@ -177,7 +177,7 @@ class AIFleetOrder(object):
         # military
         #
         elif AIFleetOrderType.ORDER_MILITARY == self.order_type:
-            if isinstance(self.fleet, TargetFleet):
+            if isinstance(self.fleet, Fleet):
                 ship_id = FleetUtilsAI.get_ship_id_with_role(fleet_id, AIShipRoleType.SHIP_ROLE_MILITARY)
             ship = universe.getShip(ship_id)
             system = universe.getSystem(self.target.target_id)

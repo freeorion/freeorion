@@ -2,7 +2,7 @@ import EnumsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 
-class AITarget(object):
+class UniverseObject(object):
     """Stores information about AI target - its id and type."""
 
     def __init__(self, target_id):
@@ -37,14 +37,14 @@ class AITarget(object):
         raise NotImplementedError()
 
 
-class TargetPlanet(AITarget):
-    name = 'planet'
+class Planet(UniverseObject):
+    object_name = 'planet'
 
     def get_required_system_ai_targets(self):
         result = []
         universe = fo.getUniverse()
         planet = universe.getPlanet(self.target_id)
-        result.append(TargetSystem(planet.systemID))
+        result.append(System(planet.systemID))
 
     @property
     def target_obj(self):
@@ -52,8 +52,8 @@ class TargetPlanet(AITarget):
         return universe.getPlanet(self.target_id)
 
 
-class TargetSystem(AITarget):
-    name = 'system'
+class System(UniverseObject):
+    object_name = 'system'
 
     def get_required_system_ai_targets(self):
         return [self]
@@ -64,8 +64,8 @@ class TargetSystem(AITarget):
        return universe.getSystem(self.target_id)
 
 
-class TargetFleet(AITarget):
-    name = 'fleet'
+class Fleet(UniverseObject):
+    object_name = 'fleet'
 
     def get_required_system_ai_targets(self):
         # Fleet systemID is where is fleet going.
@@ -75,7 +75,7 @@ class TargetFleet(AITarget):
         system_id = fleet.nextSystemID
         if system_id == -1:
             system_id = fleet.systemID
-        return [TargetSystem(system_id)]
+        return [System(system_id)]
 
 
     @property
