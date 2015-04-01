@@ -541,7 +541,7 @@ class AIFleetMission(object):
         system_targets_required_to_visit = []
         for mission_type in self.get_mission_types():
             for aiTarget in self.get_targets(mission_type):
-                system_targets_required_to_visit.extend(aiTarget.get_required_system_ai_targets())
+                system_targets_required_to_visit.append(aiTarget.get_system())
 
         orders_to_visit_systems = MoveUtilsAI.get_fleet_orders_from_system_targets(self.target, system_targets_required_to_visit)
         #TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
@@ -562,7 +562,7 @@ class AIFleetMission(object):
             for mission_type in self.get_mission_types():
                 tragets = self.get_targets(mission_type)
                 for target in tragets:
-                    if system_target in target.get_required_system_ai_targets():
+                    if system_target == target.get_system():
                         # from target required to visit get fleet orders to accomplish target
                         fleet_order = self._get_fleet_order_from_target(mission_type, target)
                         self.orders.append(fleet_order)

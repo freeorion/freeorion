@@ -31,7 +31,7 @@ class UniverseObject(object):
         """Returns if this object is valid."""
         return self.target_type is not None and EnumsAI.check_validity(self.target_id)
 
-    def get_required_system_ai_targets(self):
+    def get_system(self):
         """Returns all system AITargets required to visit in this object."""
         raise NotImplementedError()
 
@@ -39,11 +39,10 @@ class UniverseObject(object):
 class Planet(UniverseObject):
     object_name = 'planet'
 
-    def get_required_system_ai_targets(self):
-        result = []
+    def get_system(self):
         universe = fo.getUniverse()
         planet = universe.getPlanet(self.target_id)
-        result.append(System(planet.systemID))
+        return System(planet.systemID)
 
     def get_object(self):
         universe = fo.getUniverse()
@@ -53,8 +52,8 @@ class Planet(UniverseObject):
 class System(UniverseObject):
     object_name = 'system'
 
-    def get_required_system_ai_targets(self):
-        return [self]
+    def get_system(self):
+        return self
 
     def get_object(self):
        universe = fo.getUniverse()
@@ -64,7 +63,7 @@ class System(UniverseObject):
 class Fleet(UniverseObject):
     object_name = 'fleet'
 
-    def get_required_system_ai_targets(self):
+    def get_system(self):
         # Fleet systemID is where is fleet going.
         # If fleet is going nowhere, then it is location of fleet
         universe = fo.getUniverse()
@@ -72,7 +71,7 @@ class Fleet(UniverseObject):
         system_id = fleet.nextSystemID
         if system_id == -1:
             system_id = fleet.systemID
-        return [System(system_id)]
+        return System(system_id)
 
     def get_object(self):
         universe = fo.getUniverse()

@@ -358,7 +358,7 @@ class AIFleetOrder(object):
             # attack
             elif AIFleetOrderType.ORDER_ATTACK == self.order_type:
                 fleet_id = self.fleet.target_id
-                fo.issueFleetMoveOrder(fleet_id, self.target.get_required_system_ai_targets()[0].target_id)
+                fo.issueFleetMoveOrder(fleet_id, self.target.get_system().target_id)
 
     def __str__(self):
         return "fleet order[%s] source:%26s | target %26s" % (AIFleetOrderTypeNames.name(self.order_type), self.fleet, self.target)

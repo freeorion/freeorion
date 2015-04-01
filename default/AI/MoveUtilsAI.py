@@ -14,7 +14,7 @@ def get_fleet_orders_from_system_targets(fleet_target, targets):
     # TODO: use Graph Theory to construct move orders
     # TODO: add priority
     # determine system where fleet will be or where is if is going nowhere
-    last_system_target = fleet_target.get_required_system_ai_targets()[0]
+    last_system_target = fleet_target.get_system()
     secure_targets = set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
     # for every system which fleet wanted to visit, determine systems to visit and create move orders
     for target in targets:

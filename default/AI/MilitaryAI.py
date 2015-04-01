@@ -138,7 +138,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
         for ai_fleet_mission_type in ai_fleet_mission.get_mission_types():
             ai_targets = ai_fleet_mission.get_targets(ai_fleet_mission_type)
             for aiTarget in ai_targets:
-                sys_targets.extend(aiTarget.get_required_system_ai_targets())
+                sys_targets.append(aiTarget.get_system())
         if not sys_targets:  # shouldn't really be possible
             continue
         last_sys = sys_targets[-1].target_id  # will count this fleet as assigned to last system in target list
