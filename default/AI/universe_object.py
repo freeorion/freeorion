@@ -23,7 +23,7 @@ class UniverseObject(object):
 
     def get_object(self):
         """
-        Returns target UniverseObject or None.
+        Returns UniverseObject or None.
         """
         return None
 
@@ -45,8 +45,7 @@ class Planet(UniverseObject):
         return System(planet.systemID)
 
     def get_object(self):
-        universe = fo.getUniverse()
-        return universe.getPlanet(self.target_id)
+        return fo.getUniverse().getPlanet(self.target_id)
 
 
 class System(UniverseObject):
@@ -56,8 +55,7 @@ class System(UniverseObject):
         return self
 
     def get_object(self):
-       universe = fo.getUniverse()
-       return universe.getSystem(self.target_id)
+        return fo.getUniverse().getSystem(self.target_id)
 
 
 class Fleet(UniverseObject):
@@ -74,8 +72,7 @@ class Fleet(UniverseObject):
         return System(system_id)
 
     def get_object(self):
-        universe = fo.getUniverse()
-        return universe.getFleet(self.target_id)
+        return fo.getUniverse().getFleet(self.target_id)
 
 
 # Old unused targets
