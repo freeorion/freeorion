@@ -12,7 +12,7 @@ import InvasionAI
 import PlanetUtilsAI
 import math
 from freeorion_tools import dict_from_map
-from universe_object import System, Fleet, Planet, UniverseObject
+from universe_object import System, Fleet, Planet
 from EnumsAI import FLEET_MISSION_TYPES, AIFleetMissionType, AIFleetOrderType
 
 ORDERS_FOR_MISSION = {
@@ -108,7 +108,7 @@ class AIFleetMission(object):
         self.orders = []
 
     def _get_fleet_order_from_target(self, mission_type, target):
-        fleet_targets = UniverseObject(EnumsAI.TargetType.TARGET_FLEET, self.target_id)
+        fleet_targets = Fleet(self.target_id)
         order_type = ORDERS_FOR_MISSION.get(mission_type, AIFleetOrderType.ORDER_INVALID)
         return AIFleetOrder.AIFleetOrder(order_type, fleet_targets, target)
 
