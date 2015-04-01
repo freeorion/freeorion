@@ -622,7 +622,6 @@ void PartsListBox::Populate() {
          group_it != part_groups.end(); group_it++)
     {
         std::vector<const PartType* > this_group = group_it->second;
-        ShipPartClass pclass = group_it->first.first;
         std::multimap<double, const PartType*> sorted_group;
         for (std::vector<const PartType* >::iterator part_it = this_group.begin();
              part_it != this_group.end(); ++part_it)

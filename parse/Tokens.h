@@ -153,6 +153,10 @@
     (Hostile)                                   \
     (Huge)                                      \
     (Hull)                                      \
+    (HullFuel)                                  \
+    (HullStarlaneSpeed)                         \
+    (HullStealth)                               \
+    (HullStructure)                             \
     (Icon)                                      \
     (ID)                                        \
     (If)                                        \

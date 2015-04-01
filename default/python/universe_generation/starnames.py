@@ -232,7 +232,7 @@ def name_star_systems(system_list):
     if len(group_names) < num_star_groups:
         group_names.extend([names.random_name(6) for _ in range(num_star_groups - len(group_names))])
     group_name_sample = random.sample(group_names, num_star_groups)
-    for index_group, group_list in enumerate(star_groups.values()):
+    for index_group, group_list in enumerate(sorted(star_groups.values())):
         star_name_map.update(name_group(group_list, group_name_sample[index_group], star_type_assignments,
                                         planet_assignments))
 

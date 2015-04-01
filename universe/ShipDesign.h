@@ -71,7 +71,7 @@ public:
         m_name("invalid part type"),
         m_description("indescribable"),
         m_class(INVALID_SHIP_PART_CLASS),
-        m_capacity(0.0),
+        m_capacity(0.0f),
         m_production_cost(0),
         m_production_time(0),
         m_mountable_slot_types(),
@@ -128,7 +128,7 @@ private:
     std::string                             m_name;
     std::string                             m_description;
     ShipPartClass                           m_class;
-    double                                  m_capacity;
+    float                                   m_capacity;
     const ValueRef::ValueRefBase<double>*   m_production_cost;
     const ValueRef::ValueRefBase<int>*      m_production_time;
     bool                                    m_producible;

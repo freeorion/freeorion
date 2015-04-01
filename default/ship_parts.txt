@@ -477,53 +477,42 @@ Part
 Part
     name = "FU_IMPROVED_ENGINE_COUPLINGS"
     description = "FU_IMPROVED_ENGINE_COUPLINGS_DESC"
-    class = General
+    class = StarlaneSpeed
+    capacity = 10
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed value = Value + 10
     icon = "icons/ship_parts/engine-1.png"
     
     
 Part
     name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
     description = "FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
-    class = General
+    class = StarlaneSpeed
+    capacity = 20
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed value = Value + 20
     icon = "icons/ship_parts/engine-2.png"
     
 Part
     name = "FU_SINGULARITY_ENGINE_CORE"
     description = "FU_SINGULARITY_ENGINE_CORE_DESC"
-    class = General
+    class = StarlaneSpeed
+    capacity = 30
     mountableSlotTypes = Core
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed value = Value + 30
     icon = "icons/ship_parts/engine-3.png"
     
 Part
     name = "FU_TRANSPATIAL_DRIVE"
     description = "FU_TRANSPATIAL_DRIVE_DESC"
-    class = General
+    class = StarlaneSpeed
+    capacity = 40
     mountableSlotTypes = Core
     buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
@@ -531,17 +520,12 @@ Part
         OwnedBy empire = Source.Owner
         Contains Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
         ]
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
             effects = SetStealth value = Value + 40
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed value = Value + 40
-    ]
     icon = "icons/ship_parts/engine-4.png"
     
 Part
