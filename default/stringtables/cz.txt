@@ -14,14 +14,8 @@ Czech
 
 #Anyone can use these for basic buttons
 
-APPNAME
-FreeOrion
-
 BROWSE_BTN
 Procházet...
-
-OK
-OK
 
 CANCEL
 Zpět
@@ -59,23 +53,14 @@ Impérium\n
 ALL
 Všechno\n
 
-UNKNOWN_SYSTEM
-Neznámý systém\n
-
 RENAME
 Přejmenovat\n
 
 ENTER_NEW_NAME
 Vlož nové jméno\n
 
-UNKNOWN_VALUE_SYMBOL
-?
-
 ERROR
 CHYBA
-
-RESET
-Reset
 
 TURN
 Tah
@@ -89,9 +74,6 @@ Nové loďstvo "%1%""
 
 NEW_FLEET_NAME_NO_NUMBER
 Nové loďstvo
-
-NOT_APPLICABLE
-N/A
 
 BOMBER
 Bombardér
@@ -112,39 +94,33 @@ Lidský_Hráč
 
 SD_SCOUT
 Průzkumník
-
 SD_SCOUT_DESC
 Malé a levné neozbrojené plavidlo určené pro průzkum.
-
-SD_COLONY_SHIP
-Kolonizační loď
-
-SD_COLONY_SHIP_DESC
-Obrovské neozbrojené plavidlo schopné bezpečně dovážet milionů občanů na nové kolonie.
-
-SD_MARK1
-Mark I
 
 SD_MARK1_DESC
 Cenově dostupná ozbrojená hlídka.
 
-SD_MARK2
-Mark II
-
 SD_MARK2_DESC
 Křižník se silnou obrannou a útočnou schopností.
-
-SD_MARK3
-Mark III
 
 SD_MARK3_DESC
 Rozšířené křižník s těžkými zbraněmi a obrněním na dělaní špinavé práce.
 
-SD_MARK4
-Mark IV
-
 SD_MARK4_DESC
 Masivní válečná loď ozbrojená a chráněná nejnovějšími technologiemi. Cena se od toho odvíjí.
+
+SD_COLONY_SHIP
+Kolonizační loď
+SD_COLONY_SHIP_DESC
+Obrovské neozbrojené plavidlo schopné bezpečně dovážet milionů občanů na nové kolonie.
+
+############
+# Monsters #
+############
+
+##########
+# Fields #
+##########
 
 ##############################
 # Predefined Starting Fleets #
@@ -159,12 +135,6 @@ Bitevní loďstvo
 ##########################
 # Status Update Messages #
 ##########################
-
-NEW_GAME
-Generuji vesmír a UI ...
-
-LOADING
-Nahrávám ...
 
 SERVER_WONT_START
 '''Server nebyl spuštěn :(.
@@ -185,7 +155,7 @@ Hráč č. %1% se odpojil.
 
 PLAYER_DEFEATED
 Byl si poražen.\n
-      
+
 EMPIRE_DEFEATED
 Impérium rasy %1%  přestalo existovat.\n
 
@@ -194,6 +164,9 @@ Neznámá říše
 
 LAST_OPPONENT_DEFEATED_VICTORY
 Tvůj poslední protivník byl poražen a tak se stáváš VÍTĚZEM !
+
+UNABLE_TO_WRITE_CONFIG_XML
+Nemohu zapisovat do souboru config.xml
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -210,12 +183,6 @@ Vytisknout tuto nápovědu.\n\n
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Využívá všech nastavení z jakékoli stávající config.xml souboru a ty, uvedené na příkazové řádce vytvořit config.xml souboru. Tím se přepíše stávající soubor config.xml, pokud existuje.
-
-UNABLE_TO_WRITE_CONFIG_XML
-Nemohu zapisovat do souboru config.xml
-
-OPTIONS_DB_MUSIC_OFF
-Vypne hudbu ve hře.
 
 OPTIONS_DB_BG_MUSIC
 Nastaví skladbu přehrávanou na pozadí.\n
@@ -268,15 +235,6 @@ Nastavuje rychlost pohybu bodů po nařízené trase pro loštvo.
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Nastvauje zda chcete zobrazit okruh účinostu u předmětů na mapě galaxie.
 
-OPTIONS_DB_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Nastavuje zda chcete zobrazit "zamlženou" oblast na mapě kde nevidíte ostatní hráče .
-
-OPTIONS_DB_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Nastavuje zda chcete vidět na mapě galaxie hranici "zamlžené" oblasti.
-
-OPTIONS_DB_FORCE_EXTERNAL_SERVER
-Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
-
 OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
 Adresa pro připojení k externímu server módu. Když se používá,klient se stává manažerem hry.
 
@@ -322,15 +280,6 @@ Zvuk hrající při kliknutí na tlačítko.
 OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
 Zvuk hrající při kliknutí na tlačítko tahu.
 
-OPTIONS_DB_UI_SOUND_LIST_SELECT
-The sound file played when a listbox or drop-down list item is selected.
-
-OPTIONS_DB_UI_SOUND_ITEM_DROP
-The sound file played when an item is dropped into a listbox.
-
-OPTIONS_DB_UI_SOUND_LIST_PULLDOWN
-The sound file played when the list is opened in a drop-down list.
-
 OPTIONS_DB_UI_SOUND_TEXT_TYPING
 Zvuk hrající když hráč píše zprávu.
 
@@ -360,24 +309,6 @@ Zvuk hrající při přejetí myší přes systémovou ikonu.
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Zvuk hrající při otevřeném postraním panelu.
-
-OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-Zvuk hrající při kliknutí na tlačítko zaměření na zemědělství.
-
-OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Zvuk hrající při kliknutí na tlačítko zaměření na průmysl.
-
-OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-Zvuk hrající při kliknutí na tlačítko zaměření na výzkum.
-
-OPTIONS_DB_UI_SOUND_MINING_FOCUS
-Zvuk hrající při kliknutí na tlačítko zaměření na těžbu.
-
-OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-Zvuk hrající při kliknutí na tlačítko zaměření na obchod.
-
-OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-Zvuk hrající při kliknutí na tlačítko vyvážené zaměření.
 
 OPTIONS_DB_UI_FONT
 Nastaví zdrojový soubor UI fontu.
@@ -427,38 +358,11 @@ Sets the color of increasing statistics
 OPTIONS_DB_UI_STAT_DECREASE_COLOR
 Sets the color of decreasing statistics
 
-OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
-Sets UI window outer border color.
-
-OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
-Sets UI window inner border color.
-
-OPTIONS_DB_UI_KNOWN_TECH
-Sets color of known techs in the tech tree.
-
-OPTIONS_DB_UI_KNOWN_TECH_BORDER
-Sets text and border color of known techs in the tech tree.
-
-OPTIONS_DB_UI_RESEARCHABLE_TECH
-Sets color of researchable techs in the tech tree.
-
-OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
-Sets text and border color of researchable techs in the tech tree.
-
-OPTIONS_DB_UI_UNRESEARCHABLE_TECH
-Sets color of unresearchable techs in the tech tree.
-
-OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER
-Sets text and border color of unresearchable techs in the tech tree.
-
 OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND
 Sets background color of progress bars in the tech tree.
 
 OPTIONS_DB_UI_TECH_PROGRESS
 Sets color of progress bars in the tech tree.
-
-OPTIONS_DB_UI_SCROLL_WIDTH
-Sets UI scroll width.
 
 OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Nastaví velikost systémových ikon.
@@ -469,20 +373,8 @@ Toggles whether to render fog of war scanline shading over system icons.
 OPTIONS_DB_UI_SYSTEM_FOG_SPACING
 Sets spacing (in pixels) between fog of war scanlines.
 
-OPTIONS_DB_UI_SYSTEM_CIRCLES
-Toggles whether to draw circles around systems.
-
-OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
-Sets size of circles around systems on map, relative to system icon size.
-
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Sets colour of unowned system names on galaxy map.
-
-OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
-Sets minimum zoom level at which medium fleet icons are shown on the galaxy map.
-
-OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
-Sets minimum zoom level at which small fleet icons are shown on the galaxy map.
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
 Sets minimum zoom level at which tiny fleet icons are shown.  At smaller zooms, no fleet icons are shown on the galaxy map.
@@ -502,12 +394,6 @@ Sets UI tooltip popup delay, in ms.
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
 If true, clicks on multiple fleet buttons will open multiple fleet windows at the same time.  Otherwise, opening a fleet window will close any currently-open fleet window.
 
-OPTIONS_DB_UI_FLEET_AUTOSELECT
-Auto-select the top fleet when a fleet window is opened.  Consider using this flag if you use UI.multiple-fleet-windows.
-
-OPTIONS_DB_UI_WINDOW_QUICKCLOSE
-Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
-
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
 Sets size of system sidepanel.
 
@@ -519,21 +405,6 @@ Sets size of smallest-rendered rotating planets on sidepanel.
 
 OPTIONS_DB_GAMESETUP_STARS
 The number of stars in the galaxy to be generated.
-
-OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-The shape of the galaxy to be generated.
-
-OPTIONS_DB_GAMESETUP_GALAXY_AGE
-The age of the galaxy to be generated.
-
-OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-The number of planets per system in the galaxy to be generated.
-
-OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-The number of starlanes in the galaxy to be generated.
-
-OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-The frequency of specials appearing in the galaxy to be generated.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 The name used in the game for your empire.
@@ -547,62 +418,20 @@ The color used in the game for your empire.
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
 The number of AI opponents you will play in the game.
 
-OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
-The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.
-
-OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
-The vertical spacing to be placed between techs in the tech screen, in multiples of the height of a single theory tech.
-
 OPTIONS_DB_SAVE_DIR
 The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.
-
-OPTIONS_DB_RESOURCE_DIR
-Sets the root directory for the game resource files (game content and data files).
-
-OPTIONS_DB_LOG_LEVEL
-Sets the level at or above which log messages will be output (levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)
-
-OPTIONS_DB_STRINGTABLE_FILENAME
-Sets the language-specific string table filename.
-
-OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-If true, autosaves will occur during single-player games.
-
-OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-If true, autosaves will occur during multiplayer games.
 
 OPTIONS_DB_AUTOSAVE_TURNS
 Sets the number of turns that should elapse between autosaves.
 
-OPTIONS_DB_MUSIC_VOLUME
-The volume (0 to 255) at which music should be played.
-
-OPTIONS_DB_COMBAT_ENABLE_GLOW
-Toggles glow effects on and off.
-
-OPTIONS_DB_COMBAT_ENABLE_SKYBOX
-Toggles background skybox on and off.
-
-OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
-Toggles lens flares on and off.
-
-OPTIONS_DB_COMBAT_FILLED_SELECTION
-Uses a filled-in effect, as opposed to an outline effect, on selected objects.
-
 OPTIONS_DB_QUICKSTART
 Starts a new quickstart game, bypassing the main menu.
-
-OPTIONS_DB_AUTO_FIRST_TURN
-Hits the "Turn" button automatically on the first turn; useful for debugging, especially when used with --quickstart.
 
 OPTIONS_DB_CHECKED_GL_VERSION
 Stores whether the OpenGL version of this system has been checked.  If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true.
 
 OPTIONS_DB_AUTO_EFFECT_DESC
 Toggles inclusion of autogenerated text in tech, building or ship part descriptions.
-
-OPTIONS_DB_TECH_DEMO
-Try out the 3D combat tech demo.
 
 OPTIONS_DB_TEST_3D_COMBAT
 Testovat 3D bojovou mezihru.
@@ -657,18 +486,6 @@ Z:
 
 COLOR_DLG_BLUE
 M:
-
-COLOR_DLG_HUE
-H:
-
-COLOR_DLG_SATURATION
-S:
-
-COLOR_DLG_VALUE
-V:
-
-COLOR_DLG_ALPHA
-A:
 
 #################
 # Intro Screen  #
@@ -788,7 +605,6 @@ GSETUP_WINDOW_TITLE
 Nastavení galaxie
 
 #Strings
-
 GSETUP_GRAPHICS_FILES
 Grafické soubory
 
@@ -808,106 +624,50 @@ Počet počítačových hráčů
 
 GSETUP_STARS
 Počet hvězd
-
 GSETUP_SHAPE
 Tvar galaxie
-
 GSETUP_AGE
 Stáří galaxie
-
 GSETUP_STARLANE_FREQ
 Frekvence hvězd. tras
-
 GSETUP_PLANET_DENSITY
 Hustota planet
-
 GSETUP_SPECIALS_FREQ
 Speciální frekvence
 
 GSETUP_2ARM
 Spirála, 2-ramená
-
 GSETUP_3ARM
 Spirála, 3-ramená
-
 GSETUP_4ARM
 Spirála, 4-ramená
-
 GSETUP_CLUSTER
 Shluk
-
 GSETUP_ELLIPTICAL
 Elipsa
-
-GSETUP_IRREGULAR
-Nepravidelná
-
 GSETUP_RING
 Kruh
 
 GSETUP_NONE
 Žádný
-
-GSETUP_YOUNG
-Mladý
-
-GSETUP_MATURE
-Zralý
-
-GSETUP_ANCIENT
-Starověký
-
-GSETUP_FEW
-Málo
-
-GSETUP_SOME
-Spíše méně
-
-GSETUP_SEVERAL
-Průměr
-
-GSETUP_MANY
-Spíše více
-
-GSETUP_VERY_MANY
-Hodně
-
 GSETUP_LOW
 Malý
-
 GSETUP_MEDIUM
 Střední
-
 GSETUP_HIGH
 Velký
 
-GSETUP_RARE
-Vzácný
-
-GSETUP_UNCOMMON
-Neobvyklý
-
-GSETUP_COMMON
-Obvyklý
+GSETUP_YOUNG
+Mladý
+GSETUP_MATURE
+Zralý
+GSETUP_ANCIENT
+Starověký
 
 #Error messages####
 
 GSETUP_ERR_NOEXIST
 Neexistuje!
-
-###########################
-# Empire Selection Screen #
-###########################
-
-#Window Title####
-
-ESELECT_WINDOW_TITLE
-Výběr říše
-
-#Static text####
-
-ESELECT_EMPIRE_NAME
-Jméno říše:
 
 ###########################
 # About Dialog            #
@@ -934,9 +694,6 @@ FreeOrion, open-source hra založená na hře Master of Orion, je tahová strate
 # Game Menu               #
 ###########################
 
-GAME_MENU_WINDOW_TITLE
-Menu
-
 GAME_MENU_SAVE
 Uložit hru\n
 
@@ -946,8 +703,9 @@ Nahrát hru
 GAME_MENU_RESIGN
 Vzdát to!\n
 
-GAME_MENU_SAVE_FILES
-Save Game Files
+###########################
+# Save Game Dialog        #
+###########################
 
 ###########################
 # Game Options            #
@@ -955,12 +713,6 @@ Save Game Files
 
 OPTIONS_TITLE
 Nastavení\n
-
-OPTIONS_AUTOSELECT_FLEET
-Automaticky zvolte první flotilu\n
-
-OPTIONS_MULTIPLE_FLEET_WNDS
-Multiple fleet windows
 
 OPTIONS_QUICK_CLOSE_WNDS
 Rychle-zavřít okna
@@ -970,12 +722,6 @@ Různé UI Nastavení
 
 OPTIONS_SINGLEPLAYER
 Jeden hráč\n
-
-OPTIONS_MULTIPLAYER
-Multiplayer
-
-OPTIONS_AUTOSAVE_TO_KEEP
-Autosaves to keep
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Tahy mezi autouložením
@@ -989,14 +735,8 @@ Font
 OPTIONS_FONT_SIZES
 Velikost fontu
 
-OPTIONS_FONT_TEXT
-Text
-
 OPTIONS_FONT_TITLE
 Titulek oken\n
-
-OPTIONS_TECH_SPACING
-Tech spacing
 
 OPTIONS_HORIZONTAL
 Horizontální
@@ -1037,12 +777,6 @@ Zobraz FPS
 OPTIONS_LIMIT_FPS
 Limitování FPS
 
-OPTIONS_MAX_FPS
-Max FPS
-
-OPTIONS_CHAT
-Chat
-
 OPTIONS_CHAT_HISTORY
 Historie chatu
 
@@ -1052,95 +786,20 @@ Mizení chatu
 OPTIONS_GALAXY_MAP
 Mapa galaxie
 
-OPTIONS_DESCRIPTIONS
-Content Descriptions
-
-OPTIONS_SYSTEM_ICONS
-System Icons
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Optimized system rendering
-
-OPTIONS_UI_SYSTEM_ICON_SIZE
-System icon size
-
 OPTIONS_UI_SYSTEM_FOG
 System icon fog of war scanlines
 
 OPTIONS_UI_SYSTEM_FOG_SPACING
 Fog of war scanline spacing
 
-OPTIONS_UI_SYSTEM_CIRCLES
-System enclosing circles
-
-OPTIONS_UI_SYSTEM_CIRCLE_SIZE
-System circle relative size
-
-OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
-System selection indicator relative size
-
-OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
-Tiny system icon size threshold
-
 OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
 Unowned systen name colour
-
-OPTIONS_FLEET_ICONS
-Fleet Icons
-
-OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Tiny fleet icon minimum zoom
-
-OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
-Small fleet icon minimum zoom
-
-OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
-Medium fleet icon minimum zoom
-
-OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
-Fleet selection indicator relative size
-
-OPTIONS_GALAXY_MAP_GENERAL
-General
-
-OPTIONS_GALAXY_MAP_GAS
-Galaxy map gas rendering
 
 OPTIONS_GALAXY_MAP_STARFIELDS
 Galaxy map starfields rendering
 
-OPTIONS_GALAXY_MAP_SCALE_LINE
-Galaxy distance scale line
-
-OPTIONS_GALAXY_MAP_ZOOM_SLIDER
-Galaxy map zoom slider
-
-OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
-Galaxy map detection range displayed stealth threshold
-
-OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
-Galaxy map stealth threshold slider
-
-OPTIONS_GALAXY_MAP_DETECTION_RANGE
-Detection range circles
-
-OPTIONS_STARLANES
-Starlanes
-
-OPTIONS_STARLANE_THICKNESS
-Starlane thickness
-
 OPTIONS_RESOURCE_STARLANE_COLOURING
 Resource starlane colouring
-
-OPTIONS_FLEET_SUPPLY_LINES
-Fleet supply lines
-
-OPTIONS_FLEET_SUPPLY_LINE_WIDTH
-Fleet supply line width
-
-OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
-Fleet supply line dot spacing
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
 Default starlane colour
@@ -1169,26 +828,11 @@ Maximalizovat okno
 OPTIONS_SOUND_CLICK
 Klik
 
-OPTIONS_SOUND_ROLLOVER
-Rollover
-
-OPTIONS_SOUND_FLEET_CLICK
-Fleet Button Click
-
-OPTIONS_SOUND_FLEET_ROLLOVER
-Fleet Button Rollover
-
-OPTIONS_SOUND_SYSTEM_ROLLOVER
-System Icon Rollover
-
 OPTIONS_SOUND_WINDOW
 Zvuky oken
 
 OPTIONS_SOUND_BUTTON
 Zvuky tlačítek
-
-OPTIONS_SOUND_FLEET
-Fleet Button Sounds
 
 OPTIONS_SOUND_ALERT
 Poplach
@@ -1196,114 +840,20 @@ Poplach
 OPTIONS_SOUND_TYPING
 Píše
 
-OPTIONS_SOUND_TURN
-Turn button click
-
 OPTIONS_SOUND_SIDEPANEL
 Otevřít boční panel
-
-OPTIONS_SOUND_PLANET
-Planet click
-
-OPTIONS_SOUND_FOCUS
-Focus Sounds
-
-OPTIONS_SOUND_BALANCED
-Vyrovnané zaměření
-
-OPTIONS_SOUND_FARMING
-Zemědělské zaměření
-
-OPTIONS_SOUND_INDUSTRY
-Průmyslové zaměření
-
-OPTIONS_SOUND_MINING
-Těžební zaměření
-
-OPTIONS_SOUND_RESEARCH
-Průzkumné zaměření
-
-OPTIONS_SOUND_LIST
-List sounds
-
-OPTIONS_SOUND_DROP
-Item drop
-
-OPTIONS_SOUND_PULLDOWN
-Drop-down list open
-
-OPTIONS_SOUND_SELECT
-List select
-
-OPTIONS_GENERAL_COLORS
-General
-
-OPTIONS_CONTROL_COLORS
-UI Controls
-
-OPTIONS_FILL_COLOR
-Fill
-
-OPTIONS_BORDER_COLOR
-Border
-
-OPTIONS_TEXT_COLOR
-Text
-
-OPTIONS_HIGHLIGHT_COLOR
-Selection highlighting
 
 OPTIONS_DROPLIST_ARROW_COLOR
 Droplist arrow
 
-OPTIONS_STATE_BUTTON_COLOR
-Toggle button selected
-
-OPTIONS_STAT_INCREASE_COLOR
-Statistic increasing
-
-
 OPTIONS_PAGE_AUTOSAVE
 Autouložení
-
-OPTIONS_PAGE_UI
-UI
 
 OPTIONS_PAGE_COLORS
 Barvy
 
-OPTIONS_PAGE_COMBAT
-Combat
-
-OPTIONS_STAT_DECREASE_COLOR
-Statistic decreasing
-
-OPTIONS_INTERIOR_COLOR
-Interior
-
-OPTIONS_WINDOW_COLORS
-Windows
-
-OPTIONS_INNER_BORDER_COLOR
-Inner border
-
-OPTIONS_OUTER_BORDER_COLOR
-Outer border
-
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Pozadí
-
-OPTIONS_COMBAT_ENABLE_GLOW
-Glow
-
-OPTIONS_COMBAT_ENABLE_SKYBOX
-Skybox
-
-OPTIONS_COMBAT_ENABLE_LENS_FLARES
-Lens Flares
-
-OPTIONS_COMBAT_FILLED_SELECTION
-Filled selection
 
 OPTIONS_ANY_FILE
 Všechny soubory
@@ -1333,27 +883,12 @@ Autogenerated effect descriptions
 # CombatSetupWnd #
 ##################
 
-AUTO_PLACE_SHIPS
-Auto-Place Ships
-
-REDO_PLACEMENTS
-Redo Placements
-
 #################
 # Main Map      #
 #################
 
 MAP_BTN_TURN_UPDATE
 Tah č. %1%
-
-MAP_INDICATOR_FPS
-%1% FPS
-
-MAP_SCALE_INDICATOR
-%1% uu
-
-MAP_BTN_MENU
-Menu
 
 MAP_BTN_SITREP
 Zprávy
@@ -1363,9 +898,6 @@ Výzkum
 
 MAP_BTN_PRODUCTION
 Produkce
-
-MAP_BTN_DESIGN
-Design
 
 #################
 # SidePanel     #
@@ -1379,37 +911,24 @@ Produkce systému
 
 RESOURCE_PRODUCTION_TOOLTIP
 Systém %1%: %2%
-
 RESOURCE_ALLOCATION_TOOLTIP
 Systém %1%: %2%
 
-FOOD_CONSUMPTION
-Spotřeba potravin
-
-MINERALS_CONSUMPTION
-Spotřeba minerálů
-
 INDUSTRY_CONSUMPTION
 Spotřeba průmyslu
-
 RESEARCH_CONSUMPTION
 Spotřeba výzkumu
-
 TRADE_CONSUMPTION
 Spotřeba obchodu
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
 Výměna interního systému
-
 IMPORT_EXPORT_TOOLTIP
 Dovoz / Vývoz
-
 RESOURCE_IMPORT
 Dovoz
-
 RESOURCE_EXPORT
 Dostupné pro vývoz
-
 RESOURCE_SELF_SUFFICIENT
 6ádný dovoz či vývoz
 
@@ -1417,120 +936,20 @@ RESOURCE_SELF_SUFFICIENT
 
 PLANET_PANEL
 Panel planety
-
 PL_ASTEROID_BELT
 Pás asteroidů
-
 PL_UNINHABITED
 Neobydlená
-
 PL_SIZE
 Velikost
-
 PL_COLONIZE
 Kolonizovat (%1%)
 
-
-##Population Panel#########
-
-PP_POPULATION
-Populace
-
-PP_HEALTH
-Zdraví
-
-
 ## Resources Panel ##########
-
-RP_PRIMARY_FOCUS_TOOLTIP
-Primary Focus: %1%
-
-RP_SECONDARY_FOCUS_TOOLTIP
-Secondary Focus: %1%
-
-RP_FOOD
-Food Production
-
-RP_MINERALS
-Minerals Production
-
-RP_INDUSTRY
-Industrial Output
-
-RP_RESEARCH
-Research Output
-
-RP_TRADE
-Trade Level
-
-RP_CONSTRUCTION
-Construction Infrastructure
-
-
-## Military Panel ##########
-
-MP_SUPPLY
-Fleet Supply
-
-MP_SHIELD
-Shield
-
-MP_DEFENSE
-Defense
-
-MP_DETECTION
-Detection
-
-MP_STEALTH
-Stealth
-
 
 ## Buildings Panel##########
 
-BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (Incomplete)
-
-%2%'''
-
-BP_COMPLETE_BUILDING_TOOLTIP
-'''%1%
-
-%2%'''
-
-ORDER_BUIDLING_SCRAP
-Scrap Building
-
-ORDER_CANCEL_BUIDLING_SCRAP
-Cancel Scrapping Building
-
 ## General Tooltips#########
-
-TT_CURRENT
-Current
-
-TT_NEXT
-Next Turn
-
-TT_CHANGE
-Change
-
-TT_METER
-Meter: %1% / %2%
-
-TT_BASIC_FOCUS_AND_UNIVERSE
-Basic Focus and Universe
-
-TT_TECH
-%1% Tech <i>%2%</i>
-
-TT_BUILDING
-%1% Building <i>%2%</i>
-
-TT_SHIP_HULL
-Ship <i>%1%</i> Hull <i>%2%</i>
-
-TT_SHIP_PART
-Ship <i>%1%</i> Part <i>%2%</i>
 
 TT_SPECIAL
 Special <i>%1%</i>
@@ -1538,28 +957,11 @@ Special <i>%1%</i>
 TT_UNKNOWN
 Neznámý
 
-TT_RESOURCE_PRODUCTION
-%1% produces %2%
-
-TT_RESOURCE_ALLOCATION
-%1% consumes %2%
-
-## Misc. Sidepanel##########
-
-SP_UNKNOWN_SYSTEM
-Neznámý systém
-
 SP_RENAME_PLANET
 Přejmenuj planetu
 
 SP_ENTER_NEW_PLANET_NAME
 Vlož nové jméno
-
-SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-'''All colony ships in this system have been
-given orders to leave the system.
-
-Use one of the departing colony ships?'''
 
 #################
 # Fleet Window  #
@@ -1577,9 +979,6 @@ Nikdy
 FW_FLEET_ETA_UNKNOWN
 Neznámý
 
-FW_FLEET_ETA_OUT_OF_RANGE
-Out of Range
-
 FW_SHIP_CLASS
 Třída lodi 
 
@@ -1587,61 +986,28 @@ FW_UNKNOWN_DESIGN_NAME
 Neznámý Desing
 
 # the name of the new fleet icon in the fleet listbox
-FW_NEW_FLEET_LABEL
-<i>New Fleet</i>
-
-FW_EMPIRE_FLEETS_AT_SYSTEM
-%1% Fleets At %2%
-
-FW_EMPIRE_FLEETS
-%1% Fleets
-
-FW_NO_FLEET
-No Fleet
-
-FW_GENERIC_FLEETS_AT_SYSTEM
-Fleets At %1%
-
-FW_GENERIC_FLEETS
-Fleets
-
-FW_HOME_FLEET
-Home Fleet
-
-FW_BATTLE_FLEET
-Battle Fleet
 
 # the name that is used for fleets the player does not control
-FW_FOREIGN_FLEET
-Foreign fleet
+
+# the name that is used for fleets that no player controls
 
 # the name that is used for ships the player does not control
-FW_FOREIGN_SHIP
-Foreign ship
+
+# the name that is used for ships that no player controls
 
 SHIP_SPEED_STAT_TITLE
 Rychlost
 
-SHIP_SPEED_STAT_MAIN
-Maximum distance along starlanes travelled per turn.
-
-FW_FUEL
-Palivo
-
 FW_FLEET_FUEL_SUMMARY
 Fleet Fuel - Equal to the minimum fuel of the ships in the fleet.
 
-FW_FLEET_SPEED_SUMMARY
-Fleet Speed - Equal to the minimum speed of ships in the fleet.
+###############
+#  Moderator  #
+###############
 
-FW_SPLIT_FLEET
-Split Fleet
-
-ORDER_SHIP_SCRAP
-Scrap Ship
-
-ORDER_CANCEL_SHIP_SCRAP
-Cancel Scrapping Ship
+###############
+#  Diplomacy  #
+###############
 
 ###############
 # TechTreeWnd #
@@ -1655,9 +1021,6 @@ Navigace
 
 TECH_TOTAL_COST_STR
 %2% Tahů @ %1% RP / Tah
-
-TECH_TURN_COST_STR
-+%1% RP
 
 TECH_TURNS_LEFT_STR
 %1% tahů
@@ -1689,9 +1052,6 @@ Kompletní
 TECH_WND_STATUS_RESEARCHABLE
 Vyzkoumatelné
 
-TECH_WND_STATUS_UNRESEARCHABLE
-Nevyzkoumatelné
-
 TECH_WND_LIST_VIEW
 Zobrazení seznamu
 
@@ -1703,7 +1063,6 @@ Potřebuje
 
 TECH_WND_UNLOCKS
 Odemkne
-
 
 #######################
 # ProductionInfoPanel #
@@ -1724,7 +1083,6 @@ Zafinancované projekty
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
 Projekty ve frontě
 
-
 ###############
 # ResearchWnd #
 ###############
@@ -1734,10 +1092,6 @@ Výzkum
 
 RESEARCH_INFO_PANEL_TITLE
 Výzkum
-
-RESEARCH_INFO_RP
-RP
-
 
 ####################
 # BuildSelectorWnd #
@@ -1761,24 +1115,14 @@ Nedostupné
 PRODUCTION_TOTAL_COST_STR
 %1% PP / Turn @ %2% Turns
 
-PRODUCTION_TURN_COST_STR
-+%1% PP
-
 PRODUCTION_TURNS_LEFT_STR
 %1% tahů zbývá
 
 PRODUCTION_TURNS_LEFT_NEVER
 Nikdy
 
-PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Quantity
-
 PRODUCTION_DETAIL_ADD_TO_QUEUE
 Přidat do řady
-
-PRODUCTION_DETAIL_CENTER_ON_BUILD
-Center on Build
-
 
 #################
 # ProductionWnd #
@@ -1790,12 +1134,6 @@ Produkce
 PRODUCTION_INFO_PANEL_TITLE
 Produkce
 
-PRODUCTION_INFO_PP
-PP
-
-PRODUCTION_QUEUE_MULTIPLES
-%1%x 
-
 PRODUCTION_QUEUE_EMPTY
 '''Empire production queue is empty.
 
@@ -1803,28 +1141,9 @@ Enqueue production projects by selecting a planet on the sidepanel, then double-
 
 Note that ships can only be built on planets with a shipyard.'''
 
-PRODUCTION_QUEUE_ITEM_LOCATION
-At %1%
-
-
 ###############
 #  DesignWnd  #
 ###############
-
-DESIGN_ADD_TEST
-Přidej testovací design
-
-DESIGN_NAME_DEFAULT
-Custom Ship Design
-
-DESIGN_DESCRIPTION_DEFAULT
-Design Description
-
-DESIGN_NO_PART
-None
-
-DESIGN_WND_STARTS
-Design Starts
 
 DESIGN_WND_HULLS
 Empty Hulls
@@ -1835,79 +1154,39 @@ Finished Designs
 DESIGN_WND_SAVED_DESIGNS
 Saved Designs
 
-DESIGN_WND_TEMPLATES
-Design Templates
+################
+## Statistics ##
+################
+    
 
-DESIGN_WND_PART_PALETTE_TITLE
-Ship Parts
-
-DESIGN_WND_MAIN_PANEL_TITLE
-Design Details
-
-DESIGN_WND_DESIGN_NAME
-Design Name
-
-DESIGN_WND_DESIGN_DESCRIPTION
-Description
-
-DESIGN_WND_CONFIRM
-Confirm New Design
-
-DESIGN_WND_CLEAR
-Clear Parts
-
-
-####################
-#   Encyclopedia   #
-####################
+#############################################################
+####               E N C Y C L O P E D I A               ####
+#############################################################
 
 # types of things that can be shown in encyclopedia
-ENC_SHIP_PART
-Ship Part
 
-ENC_SHIP_HULL
-Ship Hull
-
-ENC_TECH
-Technology
-
-ENC_SPECIAL
-Special
-
-ENC_BUILDING_TYPE
-Building Type
-
-ENC_SHIP_DESIGN
-Ship Design
-
-# type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
-# for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
+# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
+# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
 # %1% may be an empty string for most general types of things that can be shown.
-ENC_DETAIL_TYPE_STR
-%1% %2%
 
-ENC_PP
-PP
-
-ENC_RP
-RP
-
-# indication of cost to produce or research thing that is shown.  May be omitted if thing shown can't
-# be produced or research (e.g. specials)
+# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
+# be produced or researched (e.g. specials)
 # %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
-# %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
+# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
 # %3% will be the minimum number of turns it takes to produce or research the thing shown
 ENC_COST_AND_TURNS_STR
 %3% Turns @ %1% %2% / Turn
 
-# autogenerated effects description.  %1% will be the autogenerated effects text.  This string should
-# provide an appropriate heading to appear before the autogenerated text.
-ENC_EFFECTS_STR
-'''
+# auto-generated location condition description
 
-<u>Effects</u>
+# auto-generated effects description. %1% will be the auto-generated effects text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
 
-%1%'''
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
 
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
@@ -1915,20 +1194,34 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Útok: %2%
 Obrana: %3%
 Rychlost: %4%'''
+## Temporarily removed
+# Direct Fire Parts: %4%
+# Missile Parts: %5%
+# Fighter Bays: %6%
+# Point Defense Parts: %7%
+# Battle Speed: %12%
+##
 
-ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
-'''
-
-<u>Unlocks</u>
-
-'''
-
-ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
-'''%1%: %2%
-'''
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
 ENC_TECH_DETAIL_TYPE_STR
 %1% %2% - %3%
+
+###########################################
+# Combat Report #
+###########################################
+
+###########################################
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
+###########################################
+
+###########################################
+# ARTICLES #
+###########################################
+
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
+
+# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 
 ####################
 # Combat Messages  #
@@ -1967,13 +1260,9 @@ COMBAT_DEFENSELESS
 COMBAT_LOST
  Prohra!
 
-
 ####################
 # TurnProgress     #
 ####################
-
-TURN_PROGRESS_WND
-Průběh tahu
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Pohyb loďstev ...
@@ -1993,20 +1282,41 @@ Provádění příkazů ...
 TURN_PROGRESS_PHASE_DOWNLOADING
 Stahuji nový herní stav ...
 
+########################
+# Messages Panel       #
+########################
 
 ########################
-# SitRep Panel         #
+# Players List         #
 ########################
+
+####################
+## Objects Window ##
+####################
+
+#####################
+## Objects Columns ##
+#####################
+
+####################
+## Filters Dialog ##
+####################
+
+#############################################################
+####                    S I T   R E P                    ####
+#############################################################
 
 #Window title####
 
 SITREP_PANEL_TITLE
 Zprávy z říše
 
+## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
+## these sitreps to be presented in the SitrepPanel in the order set below.
+## Sitreps not specified below will appear in the SitrepPanel following those below.
 
-####################
-# Sit Rep Entries  #
-####################
+## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
+## END OF SITREP_PRIORITY_ORDER
 
 SITREP_SHIP_BUILT
 Loď "%ship%" byla vyrobena v sestému "%system%"".
@@ -2038,9 +1348,9 @@ SITREP_EMPIRE_ELIMINATED
 SITREP_VICTORY
 %1%
 
-####################
-# Victory / Defeat #
-####################
+#############################################################
+####           V I C T O R Y   /   D E F E A T           ####
+#############################################################
 
 TECH_VICTORY
 Říše %1% dosáhla technologického vítězství.
@@ -2048,16 +1358,15 @@ TECH_VICTORY
 ALL_ENEMIES_ELIMINATED_VICTORY
 Říše %1% jako jediná přežila a vítězí.
 
+#############################################################
+####                    S P E C I E S                    ####
+#############################################################
 
-####################
-# Specials         #
-####################
+### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
-HOMEWORLD_SPECIAL
-Domovský svět
-
-HOMEWORLD_SPECIAL_DESCRIPTION
-Tato planeta je kolébkou vaší rasy, víte, jak z ní dostat co nejvíce, získáváte bonusy pro téměř všechny planetární statistiky.
+#############################################################
+####                   S P E C I A L S                   ####
+#############################################################
 
 ANCIENT_RUINS_SPECIAL
 Starobylé ruiny
@@ -2065,62 +1374,21 @@ Starobylé ruiny
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 Tato planeta má na povrchu zříceniny budov vyspělých starověkých ras, které byly zapomenuty v historických knihách.Objevením získáte bonus k výzkumu.
 
-MINERALS_SPECIAL
-Bohatá na minerály
-
-MINERALS_SPECIAL_DESCRIPTION
-Tato planeta má bohaté přírodní zdroje minerálů, zvýšuje těžbu a obchod.
-
-TUNNELS_SPECIAL
-Přírodní tunely
-
-TUNNELS_SPECIAL_DESCRIPTION
-Tato planeta má síť přirozeně vytvořených tunelů, které umožní obývat mnohem větší část planety.
-
-TECHTONIC_INSTABILITY_SPECIAL
-Tektonicky nestabilní
-
-TECHTONIC_INSTABILITY_SPECIAL_DESC
-Tato planeta je tektonicky nestabilní. Častá zemětřesení, tsunami, sopečné výbuchy nebo nepředvídatelné výboje od jádra, způsobují velmi obtížnou možnost výstavby a obecného rozvoje infrastruktury.
-
-SOLID_CORE_SPECIAL
-Pevné jádro
-
-SOLID_CORE_SPECIAL_DESC
-Tato planeta má tvrdé jádro, které má velmi slabé magnetické pole. Tzv. Sluneční vítr dosáhne povrchu planety relativně nefiltrovaný,hrozí poškození zdraví a omezování produkce potravin.
-
-HIGH_AXIAL_TILT_SPECIAL
-Vysoce nakloněná osa
-
-HIGH_AXIAL_TILT_SPECIAL_DESC
-Rotační osa této planety je velmi nakloněna vzhledem k její orbitální rovině. Sezónní výkyvy počasí jsou extrémní a rozvoj infrastruktury je tím významně narušen.
-
-SLOW_ROTATION_SPECIAL
-Vylmi pomalá rotace
-
-SLOW_ROTATION_SPECIAL_DESC
-Tato planeta se otáčí velmi pomalu kolem své osy, což způsobuje velmi dlouhé dny a noci. Infrastruktura, produkce potravin a kapacita obyvatelstva je nížší.
-
-TIDAL_LOCK_SPECIAL
-Rotace závislá na hvězdách poblíž planety
-
-TIDAL_LOCK_SPECIAL_DESC
-Tato planeta je vázána s obíhající hvězdou. Její den a rok jsou stejné délky, a jedna polovina planety má neustále den, další neustále noc. Infrastruktura je omezována, ale jakmile bude založena, průmyslové kapacity začnou využívat lokálně stabilní povrchové podmínky.
-
 ECCENTRIC_ORBIT_SPECIAL
 Excentrická orbita
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
 Dráha této planety je velmi výstřední. Má velký rozdíl mezi jeho nejbližší a nejdelší vzdálenosti k její hvězdě. Celkové oslunění se výrazně liší v průběhu celého roku. Různé podmínky brzdí rozvoj infrastruktury, ale poskytne prospěšný základ pro výzkum.
 
-#######################
-# Enumeration  values #
-#######################
+MINERALS_SPECIAL
+Bohatá na minerály
+
+#############################################################
+####        E N U M E R A T I O N   V A L U E S          ####
+#############################################################
 
 # UniverseObjectTypes
 
-INVALID_UNIVERSE_OBJECT_TYPE
-Generic Object
 OBJ_BUILDING
 Budova
 OBJ_SHIP
@@ -2135,7 +1403,6 @@ OBJ_PROD_CENTER
 Produkční centrum
 OBJ_SYSTEM
 Systém
-
 
 # StarTypes
 
@@ -2153,7 +1420,6 @@ STAR_NEUTRON
 neutronový
 STAR_BLACK
 černá díra
-
 
 # PlanetTypes
 
@@ -2180,7 +1446,6 @@ asteroidy
 PT_GASGIANT
 Plynný obr
 
-
 # Planet Sizes
 
 SZ_NOWORLD
@@ -2200,7 +1465,6 @@ Asteroidy
 SZ_GASGIANT
 Plynný obr
 
-
 # PlanetEnvironments
 
 PE_UNINHABITABLE
@@ -2214,15 +1478,8 @@ Vhodná
 PE_GOOD
 Dobrá
 
-
 # FocusTypes
 
-FOCUS_UNKNOWN
-Neznámé
-FOCUS_BALANCED
-Vyvážené
-FOCUS_FARMING
-Zemědělství
 FOCUS_INDUSTRY
 Průmysl
 FOCUS_MINING
@@ -2231,14 +1488,13 @@ FOCUS_RESEARCH
 Výzkum
 FOCUS_TRADE
 Obchod
-  
 
 # MeterTypes
 
 METER_POPULATION
 populace
-METER_FARMING
-zemědělství
+METER_HEALTH
+zdraví
 METER_INDUSTRY
 průmysl
 METER_RESEARCH
@@ -2249,21 +1505,18 @@ METER_MINING
 těžba
 METER_CONSTRUCTION
 konstrukce
-METER_HEALTH
-zdraví
 METER_FUEL
 palivo
+METER_SHIELD
+štít
+METER_DEFENSE
+obrana
 METER_SUPPLY
 zásobování
 METER_STEALTH
 tajnost
 METER_DETECTION
 detekce
-METER_SHIELD
-štít
-METER_DEFENSE
-obrana
-
 
 # EmpireAffiliationTypes
 
@@ -2274,7 +1527,6 @@ nepřítel
 AFFIL_ALLY
 spojenec
 
-
 # UnlockableItemTypes
 
 UIT_BUILDING
@@ -2283,7 +1535,6 @@ UIT_SHIP_PART
 Lodní díly
 UIT_SHIP_HULL
 Lodní trupy
-
 
 # TechTypes
 
@@ -2294,7 +1545,6 @@ Aplikace
 TT_REFINEMENT
 Vylepšení
 
-
 # BuildTypes
 
 BT_NOT_BUILDING
@@ -2303,9 +1553,6 @@ BT_BUILDING
 Stavby
 BT_SHIP
 Loď
-BT_ORBITAL
-Orbitální
-
 
 # StockpileTypes
 
@@ -2316,6 +1563,7 @@ minerály
 ST_TRADE
 obchod
 
+# Resource Types
 
 # Ship Slot Types
 
@@ -2324,267 +1572,34 @@ Vnější
 SL_INTERNAL
 Vnitřní
 
-
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Short Range
-PC_MISSILES
-Missiles
-PC_FIGHTERS
-Fighters
-PC_POINT_DEFENSE
-Point Defense
-PC_SHIELD
-Shields
 PC_ARMOUR
 Armour
-PC_DETECTION
-Detection
-PC_STEALTH
-Stealth
-PC_FUEL
-Fuel
-PC_COLONY
-Colonization
 
-
-################################################
-# ValueRef, Effect, and Condition Descriptions #
-################################################
+#############################################################
+####      ValueRef, Effect, & Condition Descriptions     ####
+#############################################################
 
 # ValueRef
 
-DESC_VAR_PLANET
-planet
-
-DESC_VAR_SYSTEM
-system
-
-DESC_VAR_SOURCE
-source
-
-DESC_VAR_TARGET
-target
-
-DESC_VAR_PLANETSIZE
-planet size
-
-DESC_VAR_PLANETTYPE
-planet type
-
-DESC_VAR_PLANETENVIRONMENT
-planet environment
-
-DESC_VAR_OBJECTTYPE
-object type
-
-DESC_VAR_STARTYPE
-star type
-
-DESC_VAR_PRIMARYFOCUS
-primary focus
-
-DESC_VAR_SECONDARYFOCUS
-secondary focus
-
-DESC_VAR_CURRENTFARMING
-current farming
-
-DESC_VAR_MAXFARMING
-max farming
-
-DESC_VAR_CURRENTINDUSTRY
-current industry
-
-DESC_VAR_MAXINDUSTRY
-max industry
-
-DESC_VAR_CURRENTRESEARCH
-current research
-
-DESC_VAR_MAXRESEARCH
-max research
-
-DESC_VAR_CURRENTTRADE
-current trade
-
-DESC_VAR_MAXTRADE
-max trade
-
-DESC_VAR_CURRENTMINING
-current mining
-
-DESC_VAR_MAXMINING
-max mining
-
-DESC_VAR_CURRENTCONSTRUCTION
-current construction
-
-DESC_VAR_MAXCONSTRUCTION
-max construction
-
-DESC_VAR_CURRENTHEALTH
-current health
-
-DESC_VAR_MAXHEALTH
-max health
-
-DESC_VAR_CURRENTPOPULATION
-current population
-
-DESC_VAR_MAXPOPULATION
-max population
-
-DESC_VAR_CURRENTFUEL
-current fuel
-
 DESC_VAR_MAXFUEL
 max fuel
-
-DESC_VAR_CURRENTSUPPLY
-current supply
-
-DESC_VAR_MAXSUPPLY
-max supply
-
-DESC_VAR_CURRENTSTEALTH
-current stealth
-
-DESC_VAR_MAXSTEALTH
-max stealth
-
-DESC_VAR_CURRENTDETECTION
-current detection
-
-DESC_VAR_MAXDETECTION
-max detection
-
-DESC_VAR_CURRENTSHIELD
-current shield
-
 DESC_VAR_MAXSHIELD
 max shield
-
-DESC_VAR_CURRENTDEFENSE
-current defense
-
 DESC_VAR_MAXDEFENSE
 max defense
-
-DESC_VAR_TRADESTOCKPILE
-trade stockpile
-
-DESC_VAR_MINERALSTOCKPILE
-mineral stockpile
-
-DESC_VAR_FOODSTOCKPILE
-food stockpile
-
-DESC_VAR_TRADEPRODUCTION
-trade production
-
-DESC_VAR_FOODPRODUCTION
-food production
-
-DESC_VAR_MINERALPRODUCTION
-mineral production
-
-DESC_VAR_INDUSTRYPRODUCTION
-industry production
-
-DESC_VAR_RESEARCHPRODUCTION
-research production
-
-DESC_VAR_OWNER
-owner
-
-DESC_VAR_ID
-ID
-
-DESC_VAR_AGE
-age in turns
 
 DESC_VAR_CREATIONTURN
 turn of creation
 
-DESC_VAR_CURRENTTURN
-the current turn
-
 # this one is intentionally left empty
-DESC_VALUE_REF_MULTIPART_VARIABLE0
-%1%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE1
-%1%'s %2%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE2
-%1%'s %2%'s %3%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE3
-%1%'s %2%'s %3%'s %4%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE4
-%1%'s %2%'s %3%'s %4%'s %5%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE5
-%1%'s %2%'s %3%'s %4%'s %5%'s %6%
 
 # six is probably more than will be needed, but just in case ...
-DESC_VALUE_REF_MULTIPART_VARIABLE6
-%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
-
-
 
 # Effects
 
-DESC_EFFECTS_GROUP_SCOPE
-Objects affected: Any object%1%
-
-DESC_EFFECTS_GROUP_SELF_SCOPE
-Objects affected: Source object only
-
-DESC_EFFECTS_GROUP_ACTIVATION
-Effect is active if the source is an object%1%
-
-DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Effect is always active
-
-DESC_EFFECTS_GROUP_SCOPE_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_ACTIVATION_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_EFFECT_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effects group %1%:
-%2%
-'''
-
 # SetMeter
-
-DESC_SIMPLE_SET_METER_MAX
-Max %1% %2%%3%
-
-DESC_SIMPLE_SET_METER_CURRENT
-Current %1% %2%%3%
-
-DESC_COMPLEX_SET_METER_MAX
-Set max %1% to %2%
-
-DESC_COMPLEX_SET_METER_CURRENT
-Set current %1% to %2%
-
 
 # others
 
@@ -2594,96 +1609,12 @@ Sets the stockpile of %1% of the object's owner to %2%
 DESC_SET_EMPIRE_CAPITAL
 Makes the object the object's owner's capital planet
 
-DESC_SET_PLANET_TYPE
-Changes the planet's type to %1%
-
-DESC_SET_PLANET_SIZE
-Changes the planet's size to %1%
-
-DESC_ADD_OWNER
-Adds ownership by empire %1% to object
-
-DESC_REMOVE_OWNER
-Removes ownership by empire %1% from object
-
-DESC_DESTROY
-Destroys object
-
-DESC_ADD_SPECIAL
-Attaches %1% special to object
-
-DESC_REMOVE_SPECIAL
-Removes %1% special from object
-
-DESC_SET_STAR_TYPE
-Changes the star's type to %1%
-
-DESC_MOVE_TO
-Moves the object to the location of an object%1%
-
-DESC_VICTORY
-Causes the object's owner to win the game
-
-# SetTechAvailability
-
-DESC_TECH_AND_ITEMS_AFFECTED
-%1% and all the items it unlocks
-
-DESC_ITEMS_ONLY_AFFECTED
-the items unlocked by the %1% tech
-
-DESC_SET_TECH_AVAIL
-Makes %1% available to empire %2%
-
-DESC_SET_TECH_UNAVAIL
-Makes %1% unavailable to empire %2%
-
-
 # Object Creation
-
-DESC_CREATE_PLANET
-Creates a new planet of type %1% and size %2%
-
-DESC_CREATE_BUILDING
-Creates a new %1% building
 
 DESC_CREATE_SHIP
 Creates a new ship of design %1% owned by the %2% empire
 
 # Conditions
-
-DESC_ALL
- in the universe
-
-DESC_EMPIRE_AFFILIATION_SELF
- that belongs to %1% empire
-
-DESC_EMPIRE_AFFILIATION_SELF_NOT
- that does not belong to %1% empire
-
-DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- that belongs only to %1% empire
-
-DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- that does not belong only to %1% empire
-
-DESC_EMPIRE_AFFILIATION
- that belongs to an %1% of %2% empire
-
-DESC_EMPIRE_AFFILIATION_NOT
- that does not belong to an %1% of %2% empire
-
-DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- that belongs only to an %1% of %2% empire
-
-DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
- that does not belong only to an %1% of %2% empire
-
-DESC_SELF
- that is the source object
-
-DESC_SELF_NOT
- that is not the source object
 
 DESC_HOMEWORLD
  that is a homeworld
@@ -2691,47 +1622,11 @@ DESC_HOMEWORLD
 DESC_HOMEWORLD_NOT
  that is not a homeworld
 
-DESC_CAPITAL
- that is an empire's capital planet
-
-DESC_CAPITAL_NOT
- that is not an empire's capital planet
-
-DESC_TYPE
- that is a %1%
-
-DESC_TYPE_NOT
- that is not a %1%
-
 DESC_BUILDING
  that contains a %1% building
 
 DESC_BUILDING_NOT
  that does't contain a %1% building
-
-DESC_SPECIAL
- that has a %1% special
-
-DESC_SPECIAL_NOT
- that doesn't have a %1% special
-
-DESC_CONTAINS
- that contains an object%1%
-
-DESC_CONTAINS_NOT
- that doesn't contain an object%1%
-
-DESC_PLANET_TYPE
- that is a %1% planet
-
-DESC_PLANET_TYPE_NOT
- that is not a %1% planet
-
-DESC_PLANET_SIZE
- that is a %1% planet
-
-DESC_PLANET_SIZE_NOT
- that is not a %1% planet
 
 DESC_PLANET_ENVIRONMENT
  that is a %1% planet
@@ -2739,53 +1634,7 @@ DESC_PLANET_ENVIRONMENT
 DESC_PLANET_ENVIRONMENT_NOT
  that is not a %1% planet
 
-DESC_FOCUS_TYPE_PRIMARY
- that has primary focus %1%
-
-DESC_FOCUS_TYPE_PRIMARY_NOT
- that doesn't have primary focus %1%
-
-DESC_FOCUS_TYPE_SECONDARY
- that has secondary focus %1%
-
-DESC_FOCUS_TYPE_SECONDARY_NOT
- that doesn't have secondary focus %1%
-
-DESC_STAR_TYPE
- that is a system with a %1% star
-
-DESC_STAR_TYPE_NOT
- that is not a system with a %1% star
-
-DESC_DESIGN_HAS_HULL
- that contains the hull %1%
-
-DESC_DESIGN_HAS_HULL_NOT
- that does not contain the hull %1%
-
-DESC_DESIGN_HAS_PART
- that contains between %1% and %2% of the %3% part
-
-DESC_DESIGN_HAS_PART_NOT
- that does not contain between %1% and %2% of the %3% part
  
-DESC_CHANCE_PERCENTAGE
- on a %1%%% chance
-
-DESC_CHANCE_PERCENTAGE_NOT
- on a (100 - %1%)%% chance
-
-DESC_CHANCE
- with a probability of %1%
-
-DESC_CHANCE_NOT
- with a probability of 1 - %1%
-
-DESC_METER_VALUE_MAX
- that has a max %1% between %2% and %3%
-
-DESC_METER_VALUE_MAX_NOT
- that doesn't have a max %1% between %2% and %3%
 
 DESC_METER_VALUE_CURRENT
  that has a current %1% between %2% and %3%
@@ -2793,59 +1642,7 @@ DESC_METER_VALUE_CURRENT
 DESC_METER_VALUE_CURRENT_NOT
  that doesn't have a current %1% between %2% and %3%
 
-DESC_EMPIRE_STOCKPILE_VALUE
- that belongs to an empire with a %1% stockpile between %2% and %3%
-
-DESC_EMPIRE_STOCKPILE_VALUE_NOT
- that doesn't belong to an empire with a %1% stockpile between %2% and %3%
-
-DESC_VISIBLE_TO_SINGLE_EMPIRE
- that is visible to the %1% empire
-
-DESC_VISIBLE_TO_SINGLE_EMPIRE_NOT
- that is not visible to the %1% empire
-
-DESC_VISIBLE_TO_EMPIRES
- that is visible to one of the %1% empires
-
-DESC_VISIBLE_TO_EMPIRES_NOT
- that is not visible to one of the %1% empires
-
-DESC_WITHIN_DISTANCE
- that is within %1% of any object%2%
-
-DESC_WITHIN_DISTANCE_NOT
- that is not within %1% of any object%2%
-
-DESC_WITHIN_STARLANE_JUMPS
- that is within %1% starlane jumps of any object%2%
-
-DESC_WITHIN_STARLANE_JUMPS_NOT
- that is not within %1% starlane jumps of any object%2%
-
-DESC_EXPLORED_BY_SINGLE_EMPIRE
- that has been explored by the %1% empire
-
-DESC_EXPLORED_BY_SINGLE_EMPIRE_NOT
- that has not been explored by the %1% empire
-
-DESC_EXPLORED_BY_EMPIRES
- that has been explored by one of the %1% empires
-
-DESC_EXPLORED_BY_EMPIRES_NOT
- that has not been explored by any of the %1% empires
  
-DESC_STATIONARY
- that is stationary
-
-DESC_STATIONARY_NOT
- that is moving
-
-DESC_AND_BETWEEN_OPERANDS
- and
-
-DESC_OR_BETWEEN_OPERANDS
- or
 
 DESC_TURN
  when the current turn is between %1% and %2%
@@ -2859,29 +1656,9 @@ DESC_NUMBER_OF
 DESC_NUMBER_OF_NOT
  that is not one of %1% objects%2%
 
-DESC_CONTAINED_BY
- that is contained by an object%1%
-
-DESC_CONTAINED_BY_NOT
- that is not contained by an object%1%
-
-DESC_OWNER_HAS_TECH
- that belongs to an empire that has the tech %1%
-
-DESC_OWNER_HAS_TECH_NOT
- that does not belong to an empire that has the tech %1%
-
-DESC_NUMBER
- if there are between %1% and %2% objects%3%
-
-DESC_NUMBER_NOT
- if there are not between %1% and %2% objects%3%
-
-
-
-###################
-# Tech Categories #
-###################
+#############################################################
+####            T E C H   C A T A G O R I E S            ####
+#############################################################
 
 LEARNING_CATEGORY
 Učení
@@ -2896,10 +1673,9 @@ Ekonomika
 SHIPS_CATEGORY
 Lodě
 
-
-####################################
-# Theory Tech Names & Descriptions #
-####################################
+#############################################################
+####               T E C H   T H E O R I E S             ####
+#############################################################
 
 THEORY_SHORT_DESC
 Teoretické předpoklady
@@ -2988,6 +1764,12 @@ Dokonalost
 LRN_TRANSCEND_DESC
 What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
+GRO_MEDICAL_PATH
+Lékařské patologie
+
+GRO_MEDICAL_PATH_DESC
+Treatment of diseases and injuries requires thorough understanding of their causes.
+
 GRO_PLANET_ECOL
 Planetární ekologie
 
@@ -2999,24 +1781,6 @@ Genetické inženýrství
 
 GRO_GENETIC_ENG_DESC
 Paleta genů je stejně různorodá jako počet druhů,kteří je mají.  Geny mohou být mazány,kopírovány či přidávány do genomů k vytvoření geneticky upraveného organismu,který lépe odolává přírodním vlivům.  Geny mohou být také měněny před znovuzavedením a tím homou být tvořeny geny nové.  Technika je limitována,je možné studovat pouze malou záměnu genů.
-
-GRO_MEDICAL_PATH
-Lékařské patologie
-
-GRO_MEDICAL_PATH_DESC
-Treatment of diseases and injuries requires thorough understanding of their causes.
-
-GRO_INDUSTY_FARM
-Průmyslové zemědělství
-
-GRO_INDUSTY_FARM_DESC
-Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced socieites, however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies.  Hydroponics, automation, fertilization, pest control and altered illumination growth cycles become necessary.  Successful use of these tools requires understanding of their function, interactions, costs and low-level mechanims.
-
-CON_ENV_ENCAPSUL
-Enviromentální zpomalení
-
-CON_ENV_ENCAPSUL_DESC
-Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
 
 GRO_SYMBIOTIC_BIO
 Biologie symbiózy
@@ -3048,18 +1812,6 @@ Nanomedicína
 GRO_NANOTECH_MED_DESC
 While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corretive measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surguries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
 
-GRO_ORBIT_FARMING
-Orbitalní farmy
-
-GRO_ORBIT_FARMING_DESC
-The primary energy source for food production in most societies is solar radiation.  Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface, and surface farming must also compete with other land uses.  By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.  Food production may be increased dramatically.
-
-GRO_INDUSRY_CLONE
-Průmyslové klonování
-
-GRO_INDUSRY_CLONE_DESC
-Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms.  By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint.  Populations may be made to order, tailored to meet the specific needs of society.
-
 GRO_XENO_HYBRIDS
 Xenohybridizace
 
@@ -3084,17 +1836,20 @@ Microgravitační výroba
 PRO_MICROGRAV_MAN_DESC
 The microgravity of low planetary orbit offers great potential for  novel manufaturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
 
-PRO_PLANET_GEOL
-Planetární geologie
+PRO_CORE_MINE
+Deep Core Mining
 
-PRO_PLANET_GEOL_DESC
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation processes such as plate techtonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes, their effects, causes and signs is essential for large scale efficient mining operations.
+PRO_CORE_MINE_DESC
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 
 PRO_ROBOTIC_PROD
 Produkce robotů
 
 PRO_ROBOTIC_PROD_DESC
 Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks.  Robots work continuously, without perpetual demands for greater economic compensation.  Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site.  Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.
+
+PRO_EXOBOTS_DESC
+Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that lack the infrastructure and work force to dedicate to specialized factories. Every colony receives a standard issue team of exobots, boosting their construction during the early development phase.
 
 PRO_FUSION_GEN
 Jaderná fůze
@@ -3120,12 +1875,6 @@ AI - Automatizace
 PRO_SENTIENT_AUTOMATION_DESC
 As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
 
-PRO_FRC_FLD_ASSMB
-Mechanika síly pole
-
-PRO_FRC_FLD_ASSMB_DESC
-Whether effected through artificial means, or psychokinesis, or a combination thereof, remote manipulation represents a revolutionary improvement in assembly techniques.  At nanoscopic scales, fully controlled chemical reactions and custom assembled molecules become almost trivial.  At larger scales, up to and including manipulation of celestial bodies, locally reactionless and non-contact force impartion permit previously impossible non-destructive testing, and are particularly suited to manipulation within an enclosed or covered region, without compromising isolation seals, nor removing masses of previously obstructing matter.
-
 PRO_INTSTEL_COPRO
 Mezihvězdná koprodukce
 
@@ -3144,23 +1893,14 @@ Produkce Singularit
 PRO_SINGULAR_GEN_DESC
 As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation do to annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than that with the accretion disk method, but can produce even greater output as well.
 
-PRO_MATENG_REPLIC
-Replikace
-
-PRO_MATENG_REPLIC_DESC
-Previous iterations of assembly techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of smaller parts, be they prefabricated subsections, or individual atoms.  By converting pure energy directly into the desired material object, eliminating the need for precursor parts or supplied materials, the ultimate level of flexible and efficient assembly is achieved.
-
 PRO_ZERO_GEN
 Energie nulového bodu
 
 PRO_ZERO_GEN_DESC
 Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency.  By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available.  The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
 
-CON_ORBITAL_CON
-Orbitální stavebnictví
-
-CON_ORBITAL_CON_DESC
-On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfraces, the practical use of these spaces will be initial primarily by those who are used to, and adapated for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
+PRO_NEUTRONIUM_EXTRACTION_DESC
+The core of a neutron star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter.  This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
 
 CON_ARCH_PSYCH
 Psychologická architektura
@@ -3168,41 +1908,14 @@ Psychologická architektura
 CON_ARCH_PSYCH_DESC
 The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed.  Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
 
-CON_INFRA_ECOL
-Účinost infrastruktury
-
-CON_INFRA_ECOL_DESC
-The basic infrastructure of an established planetary colony may seem to be created entirely by the colonizers, and to function only according to their designs.  In reality, however, the ecology of the planet on which it is built is the foundation and support mechanism for the added infrastructure, and often forms an integral part of its function.  Understanding the interaction between natural and artificial components, and the limits of the resources an ecological system can provide are essential to the development of an optimal and sustainable infrastructure for any colony.
-
 CON_ORGANIC_STRC
 Organické Struktury
 
 CON_ORGANIC_STRC_DESC
 Buildings formed of inanitmate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
 
-CON_METRO_INFRA
-Architekrura Metroplexu
-
-CON_METRO_INFRA_DESC
-When the entire surface of a world is covered, continued development must occur above and below pre-existing construction.   Care must be taken to ensure the stability of the undercut or overshadowed structures are not damaged, and transportation and supply routes must be rethought to support vastly increased population densities.  Furthermore, novel stylistic and functional issues must be considered, to ensure that the newer levels, and the combined whole, are worth inhabiting.
-
-CON_TRANS_STRC
-Transformované Struktury
-
-CON_TRANS_STRC_DESC
-A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebulding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.
-
-CON_ARCH_MONOFILS
-Architectural Monofilaments
-
 CON_ARCH_MONOFILS_DESC
 Essentially unbreakable and merely a few atoms in diamater, single-crystal filaments have many uses in improving traditional structure designs in durability and economy of construction.  The capacity to suspend or stress other materials in previously impossible configurations also permits a wholly new designs.  Low weight and high strength filaments are of particular use in large-scale orbital or surface to orbit spanning structures, where variations in gravity across lengths were previously very prohibative.
-
-CON_SELFGRAV_STRC
-Umělá gravitace
-
-CON_SELFGRAV_STRC_DESC
-As orbital construction grows ever larger in scale, eventually the mass of a single installation is sufficient to appreciably self-gravitate.  Where previously the microgravity environment was fundamental, designs must be rethought again, just as they were when originally moving surface activity into orbit.  Rather than expanding endlessly in efficient regular patterns, the natural curved shapes of planetary bodies begins to emerge in artificial bodies as well.  Advantages over surface construction are retained, however, as the artifical mass is designed and built with its purpose in mind.
 
 CON_ASYMP_MATS
 Asymptotické Materiály
@@ -3210,11 +1923,11 @@ Asymptotické Materiály
 CON_ASYMP_MATS_DESC
 Once certain thresholds of performance are passed, measuring the physical properties of materials for relative comparison becomes impractical in any terms other than orders of magnitude or logarithmic scales.  Much like superconductivity in electronics, the tensile strength, toughness, density, elasticity, refractory index and other mechanical properties of materials may be controlled with effectively no limits.  With all previously significant limitations removed, structure designs are further unhindered, and may extend or change by similar order of magnitude scales.
 
-CON_STRC_INT_FLDS
-Struktury integrity polí
+CON_FRC_ENRG_STRC
+Silnoenergetické struktury
 
-CON_STRC_INT_FLDS_DESC
-Advanced materials and architecture can greatly extend the practical size of rigid structures.  Eventually however, the stresses placed on load-bearing matter approach the magnitude of the strong nuclear force which holds atomic nuclei together, at which point alternative sources of support become essential.  Projected energy support fields may serve this purose, and replacing or augmenting fixed supports in this manner allows a drastic reduction in the necessary structural materials mass and volume.  As well, such methods may allow dynamic adjustment of reinforcement in response to rapidly changing stress patterns, whereas fixed supports must remain in place even when not being actively used.
+CON_FRC_ENRG_STRC_DESC
+When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building.  Structures composed entirely of energy have many advantages, including simple reconfiguration, resiliance, portability and novel design possibilities.
 
 CON_CONTGRAV_ARCH
 Architektura kontrolované gravitace\n
@@ -3227,12 +1940,6 @@ Galaktická infrastruktura
 
 CON_GAL_INFRA_DESC
 Integration and development of the infrastructures on highly productive worlds into a unified galaxy-spanning network is one of the greatest logistical effort conceivable.  When completed, such a system functionally unifies the worlds of which it is composed.  Integrated transportation, housing, maintenance, and construction tools may be fluidly deployed wherever needed to optimally alter resource allocations or adjust to changes.
-
-CON_FRC_ENRG_STRC
-Silnoenergetické struktury
-
-CON_FRC_ENRG_STRC_DESC
-When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building.  Structures composed entirely of energy have many advantages, including simple reconfiguration, resiliance, portability and novel design possibilities.
 
 CON_ART_HEAVENLY
 Umělá nebeská tělesa
@@ -3252,102 +1959,12 @@ N-dimezionální struktury
 CON_NDIM_STRC_DESC
 Of all the bizarre feats of applied physics, the ability to to fold space onto itself has the most direct and profound influence on structural form and design.  The potential is endless, literally as hallways are made to bend back upon their beginning, or given a twist so that their ceiling becomes their floor.  As well, the concept of urban sprawl becomes laughable, as any number of people may fit into an arbitrarily small volume, safely tucked into an adjacent plane of existence.
 
-ECO_MARKET_ECON
-Tržní hospodářství
-
-ECO_MARKET_ECON_DESC
-The free exchange of goods and services between individuals and groups, whether by simple barter or through a commonly accepted credit currency, can be a effective and dynamic economic system.  In the idealized case, the market is fully self-regulating, with supply and demand forces pushing the economy towards optimally efficient resource use and worker employment.  As well, the opportunity for personal gain in such systems can be a powerful motivator for innovation and worker effort.  Caution must be observed however, as that same motivation can also lead to explotation and collusion amongst the priviledged and successful, which can negate and undo much of the system's proported benefits.
-
-ECO_PLANNED_ECON
-Plánované hospodářství
-
-ECO_PLANNED_ECON_DESC
-By identifying and prioritizing needs and specific goals for society, then actively implementing the necessary steps to realize them, a focused and stable economic system may be achieved.  Whether the path taken is decided by high-level central planners or through distributed local bodies, in the ideal case all unnecessary diversions and waste are eliminated and all resources are focused on the top priorities.  As well, a collective purpose and effective planning eliminates innactivity and waste by ensuring a opportunity to contrbute for all workers.  Caution must be observed, however, as individuals may lack dedication to the communal goals or the specific plan to achieve them, which may undermine worker motivation.
-
-ECO_EXTERN_INTEG
-Externí integrace
-
-ECO_EXTERN_INTEG_DESC
-Unsophisticated economic systems feature decision-making based on factors affecting only the decision-makers directly.  Other factors, or externalities, that affect non-decision makers exclusively, are not considered, which has accordingly unexpected consequences, resulting in an overall loss of economic efficiency in an otherwise ideal system.  By integrating factors such as environmental degredation, tragedies of the commons, or consequences of networking effects, the overall economy can be brought closer to its theoretical ideal form.
-
-ECO_ECON_SPECTRO
-Hospodářská spektroskopie
-
-ECO_ECON_SPECTRO_DESC
-With careful analysis and well-formed models, a linearly independent set of basis states as a frequency parameterization of an economy may be constructed.  Cyclical economic trends and indicators of particular recurrance periods may then be studied independently, and may be amplitude- or phase-adjusted to achieve desired economic goals.  Such manipulations must be conducted with great caution however, as simultaneously phase-matched cyclical effects which initially appear to be unbounded growth will inevitably reach a peak, after which the economic collapse will be equally dramatic.
-
-ECO_INTSTEL_TRADE
-Mezihvězdný obchod
-
-ECO_INTSTEL_TRADE_DESC
-Commerce between the stars can be seen as essentially equivalent to trade confined to a single planet or continent, aside from the scale of the distances involved.  While concepts such as trade routes, merchant guilds and piracy all remain in some form, effectively adapting methods of economic interchange and its regulation and control to space-based forms is nontrivial.  As in earlier times, the harnessing or misuse of these factors can have drastic effects on the economies that grow to depend on them.
-
-ECO_ENV_ADAPTION
-Adaptace na životní podmínky
-
-ECO_ENV_ADAPTION_DESC
-When the colonization of space begins, the great variety of planetary environments that are encountered will seem to be nothing but a hindrance, as most environments are inhospitable to any given race, and population growth and expansion are thus limited.  However, as expantion continues and empires become established in multiple star systems, environmental diversity becomes increasingly beneficial if properly harnessed.  Each environment provides its own set of direct and indirect benefits, particularly for the creation or extraction of physical and conceptual commodities, which may then be traded and shared between systems.  By adapting the economic system of each world to best suit its unique characteristics, these benefits are maximized.
-
-ECO_GAL_MONEY_POL
-Galaktická měnová politika
-
-ECO_GAL_MONEY_POL_DESC
-As interstellar trade expands, a transition is made between isolated planetary economies to integrated regional or imperial economies.  Inter-empire exchange rates, lending and trade policies and their consequent effects for seemingly dissociated regions become the most significant factors in the overall health of the galactic economy.  Accordingly, unilateral economic considerations must be tempered, and local issues considered only in the context of wider-ranging policies, in order to ensure economic prosperity for all.
-
-ECO_ECON_FLUIDITY
-Hospodářská plynulost
-
-ECO_ECON_FLUIDITY_DESC
-When the physical distance separating star systems is no longer matched by the perceived distance for those whose economic activity occurs between them, a paradigm shift occurs.  Previously, the interstellar economy could be thought of like a solid, with atomic local economies and rigid trade bonds between close neighbours.  With the perceptual shift, the economy of the empire undergoes a conceptual state change into a fluid.  Economic activity begins to flow freely between the stars, into previously unharness crevices, filling cracks, following new flow-channels and eliminating localized unstable asymmetry.
-
-ECO_PLANET_COLONY
-Planetární kolonialismus
-
-ECO_PLANET_COLONY_DESC
-When an expending empire encoutners a planet that is rich in resources and which is populated by primitive native sentients, the opportunity arises to treat the planet as a colonial posession.  A large and well-adapted workforce is immediately available, and can often be a source of information about the non-obvious unique resources of the planet.  Care must be taken, however, to ensure that the native population, or at least its leaders, remains inclined to participate in the economic partnership, as former colonial workers can make an equally well-adapted rebel army.
-
-ECO_ECON_PRESCIEN
-Hospodářské předpovědi
-
-ECO_ECON_PRESCIEN_DESC
-Feedback control systems often consider the present, the past, and projected future states of a system when making correctional adjustments.  Making projections is error-prone to the point of uselessness, however, for any highly complex and non-deterministic systems of interacting sentients such as an economy or society.  To resolve this difficultly, precognitive projection can be employed to reveal many of the possible future time-paths and their relative probabilities, as well as the best adjustments to make to adjust these probablities as desired.  By this method, the unpredictable and often illogical choices of sentients may be isolated, and the economy can finally be described and controlled as well as a macroscopic physical system.
-
-ECO_STAB_HYPGROW
-Stabilizovaný hyperrůst
-
-ECO_STAB_HYPGROW_DESC
-Economic activity functions as a positive feedback into its own growth.  An exponential growth curve naturally follows from this in many cases, and economic growth is thus often described as a ratio of the economy's size.  Occasional bursts of hyperexponential growth intermittantly occur, but are unstable and followed by painful corrections.  However, through proper structuring and management, and careful cultivation of the necessary conditions for it to begin, indefinite hyperexponential growth may be maintained.
-
-ECO_ECON_HEGEMONY
-Ekonomická hegemonie
-
-ECO_ECON_HEGEMONY_DESC
-An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
-
-SHP_SPACE_TACTICS
-Space Tactics
-
-SHP_SPACE_TACTICS_DESC
-Battles in microgravity and vacuum require specialized weapon and defensive systems, as well as the theoretical tactics that motivate their use.
-
-SHP_GAL_EXPLO
-Galactic Exploration
-
 SHP_GAL_EXPLO_DESC
 The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
 
-SHP_NAVIGATION
-Interstellar Navigation
-
-SHP_NAVIGATION_DESC
-'''Starlanes form a relatively restrictive network of possible paths, but interstellar travel is complicated and risky without proper navigation techniques.
-
-In future, this tech might do something related to starlanes or ship speed or range...'''
-
-
-#########################################
-# Tech Application Names & Descriptions #
-#########################################
+#############################################################
+####          T E C H   A P P L I C A T I O N S          ####
+#############################################################
 
 DOES_NOTHING_SHORT_DESC
 Zbytečný: Nedělá nic
@@ -3363,9 +1980,6 @@ Odemkne budovy
 
 RESEARCH_SHORT_DESC
 Zlepší výzkum
-
-FARMING_SHORT_DESC
-Zlepší zemědělství
 
 MINING_SHORT_DESC
 Zlepší těžbu
@@ -3385,109 +1999,11 @@ Zlepší populaci planety
 FLEET_RANGE_DESC
 Zlepší lodní zásobování
 
-CON_TERRAFORM
-Terraforming
+CON_ORBITAL_CON
+Orbitální stavebnictví
 
-CON_TERRAFORM_DESC
-Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical.  The precise method depends greatly on the type of planet to be changed and the desired result.  However in all cases much of the surface of the entire planet and it's atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust.  The process takes years.
-
-CON_TERRAFORM_SHORT_DESC
-Allows terraforming to improve planets
-
-CON_RAPID_TERRAFORM
-Rapid Terraforming
-
-CON_RAPID_TERRAFORM_DESC
-Advances in orbital deployment now enable any terrestrial planet in an inhabited system to be terraformed to any environmental preference. Nanites can accomplish the transformation in half the time of conventional methods.
-
-CON_RAPID_TERRAFORM_SHORT_DESC
-Allows rapid and remote terraforming to improve planets
-
-CON_GRAVITY_WELLS
-Controlled gravity wells
-
-CON_GRAVITY_WELLS_DESC
-By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
-
-CON_MEGALITH
-Megalith Construction
-
-CON_MEGALITH_DESC
-Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
-
-CON_ORBITAL_FACT
-Orbital Factories
-
-CON_ORBITAL_FACT_DESC
-Since all colonies begin in space and raw materials are largely imported from off-world, the common Exodus practice of complete planet-fall for new colony ships is wasteful. The manufacturing work so badly needed for upstart colonies can be done more cheaply in orbit. Equipping new colonies with pre-built orbital factory kits helps them make use of the natural resource of low orbit.
-
-CON_PLANET_RING
-Planetary Ring
-
-CON_PLANET_RING_DESC
-Space elevators are now a relatively modest task. It now becomes possible to undertake their natural extension. By placing several elevators in a ring around a world like spokes in a wheel, and then connecting them together by enormous chains of satellites and space stations, a planetary ring can be created.
-
-CON_SPACE_ELEVATOR
-Space Elevator
-
-CON_SPACE_ELEVATOR_DESC
-Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit.  Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity.
-
-CON_SUBTER_CONST
-Subterranean Construction
-
-CON_SUBTER_CONST_DESC
-When space is at a premium, the holy grail of construction is the ability to build down as easily as up. Modern techniques finally make this possible.
-
-CON_ORBITAL_INFRA
-Orbital Infrastructure
-
-CON_ORBITAL_INFRA_DESC
-A well-developed general support infrastructure located in orbit permits great flexibility and rapid development of resource production capacity.
-
-ECO_COLONIAL_ECO
-Colonial Economic Blueprinting
-
-ECO_COLONIAL_ECO_DESC
-With advanced economic planning now a reality, the economy for an entire developing world can be blueprinted with the precision of a physical building.  Upstart markets tap their raw potential for growth, without risk of being mired in traditionally immature "wild frontier" mentalities.
-
-ECO_COMM_UNION
-Commercial Union of the Colonies
-
-ECO_COMM_UNION_DESC
-The combination of applications as diverse as economic spectroscopy, bio-mimetics, digital psychology and advanced game theory produce a shift in the paradigm of economic thinking. The means to organize economic markets orders of magnitude above any previously envisioned becomes possible.
-
-ECO_DEEP_GREEN
-Deep Green
-
-ECO_DEEP_GREEN_DESC
-The quantum fractal nature of the equations of economic spectroscopy make all but the relatively superficial analyses impractical for most markets. However a massive computer designed from the ground up to handle the unusual algorithms, could supply an entire empire with economic foresight and stability.
-
-ECO_ECO_ETHER
-Economic Etherealization
-
-ECO_ECO_ETHER_DESC
-In the Exodus age of vast possibilities, the economic systems of most worlds have been slow to abandon the archaic paper and pencil, trading floor mentality. The final step in economic modernization is to dispense with out-dated, corporeal economic systems once and for all and transcend to a purer plane of digital information and virtual presence. This transition will boost the markets of all worlds, especially those largest.
-
-ECO_PARADISE
-Paradise Planet
-
-ECO_PARADISE_DESC
-The Paradise Planet is the ultimate tourist resort, a world whose entire economic structure has been converted to tourism and pleasure seeking. The benefits of such a planet would extend to the citizenry of distant worlds.
-
-ECO_SINKHOLE
-Economic Sinkholes
-
-ECO_SINKHOLE_DESC
-When economic activity is viewed as a flowing fluid, the capability to affect its flow becomes apparent.  By creating a localized sinkhole in surface over which trade flows, trade centres well removed from the sinkhole itself are strongly affected.  Such trade current disruption propagates out in all directions however, and is difficult or impossible to target selectively.
-
-GRO_SELF_ROTATING_CROPS
-Self-Rotating Crops
-
-GRO_SELF_ROTATING_CROPS_DESC
-'''High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to less productive, but soil rejuvenating, plants every few growing seasons.
-
-+ 5 to max farming per 10 population on primary farming focused worlds.'''
+CON_ORBITAL_CON_DESC
+On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfraces, the practical use of these spaces will be initial primarily by those who are used to, and adapated for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
 
 GRO_BIOTERROR
 Bioterror Facilites
@@ -3495,46 +2011,11 @@ Bioterror Facilites
 GRO_BIOTERROR_DESC
 A research centre created to safely develop the most dangerous of biological weaponry while keeping prying eyes out. Biological weaponry takes effect too slowly to be of much use in a direct military conflict but as a weapon of terror it is unsurpassed, a slowly growing contamination will spread panic before it, images of a desperate people quarantined by their own government sows despair beyond the affected area, however care must be taken when developing such organisms to ensure they are not accidental released furthermore utter secrecy is required at the risk of damaging relations with other empires and our own people.
 
-GRO_HABITATION_DOMES
-Habitation Domes
+LRN_OBSERVATORY_I_DESC
+The natural extension of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.
 
-GRO_HABITATION_DOMES_DESC
-'''While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habitation Domes provide a faster and cheaper, though more limited, alternative for increasing the population capacity of inhospitable worlds, allowing moderate levels of infrastructure and resource capacity to be developed.
-
-Increases by +2 the maximum population of Terrible environment worlds with current construction of at least 20.'''
-
-GRO_CADUCEAN
-The Caducean Institute
-
-GRO_CADUCEAN_DESC
-A premiere centralized medical academy and research centre has benefits to health and population growth throughout an empire.  Adequately funding such an institute can greatly tax smaller economies, however, potentially limiting its attraction to large or economically powerfully empires.
-
-GRO_GENOME_BANK
-Genome Bank
-
-GRO_GENOME_BANK_DESC
-The unknown variables in genomic calculations for any given species remain severe for all but the simplest genetic repairs, not to mention the changes that a genetic modification can potentially have on a larger multi-species biosphere. To truly realize the benefits of genetic medicine, it is necessary to collect a massive genome database for all the species from all known worlds.
-
-GRO_LIVING_PLANET
-The Living Planet
-
-GRO_LIVING_PLANET_DESC
-Theoretically, it is possible to completely predict the ecology of a single planet by mapping out its entire web of biological interdependence, both sentient and non-sentient, in fractal algorithms. In practice however, this could only be realized by constructing a vast planet-spanning network running a computer program dedicated to regulating the planet's entire biosphere. This computer would become, in effect, the brain of a new type of life--A single planetary organism, with intelligent citizens as part of its fabric, subject to the greater will.
-
-GRO_ORBITAL_GARDENS
-Orbital Gardens
-
-GRO_ORBITAL_GARDENS_DESC
-A marvel of engineering and design, the Orbital Gardens feature samples of flora gathered from throughout the known galaxy, each cultivated within the wide range of artificial environments re-created within this small artificial moon.
-
-GRO_URBAN_FARM
-Urban Farming
-
-GRO_URBAN_FARM_DESC
-On industrialized worlds, where arable land is rare to non-existent, the capability to produce food in hydroponic or aeroponic environments tightly packed into multi-storey buildings becomes critical to maintain food output.
-
-LRN_STELLAR_TOMOGRAPHY
-Stellar Tomography
+LRN_DISTRIB_THOUGHT_DESC
+The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.
 
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''A network of specialized satellites can use tomographic methods to reconstruct the activities occurs deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.
@@ -3544,264 +2025,19 @@ Provides +3 to planets in systems with neutron stars.
 Provides +2 to planets in systems with white or blue stars.
 Provides +1 to planets in systems with red, orange or yellow stars.'''
 
-LRN_OBSERVATORY_I
-Observatory
-
-LRN_OBSERVATORY_I_DESC
-The natural extension of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.
-
-LRN_AUTOLAB_I
-Basic Autolabs
-
-LRN_AUTOLAB_I_DESC
-Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to pursue, and extract the resulting information from them.  A specialized control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant research, but lacking in industrial or minerals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
-
-LRN_THEOREM_PROVER
-Automatic Theorem Prover
-
-LRN_THEOREM_PROVER_DESC
-Abstract mathematical discoveries frequently have practical, if unforeseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorem Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
-
-LRN_COLLECTIVE_NET
-Collective Thought Network
-
-LRN_COLLECTIVE_NET_DESC
-By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
-
-LRN_DISTRIB_THOUGHT
-Distributed Thought Computing
-
-LRN_DISTRIB_THOUGHT_DESC
-The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.
-
-LRN_ENCLAVE_VOID
-Enclave of the Void
-
-LRN_ENCLAVE_VOID_DESC
-Study of the Void Mind could be accelerated by genetically engineering the populace of an entire world to be attuned to the Void. This new priestly class could transform the entire social structure of their world to better understand and channel the wisdom of the Void Mind to the entire empire.
-
-LRN_LOOKING_GLASS
-The Looking Glass
-
-LRN_LOOKING_GLASS_DESC
-A window into Space-Time, the Looking Glass will be the ultimate museum. Instead of excavating the ancient ruins of eras past, it is possible to simply open a window into time. Great leaders of the past would no longer be accessible only through books and holo-vids, but directly observable. Such a museum would gather flocks of both tourists and academicians.
-
-LRN_MONUMENT_EXODUS
-Monument to Exodus
-
-LRN_MONUMENT_EXODUS_DESC
-The greatest artists and engineers of an Exodus society are called together to produce a design for a fitting tribute to their accomplishments, and usher in the Exodus Age.
-
-LRN_PSICORP
-PsiCorp
-
-LRN_PSICORP_DESC
-It is now possible to identify the nascent psionic abilities inherent in rare individuals at birth. But to truly cultivate their gifts, it would be necessary to create an academy dedicated to psionics. Graduates of this academy, would comprise a highly trained task-force of Psi elite that could be assigned to research projects as conduits and amplifiers for the greatest researchers of an empire.
-
-PRO_AUTOFACTORY_I
-Basic Autofactories
-
-PRO_AUTOFACTORY_I_DESC
-Automated factories greatly increase industrial output without direct supervision, however it remains necessary to provide guidance to such labs regarding what needs to be produced.  A specialized control centre is required to facilitate these exchanges, and the language in which they are conducted requires extensive research prior to implementation.  Consequently, the use of automated factories may only be practical for empires that conduct large amounts of research.  Conversely, empires with minimal research, but much existing production capacity, may find other production-enhancing methods more practical.
-
-PRO_HEAVY_MINING_I
-Heavy Mining Processors
-
 PRO_HEAVY_MINING_I_DESC
 When increased minerals production is the only concern, no environmental damage considerations exist, and the environment itself is conducive, partially automated bulk mining activities can be optimal.  Significant processing capacity is required, however, necessitating the use of centralized ore-processing facilities.
-
-PRO_ENVIRO_MINING_I
-Environmentally-Conscious Mining
-
-PRO_ENVIRO_MINING_I_DESC
-'''Many mining methods are incompatible with highly populous planets, due to environmental damage.  Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.  Minerals production is less per unit of population than more extreme methods, however additional population may somewhat offset this.  Additionally, these limited techniques are only applicable to worlds capable of supporting high populations: Superb or Optimal for a given race.
-
-Increases minerals production by +2 per 10 population on primary mining focused worlds.
-Increases minerals production by +1 per 10 population on primary balanced and secondary mining focused worlds.
-Multiple focus balances are cumulative: primary and secondary mining focus provides +3 to mineral production per 10 population.'''
-
-PRO_ASTEROID_MINE
-Asteroid Mining
-
-PRO_ASTEROID_MINE_DESC
-Mineral resource extraction from subplanetoid-sized bodies involves challenges, and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.  The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Increased mining output occurs on all planets in system, allowing planets with environments normally difficult to mine, which often also allow larger populations, to produce large amounts of minerals per unit of population.  Normally large mining output per unit population is limited to low-population capacity worlds, limiting actual mineral output.
-
-PRO_ORBITAL_MINE
-Orbital Mining
-
-PRO_ORBITAL_MINE_DESC
-On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minerals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
-
-PRO_CORE_MINE
-Deep Core Mining
-
-PRO_CORE_MINE_DESC
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
-
-PRO_ART_BLACK_HOLE
-Artificial Black Hole
-
-PRO_ART_BLACK_HOLE_DESC
-By carefully collapsing a singularity in a distant solar orbit, a conveniently located source of unlimited power would be possible. This would be a highly expensive and dangerous task, but with far reaching benefits.
-
-PRO_EXOBOTS
-Exobots
-
-PRO_EXOBOTS_DESC
-Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that lack the infrastructure and work force to dedicate to specialized factories. Every colony receives a standard issue team of exobots, boosting their construction during the early development phase.
-
-PRO_FUSION_PLANTS
-Fusion Plants
-
-PRO_FUSION_PLANTS_DESC
-Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
-
-PRO_HYPER_DAM
-Hyperspatial Dam
-
-PRO_HYPER_DAM_DESC
-Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
-
-PRO_MINI_SUN
-Miniature Sun
-
-PRO_MINI_SUN_DESC
-A magnetically contained, self-perpetuating fusion reaction could be safely built and placed in coincident orbit above a planet's night facing hemisphere. This new star would dominate the night sky, providing constant twilight on its planet-facing hemisphere, while its outward facing hemisphere would be harnessed as a massive fusion power plant.
-
-PRO_MINING_ENGINEERING
-Mining Engineering
-
-PRO_MINING_ENGINEERING_DESC
-'''Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probable locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.
-
-Bonuses depend on planet type:
-Barren and Inferno receive +4 per 10 population of planet at mining focused worlds.
-Desert, Radiated and Toxic receive +2.
-Tundra and Terran receive +1.
-Ocean and Swap receive no bonus.
-
-Large research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the populations of these planet types.'''
-
-PRO_INDUSTRY_CENTRE_I
-Industrial Centres
-
-PRO_INDUSTRY_CENTRE_I_DESC
-'''Coordinating industrial activity between planets and star systems can be effectively accomplished at large centralized complexes.
-
-Facility's large cost and build time, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility.  Large industrial benefits come with large up-front cost, in both production resources and time, but with minimal research prerequisites, making facility useful for high-production strategies, but unattractive for research-focused empires.'''
-
-PRO_ENERGY_CONV
-Energy Conversion
-
-PRO_ENERGY_CONV_DESC
-At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
-
-PRO_NEUTRONIUM_EXTRACTION
-Neutronium Extraction
-
-PRO_NEUTRONIUM_EXTRACTION_DESC
-The core of a neutron star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter.  This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
-
-SHP_BASE_SHIPYARD
-Basic Shipyard
-
-SHP_BASE_SHIPYARD_DESC
-Rudimentary orbital ship production facility allows new interstellar space ships to be produced in the system where it is built.
-
-SHP_LIGHTHOUSE
-Interstellar Lighthouses
-
-SHP_LIGHTHOUSE_DESC
-Useful for ships traveling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significantly safer.
-
-SHP_FLEET_LOGISTICS
-Fleet Logistics
-
-SHP_FLEET_LOGISTICS_DESC
-Gives planets ability to resupply fleets in systems several starlane jumps away.
-
-SHP_SUSPENDED_ANIMATION
-Suspended Animation
-
-SHP_SUSPENDED_ANIMATION_DESC
-Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently.  Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space.  With this technique, the capacity of colony ships can be greatly increased.
-
-SHP_ION_CANNON
-Ion Cannon
-
-SHP_ION_CANNON_DESC
-Unlocks Ion Cannon ship part.
-
-SHP_NUCLEAR_MISSILE
-Nuclear Missile
-
-SHP_NUCLEAR_MISSILE_DESC
-Unlocks Nuclear Missile ship part.
-
-SHP_DEFLECTOR
-Deflector Shield
-
-SHP_DEFLECTOR_DESC
-Unlocks Deflector Shield ship part.
-
-SPY_DETECT_2
-Active Radar
 
 SPY_DETECT_2_DESC
 Unlocks Active Radar ship part.
 
-SHP_DEUTERIUM_TANK
-Deuterium Tank
+#############################################################
+####            T E C H   R E F I N E M E N T            ####
+#############################################################
 
-SHP_DEUTERIUM_TANK_DESC
-Unlocks Deuterium Tank ship part.
-
-SHP_MEDIUM_HULL
-Medium Ship Hulls
-
-SHP_MEDIUM_HULL_DESC
-Medium Ship Hulls
-
-SHP_LARGE_HULL
-Large Ship Hulls
-
-SHP_LARGE_HULL_DESC
-Large Ship Hulls
-
-SHP_HUGE_HULL
-Huge Ship Hulls
-
-SHP_HUGE_HULL_DESC
-Huge Ship Hulls
-
-########################################
-# Tech Refinement Names & Descriptions #
-########################################
-
-BUILDING_REFINE_SHORT_DESC
-Refines Building
-
-PRO_ASTEROID_MINE_II
-Advanced Asteroid Mines
-
-PRO_ASTEROID_MINE_II_DESC
-Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  The same asteroid field and population produces additional minerals at all planets in-system that focus primarily on mining.
-
-PRO_INDUSTRY_CENTRE_II
-Greater Industrial Centre
-
-PRO_INDUSTRY_CENTRE_II_DESC
-Improved centralized management of dispersed industrial activities increases the range and size of increased industrial output provided.
-
-PRO_INDUSTRY_CENTRE_III
-Supreme Industrial Centre
-
-PRO_INDUSTRY_CENTRE_III_DESC
-Additional experience and facilities improvements further extend the range and size of industrial output improvement.
-
-#################################
-# Building Names & Descriptions #
-#################################
+#############################################################
+####                  B U I L D I N G S                  ####
+#############################################################
 
 BLD_OBSERVATORY
 Observatoř
@@ -3842,30 +2078,6 @@ Planets within 2 starlane jumps owned by other empires receive -4 to max health.
 Planets within 2 starlane jumps owned exclusively by the empire that builds the projector receive -1 to max health.
 Requires empire operating it to own at least one Bioterror Research Centre; otherwise produces no negative health effects on other empires' planets.'''
 
-BLD_BIOTERROR_LAB
-Bioteroristické výzkumné centrum
-
-BLD_BIOTERROR_LAB_DESC
-Is required for Bioterror Projection Bases to affect other empires.\n\nCauses -2 to max health of planets in system where it is built, regardless of that planet's ownership.
-
-BLD_AUTOFACTORY_CONTROL
-Kontrolní centrum autotováren
-
-BLD_AUTOFACTORY_CONTROL_DESC
-Provides +2 to max production output per 10 population on primary industry focused worlds.\nProvides additional +1 to max industry output per 10 population on secondary industry focused worlds.
-
-BLD_AUTOLAB_CONTROL
-Kontrolní centrum autolaboratoří
-
-BLD_AUTOLAB_CONTROL_DESC
-Provides +2 to max research output per 10 population and -2 to max health on primary research focused worlds.\nProvides additional +1 to max research output per 10 population and -1 to max health on secondary research focused worlds.
-
-BLD_THEOREM_PROVER
-Autodokazovače teorémů
-
-BLD_THEOREM_PROVER_DESC
-Provides +5 to max research output per 10 population on primary research focused worlds, non-stacking.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds, non-stacking.
-
 BLD_LIGHTHOUSE
 Mezihvězdný maják
 
@@ -3878,39 +2090,11 @@ Centrum těžké těžby
 BLD_HEAVY_MINE_PROCESSOR_DESC
 Provides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
 
-BLD_INDUSTRY_CENTRE
-Průmyslové centrum
-
-BLD_INDUSTRY_CENTRE_DESC
-'''Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.
-
-[[tech PRO_INDUSTRY_CENTRE_II]] refinement increases bonus to +6 and increases distance to 200.
-
-[[tech PRO_INDUSTRY_CENTRE_III]] refinement further increases bonus to +7 and range to 300.'''
-
-BLD_ASTEROID_MINE
-Dulní zařízení na asteroidy
-
-BLD_ASTEROID_MINE_DESC
-Initially provides +4 minerals production per 10 population to planets in same system that contains an asteroid belt.\nWith Advanced Asteroid Mines refinement, provides additional +4, or +8 total minerals production per 10 population to planets in same system that contains an asteroid belt.
-
-BLD_GRAVITY_WELLS
-Centrum řízení gravitace
-
-BLD_GRAVITY_WELLS_DESC
-A null gravity generator installed deep in the planet's core, greatly boosting industry and commerce in the system.
-
 BLD_MEGALITH
 Megalit
 
 BLD_MEGALITH_DESC
 A marvel of Exodus-era Architecture, the Megalith is an abnormally massive Starscraper, kilometers in diameter. The Megalith is an inspiration to architects sector-wide and is often the crown jewel of a powerful real estate mogul's empire.
-
-BLD_PLANET_RING
-Planetární prstenec
-
-BLD_PLANET_RING_DESC
-A ring of satellites completely encircling a world, tethered to the planet's equator by spoke-like space elevators. These are used for housing, micro-gravity construction and inter-world trade.
 
 BLD_SPACE_ELEVATOR
 Vesmírný výtah
@@ -3918,47 +2102,11 @@ Vesmírný výtah
 BLD_SPACE_ELEVATOR_DESC
 An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end. The space elevator boosts the trade for the entire system.
 
-BLD_COMM_UNION
-Obchodní unie kolonií
-
-BLD_COMM_UNION_DESC
-The Commercial Union of the Colonies (CUC) is an organization with the means and will to monitor and regulate the entire galactic market. The first empire to complete the CUC gains an empire wide bonus to trade on all worlds.
-
-BLD_DEEP_GREEN
-Tmavě zelená ekonomika
-
-BLD_DEEP_GREEN_DESC
-A central economic forecast computer fed with data from all the economic markets of the known galaxy, it is capable of near perfect economic foresight and is used to boost all the markets in the empire.
-
-BLD_PARADISE
-Planeta Ráj
-
-BLD_PARADISE_DESC
-A world whose entire infrastructure has been converted to tourism, giving an enormous boost to trade and tourism in the region, but eliminating almost all useful industrial and mining output.
-
-BLD_CADUCEAN
-The Caducean Institute
-
-BLD_CADUCEAN_DESC
-Available with The Caducean Institute.\n\nIncreases max health on all populated worlds by +2, non-stacking.
-
 BLD_GENOME_BANK
 Genobanka
 
 BLD_GENOME_BANK_DESC
 The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease and in establishing farming colonies.
-
-BLD_LIVING_PLANET
-Živá planeta
-
-BLD_LIVING_PLANET_DESC
-Convert a planet into the Living Planet by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own. Industrial and mineral output are severely limited, however, as such activities upset the global harmonious balance.
-
-BLD_ORBITAL_GARDENS
-Orbitální zahrady
-
-BLD_ORBITAL_GARDENS_DESC
-An enormous moon-like satellite in orbit above a world, the Orbital Gardens are a testament throughout the galaxy to your ability to harness your environment. Besides being an excellent tourist attraction, research conducted here helps boost farming on all worlds in your empire.
 
 BLD_COLLECTIVE_NET
 Síť kolektivního myšlení 
@@ -3966,63 +2114,18 @@ Síť kolektivního myšlení
 BLD_COLLECTIVE_NET_DESC
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
 
-BLD_ENCLAVE_VOID
-Enclave of the Void
-
 BLD_ENCLAVE_VOID_DESC
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects. This world may never exceed industrial or mining output greater than 30.
-
-BLD_LOOKING_GLASS
-The Looking Glass
-
-BLD_LOOKING_GLASS_DESC
-A space-time museum of galactic fame. Both tourism and science benefit from its unfettered view of all history, as the ebb and flow of all time become as transparent as glass.
-
-BLD_MONUMENT_EXODUS
-Monument to Exodus
-
-BLD_MONUMENT_EXODUS_DESC
-A mighty orbiting sculpture visible from the ground and to passing ships. Your triumph over the starlanes will never be forgotten and your people will forever be emboldened to colonize new worlds. Increases population growth on all frontier worlds.
-
-BLD_PSICORP
-PsiCorp
-
-BLD_PSICORP_DESC
-An academy dedicated to identifying the psionically gifted citizens throughout the colonies and training them from birth to develop their abilities to the benefit of the most advanced research programs of the empire.
-
-BLD_ART_BLACK_HOLE
-Artificial Black Hole
 
 BLD_ART_BLACK_HOLE_DESC
 A constructed singularity in a distant orbit in one system. Its power is harnessed to advance industry for all nearby worlds.
 
-BLD_HYPER_DAM
-Hyperspatial Dam
-
 BLD_HYPER_DAM_DESC
 A tear in the fabric of the universe, safely controlled and harnessed. The hyperspatial dam serves as a source of nearly unlimited energy for the entire sector.
 
-BLD_MINI_SUN
-Miniature Sun
-
-BLD_MINI_SUN_DESC
-A miniature sun keeps the night sky above the world perpetually twilit. Besides being good for morale, the fusion reactor serves as a convenient source of energy for all planets in the system.
-
-BLD_REMOTE_CONST
-Remote Construction
-
-BLD_REMOTE_CONST_DESC
-A network of matter and construction. A team of construction workers and robots can assemble structures on distant worlds without the need for freighters or construction vessels. Only a small matter-terminal ship is needed. Quickly raises the industry on all worlds to that of an Established world.
-
-BLD_ECON_SINKHOLE
-Economic Sinkhole
-
-BLD_ECON_SINKHOLE_DESC
-An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
-
-###################################
-# Hull/Part Description Templates #
-###################################
+#############################################################
+####           Hull/Part Description Templates           ####
+#############################################################
 
 HULL_DESC
 '''Rychlost po mezihvězd. cestě: %1%
@@ -4036,10 +2139,16 @@ Kapacita: %1%
 PART_DESC_STRENGTH
 Pevnost: %1%
 
+# Detection Range: %2%
+
 PART_DESC_DIRECT_FIRE_STATS
 '''Poškození: %1%
 Rychlost střelby: %2% shots/turn
 Rozsah: %3%'''
+
+## TEMPORARILY HIDDEN
+# Rate of Fire: %2% shots/turn
+# Range: %3%
 
 PART_DESC_LR_STATS
 '''Poškození: %1%
@@ -4061,115 +2170,75 @@ Fighter Stealth: %8%
 Fighter Detection: %9%
 Capacity: %10% fighters'''
 
-##############
-# Ship Parts #
-##############
-
-SR_LASER
-Laser
-
-SR_LASER_DESC
-Lower power and mass
-
-SR_ION_CANNON
-Ion Cannon
-
-SR_ION_CANNON_DESC
-Moderate power and mass
-
-LR_NUCLEAR_MISSILE
-Nuclear Missile
-
-LR_NUCLEAR_MISSILE_DESC
-Long range moderate power
-
-DT_DETECTOR_2
-Active Radar
+#############################################################
+####                 S H I P   P A R T S                 ####
+#############################################################
 
 DT_DETECTOR_2_DESC
 Moderate power detection with large stealth penalty to mounting ship.
 
-DT_OPTICAL_SENSORS
-Optical Sensors
-
-DT_OPTICAL_SENSORS_DESC
-Basic detection capability
-
-FU_DEUTERIUM_TANK
-Deuterium Tank
-
 FU_DEUTERIUM_TANK_DESC
 Small increase to ship range by increasing fuel capacity.  Bulky and vulnerable to weapons fire.
-
-FU_ANTIMATTER_TANK
-Antimatter Tank
 
 FU_ANTIMATTER_TANK_DESC
 Moderate increase to ship range by increasing fuel capacity.  Compact and low mass.
 
-ST_CLOAK_1
-Electromagnetic Damper
-
 ST_CLOAK_1_DESC
 Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems.  Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.
 
-AR_LEAD_PLATE
-Lead Armour Plating
-AR_LEAD_PLATE_DESC
-Weak defense with large mass
-
-SH_DEFENSE_GRID
-Defense Grid
 SH_DEFENSE_GRID_DESC
 Weak defense with no extra mass
 
-SH_DEFLECTOR
-Deflector Shield
 SH_DEFLECTOR_DESC
 Strong defense with small mass
-
-CO_COLONY_POD
-Colony Pod
 
 CO_COLONY_POD_DESC
 Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
 
-CO_SUSPEND_ANIM_POD
-Cryonic Colony Pod
-
 CO_SUSPEND_ANIM_POD_DESC
 Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
 
-##############
-# Ship Hulls #
-##############
+#############################################################
+####                 S H I P   H U L L S                 ####
+#############################################################
 
-SH_EMPTY
-Prázdný trup
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
 
-SH_EMPTY_DESC
-Levný a rychlý,ale nedokáže nést žádné součásti.
+#############################################################
+####          A C C O U N T I N G    L A B E L S         ####
+#############################################################
 
-SH_SMALL
-Malý trup
+#############################################################
+####                       T A G S                       ####
+#############################################################
 
-SH_SMALL_DESC
-Málo slotů,ale rychlý
+## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
+## in Census pop-up, and specifies order in which they will be displayed.
+## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
+## since those won't be displayed in the census anyway.
 
-SH_MEDIUM
-Střední trup
+## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
+##STYLISH  // add to tag order list if ever this tag is given a function
 
-SH_MEDIUM_DESC
-Nastavitelná rychlost i počet součástí
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
 
-SH_LARGE
-Velký trup
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
 
-SH_LARGE_DESC
-Mnoho slotů ale menší rychlost
+### Beginning of AI Aggression Level Capital Name Lists
 
-SH_HUGE
-Obrovský trup
+### End of Capital Names Lists
 
-SH_HUGE_DESC
-Obrovský počet slotů ale velmi nízká rychlost
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?

@@ -8,14 +8,8 @@ Danish
 
 #Anyone can use these for basic buttons
 
-APPNAME
-FreeOrion
-
 BROWSE_BTN
 Gennemse...
-
-OK
-OK
 
 CANCEL
 Fortryd
@@ -32,11 +26,46 @@ Indlæs
 SAVE
 Gem
 
+# used to generate names for new fleets when they are created
+
+###########################
+# Predefined Ship Designs #
+###########################
+# in premade_ship_designs.txt
+
+############
+# Monsters #
+############
+
+##########
+# Fields #
+##########
+
+##############################
+# Predefined Starting Fleets #
+##############################
+
+##########################
+# Status Update Messages #
+##########################
+
 SERVER_TIMEOUT
 Serveren svarer ikke
 
 SERVER_LOST
 Forbindelsen til serveren er mistet.
+
+######################################
+# Command Line and OptionsDB Options #
+######################################
+
+#################
+# File Dialog   #
+#################
+
+#################
+# Color Dialog  #
+#################
 
 #################
 # Intro Screen  #
@@ -47,20 +76,10 @@ Forbindelsen til serveren er mistet.
 INTRO_WINDOW_TITLE
 FreeOrion Hoved Menu
 
-
 #Button names####
-
-INTRO_BTN_SINGLE_PLAYER
-Single Player
-
-INTRO_BTN_MULTI_PLAYER
-Multi Player
 
 INTRO_BTN_LOAD_GAME
 Indlæs Gammelt Spil
-
-INTRO_BTN_OPTIONS
-Options
 
 INTRO_BTN_ABOUT
 Omkring
@@ -68,12 +87,10 @@ Omkring
 INTRO_BTN_EXIT
 Afslut
 
-
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
 Fik timeout mens vi prøvede at tilslutte til serveren
-
 
 ########################
 # Server Setup Screen  #
@@ -84,41 +101,37 @@ Fik timeout mens vi prøvede at tilslutte til serveren
 SCONNECT_WINDOW_TITLE
 Tilslut til server
 
-
 #Static labels####
 
 LAN_GAME_LABEL
 Lan spil på:
+
 INTERNET_GAME_LABEL
 Internet spil på:
+
 PLAYER_NAME_LABEL
 Spiller navn:
-
 
 #Button names####
 
 HOST_GAME_BN
 Start et nyt spil
+
 JOIN_GAME_BN
 Deltag i et spil
+
 REFRESH_LIST_BN
 Opdater listen
-
 
 ########################
 # Multiplayer Lobby    #
 ########################
 
-#Window title####
-
 MPLOBBY_WINDOW_TITLE
 Multiplayer Opsætning
 
-#Strings
 MPLOBBY_HOST_ABORTED_GAME
 Ham der startede spillet har fortrudt
-
-#Button names####
 
 NEW_GAME_BN
 Nyt spil
@@ -128,7 +141,6 @@ Indlæs gammelt spil
 
 START_GAME_BN
 Start spil
-
 
 ########################
 # Galaxy Setup Screen  #
@@ -142,7 +154,6 @@ Galakse Opsætning
 #Strings
 GSETUP_GRAPHICS_FILES
 Grafik Filer
-
 
 #Drop-down list labels and choices####
 
@@ -169,13 +180,13 @@ GSETUP_CLUSTER
 Kluster
 GSETUP_ELLIPTICAL
 Elliptisk
-GSETUP_IRREGULAR
-Irreguler
-GSETUP_RING
-Ring
 
 GSETUP_NONE
 Ingen
+GSETUP_LOW
+Lav
+GSETUP_HIGH
+Høj
 
 GSETUP_YOUNG
 Ung
@@ -184,55 +195,13 @@ Voksen
 GSETUP_ANCIENT
 Antik
 
-GSETUP_FEW
-Få
-GSETUP_SOME
-Nogle
-GSETUP_SEVERAL
-Flere
-GSETUP_MANY
-Mange
-GSETUP_VERY_MANY
-Rigtigt mange
-
-GSETUP_LOW
-Lav
-GSETUP_MEDIUM
-Medium
-GSETUP_HIGH
-Høj
-
-GSETUP_RARE
-Sjældent
-GSETUP_UNCOMMON
-Usædvanligt
-GSETUP_COMMON
-Normalt
-
-
 #Error messages####
 
 GSETUP_ERR_NOEXIST
 Eksistere ikke.
 
-
 ###########################
-# Empire Selection Screen #
-###########################
-
-#Window Title####
-
-ESELECT_WINDOW_TITLE
-Imperium Udvælgelse
-
-
-#Static text####
-
-ESELECT_EMPIRE_NAME
-Imperium Navn:
-
-###########################
-# About Dialog		  #
+# About Dialog            #
 ###########################
 
 #License button text####
@@ -247,7 +216,7 @@ CREDITS
 Lavet af
 
 ###########################
-# In Game Options	  #
+# Game Menu               #
 ###########################
 
 GAME_MENU_WINDOW_TITLE
@@ -265,6 +234,18 @@ Afslut Spil
 GAME_MENU_SAVE_FILES
 Gemte Spil filer
 
+###########################
+# Save Game Dialog        #
+###########################
+
+###########################
+# Game Options            #
+###########################
+
+##################
+# CombatSetupWnd #
+##################
+
 #################
 # Main Map      #
 #################
@@ -276,101 +257,133 @@ Tur
 # SidePanel     #
 #################
 
-SIDE_PANEL
-Side Panel
-
-##Planet Panel#############
-PLANET_PANEL
-Planet Panel
-
-#Planet Sizes and Types####
-
-PL_SZ_NOWORLD
-Intet at se her; fortsæt bare.
-PL_SZ_TINY
-Mini
-PL_SZ_SMALL
-Lille
-PL_SZ_MEDIUM
-Medium
-PL_SZ_LARGE
-Stor
-PL_SZ_HUGE
-Enorm
-
-PL_TOXIC
-Giftig
-PL_INFERNO
-Flammehav
-PL_GASGIANT
-Gas Gigant
-PL_ASTEROIDS
-Asteroide Felt
-PL_RADIATED
-Radioaktiv
-PL_SWAMP
-Sump
-PL_BARREN
-Øde
-PL_DESERT
-Ørken
-PL_TUNDRA
-Tundra
-PL_OCEAN
-Ocean
-PL_TERRAN
-Jordlig
-PL_GAIA
-Gaia
-
-PL_UNHABITABLE
-Ubeboelig
-
-PL_UNINHABITED
-Ubeboet
-
-PL_PRIMARY_FOCUS
-primær 
-
-PL_SECONDARY_FOCUS
-sekundær
-
-PL_BALANCED
-balanceret
-PL_FARMING
-opdyrkning
-PL_INDUSTRY
-industri
-PL_MINING
-minedrift
-PL_RESEARCH
-forskning
-
-PL_PRODUCTION_TIME_NEVER
-(aldrig)
-
-PL_PRODUCTION_TIME_TURNS
-(%d ture)
-
-PL_COLONIZE
-Kolonisér
-
-SP_UNKNOWN_SYSTEM
-ukendt system
-
-SP_SYSTEM_NAME
-%s
-
 SP_SYSTEM_PRODUCTION
 System Produktion
 
+##Planet Panel#############
+
+PL_UNINHABITED
+Ubeboet
+PL_COLONIZE
+Kolonisér
+
+## Resources Panel ##########
+
+## Buildings Panel##########
+
+## General Tooltips#########
+
+#################
+# Fleet Window  #
+#################
+
+# the name of the new fleet icon in the fleet listbox
+
+# the name that is used for fleets the player does not control
+
+# the name that is used for fleets that no player controls
+
+# the name that is used for ships the player does not control
+
+# the name that is used for ships that no player controls
+
+###############
+#  Moderator  #
+###############
+
+###############
+#  Diplomacy  #
+###############
+
+###############
+# TechTreeWnd #
+###############
+
+#######################
+# ProductionInfoPanel #
+#######################
+
+###############
+# ResearchWnd #
+###############
+
+####################
+# BuildSelectorWnd #
+####################
+
+#################
+# ProductionWnd #
+#################
+
+###############
+#  DesignWnd  #
+###############
+
+################
+## Statistics ##
+################
+    
+
+#############################################################
+####               E N C Y C L O P E D I A               ####
+#############################################################
+
+# types of things that can be shown in encyclopedia
+
+# type of thing being shown. %1% is a bit of detail, and %2% is the general type.
+# for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
+# %1% may be an empty string for most general types of things that can be shown.
+
+# indication of cost to produce or research thing that is shown. May be omitted if thing shown can't
+# be produced or researched (e.g. specials)
+# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
+# %2% will be one of ENC_PP or ENC_RP, depending on whether the thing shown is built or researched
+# %3% will be the minimum number of turns it takes to produce or research the thing shown
+
+# auto-generated location condition description
+
+# auto-generated effects description. %1% will be the auto-generated effects text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+## Temporarily removed
+# Direct Fire Parts: %4%
+# Missile Parts: %5%
+# Fighter Bays: %6%
+# Point Defense Parts: %7%
+# Battle Speed: %12%
+##
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+
+###########################################
+# Combat Report #
+###########################################
+
+###########################################
+# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
+###########################################
+
+###########################################
+# ARTICLES #
+###########################################
+
+#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
+
+# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
+
+####################
+# Combat Messages  #
+####################
 
 ####################
 # TurnProgress     #
 ####################
-
-TURN_PROGRESS_WND
-Udregning af Tur
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Bevægelse af Flåder
@@ -387,23 +400,41 @@ Venter på at spillere færdigører deres tur
 TURN_PROGRESS_PHASE_ORDERS
 Udfører ordre
 
+########################
+# Messages Panel       #
+########################
 
 ########################
-# SitRep Panel         #
+# Players List         #
 ########################
+
+####################
+## Objects Window ##
+####################
+
+#####################
+## Objects Columns ##
+#####################
+
+####################
+## Filters Dialog ##
+####################
+
+#############################################################
+####                    S I T   R E P                    ####
+#############################################################
 
 #Window title####
 
 SITREP_PANEL_TITLE
 Situations Report
 
+## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
+## these sitreps to be presented in the SitrepPanel in the order set below.
+## Sitreps not specified below will appear in the SitrepPanel following those below.
 
-####################
-# Sit Rep Entries  #
-####################
-
-SITREP_MAX_INDUSTRY
-Planet %planet% i systemet %system% har nået sin maksimale produktion.
+## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
+## END OF SITREP_PRIORITY_ORDER
 
 SITREP_SHIP_BUILT
 Et nyt skib %ship% er nu i kredsløb omkring planeten %planet%.
@@ -411,15 +442,153 @@ Et nyt skib %ship% er nu i kredsløb omkring planeten %planet%.
 SITREP_TECH_RESEARCHED
 Teknologien %tech% er blevet opfundet.
 
-SITREP_BASE_BUILT
-Planeten %planet% i systemet %system% har færdig gjort en forsvars station.
+#############################################################
+####           V I C T O R Y   /   D E F E A T           ####
+#############################################################
 
-SITREP_COMBAT_SYSTEM_WON
-Der har været en kamp i systemet %system%. Du vandt!
+#############################################################
+####                    S P E C I E S                    ####
+#############################################################
 
-SITREP_COMBAT_SYSTEM_LOST
-Der har været en kamp i systemet %system%. Du tabte!
+### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
-SITREP_COMBAT_SYSTEM_NO_VICTOR
-Der har været en kamp i systemet %system%. Det blev uafgjort.
+#############################################################
+####                   S P E C I A L S                   ####
+#############################################################
 
+#############################################################
+####        E N U M E R A T I O N   V A L U E S          ####
+#############################################################
+
+# UniverseObjectTypes
+
+# StarTypes
+
+# PlanetTypes
+
+# Planet Sizes
+
+# PlanetEnvironments
+
+# FocusTypes
+
+# MeterTypes
+
+# EmpireAffiliationTypes
+
+# UnlockableItemTypes
+
+# TechTypes
+
+# BuildTypes
+
+# StockpileTypes
+
+# Resource Types
+
+# Ship Slot Types
+
+# Ship Part Classes
+
+#############################################################
+####      ValueRef, Effect, & Condition Descriptions     ####
+#############################################################
+
+# ValueRef
+
+# this one is intentionally left empty
+
+# six is probably more than will be needed, but just in case ...
+
+# Effects
+
+# SetMeter
+
+# others
+
+# Object Creation
+
+# Conditions
+
+ 
+
+ 
+
+#############################################################
+####            T E C H   C A T A G O R I E S            ####
+#############################################################
+
+#############################################################
+####               T E C H   T H E O R I E S             ####
+#############################################################
+
+#############################################################
+####          T E C H   A P P L I C A T I O N S          ####
+#############################################################
+
+#############################################################
+####            T E C H   R E F I N E M E N T            ####
+#############################################################
+
+#############################################################
+####                  B U I L D I N G S                  ####
+#############################################################
+
+#############################################################
+####           Hull/Part Description Templates           ####
+#############################################################
+
+# Detection Range: %2%
+
+## TEMPORARILY HIDDEN
+# Rate of Fire: %2% shots/turn
+# Range: %3%
+
+#############################################################
+####                 S H I P   P A R T S                 ####
+#############################################################
+
+#############################################################
+####                 S H I P   H U L L S                 ####
+#############################################################
+
+#############################################################
+####              S P E C I E S   P I C K S              ####
+#############################################################
+
+#############################################################
+####          A C C O U N T I N G    L A B E L S         ####
+#############################################################
+
+#############################################################
+####                       T A G S                       ####
+#############################################################
+
+## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
+## in Census pop-up, and specifies order in which they will be displayed.
+## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
+## since those won't be displayed in the census anyway.
+
+## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
+##STYLISH  // add to tag order list if ever this tag is given a function
+
+#############################################################
+####           A I   S T R I N G S                       ####
+#############################################################
+
+### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
+### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
+
+### Beginning of AI Aggression Level Capital Name Lists
+
+### End of Capital Names Lists
+
+#############################################################
+####           HOTKEYS NAMES AND DESCRIPTIONS            ####
+#############################################################
+
+################
+## Name Lists ##
+################
+
+# TODO: Sort these into their proper locations?
