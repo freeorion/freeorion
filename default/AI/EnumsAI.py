@@ -1,8 +1,3 @@
-def check_validity(value):
-    """checks if value is valid"""
-    return value is not None and value >= 0
-
-
 class EnumsType(object):
     names = ()
 
