@@ -29,7 +29,7 @@ class UniverseObject(object):
 
     def valid(self):
         """Returns if this object is valid."""
-        return self.target_type is not None and EnumsAI.check_validity(self.target_id)
+        return EnumsAI.check_validity(self.target_id)
 
     def get_system(self):
         """Returns all system AITargets required to visit in this object."""
