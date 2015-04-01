@@ -230,7 +230,7 @@ class AIFleetMission(object):
             if not fleet.hasOutpostShips:
                 return False
             if isinstance(target, Planet):
-                planet = target.target_obj
+                planet = target.get_object()
                 if planet.unowned:
                     return True
         elif mission_type in [ AIFleetMissionType.FLEET_MISSION_COLONISATION, AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION]:
@@ -239,7 +239,7 @@ class AIFleetMission(object):
             if not fleet.hasColonyShips:
                 return False
             if isinstance(target, Planet):
-                planet =target.target_object
+                planet = target.target_object()
                 population = planet.currentMeterValue(fo.meterType.population)
                 if planet.unowned or (planet.owner == fleet.owner and population == 0):
                     return True
@@ -249,7 +249,7 @@ class AIFleetMission(object):
             if not fleet.hasTroopShips:
                 return False
             if isinstance(target, Planet):
-                planet = target.target_obj
+                planet = target.get_object()
                 if not planet.unowned or planet.owner != fleet.owner:  # TODO remove latter portion of this check in light of invasion retargeting, or else correct logic
                     return True
         elif mission_type in [AIFleetMissionType.FLEET_MISSION_MILITARY, AIFleetMissionType.FLEET_MISSION_SECURE, AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE]:

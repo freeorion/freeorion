@@ -12,7 +12,7 @@ class UniverseObject(object):
        return cmp(self.target_id, other.target_id)
 
     def __str__(self):
-        target = self.target_obj
+        target = self.get_object()
         if target is None:
             target_name = "%4d" % self.target_id
         else:
@@ -21,8 +21,7 @@ class UniverseObject(object):
             self.name, self.target_id, target_name
         )
 
-    @property
-    def target_obj(self):
+    def get_object(self):
         """
         Returns target UniverseObject or None.
         """
@@ -46,8 +45,7 @@ class Planet(UniverseObject):
         planet = universe.getPlanet(self.target_id)
         result.append(System(planet.systemID))
 
-    @property
-    def target_obj(self):
+    def get_object(self):
         universe = fo.getUniverse()
         return universe.getPlanet(self.target_id)
 
@@ -58,8 +56,7 @@ class System(UniverseObject):
     def get_required_system_ai_targets(self):
         return [self]
 
-    @property
-    def target_obj(self):
+    def get_object(self):
        universe = fo.getUniverse()
        return universe.getSystem(self.target_id)
 
@@ -77,9 +74,7 @@ class Fleet(UniverseObject):
             system_id = fleet.systemID
         return [System(system_id)]
 
-
-    @property
-    def target_obj(self):
+    def get_object(self):
         universe = fo.getUniverse()
         return universe.getFleet(self.target_id)
 

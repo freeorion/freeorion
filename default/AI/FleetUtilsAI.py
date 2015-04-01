@@ -473,7 +473,7 @@ def issue_fleet_orders_for_fleet_missions():
         print "issuing fleet orders Round %d:" % thisround
         for mission in fleet_missions:
             fleet_id = mission.target_id
-            fleet = mission.target.target_obj
+            fleet = mission.target.get_object()
             if not fleet or not fleet.shipIDs or fleet_id in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
                 continue
             mission.issue_fleet_orders()
