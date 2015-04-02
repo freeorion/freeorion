@@ -184,35 +184,30 @@ FO_COMMON_API const PartType* GetPartType(const std::string& name);
 struct HullTypeStats {
     HullTypeStats() :
         fuel(0.0f),
-        battle_speed(0.0f),
-        starlane_speed(0.0f),
+        speed(0.0f),
         stealth(0.0f),
         structure(0.0f)
     {}
 
     HullTypeStats(float fuel_,
-                  float battle_speed_,
-                  float starlane_speed_,
+                  float speed_,
                   float stealth_,
                   float structure_) :
         fuel(fuel_),
-        battle_speed(battle_speed_),
-        starlane_speed(starlane_speed_),
+        speed(speed_),
         stealth(stealth_),
         structure(structure_)
     {}
 
     float   fuel;
-    float   battle_speed;
-    float   starlane_speed;
+    float   speed;
     float   stealth;
     float   structure;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
         ar  & BOOST_SERIALIZATION_NVP(fuel)
-            & BOOST_SERIALIZATION_NVP(battle_speed)
-            & BOOST_SERIALIZATION_NVP(starlane_speed)
+            & BOOST_SERIALIZATION_NVP(_speed)
             & BOOST_SERIALIZATION_NVP(stealth)
             & BOOST_SERIALIZATION_NVP(structure);
     }
@@ -238,8 +233,7 @@ public:
     HullType() :
         m_name("generic hull type"),
         m_description("indescribable"),
-        m_battle_speed(1.0f),
-        m_starlane_speed(1.0f),
+        m_speed(1.0f),
         m_fuel(0.0f),
         m_stealth(0.0f),
         m_structure(0.0f),
@@ -255,15 +249,14 @@ public:
     {}
 
     HullType(const std::string& name, const std::string& description,
-             float fuel, float battle_speed, float starlane_speed,
+             float fuel, float battle_speed, float speed,
              float stealth, float structure,
              const PartHullCommonParams& common_params,
              const std::vector<Slot>& slots,
              const std::string& graphic) :
         m_name(name),
         m_description(description),
-        m_battle_speed(battle_speed),
-        m_starlane_speed(starlane_speed),
+        m_speed(speed),
         m_fuel(fuel),
         m_stealth(stealth),
         m_structure(structure),
@@ -285,8 +278,7 @@ public:
              const std::string& graphic) :
         m_name(name),
         m_description(description),
-        m_battle_speed(stats.battle_speed),
-        m_starlane_speed(stats.starlane_speed),
+        m_speed(stats.speed),
         m_fuel(stats.fuel),
         m_stealth(stats.stealth),
         m_structure(stats.structure),
@@ -308,8 +300,7 @@ public:
     const std::string&  Name() const            { return m_name; }              ///< returns name of hull
     const std::string&  Description() const     { return m_description; }       ///< returns description, including a description of the stats and effects of this hull
 
-    float               BattleSpeed() const     { return m_battle_speed; }      ///< returns battle speed of hull
-    float               StarlaneSpeed() const   { return m_starlane_speed; }    ///< returns starlane speed of hull
+    float               Speed() const           { return m_speed; }             ///< returns starlane speed of hull
     float               Fuel() const            { return m_fuel; }              ///< returns fuel capacity of hull
     float               Stealth() const         { return m_stealth; }           ///< returns stealth of hull
     float               Structure() const       { return m_structure; }         ///< returns structure of hull
@@ -343,8 +334,7 @@ private:
 
     std::string                             m_name;
     std::string                             m_description;
-    float                                   m_battle_speed;
-    float                                   m_starlane_speed;
+    float                                   m_speed;
     float                                   m_fuel;
     float                                   m_stealth;
     float                                   m_structure;
@@ -434,8 +424,7 @@ public:
     int                             ProductionTime(int empire_id, int location_id) const;       ///< returns the time in turns it takes to build a ship of this design
     bool                            Producible() const      { return m_producible; }            ///< returns whether this design is producible by players and appears on the production screen list
 
-    float                           BattleSpeed() const     { return m_battle_speed; }          ///< returns design speed on the battle map
-    float                           StarlaneSpeed() const   { return m_starlane_speed; }        ///< returns design speed along starlanes
+    float                           Speed() const           { return m_speed; }                 ///< returns design speed along starlanes
 
     float                           Structure() const       { return m_structure; }             ///< returns the max structure of this design
     float                           Shields() const         { return m_shields; }               ///< returns the max shields of this design
@@ -531,8 +520,7 @@ private:
     float   m_fuel;
     float   m_shields;
     float   m_structure;
-    float   m_battle_speed;
-    float   m_starlane_speed;
+    float   m_speed;
     float   m_research_generation;
     float   m_industry_generation;
     float   m_trade_generation;
@@ -639,8 +627,7 @@ void HullType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_battle_speed)
-        & BOOST_SERIALIZATION_NVP(m_starlane_speed)
+        & BOOST_SERIALIZATION_NVP(m_speed)
         & BOOST_SERIALIZATION_NVP(m_fuel)
         & BOOST_SERIALIZATION_NVP(m_stealth)
         & BOOST_SERIALIZATION_NVP(m_structure)

@@ -422,7 +422,7 @@ Part
 Part
     name = "FU_IMPROVED_ENGINE_COUPLINGS"
     description = "FU_IMPROVED_ENGINE_COUPLINGS_DESC"
-    class = StarlaneSpeed
+    class = Speed
     capacity = 10
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
@@ -434,7 +434,7 @@ Part
 Part
     name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
     description = "FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
-    class = StarlaneSpeed
+    class = Speed
     capacity = 20
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
@@ -445,7 +445,7 @@ Part
 Part
     name = "FU_SINGULARITY_ENGINE_CORE"
     description = "FU_SINGULARITY_ENGINE_CORE_DESC"
-    class = StarlaneSpeed
+    class = Speed
     capacity = 30
     mountableSlotTypes = Core
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
@@ -456,7 +456,7 @@ Part
 Part
     name = "FU_TRANSPATIAL_DRIVE"
     description = "FU_TRANSPATIAL_DRIVE_DESC"
-    class = StarlaneSpeed
+    class = Speed
     capacity = 40
     mountableSlotTypes = Core
     buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
@@ -665,8 +665,8 @@ Part
                 Not Planet type = [Asteroids GasGiant Barren Desert]
             ]
             activation = And [
-                            Random probability = 0.15
-                            InSystem
+                Random probability = 0.15
+                InSystem
             ]
             effects = AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
 

@@ -1025,7 +1025,7 @@ void ShipDataPanel::Init() {
     // meter stat icons
     std::vector<MeterType> meters;
     meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD);     meters.push_back(METER_FUEL);
-    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);    meters.push_back(METER_STARLANE_SPEED);
+    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);    meters.push_back(METER_SPEED);
     for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
         StatisticIcon* icon = new StatisticIcon(ClientUI::MeterIcon(*it), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(*it, icon));
@@ -1158,9 +1158,9 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
 
         // stat icon for fleet speed
         icon = new StatisticIcon(SpeedIcon(), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(METER_STARLANE_SPEED, icon));
+        m_stat_icons.push_back(std::make_pair(METER_SPEED, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(METER_STARLANE_SPEED));
+        icon->SetBrowseText(StatTooltip(METER_SPEED));
         AttachChild(icon);
 
 
@@ -1483,7 +1483,7 @@ void FleetDataPanel::SetStatIconValues() {
             structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
             shield_tally += ship->InitialMeterValue(METER_SHIELD);
             fuels.push_back(ship->InitialMeterValue(METER_FUEL));
-            speeds.push_back(ship->InitialMeterValue(METER_STARLANE_SPEED));
+            speeds.push_back(ship->InitialMeterValue(METER_SPEED));
         }
     }
     if (!fuels.empty())
@@ -1494,8 +1494,8 @@ void FleetDataPanel::SetStatIconValues() {
         m_stat_icons.begin(); it != m_stat_icons.end(); ++it) 
     {
         MeterType stat_name = it->first;
-        if (stat_name == METER_STARLANE_SPEED)
-            it->second->SetValue(min_speed); 
+        if (stat_name == METER_SPEED)
+            it->second->SetValue(min_speed);
         else if (stat_name == METER_FUEL)
             it->second->SetValue(min_fuel);
         else if (stat_name == METER_SHIELD)
@@ -1554,7 +1554,7 @@ void FleetDataPanel::UpdateAggressionToggle() {
 }
 
 std::string FleetDataPanel::StatTooltip(MeterType stat_name) const {
-    if (stat_name == METER_STARLANE_SPEED)
+    if (stat_name == METER_SPEED)
         return UserString("FW_FLEET_SPEED_SUMMARY");
     else if (stat_name ==  METER_FUEL)
         return UserString("FW_FLEET_FUEL_SUMMARY");
@@ -2683,7 +2683,7 @@ void FleetWnd::SetStatIconValues() {
 }
 
 std::string FleetWnd::StatTooltip(MeterType stat_type) const {
-    if (stat_type == METER_STARLANE_SPEED)
+    if (stat_type == METER_SPEED)
         return UserString("FW_FLEET_SPEED_SUMMARY");
     else if (stat_type ==  METER_FUEL)
         return UserString("FW_FLEET_FUEL_SUMMARY");

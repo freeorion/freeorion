@@ -3,8 +3,7 @@ include "shared_macros.txt"
 Hull
     name = "SH_XENTRONIUM"
     description = "SH_XENTRONIUM_DESC"
-    speed = 50
-    starlaneSpeed = 70
+    speed = 70
     fuel = 3
     stealth = 5
     structure = 50
@@ -34,8 +33,7 @@ Hull
 Hull
     name = "SH_COLONY_BASE"
     description = "SH_COLONY_BASE_DESC"
-    speed = 10
-    starlaneSpeed = 0
+    speed = 0
     fuel = 0
     stealth = 5
     structure = 2
@@ -51,8 +49,7 @@ Hull
 Hull
     name = "SH_BASIC_SMALL"
     description = "SH_BASIC_SMALL_DESC"
-    speed = 50
-    starlaneSpeed = 75
+    speed = 75
     fuel = 4
     stealth = 5
     structure = 5
@@ -77,8 +74,7 @@ Hull
 Hull
     name = "SH_BASIC_MEDIUM"
     description = "SH_BASIC_MEDIUM_DESC"
-    speed = 50
-    starlaneSpeed = 60
+    speed = 60
     fuel = 3
     stealth = 5
     structure = 10
@@ -105,8 +101,7 @@ Hull
 Hull
     name = "SH_STANDARD"
     description = "SH_STANDARD_DESC"
-    speed = 50
-    starlaneSpeed = 60
+    speed = 60
     fuel = 3
     stealth = 5
     structure = 15
@@ -134,8 +129,7 @@ Hull
 Hull
     name = "SH_ROBOTIC"
     description = "SH_ROBOTIC_DESC"
-    speed = 60
-    starlaneSpeed = 75
+    speed = 75
     fuel = 3
     stealth = 5
     structure = 25
@@ -177,7 +171,6 @@ Hull
     name = "SH_SPATIAL_FLUX"
     description = "SH_SPATIAL_FLUX_DESC"
     speed = 80
-    starlaneSpeed = 80
     fuel = 6
     stealth = 15
     structure = 3
@@ -215,8 +208,7 @@ Hull
 Hull
     name = "SH_SELF_GRAVITATING"
     description = "SH_SELF_GRAVITATING_DESC"
-    speed = 30
-    starlaneSpeed = 80
+    speed = 80
     fuel = 3
     stealth = -5
     structure = 100
@@ -260,8 +252,7 @@ Hull
 Hull
     name = "SH_NANOROBOTIC"
     description = "SH_NANOROBOTIC_DESC"
-    speed = 70
-    starlaneSpeed = 80
+    speed = 80
     fuel = 3
     stealth = 5
     structure = 30
@@ -308,8 +299,7 @@ Hull
 Hull
     name = "SH_TITANIC"
     description = "SH_TITANIC_DESC"
-    speed = 10
-    starlaneSpeed = 80
+    speed = 80
     fuel = 3
     stealth = -35
     structure = 160
@@ -364,8 +354,7 @@ Hull
 Hull
     name = "SH_TRANSSPATIAL"
     description = "SH_TRANSSPATIAL_DESC"
-    speed = 100
-    starlaneSpeed = 80
+    speed = 80
     fuel = 3
     stealth = 15
     structure = 9
@@ -402,8 +391,7 @@ Hull
 Hull
     name = "SH_LOGISTICS_FACILITATOR"
     description = "SH_LOGISTICS_FACILITATOR_DESC"
-    speed = 25
-    starlaneSpeed = 80
+    speed = 80
     fuel = 3
     stealth = 5
     structure = 110
@@ -473,8 +461,7 @@ Hull
 Hull
     name = "SH_ASTEROID"
     description = "SH_ASTEROID_DESC"
-    speed = 35
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = 5
     structure = 30
@@ -522,8 +509,7 @@ Hull
 Hull
     name = "SH_SMALL_ASTEROID"
     description = "SH_SMALL_ASTEROID_DESC"
-    speed = 70
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = 5
     structure = 15
@@ -566,8 +552,7 @@ Hull
 Hull
     name = "SH_HEAVY_ASTEROID"
     description = "SH_HEAVY_ASTEROID_DESC"
-    speed = 30
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = 5
     structure = 50
@@ -617,8 +602,7 @@ Hull
 Hull
     name = "SH_CAMOUFLAGE_ASTEROID"
     description = "SH_CAMOUFLAGE_ASTEROID_DESC"
-    speed = 35
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = 25
     structure = 40
@@ -663,8 +647,7 @@ Hull
 Hull
     name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
     description = "SH_SMALL_CAMOUFLAGE_ASTEROID_DESC"
-    speed = 50
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = 35
     structure = 15
@@ -708,8 +691,7 @@ Hull
 Hull
     name = "SH_AGREGATE_ASTEROID"
     description = "SH_AGREGATE_ASTEROID_DESC"
-    speed = 10
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = -20
     structure = 140
@@ -777,8 +759,7 @@ Hull
 Hull
     name = "SH_MINIASTEROID_SWARM"
     description = "SH_MINIASTEROID_SWARM_DESC"
-    speed = 70
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = 35
     structure = 11
@@ -833,8 +814,7 @@ Hull
 Hull
     name = "SH_SCATTERED_ASTEROID"
     description = "SH_SCATTERED_ASTEROID_DESC"
-    speed = 10
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = 5
     structure = 160
@@ -915,8 +895,7 @@ Hull
 Hull
     name = "SH_CRYSTALLIZED_ASTEROID"
     description = "SH_CRYSTALLIZED_ASTEROID_DESC"
-    speed = 35
-    starlaneSpeed = 60
+    speed = 60
     fuel = 4
     stealth = 5
     structure = 55
@@ -970,8 +949,7 @@ Hull
 Hull
     name = "SH_ORGANIC"
     description = "SH_ORGANIC_DESC"
-    speed = 50
-    starlaneSpeed = 90
+    speed = 90
     fuel = 2
     stealth = 5
     structure = 5
@@ -1020,8 +998,7 @@ Hull
 Hull
     name = "SH_STATIC_MULTICELLULAR"
     description = "SH_STATIC_MULTICELLULAR_DESC"
-    speed = 75
-    starlaneSpeed = 100
+    speed = 100
     fuel = 2
     stealth = 5
     structure = 16
@@ -1061,8 +1038,7 @@ Hull
 Hull
     name = "SH_ENDOMORPHIC"
     description = "SH_ENDOMORPHIC_DESC"
-    speed = 50
-    starlaneSpeed = 100
+    speed = 100
     fuel = 2
     stealth = 5
     structure = 5
@@ -1113,8 +1089,7 @@ Hull
 Hull
     name = "SH_SYMBIOTIC"
     description = "SH_SYMBIOTIC_DESC"
-    speed = 70
-    starlaneSpeed = 100
+    speed = 100
     fuel = 2
     stealth = 25
     structure = 10
@@ -1167,8 +1142,7 @@ Hull
 Hull
     name = "SH_PROTOPLASMIC"
     description = "SH_PROTOPLASMIC_DESC"
-    speed = 50
-    starlaneSpeed = 100
+    speed = 100
     fuel = 2
     stealth = 35
     structure = 5
@@ -1222,8 +1196,7 @@ Hull
 Hull
     name = "SH_ENDOSYMBIOTIC"
     description = "SH_ENDOSYMBIOTIC_DESC"
-    speed = 60
-    starlaneSpeed = 100
+    speed = 100
     fuel = 2
     stealth = 25
     structure = 5
@@ -1283,8 +1256,7 @@ Hull
 Hull
     name = "SH_RAVENOUS"
     description = "SH_RAVENOUS_DESC"
-    speed = 80
-    starlaneSpeed = 100
+    speed = 100
     fuel = 2
     stealth = 5
     structure = 5
@@ -1336,8 +1308,7 @@ Hull
 Hull
     name = "SH_BIOADAPTIVE"
     description = "SH_BIOADAPTIVE_DESC"
-    speed = 80
-    starlaneSpeed = 100
+    speed = 100
     fuel = 2
     stealth = 35
     structure = 15
@@ -1392,8 +1363,7 @@ Hull
 Hull
     name = "SH_SENTIENT"
     description = "SH_SENTIENT_DESC"
-    speed = 30
-    starlaneSpeed = 100
+    speed = 100
     fuel = 2
     stealth = 25
     structure = 12
@@ -1472,8 +1442,7 @@ Hull
 Hull
     name = "SH_COMPRESSED_ENERGY"
     description = "SH_COMPRESSED_ENERGY_DESC"
-    speed = 100
-    starlaneSpeed = 120
+    speed = 120
     fuel = 5
     stealth = 45
     structure = 10
@@ -1504,8 +1473,7 @@ Hull
 Hull
     name = "SH_FRACTAL_ENERGY"
     description = "SH_FRACTAL_ENERGY_DESC"
-    speed = 50
-    starlaneSpeed = 120
+    speed = 120
     fuel = 5
     stealth = -5
     structure = 40
@@ -1551,8 +1519,7 @@ Hull
 Hull
     name = "SH_QUANTUM_ENERGY"
     description = "SH_QUANTUM_ENERGY_DESC"
-    speed = 100
-    starlaneSpeed = 120
+    speed = 120
     fuel = 5
     stealth = -15
     structure = 50
@@ -1594,8 +1561,7 @@ Hull
 Hull
     name = "SH_SOLAR"
     description = "SH_SOLAR_DESC"
-    speed = 5
-    starlaneSpeed = 120
+    speed = 120
     fuel = 5
     stealth = -55
     structure = 200
@@ -1692,8 +1658,7 @@ Hull
 Hull
     name = "SH_FLOATER_BODY"
     description = "SH_FLOATER_BODY_DESC"
-    speed = 5
-    starlaneSpeed = 20
+    speed = 20
     fuel = 3
     stealth = 15
     structure = 20
@@ -1736,7 +1701,6 @@ Hull
     name = "SH_TREE_BODY"
     description = "SH_TREE_BODY_DESC"
     speed = 0
-    starlaneSpeed = 0
     fuel = 0
     stealth = 5
     structure = 5
@@ -1782,8 +1746,7 @@ Hull
 Hull
     name = "SH_STRONG_MONSTER_BODY"
     description = "SH_STRONG_MONSTER_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 30
+    speed = 30
     fuel = 5
     stealth = 5
     structure = 80
@@ -1810,8 +1773,7 @@ Hull
 Hull
     name = "SH_GUARD_MONSTER_BODY"
     description = "SH_GUARD_MONSTER_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 0
+    speed = 0
     fuel = 0
     stealth = 5
     structure = 35
@@ -1837,8 +1799,7 @@ Hull
 Hull
     name = "SH_DRONE_BODY"
     description = "SH_DRONE_BODY_DESC"
-    speed = 12
-    starlaneSpeed = 30
+    speed = 30
     fuel = 3
     stealth = 5
     structure = 10
@@ -1863,7 +1824,6 @@ Hull
     name = "SH_IMMOBILE_FACTORY"
     description = "SH_IMMOBILE_FACTORY_DESC"
     speed = 0
-    starlaneSpeed = 0
     fuel = 0
     stealth = 5
     structure = 1000
@@ -1905,8 +1865,7 @@ Hull
 Hull
     name = "SH_KRILL_1_BODY"
     description = "SH_KRILL_1_BODY_DESC"
-    speed = 7
-    starlaneSpeed = 30
+    speed = 30
     fuel = 5
     stealth = 15
     structure = 20
@@ -1998,8 +1957,7 @@ Hull
 Hull
     name = "SH_KRILL_2_BODY"
     description = "SH_KRILL_2_BODY_DESC"
-    speed = 5
-    starlaneSpeed = 30
+    speed = 30
     fuel = 6
     stealth = 15
     structure = 40
@@ -2098,8 +2056,7 @@ Hull
 Hull
     name = "SH_KRILL_3_BODY"
     description = "SH_KRILL_3_BODY_DESC"
-    speed = 5
-    starlaneSpeed = 25
+    speed = 25
     fuel = 5
     stealth = 15
     structure = 250
@@ -2199,8 +2156,7 @@ Hull
 Hull
     name = "SH_KRILL_4_BODY"
     description = "SH_KRILL_4_BODY_DESC"
-    speed = 5
-    starlaneSpeed = 20
+    speed = 20
     fuel = 4
     stealth = 15
     structure = 1000
@@ -2249,8 +2205,7 @@ Hull
 Hull
     name = "SH_KRAKEN_1_BODY"
     description = "SH_KRAKEN_1_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 40
+    speed = 40
     fuel = 4
     stealth = 5
     structure = 20
@@ -2312,8 +2267,7 @@ Hull
 Hull
     name = "SH_KRAKEN_2_BODY"
     description = "SH_KRAKEN_2_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 45
+    speed = 45
     fuel = 4
     stealth = 5
     structure = 100
@@ -2360,8 +2314,7 @@ Hull
 Hull
     name = "SH_KRAKEN_3_BODY"
     description = "SH_KRAKEN_3_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 50
+    speed = 50
     fuel = 4
     stealth = 5
     structure = 1000
@@ -2389,8 +2342,7 @@ Hull
 Hull
     name = "SH_SNOWFLAKE_1_BODY"
     description = "SH_SNOWFLAKE_1_BODY_DESC"
-    speed = 50
-    starlaneSpeed = 55
+    speed = 55
     fuel = 5
     stealth = 15
     structure = 25
@@ -2454,8 +2406,7 @@ Hull
 Hull
     name = "SH_SNOWFLAKE_2_BODY"
     description = "SH_SNOWFLAKE_2_BODY_DESC"
-    speed = 50
-    starlaneSpeed = 60
+    speed = 60
     fuel = 5
     stealth = 5
     structure = 60
@@ -2502,8 +2453,7 @@ Hull
 Hull
     name = "SH_SNOWFLAKE_3_BODY"
     description = "SH_SNOWFLAKE_3_BODY_DESC"
-    speed = 50
-    starlaneSpeed = 65
+    speed = 65
     fuel = 5
     stealth = 5
     structure = 120
@@ -2530,8 +2480,7 @@ Hull
 Hull
     name = "SH_JUGGERNAUT_1_BODY"
     description = "SH_JUGGERNAUT_1_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 30
+    speed = 30
     fuel = 3
     stealth = 5
     structure = 30
@@ -2593,8 +2542,7 @@ Hull
 Hull
     name = "SH_JUGGERNAUT_2_BODY"
     description = "SH_JUGGERNAUT_2_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 25
+    speed = 25
     fuel = 2
     stealth = 5
     structure = 200
@@ -2643,8 +2591,7 @@ Hull
 Hull
     name = "SH_JUGGERNAUT_3_BODY"
     description = "SH_JUGGERNAUT_3_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 25
+    speed = 25
     fuel = 5
     stealth = 5
     structure = 1000
@@ -2670,8 +2617,7 @@ Hull
 Hull
     name = "SH_NEBULOUS_BODY"
     description = "SH_NEBULOUS_BODY"
-    speed = 50
-    starlaneSpeed = 100
+    speed = 100
     fuel = 1
     stealth = 80
     structure = 5000
@@ -2695,7 +2641,6 @@ Hull
     name = "SH_EXP_OUTPOST_HULL"
     description = "SH_EXP_OUTPOST_HULL_DESC"
     speed = 0
-    starlaneSpeed = 0
     fuel = 1
     stealth = 50
     structure = 1
@@ -2729,8 +2674,7 @@ Hull
 Hull
     name = "SH_BLACK_KRAKEN_BODY"
     description = "SH_BLACK_KRAKEN_BODY_DESC"
-    speed = 120
-    starlaneSpeed = 200
+    speed = 200
     fuel = 100
     stealth = 20
     structure = 4000
@@ -2757,8 +2701,7 @@ Hull
 Hull
     name = "SH_BLOATED_JUGGERNAUT_BODY"
     description = "SH_BLOATED_JUGGERNAUT_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 160
+    speed = 160
     fuel = 100
     stealth = 15
     structure = 7000
@@ -2788,7 +2731,6 @@ Hull
     name = "SH_PSIONIC_SNOWFLAKE_BODY"
     description = "SH_PSIONIC_SNOWFLAKE_BODY_DESC"
     speed = 300
-    starlaneSpeed = 300
     fuel = 100
     stealth = 25
     structure = 1800
@@ -2834,8 +2776,7 @@ Hull
 Hull
     name = "SH_COSMIC_DRAGON_BODY"
     description = "SH_COSMIC_DRAGON_BODY_DESC"
-    speed = 140
-    starlaneSpeed = 25
+    speed = 25
     fuel = 100
     stealth = 10
     structure = 50000
@@ -2876,8 +2817,7 @@ Hull
 Hull
     name = "SH_DAMPENING_CLOUD_BODY"
     description = "SH_DAMPENING_CLOUD_BODY_DESC"
-    speed = 50
-    starlaneSpeed = 20
+    speed = 20
     fuel = 1
     stealth = 45
     structure = 5000

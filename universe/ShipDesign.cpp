@@ -197,11 +197,8 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
         case PC_ARMOUR:
             m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_capacity));
             break;
-        case PC_BATTLE_SPEED:
-            m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_capacity));
-            break;
-        case PC_STARLANE_SPEED:
-            m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_capacity));
+        case PC_SPEED:
+            m_effects.push_back(IncreaseMeter(METER_SPEED,          m_capacity));
             break;
         case PC_RESEARCH:
             m_effects.push_back(IncreaseMeter(METER_TARGET_RESEARCH,m_capacity));
@@ -300,10 +297,8 @@ void HullType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
         m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
     if (m_structure != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
-    if (m_battle_speed != 0)
-        m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
-    if (m_starlane_speed != 0)
-        m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
+    if (m_speed != 0)
+        m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed));
 
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin();
          it != effects.end(); ++it)
@@ -450,8 +445,7 @@ ShipDesign::ShipDesign() :
     m_fuel(0.0),
     m_shields(0.0),
     m_structure(0.0),
-    m_battle_speed(0.0),
-    m_starlane_speed(0.0),
+    m_speed(0.0),
     m_research_generation(0.0),
     m_industry_generation(0.0),
     m_trade_generation(0.0),
@@ -483,8 +477,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_fuel(0.0),
     m_shields(0.0),
     m_structure(0.0),
-    m_battle_speed(0.0),
-    m_starlane_speed(0.0),
+    m_speed(0.0),
     m_research_generation(0.0),
     m_industry_generation(0.0),
     m_trade_generation(0.0),
@@ -785,8 +778,7 @@ void ShipDesign::BuildStatCaches() {
     m_fuel =            hull->Fuel();
     m_shields =         hull->Shields();
     m_structure =       hull->Structure();
-    m_battle_speed =    hull->BattleSpeed();
-    m_starlane_speed =  hull->StarlaneSpeed();
+    m_speed =           hull->Speed();
 
     for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         if (it->empty())
@@ -818,11 +810,8 @@ void ShipDesign::BuildStatCaches() {
         case PC_STEALTH:
             m_stealth += part->Capacity();
             break;
-        case PC_BATTLE_SPEED:
-            m_battle_speed += part->Capacity();
-            break;
-        case PC_STARLANE_SPEED:
-            m_starlane_speed += part->Capacity();
+        case PC_SPEED:
+            m_speed += part->Capacity();
             break;
         case PC_SHIELD:
             m_shields += part->Capacity();

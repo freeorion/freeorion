@@ -119,7 +119,7 @@ namespace {
             //col_types[UserStringNop("OBJECT_TYPE2")] =              UserStringCastedValueRef<UniverseObjectType>("ObjectType");
             col_types[UserStringNop("STAR_TYPE")] =                 UserStringCastedValueRef<StarType>("StarType");
 
-            for (MeterType meter = MeterType(0); meter <= METER_STARLANE_SPEED;
+            for (MeterType meter = MeterType(0); meter <= METER_SPEED;  // the meter(s) after METER_SPEED are part-specific
                  meter = MeterType(meter + 1))
             {
                 col_types[boost::lexical_cast<std::string>(meter)] =StringCastedValueRef<double>(ValueRef::MeterToName(meter));

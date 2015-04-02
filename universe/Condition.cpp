@@ -4821,17 +4821,9 @@ namespace {
         case METER_SUPPLY:              return "Supply";             break;
         case METER_STEALTH:             return "Stealth";            break;
         case METER_DETECTION:           return "Detection";          break;
-        case METER_BATTLE_SPEED:        return "BattleSpeed";        break;
-        case METER_STARLANE_SPEED:      return "StarlaneSpeed";      break;
         case METER_DAMAGE:              return "Damage";             break;
-        case METER_ROF:                 return "ROF";                break;
-        case METER_RANGE:               return "Range";              break;
         case METER_SPEED:               return "Speed";              break;
         case METER_CAPACITY:            return "Capacity";           break;
-        case METER_ANTI_SHIP_DAMAGE:    return "AntiShipDamage";     break;
-        case METER_ANTI_FIGHTER_DAMAGE: return "AntiFighterDamage";  break;
-        case METER_LAUNCH_RATE:         return "LaunchRate";         break;
-        case METER_FIGHTER_WEAPON_RANGE:return "FighterWeaponRange"; break;
         default:                        return "?Meter?";            break;
         }
     }
