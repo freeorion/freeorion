@@ -79,6 +79,7 @@
     (Damage)                                    \
     (Data)                                      \
     (Defense)                                   \
+    (Described)                                 \
     (Description)                               \
     (Desert)                                    \
     (Design)                                    \
