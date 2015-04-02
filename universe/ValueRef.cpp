@@ -189,11 +189,8 @@ namespace {
             meter_name_map["Stealth"] =            METER_STEALTH;
             meter_name_map["Detection"] =          METER_DETECTION;
             meter_name_map["Speed"] =              METER_SPEED;
+            meter_name_map["Damage"] =             METER_DAMAGE;
             meter_name_map["Capacity"] =           METER_CAPACITY;
-            meter_name_map["AntiShipDamage"] =     METER_ANTI_SHIP_DAMAGE;
-            meter_name_map["AntiFighterDamage"] =  METER_ANTI_FIGHTER_DAMAGE;
-            meter_name_map["LaunchRate"] =         METER_LAUNCH_RATE;
-            meter_name_map["FighterWeaponRange"] = METER_FIGHTER_WEAPON_RANGE;
             meter_name_map["Size"] =               METER_SIZE;
         }
         return meter_name_map;
@@ -991,6 +988,7 @@ namespace ValueRef {
 
             return hull_type->Structure();
 
+        } else if (variable_name == "HullSpeed") {
             std::string hull_type_name;
             if (m_string_ref1)
                 hull_type_name = m_string_ref1->Eval(context);
@@ -999,6 +997,7 @@ namespace ValueRef {
             if (!hull_type)
                 return 0.0;
 
+            return hull_type->Speed();
 
         } else if (variable_name == "PartCapacity") {
             std::string part_type_name;
