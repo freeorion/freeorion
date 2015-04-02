@@ -236,8 +236,7 @@ namespace parse {
             |    tok.Stealth_           [ _val = PC_STEALTH ]
             |    tok.Fuel_              [ _val = PC_FUEL ]
             |    tok.Colony_            [ _val = PC_COLONY ]
-            |    tok.BattleSpeed_       [ _val = PC_BATTLE_SPEED ]
-            |    tok.StarlaneSpeed_     [ _val = PC_STARLANE_SPEED ]
+            |    tok.Speed_             [ _val = PC_SPEED ]
             |    tok.General_           [ _val = PC_GENERAL ]
             |    tok.Bombard_           [ _val = PC_BOMBARD ]
             |    tok.Research_          [ _val = PC_RESEARCH ]
@@ -358,8 +357,7 @@ namespace parse {
             |    tok.RebelTroops_           [ _val = METER_REBEL_TROOPS ]
             |    tok.Stealth_               [ _val = METER_STEALTH ]
             |    tok.Detection_             [ _val = METER_DETECTION ]
-            |    tok.BattleSpeed_           [ _val = METER_BATTLE_SPEED ]
-            |    tok.StarlaneSpeed_         [ _val = METER_STARLANE_SPEED ]
+            |    tok.Speed_                 [ _val = METER_SPEED ]
 
             |    tok.Size_                  [ _val = METER_SIZE ]
             ;
@@ -378,17 +376,6 @@ namespace parse {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval
             =    tok.Damage_ [ _val = METER_DAMAGE ]
-            |    tok.ROF_ [ _val = METER_ROF ]
-            |    tok.Range_ [ _val = METER_RANGE ]
-            |    tok.Speed_ [ _val = METER_SPEED ]
-            |    tok.Capacity_ [ _val = METER_CAPACITY ]
-            |    tok.AntiShipDamage_ [ _val = METER_ANTI_SHIP_DAMAGE ]
-            |    tok.AntiFighterDamage_ [ _val = METER_ANTI_FIGHTER_DAMAGE ]
-            |    tok.LaunchRate_ [ _val = METER_LAUNCH_RATE ]
-            |    tok.FighterWeaponRange_ [ _val = METER_FIGHTER_WEAPON_RANGE ]
-            |    tok.Stealth_ [ _val = METER_STEALTH ]
-            |    tok.Detection_ [ _val = METER_DETECTION ]
-            |    tok.Structure_ [ _val = METER_STRUCTURE ]
             ;
         static bool once = true;
         if (once) {
@@ -435,8 +422,7 @@ namespace parse {
             |    tok.SetRebelTroops_        [ _val = METER_REBEL_TROOPS ]
             |    tok.SetStealth_            [ _val = METER_STEALTH ]
             |    tok.SetDetection_          [ _val = METER_DETECTION ]
-            |    tok.SetBattleSpeed_        [ _val = METER_BATTLE_SPEED ]
-            |    tok.SetStarlaneSpeed_      [ _val = METER_STARLANE_SPEED ]
+            |    tok.SetSpeed_              [ _val = METER_SPEED ]
 
             |    tok.SetSize_               [ _val = METER_SIZE ]
             ;
@@ -456,17 +442,6 @@ namespace parse {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval
             =    tok.SetDamage_             [ _val = METER_DAMAGE ]
-            |    tok.SetROF_                [ _val = METER_ROF ]
-            |    tok.SetRange_              [ _val = METER_RANGE ]
-            |    tok.SetSpeed_              [ _val = METER_SPEED ]
-            |    tok.SetCapacity_           [ _val = METER_CAPACITY ]
-            |    tok.SetAntiShipDamage_     [ _val = METER_ANTI_SHIP_DAMAGE ]
-            |    tok.SetAntiFighterDamage_  [ _val = METER_ANTI_FIGHTER_DAMAGE ]
-            |    tok.SetLaunchRate_         [ _val = METER_LAUNCH_RATE ]
-            |    tok.SetFighterWeaponRange_ [ _val = METER_FIGHTER_WEAPON_RANGE ]
-            |    tok.SetStealth_            [ _val = METER_STEALTH ]
-            |    tok.SetDetection_          [ _val = METER_DETECTION ]
-            |    tok.SetStructure_          [ _val = METER_STRUCTURE ]
             ;
         static bool once = true;
         if (once) {

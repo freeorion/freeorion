@@ -39,8 +39,7 @@ namespace {
                 |   tok.Supply_
                 |   tok.Stealth_
                 |   tok.Detection_
-                |   tok.BattleSpeed_
-                |   tok.StarlaneSpeed_
+                |   tok.Speed_
                 |   tok.TradeStockpile_
                 |   tok.X_
                 |   tok.Y_

@@ -79,25 +79,25 @@ namespace {
                 ;
 
             hull_stats
-                =    parse::label(Speed_token)         > parse::double_ [ _a = _1 ]
-                >    parse::label(StarlaneSpeed_token) > parse::double_ [ _b = _1 ]
-                >    parse::label(Fuel_token)          > parse::double_ [ _c = _1 ]
-                >    parse::label(Stealth_token)       > parse::double_ [ _d = _1 ]
-                >    parse::label(Structure_token)     > parse::double_ [ _val = construct<HullTypeStats>(_c, _a, _b, _d, _1) ]
+                =   parse::label(Speed_token)       >   parse::double_ [ _a = _1 ]
+                >   parse::label(Fuel_token)        >   parse::double_ [ _c = _1 ]
+                >   parse::label(Stealth_token)     >   parse::double_ [ _d = _1 ]
+                >   parse::label(Structure_token)   >   parse::double_
+                    [ _val = construct<HullTypeStats>(_b, _a, _c, _1) ]
                 ;
 
             producible
-                =    tok.Unproducible_ [ _val = false ]
-                |    tok.Producible_ [ _val = true ]
-                |    eps [ _val = true ]
+                =   tok.Unproducible_ [ _val = false ]
+                |   tok.Producible_ [ _val = true ]
+                |   eps [ _val = true ]
                 ;
 
             slot
-                =    tok.Slot_
-                >    parse::label(Type_token) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
-                >    parse::label(Position_token)
-                >    '(' > parse::double_ [ _b = _1 ] > ',' > parse::double_ [ _c = _1 ] > lit(')')
-                        [ _val = construct<HullType::Slot>(_a, _b, _c) ]
+                =   tok.Slot_
+                >   parse::label(Type_token) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
+                >   parse::label(Position_token)
+                >   '(' > parse::double_ [ _b = _1 ] > ',' > parse::double_ [ _c = _1 ] > lit(')')
+                    [ _val = construct<HullType::Slot>(_a, _b, _c) ]
                 ;
 
             slots
@@ -121,17 +121,15 @@ namespace {
                 >   producible                                           [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
-                >   -(
-                        parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _f = _1 ]
-                     )
-                >    parse::label(Icon_token)        > tok.string
+                > -(parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _f = _1 ])
+                >   parse::label(Icon_token)        > tok.string
                     [ _val = construct<PartHullCommonParams>(_a, _b, _c, _d, _e, _f, _1) ]
             ;
 
             hull
                 =   hull_prefix(_a, _b)
                 >   hull_stats [ _c = _1 ]
-                >   -slots(_e)
+                >  -slots(_e)
                 >   common_params [ _d = _1 ]
                 >   parse::label(Graphic_token) > tok.string
                     [ insert(_r1, new_<HullType>(_a, _b, _c, _d, _e, _1)) ]
@@ -186,7 +184,6 @@ namespace {
             parse::token_iterator,
             HullTypeStats (),
             qi::locals<
-                double,
                 double,
                 double,
                 double,

@@ -54,7 +54,7 @@ Field::Field(const std::string& field_type, double x, double y, double radius) :
 
     UniverseObject::Init();
 
-    AddMeter(METER_STARLANE_SPEED);
+    AddMeter(METER_SPEED);
     AddMeter(METER_SIZE);
 
     UniverseObject::GetMeter(METER_SIZE)->Set(radius, radius);
@@ -147,14 +147,14 @@ bool Field::InField(double x, double y) const {
 void Field::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
-    GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
+    GetMeter(METER_SPEED)->ResetCurrent();
     // intentionally not resetting size, so that it is presistant
 }
 
 void Field::ClampMeters() {
     UniverseObject::ClampMeters();
 
-    // intentionally not clamping METER_STARLANE_SPEED, to allow negative speeds
+    // intentionally not clamping METER_SPEED, to allow negative speeds
     UniverseObject::GetMeter(METER_SIZE)->ClampCurrentToRange();
 }
 

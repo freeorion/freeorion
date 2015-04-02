@@ -534,10 +534,10 @@ BuildingType
                 Ship
                 OwnedBy empire = Source.Owner
                 WithinDistance distance = 50 condition = Source
-                StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
+                Speed low = 1 // Immobile objects do not get the starlane speed boost.
             ]
             stackinggroup = "LIGHTHOUSE_SPEED_STACK"
-            effects = SetStarlaneSpeed value = Value + 20
+            effects = SetSpeed value = Value + 20
     ]
     icon = "icons/building/lighthouse.png"
 
