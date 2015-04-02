@@ -818,8 +818,7 @@ void Planet::PopGrowthProductionResearchPhase() {
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
 
             // record depopulation of planet with species while owned by this empire
-            std::map<std::string, int>::iterator species_it =
-                empire->SpeciesShipsLost().find(SpeciesName());
+            std::map<std::string, int>::iterator species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());
             if (species_it == empire->SpeciesPlanetsDepoped().end())
                 empire->SpeciesPlanetsDepoped()[SpeciesName()] = 1;
             else
