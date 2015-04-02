@@ -90,8 +90,7 @@ namespace {
             case PC_FUEL:
             case PC_COLONY:
             case PC_ARMOUR:
-            case PC_BATTLE_SPEED:
-            case PC_STARLANE_SPEED:
+            case PC_SPEED:
             case PC_RESEARCH:
             case PC_INDUSTRY:
             case PC_TRADE:

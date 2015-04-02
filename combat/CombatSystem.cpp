@@ -499,14 +499,12 @@ namespace {
             ShipPartClass part_class = part->Class();
 
             // get the attack power for each weapon part
-            float part_attack = 0.0;
+            float part_attack = 0.0f;
 
-            if (part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES)
+            if (part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES || part_class == PC_FIGHTERS)
                 part_attack = ship->CurrentPartMeterValue(METER_DAMAGE, part_name);
-            else if (part_class == PC_FIGHTERS)
-                part_attack = ship->CurrentPartMeterValue(METER_ANTI_SHIP_DAMAGE, part_name);
 
-            if (part_attack > 0.0)
+            if (part_attack > 0.0f)
                 retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
         }
         return retval;

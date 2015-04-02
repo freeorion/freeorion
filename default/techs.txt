@@ -1910,13 +1910,13 @@ Tech
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
-                StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
+                Speed low = 1 // Immobile objects do not get the starlane speed boost.
                 WithinDistance distance = 50 condition = And [
                     Planet
                     OwnedBy empire = Source.Owner
                 ]
             ]
-        effects = SetStarlaneSpeed value = Value + 20
+        effects = SetSpeed value = Value + 20
     graphic = "icons/tech/stellar_navigation.png"
     
 //########################################################

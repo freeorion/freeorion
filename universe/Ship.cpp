@@ -55,8 +55,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     AddMeter(METER_DETECTION);
     AddMeter(METER_STRUCTURE);
     AddMeter(METER_MAX_STRUCTURE);
-    AddMeter(METER_BATTLE_SPEED);
-    AddMeter(METER_STARLANE_SPEED);
+    AddMeter(METER_SPEED);
     AddMeter(METER_TARGET_INDUSTRY);
     AddMeter(METER_INDUSTRY);
     AddMeter(METER_TARGET_RESEARCH);
@@ -78,9 +77,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
             case PC_MISSILES:
             case PC_FIGHTERS:
             case PC_POINT_DEFENSE: {
-                m_part_meters[std::make_pair(METER_DAMAGE,              part->Name())];
-                m_part_meters[std::make_pair(METER_ROF,                 part->Name())];
-                m_part_meters[std::make_pair(METER_RANGE,               part->Name())];
+                m_part_meters[std::make_pair(METER_DAMAGE,  part->Name())];
                 break;
             }
             default:
@@ -275,7 +272,7 @@ bool Ship::CanBombard() const {
 }
 
 float Ship::Speed() const
-{ return CurrentMeterValue(METER_STARLANE_SPEED); }
+{ return CurrentMeterValue(METER_SPEED); }
 
 const std::string& Ship::PublicName(int empire_id) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who
@@ -404,10 +401,8 @@ std::vector<float> Ship::AllWeaponsDamage(float shield_DR /* = 0.0 */) const {
         // get the attack power for each weapon part
         float part_attack = 0.0;
 
-        if (part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES)
+        if (part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES || part_class == PC_FIGHTERS)
             part_attack = this->CurrentPartMeterValue(METER_DAMAGE, part_name);
-        else if (part_class == PC_FIGHTERS)
-            part_attack = this->CurrentPartMeterValue(METER_ANTI_SHIP_DAMAGE, part_name);
 
         if (part_attack > shield_DR)
             retval.push_back(part_attack-shield_DR);
@@ -483,8 +478,8 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::GetMeter(METER_TARGET_TRADE)->ResetCurrent();
 
     UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
-    UniverseObject::GetMeter(METER_BATTLE_SPEED)->ResetCurrent();
-    UniverseObject::GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
+    UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
+    UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
     { it->second.ResetCurrent(); }
@@ -518,8 +513,8 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(METER_TRADE)->ClampCurrentToRange();
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_BATTLE_SPEED)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_STARLANE_SPEED)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
         it->second.ClampCurrentToRange();

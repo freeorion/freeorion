@@ -621,8 +621,7 @@ std::string SetMeter::Dump() const {
     case METER_SUPPLY:              retval += "Supply"; break;
     case METER_STEALTH:             retval += "Stealth"; break;
     case METER_DETECTION:           retval += "Detection"; break;
-    case METER_BATTLE_SPEED:        retval += "BattleSpeed"; break;
-    case METER_STARLANE_SPEED:      retval += "StarlaneSpeed"; break;
+    case METER_SPEED:               retval += "Speed"; break;
 
     default:                        retval += "?"; break;
     }
@@ -755,14 +754,8 @@ std::string SetShipPartMeter::Dump() const {
     std::string retval = DumpIndent();
     switch (m_meter) {
         case METER_DAMAGE:              retval += "SetDamage";              break;
-        case METER_ROF:                 retval += "SetROF";                 break;
-        case METER_RANGE:               retval += "SetRange";               break;
         case METER_SPEED:               retval += "SetSpeed";               break;
         case METER_CAPACITY:            retval += "SetCapacity";            break;
-        case METER_ANTI_SHIP_DAMAGE:    retval += "SetAntiShipDamage";      break;
-        case METER_ANTI_FIGHTER_DAMAGE: retval += "SetAntiFighterDamage";   break;
-        case METER_LAUNCH_RATE:         retval += "SetLaunchRate";          break;
-        case METER_FIGHTER_WEAPON_RANGE:retval += "SetFighterWeaponRange";  break;
         case METER_STEALTH:             retval += "SetStealth";             break;
         case METER_STRUCTURE:           retval += "SetStructure";           break;
         case METER_DETECTION:           retval += "SetDetection";           break;

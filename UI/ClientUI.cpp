@@ -206,8 +206,7 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
         icon_filename = "troops.png";       break;
     case METER_REBEL_TROOPS:
         icon_filename = "rebels.png";       break;
-    case METER_STARLANE_SPEED:
-    case METER_BATTLE_SPEED:
+    case METER_SPEED:
         icon_filename = "speed.png";        break;
     default:
         break;
