@@ -109,6 +109,7 @@ namespace Condition {
     struct OrderedBombarded;
     struct ValueTest;
     struct Location;
+    struct Described;
 }
 
 /** Returns a single string which describes a vector of Conditions. If multiple
@@ -185,8 +186,8 @@ struct FO_COMMON_API Condition::ConditionBase {
       * source object.*/
     virtual bool        SourceInvariant() const { return false; }
 
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
+    virtual std::string Description(bool negated = false) const = 0;
+    virtual std::string Dump() const = 0;
 
 protected:
     mutable Invariance  m_root_candidate_invariant;
@@ -458,6 +459,7 @@ struct FO_COMMON_API Condition::Homeworld : public Condition::ConditionBase {
         m_names()
     {}
     Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+        ConditionBase(),
         m_names(names)
     {}
     virtual ~Homeworld();
@@ -524,7 +526,7 @@ private:
 
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Condition::Armed : public Condition::ConditionBase {
-    Armed() {};
+    Armed() : ConditionBase() {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -543,6 +545,7 @@ private:
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Condition::Type : public Condition::ConditionBase {
     Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
+        ConditionBase(),
         m_type(type)
     {}
     virtual ~Type();
@@ -573,6 +576,7 @@ private:
   * in \a names. */
 struct FO_COMMON_API Condition::Building : public Condition::ConditionBase {
     Building(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+        ConditionBase(),
         m_names(names)
     {}
     virtual ~Building();
@@ -602,6 +606,7 @@ private:
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
     HasSpecial(const std::string& name) :
+        ConditionBase(),
         m_name(name),
         m_since_turn_low(0),
         m_since_turn_high(0)
@@ -609,6 +614,7 @@ struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
     HasSpecial(const std::string& name,
                const ValueRef::ValueRefBase<int>* since_turn_low,
                const ValueRef::ValueRefBase<int>* since_turn_high) :
+        ConditionBase(),
         m_name(name),
         m_since_turn_low(since_turn_low),
         m_since_turn_high(since_turn_high)
@@ -643,6 +649,7 @@ private:
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API Condition::HasTag : public Condition::ConditionBase {
     HasTag(const std::string& name) :
+        ConditionBase(),
         m_name(name)
     {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -666,6 +673,7 @@ private:
 /** Matches all objects that were created on turns within the specified range. */
 struct FO_COMMON_API Condition::CreatedOnTurn : public Condition::ConditionBase {
     CreatedOnTurn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
+        ConditionBase(),
         m_low(low),
         m_high(high)
     {}
@@ -699,6 +707,7 @@ private:
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API Condition::Contains : public Condition::ConditionBase {
     Contains(const ConditionBase* condition) :
+        ConditionBase(),
         m_condition(condition)
     {}
     virtual ~Contains();
@@ -730,6 +739,7 @@ private:
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API Condition::ContainedBy : public Condition::ConditionBase {
     ContainedBy(const ConditionBase* condition) :
+        ConditionBase(),
         m_condition(condition)
     {}
     virtual ~ContainedBy();
@@ -758,6 +768,7 @@ private:
 /** Matches all objects that are in the system with the indicated \a system_id */
 struct FO_COMMON_API Condition::InSystem : public Condition::ConditionBase {
     InSystem(const ValueRef::ValueRefBase<int>* system_id) :
+        ConditionBase(),
         m_system_id(system_id)
     {}
     virtual ~InSystem();
@@ -786,6 +797,7 @@ private:
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API Condition::ObjectID : public Condition::ConditionBase {
     ObjectID(const ValueRef::ValueRefBase<int>* object_id) :
+        ConditionBase(),
         m_object_id(object_id)
     {}
     virtual ~ObjectID();
@@ -817,6 +829,7 @@ private:
   * matched. */
 struct FO_COMMON_API Condition::PlanetType : public Condition::ConditionBase {
     PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types) :
+        ConditionBase(),
         m_types(types)
     {}
     virtual ~PlanetType();
@@ -848,6 +861,7 @@ private:
   * matched. */
 struct FO_COMMON_API Condition::PlanetSize : public Condition::ConditionBase {
     PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
+        ConditionBase(),
         m_sizes(sizes)
     {}
     virtual ~PlanetSize();
@@ -880,6 +894,7 @@ private:
 struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionBase {
     PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
                       const ValueRef::ValueRefBase<std::string>* species_name_ref = 0) :
+        ConditionBase(),
         m_environments(environments),
         m_species_name(species_name_ref)
     {}
@@ -1016,6 +1031,7 @@ private:
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct FO_COMMON_API Condition::FocusType : public Condition::ConditionBase {
     FocusType(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+        ConditionBase(),
         m_names(names)
     {}
     virtual ~FocusType();
@@ -1045,6 +1061,7 @@ private:
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct FO_COMMON_API Condition::StarType : public Condition::ConditionBase {
     StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types) :
+        ConditionBase(),
         m_types(types)
     {}
     virtual ~StarType();
@@ -1073,6 +1090,7 @@ private:
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
 struct FO_COMMON_API Condition::DesignHasHull : public Condition::ConditionBase {
     DesignHasHull(const std::string& name) :
+        ConditionBase(),
         m_name(name)
     {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -1098,6 +1116,7 @@ private:
 struct FO_COMMON_API Condition::DesignHasPart : public Condition::ConditionBase {
     DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
                   const std::string& name) :
+        ConditionBase(),
         m_low(low),
         m_high(high),
         m_name(name)
@@ -1134,6 +1153,7 @@ private:
 struct FO_COMMON_API Condition::DesignHasPartClass : public Condition::ConditionBase {
     DesignHasPartClass(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
                        ShipPartClass part_class) :
+        ConditionBase(),
         m_low(low),
         m_high(high),
         m_class(part_class)
@@ -1169,6 +1189,7 @@ private:
   * \a name */
 struct FO_COMMON_API Condition::PredefinedShipDesign : public Condition::ConditionBase {
     PredefinedShipDesign(const std::string& name) :
+        ConditionBase(),
         m_name(name)
     {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -1192,6 +1213,7 @@ private:
 /** Matches ships whose design id \a id. */
 struct FO_COMMON_API Condition::NumberedShipDesign : public Condition::ConditionBase {
     NumberedShipDesign(const ValueRef::ValueRefBase<int>* design_id) :
+        ConditionBase(),
         m_design_id(design_id)
     {}
     virtual ~NumberedShipDesign();
@@ -1220,6 +1242,7 @@ private:
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct FO_COMMON_API Condition::ProducedByEmpire : public Condition::ConditionBase {
     ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+        ConditionBase(),
         m_empire_id(empire_id)
     {}
     virtual ~ProducedByEmpire();
@@ -1248,6 +1271,7 @@ private:
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct FO_COMMON_API Condition::Chance : public Condition::ConditionBase {
     Chance(const ValueRef::ValueRefBase<double>* chance) :
+        ConditionBase(),
         m_chance(chance)
     {}
     virtual ~Chance();
@@ -1278,6 +1302,7 @@ private:
 struct FO_COMMON_API Condition::MeterValue : public Condition::ConditionBase {
     MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low,
                const ValueRef::ValueRefBase<double>* high) :
+        ConditionBase(),
         m_meter(meter),
         m_low(low),
         m_high(high)
@@ -1316,6 +1341,7 @@ struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::Condition
                        MeterType meter,
                        const ValueRef::ValueRefBase<double>* low,
                        const ValueRef::ValueRefBase<double>* high) :
+        ConditionBase(),
         m_part_name(ship_part_name),
         m_meter(meter),
         m_low(low),
@@ -1352,6 +1378,7 @@ struct FO_COMMON_API Condition::EmpireMeterValue : public Condition::ConditionBa
     EmpireMeterValue(const std::string& meter,
                      const ValueRef::ValueRefBase<double>* low,
                      const ValueRef::ValueRefBase<double>* high) :
+        ConditionBase(),
         m_empire_id(0),
         m_meter(meter),
         m_low(low),
@@ -1361,6 +1388,7 @@ struct FO_COMMON_API Condition::EmpireMeterValue : public Condition::ConditionBa
                      const std::string& meter,
                      const ValueRef::ValueRefBase<double>* low,
                      const ValueRef::ValueRefBase<double>* high) :
+        ConditionBase(),
         m_empire_id(empire_id),
         m_meter(meter),
         m_low(low),
@@ -1396,6 +1424,7 @@ private:
 struct FO_COMMON_API Condition::EmpireStockpileValue : public Condition::ConditionBase {
     EmpireStockpileValue(ResourceType stockpile, const ValueRef::ValueRefBase<double>* low,
                          const ValueRef::ValueRefBase<double>* high) :
+        ConditionBase(),
         m_stockpile(stockpile),
         m_low(low),
         m_high(high)
@@ -1430,6 +1459,7 @@ private:
 /** Matches all objects whose owner who has tech \a name. */
 struct FO_COMMON_API Condition::OwnerHasTech : public Condition::ConditionBase {
     OwnerHasTech(const std::string& name) :
+        ConditionBase(),
         m_name(name)
     {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -1453,6 +1483,7 @@ private:
 /** Matches all objects whose owner who has the building type \a name available. */
 struct FO_COMMON_API Condition::OwnerHasBuildingTypeAvailable : public Condition::ConditionBase {
     OwnerHasBuildingTypeAvailable(const std::string& name) :
+        ConditionBase(),
         m_name(name)
     {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -1476,6 +1507,7 @@ private:
 /** Matches all objects whose owner who has the ship design \a id available. */
 struct FO_COMMON_API Condition::OwnerHasShipDesignAvailable : public Condition::ConditionBase {
     OwnerHasShipDesignAvailable(int id) :
+        ConditionBase(),
         m_id(id)
     {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -1499,6 +1531,7 @@ private:
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct FO_COMMON_API Condition::VisibleToEmpire : public Condition::ConditionBase {
     VisibleToEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+        ConditionBase(),
         m_empire_id(empire_id)
     {}
     virtual ~VisibleToEmpire();
@@ -1530,6 +1563,7 @@ private:
   * relatively few matches. */
 struct FO_COMMON_API Condition::WithinDistance : public Condition::ConditionBase {
     WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition) :
+        ConditionBase(),
         m_distance(distance),
         m_condition(condition)
     {}
@@ -1562,6 +1596,7 @@ private:
   * relatively few matches. */
 struct FO_COMMON_API Condition::WithinStarlaneJumps : public Condition::ConditionBase {
     WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition) :
+        ConditionBase(),
         m_jumps(jumps),
         m_condition(condition)
     {}
@@ -1596,6 +1631,7 @@ private:
   * to an existing lane. */
 struct FO_COMMON_API Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
     CanAddStarlaneConnection(const ConditionBase* condition) :
+        ConditionBase(),
         m_condition(condition)
     {}
     virtual ~CanAddStarlaneConnection();
@@ -1624,6 +1660,7 @@ private:
   * in \a empire_ids. */
 struct FO_COMMON_API Condition::ExploredByEmpire : public Condition::ConditionBase {
     ExploredByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+        ConditionBase(),
         m_empire_id(empire_id)
     {}
     virtual ~ExploredByEmpire();
@@ -1672,6 +1709,7 @@ private:
   * empire with id \a empire_id */
 struct FO_COMMON_API Condition::FleetSupplyableByEmpire : public Condition::ConditionBase {
     FleetSupplyableByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+        ConditionBase(),
         m_empire_id(empire_id)
     {}
     virtual ~FleetSupplyableByEmpire();
@@ -1701,6 +1739,7 @@ private:
   * network of the empire with id \a empire_id */
 struct FO_COMMON_API Condition::ResourceSupplyConnectedByEmpire : public Condition::ConditionBase {
     ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id, const ConditionBase* condition) :
+        ConditionBase(),
         m_empire_id(empire_id),
         m_condition(condition)
     {}
@@ -1769,6 +1808,7 @@ private:
   * object that matches \a m_by_object_condition. */
 struct FO_COMMON_API Condition::OrderedBombarded : public Condition::ConditionBase {
     OrderedBombarded(const ConditionBase* by_object_condition) :
+        ConditionBase(),
         m_by_object_condition(by_object_condition)
     {}
     virtual ~OrderedBombarded();
@@ -1799,6 +1839,7 @@ struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
     ValueTest(const ValueRef::ValueRefBase<double>* value_ref,
               const ValueRef::ValueRefBase<double>* low,
               const ValueRef::ValueRefBase<double>* high) :
+        ConditionBase(),
         m_value_ref(value_ref),
         m_low(low),
         m_high(high)
@@ -1836,6 +1877,7 @@ struct FO_COMMON_API Condition::Location : public Condition::ConditionBase {
 public:
     Location(ContentType content_type, const ValueRef::ValueRefBase<std::string>* name1,
              const ValueRef::ValueRefBase<std::string>* name2 = 0) :
+        ConditionBase(),
         m_name1(name1),
         m_name2(name2),
         m_content_type(content_type)
@@ -1869,6 +1911,7 @@ private:
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
     And(const std::vector<const ConditionBase*>& operands) :
+        ConditionBase(),
         m_operands(operands)
     {}
     virtual ~And();
@@ -1897,6 +1940,7 @@ private:
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Condition::Or : public Condition::ConditionBase {
     Or(const std::vector<const ConditionBase*>& operands) :
+        ConditionBase(),
         m_operands(operands)
     {}
     virtual ~Or();
@@ -1924,6 +1968,7 @@ private:
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Condition::Not : public Condition::ConditionBase {
     Not(const ConditionBase* operand) :
+        ConditionBase(),
         m_operand(operand)
     {}
     virtual ~Not();
@@ -1941,6 +1986,37 @@ struct FO_COMMON_API Condition::Not : public Condition::ConditionBase {
 
 private:
     const ConditionBase* m_operand;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches whatever its subcondition matches, but has a customized description
+  * string that is returned by Description() by looking up in the stringtable. */
+struct FO_COMMON_API Condition::Described : public Condition::ConditionBase {
+    Described(const ConditionBase* condition, const std::string& desc_stringtable_key) :
+        ConditionBase(),
+        m_condition(condition),
+        m_desc_stringtable_key(desc_stringtable_key)
+    {}
+    virtual ~Described();
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const  { return m_condition ? m_condition->RootCandidateInvariant() : true; }
+    virtual bool        TargetInvariant() const         { return m_condition ? m_condition->TargetInvariant() : true; }
+    virtual bool        SourceInvariant() const         { return m_condition ? m_condition->SourceInvariant() : true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const                    { return m_condition ? m_condition->Dump() : ""; }
+    const ConditionBase*SubCondition() const            { return m_condition; }
+    const std::string&  DescriptionStringKey() const    { return m_desc_stringtable_key; }
+
+private:
+    const ConditionBase*    m_condition;
+    std::string             m_desc_stringtable_key;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2348,6 +2424,14 @@ void Condition::Not::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_operand);
+}
+
+template <class Archive>
+void Condition::Described::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_condition)
+        & BOOST_SERIALIZATION_NVP(m_desc_stringtable_key);
 }
 
 #endif // _Condition_h_

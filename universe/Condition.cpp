@@ -26,6 +26,8 @@ using boost::io::str;
 
 extern int g_indent;
 
+bool UserStringExists(const std::string& str);
+
 namespace {
     void AddAllObjectsSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingObjects());
@@ -7562,4 +7564,48 @@ std::string Condition::Not::Dump() const {
     retval += m_operand->Dump();
     --g_indent;
     return retval;
+}
+
+///////////////////////////////////////////////////////////
+// Described                                             //
+///////////////////////////////////////////////////////////
+Condition::Described::~Described()
+{ delete m_condition; }
+
+bool Condition::Described::operator==(const Condition::ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const Condition::Described& rhs_ = static_cast<const Condition::Described&>(rhs);
+
+   if (m_desc_stringtable_key != rhs_.m_desc_stringtable_key)
+        return false;
+
+    CHECK_COND_VREF_MEMBER(m_condition)
+
+    return true;
+}
+
+void Condition::Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
+                          SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    TemporaryPtr<const UniverseObject> no_object;
+    ScriptingContext local_context(parent_context, no_object);
+
+    if (!m_condition) {
+        ErrorLogger() << "Condition::Described::Eval found no subcondition to evaluate!";
+        return;
+    }
+
+    return m_condition->Eval(parent_context, matches, non_matches, search_domain);
+}
+
+std::string Condition::Described::Description(bool negated/* = false*/) const {
+    if (!m_desc_stringtable_key.empty() && UserStringExists(m_desc_stringtable_key))
+        return UserString(m_desc_stringtable_key);
+    if (m_condition)
+        return m_condition->Description(negated);
+    return "";
 }

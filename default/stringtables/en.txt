@@ -179,6 +179,9 @@ Debug Data Dump
 UNOWNED
 Unowned
 
+NOWHERE
+Cannot be produced
+
 ###########################
 # Predefined Ship Designs #
 ###########################
