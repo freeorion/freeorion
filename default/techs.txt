@@ -2159,7 +2159,7 @@ Tech
     prerequisites = [
         "SHP_MINIAST_SWARM"
         "SHP_HEAVY_AST_HULL"
-	]
+    ]
     unlock = [
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
