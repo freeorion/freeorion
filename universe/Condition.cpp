@@ -3282,12 +3282,12 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
     if (m_species_name)
         species_str = m_species_name->Description();
     if (species_str.empty())
-        species_str = UserString("DESC_PLANET_ENVIRONMENT_CUR_SPECIES");
+        species_str = "DESC_PLANET_ENVIRONMENT_CUR_SPECIES";
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_PLANET_ENVIRONMENT")
         : UserString("DESC_PLANET_ENVIRONMENT_NOT"))
         % values_str
-        % species_str);
+        % UserString(species_str));
 }
 
 std::string Condition::PlanetEnvironment::Dump() const {
