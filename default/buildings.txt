@@ -7,7 +7,7 @@ BuildingType
     buildcost = 200
     buildtime = 1
     tags = "ANTIQUATED"
-    location = Not All
+    location = Described description = "NOWHERE" condition = Not All
     effectsgroups = [
 /*  // testing effects
         EffectsGroup
