@@ -474,7 +474,7 @@ private:
       * TemporaryPtr on failure.  Useful mostly for times when ID needs
       * to be consistent on client and server */
     template <class T>
-    TemporaryPtr<T>            InsertID(T* obj, int id);
+    TemporaryPtr<T>             InsertID(T* obj, int id);
 
     struct GraphImpl;
 
