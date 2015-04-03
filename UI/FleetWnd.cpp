@@ -1075,7 +1075,6 @@ private:
     void                Refresh();
     void                SetStatIconValues();
     void                UpdateAggressionToggle();
-    std::string         StatTooltip(MeterType stat_name) const;
     void                DoLayout();
 
     const int           m_fleet_id;
@@ -1125,42 +1124,42 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(METER_SIZE));
+        icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
         AttachChild(icon);
 
         // stat icon for fleet damage
         icon = new StatisticIcon(DamageIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(METER_DAMAGE));
+        icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
         AttachChild(icon);
 
         // stat icon for fleet structure
         icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(METER_STRUCTURE));
+        icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
         AttachChild(icon);
 
         // stat icon for fleet shields
         icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(METER_SHIELD));
+        icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
         AttachChild(icon);
 
         // stat icon for fleet fuel
         icon = new StatisticIcon(ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(METER_FUEL));
+        icon->SetBrowseText(UserString("FW_FLEET_FUEL_SUMMARY"));
         AttachChild(icon);
 
         // stat icon for fleet speed
         icon = new StatisticIcon(SpeedIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(METER_SPEED, icon));
         icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(StatTooltip(METER_SPEED));
+        icon->SetBrowseText(UserString("FW_FLEET_SPEED_SUMMARY"));
         AttachChild(icon);
 
 
@@ -1551,23 +1550,6 @@ void FleetDataPanel::UpdateAggressionToggle() {
             FleetPassiveIcon(), UserString("FW_AUTO"), UserString("FW_AUTO_DESC")));
         m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     }
-}
-
-std::string FleetDataPanel::StatTooltip(MeterType stat_name) const {
-    if (stat_name == METER_SPEED)
-        return UserString("FW_FLEET_SPEED_SUMMARY");
-    else if (stat_name ==  METER_FUEL)
-        return UserString("FW_FLEET_FUEL_SUMMARY");
-    else if (stat_name == METER_SHIELD)
-        return UserString("FW_FLEET_SHIELD_SUMMARY");
-    else if (stat_name == METER_STRUCTURE)
-        return UserString("FW_FLEET_STRUCTURE_SUMMARY");
-    else if (stat_name == METER_DAMAGE)
-        return UserString("FW_FLEET_DAMAGE_SUMMARY");
-    else if (stat_name == METER_SIZE)
-        return UserString("FW_FLEET_COUNT_SUMMARY");
-    else
-        return "";
 }
 
 void FleetDataPanel::DoLayout() {
@@ -2560,28 +2542,28 @@ void FleetWnd::Init(int selected_fleet_id) {
     StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(StatTooltip(METER_SIZE));
+    icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
     AttachChild(icon);
 
     // stat icon for fleet damage
     icon = new StatisticIcon(DamageIcon(), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(StatTooltip(METER_DAMAGE));
+    icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
     AttachChild(icon);
 
     // stat icon for fleet structure
     icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
     icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(StatTooltip(METER_STRUCTURE));
+    icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
     AttachChild(icon);
 
     // stat icon for fleet shields
     icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false);
     m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
     icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(StatTooltip(METER_SHIELD));
+    icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
     AttachChild(icon);
 
     // create fleet list box
@@ -2680,23 +2662,6 @@ void FleetWnd::SetStatIconValues() {
         else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);
     }
-}
-
-std::string FleetWnd::StatTooltip(MeterType stat_type) const {
-    if (stat_type == METER_SPEED)
-        return UserString("FW_FLEET_SPEED_SUMMARY");
-    else if (stat_type ==  METER_FUEL)
-        return UserString("FW_FLEET_FUEL_SUMMARY");
-    else if (stat_type == METER_SHIELD)
-        return UserString("FW_FLEET_SHIELD_SUMMARY");
-    else if (stat_type == METER_STRUCTURE)
-        return UserString("FW_FLEET_STRUCTURE_SUMMARY");
-    else if (stat_type == METER_DAMAGE)
-        return UserString("FW_FLEET_DAMAGE_SUMMARY");
-    else if (stat_type == METER_SIZE)
-        return UserString("FW_FLEET_COUNT_SUMMARY");
-    else
-        return "";
 }
 
 void FleetWnd::RefreshStateChangedSignals() {
