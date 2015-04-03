@@ -207,7 +207,7 @@ struct HullTypeStats {
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
         ar  & BOOST_SERIALIZATION_NVP(fuel)
-            & BOOST_SERIALIZATION_NVP(_speed)
+            & BOOST_SERIALIZATION_NVP(speed)
             & BOOST_SERIALIZATION_NVP(stealth)
             & BOOST_SERIALIZATION_NVP(structure);
     }
