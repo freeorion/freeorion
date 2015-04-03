@@ -1139,7 +1139,7 @@ void SetOwner::Execute(const ScriptingContext& context) const {
         // if old fleet is empty, destroy it.  Don't reassign ownership of fleet
         // in case that would reval something to the recipient that shouldn't be...
         if (fleet->Empty())
-            GetUniverse().EffectDestroy(fleet->ID());
+            GetUniverse().EffectDestroy(fleet->ID(), INVALID_OBJECT_ID);    // no particular source destroyed the fleet in this case
     }
 }
 
@@ -1797,7 +1797,12 @@ void Destroy::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "Destroy::Execute passed no target object";
         return;
     }
-    GetUniverse().EffectDestroy(context.effect_target->ID());
+
+    int source_id = INVALID_OBJECT_ID;
+    if (context.source)
+        source_id = context.source->ID();
+
+    GetUniverse().EffectDestroy(context.effect_target->ID(), source_id);
 }
 
 std::string Destroy::Description() const
@@ -2203,7 +2208,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
 
         if (old_fleet && old_fleet->Empty()) {
             old_sys->Remove(old_fleet->ID());
-            universe.EffectDestroy(old_fleet->ID());
+            universe.EffectDestroy(old_fleet->ID(), INVALID_OBJECT_ID); // no particular object destroyed this fleet
         }
 
     } else if (TemporaryPtr<Planet> planet = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
@@ -2428,7 +2433,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
             old_fleet->RemoveShip(ship->ID());
             if (old_fleet->Empty()) {
                 old_sys->Remove(old_fleet->ID());
-                GetUniverse().EffectDestroy(old_fleet->ID());
+                GetUniverse().EffectDestroy(old_fleet->ID(), INVALID_OBJECT_ID);    // no object in particular destroyed this fleet
             }
         }
 
@@ -2610,7 +2615,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         if (old_fleet && old_fleet->Empty()) {
             if (old_sys)
                 old_sys->Remove(old_fleet->ID());
-            GetUniverse().EffectDestroy(old_fleet->ID());
+            GetUniverse().EffectDestroy(old_fleet->ID(), INVALID_OBJECT_ID);    // no object in particular destroyed this fleet
         }
 
     } else if (TemporaryPtr<Field> field = boost::dynamic_pointer_cast<Field>(target)) {
