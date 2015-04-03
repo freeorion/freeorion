@@ -4270,25 +4270,12 @@ METER_STEALTH
 Tarnung
 METER_DETECTION
 Aufklärungsreichweite
-METER_BATTLE_SPEED
-Kampfgeschwindigkeit
-METER_STARLANE_SPEED
-Geschwindigkeit in Sternstraße
 METER_DAMAGE
 Schaden
-METER_ROF
-Feuerrate
-METER_RANGE
-Reichweite
 METER_SPEED
 Geschwindigkeit
 METER_CAPACITY
 Kapazität
-METER_LAUNCH_RATE
-Abschussrate
-METER_FIGHTER_WEAPON_RANGE
-Waffenreichweite der Abfangjäger
-
 METER_SIZE
 Größe
 
@@ -4395,10 +4382,6 @@ PC_FUEL
 Treibstoff
 PC_COLONY
 Kolonisten
-PC_BATTLE_SPEED
-Kampf Geschwindigkeit
-PC_STARLANE_SPEED
-Sternstraßen Geschwindigkeit
 PC_GENERAL
 Sonstiges
 
