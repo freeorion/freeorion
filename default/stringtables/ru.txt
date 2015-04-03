@@ -4374,29 +4374,12 @@ METER_STEALTH
 Скрытность
 METER_DETECTION
 Обнаружение
-METER_BATTLE_SPEED
-Скорость в бою
-METER_STARLANE_SPEED
-Межзвездная скорость
 METER_DAMAGE
 Урон
-METER_ROF
-Частота огня
-METER_RANGE
-Расстояние
 METER_SPEED
 Скорость
 METER_CAPACITY
 Вместимость
-METER_ANTI_SHIP_DAMAGE
-Урон кораблям
-METER_ANTI_FIGHTER_DAMAGE
-Урон истребителям
-METER_LAUNCH_RATE
-Скорость запуска
-METER_FIGHTER_WEAPON_RANGE
-Дальность орудий истребителей
-
 METER_SIZE
 Размер
 
@@ -4527,10 +4510,6 @@ PC_FUEL
 Топливо
 PC_COLONY
 Колонизация
-PC_BATTLE_SPEED
-Скорость в бою
-PC_STARLANE_SPEED
-Межзвездная скорость
 PC_GENERAL
 Общий 
 PC_BOMBARD
