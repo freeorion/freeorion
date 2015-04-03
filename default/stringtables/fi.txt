@@ -1980,28 +1980,12 @@ METER_STEALTH
 Häivetaso
 METER_DETECTION
 Havaitseminen
-METER_BATTLE_SPEED
-Taistelunopeus
-METER_STARLANE_SPEED
-Tähtilinjanopeus
 METER_DAMAGE
 Vahinko
-METER_ROF
-Tulinopeus
-METER_RANGE
-Kantama
 METER_SPEED
 Nopeus
 METER_CAPACITY
 Kapasiteetti
-METER_ANTI_SHIP_DAMAGE
-Vahinko aluksia vastaan
-METER_ANTI_FIGHTER_DAMAGE
-Vahinko hävittäjiä vastaan
-METER_LAUNCH_RATE
-Laukaisutahti
-METER_FIGHTER_WEAPON_RANGE
-Hävittäjän aseiden kantama
 
 # EmpireAffiliationTypes
 
@@ -2074,10 +2058,6 @@ PC_FUEL
 Polttoaine
 PC_COLONY
 Kolonisaatio
-PC_BATTLE_SPEED
-Taistelunopeus
-PC_STARLANE_SPEED
-Tähtilinjanopeus
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####

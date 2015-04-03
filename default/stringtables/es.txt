@@ -2165,28 +2165,12 @@ METER_STEALTH
 Ocultación
 METER_DETECTION
 Detección
-METER_BATTLE_SPEED
-Velocidad de Batalla
-METER_STARLANE_SPEED
-Velocidad de Línea Estelar
 METER_DAMAGE
 Daño
-METER_ROF
-Candecia de Disparo
-METER_RANGE
-Alcance
 METER_SPEED
 Velocidad
 METER_CAPACITY
 Capacidad
-METER_ANTI_SHIP_DAMAGE
-Daño Anti Nave
-METER_ANTI_FIGHTER_DAMAGE
-Daño Anti Caza
-METER_LAUNCH_RATE
-Cadencia de Lanzamiento
-METER_FIGHTER_WEAPON_RANGE
-Alcance de Disparo de Caza
 
 # EmpireAffiliationTypes
 
@@ -2275,10 +2259,6 @@ PC_FUEL
 Combustible
 PC_COLONY
 Colonización
-PC_BATTLE_SPEED
-Velocidad de Batalla
-PC_STARLANE_SPEED
-Velocidad de Línea Estelar
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
