@@ -2191,7 +2191,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     m_marked_for_victory.clear();
     std::map< std::string, std::set<int> > executed_nonstacking_effects;
     bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
-    
+
     // grouping targets causes by effects group
     // sorting by effects group has already been done in GetEffectsAndTargets()
     // FIXME: GetEffectsAndTargets already produces this separation, exploit that
@@ -2216,7 +2216,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     }
 
     // execute each effects group one by one
-    std::vector< std::pair<const Effect::EffectsGroup*, Effect::TargetsCauses> >::iterator effect_group_it;
+    std::vector<std::pair<const Effect::EffectsGroup*, Effect::TargetsCauses> >::iterator effect_group_it;
     for (effect_group_it = dispatched_targets_causes.begin();
          effect_group_it != dispatched_targets_causes.end(); ++effect_group_it)
     {
@@ -2281,12 +2281,46 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                                include_empire_meter_effects);
     }
 
+    // collect info about source objects for destruction, to sure theire info is
+    // available even if they are destroyed by the upcoming effect destruction
+    // TODO...
+
     // actually do destroy effect action.  Executing the effect just marks
     // objects to be destroyed, but doesn't actually do so in order to ensure
     // no interaction in order of effects and source or target objects being
     // destroyed / deleted between determining target sets and executing effects
-    for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it)
-        RecursiveDestroy(*it);
+    for (std::map<int, std::set<int> >::iterator it = m_marked_destroyed.begin();
+         it != m_marked_destroyed.end(); ++it)
+    {
+        TemporaryPtr<UniverseObject> obj = GetUniverseObject(it->first);
+        if (!obj)
+            continue;
+        const std::set<int>& contents = obj->ContainedObjectIDs();
+
+        // recording of what species/empire destroyed what other stuff in
+        // empire statistics for this destroyed object and any contained objects
+        for (std::set<int>::const_iterator source_it = it->second.begin();
+             source_it != it->second.end(); ++source_it)
+        { CountDestructionInStats(it->first, *source_it); }
+
+        for (std::set<int>::const_iterator dest_it = contents.begin();
+             dest_it != contents.end(); ++dest_it)
+        {
+            for (std::set<int>::const_iterator source_it = it->second.begin();
+                 source_it != it->second.end(); ++source_it)
+            { CountDestructionInStats(*dest_it, *source_it); }
+        }
+        // not worried about fleets being deleted because all their ships were
+        // destroyed...  as of this writing there are no stats tracking
+        // destruction of fleets.
+
+        // do actual recursive destruction.
+        RecursiveDestroy(it->first);
+    }
+}
+
+void Universe::CountDestructionInStats(int object_id, int source_object_id) {
+    // todo: this!
 }
 
 void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis) {
@@ -3408,8 +3442,11 @@ bool Universe::Delete(int object_id) {
     return true;
 }
 
-void Universe::EffectDestroy(int object_id)
-{ m_marked_destroyed.insert(object_id); }
+void Universe::EffectDestroy(int object_id, int source_object_id) {
+    if (m_marked_destroyed.find(object_id) != m_marked_destroyed.end())
+        return;
+    m_marked_destroyed[object_id].insert(source_object_id);
+}
 
 void Universe::EffectVictory(int object_id, const std::string& reason_string)
 { m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string)); }
