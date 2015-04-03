@@ -5615,29 +5615,12 @@ METER_STEALTH
 Furtivité
 METER_DETECTION
 Rayon de Détection
-METER_BATTLE_SPEED
-Vitesse au combat
-METER_STARLANE_SPEED
-Vitesse sur Voies spatiales
 METER_DAMAGE
 Dommages
-METER_ROF
-Cadence de tir
-METER_RANGE
-Portée
 METER_SPEED
 Vitesse
 METER_CAPACITY
 Capacité
-METER_ANTI_SHIP_DAMAGE
-Dommages anti-astronefs
-METER_ANTI_FIGHTER_DAMAGE
-Dommages anti-chasseurs
-METER_LAUNCH_RATE
-Cadence de lancement
-METER_FIGHTER_WEAPON_RANGE
-Portée armement chasseurs
-
 METER_SIZE
 Taille
 
@@ -5766,10 +5749,6 @@ PC_FUEL
 Carburant
 PC_COLONY
 Colonisation
-PC_BATTLE_SPEED
-Vitesse au combat
-PC_STARLANE_SPEED
-Vitesse sur Voies spatiales
 PC_GENERAL
 Général
 PC_BOMBARD
