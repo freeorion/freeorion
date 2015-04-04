@@ -97,8 +97,8 @@ BuildingType
             ]
             effects = SetTargetResearch value = Value + 5
 
-	EffectsGroup	// Destroy cultural library when the species is no longer present
-	    scope = Source
+        EffectsGroup    // Destroy cultural library when the species is no longer present
+            scope = Source
             activation = ContainedBy And [
                 Object id = Source.PlanetID
                 Population high = 0
@@ -836,7 +836,7 @@ BuildingType
                     icon = "icons/building/blackhole.png"
                     parameters = tag = "system" data = Source.SystemID
                     empire = Source.Owner
-				]
+                ]
 
         EffectsGroup
             scope = Source
@@ -1622,7 +1622,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
-				Source
+                Source
                 OwnedBy affiliation = AnyEmpire
                 Species name = "SP_EXPERIMENTOR" 
             ]
@@ -1675,9 +1675,9 @@ BuildingType
                     parameters = [
                         tag = "planet" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
-						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "5"
-						]
+                    ]
             ]
 
         EffectsGroup
@@ -1695,9 +1695,9 @@ BuildingType
                     parameters = [
                         tag = "planet" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
-						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
-						]
+                    ]
             ]
 
         EffectsGroup
@@ -1718,9 +1718,9 @@ BuildingType
                     parameters = [
                         tag = "planet" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
-						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "5"
-						]
+                    ]
             ]
 
         EffectsGroup
@@ -1738,9 +1738,9 @@ BuildingType
                     parameters = [
                         tag = "planet" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
-						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
-						]
+                    ]
             ]
 
         EffectsGroup
@@ -1761,9 +1761,9 @@ BuildingType
                     parameters = [
                         tag = "planet" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
-						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "5"
-						]
+                    ]
             ]
 
         EffectsGroup
@@ -1781,9 +1781,9 @@ BuildingType
                     parameters = [
                         tag = "planet" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
-						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
-						]
+                    ]
             ]
 
         EffectsGroup
@@ -1802,9 +1802,9 @@ BuildingType
                     parameters = [
                         tag = "planet" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_COSMIC_DRAGON"
-						tag = "species" data = "SP_EXPERIMENTOR"
+                        tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "3"
-						]
+                    ]
             ]
     ]
     icon = ""
