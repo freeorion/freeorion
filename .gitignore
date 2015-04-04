@@ -75,3 +75,6 @@ DerivedData
 *.exp
 *.opensdf
 msvc2010/FreeOrion/Release/FreeOrion.res
+
+# KDevelop4
+*.kdev4
