@@ -32,7 +32,7 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 
 namespace {
-    const float EPSILON = 0.00001f;
+    const float EPSILON = 0.0001f;
     const std::string EMPTY_STRING;
 
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
