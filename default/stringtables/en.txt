@@ -3306,6 +3306,9 @@ ENC_SYSTEM
 ENC_FIELD
 [Game - Fields]
 
+ENC_HOMEWORLDS
+Species' Homeworlds
+
 ENC_INDEX
 Encyclopedia Index
 
