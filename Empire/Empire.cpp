@@ -1789,8 +1789,8 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
                     systems_containing_friendly_fleets.insert(system_id);
                     if (fleet->ArrivalStarlane()==system_id)
                         unrestricted_friendly_systems.insert(system_id);
-                } else {
-                    systems_with_lane_preserving_fleets.insert(system_id);
+                    else
+                        systems_with_lane_preserving_fleets.insert(system_id);
                 }
             } else if (fleet->NextSystemID()==INVALID_OBJECT_ID) {
                 int fleet_owner = fleet->Owner();
