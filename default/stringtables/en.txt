@@ -195,7 +195,7 @@ Small and cheap unarmed vessel designed for recon and exploration. Further resea
 SD_AST_SCOUT
 Asteroid Scout
 SD_AST_SCOUT_DESC
-Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. Asteroid ships can only be built in systems with an asteroid processor.
+Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. Asteroid ships can only be built in systems with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_SCOUT_2
 Scout II
@@ -270,17 +270,17 @@ Improved fighter with heavy lasers and armor.
 SD_ROBOTIC1
 Robocruiser I
 SD_ROBOTIC1_DESC
-Robotic mass-driver fighter. Can only be built at a colony with an orbital drydock.
+Robotic mass-driver fighter. Can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC2
 Robocruiser II
 SD_ROBOTIC2_DESC
-Robotic fighter with lasers and heavy armor. Can only be built at a colony with an orbital drydock.
+Robotic fighter with lasers and heavy armor. Can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ROBOTIC3
 Robocruiser III
 SD_ROBOTIC3_DESC
-Improved robotic fighter with heavy lasers. Can only be built at a colony with an orbital drydock.
+Improved robotic fighter with heavy lasers. Can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
 SD_ORGANIC1
 Organic I
@@ -315,27 +315,27 @@ Organic fighter with shields. Effective against enemies with poor weapons.
 SD_AST_1
 Rock I
 SD_AST_1_DESC
-A hollowed-out asteroid armed with lasers. Asteroid ships can only be built in systems with an asteroid processor.
+A hollowed-out asteroid armed with lasers. Asteroid ships can only be built in systems with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_2
 Rock II
 SD_AST_2_DESC
-A hollowed-out asteroid armed with plasma cannons. Asteroid ships can only be built in systems with an asteroid processor.
+A hollowed-out asteroid armed with plasma cannons. Asteroid ships can only be built in systems with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_AST_3
 Rock III
 SD_AST_3_DESC
-A hollowed-out asteroid armed with heavy plasma cannons and reformed rock armor. Asteroid ships can only be built in systems with an asteroid processor.
+A hollowed-out asteroid armed with heavy plasma cannons and reformed rock armor. Asteroid ships can only be built in systems with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_HEAVY_AST_1
 Big Rock I
 SD_HEAVY_AST_1_DESC
-A large hollowed-out asteroid armed with plasma cannons. Asteroid ships can only be built in systems with an asteroid processor.
+A large hollowed-out asteroid armed with plasma cannons. Asteroid ships can only be built in systems with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_HEAVY_AST_2
 Big Rock II
 SD_HEAVY_AST_2_DESC
-A large hollowed-out asteroid armed with heavy plasma cannons and reformed rock plate. Asteroid ships can only be built in systems with an asteroid processor.
+A large hollowed-out asteroid armed with heavy plasma cannons and reformed rock plate. Asteroid ships can only be built in systems with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_CRYSTAL
 Crystal
@@ -375,27 +375,27 @@ An exotic warship made of fractal energy.
 SD_COLONY_SHIP
 Colony Ship
 SD_COLONY_SHIP_DESC
-Unarmed vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard.
+Unarmed vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_COLONY_SHIP
 Organic Colony Ship
 SD_ORG_COLONY_SHIP_DESC
-Unarmed organic vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with an orbital incubator.
+Unarmed organic vessel capable of delivering millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_CRYONIC_COLONY_SHIP
 Cryonic Colony Ship
 SD_CRYONIC_COLONY_SHIP_DESC
-Unarmed vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard.
+Unarmed vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_CRYOCOL_SHIP
 Organic Cryonic Colony Ship
 SD_ORG_CRYOCOL_SHIP_DESC
-Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with an orbital incubator.
+Unarmed organic vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_CRYOCOL_SHIP
 Cryonic Colony Asteroid
 SD_AST_CRYOCOL_SHIP_DESC
-Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a shipyard, in a system with an asteroid processor.
+Unarmed asteroid vessel capable of delivering many millions of citizens safely to new colony sites. This vessel can only be built at a colony with a population of at least three, with a [[buildingtype BLD_SHIPYARD_BASE]], in a system with an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_OUTPOST_SHIP
 Outpost Ship
@@ -405,7 +405,7 @@ Unarmed vessel capable of creating an outpost on an uninhabitable world.
 SD_ORG_OUTPOST_SHIP
 Organic Outpost Ship
 SD_ORG_OUTPOST_SHIP_DESC
-Unarmed organic vessel capable of creating an outpost on an uninhabitable world. This vessel can only be built at a colony with an orbital incubator.
+Unarmed organic vessel capable of creating an outpost on an uninhabitable world. This vessel can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_COLONY_BASE
 Colony Base
@@ -440,7 +440,7 @@ Carries six units of ground [[encyclopedia TROOP_TITLE]] and equipment that can 
 SD_ORG_TROOP_SHIP
 Organic Troop Ship
 SD_ORG_TROOP_SHIP_DESC
-Carries eight units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Organic vessels can only be built at planets with an orbital incubator.
+Carries eight units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. Organic vessels can only be built at planets with an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ENG_TROOP_SHIP
 Small Troop Ship
@@ -7358,7 +7358,7 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-'''Increases max Fuel on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.2 per Population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
+'''Increases max [[encyclopedia FUEL_TITLE]] on all ships by 2, max [[encyclopedia DEFENSE_TITLE]] on all planets by 5, max [[encyclopedia SHIELDS_TITLE]] on all planets by 5, target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.2 per Population, and target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
 
 While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally. Ship's crews for example, would no longer have to waste space with crew quarters or rations storage. Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
 
