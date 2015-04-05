@@ -83,7 +83,7 @@ namespace {
                 >   parse::label(Fuel_token)        >   parse::double_ [ _c = _1 ]
                 >   parse::label(Stealth_token)     >   parse::double_ [ _d = _1 ]
                 >   parse::label(Structure_token)   >   parse::double_
-                    [ _val = construct<HullTypeStats>(_b, _a, _c, _1) ]
+                    [ _val = construct<HullTypeStats>(_c, _a, _d, _1) ]
                 ;
 
             producible
