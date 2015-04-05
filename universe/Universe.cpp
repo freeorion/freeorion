@@ -2281,14 +2281,14 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                                include_empire_meter_effects);
     }
 
-    // collect info about source objects for destruction, to sure theire info is
-    // available even if they are destroyed by the upcoming effect destruction
-    // TODO...
-
     // actually do destroy effect action.  Executing the effect just marks
     // objects to be destroyed, but doesn't actually do so in order to ensure
     // no interaction in order of effects and source or target objects being
-    // destroyed / deleted between determining target sets and executing effects
+    // destroyed / deleted between determining target sets and executing effects.
+    // but, do now collect info about source objects for destruction, to sure
+    // their info is available even if they are destroyed by the upcoming effect
+    // destruction
+
     for (std::map<int, std::set<int> >::iterator it = m_marked_destroyed.begin();
          it != m_marked_destroyed.end(); ++it)
     {
@@ -2319,7 +2319,72 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     }
 }
 
+namespace {
+    static const std::string EMPTY_STRING;
+
+    const std::string& GetSpeciesFromObject(TemporaryPtr<const UniverseObject> obj) {
+        TemporaryPtr<const Fleet> obj_fleet;
+        TemporaryPtr<const Ship> obj_ship;
+        TemporaryPtr<const Building> obj_building;
+
+        switch (obj->ObjectType()) {
+        case OBJ_PLANET: {
+            TemporaryPtr<const Planet> obj_planet = boost::static_pointer_cast<const Planet>(obj);
+            return obj_planet->SpeciesName();
+            break;
+        }
+        case OBJ_SHIP: {
+            TemporaryPtr<const Ship> obj_ship = boost::static_pointer_cast<const Ship>(obj);
+            return obj_ship->SpeciesName();
+            break;
+        }
+        default:
+            return EMPTY_STRING;
+        }
+    }
+
+    int GetDesignIDFromObject(TemporaryPtr<const UniverseObject> obj) {
+        if (obj->ObjectType() != OBJ_SHIP)
+            return ShipDesign::INVALID_DESIGN_ID;
+        TemporaryPtr<const Ship> shp = boost::static_pointer_cast<const Ship>(obj);
+        return shp->DesignID();
+    }
+}
+
 void Universe::CountDestructionInStats(int object_id, int source_object_id) {
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
+    if (!obj)
+        return;
+    TemporaryPtr<const UniverseObject> source = GetUniverseObject(source_object_id);
+    if (!source)
+        return;
+
+    const std::string& species_for_obj = GetSpeciesFromObject(obj);
+    const std::string& species_for_source = GetSpeciesFromObject(source);
+
+    int empire_for_obj_id = obj->Owner();
+    int empire_for_source_id = source->Owner();
+
+    int design_for_obj_id = GetDesignIDFromObject(obj);
+
+    if (Empire* source_empire = GetEmpire(empire_for_source_id)) {
+        source_empire->EmpireShipsDestroyed()[empire_for_obj_id]++;
+
+        if (design_for_obj_id != ShipDesign::INVALID_DESIGN_ID)
+            source_empire->ShipDesignsDestroyed()[design_for_obj_id]++;
+
+        if (species_for_obj.empty())
+            source_empire->SpeciesShipsDestroyed()[species_for_obj]++;
+    }
+
+    if (Empire* obj_empire = GetEmpire(empire_for_obj_id)) {
+        if (!species_for_obj.empty())
+            obj_empire->SpeciesShipsLost()[species_for_obj]++;
+
+        if (design_for_obj_id != ShipDesign::INVALID_DESIGN_ID)
+            obj_empire->ShipDesignsLost()[design_for_obj_id]++;
+    }
+
     // todo: this!
 }
 
