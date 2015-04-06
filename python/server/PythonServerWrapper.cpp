@@ -614,11 +614,15 @@ namespace {
             return;
         }
         // check if the special exists
-        if (!GetSpecial(special_name)) {
+        const Special* special = GetSpecial(special_name);
+        if (!special) {
             ErrorLogger() << "PythonUniverseGenerator::AddSpecial: couldn't get special " << special_name;
             return;
         }
-        obj->AddSpecial(special_name);
+
+        float capacity = special->InitialCapacity(object_id);
+
+        obj->AddSpecial(special_name, capacity);
     }
 
     void RemoveSpecial(int object_id, const std::string special_name) {
