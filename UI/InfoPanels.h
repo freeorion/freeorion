@@ -286,7 +286,7 @@ public:
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual bool            EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
-    void                    Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
+    void                    Update();          ///< regenerates indicators according specials on object
 
     /** Enables, or disables if \a enable is false, issuing orders via this SpecialsPanel. */
     void                    EnableOrderIssuing(bool enable = true);
@@ -296,8 +296,8 @@ public:
 private:
     void                    SpecialRightClicked(const std::string& name);
 
-    int                                         m_object_id;        ///< id for the Object whose specials this panel displays
-    std::map<std::string, GG::StaticGraphic*>   m_icons;
+    int                                     m_object_id;        ///< id for the Object whose specials this panel displays
+    std::map<std::string, StatisticIcon*>   m_icons;
 };
 
 /** Represents a ShipDesign */
