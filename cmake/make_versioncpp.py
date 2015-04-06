@@ -5,6 +5,7 @@ import os
 from string import Template
 from subprocess import check_output
 from datetime import datetime
+from platform import system
 
 if 3 != len(sys.argv):
     print "ERROR: invalid parameters."
@@ -50,5 +51,25 @@ version_cpp.write(template.substitute(
     FreeOrion_BUILD_NO=build_no,
     FreeOrion_BUILDSYS=build_sys))
 version_cpp.close()
+
+if system() == "Darwin":
+    infile = "Xcode/Info.plist.in"
+    outfile = "Xcode/Info.plist"
+    try:
+        template_file = open(infile)
+        template = Template(template_file.read())
+        template_file.close()
+    except:
+        print "WARNING: Can't access %s, %s not updated!" % (infile, outfile)
+        quit()
+
+    print "Writing file: %s" % outfile
+
+    info_plist = open(outfile, "w")
+    info_plist.write(template.substitute(
+        FreeOrion_VERSION=version,
+        FreeOrion_BRANCH=branch,
+        FreeOrion_BUILD_NO=build_no))
+    info_plist.close()
 
 print "Building v%s build %s" %(version, build_no)
