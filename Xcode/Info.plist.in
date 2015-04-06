@@ -9,7 +9,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
+	<string>$${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
 	<string>FreeOrion</string>
 	<key>CFBundleIdentifier</key>
@@ -19,8 +19,8 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleVersion</key>
-	<string>0.4.4+</string>
+	<string>${FreeOrion_VERSION} ${FreeOrion_BRANCH} (build ${FreeOrion_BUILD_NO})</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.4.4+</string>
+	<string>${FreeOrion_VERSION} (build ${FreeOrion_BUILD_NO})</string>
 </dict>
 </plist>
