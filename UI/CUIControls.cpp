@@ -875,13 +875,34 @@ namespace {
     const int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
 }
 
+StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture) :
+    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+    m_num_values(0),
+    m_values(),
+    m_digits(),
+    m_show_signs(),
+    m_icon(0),
+    m_text(0)
+{
+    m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
+
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+
+    AttachChild(m_icon);
+
+    DoLayout();
+    Refresh();
+}
+
 StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_num_values(1),
-    m_values(std::vector<double>(1, value)), m_digits(std::vector<int>(1, digits)),
+    m_values(std::vector<double>(1, value)),
+    m_digits(std::vector<int>(1, digits)),
     m_show_signs(std::vector<bool>(1, showsign)),
-    m_icon(0), m_text(0)
+    m_icon(0),
+    m_text(0)
 {
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
     m_text = new CUILabel("");
@@ -900,9 +921,11 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
                              bool showsign0, bool showsign1) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_num_values(2),
-    m_values(std::vector<double>(2, 0.0)), m_digits(std::vector<int>(2, 2)),
+    m_values(std::vector<double>(2, 0.0)),
+    m_digits(std::vector<int>(2, 2)),
     m_show_signs(std::vector<bool>(2, false)),
-    m_icon(0), m_text(0)
+    m_icon(0),
+    m_text(0)
 {
     SetName("StatisticIcon");
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
@@ -975,7 +998,11 @@ void StatisticIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey>
 void StatisticIcon::DoLayout() {
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     int icon_dim = std::min(Value(Height()), Value(Width()));
-    m_icon->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
+    m_icon->SizeMove(GG::Pt(GG::X0, GG::Y0),
+                     GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
+
+    if (!m_text)
+        return;
 
     GG::Pt text_ul;
     GG::Pt text_lr(Width(), Height());
@@ -992,6 +1019,9 @@ void StatisticIcon::DoLayout() {
 }
 
 void StatisticIcon::Refresh() {
+    if (!m_text)
+        return;
+
     std::string text = "";
 
     // first value: always present
@@ -1008,6 +1038,9 @@ void StatisticIcon::Refresh() {
 }
 
 GG::Clr StatisticIcon::ValueColor(int index) const {
+    if (m_values.empty() || index >= m_num_values || index < 0)
+        return ClientUI::TextColor();
+
     int effectiveSign = EffectiveSign(m_values.at(index));
 
     if (index == 0) return ClientUI::TextColor();
