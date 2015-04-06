@@ -3,7 +3,7 @@
 #include "ClientUI.h"
 #include "CUIDrawUtil.h"
 #include "CUISpin.h"
-#include "InfoPanels.h"
+#include "IconTextBrowseWnd.h"
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"
