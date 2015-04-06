@@ -1300,6 +1300,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Ocean Swamp Toxic]
@@ -1347,6 +1348,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Desert Terran Ocean Swamp]
@@ -1393,6 +1395,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Tundra Desert Terran]
@@ -1439,6 +1442,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
@@ -1487,6 +1491,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
@@ -1536,6 +1541,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
@@ -1585,6 +1591,7 @@ Special
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
@@ -1633,6 +1640,7 @@ Special
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Not Planet type = [GasGiant]
@@ -1682,6 +1690,7 @@ Special
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
