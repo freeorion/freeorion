@@ -393,7 +393,6 @@ const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
     return it->first;
 }
 
-
 void SpeciesManager::ClearSpeciesHomeworlds() {
     for (std::map<std::string, Species*>::iterator it = m_species.begin(); it != m_species.end(); ++it)
         it->second->SetHomeworlds(std::set<int>());
