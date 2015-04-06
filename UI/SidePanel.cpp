@@ -471,7 +471,7 @@ public:
     void                    Refresh();                      ///< updates panels, shows / hides colonize button, redoes layout of infopanels
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
-    void            EnableOrderIssuing(bool enable = true);
+    void                    EnableOrderIssuing(bool enable = true);
     //@}
 
     /** emitted when the planet panel is left clicked by the user.
