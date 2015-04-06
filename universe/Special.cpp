@@ -7,6 +7,8 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
+#include "../util/AppInterface.h"
+#include "../universe/UniverseObject.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -99,6 +101,19 @@ std::string Special::Dump() const {
     retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     --g_indent;
     return retval;
+}
+
+float Special::InitialCapacity(int object_id) const {
+    if (!m_initial_capacity)
+        return 0.0f;
+
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
+    if (!obj)
+        return 0.0f;
+
+    ScriptingContext context(obj);
+
+    return m_initial_capacity->Eval(context);
 }
 
 const Special* GetSpecial(const std::string& name)

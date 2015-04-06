@@ -58,6 +58,7 @@ public:
     float                                   SpawnRate() const   { return m_spawn_rate; }
     int                                     SpawnLimit() const  { return m_spawn_limit; }
     const ValueRef::ValueRefBase<double>*   InitialCapacity() const                     { return m_initial_capacity; }  ///< returns the ValueRef to use to set the initial capacity of the special when placed
+    float                                   InitialCapacity(int object_id) const;           ///< evaluates initial apacity ValueRef using the object with specified \a object_id as the object on which the special will be placed
     const Condition::ConditionBase*         Location() const    { return m_location; }      ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
     const std::string&                      Graphic() const     { return m_graphic; };      ///< returns the name of the grapic file for this special
     //@}
