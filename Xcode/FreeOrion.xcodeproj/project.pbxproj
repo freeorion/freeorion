@@ -158,7 +158,6 @@
 		471024300CEF3AAC00A7DF2B /* Wnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C20CEF3AAC00A7DF2B /* Wnd.cpp */; };
 		471024320CEF3AAC00A7DF2B /* WndEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C40CEF3AAC00A7DF2B /* WndEvent.cpp */; };
 		471024330CEF3AAC00A7DF2B /* ZList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C50CEF3AAC00A7DF2B /* ZList.cpp */; };
-		4710311F0CEF60AA00A7DF2B /* InfoPanels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4710311D0CEF60AA00A7DF2B /* InfoPanels.cpp */; };
 		471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F890CEF55F700A7DF2B /* ClientFSMEvents.cpp */; };
 		471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F870CEF55E700A7DF2B /* HumanClientFSM.cpp */; };
 		4710323E0CEF6A7700A7DF2B /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471032380CEF6A7600A7DF2B /* Ogg.framework */; };
@@ -719,8 +718,6 @@
 		471030480CEF569200A7DF2B /* ServerFSM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerFSM.h; sourceTree = "<group>"; };
 		471030490CEF569900A7DF2B /* SaveLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveLoad.cpp; sourceTree = "<group>"; };
 		4710304A0CEF569900A7DF2B /* SaveLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveLoad.h; sourceTree = "<group>"; };
-		4710311D0CEF60AA00A7DF2B /* InfoPanels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InfoPanels.cpp; sourceTree = "<group>"; };
-		4710311E0CEF60AA00A7DF2B /* InfoPanels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoPanels.h; sourceTree = "<group>"; };
 		471032380CEF6A7600A7DF2B /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Ogg.framework; sourceTree = "<group>"; };
 		4710323F0CEF6A8B00A7DF2B /* vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = vorbis.framework; sourceTree = "<group>"; };
 		471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = FreeOrion.icns; sourceTree = "<group>"; };
@@ -1775,8 +1772,6 @@
 				82B9D446180C53FE0032F86D /* GraphControl.h */,
 				820BDECB1848A93E009BC457 /* Hotkeys.cpp */,
 				820BDECC1848A93E009BC457 /* Hotkeys.h */,
-				4710311D0CEF60AA00A7DF2B /* InfoPanels.cpp */,
-				4710311E0CEF60AA00A7DF2B /* InfoPanels.h */,
 				471D5CC20A98A3F900DA9C21 /* InGameMenu.cpp */,
 				471D5CC30A98A3F900DA9C21 /* InGameMenu.h */,
 				471D5CC40A98A3F900DA9C21 /* IntroScreen.cpp */,
@@ -2915,7 +2910,6 @@
 				820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */,
 				470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */,
 				471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */,
-				4710311F0CEF60AA00A7DF2B /* InfoPanels.cpp in Sources */,
 				471D5E1F0A98A9B000DA9C21 /* InGameMenu.cpp in Sources */,
 				471D5E200A98A9B200DA9C21 /* IntroScreen.cpp in Sources */,
 				471D5E210A98A9C000DA9C21 /* LinkText.cpp in Sources */,

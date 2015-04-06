@@ -8,7 +8,7 @@
 #include "TechTreeWnd.h"
 #include "MapWnd.h"
 #include "EncyclopediaDetailPanel.h"
-#include "InfoPanels.h"
+#include "IconTextBrowseWnd.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"

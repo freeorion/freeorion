@@ -2,7 +2,8 @@
 
 #include "CUIControls.h"
 #include "SidePanel.h"
-#include "InfoPanels.h"
+#include "IconTextBrowseWnd.h"
+#include "MeterBrowseWnd.h"
 #include "ClientUI.h"
 #include "Sound.h"
 #include "ShaderProgram.h"
