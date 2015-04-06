@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FreeOrion"
-!define PRODUCT_VERSION "${FreeOrion_VERSION} ${FreeOrion_BRANCH} (build ${FreeOrion_BUILD_NO})"
+!define PRODUCT_VERSION "${FreeOrion_VERSION} (build ${FreeOrion_BUILD_NO})"
 !define PRODUCT_PUBLISHER "FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\$${PRODUCT_NAME}"
