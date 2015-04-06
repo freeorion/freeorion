@@ -2429,6 +2429,14 @@ Set focus
 RP_FOCUS_TOOLTIP
 Focus: %1%
 
+## Specials Panel ##########
+
+SPECIAL_CAPACITY
+Capacity: %1%
+
+ADDED_ON_TURN
+Present Since Turn: %1%
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
