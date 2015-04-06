@@ -68,7 +68,6 @@ if system() == "Windows":
     installer_script = open(outfile, "w")
     installer_script.write(template.substitute(
         FreeOrion_VERSION=version,
-        FreeOrion_BRANCH=branch,
         FreeOrion_BUILD_NO=build_no))
     installer_script.close()
 
