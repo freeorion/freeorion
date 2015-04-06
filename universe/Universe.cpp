@@ -2384,8 +2384,6 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
         if (design_for_obj_id != ShipDesign::INVALID_DESIGN_ID)
             obj_empire->ShipDesignsLost()[design_for_obj_id]++;
     }
-
-    // todo: this!
 }
 
 void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibility vis) {
