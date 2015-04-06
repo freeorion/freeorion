@@ -162,9 +162,9 @@ namespace {
 
 
             // if group has no pp available, can't build anything this turn
-            if (group_pp_available <= 0.0) {
+            if (group_pp_available <= 0.0f) {
                 //DebugLogger() << "no pp available in group";
-                queue_element.allocated_pp = 0.0;
+                queue_element.allocated_pp = 0.0f;
                 continue;
             }
             //DebugLogger() << "group has " << group_pp_available << " PP available";
@@ -172,7 +172,7 @@ namespace {
             // see if item is buildable this turn...
             if (!empire->ProducibleItem(queue_element.item, queue_element.location)) {
                 // can't be built at this location this turn.
-                queue_element.allocated_pp = 0.0;
+                queue_element.allocated_pp = 0.0f;
                 //DebugLogger() << "item can't be built at location this turn";
                 continue;
             }
