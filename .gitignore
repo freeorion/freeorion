@@ -60,6 +60,8 @@ DerivedData
 # FreeOrion Xcode project
 /Xcode/dep/
 /Xcode/build/
+/Xcode/Info.plist
+contents.xcworkspacedata
 
 # FreeOrion MSVC2010 project
 *.pdb
