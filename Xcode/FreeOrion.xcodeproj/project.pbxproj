@@ -1193,7 +1193,6 @@
 		82E9DDEF19530E5D007E681B /* CombatEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatEvents.cpp; sourceTree = "<group>"; };
 		82E9DDF019530E5D007E681B /* CombatEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEvents.h; sourceTree = "<group>"; };
 		82ED913E194F5C85002F0A4A /* make_dmg.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = make_dmg.py; sourceTree = "<group>"; };
-		82ED9140194F5CDD002F0A4A /* make_ogre_plugins.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = make_ogre_plugins.py; path = ../cmake/make_ogre_plugins.py; sourceTree = "<group>"; };
 		82ED9141194F5CDD002F0A4A /* make_versioncpp.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = make_versioncpp.py; path = ../cmake/make_versioncpp.py; sourceTree = "<group>"; };
 		82F06B6417B7C3BD00982965 /* TemporaryPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryPtr.h; sourceTree = "<group>"; };
 		8DD76F6C0486A84900D96B5E /* FreeOrion */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeOrion; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2353,7 +2352,6 @@
 		82ED913F194F5C96002F0A4A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				82ED9140194F5CDD002F0A4A /* make_ogre_plugins.py */,
 				82ED9141194F5CDD002F0A4A /* make_versioncpp.py */,
 				82ED913E194F5C85002F0A4A /* make_dmg.py */,
 			);
