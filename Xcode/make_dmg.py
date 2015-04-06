@@ -12,8 +12,9 @@ if len(sys.argv) != 3:
 os.chdir(sys.argv[1])
 build_no = "XXXX"
 try:
+    commit = check_output(["git", "show", "-s", "--format=%h", "HEAD"]).strip()
     timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"]).strip())
-    build_no = datetime.utcfromtimestamp(timestamp).strftime("%Y%m%d")
+    build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y%m%d"), commit])
 except:
     print "WARNING: git not installed, can't determine build number"
 
