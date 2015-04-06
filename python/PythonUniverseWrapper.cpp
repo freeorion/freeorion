@@ -207,6 +207,8 @@ namespace {
     bool                    ObjectInField(const Field& field, const UniverseObject& obj)
     { return field.InField(obj.X(), obj.Y()); }
     bool                    (Field::*LocationInField)(double x, double y) const =               &Field::InField;
+
+    float                   (Special::*SpecialInitialCapacityOnObject)(int) const =             &Special::InitialCapacity;
 }
 
 namespace FreeOrionPython {
@@ -606,7 +608,8 @@ namespace FreeOrionPython {
             .add_property("spawnrate",          make_function(&Special::SpawnRate,      return_value_policy<return_by_value>()))
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     return_value_policy<return_by_value>()))
             .add_property("dump",               &Special::Dump)
-        ;
+            .def("initialCapacity",             SpecialInitialCapacityOnObject)
+            ;
         def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>());
 
         /////////////////
