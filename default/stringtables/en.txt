@@ -3821,7 +3821,7 @@ STRUCTURE_TEXT
 '''Structure is amount of damage that ship can take until it is destroyed. Structure can be restored by repairing.'''
 
 STARLANE_SPEED_TITLE
-Starline Speed
+Starlane Speed
 STARLANE_SPEED_TEXT
 '''Speed on galaxy map  (uu/turn)'''
 
