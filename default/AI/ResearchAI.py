@@ -147,7 +147,7 @@ def generate_research_orders():
 
     research_queue_list = get_research_queue_techs()
     num_techs_accelerated = 1  # will ensure leading tech doesn't get dislodged
-    got_ggg = tech_is_complete("PRO_ORBITAL_GEN")
+    got_ggg_tech = tech_is_complete("PRO_ORBITAL_GEN")
     got_sym_bio = tech_is_complete("GRO_SYMBIOTIC_BIO")
     got_xeno_gen = tech_is_complete("GRO_XENO_GENETICS")
     #
@@ -322,7 +322,7 @@ def generate_research_orders():
     #
     # assess if our empire has any non-lousy colonizers, & boost gro_xeno_gen if we don't
     if True:  # just to help with cold-folding / organization
-        if got_ggg and got_sym_bio and (not got_xeno_gen) and foAI.foAIstate.aggression >= fo.aggression.cautious:
+        if got_ggg_tech and got_sym_bio and (not got_xeno_gen) and foAI.foAIstate.aggression >= fo.aggression.cautious:
             most_adequate = 0
             for specName in ColonisationAI.empire_colonizers:
                 environs = {}
