@@ -609,7 +609,7 @@ namespace FreeOrionPython {
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     return_value_policy<return_by_value>()))
             .add_property("dump",               &Special::Dump)
             .def("initialCapacity",             SpecialInitialCapacityOnObject)
-            ;
+        ;
         def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>());
 
         /////////////////
