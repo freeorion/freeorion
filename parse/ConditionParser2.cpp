@@ -31,8 +31,7 @@ namespace {
             using phoenix::new_;
 
             has_special_since_turn
-                =    (
-                            tok.HasSpecialSinceTurn_
+                =    (      tok.HasSpecialSinceTurn_
                         >   parse::label(Name_token) >  tok.string [ _e = _1 ]
                         > -(parse::label(Low_token)  >  flexible_int_ref [ _a = _1 ] )
                         > -(parse::label(High_token) >  flexible_int_ref [ _b = _1 ] )
@@ -48,8 +47,7 @@ namespace {
                 ;
 
             enqueued1
-                =   (
-                        tok.Enqueued_
+                =   (   tok.Enqueued_
                         >> parse::label(Type_token) >> tok.Building_
                         >  (
                                 parse::label(Name_token) >       tok.string [ _e = _1 ]
@@ -62,8 +60,7 @@ namespace {
                 ;
 
             enqueued2
-                =   (
-                        tok.Enqueued_
+                =   (   tok.Enqueued_
                         >>      parse::label(Type_token)   >>   tok.Ship_
                         >  -(   parse::label(Design_token) >    int_value_ref [ _d = _1 ] )
                         >  -(   parse::label(Empire_token) >    int_value_ref [ _a = _1 ] )
@@ -73,8 +70,7 @@ namespace {
                 ;
 
             enqueued3
-                =   (
-                        tok.Enqueued_
+                =   (   tok.Enqueued_
                         >>      parse::label(Type_token)   >>   tok.Ship_
                         >>      parse::label(Name_token)   >    tok.string [ _e = _1 ]
                         >  -(   parse::label(Empire_token) >    int_value_ref [ _a = _1 ] )
@@ -84,8 +80,7 @@ namespace {
                 ;
 
             enqueued4
-                =   (
-                        tok.Enqueued_
+                =   (   tok.Enqueued_
                         >  -(   parse::label(Empire_token) >     int_value_ref [ _a = _1 ] )
                         >  -(   parse::label(Low_token)    >     flexible_int_ref [ _b = _1 ] )
                         >  -(   parse::label(High_token)   >     flexible_int_ref [ _c = _1 ] )
@@ -109,8 +104,7 @@ namespace {
                 ;
 
             in_system
-                =   (
-                        tok.InSystem_
+                =   (   tok.InSystem_
                     >  -(parse::label(ID_token)  > int_value_ref [ _a = _1 ])
                     )
                     [ _val = new_<Condition::InSystem>(_a) ]
