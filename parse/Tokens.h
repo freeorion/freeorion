@@ -140,6 +140,7 @@
     (Graphic)                                   \
     (Happiness)                                 \
     (HasSpecial)                                \
+    (HasSpecialCapacity)                        \
     (HasSpecialSinceTurn)                       \
     (HasTag)                                    \
     (High)                                      \
