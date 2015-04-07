@@ -4,6 +4,7 @@
 
 #include "../util/Logger.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Planet.h"
 #include "../client/human/HumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
@@ -23,8 +24,6 @@ namespace {
     }
 }
 
-std::map<int, bool> MilitaryPanel::s_expanded_map;
-
 MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     AccordionPanel(w),
     m_planet_id(planet_id),
@@ -38,6 +37,10 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     m_multi_meter_status_bar(0)
 {
     SetName("MilitaryPanel");
+
+    TemporaryPtr<const Planet> planet = GetPlanet();
+    if (!planet)
+        throw std::invalid_argument("Attempted to construct a MilitaryPanel with an object id is not a Planet");
 
     GG::Connect(m_expand_button->LeftClickedSignal, &MilitaryPanel::ExpandCollapseButtonPressed, this);
 
@@ -71,6 +74,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     meters.push_back(std::make_pair(METER_SUPPLY, METER_MAX_SUPPLY));
 
 
+    // attach and show meter bars and large resource indicators
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_planet_id, meters);
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_planet_id, meters);
 
@@ -84,15 +88,15 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
 
 MilitaryPanel::~MilitaryPanel() {
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
+    delete m_multi_icon_value_indicator;
+    delete m_multi_meter_status_bar;
+
     delete m_fleet_supply_stat;
     delete m_shield_stat;
     delete m_defense_stat;
     delete m_troops_stat;
     delete m_detection_stat;
     delete m_stealth_stat;
-
-    delete m_multi_icon_value_indicator;
-    delete m_multi_meter_status_bar;
 }
 
 void MilitaryPanel::ExpandCollapse(bool expanded) {
@@ -128,7 +132,6 @@ void MilitaryPanel::Update() {
         return;
     }
 
-
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
@@ -141,7 +144,9 @@ void MilitaryPanel::Update() {
     m_stealth_stat->SetValue(obj->InitialMeterValue(METER_STEALTH));
 
     // tooltips
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SUPPLY, METER_MAX_SUPPLY));
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SUPPLY, METER_MAX_SUPPLY));
     m_fleet_supply_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_SUPPLY, browse_wnd);
 
@@ -171,20 +176,27 @@ void MilitaryPanel::Refresh() {
     DoLayout();
 }
 
+void MilitaryPanel::EnableOrderIssuing(bool enable/* = true*/)
+{}
+
 void MilitaryPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
 void MilitaryPanel::DoLayout() {
+    // initially detach most things.  Some will be reattached later.
+    DetachChild(m_shield_stat);
+    DetachChild(m_defense_stat);
+    DetachChild(m_troops_stat);
+    DetachChild(m_detection_stat);
+    DetachChild(m_stealth_stat);
+    DetachChild(m_fleet_supply_stat);
+
+    // detach / hide meter bars and large resource indicators
+    DetachChild(m_multi_meter_status_bar);
+    DetachChild(m_multi_icon_value_indicator);
+
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
-
-        // detach / hide meter bars and large resource indicators
-        DetachChild(m_multi_meter_status_bar);
-        DetachChild(m_multi_icon_value_indicator);
-
-
-        // determine which two resource icons to display while collapsed: the two with the highest production
-
         // sort by insereting into multimap keyed by production amount, then taking the first two icons therein
         std::vector<StatisticIcon*> meter_icons;
         meter_icons.push_back(m_shield_stat);
@@ -193,10 +205,6 @@ void MilitaryPanel::DoLayout() {
         meter_icons.push_back(m_detection_stat);
         meter_icons.push_back(m_stealth_stat);
         meter_icons.push_back(m_fleet_supply_stat);
-
-        // initially detach all...
-        for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end(); ++it)
-            DetachChild(*it);
 
         // position and reattach icons to be shown
         int n = 0;
@@ -217,10 +225,6 @@ void MilitaryPanel::DoLayout() {
 
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
-        // detach statistic icons
-        DetachChild(m_shield_stat);     DetachChild(m_defense_stat);    DetachChild(m_troops_stat);
-        DetachChild(m_detection_stat);  DetachChild(m_stealth_stat);    DetachChild(m_fleet_supply_stat);
-
         // attach and show meter bars and large resource indicators
         GG::Y top = Top();
 
@@ -242,5 +246,18 @@ void MilitaryPanel::DoLayout() {
     SetCollapsed(!s_expanded_map[m_planet_id]);
 }
 
-void MilitaryPanel::EnableOrderIssuing(bool enable/* = true*/)
-{}
+TemporaryPtr<const Planet> MilitaryPanel::GetPlanet() const {
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+    if (!obj) {
+        ErrorLogger() << "MilitaryPanel tried to get an object with an invalid m_planet_id";
+        return TemporaryPtr<const Planet>();
+    }
+    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj);
+    if (!planet) {
+        ErrorLogger() << "MilitaryPanel failed casting an object pointer to a Planet pointer";
+        return TemporaryPtr<const Planet>();
+    }
+    return planet;
+}
+
+std::map<int, bool> MilitaryPanel::s_expanded_map;
