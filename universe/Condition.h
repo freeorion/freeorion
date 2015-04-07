@@ -608,16 +608,30 @@ struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
     HasSpecial(const std::string& name) :
         ConditionBase(),
         m_name(name),
+        m_capacity_low(0),
+        m_capacity_high(0),
         m_since_turn_low(0),
         m_since_turn_high(0)
     {}
     HasSpecial(const std::string& name,
                const ValueRef::ValueRefBase<int>* since_turn_low,
-               const ValueRef::ValueRefBase<int>* since_turn_high) :
+               const ValueRef::ValueRefBase<int>* since_turn_high = 0) :
         ConditionBase(),
         m_name(name),
+        m_capacity_low(0),
+        m_capacity_high(0),
         m_since_turn_low(since_turn_low),
         m_since_turn_high(since_turn_high)
+    {}
+    HasSpecial(const std::string& name,
+               const ValueRef::ValueRefBase<double>* capacity_low,
+               const ValueRef::ValueRefBase<double>* capacity_high = 0) :
+        ConditionBase(),
+        m_name(name),
+        m_capacity_low(capacity_low),
+        m_capacity_high(capacity_high),
+        m_since_turn_low(0),
+        m_since_turn_high(0)
     {}
     virtual ~HasSpecial();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -630,16 +644,20 @@ struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&                  Name() const { return m_name; }
-    const ValueRef::ValueRefBase<int>*  Low() const { return m_since_turn_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_since_turn_high; }
+    const std::string&                      Name() const { return m_name; }
+    const ValueRef::ValueRefBase<double>*   CapacityLow() const { return m_capacity_low; }
+    const ValueRef::ValueRefBase<double>*   CapacityHigh() const { return m_capacity_high; }
+    const ValueRef::ValueRefBase<int>*      SinceTurnLow() const { return m_since_turn_low; }
+    const ValueRef::ValueRefBase<int>*      SinceTurnHigh() const { return m_since_turn_high; }
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string                         m_name;
-    const ValueRef::ValueRefBase<int>*  m_since_turn_low;
-    const ValueRef::ValueRefBase<int>*  m_since_turn_high;
+    std::string                             m_name;
+    const ValueRef::ValueRefBase<double>*   m_capacity_low;
+    const ValueRef::ValueRefBase<double>*   m_capacity_high;
+    const ValueRef::ValueRefBase<int>*      m_since_turn_low;
+    const ValueRef::ValueRefBase<int>*      m_since_turn_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2117,6 +2135,8 @@ void Condition::HasSpecial::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_capacity_low)
+        & BOOST_SERIALIZATION_NVP(m_capacity_high)
         & BOOST_SERIALIZATION_NVP(m_since_turn_low)
         & BOOST_SERIALIZATION_NVP(m_since_turn_high);
 }

@@ -1952,6 +1952,8 @@ bool Condition::Building::Match(const ScriptingContext& local_context) const {
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
 Condition::HasSpecial::~HasSpecial() {
+    delete m_capacity_low;
+    delete m_capacity_high;
     delete m_since_turn_low;
     delete m_since_turn_high;
 }
@@ -1967,6 +1969,8 @@ bool Condition::HasSpecial::operator==(const Condition::ConditionBase& rhs) cons
     if (m_name != rhs_.m_name)
         return false;
 
+    CHECK_COND_VREF_MEMBER(m_capacity_low)
+    CHECK_COND_VREF_MEMBER(m_capacity_high)
     CHECK_COND_VREF_MEMBER(m_since_turn_low)
     CHECK_COND_VREF_MEMBER(m_since_turn_high)
 
@@ -1975,8 +1979,10 @@ bool Condition::HasSpecial::operator==(const Condition::ConditionBase& rhs) cons
 
 namespace {
     struct HasSpecialSimpleMatch {
-        HasSpecialSimpleMatch(const std::string& name, int low_turn, int high_turn) :
+        HasSpecialSimpleMatch(const std::string& name, float low_cap, float high_cap, int low_turn, int high_turn) :
             m_name(name),
+            m_low_cap(low_cap),
+            m_high_cap(high_cap),
             m_low_turn(low_turn),
             m_high_turn(high_turn)
         {}
@@ -1993,13 +1999,18 @@ namespace {
                 return false;
 
             int special_since_turn = it->second.first;
-
-            return m_low_turn <= special_since_turn && special_since_turn <= m_high_turn;
+            float special_capacity = it->second.second;
+            return m_low_turn <= special_since_turn
+                && special_since_turn <= m_high_turn
+                && m_low_cap <= special_capacity
+                && special_capacity <= m_high_cap;
         }
 
-        const std::string& m_name;
-        int m_low_turn;
-        int m_high_turn;
+        const std::string&  m_name;
+        float               m_low_cap;
+        float               m_high_cap;
+        int                 m_low_turn;
+        int                 m_high_turn;
     };
 }
 
@@ -2007,16 +2018,20 @@ void Condition::HasSpecial::Eval(const ScriptingContext& parent_context,
                                  ObjectSet& matches, ObjectSet& non_matches,
                                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ((!m_since_turn_low || m_since_turn_low->LocalCandidateInvariant()) &&
+    bool simple_eval_safe = ((!m_capacity_low || m_capacity_low->LocalCandidateInvariant()) &&
+                             (!m_capacity_high || m_capacity_high->LocalCandidateInvariant()) &&
+                             (!m_since_turn_low || m_since_turn_low->LocalCandidateInvariant()) &&
                              (!m_since_turn_high || m_since_turn_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate turn limits once, pass to simple match for all candidates
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
-        int low = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
-        int high = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
-        EvalImpl(matches, non_matches, search_domain, HasSpecialSimpleMatch(m_name, low, high));
+        float low_cap = (m_capacity_low ? m_capacity_low->Eval(local_context) : -FLT_MAX);
+        float high_cap = (m_capacity_high ? m_capacity_high->Eval(local_context) : FLT_MAX);
+        int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
+        int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
+        EvalImpl(matches, non_matches, search_domain, HasSpecialSimpleMatch(m_name, low_cap, high_cap, low_turn, high_turn));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -2024,54 +2039,90 @@ void Condition::HasSpecial::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::HasSpecial::RootCandidateInvariant() const
-{ return ((!m_since_turn_low || m_since_turn_low->RootCandidateInvariant()) &&
+{ return ((!m_capacity_low || m_capacity_low->RootCandidateInvariant()) &&
+          (!m_capacity_high || m_capacity_high->RootCandidateInvariant()) &&
+          (!m_since_turn_low || m_since_turn_low->RootCandidateInvariant()) &&
           (!m_since_turn_high || m_since_turn_high->RootCandidateInvariant())); }
 
 bool Condition::HasSpecial::TargetInvariant() const
-{ return ((!m_since_turn_low || m_since_turn_low->TargetInvariant()) &&
+{ return ((!m_capacity_low || m_capacity_low->TargetInvariant()) &&
+          (!m_capacity_high || m_capacity_high->TargetInvariant()) &&
+          (!m_since_turn_low || m_since_turn_low->TargetInvariant()) &&
           (!m_since_turn_high || m_since_turn_high->TargetInvariant())); }
 
 bool Condition::HasSpecial::SourceInvariant() const
-{ return ((!m_since_turn_low || m_since_turn_low->SourceInvariant()) &&
+{ return ((!m_capacity_low || m_capacity_low->SourceInvariant()) &&
+          (!m_capacity_high || m_capacity_high->SourceInvariant()) &&
+          (!m_since_turn_low || m_since_turn_low->SourceInvariant()) &&
           (!m_since_turn_high || m_since_turn_high->SourceInvariant())); }
 
 std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
-    if (!m_since_turn_low && !m_since_turn_high) {
+    if (m_since_turn_low || m_since_turn_high) {
+        // turn range has been specified; must indicate in description
+        std::string low_str = boost::lexical_cast<std::string>(BEFORE_FIRST_TURN);
+        if (m_since_turn_low) {
+            low_str = ValueRef::ConstantExpr(m_since_turn_low) ?
+                    boost::lexical_cast<std::string>(m_since_turn_low->Eval()) :
+                    m_since_turn_low->Description();
+        }
+        std::string high_str = boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN);
+        if (m_since_turn_high) {
+            high_str = ValueRef::ConstantExpr(m_since_turn_high) ?
+                    boost::lexical_cast<std::string>(m_since_turn_high->Eval()) :
+                    m_since_turn_high->Description();
+        }
+
         return str(FlexibleFormat((!negated)
-            ? UserString("DESC_SPECIAL")
-            : UserString("DESC_SPECIAL_NOT"))
-                   % UserString(m_name));
+            ? UserString("DESC_SPECIAL_TURN_RANGE")
+            : UserString("DESC_SPECIAL_TURN_RANGE_NOT"))
+                % UserString(m_name)
+                % low_str
+                % high_str);
     }
 
-    // turn ranges have been specified; must indicate in description
-    std::string low_str = boost::lexical_cast<std::string>(BEFORE_FIRST_TURN);
-    if (m_since_turn_low) {
-        low_str = ValueRef::ConstantExpr(m_since_turn_low) ?
-                  boost::lexical_cast<std::string>(m_since_turn_low->Eval()) :
-                  m_since_turn_low->Description();
-    }
-    std::string high_str = boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN);
-    if (m_since_turn_high) {
-        high_str = ValueRef::ConstantExpr(m_since_turn_high) ?
-                   boost::lexical_cast<std::string>(m_since_turn_high->Eval()) :
-                   m_since_turn_high->Description();
+    if (m_capacity_low || m_capacity_high) {
+        // capacity range has been specified; must indicate in description
+        std::string low_str = boost::lexical_cast<std::string>(-FLT_MAX);
+        if (m_capacity_low) {
+            low_str = ValueRef::ConstantExpr(m_capacity_low) ?
+                    boost::lexical_cast<std::string>(m_capacity_low->Eval()) :
+                    m_capacity_low->Description();
+        }
+        std::string high_str = boost::lexical_cast<std::string>(FLT_MAX);
+        if (m_capacity_high) {
+            high_str = ValueRef::ConstantExpr(m_capacity_high) ?
+                    boost::lexical_cast<std::string>(m_capacity_high->Eval()) :
+                    m_capacity_high->Description();
+        }
+
+        return str(FlexibleFormat((!negated)
+            ? UserString("DESC_SPECIAL_CAPACITY_RANGE")
+            : UserString("DESC_SPECIAL_CAPACITY_RANGE_NOT"))
+                % UserString(m_name)
+                % low_str
+                % high_str);
     }
 
     return str(FlexibleFormat((!negated)
-            ? UserString("DESC_SPECIAL_TURN_RANGE")
-            : UserString("DESC_SPECIAL_TURN_RANGE_NOT"))
-               % UserString(m_name)
-               % low_str
-               % high_str);
+        ? UserString("DESC_SPECIAL")
+        : UserString("DESC_SPECIAL_NOT"))
+                % UserString(m_name));
 }
 
 std::string Condition::HasSpecial::Dump() const {
-    if (!m_since_turn_low && !m_since_turn_high)
-        return DumpIndent() + "HasSpecial name = \"" + m_name + "\"\n";
+    if (m_since_turn_low || m_since_turn_high) {
+        std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump() : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
+        std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump() : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
+        return DumpIndent() + "HasSpecialSinceTurn name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
+    }
 
-    std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump() : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
-    std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump() : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
-    return DumpIndent() + "HasSpecialSinceTurn name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
+    if (m_capacity_low || m_capacity_high) {
+        std::string low_dump = (m_capacity_low ? m_capacity_low->Dump() : boost::lexical_cast<std::string>(-FLT_MAX));
+        std::string high_dump = (m_capacity_high ? m_capacity_high->Dump() : boost::lexical_cast<std::string>(FLT_MAX));
+        return DumpIndent() + "HasSpecialCapacity name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
+    }
+
+    return DumpIndent() + "HasSpecial name = \"" + m_name + "\"\n";
 }
 
 bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
@@ -2080,9 +2131,12 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "HasSpecial::Match passed no candidate object";
         return false;
     }
-    int low = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
-    int high = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
-    return HasSpecialSimpleMatch(m_name, low, high)(candidate);
+    float low_cap = (m_capacity_low ? m_capacity_low->Eval(local_context) : -FLT_MAX);
+    float high_cap = (m_capacity_high ? m_capacity_high->Eval(local_context) : FLT_MAX);
+    int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
+    int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
+
+    return HasSpecialSimpleMatch(m_name, low_cap, high_cap, low_turn, high_turn)(candidate);
 }
 
 ///////////////////////////////////////////////////////////
