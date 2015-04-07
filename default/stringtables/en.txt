@@ -6786,6 +6786,12 @@ DESC_SPECIAL
 DESC_SPECIAL_NOT
  that doesn't have a %1% special
 
+DESC_SPECIAL_CAPACITY_RANGE
+ that has a %1% special with capacity between %2% and %3%
+
+DESC_SPECIAL_CAPACITY_RANGE_NOT
+ that doesn't have a %1% special with capacity between %2% and %3%
+
 DESC_SPECIAL_TURN_RANGE
  that has had a %1% special since between turns %2% and %3%
 
