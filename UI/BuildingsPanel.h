@@ -12,40 +12,48 @@ class ShaderProgram;
 class BuildingsPanel : public AccordionPanel {
 public:
     /** \name Structors */ //@{
-    BuildingsPanel(GG::X w, int columns, int planet_id);    ///< basic ctor
+    BuildingsPanel(GG::X w, int columns, int planet_id);
     ~BuildingsPanel();
     //@}
 
     /** \name Accessors */ //@{
-    int             PlanetID() const {return m_planet_id;}
+    int PlanetID() const { return m_planet_id; }
     //@}
 
     /** \name Mutators */ //@{
-    void            ExpandCollapse(bool expanded);          ///< expands or collapses panel to show details or just summary info
+    /** expands or collapses panel to show details or just summary info */
+    void ExpandCollapse(bool expanded);
 
-    virtual void    Render();
-    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void Render();
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    void            Refresh();                              ///< recreates indicators, redoes layout, resizes
+    /** updates indicators with values of associated object.  Does not do layout and resizing. */
+    void Update();
+    /** updates, redoes layout, resizes indicator */
+    void Refresh();
 
-    /** Enables, or disables if \a enable is false, issuing orders via this BuildingsPanel. */
-    void            EnableOrderIssuing(bool enable = true);
+    /** Enables, or disables if \a enable is false, issuing orders via this panel. */
+    void EnableOrderIssuing(bool enable = true);
     //@}
 
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
 private:
-    void            ExpandCollapseButtonPressed();          ///< toggles panel expanded or collapsed
-    void            DoLayout();                             ///< resizes panel and positions indicators
+    /** toggles panel expanded or collapsed */
+    void ExpandCollapseButtonPressed();
+    /** resizes panel and positions widgets */
+    void DoLayout();
 
-    void            Update();                               ///< recreates building indicators for building on or being built at this planet
+    /** object id for the Planet whose buildings this panel displays */
+    int m_planet_id;
 
-    int                             m_planet_id;            ///< object id for the Planet whose buildings this panel displays
-    int                             m_columns;              ///< number of columns in which to display building indicators
+    /** number of columns in which to display building indicators */
+    int m_columns;
     std::vector<BuildingIndicator*> m_building_indicators;
 
-    static std::map<int, bool>      s_expanded_map;         ///< map indexed by planet ID indicating whether the BuildingsPanel for each object is expanded (true) or collapsed (false)
+    /** map indexed by planet ID indicating whether the BuildingsPanel for each object is expanded (true) or collapsed (false) */
+    static std::map<int, bool> s_expanded_map;
 };
 
 /** Represents and allows some user interaction with a building */

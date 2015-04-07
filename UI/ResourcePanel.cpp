@@ -196,8 +196,6 @@ namespace {
     }
 }
 
-std::map<int, bool> ResourcePanel::s_expanded_map;
-
 ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     AccordionPanel(w),
     m_rescenter_id(object_id),
@@ -211,10 +209,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 {
     SetName("ResourcePanel");
 
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
-    if (!obj)
-        throw std::invalid_argument("Attempted to construct a ResourcePanel with an object_id that is not an UniverseObject");
-    TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
+    TemporaryPtr<const ResourceCenter> res = GetResCenter();
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
@@ -243,6 +238,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     meters.push_back(std::make_pair(METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
     meters.push_back(std::make_pair(METER_TRADE,        METER_TARGET_TRADE));
 
+    // attach and show meter bars and large resource indicators
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
 
@@ -265,10 +261,6 @@ ResourcePanel::~ResourcePanel() {
     delete m_construction_stat;
 }
 
-void ResourcePanel::ExpandCollapseButtonPressed() {
-    ExpandCollapse(!s_expanded_map[m_rescenter_id]);
-}
-
 void ResourcePanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_rescenter_id]) return; // nothing to do
     s_expanded_map[m_rescenter_id] = expanded;
@@ -276,92 +268,9 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void ResourcePanel::DoLayout() {
-    // initially detach everything (most things?).  Some will be reattached later.
-    DetachChild(m_industry_stat);   DetachChild(m_research_stat);
-    DetachChild(m_trade_stat);      DetachChild(m_construction_stat);
-
-    DetachChild(m_multi_meter_status_bar);
-    DetachChild(m_multi_icon_value_indicator);
-
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
-
-    // update size of panel and position and visibility of widgets
-    if (!s_expanded_map[m_rescenter_id]) {
-        TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
-
-        if (res) {
-            // determine which two resource icons to display while collapsed: the two with the highest production.
-            // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
-            // add a slight offest to the sorting key to control order in case of ties
-            std::multimap<double, StatisticIcon*> res_prod_icon_map;
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue()+0.0003,     m_industry_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue()+0.0002,     m_research_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(),        m_trade_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_construction_stat->GetValue()+0.0001, m_construction_stat));
-
-            // position and reattach icons to be shown
-            int n = 0;
-            for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
-                GG::X x = MeterIconSize().x*n*7/2;
-
-                if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
-
-                std::multimap<double, StatisticIcon*>::iterator it2 = --it;
-
-                StatisticIcon* icon = it2->second;
-                AttachChild(icon);
-                GG::Pt icon_ul(x, GG::Y0);
-                GG::Pt icon_lr = icon_ul + MeterIconSize();
-                icon->SizeMove(icon_ul, icon_lr);
-                icon->Show();
-
-                n++;
-            }
-        }
-
-        Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
-    } else {
-        GG::Y top = GG::Y0;
-
-        // attach and show meter bars and large resource indicators
-        AttachChild(m_multi_icon_value_indicator);
-        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
-        m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
-        top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
-
-        AttachChild(m_multi_meter_status_bar);
-        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
-        m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
-        top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
-
-        MoveChildUp(m_expand_button);
-
-        Resize(GG::Pt(Width(), top));
-    }
-
-    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
-
-    SetCollapsed(!s_expanded_map[m_rescenter_id]);
-}
-
 void ResourcePanel::Render() {
     // Draw outline and background...
     GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-
-    // draw details depending on state of ownership and expanded / collapsed status
-
-    // determine ownership
-    /*TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
-    if (obj->Unowned())
-        // uninhabited
-    else {
-        if(!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            // inhabited by other empire
-        else
-            // inhabited by this empire (and possibly other empires)
-    }*/
-
 }
 
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -390,17 +299,11 @@ void ResourcePanel::Update() {
     m_construction_stat->ClearBrowseInfoWnd();
     m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
 
-
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
     }
-
-
-    //std::cout << "ResourcePanel::Update() object: " << obj->Name() << std::endl;
-    //DebugLogger() << "ResourcePanel::Update()";
-    //DebugLogger() << obj->Dump();
 
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
@@ -410,7 +313,6 @@ void ResourcePanel::Update() {
     m_research_stat->SetValue(obj->InitialMeterValue(METER_RESEARCH));
     m_trade_stat->SetValue(obj->InitialMeterValue(METER_TRADE));
     m_construction_stat->SetValue(obj->InitialMeterValue(METER_CONSTRUCTION));
-
 
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
     // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
@@ -444,3 +346,88 @@ void ResourcePanel::Refresh() {
 
 void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/)
 {}
+
+void ResourcePanel::ExpandCollapseButtonPressed()
+{ ExpandCollapse(!s_expanded_map[m_rescenter_id]); }
+
+void ResourcePanel::DoLayout() {
+    // initially detach most things.  Some will be reattached later.
+    DetachChild(m_industry_stat);
+    DetachChild(m_research_stat);
+    DetachChild(m_trade_stat);
+    DetachChild(m_construction_stat);
+
+    // detach / hide meter bars and large resource indicators
+    DetachChild(m_multi_meter_status_bar);
+    DetachChild(m_multi_icon_value_indicator);
+
+    // update size of panel and position and visibility of widgets
+    if (!s_expanded_map[m_rescenter_id]) {
+        // determine which two resource icons to display while collapsed: the two with the highest production.
+        // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
+        // add a slight offest to the sorting key to control order in case of ties
+        std::multimap<double, StatisticIcon*> res_prod_icon_map;
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue() + 0.0003, m_industry_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue() + 0.0002, m_research_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(), m_trade_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_construction_stat->GetValue() + 0.0001, m_construction_stat));
+
+        // position and reattach icons to be shown
+        int n = 0;
+        for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
+            GG::X x = MeterIconSize().x*n*7/2;
+
+            if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
+
+            std::multimap<double, StatisticIcon*>::iterator it2 = --it;
+
+            StatisticIcon* icon = it2->second;
+            AttachChild(icon);
+            GG::Pt icon_ul(x, GG::Y0);
+            GG::Pt icon_lr = icon_ul + MeterIconSize();
+            icon->SizeMove(icon_ul, icon_lr);
+            icon->Show();
+
+            n++;
+        }
+
+        Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
+    } else {
+        // attach and show meter bars and large resource indicators
+        GG::Y top = GG::Y0;
+
+        AttachChild(m_multi_icon_value_indicator);
+        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
+        m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
+        top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
+
+        AttachChild(m_multi_meter_status_bar);
+        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
+        m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
+        top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
+
+        MoveChildUp(m_expand_button);
+
+        Resize(GG::Pt(Width(), top));
+    }
+
+    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
+
+    SetCollapsed(!s_expanded_map[m_rescenter_id]);
+}
+
+TemporaryPtr<const ResourceCenter> ResourcePanel::GetResCenter() const {
+    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
+    if (!obj) {
+        ErrorLogger() << "ResourcePanel tried to get an object with an invalid m_rescenter_id";
+        return TemporaryPtr<const ResourceCenter>();
+    }
+    TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
+    if (!res) {
+        ErrorLogger() << "ResourcePanel failed casting an object pointer to a ResourceCenter pointer";
+        return TemporaryPtr<const ResourceCenter>();
+    }
+    return res;
+}
+
+std::map<int, bool> ResourcePanel::s_expanded_map;
