@@ -101,11 +101,6 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void ResourcePanel::Render() {
-    // Draw outline and background...
-    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-}
-
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 

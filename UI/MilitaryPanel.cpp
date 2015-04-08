@@ -106,13 +106,6 @@ void MilitaryPanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void MilitaryPanel::Render() {
-    if (Height() < 1) return;   // don't render if empty
-
-    // Draw outline and background...
-    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-}
-
 void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
