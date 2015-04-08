@@ -39,7 +39,7 @@ Effect::SourcedEffectsGroup::SourcedEffectsGroup() :
     source_object_id(INVALID_OBJECT_ID)
 {}
 
-Effect::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const EffectsGroup>& effects_group_) :
+Effect::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<EffectsGroup>& effects_group_) :
     source_object_id(source_object_id_),
     effects_group(effects_group_)
 {}

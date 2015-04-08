@@ -114,6 +114,8 @@ struct ValueRef::ValueRefBase
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0; ///< returns a text description of this type of special
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -137,8 +139,11 @@ struct FO_COMMON_API ValueRef::Constant : public ValueRef::ValueRefBase<T>
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    T m_value;
+    T           m_value;
+    std::string m_top_level_content;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -182,9 +187,9 @@ private:
 template <class T>
 struct FO_COMMON_API ValueRef::Statistic : public ValueRef::Variable<T>
 {
-    Statistic(const ValueRef::ValueRefBase<T>* value_ref,
+    Statistic(ValueRef::ValueRefBase<T>* value_ref,
               StatisticType stat_type,
-              const Condition::ConditionBase* sampling_condition);
+              Condition::ConditionBase* sampling_condition);
 
     ~Statistic();
 
@@ -204,11 +209,13 @@ struct FO_COMMON_API ValueRef::Statistic : public ValueRef::Variable<T>
     virtual std::string             Description() const;
     virtual std::string             Dump() const;
 
+    virtual void                    SetTopLevelContent(const std::string& content_name);
+
 protected:
     /** Gets the set of objects in the Universe that match the sampling condition. */
     void    GetConditionMatches(const ScriptingContext& context,
                                 Condition::ObjectSet& condition_targets,
-                                const Condition::ConditionBase* condition) const;
+                                Condition::ConditionBase* condition) const;
 
     /** Evaluates the property for the specified objects. */
     void    GetObjectPropertyValues(const ScriptingContext& context,
@@ -219,9 +226,9 @@ protected:
     T       ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const;
 
 private:
-    StatisticType                   m_stat_type;
-    const Condition::ConditionBase* m_sampling_condition;
-    const ValueRef::ValueRefBase<T>*m_value_ref;
+    StatisticType               m_stat_type;
+    Condition::ConditionBase*   m_sampling_condition;
+    ValueRef::ValueRefBase<T>*  m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -234,11 +241,11 @@ template <class T>
 struct FO_COMMON_API ValueRef::ComplexVariable : public ValueRef::Variable<T>
 {
     explicit ComplexVariable(const std::string& variable_name,
-                             const ValueRefBase<int>* int_ref1 = 0,
-                             const ValueRefBase<int>* int_ref2 = 0,
-                             const ValueRefBase<int>* int_ref3 = 0,
-                             const ValueRefBase<std::string>* string_ref1 = 0,
-                             const ValueRefBase<std::string>* string_ref2 = 0);
+                             ValueRefBase<int>* int_ref1 = 0,
+                             ValueRefBase<int>* int_ref2 = 0,
+                             ValueRefBase<int>* int_ref3 = 0,
+                             ValueRefBase<std::string>* string_ref1 = 0,
+                             ValueRefBase<std::string>* string_ref2 = 0);
 
     ~ComplexVariable();
 
@@ -256,12 +263,14 @@ struct FO_COMMON_API ValueRef::ComplexVariable : public ValueRef::Variable<T>
     virtual std::string             Description() const;
     virtual std::string             Dump() const;
 
+    virtual void                    SetTopLevelContent(const std::string& content_name);
+
 protected:
-    const ValueRefBase<int>*        m_int_ref1;
-    const ValueRefBase<int>*        m_int_ref2;
-    const ValueRefBase<int>*        m_int_ref3;
-    const ValueRefBase<std::string>*m_string_ref1;
-    const ValueRefBase<std::string>*m_string_ref2;
+    ValueRefBase<int>*        m_int_ref1;
+    ValueRefBase<int>*        m_int_ref2;
+    ValueRefBase<int>*        m_int_ref3;
+    ValueRefBase<std::string>*m_string_ref1;
+    ValueRefBase<std::string>*m_string_ref2;
 
 private:
     friend class boost::serialization::access;
@@ -275,8 +284,8 @@ private:
 template <class FromType, class ToType>
 struct FO_COMMON_API ValueRef::StaticCast : public ValueRef::Variable<ToType>
 {
-    StaticCast(const ValueRef::Variable<FromType>* value_ref);
-    StaticCast(const ValueRef::ValueRefBase<FromType>* value_ref);
+    StaticCast(ValueRef::Variable<FromType>* value_ref);
+    StaticCast(ValueRef::ValueRefBase<FromType>* value_ref);
     ~StaticCast();
 
     virtual bool        operator==(const ValueRef::ValueRefBase<ToType>& rhs) const;
@@ -289,8 +298,10 @@ struct FO_COMMON_API ValueRef::StaticCast : public ValueRef::Variable<ToType>
     virtual std::string Dump() const;
     const ValueRefBase<FromType>*   GetValueRef() const { return m_value_ref; }
 
+    virtual void                    SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRefBase<FromType>* m_value_ref;
+    ValueRefBase<FromType>* m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -303,8 +314,8 @@ private:
 template <class FromType>
 struct FO_COMMON_API ValueRef::StringCast : public ValueRef::Variable<std::string>
 {
-    StringCast(const ValueRef::Variable<FromType>* value_ref);
-    StringCast(const ValueRef::ValueRefBase<FromType>* value_ref);
+    StringCast(ValueRef::Variable<FromType>* value_ref);
+    StringCast(ValueRef::ValueRefBase<FromType>* value_ref);
     ~StringCast();
 
     virtual bool        operator==(const ValueRef::ValueRefBase<std::string>& rhs) const;
@@ -317,8 +328,10 @@ struct FO_COMMON_API ValueRef::StringCast : public ValueRef::Variable<std::strin
     virtual std::string Dump() const;
     const ValueRefBase<FromType>*   GetValueRef() const { return m_value_ref; }
 
+    virtual void                    SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRefBase<FromType>* m_value_ref;
+    ValueRefBase<FromType>* m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -327,8 +340,8 @@ private:
 
 /** Looks up a string ValueRef and returns the UserString equivalent. */
 struct FO_COMMON_API ValueRef::UserStringLookup : public ValueRef::Variable<std::string> {
-    UserStringLookup(const ValueRef::Variable<std::string>* value_ref);
-    UserStringLookup(const ValueRef::ValueRefBase<std::string>* value_ref);
+    UserStringLookup(ValueRef::Variable<std::string>* value_ref);
+    UserStringLookup(ValueRef::ValueRefBase<std::string>* value_ref);
     ~UserStringLookup();
 
     virtual bool        operator==(const ValueRef::ValueRefBase<std::string>& rhs) const;
@@ -341,8 +354,10 @@ struct FO_COMMON_API ValueRef::UserStringLookup : public ValueRef::Variable<std:
     virtual std::string Dump() const;
     const ValueRefBase<std::string>*    GetValueRef() const { return m_value_ref; }
 
+    virtual void                        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRefBase<std::string>* m_value_ref;
+    ValueRefBase<std::string>* m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -355,9 +370,9 @@ private:
 template <class T>
 struct FO_COMMON_API ValueRef::Operation : public ValueRef::ValueRefBase<T>
 {
-    Operation(OpType op_type, const ValueRefBase<T>* operand1,
-              const ValueRefBase<T>* operand2);                 ///< binary operation ctor
-    Operation(OpType op_type, const ValueRefBase<T>* operand);  ///< unary operation ctor
+    Operation(OpType op_type, ValueRefBase<T>* operand1,
+              ValueRefBase<T>* operand2);               ///< binary operation ctor
+    Operation(OpType op_type, ValueRefBase<T>* operand);///< unary operation ctor
     ~Operation();
 
     virtual bool            operator==(const ValueRef::ValueRefBase<T>& rhs) const;
@@ -372,10 +387,12 @@ struct FO_COMMON_API ValueRef::Operation : public ValueRef::ValueRefBase<T>
     virtual std::string     Description() const;
     virtual std::string     Dump() const;
 
+    virtual void            SetTopLevelContent(const std::string& content_name);
+
 private:
-    OpType                  m_op_type;
-    const ValueRefBase<T>*  m_operand1;
-    const ValueRefBase<T>*  m_operand2;
+    OpType              m_op_type;
+    ValueRefBase<T>*    m_operand1;
+    ValueRefBase<T>*    m_operand2;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -385,7 +402,6 @@ private:
 namespace ValueRef {
     FO_COMMON_API MeterType     NameToMeter(const std::string& name);
     FO_COMMON_API std::string   MeterToName(MeterType meter);
-
     FO_COMMON_API std::string   ReconstructName(const std::vector<std::string>& property_name,
                                                 ReferenceType ref_type);
 }
@@ -426,7 +442,7 @@ bool ValueRef::Constant<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) con
         return false;
     const ValueRef::Constant<T>& rhs_ = static_cast<const ValueRef::Constant<T>&>(rhs);
 
-    return m_value == rhs_.m_value;
+    return m_value == rhs_.m_value && m_top_level_content == rhs_.m_top_level_content;
 }
 
 template <class T>
@@ -440,6 +456,10 @@ T ValueRef::Constant<T>::Eval(const ScriptingContext& context) const
 template <class T>
 std::string ValueRef::Constant<T>::Description() const
 { return UserString(boost::lexical_cast<std::string>(m_value)); }
+
+template <class T>
+void ValueRef::Constant<T>::SetTopLevelContent(const std::string& content_name)
+{ m_top_level_content = content_name; }
 
 namespace ValueRef {
     template <>
@@ -474,6 +494,9 @@ namespace ValueRef {
 
     template <>
     std::string Constant<std::string>::Dump() const;
+
+    template <>
+    std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
 }
 
 template <class T>
@@ -481,7 +504,8 @@ template <class Archive>
 void ValueRef::Constant<T>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
-        & BOOST_SERIALIZATION_NVP(m_value);
+        & BOOST_SERIALIZATION_NVP(m_value)
+        & BOOST_SERIALIZATION_NVP(m_top_level_content);
 }
 
 ///////////////////////////////////////////////////////////
@@ -585,9 +609,9 @@ void ValueRef::Variable<T>::serialize(Archive& ar, const unsigned int version)
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
 template <class T>
-ValueRef::Statistic<T>::Statistic(const ValueRef::ValueRefBase<T>* value_ref,
+ValueRef::Statistic<T>::Statistic(ValueRef::ValueRefBase<T>* value_ref,
                                   StatisticType stat_type,
-                                  const Condition::ConditionBase* sampling_condition) :
+                                  Condition::ConditionBase* sampling_condition) :
     Variable<T>(ValueRef::NON_OBJECT_REFERENCE, ""),
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition),
@@ -630,7 +654,7 @@ bool ValueRef::Statistic<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) co
 template <class T>
 void ValueRef::Statistic<T>::GetConditionMatches(const ScriptingContext& context,
                                                  Condition::ObjectSet& condition_targets,
-                                                 const Condition::ConditionBase* condition) const
+                                                 Condition::ConditionBase* condition) const
 {
     condition_targets.clear();
     if (!condition)
@@ -719,6 +743,15 @@ std::string ValueRef::Statistic<T>::Description() const {
 template <class T>
 std::string ValueRef::Statistic<T>::Dump() const
 { return Description(); }
+
+template <class T>
+void ValueRef::Statistic<T>::SetTopLevelContent(const std::string& content_name)
+{
+    if (m_sampling_condition)
+        m_sampling_condition->SetTopLevelContent(content_name);
+    if (m_value_ref)
+        m_value_ref->SetTopLevelContent(content_name);
+}
 
 template <class T>
 T ValueRef::Statistic<T>::Eval(const ScriptingContext& context) const
@@ -965,11 +998,11 @@ void ValueRef::Statistic<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <class T>
 ValueRef::ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
-                                              const ValueRefBase<int>* int_ref1,
-                                              const ValueRefBase<int>* int_ref2,
-                                              const ValueRefBase<int>* int_ref3,
-                                              const ValueRefBase<std::string>* string_ref1,
-                                              const ValueRefBase<std::string>* string_ref2) :
+                                              ValueRefBase<int>* int_ref1,
+                                              ValueRefBase<int>* int_ref2,
+                                              ValueRefBase<int>* int_ref3,
+                                              ValueRefBase<std::string>* string_ref1,
+                                              ValueRefBase<std::string>* string_ref2) :
     Variable<T>(ValueRef::NON_OBJECT_REFERENCE, std::vector<std::string>(1, variable_name)),
     m_int_ref1(int_ref1),
     m_int_ref2(int_ref2),
@@ -1146,6 +1179,21 @@ template <class T>
 std::string ValueRef::ComplexVariable<T>::Dump() const
 { return "ComplexVariable"; }
 
+template <class T>
+void ValueRef::ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
+{
+    if (m_int_ref1)
+        m_int_ref1->SetTopLevelContent(content_name);
+    if (m_int_ref2)
+        m_int_ref2->SetTopLevelContent(content_name);
+    if (m_int_ref3)
+        m_int_ref3->SetTopLevelContent(content_name);
+    if (m_string_ref1)
+        m_string_ref1->SetTopLevelContent(content_name);
+    if (m_string_ref2)
+        m_string_ref2->SetTopLevelContent(content_name);
+}
+
 namespace ValueRef {
     template <>
     PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const;
@@ -1185,13 +1233,13 @@ void ValueRef::ComplexVariable<T>::serialize(Archive& ar, const unsigned int ver
 // StaticCast                                            //
 ///////////////////////////////////////////////////////////
 template <class FromType, class ToType>
-ValueRef::StaticCast<FromType, ToType>::StaticCast(const ValueRef::Variable<FromType>* value_ref) :
+ValueRef::StaticCast<FromType, ToType>::StaticCast(ValueRef::Variable<FromType>* value_ref) :
     ValueRef::Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(value_ref)
 {}
 
 template <class FromType, class ToType>
-ValueRef::StaticCast<FromType, ToType>::StaticCast(const ValueRef::ValueRefBase<FromType>* value_ref) :
+ValueRef::StaticCast<FromType, ToType>::StaticCast(ValueRef::ValueRefBase<FromType>* value_ref) :
     ValueRef::Variable<ToType>(ValueRef::NON_OBJECT_REFERENCE),
     m_value_ref(value_ref)
 {}
@@ -1251,6 +1299,13 @@ std::string ValueRef::StaticCast<FromType, ToType>::Dump() const
 { return m_value_ref->Dump(); }
 
 template <class FromType, class ToType>
+void ValueRef::StaticCast<FromType, ToType>::SetTopLevelContent(const std::string& content_name)
+{
+    if (m_value_ref)
+        m_value_ref->SetTopLevelContent(content_name);
+}
+
+template <class FromType, class ToType>
 template <class Archive>
 void ValueRef::StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int version)
 {
@@ -1262,13 +1317,13 @@ void ValueRef::StaticCast<FromType, ToType>::serialize(Archive& ar, const unsign
 // StringCast                                            //
 ///////////////////////////////////////////////////////////
 template <class FromType>
-ValueRef::StringCast<FromType>::StringCast(const ValueRef::Variable<FromType>* value_ref) :
+ValueRef::StringCast<FromType>::StringCast(ValueRef::Variable<FromType>* value_ref) :
     ValueRef::Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(value_ref)
 {}
 
 template <class FromType>
-ValueRef::StringCast<FromType>::StringCast(const ValueRef::ValueRefBase<FromType>* value_ref) :
+ValueRef::StringCast<FromType>::StringCast(ValueRef::ValueRefBase<FromType>* value_ref) :
     ValueRef::Variable<std::string>(ValueRef::NON_OBJECT_REFERENCE),
     m_value_ref(value_ref)
 {}
@@ -1342,6 +1397,12 @@ std::string ValueRef::StringCast<FromType>::Dump() const
 { return m_value_ref->Dump(); }
 
 template <class FromType>
+void ValueRef::StringCast<FromType>::SetTopLevelContent(const std::string& content_name) {
+    if (m_value_ref)
+        m_value_ref->SetTopLevelContent(content_name);
+}
+
+template <class FromType>
 template <class Archive>
 void ValueRef::StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
 {
@@ -1363,14 +1424,14 @@ void ValueRef::UserStringLookup::serialize(Archive& ar, const unsigned int versi
 // Operation                                             //
 ///////////////////////////////////////////////////////////
 template <class T>
-ValueRef::Operation<T>::Operation(OpType op_type, const ValueRefBase<T>* operand1, const ValueRefBase<T>* operand2) :
+ValueRef::Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand1, ValueRefBase<T>* operand2) :
     m_op_type(op_type),
     m_operand1(operand1),
     m_operand2(operand2)
 {}
 
 template <class T>
-ValueRef::Operation<T>::Operation(OpType op_type, const ValueRefBase<T>* operand) :
+ValueRef::Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand) :
     m_op_type(op_type),
     m_operand1(operand),
     m_operand2(0)
@@ -1668,6 +1729,14 @@ std::string ValueRef::Operation<T>::Dump() const
         retval += m_operand2->Dump();
 
     return retval;
+}
+
+template <class T>
+void ValueRef::Operation<T>::SetTopLevelContent(const std::string& content_name) {
+    if (m_operand1)
+        m_operand1->SetTopLevelContent(content_name);
+    if (m_operand2)
+        m_operand2->SetTopLevelContent(content_name);
 }
 
 template <class T>

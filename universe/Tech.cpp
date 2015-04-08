@@ -75,6 +75,17 @@ namespace {
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
 ///////////////////////////////////////////////////////////
+void Tech::Init() {
+    if (m_research_cost)
+        m_research_cost->SetTopLevelContent(m_name);
+    if (m_research_turns)
+        m_research_turns->SetTopLevelContent(m_name);
+
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
+         it != m_effects.end(); ++it)
+    { (*it)->SetTopLevelContent(m_name); }
+}
+
 std::string Tech::Dump() const {
     using boost::lexical_cast;
 

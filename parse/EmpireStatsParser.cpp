@@ -34,7 +34,7 @@ namespace {
                 =   tok.Statistic_
                 >   parse::label(Name_token)    > tok.string [ _a = _1 ]
                 >   parse::label(Value_token)   > double_value_ref
-                [ _val = construct<std::pair<std::string, const ValueRef::ValueRefBase<double>*> >(_a, _1) ]
+                [ _val = construct<std::pair<std::string, ValueRef::ValueRefBase<double>*> >(_a, _1) ]
                 ;
 
             start
@@ -52,14 +52,14 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            std::pair<std::string, const ValueRef::ValueRefBase<double>*> (),
+            std::pair<std::string, ValueRef::ValueRefBase<double>*> (),
             qi::locals<std::string>,
             parse::skipper_type
         > stat_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::map<std::string, const ValueRef::ValueRefBase<double>*>&),
+            void (std::map<std::string, ValueRef::ValueRefBase<double>*>&),
             parse::skipper_type
         > start_rule;
 
@@ -70,9 +70,6 @@ namespace {
 
 namespace parse {
     bool statistics(const boost::filesystem::path& path,
-                    std::map<std::string, const ValueRef::ValueRefBase<double>*>& stats_)
-    {
-        return detail::parse_file<rules, std::map<std::string, const ValueRef::ValueRefBase<double>*> >(
-            path, stats_);
-    }
+                    std::map<std::string, ValueRef::ValueRefBase<double>*>& stats_)
+    { return detail::parse_file<rules, std::map<std::string, ValueRef::ValueRefBase<double>*> >(path, stats_); }
 }

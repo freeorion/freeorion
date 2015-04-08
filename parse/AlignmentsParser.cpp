@@ -16,7 +16,7 @@ namespace std {
 #endif
 
 namespace {
-    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >* g_effects_groups = 0;
+    std::vector<boost::shared_ptr<Effect::EffectsGroup> >* g_effects_groups = 0;
 
     struct rules {
         rules() {
@@ -82,7 +82,7 @@ namespace {
 namespace parse {
     bool alignments(const boost::filesystem::path& path,
                     std::vector<Alignment>& alignments_,
-                    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups)
+                    std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups)
     {
         g_effects_groups = &effects_groups;
         return detail::parse_file<rules, std::vector<Alignment> >(path, alignments_);

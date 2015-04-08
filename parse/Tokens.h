@@ -70,6 +70,7 @@
     (CreateShip)                                \
     (CreateSystem)                              \
     (CreationTurn)                              \
+    (CurrentContent)                            \
     (CurrentTurn)
 
 #define TOKEN_SEQ_3                             \

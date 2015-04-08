@@ -19,7 +19,7 @@
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<HullType::Slot>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, HullType*>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, HullType*>&) { return os; }
     inline ostream& operator<<(ostream& os, const HullType::Slot&) { return os; }
@@ -230,7 +230,7 @@ namespace {
                 bool,
                 std::set<std::string>,
                 Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+                std::vector<boost::shared_ptr<Effect::EffectsGroup> >
             >,
             parse::skipper_type
         > part_hull_common_params_rule;

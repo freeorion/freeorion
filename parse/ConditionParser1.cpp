@@ -14,7 +14,7 @@ namespace phoenix = boost::phoenix;
 
 #if DEBUG_CONDITION_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<const Condition::ConditionBase*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<Condition::ConditionBase*>&) { return os; }
 }
 #endif
 
@@ -190,7 +190,7 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Condition::ConditionBase* (),
-            qi::locals<std::vector<const Condition::ConditionBase*> >,
+            qi::locals<std::vector<Condition::ConditionBase*> >,
             parse::skipper_type
         > and_or_rule;
 
