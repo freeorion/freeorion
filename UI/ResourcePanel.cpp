@@ -16,21 +16,6 @@
 #include "MultiMeterStatusBar.h"
 
 namespace {
-    /** Returns text wrapped in GG RGBA tags for specified colour */
-    std::string ColourWrappedtext(const std::string& text, const GG::Clr colour)
-    { return GG::RgbaTag(colour) + text + "</rgba>"; }
-
-    /** Returns text representation of number wrapped in GG RGBA tags for
-      * colour depending on whether number is positive, negative or 0.0 */
-    std::string ColouredNumber(double number) {
-        GG::Clr clr = ClientUI::TextColor();
-        if (number > 0.0)
-            clr = ClientUI::StatIncrColor();
-        else if (number < 0.0)
-            clr = ClientUI::StatDecrColor();
-        return ColourWrappedtext(DoubleToString(number, 3, true), clr);
-    }
-
     const int       EDGE_PAD(3);
 
     const GG::X     METER_BROWSE_LABEL_WIDTH(300);
@@ -43,163 +28,11 @@ namespace {
         const int icon_size = std::max(ClientUI::Pts(), 12) * 4/3;
         return GG::Pt(GG::X(icon_size), GG::Y(icon_size));
     }
-
-    const std::string& MeterToUserString(MeterType meter_type) {
-        return UserString(EnumToString(meter_type));
-    }
-
-    class MeterModifiersIndicatorBrowseWnd : public GG::BrowseInfoWnd {
-    public:
-        MeterModifiersIndicatorBrowseWnd(int object_id, MeterType meter_type);
-        virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
-        virtual void    Render();
-
-    private:
-        void            Initialize();
-        virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
-
-        MeterType               m_meter_type;
-        int                     m_source_object_id;
-
-        CUILabel*               m_summary_title;
-
-        std::vector<std::pair<CUILabel*, CUILabel*> >
-                                m_effect_labels_and_values;
-
-        GG::Y                   m_row_height;
-        bool                    m_initialized;
-    };
-
-    //////////////////////////////////////
-    // MeterModifiersIndicatorBrowseWnd //
-    //////////////////////////////////////
-    MeterModifiersIndicatorBrowseWnd::MeterModifiersIndicatorBrowseWnd(int object_id, MeterType meter_type) :
-        GG::BrowseInfoWnd(GG::X0, GG::Y0, METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, GG::Y1),
-        m_meter_type(meter_type),
-        m_source_object_id(object_id),
-        m_summary_title(0),
-        m_row_height(1),
-        m_initialized(false)
-    {}
-
-    bool MeterModifiersIndicatorBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
-        assert(mode <= wnd->BrowseModes().size());
-        return true;
-    }
-
-    void MeterModifiersIndicatorBrowseWnd::Render() {
-        GG::Pt ul = UpperLeft();
-        GG::Pt lr = LowerRight();
-        // main background
-        GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
-
-        // top title filled background
-        if (m_summary_title)
-            GG::FlatRectangle(m_summary_title->UpperLeft(), m_summary_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
-    }
-
-    void MeterModifiersIndicatorBrowseWnd::Initialize() {
-        m_row_height = GG::Y(ClientUI::Pts()*3/2);
-        GG::Y top = GG::Y0;
-
-        const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
-
-        m_summary_title = new CUILabel("", GG::FORMAT_RIGHT);
-        m_summary_title->MoveTo(GG::Pt(GG::X0, top));
-        m_summary_title->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, m_row_height));
-        m_summary_title->SetFont(ClientUI::GetBoldFont());
-        AttachChild(m_summary_title);
-        top += m_row_height;
-
-        // clear existing labels
-        for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
-            DeleteChild(m_effect_labels_and_values[i].first);
-            DeleteChild(m_effect_labels_and_values[i].second);
-        }
-        m_effect_labels_and_values.clear();
-
-        // set summary label
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_source_object_id);
-        if (!obj) {
-            ErrorLogger() << "MeterModifiersIndicatorBrowseWnd couldn't get object with id " << m_source_object_id;
-            m_summary_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_TARGETS_BREAKDOWN_SUMMARY")) %
-                                                    MeterToUserString(m_meter_type) %
-                                                    DoubleToString(0.0, 3, false)));
-            return;
-        }
-
-        const Universe& universe = GetUniverse();
-        const ObjectMap& objects = universe.Objects();
-        const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-
-        double modifications_sum = 0.0;
-
-        // for every object that has the appropriate meter type, get its affect accounting info
-        for (ObjectMap::const_iterator<> obj_it = objects.const_begin();
-                obj_it != objects.const_end(); ++obj_it)
-        {
-            int target_object_id = obj_it->ID();
-            TemporaryPtr<const UniverseObject> target_obj = *obj_it;
-            // does object have relevant meter?
-            const Meter* meter = target_obj->GetMeter(m_meter_type);
-            if (!meter)
-                continue;
-
-            // is any effect accounting available for target object?
-            Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(target_object_id);
-            if (map_it == effect_accounting_map.end())
-                continue;
-            const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
-
-            // is any effect accounting available for this indicator's meter type?
-            std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it =
-                meter_map.find(m_meter_type);
-            if (meter_it == meter_map.end())
-                continue;
-            const std::vector<Effect::AccountingInfo>& accounts = meter_it->second;
-
-            // does the target object's effect accounting have any modifications
-            // by this indicator's source object?  (may be more than one)
-            for (std::vector<Effect::AccountingInfo>::const_iterator account_it = accounts.begin();
-                    account_it != accounts.end(); ++account_it)
-            {
-                if (account_it->source_id != m_source_object_id)
-                    continue;
-                modifications_sum += account_it->meter_change;
-
-                CUILabel* label = new CUILabel(target_obj->Name(), GG::FORMAT_RIGHT);
-                label->MoveTo(GG::Pt(GG::X0, top));
-                label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
-                AttachChild(label);
-
-                CUILabel* value = new CUILabel(ColouredNumber(account_it->meter_change));
-                value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
-                value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
-                AttachChild(value);
-                m_effect_labels_and_values.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
-
-                top += m_row_height;
-            }
-        }
-
-        Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, top));
-
-        m_summary_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_TARGETS_BREAKDOWN_SUMMARY")) %
-                                                MeterToUserString(m_meter_type) %
-                                                DoubleToString(modifications_sum, 3, false)));
-        m_initialized = true;
-    }
-
-    void MeterModifiersIndicatorBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
-        if (!m_initialized)
-            Initialize();
-    }
 }
 
 ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     AccordionPanel(w),
     m_rescenter_id(object_id),
-    //m_pop_mod_stat(0),
     m_industry_stat(0),
     m_research_stat(0),
     m_trade_stat(0),
@@ -334,9 +167,6 @@ void ResourcePanel::Update() {
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
     m_construction_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
-
-    //browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterModifiersIndicatorBrowseWnd(m_rescenter_id, METER_TARGET_POPULATION));
-    //m_pop_mod_stat->SetBrowseInfoWnd(browse_wnd);
 }
 
 void ResourcePanel::Refresh() {
