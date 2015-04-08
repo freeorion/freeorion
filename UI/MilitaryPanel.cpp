@@ -106,9 +106,6 @@ void MilitaryPanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 void MilitaryPanel::Update() {
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!obj) {

@@ -83,9 +83,6 @@ void PopulationPanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (event.Type() != GG::WndEvent::RClick)
         return false;

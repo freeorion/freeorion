@@ -90,9 +90,6 @@ void BuildingsPanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 void BuildingsPanel::Update() {
     //std::cout << "BuildingsPanel::Update" << std::endl;
 
