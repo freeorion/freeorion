@@ -15,7 +15,7 @@ namespace phoenix = boost::phoenix;
 
 #if DEBUG_CONDITION_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<const Condition::ConditionBase*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<Condition::ConditionBase*>&) { return os; }
 }
 #endif
 

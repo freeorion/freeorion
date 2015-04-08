@@ -37,9 +37,11 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/GUI.h>
-#include <boost/algorithm/clamp.hpp>
 
+#include <boost/algorithm/clamp.hpp>
 #include <boost/algorithm/string.hpp>
+
+using boost::io::str;
 
 namespace {
     const GG::X TEXT_MARGIN_X(3);
@@ -2314,7 +2316,6 @@ void EncyclopediaDetailPanel::Refresh() {
     std::string detailed_description;
     GG::Clr color(GG::CLR_ZERO);
 
-    using boost::io::str;
     if (m_items.empty())
         return;
 

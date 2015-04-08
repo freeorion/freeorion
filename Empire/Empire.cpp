@@ -1105,7 +1105,7 @@ namespace {
         const std::vector<Alignment>&           Alignments() const { return m_alignments; }
 
         const std::vector<boost::shared_ptr<
-            const Effect::EffectsGroup> >       EffectsGroups() const { return m_effects_groups; }
+            Effect::EffectsGroup> >       EffectsGroups() const { return m_effects_groups; }
         //@}
 
         /** returns the instance of this singleton class; you should use the
@@ -1115,9 +1115,8 @@ namespace {
     private:
         AlignmentManager();
 
-        std::vector<Alignment>              m_alignments;
-        std::vector<boost::shared_ptr<
-            const Effect::EffectsGroup> >   m_effects_groups;
+        std::vector<Alignment>                                  m_alignments;
+        std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects_groups;
 
         static AlignmentManager*    s_instance;
     };
@@ -1146,10 +1145,10 @@ namespace {
                 DebugLogger() << " ... " << p.Name();
             }
             DebugLogger() << "Alignment Effects:";
-            for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = m_effects_groups.begin();
+            for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = m_effects_groups.begin();
                  it != m_effects_groups.end(); ++it)
             {
-                //const boost::shared_ptr<const Effect::EffectsGroup>& p = *it;
+                //const boost::shared_ptr<Effect::EffectsGroup>& p = *it;
                 DebugLogger() << " ... " /*<< p->Dump()*/;
             }
         }

@@ -13,7 +13,7 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, BuildingType*>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, BuildingType*>&) { return os; }
 }
@@ -62,33 +62,32 @@ namespace {
             using phoenix::construct;
 
             building_type_params
-                =    parse::label(Name_token)                   > tok.string [ _a = _1 ]
-                >    parse::label(Description_token)            > tok.string [ _b = _1 ]
-                >    parse::label(BuildCost_token)              > double_value_ref [ _c = _1 ]
-                >    parse::label(BuildTime_token)              > flexible_int_ref [ _d = _1 ]
-                >    producible [ _e = _1 ]
-                >    (
-                            parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
-                        |   eps [ _f = CR_CAPTURE ]
-                     )
+                =   parse::label(Name_token)                > tok.string [ _a = _1 ]
+                >   parse::label(Description_token)         > tok.string [ _b = _1 ]
+                >   parse::label(BuildCost_token)           > double_value_ref [ _c = _1 ]
+                >   parse::label(BuildTime_token)           > flexible_int_ref [ _d = _1 ]
+                >   producible [ _e = _1 ]
+                >   (   parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _f = _1 ]
+                    |   eps [ _f = CR_CAPTURE ]
+                    )
                 [ _val = construct<BuildingTypeParams>(_a, _b, _c, _d, _e, _f) ]
                 ;
 
             producible
-                =    tok.Unproducible_ [ _val = false ]
-                |    tok.Producible_ [ _val = true ]
-                |    eps [ _val = true ]
+                =   tok.Unproducible_ [ _val = false ]
+                |   tok.Producible_ [ _val = true ]
+                |   eps [ _val = true ]
                 ;
 
             building_type
-                =    tok.BuildingType_
-                >    building_type_params [ _a = _1 ]
-                >    parse::detail::tags_parser()(_b)
-                >  -(parse::label(Location_token)           >> parse::detail::condition_parser [ _c = _1 ] )
-                >  -(parse::label(EnqueueLocation_token)    >> parse::detail::condition_parser [ _d = _1 ] )
-                >  -(parse::label(EffectsGroups_token)      >> parse::detail::effects_group_parser() [ _e = _1 ] )
-                >    parse::label(Icon_token)               > tok.string
-                    [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _1)) ]
+                =   tok.BuildingType_
+                >   building_type_params [ _a = _1 ]
+                >   parse::detail::tags_parser()(_b)
+                > -(parse::label(Location_token)           >> parse::detail::condition_parser [ _c = _1 ])
+                > -(parse::label(EnqueueLocation_token)    >> parse::detail::condition_parser [ _d = _1 ])
+                > -(parse::label(EffectsGroups_token)      >> parse::detail::effects_group_parser() [ _e = _1 ])
+                >   parse::label(Icon_token)               > tok.string
+                [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 
             start
@@ -136,7 +135,7 @@ namespace {
                 std::set<std::string>,
                 Condition::ConditionBase*,
                 Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+                std::vector<boost::shared_ptr<Effect::EffectsGroup> >
             >,
             parse::skipper_type
         > building_type_rule;

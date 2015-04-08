@@ -38,12 +38,12 @@ struct PartHullCommonParams {
         effects(),
         icon()
     {}
-    PartHullCommonParams(const ValueRef::ValueRefBase<double>* production_cost_,
-                         const ValueRef::ValueRefBase<int>* production_time_,
+    PartHullCommonParams(ValueRef::ValueRefBase<double>* production_cost_,
+                         ValueRef::ValueRefBase<int>* production_time_,
                          bool producible_,
                          const std::set<std::string>& tags_,
-                         const Condition::ConditionBase* location_,
-                         const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_,
+                         Condition::ConditionBase* location_,
+                         const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_,
                          const std::string& icon_) :
         production_cost(production_cost_),
         production_time(production_time_),
@@ -53,14 +53,14 @@ struct PartHullCommonParams {
         effects(effects_),
         icon(icon_)
     {}
-    const ValueRef::ValueRefBase<double>*   production_cost;
-    const ValueRef::ValueRefBase<int>*      production_time;
-    bool                                    producible;
-    std::set<std::string>                   tags;
-    const Condition::ConditionBase*         location;
-    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                                            effects;
-    std::string                             icon;
+
+    ValueRef::ValueRefBase<double>*                         production_cost;
+    ValueRef::ValueRefBase<int>*                            production_time;
+    bool                                                    producible;
+    std::set<std::string>                                   tags;
+    Condition::ConditionBase*                               location;
+    std::vector<boost::shared_ptr<Effect::EffectsGroup> >   effects;
+    std::string                                             icon;
 };
 
 /** A type of ship part */
@@ -117,27 +117,26 @@ public:
 
     const std::set<std::string>& Tags() const       { return m_tags; }
     const Condition::ConditionBase* Location() const{ return m_location; }          ///< returns the condition that determines the locations where ShipDesign containing part can be produced
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
+    const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& Effects() const
                                                     { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects this part has
     const std::string&      Icon() const            { return m_icon; }              ///< returns icon graphic that represents part in UI
     //@}
 
 private:
-    void                    Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
+    void                    Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects);
 
-    std::string                             m_name;
-    std::string                             m_description;
-    ShipPartClass                           m_class;
-    float                                   m_capacity;
-    const ValueRef::ValueRefBase<double>*   m_production_cost;
-    const ValueRef::ValueRefBase<int>*      m_production_time;
-    bool                                    m_producible;
-    std::vector<ShipSlotType>               m_mountable_slot_types;
-    std::set<std::string>                   m_tags;
-    const Condition::ConditionBase*         m_location;
-    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                                            m_effects;
-    std::string                             m_icon;
+    std::string                                             m_name;
+    std::string                                             m_description;
+    ShipPartClass                                           m_class;
+    float                                                   m_capacity;
+    ValueRef::ValueRefBase<double>*                         m_production_cost;
+    ValueRef::ValueRefBase<int>*                            m_production_time;
+    bool                                                    m_producible;
+    std::vector<ShipSlotType>                               m_mountable_slot_types;
+    std::set<std::string>                                   m_tags;
+    Condition::ConditionBase*                               m_location;
+    std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
+    std::string                                             m_icon;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -322,7 +321,7 @@ public:
 
     const Condition::ConditionBase* Location() const
     { return m_location; }                                                      ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
+    const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& Effects() const
     { return m_effects; }                                                       ///< returns the EffectsGroups that encapsulate the effects this part hull has
 
     const std::string&  Graphic() const         { return m_graphic; }           ///< returns the image that represents the hull on the design screen
@@ -330,24 +329,23 @@ public:
     //@}
 
 private:
-    void                Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
+    void                Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects);
 
-    std::string                             m_name;
-    std::string                             m_description;
-    float                                   m_speed;
-    float                                   m_fuel;
-    float                                   m_stealth;
-    float                                   m_structure;
-    const ValueRef::ValueRefBase<double>*   m_production_cost;
-    const ValueRef::ValueRefBase<int>*      m_production_time;
-    bool                                    m_producible;
-    std::vector<Slot>                       m_slots;
-    std::set<std::string>                   m_tags;
-    const Condition::ConditionBase*         m_location;
-    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                                            m_effects;
-    std::string                             m_graphic;
-    std::string                             m_icon;
+    std::string                                             m_name;
+    std::string                                             m_description;
+    float                                                   m_speed;
+    float                                                   m_fuel;
+    float                                                   m_stealth;
+    float                                                   m_structure;
+    ValueRef::ValueRefBase<double>*                         m_production_cost;
+    ValueRef::ValueRefBase<int>*                            m_production_time;
+    bool                                                    m_producible;
+    std::vector<Slot>                                       m_slots;
+    std::set<std::string>                                   m_tags;
+    Condition::ConditionBase*                               m_location;
+    std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
+    std::string                                             m_graphic;
+    std::string                                             m_icon;
 
     friend class boost::serialization::access;
     template <class Archive>

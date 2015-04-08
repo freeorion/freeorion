@@ -58,6 +58,18 @@ Special::~Special() {
     delete m_location;
 }
 
+void Special::Init() {
+    if (m_stealth)
+        m_stealth->SetTopLevelContent(m_name);
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
+         it != m_effects.end(); ++it)
+    { (*it)->SetTopLevelContent(m_name); }
+    if (m_initial_capacity)
+        m_initial_capacity->SetTopLevelContent(m_name);
+    if (m_location)
+        m_location->SetTopLevelContent(m_name);
+}
+
 std::string Special::Dump() const {
     std::string retval = DumpIndent() + "Special\n";
     ++g_indent;

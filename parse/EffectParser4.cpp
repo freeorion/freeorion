@@ -175,7 +175,7 @@ namespace {
             qi::locals<
                 std::string,
                 std::string,
-                std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >,
+                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >,
                 EmpireAffiliationType
             >,
             parse::skipper_type

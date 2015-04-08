@@ -93,8 +93,8 @@ struct BuildingTypeParams {
         capture_result(CR_DESTROY)
     {}
     BuildingTypeParams(const std::string& name_, const std::string& desc_,
-                       const ValueRef::ValueRefBase<double>* prod_cost_,
-                       const ValueRef::ValueRefBase<int>* prod_time_,
+                       ValueRef::ValueRefBase<double>* prod_cost_,
+                       ValueRef::ValueRefBase<int>* prod_time_,
                        bool producible_, CaptureResult capture_result_) :
         name(name_),
         desc(desc_),
@@ -103,12 +103,12 @@ struct BuildingTypeParams {
         producible(producible_),
         capture_result(capture_result_)
     {}
-    std::string                             name;
-    std::string                             desc;
-    const ValueRef::ValueRefBase<double>*   prod_cost;
-    const ValueRef::ValueRefBase<int>*      prod_time;
-    bool                                    producible;
-    CaptureResult                           capture_result;
+    std::string                     name;
+    std::string                     desc;
+    ValueRef::ValueRefBase<double>* prod_cost;
+    ValueRef::ValueRefBase<int>*    prod_time;
+    bool                            producible;
+    CaptureResult                   capture_result;
 };
 
 /** A specification for a building of a certain type.  Each building type must
@@ -117,26 +117,11 @@ struct BuildingTypeParams {
 class FO_COMMON_API BuildingType {
 public:
     /** \name Structors */ //@{
-    /** default ctor */
-    BuildingType() :
-        m_name(),
-        m_description(),
-        m_production_cost(0),
-        m_production_time(0),
-        m_capture_result(CR_DESTROY),
-        m_tags(),
-        m_location(0),
-        m_enqueue_location(0),
-        m_effects(0),
-        m_icon("")
-    {};
-
-    /** basic ctor */
-    BuildingType(const BuildingTypeParams& params,
+    BuildingType(BuildingTypeParams& params,
                  const std::set<std::string>& tags,
-                 const Condition::ConditionBase* location,
-                 const Condition::ConditionBase* enqueue_location,
-                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+                 Condition::ConditionBase* location,
+                 Condition::ConditionBase* enqueue_location,
+                 const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,
                  const std::string& icon) :
         m_name(params.name),
         m_description(params.desc),
@@ -149,9 +134,9 @@ public:
         m_enqueue_location(enqueue_location),
         m_effects(effects),
         m_icon(icon)
-    {}
+    { Init(); }
 
-    ~BuildingType(); ///< dtor
+    ~BuildingType();
     //@}
 
     /** \name Accessors */ //@{
@@ -172,7 +157,7 @@ public:
     const Condition::ConditionBase* Location() const        { return m_location; }          ///< returns the condition that determines the locations where this building can be produced
     const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location; }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
 
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
+    const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
                                     Effects() const         { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
     const std::string&              Icon() const            { return m_icon; }              ///< returns the name of the grapic file for this building type
 
@@ -190,17 +175,19 @@ public:
     //@}
 
 private:
-    std::string                                                 m_name;
-    std::string                                                 m_description;
-    const ValueRef::ValueRefBase<double>*                       m_production_cost;
-    const ValueRef::ValueRefBase<int>*                          m_production_time;
-    bool                                                        m_producible;
-    CaptureResult                                               m_capture_result;
-    std::set<std::string>                                       m_tags;
-    const Condition::ConditionBase*                             m_location;
-    const Condition::ConditionBase*                             m_enqueue_location;
-    std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
-    std::string                                                 m_icon;
+    void    Init();
+
+    std::string                                             m_name;
+    std::string                                             m_description;
+    ValueRef::ValueRefBase<double>*                         m_production_cost;
+    ValueRef::ValueRefBase<int>*                            m_production_time;
+    bool                                                    m_producible;
+    CaptureResult                                           m_capture_result;
+    std::set<std::string>                                   m_tags;
+    Condition::ConditionBase*                               m_location;
+    Condition::ConditionBase*                               m_enqueue_location;
+    std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
+    std::string                                             m_icon;
 };
 
 /** Holds all FreeOrion building types.  Types may be looked up by name. */

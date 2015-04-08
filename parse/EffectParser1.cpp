@@ -179,13 +179,13 @@ namespace {
             qi::locals<
                 std::string,
                 std::string,
-                std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >,
+                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >,
                 EmpireAffiliationType
             >,
             parse::skipper_type
         > generate_sitrep_message_rule;
 
-        typedef std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> string_and_string_ref_pair;
+        typedef std::pair<std::string, ValueRef::ValueRefBase<std::string>*> string_and_string_ref_pair;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,

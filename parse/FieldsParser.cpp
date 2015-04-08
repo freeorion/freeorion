@@ -12,7 +12,7 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, FieldType*>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, FieldType*>&) { return os; }
 }
@@ -55,15 +55,13 @@ namespace {
 
             field
                 =   tok.FieldType_
-                >   parse::label(Name_token)                 > tok.string [ _a = _1 ]
-                >   parse::label(Description_token)          > tok.string [ _b = _1 ]
-                >   parse::label(Stealth_token)              > parse::double_ [ _c = _1]
+                >   parse::label(Name_token)                > tok.string [ _a = _1 ]
+                >   parse::label(Description_token)         > tok.string [ _b = _1 ]
+                >   parse::label(Stealth_token)             > parse::double_ [ _c = _1]
                 >   parse::detail::tags_parser()(_d)
-                >   -(
-                        parse::label(EffectsGroups_token)    > parse::detail::effects_group_parser() [ _e = _1 ]
-                     )
-                >    parse::label(Graphic_token)             > tok.string
-                     [ insert(_r1, new_<FieldType>(_a, _b, _c, _d, _e, _1)) ]
+                > -(parse::label(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
+                >   parse::label(Graphic_token)             > tok.string
+                [ insert(_r1, new_<FieldType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 
             start
@@ -87,7 +85,7 @@ namespace {
                 std::string,
                 float,
                 std::set<std::string>,
-                std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
+                std::vector<boost::shared_ptr<Effect::EffectsGroup> >
             >,
             parse::skipper_type
         > field_rule;

@@ -356,7 +356,7 @@ public:
             const std::string& species_name = GetString();
             if (species_name.empty())
                 return new Condition::Homeworld();
-            std::vector<const ValueRef::ValueRefBase<std::string>*> names;
+            std::vector<ValueRef::ValueRefBase<std::string>*> names;
             names.push_back(new ValueRef::Constant<std::string>(species_name));
             return new Condition::Homeworld(names);
 
@@ -370,7 +370,7 @@ public:
             return new Condition::HasSpecial(GetString());
 
         } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
-            std::vector< const Condition::ConditionBase*> operands;
+            std::vector<Condition::ConditionBase*> operands;
             // determine sitrep order
             std::istringstream template_stream(UserString("GROWTH_SPECIALS_LIST"));
             for (std::istream_iterator<std::string> stream_it = std::istream_iterator<std::string>(template_stream);
@@ -383,39 +383,40 @@ public:
             return this_cond;
 
         } else if (condition_key == ASTWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_ASTEROIDS ContainedBy And [System Contains PlanetType X]]
-            std::vector< const Condition::ConditionBase*> operands1;
-            operands1.push_back( new Condition::Type( new ValueRef::Constant<UniverseObjectType> (OBJ_PLANET)) );
+            std::vector<Condition::ConditionBase*> operands1;
+            operands1.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_PLANET)));
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
-                std::vector<const ValueRef::ValueRefBase<PlanetType>*> copytype;
-                copytype.push_back( new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
-                operands1.push_back( new Condition::Not(new Condition::PlanetType(copytype)));
-            } else
-                operands1.push_back( new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
-            std::vector< const Condition::ConditionBase*> operands2;
-            operands2.push_back( new Condition::Type( new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM)));
-            std::vector<const ValueRef::ValueRefBase<PlanetType>*> maintype;
-            maintype.push_back( new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
-            operands2.push_back( new Condition::Contains( new Condition::PlanetType(maintype)));
+                std::vector<ValueRef::ValueRefBase<PlanetType>*> copytype;
+                copytype.push_back(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
+                operands1.push_back(new Condition::Not(new Condition::PlanetType(copytype)));
+            } else {
+                operands1.push_back(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
+            }
+            std::vector<Condition::ConditionBase*> operands2;
+            operands2.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM)));
+            std::vector<ValueRef::ValueRefBase<PlanetType>*> maintype;
+            maintype.push_back(new ValueRef::Constant<PlanetType>(PT_ASTEROIDS));
+            operands2.push_back(new Condition::Contains(new Condition::PlanetType(maintype)));
             operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
             Condition::And* this_cond =  new Condition::And(operands1);
             object_list_cond_description_map[this_cond->Description()] = ASTWITHPTYPE_CONDITION;
             return this_cond;
 
         } else if (condition_key == GGWITHPTYPE_CONDITION) { // And [Planet PlanetType PT_GASGIANT ContainedBy And [System Contains PlanetType X]]
-            std::vector< const Condition::ConditionBase*> operands1;
+            std::vector<Condition::ConditionBase*> operands1;
             const std::string& text = GetString();
             if (text == UserString("CONDITION_ANY")) {
-                std::vector<const ValueRef::ValueRefBase<PlanetType>*> copytype;
-                copytype.push_back( new ValueRef::Constant<PlanetType>(PT_GASGIANT));
-                operands1.push_back( new Condition::Not(new Condition::PlanetType(copytype)));
+                std::vector<ValueRef::ValueRefBase<PlanetType>*> copytype;
+                copytype.push_back(new ValueRef::Constant<PlanetType>(PT_GASGIANT));
+                operands1.push_back(new Condition::Not(new Condition::PlanetType(copytype)));
             } else
-                operands1.push_back( new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
-            std::vector< const Condition::ConditionBase*> operands2;
-            operands2.push_back( new Condition::Type( new ValueRef::Constant<UniverseObjectType> (OBJ_SYSTEM)));
-            std::vector<const ValueRef::ValueRefBase<PlanetType>*> maintype;
-            maintype.push_back( new ValueRef::Constant<PlanetType>(PT_GASGIANT));
-            operands2.push_back( new Condition::Contains( new Condition::PlanetType(maintype)));
+                operands1.push_back(new Condition::PlanetType(GetEnumValueRefVec< ::PlanetType>()));
+            std::vector<Condition::ConditionBase*> operands2;
+            operands2.push_back(new Condition::Type(new ValueRef::Constant<UniverseObjectType>(OBJ_SYSTEM)));
+            std::vector<ValueRef::ValueRefBase<PlanetType>*> maintype;
+            maintype.push_back(new ValueRef::Constant<PlanetType>(PT_GASGIANT));
+            operands2.push_back(new Condition::Contains(new Condition::PlanetType(maintype)));
             operands1.push_back(new Condition::ContainedBy(new Condition::And(operands2)));
             Condition::And* this_cond =  new Condition::And(operands1);
             object_list_cond_description_map[this_cond->Description()] = GGWITHPTYPE_CONDITION;
@@ -507,8 +508,8 @@ private:
     ValueRef::ValueRefBase<std::string>*                    GetStringValueRef()
     { return new ValueRef::Constant<std::string>(GetString()); }
 
-    std::vector<const ValueRef::ValueRefBase<std::string>*> GetStringValueRefVec() {
-        std::vector<const ValueRef::ValueRefBase<std::string>*> retval;
+    std::vector<ValueRef::ValueRefBase<std::string>*> GetStringValueRefVec() {
+        std::vector<ValueRef::ValueRefBase<std::string>*> retval;
         retval.push_back(GetStringValueRef());
         return retval;
     }
@@ -570,8 +571,9 @@ private:
     { return new ValueRef::Constant<T>(GetEnum<T>()); }
 
     template <typename T>
-    std::vector<const ValueRef::ValueRefBase<T>*>           GetEnumValueRefVec() {
-        std::vector<const ValueRef::ValueRefBase<T>*> retval;
+    std::vector<ValueRef::ValueRefBase<T>*>                 GetEnumValueRefVec()
+    {
+        std::vector<ValueRef::ValueRefBase<T>*> retval;
         retval.push_back(GetEnumValueRef<T>());
         return retval;
     }
