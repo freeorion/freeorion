@@ -26,7 +26,6 @@ public:
     /** expands or collapses panel to show details or just summary info */
     void ExpandCollapse(bool expanded);
 
-    virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     /** updates indicators with values of associated object.  Does not do layout and resizing. */

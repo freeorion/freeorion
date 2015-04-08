@@ -83,11 +83,6 @@ void PopulationPanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void PopulationPanel::Render() {
-    // Draw outline and background...
-    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-}
-
 void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 

@@ -90,13 +90,6 @@ void BuildingsPanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
-void BuildingsPanel::Render() {
-    if (Height() < 1) return;   // don't render if empty
-
-    // Draw outline and background...
-    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-}
-
 void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 

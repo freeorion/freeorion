@@ -16,6 +16,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void Render();
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 

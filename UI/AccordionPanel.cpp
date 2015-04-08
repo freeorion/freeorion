@@ -20,6 +20,14 @@ AccordionPanel::AccordionPanel(GG::X w) :
     DoLayout();
 }
 
+void AccordionPanel::Render() {
+    if (Height() < 1 || Width() < 1)
+        return;
+
+    // Draw outline and background...
+    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+}
+
 void AccordionPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
