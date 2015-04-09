@@ -248,7 +248,7 @@ private:
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
 struct FO_COMMON_API Condition::Turn : public Condition::ConditionBase {
-    Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
+    explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = 0) :
         m_low(low),
         m_high(high)
     {}
@@ -365,11 +365,11 @@ private:
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API Condition::EmpireAffiliation : public Condition::ConditionBase {
-    EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation = AFFIL_SELF) :
+    explicit EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation = AFFIL_SELF) :
         m_empire_id(empire_id),
         m_affiliation(affiliation)
     {}
-    EmpireAffiliation(EmpireAffiliationType affiliation) :
+    explicit EmpireAffiliation(EmpireAffiliationType affiliation) :
        m_empire_id(0),
        m_affiliation(affiliation)
     {}
@@ -480,7 +480,7 @@ struct FO_COMMON_API Condition::Homeworld : public Condition::ConditionBase {
         ConditionBase(),
         m_names()
     {}
-    Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
+    explicit Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
@@ -577,7 +577,7 @@ private:
 
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Condition::Type : public Condition::ConditionBase {
-    Type(ValueRef::ValueRefBase<UniverseObjectType>* type) :
+    explicit Type(ValueRef::ValueRefBase<UniverseObjectType>* type) :
         ConditionBase(),
         m_type(type)
     {}
@@ -611,7 +611,7 @@ private:
 /** Matches all Building objects that are one of the building types specified
   * in \a names. */
 struct FO_COMMON_API Condition::Building : public Condition::ConditionBase {
-    Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
+    explicit Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
@@ -644,7 +644,7 @@ private:
 
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
-    HasSpecial(const std::string& name) :
+    explicit HasSpecial(const std::string& name) :
         ConditionBase(),
         m_name(name),
         m_capacity_low(0),
