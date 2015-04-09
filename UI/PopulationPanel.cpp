@@ -91,15 +91,6 @@ void PopulationPanel::Render() {
 void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void PopulationPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Pt old_size = GG::Wnd::Size();
-
-    AccordionPanel::SizeMove(ul, lr);
-
-    if (old_size != GG::Wnd::Size())
-        DoLayout();
-}
-
 bool PopulationPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (event.Type() != GG::WndEvent::RClick)
         return false;
@@ -179,6 +170,8 @@ void PopulationPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_popcenter_id]); }
 
 void PopulationPanel::DoLayout() {
+    AccordionPanel::DoLayout();
+
     // initially detach most things.  Some will be reattached later.
     DetachChild(m_pop_stat);
     DetachChild(m_happiness_stat);

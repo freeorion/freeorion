@@ -28,7 +28,6 @@ public:
 
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
     /** updates indicators with values of associated object.  Does not do layout and resizing. */
@@ -40,11 +39,15 @@ public:
     void EnableOrderIssuing(bool enable = true);
     //@}
 
+protected:
+    /** \name Mutators */ //@{
+    /** resizes panel and positions widgets */
+    virtual void DoLayout();
+    //@}
+
 private:
     /** toggles panel expanded or collapsed */
     void ExpandCollapseButtonPressed();
-    /** resizes panel and positions widgets */
-    void DoLayout();
 
     /** object id for the PopulationCenter that this panel displays */
     int m_popcenter_id;
