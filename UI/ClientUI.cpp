@@ -501,6 +501,7 @@ namespace {
         db.Add("UI.design-pedia-dynamic",       UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),          false);
         db.Add("UI.chat-panel-height",          UserStringNop("OPTIONS_DB_CHAT_PANEL_HEIGHT"),             160);
         db.Add("UI.chat-panel-width",           UserStringNop("OPTIONS_DB_CHAT_PANEL_WIDTH"),              345);
+        db.Add("UI.show-fleet-eta",             UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                false);
 
         // Other
         db.Add("auto-add-saved-designs",        UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),        true);
