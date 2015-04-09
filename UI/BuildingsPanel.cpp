@@ -100,15 +100,6 @@ void BuildingsPanel::Render() {
 void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void BuildingsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Pt old_size = GG::Wnd::Size();
-
-    AccordionPanel::SizeMove(ul, lr);
-
-    if (old_size != GG::Wnd::Size())
-        DoLayout();
-}
-
 void BuildingsPanel::Update() {
     //std::cout << "BuildingsPanel::Update" << std::endl;
 
@@ -199,6 +190,8 @@ void BuildingsPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
 void BuildingsPanel::DoLayout() {
+    AccordionPanel::DoLayout();
+
     int row = 0;
     int column = 0;
     const int padding = 5;      // space around and between adjacent indicators

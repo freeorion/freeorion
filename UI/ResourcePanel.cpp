@@ -109,15 +109,6 @@ void ResourcePanel::Render() {
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void ResourcePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Pt old_size = GG::Wnd::Size();
-
-    AccordionPanel::SizeMove(ul, lr);
-
-    if (old_size != GG::Wnd::Size())
-        DoLayout();
-}
-
 void ResourcePanel::Update() {
     // remove any old browse wnds
     m_industry_stat->ClearBrowseInfoWnd();
@@ -181,6 +172,8 @@ void ResourcePanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_rescenter_id]); }
 
 void ResourcePanel::DoLayout() {
+    AccordionPanel::DoLayout();
+
     // initially detach most things.  Some will be reattached later.
     DetachChild(m_industry_stat);
     DetachChild(m_research_stat);

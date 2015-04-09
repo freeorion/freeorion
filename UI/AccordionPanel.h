@@ -16,7 +16,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
@@ -24,14 +24,10 @@ public:
 protected:
     /** \name Mutators */ //@{
     void SetCollapsed(bool collapsed);
+    virtual void DoLayout();
     //@}
 
     GG::Button*                     m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
-
-private:
-    /** \name Mutators */ //@{
-    void DoLayout();
-    //@}
 };
 
 #endif

@@ -116,15 +116,6 @@ void MilitaryPanel::Render() {
 void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
-void MilitaryPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Pt old_size = GG::Wnd::Size();
-
-    AccordionPanel::SizeMove(ul, lr);
-
-    if (old_size != GG::Wnd::Size())
-        DoLayout();
-}
-
 void MilitaryPanel::Update() {
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!obj) {
@@ -183,6 +174,8 @@ void MilitaryPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
 void MilitaryPanel::DoLayout() {
+    AccordionPanel::DoLayout();
+
     // initially detach most things.  Some will be reattached later.
     DetachChild(m_shield_stat);
     DetachChild(m_defense_stat);
