@@ -14,13 +14,13 @@ build_no = "XXXX"
 try:
     commit = check_output(["git", "show", "-s", "--format=%h", "HEAD"]).strip()
     timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"]).strip())
-    build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y%m%d"), commit])
+    build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
 except:
     print "WARNING: git not installed, can't determine build number"
 
 built_product_dir = sys.argv[2]
 app = os.path.join(built_product_dir, "FreeOrion.app")
-dmg_file = "FreeOrion-%s-MacOSX-10.6.dmg" % build_no
+dmg_file = "FreeOrion_%s_MacOSX_10.7.dmg" % build_no
 out_path = os.path.join(built_product_dir, dmg_file)
 if os.path.exists(out_path):
     os.remove(out_path)
