@@ -2004,7 +2004,17 @@ void Condition::Building::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
+Condition::HasSpecial::HasSpecial(const std::string& name) :
+    ConditionBase(),
+    m_name(new ValueRef::Constant<std::string>(name)),
+    m_capacity_low(0),
+    m_capacity_high(0),
+    m_since_turn_low(0),
+    m_since_turn_high(0)
+{}
+
 Condition::HasSpecial::~HasSpecial() {
+    delete m_name;
     delete m_capacity_low;
     delete m_capacity_high;
     delete m_since_turn_low;
@@ -2019,9 +2029,7 @@ bool Condition::HasSpecial::operator==(const Condition::ConditionBase& rhs) cons
 
     const Condition::HasSpecial& rhs_ = static_cast<const Condition::HasSpecial&>(rhs);
 
-    if (m_name != rhs_.m_name)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_name)
     CHECK_COND_VREF_MEMBER(m_capacity_low)
     CHECK_COND_VREF_MEMBER(m_capacity_high)
     CHECK_COND_VREF_MEMBER(m_since_turn_low)
@@ -2071,7 +2079,8 @@ void Condition::HasSpecial::Eval(const ScriptingContext& parent_context,
                                  ObjectSet& matches, ObjectSet& non_matches,
                                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ((!m_capacity_low || m_capacity_low->LocalCandidateInvariant()) &&
+    bool simple_eval_safe = ((!m_name || m_name->LocalCandidateInvariant()) &&
+                             (!m_capacity_low || m_capacity_low->LocalCandidateInvariant()) &&
                              (!m_capacity_high || m_capacity_high->LocalCandidateInvariant()) &&
                              (!m_since_turn_low || m_since_turn_low->LocalCandidateInvariant()) &&
                              (!m_since_turn_high || m_since_turn_high->LocalCandidateInvariant()) &&
@@ -2080,11 +2089,12 @@ void Condition::HasSpecial::Eval(const ScriptingContext& parent_context,
         // evaluate turn limits once, pass to simple match for all candidates
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
+        std::string name = (m_name ? m_name->Eval(local_context) : "");
         float low_cap = (m_capacity_low ? m_capacity_low->Eval(local_context) : -FLT_MAX);
         float high_cap = (m_capacity_high ? m_capacity_high->Eval(local_context) : FLT_MAX);
         int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
         int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
-        EvalImpl(matches, non_matches, search_domain, HasSpecialSimpleMatch(m_name, low_cap, high_cap, low_turn, high_turn));
+        EvalImpl(matches, non_matches, search_domain, HasSpecialSimpleMatch(name, low_cap, high_cap, low_turn, high_turn));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -2092,43 +2102,45 @@ void Condition::HasSpecial::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::HasSpecial::RootCandidateInvariant() const
-{ return ((!m_capacity_low || m_capacity_low->RootCandidateInvariant()) &&
+{ return ((!m_name || m_name->RootCandidateInvariant()) &&
+          (!m_capacity_low || m_capacity_low->RootCandidateInvariant()) &&
           (!m_capacity_high || m_capacity_high->RootCandidateInvariant()) &&
           (!m_since_turn_low || m_since_turn_low->RootCandidateInvariant()) &&
           (!m_since_turn_high || m_since_turn_high->RootCandidateInvariant())); }
 
 bool Condition::HasSpecial::TargetInvariant() const
-{ return ((!m_capacity_low || m_capacity_low->TargetInvariant()) &&
+{ return ((!m_name || m_name->TargetInvariant()) &&
+          (!m_capacity_low || m_capacity_low->TargetInvariant()) &&
           (!m_capacity_high || m_capacity_high->TargetInvariant()) &&
           (!m_since_turn_low || m_since_turn_low->TargetInvariant()) &&
           (!m_since_turn_high || m_since_turn_high->TargetInvariant())); }
 
 bool Condition::HasSpecial::SourceInvariant() const
-{ return ((!m_capacity_low || m_capacity_low->SourceInvariant()) &&
+{ return ((!m_name || m_name->SourceInvariant()) &&
+          (!m_capacity_low || m_capacity_low->SourceInvariant()) &&
           (!m_capacity_high || m_capacity_high->SourceInvariant()) &&
           (!m_since_turn_low || m_since_turn_low->SourceInvariant()) &&
           (!m_since_turn_high || m_since_turn_high->SourceInvariant())); }
 
 std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
+    std::string name_str;
+    if (m_name)
+        name_str = m_name->Description();
+
     if (m_since_turn_low || m_since_turn_high) {
         // turn range has been specified; must indicate in description
         std::string low_str = boost::lexical_cast<std::string>(BEFORE_FIRST_TURN);
-        if (m_since_turn_low) {
-            low_str = ValueRef::ConstantExpr(m_since_turn_low) ?
-                    boost::lexical_cast<std::string>(m_since_turn_low->Eval()) :
-                    m_since_turn_low->Description();
-        }
+        if (m_since_turn_low)
+            low_str = m_since_turn_low->Description();
+
         std::string high_str = boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN);
-        if (m_since_turn_high) {
-            high_str = ValueRef::ConstantExpr(m_since_turn_high) ?
-                    boost::lexical_cast<std::string>(m_since_turn_high->Eval()) :
-                    m_since_turn_high->Description();
-        }
+        if (m_since_turn_high)
+            high_str = m_since_turn_high->Description();
 
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_SPECIAL_TURN_RANGE")
             : UserString("DESC_SPECIAL_TURN_RANGE_NOT"))
-                % UserString(m_name)
+                % UserString(name_str)
                 % low_str
                 % high_str);
     }
@@ -2136,22 +2148,17 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
     if (m_capacity_low || m_capacity_high) {
         // capacity range has been specified; must indicate in description
         std::string low_str = boost::lexical_cast<std::string>(-FLT_MAX);
-        if (m_capacity_low) {
-            low_str = ValueRef::ConstantExpr(m_capacity_low) ?
-                    boost::lexical_cast<std::string>(m_capacity_low->Eval()) :
-                    m_capacity_low->Description();
-        }
+        if (m_capacity_low)
+            low_str = m_capacity_low->Description();
+
         std::string high_str = boost::lexical_cast<std::string>(FLT_MAX);
-        if (m_capacity_high) {
-            high_str = ValueRef::ConstantExpr(m_capacity_high) ?
-                    boost::lexical_cast<std::string>(m_capacity_high->Eval()) :
-                    m_capacity_high->Description();
-        }
+        if (m_capacity_high)
+            high_str = m_capacity_high->Description();
 
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_SPECIAL_CAPACITY_RANGE")
             : UserString("DESC_SPECIAL_CAPACITY_RANGE_NOT"))
-                % UserString(m_name)
+                % UserString(name_str)
                 % low_str
                 % high_str);
     }
@@ -2159,23 +2166,25 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_SPECIAL")
         : UserString("DESC_SPECIAL_NOT"))
-                % UserString(m_name));
+                % UserString(name_str));
 }
 
 std::string Condition::HasSpecial::Dump() const {
+    std::string name_str = (m_name ? m_name->Dump() : "");
+
     if (m_since_turn_low || m_since_turn_high) {
         std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump() : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
         std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump() : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
-        return DumpIndent() + "HasSpecialSinceTurn name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
+        return DumpIndent() + "HasSpecialSinceTurn name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
     }
 
     if (m_capacity_low || m_capacity_high) {
         std::string low_dump = (m_capacity_low ? m_capacity_low->Dump() : boost::lexical_cast<std::string>(-FLT_MAX));
         std::string high_dump = (m_capacity_high ? m_capacity_high->Dump() : boost::lexical_cast<std::string>(FLT_MAX));
-        return DumpIndent() + "HasSpecialCapacity name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
+        return DumpIndent() + "HasSpecialCapacity name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
     }
 
-    return DumpIndent() + "HasSpecial name = \"" + m_name + "\"\n";
+    return DumpIndent() + "HasSpecial name = \"" + name_str + "\"\n";
 }
 
 bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
@@ -2184,15 +2193,18 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "HasSpecial::Match passed no candidate object";
         return false;
     }
+    std::string name = (m_name ? m_name->Eval(local_context) : "");
     float low_cap = (m_capacity_low ? m_capacity_low->Eval(local_context) : -FLT_MAX);
     float high_cap = (m_capacity_high ? m_capacity_high->Eval(local_context) : FLT_MAX);
     int low_turn = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
     int high_turn = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
 
-    return HasSpecialSimpleMatch(m_name, low_cap, high_cap, low_turn, high_turn)(candidate);
+    return HasSpecialSimpleMatch(name, low_cap, high_cap, low_turn, high_turn)(candidate);
 }
 
 void Condition::HasSpecial::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
     if (m_capacity_low)
         m_capacity_low->SetTopLevelContent(content_name);
     if (m_capacity_high)
@@ -3726,6 +3738,7 @@ void Condition::Species::SetTopLevelContent(const std::string& content_name) {
 // Enqueued                                              //
 ///////////////////////////////////////////////////////////
 Condition::Enqueued::~Enqueued() {
+    delete m_name;
     delete m_design_id;
     delete m_low;
     delete m_high;
@@ -3742,9 +3755,7 @@ bool Condition::Enqueued::operator==(const Condition::ConditionBase& rhs) const 
     if (m_build_type != rhs_.m_build_type)
         return false;
 
-    if (m_name != rhs_.m_name)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_name)
     CHECK_COND_VREF_MEMBER(m_design_id)
     CHECK_COND_VREF_MEMBER(m_empire_id)
     CHECK_COND_VREF_MEMBER(m_low)
@@ -3837,7 +3848,8 @@ void Condition::Enqueued::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        if ((m_design_id && !m_design_id->LocalCandidateInvariant()) ||
+        if ((m_name &&      !m_name->LocalCandidateInvariant()) ||
+            (m_design_id && !m_design_id->LocalCandidateInvariant()) ||
             (m_empire_id && !m_empire_id->LocalCandidateInvariant()) ||
             (m_low &&       !m_low->LocalCandidateInvariant()) ||
             (m_high &&      !m_high->LocalCandidateInvariant()))
@@ -3845,10 +3857,11 @@ void Condition::Enqueued::Eval(const ScriptingContext& parent_context,
     }
     if (simple_eval_safe) {
         // evaluate valuerefs once, and use to check all candidate objects
-        int design_id = (m_design_id ?  m_design_id->Eval(parent_context) : ShipDesign::INVALID_DESIGN_ID);
-        int empire_id = (m_empire_id ?  m_empire_id->Eval(parent_context) : ALL_EMPIRES);
-        int low =       (m_low ?        m_low->Eval(parent_context) :       0);
-        int high =      (m_high ?       m_high->Eval(parent_context) :      INT_MAX);
+        std::string name =  (m_name ?       m_name->Eval(parent_context) :      "");
+        int design_id =     (m_design_id ?  m_design_id->Eval(parent_context) : ShipDesign::INVALID_DESIGN_ID);
+        int empire_id =     (m_empire_id ?  m_empire_id->Eval(parent_context) : ALL_EMPIRES);
+        int low =           (m_low ?        m_low->Eval(parent_context) :       0);
+        int high =          (m_high ?       m_high->Eval(parent_context) :      INT_MAX);
         // special case: if neither low nor high is specified, default to a
         // minimum of 1, so that just matching "Enqueued (type) (name/id)" will
         // match places where at least one of the specified item is enqueued.
@@ -3858,7 +3871,7 @@ void Condition::Enqueued::Eval(const ScriptingContext& parent_context,
         if (!m_low && !m_high)
             low = 1;
 
-        EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, m_name, design_id, 
+        EvalImpl(matches, non_matches, search_domain, EnqueuedSimpleMatch(m_build_type, name, design_id, 
                                                                           empire_id, low, high));
     } else {
         // re-evaluate allowed building types range for each candidate object
@@ -3867,7 +3880,8 @@ void Condition::Enqueued::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::Enqueued::RootCandidateInvariant() const {
-    if ((m_design_id && !m_design_id->RootCandidateInvariant()) ||
+    if ((m_name &&      !m_name->RootCandidateInvariant()) ||
+        (m_design_id && !m_design_id->RootCandidateInvariant()) ||
         (m_empire_id && !m_empire_id->RootCandidateInvariant()) ||
         (m_low &&       !m_low->RootCandidateInvariant()) ||
         (m_high &&      !m_high->RootCandidateInvariant()))
@@ -3876,7 +3890,8 @@ bool Condition::Enqueued::RootCandidateInvariant() const {
 }
 
 bool Condition::Enqueued::TargetInvariant() const {
-    if ((m_design_id && !m_design_id->TargetInvariant()) ||
+    if ((m_name &&      !m_name->TargetInvariant()) ||
+        (m_design_id && !m_design_id->TargetInvariant()) ||
         (m_empire_id && !m_empire_id->TargetInvariant()) ||
         (m_low &&       !m_low->TargetInvariant()) ||
         (m_high &&      !m_high->TargetInvariant()))
@@ -3885,7 +3900,8 @@ bool Condition::Enqueued::TargetInvariant() const {
 }
 
 bool Condition::Enqueued::SourceInvariant() const {
-    if ((m_design_id && !m_design_id->SourceInvariant()) ||
+    if ((m_name &&      !m_name->SourceInvariant()) ||
+        (m_design_id && !m_design_id->SourceInvariant()) ||
         (m_empire_id && !m_empire_id->SourceInvariant()) ||
         (m_low &&       !m_low->SourceInvariant()) ||
         (m_high &&      !m_high->SourceInvariant()))
@@ -3904,7 +3920,7 @@ std::string Condition::Enqueued::Description(bool negated/* = false*/) const {
         else
             empire_str = m_empire_id->Description();
     }
-    std::string low_str = "0";
+    std::string low_str = "1";
     if (m_low) {
         low_str = ValueRef::ConstantExpr(m_low) ?
                     boost::lexical_cast<std::string>(m_low->Eval()) :
@@ -3917,8 +3933,10 @@ std::string Condition::Enqueued::Description(bool negated/* = false*/) const {
                     m_high->Description();
     }
     std::string what_str;
-    if (!m_name.empty()) {
-        what_str = UserString(m_name);
+    if (m_name) {
+        what_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(what_str))
+            what_str = UserString(what_str);
     } else if (m_design_id) {
         what_str = ValueRef::ConstantExpr(m_design_id) ?
                     boost::lexical_cast<std::string>(m_design_id->Eval()) :
@@ -3951,12 +3969,12 @@ std::string Condition::Enqueued::Dump() const {
 
     if (m_build_type == BT_BUILDING) {
         retval += " type = Building";
-        if (!m_name.empty())
-            retval += " name = " + m_name;
+        if (m_name)
+            retval += " name = " + m_name->Dump();
     } else if (m_build_type == BT_SHIP) {
         retval += " type = Ship";
-        if (!m_name.empty())
-            retval += " design = " + m_name;
+        if (m_name)
+            retval += " design = " + m_name->Dump();
         else if (m_design_id)
             retval += " design = " + m_design_id->Dump();
     }
@@ -3976,14 +3994,17 @@ bool Condition::Enqueued::Match(const ScriptingContext& local_context) const {
         ErrorLogger() << "Enqueued::Match passed no candidate object";
         return false;
     }
-    int empire_id = (m_empire_id ?  m_empire_id->Eval(local_context) :  ALL_EMPIRES);
-    int design_id = (m_design_id ?  m_design_id->Eval(local_context) :  ShipDesign::INVALID_DESIGN_ID);
-    int low =       (m_low ?        m_low->Eval(local_context) :        0);
-    int high =      (m_high ?       m_high->Eval(local_context) :       INT_MAX);
-    return EnqueuedSimpleMatch(m_build_type, m_name, design_id, empire_id, low, high)(candidate);
+    std::string name =  (m_name ?       m_name->Eval(local_context) :       "");
+    int empire_id =     (m_empire_id ?  m_empire_id->Eval(local_context) :  ALL_EMPIRES);
+    int design_id =     (m_design_id ?  m_design_id->Eval(local_context) :  ShipDesign::INVALID_DESIGN_ID);
+    int low =           (m_low ?        m_low->Eval(local_context) :        0);
+    int high =          (m_high ?       m_high->Eval(local_context) :       INT_MAX);
+    return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high)(candidate);
 }
 
 void Condition::Enqueued::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
     if (m_design_id)
         m_design_id->SetTopLevelContent(content_name);
     if (m_empire_id)
@@ -4388,6 +4409,7 @@ bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) cons
 // DesignHasPart                                         //
 ///////////////////////////////////////////////////////////
 Condition::DesignHasPart::~DesignHasPart() {
+    delete m_name;
     delete m_low;
     delete m_high;
 }
@@ -4400,9 +4422,7 @@ bool Condition::DesignHasPart::operator==(const Condition::ConditionBase& rhs) c
 
     const Condition::DesignHasPart& rhs_ = static_cast<const Condition::DesignHasPart&>(rhs);
 
-    if (m_name != rhs_.m_name)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_name);
     CHECK_COND_VREF_MEMBER(m_low)
     CHECK_COND_VREF_MEMBER(m_high)
 
@@ -4438,9 +4458,9 @@ namespace {
             return (m_low <= count && count <= m_high);
         }
 
-        int m_low;
-        int m_high;
-        const std::string& m_name;
+        int                 m_low;
+        int                 m_high;
+        const std::string&  m_name;
     };
 }
 
@@ -4448,15 +4468,18 @@ void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context,
                                     ObjectSet& matches, ObjectSet& non_matches,
                                     SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
-                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    bool simple_eval_safe = (!m_low || m_low->LocalCandidateInvariant()) &&
+                            (!m_high || m_high->LocalCandidateInvariant()) &&
+                            (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
         TemporaryPtr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
-        int low =  std::max(0, m_low->Eval(local_context));
-        int high = std::min(m_high->Eval(local_context), INT_MAX);
-        EvalImpl(matches, non_matches, search_domain, DesignHasPartSimpleMatch(low, high, m_name));
+        std::string name = (m_name ? m_name->Eval(local_context) : "");
+        int low =          (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+        int high =         (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
+        EvalImpl(matches, non_matches, search_domain, DesignHasPartSimpleMatch(low, high, name));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -4464,13 +4487,19 @@ void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::DesignHasPart::RootCandidateInvariant() const
-{ return (m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant()); }
+{   return (!m_low || m_low->RootCandidateInvariant()) &&
+           (!m_high || m_high->RootCandidateInvariant()) &&
+           (!m_name || m_name->RootCandidateInvariant()); }
 
 bool Condition::DesignHasPart::TargetInvariant() const
-{ return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
+{   return (!m_low || m_low->TargetInvariant()) &&
+           (!m_high || m_high->TargetInvariant()) &&
+           (!m_name || m_name->TargetInvariant()); }
 
 bool Condition::DesignHasPart::SourceInvariant() const
-{ return (m_low->SourceInvariant() && m_high->SourceInvariant()); }
+{   return (!m_low || m_low->SourceInvariant()) &&
+           (!m_high || m_high->SourceInvariant()) &&
+           (!m_name || m_name->SourceInvariant()); }
 
 std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const {
     std::string low_str = "0";
@@ -4485,16 +4514,30 @@ std::string Condition::DesignHasPart::Description(bool negated/* = false*/) cons
                     boost::lexical_cast<std::string>(m_high->Eval()) :
                     m_high->Description();
     };
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_DESIGN_HAS_PART")
         : UserString("DESC_DESIGN_HAS_PART_NOT"))
         % low_str
         % high_str
-        % m_name);
+        % name_str);
 }
 
-std::string Condition::DesignHasPart::Dump() const
-{ return DumpIndent() + "DesignHasPart low = " + m_low->Dump() + " high = " + m_high->Dump() + " name = " + m_name; }
+std::string Condition::DesignHasPart::Dump() const {
+    std::string retval = DumpIndent() + "DesignHasPart";
+    if (m_low)
+        retval += "low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval;
+}
 
 bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
@@ -4503,10 +4546,11 @@ bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) cons
         return false;
     }
 
-    int low =  std::max(0, m_low->Eval(local_context));
-    int high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
+    int low =  (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
+    std::string name = (m_name ? m_name->Eval(local_context) : "");
 
-    return DesignHasPartSimpleMatch(low, high, m_name)(candidate);
+    return DesignHasPartSimpleMatch(low, high, name)(candidate);
 }
 
 void Condition::DesignHasPart::SetTopLevelContent(const std::string& content_name) {
@@ -4514,6 +4558,8 @@ void Condition::DesignHasPart::SetTopLevelContent(const std::string& content_nam
         m_low->SetTopLevelContent(content_name);
     if (m_high)
         m_high->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////
