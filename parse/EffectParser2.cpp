@@ -39,7 +39,6 @@ namespace {
                 =    parse::set_ship_part_meter_type_enum() [ _a = _1 ]
                  >> (
                         set_ship_part_meter_suffix_1(_a) [ _val = _1 ]
-                    |   set_ship_part_meter_suffix_2(_a) [ _val = _1 ]
                     |   set_ship_part_meter_suffix_3(_a) [ _val = _1 ]
                     )
                 ;
@@ -49,24 +48,18 @@ namespace {
                 >    parse::label(Value_token)     >  double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _a, _1) ]
                 ;
 
-            set_ship_part_meter_suffix_2
-                =    parse::label(FighterType_token) >  parse::enum_parser<CombatFighterType>() [ _b = _1 ]
-                >    parse::label(Value_token)       >  double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _b, _1) ]
-                ;
-
             set_ship_part_meter_suffix_3
-                =    parse::label(PartName_token) > tok.string [ _c = _1 ]
-                >    parse::label(Value_token)    > double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _c, _1) ]
+                =    parse::label(PartName_token) > tok.string [ _b = _1 ]
+                >    parse::label(Value_token)    > double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _b, _1) ]
                 ;
 
             set_empire_stockpile
                 =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
                 >   (
-                        (
-                            parse::label(Empire_token) > int_value_ref [ _b = _1 ]
+                        (   parse::label(Empire_token) > int_value_ref [ _b = _1 ]
                         >   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
-                        |   (   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ] )
+                        |  (parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
                     )
                 ;
 
@@ -160,7 +153,6 @@ namespace {
             Effect::EffectBase* (MeterType),
             qi::locals<
                 ShipPartClass,
-                CombatFighterType,
                 std::string
             >,
             parse::skipper_type
@@ -190,7 +182,6 @@ namespace {
         set_meter_rule                      set_meter;
         set_meter_rule                      set_ship_part_meter;
         set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_1;
-        set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_2;
         set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_3;
         set_empire_stockpile_rule           set_empire_stockpile;
         parse::effect_parser_rule           set_empire_capital;

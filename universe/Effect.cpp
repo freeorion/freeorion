@@ -176,7 +176,6 @@ namespace {
 
     bool PartMatchesEffect(const PartType& part,
                            ShipPartClass part_class,
-                           CombatFighterType fighter_type,
                            const std::string& part_name)
     {
         if (!part_name.empty())
@@ -653,7 +652,6 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
                                    ShipPartClass part_class,
                                    ValueRef::ValueRefBase<double>* value) :
     m_part_class(part_class),
-    m_fighter_type(INVALID_COMBAT_FIGHTER_TYPE),
     m_part_name(),
     m_meter(meter),
     m_value(value)
@@ -663,10 +661,8 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
 }
 
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   CombatFighterType fighter_type,
                                    ValueRef::ValueRefBase<double>* value) :
     m_part_class(INVALID_SHIP_PART_CLASS),
-    m_fighter_type(fighter_type),
     m_part_name(),
     m_meter(meter),
     m_value(value)
@@ -676,7 +672,6 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
                                    const std::string& part_name,
                                    ValueRef::ValueRefBase<double>* value) :
     m_part_class(INVALID_SHIP_PART_CLASS),
-    m_fighter_type(INVALID_COMBAT_FIGHTER_TYPE),
     m_part_name(part_name),
     m_meter(meter),
     m_value(value)
@@ -726,8 +721,8 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         }
 
         // verify that found part matches the target part type information for
-        // this effect: same name, same class and slot type, or same fighter type
-        if (PartMatchesEffect(*target_part, m_part_class, m_fighter_type, m_part_name)) {
+        // this effect: same name, same class
+        if (PartMatchesEffect(*target_part, m_part_class, m_part_name)) {
             double val = m_value->Eval(ScriptingContext(context, meter->Current()));
             meter->SetCurrent(val);
         }
@@ -746,11 +741,6 @@ std::string SetShipPartMeter::Description() const {
         return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
                    % meter_str
                    % UserString(lexical_cast<std::string>(m_part_class))
-                   % value_str);
-    } else if (m_fighter_type != INVALID_COMBAT_FIGHTER_TYPE) {
-        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-                   % meter_str
-                   % UserString(lexical_cast<std::string>(m_fighter_type))
                    % value_str);
     } else if (!m_part_name.empty()) {
         return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
@@ -780,8 +770,6 @@ std::string SetShipPartMeter::Dump() const {
 
     if (m_part_class != INVALID_SHIP_PART_CLASS)
         retval += " partclass = " + lexical_cast<std::string>(m_part_class);
-    else if (m_fighter_type != INVALID_COMBAT_FIGHTER_TYPE)
-        retval += " fightertype = " + lexical_cast<std::string>(m_fighter_type);
     else if (!m_part_name.empty())
         retval += " partname = " + UserString(m_part_name);
     else

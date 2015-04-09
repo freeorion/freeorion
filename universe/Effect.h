@@ -206,7 +206,6 @@ public:
     /** Affects the \a meter_type meters that belong to all PC_FIGHTERS parts
         of type \a fighter_type. */
     SetShipPartMeter(MeterType meter_type,
-                     CombatFighterType fighter_type,
                      ValueRef::ValueRefBase<double>* value);
 
     /** Affects the \a meter_type meters that belong to all parts named \a
@@ -227,7 +226,6 @@ public:
 
 private:
     ShipPartClass                   m_part_class;
-    CombatFighterType               m_fighter_type;
     std::string                     m_part_name;
     MeterType                       m_meter;
     ValueRef::ValueRefBase<double>* m_value;
