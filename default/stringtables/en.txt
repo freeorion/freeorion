@@ -4181,6 +4181,7 @@ EFFECT_ANCIENT_BUILDING
 EFFECT_ANCIENT_BUILDING_RUMORS
 EFFECT_ANCIENT_TECH
 EFFECT_ANCIENT_TECH_RUMORS
+EFFECT_ANCIENT_RUINS_EMPTY
 SITREP_TECH_RESEARCHED
 SITREP_TECH_UNLOCKED
 SITREP_SHIP_PART_UNLOCKED
@@ -4478,6 +4479,11 @@ EFFECT_ANCIENT_TECH_RUMORS
 Rumors spread through the galaxy that %tech% was revealed to a xenoarcheology expedition at Ancient Ruins!
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Ancient Ruins Tech Rumors
+
+EFFECT_ANCIENT_RUINS_EMPTY
+On %planet% Ancient Ruins were excavated, but only tantalizing hints of ancient technology were found.
+EFFECT_ANCIENT_RUINS_EMPTY_LABEL
+Ancient Ruins Empty Excavation
 
 EFFECT_CONC_CAMP_COMLETE
 At %planet%: depopulation is complete.
