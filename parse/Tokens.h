@@ -111,7 +111,6 @@
     (Field)                                     \
     (FieldType)                                 \
     (Fighters)                                  \
-    (FighterType)                               \
     (FinalDestinationID)                        \
     (Fleet)                                     \
     (FleetID)                                   \
