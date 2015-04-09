@@ -307,6 +307,21 @@ Special
                     ]
             ]
 
+        // make a default sitrep to confirm empty excavation
+        EffectsGroup
+            scope = Source
+            activation = OwnerHasTech name = "LRN_XENOARCH"
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_RUINS_EMPTY"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                    ]
+                    empire = Source.Owner
+            ]
+
         EffectsGroup
             scope = Source
             activation = OwnerHasTech name = "LRN_XENOARCH"
