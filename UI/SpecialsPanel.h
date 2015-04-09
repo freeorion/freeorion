@@ -25,10 +25,6 @@ public:
     virtual bool            EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
     void                    Update();          ///< regenerates indicators according specials on object
-
-    /** Enables, or disables if \a enable is false, issuing orders via this SpecialsPanel. */
-    void                    EnableOrderIssuing(bool enable = true);
-
     //@}
 
 private:

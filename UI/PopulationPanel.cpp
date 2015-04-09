@@ -163,9 +163,6 @@ void PopulationPanel::Refresh() {
     DoLayout();
 }
 
-void PopulationPanel::EnableOrderIssuing(bool enable/* = true*/)
-{}
-
 void PopulationPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_popcenter_id]); }
 

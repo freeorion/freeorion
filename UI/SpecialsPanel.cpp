@@ -127,9 +127,6 @@ void SpecialsPanel::Update() {
     }
 }
 
-void SpecialsPanel::EnableOrderIssuing(bool enable/* = true*/)
-{}
-
 bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (event.Type() != GG::WndEvent::RClick)
         return false;

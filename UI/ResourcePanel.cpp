@@ -165,9 +165,6 @@ void ResourcePanel::Refresh() {
     DoLayout();
 }
 
-void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/)
-{}
-
 void ResourcePanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_rescenter_id]); }
 

@@ -34,9 +34,6 @@ public:
     void Update();
     /** updates, redoes layout, resizes indicator */
     void Refresh();
-
-    /** Enables, or disables if \a enable is false, issuing orders via this panel. */
-    void EnableOrderIssuing(bool enable = true);
     //@}
 
 protected:

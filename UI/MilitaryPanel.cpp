@@ -167,9 +167,6 @@ void MilitaryPanel::Refresh() {
     DoLayout();
 }
 
-void MilitaryPanel::EnableOrderIssuing(bool enable/* = true*/)
-{}
-
 void MilitaryPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 

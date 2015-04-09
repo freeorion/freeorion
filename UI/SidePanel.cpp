@@ -2254,11 +2254,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
     m_invade_button->Disable(!enable);
     m_bombard_button->Disable(!enable);
 
-    m_population_panel->EnableOrderIssuing(enable);
-    m_resource_panel->EnableOrderIssuing(enable);
-    m_military_panel->EnableOrderIssuing(enable);
     m_buildings_panel->EnableOrderIssuing(enable);
-    m_specials_panel->EnableOrderIssuing(enable);
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
