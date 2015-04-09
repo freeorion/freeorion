@@ -5,7 +5,7 @@ project(freeoriond)
 
 message("-- Configuring freeoriond")
 
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS python REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS python log REQUIRED)
 find_package(PythonLibs 2 REQUIRED)
 
 include_directories(

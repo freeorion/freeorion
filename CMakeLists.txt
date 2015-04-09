@@ -12,7 +12,7 @@ project(FreeOrion)
 set(FreeOrion_VERSION 0.4.4+)
 set(FREEORION_RELEASE false)
 
-set(MINIMUM_BOOST_VERSION 1.47.0)
+set(MINIMUM_BOOST_VERSION 1.54.0)
 
 option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
@@ -56,6 +56,7 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(
         -DFREEORION_LINUX
         -DENABLE_BINRELOC
+        -DBOOST_ALL_DYN_LINK
     )
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wall -Wno-parentheses")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
@@ -107,7 +108,7 @@ set(LIB_SUFFIX ${OLD_LIB_SUFFIX})
 ########################################
 # Dependencies                         #
 ########################################
-find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex serialization signals system thread REQUIRED)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex serialization signals system thread log REQUIRED)
 find_package(ZLIB REQUIRED)
 
 include_directories(
