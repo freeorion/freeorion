@@ -1931,6 +1931,9 @@ AddSpecial::AddSpecial(ValueRef::ValueRefBase<std::string>* name,
     m_capacity(capacity)
 {}
 
+AddSpecial::~AddSpecial()
+{ delete m_name; }
+
 void AddSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         ErrorLogger() << "AddSpecial::Execute passed no target object";
@@ -1967,22 +1970,39 @@ void AddSpecial::SetTopLevelContent(const std::string& content_name) {
 // RemoveSpecial                                         //
 ///////////////////////////////////////////////////////////
 RemoveSpecial::RemoveSpecial(const std::string& name) :
+    m_name(new ValueRef::Constant<std::string>(name))
+{}
+
+RemoveSpecial::RemoveSpecial(ValueRef::ValueRefBase<std::string>* name) :
     m_name(name)
 {}
 
+RemoveSpecial::~RemoveSpecial()
+{ delete m_name; }
+
 void RemoveSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "RemoveSpecial::Execute pass no target object.";
+        ErrorLogger() << "RemoveSpecial::Execute passed no target object";
         return;
     }
-    context.effect_target->RemoveSpecial(m_name);
+
+    std::string name = (m_name ? m_name->Eval(context) : "");
+    context.effect_target->RemoveSpecial(name);
 }
 
-std::string RemoveSpecial::Description() const
-{ return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % UserString(m_name)); }
+std::string RemoveSpecial::Description() const {
+    std::string name = (m_name ? m_name->Description() : "");
+    return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % UserString(name));
+}
 
-std::string RemoveSpecial::Dump() const
-{ return DumpIndent() + "RemoveSpecial name = \"" + m_name + "\"\n"; }
+std::string RemoveSpecial::Dump() const {
+    return DumpIndent() + "RemoveSpecial name = " +  (m_name ? m_name->Dump() : "") + "\n";
+}
+
+void RemoveSpecial::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+}
 
 
 ///////////////////////////////////////////////////////////
