@@ -18,7 +18,7 @@ class UniverseObject(object):
         else:
             target_name = target.name
         return "{ %7s : [%4d] %9s}" % (
-            self.name, self.target_id, target_name
+            self.object_name, self.target_id, target_name
         )
 
     def get_object(self):

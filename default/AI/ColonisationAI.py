@@ -9,7 +9,7 @@ import FreeOrionAI as foAI
 import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType, AIFocusType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AIFocusType
 import EnumsAI
 from freeorion_tools import dict_from_map, tech_is_complete
 from freeorion_debug import Timer

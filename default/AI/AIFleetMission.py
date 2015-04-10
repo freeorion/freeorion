@@ -54,26 +54,26 @@ class AIFleetMission(object):
         for mt in FLEET_MISSION_TYPES:
             self._mission_types[mt] = []
         self.target_id = self.target.target_id
-        self.target_type = self.target.target_type
 
-    def __setstate__(self, state_dict):
-        # TODO fix me
-        self.__dict__.update(state_dict)  # update attributes
-        #print "Fleet mission unpickle: passed %s"%state_dict
-        for attrib, default in [('orders', state_dict.get('_AIFleetMission__aiFleetOrders', [])),
-                            ('mission_type', EnumsAI.AIMissionType.FLEET_MISSION),
-                            ('_mission_types', state_dict.get('_AIAbstractMission__aiMissionTypes', {})),
-                            ('target_type', EnumsAI.TargetType.TARGET_FLEET)]:
-            if attrib not in state_dict:
-                #print "Fleet mission unpickle: setting %s to %s"%(attrib, default)
-                self.__dict__[attrib] = default
-        if 'target' not in state_dict:
-            old_target = state_dict.get('_AIAbstractMission__aiTarget', None)
-            target_id = old_target.target_id if (old_target is not None) else -1 #TODO consider a harder fail
-            self.__dict__['target'] = old_target
-            self.__dict__['target_id'] = target_id
-            #print "Fleet mission unpickle: setting %s to %s"%('target', old_target)
-            #print "Fleet mission unpickle: setting %s to %s"%('target_id', target_id)
+
+    # def __setstate__(self, state_dict):
+    #     # TODO fix me
+    #     self.__dict__.update(state_dict)  # update attributes
+    #     #print "Fleet mission unpickle: passed %s"%state_dict
+    #     for attrib, default in [('orders', state_dict.get('_AIFleetMission__aiFleetOrders', [])),
+    #                         ('mission_type', EnumsAI.AIMissionType.FLEET_MISSION),
+    #                         ('_mission_types', state_dict.get('_AIAbstractMission__aiMissionTypes', {})),
+    #                         ('target_type', EnumsAI.TargetType.TARGET_FLEET)]:
+    #         if attrib not in state_dict:
+    #             #print "Fleet mission unpickle: setting %s to %s"%(attrib, default)
+    #             self.__dict__[attrib] = default
+    #     if 'target' not in state_dict:
+    #         old_target = state_dict.get('_AIAbstractMission__aiTarget', None)
+    #         target_id = old_target.target_id if (old_target is not None) else -1 #TODO consider a harder fail
+    #         self.__dict__['target'] = old_target
+    #         self.__dict__['target_id'] = target_id
+    #         #print "Fleet mission unpickle: setting %s to %s"%('target', old_target)
+    #         #print "Fleet mission unpickle: setting %s to %s"%('target_id', target_id)
 
     def add_target(self, mission_type, target):
         targets = self.get_targets(mission_type)
