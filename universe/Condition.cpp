@@ -2218,6 +2218,14 @@ void Condition::HasSpecial::SetTopLevelContent(const std::string& content_name) 
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
+Condition::HasTag::HasTag(const std::string& name) :
+    ConditionBase(),
+    m_name(new ValueRef::Constant<std::string>(name))
+{}
+
+Condition::HasTag::~HasTag()
+{ delete m_name; }
+
 bool Condition::HasTag::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -2226,21 +2234,86 @@ bool Condition::HasTag::operator==(const Condition::ConditionBase& rhs) const {
 
     const Condition::HasTag& rhs_ = static_cast<const Condition::HasTag&>(rhs);
 
-    if (m_name != rhs_.m_name)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
 }
 
+namespace {
+    struct HasTagSimpleMatch {
+        HasTagSimpleMatch() :
+            m_any_tag_ok(true),
+            m_name()
+        {}
+
+        HasTagSimpleMatch(const std::string& name) :
+            m_any_tag_ok(false),
+            m_name(name)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            if (m_any_tag_ok && !candidate->Tags().empty())
+                return true;
+
+            return candidate->HasTag(m_name);
+        }
+
+        bool        m_any_tag_ok;
+        std::string m_name;
+    };
+}
+
+void Condition::HasTag::Eval(const ScriptingContext& parent_context,
+                             ObjectSet& matches, ObjectSet& non_matches,
+                             SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        if (!m_name)
+            EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch());
+        std::string name = m_name->Eval(local_context);
+        EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(name));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::HasTag::RootCandidateInvariant() const
+{ return !m_name || m_name->RootCandidateInvariant(); }
+
+bool Condition::HasTag::TargetInvariant() const
+{ return !m_name || m_name->TargetInvariant(); }
+
+bool Condition::HasTag::SourceInvariant() const
+{ return !m_name || m_name->SourceInvariant(); }
+
 std::string Condition::HasTag::Description(bool negated/* = false*/) const {
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_HAS_TAG")
         : UserString("DESC_HAS_TAG_NOT"))
-        % UserString(m_name));
+        % UserString(name_str));
 }
 
-std::string Condition::HasTag::Dump() const
-{ return DumpIndent() + "HasTag name = \"" + m_name + "\"\n"; }
+std::string Condition::HasTag::Dump() const {
+    std::string retval = DumpIndent() + "HasTag";
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval;
+}
 
 bool Condition::HasTag::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
@@ -2249,8 +2322,18 @@ bool Condition::HasTag::Match(const ScriptingContext& local_context) const {
         return false;
     }
 
-    return candidate->HasTag(m_name);
+    if (!m_name)
+        return HasTagSimpleMatch()(candidate);
+
+    std::string name = m_name->Eval(local_context);
+    return HasTagSimpleMatch(name)(candidate);
 }
+
+void Condition::HasTag::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
@@ -4368,6 +4451,9 @@ void Condition::StarType::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
+Condition::DesignHasHull::~DesignHasHull()
+{ delete m_name; }
+
 bool Condition::DesignHasHull::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -4376,21 +4462,83 @@ bool Condition::DesignHasHull::operator==(const Condition::ConditionBase& rhs) c
 
     const Condition::DesignHasHull& rhs_ = static_cast<const Condition::DesignHasHull&>(rhs);
 
-    if (m_name != rhs_.m_name)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_name);
 
     return true;
 }
 
-std::string Condition::DesignHasHull::Description(bool negated/* = false*/) const {
-    return str(FlexibleFormat((!negated)
-        ? UserString("DESC_DESIGN_HAS_HULL")
-        : UserString("DESC_DESIGN_HAS_HULL"))
-        % UserString(m_name));
+namespace {
+    struct DesignHasHullSimpleMatch {
+        explicit DesignHasHullSimpleMatch(const std::string& name) :
+            m_name(name)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            // is it a ship?
+            TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
+            if (!ship)
+                return false;
+            // with a valid design?
+            const ShipDesign* design = ship->Design();
+            if (!design)
+                return false;
+
+            return design->Hull() == m_name;
+        }
+
+        const std::string&  m_name;
+    };
 }
 
-std::string Condition::DesignHasHull::Dump() const
-{ return DumpIndent() + "DesignHasHull name = \"" + m_name + "\"\n"; }
+void Condition::DesignHasHull::Eval(const ScriptingContext& parent_context,
+                                    ObjectSet& matches, ObjectSet& non_matches,
+                                    SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        std::string name = (m_name ? m_name->Eval(local_context) : "");
+        EvalImpl(matches, non_matches, search_domain, DesignHasHullSimpleMatch(name));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::DesignHasHull::RootCandidateInvariant() const
+{ return (!m_name || m_name->RootCandidateInvariant()); }
+
+bool Condition::DesignHasHull::TargetInvariant() const
+{ return (!m_name || m_name->TargetInvariant()); }
+
+bool Condition::DesignHasHull::SourceInvariant() const
+{ return (!m_name || m_name->SourceInvariant()); }
+
+std::string Condition::DesignHasHull::Description(bool negated/* = false*/) const {
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
+    return str(FlexibleFormat((!negated)
+        ? UserString("DESC_DESIGN_HAS_HULL")
+        : UserString("DESC_DESIGN_HAS_HULL_NOT"))
+        % name_str);
+}
+
+std::string Condition::DesignHasHull::Dump() const {
+    std::string retval = DumpIndent() + "DesignHasHull";
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval;
+}
 
 bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
@@ -4399,10 +4547,14 @@ bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) cons
         return false;
     }
 
-    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
-        if (const ShipDesign* design = ship->Design())
-            return (design->Hull() == m_name);
-    return false;
+    std::string name = (m_name ? m_name->Eval(local_context) : "");
+
+    return DesignHasHullSimpleMatch(name)(candidate);
+}
+
+void Condition::DesignHasHull::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////
@@ -4701,6 +4853,9 @@ void Condition::DesignHasPartClass::SetTopLevelContent(const std::string& conten
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
+Condition::PredefinedShipDesign::~PredefinedShipDesign()
+{ delete m_name; }
+
 bool Condition::PredefinedShipDesign::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -4709,21 +4864,96 @@ bool Condition::PredefinedShipDesign::operator==(const Condition::ConditionBase&
 
     const Condition::PredefinedShipDesign& rhs_ = static_cast<const Condition::PredefinedShipDesign&>(rhs);
 
-    if (m_name != rhs_.m_name)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
 }
 
+namespace {
+    struct PredefinedShipDesignSimpleMatch {
+        PredefinedShipDesignSimpleMatch() :
+            m_any_predef_design_ok(true),
+            m_name()
+        {}
+
+        PredefinedShipDesignSimpleMatch(const std::string& name) :
+            m_any_predef_design_ok(false),
+            m_name(name)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
+            if (!ship)
+                return false;
+            const ShipDesign* candidate_design = ship->Design();
+            if (!candidate_design)
+                return false;
+
+            // ship has a valid design.  see if it is / could be a predefined ship design...
+
+            // all predefined named designs are hard-coded in parsing to have a designed on turn 0 (before first turn)
+            if (candidate_design->DesignedOnTurn() != 0)
+                return false;
+
+            if (m_any_predef_design_ok)
+                return true;    // any predefined design is OK; don't need to check name.
+
+            return (m_name == candidate_design->Name(false)); // don't look up in stringtable; predefined designs are stored by stringtable entry key
+        }
+
+        bool        m_any_predef_design_ok;
+        std::string m_name;
+    };
+}
+
+void Condition::PredefinedShipDesign::Eval(const ScriptingContext& parent_context,
+                                           ObjectSet& matches, ObjectSet& non_matches,
+                                           SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        if (!m_name)
+            EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch());
+        std::string name = m_name->Eval(local_context);
+        EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch(name));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::PredefinedShipDesign::RootCandidateInvariant() const
+{ return !m_name || m_name->RootCandidateInvariant(); }
+
+bool Condition::PredefinedShipDesign::TargetInvariant() const
+{ return !m_name || m_name->TargetInvariant(); }
+
+bool Condition::PredefinedShipDesign::SourceInvariant() const
+{ return !m_name || m_name->SourceInvariant(); }
+
 std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*/) const {
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_PREDEFINED_SHIP_DESIGN")
         : UserString("DESC_PREDEFINED_SHIP_DESIGN_NOT"))
-        % UserString(m_name));
+        % UserString(name_str));
 }
 
-std::string Condition::PredefinedShipDesign::Dump() const
-{ return DumpIndent() + "PredefinedShipDesign name = \"" + m_name + "\"\n"; }
+std::string Condition::PredefinedShipDesign::Dump() const {
+    std::string retval = DumpIndent() + "PredefinedShipDesign";
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval;
+}
 
 bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
@@ -4732,21 +4962,16 @@ bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_contex
         return false;
     }
 
-    TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
-    if (!ship)
-        return false;
-    const ShipDesign* candidate_design = ship->Design();
-    if (!candidate_design)
-        return false;
+    if (!m_name)
+        return PredefinedShipDesignSimpleMatch()(candidate);
 
-    // ship has a valid design.  see if it is / could be a predefined ship design...
+    std::string name = m_name->Eval(local_context);
+    return PredefinedShipDesignSimpleMatch(name)(candidate);
+}
 
-    // all predefined named designs are hard-coded in parsing to have a designed on turn 0 (before first turn)
-    if (candidate_design->DesignedOnTurn() != 0)
-        return false;
-
-    // all predefined designs have a name, and that name should match the condition m_name
-    return (m_name == candidate_design->Name(false));   // don't look up in stringtable; predefined designs are stored by stringtable entry key
+void Condition::PredefinedShipDesign::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////
@@ -5629,6 +5854,9 @@ void Condition::EmpireStockpileValue::SetTopLevelContent(const std::string& cont
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
+Condition::OwnerHasTech::~OwnerHasTech()
+{ delete m_name; }
+
 bool Condition::OwnerHasTech::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -5637,21 +5865,80 @@ bool Condition::OwnerHasTech::operator==(const Condition::ConditionBase& rhs) co
 
     const Condition::OwnerHasTech& rhs_ = static_cast<const Condition::OwnerHasTech&>(rhs);
 
-    if (m_name != rhs_.m_name)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
 }
 
-std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const {
-    return str(FlexibleFormat((!negated)
-        ? UserString("DESC_OWNER_HAS_TECH")
-        : UserString("DESC_OWNER_HAS_TECH_NOT"))
-        % UserString(m_name));
+namespace {
+    struct OwnerHasTechSimpleMatch {
+        OwnerHasTechSimpleMatch(const std::string& name) :
+            m_name(name)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            if (candidate->Unowned())
+                return false;
+
+            if (const Empire* empire = GetEmpire(candidate->Owner()))
+                return empire->TechResearched(m_name);
+
+            return false;
+        }
+
+        std::string m_name;
+    };
 }
 
-std::string Condition::OwnerHasTech::Dump() const
-{ return DumpIndent() + "OwnerHasTech name = \"" + m_name + "\"\n"; }
+void Condition::OwnerHasTech::Eval(const ScriptingContext& parent_context,
+                                   ObjectSet& matches, ObjectSet& non_matches,
+                                   SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        std::string name = m_name ? m_name->Eval(local_context) : "";
+        EvalImpl(matches, non_matches, search_domain, OwnerHasTechSimpleMatch(name));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::OwnerHasTech::RootCandidateInvariant() const
+{ return !m_name || m_name->RootCandidateInvariant(); }
+
+bool Condition::OwnerHasTech::TargetInvariant() const
+{ return !m_name || m_name->TargetInvariant(); }
+
+bool Condition::OwnerHasTech::SourceInvariant() const
+{ return !m_name || m_name->SourceInvariant(); }
+
+std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const {
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
+    return str(FlexibleFormat((!negated)
+        ? UserString("DESC_OWNER_HAS_TECH")
+        : UserString("DESC_OWNER_HAS_TECH"))
+        % UserString(name_str));
+}
+
+std::string Condition::OwnerHasTech::Dump() const {
+    std::string retval = DumpIndent() + "OwnerHasTech";
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval;
+}
 
 bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
@@ -5660,13 +5947,13 @@ bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
         return false;
     }
 
-    if (candidate->Unowned())
-        return false;
+    std::string name = m_name ? m_name->Eval(local_context) : "";
+    return OwnerHasTechSimpleMatch(name)(candidate);
+}
 
-    if (const Empire* empire = GetEmpire(candidate->Owner()))
-        return empire->TechResearched(m_name);
-    else
-        return false;
+void Condition::OwnerHasTech::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////

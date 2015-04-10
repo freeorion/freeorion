@@ -21,6 +21,8 @@ namespace {
                 parse::value_ref_parser<double>();
             const parse::value_ref_parser_rule< int >::type& flexible_int_ref = 
                 parse::value_ref_parser_flexible_int();
+            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
+                parse::value_ref_parser<std::string>();
 
             qi::_1_type _1;
             qi::_a_type _a;
@@ -32,7 +34,7 @@ namespace {
 
             has_special_capacity
                 =   (   tok.HasSpecialCapacity_
-                >       parse::label(Name_token) >  tok.string [ _c = _1 ]
+                >       parse::label(Name_token) >  string_value_ref [ _c = _1 ]
                 >     -(parse::label(Low_token)  >  double_value_ref [ _a = _1 ] )
                 >     -(parse::label(High_token) >  double_value_ref [ _b = _1 ] )
                     ) [ _val = new_<Condition::HasSpecial>(_c, _a, _b) ]
@@ -181,7 +183,7 @@ namespace {
             qi::locals<
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
-                std::string
+                ValueRef::ValueRefBase<std::string>*
             >,
             parse::skipper_type
         > double_ref_double_ref_rule;
