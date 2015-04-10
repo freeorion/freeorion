@@ -10390,7 +10390,7 @@ ULTIMATE_SUPPLY
 '''++	Ultimate [[encyclopedia SUPPLY_TITLE]]: +3'''
 
 BROAD_EP
-'''++	Broad Planet Tolerance: flourishes on more types.'''
+'''++	Broad Planet Tolerance: can tolerate more types.'''
 
 NARROW_EP
 '''−	Narrow Planet Tolerance: flourishes on fewer types.'''
