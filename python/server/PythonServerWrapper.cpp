@@ -91,6 +91,10 @@ namespace {
     double  InvalidPosition()
     { return UniverseObject::INVALID_POSITION; }
 
+    // Wrapper for GetResourceDir
+    object GetResourceDirWrapper()
+    { return object(PathString(GetResourceDir())); }
+
     // Wrappers for generating sitrep messages
     void GenerateSitRep(int empire_id,
                         const std::string& template_string,
@@ -1149,6 +1153,7 @@ void WrapServerAPI() {
 
     def("user_string",                          make_function(&UserString,      return_value_policy<copy_const_reference>()));
     def("roman_number",                         RomanNumber);
+    def("get_resource_dir",                     GetResourceDirWrapper);
 
     def("all_empires",                          AllEmpires);
     def("invalid_object",                       InvalidObjectID);
