@@ -144,9 +144,9 @@ bool PythonInit() {
     if (!PythonAddToSysPath(GetPythonCommonDir()))
         return false;
 
-    // Confirm existence of the directory containing
-    // the universe generation Python scripts...
-    // ...and also add it to Pythons sys.path to make sure Python will find our scripts
+    // Confirm existence of the directory containing the universe generation
+    // Python scripts and add it to Pythons sys.path to make sure Python will
+    // find our scripts
     if (!fs::exists(GetPythonUniverseGeneratorDir()) || !PythonAddToSysPath(GetPythonUniverseGeneratorDir()))
         return false;
 
@@ -160,9 +160,9 @@ bool PythonInit() {
         return false;
     }
 
-    // Confirm existence of the directory containing
-    // the turn event Python scripts...
-    // ...and also add it to Pythons sys.path to make sure Python will find our scripts
+    // Confirm existence of the directory containing the turn event Python
+    // scripts and add it to Pythons sys.path to make sure Python will find
+    // our scripts
     if (!fs::exists(GetPythonTurnEventsDir()) || !PythonAddToSysPath(GetPythonTurnEventsDir()))
         return false;
 
