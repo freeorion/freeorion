@@ -3,6 +3,7 @@
 #define _MilitaryPanel_h_
 
 #include "AccordionPanel.h"
+#include "../universe/Enums.h"
 #include "../universe/TemporaryPtr.h"
 
 class MultiIconValueIndicator;
@@ -48,14 +49,10 @@ private:
     /** returns the Planet object with id m_planet_id */
     TemporaryPtr<const Planet> GetPlanet() const;
 
-    StatisticIcon* m_fleet_supply_stat;
-    StatisticIcon* m_shield_stat;
-    StatisticIcon* m_defense_stat;
-    StatisticIcon* m_troops_stat;
-    StatisticIcon* m_detection_stat;
-    StatisticIcon* m_stealth_stat;
+    /** Icons for the associated meter type. */
+    std::vector<std::pair<MeterType, StatisticIcon*> > m_meter_stats;
 
-    /** textually / numerically indicates resource production and construction meter */
+    /** textually / numerically indicates military capabilities */
     MultiIconValueIndicator* m_multi_icon_value_indicator;
     /** graphically indicates meter values */
     MultiMeterStatusBar* m_multi_meter_status_bar;

@@ -33,10 +33,7 @@ namespace {
 ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     AccordionPanel(w),
     m_rescenter_id(object_id),
-    m_industry_stat(0),
-    m_research_stat(0),
-    m_trade_stat(0),
-    m_construction_stat(0),
+    m_meter_stats(),
     m_multi_icon_value_indicator(0),
     m_multi_meter_status_bar(0)
 {
@@ -50,26 +47,19 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     GG::Connect(m_expand_button->LeftClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
-    // small resource indicators - for use when panel is collapsed
-    m_industry_stat = new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false);
-    AttachChild(m_industry_stat);
-
-    m_research_stat = new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false);
-    AttachChild(m_research_stat);
-
-    m_construction_stat = new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION), 0, 3, false);
-    AttachChild(m_construction_stat);
-
-    m_trade_stat = new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false);
-    AttachChild(m_trade_stat);
-
+    // small meter indicators - for use when panel is collapsed
+    m_meter_stats.push_back(std::make_pair(METER_INDUSTRY, new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_RESEARCH, new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_TRADE, new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
-    meters.push_back(std::make_pair(METER_INDUSTRY,     METER_TARGET_INDUSTRY));
-    meters.push_back(std::make_pair(METER_RESEARCH,     METER_TARGET_RESEARCH));
-    meters.push_back(std::make_pair(METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
-    meters.push_back(std::make_pair(METER_TRADE,        METER_TARGET_TRADE));
+
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        AttachChild(it->second);
+        meters.push_back(std::make_pair(it->first, AssociatedMeterType(it->first)));
+    }
 
     // attach and show meter bars and large resource indicators
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
@@ -88,10 +78,9 @@ ResourcePanel::~ResourcePanel() {
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
-    delete m_industry_stat;
-    delete m_research_stat;
-    delete m_trade_stat;
-    delete m_construction_stat;
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        delete it->second;
+    }
 }
 
 void ResourcePanel::ExpandCollapse(bool expanded) {
@@ -101,19 +90,28 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
     DoLayout();
 }
 
+namespace {
+    bool sortByMeterValue(std::pair<MeterType, StatisticIcon*> left, std::pair<MeterType, StatisticIcon*> right) {
+        if (left.second->GetValue() == right.second->GetValue()) {
+            if (left.first == METER_TRADE && right.first == METER_CONSTRUCTION) {
+                // swap order of METER_TRADE and METER_CONSTRUCTION in relation to
+                // MeterType enum.
+                return false;
+            }
+
+            return left.first < right.first;
+        }
+
+        return left.second->GetValue() < right.second->GetValue();
+    }
+}
+
 void ResourcePanel::Update() {
     // remove any old browse wnds
-    m_industry_stat->ClearBrowseInfoWnd();
-    m_multi_icon_value_indicator->ClearToolTip(METER_INDUSTRY);
-
-    m_research_stat->ClearBrowseInfoWnd();
-    m_multi_icon_value_indicator->ClearToolTip(METER_RESEARCH);
-
-    m_trade_stat->ClearBrowseInfoWnd();
-    m_multi_icon_value_indicator->ClearToolTip(METER_TRADE);
-
-    m_construction_stat->ClearBrowseInfoWnd();
-    m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        it->second->ClearBrowseInfoWnd();
+        m_multi_icon_value_indicator->ClearToolTip(it->first);
+    }
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {
@@ -121,35 +119,22 @@ void ResourcePanel::Update() {
         return;
     }
 
-    // meter bar displays and production stats
+    // meter bar displays resource stats
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_industry_stat->SetValue(obj->InitialMeterValue(METER_INDUSTRY));
-    m_research_stat->SetValue(obj->InitialMeterValue(METER_RESEARCH));
-    m_trade_stat->SetValue(obj->InitialMeterValue(METER_TRADE));
-    m_construction_stat->SetValue(obj->InitialMeterValue(METER_CONSTRUCTION));
-
-    // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
-    // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
-    // browse wnd on these indicators
+    // tooltips
     boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_INDUSTRY, METER_TARGET_INDUSTRY));
-    m_industry_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_INDUSTRY, browse_wnd);
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        it->second->SetValue(obj->InitialMeterValue(it->first));
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_RESEARCH, METER_TARGET_RESEARCH));
-    m_research_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_RESEARCH, browse_wnd);
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, it->first, AssociatedMeterType(it->first)));
+        it->second->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(it->first, browse_wnd);
+    }
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_TRADE, METER_TARGET_TRADE));
-    m_trade_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_TRADE, browse_wnd);
-
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
-    m_construction_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
+    std::sort(m_meter_stats.begin(), m_meter_stats.end(), sortByMeterValue);
 }
 
 void ResourcePanel::Refresh() {
@@ -163,11 +148,9 @@ void ResourcePanel::ExpandCollapseButtonPressed()
 void ResourcePanel::DoLayout() {
     AccordionPanel::DoLayout();
 
-    // initially detach most things.  Some will be reattached later.
-    DetachChild(m_industry_stat);
-    DetachChild(m_research_stat);
-    DetachChild(m_trade_stat);
-    DetachChild(m_construction_stat);
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        DetachChild(it->second);
+    }
 
     // detach / hide meter bars and large resource indicators
     DetachChild(m_multi_meter_status_bar);
@@ -175,25 +158,14 @@ void ResourcePanel::DoLayout() {
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
-        // determine which two resource icons to display while collapsed: the two with the highest production.
-        // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
-        // add a slight offest to the sorting key to control order in case of ties
-        std::multimap<double, StatisticIcon*> res_prod_icon_map;
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_industry_stat->GetValue() + 0.0003, m_industry_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_research_stat->GetValue() + 0.0002, m_research_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_trade_stat->GetValue(), m_trade_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(m_construction_stat->GetValue() + 0.0001, m_construction_stat));
-
         // position and reattach icons to be shown
         int n = 0;
-        for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
+        for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
             GG::X x = MeterIconSize().x*n*7/2;
 
             if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
-            std::multimap<double, StatisticIcon*>::iterator it2 = --it;
-
-            StatisticIcon* icon = it2->second;
+            StatisticIcon* icon = it->second;
             AttachChild(icon);
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
