@@ -708,24 +708,32 @@ private:
 
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API Condition::HasTag : public Condition::ConditionBase {
-    HasTag(const std::string& name) :
+    explicit HasTag(const std::string& name);
+    explicit HasTag(ValueRef::ValueRefBase<std::string>* name = 0) :
         ConditionBase(),
         m_name(name)
     {}
+    ~HasTag();
+
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  Name() const { return m_name; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    ValueRef::ValueRefBase<std::string>*    Name() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string     m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1180,24 +1188,30 @@ private:
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
 struct FO_COMMON_API Condition::DesignHasHull : public Condition::ConditionBase {
-    DesignHasHull(const std::string& name) :
+    explicit DesignHasHull(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+    ~DesignHasHull();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  Name() const { return m_name; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string     m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1285,24 +1299,30 @@ private:
 /** Matches ships who ShipDesign is a predefined shipdesign with the name
   * \a name */
 struct FO_COMMON_API Condition::PredefinedShipDesign : public Condition::ConditionBase {
-    PredefinedShipDesign(const std::string& name) :
+    explicit PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+    ~PredefinedShipDesign();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  Name() const { return m_name; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string     m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1571,24 +1591,30 @@ private:
 
 /** Matches all objects whose owner who has tech \a name. */
 struct FO_COMMON_API Condition::OwnerHasTech : public Condition::ConditionBase {
-    OwnerHasTech(const std::string& name) :
+    explicit OwnerHasTech(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+    ~OwnerHasTech();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  Tech() const { return m_name; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    const ValueRef::ValueRefBase<std::string>*  Tech() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string m_name;
+    ValueRef::ValueRefBase<std::string>* m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
