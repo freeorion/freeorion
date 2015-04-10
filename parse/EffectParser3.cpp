@@ -89,7 +89,7 @@ namespace {
 
             remove_special
                 =    tok.RemoveSpecial_
-                >    parse::label(Name_token) > tok.string [ _val = new_<Effect::RemoveSpecial>(_1) ]
+                >    parse::label(Name_token) > string_value_ref [ _val = new_<Effect::RemoveSpecial>(_1) ]
                 ;
 
             add_starlanes

@@ -609,6 +609,7 @@ public:
     explicit AddSpecial(const std::string& name, float capacity = 1.0f);
     explicit AddSpecial(ValueRef::ValueRefBase<std::string>* name,
                         ValueRef::ValueRefBase<double>* capacity = 0);
+    ~AddSpecial();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
@@ -629,16 +630,18 @@ private:
   * no effect if no such Special was already attached to the target object. */
 class FO_COMMON_API Effect::RemoveSpecial : public Effect::EffectBase {
 public:
-    RemoveSpecial(const std::string& name); // TODO: make this a ValueRefBase<std::string>*
+    explicit RemoveSpecial(const std::string& name);
+    explicit RemoveSpecial(ValueRef::ValueRefBase<std::string>* name);
+    ~RemoveSpecial();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
-    std::string m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
