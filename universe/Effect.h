@@ -196,22 +196,10 @@ private:
   * located in a different type than specified, and would be matched). */
 class FO_COMMON_API Effect::SetShipPartMeter : public Effect::EffectBase {
 public:
-    /** Affects the \a meter_type meters that belong to all parts of class \a
-        part_class.  \a part_class must specify a class of parts for which
-        there is a ship meter (i.e. specifying PC_FUEL would be illegal). */
-    SetShipPartMeter(MeterType meter_type,
-                     ShipPartClass part_class,
-                     ValueRef::ValueRefBase<double>* value);
-
-    /** Affects the \a meter_type meters that belong to all PC_FIGHTERS parts
-        of type \a fighter_type. */
-    SetShipPartMeter(MeterType meter_type,
-                     ValueRef::ValueRefBase<double>* value);
-
-    /** Affects the \a meter_type meters that belong to all parts named \a
+    /** Affects the \a meter_type meter that belongs to part(s) named \a
         part_name. */
     SetShipPartMeter(MeterType meter_type,
-                     const std::string& part_name,
+                     ValueRef::ValueRefBase<std::string>* part_name,
                      ValueRef::ValueRefBase<double>* value);
 
     virtual ~SetShipPartMeter();
@@ -219,16 +207,16 @@ public:
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
-    const std::string&  GetPartName() const {return m_part_name;}
-    MeterType           GetMeterType() const {return m_meter;};
+
+    const ValueRef::ValueRefBase<std::string>*  GetPartName() const { return m_part_name; }
+    MeterType                                   GetMeterType() const { return m_meter; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
-    ShipPartClass                   m_part_class;
-    std::string                     m_part_name;
-    MeterType                       m_meter;
-    ValueRef::ValueRefBase<double>* m_value;
+    ValueRef::ValueRefBase<std::string>*    m_part_name;
+    MeterType                               m_meter;
+    ValueRef::ValueRefBase<double>*         m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1017,8 +1005,6 @@ template <class Archive>
 void Effect::SetShipPartMeter::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_NVP(m_part_class)
-        & BOOST_SERIALIZATION_NVP(m_fighter_type)
         & BOOST_SERIALIZATION_NVP(m_part_name)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_value);

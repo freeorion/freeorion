@@ -46,18 +46,24 @@ namespace {
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
-        ValueRef::ValueRefBase<double>* vr =
+
+        ValueRef::ValueRefBase<double>* value_vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
                 new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
                 new ValueRef::Constant<double>(increase)
             );
+
+        ValueRef::ValueRefBase<std::string>* part_name_vr =
+            new ValueRef::Constant<std::string>(part_name);
+
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
+
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
                 scope, activation,
-                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name, vr)),
+                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name_vr, value_vr)),
                 part_name, stacking_group));
     }
 
