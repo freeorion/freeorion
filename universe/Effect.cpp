@@ -174,26 +174,6 @@ namespace {
         fleet->SetRoute(route_pair.first);
     }
 
-    bool PartMatchesEffect(const PartType& part,
-                           ShipPartClass part_class,
-                           const std::string& part_name)
-    {
-        if (!part_name.empty())
-            return part_name == part.Name();
-
-        switch (part.Class()) {
-        case PC_SHORT_RANGE:
-        case PC_MISSILES:
-        case PC_POINT_DEFENSE:
-        case PC_FIGHTERS:
-            return part.Class() == part_class;
-        default:
-            break;
-        }
-
-        return false;
-    }
-
     std::string GenerateSystemName() {
         static std::list<std::string> star_names;
         if (star_names.empty())
@@ -491,10 +471,11 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
             } else if (set_ship_part_meter_effect) {
                 if (target->ObjectType() != OBJ_SHIP)
                     continue;   // only ships have ship part meters
-                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(target);
-                if (!ship)
-                    continue;
-                meter = ship->GetPartMeter(meter_type, set_ship_part_meter_effect->GetPartName());
+                TemporaryPtr<const Ship> ship = boost::static_pointer_cast<const Ship>(target);
+
+                const ValueRef::ValueRefBase<std::string>* part_name_value_ref = set_ship_part_meter_effect->GetPartName();
+                std::string part_name = (part_name_value_ref ? part_name_value_ref->Eval(ScriptingContext(source, target)) : "");
+                meter = ship->GetPartMeter(meter_type, part_name);
             }
 
             if (!meter)
@@ -649,40 +630,26 @@ void SetMeter::SetTopLevelContent(const std::string& content_name) {
 // SetShipPartMeter                                      //
 ///////////////////////////////////////////////////////////
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   ShipPartClass part_class,
+                                   ValueRef::ValueRefBase<std::string>* part_name,
                                    ValueRef::ValueRefBase<double>* value) :
-    m_part_class(part_class),
-    m_part_name(),
-    m_meter(meter),
-    m_value(value)
-{
-    if (m_part_class == PC_FIGHTERS)
-        ErrorLogger() << "SetShipPartMeter passed ShipPartClass of PC_FIGHTERS, which is invalid";
-}
-
-SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   ValueRef::ValueRefBase<double>* value) :
-    m_part_class(INVALID_SHIP_PART_CLASS),
-    m_part_name(),
-    m_meter(meter),
-    m_value(value)
-{}
-
-SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   const std::string& part_name,
-                                   ValueRef::ValueRefBase<double>* value) :
-    m_part_class(INVALID_SHIP_PART_CLASS),
     m_part_name(part_name),
     m_meter(meter),
     m_value(value)
 {}
 
-SetShipPartMeter::~SetShipPartMeter()
-{ delete m_value; }
+SetShipPartMeter::~SetShipPartMeter() {
+    delete m_value;
+    delete m_part_name;
+}
 
 void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         DebugLogger() << "SetShipPartMeter::Execute passed null target pointer";
+        return;
+    }
+
+    if (!m_part_name || !m_value) {
+        ErrorLogger() << "SetShipPartMeter::Execute missing part name or value ValueRefs";
         return;
     }
 
@@ -693,67 +660,41 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    if (m_part_class == PC_FIGHTERS && !m_part_name.empty()) {
-        DebugLogger() << "SetShipPartMeter::Execute aborting due to part class being PC_FIGHTERS and part name being not empty";
+    std::string part_name = m_part_name->Eval(context);
+
+    // get meter, evaluate new value, assign
+    Meter* meter = ship->GetPartMeter(m_meter, part_name);
+    if (!meter) {
+        ErrorLogger() << "SetShipPartMeter::Execute couldn't find meter " << m_meter << " for ship part name: " << part_name;
         return;
     }
 
-    // loop through all part meters in the ship design, applying effect to each if part is appropriate
-    const std::vector<std::string>& design_parts = ship->Design()->Parts();
-    std::set<std::string> unique_design_parts;
-    std::copy(design_parts.begin(), design_parts.end(), std::inserter(unique_design_parts, unique_design_parts.begin()));
-
-    for (std::set<std::string>::const_iterator it = unique_design_parts.begin();
-         it != unique_design_parts.end(); ++it)
-    {
-        const std::string& target_part_name = *it;
-        if (target_part_name.empty())
-            continue;   // slots in a design may be empty... this isn't an error
-
-        Meter* meter = ship->GetPartMeter(m_meter, target_part_name);
-        if (!meter)
-            continue;   // some parts may not have the requested meter.  this isn't an error
-
-        const PartType* target_part = GetPartType(target_part_name);
-        if (!target_part) {
-            ErrorLogger() << "SetShipPartMeter::Execute couldn't get part type: " << target_part_name;
-            continue;
-        }
-
-        // verify that found part matches the target part type information for
-        // this effect: same name, same class
-        if (PartMatchesEffect(*target_part, m_part_class, m_part_name)) {
-            double val = m_value->Eval(ScriptingContext(context, meter->Current()));
-            meter->SetCurrent(val);
-        }
-    }
+    double val = m_value->Eval(ScriptingContext(context, meter->Current()));
+    meter->SetCurrent(val);
 }
 
 std::string SetShipPartMeter::Description() const {
-    std::string value_str = ValueRef::ConstantExpr(m_value) ?
-                                lexical_cast<std::string>(m_value->Eval()) :
-                                m_value->Description();
+    std::string value_str;
+    if (m_value) {
+        if (ValueRef::ConstantExpr(m_value))
+            value_str = lexical_cast<std::string>(m_value->Eval());
+        else
+            value_str = m_value->Description();
+    }
+
     std::string meter_str = UserString(lexical_cast<std::string>(m_meter));
 
-    // TODO: indicate slot restrictions in SetShipPartMeter descriptions...
-
-    if (m_part_class != INVALID_SHIP_PART_CLASS) {
-        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-                   % meter_str
-                   % UserString(lexical_cast<std::string>(m_part_class))
-                   % value_str);
-    } else if (!m_part_name.empty()) {
-        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-                   % meter_str
-                   % UserString(m_part_name)
-                   % value_str);
-    } else {
-        // something weird is going on... default cause shouldn't be needed
-        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-                   % meter_str
-                   % UserString("UIT_SHIP_PART")
-                   % value_str);
+    std::string part_str;
+    if (m_part_name) {
+        part_str = m_part_name->Description();
+        if (ValueRef::ConstantExpr(m_part_name) && UserStringExists(part_str))
+            part_str = UserString(part_str);
     }
+
+    return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
+               % meter_str
+               % part_str
+               % value_str);
 }
 
 std::string SetShipPartMeter::Dump() const {
@@ -768,12 +709,8 @@ std::string SetShipPartMeter::Dump() const {
         default:                        retval += "Set????";                break;
     }
 
-    if (m_part_class != INVALID_SHIP_PART_CLASS)
-        retval += " partclass = " + lexical_cast<std::string>(m_part_class);
-    else if (!m_part_name.empty())
-        retval += " partname = " + UserString(m_part_name);
-    else
-        retval += " ???";
+    if (m_part_name)
+        retval += " partname = " + m_part_name->Dump();
 
     retval += " value = " + m_value->Dump();
 
@@ -783,6 +720,8 @@ std::string SetShipPartMeter::Dump() const {
 void SetShipPartMeter::SetTopLevelContent(const std::string& content_name) {
     if (m_value)
         m_value->SetTopLevelContent(content_name);
+    if (m_part_name)
+        m_part_name->SetTopLevelContent(content_name);
 }
 
 
