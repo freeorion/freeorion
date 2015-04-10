@@ -3,6 +3,7 @@
 #define _PopulationPanel_h_
 
 #include "AccordionPanel.h"
+#include "../universe/Enums.h"
 #include "../universe/TemporaryPtr.h"
 
 class MultiIconValueIndicator;
@@ -50,10 +51,8 @@ private:
     /** returns the PopCenter object with id m_popcenter_id */
     TemporaryPtr<const PopCenter> GetPopCenter() const;
 
-    /** icon and number of population */
-    StatisticIcon* m_pop_stat;
-    /** icon and number of happiness */
-    StatisticIcon* m_happiness_stat;
+    /** Icons for the associated meter type. */
+    std::vector<std::pair<MeterType, StatisticIcon*> > m_meter_stats;
 
     /** textually / numerically indicates population */
     MultiIconValueIndicator* m_multi_icon_value_indicator;

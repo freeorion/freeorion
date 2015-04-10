@@ -3,6 +3,7 @@
 #define _ResourcePanel_h_
 
 #include "AccordionPanel.h"
+#include "../universe/Enums.h"
 #include "../universe/TemporaryPtr.h"
 
 class MultiIconValueIndicator;
@@ -48,14 +49,8 @@ private:
     /** returns the ResourceCenter object with id m_rescenter_id */
     TemporaryPtr<const ResourceCenter> GetResCenter() const;
 
-    /** icon and number of industry production */
-    StatisticIcon* m_industry_stat;
-    /** icon and number of research production */
-    StatisticIcon* m_research_stat;
-    /** icon and number of trade production */
-    StatisticIcon* m_trade_stat;
-    /** icon and number of infrastructure */
-    StatisticIcon* m_construction_stat;
+    /** Icons for the associated meter type. */
+    std::vector<std::pair<MeterType, StatisticIcon*> > m_meter_stats;
 
     /** textually / numerically indicates resource production and construction meter */
     MultiIconValueIndicator* m_multi_icon_value_indicator;

@@ -27,12 +27,7 @@ namespace {
 MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     AccordionPanel(w),
     m_planet_id(planet_id),
-    m_fleet_supply_stat(0),
-    m_shield_stat(0),
-    m_defense_stat(0),
-    m_troops_stat(0),
-    m_detection_stat(0),
-    m_stealth_stat(0),
+    m_meter_stats(),
     m_multi_icon_value_indicator(0),
     m_multi_meter_status_bar(0)
 {
@@ -45,34 +40,20 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     GG::Connect(m_expand_button->LeftClickedSignal, &MilitaryPanel::ExpandCollapseButtonPressed, this);
 
     // small meter indicators - for use when panel is collapsed
-    m_fleet_supply_stat = new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY), 0, 3, false);
-    AttachChild(m_fleet_supply_stat);
-
-    m_shield_stat = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 3, false);
-    AttachChild(m_shield_stat);
-
-    m_defense_stat = new StatisticIcon(ClientUI::MeterIcon(METER_DEFENSE), 0, 3, false);
-    AttachChild(m_defense_stat);
-
-    m_troops_stat = new StatisticIcon(ClientUI::MeterIcon(METER_TROOPS), 0, 3, false);
-    AttachChild(m_troops_stat);
-
-    m_detection_stat = new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false);
-    AttachChild(m_detection_stat);
-
-    m_stealth_stat = new StatisticIcon(ClientUI::MeterIcon(METER_STEALTH), 0, 3, false);
-    AttachChild(m_stealth_stat);
-
+    m_meter_stats.push_back(std::make_pair(METER_SHIELD, new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_DEFENSE, new StatisticIcon(ClientUI::MeterIcon(METER_DEFENSE), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_TROOPS, new StatisticIcon(ClientUI::MeterIcon(METER_TROOPS), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_DETECTION, new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_STEALTH, new StatisticIcon(ClientUI::MeterIcon(METER_STEALTH), 0, 3, false)));
+    m_meter_stats.push_back(std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY), 0, 3, false)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
-    meters.push_back(std::make_pair(METER_SHIELD, METER_MAX_SHIELD));
-    meters.push_back(std::make_pair(METER_DEFENSE, METER_MAX_DEFENSE));
-    meters.push_back(std::make_pair(METER_TROOPS, METER_MAX_TROOPS));
-    meters.push_back(std::make_pair(METER_DETECTION, INVALID_METER_TYPE));
-    meters.push_back(std::make_pair(METER_STEALTH, INVALID_METER_TYPE));
-    meters.push_back(std::make_pair(METER_SUPPLY, METER_MAX_SUPPLY));
 
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        AttachChild(it->second);
+        meters.push_back(std::make_pair(it->first, AssociatedMeterType(it->first)));
+    }
 
     // attach and show meter bars and large resource indicators
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_planet_id, meters);
@@ -91,12 +72,9 @@ MilitaryPanel::~MilitaryPanel() {
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
-    delete m_fleet_supply_stat;
-    delete m_shield_stat;
-    delete m_defense_stat;
-    delete m_troops_stat;
-    delete m_detection_stat;
-    delete m_stealth_stat;
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        delete it->second;
+    }
 }
 
 void MilitaryPanel::ExpandCollapse(bool expanded) {
@@ -113,43 +91,20 @@ void MilitaryPanel::Update() {
         return;
     }
 
-    // meter bar displays and production stats
+    // meter bar displays military stats
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
-
-    m_fleet_supply_stat->SetValue(obj->InitialMeterValue(METER_SUPPLY));
-    m_shield_stat->SetValue(obj->InitialMeterValue(METER_SHIELD));
-    m_defense_stat->SetValue(obj->InitialMeterValue(METER_DEFENSE));
-    m_troops_stat->SetValue(obj->InitialMeterValue(METER_TROOPS));
-    m_detection_stat->SetValue(obj->InitialMeterValue(METER_DETECTION));
-    m_stealth_stat->SetValue(obj->InitialMeterValue(METER_STEALTH));
 
     // tooltips
     boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SUPPLY, METER_MAX_SUPPLY));
-    m_fleet_supply_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_SUPPLY, browse_wnd);
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        it->second->SetValue(obj->InitialMeterValue(it->first));
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SHIELD, METER_MAX_SHIELD));
-    m_shield_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_SHIELD, browse_wnd);
-
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_DEFENSE, METER_MAX_DEFENSE));
-    m_defense_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_DEFENSE, browse_wnd);
-
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_TROOPS, METER_MAX_TROOPS));
-    m_troops_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_TROOPS, browse_wnd);
-
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_DETECTION));
-    m_detection_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_DETECTION, browse_wnd);
-
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_STEALTH));
-    m_stealth_stat->SetBrowseInfoWnd(browse_wnd);
-    m_multi_icon_value_indicator->SetToolTip(METER_STEALTH, browse_wnd);
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, it->first, AssociatedMeterType(it->first)));
+        it->second->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(it->first, browse_wnd);
+    }
 }
 
 void MilitaryPanel::Refresh() {
@@ -163,13 +118,9 @@ void MilitaryPanel::ExpandCollapseButtonPressed()
 void MilitaryPanel::DoLayout() {
     AccordionPanel::DoLayout();
 
-    // initially detach most things.  Some will be reattached later.
-    DetachChild(m_shield_stat);
-    DetachChild(m_defense_stat);
-    DetachChild(m_troops_stat);
-    DetachChild(m_detection_stat);
-    DetachChild(m_stealth_stat);
-    DetachChild(m_fleet_supply_stat);
+    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        DetachChild(it->second);
+    }
 
     // detach / hide meter bars and large resource indicators
     DetachChild(m_multi_meter_status_bar);
@@ -177,23 +128,14 @@ void MilitaryPanel::DoLayout() {
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
-        // sort by insereting into multimap keyed by production amount, then taking the first two icons therein
-        std::vector<StatisticIcon*> meter_icons;
-        meter_icons.push_back(m_shield_stat);
-        meter_icons.push_back(m_defense_stat);
-        meter_icons.push_back(m_troops_stat);
-        meter_icons.push_back(m_detection_stat);
-        meter_icons.push_back(m_stealth_stat);
-        meter_icons.push_back(m_fleet_supply_stat);
-
         // position and reattach icons to be shown
         int n = 0;
-        for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end(); ++it) {
+        for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
             GG::X x = MeterIconSize().x*n*7/2;
 
             if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
-            StatisticIcon* icon = *it;
+            StatisticIcon* icon = it->second;
             AttachChild(icon);
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
