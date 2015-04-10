@@ -176,8 +176,6 @@ bool PythonInit() {
         return false;
     }
 
-    //GetRootDataDir()
-    
     DebugLogger() << "Server Python interface successfully initialized!";
     return true;
 }
