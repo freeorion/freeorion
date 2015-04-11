@@ -188,17 +188,9 @@ namespace {
             meter_name_map["MaxSupply"] =          METER_MAX_SUPPLY;
             meter_name_map["Stealth"] =            METER_STEALTH;
             meter_name_map["Detection"] =          METER_DETECTION;
-            meter_name_map["BattleSpeed"] =        METER_BATTLE_SPEED;
-            meter_name_map["StarlaneSpeed"] =      METER_STARLANE_SPEED;
-            meter_name_map["Damage"] =             METER_DAMAGE;
-            meter_name_map["ROF"] =                METER_ROF;
-            meter_name_map["Range"] =              METER_RANGE;
             meter_name_map["Speed"] =              METER_SPEED;
+            meter_name_map["Damage"] =             METER_DAMAGE;
             meter_name_map["Capacity"] =           METER_CAPACITY;
-            meter_name_map["AntiShipDamage"] =     METER_ANTI_SHIP_DAMAGE;
-            meter_name_map["AntiFighterDamage"] =  METER_ANTI_FIGHTER_DAMAGE;
-            meter_name_map["LaunchRate"] =         METER_LAUNCH_RATE;
-            meter_name_map["FighterWeaponRange"] = METER_FIGHTER_WEAPON_RANGE;
             meter_name_map["Size"] =               METER_SIZE;
         }
         return meter_name_map;
@@ -354,6 +346,14 @@ namespace ValueRef {
     template <>
     std::string Constant<std::string>::Dump() const
     { return "\"" + Description() + "\""; }
+
+    template <>
+    std::string Constant<std::string>::Eval(const ScriptingContext& context) const
+    {
+        if (m_value == "CurrentContent")
+            return m_top_level_content;
+        return m_value;
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -963,7 +963,51 @@ namespace ValueRef {
     {
         const std::string& variable_name = m_property_name.back();
 
-        if (variable_name == "PartCapacity") {
+        if (variable_name == "HullFuel") {
+            std::string hull_type_name;
+            if (m_string_ref1)
+                hull_type_name = m_string_ref1->Eval(context);
+
+            const HullType* hull_type = GetHullType(hull_type_name);
+            if (!hull_type)
+                return 0.0;
+
+            return hull_type->Fuel();
+
+        } else if (variable_name == "HullStealth") {
+            std::string hull_type_name;
+            if (m_string_ref1)
+                hull_type_name = m_string_ref1->Eval(context);
+
+            const HullType* hull_type = GetHullType(hull_type_name);
+            if (!hull_type)
+                return 0.0;
+
+            return hull_type->Stealth();
+
+        } else if (variable_name == "HullStructure") {
+            std::string hull_type_name;
+            if (m_string_ref1)
+                hull_type_name = m_string_ref1->Eval(context);
+
+            const HullType* hull_type = GetHullType(hull_type_name);
+            if (!hull_type)
+                return 0.0f;
+
+            return hull_type->Structure();
+
+        } else if (variable_name == "HullSpeed") {
+            std::string hull_type_name;
+            if (m_string_ref1)
+                hull_type_name = m_string_ref1->Eval(context);
+
+            const HullType* hull_type = GetHullType(hull_type_name);
+            if (!hull_type)
+                return 0.0;
+
+            return hull_type->Speed();
+
+        } else if (variable_name == "PartCapacity") {
             std::string part_type_name;
             if (m_string_ref1)
                 part_type_name = m_string_ref1->Eval(context);
@@ -1825,12 +1869,12 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 // UserStringLookup                                      //
 ///////////////////////////////////////////////////////////
-ValueRef::UserStringLookup::UserStringLookup(const ValueRef::Variable<std::string>* value_ref) :
+ValueRef::UserStringLookup::UserStringLookup(ValueRef::Variable<std::string>* value_ref) :
     ValueRef::Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(value_ref)
 {}
 
-ValueRef::UserStringLookup::UserStringLookup(const ValueRef::ValueRefBase<std::string>* value_ref) :
+ValueRef::UserStringLookup::UserStringLookup(ValueRef::ValueRefBase<std::string>* value_ref) :
     ValueRef::Variable<std::string>(ValueRef::NON_OBJECT_REFERENCE),
     m_value_ref(value_ref)
 {}
@@ -1871,19 +1915,24 @@ bool ValueRef::UserStringLookup::RootCandidateInvariant() const
 { return m_value_ref->RootCandidateInvariant(); }
 
 bool ValueRef::UserStringLookup::LocalCandidateInvariant() const
-{ return m_value_ref->LocalCandidateInvariant(); }
+{ return !m_value_ref || m_value_ref->LocalCandidateInvariant(); }
 
 bool ValueRef::UserStringLookup::TargetInvariant() const
-{ return m_value_ref->TargetInvariant(); }
+{ return !m_value_ref || m_value_ref->TargetInvariant(); }
 
 bool ValueRef::UserStringLookup::SourceInvariant() const
-{ return m_value_ref->SourceInvariant(); }
+{ return !m_value_ref || m_value_ref->SourceInvariant(); }
 
 std::string ValueRef::UserStringLookup::Description() const
 { return m_value_ref->Description(); }
 
 std::string ValueRef::UserStringLookup::Dump() const
 { return m_value_ref->Dump(); }
+
+void ValueRef::UserStringLookup::SetTopLevelContent(const std::string& content_name) {
+    if (m_value_ref)
+        m_value_ref->SetTopLevelContent(content_name);
+}
 
 ///////////////////////////////////////////////////////////
 // Operation                                             //
@@ -1974,7 +2023,6 @@ namespace ValueRef {
     template <>
     std::string Operation<std::string>::Eval(const ScriptingContext& context) const
     {
-        std::string op_link;
         if (m_op_type == PLUS)
             return m_operand1->Eval(context) + m_operand2->Eval(context);
         throw std::runtime_error("std::string ValueRef evaluated with an unknown or invalid OpType.");

@@ -52,12 +52,12 @@ namespace Effect {
     /** Combination of an EffectsGroup and the id of a source object. */
     struct SourcedEffectsGroup {
         SourcedEffectsGroup();
-        SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const EffectsGroup>& effects_group_);
-        bool operator<(const SourcedEffectsGroup& right) const;
+        SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<EffectsGroup>& effects_group_);
+        bool    operator<(const SourcedEffectsGroup& right) const;
         void    Execute(const TargetSet& targets) const;
         void    Execute(const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const;
-        int                                     source_object_id;
-        boost::shared_ptr<const EffectsGroup>   effects_group;
+        int                             source_object_id;
+        boost::shared_ptr<EffectsGroup> effects_group;
     };
 
     /** Discrepancy between meter's value at start of turn, and the value that

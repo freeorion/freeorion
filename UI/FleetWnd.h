@@ -168,7 +168,6 @@ private:
 
     void            SystemChangedSlot();                    ///< responds to StateChangedSignal emitted by the system this FleetWnd is showing the contents of
     void            SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd
-    std::string     StatTooltip(MeterType meter) const;
     mutable boost::signals2::signal<void (FleetWnd*)> ClosingSignal;
 
     boost::signals2::connection  m_system_connection;

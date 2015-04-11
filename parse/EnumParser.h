@@ -57,9 +57,6 @@ namespace parse {
     enum_parser_rule<ShipPartClass>::type& enum_parser<ShipPartClass>();
 
     template <>
-    enum_parser_rule<CombatFighterType>::type& enum_parser<CombatFighterType>();
-
-    template <>
     enum_parser_rule<CaptureResult>::type& enum_parser<CaptureResult>();
 
     template <>
@@ -72,7 +69,6 @@ namespace parse {
     enum_parser_rule<MeterType>::type& set_non_ship_part_meter_type_enum();
 
     enum_parser_rule<MeterType>::type& set_ship_part_meter_type_enum();
-
 }
 
 #endif

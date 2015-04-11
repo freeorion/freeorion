@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FreeOrion"
-!define PRODUCT_VERSION "0.4.4+"
+!define PRODUCT_VERSION "0.4.4+ (build 2015-04-09.0adf492)"
 !define PRODUCT_PUBLISHER "FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}"
@@ -44,7 +44,7 @@ SetCompressor bzip2
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\..\FreeOrion-5195-Test-Win32-Setup.exe"
+OutFile "..\..\FreeOrion_2015-04-09.0adf492_Test_Win32_Setup.exe"
 InstallDir "$PROGRAMFILES\FreeOrion"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
@@ -90,7 +90,7 @@ Section "MainSection" SEC01
   File "..\FreeOrion.ico"
   File "..\changelog.txt"
 
-  File /r /x .svn "..\default"
+  File /r /x .git "..\default"
 
   CreateDirectory "$SMPROGRAMS\FreeOrion"
   CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion Fullscreen.lnk" "$INSTDIR\freeorion.exe" "--fullscreen"

@@ -22,6 +22,11 @@ Special
                 SetMaxTroops value = Value + 10
                 SetDetection value = Value + 20
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = RemoveSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
     ]
     graphic = "icons/tech/categories/learning.png"
 
@@ -47,6 +52,24 @@ Special
                 SetMaxTroops value = Value + 30
                 SetDetection value = Value + 60
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = Turn low = 1 high = 1
+            effects = CreateBuilding type = "BLD_CULTURE_LIBRARY"
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Random probability = 0.2
+                Turn low = 1 high = 1
+            ]
+            effects = CreateBuilding type = "BLD_SCANNING_FACILITY"
+
+        EffectsGroup
+            scope = Source
+            activation = OwnedBy affiliation = AnyEmpire
+            effects = RemoveSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
     ]
     graphic = "icons/tech/categories/learning.png"
 
@@ -191,7 +214,7 @@ Special
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                CreateBuilding name = "BLD_NEUTRONIUM_SYNTH"
+                CreateBuilding type = "BLD_NEUTRONIUM_SYNTH"
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_BUILDING"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -282,6 +305,21 @@ Special
                     parameters = [
                         tag = "tech" data = "SHP_KRILL_SPAWN"
                     ]
+            ]
+
+        // make a default sitrep to confirm empty excavation
+        EffectsGroup
+            scope = Source
+            activation = OwnerHasTech name = "LRN_XENOARCH"
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_RUINS_EMPTY"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                    ]
+                    empire = Source.Owner
             ]
 
         EffectsGroup
@@ -587,7 +625,7 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-	    Not Planet size = [tiny huge]
+        Not Planet size = [tiny huge]
         Not ContainedBy And [
             System 
             Contains Capital
@@ -604,11 +642,11 @@ Special
         EffectsGroup
             scope = Source
             activation = Source
-	        effects = [
-		        SetDetection value = Value + 10
-		        SetMaxSupply value = Value + 1
-		        SetTargetHappiness value = Value + 5
-	        ]
+            effects = [
+                SetDetection value = Value + 10
+                SetMaxSupply value = Value + 1
+                SetTargetHappiness value = Value + 5
+            ]
         EffectsGroup
             scope = And [
                 Planet
@@ -855,7 +893,7 @@ Special
                 Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
                 Population low = 0.0001
             ]
-            effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
+            effects = CreateBuilding type = "BLD_CONC_CAMP_REMNANT"
         EffectsGroup
             scope = Source
             activation = And [
@@ -881,7 +919,7 @@ Special
                 Not Contains Building name = "BLD_CONC_CAMP"
                 Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
             ]
-            effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
+            effects = CreateBuilding type = "BLD_CONC_CAMP_REMNANT"
         EffectsGroup
             scope = Source
             activation = OR [
@@ -1277,6 +1315,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Ocean Swamp Toxic]
@@ -1324,6 +1363,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Desert Terran Ocean Swamp]
@@ -1370,6 +1410,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Tundra Desert Terran]
@@ -1416,6 +1457,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
@@ -1464,6 +1506,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
@@ -1513,6 +1556,7 @@ Special
     stealth = 0
     spawnrate = 9.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
@@ -1562,6 +1606,7 @@ Special
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
@@ -1610,6 +1655,7 @@ Special
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Not Planet type = [GasGiant]
@@ -1659,6 +1705,7 @@ Special
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
+    capacity = 50 + RandomNumber(0, 50)
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]

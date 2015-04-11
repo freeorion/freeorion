@@ -16,9 +16,9 @@
 #include <boost/filesystem/fstream.hpp>
 
 namespace {
-    boost::shared_ptr<const Effect::EffectsGroup>
+    boost::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, double increase) {
-        typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
+        typedef boost::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = 0;
@@ -54,7 +54,7 @@ Field::Field(const std::string& field_type, double x, double y, double radius) :
 
     UniverseObject::Init();
 
-    AddMeter(METER_STARLANE_SPEED);
+    AddMeter(METER_SPEED);
     AddMeter(METER_SIZE);
 
     UniverseObject::GetMeter(METER_SIZE)->Set(radius, radius);
@@ -147,14 +147,14 @@ bool Field::InField(double x, double y) const {
 void Field::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
-    GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
+    GetMeter(METER_SPEED)->ResetCurrent();
     // intentionally not resetting size, so that it is presistant
 }
 
 void Field::ClampMeters() {
     UniverseObject::ClampMeters();
 
-    // intentionally not clamping METER_STARLANE_SPEED, to allow negative speeds
+    // intentionally not clamping METER_SPEED, to allow negative speeds
     UniverseObject::GetMeter(METER_SIZE)->ClampCurrentToRange();
 }
 
@@ -163,23 +163,25 @@ void Field::ClampMeters() {
 /////////////////////////////////////////////////
 FieldType::FieldType(const std::string& name, const std::string& description,
                      float stealth, const std::set<std::string>& tags,
-                     //const Condition::ConditionBase* location,
-                     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+                     const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,
                      const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_stealth(stealth),
     m_tags(tags),
-    //m_location(location),
     m_effects(effects),
     m_graphic(graphic)
 {
     if (m_stealth != 0.0f)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));
+
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
+         it != m_effects.end(); ++it)
+    { (*it)->SetTopLevelContent(m_name); }
 }
 
 FieldType::~FieldType()
-{ /*delete m_location;*/ }
+{}
 
 std::string FieldType::Dump() const {
     using boost::lexical_cast;

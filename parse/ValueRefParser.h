@@ -11,7 +11,6 @@
 
 
 namespace parse {
-
     template <typename T>
     struct value_ref_parser_rule
     {

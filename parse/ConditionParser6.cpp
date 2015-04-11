@@ -15,11 +15,11 @@ namespace phoenix = boost::phoenix;
 
 #if DEBUG_CONDITION_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<const Condition::ConditionBase*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<const ValueRef::ValueRefBase<std::string>*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<const ValueRef::ValueRefBase<PlanetSize>*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<const ValueRef::ValueRefBase<PlanetType>*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<Condition::ConditionBase*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<ValueRef::ValueRefBase<std::string>*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<ValueRef::ValueRefBase<PlanetSize>*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<ValueRef::ValueRefBase<PlanetType>*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<ValueRef::ValueRefBase<PlanetEnvironment>*>&) { return os; }
 }
 #endif
 
@@ -84,7 +84,7 @@ namespace {
                 =    tok.Focus_
                 >    (
                             parse::label(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
-                        |   eps [ _val = new_<Condition::FocusType>(std::vector<const ValueRef::ValueRefBase<std::string>*>()) ]
+                        |   eps [ _val = new_<Condition::FocusType>(std::vector<ValueRef::ValueRefBase<std::string>*>()) ]
                      )
                 ;
 
@@ -164,28 +164,28 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            std::vector<const ValueRef::ValueRefBase<std::string>*> (),
+            std::vector<ValueRef::ValueRefBase<std::string>*> (),
             parse::skipper_type
         > string_ref_vec_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Condition::ConditionBase* (),
-            qi::locals<std::vector<const ValueRef::ValueRefBase<std::string>*> >,
+            qi::locals<std::vector<ValueRef::ValueRefBase<std::string>*> >,
             parse::skipper_type
         > building_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Condition::ConditionBase* (),
-            qi::locals<std::vector<const ValueRef::ValueRefBase<PlanetType>*> >,
+            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetType>*> >,
             parse::skipper_type
         > planet_type_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Condition::ConditionBase* (),
-            qi::locals<std::vector<const ValueRef::ValueRefBase<PlanetSize>*> >,
+            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetSize>*> >,
             parse::skipper_type
         > planet_size_rule;
 
@@ -193,8 +193,8 @@ namespace {
             parse::token_iterator,
             Condition::ConditionBase* (),
             qi::locals<
-                std::vector<const ValueRef::ValueRefBase<PlanetEnvironment>*>,
-                const ValueRef::ValueRefBase<std::string>*
+                std::vector<ValueRef::ValueRefBase<PlanetEnvironment>*>,
+                ValueRef::ValueRefBase<std::string>*
             >,
             parse::skipper_type
         > planet_environment_rule;

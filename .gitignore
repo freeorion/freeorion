@@ -60,6 +60,8 @@ DerivedData
 # FreeOrion Xcode project
 /Xcode/dep/
 /Xcode/build/
+/Xcode/Info.plist
+contents.xcworkspacedata
 
 # FreeOrion MSVC2010 project
 *.pdb
@@ -75,3 +77,7 @@ DerivedData
 *.exp
 *.opensdf
 msvc2010/FreeOrion/Release/FreeOrion.res
+Installer/FreeOrion_Install_Script.nsi
+
+# KDevelop4
+*.kdev4

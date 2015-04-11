@@ -1776,7 +1776,6 @@ Capacidad de Combustible: %11%
 Capacidad de Colonización: %12%
 Ocultación: %13%
 '''
-
 ## Temporarily removed
 # Direct Fire Parts: %4%
 # Missile Parts: %5%
@@ -1785,8 +1784,14 @@ Ocultación: %13%
 # Battle Speed: %12%
 ##
 
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+
 ENC_TECH_DETAIL_TYPE_STR
 %1% %2% - %3%
+
+###########################################
+# Combat Report #
+###########################################
 
 ###########################################
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
@@ -1798,7 +1803,7 @@ ENC_TECH_DETAIL_TYPE_STR
 
 #The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
-# Functional list; do not translate. Used for logging during universe creation
+# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 
 ####################
 # Combat Messages  #
@@ -2160,28 +2165,12 @@ METER_STEALTH
 Ocultación
 METER_DETECTION
 Detección
-METER_BATTLE_SPEED
-Velocidad de Batalla
-METER_STARLANE_SPEED
-Velocidad de Línea Estelar
 METER_DAMAGE
 Daño
-METER_ROF
-Candecia de Disparo
-METER_RANGE
-Alcance
 METER_SPEED
 Velocidad
 METER_CAPACITY
 Capacidad
-METER_ANTI_SHIP_DAMAGE
-Daño Anti Nave
-METER_ANTI_FIGHTER_DAMAGE
-Daño Anti Caza
-METER_LAUNCH_RATE
-Cadencia de Lanzamiento
-METER_FIGHTER_WEAPON_RANGE
-Alcance de Disparo de Caza
 
 # EmpireAffiliationTypes
 
@@ -2270,10 +2259,6 @@ PC_FUEL
 Combustible
 PC_COLONY
 Colonización
-PC_BATTLE_SPEED
-Velocidad de Batalla
-PC_STARLANE_SPEED
-Velocidad de Línea Estelar
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -2718,12 +2703,6 @@ Ingeniería Genética
 
 GRO_GENETIC_ENG_DESC
 La paleta de genes es tan variada como las formas de vida que permiten. Los genes se pueden eliminar, copiar y reinsertar en los genomas para crear organismos transgénicos con combinaciones de rasgos que no existen o son posibles en la naturaleza. También se pueden alterar antes de reinsertar, modificando las bases directamente, permitiendo que genes totalmente nuevos sean creados. Las técnicas son limitadas, aun así, las pequeñas modificaciones de los genes existentes están disponibles para el estudio.
-
-CON_ENV_ENCAPSUL
-Encapsulación Medio Ambiental
-
-CON_ENV_ENCAPSUL_DESC
-Capsulas cubiertas, rodeadas y selladas de habitats particulares esenciales para el viaje espacial, colonización de planetas difíciles y la preservación de la diversidad natural en mundos fuertemente industrializados.  Mantener las condiciones deseadas no es trivial, ya que en muchos casos no hay una fuente de materiales externa pura y limpia u organismos disponibles.  Sin embargo, es necesario crear un ambiente sostenible auto-suficiente, a veces un ecosistema completo, capaz de reciclar y reusar sus desechos para suministrar todo lo que necesita y consume.
 
 GRO_SYMBIOTIC_BIO
 Biología Simbiótica

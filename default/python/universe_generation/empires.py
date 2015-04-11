@@ -1,3 +1,4 @@
+import os.path
 import random
 
 import freeorion as fo
@@ -197,7 +198,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     # give homeworld starting buildings
     # use the list provided in starting_buildings.txt
     print "Player", player_name, ": add starting buildings to homeworld"
-    for building in util.load_string_list("../../starting_buildings.txt"):
+    for building in util.load_string_list(os.path.join(fo.get_resource_dir(), "starting_buildings.txt")):
         fo.create_building(building, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.

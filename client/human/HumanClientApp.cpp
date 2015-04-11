@@ -711,10 +711,6 @@ void HumanClientApp::Reinitialize() {
 float HumanClientApp::GLVersion() const
 { return GetGLVersion(); }
 
-namespace {
-    static bool enter_2d_mode_log_done(false);
-}
-
 void HumanClientApp::StartTurn() {
     ClientApp::StartTurn();
     m_fsm->process_event(TurnEnded());

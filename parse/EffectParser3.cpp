@@ -78,7 +78,7 @@ namespace {
 
             add_special_1
                 =    tok.AddSpecial_
-                >    parse::label(Name_token) > tok.string [ _val = new_<Effect::AddSpecial>(_1) ]
+                >    parse::label(Name_token) > string_value_ref [ _val = new_<Effect::AddSpecial>(_1) ]
                 ;
 
             add_special_2
@@ -89,7 +89,7 @@ namespace {
 
             remove_special
                 =    tok.RemoveSpecial_
-                >    parse::label(Name_token) > tok.string [ _val = new_<Effect::RemoveSpecial>(_1) ]
+                >    parse::label(Name_token) > string_value_ref [ _val = new_<Effect::RemoveSpecial>(_1) ]
                 ;
 
             add_starlanes

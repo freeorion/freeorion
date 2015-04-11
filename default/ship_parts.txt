@@ -308,90 +308,66 @@ Part
     name = "SH_DEFENSE_GRID"
     description = "SH_DEFENSE_GRID_DESC"
     class = Shield
-    capacity = 0
+    capacity = 4
     mountableSlotTypes = Internal
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield value = Value + 4
+    effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/defense_grid.png"
 
 Part
     name = "SH_DEFLECTOR"
     description = "SH_DEFLECTOR_DESC"
     class = Shield
-    capacity = 0
+    capacity = 7
     mountableSlotTypes = Internal
     buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield value = Value + 7
+    effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/deflector_shield.png"
 
 Part
     name = "SH_PLASMA"
     description = "SH_PLASMA_DESC"
     class = Shield
-    capacity = 0
+    capacity = 12
     mountableSlotTypes = Internal
     buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield value = Value + 12
+    effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/plasma_shield.png"
 
 Part
     name = "SH_BLACK"
     description = "SH_BLACK_DESC"
     class = Shield
-    capacity = 0
+    capacity = 20
     mountableSlotTypes = Internal
     buildcost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield value = Value + 20
+    effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/blackshield.png"
 
 Part
     name = "SH_MULTISPEC"
     description = "SH_MULTISPEC_DESC"
     class = Shield
-    capacity = 0
+    capacity = 15
     mountableSlotTypes = Internal
     buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
     location = OwnedBy empire = Source.Owner
     effectsgroups = [
+        [[SHIELD_STACKING]]     //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
         EffectsGroup
             scope = Source
             activation = Star type = [Red Orange Yellow White Blue]
             stackinggroup = "STEALTH_SOLAR_STACK"
             effects = SetStealth value = Value + 60
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield value = Value + 15
     ]
     icon = "icons/ship_parts/multi-spectral.png"
 
@@ -399,120 +375,89 @@ Part
     name = "DT_DETECTOR_4"
     description = "DT_DETECTOR_4_DESC"
     class = Detection
-    capacity = 0
+    capacity = 200
     mountableSlotTypes = External
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection value = Value + 200
+    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
     icon = "icons/ship_parts/detector-4.png"
 
 Part
     name = "DT_DETECTOR_3"
     description = "DT_DETECTOR_3_DESC"
     class = Detection
-    capacity = 0
+    capacity = 150
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection value = Value + 150
+    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
     icon = "icons/ship_parts/detector-3.png"
 
 Part
     name = "DT_DETECTOR_2"
     description = "DT_DETECTOR_2_DESC"
     class = Detection
-    capacity = 0
+    capacity = 75
     mountableSlotTypes = External
     buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection value = Value + 75
+    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
     icon = "icons/ship_parts/detector-2.png"
 
 Part
     name = "DT_DETECTOR_1"
     description = "DT_DETECTOR_1_DESC"
     class = Detection
-    capacity = 0
+    capacity = 25
     mountableSlotTypes = External
     buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection value = Value + 25
+    effectsgroups = [[DETECTOR_STACKING]]   //Make sure to add new detectors to SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
     icon = "icons/ship_parts/detector-1.png"
 
 Part
     name = "FU_IMPROVED_ENGINE_COUPLINGS"
     description = "FU_IMPROVED_ENGINE_COUPLINGS_DESC"
-    class = General
+    class = Speed
+    capacity = 10
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed value = Value + 10
     icon = "icons/ship_parts/engine-1.png"
     
     
 Part
     name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
     description = "FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
-    class = General
+    class = Speed
+    capacity = 20
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed value = Value + 20
     icon = "icons/ship_parts/engine-2.png"
     
 Part
     name = "FU_SINGULARITY_ENGINE_CORE"
     description = "FU_SINGULARITY_ENGINE_CORE_DESC"
-    class = General
+    class = Speed
+    capacity = 30
     mountableSlotTypes = Core
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed value = Value + 30
     icon = "icons/ship_parts/engine-3.png"
     
 Part
     name = "FU_TRANSPATIAL_DRIVE"
     description = "FU_TRANSPATIAL_DRIVE_DESC"
-    class = General
+    class = Speed
+    capacity = 40
     mountableSlotTypes = Core
     buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
@@ -523,13 +468,15 @@ Part
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Source
-            stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth value = Value + 40
+            activation = ValueTest Low = 1 High = 40 TestValue = [[BEST_CLOAK_EFFECT]]
+            stackinggroup = "ENGINE_STEALTH_PART_STACK1"
+            accountinglabel = "TRANSPATIAL_CLOAK_INTERACTION"
+            effects = SetStealth value = Value - [[BEST_CLOAK_EFFECT]]
         EffectsGroup
             scope = Source
-            activation = Source
-            effects = SetStarlaneSpeed value = Value + 40
+            activation = ValueTest Low = [[BEST_CLOAK_EFFECT]] TestValue = 40
+            stackinggroup = "ENGINE_STEALTH_PART_STACK2"
+            effects = SetStealth value = Value + 40
     ]
     icon = "icons/ship_parts/engine-4.png"
     
@@ -603,68 +550,48 @@ Part
     name = "ST_CLOAK_4"
     description = "ST_CLOAK_4_DESC"
     class = Stealth
-    capacity = 0
+    capacity = 80
     mountableSlotTypes = Internal
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth value = Value + 80
+    effectsgroups = [[CLOAK_STACKING]]   //Make sure to add new cloaks to SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
     icon = "icons/ship_parts/cloak-4.png"
 
 Part
     name = "ST_CLOAK_3"
     description = "ST_CLOAK_3_DESC"
     class = Stealth
-    capacity = 0
+    capacity = 60
     mountableSlotTypes = Internal
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 7
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth value = Value + 60
+    effectsgroups = [[CLOAK_STACKING]]   //Make sure to add new cloaks to SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
     icon = "icons/ship_parts/cloak-3.png"
 
 Part
     name = "ST_CLOAK_2"
     description = "ST_CLOAK_2_DESC"
     class = Stealth
-    capacity = 0
+    capacity = 40
     mountableSlotTypes = Internal
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth value = Value + 40
+    effectsgroups = [[CLOAK_STACKING]]   //Make sure to add new cloaks to SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
     icon = "icons/ship_parts/cloak-2.png"
 
 Part
     name = "ST_CLOAK_1"
     description = "ST_CLOAK_1_DESC"
     class = Stealth
-    capacity = 0
+    capacity = 20
     mountableSlotTypes = Internal
     buildcost = 2 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy empire = Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth value = Value + 20
+    effectsgroups = [[CLOAK_STACKING]]   //Make sure to add new cloaks to SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
     icon = "icons/ship_parts/cloak-1.png"
 
 Part
@@ -738,8 +665,8 @@ Part
                 Not Planet type = [Asteroids GasGiant Barren Desert]
             ]
             activation = And [
-                            Random probability = 0.15
-                            InSystem
+                Random probability = 0.15
+                InSystem
             ]
             effects = AddSpecial name = "CLOUD_COVER_MASTER_SPECIAL"
 
@@ -1162,10 +1089,10 @@ Part
                     DesignHasHull name = "SH_TITANIC"
                 ]
             ]
-            stackinggroup = "SHIELD_PART_STACK"
-            effects = SetMaxShield value = Value + min(min(
-                (([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]])),            
-                ((([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]]) * 7 ) ^ 0.5 )), 20)
+            activation = ValueTest Low = [[BEST_SHIELD_EFFECT]] TestValue= [[ROBOTIC_SHIELD_EFFECT]]
+            stackinggroup = "ROBOTIC_SHIELD_PART_STACK"
+            accountinglabel = "ROBOTIC_INTERFACE_EFFECT"
+            effects = SetMaxShield value = Value - [[BEST_SHIELD_EFFECT]] + [[ROBOTIC_SHIELD_EFFECT]]
     icon = "icons/ship_parts/robotic-interface-shields.png"
 
 
@@ -1187,4 +1114,118 @@ Count condition = And [
                 ]
                 WithinStarlaneJumps jumps = 0 condition = Source
             ]
+'''
+
+
+BEST_DETECTOR_EFFECT
+'''
+max(max(max(
+    min(1, PartsInShipDesign Name = "DT_DETECTOR_1" design = Source.DesignID)
+    * PartCapacity name = "DT_DETECTOR_1",
+    min(1, PartsInShipDesign Name = "DT_DETECTOR_2" design = Source.DesignID)
+    * PartCapacity name = "DT_DETECTOR_2"),
+    min(1, PartsInShipDesign Name = "DT_DETECTOR_3" design = Source.DesignID)
+    * PartCapacity name = "DT_DETECTOR_3"),
+    min(1, PartsInShipDesign Name = "DT_DETECTOR_4" design = Source.DesignID)
+    * PartCapacity name = "DT_DETECTOR_4")
+'''
+
+
+SUM_DETECTOR_CAPACITY
+'''
+((PartCapacity name = "DT_DETECTOR_1")* (PartsInShipDesign Name = "DT_DETECTOR_1" design = Source.DesignID)
++(PartCapacity name = "DT_DETECTOR_2")* (PartsInShipDesign Name = "DT_DETECTOR_2" design = Source.DesignID)
++(PartCapacity name = "DT_DETECTOR_3")* (PartsInShipDesign Name = "DT_DETECTOR_3" design = Source.DesignID)
++(PartCapacity name = "DT_DETECTOR_4")* (PartsInShipDesign Name = "DT_DETECTOR_4" design = Source.DesignID))
+'''
+
+
+DETECTOR_STACKING
+'''
+EffectsGroup    // Make sure to add new detector parts to the macros SUM_DETECTOR_CAPACITY and BEST_DETECTOR_EFFECT
+    scope = Source
+    activation = DesignHasPartClass Low=2 High=999 Class=Detection
+    stackinggroup = "DETECTOR_PART_STACK"
+    accountinglabel = "DETECTOR_INTERFERENCE"
+    effects = SetDetection value = Value - [[SUM_DETECTOR_CAPACITY]] + [[BEST_DETECTOR_EFFECT]]
+'''
+
+BEST_CLOAK_EFFECT
+'''
+max(max(max(
+    min(1, PartsInShipDesign Name = "ST_CLOAK_1" design = Source.DesignID)
+    * PartCapacity name = "ST_CLOAK_1",
+    min(1, PartsInShipDesign Name = "ST_CLOAK_2" design = Source.DesignID)
+    * PartCapacity name = "ST_CLOAK_2"),
+    min(1, PartsInShipDesign Name = "ST_CLOAK_3" design = Source.DesignID)
+    * PartCapacity name = "ST_CLOAK_3"),
+    min(1, PartsInShipDesign Name = "ST_CLOAK_4" design = Source.DesignID)
+    * PartCapacity name = "ST_CLOAK_4")
+'''
+
+
+SUM_CLOAK_CAPACITY
+'''
+((PartCapacity name = "ST_CLOAK_1")* (PartsInShipDesign Name = "ST_CLOAK_1" design = Source.DesignID)
++(PartCapacity name = "ST_CLOAK_2")* (PartsInShipDesign Name = "ST_CLOAK_2" design = Source.DesignID)
++(PartCapacity name = "ST_CLOAK_3")* (PartsInShipDesign Name = "ST_CLOAK_3" design = Source.DesignID)
++(PartCapacity name = "ST_CLOAK_4")* (PartsInShipDesign Name = "ST_CLOAK_4" design = Source.DesignID))
+'''
+
+
+CLOAK_STACKING
+'''
+EffectsGroup    // Make sure to add new cloak parts to the macros SUM_CLOAK_CAPACITY and BEST_CLOAK_EFFECT
+    scope = Source
+    activation = DesignHasPartClass Low=2 High=999 Class=Stealth
+    stackinggroup = "STEALTH_PART_STACK"
+    accountinglabel = "CLOAK_INTERFERENCE"
+    effects = SetStealth value = Value - [[SUM_CLOAK_CAPACITY]] + [[BEST_CLOAK_EFFECT]]
+'''
+
+
+BEST_SHIELD_EFFECT
+'''
+max(max(max(max(
+    min(1, PartsInShipDesign Name = "SH_DEFENSE_GRID" design = Source.DesignID)
+    * PartCapacity name = "SH_DEFENSE_GRID",
+    min(1, PartsInShipDesign Name = "SH_DEFLECTOR" design = Source.DesignID)
+    * PartCapacity name = "SH_DEFLECTOR"),
+    min(1, PartsInShipDesign Name = "SH_PLASMA" design = Source.DesignID)
+    * PartCapacity name = "SH_PLASMA"),
+    min(1, PartsInShipDesign Name = "SH_BLACK" design = Source.DesignID)
+    * PartCapacity name = "SH_BLACK"),
+    min(1, PartsInShipDesign Name = "SH_MULTISPEC" design = Source.DesignID)
+    * PartCapacity name = "SH_MULTISPEC" 
+    )
+'''
+
+
+SUM_SHIELD_CAPACITY
+'''
+((PartCapacity name = "SH_DEFENSE_GRID")* (PartsInShipDesign Name = "SH_DEFENSE_GRID" design = Source.DesignID)
++(PartCapacity name = "SH_DEFLECTOR")* (PartsInShipDesign Name = "SH_DEFLECTOR" design = Source.DesignID)
++(PartCapacity name = "SH_PLASMA")* (PartsInShipDesign Name = "SH_PLASMA" design = Source.DesignID)
++(PartCapacity name = "SH_BLACK")* (PartsInShipDesign Name = "SH_BLACK" design = Source.DesignID)
++(PartCapacity name = "SH_MULTISPEC")* (PartsInShipDesign Name = "SH_MULTISPEC" design = Source.DesignID))
+'''
+
+
+SHIELD_STACKING
+'''
+EffectsGroup    // Make sure to add new shield parts to the macros SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
+    scope = Source
+    activation = DesignHasPartClass Low=2 High=999 Class=Shield
+    stackinggroup = "SHIELD_PART_STACK"
+    accountinglabel = "SHIELD_INTERFERENCE"
+    effects = SetMaxShield value = Value - [[SUM_SHIELD_CAPACITY]] + [[BEST_SHIELD_EFFECT]]
+'''
+
+
+ROBOTIC_SHIELD_EFFECT
+'''
+min(min(
+        [[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]],            
+        (([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]] * 7 ) ^ 0.5 )),
+        20)
 '''

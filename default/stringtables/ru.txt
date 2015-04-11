@@ -2565,7 +2565,6 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Десант: %16%
 Скорость перелетов: %13%
 '''
-
 ## Temporarily removed
 # Direct Fire Parts: %4%
 # Missile Parts: %5%
@@ -2573,6 +2572,8 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 # Point Defense Parts: %7%
 # Battle Speed: %12%
 ##
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
 ENC_UNLOCKED_BY
 '''<u>Открыто технологией:</u>
@@ -2598,6 +2599,10 @@ ENC_COMBAT_ATTACK_STR
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Неизвестно 
+
+###########################################
+# Combat Report #
+###########################################
 
 ###########################################
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
@@ -2719,7 +2724,7 @@ EVACUATION_TITLE
 AI_LEVELS_TITLE
 Уровни Агрессий  AI
 
-# Functional list; do not translate. Used for logging during universe creation
+# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 
 ####################
 # Combat Messages  #
@@ -3113,11 +3118,6 @@ EFFECT_DERELICT_MAP_LABEL
 
 EFFECT_DERELICT_FUEL_LABEL
 Заброшенная Топливо
-
-EFFECT_EXOBOT
-Колония Экзоботов построена на %planet%.
-EFFECT_EXOBOT_LABEL
-Корабль Экзоботов
 
 EFFECT_EVACUEES
 Эвакуированные поселились на %planet%.
@@ -4374,29 +4374,12 @@ METER_STEALTH
 Скрытность
 METER_DETECTION
 Обнаружение
-METER_BATTLE_SPEED
-Скорость в бою
-METER_STARLANE_SPEED
-Межзвездная скорость
 METER_DAMAGE
 Урон
-METER_ROF
-Частота огня
-METER_RANGE
-Расстояние
 METER_SPEED
 Скорость
 METER_CAPACITY
 Вместимость
-METER_ANTI_SHIP_DAMAGE
-Урон кораблям
-METER_ANTI_FIGHTER_DAMAGE
-Урон истребителям
-METER_LAUNCH_RATE
-Скорость запуска
-METER_FIGHTER_WEAPON_RANGE
-Дальность орудий истребителей
-
 METER_SIZE
 Размер
 
@@ -4527,10 +4510,6 @@ PC_FUEL
 Топливо
 PC_COLONY
 Колонизация
-PC_BATTLE_SPEED
-Скорость в бою
-PC_STARLANE_SPEED
-Межзвездная скорость
 PC_GENERAL
 Общий 
 PC_BOMBARD
@@ -5331,12 +5310,6 @@ GRO_GENETIC_ENG
 
 GRO_GENETIC_ENG_DESC
 '''Палитра генетики настолько же разнообразна, как и формы жизни, из которых она заимствуется.  Гены могут быть удалены, скопированы и заменены в геномы для создания трансгенных организмов с набором особенностей, невозможных в природе.  Также, гены могут быть изменены перед заменой, записывая измененные базовые коды напрямую, что позволяет создавать полностью новые гены.  Несмотря на это, методы ограничены небольшими модификациями существующих генов, доступных для анализа.'''
-
-CON_ENV_ENCAPSUL
-Инкапсуляция Природной Среды
-
-CON_ENV_ENCAPSUL_DESC
-'''Позволяет 0,1 населения селиться на непригодных для заселения планетах, включая астероидные поля и газовые гиганты. Многие типы строений нельзя строить в таких колониях.'''
 
 GRO_SYMBIOTIC_BIO
 Симбиозная Биология
@@ -6249,9 +6222,6 @@ BLD_SCANNING_FACILITY_DESC
 
 BLD_INDUSTRY_CENTER
 Промышленный Центр
-
-BLD_EXOBOT_SHIP
-Начальная колония Экзоботов
 
 BLD_MEGALITH
 Мегалит

@@ -17,7 +17,6 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
-            qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -32,41 +31,22 @@ namespace {
 
             set_meter
                 =    parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
-                >>   parse::label(Value_token) > double_value_ref [ _val = new_<Effect::SetMeter>(_a, _1) ]
+                >>   parse::label(Value_token)      > double_value_ref [ _val = new_<Effect::SetMeter>(_a, _1) ]
                 ;
 
             set_ship_part_meter
                 =    parse::set_ship_part_meter_type_enum() [ _a = _1 ]
-                 >> (
-                        set_ship_part_meter_suffix_1(_a) [ _val = _1 ]
-                    |   set_ship_part_meter_suffix_2(_a) [ _val = _1 ]
-                    |   set_ship_part_meter_suffix_3(_a) [ _val = _1 ]
-                    )
-                ;
-
-            set_ship_part_meter_suffix_1
-                =    parse::label(PartClass_token) >  parse::enum_parser<ShipPartClass>() [ _a = _1 ] // TODO: PartClass should match "Class" from ShipPartsParser.cpp.
-                >    parse::label(Value_token)     >  double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _a, _1) ]
-                ;
-
-            set_ship_part_meter_suffix_2
-                =    parse::label(FighterType_token) >  parse::enum_parser<CombatFighterType>() [ _b = _1 ]
-                >    parse::label(Value_token)       >  double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _b, _1) ]
-                ;
-
-            set_ship_part_meter_suffix_3
-                =    parse::label(PartName_token) > tok.string [ _c = _1 ]
-                >    parse::label(Value_token)    > double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_r1, _c, _1) ]
+                >>   parse::label(PartName_token)   > string_value_ref [ _b = _1 ]
+                >    parse::label(Value_token)      > double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
                 ;
 
             set_empire_stockpile
                 =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
                 >   (
-                        (
-                            parse::label(Empire_token) > int_value_ref [ _b = _1 ]
+                        (   parse::label(Empire_token) > int_value_ref [ _b = _1 ]
                         >   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
-                        |   (   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ] )
+                        |  (parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
                     )
                 ;
 
@@ -113,8 +93,8 @@ namespace {
                 ;
 
             start
-                %=   set_meter
-                |    set_ship_part_meter
+                %=   set_ship_part_meter
+                |    set_meter
                 |    set_empire_stockpile
                 |    set_empire_capital
                 |    set_planet_type
@@ -151,20 +131,11 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Effect::EffectBase* (),
-            qi::locals<MeterType>,
-            parse::skipper_type
-        > set_meter_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Effect::EffectBase* (MeterType),
-            qi::locals<
-                ShipPartClass,
-                CombatFighterType,
-                std::string
+            qi::locals<MeterType,
+                       ValueRef::ValueRefBase<std::string>*
             >,
             parse::skipper_type
-        > set_ship_part_meter_suffix_rule;
+        > set_meter_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -189,9 +160,6 @@ namespace {
 
         set_meter_rule                      set_meter;
         set_meter_rule                      set_ship_part_meter;
-        set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_1;
-        set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_2;
-        set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_3;
         set_empire_stockpile_rule           set_empire_stockpile;
         parse::effect_parser_rule           set_empire_capital;
         parse::effect_parser_rule           set_planet_type;

@@ -4,12 +4,19 @@
 
 #include "CUIWnd.h"
 #include "CUIControls.h"
+#include "MultiIconValueIndicator.h"
 #include "SystemIcon.h"
 #include "Sound.h"
 #include "FleetWnd.h"
-#include "InfoPanels.h"
+#include "BuildingsPanel.h"
+#include "MilitaryPanel.h"
+#include "PopulationPanel.h"
+#include "ResourcePanel.h"
 #include "MapWnd.h"
 #include "ShaderProgram.h"
+#include "SpecialsPanel.h"
+#include "SystemResourceSummaryBrowseWnd.h"
+#include "TextBrowseWnd.h"
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Fleet.h"
@@ -471,7 +478,7 @@ public:
     void                    Refresh();                      ///< updates panels, shows / hides colonize button, redoes layout of infopanels
 
     /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
-    void            EnableOrderIssuing(bool enable = true);
+    void                    EnableOrderIssuing(bool enable = true);
     //@}
 
     /** emitted when the planet panel is left clicked by the user.
@@ -2247,11 +2254,7 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/) {
     m_invade_button->Disable(!enable);
     m_bombard_button->Disable(!enable);
 
-    m_population_panel->EnableOrderIssuing(enable);
-    m_resource_panel->EnableOrderIssuing(enable);
-    m_military_panel->EnableOrderIssuing(enable);
     m_buildings_panel->EnableOrderIssuing(enable);
-    m_specials_panel->EnableOrderIssuing(enable);
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))

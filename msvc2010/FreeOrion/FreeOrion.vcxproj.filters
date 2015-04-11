@@ -96,7 +96,16 @@
     <ClInclude Include="..\..\UI\About.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\AccordionPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\UI\BuildDesignatorWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\BuildingsPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CensusBrowseWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\ChatWnd.h">
@@ -135,7 +144,7 @@
     <ClInclude Include="..\..\UI\GalaxySetupWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\InfoPanels.h">
+    <ClInclude Include="..\..\UI\IconTextBrowseWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\InGameMenu.h">
@@ -153,6 +162,18 @@
     <ClInclude Include="..\..\UI\MarkupBox.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\MeterBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MilitaryPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MultiIconValueIndicator.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MultiMeterStatusBar.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -165,6 +186,9 @@
     <ClInclude Include="..\..\UI\OptionsWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\PopulationPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\UI\ProductionWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
@@ -174,10 +198,16 @@
     <ClInclude Include="..\..\UI\ResearchWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\ResourcePanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\UI\ServerConnectWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\ShaderProgram.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ShipDesignPanel.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\UI\SidePanel.h">
@@ -189,10 +219,19 @@
     <ClInclude Include="..\..\UI\Sound.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\SpecialsPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\UI\SystemIcon.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\SystemResourceSummaryBrowseWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\UI\TechTreeWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\TextBrowseWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\util\Math.h">
@@ -409,7 +448,16 @@
     <ClCompile Include="..\..\UI\About.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\UI\AccordionPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\BuildingsPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CensusBrowseWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ChatWnd.cpp">
@@ -445,7 +493,7 @@
     <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UI\InfoPanels.cpp">
+    <ClCompile Include="..\..\UI\IconTextBrowseWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\InGameMenu.cpp">
@@ -463,10 +511,25 @@
     <ClCompile Include="..\..\UI\MarkupBox.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\UI\MeterBrowseWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MilitaryPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MultiIconValueIndicator.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MultiMeterStatusBar.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\OptionsWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PopulationPanel.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\ProductionWnd.cpp">
@@ -478,13 +541,28 @@
     <ClCompile Include="..\..\UI\ResearchWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\UI\ResourcePanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\UI\ServerConnectWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ShipDesignPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SpecialsPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SystemResourceSummaryBrowseWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\PlayerListWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\TextBrowseWnd.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\Process.cpp">
