@@ -70,6 +70,7 @@
     (CreateShip)                                \
     (CreateSystem)                              \
     (CreationTurn)                              \
+    (CurrentContent)                            \
     (CurrentTurn)
 
 #define TOKEN_SEQ_3                             \
@@ -110,7 +111,6 @@
     (Field)                                     \
     (FieldType)                                 \
     (Fighters)                                  \
-    (FighterType)                               \
     (FinalDestinationID)                        \
     (Fleet)                                     \
     (FleetID)                                   \
@@ -140,6 +140,7 @@
     (Graphic)                                   \
     (Happiness)                                 \
     (HasSpecial)                                \
+    (HasSpecialCapacity)                        \
     (HasSpecialSinceTurn)                       \
     (HasTag)                                    \
     (High)                                      \

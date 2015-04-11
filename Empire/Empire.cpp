@@ -32,7 +32,7 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 
 namespace {
-    const float EPSILON = 0.0001f;
+    const float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
 
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
@@ -44,7 +44,7 @@ namespace {
                                      ResearchQueue::QueueType& queue,
                                      float& total_RPs_spent, int& projects_in_progress, int empire_id)
     {
-        total_RPs_spent = 0.0;
+        total_RPs_spent = 0.0f;
         projects_in_progress = 0;
         int i = 0;
 
@@ -79,11 +79,11 @@ namespace {
                     total_RPs_spent += it->allocated_rp;
                     ++projects_in_progress;
                 } else {
-                    it->allocated_rp = 0.0;
+                    it->allocated_rp = 0.0f;
                 }
             } else {
                 // item can't be researched this turn
-                it->allocated_rp = 0.0;
+                it->allocated_rp = 0.0f;
             }
         }
     }
@@ -146,34 +146,34 @@ namespace {
             const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
             if (group.empty()) {
                 //DebugLogger() << "resource sharing group for queue element is empty.  not allocating any resources to element";
-                queue_element.allocated_pp = 0.0;
+                queue_element.allocated_pp = 0.0f;
                 continue;
             }
 
             std::map<std::set<int>, float>::iterator available_pp_it = available_pp.find(group);
             if (available_pp_it == available_pp.end()) {
-                // item is not being built at an object that has access to resources, so it can't be built.
+                // item is not being built at an object that has access to resources, so it can't be produced.
                 //DebugLogger() << "no resource sharing group for production queue element";
-                queue_element.allocated_pp = 0.0;
+                queue_element.allocated_pp = 0.0f;
                 continue;
             }
 
             float& group_pp_available = available_pp_it->second;
 
 
-            // if group has no pp available, can't build anything this turn
-            if (group_pp_available <= 0.0) {
+            // if group has no pp available, can't produce anything this turn
+            if (group_pp_available <= 0.0f) {
                 //DebugLogger() << "no pp available in group";
-                queue_element.allocated_pp = 0.0;
+                queue_element.allocated_pp = 0.0f;
                 continue;
             }
             //DebugLogger() << "group has " << group_pp_available << " PP available";
 
-            // see if item is buildable this turn...
+            // see if item is producible this turn...
             if (!empire->ProducibleItem(queue_element.item, queue_element.location)) {
-                // can't be built at this location this turn.
-                queue_element.allocated_pp = 0.0;
-                //DebugLogger() << "item can't be built at location this turn";
+                // can't be produced at this location this turn.
+                queue_element.allocated_pp = 0.0f;
+                //DebugLogger() << "item can't be produced at location this turn";
                 continue;
             }
 
@@ -188,9 +188,9 @@ namespace {
 
             item_cost *= queue_element.blocksize;
             // determine additional PP needed to complete build queue element: total cost - progress
-            float element_accumulated_PP = queue_element.progress;                                 // PP accumulated by this element towards building next item
-            float element_total_cost = item_cost * queue_element.remaining;                        // total PP to build all items in this element
-            float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to build all items in this element
+            float element_accumulated_PP = queue_element.progress;                                 // PP accumulated by this element towards producing  next item
+            float element_total_cost = item_cost * queue_element.remaining;                        // total PP to produce all items in this element
+            float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to produce all items in this element
             float element_per_turn_limit = item_cost / std::max(build_turns, 1);
 
             // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
@@ -201,7 +201,7 @@ namespace {
             float allocation = std::max(std::min(std::min(additional_pp_to_complete_element,
                                                           element_per_turn_limit),
                                                  group_pp_available),
-                                        0.0f);       // max(..., 0.0) prevents negative-allocations
+                                        EPSILON);   // max(...) prevents negative-allocations and helps avoid rounding issues by making any allocation at least a certain small number
 
             //DebugLogger() << "element accumulated " << element_accumulated_PP << " of total cost "
             //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
@@ -212,12 +212,13 @@ namespace {
             queue_element.allocated_pp = allocation;
 
             // record alloation in group, if group is not empty
-            allocated_pp[group] += allocation;  // assuming the float indexed by group will be default initialized to 0.0 if that entry doesn't already exist in the map
+            allocated_pp[group] += allocation;  // assuming the float indexed by group will be default initialized to 0.0f if that entry doesn't already exist in the map
             group_pp_available -= allocation;
+            group_pp_available = std::max(group_pp_available, 0.0f);    // safety clamp
 
             //DebugLogger() << "... leaving " << group_pp_available << " PP available to group";
 
-            if (allocation > 0.0)
+            if (allocation > 0.0f)
                 ++projects_in_progress;
         }
     }
@@ -977,7 +978,7 @@ void ProductionQueue::Update() {
                 // resource sharing group
                 //DebugLogger()  << "     turn: "<<j<<"; max_pp_needed: "<< additional_pp_to_complete_element <<"; per turn limit: " << element_per_turn_limit<<"; pp stil avail: "<<ppStillAvailable[firstTurnPPAvailable+j-1];
                 allocation = std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), ppStillAvailable[firstTurnPPAvailable+j-1]);
-                allocation = std::max(allocation, 0.0f);     // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
+                allocation = std::max(allocation, EPSILON);
                 element.progress += allocation;   // add turn's allocation
                 additional_pp_to_complete_element = element_total_cost - element.progress;
                 float item_cost_remaining = item_cost - element.progress;
@@ -989,8 +990,7 @@ void ProductionQueue::Update() {
                 }
 
                 // check if additional turn's PP allocation was enough to finish next item in element
-                // the 20*EPSILON check is necessary because of accumulating floating point roundoff errors for items with high build_turns
-                if ((item_cost_remaining < EPSILON ) || ((j==build_turns-1) && (item_cost_remaining < 20*EPSILON))) {
+                if ((item_cost_remaining < EPSILON ) || ((j==build_turns-1) && (item_cost_remaining < EPSILON))) {
                     //DebugLogger()  << "     finished an item";
                     // an item has been completed. 
                     // deduct cost of one item from accumulated PP.  don't set
@@ -1022,10 +1022,10 @@ void ProductionQueue::Update() {
     dp_time = (dp_time_end - dp_time_start).total_microseconds();
     if ((dp_time * 1e-6) >= DP_TOO_LONG_TIME)
         DebugLogger()  << "ProductionQueue::Update: Projections timed out after " << dp_time 
-                                << " microseconds; all remaining items in queue marked completing 'Never'.";
+                       << " microseconds; all remaining items in queue marked completing 'Never'.";
     DebugLogger()  << "ProductionQueue::Update: Projections took " 
-                            << ((dp_time_end - dp_time_start).total_microseconds()) << " microseconds with "
-                            << empire->ProductionPoints() << " total Production Points";
+                   << ((dp_time_end - dp_time_start).total_microseconds()) << " microseconds with "
+                   << empire->ProductionPoints() << " total Production Points";
     ProductionQueueChangedSignal();
 }
 
@@ -1105,7 +1105,7 @@ namespace {
         const std::vector<Alignment>&           Alignments() const { return m_alignments; }
 
         const std::vector<boost::shared_ptr<
-            const Effect::EffectsGroup> >       EffectsGroups() const { return m_effects_groups; }
+            Effect::EffectsGroup> >       EffectsGroups() const { return m_effects_groups; }
         //@}
 
         /** returns the instance of this singleton class; you should use the
@@ -1115,9 +1115,8 @@ namespace {
     private:
         AlignmentManager();
 
-        std::vector<Alignment>              m_alignments;
-        std::vector<boost::shared_ptr<
-            const Effect::EffectsGroup> >   m_effects_groups;
+        std::vector<Alignment>                                  m_alignments;
+        std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects_groups;
 
         static AlignmentManager*    s_instance;
     };
@@ -1146,10 +1145,10 @@ namespace {
                 DebugLogger() << " ... " << p.Name();
             }
             DebugLogger() << "Alignment Effects:";
-            for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = m_effects_groups.begin();
+            for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = m_effects_groups.begin();
                  it != m_effects_groups.end(); ++it)
             {
-                //const boost::shared_ptr<const Effect::EffectsGroup>& p = *it;
+                //const boost::shared_ptr<Effect::EffectsGroup>& p = *it;
                 DebugLogger() << " ... " /*<< p->Dump()*/;
             }
         }
@@ -2278,7 +2277,7 @@ void Empire::SetTechResearchProgress(const std::string& name, float progress) {
         return; // can't affect already-researched tech
 
     // set progress
-    float clamped_progress = std::min(tech->ResearchCost(m_id), std::max(0.0f, progress));
+    float clamped_progress = std::min(tech->ResearchCost(m_id), std::max(EPSILON, progress));
     m_research_progress[name] = clamped_progress;
 
     // if tech is complete, ensure it is on the queue, so it will be researched next turn

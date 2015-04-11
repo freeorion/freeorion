@@ -91,6 +91,10 @@ namespace {
     double  InvalidPosition()
     { return UniverseObject::INVALID_POSITION; }
 
+    // Wrapper for GetResourceDir
+    object GetResourceDirWrapper()
+    { return object(PathString(GetResourceDir())); }
+
     // Wrappers for generating sitrep messages
     void GenerateSitRep(int empire_id,
                         const std::string& template_string,
@@ -614,11 +618,15 @@ namespace {
             return;
         }
         // check if the special exists
-        if (!GetSpecial(special_name)) {
+        const Special* special = GetSpecial(special_name);
+        if (!special) {
             ErrorLogger() << "PythonUniverseGenerator::AddSpecial: couldn't get special " << special_name;
             return;
         }
-        obj->AddSpecial(special_name);
+
+        float capacity = special->InitialCapacity(object_id);
+
+        obj->AddSpecial(special_name, capacity);
     }
 
     void RemoveSpecial(int object_id, const std::string special_name) {
@@ -1145,6 +1153,7 @@ void WrapServerAPI() {
 
     def("user_string",                          make_function(&UserString,      return_value_policy<copy_const_reference>()));
     def("roman_number",                         RomanNumber);
+    def("get_resource_dir",                     GetResourceDirWrapper);
 
     def("all_empires",                          AllEmpires);
     def("invalid_object",                       InvalidObjectID);

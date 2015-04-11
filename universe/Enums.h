@@ -230,19 +230,6 @@ GG_ENUM(ResourceType,
     NUM_RESOURCE_TYPES
 )
 
-/** Types of fighters. */
-GG_ENUM(CombatFighterType,
-    INVALID_COMBAT_FIGHTER_TYPE,
-
-    /** A fighter that is better at attacking other fighters than at
-        attacking ships. */
-    INTERCEPTOR,
-
-    /** A fighter that is better at attacking ships than at attacking
-        other fighters. */
-    BOMBER
-)
-
 /** Types "classes" of ship parts */
 GG_ENUM(ShipPartClass,
     INVALID_SHIP_PART_CLASS = -1,

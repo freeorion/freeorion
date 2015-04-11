@@ -7,7 +7,7 @@
 #include "CUIControls.h"
 #include "QueueListBox.h"
 #include "SidePanel.h"
-#include "InfoPanels.h"
+#include "IconTextBrowseWnd.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"

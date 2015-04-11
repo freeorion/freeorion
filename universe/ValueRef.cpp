@@ -346,6 +346,14 @@ namespace ValueRef {
     template <>
     std::string Constant<std::string>::Dump() const
     { return "\"" + Description() + "\""; }
+
+    template <>
+    std::string Constant<std::string>::Eval(const ScriptingContext& context) const
+    {
+        if (m_value == "CurrentContent")
+            return m_top_level_content;
+        return m_value;
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -1861,12 +1869,12 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 // UserStringLookup                                      //
 ///////////////////////////////////////////////////////////
-ValueRef::UserStringLookup::UserStringLookup(const ValueRef::Variable<std::string>* value_ref) :
+ValueRef::UserStringLookup::UserStringLookup(ValueRef::Variable<std::string>* value_ref) :
     ValueRef::Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(value_ref)
 {}
 
-ValueRef::UserStringLookup::UserStringLookup(const ValueRef::ValueRefBase<std::string>* value_ref) :
+ValueRef::UserStringLookup::UserStringLookup(ValueRef::ValueRefBase<std::string>* value_ref) :
     ValueRef::Variable<std::string>(ValueRef::NON_OBJECT_REFERENCE),
     m_value_ref(value_ref)
 {}
@@ -1907,19 +1915,24 @@ bool ValueRef::UserStringLookup::RootCandidateInvariant() const
 { return m_value_ref->RootCandidateInvariant(); }
 
 bool ValueRef::UserStringLookup::LocalCandidateInvariant() const
-{ return m_value_ref->LocalCandidateInvariant(); }
+{ return !m_value_ref || m_value_ref->LocalCandidateInvariant(); }
 
 bool ValueRef::UserStringLookup::TargetInvariant() const
-{ return m_value_ref->TargetInvariant(); }
+{ return !m_value_ref || m_value_ref->TargetInvariant(); }
 
 bool ValueRef::UserStringLookup::SourceInvariant() const
-{ return m_value_ref->SourceInvariant(); }
+{ return !m_value_ref || m_value_ref->SourceInvariant(); }
 
 std::string ValueRef::UserStringLookup::Description() const
 { return m_value_ref->Description(); }
 
 std::string ValueRef::UserStringLookup::Dump() const
 { return m_value_ref->Dump(); }
+
+void ValueRef::UserStringLookup::SetTopLevelContent(const std::string& content_name) {
+    if (m_value_ref)
+        m_value_ref->SetTopLevelContent(content_name);
+}
 
 ///////////////////////////////////////////////////////////
 // Operation                                             //
@@ -2010,7 +2023,6 @@ namespace ValueRef {
     template <>
     std::string Operation<std::string>::Eval(const ScriptingContext& context) const
     {
-        std::string op_link;
         if (m_op_type == PLUS)
             return m_operand1->Eval(context) + m_operand2->Eval(context);
         throw std::runtime_error("std::string ValueRef evaluated with an unknown or invalid OpType.");

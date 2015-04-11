@@ -134,6 +134,10 @@ Fleet %1%
 NEW_FLEET_NAME_NO_NUMBER
 Fleet
 
+# used to generate name for effect-created planets. %1% is the system name.
+NEW_PLANET_NAME
+%1% Nova
+
 EMPTY_SPACE
 Deep Space
 
@@ -1114,6 +1118,9 @@ Sets minimum zoom level at which tiny fleet icons are shown on the galaxy map. A
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Sets size of fleet selection indicator, relative to fleet icon size.
+
+OPTIONS_DB_SHOW_FLEET_ETA
+Show fleet ETA (for moving fleets) in Fleet Window
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator, relative to system icon size.
@@ -2429,6 +2436,14 @@ Set focus
 RP_FOCUS_TOOLTIP
 Focus: %1%
 
+## Specials Panel ##########
+
+SPECIAL_CAPACITY
+Capacity: %1%
+
+ADDED_ON_TURN
+Present Since Turn: %1%
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -2518,6 +2533,9 @@ Holding at %1%
 
 FW_FLEET_MOVING_TO
 Moving to %1%
+
+FW_FLEET_MOVING_TO_ETA
+Moving to %1% (ETA %2%)
 
 FW_FLEET_EXPLORING_REFUEL
 Waiting for Fuel
@@ -3813,7 +3831,7 @@ STRUCTURE_TEXT
 '''Structure is amount of damage that ship can take until it is destroyed. Structure can be restored by repairing.'''
 
 STARLANE_SPEED_TITLE
-Starline Speed
+Starlane Speed
 STARLANE_SPEED_TEXT
 '''Speed on galaxy map  (uu/turn)'''
 
@@ -4173,6 +4191,7 @@ EFFECT_ANCIENT_BUILDING
 EFFECT_ANCIENT_BUILDING_RUMORS
 EFFECT_ANCIENT_TECH
 EFFECT_ANCIENT_TECH_RUMORS
+EFFECT_ANCIENT_RUINS_EMPTY
 SITREP_TECH_RESEARCHED
 SITREP_TECH_UNLOCKED
 SITREP_SHIP_PART_UNLOCKED
@@ -4470,6 +4489,11 @@ EFFECT_ANCIENT_TECH_RUMORS
 Rumors spread through the galaxy that %tech% was revealed to a xenoarcheology expedition at Ancient Ruins!
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Ancient Ruins Tech Rumors
+
+EFFECT_ANCIENT_RUINS_EMPTY
+On %planet% Ancient Ruins were excavated, but only tantalizing hints of ancient technology were found.
+EFFECT_ANCIENT_RUINS_EMPTY_LABEL
+Ancient Ruins Empty Excavation
 
 EFFECT_CONC_CAMP_COMLETE
 At %planet%: depopulation is complete.
@@ -6539,17 +6563,6 @@ Effect is active if the source is an object%1%
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effect is always active
 
-DESC_EFFECTS_GROUP_SCOPE_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_ACTIVATION_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_EFFECT_DESC
-'''%1%
-'''
 
 DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
 '''%1%
@@ -6777,6 +6790,12 @@ DESC_SPECIAL
 
 DESC_SPECIAL_NOT
  that doesn't have a %1% special
+
+DESC_SPECIAL_CAPACITY_RANGE
+ that has a %1% special with capacity between %2% and %3%
+
+DESC_SPECIAL_CAPACITY_RANGE_NOT
+ that doesn't have a %1% special with capacity between %2% and %3%
 
 DESC_SPECIAL_TURN_RANGE
  that has had a %1% special since between turns %2% and %3%
@@ -10364,7 +10383,7 @@ ULTIMATE_SUPPLY
 '''++	Ultimate [[encyclopedia SUPPLY_TITLE]]: +3'''
 
 BROAD_EP
-'''++	Broad Planet Tolerance: flourishes on more types.'''
+'''++	Broad Planet Tolerance: can tolerate more types.'''
 
 NARROW_EP
 '''−	Narrow Planet Tolerance: flourishes on fewer types.'''

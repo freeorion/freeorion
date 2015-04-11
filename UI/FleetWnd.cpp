@@ -2,7 +2,8 @@
 
 #include "CUIControls.h"
 #include "SidePanel.h"
-#include "InfoPanels.h"
+#include "IconTextBrowseWnd.h"
+#include "MeterBrowseWnd.h"
 #include "ClientUI.h"
 #include "Sound.h"
 #include "ShaderProgram.h"
@@ -108,9 +109,14 @@ namespace {
             if(ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()))
                 retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_TO")) %
                                                 dest_name % final_eta_text % next_eta_text);
-            else
-                retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_MOVING_TO")) % 
+            else {
+                // "FW_FLEET_MOVING_TO" userstring is currently truncated to drop ETA info
+                // so as to fit better in a small fleet window
+                std::string moving_key = GetOptionsDB().Get<bool>("UI.show-fleet-eta") ?
+                                         "FW_FLEET_MOVING_TO_ETA" : "FW_FLEET_MOVING_TO";
+                retval = boost::io::str(FlexibleFormat(UserString(moving_key)) % 
                                                 dest_name % final_eta_text % next_eta_text);
+            }
 
         } else if (cur_sys) {
             const std::string& cur_system_name = cur_sys->ApparentName(client_empire_id);

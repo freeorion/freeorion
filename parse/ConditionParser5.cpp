@@ -18,6 +18,7 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             const parse::value_ref_parser_rule<int>::type& int_value_ref = parse::value_ref_parser<int>();
+            const parse::value_ref_parser_rule<std::string>::type& string_value_ref = parse::value_ref_parser<std::string>();
 
             qi::_1_type _1;
             qi::_val_type _val;
@@ -26,27 +27,27 @@ namespace {
 
             has_special
                 =    tok.HasSpecial_
-                >    parse::label(Name_token) > tok.string [ _val = new_<Condition::HasSpecial>(_1) ]
+                >    parse::label(Name_token) > string_value_ref [ _val = new_<Condition::HasSpecial>(_1) ]
                 ;
 
             has_tag
                 =    tok.HasTag_
-                >    parse::label(Name_token) > tok.string [ _val = new_<Condition::HasTag>(_1) ]
+                >    parse::label(Name_token) > string_value_ref [ _val = new_<Condition::HasTag>(_1) ]
                 ;
 
             owner_has_tech
                 =    tok.OwnerHasTech_
-                >    parse::label(Name_token) > tok.string [ _val = new_<Condition::OwnerHasTech>(_1) ]
+                >    parse::label(Name_token) > string_value_ref [ _val = new_<Condition::OwnerHasTech>(_1) ]
                 ;
 
             design_has_hull
                 =    tok.DesignHasHull_
-                >    parse::label(Name_token) > tok.string [ _val = new_<Condition::DesignHasHull>(_1) ]
+                >    parse::label(Name_token) > string_value_ref [ _val = new_<Condition::DesignHasHull>(_1) ]
                 ;
 
             predefined_design
                 =    tok.Design_
-                >>   parse::label(Name_token) > tok.string [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                >>   parse::label(Name_token) > string_value_ref [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
                 ;
 
             design_number

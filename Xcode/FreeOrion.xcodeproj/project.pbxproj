@@ -158,7 +158,6 @@
 		471024300CEF3AAC00A7DF2B /* Wnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C20CEF3AAC00A7DF2B /* Wnd.cpp */; };
 		471024320CEF3AAC00A7DF2B /* WndEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C40CEF3AAC00A7DF2B /* WndEvent.cpp */; };
 		471024330CEF3AAC00A7DF2B /* ZList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023C50CEF3AAC00A7DF2B /* ZList.cpp */; };
-		4710311F0CEF60AA00A7DF2B /* InfoPanels.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4710311D0CEF60AA00A7DF2B /* InfoPanels.cpp */; };
 		471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F890CEF55F700A7DF2B /* ClientFSMEvents.cpp */; };
 		471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F870CEF55E700A7DF2B /* HumanClientFSM.cpp */; };
 		4710323E0CEF6A7700A7DF2B /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471032380CEF6A7600A7DF2B /* Ogg.framework */; };
@@ -299,6 +298,20 @@
 		82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		82682D8219C24DEC0041C465 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E250AD19C2317700F0E2F2 /* libGLEW.a */; };
 		8273F49515DD774C000F6A09 /* changelog.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8273F49415DD7724000F6A09 /* changelog.txt */; };
+		8275F3F91AD31381003568FF /* AccordionPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3DD1AD31381003568FF /* AccordionPanel.cpp */; };
+		8275F3FA1AD31381003568FF /* BuildingsPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3DF1AD31381003568FF /* BuildingsPanel.cpp */; };
+		8275F3FB1AD31381003568FF /* CensusBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3E11AD31381003568FF /* CensusBrowseWnd.cpp */; };
+		8275F3FC1AD31381003568FF /* IconTextBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3E31AD31381003568FF /* IconTextBrowseWnd.cpp */; };
+		8275F3FD1AD31381003568FF /* MeterBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3E51AD31381003568FF /* MeterBrowseWnd.cpp */; };
+		8275F3FE1AD31381003568FF /* MilitaryPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3E71AD31381003568FF /* MilitaryPanel.cpp */; };
+		8275F3FF1AD31381003568FF /* MultiIconValueIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3E91AD31381003568FF /* MultiIconValueIndicator.cpp */; };
+		8275F4001AD31381003568FF /* MultiMeterStatusBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3EB1AD31381003568FF /* MultiMeterStatusBar.cpp */; };
+		8275F4011AD31381003568FF /* PopulationPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3ED1AD31381003568FF /* PopulationPanel.cpp */; };
+		8275F4021AD31381003568FF /* ResourcePanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3EF1AD31381003568FF /* ResourcePanel.cpp */; };
+		8275F4031AD31381003568FF /* ShipDesignPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3F11AD31381003568FF /* ShipDesignPanel.cpp */; };
+		8275F4041AD31381003568FF /* SpecialsPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3F31AD31381003568FF /* SpecialsPanel.cpp */; };
+		8275F4051AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3F51AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp */; };
+		8275F4061AD31381003568FF /* TextBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3F71AD31381003568FF /* TextBrowseWnd.cpp */; };
 		827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */; };
 		8280AC5D19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8280AC5C19C0741B00ADDB65 /* libboost_iostreams.a */; };
 		8280AC5E19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8280AC5C19C0741B00ADDB65 /* libboost_iostreams.a */; };
@@ -719,8 +732,6 @@
 		471030480CEF569200A7DF2B /* ServerFSM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerFSM.h; sourceTree = "<group>"; };
 		471030490CEF569900A7DF2B /* SaveLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveLoad.cpp; sourceTree = "<group>"; };
 		4710304A0CEF569900A7DF2B /* SaveLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveLoad.h; sourceTree = "<group>"; };
-		4710311D0CEF60AA00A7DF2B /* InfoPanels.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InfoPanels.cpp; sourceTree = "<group>"; };
-		4710311E0CEF60AA00A7DF2B /* InfoPanels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoPanels.h; sourceTree = "<group>"; };
 		471032380CEF6A7600A7DF2B /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Ogg.framework; sourceTree = "<group>"; };
 		4710323F0CEF6A8B00A7DF2B /* vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = vorbis.framework; sourceTree = "<group>"; };
 		471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = FreeOrion.icns; sourceTree = "<group>"; };
@@ -1128,6 +1139,34 @@
 		825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorAction.cpp; sourceTree = "<group>"; };
 		825EA75F16DB9DB10002A797 /* ModeratorAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorAction.h; sourceTree = "<group>"; };
 		8273F49415DD7724000F6A09 /* changelog.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = changelog.txt; path = ../changelog.txt; sourceTree = SOURCE_ROOT; };
+		8275F3DD1AD31381003568FF /* AccordionPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccordionPanel.cpp; sourceTree = "<group>"; };
+		8275F3DE1AD31381003568FF /* AccordionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccordionPanel.h; sourceTree = "<group>"; };
+		8275F3DF1AD31381003568FF /* BuildingsPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuildingsPanel.cpp; sourceTree = "<group>"; };
+		8275F3E01AD31381003568FF /* BuildingsPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuildingsPanel.h; sourceTree = "<group>"; };
+		8275F3E11AD31381003568FF /* CensusBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CensusBrowseWnd.cpp; sourceTree = "<group>"; };
+		8275F3E21AD31381003568FF /* CensusBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CensusBrowseWnd.h; sourceTree = "<group>"; };
+		8275F3E31AD31381003568FF /* IconTextBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconTextBrowseWnd.cpp; sourceTree = "<group>"; };
+		8275F3E41AD31381003568FF /* IconTextBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconTextBrowseWnd.h; sourceTree = "<group>"; };
+		8275F3E51AD31381003568FF /* MeterBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeterBrowseWnd.cpp; sourceTree = "<group>"; };
+		8275F3E61AD31381003568FF /* MeterBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeterBrowseWnd.h; sourceTree = "<group>"; };
+		8275F3E71AD31381003568FF /* MilitaryPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MilitaryPanel.cpp; sourceTree = "<group>"; };
+		8275F3E81AD31381003568FF /* MilitaryPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MilitaryPanel.h; sourceTree = "<group>"; };
+		8275F3E91AD31381003568FF /* MultiIconValueIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiIconValueIndicator.cpp; sourceTree = "<group>"; };
+		8275F3EA1AD31381003568FF /* MultiIconValueIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiIconValueIndicator.h; sourceTree = "<group>"; };
+		8275F3EB1AD31381003568FF /* MultiMeterStatusBar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiMeterStatusBar.cpp; sourceTree = "<group>"; };
+		8275F3EC1AD31381003568FF /* MultiMeterStatusBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiMeterStatusBar.h; sourceTree = "<group>"; };
+		8275F3ED1AD31381003568FF /* PopulationPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PopulationPanel.cpp; sourceTree = "<group>"; };
+		8275F3EE1AD31381003568FF /* PopulationPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopulationPanel.h; sourceTree = "<group>"; };
+		8275F3EF1AD31381003568FF /* ResourcePanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourcePanel.cpp; sourceTree = "<group>"; };
+		8275F3F01AD31381003568FF /* ResourcePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourcePanel.h; sourceTree = "<group>"; };
+		8275F3F11AD31381003568FF /* ShipDesignPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShipDesignPanel.cpp; sourceTree = "<group>"; };
+		8275F3F21AD31381003568FF /* ShipDesignPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipDesignPanel.h; sourceTree = "<group>"; };
+		8275F3F31AD31381003568FF /* SpecialsPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpecialsPanel.cpp; sourceTree = "<group>"; };
+		8275F3F41AD31381003568FF /* SpecialsPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecialsPanel.h; sourceTree = "<group>"; };
+		8275F3F51AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemResourceSummaryBrowseWnd.cpp; sourceTree = "<group>"; };
+		8275F3F61AD31381003568FF /* SystemResourceSummaryBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemResourceSummaryBrowseWnd.h; sourceTree = "<group>"; };
+		8275F3F71AD31381003568FF /* TextBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBrowseWnd.cpp; sourceTree = "<group>"; };
+		8275F3F81AD31381003568FF /* TextBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBrowseWnd.h; sourceTree = "<group>"; };
 		827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorActionsWnd.cpp; sourceTree = "<group>"; };
 		827902371737C6EA008AF126 /* ModeratorActionsWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorActionsWnd.h; sourceTree = "<group>"; };
 		827AF376185B26AE001CD79C /* UniverseGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniverseGenerator.h; sourceTree = "<group>"; };
@@ -1740,8 +1779,14 @@
 			children = (
 				471D5CA50A98A3F900DA9C21 /* About.cpp */,
 				471D5CA60A98A3F900DA9C21 /* About.h */,
+				8275F3DD1AD31381003568FF /* AccordionPanel.cpp */,
+				8275F3DE1AD31381003568FF /* AccordionPanel.h */,
 				471D5CA70A98A3F900DA9C21 /* BuildDesignatorWnd.cpp */,
 				471D5CA80A98A3F900DA9C21 /* BuildDesignatorWnd.h */,
+				8275F3DF1AD31381003568FF /* BuildingsPanel.cpp */,
+				8275F3E01AD31381003568FF /* BuildingsPanel.h */,
+				8275F3E11AD31381003568FF /* CensusBrowseWnd.cpp */,
+				8275F3E21AD31381003568FF /* CensusBrowseWnd.h */,
 				34972BE60F49CBE80015C864 /* ChatWnd.cpp */,
 				34972BE70F49CBE80015C864 /* ChatWnd.h */,
 				471D5CA90A98A3F900DA9C21 /* ClientUI.cpp */,
@@ -1775,8 +1820,8 @@
 				82B9D446180C53FE0032F86D /* GraphControl.h */,
 				820BDECB1848A93E009BC457 /* Hotkeys.cpp */,
 				820BDECC1848A93E009BC457 /* Hotkeys.h */,
-				4710311D0CEF60AA00A7DF2B /* InfoPanels.cpp */,
-				4710311E0CEF60AA00A7DF2B /* InfoPanels.h */,
+				8275F3E31AD31381003568FF /* IconTextBrowseWnd.cpp */,
+				8275F3E41AD31381003568FF /* IconTextBrowseWnd.h */,
 				471D5CC20A98A3F900DA9C21 /* InGameMenu.cpp */,
 				471D5CC30A98A3F900DA9C21 /* InGameMenu.h */,
 				471D5CC40A98A3F900DA9C21 /* IntroScreen.cpp */,
@@ -1787,8 +1832,16 @@
 				471D5CC90A98A3F900DA9C21 /* MapWnd.h */,
 				343EC65F0F3F5C7C00782AD3 /* MarkupBox.cpp */,
 				343EC6600F3F5C7C00782AD3 /* MarkupBox.h */,
+				8275F3E51AD31381003568FF /* MeterBrowseWnd.cpp */,
+				8275F3E61AD31381003568FF /* MeterBrowseWnd.h */,
+				8275F3E71AD31381003568FF /* MilitaryPanel.cpp */,
+				8275F3E81AD31381003568FF /* MilitaryPanel.h */,
 				827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */,
 				827902371737C6EA008AF126 /* ModeratorActionsWnd.h */,
+				8275F3E91AD31381003568FF /* MultiIconValueIndicator.cpp */,
+				8275F3EA1AD31381003568FF /* MultiIconValueIndicator.h */,
+				8275F3EB1AD31381003568FF /* MultiMeterStatusBar.cpp */,
+				8275F3EC1AD31381003568FF /* MultiMeterStatusBar.h */,
 				471D5CCA0A98A3F900DA9C21 /* MultiplayerLobbyWnd.cpp */,
 				471D5CCB0A98A3F900DA9C21 /* MultiplayerLobbyWnd.h */,
 				82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */,
@@ -1797,32 +1850,44 @@
 				471D5CCD0A98A3F900DA9C21 /* OptionsWnd.h */,
 				2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */,
 				2F60966412EEAD2200F58913 /* PlayerListWnd.h */,
+				8275F3ED1AD31381003568FF /* PopulationPanel.cpp */,
+				8275F3EE1AD31381003568FF /* PopulationPanel.h */,
 				471D5CD00A98A3F900DA9C21 /* ProductionWnd.cpp */,
 				471D5CD10A98A3F900DA9C21 /* ProductionWnd.h */,
 				343EC6610F3F5C7C00782AD3 /* QueueListBox.cpp */,
 				343EC6620F3F5C7C00782AD3 /* QueueListBox.h */,
 				471D5CD20A98A3F900DA9C21 /* ResearchWnd.cpp */,
 				471D5CD30A98A3F900DA9C21 /* ResearchWnd.h */,
+				8275F3EF1AD31381003568FF /* ResourcePanel.cpp */,
+				8275F3F01AD31381003568FF /* ResourcePanel.h */,
 				8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */,
 				8298A1AD18F9BB980001D3DA /* SaveFileDialog.h */,
 				471D5CD40A98A3F900DA9C21 /* ServerConnectWnd.cpp */,
 				471D5CD50A98A3F900DA9C21 /* ServerConnectWnd.h */,
 				346D87ED0FC5F6080095593E /* ShaderProgram.cpp */,
 				346D87EE0FC5F6080095593E /* ShaderProgram.h */,
+				8275F3F11AD31381003568FF /* ShipDesignPanel.cpp */,
+				8275F3F21AD31381003568FF /* ShipDesignPanel.h */,
 				471D5CD60A98A3F900DA9C21 /* SidePanel.cpp */,
 				471D5CD70A98A3F900DA9C21 /* SidePanel.h */,
 				471D5CD80A98A3F900DA9C21 /* SitRepPanel.cpp */,
 				471D5CD90A98A3F900DA9C21 /* SitRepPanel.h */,
 				34972BEC0F49CBF90015C864 /* Sound.cpp */,
 				34972BED0F49CBF90015C864 /* Sound.h */,
+				8275F3F31AD31381003568FF /* SpecialsPanel.cpp */,
+				8275F3F41AD31381003568FF /* SpecialsPanel.h */,
 				471D5CDE0A98A3F900DA9C21 /* SystemIcon.cpp */,
 				471D5CDF0A98A3F900DA9C21 /* SystemIcon.h */,
+				8275F3F51AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp */,
+				8275F3F61AD31381003568FF /* SystemResourceSummaryBrowseWnd.h */,
 				82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */,
 				82970BEE1A0CF53A008B37EF /* TechTreeArcs.h */,
 				2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */,
 				2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */,
 				471D5CE00A98A3F900DA9C21 /* TechTreeWnd.cpp */,
 				471D5CE10A98A3F900DA9C21 /* TechTreeWnd.h */,
+				8275F3F71AD31381003568FF /* TextBrowseWnd.cpp */,
+				8275F3F81AD31381003568FF /* TextBrowseWnd.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -2889,7 +2954,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8275F3FA1AD31381003568FF /* BuildingsPanel.cpp in Sources */,
 				471D5E0E0A98A96700DA9C21 /* About.cpp in Sources */,
+				8275F4061AD31381003568FF /* TextBrowseWnd.cpp in Sources */,
 				471D5E0F0A98A96D00DA9C21 /* BuildDesignatorWnd.cpp in Sources */,
 				34972BEA0F49CBE80015C864 /* ChatWnd.cpp in Sources */,
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
@@ -2897,6 +2964,7 @@
 				471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */,
 				82B9AEA21AA71CCC00486B2A /* CombatReportData.cpp in Sources */,
 				471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */,
+				8275F4051AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp in Sources */,
 				471D5E150A98A97D00DA9C21 /* CUIControls.cpp in Sources */,
 				471D5E160A98A98700DA9C21 /* CUIDrawUtil.cpp in Sources */,
 				471D5E180A98A98B00DA9C21 /* CUIStyle.cpp in Sources */,
@@ -2908,20 +2976,27 @@
 				471D5E1B0A98A99D00DA9C21 /* FleetButton.cpp in Sources */,
 				471D5E1C0A98A9A300DA9C21 /* FleetWnd.cpp in Sources */,
 				471D5E1E0A98A9AE00DA9C21 /* GalaxySetupWnd.cpp in Sources */,
+				8275F4041AD31381003568FF /* SpecialsPanel.cpp in Sources */,
+				8275F3FD1AD31381003568FF /* MeterBrowseWnd.cpp in Sources */,
 				82B9AEA41AA71CCC00486B2A /* GraphicalSummary.cpp in Sources */,
 				82B9D447180C53FE0032F86D /* GraphControl.cpp in Sources */,
 				82B9AEA11AA71CCC00486B2A /* CombatLogWnd.cpp in Sources */,
 				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
 				820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */,
+				8275F3FC1AD31381003568FF /* IconTextBrowseWnd.cpp in Sources */,
 				470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */,
+				8275F3FF1AD31381003568FF /* MultiIconValueIndicator.cpp in Sources */,
 				471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */,
-				4710311F0CEF60AA00A7DF2B /* InfoPanels.cpp in Sources */,
+				8275F4021AD31381003568FF /* ResourcePanel.cpp in Sources */,
+				8275F3FE1AD31381003568FF /* MilitaryPanel.cpp in Sources */,
 				471D5E1F0A98A9B000DA9C21 /* InGameMenu.cpp in Sources */,
 				471D5E200A98A9B200DA9C21 /* IntroScreen.cpp in Sources */,
+				8275F4001AD31381003568FF /* MultiMeterStatusBar.cpp in Sources */,
 				471D5E210A98A9C000DA9C21 /* LinkText.cpp in Sources */,
 				471D5E220A98A9C500DA9C21 /* MapWnd.cpp in Sources */,
 				343EC6640F3F5C7C00782AD3 /* MarkupBox.cpp in Sources */,
 				827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */,
+				8275F4011AD31381003568FF /* PopulationPanel.cpp in Sources */,
 				471D5E230A98A9C700DA9C21 /* MultiplayerLobbyWnd.cpp in Sources */,
 				82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */,
 				471D5E240A98A9C900DA9C21 /* OptionsWnd.cpp in Sources */,
@@ -2932,14 +3007,17 @@
 				471D5E270A98A9CF00DA9C21 /* ResearchWnd.cpp in Sources */,
 				8298A1AE18F9BB980001D3DA /* SaveFileDialog.cpp in Sources */,
 				471D5E280A98A9D100DA9C21 /* ServerConnectWnd.cpp in Sources */,
+				8275F3F91AD31381003568FF /* AccordionPanel.cpp in Sources */,
 				346D87EF0FC5F6080095593E /* ShaderProgram.cpp in Sources */,
 				82CE867F19BF27D0004DF6DF /* GUIController.mm in Sources */,
 				471D5E290A98A9D700DA9C21 /* SidePanel.cpp in Sources */,
 				471D5E2A0A98A9D900DA9C21 /* SitRepPanel.cpp in Sources */,
+				8275F4031AD31381003568FF /* ShipDesignPanel.cpp in Sources */,
 				34972BEE0F49CBF90015C864 /* Sound.cpp in Sources */,
 				471D5E2D0A98AA1700DA9C21 /* SystemIcon.cpp in Sources */,
 				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
 				471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */,
+				8275F3FB1AD31381003568FF /* CensusBrowseWnd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

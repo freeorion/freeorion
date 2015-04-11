@@ -151,6 +151,20 @@ void Building::SetOrderedScrapped(bool b) {
 BuildingType::~BuildingType()
 { delete m_location; }
 
+void BuildingType::Init() {
+    if (m_production_cost)
+        m_production_cost->SetTopLevelContent(m_name);
+    if (m_production_time)
+        m_production_time->SetTopLevelContent(m_name);
+    if (m_location)
+        m_location->SetTopLevelContent(m_name);
+    if (m_enqueue_location)
+        m_enqueue_location->SetTopLevelContent(m_name);
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
+         it != m_effects.end(); ++it)
+    { (*it)->SetTopLevelContent(m_name); }
+}
+
 std::string BuildingType::Dump() const {
     using boost::lexical_cast;
 

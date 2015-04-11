@@ -87,8 +87,8 @@ namespace {
                 ;
 
             start
-                =    '[' > +effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ] > ']'
-                |    effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ]
+                =    '[' > +effects_group [ push_back(_val, construct<boost::shared_ptr<Effect::EffectsGroup> >(_1)) ] > ']'
+                |    effects_group [ push_back(_val, construct<boost::shared_ptr<Effect::EffectsGroup> >(_1)) ]
                 ;
 
             effects_group.name("EffectsGroup");

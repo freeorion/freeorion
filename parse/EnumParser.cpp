@@ -256,25 +256,6 @@ namespace parse {
     }
 
     template <>
-    enum_parser_rule<CombatFighterType>::type& enum_parser<CombatFighterType>()
-    {
-        const parse::lexer& tok = parse::lexer::instance();
-        static enum_parser_rule<CombatFighterType>::type retval
-            =    tok.Interceptor_ [ _val = INTERCEPTOR ]
-            |    tok.Bomber_ [ _val = BOMBER ]
-            ;
-        static bool once = true;
-        if (once) {
-            retval.name("CombatFighterType");
-#if DEBUG_PARSERS
-            debug(retval);
-#endif
-            once = false;
-        }
-        return retval;
-    }
-
-    template <>
     enum_parser_rule<CaptureResult>::type& enum_parser<CaptureResult>()
     {
         const parse::lexer& tok = parse::lexer::instance();

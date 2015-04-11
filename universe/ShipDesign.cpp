@@ -23,9 +23,9 @@ namespace {
 }
 
 namespace {
-    boost::shared_ptr<const Effect::EffectsGroup>
+    boost::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float increase) {
-        typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
+        typedef boost::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
@@ -40,24 +40,30 @@ namespace {
                 scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
     }
 
-    boost::shared_ptr<const Effect::EffectsGroup>
+    boost::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, const std::string& part_name, float increase, bool allow_stacking = true) {
-        typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
+        typedef boost::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
-        ValueRef::ValueRefBase<double>* vr =
+
+        ValueRef::ValueRefBase<double>* value_vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
                 new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
                 new ValueRef::Constant<double>(increase)
             );
+
+        ValueRef::ValueRefBase<std::string>* part_name_vr =
+            new ValueRef::Constant<std::string>(part_name);
+
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
+
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
                 scope, activation,
-                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name, vr)),
+                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name_vr, value_vr)),
                 part_name, stacking_group));
     }
 
@@ -173,7 +179,7 @@ namespace {
 ////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
-void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects) {
+void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
     if (m_capacity != 0) {
         switch (m_class) {
         case PC_SHORT_RANGE:
@@ -214,9 +220,12 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
         }
     }
 
-    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator
          it = effects.begin(); it != effects.end(); ++it)
-    { m_effects.push_back(*it); }
+    {
+        (*it)->SetTopLevelContent(m_name);
+        m_effects.push_back(*it);
+    }
 }
 
 PartType::~PartType()
@@ -290,7 +299,7 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
 ////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
-void HullType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects) {
+void HullType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
     if (m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
     if (m_stealth != 0)
@@ -300,9 +309,12 @@ void HullType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
     if (m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed));
 
-    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin();
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = effects.begin();
          it != effects.end(); ++it)
-    { m_effects.push_back(*it); }
+    {
+        (*it)->SetTopLevelContent(m_name);
+        m_effects.push_back(*it);
+    }
 }
 
 HullType::~HullType()

@@ -34,7 +34,7 @@ extern int g_indent;
 
 namespace {
     boost::tuple<bool, ValueRef::OpType, double>
-    SimpleMeterModification(MeterType meter, const ValueRef::ValueRefBase<double>* ref) {
+    SimpleMeterModification(MeterType meter, ValueRef::ValueRefBase<double>* ref) {
         boost::tuple<bool, ValueRef::OpType, double> retval(false, ValueRef::PLUS, 0.0);
         if (const ValueRef::Operation<double>* op = dynamic_cast<const ValueRef::Operation<double>*>(ref)) {
             if (!op->LHS() || !op->RHS())
@@ -174,27 +174,6 @@ namespace {
         fleet->SetRoute(route_pair.first);
     }
 
-    bool PartMatchesEffect(const PartType& part,
-                           ShipPartClass part_class,
-                           CombatFighterType fighter_type,
-                           const std::string& part_name)
-    {
-        if (!part_name.empty())
-            return part_name == part.Name();
-
-        switch (part.Class()) {
-        case PC_SHORT_RANGE:
-        case PC_MISSILES:
-        case PC_POINT_DEFENSE:
-        case PC_FIGHTERS:
-            return part.Class() == part_class;
-        default:
-            break;
-        }
-
-        return false;
-    }
-
     std::string GenerateSystemName() {
         static std::list<std::string> star_names;
         if (star_names.empty())
@@ -221,6 +200,7 @@ namespace {
         return "";  // fallback to empty name.
     }
 }
+
 
 ///////////////////////////////////////////////////////////
 // EffectsGroup                                          //
@@ -300,40 +280,21 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
     }
 }
 
-EffectsGroup::Description EffectsGroup::GetDescription() const {
-    Description retval;
-    if (dynamic_cast<const Condition::Source*>(m_scope))
-        retval.scope_description = UserString("DESC_EFFECTS_GROUP_SELF_SCOPE");
-    else
-        retval.scope_description = str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
-
-    if (!m_activation || dynamic_cast<const Condition::Source*>(m_activation) || dynamic_cast<const Condition::All*>(m_activation))
-        retval.activation_description = UserString("DESC_EFFECTS_GROUP_ALWAYS_ACTIVE");
-    else
-        retval.activation_description = str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description());
-
-    for (unsigned int i = 0; i < m_effects.size(); ++i) {
-        retval.effect_descriptions.push_back(m_effects[i]->Description());
-    }
-    return retval;
-}
-
 std::string EffectsGroup::DescriptionString() const {
-    if (!m_explicit_description.empty()) {
-        return UserString(m_explicit_description);
-    } else {
-        std::stringstream retval;
-        Description description = GetDescription();
-        retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE_DESC")) % description.scope_description);
+    std::stringstream retval;
 
-        if (m_activation && !dynamic_cast<const Condition::Source*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
-            retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION_DESC")) % description.activation_description);
+    if (dynamic_cast<const Condition::Source*>(m_scope))
+        retval << UserString("DESC_EFFECTS_GROUP_SELF_SCOPE") + "\n";
+    else
+        retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description()) + "\n";
 
-        for (unsigned int i = 0; i < description.effect_descriptions.size(); ++i) {
-            retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_EFFECT_DESC")) % description.effect_descriptions[i]);
-        }
-        return retval.str();
-    }
+    if (m_activation && !dynamic_cast<const Condition::Source*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
+    { retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description()) + "\n"; }
+
+    for (unsigned int i = 0; i < m_effects.size(); ++i)
+    { retval << m_effects[i]->Description() + "\n"; }
+
+    return retval.str();
 }
 
 std::string EffectsGroup::Dump() const {
@@ -369,11 +330,20 @@ std::string EffectsGroup::Dump() const {
     return retval;
 }
 
+void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
+    if (m_scope)
+        m_scope->SetTopLevelContent(content_name);
+    if (m_activation)
+        m_activation->SetTopLevelContent(content_name);
+    for (std::vector<EffectBase*>::iterator it = m_effects.begin(); it != m_effects.end(); ++it)
+    { (*it)->SetTopLevelContent(content_name); }
+}
+
 
 ///////////////////////////////////////////////////////////
 // EffectsDescription function                           //
 ///////////////////////////////////////////////////////////
-std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups) {
+std::string EffectsDescription(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups) {
     std::stringstream retval;
     if (effects_groups.size() == 1) {
         retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC")) % effects_groups[0]->DescriptionString());
@@ -393,11 +363,11 @@ EffectBase::~EffectBase()
 {}
 
 void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
-                           bool stacking,
-                           AccountingMap* accounting_map/* = 0*/,
-                           bool only_meter_effects/* = false*/,
-                           bool only_appearance_effects/* = false*/,
-                           bool include_empire_meter_effects/* = false*/) const
+                         bool stacking,
+                         AccountingMap* accounting_map/* = 0*/,
+                         bool only_meter_effects/* = false*/,
+                         bool only_appearance_effects/* = false*/,
+                         bool include_empire_meter_effects/* = false*/) const
 {
     bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
 
@@ -482,10 +452,11 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
             } else if (set_ship_part_meter_effect) {
                 if (target->ObjectType() != OBJ_SHIP)
                     continue;   // only ships have ship part meters
-                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(target);
-                if (!ship)
-                    continue;
-                meter = ship->GetPartMeter(meter_type, set_ship_part_meter_effect->GetPartName());
+                TemporaryPtr<const Ship> ship = boost::static_pointer_cast<const Ship>(target);
+
+                const ValueRef::ValueRefBase<std::string>* part_name_value_ref = set_ship_part_meter_effect->GetPartName();
+                std::string part_name = (part_name_value_ref ? part_name_value_ref->Eval(ScriptingContext(source, target)) : "");
+                meter = ship->GetPartMeter(meter_type, part_name);
             }
 
             if (!meter)
@@ -523,10 +494,11 @@ void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targe
     }
 }
 
+
 ///////////////////////////////////////////////////////////
 // SetMeter                                              //
 ///////////////////////////////////////////////////////////
-SetMeter::SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value) :
+SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value) :
     m_meter(meter),
     m_value(value)
 {}
@@ -629,49 +601,36 @@ std::string SetMeter::Dump() const {
     return retval;
 }
 
+void SetMeter::SetTopLevelContent(const std::string& content_name) {
+    if (m_value)
+        m_value->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetShipPartMeter                                      //
 ///////////////////////////////////////////////////////////
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   ShipPartClass part_class,
-                                   const ValueRef::ValueRefBase<double>* value) :
-    m_part_class(part_class),
-    m_fighter_type(INVALID_COMBAT_FIGHTER_TYPE),
-    m_part_name(),
-    m_meter(meter),
-    m_value(value)
-{
-    if (m_part_class == PC_FIGHTERS)
-        ErrorLogger() << "SetShipPartMeter passed ShipPartClass of PC_FIGHTERS, which is invalid";
-}
-
-SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   CombatFighterType fighter_type,
-                                   const ValueRef::ValueRefBase<double>* value) :
-    m_part_class(INVALID_SHIP_PART_CLASS),
-    m_fighter_type(fighter_type),
-    m_part_name(),
-    m_meter(meter),
-    m_value(value)
-{}
-
-SetShipPartMeter::SetShipPartMeter(MeterType meter,
-                                   const std::string& part_name,
-                                   const ValueRef::ValueRefBase<double>* value) :
-    m_part_class(INVALID_SHIP_PART_CLASS),
-    m_fighter_type(INVALID_COMBAT_FIGHTER_TYPE),
+                                   ValueRef::ValueRefBase<std::string>* part_name,
+                                   ValueRef::ValueRefBase<double>* value) :
     m_part_name(part_name),
     m_meter(meter),
     m_value(value)
 {}
 
-SetShipPartMeter::~SetShipPartMeter()
-{ delete m_value; }
+SetShipPartMeter::~SetShipPartMeter() {
+    delete m_value;
+    delete m_part_name;
+}
 
 void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         DebugLogger() << "SetShipPartMeter::Execute passed null target pointer";
+        return;
+    }
+
+    if (!m_part_name || !m_value) {
+        ErrorLogger() << "SetShipPartMeter::Execute missing part name or value ValueRefs";
         return;
     }
 
@@ -682,72 +641,41 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    if (m_part_class == PC_FIGHTERS && !m_part_name.empty()) {
-        DebugLogger() << "SetShipPartMeter::Execute aborting due to part class being PC_FIGHTERS and part name being not empty";
+    std::string part_name = m_part_name->Eval(context);
+
+    // get meter, evaluate new value, assign
+    Meter* meter = ship->GetPartMeter(m_meter, part_name);
+    if (!meter) {
+        ErrorLogger() << "SetShipPartMeter::Execute couldn't find meter " << m_meter << " for ship part name: " << part_name;
         return;
     }
 
-    // loop through all part meters in the ship design, applying effect to each if part is appropriate
-    const std::vector<std::string>& design_parts = ship->Design()->Parts();
-    std::set<std::string> unique_design_parts;
-    std::copy(design_parts.begin(), design_parts.end(), std::inserter(unique_design_parts, unique_design_parts.begin()));
-
-    for (std::set<std::string>::const_iterator it = unique_design_parts.begin();
-         it != unique_design_parts.end(); ++it)
-    {
-        const std::string& target_part_name = *it;
-        if (target_part_name.empty())
-            continue;   // slots in a design may be empty... this isn't an error
-
-        Meter* meter = ship->GetPartMeter(m_meter, target_part_name);
-        if (!meter)
-            continue;   // some parts may not have the requested meter.  this isn't an error
-
-        const PartType* target_part = GetPartType(target_part_name);
-        if (!target_part) {
-            ErrorLogger() << "SetShipPartMeter::Execute couldn't get part type: " << target_part_name;
-            continue;
-        }
-
-        // verify that found part matches the target part type information for
-        // this effect: same name, same class and slot type, or same fighter type
-        if (PartMatchesEffect(*target_part, m_part_class, m_fighter_type, m_part_name)) {
-            double val = m_value->Eval(ScriptingContext(context, meter->Current()));
-            meter->SetCurrent(val);
-        }
-    }
+    double val = m_value->Eval(ScriptingContext(context, meter->Current()));
+    meter->SetCurrent(val);
 }
 
 std::string SetShipPartMeter::Description() const {
-    std::string value_str = ValueRef::ConstantExpr(m_value) ?
-                                lexical_cast<std::string>(m_value->Eval()) :
-                                m_value->Description();
+    std::string value_str;
+    if (m_value) {
+        if (ValueRef::ConstantExpr(m_value))
+            value_str = lexical_cast<std::string>(m_value->Eval());
+        else
+            value_str = m_value->Description();
+    }
+
     std::string meter_str = UserString(lexical_cast<std::string>(m_meter));
 
-    // TODO: indicate slot restrictions in SetShipPartMeter descriptions...
-
-    if (m_part_class != INVALID_SHIP_PART_CLASS) {
-        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-                   % meter_str
-                   % UserString(lexical_cast<std::string>(m_part_class))
-                   % value_str);
-    } else if (m_fighter_type != INVALID_COMBAT_FIGHTER_TYPE) {
-        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-                   % meter_str
-                   % UserString(lexical_cast<std::string>(m_fighter_type))
-                   % value_str);
-    } else if (!m_part_name.empty()) {
-        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-                   % meter_str
-                   % UserString(m_part_name)
-                   % value_str);
-    } else {
-        // something weird is going on... default cause shouldn't be needed
-        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
-                   % meter_str
-                   % UserString("UIT_SHIP_PART")
-                   % value_str);
+    std::string part_str;
+    if (m_part_name) {
+        part_str = m_part_name->Description();
+        if (ValueRef::ConstantExpr(m_part_name) && UserStringExists(part_str))
+            part_str = UserString(part_str);
     }
+
+    return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
+               % meter_str
+               % part_str
+               % value_str);
 }
 
 std::string SetShipPartMeter::Dump() const {
@@ -762,32 +690,33 @@ std::string SetShipPartMeter::Dump() const {
         default:                        retval += "Set????";                break;
     }
 
-    if (m_part_class != INVALID_SHIP_PART_CLASS)
-        retval += " partclass = " + lexical_cast<std::string>(m_part_class);
-    else if (m_fighter_type != INVALID_COMBAT_FIGHTER_TYPE)
-        retval += " fightertype = " + lexical_cast<std::string>(m_fighter_type);
-    else if (!m_part_name.empty())
-        retval += " partname = " + UserString(m_part_name);
-    else
-        retval += " ???";
+    if (m_part_name)
+        retval += " partname = " + m_part_name->Dump();
 
     retval += " value = " + m_value->Dump();
 
     return retval;
 }
 
+void SetShipPartMeter::SetTopLevelContent(const std::string& content_name) {
+    if (m_value)
+        m_value->SetTopLevelContent(content_name);
+    if (m_part_name)
+        m_part_name->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
-SetEmpireMeter::SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value) :
+SetEmpireMeter::SetEmpireMeter(const std::string& meter, ValueRef::ValueRefBase<double>* value) :
     m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
     m_meter(meter),
     m_value(value)
 {}
 
-SetEmpireMeter::SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter,
-                               const ValueRef::ValueRefBase<double>* value) :
+SetEmpireMeter::SetEmpireMeter(ValueRef::ValueRefBase<int>* empire_id, const std::string& meter,
+                               ValueRef::ValueRefBase<double>* value) :
     m_empire_id(empire_id),
     m_meter(meter),
     m_value(value)
@@ -841,20 +770,27 @@ std::string SetEmpireMeter::Description() const {
 std::string SetEmpireMeter::Dump() const
 { return DumpIndent() + "SetEmpireMeter meter = " + m_meter + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump(); }
 
+void SetEmpireMeter::SetTopLevelContent(const std::string& content_name) {
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+    if (m_value)
+        m_value->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetEmpireStockpile                                    //
 ///////////////////////////////////////////////////////////
 SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile,
-                                       const ValueRef::ValueRefBase<double>* value) :
+                                       ValueRef::ValueRefBase<double>* value) :
     m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"))),
     m_stockpile(stockpile),
     m_value(value)
 {}
 
-SetEmpireStockpile::SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id,
+SetEmpireStockpile::SetEmpireStockpile(ValueRef::ValueRefBase<int>* empire_id,
                                        ResourceType stockpile,
-                                       const ValueRef::ValueRefBase<double>* value) :
+                                       ValueRef::ValueRefBase<double>* value) :
     m_empire_id(empire_id),
     m_stockpile(stockpile),
     m_value(value)
@@ -908,6 +844,13 @@ std::string SetEmpireStockpile::Dump() const {
     return retval;
 }
 
+void SetEmpireStockpile::SetTopLevelContent(const std::string& content_name) {
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+    if (m_value)
+        m_value->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetEmpireCapital                                      //
@@ -916,7 +859,7 @@ SetEmpireCapital::SetEmpireCapital() :
     m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
 {}
 
-SetEmpireCapital::SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id) :
+SetEmpireCapital::SetEmpireCapital(ValueRef::ValueRefBase<int>* empire_id) :
     m_empire_id(empire_id)
 {}
 
@@ -953,11 +896,16 @@ std::string SetEmpireCapital::Description() const {
 std::string SetEmpireCapital::Dump() const
 { return DumpIndent() + "SetEmpireCapital empire = " + m_empire_id->Dump() + "\n"; }
 
+void SetEmpireCapital::SetTopLevelContent(const std::string& content_name) {
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetPlanetType                                         //
 ///////////////////////////////////////////////////////////
-SetPlanetType::SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type) :
+SetPlanetType::SetPlanetType(ValueRef::ValueRefBase<PlanetType>* type) :
     m_type(type)
 {}
 
@@ -989,11 +937,16 @@ std::string SetPlanetType::Description() const {
 std::string SetPlanetType::Dump() const
 { return DumpIndent() + "SetPlanetType type = " + m_type->Dump() + "\n"; }
 
+void SetPlanetType::SetTopLevelContent(const std::string& content_name) {
+    if (m_type)
+        m_type->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetPlanetSize                                         //
 ///////////////////////////////////////////////////////////
-SetPlanetSize::SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size) :
+SetPlanetSize::SetPlanetSize(ValueRef::ValueRefBase<PlanetSize>* size) :
     m_size(size)
 {}
 
@@ -1023,11 +976,16 @@ std::string SetPlanetSize::Description() const {
 std::string SetPlanetSize::Dump() const
 { return DumpIndent() + "SetPlanetSize size = " + m_size->Dump() + "\n"; }
 
+void SetPlanetSize::SetTopLevelContent(const std::string& content_name) {
+    if (m_size)
+        m_size->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetSpecies                                            //
 ///////////////////////////////////////////////////////////
-SetSpecies::SetSpecies(const ValueRef::ValueRefBase<std::string>* species) :
+SetSpecies::SetSpecies(ValueRef::ValueRefBase<std::string>* species) :
     m_species_name(species)
 {}
 
@@ -1095,11 +1053,16 @@ std::string SetSpecies::Description() const {
 std::string SetSpecies::Dump() const
 { return DumpIndent() + "SetSpecies name = " + m_species_name->Dump() + "\n"; }
 
+void SetSpecies::SetTopLevelContent(const std::string& content_name) {
+    if (m_species_name)
+        m_species_name->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetOwner                                              //
 ///////////////////////////////////////////////////////////
-SetOwner::SetOwner(const ValueRef::ValueRefBase<int>* empire_id) :
+SetOwner::SetOwner(ValueRef::ValueRefBase<int>* empire_id) :
     m_empire_id(empire_id)
 {}
 
@@ -1159,13 +1122,18 @@ std::string SetOwner::Description() const {
 std::string SetOwner::Dump() const
 { return DumpIndent() + "SetOwner empire = " + m_empire_id->Dump() + "\n"; }
 
+void SetOwner::SetTopLevelContent(const std::string& content_name) {
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetSpeciesEmpireOpinion                               //
 ///////////////////////////////////////////////////////////
-SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(const ValueRef::ValueRefBase<std::string>* species_name,
-                                                 const ValueRef::ValueRefBase<int>* empire_id,
-                                                 const ValueRef::ValueRefBase<double>* opinion) :
+SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(ValueRef::ValueRefBase<std::string>* species_name,
+                                                 ValueRef::ValueRefBase<int>* empire_id,
+                                                 ValueRef::ValueRefBase<double>* opinion) :
     m_species_name(species_name),
     m_empire_id(empire_id),
     m_opinion(opinion)
@@ -1214,13 +1182,22 @@ std::string SetSpeciesEmpireOpinion::Description() const {
 std::string SetSpeciesEmpireOpinion::Dump() const
 { return DumpIndent() + "SetSpeciesEmpireOpinion empire = " + m_empire_id->Dump() + "\n"; }
 
+void SetSpeciesEmpireOpinion::SetTopLevelContent(const std::string& content_name) {
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+    if (m_species_name)
+        m_species_name->SetTopLevelContent(content_name);
+    if (m_opinion)
+        m_opinion->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetSpeciesSpeciesOpinion                              //
 ///////////////////////////////////////////////////////////
-SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(const ValueRef::ValueRefBase<std::string>* opinionated_species_name,
-                                                   const ValueRef::ValueRefBase<std::string>* rated_species_name,
-                                                   const ValueRef::ValueRefBase<double>* opinion) :
+SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(ValueRef::ValueRefBase<std::string>* opinionated_species_name,
+                                                   ValueRef::ValueRefBase<std::string>* rated_species_name,
+                                                   ValueRef::ValueRefBase<double>* opinion) :
     m_opinionated_species_name(opinionated_species_name),
     m_rated_species_name(rated_species_name),
     m_opinion(opinion)
@@ -1269,25 +1246,31 @@ std::string SetSpeciesSpeciesOpinion::Description() const {
 std::string SetSpeciesSpeciesOpinion::Dump() const
 { return DumpIndent() + "SetSpeciesSpeciesOpinion" + "\n"; }
 
+void SetSpeciesSpeciesOpinion::SetTopLevelContent(const std::string& content_name) {
+    if (m_opinionated_species_name)
+        m_opinionated_species_name->SetTopLevelContent(content_name);
+    if (m_rated_species_name)
+        m_rated_species_name->SetTopLevelContent(content_name);
+    if (m_opinion)
+        m_opinion->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // CreatePlanet                                          //
 ///////////////////////////////////////////////////////////
-CreatePlanet::CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type,
-                           const ValueRef::ValueRefBase<PlanetSize>* size) :
+CreatePlanet::CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
+                           ValueRef::ValueRefBase<PlanetSize>* size,
+                           ValueRef::ValueRefBase<std::string>* name) :
     m_type(type),
-    m_size(size)
-{
-    DebugLogger() << "CreatePlanet::CreatePlanet";
-    DebugLogger() << "    type: " << (m_type ? m_type->Dump() : "no type");
-    DebugLogger() << "    size: " << (m_size ? m_size->Dump() : "no size");
-    DebugLogger() << Dump();
-}
+    m_size(size),
+    m_name(name)
+{}
 
 CreatePlanet::~CreatePlanet() {
-    DebugLogger() << "CreatePlanet::~CreatePlanet";
     delete m_type;
     delete m_size;
+    delete m_name;
 }
 
 void CreatePlanet::Execute(const ScriptingContext& context) const {
@@ -1329,6 +1312,16 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     }
 
     location->Insert(planet);   // let system chose an orbit for planet
+
+    std::string name;
+    if (m_name) {
+        name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
+    } else {
+        name = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % location->Name());
+    }
+    planet->Rename(name);
 }
 
 std::string CreatePlanet::Description() const {
@@ -1340,26 +1333,44 @@ std::string CreatePlanet::Description() const {
                                 m_size->Description();
 
     return str(FlexibleFormat(UserString("DESC_CREATE_PLANET"))
-               % type_str
-               % size_str);
+                % type_str
+                % size_str);
 }
 
-std::string CreatePlanet::Dump() const
-{
-    DebugLogger() << "CreatePlanet::Dump()";
-    return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + "\n";
+std::string CreatePlanet::Dump() const {
+    std::string retval = DumpIndent() + "CreatePlanet";
+    if (m_size)
+        retval += " size = " + m_size->Dump();
+    if (m_type)
+        retval += " type = " + m_type->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval + "\n";
+}
+
+void CreatePlanet::SetTopLevelContent(const std::string& content_name) {
+    if (m_type)
+        m_type->SetTopLevelContent(content_name);
+    if (m_size)
+        m_size->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 
 ///////////////////////////////////////////////////////////
 // CreateBuilding                                        //
 ///////////////////////////////////////////////////////////
-CreateBuilding::CreateBuilding(const ValueRef::ValueRefBase<std::string>* building_type_name) :
-    m_building_type_name(building_type_name)
+CreateBuilding::CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
+                               ValueRef::ValueRefBase<std::string>* name) :
+    m_building_type_name(building_type_name),
+    m_name(name)
 {}
 
-CreateBuilding::~CreateBuilding()
-{ delete m_building_type_name; }
+CreateBuilding::~CreateBuilding() {
+    delete m_building_type_name;
+    delete m_name;
+}
 
 void CreateBuilding::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1372,6 +1383,11 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
             location = GetPlanet(location_building->PlanetID());
     if (!location) {
         ErrorLogger() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
+        return;
+    }
+
+    if (!m_building_type_name) {
+        ErrorLogger() << "CreateBuilding::Execute has no building type specified!";
         return;
     }
 
@@ -1396,60 +1412,72 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     TemporaryPtr<System> system = GetSystem(location->SystemID());
     if (system)
         system->Insert(building);
+
+    if (m_name) {
+        std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
+        building->Rename(name);
+    }
 }
 
 std::string CreateBuilding::Description() const {
     std::string type_str = ValueRef::ConstantExpr(m_building_type_name) ?
                                 UserString(lexical_cast<std::string>(m_building_type_name->Eval())) :
                                 m_building_type_name->Description();
+
     return str(FlexibleFormat(UserString("DESC_CREATE_BUILDING"))
-               % type_str);
+                % type_str);
 }
 
-std::string CreateBuilding::Dump() const
-{ return DumpIndent() + "CreateBuilding type = " + m_building_type_name->Dump() + "\n"; }
+std::string CreateBuilding::Dump() const {
+    std::string retval = DumpIndent() + "CreateBuilding";
+    if (m_building_type_name)
+        retval += " type = " + m_building_type_name->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval + "\n";
+}
+
+void CreateBuilding::SetTopLevelContent(const std::string& content_name) {
+    if (m_building_type_name)
+        m_building_type_name->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+}
 
 
 ///////////////////////////////////////////////////////////
 // CreateShip                                            //
 ///////////////////////////////////////////////////////////
-CreateShip::CreateShip(const std::string& predefined_ship_design_name,
-                       const ValueRef::ValueRefBase<int>* empire_id,
-                       const ValueRef::ValueRefBase<std::string>* species_name) :
+CreateShip::CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
+                       ValueRef::ValueRefBase<int>* empire_id,
+                       ValueRef::ValueRefBase<std::string>* species_name,
+                       ValueRef::ValueRefBase<std::string>* ship_name) :
     m_design_name(predefined_ship_design_name),
-    m_design_id(0), // this specifies a null pointer to a ValueRef, not the constant 0
+    m_design_id(0),
     m_empire_id(empire_id),
-    m_species_name(species_name)
+    m_species_name(species_name),
+    m_name(ship_name)
 {}
 
-CreateShip::CreateShip(const ValueRef::ValueRefBase<int>* ship_design_id,
-                       const ValueRef::ValueRefBase<int>* empire_id,
-                       const ValueRef::ValueRefBase<std::string>* species_name) :
-    m_design_name(),
+CreateShip::CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
+                       ValueRef::ValueRefBase<int>* empire_id,
+                       ValueRef::ValueRefBase<std::string>* species_name,
+                       ValueRef::ValueRefBase<std::string>* ship_name) :
+    m_design_name(0),
     m_design_id(ship_design_id),
     m_empire_id(empire_id),
-    m_species_name(species_name)
-{}
-
-CreateShip::CreateShip(const std::string& predefined_ship_design_name,
-                       const ValueRef::ValueRefBase<int>* empire_id) :
-    m_design_name(predefined_ship_design_name),
-    m_design_id(0),     // this specifies a null pointer to a ValueRef, not the constant 0
-    m_empire_id(empire_id),
-    m_species_name(0)   // ...
-{}
-
-CreateShip::CreateShip(const std::string& predefined_ship_design_name) :
-    m_design_name(predefined_ship_design_name),
-    m_design_id(0),     // this specifies a null pointer to a ValueRef, not the constant 0
-    m_empire_id(0),     // ...
-    m_species_name(0)   // ...
+    m_species_name(species_name),
+    m_name(ship_name)
 {}
 
 CreateShip::~CreateShip() {
+    delete m_design_name;
     delete m_design_id;
     delete m_empire_id;
     delete m_species_name;
+    delete m_name;
 }
 
 void CreateShip::Execute(const ScriptingContext& context) const {
@@ -1471,10 +1499,11 @@ void CreateShip::Execute(const ScriptingContext& context) const {
             ErrorLogger() << "CreateShip::Execute couldn't get ship design with id: " << design_id;
             return;
         }
-    } else {
-        const ShipDesign* ship_design = GetPredefinedShipDesign(m_design_name);
+    } else if (m_design_name) {
+        std::string design_name = m_design_name->Eval(context);
+        const ShipDesign* ship_design = GetPredefinedShipDesign(design_name);
         if (!ship_design) {
-            ErrorLogger() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name;
+            ErrorLogger() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name->Dump();
             return;
         }
         design_id = ship_design->ID();
@@ -1518,7 +1547,12 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     TemporaryPtr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
     system->Insert(ship);
 
-    if (ship->IsMonster()) {
+    if (m_name) {
+        std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
+        ship->Rename(name);
+    } else if (ship->IsMonster()) {
         ship->Rename(NewMonsterName());
     } else if (empire) {
         ship->Rename(empire->NewShipName());
@@ -1554,7 +1588,7 @@ std::string CreateShip::Description() const {
         }
     }
 
-    std::string design_str = UserString("ERROR");
+    std::string design_str;
     if (m_design_id) {
         if (ValueRef::ConstantExpr(m_design_id)) {
             if (const ShipDesign* design = GetShipDesign(m_design_id->Eval()))
@@ -1562,8 +1596,10 @@ std::string CreateShip::Description() const {
         } else {
             design_str = m_design_id->Description();
         }
-    } else {
-        design_str = UserString(m_design_name);
+    } else if (m_design_name) {
+        design_str = m_design_name->Description();
+        if (ValueRef::ConstantExpr(m_design_name) && UserStringExists(design_str))
+            design_str = UserString(design_str);
     }
 
     std::string species_str;
@@ -1572,54 +1608,80 @@ std::string CreateShip::Description() const {
                       UserString(m_species_name->Eval()) :
                       m_species_name->Description();
 
-    if (!empire_str.empty() && !species_str.empty())
+    if (!empire_str.empty() && !species_str.empty()) {
         return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
                    % design_str
                    % empire_str
                    % species_str);
-    else
+    } else {
         return str(FlexibleFormat(UserString("DESC_CREATE_SHIP_SIMPLE"))
                    % design_str);
+    }
 }
 
 std::string CreateShip::Dump() const {
-    std::string retval;
+    std::string retval = DumpIndent() + "CreateShip";
     if (m_design_id)
-        retval = DumpIndent() + "CreateShip design_id = " + m_design_id->Dump();
-    else
-        retval = DumpIndent() + "CreateShip predefined_ship_design_name = \"" + m_design_name + "\"";
+        retval += " designid = " + m_design_id->Dump();
+    if (m_design_name)
+        retval += " designname = " + m_design_name->Dump();
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump();
     if (m_species_name)
-        retval += " species_name = " + m_species_name->Dump();
+        retval += " species = " + m_species_name->Dump();
+    if (m_name)
+        retval += " name = " + m_species_name->Dump();
+
     retval += "\n";
     return retval;
+}
+
+void CreateShip::SetTopLevelContent(const std::string& content_name) {
+    if (m_design_name)
+        m_design_name->SetTopLevelContent(content_name);
+    if (m_design_id)
+        m_design_id->SetTopLevelContent(content_name);
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+    if (m_species_name)
+        m_species_name->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 
 ///////////////////////////////////////////////////////////
 // CreateField                                           //
 ///////////////////////////////////////////////////////////
-CreateField::CreateField(const std::string& field_type_name,
-                         const ValueRef::ValueRefBase<double>* size/* = 0*/) :
+CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
+                         ValueRef::ValueRefBase<double>* size,
+                         ValueRef::ValueRefBase<std::string>* name) :
     m_field_type_name(field_type_name),
     m_x(0),
     m_y(0),
-    m_size(size)
+    m_size(size),
+    m_name(name)
 {}
 
-CreateField::CreateField(const std::string& field_type_name,
-                         const ValueRef::ValueRefBase<double>* x,
-                         const ValueRef::ValueRefBase<double>* y,
-                         const ValueRef::ValueRefBase<double>* size/* = 0*/) :
+CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
+                         ValueRef::ValueRefBase<double>* x,
+                         ValueRef::ValueRefBase<double>* y,
+                         ValueRef::ValueRefBase<double>* size,
+                         ValueRef::ValueRefBase<std::string>* name) :
     m_field_type_name(field_type_name),
     m_x(x),
     m_y(y),
-    m_size(size)
+    m_size(size),
+    m_name(name)
 {}
 
-CreateField::~CreateField()
-{ delete m_size; }
+CreateField::~CreateField() {
+    delete m_field_type_name;
+    delete m_x;
+    delete m_y;
+    delete m_size;
+    delete m_name;
+}
 
 void CreateField::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1628,9 +1690,12 @@ void CreateField::Execute(const ScriptingContext& context) const {
     }
     TemporaryPtr<UniverseObject> target = context.effect_target;
 
-    const FieldType* field_type = GetFieldType(m_field_type_name);
+    if (!m_field_type_name)
+        return;
+
+    const FieldType* field_type = GetFieldType(m_field_type_name->Eval(context));
     if (!field_type) {
-        ErrorLogger() << "CreateField::Execute couldn't get field type with name: " << m_field_type_name;
+        ErrorLogger() << "CreateField::Execute couldn't get field type with name: " << m_field_type_name->Dump();
         return;
     }
 
@@ -1657,7 +1722,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
     else
         y = target->Y();
 
-    TemporaryPtr<Field> field = GetUniverse().CreateField(m_field_type_name, x, y, size);
+    TemporaryPtr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
     if (!field) {
         ErrorLogger() << "CreateField::Execute couldn't create field!";
         return;
@@ -1670,69 +1735,101 @@ void CreateField::Execute(const ScriptingContext& context) const {
         return;
     if ((!m_y || y == system->Y()) && (!m_x || x == system->X()))
         system->Insert(field);
+
+    if (m_name) {
+        std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
+        field->Rename(name);
+    }
 }
 
 std::string CreateField::Description() const {
+    std::string size_str;
     if (m_size) {
-        std::string size_str;
         if (ValueRef::ConstantExpr(m_size)) {
             size_str = boost::lexical_cast<std::string>(m_size->Eval());
         } else {
             size_str = m_size->Description();
         }
+    }
+    std::string type_str;
+    if (m_field_type_name) {
+        type_str = m_field_type_name->Description();
+        if (ValueRef::ConstantExpr(m_field_type_name) && UserStringExists(type_str))
+            type_str = UserString(type_str);
+    }
+
+    if (!size_str.empty()) {
         return str(FlexibleFormat(UserString("DESC_CREATE_FIELD_SIZE"))
-                   % UserString(m_field_type_name)
+                   % type_str
                    % size_str);
     } else {
         return str(FlexibleFormat(UserString("DESC_CREATE_FIELD"))
-                   % UserString(m_field_type_name));
+                   % type_str);
     }
 }
 
 std::string CreateField::Dump() const {
-    std::string retval = DumpIndent() + "CreateField type = " + m_field_type_name;
+    std::string retval = DumpIndent() + "CreateField";
+    if (m_field_type_name)
+        retval += " type = " + m_field_type_name->Dump();
     if (m_x)
         retval += " x = " + m_x->Dump();
     if (m_y)
         retval += " y = " + m_y->Dump();
     if (m_size)
         retval += " size = " + m_size->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
     retval += "\n";
     return retval;
+}
+
+void CreateField::SetTopLevelContent(const std::string& content_name) {
+    if (m_field_type_name)
+        m_field_type_name->SetTopLevelContent(content_name);
+    if (m_x)
+        m_x->SetTopLevelContent(content_name);
+    if (m_y)
+        m_y->SetTopLevelContent(content_name);
+    if (m_size)
+        m_size->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 
 ///////////////////////////////////////////////////////////
 // CreateSystem                                          //
 ///////////////////////////////////////////////////////////
-CreateSystem::CreateSystem(const ValueRef::ValueRefBase< ::StarType>* type,
-                           const ValueRef::ValueRefBase<double>* x,
-                           const ValueRef::ValueRefBase<double>* y) :
+CreateSystem::CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
+                           ValueRef::ValueRefBase<double>* x,
+                           ValueRef::ValueRefBase<double>* y,
+                           ValueRef::ValueRefBase<std::string>* name) :
     m_type(type),
     m_x(x),
-    m_y(y)
+    m_y(y),
+    m_name(name)
 {}
 
-CreateSystem::CreateSystem(const ValueRef::ValueRefBase<double>* x,
-                           const ValueRef::ValueRefBase<double>* y) :
+CreateSystem::CreateSystem(ValueRef::ValueRefBase<double>* x,
+                           ValueRef::ValueRefBase<double>* y,
+                           ValueRef::ValueRefBase<std::string>* name) :
     m_type(0),
     m_x(x),
-    m_y(y)
+    m_y(y),
+    m_name(name)
 {}
 
 CreateSystem::~CreateSystem() {
     delete m_type;
     delete m_x;
     delete m_y;
+    delete m_name;
 }
 
 void CreateSystem::Execute(const ScriptingContext& context) const {
-    //if (!context.effect_target) {
-    //    ErrorLogger() << "CreateSystem::Execute passed null target";
-    //    return;
-    //}
-    //TemporaryPtr<const UniverseObject> target = context.effect_target;
-
     // pick a star type
     StarType star_type = STAR_NONE;
     if (m_type) {
@@ -1751,7 +1848,16 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     if (m_y)
         y = m_y->Eval(context);
 
-    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, GenerateSystemName(), x, y);
+    std::string name;
+    if (m_name) {
+        name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
+    } else {
+        name = GenerateSystemName();
+    }
+
+    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, name, x, y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
@@ -1781,8 +1887,21 @@ std::string CreateSystem::Dump() const {
         retval += " x = " + m_x->Dump();
     if (m_y)
         retval += " y = " + m_y->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
     retval += "\n";
     return retval;
+}
+
+void CreateSystem::SetTopLevelContent(const std::string& content_name) {
+    if (m_x)
+        m_x->SetTopLevelContent(content_name);
+    if (m_y)
+        m_y->SetTopLevelContent(content_name);
+    if (m_type)
+        m_type->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 
@@ -1820,11 +1939,14 @@ AddSpecial::AddSpecial(const std::string& name, float capacity) :
     m_capacity(new ValueRef::Constant<double>(capacity))
 {}
 
-AddSpecial::AddSpecial(const ValueRef::ValueRefBase<std::string>* name,
-                       const ValueRef::ValueRefBase<double>* capacity) :
+AddSpecial::AddSpecial(ValueRef::ValueRefBase<std::string>* name,
+                       ValueRef::ValueRefBase<double>* capacity) :
     m_name(name),
     m_capacity(capacity)
 {}
+
+AddSpecial::~AddSpecial()
+{ delete m_name; }
 
 void AddSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1850,33 +1972,57 @@ std::string AddSpecial::Dump() const {
         " capacity = " + (m_capacity ? m_capacity->Dump() : "0.0") +  "\n";
 }
 
+void AddSpecial::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+    if (m_capacity)
+        m_capacity->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // RemoveSpecial                                         //
 ///////////////////////////////////////////////////////////
 RemoveSpecial::RemoveSpecial(const std::string& name) :
+    m_name(new ValueRef::Constant<std::string>(name))
+{}
+
+RemoveSpecial::RemoveSpecial(ValueRef::ValueRefBase<std::string>* name) :
     m_name(name)
 {}
 
+RemoveSpecial::~RemoveSpecial()
+{ delete m_name; }
+
 void RemoveSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
-        ErrorLogger() << "RemoveSpecial::Execute pass no target object.";
+        ErrorLogger() << "RemoveSpecial::Execute passed no target object";
         return;
     }
-    context.effect_target->RemoveSpecial(m_name);
+
+    std::string name = (m_name ? m_name->Eval(context) : "");
+    context.effect_target->RemoveSpecial(name);
 }
 
-std::string RemoveSpecial::Description() const
-{ return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % UserString(m_name)); }
+std::string RemoveSpecial::Description() const {
+    std::string name = (m_name ? m_name->Description() : "");
+    return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % UserString(name));
+}
 
-std::string RemoveSpecial::Dump() const
-{ return DumpIndent() + "RemoveSpecial name = \"" + m_name + "\"\n"; }
+std::string RemoveSpecial::Dump() const {
+    return DumpIndent() + "RemoveSpecial name = " +  (m_name ? m_name->Dump() : "") + "\n";
+}
+
+void RemoveSpecial::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+}
 
 
 ///////////////////////////////////////////////////////////
 // AddStarlanes                                          //
 ///////////////////////////////////////////////////////////
-AddStarlanes::AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition) :
+AddStarlanes::AddStarlanes(Condition::ConditionBase* other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(other_lane_endpoint_condition)
 {}
 
@@ -1934,11 +2080,16 @@ std::string AddStarlanes::Description() const {
 std::string AddStarlanes::Dump() const
 { return DumpIndent() + "AddStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump() + "\n"; }
 
+void AddStarlanes::SetTopLevelContent(const std::string& content_name) {
+    if (m_other_lane_endpoint_condition)
+        m_other_lane_endpoint_condition->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // RemoveStarlanes                                       //
 ///////////////////////////////////////////////////////////
-RemoveStarlanes::RemoveStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition) :
+RemoveStarlanes::RemoveStarlanes(Condition::ConditionBase* other_lane_endpoint_condition) :
     m_other_lane_endpoint_condition(other_lane_endpoint_condition)
 {}
 
@@ -1997,11 +2148,16 @@ std::string RemoveStarlanes::Description() const {
 std::string RemoveStarlanes::Dump() const
 { return DumpIndent() + "RemoveStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump() + "\n"; }
 
+void RemoveStarlanes::SetTopLevelContent(const std::string& content_name) {
+    if (m_other_lane_endpoint_condition)
+        m_other_lane_endpoint_condition->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetStarType                                           //
 ///////////////////////////////////////////////////////////
-SetStarType::SetStarType(const ValueRef::ValueRefBase<StarType>* type) :
+SetStarType::SetStarType(ValueRef::ValueRefBase<StarType>* type) :
     m_type(type)
 {}
 
@@ -2029,11 +2185,16 @@ std::string SetStarType::Description() const {
 std::string SetStarType::Dump() const
 { return DumpIndent() + "SetStarType type = " + m_type->Dump() + "\n"; }
 
+void SetStarType::SetTopLevelContent(const std::string& content_name) {
+    if (m_type)
+        m_type->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // MoveTo                                                //
 ///////////////////////////////////////////////////////////
-MoveTo::MoveTo(const Condition::ConditionBase* location_condition) :
+MoveTo::MoveTo(Condition::ConditionBase* location_condition) :
     m_location_condition(location_condition)
 {}
 
@@ -2327,21 +2488,26 @@ std::string MoveTo::Description() const {
 std::string MoveTo::Dump() const
 { return DumpIndent() + "MoveTo destination = " + m_location_condition->Dump() + "\n"; }
 
+void MoveTo::SetTopLevelContent(const std::string& content_name) {
+    if (m_location_condition)
+        m_location_condition->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // MoveInOrbit                                           //
 ///////////////////////////////////////////////////////////
-MoveInOrbit::MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
-                         const Condition::ConditionBase* focal_point_condition) :
+MoveInOrbit::MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
+                         Condition::ConditionBase* focal_point_condition) :
     m_speed(speed),
     m_focal_point_condition(focal_point_condition),
     m_focus_x(0),
     m_focus_y(0)
 {}
 
-MoveInOrbit::MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
-                         const ValueRef::ValueRefBase<double>* focus_x/* = 0*/,
-                         const ValueRef::ValueRefBase<double>* focus_y/* = 0*/) :
+MoveInOrbit::MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
+                         ValueRef::ValueRefBase<double>* focus_x/* = 0*/,
+                         ValueRef::ValueRefBase<double>* focus_y/* = 0*/) :
     m_speed(speed),
     m_focal_point_condition(0),
     m_focus_x(focus_x),
@@ -2489,21 +2655,32 @@ std::string MoveInOrbit::Dump() const {
         return DumpIndent() + "MoveInOrbit";
 }
 
+void MoveInOrbit::SetTopLevelContent(const std::string& content_name) {
+    if (m_speed)
+        m_speed->SetTopLevelContent(content_name);
+    if (m_focal_point_condition)
+        m_focal_point_condition->SetTopLevelContent(content_name);
+    if (m_focus_x)
+        m_focus_x->SetTopLevelContent(content_name);
+    if (m_focus_y)
+        m_focus_y->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // MoveTowards                                           //
 ///////////////////////////////////////////////////////////
-MoveTowards::MoveTowards(const ValueRef::ValueRefBase<double>* speed,
-                         const Condition::ConditionBase* dest_condition) :
+MoveTowards::MoveTowards(ValueRef::ValueRefBase<double>* speed,
+                         Condition::ConditionBase* dest_condition) :
     m_speed(speed),
     m_dest_condition(dest_condition),
     m_dest_x(0),
     m_dest_y(0)
 {}
 
-MoveTowards::MoveTowards(const ValueRef::ValueRefBase<double>* speed,
-                         const ValueRef::ValueRefBase<double>* dest_x/* = 0*/,
-                         const ValueRef::ValueRefBase<double>* dest_y/* = 0*/) :
+MoveTowards::MoveTowards(ValueRef::ValueRefBase<double>* speed,
+                         ValueRef::ValueRefBase<double>* dest_x/* = 0*/,
+                         ValueRef::ValueRefBase<double>* dest_y/* = 0*/) :
     m_speed(speed),
     m_dest_condition(0),
     m_dest_x(dest_x),
@@ -2666,11 +2843,22 @@ std::string MoveTowards::Dump() const {
         return DumpIndent() + "MoveTowards";
 }
 
+void MoveTowards::SetTopLevelContent(const std::string& content_name) {
+    if (m_speed)
+        m_speed->SetTopLevelContent(content_name);
+    if (m_dest_condition)
+        m_dest_condition->SetTopLevelContent(content_name);
+    if (m_dest_x)
+        m_dest_x->SetTopLevelContent(content_name);
+    if (m_dest_y)
+        m_dest_y->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetDestination                                        //
 ///////////////////////////////////////////////////////////
-SetDestination::SetDestination(const Condition::ConditionBase* location_condition) :
+SetDestination::SetDestination(Condition::ConditionBase* location_condition) :
     m_location_condition(location_condition)
 {}
 
@@ -2742,6 +2930,11 @@ std::string SetDestination::Description() const {
 std::string SetDestination::Dump() const
 { return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n"; }
 
+void SetDestination::SetTopLevelContent(const std::string& content_name) {
+    if (m_location_condition)
+        m_location_condition->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetAggression                                         //
@@ -2807,7 +3000,7 @@ SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>
 
 SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
                                              ValueRef::ValueRefBase<double>* research_progress,
-                                             const ValueRef::ValueRefBase<int>* empire_id) :
+                                             ValueRef::ValueRefBase<int>* empire_id) :
     m_tech_name(tech_name),
     m_research_progress(research_progress),
     m_empire_id(empire_id)
@@ -2886,36 +3079,50 @@ std::string SetEmpireTechProgress::Dump() const {
     return retval;
 }
 
+void SetEmpireTechProgress::SetTopLevelContent(const std::string& content_name) {
+    if (m_tech_name)
+        m_tech_name->SetTopLevelContent(content_name);
+    if (m_research_progress)
+        m_research_progress->SetTopLevelContent(content_name);
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // GiveEmpireTech                                        //
 ///////////////////////////////////////////////////////////
-GiveEmpireTech::GiveEmpireTech(const std::string& tech_name) :
-    m_tech_name(tech_name),
-    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
-{}
-
-GiveEmpireTech::GiveEmpireTech(const std::string& tech_name,
-                               const ValueRef::ValueRefBase<int>* empire_id) :
+GiveEmpireTech::GiveEmpireTech(ValueRef::ValueRefBase<std::string>* tech_name,
+                               ValueRef::ValueRefBase<int>* empire_id) :
     m_tech_name(tech_name),
     m_empire_id(empire_id)
-{}
+{
+    if (!m_empire_id)
+        m_empire_id = new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"));
+}
 
-GiveEmpireTech::~GiveEmpireTech()
-{ delete m_empire_id; }
+GiveEmpireTech::~GiveEmpireTech() {
+    delete m_empire_id;
+    delete m_tech_name;
+}
 
 void GiveEmpireTech::Execute(const ScriptingContext& context) const {
     if (!m_empire_id) return;
     Empire* empire = GetEmpire(m_empire_id->Eval(context));
     if (!empire) return;
 
-    const Tech* tech = GetTech(m_tech_name);
+    if (!m_tech_name)
+        return;
+
+    std::string tech_name = m_tech_name->Eval(context);
+
+    const Tech* tech = GetTech(tech_name);
     if (!tech) {
-        ErrorLogger() << "GiveEmpireTech::Execute couldn't get tech with name " << m_tech_name;
+        ErrorLogger() << "GiveEmpireTech::Execute couldn't get tech with name: " << tech_name;
         return;
     }
 
-    empire->AddTech(m_tech_name);
+    empire->AddTech(tech_name);
 }
 
 std::string GiveEmpireTech::Description() const {
@@ -2928,17 +3135,37 @@ std::string GiveEmpireTech::Description() const {
             empire_str = m_empire_id->Description();
         }
     }
+
+    std::string tech_str;
+    if (m_tech_name) {
+        tech_str = m_tech_name->Description();
+        if (ValueRef::ConstantExpr(m_tech_name) && UserStringExists(tech_str))
+            tech_str = UserString(tech_str);
+    }
+
     return str(FlexibleFormat(UserString("DESC_GIVE_EMPIRE_TECH"))
-                % UserString(m_tech_name)
+                % tech_str
                 % empire_str);
 }
 
 std::string GiveEmpireTech::Dump() const {
-    std::string retval = "GiveEmpireTech name = \"" + m_tech_name + "\"";
+    std::string retval = DumpIndent() + "GiveEmpireTech";
+
+    if (m_tech_name)
+        retval += " name = " + m_tech_name->Dump();
+
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump();
+
     retval += "\n";
     return retval;
+}
+
+void GiveEmpireTech::SetTopLevelContent(const std::string& content_name) {
+    if (m_empire_id)
+        m_empire_id->SetTopLevelContent(content_name);
+    if (m_tech_name)
+        m_tech_name->SetTopLevelContent(content_name);
 }
 
 
@@ -2947,8 +3174,8 @@ std::string GiveEmpireTech::Dump() const {
 ///////////////////////////////////////////////////////////
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
-                                             const ValueRef::ValueRefBase<int>* recipient_empire_id,
+                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             ValueRef::ValueRefBase<int>* recipient_empire_id,
                                              EmpireAffiliationType affiliation) :
     m_message_string(message_string),
     m_icon(icon),
@@ -2960,9 +3187,9 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                                              EmpireAffiliationType affiliation,
-                                             const Condition::ConditionBase* condition) :
+                                             Condition::ConditionBase* condition) :
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
@@ -2972,7 +3199,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage() {
-    for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::iterator it =
+    for (std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >::iterator it =
          m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
     {
         delete it->second;
@@ -2994,7 +3221,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string> > parameter_tag_values;
-    for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::const_iterator it =
+    for (std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >::const_iterator it =
          m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
     {
         parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(context)));
@@ -3172,11 +3399,21 @@ std::string GenerateSitRepMessage::Dump() const {
     return retval;
 }
 
+void GenerateSitRepMessage::SetTopLevelContent(const std::string& content_name) {
+    for (std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >::iterator it = m_message_parameters.begin();
+         it != m_message_parameters.end(); ++it)
+    { it->second->SetTopLevelContent(content_name); }
+    if (m_recipient_empire_id)
+        m_recipient_empire_id->SetTopLevelContent(content_name);
+    if (m_condition)
+        m_condition->SetTopLevelContent(content_name);
+}
+
 
 ///////////////////////////////////////////////////////////
 // SetOverlayTexture                                     //
 ///////////////////////////////////////////////////////////
-SetOverlayTexture::SetOverlayTexture(const std::string& texture, const ValueRef::ValueRefBase<double>* size) :
+SetOverlayTexture::SetOverlayTexture(const std::string& texture, ValueRef::ValueRefBase<double>* size) :
     m_texture(texture),
     m_size(size)
 {}
@@ -3204,6 +3441,11 @@ std::string SetOverlayTexture::Dump() const {
         retval += " size = " + m_size->Dump();
     retval += "\n";
     return retval;
+}
+
+void SetOverlayTexture::SetTopLevelContent(const std::string& content_name) {
+    if (m_size)
+        m_size->SetTopLevelContent(content_name);
 }
 
 

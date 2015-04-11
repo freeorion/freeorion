@@ -121,7 +121,7 @@ namespace Condition {
   * candidate object is provided, the returned string will indicate which 
   * subconditions the candidate matches, and indicate if the overall combination
   * of conditions matches the object. */
-FO_COMMON_API std::string ConditionDescription(const std::vector<const Condition::ConditionBase*>& conditions,
+FO_COMMON_API std::string ConditionDescription(const std::vector<Condition::ConditionBase*>& conditions,
                                                TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
                                                TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
 
@@ -189,6 +189,8 @@ struct FO_COMMON_API Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const = 0;
     virtual std::string Dump() const = 0;
 
+    virtual void        SetTopLevelContent(const std::string& content_name) = 0;
+
 protected:
     mutable Invariance  m_root_candidate_invariant;
     mutable Invariance  m_target_invariant;
@@ -209,8 +211,8 @@ private:
   * \a condition is is >= \a low and < \a high.  Matched objects may
   * or may not themselves match the condition. */
 struct FO_COMMON_API Condition::Number : public Condition::ConditionBase {
-    Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
-           const ConditionBase* condition) :
+    Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
+           ConditionBase* condition) :
         m_low(low),
         m_high(high),
         m_condition(condition)
@@ -230,12 +232,14 @@ struct FO_COMMON_API Condition::Number : public Condition::ConditionBase {
     const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
     const ConditionBase*                GetCondition() const { return m_condition; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_low;
-    const ValueRef::ValueRefBase<int>* m_high;
-    const ConditionBase*               m_condition;
+    ValueRef::ValueRefBase<int>*    m_low;
+    ValueRef::ValueRefBase<int>*    m_high;
+    ConditionBase*                  m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -244,7 +248,7 @@ private:
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
 struct FO_COMMON_API Condition::Turn : public Condition::ConditionBase {
-    Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
+    explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = 0) :
         m_low(low),
         m_high(high)
     {}
@@ -262,11 +266,13 @@ struct FO_COMMON_API Condition::Turn : public Condition::ConditionBase {
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
     const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_low;
-    const ValueRef::ValueRefBase<int>* m_high;
+    ValueRef::ValueRefBase<int>*    m_low;
+    ValueRef::ValueRefBase<int>*    m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -283,8 +289,8 @@ private:
   * selected preferentially. */
 struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase {
     /** Sorts randomly, without considering a sort key. */
-    SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                   const ConditionBase* condition) :
+    SortedNumberOf(ValueRef::ValueRefBase<int>* number,
+                   ConditionBase* condition) :
         m_number(number),
         m_sort_key(0),
         m_sorting_method(Condition::SORT_RANDOM),
@@ -293,10 +299,10 @@ struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase
 
     /** Sorts according to the specified method, based on the key values
       * evaluated for each object. */
-    SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                   const ValueRef::ValueRefBase<double>* sort_key_ref,
+    SortedNumberOf(ValueRef::ValueRefBase<int>* number,
+                   ValueRef::ValueRefBase<double>* sort_key_ref,
                    SortingMethod sorting_method,
-                   const ConditionBase* condition) :
+                   ConditionBase* condition) :
         m_number(number),
         m_sort_key(sort_key_ref),
         m_sorting_method(sorting_method),
@@ -317,13 +323,16 @@ struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase
     const ValueRef::ValueRefBase<double>*   SortKey() const { return m_sort_key; }
     SortingMethod                           GetSortingMethod() const { return m_sorting_method; }
     const ConditionBase*                    GetCondition() const { return m_condition; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void                            GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                                              Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
-    const ValueRef::ValueRefBase<int>*      m_number;
-    const ValueRef::ValueRefBase<double>*   m_sort_key;
-    SortingMethod                           m_sorting_method;
-    const ConditionBase*                    m_condition;
+    ValueRef::ValueRefBase<int>*    m_number;
+    ValueRef::ValueRefBase<double>* m_sort_key;
+    SortingMethod                   m_sorting_method;
+    ConditionBase*                  m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -344,6 +353,8 @@ struct FO_COMMON_API Condition::All : public Condition::ConditionBase {
     virtual bool        TargetInvariant() const { return true; }
     virtual bool        SourceInvariant() const { return true; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -354,11 +365,11 @@ private:
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API Condition::EmpireAffiliation : public Condition::ConditionBase {
-    EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation = AFFIL_SELF) :
+    explicit EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation = AFFIL_SELF) :
         m_empire_id(empire_id),
         m_affiliation(affiliation)
     {}
-    EmpireAffiliation(EmpireAffiliationType affiliation) :
+    explicit EmpireAffiliation(EmpireAffiliationType affiliation) :
        m_empire_id(0),
        m_affiliation(affiliation)
     {}
@@ -374,14 +385,17 @@ struct FO_COMMON_API Condition::EmpireAffiliation : public Condition::ConditionB
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+
     const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
     EmpireAffiliationType               GetAffiliation() const { return m_affiliation; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_empire_id;
-    EmpireAffiliationType              m_affiliation;
+    ValueRef::ValueRefBase<int>*    m_empire_id;
+    EmpireAffiliationType           m_affiliation;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -397,7 +411,10 @@ struct FO_COMMON_API Condition::Source : public Condition::ConditionBase {
     //virtual bool        SourceInvariant() const { return false; } // same as ConditionBase
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -420,6 +437,8 @@ struct FO_COMMON_API Condition::RootCandidate : public Condition::ConditionBase 
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
@@ -440,7 +459,10 @@ struct FO_COMMON_API Condition::Target : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -458,7 +480,7 @@ struct FO_COMMON_API Condition::Homeworld : public Condition::ConditionBase {
         ConditionBase(),
         m_names()
     {}
-    Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+    explicit Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
@@ -473,13 +495,16 @@ struct FO_COMMON_API Condition::Homeworld : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    const std::vector<ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
+    std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -495,7 +520,10 @@ struct FO_COMMON_API Condition::Capital : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -514,7 +542,10 @@ struct FO_COMMON_API Condition::Monster : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -534,6 +565,8 @@ struct FO_COMMON_API Condition::Armed : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
@@ -544,7 +577,7 @@ private:
 
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct FO_COMMON_API Condition::Type : public Condition::ConditionBase {
-    Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
+    explicit Type(ValueRef::ValueRefBase<UniverseObjectType>* type) :
         ConditionBase(),
         m_type(type)
     {}
@@ -560,12 +593,15 @@ struct FO_COMMON_API Condition::Type : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<UniverseObjectType>*   GetType() const { return m_type; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<UniverseObjectType>* m_type;
+    ValueRef::ValueRefBase<UniverseObjectType>* m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -575,7 +611,7 @@ private:
 /** Matches all Building objects that are one of the building types specified
   * in \a names. */
 struct FO_COMMON_API Condition::Building : public Condition::ConditionBase {
-    Building(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+    explicit Building(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
@@ -590,13 +626,16 @@ struct FO_COMMON_API Condition::Building : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    const std::vector<ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
+    std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -605,19 +644,34 @@ private:
 
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
-    HasSpecial(const std::string& name) :
+    explicit HasSpecial(const std::string& name);
+    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name),
+        m_capacity_low(0),
+        m_capacity_high(0),
         m_since_turn_low(0),
         m_since_turn_high(0)
     {}
-    HasSpecial(const std::string& name,
-               const ValueRef::ValueRefBase<int>* since_turn_low,
-               const ValueRef::ValueRefBase<int>* since_turn_high) :
+    HasSpecial(ValueRef::ValueRefBase<std::string>* name,
+               ValueRef::ValueRefBase<int>* since_turn_low,
+               ValueRef::ValueRefBase<int>* since_turn_high = 0) :
         ConditionBase(),
         m_name(name),
+        m_capacity_low(0),
+        m_capacity_high(0),
         m_since_turn_low(since_turn_low),
         m_since_turn_high(since_turn_high)
+    {}
+    HasSpecial(ValueRef::ValueRefBase<std::string>* name,
+               ValueRef::ValueRefBase<double>* capacity_low,
+               ValueRef::ValueRefBase<double>* capacity_high = 0) :
+        ConditionBase(),
+        m_name(name),
+        m_capacity_low(capacity_low),
+        m_capacity_high(capacity_high),
+        m_since_turn_low(0),
+        m_since_turn_high(0)
     {}
     virtual ~HasSpecial();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -630,16 +684,22 @@ struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&                  Name() const { return m_name; }
-    const ValueRef::ValueRefBase<int>*  Low() const { return m_since_turn_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_since_turn_high; }
+    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+    const ValueRef::ValueRefBase<double>*       CapacityLow() const { return m_capacity_low; }
+    const ValueRef::ValueRefBase<double>*       CapacityHigh() const { return m_capacity_high; }
+    const ValueRef::ValueRefBase<int>*          SinceTurnLow() const { return m_since_turn_low; }
+    const ValueRef::ValueRefBase<int>*          SinceTurnHigh() const { return m_since_turn_high; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string                         m_name;
-    const ValueRef::ValueRefBase<int>*  m_since_turn_low;
-    const ValueRef::ValueRefBase<int>*  m_since_turn_high;
+    ValueRef::ValueRefBase<std::string>*    m_name;
+    ValueRef::ValueRefBase<double>*         m_capacity_low;
+    ValueRef::ValueRefBase<double>*         m_capacity_high;
+    ValueRef::ValueRefBase<int>*            m_since_turn_low;
+    ValueRef::ValueRefBase<int>*            m_since_turn_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -648,22 +708,32 @@ private:
 
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API Condition::HasTag : public Condition::ConditionBase {
-    HasTag(const std::string& name) :
+    explicit HasTag(const std::string& name);
+    explicit HasTag(ValueRef::ValueRefBase<std::string>* name = 0) :
         ConditionBase(),
         m_name(name)
     {}
+    ~HasTag();
+
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  Name() const { return m_name; }
+
+    ValueRef::ValueRefBase<std::string>*    Name() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string                         m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -672,7 +742,7 @@ private:
 
 /** Matches all objects that were created on turns within the specified range. */
 struct FO_COMMON_API Condition::CreatedOnTurn : public Condition::ConditionBase {
-    CreatedOnTurn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
+    CreatedOnTurn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
         ConditionBase(),
         m_low(low),
         m_high(high)
@@ -691,11 +761,13 @@ struct FO_COMMON_API Condition::CreatedOnTurn : public Condition::ConditionBase 
     const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
     const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>*  m_low;
-    const ValueRef::ValueRefBase<int>*  m_high;
+    ValueRef::ValueRefBase<int>*    m_low;
+    ValueRef::ValueRefBase<int>*    m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -706,7 +778,7 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API Condition::Contains : public Condition::ConditionBase {
-    Contains(const ConditionBase* condition) :
+    Contains(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
     {}
@@ -722,12 +794,15 @@ struct FO_COMMON_API Condition::Contains : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ConditionBase*GetCondition() const { return m_condition; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ConditionBase* m_condition;
+    ConditionBase*  m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -738,7 +813,7 @@ private:
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */
 struct FO_COMMON_API Condition::ContainedBy : public Condition::ConditionBase {
-    ContainedBy(const ConditionBase* condition) :
+    ContainedBy(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
     {}
@@ -755,10 +830,12 @@ struct FO_COMMON_API Condition::ContainedBy : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const ConditionBase*GetCondition() const { return m_condition; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ConditionBase* m_condition;
+    ConditionBase* m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -767,7 +844,7 @@ private:
 
 /** Matches all objects that are in the system with the indicated \a system_id */
 struct FO_COMMON_API Condition::InSystem : public Condition::ConditionBase {
-    InSystem(const ValueRef::ValueRefBase<int>* system_id) :
+    InSystem(ValueRef::ValueRefBase<int>* system_id) :
         ConditionBase(),
         m_system_id(system_id)
     {}
@@ -784,10 +861,12 @@ struct FO_COMMON_API Condition::InSystem : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  SystemId() const { return m_system_id; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_system_id;
+    ValueRef::ValueRefBase<int>* m_system_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -796,7 +875,7 @@ private:
 
 /** Matches the object with the id \a object_id */
 struct FO_COMMON_API Condition::ObjectID : public Condition::ConditionBase {
-    ObjectID(const ValueRef::ValueRefBase<int>* object_id) :
+    ObjectID(ValueRef::ValueRefBase<int>* object_id) :
         ConditionBase(),
         m_object_id(object_id)
     {}
@@ -812,12 +891,15 @@ struct FO_COMMON_API Condition::ObjectID : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  ObjectId() const { return m_object_id; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_object_id;
+    ValueRef::ValueRefBase<int>* m_object_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -828,7 +910,7 @@ private:
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API Condition::PlanetType : public Condition::ConditionBase {
-    PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types) :
+    PlanetType(const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>& types) :
         ConditionBase(),
         m_types(types)
     {}
@@ -843,13 +925,16 @@ struct FO_COMMON_API Condition::PlanetType : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>&    Types() const { return m_types; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>&    Types() const { return m_types; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase< ::PlanetType>*> m_types;
+    std::vector<ValueRef::ValueRefBase< ::PlanetType>*> m_types;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -860,7 +945,7 @@ private:
   * Note that all Building objects which are on matching planets are also
   * matched. */
 struct FO_COMMON_API Condition::PlanetSize : public Condition::ConditionBase {
-    PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
+    PlanetSize(const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
         ConditionBase(),
         m_sizes(sizes)
     {}
@@ -875,13 +960,16 @@ struct FO_COMMON_API Condition::PlanetSize : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>&    Sizes() const { return m_sizes; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>&    Sizes() const { return m_sizes; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*> m_sizes;
+    std::vector<ValueRef::ValueRefBase< ::PlanetSize>*> m_sizes;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -892,8 +980,8 @@ private:
   * \a environments.  Note that all Building objects which are on matching
   * planets are also matched. */
 struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionBase {
-    PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
-                      const ValueRef::ValueRefBase<std::string>* species_name_ref = 0) :
+    PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
+                      ValueRef::ValueRefBase<std::string>* species_name_ref = 0) :
         ConditionBase(),
         m_environments(environments),
         m_species_name(species_name_ref)
@@ -909,14 +997,17 @@ struct FO_COMMON_API Condition::PlanetEnvironment : public Condition::ConditionB
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& Environments() const { return m_environments; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
+    const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& Environments() const { return m_environments; }
+    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>    m_environments;
-    const ValueRef::ValueRefBase<std::string>*                          m_species_name;
+    std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>  m_environments;
+    ValueRef::ValueRefBase<std::string>*                        m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -927,7 +1018,7 @@ private:
   * Note that all Building object which are on matching planets are also
   * matched. */
 struct FO_COMMON_API Condition::Species : public Condition::ConditionBase {
-    Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+    Species(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
@@ -946,12 +1037,14 @@ struct FO_COMMON_API Condition::Species : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
+    const std::vector<ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
+    std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -962,10 +1055,10 @@ private:
   * or ship design are enqueued on the production queue. */
 struct FO_COMMON_API Condition::Enqueued : public Condition::ConditionBase {
     Enqueued(BuildType build_type,
-             const std::string& name = "",
-             const ValueRef::ValueRefBase<int>* empire_id = 0,
-             const ValueRef::ValueRefBase<int>* low = 0,
-             const ValueRef::ValueRefBase<int>* high = 0) :
+             ValueRef::ValueRefBase<std::string>* name,
+             ValueRef::ValueRefBase<int>* empire_id = 0,
+             ValueRef::ValueRefBase<int>* low = 0,
+             ValueRef::ValueRefBase<int>* high = 0) :
         ConditionBase(),
         m_build_type(build_type),
         m_name(name),
@@ -974,10 +1067,10 @@ struct FO_COMMON_API Condition::Enqueued : public Condition::ConditionBase {
         m_low(low),
         m_high(high)
     {}
-    Enqueued(const ValueRef::ValueRefBase<int>* design_id,
-             const ValueRef::ValueRefBase<int>* empire_id = 0,
-             const ValueRef::ValueRefBase<int>* low = 0,
-             const ValueRef::ValueRefBase<int>* high = 0) :
+    explicit Enqueued(ValueRef::ValueRefBase<int>* design_id,
+             ValueRef::ValueRefBase<int>* empire_id = 0,
+             ValueRef::ValueRefBase<int>* low = 0,
+             ValueRef::ValueRefBase<int>* high = 0) :
         ConditionBase(),
         m_build_type(BT_SHIP),
         m_name(),
@@ -1007,21 +1100,23 @@ struct FO_COMMON_API Condition::Enqueued : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     BuildType           GetBuildType() const { return m_build_type; }
-    const std::string&  GetName() const { return m_name; }
-    const ValueRef::ValueRefBase<int>*  DesignID() const { return m_design_id; }
-    const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
-    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
+    const ValueRef::ValueRefBase<std::string>*  GetName() const { return m_name; }
+    const ValueRef::ValueRefBase<int>*          DesignID() const { return m_design_id; }
+    const ValueRef::ValueRefBase<int>*          EmpireID() const { return m_empire_id; }
+    const ValueRef::ValueRefBase<int>*          Low() const { return m_low; }
+    const ValueRef::ValueRefBase<int>*          High() const { return m_high; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    BuildType                           m_build_type;
-    std::string                         m_name;
-    const ValueRef::ValueRefBase<int>*  m_design_id;
-    const ValueRef::ValueRefBase<int>*  m_empire_id;
-    const ValueRef::ValueRefBase<int>*  m_low;
-    const ValueRef::ValueRefBase<int>*  m_high;
+    BuildType                               m_build_type;
+    ValueRef::ValueRefBase<std::string>*    m_name;
+    ValueRef::ValueRefBase<int>*            m_design_id;
+    ValueRef::ValueRefBase<int>*            m_empire_id;
+    ValueRef::ValueRefBase<int>*            m_low;
+    ValueRef::ValueRefBase<int>*            m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1030,7 +1125,7 @@ private:
 
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct FO_COMMON_API Condition::FocusType : public Condition::ConditionBase {
-    FocusType(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+    FocusType(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
@@ -1045,12 +1140,14 @@ struct FO_COMMON_API Condition::FocusType : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
+    const std::vector<ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
+    std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1060,7 +1157,7 @@ private:
 /** Matches all System objects that have one of the StarTypes in \a types.  Note that all objects
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct FO_COMMON_API Condition::StarType : public Condition::ConditionBase {
-    StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types) :
+    StarType(const std::vector<ValueRef::ValueRefBase< ::StarType>*>& types) :
         ConditionBase(),
         m_types(types)
     {}
@@ -1075,12 +1172,14 @@ struct FO_COMMON_API Condition::StarType : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ValueRef::ValueRefBase< ::StarType>*>&  Types() const { return m_types; }
+    const std::vector<ValueRef::ValueRefBase< ::StarType>*>&  Types() const { return m_types; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::vector<const ValueRef::ValueRefBase< ::StarType>*> m_types;
+    std::vector<ValueRef::ValueRefBase< ::StarType>*> m_types;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1089,22 +1188,30 @@ private:
 
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
 struct FO_COMMON_API Condition::DesignHasHull : public Condition::ConditionBase {
-    DesignHasHull(const std::string& name) :
+    explicit DesignHasHull(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+    ~DesignHasHull();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  Name() const { return m_name; }
+
+    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string     m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1114,8 +1221,8 @@ private:
 /** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
   * part specified by \a name. */
 struct FO_COMMON_API Condition::DesignHasPart : public Condition::ConditionBase {
-    DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
-                  const std::string& name) :
+    DesignHasPart(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
+                  ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_low(low),
         m_high(high),
@@ -1132,16 +1239,18 @@ struct FO_COMMON_API Condition::DesignHasPart : public Condition::ConditionBase 
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
-    const std::string&                  Name() const { return m_name; }
+    const ValueRef::ValueRefBase<int>*          Low() const  { return m_low; }
+    const ValueRef::ValueRefBase<int>*          High() const { return m_high; }
+    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>*  m_low;
-    const ValueRef::ValueRefBase<int>*  m_high;
-    std::string                         m_name;
+    ValueRef::ValueRefBase<int>*            m_low;
+    ValueRef::ValueRefBase<int>*            m_high;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1151,7 +1260,7 @@ private:
 /** Matches ships whose ShipDesign has >= \a low and < \a high of ship parts of
   * the specified \a part_class */
 struct FO_COMMON_API Condition::DesignHasPartClass : public Condition::ConditionBase {
-    DesignHasPartClass(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
+    DesignHasPartClass(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high,
                        ShipPartClass part_class) :
         ConditionBase(),
         m_low(low),
@@ -1173,12 +1282,14 @@ struct FO_COMMON_API Condition::DesignHasPartClass : public Condition::Condition
     const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
     ShipPartClass                       Class() const { return m_class; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>*  m_low;
-    const ValueRef::ValueRefBase<int>*  m_high;
-    ShipPartClass                       m_class;
+    ValueRef::ValueRefBase<int>*    m_low;
+    ValueRef::ValueRefBase<int>*    m_high;
+    ShipPartClass                   m_class;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1188,22 +1299,30 @@ private:
 /** Matches ships who ShipDesign is a predefined shipdesign with the name
   * \a name */
 struct FO_COMMON_API Condition::PredefinedShipDesign : public Condition::ConditionBase {
-    PredefinedShipDesign(const std::string& name) :
+    explicit PredefinedShipDesign(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+    ~PredefinedShipDesign();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  Name() const { return m_name; }
+
+    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string     m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1212,7 +1331,7 @@ private:
 
 /** Matches ships whose design id \a id. */
 struct FO_COMMON_API Condition::NumberedShipDesign : public Condition::ConditionBase {
-    NumberedShipDesign(const ValueRef::ValueRefBase<int>* design_id) :
+    NumberedShipDesign(ValueRef::ValueRefBase<int>* design_id) :
         ConditionBase(),
         m_design_id(design_id)
     {}
@@ -1229,10 +1348,12 @@ struct FO_COMMON_API Condition::NumberedShipDesign : public Condition::Condition
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  DesignID() const { return m_design_id; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_design_id;
+    ValueRef::ValueRefBase<int>* m_design_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1241,7 +1362,7 @@ private:
 
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct FO_COMMON_API Condition::ProducedByEmpire : public Condition::ConditionBase {
-    ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+    ProducedByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
@@ -1258,10 +1379,12 @@ struct FO_COMMON_API Condition::ProducedByEmpire : public Condition::ConditionBa
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_empire_id;
+    ValueRef::ValueRefBase<int>* m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1270,7 +1393,7 @@ private:
 
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct FO_COMMON_API Condition::Chance : public Condition::ConditionBase {
-    Chance(const ValueRef::ValueRefBase<double>* chance) :
+    Chance(ValueRef::ValueRefBase<double>* chance) :
         ConditionBase(),
         m_chance(chance)
     {}
@@ -1287,10 +1410,12 @@ struct FO_COMMON_API Condition::Chance : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<double>*   GetChance() const { return m_chance; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<double>* m_chance;
+    ValueRef::ValueRefBase<double>* m_chance;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1300,8 +1425,8 @@ private:
 /** Matches all objects that have a meter of type \a meter, and whose current
   * value is >= \a low and <= \a high. */
 struct FO_COMMON_API Condition::MeterValue : public Condition::ConditionBase {
-    MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low,
-               const ValueRef::ValueRefBase<double>* high) :
+    MeterValue(MeterType meter, ValueRef::ValueRefBase<double>* low,
+               ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
         m_meter(meter),
         m_low(low),
@@ -1322,12 +1447,14 @@ struct FO_COMMON_API Condition::MeterValue : public Condition::ConditionBase {
     const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
     MeterType                               GetMeterType() const { return m_meter; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    MeterType                             m_meter;
-    const ValueRef::ValueRefBase<double>* m_low;
-    const ValueRef::ValueRefBase<double>* m_high;
+    MeterType                       m_meter;
+    ValueRef::ValueRefBase<double>* m_low;
+    ValueRef::ValueRefBase<double>* m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1339,8 +1466,8 @@ private:
 struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::ConditionBase {
     ShipPartMeterValue(const std::string& ship_part_name,
                        MeterType meter,
-                       const ValueRef::ValueRefBase<double>* low,
-                       const ValueRef::ValueRefBase<double>* high) :
+                       ValueRef::ValueRefBase<double>* low,
+                       ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
         m_part_name(ship_part_name),
         m_meter(meter),
@@ -1363,31 +1490,33 @@ struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::Condition
     const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
     MeterType                               GetMeterType() const { return m_meter; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string                             m_part_name;
-    MeterType                               m_meter;
-    const ValueRef::ValueRefBase<double>*   m_low;
-    const ValueRef::ValueRefBase<double>*   m_high;
+    std::string                     m_part_name;
+    MeterType                       m_meter;
+    ValueRef::ValueRefBase<double>* m_low;
+    ValueRef::ValueRefBase<double>* m_high;
 };
 
 /** Matches all objects if the empire with id \a empire_id has an empire meter
   * \a meter whose current value is >= \a low and <= \a high. */
 struct FO_COMMON_API Condition::EmpireMeterValue : public Condition::ConditionBase {
     EmpireMeterValue(const std::string& meter,
-                     const ValueRef::ValueRefBase<double>* low,
-                     const ValueRef::ValueRefBase<double>* high) :
+                     ValueRef::ValueRefBase<double>* low,
+                     ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
         m_empire_id(0),
         m_meter(meter),
         m_low(low),
         m_high(high)
     {}
-    EmpireMeterValue(const ValueRef::ValueRefBase<int>* empire_id,
+    EmpireMeterValue(ValueRef::ValueRefBase<int>* empire_id,
                      const std::string& meter,
-                     const ValueRef::ValueRefBase<double>* low,
-                     const ValueRef::ValueRefBase<double>* high) :
+                     ValueRef::ValueRefBase<double>* low,
+                     ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
         m_empire_id(empire_id),
         m_meter(meter),
@@ -1410,20 +1539,22 @@ struct FO_COMMON_API Condition::EmpireMeterValue : public Condition::ConditionBa
     const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
     const ValueRef::ValueRefBase<int>*      EmpireID() const { return m_empire_id; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>*      m_empire_id;
-    const std::string                       m_meter;
-    const ValueRef::ValueRefBase<double>*   m_low;
-    const ValueRef::ValueRefBase<double>*   m_high;
+    ValueRef::ValueRefBase<int>*    m_empire_id;
+    const std::string               m_meter;
+    ValueRef::ValueRefBase<double>* m_low;
+    ValueRef::ValueRefBase<double>* m_high;
 };
 
 /** Matches all objects whose owner's stockpile of \a stockpile is between
   * \a low and \a high, inclusive. */
 struct FO_COMMON_API Condition::EmpireStockpileValue : public Condition::ConditionBase {
-    EmpireStockpileValue(ResourceType stockpile, const ValueRef::ValueRefBase<double>* low,
-                         const ValueRef::ValueRefBase<double>* high) :
+    EmpireStockpileValue(ResourceType stockpile, ValueRef::ValueRefBase<double>* low,
+                         ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
         m_stockpile(stockpile),
         m_low(low),
@@ -1444,12 +1575,14 @@ struct FO_COMMON_API Condition::EmpireStockpileValue : public Condition::Conditi
     const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
     ResourceType                            Stockpile() const { return m_stockpile; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    ResourceType                            m_stockpile;
-    const ValueRef::ValueRefBase<double>*   m_low;
-    const ValueRef::ValueRefBase<double>*   m_high;
+    ResourceType                    m_stockpile;
+    ValueRef::ValueRefBase<double>* m_low;
+    ValueRef::ValueRefBase<double>* m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1458,22 +1591,30 @@ private:
 
 /** Matches all objects whose owner who has tech \a name. */
 struct FO_COMMON_API Condition::OwnerHasTech : public Condition::ConditionBase {
-    OwnerHasTech(const std::string& name) :
+    explicit OwnerHasTech(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+    ~OwnerHasTech();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  Tech() const { return m_name; }
+
+    const ValueRef::ValueRefBase<std::string>*  Tech() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string m_name;
+    ValueRef::ValueRefBase<std::string>* m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1493,6 +1634,8 @@ struct FO_COMMON_API Condition::OwnerHasBuildingTypeAvailable : public Condition
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     const std::string&  GetBuildingType() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1518,6 +1661,8 @@ struct FO_COMMON_API Condition::OwnerHasShipDesignAvailable : public Condition::
     virtual std::string Dump() const;
     int                 GetDesignID() const { return m_id; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
@@ -1530,7 +1675,7 @@ private:
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct FO_COMMON_API Condition::VisibleToEmpire : public Condition::ConditionBase {
-    VisibleToEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+    VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
@@ -1547,10 +1692,12 @@ struct FO_COMMON_API Condition::VisibleToEmpire : public Condition::ConditionBas
     virtual std::string Dump() const;
     const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_empire_id;
+    ValueRef::ValueRefBase<int>* m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1562,7 +1709,7 @@ private:
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
 struct FO_COMMON_API Condition::WithinDistance : public Condition::ConditionBase {
-    WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition) :
+    WithinDistance(ValueRef::ValueRefBase<double>* distance, ConditionBase* condition) :
         ConditionBase(),
         m_distance(distance),
         m_condition(condition)
@@ -1579,11 +1726,13 @@ struct FO_COMMON_API Condition::WithinDistance : public Condition::ConditionBase
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<double>* m_distance;
-    const ConditionBase*                  m_condition;
+    ValueRef::ValueRefBase<double>* m_distance;
+    ConditionBase*                  m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1595,7 +1744,7 @@ private:
   * down considerably if overused.  It is best to use Conditions that yield
   * relatively few matches. */
 struct FO_COMMON_API Condition::WithinStarlaneJumps : public Condition::ConditionBase {
-    WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition) :
+    WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, ConditionBase* condition) :
         ConditionBase(),
         m_jumps(jumps),
         m_condition(condition)
@@ -1612,11 +1761,13 @@ struct FO_COMMON_API Condition::WithinStarlaneJumps : public Condition::Conditio
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_jumps;
-    const ConditionBase*               m_condition;
+    ValueRef::ValueRefBase<int>* m_jumps;
+    ConditionBase*               m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1630,7 +1781,7 @@ private:
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
 struct FO_COMMON_API Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
-    CanAddStarlaneConnection(const ConditionBase* condition) :
+    CanAddStarlaneConnection(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
     {}
@@ -1646,10 +1797,12 @@ struct FO_COMMON_API Condition::CanAddStarlaneConnection :  Condition::Condition
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ConditionBase*               m_condition;
+    ConditionBase*      m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1659,7 +1812,7 @@ private:
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
 struct FO_COMMON_API Condition::ExploredByEmpire : public Condition::ConditionBase {
-    ExploredByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+    ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
@@ -1675,10 +1828,12 @@ struct FO_COMMON_API Condition::ExploredByEmpire : public Condition::ConditionBa
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>* m_empire_id;
+    ValueRef::ValueRefBase<int>* m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1697,6 +1852,8 @@ struct FO_COMMON_API Condition::Stationary : public Condition::ConditionBase {
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
@@ -1708,7 +1865,7 @@ private:
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
 struct FO_COMMON_API Condition::FleetSupplyableByEmpire : public Condition::ConditionBase {
-    FleetSupplyableByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+    FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
@@ -1724,10 +1881,12 @@ struct FO_COMMON_API Condition::FleetSupplyableByEmpire : public Condition::Cond
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>*  m_empire_id;
+    ValueRef::ValueRefBase<int>*  m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1738,7 +1897,7 @@ private:
   * to at least one object that meets \a condition using the resource-sharing
   * network of the empire with id \a empire_id */
 struct FO_COMMON_API Condition::ResourceSupplyConnectedByEmpire : public Condition::ConditionBase {
-    ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id, const ConditionBase* condition) :
+    ResourceSupplyConnectedByEmpire(ValueRef::ValueRefBase<int>* empire_id, ConditionBase* condition) :
         ConditionBase(),
         m_empire_id(empire_id),
         m_condition(condition)
@@ -1755,11 +1914,13 @@ struct FO_COMMON_API Condition::ResourceSupplyConnectedByEmpire : public Conditi
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<int>*  m_empire_id;
-    const ConditionBase*                m_condition;
+    ValueRef::ValueRefBase<int>*  m_empire_id;
+    ConditionBase*                m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1776,6 +1937,8 @@ struct FO_COMMON_API Condition::CanColonize : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
@@ -1796,6 +1959,8 @@ struct FO_COMMON_API Condition::CanProduceShips : public Condition::ConditionBas
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
@@ -1807,7 +1972,7 @@ private:
 /** Matches the objects that have been targeted for bombardment by at least one
   * object that matches \a m_by_object_condition. */
 struct FO_COMMON_API Condition::OrderedBombarded : public Condition::ConditionBase {
-    OrderedBombarded(const ConditionBase* by_object_condition) :
+    OrderedBombarded(ConditionBase* by_object_condition) :
         ConditionBase(),
         m_by_object_condition(by_object_condition)
     {}
@@ -1823,10 +1988,12 @@ struct FO_COMMON_API Condition::OrderedBombarded : public Condition::ConditionBa
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ConditionBase*    m_by_object_condition;
+    ConditionBase*      m_by_object_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1836,9 +2003,9 @@ private:
 /** Matches all objects if the evaluation of \a value_ref returns a value
   * within the range between \a low and \a high. */
 struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
-    ValueTest(const ValueRef::ValueRefBase<double>* value_ref,
-              const ValueRef::ValueRefBase<double>* low,
-              const ValueRef::ValueRefBase<double>* high) :
+    ValueTest(ValueRef::ValueRefBase<double>* value_ref,
+              ValueRef::ValueRefBase<double>* low,
+              ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
         m_value_ref(value_ref),
         m_low(low),
@@ -1859,12 +2026,14 @@ struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
     const ValueRef::ValueRefBase<double>*  Low() const { return m_low; }
     const ValueRef::ValueRefBase<double>*  High() const { return m_high; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<double>*   m_value_ref;
-    const ValueRef::ValueRefBase<double>*   m_low;
-    const ValueRef::ValueRefBase<double>*   m_high;
+    ValueRef::ValueRefBase<double>* m_value_ref;
+    ValueRef::ValueRefBase<double>* m_low;
+    ValueRef::ValueRefBase<double>* m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1875,8 +2044,8 @@ private:
   * content.  */
 struct FO_COMMON_API Condition::Location : public Condition::ConditionBase {
 public:
-    Location(ContentType content_type, const ValueRef::ValueRefBase<std::string>* name1,
-             const ValueRef::ValueRefBase<std::string>* name2 = 0) :
+    Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
+             ValueRef::ValueRefBase<std::string>* name2 = 0) :
         ConditionBase(),
         m_name1(name1),
         m_name2(name2),
@@ -1896,12 +2065,14 @@ public:
     const ValueRef::ValueRefBase<std::string>*  GetName1() const { return m_name1; }
     const ValueRef::ValueRefBase<std::string>*  GetName2() const { return m_name2; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    const ValueRef::ValueRefBase<std::string>*  m_name1;
-    const ValueRef::ValueRefBase<std::string>*  m_name2;
-    ContentType                                 m_content_type;
+    ValueRef::ValueRefBase<std::string>*    m_name1;
+    ValueRef::ValueRefBase<std::string>*    m_name2;
+    ContentType                             m_content_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1910,7 +2081,7 @@ private:
 
 /** Matches all objects that match every Condition in \a operands. */
 struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
-    And(const std::vector<const ConditionBase*>& operands) :
+    And(const std::vector<ConditionBase*>& operands) :
         ConditionBase(),
         m_operands(operands)
     {}
@@ -1925,12 +2096,14 @@ struct FO_COMMON_API Condition::And : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ConditionBase*>&
+    const std::vector<ConditionBase*>&
                         Operands() const { return m_operands; }
     virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, Condition::ObjectSet& condition_non_targets) const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    std::vector<const ConditionBase*> m_operands;
+    std::vector<ConditionBase*> m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1939,7 +2112,7 @@ private:
 
 /** Matches all objects that match at least one Condition in \a operands. */
 struct FO_COMMON_API Condition::Or : public Condition::ConditionBase {
-    Or(const std::vector<const ConditionBase*>& operands) :
+    Or(const std::vector<ConditionBase*>& operands) :
         ConditionBase(),
         m_operands(operands)
     {}
@@ -1954,11 +2127,13 @@ struct FO_COMMON_API Condition::Or : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::vector<const ConditionBase*>&
+    const std::vector<ConditionBase*>&
                         Operands() const { return m_operands; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    std::vector<const ConditionBase*> m_operands;
+    std::vector<ConditionBase*> m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1967,7 +2142,7 @@ private:
 
 /** Matches all objects that do not match the Condition \a operand. */
 struct FO_COMMON_API Condition::Not : public Condition::ConditionBase {
-    Not(const ConditionBase* operand) :
+    Not(ConditionBase* operand) :
         ConditionBase(),
         m_operand(operand)
     {}
@@ -1984,8 +2159,10 @@ struct FO_COMMON_API Condition::Not : public Condition::ConditionBase {
     virtual std::string Dump() const;
     const ConditionBase*Operand() const { return m_operand; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ConditionBase* m_operand;
+    ConditionBase* m_operand;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1995,7 +2172,7 @@ private:
 /** Matches whatever its subcondition matches, but has a customized description
   * string that is returned by Description() by looking up in the stringtable. */
 struct FO_COMMON_API Condition::Described : public Condition::ConditionBase {
-    Described(const ConditionBase* condition, const std::string& desc_stringtable_key) :
+    Described(ConditionBase* condition, const std::string& desc_stringtable_key) :
         ConditionBase(),
         m_condition(condition),
         m_desc_stringtable_key(desc_stringtable_key)
@@ -2006,17 +2183,19 @@ struct FO_COMMON_API Condition::Described : public Condition::ConditionBase {
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const  { return m_condition ? m_condition->RootCandidateInvariant() : true; }
-    virtual bool        TargetInvariant() const         { return m_condition ? m_condition->TargetInvariant() : true; }
-    virtual bool        SourceInvariant() const         { return m_condition ? m_condition->SourceInvariant() : true; }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const                    { return m_condition ? m_condition->Dump() : ""; }
     const ConditionBase*SubCondition() const            { return m_condition; }
     const std::string&  DescriptionStringKey() const    { return m_desc_stringtable_key; }
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ConditionBase*    m_condition;
-    std::string             m_desc_stringtable_key;
+    ConditionBase*  m_condition;
+    std::string     m_desc_stringtable_key;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2117,6 +2296,8 @@ void Condition::HasSpecial::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_capacity_low)
+        & BOOST_SERIALIZATION_NVP(m_capacity_high)
         & BOOST_SERIALIZATION_NVP(m_since_turn_low)
         & BOOST_SERIALIZATION_NVP(m_since_turn_high);
 }
