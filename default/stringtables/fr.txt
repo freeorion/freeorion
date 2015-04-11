@@ -376,27 +376,27 @@ Monstre
 SM_KRILL_1
 Petit Essaim de Krill
 SM_KRILL_1_DESC
-'''Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.'''
+Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_2
 Essaim de Krill Moyen
 SM_KRILL_2_DESC
-'''Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.'''
+Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_3
 Grand Essaim de Krill
 SM_KRILL_3_DESC
-'''Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.'''
+Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_4
 Fléau Krill
 SM_KRILL_4_DESC
-'''Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Le comportements du krill change radicalement lorsqu'une population critique est atteinte (quelques dizaines de millions). Le krill spatial, d'ordinaire pacifique, devient alors agressif, attaque les astronefs et détruit les structures orbitales. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.'''
+Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Le comportements du krill change radicalement lorsqu'une population critique est atteinte (quelques dizaines de millions). Le krill spatial, d'ordinaire pacifique, devient alors agressif, attaque les astronefs et détruit les structures orbitales. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_TREE
 Forêt Dyson
 SM_TREE_DESC
-'''Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Par intervalles, ces forêts relâchent des graines le long des Voies spatiales pour coloniser d'autres étoiles.'''
+Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Par intervalles, ces forêts relâchent des graines le long des Voies spatiales pour coloniser d'autres étoiles.
 
 SM_SEED
 Graine Dyson
@@ -546,7 +546,7 @@ Se nourrit de minéraux. La coquille de l'Astergot ressemblant à s'y méprendre
 SM_DAMPENING_CLOUD
 Nuage Siphonnant
 SM_DAMPENING_CLOUD_DESC
-'''Un nuage cosmique de particules à haute énergie qui a développé une forme de sensibilité. Irrésistiblement attiré par les plus grandes réserves d'énergie potentielle dont il se nourrit, une flotte entière d'astronefs peut tomber en panne de carburant en quelques secondes.'''
+Un nuage cosmique de particules à haute énergie qui a développé une forme de sensibilité. Irrésistiblement attiré par les plus grandes réserves d'énergie potentielle dont il se nourrit, une flotte entière d'astronefs peut tomber en panne de carburant en quelques secondes.
 
 SM_ACIREMA_GUARD
 Astrogarde Acirema
@@ -690,10 +690,10 @@ Les événements de tour scriptés contiennent des erreurs. Consultez le fichier
 ######################################
 
 COMMAND_LINE_USAGE
-Usage : 
+'''Usage : '''
 
 COMMAND_LINE_DEFAULT
-Défaut : 
+'''Défaut : '''
 
 OPTIONS_DB_HELP
 Affiche ce message d'aide.
@@ -1103,13 +1103,13 @@ OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 Le niveau maximal d'agressivité des adversaires gérés par l'ordinateur.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
-'''Le nom de votre empire dans le jeu.'''
+Le nom de votre empire dans le jeu.
 
 OPTIONS_DB_GAMESETUP_PLAYER_NAME
-'''Le nom de joueur qui vous désigne dans une partie solo.'''
+Le nom de joueur qui vous désigne dans une partie solo.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
-'''La couleur de votre empire dans le jeu.'''
+La couleur de votre empire dans le jeu.
 
 OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
 '''L'espèce qui habite votre planète d'origine et qui fondera votre empire.
@@ -1278,7 +1278,7 @@ A
 #Window title####
 
 INTRO_WINDOW_TITLE
-           Menu principal
+'''           Menu principal'''
 
 #Button names####
 
@@ -1309,7 +1309,7 @@ ERR_CONNECT_TIMED_OUT
 Délai de connexion au serveur dépassé.
 
 ERR_VERSION_MISMATCH
-Connexion au serveur impossible, ce client utilise une version différente des paramètres et/ou fichiers suivants: 
+'''Connexion au serveur impossible, ce client utilise une version différente des paramètres et/ou fichiers suivants: '''
 
 ########################
 # Server Setup Screen  #
@@ -2267,7 +2267,7 @@ TT_CHANGE
 Évolution
 
 TT_BREAKDOWN_SUMMARY
-%1% : %2% 
+'''%1% : %2% '''
 
 TT_TARGETS_BREAKDOWN_SUMMARY
 %1% Modifications : %2%
@@ -2358,7 +2358,7 @@ FW_AUTO_DESC
 Attribe automatiquement un comportement belliqueux à toute nouvelle flotte si celle-ci est équipée d'armes.
 
 FW_SHIP_CLASS
-Classe d'astronef 
+'''Classe d'astronef '''
 
 FW_UNKNOWN_DESIGN_NAME
 Conception inconnue
@@ -2582,7 +2582,7 @@ TECH_WND_ENQUEUED
 En file d'attente
 
 TECH_WND_UNRESEARCHED_PREREQUISITES
-Prérequis non acquis : 
+'''Prérequis non acquis : '''
 
 TECH_WND_LIST_VIEW
 Vue en liste
@@ -2905,7 +2905,7 @@ ENC_SPECIAL
 Particularité planétaire et spatiale
 
 OBJECTS_WITH_SPECIAL
-Objets à Particularité : 
+'''Objets à Particularité : '''
 
 ENC_BUILDING_TYPE
 Type de structures
@@ -2920,7 +2920,7 @@ ENC_SHIP_DESIGN
 Astronef - Modèle
 
 SHIPS_OF_DESIGN
-Astronefs de ce modèle : 
+'''Astronefs de ce modèle : '''
 
 NO_SHIPS_OF_DESIGN
 Aucun astronef connu de ce modèle
@@ -2932,7 +2932,7 @@ ENC_EMPIRE
 [Partie - Empires]
 
 EMPIRE_CAPITAL
-Capitale : 
+'''Capitale : '''
 
 NO_CAPITAL
 Capitale non localisée
@@ -2941,13 +2941,13 @@ EMPIRE_METERS
 Indicateurs :
 
 OWNED_PLANETS
-Planètes impériales : 
+'''Planètes impériales : '''
 
 NO_OWNED_PLANETS_KNOWN
 Aucune planète impériale connue
 
 OWNED_FLEETS
-Flottes impériales : 
+'''Flottes impériales : '''
 
 OWNED_FLEET_AT_SYSTEM
 %1% dans %2%
@@ -3010,7 +3010,7 @@ MONSTER_TYPES
 Type de monstres
 
 MONSTER_OBJECTS
-Monstres : 
+'''Monstres : '''
 
 NO_MONSTER_OBJECTS
 Aucun monstre connu
@@ -3219,13 +3219,13 @@ COMBAT_SUMMARY_PARTICIPANT_RELATIVE
 Barres:Relatives
 
 COMBAT_SUMMARY_PARTICIPANT_RELATIVE_TIP
-'''Les largeurs des barres sont relatives à la santé.'''
+Les largeurs des barres sont relatives à la santé.
 
 COMBAT_SUMMARY_PARTICIPANT_EQUAL
 Barres:Égales
 
 COMBAT_SUMMARY_PARTICIPANT_EQUAL_TIP
-'''Les largeurs des barres sont égales. Cliquez ici pour un mode plus excitant!'''
+Les largeurs des barres sont égales. Cliquez ici pour un mode plus excitant!
 
 OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_WIDTH_PROPORTIONAL
 Si activé, les barres des combattants seront adaptées horizontalement pour être proportionnelles à la santé.
@@ -3234,13 +3234,13 @@ COMBAT_SUMMARY_HEALTH_SMOOTH
 Santé:Précise
 
 COMBAT_SUMMARY_HEALTH_SMOOTH_TIP
-'''La santé d'un astronef est représentée via une interpolation précise'''
+La santé d'un astronef est représentée via une interpolation précise
 
 COMBAT_SUMMARY_HEALTH_BAR
 Santé:Barre
 
 COMBAT_SUMMARY_HEALTH_BAR_TIP
-'''La santé d'un astronef est représentée par une barre bicolore'''
+La santé d'un astronef est représentée par une barre bicolore
 
 OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
 Si activé, la couleur des barres des combattants sera interpolée précisément selon le pourcentage restant de santé.
@@ -3343,7 +3343,7 @@ La paix est le rapport diplomatique entre empires ayant convenu de ne pas attaqu
 OUTPOSTS_TITLE
 Avant-postes
 OUTPOSTS_TEXT
-'''Les Avant-postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-poste. Pour construire un Avant-poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.'''
+Les Avant-postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-poste. Pour construire un Avant-poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.
 
 GROWTH_FOCUS_TITLE
 Focus Croissance
@@ -3359,18 +3359,18 @@ Lorsqu'elles privilégient la Croissance, les colonies installées sur des plan�
 MINING_FOCUS_TITLE
 Focus Extraction minière
 MINING_FOCUS_TEXT
-'''Option pour le moment désactivée.'''
+Option pour le moment désactivée.
 #The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TITLE
 Focus Commerce
 TRADE_FOCUS_TEXT
-'''Le Commerce est encore sans effet. Il s'agit juste d'un espace réservé indiquant que d'autres ressources sont prévues.'''
+Le Commerce est encore sans effet. Il s'agit juste d'un espace réservé indiquant que d'autres ressources sont prévues.
 
 PROTECTION_FOCUS_TITLE
 Focus Protection
 PROTECTION_FOCUS_TEXT
-'''Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[encyclopedia TROOP_TITLE]], sa capacité de [[encyclopedia DEFENSE_TITLE]], et la résistance de ses [[encyclopedia SHIELDS_TITLE]] sont par conséquent doublés.'''
+Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[encyclopedia TROOP_TITLE]], sa capacité de [[encyclopedia DEFENSE_TITLE]], et la résistance de ses [[encyclopedia SHIELDS_TITLE]] sont par conséquent doublés.
 
 INDUSTRY_TITLE
 Industrie
@@ -3394,15 +3394,15 @@ Les points de recherche sont affectés aux technologies à acquérir selon leur 
 HAPPINESS_TITLE
 Bonheur
 HAPPINESS_TEXT
-'''Le Bonheur est pour le moment sans effet.'''
+Le Bonheur est pour le moment sans effet.
 
 INFRASTRUCTURE_TEXT
-'''L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc.'''
+L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc.
 
 DEFENSE_TITLE
 Défense
 DEFENSE_TEXT
-'''L'indicateur 'Défense' d'une planète représente la puissance de feu (mesurée par l'ampleur des dégâts qu'elle cause) de l'ensemble des armes sol/air installées. Il est comparable à l'indicateur 'Dommages' des astronefs.'''
+L'indicateur 'Défense' d'une planète représente la puissance de feu (mesurée par l'ampleur des dégâts qu'elle cause) de l'ensemble des armes sol/air installées. Il est comparable à l'indicateur 'Dommages' des astronefs.
 
 SHIELDS_TITLE
 Boucliers
@@ -3446,17 +3446,17 @@ L'indicateur 'Infanterie' d'une planète représente la puissance des troupes te
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
 ORGANIC_SPECIES_TEXT
-'''Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.'''
+Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
 
 LITHIC_SPECIES_TITLE
 Métabolisme Lithique
 LITHIC_SPECIES_TEXT
-'''Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.'''
+Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
 
 ROBOTIC_SPECIES_TITLE
 Métabolisme Robotique
 ROBOTIC_SPECIES_TEXT
-'''Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.'''
+Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Métabolisme Phototropique
@@ -3473,12 +3473,12 @@ Influence sur la population / taille planète:
 SELF_SUSTAINING_SPECIES_TITLE
 Métabolisme Autosuffisant
 SELF_SUSTAINING_SPECIES_TEXT
-'''Les espèces autosuffisantes sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément des trois Particularités de Croissance.'''
+Les espèces autosuffisantes sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément des trois Particularités de Croissance.
 
 TELEPATHIC_TITLE
 Télépathie
 TELEPATHY_TEXT
-'''Les espèces télépathiques sont immunisées contre le contrôle de l'esprit, ce qui les rend beaucoup plus performantes en Recherche [[tech LRN_PSIONICS]].'''
+Les espèces télépathiques sont immunisées contre le contrôle de l'esprit, ce qui les rend beaucoup plus performantes en Recherche [[tech LRN_PSIONICS]].
 
 XENOPHOBIC_SPECIES_TITLE
 Xénophobe
@@ -3490,7 +3490,7 @@ Les espèces xénophobes commencent avec les [[tech CON_CONC_CAMP]] disponibles.
 FUEL_TITLE
 Carburant
 FUEL_TEXT
-'''Le carburant permet aux astronefs de parcourir les Voies spatiales. C'est seulement lors de son entrée sur une Voie spatiale qu'un astronef brûle du carburant (une unité). À aucun autre moment de son trajet sur la Voie spatiale parcourue, il n'est consommé de carburant. Les lignes d'[[encyclopedia SUPPLY_TITLE]] permettent de refaire le plein en carburant des astronefs. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant si et seulement si cet astronef se trouve en dehors des Voies spatiales (stationné dans un système stellaire ou dans l'espace intersidéral).'''
+Le carburant permet aux astronefs de parcourir les Voies spatiales. C'est seulement lors de son entrée sur une Voie spatiale qu'un astronef brûle du carburant (une unité). À aucun autre moment de son trajet sur la Voie spatiale parcourue, il n'est consommé de carburant. Les lignes d'[[encyclopedia SUPPLY_TITLE]] permettent de refaire le plein en carburant des astronefs. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant si et seulement si cet astronef se trouve en dehors des Voies spatiales (stationné dans un système stellaire ou dans l'espace intersidéral).
 
 SUPPLY_TITLE
 Approvisionnement
@@ -3502,7 +3502,7 @@ L'indicateur 'Approvisionnement' d'une planète représente le nombre de Voies s
 FLEET_UPKEEP_TITLE
 Entretien des flottes
 FLEET_UPKEEP_TEXT
-'''Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et de toutes les structures de colonisation augmentent quant à eux de 6% pour chaque planète que l'empire possède.'''
+Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et de toutes les structures de colonisation augmentent quant à eux de 6% pour chaque planète que l'empire possède.
 
 EVACUATION_TITLE
 Évacuation
@@ -3540,10 +3540,10 @@ Maniaque:
 STRUCTURE_TITLE
 Résistance
 STRUCTURE_TEXT
-'''La Résistance indique la quantité de dommages qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation.'''
+La Résistance indique la quantité de dommages qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation.
 
 STARLANE_SPEED_TEXT
-'''Vitesse sur la carte galactique  (uu/tour)'''
+Vitesse sur la carte galactique  (uu/tour)
 
 # Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 
@@ -3555,7 +3555,7 @@ COMBAT_WINDOW_TITLE
 Fenêtre de Combat
 
 COMBAT_BATTLE
-BATAILLE : 
+'''BATAILLE : '''
 
 COMBAT_SYSTEM
 Le système %1%
@@ -3570,19 +3570,19 @@ COMBAT_PLANETS
 Planètes
 
 COMBAT_REMAINING
- Restant
+''' Restant'''
 
 COMBAT_RETREATED
- En retraite
+''' En retraite'''
 
 COMBAT_DESTROYED
- Détruit
+''' Détruit'''
 
 COMBAT_DEFENSELESS
- Sans défense
+''' Sans défense'''
 
 COMBAT_LOST
- Perdu!
+''' Perdu!'''
 
 ####################
 # TurnProgress     #
@@ -4049,7 +4049,7 @@ SITREP_VICTORY_DESTRUCTION_LABEL
 Victoire par Éradication
 
 SITREP_VICTORY_CAPTURE
-Victoire! Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, sont désormais sous votre contrôle. Vous pouvez continuer la partie si vous le désirez. 
+'''Victoire! Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, sont désormais sous votre contrôle. Vous pouvez continuer la partie si vous le désirez. '''
 SITREP_VICTORY_CAPTURE_LABEL
 Victoire par Capture
 
@@ -4248,7 +4248,7 @@ ENVIRONMENTAL_PREFERENCES
 Adaptabilité environnementale :
 
 FOCUS_PREFERENCE
-Focus favori : 
+'''Focus favori : '''
 
 ### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
@@ -5096,7 +5096,7 @@ SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''
 
 SP_EXPERIMENTOR_DESC
-'''Les Expérimentateurs appartiennent à une ancienne race précurseur, dont l'existence est dévouée à la recherche du savoir. Leur désir de découverte est sans égal, et ils n'ont aucun scrupule à considérer une galaxie entière comme un laboratoire pour leurs expériences.'''
+Les Expérimentateurs appartiennent à une ancienne race précurseur, dont l'existence est dévouée à la recherche du savoir. Leur désir de découverte est sans égal, et ils n'ont aucun scrupule à considérer une galaxie entière comme un laboratoire pour leurs expériences.
 
 SP_SUPER_TEST
 Super Testeurs
@@ -5257,7 +5257,7 @@ Cette planète abrite des monstres fouisseurs évoluant autour de son coeur, ce 
 VOLCANIC_ACTIVITY_SPECIAL
 Volcanisme Intense
 VOLCANIC_ACTIVITY_SPECIAL_DESC
-'''La planète est soumise à une intense activité volcanique, ce qui peut éventuellement obscurcir sa surface.'''
+La planète est soumise à une intense activité volcanique, ce qui peut éventuellement obscurcir sa surface.
 
 VOLCANIC_ASH_SLAVE_SPECIAL
 Cendres Volcaniques
@@ -5275,7 +5275,7 @@ DIM_RIFT_SLAVE_SPECIAL_DESC
 Cette planète est partiellement dissimulée dans une faille dimensionnelle, ce qui accroît de 60 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que le [[tech SPY_STEALTH_3]].
 
 VOID_MASTER_SPECIAL
-Monstres du Vide 
+'''Monstres du Vide '''
 VOID_MASTER_SPECIAL_DESC
 Des monstres évoluant au coeur de la planète l'entraînent dans le Vide. Une catastrophe imminente pourrait peut-être découler de cette Particularité.
 
@@ -5625,31 +5625,31 @@ METER_SIZE
 Taille
 
 ALIGN_MILITARISM
-Militarisme 
+'''Militarisme '''
 
 ALIGN_MILITARY_STRENGTH_DESC
-Grandeur et puissance des forces militaires 
+'''Grandeur et puissance des forces militaires '''
 
 ALIGN_SOCIAL_CONTROL
-Contrôle social 
+'''Contrôle social '''
 
 ALIGN_SOCIAL_CONTROL_DESC
 Degré auquel une population est surveillée, contrôlée et manipulée.
 
 ALIGN_ENVIRONMENT_MODIFICATION
-Modification de l'environnement 
+'''Modification de l'environnement '''
 
 ALIGN_ENVIRONMENT_MODIFICATION_DESC
 Usage de la terraformation ou autres actions environnementales à grande échelle.
 
 ALIGN_BIOLOGICAL_ALTERATION
-Modification biologique 
+'''Modification biologique '''
 
 ALIGN_BIOLOGICAL_ALTERATION_DESC
 Usage de la modification et de l'ingéniérie biologique.
 
 ALIGN_MECHANIZATION
-Mécanisation 
+'''Mécanisation '''
 
 ALIGN_MECHANIZATION_DESC
 Usage de sens artificiels et de l'automatisation
@@ -6084,421 +6084,421 @@ Crée un nouveau système
 # Conditions
 
 DESC_ALL
- dans l'univers
+''' dans l'univers'''
 
 DESC_ALL_NOT
- absent de l'univers
+''' absent de l'univers'''
 
 DESC_EMPIRE_AFFILIATION_SELF
- appartenant à l'empire %1%
+''' appartenant à l'empire %1%'''
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- n'appartenant pas à l'empire %1%
+''' n'appartenant pas à l'empire %1%'''
 
 DESC_EMPIRE_AFFILIATION
- appartenant à un %1% de l'empire %2%
+''' appartenant à un %1% de l'empire %2%'''
 
 DESC_EMPIRE_AFFILIATION_NOT
- n'appartenant pas à un %1% de l'empire %2%
+''' n'appartenant pas à un %1% de l'empire %2%'''
 
 DESC_EMPIRE_AFFILIATION_ANY
- appartenant à n'importe quel empire
+''' appartenant à n'importe quel empire'''
 
 DESC_EMPIRE_AFFILIATION_ANY_NOT
- n'appartenant à aucun empire
+''' n'appartenant à aucun empire'''
 
 DESC_SOURCE
- qui est l'objet source
+''' qui est l'objet source'''
 
 DESC_SOURCE_NOT
- qui n'est pas l'objet source
+''' qui n'est pas l'objet source'''
 
 DESC_ROOT_CANDIDATE
- qui est l'objet d'origine candidat
+''' qui est l'objet d'origine candidat'''
 
 DESC_ROOT_CANDIDATE_NOT
- qui n'est pas l'objet d'origine candidat
+''' qui n'est pas l'objet d'origine candidat'''
 
 DESC_TARGET
- qui est l'objet cible
+''' qui est l'objet cible'''
 
 DESC_TARGET_NOT
- qui n'est pas l'objet cible
+''' qui n'est pas l'objet cible'''
 
 DESC_HOMEWORLD
- qui est le Monde natal de l'espèce %1%
+''' qui est le Monde natal de l'espèce %1%'''
 
 DESC_HOMEWORLD_NOT
- qui n'est pas le Monde natal de l'espèce %1%
+''' qui n'est pas le Monde natal de l'espèce %1%'''
 
 DESC_CAPITAL
- qui est capitale d'empire
+''' qui est capitale d'empire'''
 
 DESC_CAPITAL_NOT
- qui n'est pas capitale d'empire
+''' qui n'est pas capitale d'empire'''
 
 DESC_MONSTER
- qui est un monstre de l'espace
+''' qui est un monstre de l'espace'''
 
 DESC_MONSTER_NOT
- qui n'est pas un monstre de l'espace
+''' qui n'est pas un monstre de l'espace'''
 
 DESC_ARMED
- qui est un astronef armé
+''' qui est un astronef armé'''
 
 DESC_ARMED_NOT
- qui n'est pas un astronef armé
+''' qui n'est pas un astronef armé'''
 
 DESC_TYPE
- qui est un(e) %1%
+''' qui est un(e) %1%'''
 
 DESC_TYPE_NOT
- qui n'est pas un(e) %1%
+''' qui n'est pas un(e) %1%'''
 
 DESC_BUILDING
- étant une structure %1%
+''' étant une structure %1%'''
 
 DESC_BUILDING_NOT
- n'étant pas une structure %1%
+''' n'étant pas une structure %1%'''
 
 DESC_SPECIAL
- qui présente la Particularité %1%
+''' qui présente la Particularité %1%'''
 
 DESC_SPECIAL_NOT
- qui ne présente pas la Particularité %1%
+''' qui ne présente pas la Particularité %1%'''
 
 DESC_SPECIAL_TURN_RANGE
- qui présente une Particularité %1% depuis l'entre-tour %2%-%3%
+''' qui présente une Particularité %1% depuis l'entre-tour %2%-%3%'''
 
 DESC_SPECIAL_TURN_RANGE_NOT
- qui ne présente pas une Particularité %1% depuis l'entre-tour %2%-%3%
+''' qui ne présente pas une Particularité %1% depuis l'entre-tour %2%-%3%'''
 
 DESC_CREATED_ON_TURN
- qui a été créé entre les tours %1% et %2%
+''' qui a été créé entre les tours %1% et %2%'''
 
 DESC_CREATED_ON_TURN_NOT
- qui n'a pas été créé entre les tours %1% et %2%
+''' qui n'a pas été créé entre les tours %1% et %2%'''
 
 DESC_CONTAINS
- qui contient un objet%1%
+''' qui contient un objet%1%'''
 
 DESC_CONTAINS_NOT
- qui ne contient pas un objet%1%
+''' qui ne contient pas un objet%1%'''
 
 DESC_PLANET_TYPE
- qui est un astre de type %1%
+''' qui est un astre de type %1%'''
 
 DESC_PLANET_TYPE_NOT
- qui n'est pas un astre de type %1%
+''' qui n'est pas un astre de type %1%'''
 
 DESC_PLANET_SIZE
- qui est une planète %1%
+''' qui est une planète %1%'''
 
 DESC_PLANET_SIZE_NOT
- qui n'est pas une planète %1%
+''' qui n'est pas une planète %1%'''
 
 DESC_PLANET_ENVIRONMENT
- qui est une planète %1% pour l'espèce %2%
+''' qui est une planète %1% pour l'espèce %2%'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- qui n'est pas une planète %1% pour l'espèce %2%
+''' qui n'est pas une planète %1% pour l'espèce %2%'''
 
 DESC_PLANET_ENVIRONMENT_CUR_SPECIES
 qui y habite
 
 DESC_SPECIES
- qui héberge l'espèce %1%
+''' qui héberge l'espèce %1%'''
 
 DESC_SPECIES_NOT
- qui n'heberge pas l'espèce %1%
+''' qui n'heberge pas l'espèce %1%'''
 
 DESC_ENQUEUED
- où l'empire %1% a entre %2% et %3% projets dans la file d'attente de production
+''' où l'empire %1% a entre %2% et %3% projets dans la file d'attente de production'''
  
 DESC_ENQUEUED_NOT
- où l'empire %1% n'a pas entre %2% et %3% projets dans la file d'attente de production
+''' où l'empire %1% n'a pas entre %2% et %3% projets dans la file d'attente de production'''
  
 DESC_ENQUEUED_BUILDING
- où l'empire %1% a entre %2% et %3% structures %4% dans la file d'attente de production
+''' où l'empire %1% a entre %2% et %3% structures %4% dans la file d'attente de production'''
  
 DESC_ENQUEUED_BUILDING_NOT
- où l'empire %1% n'a pas entre %2% et %3% structures %4% dans la file d'attente de production
+''' où l'empire %1% n'a pas entre %2% et %3% structures %4% dans la file d'attente de production'''
  
 DESC_ENQUEUED_DESIGN
- où l'empire %1% a entre %2% et %3% %4% astronefs dans la file d'attente de production
+''' où l'empire %1% a entre %2% et %3% %4% astronefs dans la file d'attente de production'''
 
 DESC_ENQUEUED_DESIGN_NOT
- où l'empire %1% n'a pas entre %2% et %3% %4% astronefs dans la file d'attente de production
+''' où l'empire %1% n'a pas entre %2% et %3% %4% astronefs dans la file d'attente de production'''
 
 DESC_FOCUS_TYPE
- qui a un focus sur %1%
+''' qui a un focus sur %1%'''
 
 DESC_FOCUS_TYPE_NOT
- qui n'a pas un focus sur %1%
+''' qui n'a pas un focus sur %1%'''
 
 DESC_STAR_TYPE
- qui est un système avec un astre de type %1% 
+''' qui est un système avec un astre de type %1% '''
 
 DESC_STAR_TYPE_NOT
- qui n'est pas un système avec un astre de type %1%
+''' qui n'est pas un système avec un astre de type %1%'''
 
 DESC_DESIGN_HAS_HULL
- qui contient la coque %1%
+''' qui contient la coque %1%'''
 
 DESC_DESIGN_HAS_HULL_NOT
- qui ne contient pas la coque %1%
+''' qui ne contient pas la coque %1%'''
 
 DESC_DESIGN_HAS_PART
- qui contient entre %1% et %2% exemplaires de l'équipement %3%
+''' qui contient entre %1% et %2% exemplaires de l'équipement %3%'''
 
 DESC_DESIGN_HAS_PART_NOT
- qui ne contient pas entre %1% et %2% exemplaires de l'équipement %3%
+''' qui ne contient pas entre %1% et %2% exemplaires de l'équipement %3%'''
 
 DESC_DESIGN_HAS_PART_CLASS
- qui possède un équipement de classe %1%
+''' qui possède un équipement de classe %1%'''
 
 DESC_DESIGN_HAS_PART_CLASS_NOT
- qui ne possède pas d'équipement de classe %1%
+''' qui ne possède pas d'équipement de classe %1%'''
 
 DESC_PREDEFINED_SHIP_DESIGN
- qui est du modèle %1%
+''' qui est du modèle %1%'''
 
 DESC_PREDEFINED_SHIP_DESIGN_NOT
- qui n'est pas du modèle %1%
+''' qui n'est pas du modèle %1%'''
 
 DESC_NUMBERED_SHIP_DESIGN
- qui est du modèle %1%
+''' qui est du modèle %1%'''
 
 DESC_NUMBERED_SHIP_DESIGN_NOT
- qui n'est pas du modèle %1%
+''' qui n'est pas du modèle %1%'''
 
 DESC_CHANCE_PERCENTAGE
- qui a %1%%% chance
+''' qui a %1%%% chance'''
 
 DESC_CHANCE_PERCENTAGE_NOT
- qui a (100 - %1%)%% chance
+''' qui a (100 - %1%)%% chance'''
 
 DESC_CHANCE
- avec une probabilité de %1%
+''' avec une probabilité de %1%'''
 
 DESC_CHANCE_NOT
- avec une probabilité de 1 - %1%
+''' avec une probabilité de 1 - %1%'''
 
 DESC_PRODUCED_BY_EMPIRE
- qui a été produit par l'empire %1%
+''' qui a été produit par l'empire %1%'''
 
 DESC_PRODUCED_BY_EMPIRE_NOT
- qui n'a pas pas été produit par l'empire %1%
+''' qui n'a pas pas été produit par l'empire %1%'''
 
 DESC_METER_VALUE_CURRENT
- qui a un indicateur %1% compris entre %2% et %3%
+''' qui a un indicateur %1% compris entre %2% et %3%'''
 
 DESC_METER_VALUE_CURRENT_NOT
- qui n'a pas un indicateur %1% compris entre %2% et %3%
+''' qui n'a pas un indicateur %1% compris entre %2% et %3%'''
 
 DESC_SHIP_PART_METER_VALUE_CURRENT
- qui a un(e) %2% %1% compris(e) entre %3% et %4%
+''' qui a un(e) %2% %1% compris(e) entre %3% et %4%'''
 
 DESC_SHIP_PART_METER_VALUE_CURRENT_NOT
- qui n'a pas un(e) %2% %1% compris(e) entre %3% et %4%
+''' qui n'a pas un(e) %2% %1% compris(e) entre %3% et %4%'''
 
 DESC_EMPIRE_METER_VALUE_CURRENT
- si l'empire %4% a un(e) %1% compris(e) entre %2% et %3%
+''' si l'empire %4% a un(e) %1% compris(e) entre %2% et %3%'''
 
 DESC_EMPIRE_METER_VALUE_CURRENT_NOT
- si l'empire %4% n'a pas un(e) %1% compris(e) entre %2% et %3%
+''' si l'empire %4% n'a pas un(e) %1% compris(e) entre %2% et %3%'''
 
 DESC_EMPIRE_STOCKPILE_VALUE
- qui appartient à un empire possédant un stock de %1% entre %2% and %3%
+''' qui appartient à un empire possédant un stock de %1% entre %2% and %3%'''
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
- qui n'appartient pas à un empire possédant un stock de %1% entre %2% and %3%
+''' qui n'appartient pas à un empire possédant un stock de %1% entre %2% and %3%'''
 
 DESC_VISIBLE_TO_EMPIRE
- qui est visible par l'empire %1%
+''' qui est visible par l'empire %1%'''
 
 DESC_VISIBLE_TO_EMPIRE_NOT
- qui n'est pas visible par l'empire %1%
+''' qui n'est pas visible par l'empire %1%'''
 
 DESC_WITHIN_DISTANCE
- qui est à moins de %1% de tout objet%2%
+''' qui est à moins de %1% de tout objet%2%'''
 
 DESC_WITHIN_DISTANCE_NOT
- qui n'est pas à moins de %1% de tout objet%2%
+''' qui n'est pas à moins de %1% de tout objet%2%'''
 
 DESC_WITHIN_STARLANE_JUMPS
- qui est à moins de %1% sauts hyperspatiaux de tout objet%2%
+''' qui est à moins de %1% sauts hyperspatiaux de tout objet%2%'''
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
- qui est à plus de %1% sauts hyperspatiaux de tout objet%2%
+''' qui est à plus de %1% sauts hyperspatiaux de tout objet%2%'''
 
 DESC_CAN_ADD_STARLANE_CONNECTION
- auquel on peut ajouter des voies spatiales vers tous les systèmes contenant des objets%1%
+''' auquel on peut ajouter des voies spatiales vers tous les systèmes contenant des objets%1%'''
 
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
- auquel on ne peut ajouter des voies spatiales vers tous les systèmes contenant des objets%1%
+''' auquel on ne peut ajouter des voies spatiales vers tous les systèmes contenant des objets%1%'''
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION
- auquel on peut ôter des voies spatiales vers tous les systèmes contenant des objets%1%
+''' auquel on peut ôter des voies spatiales vers tous les systèmes contenant des objets%1%'''
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
- auquel on ne peut ôter des voies spatiales vers tous les systèmes contenant des objets%1%
+''' auquel on ne peut ôter des voies spatiales vers tous les systèmes contenant des objets%1%'''
 
 DESC_EXPLORED_BY_EMPIRE
- qui a été exploré par l'empire %1%
+''' qui a été exploré par l'empire %1%'''
 
 DESC_EXPLORED_BY_EMPIRE_NOT
- qui n'a pas été exploré par l'empire %1%
+''' qui n'a pas été exploré par l'empire %1%'''
 
 DESC_STATIONARY
- qui est stationnaire
+''' qui est stationnaire'''
 
 DESC_STATIONARY_NOT
- qui est en mouvement
+''' qui est en mouvement'''
 
 DESC_CAN_COLONIZE
- avec une espèce pouvant coloniser
+''' avec une espèce pouvant coloniser'''
 
 DESC_CAN_COLONIZE_NOT
- avec une espèce ne pouvant pas coloniser
+''' avec une espèce ne pouvant pas coloniser'''
 
 DESC_CAN_PRODUCE_SHIPS
- avec une espèce pouvant produire des astronefs
+''' avec une espèce pouvant produire des astronefs'''
 
 DESC_CAN_PRODUCE_SHIPS_NOT
- avec une espèce ne pouvant produire d'astronefs
+''' avec une espèce ne pouvant produire d'astronefs'''
  
 DESC_SUPPLY_CONNECTED_FLEET
- qui est dans un sytème où l'empire %1% peut l'approvisionner
+''' qui est dans un sytème où l'empire %1% peut l'approvisionner'''
 
 DESC_SUPPLY_CONNECTED_FLEET_NOT
- qui est dans un sytème où l'empire %1% ne peut l'approvisionner
+''' qui est dans un sytème où l'empire %1% ne peut l'approvisionner'''
 
 DESC_SUPPLY_CONNECTED_RESOURCE
- qui est connecté, pour l'empire %1%, à un objet%2%
+''' qui est connecté, pour l'empire %1%, à un objet%2%'''
 
 DESC_SUPPLY_CONNECTED_RESOURCE_NOT
- qui n'est pas connecté, pour l'empire %1%, à un objet%2%
+''' qui n'est pas connecté, pour l'empire %1%, à un objet%2%'''
 
 DESC_ORDERED_BOMBARDED
- qui est bombardé par un objet %1%
+''' qui est bombardé par un objet %1%'''
 
 DESC_ORDERED_BOMBARDED_NOT
- qui n'est pas bombardé par un objet %1%
+''' qui n'est pas bombardé par un objet %1%'''
 
 DESC_AND_BETWEEN_OPERANDS
- et
+''' et'''
 
 DESC_OR_BETWEEN_OPERANDS
- ou
+''' ou'''
 
 DESC_TURN
- dans l'intervalle entre les tours %1% et %2%
+''' dans l'intervalle entre les tours %1% et %2%'''
 
 DESC_TURN_NOT
- hors de l'intervalle entre les tours %1% et %2%
+''' hors de l'intervalle entre les tours %1% et %2%'''
 
 DESC_TURN_MIN_ONLY
- démarrant au tour %1%
+''' démarrant au tour %1%'''
 
 DESC_TURN_MIN_ONLY_NOT
- avant le tour %1%
+''' avant le tour %1%'''
 
 DESC_TURN_MAX_ONLY
- jusqu'au tour %1%
+''' jusqu'au tour %1%'''
 
 DESC_TURN_MAX_ONLY_NOT
- après le tour %1%
+''' après le tour %1%'''
 
 DESC_TURN_ANY
- durant un tour quelconque
+''' durant un tour quelconque'''
 
 DESC_TURN_ANY_NOT
- durant aucun tour
+''' durant aucun tour'''
 
 DESC_NUMBER_OF
- qui est un des %1% objets%2% choisis au hasard
+''' qui est un des %1% objets%2% choisis au hasard'''
 
 DESC_NUMBER_OF_NOT
- qui n'est pas un des %1% objets%2% choisis au hasard
+''' qui n'est pas un des %1% objets%2% choisis au hasard'''
 
 DESC_MAX_NUMBER_OF
- qui est un des objets %1% ayant la plus grande valeur de%2% et de%3%
+''' qui est un des objets %1% ayant la plus grande valeur de%2% et de%3%'''
 
 DESC_MAX_NUMBER_OF_NOT
- qui n'est pas un des objets %1% ayant la plus grande valeur de%2% et de%3%
+''' qui n'est pas un des objets %1% ayant la plus grande valeur de%2% et de%3%'''
 
 DESC_MIN_NUMBER_OF
- qui est un des objets %1% ayant la plus faible valeur de%2% et de%3%
+''' qui est un des objets %1% ayant la plus faible valeur de%2% et de%3%'''
 
 DESC_MIN_NUMBER_OF_NOT
- qui n'est pas un des objets %1% ayant la plus faible valeur de%2% et de%3%
+''' qui n'est pas un des objets %1% ayant la plus faible valeur de%2% et de%3%'''
 
 DESC_MODE_NUMBER_OF
- qui est un des objets %1% ayant la valeur la plus répandue de%2% et de%3%
+''' qui est un des objets %1% ayant la valeur la plus répandue de%2% et de%3%'''
 
 DESC_MODE_NUMBER_OF_NOT
- qui n'est pas un des objets %1% ayant la valeur la plus répandue de%2% et de%3%
+''' qui n'est pas un des objets %1% ayant la valeur la plus répandue de%2% et de%3%'''
 
 DESC_VALUE_TEST
- quand la %1% est comprise entre %2% et %3%
+''' quand la %1% est comprise entre %2% et %3%'''
 
 DESC_VALUE_TEST_NOT
- quand la %1% n'est pas comprise entre %2% et %3%
+''' quand la %1% n'est pas comprise entre %2% et %3%'''
 
 DESC_CONTAINED_BY
- situé dans un objet%1%
+''' situé dans un objet%1%'''
 
 DESC_CONTAINED_BY_NOT
- non situé dans un objet%1%
+''' non situé dans un objet%1%'''
 
 DESC_IN_SYSTEM
- présent dans le système %1%
+''' présent dans le système %1%'''
 
 DESC_IN_SYSTEM_NOT
- absent du système %1%
+''' absent du système %1%'''
 
 DESC_IN_SYSTEM_SIMPLE
- qui est un système
+''' qui est un système'''
 
 DESC_IN_SYSTEM_SIMPLE_NOT
- qui n'est pas un système
+''' qui n'est pas un système'''
 
 DESC_OBJECT_ID
- qui est %1%
+''' qui est %1%'''
 
 DESC_OBJECT_ID_NOT
- qui n'est pas %1%
+''' qui n'est pas %1%'''
 
 DESC_OWNER_HAS_TECH
- qui appartient à un empire maîtrisant la technologie %1%
+''' qui appartient à un empire maîtrisant la technologie %1%'''
 
 DESC_OWNER_HAS_TECH_NOT
- qui appartient à un empire ne maîtrisant pas la technologie %1%
+''' qui appartient à un empire ne maîtrisant pas la technologie %1%'''
 
 DESC_OWNER_HAS_BUILDING_TYPE
- structure débloquée pour l'empire
+''' structure débloquée pour l'empire'''
 
 DESC_OWNER_HAS_BUILDING_TYPE_NOT
- structure non débloquée pour l'empire
+''' structure non débloquée pour l'empire'''
 
 DESC_OWNER_HAS_SHIP_DESIGN
- modèle d'astronef débloqué pour l'empire
+''' modèle d'astronef débloqué pour l'empire'''
 
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
- modèle d'astronef non débloqué pour l'empire
+''' modèle d'astronef non débloqué pour l'empire'''
 
 DESC_NUMBER
- s'il y a entre %1% et %2% objets%3%
+''' s'il y a entre %1% et %2% objets%3%'''
 
 DESC_NUMBER_NOT
- s'il n'y pas entre %1% et %2% objets%3%
+''' s'il n'y pas entre %1% et %2% objets%3%'''
 
 DESC_HAS_TAG
- c'est %1%
+''' c'est %1%'''
 
 DESC_HAS_TAG_NOT
- ce n'est pas %1%
+''' ce n'est pas %1%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
@@ -6616,7 +6616,7 @@ LRN_NDIM_SUBSPACE_DESC
 Les premiers théoriciens des super-cordes mentionnaient des univers à 10, 11 ou 26 dimensions, mais chacun d'eux présentaient 4 macro-dimensions "imbriquées" si étroitement qu'elles demeuraient invisibles. Ces dernières et d'autres dimensions de même type peuvent désormais être séparées et ouvertes: la surface de l'espace lui-même peut être étiré et transpercé par de la matière en mouvement, en direction ou en provenance de niveaux d'existence précédemment dissimulés sous la surface de notre perception limitée. Cette manipulation des macro-dimensions est à même de créer de nouvelles couches ou bulles dimensionnelles, où seul le néant faisait loi auparavant.
 
 LRN_UNIF_CONC
-Conscience Unifiée 
+'''Conscience Unifiée '''
 
 LRN_UNIF_CONC_DESC
 '''En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, leurs actions étant parfaitement unifiées et orientées pour le bien de l'ensemble.
@@ -6656,25 +6656,25 @@ GRO_GENETIC_ENG
 Génie Génétique
 
 GRO_GENETIC_ENG_DESC
-'''La palette génétique est aussi variée que les formes de vies qui en émergent. Les gènes peuvent être extraits, copiés et réintroduits dans les génomes afin de créer des organismes transgéniques possédant des combinaisons de caractères absents ou impossibles à l'état naturel. Grâce à la modification directe des bases aminées codantes, les gènes peuvent également être transformés avant réintroduction, permettant ainsi la création de gènes entièrement nouveaux. Cependant, les techniques sont limitées à de légères modifications des gènes existants et accessibles à la recherche.'''
+La palette génétique est aussi variée que les formes de vies qui en émergent. Les gènes peuvent être extraits, copiés et réintroduits dans les génomes afin de créer des organismes transgéniques possédant des combinaisons de caractères absents ou impossibles à l'état naturel. Grâce à la modification directe des bases aminées codantes, les gènes peuvent également être transformés avant réintroduction, permettant ainsi la création de gènes entièrement nouveaux. Cependant, les techniques sont limitées à de légères modifications des gènes existants et accessibles à la recherche.
 
 CON_REMOTE_COL
 Colonisation Lointaine
 
 CON_REMOTE_COL_DESC
-'''Fonder de nouvelles colonies au-delà de la zone d'approvisionnement des mondes déjà établis est une entreprise complexe. Cela requiert des astronefs de colonisation pouvant transporter tout l'équipement nécessaire à l'édification d'une colonie autonome, ainsi qu'un contingent initial de colons.'''
+Fonder de nouvelles colonies au-delà de la zone d'approvisionnement des mondes déjà établis est une entreprise complexe. Cela requiert des astronefs de colonisation pouvant transporter tout l'équipement nécessaire à l'édification d'une colonie autonome, ainsi qu'un contingent initial de colons.
 
 GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Accroît le plafond de population des planètes parfaites, convenables et pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.'''
+Accroît le plafond de population des planètes parfaites, convenables et pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 GRO_GENETIC_MED
 Médecine Génétique
 
 GRO_GENETIC_MED_DESC
-'''Le Génie Génétique traditionnel altère les codes génétiques, puis fait croître l'organisme modifié depuis l'état embryonnaire. Toutefois, des techniques similaires peuvent être appliquées à des individus déjà adultes. L'objectif de ces traitements peut viser à l'amélioration de l'apparence ou des performances, la correction ou la prévention des dysfonctionnements de l'organisme, ou la lutte contre le vieillissement des individus traités. Réduire le délai entre la modification du gène et les résultats (d'une génération à seulement quelques mois, jours ou heures), augmente dans les mêmes proportions le nombre des possibles et des effets de la modification génétique.'''
+Le Génie Génétique traditionnel altère les codes génétiques, puis fait croître l'organisme modifié depuis l'état embryonnaire. Toutefois, des techniques similaires peuvent être appliquées à des individus déjà adultes. L'objectif de ces traitements peut viser à l'amélioration de l'apparence ou des performances, la correction ou la prévention des dysfonctionnements de l'organisme, ou la lutte contre le vieillissement des individus traités. Réduire le délai entre la modification du gène et les résultats (d'une génération à seulement quelques mois, jours ou heures), augmente dans les mêmes proportions le nombre des possibles et des effets de la modification génétique.
 
 GRO_LIFECYCLE_MAN
 Manipulation du Cycle de Vie
@@ -6859,7 +6859,7 @@ CON_ORBITAL_HAB
 Habitation Orbitale
 
 CON_ORBITAL_HAB_DESC
-'''Accroît le plafond de population de toutes les planètes habitables selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.'''
+Accroît le plafond de population de toutes les planètes habitables selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 CON_NDIM_STRC
 Structures Multidimensionnelles
@@ -6872,7 +6872,7 @@ The primary limiting factors on a planets population capacity are environmental 
 Of all the bizarre feats of applied physics, the ability to to fold space onto itself has the most direct and profound influence on structural form and design. The potential is endless, literally as hallways are made to bend back upon their beginning, or given a twist so that their ceiling becomes their floor. As well, the concept of urban sprawl becomes laughable, as any number of people may fit into an arbitrarily small volume, safely tucked into an adjacent plane of existence.'''
 
 SHP_GAL_EXPLO
-Exploration Galactique 
+'''Exploration Galactique '''
 
 SHP_GAL_EXPLO_DESC
 La découverte du voyage interstellaire par liaisons spatiales inaugure une nouvelle ère de développement de la société. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entière est confrontée au possibilités illimitées des étoiles ... la croissance et la prospérité, ou la destruction totale.
@@ -6961,7 +6961,7 @@ Enfanteur de Krill
 SPY_ROOT_DECEPTION
 Tromperie
 SPY_ROOT_DECEPTION_DESC
-'''L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de cacher la vérité peut être bien utile.'''
+L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de cacher la vérité peut être bien utile.
 
 #############################################################
 ####          T E C H   A P P L I C A T I O N S          ####
@@ -7092,7 +7092,7 @@ GRO_SUBTER_HAB
 Habitat Souterrain
 
 GRO_SUBTER_HAB_DESC
-'''Accroît le plafond de population de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.'''
+Accroît le plafond de population de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 GRO_GENOME_BANK
 Banque du Génome
@@ -7299,77 +7299,77 @@ Autorise l'armement de base et le [[shippart GT_TROOP_POD]].
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
 SHP_WEAPON_1_2_DESC
-'''Perfectionne le Canon Mitrailleur au niveau 2.'''
+Perfectionne le Canon Mitrailleur au niveau 2.
 
 SHP_WEAPON_1_3
 Canon Mitrailleur 3
 SHP_WEAPON_1_3_DESC
-'''Perfectionne le Canon Mitrailleur au niveau 3.'''
+Perfectionne le Canon Mitrailleur au niveau 3.
 
 SHP_WEAPON_1_4
 Canon Mitrailleur 4
 SHP_WEAPON_1_4_DESC
-'''Perfectionne le Canon Mitrailleur au niveau 4.'''
+Perfectionne le Canon Mitrailleur au niveau 4.
 
 SHP_WEAPON_2_1
 Canon Laser 1
 SHP_WEAPON_2_1_DESC
-'''Débloque le Canon Laser, un armement d'astronefs plus puissant que le Canon Mitrailleur.'''
+Débloque le Canon Laser, un armement d'astronefs plus puissant que le Canon Mitrailleur.
 
 SHP_WEAPON_2_2
 Canon Laser 2
 SHP_WEAPON_2_2_DESC
-'''Perfectionne le Canon Laser au niveau 2.'''
+Perfectionne le Canon Laser au niveau 2.
 
 SHP_WEAPON_2_3
 Canon Laser 3
 SHP_WEAPON_2_3_DESC
-'''Perfectionne le Canon Laser au niveau 3.'''
+Perfectionne le Canon Laser au niveau 3.
 
 SHP_WEAPON_2_4
 Canon Laser 4
 SHP_WEAPON_2_4_DESC
-'''Perfectionne le Canon Laser au niveau 4.'''
+Perfectionne le Canon Laser au niveau 4.
 
 SHP_WEAPON_3_1
 Canon Plasma 1
 SHP_WEAPON_3_1_DESC
-'''Débloque le Canon Plasma, un armement pour astronefs plus puissant que le Canon Laser.'''
+Débloque le Canon Plasma, un armement pour astronefs plus puissant que le Canon Laser.
 
 SHP_WEAPON_3_2
 Canon Plasma 2
 SHP_WEAPON_3_2_DESC
-'''Perfectionne le Canon Plasma au niveau 2.'''
+Perfectionne le Canon Plasma au niveau 2.
 
 SHP_WEAPON_3_3
 Canon Plasma 3
 SHP_WEAPON_3_3_DESC
-'''Perfectionne le Canon Plasma au niveau 3.'''
+Perfectionne le Canon Plasma au niveau 3.
 
 SHP_WEAPON_3_4
 Canon Plasma 4
 SHP_WEAPON_3_4_DESC
-'''Perfectionne le Canon Plasma au niveau 4.'''
+Perfectionne le Canon Plasma au niveau 4.
 
 SHP_WEAPON_4_1
 Rayon Gamma 1
 SHP_WEAPON_4_1_DESC
-'''Débloque le Rayon Gamma, l'armement ultime des astronefs.'''
+Débloque le Rayon Gamma, l'armement ultime des astronefs.
 
 SHP_WEAPON_4_2
 Rayon Gamma 2
 SHP_WEAPON_4_2_DESC
-'''Perfectionne le Rayon Gamma au niveau 2.'''
+Perfectionne le Rayon Gamma au niveau 2.
 
 SHP_WEAPON_4_3
 Rayon Gamma 3
 SHP_WEAPON_4_3_DESC
-'''Perfectionne le Rayon Gamma au niveau 3.'''
+Perfectionne le Rayon Gamma au niveau 3.
 
 SHP_WEAPON_4_4
 Rayon Gamma 4
 SHP_WEAPON_4_4_DESC
-'''Perfectionne le Rayon Gamma au niveau 4. L'amélioration ultime de l'arme ultime.'''
+Perfectionne le Rayon Gamma au niveau 4. L'amélioration ultime de l'arme ultime.
 
 SHP_ION_CANNON
 Canon Ionique
@@ -7564,7 +7564,7 @@ SPY_PLANET_STEALTH_MOD
 Modificateur de Furtivité Planétaire
 
 SPY_PLANET_STEALTH_MOD_DESC
-'''Accroît la [[encyclopedia STEALTH_TITLE]] naturelle des planètes à 4.99, afin que les systèmes soient visibles pour les empires avant les planètes qui s'y trouvent.'''
+Accroît la [[encyclopedia STEALTH_TITLE]] naturelle des planètes à 4.99, afin que les systèmes soient visibles pour les empires avant les planètes qui s'y trouvent.
 
 #############################################################
 ####            T E C H   R E F I N E M E N T            ####
@@ -7610,17 +7610,12 @@ BLD_CULTURE_ARCHIVES_DESC
 Conserve le savoir accumulé par des millier d'années de vie sur cette planète, donnant des bonus à bien des aspects de la productivité planétaire.'''
 
 BLD_IMPERIAL_PALACE
-Palais Impérial 
+'''Palais Impérial '''
 
 BLD_IMPERIAL_PALACE_DESC
 '''Augmente la porté des lignes d'[[encyclopedia SUPPLY_TITLE]] de 1, l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5 et l'[[encyclopedia TROOP_TITLE]] de 3. Sa place définit également la capitale de l'empire.
 
-Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire.''' 
-
-BLD_SUPER_TEST
-Super-Tester Takeover
-BLD_SUPER_TEST_DESC
-'''Switches the species of the planet to Super-Testers.  For Official Testing Purposes, or for cheating.'''
+Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire.'''
 
 BLD_SHIPYARD_BASE
 Chantier Spatial
@@ -7991,11 +7986,11 @@ PART_DESC_SHIELD_STRENGTH
 Résistance Bouclier: %1%
 
 PART_DESC_DETECTION
-'''Puissance Détection: %1%'''
+Puissance Détection: %1%
 # Detection Range: %2%
 
 PART_DESC_DIRECT_FIRE_STATS
-'''Dommages à l'attaque : %1%'''
+Dommages à l'attaque : %1%
 
 ## TEMPORARILY HIDDEN
 # Rate of Fire: %2% shots/turn
@@ -8028,82 +8023,82 @@ Capacité: %9% fighters'''
 SR_WEAPON_1_1
 Canon Mitrailleur 1
 SR_WEAPON_1_1_DESC
-'''Le Canon Mitrailleur, une arme de base.'''
+Le Canon Mitrailleur, une arme de base.
 
 SR_WEAPON_1_2
 Canon Mitrailleur 2
 SR_WEAPON_1_2_DESC
-'''Canon Mitrailleur, perfectionné au niveau 2.'''
+Canon Mitrailleur, perfectionné au niveau 2.
 
 SR_WEAPON_1_3
 Canon Mitrailleur 3
 SR_WEAPON_1_3_DESC
-'''Canon Mitrailleur, perfectionné au niveau 3.'''
+Canon Mitrailleur, perfectionné au niveau 3.
 
 SR_WEAPON_1_4
 Canon Mitrailleur 4
 SR_WEAPON_1_4_DESC
-'''Canon Mitrailleur, perfectionné au niveau 4.'''
+Canon Mitrailleur, perfectionné au niveau 4.
 
 SR_WEAPON_2_1
 Canon Laser 1
 SR_WEAPON_2_1_DESC
-'''Le Canon Laser, une armement d'astronefs plus puissant que le Canon Mitrailleur.'''
+Le Canon Laser, une armement d'astronefs plus puissant que le Canon Mitrailleur.
 
 SR_WEAPON_2_2
 Canon Laser 2
 SR_WEAPON_2_2_DESC
-'''Canon Laser, perfectionné au niveau 2.'''
+Canon Laser, perfectionné au niveau 2.
 
 SR_WEAPON_2_3
 Canon Laser 3
 SR_WEAPON_2_3_DESC
-'''Canon Laser, perfectionné au niveau 3.'''
+Canon Laser, perfectionné au niveau 3.
 
 SR_WEAPON_2_4
 Canon Laser 4
 SR_WEAPON_2_4_DESC
-'''Canon Laser, perfectionné au niveau 4.'''
+Canon Laser, perfectionné au niveau 4.
 
 SR_WEAPON_3_1
 Canon Plasma 1
 SR_WEAPON_3_1_DESC
-'''Le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.'''
+Le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
 
 SR_WEAPON_3_2
 Canon Plasma 2
 SR_WEAPON_3_2_DESC
-'''Canon Plasma, perfectionné au niveau 2.'''
+Canon Plasma, perfectionné au niveau 2.
 
 SR_WEAPON_3_3
 Canon Plasma 3
 SR_WEAPON_3_3_DESC
-'''Canon Plasma, perfectionné au niveau 3.'''
+Canon Plasma, perfectionné au niveau 3.
 
 SR_WEAPON_3_4
 Canon Plasma 4
 SR_WEAPON_3_4_DESC
-'''Canon Plasma, perfectionné au niveau 4.'''
+Canon Plasma, perfectionné au niveau 4.
 
 SR_WEAPON_4_1
 Rayon Gamma 1
 SR_WEAPON_4_1_DESC
-'''Le Rayon Gamma, l'armement ultime des astronefs.'''
+Le Rayon Gamma, l'armement ultime des astronefs.
 
 SR_WEAPON_4_2
 Rayon Gamma 2
 SR_WEAPON_4_2_DESC
-'''Rayon Gamma, perfectionné au niveau 2.'''
+Rayon Gamma, perfectionné au niveau 2.
 
 SR_WEAPON_4_3
 Rayon Gamma 3
 SR_WEAPON_4_3_DESC
-'''Rayon Gamma, perfectionné au niveau 3.'''
+Rayon Gamma, perfectionné au niveau 3.
 
 SR_WEAPON_4_4
 Rayon Gamma 4
 SR_WEAPON_4_4_DESC
-'''Rayon Gamma, perfectionné au niveau 4. L'amélioration ultime de l'arme ultime.'''
+Rayon Gamma, perfectionné au niveau 4. L'amélioration ultime de l'arme ultime.
 
 SR_WEAPON_2
 Canon Laser
@@ -8338,7 +8333,7 @@ CO_OUTPOST_POD
 Module d'Avant-Poste
 
 CO_OUTPOST_POD_DESC
-'''Les modules d'avant-poste vous permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune population et ne produisent normalement pas de ressources, mais offrent une extension des lignes d'[[encyclopedia SUPPLY_TITLE]] quand la bonne technologie est exploitée. Les modules d'avant-poste peuvent évoluer en colonies. Le coût de cet équipement augmente à mesure que l'empire s'étend, compte tenu de la complexité logistique inhérente à tout grand empire.'''
+Les modules d'avant-poste vous permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune population et ne produisent normalement pas de ressources, mais offrent une extension des lignes d'[[encyclopedia SUPPLY_TITLE]] quand la bonne technologie est exploitée. Les modules d'avant-poste peuvent évoluer en colonies. Le coût de cet équipement augmente à mesure que l'empire s'étend, compte tenu de la complexité logistique inhérente à tout grand empire.
 
 GT_TROOP_POD
 Module d'Infanterie
@@ -8706,323 +8701,323 @@ Un nuage cosmique de particules à haute énergie.
 #############################################################
 
 NO_INDUSTRY
-'''−−−	Pas d'[[encyclopedia INDUSTRY_TITLE]]'''
+−−−	Pas d'[[encyclopedia INDUSTRY_TITLE]]
 
 BAD_INDUSTRY
-'''−	Mauvais en [[encyclopedia INDUSTRY_TITLE]] : -50%'''
+−	Mauvais en [[encyclopedia INDUSTRY_TITLE]] : -50%
 
 AVERAGE_INDUSTRY
 '''	Normal en [[encyclopedia INDUSTRY_TITLE]] : 100%'''
 
 GOOD_INDUSTRY
-'''+	Bon en [[encyclopedia INDUSTRY_TITLE]] : 150%'''
++	Bon en [[encyclopedia INDUSTRY_TITLE]] : 150%
 
 GREAT_INDUSTRY
-'''++	Excellent en [[encyclopedia INDUSTRY_TITLE]] : 200%'''
+++	Excellent en [[encyclopedia INDUSTRY_TITLE]] : 200%
 
 ULTIMATE_INDUSTRY
-'''+++	Parfait en [[encyclopedia INDUSTRY_TITLE]] : 400%'''
++++	Parfait en [[encyclopedia INDUSTRY_TITLE]] : 400%
 
 NO_RESEARCH
-'''−−−	Pas de [[encyclopedia RESEARCH_TITLE]]'''
+−−−	Pas de [[encyclopedia RESEARCH_TITLE]]
 
 BAD_RESEARCH
-'''−	Mauvais en [[encyclopedia RESEARCH_TITLE]] : -50%'''
+−	Mauvais en [[encyclopedia RESEARCH_TITLE]] : -50%
 
 AVERAGE_RESEARCH
 '''	Normal en [[encyclopedia RESEARCH_TITLE]] : 100%'''
 
 GOOD_RESEARCH
-'''+	Bon en [[encyclopedia RESEARCH_TITLE]] : 150%'''
++	Bon en [[encyclopedia RESEARCH_TITLE]] : 150%
 
 GREAT_RESEARCH
-'''++	Excellent en [[encyclopedia RESEARCH_TITLE]] : 200%'''
+++	Excellent en [[encyclopedia RESEARCH_TITLE]] : 200%
 
 ULTIMATE_RESEARCH
-'''+++	Parfait en [[encyclopedia RESEARCH_TITLE]] : 400%'''
++++	Parfait en [[encyclopedia RESEARCH_TITLE]] : 400%
 
 NO_GROUND_TROOPS
-'''−−−	Pas d'[[encyclopedia TROOP_TITLE]]'''
+−−−	Pas d'[[encyclopedia TROOP_TITLE]]
 
 BAD_GROUND_TROOPS
-'''−	Mauvais en [[encyclopedia TROOP_TITLE]] : -50%'''
+−	Mauvais en [[encyclopedia TROOP_TITLE]] : -50%
 
 AVERAGE_GROUND_TROOPS
 '''	Normal en [[encyclopedia TROOP_TITLE]] : 100%'''
 
 GOOD_GROUND_TROOPS
-'''+	Bon en [[encyclopedia TROOP_TITLE]] : 150%'''
++	Bon en [[encyclopedia TROOP_TITLE]] : 150%
 
 GREAT_GROUND_TROOPS
-'''++	Excellent en [[encyclopedia TROOP_TITLE]] : 200%'''
+++	Excellent en [[encyclopedia TROOP_TITLE]] : 200%
 
 ULTIMATE_GROUND_TROOPS
-'''+++	Parfait en [[encyclopedia TROOP_TITLE]] : 300%'''
++++	Parfait en [[encyclopedia TROOP_TITLE]] : 300%
 
 BAD_DETECTION
-'''−	Faible [[encyclopedia DETECTION_RANGE_TITLE]] : −20 malus'''
+−	Faible [[encyclopedia DETECTION_RANGE_TITLE]] : −20 malus
 
 GOOD_DETECTION
-'''+	Bon [[encyclopedia DETECTION_RANGE_TITLE]] : +25 bonus'''
++	Bon [[encyclopedia DETECTION_RANGE_TITLE]] : +25 bonus
 
 GREAT_DETECTION
-'''++	Excellent [[encyclopedia DETECTION_RANGE_TITLE]] : +50 bonus'''
+++	Excellent [[encyclopedia DETECTION_RANGE_TITLE]] : +50 bonus
 
 ULTIMATE_DETECTION
-'''+++	Parfait [[encyclopedia DETECTION_RANGE_TITLE]] : +100 bonus'''
++++	Parfait [[encyclopedia DETECTION_RANGE_TITLE]] : +100 bonus
 
 BAD_STEALTH
-'''−	Mauvais en [[encyclopedia STEALTH_TITLE]] : −15 malus'''
+−	Mauvais en [[encyclopedia STEALTH_TITLE]] : −15 malus
 
 AVERAGE_STEALTH
 '''	Normal en [[encyclopedia STEALTH_TITLE]]'''
 
 GOOD_STEALTH
-'''+	Bon en [[encyclopedia STEALTH_TITLE]] : +15 bonus'''
++	Bon en [[encyclopedia STEALTH_TITLE]] : +15 bonus
 
 GREAT_STEALTH
-'''++	Excellent en [[encyclopedia STEALTH_TITLE]] : +40 bonus'''
+++	Excellent en [[encyclopedia STEALTH_TITLE]] : +40 bonus
 
 ULTIMATE_STEALTH
-'''+++	Parfait en [[encyclopedia STEALTH_TITLE]] : +60 bonus'''
++++	Parfait en [[encyclopedia STEALTH_TITLE]] : +60 bonus
 
 BAD_WEAPONS
-'''-	Mauvais Pilotes : -25% de dommages.'''
+-	Mauvais Pilotes : -25% de dommages.
 
 GOOD_WEAPONS
-'''+	Bons Pilotes : +25% de dommages.'''
++	Bons Pilotes : +25% de dommages.
 
 GREAT_WEAPONS
-'''++	Excellents Pilotes : +50% de dommages.'''
+++	Excellents Pilotes : +50% de dommages.
 
 ULTIMATE_WEAPONS
-'''+++	Parfaits Pilotes : +100% de dommages.'''
++++	Parfaits Pilotes : +100% de dommages.
 
 BAD_POPULATION
-'''−	Faible Population : 75%'''
+−	Faible Population : 75%
 
 AVERAGE_POPULATION
 '''	Population normale'''
 
 GOOD_POPULATION
-'''+	Grande Population : 125%'''
++	Grande Population : 125%
 
 BAD_SUPPLY
-'''-	Mauvais en [[encyclopedia SUPPLY_TITLE]] : aucun bonus'''
+-	Mauvais en [[encyclopedia SUPPLY_TITLE]] : aucun bonus
 
 AVERAGE_SUPPLY
 '''	Normal en [[encyclopedia SUPPLY_TITLE]] : +1'''
 
 GREAT_SUPPLY
-'''+	Excellent en [[encyclopedia SUPPLY_TITLE]] : +2'''
++	Excellent en [[encyclopedia SUPPLY_TITLE]] : +2
 
 ULTIMATE_SUPPLY
-'''++	Parfait en [[encyclopedia SUPPLY_TITLE]] : +3'''
+++	Parfait en [[encyclopedia SUPPLY_TITLE]] : +3
 
 BROAD_EP
-'''++	Grande adaptabilité : s'acclimate à plus de types planétaires.'''
+++	Grande adaptabilité : s'acclimate à plus de types planétaires.
 
 NARROW_EP
-'''−	Faible adaptabilité : s'acclimate à moins de types planétaires.'''
+−	Faible adaptabilité : s'acclimate à moins de types planétaires.
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
 
 STANDARD_CONSTRUCTION_LABEL
-'''%1% [[encyclopedia INFRASTRUCTURE_TITLE]] normale'''
+%1% [[encyclopedia INFRASTRUCTURE_TITLE]] normale
 
 GOOD_ENVIRONMENT_LABEL
-'''%1% Environnement parfait'''
+%1% Environnement parfait
 
 ADEQUATE_ENVIRONMENT_LABEL
-'''%1% Environnement correct'''
+%1% Environnement correct
 
 POOR_ENVIRONMENT_LABEL
-'''%1% Environnement pauvre'''
+%1% Environnement pauvre
 
 HOSTILE_ENVIRONMENT_LABEL
-'''%1% Environnement hostile'''
+%1% Environnement hostile
 
 UNINHABTIABLE_ENVIRONMENT_LABEL
-'''%1% Environnement inhabitable'''
+%1% Environnement inhabitable
 
 ENV_ENCAPSUL_LABEL
-'''%1% Encapsulation de l'environnement'''
+%1% Encapsulation de l'environnement
 
 SELF_SUSTAINING_LABEL
-'''Autosuffisant'''
+Autosuffisant
 
 SUBTERRANEAN_LABEL
-'''Bonus Habitat souterrain'''
+Bonus Habitat souterrain
 
 GAIA_LABEL
-'''Bonus Gaia'''
+Bonus Gaia
 
 WORLDTREE_LABEL
-'''Bonus Arbre Planétaire'''
+Bonus Arbre Planétaire
 
 HOMEWORLD_LABEL
-'''Monde natal'''
+Monde natal
 
 BAD_POPULATION_LABEL
-'''%2% Faible population 75%%'''
+%2% Faible population 75%%
 
 GOOD_POPULATION_LABEL
-'''%2% Grande population 125%%'''
+%2% Grande population 125%%
 
 FOCUS_MINING_LABEL
-'''%1% Focus Extraction'''
+%1% Focus Extraction
 
 FOCUS_HEAVY_MINING_LABEL
-'''%1% Focus Extraction intensive'''
+%1% Focus Extraction intensive
 
 BAD_MINING_LABEL
-'''%1% Mauvais en Extraction'''
+%1% Mauvais en Extraction
 
 GOOD_MINING_LABEL
-'''%1% Bon en Extraction'''
+%1% Bon en Extraction
 
 GREAT_MINING_LABEL
-'''%1% Excellent en Extraction'''
+%1% Excellent en Extraction
 
 ULTIMATE_MINING_LABEL
-'''%1% Parfait en Extraction'''
+%1% Parfait en Extraction
 
 FOCUS_INDUSTRY_LABEL
-'''%2% Focus Industrie'''
+%2% Focus Industrie
 
 BAD_INDUSTRY_LABEL
-'''%2% Mauvais en Industrie'''
+%2% Mauvais en Industrie
 
 GOOD_INDUSTRY_LABEL
-'''%2% Bon en Industrie'''
+%2% Bon en Industrie
 
 GREAT_INDUSTRY_LABEL
-'''%2% Excellent en Industrie'''
+%2% Excellent en Industrie
 
 ULTIMATE_INDUSTRY_LABEL
-'''%2% Parfait en Industrie'''
+%2% Parfait en Industrie
 
 FOCUS_RESEARCH_LABEL
-'''%2% Focus Recherche'''
+%2% Focus Recherche
 
 BAD_RESEARCH_LABEL
-'''%2% Mauvais en Recherche'''
+%2% Mauvais en Recherche
 
 GOOD_RESEARCH_LABEL
-'''%2% Bon en Recherche'''
+%2% Bon en Recherche
 
 GREAT_RESEARCH_LABEL
-'''%2% Excellent en Recherche'''
+%2% Excellent en Recherche
 
 ULTIMATE_RESEARCH_LABEL
-'''%2% Parfait en Recherche'''
+%2% Parfait en Recherche
 
 BAD_SUPPLY_LABEL
-'''%2% Mauvais en Approvisionnement'''
+%2% Mauvais en Approvisionnement
 
 AVERAGE_SUPPLY_LABEL
-'''%2% Normal en Approvisionnement'''
+%2% Normal en Approvisionnement
 
 GREAT_SUPPLY_LABEL
-'''%2% Excellent en Approvisionnement'''
+%2% Excellent en Approvisionnement
 
 ULTIMATE_SUPPLY_LABEL
-'''%2% Parfait en Approvisionnement'''
+%2% Parfait en Approvisionnement
 
 BAD_TROOPS_LABEL
-'''%2% Mauvais en Infanterie'''
+%2% Mauvais en Infanterie
 
 AVERAGE_TROOPS_LABEL
-'''%2% Normal en Infanterie'''
+%2% Normal en Infanterie
 
 GOOD_TROOPS_LABEL
-'''%2% Bon en Infanterie'''
+%2% Bon en Infanterie
 
 GREAT_TROOPS_LABEL
-'''%2% Excellent en Infanterie'''
+%2% Excellent en Infanterie
 
 ULTIMATE_TROOPS_LABEL
-'''%2% Parfait en Infanterie'''
+%2% Parfait en Infanterie
 
 INDEPENDENT_TROOP_LABEL
-'''Monde natal indépendant'''
+Monde natal indépendant
 
 OUTPOST_TROOP_LABEL
-'''Avant-poste'''
+Avant-poste
 
 NATIVE_PLANETARY_DEFENSE_LABEL
-'''%2% Défense planétaire'''
+%2% Défense planétaire
 
 NATIVE_PLANETARY_SHIELDS_LABEL
-'''%2% Bouclier planétaire'''
+%2% Bouclier planétaire
 
 VERY_BRIGHT_STAR
-'''Étoile très lumineuse'''
+Étoile très lumineuse
 
 BRIGHT_STAR
-'''Étoile lumineuse'''
+Étoile lumineuse
 
 DIM_STAR
-'''Étoile peu lumineuse'''
+Étoile peu lumineuse
 
 NO_STAR
-'''Pas d'étoile'''
+Pas d'étoile
 
 TINY_PLANET_LABEL
-'''Minuscule planète'''
+Minuscule planète
 
 SMALL_PLANET_LABEL
-'''Petite planète'''
+Petite planète
 
 LARGE_PLANET_LABEL
-'''Grande planète'''
+Grande planète
 
 HUGE_PLANET_LABEL
-'''Immense planète'''
+Immense planète
 
 GAS_GIANT_LABEL
-'''Géante gazeuse'''
+Géante gazeuse
 
 HOMEWORLD_SUPPLY
-'''Approvisionnement Monde natal'''
+Approvisionnement Monde natal
 
 HOMEWORLD_BONUS
-'''Monde natal'''
+Monde natal
 
 ORBITAL_HAB_LABEL
-'''Habitation orbitale'''
+Habitation orbitale
 
 NDIM_STRC_LABEL
-'''Structures multidimensionnelles'''
+Structures multidimensionnelles
 
 WEAK_VISION_LABEL
-'''Faible Vision'''
+Faible Vision
 
 MODERATE_VISION_LABEL
-'''Moyenne Vision'''
+Moyenne Vision
 
 GOOD_VISION_LABEL
-'''Bonne Vision'''
+Bonne Vision
 
 EXCELLENT_VISION_LABEL
-'''Excellente Vision'''
+Excellente Vision
 
 FOCUS_PROTECTION_LABEL
-'''Focus Protection'''
+Focus Protection
 
 XENOPHOBIC_LABEL_SELF
-'''Frénésie xénophobe (autre espèce proche)'''
+Frénésie xénophobe (autre espèce proche)
 
 XENOPHOBIC_LABEL_TRITH_OTHER
-'''Harcèlement xénophobe: Trith'''
+Harcèlement xénophobe: Trith
 
 XENOPHOBIC_LABEL_EAXAW_OTHER
-'''Harcèlement xénophobe: Eaxaw'''
+Harcèlement xénophobe: Eaxaw
 
 ORGANIC_GROWTH
-'''Croissance Organique'''
+Croissance Organique
 
 BASIC_CONTENTEDNESS_LABEL
 Satisfaction générale
