@@ -31,12 +31,11 @@ namespace {
             using phoenix::new_;
 
             has_special_since_turn
-                =    (      tok.HasSpecialSinceTurn_
+                =   (       tok.HasSpecialSinceTurn_
                         >   parse::label(Name_token) >  string_value_ref [ _e = _1 ]
                         > -(parse::label(Low_token)  >  flexible_int_ref [ _a = _1 ] )
                         > -(parse::label(High_token) >  flexible_int_ref [ _b = _1 ] )
-                     )
-                     [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
+                    ) [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
                 ;
 
             enqueued

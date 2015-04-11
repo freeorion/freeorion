@@ -2023,7 +2023,6 @@ namespace ValueRef {
     template <>
     std::string Operation<std::string>::Eval(const ScriptingContext& context) const
     {
-        std::string op_link;
         if (m_op_type == PLUS)
             return m_operand1->Eval(context) + m_operand2->Eval(context);
         throw std::runtime_error("std::string ValueRef evaluated with an unknown or invalid OpType.");
