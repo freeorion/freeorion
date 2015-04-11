@@ -239,7 +239,7 @@ class AIFleetMission(object):
             if not fleet.hasColonyShips:
                 return False
             if isinstance(target, Planet):
-                planet = target.target_object()
+                planet = target.get_object()
                 population = planet.currentMeterValue(fo.meterType.population)
                 if planet.unowned or (planet.owner == fleet.owner and population == 0):
                     return True
