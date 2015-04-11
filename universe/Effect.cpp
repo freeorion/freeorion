@@ -1316,6 +1316,8 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     std::string name;
     if (m_name) {
         name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
     } else {
         name = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % location->Name());
     }
@@ -1411,8 +1413,12 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     if (system)
         system->Insert(building);
 
-    if (m_name)
-        building->Rename(m_name->Eval(context));
+    if (m_name) {
+        std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
+        building->Rename(name);
+    }
 }
 
 std::string CreateBuilding::Description() const {
@@ -1543,6 +1549,8 @@ void CreateShip::Execute(const ScriptingContext& context) const {
 
     if (m_name) {
         std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
         ship->Rename(name);
     } else if (ship->IsMonster()) {
         ship->Rename(NewMonsterName());
@@ -1730,6 +1738,8 @@ void CreateField::Execute(const ScriptingContext& context) const {
 
     if (m_name) {
         std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
         field->Rename(name);
     }
 }
@@ -1820,12 +1830,6 @@ CreateSystem::~CreateSystem() {
 }
 
 void CreateSystem::Execute(const ScriptingContext& context) const {
-    //if (!context.effect_target) {
-    //    ErrorLogger() << "CreateSystem::Execute passed null target";
-    //    return;
-    //}
-    //TemporaryPtr<const UniverseObject> target = context.effect_target;
-
     // pick a star type
     StarType star_type = STAR_NONE;
     if (m_type) {
@@ -1847,6 +1851,8 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     std::string name;
     if (m_name) {
         name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
     } else {
         name = GenerateSystemName();
     }
