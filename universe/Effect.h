@@ -873,9 +873,8 @@ private:
 
 class FO_COMMON_API Effect::GiveEmpireTech : public Effect::EffectBase {
 public:
-    explicit GiveEmpireTech(const std::string& tech_name);
-    GiveEmpireTech(const std::string& tech_name,
-                   ValueRef::ValueRefBase<int>* empire_id);
+    explicit GiveEmpireTech(ValueRef::ValueRefBase<std::string>* tech_name,
+                            ValueRef::ValueRefBase<int>* empire_id = 0);
     virtual ~GiveEmpireTech();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -885,8 +884,8 @@ public:
     virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
-    std::string                     m_tech_name;
-    ValueRef::ValueRefBase<int>*    m_empire_id;
+    ValueRef::ValueRefBase<std::string>*    m_tech_name;
+    ValueRef::ValueRefBase<int>*            m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
