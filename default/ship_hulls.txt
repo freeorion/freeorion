@@ -2661,7 +2661,7 @@ Hull
             effects = [
                 SetSpecies name = "SP_EXPERIMENTOR"
                 SetPopulation value = Target.TargetPopulation
-                CreateBuilding name = "BLD_EXPERIMENTOR_OUTPOST"
+                CreateBuilding type = "BLD_EXPERIMENTOR_OUTPOST"
             ]
 
         EffectsGroup

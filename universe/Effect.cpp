@@ -1279,20 +1279,17 @@ void SetSpeciesSpeciesOpinion::SetTopLevelContent(const std::string& content_nam
 // CreatePlanet                                          //
 ///////////////////////////////////////////////////////////
 CreatePlanet::CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
-                           ValueRef::ValueRefBase<PlanetSize>* size) :
+                           ValueRef::ValueRefBase<PlanetSize>* size,
+                           ValueRef::ValueRefBase<std::string>* name) :
     m_type(type),
-    m_size(size)
-{
-    DebugLogger() << "CreatePlanet::CreatePlanet";
-    DebugLogger() << "    type: " << (m_type ? m_type->Dump() : "no type");
-    DebugLogger() << "    size: " << (m_size ? m_size->Dump() : "no size");
-    DebugLogger() << Dump();
-}
+    m_size(size),
+    m_name(name)
+{}
 
 CreatePlanet::~CreatePlanet() {
-    DebugLogger() << "CreatePlanet::~CreatePlanet";
     delete m_type;
     delete m_size;
+    delete m_name;
 }
 
 void CreatePlanet::Execute(const ScriptingContext& context) const {
@@ -1334,6 +1331,14 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     }
 
     location->Insert(planet);   // let system chose an orbit for planet
+
+    std::string name;
+    if (m_name) {
+        name = m_name->Eval(context);
+    } else {
+        name = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % location->Name());
+    }
+    planet->Rename(name);
 }
 
 std::string CreatePlanet::Description() const {
@@ -1345,14 +1350,19 @@ std::string CreatePlanet::Description() const {
                                 m_size->Description();
 
     return str(FlexibleFormat(UserString("DESC_CREATE_PLANET"))
-               % type_str
-               % size_str);
+                % type_str
+                % size_str);
 }
 
-std::string CreatePlanet::Dump() const
-{
-    DebugLogger() << "CreatePlanet::Dump()";
-    return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + "\n";
+std::string CreatePlanet::Dump() const {
+    std::string retval = DumpIndent() + "CreatePlanet";
+    if (m_size)
+        retval += " size = " + m_size->Dump();
+    if (m_type)
+        retval += " type = " + m_type->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval + "\n";
 }
 
 void CreatePlanet::SetTopLevelContent(const std::string& content_name) {
@@ -1360,18 +1370,24 @@ void CreatePlanet::SetTopLevelContent(const std::string& content_name) {
         m_type->SetTopLevelContent(content_name);
     if (m_size)
         m_size->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 
 ///////////////////////////////////////////////////////////
 // CreateBuilding                                        //
 ///////////////////////////////////////////////////////////
-CreateBuilding::CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name) :
-    m_building_type_name(building_type_name)
+CreateBuilding::CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
+                               ValueRef::ValueRefBase<std::string>* name) :
+    m_building_type_name(building_type_name),
+    m_name(name)
 {}
 
-CreateBuilding::~CreateBuilding()
-{ delete m_building_type_name; }
+CreateBuilding::~CreateBuilding() {
+    delete m_building_type_name;
+    delete m_name;
+}
 
 void CreateBuilding::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1384,6 +1400,11 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
             location = GetPlanet(location_building->PlanetID());
     if (!location) {
         ErrorLogger() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
+        return;
+    }
+
+    if (!m_building_type_name) {
+        ErrorLogger() << "CreateBuilding::Execute has no building type specified!";
         return;
     }
 
@@ -1408,65 +1429,68 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     TemporaryPtr<System> system = GetSystem(location->SystemID());
     if (system)
         system->Insert(building);
+
+    if (m_name)
+        building->Rename(m_name->Eval(context));
 }
 
 std::string CreateBuilding::Description() const {
     std::string type_str = ValueRef::ConstantExpr(m_building_type_name) ?
                                 UserString(lexical_cast<std::string>(m_building_type_name->Eval())) :
                                 m_building_type_name->Description();
+
     return str(FlexibleFormat(UserString("DESC_CREATE_BUILDING"))
-               % type_str);
+                % type_str);
 }
 
-std::string CreateBuilding::Dump() const
-{ return DumpIndent() + "CreateBuilding type = " + m_building_type_name->Dump() + "\n"; }
+std::string CreateBuilding::Dump() const {
+    std::string retval = DumpIndent() + "CreateBuilding";
+    if (m_building_type_name)
+        retval += " type = " + m_building_type_name->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval + "\n";
+}
 
 void CreateBuilding::SetTopLevelContent(const std::string& content_name) {
     if (m_building_type_name)
         m_building_type_name->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 
 ///////////////////////////////////////////////////////////
 // CreateShip                                            //
 ///////////////////////////////////////////////////////////
-CreateShip::CreateShip(const std::string& predefined_ship_design_name,
+CreateShip::CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
                        ValueRef::ValueRefBase<int>* empire_id,
-                       ValueRef::ValueRefBase<std::string>* species_name) :
+                       ValueRef::ValueRefBase<std::string>* species_name,
+                       ValueRef::ValueRefBase<std::string>* ship_name) :
     m_design_name(predefined_ship_design_name),
-    m_design_id(0), // this specifies a null pointer to a ValueRef, not the constant 0
+    m_design_id(0),
     m_empire_id(empire_id),
-    m_species_name(species_name)
+    m_species_name(species_name),
+    m_name(ship_name)
 {}
 
 CreateShip::CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
                        ValueRef::ValueRefBase<int>* empire_id,
-                       ValueRef::ValueRefBase<std::string>* species_name) :
-    m_design_name(),
+                       ValueRef::ValueRefBase<std::string>* species_name,
+                       ValueRef::ValueRefBase<std::string>* ship_name) :
+    m_design_name(0),
     m_design_id(ship_design_id),
     m_empire_id(empire_id),
-    m_species_name(species_name)
-{}
-
-CreateShip::CreateShip(const std::string& predefined_ship_design_name,
-                       ValueRef::ValueRefBase<int>* empire_id) :
-    m_design_name(predefined_ship_design_name),
-    m_design_id(0),     // this specifies a null pointer to a ValueRef, not the constant 0
-    m_empire_id(empire_id),
-    m_species_name(0)   // ...
-{}
-
-CreateShip::CreateShip(const std::string& predefined_ship_design_name) :
-    m_design_name(predefined_ship_design_name),
-    m_design_id(0),     // this specifies a null pointer to a ValueRef, not the constant 0
-    m_empire_id(0),     // ...
-    m_species_name(0)   // ...
+    m_species_name(species_name),
+    m_name(ship_name)
 {}
 
 CreateShip::~CreateShip() {
+    delete m_design_name;
     delete m_design_id;
     delete m_empire_id;
     delete m_species_name;
+    delete m_name;
 }
 
 void CreateShip::Execute(const ScriptingContext& context) const {
@@ -1488,10 +1512,11 @@ void CreateShip::Execute(const ScriptingContext& context) const {
             ErrorLogger() << "CreateShip::Execute couldn't get ship design with id: " << design_id;
             return;
         }
-    } else {
-        const ShipDesign* ship_design = GetPredefinedShipDesign(m_design_name);
+    } else if (m_design_name) {
+        std::string design_name = m_design_name->Eval(context);
+        const ShipDesign* ship_design = GetPredefinedShipDesign(design_name);
         if (!ship_design) {
-            ErrorLogger() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name;
+            ErrorLogger() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name->Dump();
             return;
         }
         design_id = ship_design->ID();
@@ -1535,7 +1560,10 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     TemporaryPtr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
     system->Insert(ship);
 
-    if (ship->IsMonster()) {
+    if (m_name) {
+        std::string name = m_name->Eval(context);
+        ship->Rename(name);
+    } else if (ship->IsMonster()) {
         ship->Rename(NewMonsterName());
     } else if (empire) {
         ship->Rename(empire->NewShipName());
@@ -1571,7 +1599,7 @@ std::string CreateShip::Description() const {
         }
     }
 
-    std::string design_str = UserString("ERROR");
+    std::string design_str;
     if (m_design_id) {
         if (ValueRef::ConstantExpr(m_design_id)) {
             if (const ShipDesign* design = GetShipDesign(m_design_id->Eval()))
@@ -1579,8 +1607,10 @@ std::string CreateShip::Description() const {
         } else {
             design_str = m_design_id->Description();
         }
-    } else {
-        design_str = UserString(m_design_name);
+    } else if (m_design_name) {
+        design_str = m_design_name->Description();
+        if (ValueRef::ConstantExpr(m_design_name) && UserStringExists(design_str))
+            design_str = UserString(design_str);
     }
 
     std::string species_str;
@@ -1589,63 +1619,80 @@ std::string CreateShip::Description() const {
                       UserString(m_species_name->Eval()) :
                       m_species_name->Description();
 
-    if (!empire_str.empty() && !species_str.empty())
+    if (!empire_str.empty() && !species_str.empty()) {
         return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
                    % design_str
                    % empire_str
                    % species_str);
-    else
+    } else {
         return str(FlexibleFormat(UserString("DESC_CREATE_SHIP_SIMPLE"))
                    % design_str);
+    }
 }
 
 std::string CreateShip::Dump() const {
-    std::string retval;
+    std::string retval = DumpIndent() + "CreateShip";
     if (m_design_id)
-        retval = DumpIndent() + "CreateShip design_id = " + m_design_id->Dump();
-    else
-        retval = DumpIndent() + "CreateShip predefined_ship_design_name = \"" + m_design_name + "\"";
+        retval += " designid = " + m_design_id->Dump();
+    if (m_design_name)
+        retval += " designname = " + m_design_name->Dump();
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump();
     if (m_species_name)
-        retval += " species_name = " + m_species_name->Dump();
+        retval += " species = " + m_species_name->Dump();
+    if (m_name)
+        retval += " name = " + m_species_name->Dump();
+
     retval += "\n";
     return retval;
 }
 
 void CreateShip::SetTopLevelContent(const std::string& content_name) {
+    if (m_design_name)
+        m_design_name->SetTopLevelContent(content_name);
     if (m_design_id)
         m_design_id->SetTopLevelContent(content_name);
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
     if (m_species_name)
         m_species_name->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 
 ///////////////////////////////////////////////////////////
 // CreateField                                           //
 ///////////////////////////////////////////////////////////
-CreateField::CreateField(const std::string& field_type_name,
-                         ValueRef::ValueRefBase<double>* size/* = 0*/) :
+CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
+                         ValueRef::ValueRefBase<double>* size,
+                         ValueRef::ValueRefBase<std::string>* name) :
     m_field_type_name(field_type_name),
     m_x(0),
     m_y(0),
-    m_size(size)
+    m_size(size),
+    m_name(name)
 {}
 
-CreateField::CreateField(const std::string& field_type_name,
+CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                          ValueRef::ValueRefBase<double>* x,
                          ValueRef::ValueRefBase<double>* y,
-                         ValueRef::ValueRefBase<double>* size/* = 0*/) :
+                         ValueRef::ValueRefBase<double>* size,
+                         ValueRef::ValueRefBase<std::string>* name) :
     m_field_type_name(field_type_name),
     m_x(x),
     m_y(y),
-    m_size(size)
+    m_size(size),
+    m_name(name)
 {}
 
-CreateField::~CreateField()
-{ delete m_size; }
+CreateField::~CreateField() {
+    delete m_field_type_name;
+    delete m_x;
+    delete m_y;
+    delete m_size;
+    delete m_name;
+}
 
 void CreateField::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -1654,9 +1701,12 @@ void CreateField::Execute(const ScriptingContext& context) const {
     }
     TemporaryPtr<UniverseObject> target = context.effect_target;
 
-    const FieldType* field_type = GetFieldType(m_field_type_name);
+    if (!m_field_type_name)
+        return;
+
+    const FieldType* field_type = GetFieldType(m_field_type_name->Eval(context));
     if (!field_type) {
-        ErrorLogger() << "CreateField::Execute couldn't get field type with name: " << m_field_type_name;
+        ErrorLogger() << "CreateField::Execute couldn't get field type with name: " << m_field_type_name->Dump();
         return;
     }
 
@@ -1683,7 +1733,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
     else
         y = target->Y();
 
-    TemporaryPtr<Field> field = GetUniverse().CreateField(m_field_type_name, x, y, size);
+    TemporaryPtr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
     if (!field) {
         ErrorLogger() << "CreateField::Execute couldn't create field!";
         return;
@@ -1696,44 +1746,66 @@ void CreateField::Execute(const ScriptingContext& context) const {
         return;
     if ((!m_y || y == system->Y()) && (!m_x || x == system->X()))
         system->Insert(field);
+
+    if (m_name) {
+        std::string name = m_name->Eval(context);
+        field->Rename(name);
+    }
 }
 
 std::string CreateField::Description() const {
+    std::string size_str;
     if (m_size) {
-        std::string size_str;
         if (ValueRef::ConstantExpr(m_size)) {
             size_str = boost::lexical_cast<std::string>(m_size->Eval());
         } else {
             size_str = m_size->Description();
         }
+    }
+    std::string type_str;
+    if (m_field_type_name) {
+        type_str = m_field_type_name->Description();
+        if (ValueRef::ConstantExpr(m_field_type_name) && UserStringExists(type_str))
+            type_str = UserString(type_str);
+    }
+
+    if (!size_str.empty()) {
         return str(FlexibleFormat(UserString("DESC_CREATE_FIELD_SIZE"))
-                   % UserString(m_field_type_name)
+                   % type_str
                    % size_str);
     } else {
         return str(FlexibleFormat(UserString("DESC_CREATE_FIELD"))
-                   % UserString(m_field_type_name));
+                   % type_str);
     }
 }
 
 std::string CreateField::Dump() const {
-    std::string retval = DumpIndent() + "CreateField type = " + m_field_type_name;
+    std::string retval = DumpIndent() + "CreateField";
+    if (m_field_type_name)
+        retval += " type = " + m_field_type_name->Dump();
     if (m_x)
         retval += " x = " + m_x->Dump();
     if (m_y)
         retval += " y = " + m_y->Dump();
     if (m_size)
         retval += " size = " + m_size->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
     retval += "\n";
     return retval;
 }
 
 void CreateField::SetTopLevelContent(const std::string& content_name) {
+    if (m_field_type_name)
+        m_field_type_name->SetTopLevelContent(content_name);
     if (m_x)
         m_x->SetTopLevelContent(content_name);
     if (m_y)
         m_y->SetTopLevelContent(content_name);
     if (m_size)
         m_size->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 
@@ -1742,23 +1814,28 @@ void CreateField::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 CreateSystem::CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
                            ValueRef::ValueRefBase<double>* x,
-                           ValueRef::ValueRefBase<double>* y) :
+                           ValueRef::ValueRefBase<double>* y,
+                           ValueRef::ValueRefBase<std::string>* name) :
     m_type(type),
     m_x(x),
-    m_y(y)
+    m_y(y),
+    m_name(name)
 {}
 
 CreateSystem::CreateSystem(ValueRef::ValueRefBase<double>* x,
-                           ValueRef::ValueRefBase<double>* y) :
+                           ValueRef::ValueRefBase<double>* y,
+                           ValueRef::ValueRefBase<std::string>* name) :
     m_type(0),
     m_x(x),
-    m_y(y)
+    m_y(y),
+    m_name(name)
 {}
 
 CreateSystem::~CreateSystem() {
     delete m_type;
     delete m_x;
     delete m_y;
+    delete m_name;
 }
 
 void CreateSystem::Execute(const ScriptingContext& context) const {
@@ -1786,7 +1863,14 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     if (m_y)
         y = m_y->Eval(context);
 
-    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, GenerateSystemName(), x, y);
+    std::string name;
+    if (m_name) {
+        name = m_name->Eval(context);
+    } else {
+        name = GenerateSystemName();
+    }
+
+    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, name, x, y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
@@ -1816,6 +1900,8 @@ std::string CreateSystem::Dump() const {
         retval += " x = " + m_x->Dump();
     if (m_y)
         retval += " y = " + m_y->Dump();
+    if (m_name)
+        retval += " name = " + m_name->Dump();
     retval += "\n";
     return retval;
 }
@@ -1827,6 +1913,8 @@ void CreateSystem::SetTopLevelContent(const std::string& content_name) {
         m_y->SetTopLevelContent(content_name);
     if (m_type)
         m_type->SetTopLevelContent(content_name);
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 

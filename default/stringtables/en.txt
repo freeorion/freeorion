@@ -134,6 +134,10 @@ Fleet %1%
 NEW_FLEET_NAME_NO_NUMBER
 Fleet
 
+# used to generate name for effect-created planets. %1% is the system name.
+NEW_PLANET_NAME
+%1% Nova
+
 EMPTY_SPACE
 Deep Space
 

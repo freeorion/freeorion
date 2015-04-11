@@ -56,7 +56,7 @@ Special
         EffectsGroup
             scope = Source
             activation = Turn low = 1 high = 1
-            effects = CreateBuilding name = "BLD_CULTURE_LIBRARY"
+            effects = CreateBuilding type = "BLD_CULTURE_LIBRARY"
 
         EffectsGroup
             scope = Source
@@ -64,7 +64,7 @@ Special
                 Random probability = 0.2
                 Turn low = 1 high = 1
             ]
-            effects = CreateBuilding name = "BLD_SCANNING_FACILITY"
+            effects = CreateBuilding type = "BLD_SCANNING_FACILITY"
 
         EffectsGroup
             scope = Source
@@ -214,7 +214,7 @@ Special
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                CreateBuilding name = "BLD_NEUTRONIUM_SYNTH"
+                CreateBuilding type = "BLD_NEUTRONIUM_SYNTH"
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_BUILDING"
                     icon = "icons/specials_huge/ancient_ruins.png"
@@ -893,7 +893,7 @@ Special
                 Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
                 Population low = 0.0001
             ]
-            effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
+            effects = CreateBuilding type = "BLD_CONC_CAMP_REMNANT"
         EffectsGroup
             scope = Source
             activation = And [
@@ -919,7 +919,7 @@ Special
                 Not Contains Building name = "BLD_CONC_CAMP"
                 Not Contains Building name = "BLD_CONC_CAMP_REMNANT"
             ]
-            effects = CreateBuilding name = "BLD_CONC_CAMP_REMNANT"
+            effects = CreateBuilding type = "BLD_CONC_CAMP_REMNANT"
         EffectsGroup
             scope = Source
             activation = OR [
