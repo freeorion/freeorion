@@ -6563,17 +6563,6 @@ Effect is active if the source is an object%1%
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effect is always active
 
-DESC_EFFECTS_GROUP_SCOPE_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_ACTIVATION_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_EFFECT_DESC
-'''%1%
-'''
 
 DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
 '''%1%

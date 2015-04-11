@@ -73,19 +73,12 @@ namespace ValueRef {
   * active in the current turn. */
 class FO_COMMON_API Effect::EffectsGroup {
 public:
-    struct Description {
-        std::string scope_description;
-        std::string activation_description;
-        std::vector<std::string> effect_descriptions;
-    };
-
     EffectsGroup(Condition::ConditionBase* scope, Condition::ConditionBase* activation,
                  const std::vector<EffectBase*>& effects, const std::string& accounting_label = "",
                  const std::string& stacking_group = "") :
         m_scope(scope),
         m_activation(activation),
         m_stacking_group(stacking_group),
-        m_explicit_description(""), // TODO: Get this from stringtable when available
         m_effects(effects),
         m_accounting_label(accounting_label)
     {}
@@ -110,7 +103,6 @@ public:
     Condition::ConditionBase* Scope() const               { return m_scope; }
     Condition::ConditionBase* Activation() const          { return m_activation; }
     const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
-    Description                     GetDescription() const;
     std::string                     DescriptionString() const;
     const std::string&              AccountingLabel() const     { return m_accounting_label; }
     std::string                     Dump() const;
@@ -121,7 +113,6 @@ protected:
     Condition::ConditionBase*   m_scope;
     Condition::ConditionBase*   m_activation;
     std::string                 m_stacking_group;
-    std::string                 m_explicit_description;
     std::vector<EffectBase*>    m_effects;
     std::string                 m_accounting_label;
 
@@ -995,7 +986,6 @@ void Effect::EffectsGroup::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_scope)
         & BOOST_SERIALIZATION_NVP(m_activation)
         & BOOST_SERIALIZATION_NVP(m_stacking_group)
-        & BOOST_SERIALIZATION_NVP(m_explicit_description)
         & BOOST_SERIALIZATION_NVP(m_effects);
 }
 
