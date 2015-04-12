@@ -1316,6 +1316,8 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     std::string name;
     if (m_name) {
         name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
     } else {
         name = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % location->Name());
     }
@@ -1411,8 +1413,12 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     if (system)
         system->Insert(building);
 
-    if (m_name)
-        building->Rename(m_name->Eval(context));
+    if (m_name) {
+        std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
+        building->Rename(name);
+    }
 }
 
 std::string CreateBuilding::Description() const {
@@ -1543,6 +1549,8 @@ void CreateShip::Execute(const ScriptingContext& context) const {
 
     if (m_name) {
         std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
         ship->Rename(name);
     } else if (ship->IsMonster()) {
         ship->Rename(NewMonsterName());
@@ -1730,6 +1738,8 @@ void CreateField::Execute(const ScriptingContext& context) const {
 
     if (m_name) {
         std::string name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
         field->Rename(name);
     }
 }
@@ -1820,12 +1830,6 @@ CreateSystem::~CreateSystem() {
 }
 
 void CreateSystem::Execute(const ScriptingContext& context) const {
-    //if (!context.effect_target) {
-    //    ErrorLogger() << "CreateSystem::Execute passed null target";
-    //    return;
-    //}
-    //TemporaryPtr<const UniverseObject> target = context.effect_target;
-
     // pick a star type
     StarType star_type = STAR_NONE;
     if (m_type) {
@@ -1847,6 +1851,8 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     std::string name;
     if (m_name) {
         name = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
+            name = UserString(name);
     } else {
         name = GenerateSystemName();
     }
@@ -3086,32 +3092,37 @@ void SetEmpireTechProgress::SetTopLevelContent(const std::string& content_name) 
 ///////////////////////////////////////////////////////////
 // GiveEmpireTech                                        //
 ///////////////////////////////////////////////////////////
-GiveEmpireTech::GiveEmpireTech(const std::string& tech_name) :
-    m_tech_name(tech_name),
-    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")))
-{}
-
-GiveEmpireTech::GiveEmpireTech(const std::string& tech_name,
+GiveEmpireTech::GiveEmpireTech(ValueRef::ValueRefBase<std::string>* tech_name,
                                ValueRef::ValueRefBase<int>* empire_id) :
     m_tech_name(tech_name),
     m_empire_id(empire_id)
-{}
+{
+    if (!m_empire_id)
+        m_empire_id = new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"));
+}
 
-GiveEmpireTech::~GiveEmpireTech()
-{ delete m_empire_id; }
+GiveEmpireTech::~GiveEmpireTech() {
+    delete m_empire_id;
+    delete m_tech_name;
+}
 
 void GiveEmpireTech::Execute(const ScriptingContext& context) const {
     if (!m_empire_id) return;
     Empire* empire = GetEmpire(m_empire_id->Eval(context));
     if (!empire) return;
 
-    const Tech* tech = GetTech(m_tech_name);
+    if (!m_tech_name)
+        return;
+
+    std::string tech_name = m_tech_name->Eval(context);
+
+    const Tech* tech = GetTech(tech_name);
     if (!tech) {
-        ErrorLogger() << "GiveEmpireTech::Execute couldn't get tech with name " << m_tech_name;
+        ErrorLogger() << "GiveEmpireTech::Execute couldn't get tech with name: " << tech_name;
         return;
     }
 
-    empire->AddTech(m_tech_name);
+    empire->AddTech(tech_name);
 }
 
 std::string GiveEmpireTech::Description() const {
@@ -3124,15 +3135,28 @@ std::string GiveEmpireTech::Description() const {
             empire_str = m_empire_id->Description();
         }
     }
+
+    std::string tech_str;
+    if (m_tech_name) {
+        tech_str = m_tech_name->Description();
+        if (ValueRef::ConstantExpr(m_tech_name) && UserStringExists(tech_str))
+            tech_str = UserString(tech_str);
+    }
+
     return str(FlexibleFormat(UserString("DESC_GIVE_EMPIRE_TECH"))
-                % UserString(m_tech_name)
+                % tech_str
                 % empire_str);
 }
 
 std::string GiveEmpireTech::Dump() const {
-    std::string retval = "GiveEmpireTech name = \"" + m_tech_name + "\"";
+    std::string retval = DumpIndent() + "GiveEmpireTech";
+
+    if (m_tech_name)
+        retval += " name = " + m_tech_name->Dump();
+
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump();
+
     retval += "\n";
     return retval;
 }
@@ -3140,6 +3164,8 @@ std::string GiveEmpireTech::Dump() const {
 void GiveEmpireTech::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
+    if (m_tech_name)
+        m_tech_name->SetTopLevelContent(content_name);
 }
 
 

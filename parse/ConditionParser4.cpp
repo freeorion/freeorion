@@ -30,11 +30,15 @@ namespace {
             const parse::value_ref_parser_rule<double>::type& double_value_ref =
                 parse::value_ref_parser<double>();
 
+            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
+                parse::value_ref_parser<std::string>();
+
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
             qi::_d_type _d;
+            qi::_e_type _e;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -51,11 +55,11 @@ namespace {
             ship_part_meter_value
                 =   (
                         tok.ShipPartMeter_
-                        >   parse::label(Part_token)      >  tok.string [ _d = _1 ]
+                        >   parse::label(Part_token)    >   string_value_ref [ _e = _1 ]
                         >   parse::ship_part_meter_type_enum() [ _a = _1 ]
-                        >  -(parse::label(Low_token)  >  double_value_ref [ _b = _1 ])
-                        >  -(parse::label(High_token) >  double_value_ref [ _c = _1 ])
-                    ) [ _val = new_<Condition::ShipPartMeterValue>(_d, _a, _b, _c) ]
+                        >  -(parse::label(Low_token)    >   double_value_ref [ _b = _1 ])
+                        >  -(parse::label(High_token)   >   double_value_ref [ _c = _1 ])
+                    ) [ _val = new_<Condition::ShipPartMeterValue>(_e, _a, _b, _c) ]
                 ;
 
             empire_meter_value1
@@ -106,7 +110,8 @@ namespace {
                 MeterType,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
-                std::string
+                std::string,
+                ValueRef::ValueRefBase<std::string>*
             >,
             parse::skipper_type
         > meter_value_rule;

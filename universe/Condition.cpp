@@ -4914,10 +4914,10 @@ void Condition::PredefinedShipDesign::Eval(const ScriptingContext& parent_contex
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
-        ScriptingContext local_context(parent_context, no_object);
         if (!m_name)
             EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch());
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
         std::string name = m_name->Eval(local_context);
         EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch(name));
     } else {
@@ -5420,6 +5420,7 @@ void Condition::MeterValue::SetTopLevelContent(const std::string& content_name) 
 // ShipPartMeterValue                                    //
 ///////////////////////////////////////////////////////////
 Condition::ShipPartMeterValue::~ShipPartMeterValue() {
+    delete m_part_name;
     delete m_low;
     delete m_high;
 }
@@ -5435,9 +5436,7 @@ bool Condition::ShipPartMeterValue::operator==(const Condition::ConditionBase& r
     if (m_meter != rhs_.m_meter)
         return false;
 
-    if (m_part_name != rhs_.m_part_name)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_part_name)
     CHECK_COND_VREF_MEMBER(m_low)
     CHECK_COND_VREF_MEMBER(m_high)
 
@@ -5468,8 +5467,8 @@ namespace {
         }
 
         std::string m_part_name;
-        float      m_low;
-        float      m_high;
+        float       m_low;
+        float       m_high;
         MeterType   m_meter;
     };
 }
@@ -5478,7 +5477,8 @@ void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
                                          ObjectSet& matches, ObjectSet& non_matches,
                                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
+    bool simple_eval_safe = ((!m_part_name || m_part_name->LocalCandidateInvariant()) &&
+                             (!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -5487,7 +5487,8 @@ void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
         ScriptingContext local_context(parent_context, no_object);
         float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
         float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-        EvalImpl(matches, non_matches, search_domain, ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high));
+        std::string part_name = (m_part_name ? m_part_name->Eval(local_context) : "");
+        EvalImpl(matches, non_matches, search_domain, ShipPartMeterValueSimpleMatch(part_name, m_meter, low, high));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -5495,34 +5496,48 @@ void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::ShipPartMeterValue::RootCandidateInvariant() const {
-    return ((!m_low || m_low->RootCandidateInvariant()) &&
+    return ((!m_part_name || m_part_name->RootCandidateInvariant()) &&
+            (!m_low || m_low->RootCandidateInvariant()) &&
             (!m_high || m_high->RootCandidateInvariant()));
 }
 
 bool Condition::ShipPartMeterValue::TargetInvariant() const {
-    return ((!m_low || m_low->TargetInvariant()) &&
+    return ((!m_part_name || m_part_name->TargetInvariant()) &&
+            (!m_low || m_low->TargetInvariant()) &&
             (!m_high || m_high->TargetInvariant()));
 }
 
 bool Condition::ShipPartMeterValue::SourceInvariant() const {
-    return ((!m_low || m_low->SourceInvariant()) &&
+    return ((!m_part_name || m_part_name->SourceInvariant()) &&
+            (!m_low || m_low->SourceInvariant()) &&
             (!m_high || m_high->SourceInvariant()));
 }
 
 std::string Condition::ShipPartMeterValue::Description(bool negated/* = false*/) const {
-    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
-                                    boost::lexical_cast<std::string>(m_low->Eval()) :
-                                    m_low->Description())
-                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
-    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
-                                      boost::lexical_cast<std::string>(m_high->Eval()) :
-                                      m_high->Description())
-                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+    std::string low_str;
+    if (m_low)
+        low_str = m_low->Description();
+    else
+        low_str = boost::lexical_cast<std::string>(-Meter::LARGE_VALUE);
+
+    std::string high_str;
+    if (m_high)
+        high_str = m_high->Description();
+    else
+        high_str = boost::lexical_cast<std::string>(Meter::LARGE_VALUE);
+
+    std::string part_str;
+    if (m_part_name) {
+        part_str = m_part_name->Description();
+        if (ValueRef::ConstantExpr(m_part_name) && UserStringExists(part_str))
+            part_str = UserString(part_str);
+    }
+
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_SHIP_PART_METER_VALUE_CURRENT")
         : UserString("DESC_SHIP_PART_METER_VALUE_CURRENT_NOT"))
                % UserString(boost::lexical_cast<std::string>(m_meter))
-               % UserString(m_part_name)
+               % part_str
                % low_str
                % high_str);
 }
@@ -5530,7 +5545,8 @@ std::string Condition::ShipPartMeterValue::Description(bool negated/* = false*/)
 std::string Condition::ShipPartMeterValue::Dump() const {
     std::string retval = DumpIndent();
     retval += MeterTypeDumpString(m_meter);
-    retval += " partname = " + m_part_name;
+    if (m_part_name)
+        retval += " part = " + m_part_name->Dump();
     if (m_low)
         retval += " low = " + m_low->Dump();
     if (m_high)
@@ -5547,10 +5563,13 @@ bool Condition::ShipPartMeterValue::Match(const ScriptingContext& local_context)
     }
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
     float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-    return ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high)(candidate);
+    std::string part_name = (m_part_name ? m_part_name->Eval(local_context) : "");
+    return ShipPartMeterValueSimpleMatch(part_name, m_meter, low, high)(candidate);
 }
 
 void Condition::ShipPartMeterValue::SetTopLevelContent(const std::string& content_name) {
+    if (m_part_name)
+        m_part_name->SetTopLevelContent(content_name);
     if (m_low)
         m_low->SetTopLevelContent(content_name);
     if (m_high)
@@ -5959,6 +5978,14 @@ void Condition::OwnerHasTech::SetTopLevelContent(const std::string& content_name
 ///////////////////////////////////////////////////////////
 // OwnerHasBuildingTypeAvailable                         //
 ///////////////////////////////////////////////////////////
+Condition::OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
+    ConditionBase(),
+    m_name(new ValueRef::Constant<std::string>(name))
+{}
+
+Condition::OwnerHasBuildingTypeAvailable::~OwnerHasBuildingTypeAvailable()
+{ delete m_name; }
+
 bool Condition::OwnerHasBuildingTypeAvailable::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -5967,11 +5994,60 @@ bool Condition::OwnerHasBuildingTypeAvailable::operator==(const Condition::Condi
 
     const Condition::OwnerHasBuildingTypeAvailable& rhs_ = static_cast<const Condition::OwnerHasBuildingTypeAvailable&>(rhs);
 
-    if (m_name != rhs_.m_name)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
 }
+
+namespace {
+    struct OwnerHasBuildingTypeAvailableSimpleMatch {
+        OwnerHasBuildingTypeAvailableSimpleMatch(const std::string& name) :
+            m_name(name)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            if (candidate->Unowned())
+                return false;
+
+            if (const Empire* empire = GetEmpire(candidate->Owner()))
+                return empire->BuildingTypeAvailable(m_name);
+
+            return false;
+        }
+
+        std::string m_name;
+    };
+}
+
+void Condition::OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
+                                                    ObjectSet& matches, ObjectSet& non_matches,
+                                                    SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        std::string name = m_name ? m_name->Eval(local_context) : "";
+        EvalImpl(matches, non_matches, search_domain, OwnerHasBuildingTypeAvailableSimpleMatch(name));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::OwnerHasBuildingTypeAvailable::RootCandidateInvariant() const
+{ return !m_name || m_name->RootCandidateInvariant(); }
+
+bool Condition::OwnerHasBuildingTypeAvailable::TargetInvariant() const
+{ return !m_name || m_name->TargetInvariant(); }
+
+bool Condition::OwnerHasBuildingTypeAvailable::SourceInvariant() const
+{ return !m_name || m_name->SourceInvariant(); }
 
 std::string Condition::OwnerHasBuildingTypeAvailable::Description(bool negated/* = false*/) const {
     // used internally for a tooltip where context is apparent, so don't need
@@ -5981,28 +6057,40 @@ std::string Condition::OwnerHasBuildingTypeAvailable::Description(bool negated/*
         : UserString("DESC_OWNER_HAS_BUILDING_TYPE_NOT");
 }
 
-std::string Condition::OwnerHasBuildingTypeAvailable::Dump() const
-{ return DumpIndent() + "OwnerHasBuildingTypeAvailable name = \"" + m_name + "\"\n"; }
+std::string Condition::OwnerHasBuildingTypeAvailable::Dump() const {
+    std::string retval= DumpIndent() + "OwnerHasBuildingTypeAvailable";
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval;
+}
 
 bool Condition::OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OwnerHasBuildingTypeAvailable::Match passed no candidate object";
+        ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
     }
 
-    if (candidate->Unowned())
-        return false;
+    std::string name = m_name ? m_name->Eval(local_context) : "";
+    return OwnerHasBuildingTypeAvailableSimpleMatch(name)(candidate);
+}
 
-    if (const Empire* empire = GetEmpire(candidate->Owner()))
-        return empire->BuildingTypeAvailable(m_name);
-    else
-        return false;
+void Condition::OwnerHasBuildingTypeAvailable::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////
 // OwnerHasShipDesignAvailable                           //
 ///////////////////////////////////////////////////////////
+Condition::OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int id) :
+    ConditionBase(),
+    m_id(new ValueRef::Constant<int>(id))
+{}
+
+Condition::OwnerHasShipDesignAvailable::~OwnerHasShipDesignAvailable()
+{ delete m_id; }
+
 bool Condition::OwnerHasShipDesignAvailable::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -6011,37 +6099,90 @@ bool Condition::OwnerHasShipDesignAvailable::operator==(const Condition::Conditi
 
     const Condition::OwnerHasShipDesignAvailable& rhs_ = static_cast<const Condition::OwnerHasShipDesignAvailable&>(rhs);
 
-    if (m_id != rhs_.m_id)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_id)
 
     return true;
 }
 
+namespace {
+    struct OwnerHasShipDesignAvailableSimpleMatch {
+        OwnerHasShipDesignAvailableSimpleMatch(int id) :
+            m_id(id)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            if (candidate->Unowned())
+                return false;
+
+            if (const Empire* empire = GetEmpire(candidate->Owner()))
+                return empire->ShipDesignAvailable(m_id);
+
+            return false;
+        }
+
+        int m_id;
+    };
+}
+
+void Condition::OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
+                                                  ObjectSet& matches, ObjectSet& non_matches,
+                                                  SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_id || m_id->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        int id = m_id ? m_id->Eval(local_context) : ShipDesign::INVALID_DESIGN_ID;
+        EvalImpl(matches, non_matches, search_domain, OwnerHasShipDesignAvailableSimpleMatch(id));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::OwnerHasShipDesignAvailable::RootCandidateInvariant() const
+{ return !m_id || m_id->RootCandidateInvariant(); }
+
+bool Condition::OwnerHasShipDesignAvailable::TargetInvariant() const
+{ return !m_id || m_id->TargetInvariant(); }
+
+bool Condition::OwnerHasShipDesignAvailable::SourceInvariant() const
+{ return !m_id || m_id->SourceInvariant(); }
+
 std::string Condition::OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) const {
     // used internally for a tooltip where context is apparent, so don't need
-    // to name design here
+    // to specify design here
     return (!negated)
         ? UserString("DESC_OWNER_HAS_SHIP_DESIGN")
         : UserString("DESC_OWNER_HAS_SHIP_DESIGN_NOT");
 }
 
-std::string Condition::OwnerHasShipDesignAvailable::Dump() const
-{ return DumpIndent() + "OwnerHasShipDesignAvailable id = \"" + boost::lexical_cast<std::string>(m_id) + "\"\n"; }
+std::string Condition::OwnerHasShipDesignAvailable::Dump() const {
+    std::string retval = DumpIndent() + "OwnerHasShipDesignAvailable";
+    if (m_id)
+        retval += " id = " + m_id->Dump();
+    return retval;
+}
 
 bool Condition::OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OwnerHasShipDesignAvailable::Match passed no candidate object";
+        ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
     }
 
-    if (candidate->Unowned())
-        return false;
+    int id = m_id ? m_id->Eval(local_context) : ShipDesign::INVALID_DESIGN_ID;
+    return OwnerHasShipDesignAvailableSimpleMatch(id)(candidate);
+}
 
-    if (const Empire* empire = GetEmpire(candidate->Owner()))
-        return empire->ShipDesignAvailable(m_id);
-    else
-        return false;
+void Condition::OwnerHasShipDesignAvailable::SetTopLevelContent(const std::string& content_name) {
+    if (m_id)
+        m_id->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////
