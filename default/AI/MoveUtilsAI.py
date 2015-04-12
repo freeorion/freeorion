@@ -1,8 +1,8 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
-from EnumsAI import TargetType, AIFleetOrderType
-import AITarget
+from EnumsAI import AIFleetOrderType
+import universe_object
 import AIFleetOrder
 import ColonisationAI
 import PlanetUtilsAI
@@ -14,7 +14,7 @@ def get_fleet_orders_from_system_targets(fleet_target, targets):
     # TODO: use Graph Theory to construct move orders
     # TODO: add priority
     # determine system where fleet will be or where is if is going nowhere
-    last_system_target = fleet_target.get_required_system_ai_targets()[0]
+    last_system_target = fleet_target.get_system()
     secure_targets = set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
     # for every system which fleet wanted to visit, determine systems to visit and create move orders
     for target in targets:
@@ -76,7 +76,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
                 target_sys_id in ColonisationAI.annexable_ring1 and len(unsupplied_stops) < fuel or
                 foAI.foAIstate.aggression >= fo.aggression.typical and target_sys_id in ColonisationAI.annexable_ring2 and len(unsupplied_stops) < fuel - 1 or
                 foAI.foAIstate.aggression >= fo.aggression.aggressive and target_sys_id in ColonisationAI.annexable_ring3 and len(unsupplied_stops) < fuel - 2):
-        return [AITarget.AITarget(TargetType.TARGET_SYSTEM, sid) for sid in short_path]
+        return [universe_object.System(sid) for sid in short_path]
     else:
         #print " getting path from 'can_travel_to_system_and_return_to_resupply' ",
         return can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target)
@@ -117,7 +117,7 @@ def get_nearest_supplied_system(start_system_id):
     universe = fo.getUniverse()
 
     if start_system_id in fleet_supplyable_system_ids:
-        return AITarget.AITarget(TargetType.TARGET_SYSTEM, start_system_id)
+        return universe_object.System(start_system_id)
     else:
         min_jumps = 9999  # infinity
         supply_system_id = -1
@@ -127,7 +127,7 @@ def get_nearest_supplied_system(start_system_id):
                 if least_jumps_len < min_jumps:
                     min_jumps = least_jumps_len
                     supply_system_id = system_id
-        return AITarget.AITarget(TargetType.TARGET_SYSTEM, supply_system_id)
+        return universe_object.System(supply_system_id)
 
 
 def get_nearest_drydock_system_id(start_system_id):
@@ -149,8 +149,8 @@ def get_nearest_drydock_system_id(start_system_id):
 
 
 def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
-    start_targ = AITarget.AITarget(TargetType.TARGET_SYSTEM, start_id)
-    dest_targ = AITarget.AITarget(TargetType.TARGET_SYSTEM, dest_id)
+    start_targ = universe_object.System(start_id)
+    dest_targ = universe_object.System(dest_id)
     #TODO actually get a safe path
     this_path = can_travel_to_system(fleet_id, start_targ, dest_targ, ensure_return=False)
     path_ids = [targ.target_id for targ in this_path if targ.target_id != start_id] + [start_id]
@@ -186,7 +186,7 @@ def __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_
                 # leastJumpPath can differ from shortestPath
                 # TODO: use Graph Theory to optimize
                 if True or (system_id != to_system_target.target_id and system_id in fleet_supplyable_system_ids):  # TODO: restructure
-                    new_targets.append(AITarget.AITarget(TargetType.TARGET_SYSTEM, system_id))
+                    new_targets.append(universe_object.System(system_id))
                 if fuel < 0:
                     result = False
             from_system_id = system_id
@@ -221,7 +221,7 @@ def get_repair_fleet_order(fleet_target, current_sys_id):
     """ Returns repair AIFleetOrder to [nearest safe] drydock."""
     # find nearest supplied system
     drydock_sys_id = get_nearest_drydock_system_id(current_sys_id)
-    drydock_system_target = AITarget.AITarget(TargetType.TARGET_SYSTEM, drydock_sys_id)
+    drydock_system_target = universe_object.System(drydock_sys_id)
     print "ordering fleet %d to %s for repair" % (fleet_target.target_id, ppstring(PlanetUtilsAI.sys_name_ids([drydock_sys_id])))
     # create resupply AIFleetOrder
     return AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_REPAIR, fleet_target, drydock_system_target)

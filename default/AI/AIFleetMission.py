@@ -12,7 +12,7 @@ import InvasionAI
 import PlanetUtilsAI
 import math
 from freeorion_tools import dict_from_map
-from AITarget import AITarget
+from universe_object import System, Fleet, Planet
 from EnumsAI import FLEET_MISSION_TYPES, AIFleetMissionType, AIFleetOrderType
 
 ORDERS_FOR_MISSION = {
@@ -49,30 +49,31 @@ class AIFleetMission(object):
     def __init__(self, fleet_id):
         self.orders = []
         self.mission_type = EnumsAI.AIMissionType.FLEET_MISSION
-        self.target = AITarget(EnumsAI.TargetType.TARGET_FLEET, fleet_id)
+        self.target = Fleet(fleet_id)
         self._mission_types = {}
         for mt in FLEET_MISSION_TYPES:
             self._mission_types[mt] = []
         self.target_id = self.target.target_id
-        self.target_type = self.target.target_type
 
-    def __setstate__(self, state_dict):
-        self.__dict__.update(state_dict)  # update attributes
-        #print "Fleet mission unpickle: passed %s"%state_dict
-        for attrib, default in [('orders', state_dict.get('_AIFleetMission__aiFleetOrders', [])),
-                            ('mission_type', EnumsAI.AIMissionType.FLEET_MISSION),
-                            ('_mission_types', state_dict.get('_AIAbstractMission__aiMissionTypes', {})),
-                            ('target_type', EnumsAI.TargetType.TARGET_FLEET)]:
-            if attrib not in state_dict:
-                #print "Fleet mission unpickle: setting %s to %s"%(attrib, default)
-                self.__dict__[attrib] = default
-        if 'target' not in state_dict:
-            old_target = state_dict.get('_AIAbstractMission__aiTarget', None)
-            target_id = old_target.target_id if (old_target is not None) else -1 #TODO consider a harder fail
-            self.__dict__['target'] = old_target
-            self.__dict__['target_id'] = target_id
-            #print "Fleet mission unpickle: setting %s to %s"%('target', old_target)
-            #print "Fleet mission unpickle: setting %s to %s"%('target_id', target_id)
+
+    # def __setstate__(self, state_dict):
+    #     # TODO fix me
+    #     self.__dict__.update(state_dict)  # update attributes
+    #     #print "Fleet mission unpickle: passed %s"%state_dict
+    #     for attrib, default in [('orders', state_dict.get('_AIFleetMission__aiFleetOrders', [])),
+    #                         ('mission_type', EnumsAI.AIMissionType.FLEET_MISSION),
+    #                         ('_mission_types', state_dict.get('_AIAbstractMission__aiMissionTypes', {})),
+    #                         ('target_type', EnumsAI.TargetType.TARGET_FLEET)]:
+    #         if attrib not in state_dict:
+    #             #print "Fleet mission unpickle: setting %s to %s"%(attrib, default)
+    #             self.__dict__[attrib] = default
+    #     if 'target' not in state_dict:
+    #         old_target = state_dict.get('_AIAbstractMission__aiTarget', None)
+    #         target_id = old_target.target_id if (old_target is not None) else -1 #TODO consider a harder fail
+    #         self.__dict__['target'] = old_target
+    #         self.__dict__['target_id'] = target_id
+    #         #print "Fleet mission unpickle: setting %s to %s"%('target', old_target)
+    #         #print "Fleet mission unpickle: setting %s to %s"%('target_id', target_id)
 
     def add_target(self, mission_type, target):
         targets = self.get_targets(mission_type)
@@ -107,7 +108,7 @@ class AIFleetMission(object):
         self.orders = []
 
     def _get_fleet_order_from_target(self, mission_type, target):
-        fleet_targets = AITarget(EnumsAI.TargetType.TARGET_FLEET, self.target_id)
+        fleet_targets = Fleet(self.target_id)
         order_type = ORDERS_FOR_MISSION.get(mission_type, AIFleetOrderType.ORDER_INVALID)
         return AIFleetOrder.AIFleetOrder(order_type, fleet_targets, target)
 
@@ -219,7 +220,7 @@ class AIFleetMission(object):
         if not target.valid:
             return False
         if mission_type == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
-            if target.target_type == EnumsAI.TargetType.TARGET_SYSTEM:
+            if isinstance(target, System):
                 empire = fo.getEmpire()
                 if not empire.hasExploredSystem(target.target_id):
                     return True
@@ -228,8 +229,8 @@ class AIFleetMission(object):
             fleet = universe.getFleet(self.target_id)
             if not fleet.hasOutpostShips:
                 return False
-            if target.target_type == EnumsAI.TargetType.TARGET_PLANET:
-                planet = universe.getPlanet(target.target_id)
+            if isinstance(target, Planet):
+                planet = target.get_object()
                 if planet.unowned:
                     return True
         elif mission_type in [ AIFleetMissionType.FLEET_MISSION_COLONISATION, AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION]:
@@ -237,8 +238,8 @@ class AIFleetMission(object):
             fleet = universe.getFleet(self.target_id)
             if not fleet.hasColonyShips:
                 return False
-            if target.target_type == EnumsAI.TargetType.TARGET_PLANET:
-                planet = universe.getPlanet(target.target_id)
+            if isinstance(target, Planet):
+                planet = target.get_object()
                 population = planet.currentMeterValue(fo.meterType.population)
                 if planet.unowned or (planet.owner == fleet.owner and population == 0):
                     return True
@@ -247,13 +248,13 @@ class AIFleetMission(object):
             fleet = universe.getFleet(self.target_id)
             if not fleet.hasTroopShips:
                 return False
-            if target.target_type == EnumsAI.TargetType.TARGET_PLANET:
-                planet = universe.getPlanet(target.target_id)
+            if isinstance(target, Planet):
+                planet = target.get_object()
                 if not planet.unowned or planet.owner != fleet.owner:  # TODO remove latter portion of this check in light of invasion retargeting, or else correct logic
                     return True
         elif mission_type in [AIFleetMissionType.FLEET_MISSION_MILITARY, AIFleetMissionType.FLEET_MISSION_SECURE, AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE]:
             universe = fo.getUniverse()
-            if target.target_type == EnumsAI.TargetType.TARGET_SYSTEM:
+            if isinstance(target, System):
                 return True
         # TODO: implement other mission types
         return False
@@ -354,7 +355,7 @@ class AIFleetMission(object):
                                                 verbose=False)
         for fid in found_fleets:
             FleetUtilsAI.merge_fleet_a_into_b(fid, fleet_id)
-        target = AITarget(EnumsAI.TargetType.TARGET_PLANET, target_id)
+        target = Planet(target_id)
         self.add_target(AIFleetMissionType.FLEET_MISSION_INVASION, target)
         self.generate_fleet_orders()
 
@@ -438,12 +439,6 @@ class AIFleetMission(object):
                             source_target = last_order.fleet
                             target_target = last_order.target
                             print "        source target validity: %s; target target validity: %s " % (source_target.valid, target_target.valid)
-                            if EnumsAI.TargetType.TARGET_SHIP == source_target.target_type:
-                                ship_id = source_target.target_id
-                                ship = universe.getShip(ship_id)
-                                if not ship:
-                                    print "Ship id %d not a valid ship id" % ship_id
-                                print "        source target Ship (%d), species %s, can%s colonize" % (ship_id, ship.speciesName, ["not", ""][ship.canColonize])
                         return  # colonize order must not have completed yet
                 clearAll = True
                 last_sys_target = -1
@@ -546,7 +541,7 @@ class AIFleetMission(object):
         system_targets_required_to_visit = []
         for mission_type in self.get_mission_types():
             for aiTarget in self.get_targets(mission_type):
-                system_targets_required_to_visit.extend(aiTarget.get_required_system_ai_targets())
+                system_targets_required_to_visit.append(aiTarget.get_system())
 
         orders_to_visit_systems = MoveUtilsAI.get_fleet_orders_from_system_targets(self.target, system_targets_required_to_visit)
         #TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
@@ -561,13 +556,13 @@ class AIFleetMission(object):
         # if fleet is in some system = fleet.system_id >=0, then also generate system AIFleetOrders
         if system_id >= 0:
             # system in where fleet is
-            system_target = AITarget(EnumsAI.TargetType.TARGET_SYSTEM, system_id)
+            system_target = System(system_id)
             # if mission aiTarget has required system where fleet is, then generate fleet_order from this aiTarget
             # for all targets in all mission types get required systems to visit
             for mission_type in self.get_mission_types():
                 tragets = self.get_targets(mission_type)
                 for target in tragets:
-                    if system_target in target.get_required_system_ai_targets():
+                    if system_target == target.get_system():
                         # from target required to visit get fleet orders to accomplish target
                         fleet_order = self._get_fleet_order_from_target(mission_type, target)
                         self.orders.append(fleet_order)
@@ -600,9 +595,9 @@ class AIFleetMission(object):
         fleet = fo.getUniverse().getFleet(self.target_id)
         system_id = fleet.systemID
         if system_id >= 0:
-            return AITarget(EnumsAI.TargetType.TARGET_SYSTEM, system_id)
+            return System(system_id)
         else:  # in starlane, so return next system
-            return AITarget(EnumsAI.TargetType.TARGET_SYSTEM, fleet.nextSystemID)
+            return System(fleet.nextSystemID)
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.target == other.target

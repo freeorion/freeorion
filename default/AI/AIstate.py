@@ -9,9 +9,10 @@ import ExplorationAI
 import FleetUtilsAI
 import ProductionAI
 import ResourcesAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType
 from MilitaryAI import MinThreat
 import PlanetUtilsAI
+from universe_object import System
 from freeorion_tools import dict_from_map
 
 
@@ -1026,7 +1027,7 @@ class AIstate(object):
                         mainMissionTargets = mainFleetMission.getAITargets(mainMissionType)
                         if mainMissionTargets:
                             mMT0=mainMissionTargets[0]
-                            if mMT0.target_type == TargetType.TARGET_SYSTEM:
+                            if isinstance(mMT0.target_type, System):
                                 status['sysID'] = mMT0.target_id  # hmm, but might still be a fair ways from here
         self.shipCount = shipCount
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])
