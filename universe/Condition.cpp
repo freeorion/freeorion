@@ -4914,10 +4914,10 @@ void Condition::PredefinedShipDesign::Eval(const ScriptingContext& parent_contex
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
-        ScriptingContext local_context(parent_context, no_object);
         if (!m_name)
             EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch());
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
         std::string name = m_name->Eval(local_context);
         EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch(name));
     } else {
@@ -5978,6 +5978,14 @@ void Condition::OwnerHasTech::SetTopLevelContent(const std::string& content_name
 ///////////////////////////////////////////////////////////
 // OwnerHasBuildingTypeAvailable                         //
 ///////////////////////////////////////////////////////////
+Condition::OwnerHasBuildingTypeAvailable::OwnerHasBuildingTypeAvailable(const std::string& name) :
+    ConditionBase(),
+    m_name(new ValueRef::Constant<std::string>(name))
+{}
+
+Condition::OwnerHasBuildingTypeAvailable::~OwnerHasBuildingTypeAvailable()
+{ delete m_name; }
+
 bool Condition::OwnerHasBuildingTypeAvailable::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -5986,11 +5994,60 @@ bool Condition::OwnerHasBuildingTypeAvailable::operator==(const Condition::Condi
 
     const Condition::OwnerHasBuildingTypeAvailable& rhs_ = static_cast<const Condition::OwnerHasBuildingTypeAvailable&>(rhs);
 
-    if (m_name != rhs_.m_name)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_name)
 
     return true;
 }
+
+namespace {
+    struct OwnerHasBuildingTypeAvailableSimpleMatch {
+        OwnerHasBuildingTypeAvailableSimpleMatch(const std::string& name) :
+            m_name(name)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            if (candidate->Unowned())
+                return false;
+
+            if (const Empire* empire = GetEmpire(candidate->Owner()))
+                return empire->BuildingTypeAvailable(m_name);
+
+            return false;
+        }
+
+        std::string m_name;
+    };
+}
+
+void Condition::OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
+                                                    ObjectSet& matches, ObjectSet& non_matches,
+                                                    SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        std::string name = m_name ? m_name->Eval(local_context) : "";
+        EvalImpl(matches, non_matches, search_domain, OwnerHasBuildingTypeAvailableSimpleMatch(name));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::OwnerHasBuildingTypeAvailable::RootCandidateInvariant() const
+{ return !m_name || m_name->RootCandidateInvariant(); }
+
+bool Condition::OwnerHasBuildingTypeAvailable::TargetInvariant() const
+{ return !m_name || m_name->TargetInvariant(); }
+
+bool Condition::OwnerHasBuildingTypeAvailable::SourceInvariant() const
+{ return !m_name || m_name->SourceInvariant(); }
 
 std::string Condition::OwnerHasBuildingTypeAvailable::Description(bool negated/* = false*/) const {
     // used internally for a tooltip where context is apparent, so don't need
@@ -6000,23 +6057,27 @@ std::string Condition::OwnerHasBuildingTypeAvailable::Description(bool negated/*
         : UserString("DESC_OWNER_HAS_BUILDING_TYPE_NOT");
 }
 
-std::string Condition::OwnerHasBuildingTypeAvailable::Dump() const
-{ return DumpIndent() + "OwnerHasBuildingTypeAvailable name = \"" + m_name + "\"\n"; }
+std::string Condition::OwnerHasBuildingTypeAvailable::Dump() const {
+    std::string retval= DumpIndent() + "OwnerHasBuildingTypeAvailable";
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    return retval;
+}
 
 bool Condition::OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OwnerHasBuildingTypeAvailable::Match passed no candidate object";
+        ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
     }
 
-    if (candidate->Unowned())
-        return false;
+    std::string name = m_name ? m_name->Eval(local_context) : "";
+    return OwnerHasBuildingTypeAvailableSimpleMatch(name)(candidate);
+}
 
-    if (const Empire* empire = GetEmpire(candidate->Owner()))
-        return empire->BuildingTypeAvailable(m_name);
-    else
-        return false;
+void Condition::OwnerHasBuildingTypeAvailable::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////

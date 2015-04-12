@@ -1623,24 +1623,31 @@ private:
 
 /** Matches all objects whose owner who has the building type \a name available. */
 struct FO_COMMON_API Condition::OwnerHasBuildingTypeAvailable : public Condition::ConditionBase {
-    OwnerHasBuildingTypeAvailable(const std::string& name) :
+    explicit OwnerHasBuildingTypeAvailable(const std::string& name);
+    explicit OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+    ~OwnerHasBuildingTypeAvailable();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  GetBuildingType() const { return m_name; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    const ValueRef::ValueRefBase<std::string>*  GetBuildingType() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
