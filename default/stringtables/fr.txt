@@ -158,6 +158,9 @@ Débogage
 UNOWNED
 Sans propriétaire
 
+NOWHERE
+Ne peut pas être produit
+
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -3542,6 +3545,8 @@ Résistance
 STRUCTURE_TEXT
 La Résistance indique la quantité de dommages qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation.
 
+STARLANE_SPEED_TITLE
+Vitesse sur Voies spatiales
 STARLANE_SPEED_TEXT
 Vitesse sur la carte galactique  (uu/tour)
 
@@ -5749,6 +5754,8 @@ PC_FUEL
 Carburant
 PC_COLONY
 Colonisation
+PC_SPEED
+Vitesse
 PC_GENERAL
 Général
 PC_BOMBARD
@@ -7609,6 +7616,9 @@ BLD_CULTURE_ARCHIVES_DESC
 
 Conserve le savoir accumulé par des millier d'années de vie sur cette planète, donnant des bonus à bien des aspects de la productivité planétaire.'''
 
+BLD_CULTURE_LIBRARY
+Bibliothèque Culturelle
+
 BLD_IMPERIAL_PALACE
 '''Palais Impérial '''
 
@@ -9027,6 +9037,18 @@ Focus favori activé
 
 ROBOTIC_INTERFACE_EFFECT
 Réseau d'équipage robotique
+
+SHIELD_INTERFERENCE
+Brouillage Boucliers
+
+DETECTOR_INTERFERENCE
+Brouillage Détecteurs
+
+CLOAK_INTERFERENCE
+Brouillage Camouflage
+
+TRANSPATIAL_CLOAK_INTERACTION
+Interaction Propulsion Transpatiale - Camouflage
 
 #############################################################
 ####                       T A G S                       ####
