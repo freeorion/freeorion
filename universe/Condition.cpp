@@ -6083,6 +6083,14 @@ void Condition::OwnerHasBuildingTypeAvailable::SetTopLevelContent(const std::str
 ///////////////////////////////////////////////////////////
 // OwnerHasShipDesignAvailable                           //
 ///////////////////////////////////////////////////////////
+Condition::OwnerHasShipDesignAvailable::OwnerHasShipDesignAvailable(int id) :
+    ConditionBase(),
+    m_id(new ValueRef::Constant<int>(id))
+{}
+
+Condition::OwnerHasShipDesignAvailable::~OwnerHasShipDesignAvailable()
+{ delete m_id; }
+
 bool Condition::OwnerHasShipDesignAvailable::operator==(const Condition::ConditionBase& rhs) const {
     if (this == &rhs)
         return true;
@@ -6091,37 +6099,90 @@ bool Condition::OwnerHasShipDesignAvailable::operator==(const Condition::Conditi
 
     const Condition::OwnerHasShipDesignAvailable& rhs_ = static_cast<const Condition::OwnerHasShipDesignAvailable&>(rhs);
 
-    if (m_id != rhs_.m_id)
-        return false;
+    CHECK_COND_VREF_MEMBER(m_id)
 
     return true;
 }
 
+namespace {
+    struct OwnerHasShipDesignAvailableSimpleMatch {
+        OwnerHasShipDesignAvailableSimpleMatch(int id) :
+            m_id(id)
+        {}
+
+        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            if (candidate->Unowned())
+                return false;
+
+            if (const Empire* empire = GetEmpire(candidate->Owner()))
+                return empire->ShipDesignAvailable(m_id);
+
+            return false;
+        }
+
+        int m_id;
+    };
+}
+
+void Condition::OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
+                                                  ObjectSet& matches, ObjectSet& non_matches,
+                                                  SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_id || m_id->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        TemporaryPtr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        int id = m_id ? m_id->Eval(local_context) : ShipDesign::INVALID_DESIGN_ID;
+        EvalImpl(matches, non_matches, search_domain, OwnerHasShipDesignAvailableSimpleMatch(id));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::OwnerHasShipDesignAvailable::RootCandidateInvariant() const
+{ return !m_id || m_id->RootCandidateInvariant(); }
+
+bool Condition::OwnerHasShipDesignAvailable::TargetInvariant() const
+{ return !m_id || m_id->TargetInvariant(); }
+
+bool Condition::OwnerHasShipDesignAvailable::SourceInvariant() const
+{ return !m_id || m_id->SourceInvariant(); }
+
 std::string Condition::OwnerHasShipDesignAvailable::Description(bool negated/* = false*/) const {
     // used internally for a tooltip where context is apparent, so don't need
-    // to name design here
+    // to specify design here
     return (!negated)
         ? UserString("DESC_OWNER_HAS_SHIP_DESIGN")
         : UserString("DESC_OWNER_HAS_SHIP_DESIGN_NOT");
 }
 
-std::string Condition::OwnerHasShipDesignAvailable::Dump() const
-{ return DumpIndent() + "OwnerHasShipDesignAvailable id = \"" + boost::lexical_cast<std::string>(m_id) + "\"\n"; }
+std::string Condition::OwnerHasShipDesignAvailable::Dump() const {
+    std::string retval = DumpIndent() + "OwnerHasShipDesignAvailable";
+    if (m_id)
+        retval += " id = " + m_id->Dump();
+    return retval;
+}
 
 bool Condition::OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
     TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        ErrorLogger() << "OwnerHasShipDesignAvailable::Match passed no candidate object";
+        ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
     }
 
-    if (candidate->Unowned())
-        return false;
+    int id = m_id ? m_id->Eval(local_context) : ShipDesign::INVALID_DESIGN_ID;
+    return OwnerHasShipDesignAvailableSimpleMatch(id)(candidate);
+}
 
-    if (const Empire* empire = GetEmpire(candidate->Owner()))
-        return empire->ShipDesignAvailable(m_id);
-    else
-        return false;
+void Condition::OwnerHasShipDesignAvailable::SetTopLevelContent(const std::string& content_name) {
+    if (m_id)
+        m_id->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////
