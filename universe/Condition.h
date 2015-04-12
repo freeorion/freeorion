@@ -1464,7 +1464,7 @@ private:
 /** Matches ships that have a ship part meter of type \a meter for part \a part
   * whose current value is >= low and <= high. */
 struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::ConditionBase {
-    ShipPartMeterValue(const std::string& ship_part_name,
+    ShipPartMeterValue(ValueRef::ValueRefBase<std::string>* ship_part_name,
                        MeterType meter,
                        ValueRef::ValueRefBase<double>* low,
                        ValueRef::ValueRefBase<double>* high) :
@@ -1485,20 +1485,20 @@ struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::Condition
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&                      PartName() const { return m_part_name; }
-    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
-    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
-    MeterType                               GetMeterType() const { return m_meter; }
+    const ValueRef::ValueRefBase<std::string>*  PartName() const { return m_part_name; }
+    const ValueRef::ValueRefBase<double>*       Low() const { return m_low; }
+    const ValueRef::ValueRefBase<double>*       High() const { return m_high; }
+    MeterType                                   GetMeterType() const { return m_meter; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string                     m_part_name;
-    MeterType                       m_meter;
-    ValueRef::ValueRefBase<double>* m_low;
-    ValueRef::ValueRefBase<double>* m_high;
+    ValueRef::ValueRefBase<std::string>*    m_part_name;
+    MeterType                               m_meter;
+    ValueRef::ValueRefBase<double>*         m_low;
+    ValueRef::ValueRefBase<double>*         m_high;
 };
 
 /** Matches all objects if the empire with id \a empire_id has an empire meter

@@ -5420,6 +5420,7 @@ void Condition::MeterValue::SetTopLevelContent(const std::string& content_name) 
 // ShipPartMeterValue                                    //
 ///////////////////////////////////////////////////////////
 Condition::ShipPartMeterValue::~ShipPartMeterValue() {
+    delete m_part_name;
     delete m_low;
     delete m_high;
 }
@@ -5435,9 +5436,7 @@ bool Condition::ShipPartMeterValue::operator==(const Condition::ConditionBase& r
     if (m_meter != rhs_.m_meter)
         return false;
 
-    if (m_part_name != rhs_.m_part_name)
-        return false;
-
+    CHECK_COND_VREF_MEMBER(m_part_name)
     CHECK_COND_VREF_MEMBER(m_low)
     CHECK_COND_VREF_MEMBER(m_high)
 
@@ -5468,8 +5467,8 @@ namespace {
         }
 
         std::string m_part_name;
-        float      m_low;
-        float      m_high;
+        float       m_low;
+        float       m_high;
         MeterType   m_meter;
     };
 }
@@ -5478,7 +5477,8 @@ void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
                                          ObjectSet& matches, ObjectSet& non_matches,
                                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
+    bool simple_eval_safe = ((!m_part_name || m_part_name->LocalCandidateInvariant()) &&
+                             (!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
@@ -5487,7 +5487,8 @@ void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
         ScriptingContext local_context(parent_context, no_object);
         float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
         float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-        EvalImpl(matches, non_matches, search_domain, ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high));
+        std::string part_name = (m_part_name ? m_part_name->Eval(local_context) : "");
+        EvalImpl(matches, non_matches, search_domain, ShipPartMeterValueSimpleMatch(part_name, m_meter, low, high));
     } else {
         // re-evaluate allowed turn range for each candidate object
         Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -5495,34 +5496,48 @@ void Condition::ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
 }
 
 bool Condition::ShipPartMeterValue::RootCandidateInvariant() const {
-    return ((!m_low || m_low->RootCandidateInvariant()) &&
+    return ((!m_part_name || m_part_name->RootCandidateInvariant()) &&
+            (!m_low || m_low->RootCandidateInvariant()) &&
             (!m_high || m_high->RootCandidateInvariant()));
 }
 
 bool Condition::ShipPartMeterValue::TargetInvariant() const {
-    return ((!m_low || m_low->TargetInvariant()) &&
+    return ((!m_part_name || m_part_name->TargetInvariant()) &&
+            (!m_low || m_low->TargetInvariant()) &&
             (!m_high || m_high->TargetInvariant()));
 }
 
 bool Condition::ShipPartMeterValue::SourceInvariant() const {
-    return ((!m_low || m_low->SourceInvariant()) &&
+    return ((!m_part_name || m_part_name->SourceInvariant()) &&
+            (!m_low || m_low->SourceInvariant()) &&
             (!m_high || m_high->SourceInvariant()));
 }
 
 std::string Condition::ShipPartMeterValue::Description(bool negated/* = false*/) const {
-    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
-                                    boost::lexical_cast<std::string>(m_low->Eval()) :
-                                    m_low->Description())
-                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
-    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
-                                      boost::lexical_cast<std::string>(m_high->Eval()) :
-                                      m_high->Description())
-                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+    std::string low_str;
+    if (m_low)
+        low_str = m_low->Description();
+    else
+        low_str = boost::lexical_cast<std::string>(-Meter::LARGE_VALUE);
+
+    std::string high_str;
+    if (m_high)
+        high_str = m_high->Description();
+    else
+        high_str = boost::lexical_cast<std::string>(Meter::LARGE_VALUE);
+
+    std::string part_str;
+    if (m_part_name) {
+        part_str = m_part_name->Description();
+        if (ValueRef::ConstantExpr(m_part_name) && UserStringExists(part_str))
+            part_str = UserString(part_str);
+    }
+
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_SHIP_PART_METER_VALUE_CURRENT")
         : UserString("DESC_SHIP_PART_METER_VALUE_CURRENT_NOT"))
                % UserString(boost::lexical_cast<std::string>(m_meter))
-               % UserString(m_part_name)
+               % part_str
                % low_str
                % high_str);
 }
@@ -5530,7 +5545,8 @@ std::string Condition::ShipPartMeterValue::Description(bool negated/* = false*/)
 std::string Condition::ShipPartMeterValue::Dump() const {
     std::string retval = DumpIndent();
     retval += MeterTypeDumpString(m_meter);
-    retval += " partname = " + m_part_name;
+    if (m_part_name)
+        retval += " part = " + m_part_name->Dump();
     if (m_low)
         retval += " low = " + m_low->Dump();
     if (m_high)
@@ -5547,10 +5563,13 @@ bool Condition::ShipPartMeterValue::Match(const ScriptingContext& local_context)
     }
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
     float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
-    return ShipPartMeterValueSimpleMatch(m_part_name, m_meter, low, high)(candidate);
+    std::string part_name = (m_part_name ? m_part_name->Eval(local_context) : "");
+    return ShipPartMeterValueSimpleMatch(part_name, m_meter, low, high)(candidate);
 }
 
 void Condition::ShipPartMeterValue::SetTopLevelContent(const std::string& content_name) {
+    if (m_part_name)
+        m_part_name->SetTopLevelContent(content_name);
     if (m_low)
         m_low->SetTopLevelContent(content_name);
     if (m_high)
