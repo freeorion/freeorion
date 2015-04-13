@@ -4,6 +4,7 @@
 
 #include "MapWnd.h"
 
+#include "CensusBrowseWnd.h"
 #include "ChatWnd.h"
 #include "PlayerListWnd.h"
 #include "ClientUI.h"
@@ -12,7 +13,6 @@
 #include "CombatReport/CombatReportWnd.h"
 #include "FleetButton.h"
 #include "FleetWnd.h"
-#include "InfoPanels.h"
 #include "InGameMenu.h"
 #include "DesignWnd.h"
 #include "ProductionWnd.h"
@@ -27,6 +27,7 @@
 #include "ShaderProgram.h"
 #include "Hotkeys.h"
 #include "Sound.h"
+#include "TextBrowseWnd.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"

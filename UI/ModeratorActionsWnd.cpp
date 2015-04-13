@@ -7,7 +7,7 @@
 #include "../util/AppInterface.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
-#include "InfoPanels.h"
+#include "TextBrowseWnd.h"
 #include <GG/Button.h>
 
 namespace {

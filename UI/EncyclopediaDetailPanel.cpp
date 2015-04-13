@@ -37,9 +37,11 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/GUI.h>
-#include <boost/algorithm/clamp.hpp>
 
+#include <boost/algorithm/clamp.hpp>
 #include <boost/algorithm/string.hpp>
+
+using boost::io::str;
 
 namespace {
     const GG::X TEXT_MARGIN_X(3);
@@ -1013,9 +1015,9 @@ namespace {
         general_type = UserString("ENC_SHIP_HULL");
 
         detailed_description += UserString(hull->Description()) + "\n\n" + str(FlexibleFormat(UserString("HULL_DESC"))
-            % hull->StarlaneSpeed()
+            % hull->Speed()
             % hull->Fuel()
-            % hull->BattleSpeed()
+            % hull->Speed()
             % hull->Structure());
 
         std::vector<std::string> unlocked_by_techs = TechsThatUnlockItem(ItemSpec(UIT_SHIP_HULL, item_name));
@@ -1769,8 +1771,8 @@ namespace {
             % ship->CurrentMeterValue(METER_MAX_SHIELD)
             % ship->CurrentMeterValue(METER_DETECTION)
             % ship->CurrentMeterValue(METER_STEALTH)
-            % ship->CurrentMeterValue(METER_BATTLE_SPEED)
-            % ship->CurrentMeterValue(METER_STARLANE_SPEED)
+            % ship->CurrentMeterValue(METER_SPEED)
+            % ship->CurrentMeterValue(METER_SPEED)
             % ship->CurrentMeterValue(METER_MAX_FUEL)
             % design->ColonyCapacity()
             % design->TroopCapacity()
@@ -1833,8 +1835,8 @@ namespace {
                     % ship->CurrentMeterValue(METER_MAX_SHIELD)
                     % ship->CurrentMeterValue(METER_DETECTION)
                     % ship->CurrentMeterValue(METER_STEALTH)
-                    % ship->CurrentMeterValue(METER_BATTLE_SPEED)
-                    % ship->CurrentMeterValue(METER_STARLANE_SPEED)
+                    % ship->CurrentMeterValue(METER_SPEED)
+                    % ship->CurrentMeterValue(METER_SPEED)
         % ship->CurrentMeterValue(METER_MAX_FUEL)
         % design->ColonyCapacity()
         % design->TroopCapacity()
@@ -2314,7 +2316,6 @@ void EncyclopediaDetailPanel::Refresh() {
     std::string detailed_description;
     GG::Clr color(GG::CLR_ZERO);
 
-    using boost::io::str;
     if (m_items.empty())
         return;
 

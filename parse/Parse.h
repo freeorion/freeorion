@@ -66,10 +66,10 @@ namespace parse {
 
     FO_PARSE_API bool alignments(const boost::filesystem::path& path,
                                  std::vector<Alignment>& alignments_,
-                                 std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups);
+                                 std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups);
 
     FO_PARSE_API bool statistics(const boost::filesystem::path& path,
-                                 std::map<std::string, const ValueRef::ValueRefBase<double>*>& stats_);
+                                 std::map<std::string, ValueRef::ValueRefBase<double>*>& stats_);
 
     FO_PARSE_API bool encyclopedia_articles(const boost::filesystem::path& path,
                                             Encyclopedia& enc);

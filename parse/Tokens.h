@@ -21,8 +21,6 @@
     (All)                                       \
     (AllyOf)                                    \
     (And)                                       \
-    (AntiFighterDamage)                         \
-    (AntiShipDamage)                            \
     (AnyEmpire)                                 \
     (Armed)                                     \
     (Armour)                                    \
@@ -30,7 +28,6 @@
     (Application)                               \
     (Asteroids)                                 \
     (Barren)                                    \
-    (BattleSpeed)                               \
     (BlackHole)                                 \
     (Blue)                                      \
     (Bombard)                                   \
@@ -73,6 +70,7 @@
     (CreateShip)                                \
     (CreateSystem)                              \
     (CreationTurn)                              \
+    (CurrentContent)                            \
     (CurrentTurn)
 
 #define TOKEN_SEQ_3                             \
@@ -113,8 +111,6 @@
     (Field)                                     \
     (FieldType)                                 \
     (Fighters)                                  \
-    (FighterType)                               \
-    (FighterWeaponRange)                        \
     (FinalDestinationID)                        \
     (Fleet)                                     \
     (FleetID)                                   \
@@ -144,6 +140,7 @@
     (Graphic)                                   \
     (Happiness)                                 \
     (HasSpecial)                                \
+    (HasSpecialCapacity)                        \
     (HasSpecialSinceTurn)                       \
     (HasTag)                                    \
     (High)                                      \
@@ -155,7 +152,7 @@
     (Huge)                                      \
     (Hull)                                      \
     (HullFuel)                                  \
-    (HullStarlaneSpeed)                         \
+    (HullSpeed)                                 \
     (HullStealth)                               \
     (HullStructure)                             \
     (Icon)                                      \
@@ -177,7 +174,6 @@
     (Large)                                     \
     (LastTurnBattleHere)                        \
     (LastTurnActiveInBattle)                    \
-    (LaunchRate)                                \
     (LeastHappySpecies)                         \
     (LocalCandidate)                            \
     (Location)                                  \
@@ -314,15 +310,11 @@
     (ResupplyableBy)                            \
     (Retain)                                    \
     (RMS)                                       \
-    (ROF)                                       \
     (RootCandidate)                             \
     (Scope)
 
 #define TOKEN_SEQ_11                            \
     (SetAggressive)                             \
-    (SetAntiFighterDamage)                      \
-    (SetAntiShipDamage)                         \
-    (SetBattleSpeed)                            \
     (SetCapacity)                               \
     (SetConstruction)                           \
     (SetDamage)                                 \
@@ -333,11 +325,9 @@
     (SetEmpireMeter)                            \
     (SetEmpireTechProgress)                     \
     (SetEmpireTradeStockpile)                   \
-    (SetFighterWeaponRange)                     \
     (SetFuel)                                   \
     (SetHappiness)                              \
     (SetIndustry)                               \
-    (SetLaunchRate)                             \
     (SetMaxDefense)                             \
     (SetMaxFuel)                                \
     (SetMaxShield)                              \
@@ -355,13 +345,11 @@
     (SetRange)                                  \
     (SetRebelTroops)                            \
     (SetResearch)                               \
-    (SetROF)                                    \
     (SetShield)                                 \
     (SetSize)                                   \
     (SetSpecies)                                \
     (SetSpeciesOpinion)                         \
     (SetSpeed)                                  \
-    (SetStarlaneSpeed)                          \
     (SetStarType)                               \
     (SetStealth)                                \
     (SetStructure)                              \
@@ -420,7 +408,6 @@
     (Spread)                                    \
     (StackingGroup)                             \
     (Star)                                      \
-    (StarlaneSpeed)                             \
     (StarType)                                  \
     (Stationary)                                \
     (Statistic)                                 \

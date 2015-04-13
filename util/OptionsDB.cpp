@@ -396,7 +396,8 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
 
         if (it == m_options.end()) {
-            ErrorLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  You may need to delete your config.xml if it is out of date";
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                ErrorLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  You may need to delete your config.xml if it is out of date";
             return;
         }
 

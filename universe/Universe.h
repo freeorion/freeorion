@@ -345,6 +345,10 @@ public:
       * known by the empire with id \a empire_id */
     void            SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id);
 
+    /** Record in statistics that \a object_id was destroyed by species/empire
+      * associated with \a source_object_id */
+    void            CountDestructionInStats(int object_id, int source_object_id);
+
     /** Removes the object with ID number \a object_id from the universe's map
       * of existing objects, and adds the object's id to the set of destroyed
       * object ids.  If \a update_destroyed_object_knowers is true, empires
@@ -364,7 +368,7 @@ public:
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
       * other effects might depend on their existence) */
-    void            EffectDestroy(int object_id);
+    void            EffectDestroy(int object_id, int source_object_id = INVALID_OBJECT_ID);
 
     /** Permanently deletes object with ID number \a object_id.  no
       * information about this object is retained in the Universe.  Can be
@@ -474,7 +478,7 @@ private:
       * TemporaryPtr on failure.  Useful mostly for times when ID needs
       * to be consistent on client and server */
     template <class T>
-    TemporaryPtr<T>            InsertID(T* obj, int id);
+    TemporaryPtr<T>             InsertID(T* obj, int id);
 
     struct GraphImpl;
 
@@ -533,7 +537,7 @@ private:
     int                             m_last_allocated_object_id;
     int                             m_last_allocated_design_id;
 
-    std::set<int>                   m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
+    std::map<int, std::set<int> >   m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
     std::multimap<int, std::string> m_marked_for_victory;               ///< used while applying effects to cache objects whose owner should be victorious.  Victory testing is done separately from effects execution, so this needs to be stored temporarily...
 
     double                          m_universe_width;
