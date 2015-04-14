@@ -6940,9 +6940,6 @@ Spécialisation Propulsion de Masse
 SHP_TRANSSPACE_DRIVE
 Propulsion Trans-Spatiale
 
-SHP_TRANSSPACE_DRIVE_DESC
-Even when spatial dimensions are skewed by relativistic effects, an object generally has constant space-time characteristics. By creating a device which alters the characteristics of space-time itself using quasi-relativistic effects, it would be possible to create a fast, stealthy method of propulsion.
-
 SHP_MIDCOMB_LOG
 Logistique de Combat
 
@@ -7492,9 +7489,6 @@ Le nec plus ultra de la détection. Porte le [[encyclopedia DETECTION_RANGE_TITL
 SPY_STEALTH_1
 Affaiblisseur Électromagnétique
 
-SPY_STEALTH_1_DESC
-Unlocks the [[shippart ST_CLOAK_1]] ship part and gives all planets and outposts in the empire the [[special CLOUD_COVER_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20.
-
 SPY_STEALTH_2
 Champ d'Absorption
 
@@ -7572,23 +7566,14 @@ Coques Astéroïdales de Camouflage
 SHP_MINIAST_SWARM
 Essaim Mini-Astéroïdal
 
-SHP_MINIAST_SWARM_DESC
-This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull.
-
 SHP_SCAT_AST_HULL
 Coque Astéroïdale Multiple
 
 SHP_ORG_HULL
 Coque Organique
 
-SHP_ORG_HULL_DESC
-This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle.
-
 SHP_ENDOSYMB_HULL
 Coque Endosymbiotique
-
-SHP_ENDOSYMB_HULL_DESC
-This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles.
 
 SHP_SENT_HULL
 Coque Sensitive
@@ -8277,9 +8262,6 @@ La recherche sur l'espace multidimensionnel initie le développement de matrice 
 
 FU_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
-
-FU_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 30.
 
 FU_TRANSPATIAL_DRIVE
 Propulsion Trans-Spatiale
