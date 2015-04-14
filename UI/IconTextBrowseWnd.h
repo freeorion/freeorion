@@ -5,8 +5,6 @@
 #include <GG/GGFwd.h>
 #include <GG/BrowseInfoWnd.h>
 
-class CUILabel;
-
 
 /** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/
 class IconTextBrowseWnd : public GG::BrowseInfoWnd {
@@ -18,8 +16,8 @@ public:
 
 private:
     GG::StaticGraphic*  m_icon;
-    CUILabel*           m_title_text;
-    CUILabel*           m_main_text;
+    GG::Label*          m_title_text;
+    GG::Label*          m_main_text;
 };
 
 #endif

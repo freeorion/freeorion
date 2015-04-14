@@ -122,8 +122,6 @@ public:
 
     /** \name Accessors */ //@{
     virtual GG::Pt MinUsableSize() const;
-
-    GG::Clr        BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
     //@}
 
     /** \name Mutators */ //@{
@@ -342,7 +340,7 @@ private:
     std::vector<bool>   m_show_signs;
 
     GG::StaticGraphic*  m_icon;
-    CUILabel*           m_text;
+    GG::Label*          m_text;
 };
 
 class CUIToolBar : public GG::Control {
@@ -459,20 +457,20 @@ private:
 
     void Draw(GG::Clr clr, bool fill);
 
-    CUILabel* m_title;
-    CUILabel* m_total_points_label;
-    CUILabel* m_total_points;
-    CUILabel* m_total_points_P_label;
-    CUILabel* m_wasted_points_label;
-    CUILabel* m_wasted_points;
-    CUILabel* m_wasted_points_P_label;
-    CUILabel* m_projects_in_progress_label;
-    CUILabel* m_projects_in_progress;
-    CUILabel* m_points_to_underfunded_projects_label;
-    CUILabel* m_points_to_underfunded_projects;
-    CUILabel* m_points_to_underfunded_projects_P_label;
-    CUILabel* m_projects_in_queue_label;
-    CUILabel* m_projects_in_queue;
+    GG::Label* m_title;
+    GG::Label* m_total_points_label;
+    GG::Label* m_total_points;
+    GG::Label* m_total_points_P_label;
+    GG::Label* m_wasted_points_label;
+    GG::Label* m_wasted_points;
+    GG::Label* m_wasted_points_P_label;
+    GG::Label* m_projects_in_progress_label;
+    GG::Label* m_projects_in_progress;
+    GG::Label* m_points_to_underfunded_projects_label;
+    GG::Label* m_points_to_underfunded_projects;
+    GG::Label* m_points_to_underfunded_projects_P_label;
+    GG::Label* m_projects_in_queue_label;
+    GG::Label* m_projects_in_queue;
 
     std::pair<int, int> m_center_gap;
     float m_border_thickness;
@@ -505,7 +503,7 @@ private:
 };
 
 /** Displays current rendering frames per second. */
-class FPSIndicator : public GG::TextControl {
+class FPSIndicator : public GG::Label {
 public:
     FPSIndicator();
     virtual void Render();

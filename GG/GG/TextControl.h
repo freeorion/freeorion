@@ -256,6 +256,8 @@ private:
     Font::RenderCache*          m_render_cache;///< Cache much of text rendering.
 };
 
+typedef TextControl Label;
+
 } // namespace GG
 
 // template implementations

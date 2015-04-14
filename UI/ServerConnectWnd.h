@@ -4,14 +4,10 @@
 
 #include <string>
 #include <GG/GGFwd.h>
+#include <GG/ListBox.h>
 
 #include "CUIWnd.h"
-#include "CUIControls.h"
 #include "../network/ClientNetworking.h"
-
-class CUIButton;
-class CUIListBox;
-class CUIEdit;
 
 
 /** server connections window */
@@ -49,14 +45,14 @@ private:
     std::pair<std::string, std::string> m_result;
 
     GG::RadioButtonGroup*               m_host_or_join_radio_group;
-    CUILabel*                           m_LAN_game_label;
-    CUIListBox*                         m_servers_lb;
-    CUIButton*                          m_find_LAN_servers_bn;
-    CUILabel*                           m_internet_game_label;
-    CUIEdit*                            m_IP_address_edit;
-    CUIEdit*                            m_player_name_edit;
-    CUIButton*                          m_ok_bn;
-    CUIButton*                          m_cancel_bn;
+    GG::Label*                          m_LAN_game_label;
+    GG::ListBox*                        m_servers_lb;
+    GG::Button*                         m_find_LAN_servers_bn;
+    GG::Label*                          m_internet_game_label;
+    GG::Edit*                           m_IP_address_edit;
+    GG::Edit*                           m_player_name_edit;
+    GG::Button*                         m_ok_bn;
+    GG::Button*                         m_cancel_bn;
 
     ClientNetworking::ServerList        m_LAN_servers;
 };

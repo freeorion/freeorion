@@ -325,7 +325,7 @@ void ModeratorActionsWnd::Refresh() {
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
-        CUILabel* label = new CUILabel(empire->Name(), GG::FORMAT_NOWRAP);
+        GG::Label* label = new CUILabel(empire->Name(), GG::FORMAT_NOWRAP);
         label->SetTextColor(empire->Color());
         row->push_back(label);
         m_empire_drop->Insert(row);
@@ -333,7 +333,7 @@ void ModeratorActionsWnd::Refresh() {
 
     // no empire / monsters
     GG::DropDownList::Row* row = new GG::DropDownList::Row();
-    CUILabel* label = new CUILabel(UserString("UNOWNED"), GG::FORMAT_NOWRAP);
+    GG::Label* label = new CUILabel(UserString("UNOWNED"), GG::FORMAT_NOWRAP);
     label->SetTextColor(GG::CLR_RED);
     row->push_back(label);
     m_empire_drop->Insert(row);

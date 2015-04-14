@@ -6,8 +6,6 @@
 #include <GG/GGFwd.h>
 #include <GG/Control.h>
 
-class CUILabel;
-
 
 /** A control that allows interaction with a field. This class allows user
   * interaction with fields on the galaxy map.  It contains the graphic to
@@ -61,7 +59,7 @@ private:
     GG::DynamicGraphic*             m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
     GG::StaticGraphic*              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system
     bool                            m_selected;                 //!< is this icon presently selected / should it show m_selected_indicator
-    CUILabel*                       m_name;                     //!< the control that holds the name of the system
+    GG::Label*                      m_name;                     //!< the control that holds the name of the system
 };
 
 #endif // _SystemIcon_h_

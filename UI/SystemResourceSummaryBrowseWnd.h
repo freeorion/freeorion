@@ -2,9 +2,11 @@
 #ifndef _SystemResourceSummaryBrowseWnd_h_
 #define _SystemResourceSummaryBrowseWnd_h_
 
+#include <GG/GGFwd.h>
 #include <GG/BrowseInfoWnd.h>
 
-#include "CUIControls.h"
+#include "../universe/Enums.h"
+
 
 /** Gives information about inporting and exporting of resources to and from this system when mousing
   * over the system resource production summary. */
@@ -32,13 +34,13 @@ private:
     double              m_production;               // set by UpdateProduction - used to store production in system so that import / export / unused can be more easily calculated
     double              m_allocation;               // set by UpdateAllocation - used like m_production
 
-    CUILabel*           m_production_label;
-    CUILabel*           m_allocation_label;
-    CUILabel*           m_import_export_label;
+    GG::Label*          m_production_label;
+    GG::Label*          m_allocation_label;
+    GG::Label*          m_import_export_label;
 
-    std::vector<std::pair<CUILabel*, CUILabel*> > m_production_labels_and_amounts;
-    std::vector<std::pair<CUILabel*, CUILabel*> > m_allocation_labels_and_amounts;
-    std::vector<std::pair<CUILabel*, CUILabel*> > m_import_export_labels_and_amounts;
+    std::vector<std::pair<GG::Label*, GG::Label*> > m_production_labels_and_amounts;
+    std::vector<std::pair<GG::Label*, GG::Label*> > m_allocation_labels_and_amounts;
+    std::vector<std::pair<GG::Label*, GG::Label*> > m_import_export_labels_and_amounts;
 
     GG::Y               row_height;
 

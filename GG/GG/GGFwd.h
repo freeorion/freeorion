@@ -26,7 +26,9 @@
 
 namespace GG {
     class Button;
+    class DropDownList;
     class DynamicGraphic;
+    class Edit;
     class Font;
     class ListBox;
     class MultiEdit;
@@ -34,8 +36,15 @@ namespace GG {
     class Scroll;
     class StaticGraphic;
     class SubTexture;
+    class TabWnd;
     class Texture;
+    class TextControl;
     struct Clr;
+
+    typedef TextControl Label;
+
+    template <class T>
+    class Spin;
 }
 
 #endif

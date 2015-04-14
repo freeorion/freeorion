@@ -325,12 +325,12 @@ namespace {
         }
 
         int                     m_player_id;
-        //CUILabel*             m_player_name_text;
-        CUILabel*               m_empire_name_text;
-        CUILabel*               m_empire_ship_text;
-        CUILabel*               m_empire_planet_text;
-        CUILabel*               m_empire_production_text;
-        CUILabel*               m_empire_research_text;
+        //GG::Label*            m_player_name_text;
+        GG::Label*              m_empire_name_text;
+        GG::Label*              m_empire_ship_text;
+        GG::Label*              m_empire_planet_text;
+        GG::Label*              m_empire_production_text;
+        GG::Label*              m_empire_research_text;
 
         GG::Pt                  m_diplo_status_icon_ul;
         GG::Pt                  m_ship_icon_ul;

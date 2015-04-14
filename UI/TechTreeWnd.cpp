@@ -538,14 +538,14 @@ private:
     TechTreeArcs                        m_dependency_arcs;
 
     LayoutSurface* m_layout_surface;
-    CUIScroll*     m_vscroll;
-    CUIScroll*     m_hscroll;
+    GG::Scroll*    m_vscroll;
+    GG::Scroll*    m_hscroll;
     double         m_scroll_position_x;     //actual scroll position
     double         m_scroll_position_y;
     double         m_drag_scroll_position_x;//position when drag started
     double         m_drag_scroll_position_y;
-    CUIButton*     m_zoom_in_button;
-    CUIButton*     m_zoom_out_button;
+    GG::Button*    m_zoom_in_button;
+    GG::Button*    m_zoom_out_button;
 };
 
 
@@ -1392,7 +1392,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 
-    CUILabel* text = new CUILabel(UserString(m_tech), GG::FORMAT_LEFT);
+    GG::Label* text = new CUILabel(UserString(m_tech), GG::FORMAT_LEFT);
     text->Resize(GG::Pt(NAME_WIDTH, HEIGHT));
     text->ClipText(true);
     push_back(text);

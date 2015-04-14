@@ -8,7 +8,6 @@
 #include "CUIWnd.h"
 #include "MapWnd.h"
 
-class CUIListBox;
 class Fleet;
 class FleetDataPanel;
 class FleetDetailPanel;
@@ -229,8 +228,8 @@ private:
     GG::StaticGraphic*          m_invade_indicator;
     GG::StaticGraphic*          m_bombard_indicator;
     ScanlineControl*            m_scanline_control;
-    CUILabel*                   m_ship_name_text;
-    CUILabel*                   m_design_name_text;
+    GG::Label*                  m_ship_name_text;
+    GG::Label*                  m_design_name_text;
 
     std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 

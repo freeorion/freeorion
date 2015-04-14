@@ -1091,8 +1091,8 @@ private:
     boost::signals2::connection  m_fleet_connection;
 
     GG::Control*        m_fleet_icon;
-    CUILabel*           m_fleet_name_text;
-    CUILabel*           m_fleet_destination_text;
+    GG::Label*          m_fleet_name_text;
+    GG::Label*          m_fleet_destination_text;
     GG::Button*         m_aggression_toggle;
     GG::StaticGraphic*  m_gift_indicator;
     ScanlineControl*    m_scanline_control;

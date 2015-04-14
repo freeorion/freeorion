@@ -1,7 +1,6 @@
 #include "CUIStyle.h"
 
 #include "CUIControls.h"
-#include "CUISpin.h"
 #include "CUISlider.h"
 #include "../util/i18n.h"
 

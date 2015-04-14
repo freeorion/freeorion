@@ -3,7 +3,7 @@
 #define _ShipDesignPanel_h_
 
 #include <GG/GGFwd.h>
-#include "CUIControls.h"
+#include <GG/Control.h>
 
 
 /** Represents a ShipDesign */
@@ -29,7 +29,7 @@ private:
 
 protected:
     GG::StaticGraphic*      m_graphic;
-    CUILabel*               m_name;
+    GG::Label*              m_name;
 };
 
 #endif

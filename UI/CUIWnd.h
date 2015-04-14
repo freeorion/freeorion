@@ -3,12 +3,10 @@
 #ifndef _CUIWnd_h_
 #define _CUIWnd_h_
 
+#include <GG/GGFwd.h>
 #include <GG/Button.h>
 #include <GG/Wnd.h>
 #include <GG/WndEvent.h>
-
-class CUIEdit;
-class CUIButton;
 
 
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
@@ -183,9 +181,9 @@ private:
 
     std::string m_result;
 
-    CUIEdit*    m_edit;
-    CUIButton*  m_ok_bn;
-    CUIButton*  m_cancel_bn;
+    GG::Edit*   m_edit;
+    GG::Button* m_ok_bn;
+    GG::Button* m_cancel_bn;
 
     static const GG::X BUTTON_WIDTH;
     static const int CONTROL_MARGIN;

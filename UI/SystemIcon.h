@@ -6,7 +6,6 @@
 #include <GG/GGFwd.h>
 #include <GG/Control.h>
 
-class CUILabel;
 class FleetButton;
 
 

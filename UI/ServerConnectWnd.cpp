@@ -1,23 +1,22 @@
 #include "ServerConnectWnd.h"
 
-#include "ClientUI.h"
-#include "Sound.h"
-#include "../client/human/HumanClientApp.h"
+#include <sstream>
+#include <iomanip>
+#include <cctype>
+#include <boost/cast.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <GG/Button.h>
+#include <GG/Layout.h>
+
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../client/human/HumanClientApp.h"
+#include "ClientUI.h"
+#include "CUIControls.h"
+#include "Sound.h"
 
-#include <boost/filesystem/fstream.hpp>
-
-#include <GG/Button.h>
-#include <GG/Layout.h>
-
-#include <boost/cast.hpp>
-
-#include <sstream>
-#include <iomanip>
-#include <cctype>
 
 namespace {
     const GG::X WINDOW_WIDTH(400);
@@ -55,7 +54,7 @@ ServerConnectWnd::ServerConnectWnd() :
 {
     Sound::TempUISoundDisabler sound_disabler;
 
-    CUILabel* player_name_label = new CUILabel(UserString("PLAYER_NAME_LABEL"), GG::FORMAT_LEFT);
+    GG::Label* player_name_label = new CUILabel(UserString("PLAYER_NAME_LABEL"), GG::FORMAT_LEFT);
     m_player_name_edit = new CUIEdit(GetOptionsDB().Get<std::string>("multiplayersetup.player-name"));
     m_host_or_join_radio_group = new GG::RadioButtonGroup(GG::VERTICAL);
     m_host_or_join_radio_group->AddButton(new CUIStateButton(UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
@@ -192,7 +191,7 @@ void ServerConnectWnd::OkClicked()
         m_result.second = *m_IP_address_edit;
         if (m_result.second == "") {
             m_result.second =
-                boost::polymorphic_downcast<CUILabel*>(
+                boost::polymorphic_downcast<GG::Label*>(
                     (***m_servers_lb->Selections().begin())[0])->Text();
         }
     }

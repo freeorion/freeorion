@@ -3,14 +3,13 @@
 #define _GalaxySetupWnd_h_
 
 #include <GG/GGFwd.h>
+#include <GG/ListBox.h>
 
 #include "../universe/Universe.h"
 #include "CUIWnd.h"
-#include "CUISpin.h"
 
-class CUIButton;
-class CUIStateButton;
 class EmpireColorSelector;
+class SpeciesSelector;
 struct GalaxySetupData;
 
 /** Encapsulates the galaxy setup options so that they may be reused in the GalaxySetupWnd and the MultiPlayerLobbyWnd. */
@@ -61,27 +60,27 @@ private:
     void SeedChanged(const std::string& newseed);
     void ShapeChanged(GG::ListBox::iterator it);
 
-    CUILabel*           m_seed_label;
-    CUIEdit*            m_seed_edit;            //!< The seed used in the generation of the galaxy
-    CUIButton*          m_random;               //!< Random seed button
-    CUILabel*           m_stars_label;
-    CUISpin<int>*       m_stars_spin;           //!< The number of stars to include in the galaxy
-    CUILabel*           m_galaxy_shapes_label;
-    CUIDropDownList*    m_galaxy_shapes_list;   //!< The possible shapes for the galaxy
-    CUILabel*           m_galaxy_ages_label;
-    CUIDropDownList*    m_galaxy_ages_list;     //!< The possible ages for the galaxy
-    CUILabel*           m_starlane_freq_label;
-    CUIDropDownList*    m_starlane_freq_list;   //!< The frequency of starlanes in the galaxy
-    CUILabel*           m_planet_density_label;
-    CUIDropDownList*    m_planet_density_list;  //!< The density of planets in each system
-    CUILabel*           m_specials_freq_label;
-    CUIDropDownList*    m_specials_freq_list;   //!< The frequency of specials in systems and on planets
-    CUILabel*           m_monster_freq_label;
-    CUIDropDownList*    m_monster_freq_list;    //!< The frequency of monsters
-    CUILabel*           m_native_freq_label;
-    CUIDropDownList*    m_native_freq_list;     //!< The frequency of natives
-    CUILabel*           m_ai_aggression_label;
-    CUIDropDownList*    m_ai_aggression_list;   //!< The max aggression choices for AI opponents
+    GG::Label*          m_seed_label;
+    GG::Edit*           m_seed_edit;            //!< The seed used in the generation of the galaxy
+    GG::Button*         m_random;               //!< Random seed button
+    GG::Label*          m_stars_label;
+    GG::Spin<int>*      m_stars_spin;           //!< The number of stars to include in the galaxy
+    GG::Label*          m_galaxy_shapes_label;
+    GG::DropDownList*   m_galaxy_shapes_list;   //!< The possible shapes for the galaxy
+    GG::Label*          m_galaxy_ages_label;
+    GG::DropDownList*   m_galaxy_ages_list;     //!< The possible ages for the galaxy
+    GG::Label*          m_starlane_freq_label;
+    GG::DropDownList*   m_starlane_freq_list;   //!< The frequency of starlanes in the galaxy
+    GG::Label*          m_planet_density_label;
+    GG::DropDownList*   m_planet_density_list;  //!< The density of planets in each system
+    GG::Label*          m_specials_freq_label;
+    GG::DropDownList*   m_specials_freq_list;   //!< The frequency of specials in systems and on planets
+    GG::Label*          m_monster_freq_label;
+    GG::DropDownList*   m_monster_freq_list;    //!< The frequency of monsters
+    GG::Label*          m_native_freq_label;
+    GG::DropDownList*   m_native_freq_list;     //!< The frequency of natives
+    GG::Label*          m_ai_aggression_label;
+    GG::DropDownList*   m_ai_aggression_list;   //!< The max aggression choices for AI opponents
     
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
 };
@@ -123,19 +122,19 @@ private:
     bool m_ended_with_ok;    //!< indicates whether or not we ended the dialog with OK or not
 
     GalaxySetupPanel*       m_galaxy_setup_panel;    //!< The GalaxySetupPanel that does most of the work of the dialog
-    CUILabel*               m_player_name_label;
-    CUIEdit*                m_player_name_edit;
-    CUILabel*               m_empire_name_label;
-    CUIEdit*                m_empire_name_edit;
-    CUILabel*               m_empire_color_label;
+    GG::Label*              m_player_name_label;
+    GG::Edit*               m_player_name_edit;
+    GG::Label*              m_empire_name_label;
+    GG::Edit*               m_empire_name_edit;
+    GG::Label*              m_empire_color_label;
     EmpireColorSelector*    m_empire_color_selector;
     SpeciesSelector*        m_starting_secies_selector;
-    CUILabel*               m_starting_species_label;
-    CUILabel*               m_number_ais_label;
-    CUISpin<int>*           m_number_ais_spin;
+    GG::Label*              m_starting_species_label;
+    GG::Label*              m_number_ais_label;
+    GG::Spin<int>*          m_number_ais_spin;
     GG::StaticGraphic*      m_preview_image;         //!< The galaxy shape preview image
-    CUIButton*              m_ok;                    //!< OK button
-    CUIButton*              m_cancel;                //!< Cancel button
+    GG::Button*             m_ok;                    //!< OK button
+    GG::Button*             m_cancel;                //!< Cancel button
 
     GG::Pt                  m_preview_ul;
 };

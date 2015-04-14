@@ -12,9 +12,6 @@
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
 
-class CUIButton;
-class SettableInWindowCUIButton;
-class CUIEdit;
 class FleetWnd;
 class MapWndPopup;
 class DesignWnd;
@@ -32,7 +29,6 @@ class FieldIcon;
 class StatisticIcon;
 class CUIToolBar;
 class UniverseObject;
-class FPSIndicator;
 struct MovePathNode;
 class ShaderProgram;
 
@@ -409,7 +405,7 @@ private:
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
-    CUIButton*                  m_btn_turn;         //!< button that updates player's turn
+    GG::Button*                 m_btn_turn;         //!< button that updates player's turn
     GG::Button*                 m_btn_auto_turn;    //!< button that toggles whether to automatically end turns
     bool                        m_auto_end_turn;    //!< should turns be ended automatically by this client?
     std::list<MapWndPopup*>     m_popups;           //!< list of currently active popup windows
@@ -423,11 +419,11 @@ private:
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_trade, *m_population, *m_research, *m_industry, *m_detection, *m_fleet;
     GG::Button                  *m_industry_wasted, *m_research_wasted;
-    SettableInWindowCUIButton   *m_btn_moderator, *m_btn_messages, *m_btn_empires,
+    GG::Button                  *m_btn_moderator, *m_btn_messages, *m_btn_empires,
                                 *m_btn_siterep, *m_btn_research, *m_btn_production,
                                 *m_btn_design, *m_btn_pedia, *m_btn_graphs,
                                 *m_btn_objects, *m_btn_menu;
-    FPSIndicator*               m_FPS;
+    GG::Label*                  m_FPS;
 
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
     GG::Slider<double>*         m_zoom_slider;      //!< allows user to set zoom level

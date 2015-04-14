@@ -2,7 +2,6 @@
 
 #include "ClientUI.h"
 #include "CUIDrawUtil.h"
-#include "CUISpin.h"
 #include "IconTextBrowseWnd.h"
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
@@ -322,7 +321,7 @@ void CUIStateButton::Render() {
         GG::Pt bn_lr = ClientUpperLeft() + ButtonLowerRight();
         GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
         GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
-        GG::Clr border_color_to_use = Disabled() ? DisabledColor(BorderColor()) : BorderColor();
+        GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
         if (!Disabled() && !Checked() && m_mouse_here) {
             AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
             AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
@@ -1089,7 +1088,7 @@ namespace {
             GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC);
             icon->Resize(GG::Pt(GG::X(Value(h) - 6), h - 6));
             push_back(icon);
-            CUILabel* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT);
+            GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT);
             species_name->Resize(GG::Pt(Width() - GG::X(Value(h)), h));
             push_back(species_name);
             GG::X first_col_width(Value(h) - 10);
