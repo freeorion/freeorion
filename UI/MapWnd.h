@@ -3,14 +3,14 @@
 #define _MapWnd_h_
 
 #include <vector>
+#include <GG/GGFwd.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 #include "CUIWnd.h"
 #include "CUISlider.h"
 #include "../universe/Enums.h"
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
-
-#include <GG/GLClientAndServerBuffer.h>
 
 class CUIButton;
 class SettableInWindowCUIButton;
@@ -35,12 +35,6 @@ class UniverseObject;
 class FPSIndicator;
 struct MovePathNode;
 class ShaderProgram;
-namespace GG {
-    class Texture;
-    class MultiEdit;
-    class WndEvent;
-    class StaticGraphic;
-}
 
 /* Start and end points in universe coordinates as seen in MapWnd.  Lanes are drawn to
  * and from a circle surrounding system icons, note the centre of the system icon. The

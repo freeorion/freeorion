@@ -2,8 +2,10 @@
 #ifndef _FleetWnd_h_
 #define _FleetWnd_h_
 
-#include "CUIWnd.h"
+#include <GG/GGFwd.h>
 #include <GG/ListBox.h>
+
+#include "CUIWnd.h"
 #include "MapWnd.h"
 
 class CUIListBox;
@@ -15,9 +17,6 @@ class Ship;
 class System;
 class UniverseObject;
 class StatisticIcon;
-namespace GG {
-    class StaticGraphic;
-}
 class ScanlineControl;
 
 

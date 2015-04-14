@@ -2,6 +2,8 @@
 #ifndef _ENCYCLOPEDIA_DETAIL_PANEL_H_
 #define _ENCYCLOPEDIA_DETAIL_PANEL_H_
 
+#include <GG/GGFwd.h>
+
 #include "CUIWnd.h"
 
 class Planet;
@@ -19,10 +21,7 @@ class CUILabel;
 class CUIMultiEdit;
 class GraphControl;
 template <class T> class TemporaryPtr;
-namespace GG {
-    class StaticGraphic;
-    class MultiEdit;
-}
+
 
 /** UI class that displays in-game encyclopedic information about game
   * content.  Tech, PartType, HullType, BuildingType, ShipDesign, etc. */

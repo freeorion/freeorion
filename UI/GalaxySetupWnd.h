@@ -2,15 +2,12 @@
 #ifndef _GalaxySetupWnd_h_
 #define _GalaxySetupWnd_h_
 
+#include <GG/GGFwd.h>
+
 #include "../universe/Universe.h"
 #include "CUIWnd.h"
 #include "CUISpin.h"
 
-namespace GG {
-    class RadioButtonGroup;
-    class StaticGraphic;
-    class Texture;
-}
 class CUIButton;
 class CUIStateButton;
 class EmpireColorSelector;

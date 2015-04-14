@@ -2,12 +2,9 @@
 #ifndef _SitRepPanel_h_
 #define _SitRepPanel_h_
 
+#include <GG/GGFwd.h>
 #include "CUIWnd.h"
 
-namespace GG {
-    class Button;
-    class ListBox;
-}
 class SitRepEntry;
 
 

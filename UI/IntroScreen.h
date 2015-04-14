@@ -4,19 +4,15 @@
 #ifndef _IntroScreen_h_
 #define _IntroScreen_h_
 
-#ifndef _GG_GUI_h_
+#include <GG/GGFwd.h>
 #include <GG/GUI.h>
-#endif
-
-#ifndef _CUIWnd_h_
-#include "CUIWnd.h"
-#endif
-
-class CreditsWnd;
+#include <GG/Wnd.h>
 
 class CUIButton;
 class CUILabel;
-namespace GG {class StaticGraphic;}
+class CUIWnd;
+class CreditsWnd;
+
 
 /** This is the first screen the user sees in FreeOrion.  It will always be the
   * size of the Application main window.  It will display a splash screen with

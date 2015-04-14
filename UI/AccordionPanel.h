@@ -2,12 +2,8 @@
 #ifndef _AccordionPanel_h_
 #define _AccordionPanel_h_
 
+#include <GG/GGFwd.h>
 #include <GG/Wnd.h>
-
-namespace GG {
-    class Button;
-    class StaticGraphic;
-};
 
 class AccordionPanel : public GG::Wnd {
 public:

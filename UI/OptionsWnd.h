@@ -2,15 +2,14 @@
 #ifndef _OptionsWnd_h_
 #define _OptionsWnd_h_
 
+#include <utility>
+#include <vector>
+#include <GG/GGFwd.h>
+
 #include "CUIWnd.h"
 #include "CUISpin.h"
 
-#include <utility>
-#include <vector>
-
-
 class CUIStateButton;
-namespace GG { class TabWnd; }
 
 //! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
 class OptionsWnd : public CUIWnd {

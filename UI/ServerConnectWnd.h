@@ -2,19 +2,17 @@
 #ifndef _ServerConnectWnd_h_
 #define _ServerConnectWnd_h_
 
+#include <string>
+#include <GG/GGFwd.h>
+
 #include "CUIWnd.h"
 #include "CUIControls.h"
 #include "../network/ClientNetworking.h"
 
-#include <string>
-
-
 class CUIButton;
 class CUIListBox;
 class CUIEdit;
-namespace GG {
-    class RadioButtonGroup;
-}
+
 
 /** server connections window */
 class ServerConnectWnd : public CUIWnd

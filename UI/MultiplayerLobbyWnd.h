@@ -2,11 +2,12 @@
 #ifndef _MultiPlayerLobbyWnd_h_
 #define _MultiPlayerLobbyWnd_h_
 
+#include <vector>
+#include <GG/GGFwd.h>
+
 #include "CUIWnd.h"
 #include "GalaxySetupWnd.h"
 #include "../util/MultiplayerCommon.h"
-
-#include <vector>
 
 class CUIButton;
 class CUIDropDownList;
@@ -15,9 +16,7 @@ class CUILabel;
 class CUIListBox;
 class CUIMultiEdit;
 class Message;
-namespace GG {
-    class StaticGraphic;
-}
+
 
 /** multiplayer lobby window */
 class MultiPlayerLobbyWnd : public CUIWnd {

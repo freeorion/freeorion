@@ -2,6 +2,7 @@
 
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "CUIDrawUtil.h"
 #include "../universe/Field.h"
 #include "../util/AppInterface.h"
 #include "../util/i18n.h"

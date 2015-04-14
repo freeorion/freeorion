@@ -2,17 +2,13 @@
 #ifndef _ModeratorActionsWnd_h_
 #define _ModeratorActionsWnd_h_
 
+#include <vector>
+#include <boost/signals2/signal.hpp>
+#include <GG/GGFwd.h>
+
 #include "CUIWnd.h"
 #include "CUIControls.h"
 #include "../universe/Enums.h"
-
-#include <boost/signals2/signal.hpp>
-
-#include <vector>
-
-namespace GG {
-    class Button;
-}
 
 
 class ModeratorActionsWnd : public CUIWnd {

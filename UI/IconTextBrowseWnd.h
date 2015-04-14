@@ -2,13 +2,11 @@
 #ifndef _IconTextBrowseWnd_h_
 #define _IconTextBrowseWnd_h_
 
+#include <GG/GGFwd.h>
 #include <GG/BrowseInfoWnd.h>
 
-namespace GG {
-    class StaticGraphic;
-}
-
 class CUILabel;
+
 
 /** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/
 class IconTextBrowseWnd : public GG::BrowseInfoWnd {

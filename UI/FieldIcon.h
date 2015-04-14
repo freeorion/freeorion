@@ -3,15 +3,11 @@
 #ifndef _FieldIcon_h_
 #define _FieldIcon_h_
 
-#include "CUIDrawUtil.h"
+#include <GG/GGFwd.h>
 #include <GG/Control.h>
 
 class CUILabel;
-namespace GG {
-    class StaticGraphic;
-    class DynamicGraphic;
-    class Texture;
-}
+
 
 /** A control that allows interaction with a field. This class allows user
   * interaction with fields on the galaxy map.  It contains the graphic to
