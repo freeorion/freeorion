@@ -3048,9 +3048,11 @@ namespace {
             }
         }
     }
+    
+    
 }
 
-void Universe::UpdateEmpireObjectVisibilities() {
+void Universe::UpdateEmpireObjectVisibilities(bool reset) {
     // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
     for (EmpireManager::iterator empire_it = Empires().begin();
          empire_it != Empires().end(); ++empire_it)
@@ -3063,7 +3065,9 @@ void Universe::UpdateEmpireObjectVisibilities() {
         { m_empire_known_ship_design_ids[empire_id].insert(*design_it); }
     }
 
-    m_empire_object_visibility.clear();
+    if (reset) {
+        m_empire_object_visibility.clear();
+    }
     m_empire_object_visible_specials.clear();
 
     if (m_all_objects_visible) {

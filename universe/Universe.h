@@ -304,8 +304,10 @@ public:
     void            BackPropegateObjectMeters(const std::vector<int>& object_ids);
 
     /** Determines which empires can see which objects at what visibility
-      * level, based on  */
-    void            UpdateEmpireObjectVisibilities();
+      * level, based on empire detection strength and ships with detection
+      * \param reset If true, old visibility information is discarded before the update
+      */
+    void            UpdateEmpireObjectVisibilities(bool reset = true);
 
     /** Sets visibility for indicated \a empire_id of object with \a object_id
       * a vis */
