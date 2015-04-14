@@ -11,7 +11,7 @@ import ProductionAI
 import TechsListsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType, AIFocusType
 import EnumsAI
-from freeorion_tools import dict_from_map, tech_is_complete
+from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade
 from freeorion_debug import Timer
 
 colonization_timer = Timer('getColonyFleets()')
@@ -84,12 +84,8 @@ def galaxy_is_sparse():
              ((avg_empire_systems >= 35) and (setup_data.shape != fo.galaxyShape.elliptical))))
 
 def rate_piloting_tag(tag_list):
-    grade = AVG_PILOT_RATING
     grades = {'NO': 1e-8, 'BAD': 0.75, 'GOOD': GOOD_PILOT_RATING, 'GREAT': GREAT_PILOT_RATING, 'ULTIMATE': ULT_PILOT_RATING}
-    for tag in [tag1 for tag1 in tag_list if "AI_TAG" in tag1 and "WEAPONS" in tag1]:
-        tag_parts = tag.split('_')
-        grade = grades.get(tag_parts[2], 1.0)
-    return grade  # TODO check this code, it iterates by all possible values and return last. May be we need return on first match?
+    return grades.get(get_ai_tag_grade(tag_list, "WEAPONS"), 1.0)
 
 
 def rate_planetary_piloting(pid):
