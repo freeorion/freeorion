@@ -211,9 +211,10 @@ void CUIButton::RenderUnpressed() {
 ///////////////////////////////////////
 SettableInWindowCUIButton::SettableInWindowCUIButton(const GG::SubTexture& unpressed,
                                                      const GG::SubTexture& pressed,
-                                                     const GG::SubTexture& rollover) :
+                                                     const GG::SubTexture& rollover,
+                                                     boost::function<bool(const GG::Pt&)> in_window_function) :
     CUIButton(unpressed, pressed, rollover)
-{}
+{ m_in_window_func = in_window_function; }
 
 bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
     if (m_in_window_func)
@@ -221,9 +222,6 @@ bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
     else
         return CUIButton::InWindow(pt);
 }
-
-void SettableInWindowCUIButton::SetInWindow(boost::function<bool(const GG::Pt&)> in_window_function)
-{ m_in_window_func = in_window_function; }
 
 
 ///////////////////////////////////////

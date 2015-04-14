@@ -651,181 +651,181 @@ MapWnd::MapWnd() :
     m_FPS = new FPSIndicator();
     m_FPS->Hide();
 
-    // Menu button
-    m_btn_menu = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_mouseover.png")));
-    m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_menu->LeftClickedSignal, boost::bind(&MapWnd::ShowMenu, this));
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
     boost::function<bool(const GG::Pt&)> in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_menu), boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_toolbar), boost::bind(&WndBottom, m_btn_menu),
                     _1);
-    m_btn_menu->SetInWindow(in_window_func);
+    // Menu button
+    m_btn_menu = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_mouseover.png")),
+        in_window_func);
+    m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_menu->LeftClickedSignal, boost::bind(&MapWnd::ShowMenu, this));
     m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_menu->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU"))));
 
 
-    // Encyclo"pedia" button
-    m_btn_pedia = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_mouseover.png")));
-    m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_pedia->LeftClickedSignal, boost::bind(&MapWnd::TogglePedia, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_pedia),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_pedia),  boost::bind(&WndBottom, m_btn_pedia),
                     _1);
-    m_btn_pedia->SetInWindow(in_window_func);
+    // Encyclo"pedia" button
+    m_btn_pedia = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_mouseover.png")),
+        in_window_func);
+    m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_pedia->LeftClickedSignal, boost::bind(&MapWnd::TogglePedia, this));
     m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_pedia->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA"))));
 
-    // Graphs button
-    m_btn_graphs = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")));
-    m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_graphs->LeftClickedSignal, &MapWnd::ShowGraphs, this);
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_graphs),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_graphs),  boost::bind(&WndBottom, m_btn_graphs),
                     _1);
-    m_btn_graphs->SetInWindow(in_window_func);
+    // Graphs button
+    m_btn_graphs = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
+        in_window_func);
+    m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_graphs->LeftClickedSignal, &MapWnd::ShowGraphs, this);
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_graphs->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH"))));
 
-    // Design button
-    m_btn_design = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_mouseover.png")));
-    m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_design->LeftClickedSignal, boost::bind(&MapWnd::ToggleDesign, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_design),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_design),  boost::bind(&WndBottom, m_btn_design),
                     _1);
-    m_btn_design->SetInWindow(in_window_func);
+    // Design button
+    m_btn_design = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_mouseover.png")),
+        in_window_func);
+    m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_design->LeftClickedSignal, boost::bind(&MapWnd::ToggleDesign, this));
     m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_design->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN"))));
 
-    // Production button
-    m_btn_production = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_mouseover.png")));
-    m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_production->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_production),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_production),  boost::bind(&WndBottom, m_btn_production),
                     _1);
-    m_btn_production->SetInWindow(in_window_func);
+    // Production button
+    m_btn_production = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_mouseover.png")),
+        in_window_func);
+    m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_production->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_production->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION"))));
 
-    // Research button
-    m_btn_research = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_mouseover.png")));
-    m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_research->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_research),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_research),  boost::bind(&WndBottom, m_btn_research),
                     _1);
-    m_btn_research->SetInWindow(in_window_func);
+    // Research button
+    m_btn_research = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_mouseover.png")),
+        in_window_func);
+    m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_research->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch, this));
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH"))));
 
-    // Objects button
-    m_btn_objects = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_mouseover.png")));
-    m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_objects->LeftClickedSignal, boost::bind(&MapWnd::ToggleObjects, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_objects),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_objects),  boost::bind(&WndBottom, m_btn_objects),
                     _1);
-    m_btn_objects->SetInWindow(in_window_func);
+    // Objects button
+    m_btn_objects = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_mouseover.png")),
+        in_window_func);
+    m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_objects->LeftClickedSignal, boost::bind(&MapWnd::ToggleObjects, this));
     m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_objects->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS"))));
 
-    // Empires button
-    m_btn_empires = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_mouseover.png")));
-    m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_empires->LeftClickedSignal, boost::bind(&MapWnd::ToggleEmpires, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_empires),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_empires),  boost::bind(&WndBottom, m_btn_empires),
                     _1);
-    m_btn_empires->SetInWindow(in_window_func);
+    // Empires button
+    m_btn_empires = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_mouseover.png")),
+        in_window_func);
+    m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_empires->LeftClickedSignal, boost::bind(&MapWnd::ToggleEmpires, this));
     m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_empires->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES"))));
 
-    // SitRep button
-    m_btn_siterep = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_mouseover.png")));
-    m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_siterep->LeftClickedSignal, boost::bind(&MapWnd::ToggleSitRep, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_siterep),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_siterep),  boost::bind(&WndBottom, m_btn_siterep),
                     _1);
-    m_btn_siterep->SetInWindow(in_window_func);
+    // SitRep button
+    m_btn_siterep = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_mouseover.png")),
+        in_window_func);
+    m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_siterep->LeftClickedSignal, boost::bind(&MapWnd::ToggleSitRep, this));
     m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_siterep->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP"))));
 
-    // Messages button
-    m_btn_messages = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_mouseover.png")));
-    m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_messages->LeftClickedSignal, boost::bind(&MapWnd::ToggleMessages, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_messages),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_messages),  boost::bind(&WndBottom, m_btn_messages),
                     _1);
-    m_btn_messages->SetInWindow(in_window_func);
+    // Messages button
+    m_btn_messages = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_mouseover.png")),
+        in_window_func);
+    m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_messages->LeftClickedSignal, boost::bind(&MapWnd::ToggleMessages, this));
     m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_messages->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES"))));
 
-    // Moderator button
-    m_btn_moderator = new SettableInWindowCUIButton(
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_clicked.png")),
-        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_mouseover.png")));
-    m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_moderator->LeftClickedSignal, boost::bind(&MapWnd::ToggleModeratorActions, this));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_moderator),    boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_moderator),   boost::bind(&WndBottom, m_btn_moderator),
                     _1);
-    m_btn_moderator->SetInWindow(in_window_func);
+    // Moderator button
+    m_btn_moderator = new SettableInWindowCUIButton(
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_clicked.png")),
+        GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_mouseover.png")),
+        in_window_func);
+    m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
+    GG::Connect(m_btn_moderator->LeftClickedSignal, boost::bind(&MapWnd::ToggleModeratorActions, this));
     m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_moderator->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR"))));

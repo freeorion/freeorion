@@ -74,15 +74,11 @@ private:
 class SettableInWindowCUIButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover);
+    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, boost::function<bool(const GG::Pt&)> in_window_function);
     //@}
 
     /** \name Accessors */ //@{
     virtual bool    InWindow(const GG::Pt& pt) const;
-    //@}
-
-    /** \name Mutators */ //@{
-    void            SetInWindow(boost::function<bool(const GG::Pt&)> in_window_function);
     //@}
 
 private:
