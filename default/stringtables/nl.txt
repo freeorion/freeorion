@@ -59,6 +59,8 @@ fluister
 
 # used to generate names for new fleets when they are created
 
+# used to generate name for effect-created planets. %1% is the system name.
+
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -106,10 +108,10 @@ Het %1% rijk is niet meer.
 ######################################
 
 COMMAND_LINE_USAGE
-Gebruik: 
+'''Gebruik: '''
 
 COMMAND_LINE_DEFAULT
-Standaard: 
+'''Standaard: '''
 
 OPTIONS_DB_HELP
 Geef dit help bericht weer.
@@ -322,7 +324,7 @@ OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 Het aantal sterrenbanen in de melkweg om te genereren.
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-De frequentie van verschijning van specials in de melkweg om te genereren. 
+'''De frequentie van verschijning van specials in de melkweg om te genereren. '''
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 De horizontale afstand tussen technologiÃ«n in het onderzoeksvenster, in meerdere van de breedte voor iedere enkele theorie technologie.
@@ -828,7 +830,7 @@ Geluidbestanden
 #################
 
 MAP_BTN_TURN_UPDATE
-Beurt 
+'''Beurt '''
 
 MAP_BTN_SITREP
 SitRap
@@ -866,6 +868,8 @@ PL_COLONIZE
 Koloniseren
 
 ## Resources Panel ##########
+
+## Specials Panel ##########
 
 ## Buildings Panel##########
 
@@ -912,7 +916,7 @@ FW_FLEET_ETA_UNKNOWN
 Onbekend
 
 FW_SHIP_CLASS
-Schip Klasse 
+'''Schip Klasse '''
 
 FW_UNKNOWN_DESIGN_NAME
 Onbekend
@@ -1205,7 +1209,7 @@ COMBAT_WINDOW_TITLE
 Gevechtsvenster
 
 COMBAT_BATTLE
-GEVECHT : 
+'''GEVECHT : '''
 
 COMBAT_SYSTEM
 Het %1% Systeem
@@ -1220,19 +1224,19 @@ COMBAT_PLANETS
 Planeten
 
 COMBAT_REMAINING
- Over
+''' Over'''
 
 COMBAT_RETREATED
- Teruggetrokken
+''' Teruggetrokken'''
 
 COMBAT_DESTROYED
- Vernietigd
+''' Vernietigd'''
 
 COMBAT_DEFENSELESS
- Onweerbaar
+''' Onweerbaar'''
 
 COMBAT_LOST
- Verloren!
+''' Verloren!'''
 
 ####################
 # TurnProgress     #
@@ -1597,15 +1601,6 @@ de huidige beurt
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effect is altijd actief
 
-DESC_EFFECTS_GROUP_SCOPE_DESC
-%1%\n
-
-DESC_EFFECTS_GROUP_ACTIVATION_DESC
-%1%\n
-
-DESC_EFFECTS_GROUP_EFFECT_DESC
-%1%\n
-
 DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
 %1%\n
 
@@ -1624,38 +1619,38 @@ Sets the stockpile of %1% of the object's owner to %2%
 # Conditions
 
 DESC_BUILDING
- that contains a %1% building
+''' that contains a %1% building'''
 
 DESC_BUILDING_NOT
- that does't contain a %1% building
+''' that does't contain a %1% building'''
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+''' that is a %1% planet'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+''' that is not a %1% planet'''
 
  
 
 DESC_METER_VALUE_CURRENT
- that has a current %1% between %2% and %3%
+''' that has a current %1% between %2% and %3%'''
 
 DESC_METER_VALUE_CURRENT_NOT
- that doesn't have a current %1% between %2% and %3%
+''' that doesn't have a current %1% between %2% and %3%'''
 
  
 
 DESC_TURN
- when the current turn is between %1% and %2%
+''' when the current turn is between %1% and %2%'''
 
 DESC_TURN_NOT
- when the current turn is not between %1% and %2%
+''' when the current turn is not between %1% and %2%'''
 
 DESC_NUMBER_OF
- that is one of %1% objects%2%
+''' that is one of %1% objects%2%'''
 
 DESC_NUMBER_OF_NOT
- that is not one of %1% objects%2%
+''' that is not one of %1% objects%2%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
@@ -1796,7 +1791,7 @@ GRO_XENO_GENETICS
 Xenologische Genetica
 
 GRO_XENO_GENETICS_DESC
-Vroege genetica is beperkt door de beschikbaarheid van monsters van natuurlijk voorkomende organismen om modificaties op te baseren. Daarnaast zijn deze modificaties beperkt binnen de limieten van de fysische mechanismen voor de opslag, aanpassing en expressie van de genetische code in ontwikkelde individuen. Door equivalente systemen in compleet verschillende ecosystemen en organismen te onderzoeken kan meer inzicht en openbaringen verkregen verkregen worden, waardoor nieuwe ontwikkelingen in meer bekende genetische systemen versneld worden. 
+'''Vroege genetica is beperkt door de beschikbaarheid van monsters van natuurlijk voorkomende organismen om modificaties op te baseren. Daarnaast zijn deze modificaties beperkt binnen de limieten van de fysische mechanismen voor de opslag, aanpassing en expressie van de genetische code in ontwikkelde individuen. Door equivalente systemen in compleet verschillende ecosystemen en organismen te onderzoeken kan meer inzicht en openbaringen verkregen verkregen worden, waardoor nieuwe ontwikkelingen in meer bekende genetische systemen versneld worden. '''
 
 GRO_NANOTECH_MED
 Nanotech Medicijn
