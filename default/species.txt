@@ -2950,10 +2950,10 @@ BASIC_GROUND_TROOPS
                 Planet
                 OwnedBy empire = Source.Owner
             ]
-            activation = NOT OwnerHasTech name = "DEF_GARRISON_1"
+            activation = OwnerHasTech name = "DEF_GARRISON_4"
             stackinggroup = "BASIC_TROOPS_STACK"
-            accountinglabel = "DEF_ROOT_DEFENSE"
-            effects = SetMaxTroops value = Value + 2    
+            accountinglabel = "DEF_GARRISON_4"
+            effects = SetMaxTroops value = Value + 20  
 
 EffectsGroup
             scope = And [
@@ -2962,12 +2962,11 @@ EffectsGroup
             ]
             activation = AND [
                 Planet
-                OwnerHasTech name = "DEF_GARRISON_1"
-                NOT OwnerHasTech name = "DEF_GARRISON_2"
+                OwnerHasTech name = "DEF_GARRISON_3"
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_1"
-            effects = SetMaxTroops value = Value + 5
+            accountinglabel = "DEF_GARRISON_3"
+            effects = SetMaxTroops value = Value + 15
             
 EffectsGroup
             scope = And [
@@ -2977,7 +2976,6 @@ EffectsGroup
             activation = AND [
                 Planet
                 OwnerHasTech name = "DEF_GARRISON_2"
-                NOT OwnerHasTech name = "DEF_GARRISON_3"
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_2"
@@ -2990,12 +2988,11 @@ EffectsGroup
             ]
             activation = AND [
                 Planet
-                OwnerHasTech name = "DEF_GARRISON_3"
-                NOT OwnerHasTech name = "DEF_GARRISON_4"
+                OwnerHasTech name = "DEF_GARRISON_1"
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_3"
-            effects = SetMaxTroops value = Value + 15        
+            accountinglabel = "DEF_GARRISON_1"
+            effects = SetMaxTroops value = Value + 5        
 
 EffectsGroup
             scope = And [
@@ -3004,11 +3001,24 @@ EffectsGroup
             ]
             activation = And [
                 Planet
-                OwnerHasTech name = "DEF_GARRISON_4"
+                OwnerHasTech name = "DEF_ROOT_DEFENSE"
             ]
-            stackinggroup = "BASIC_TROOPS_STACK"
-            accountinglabel = "DEF_GARRISON_4"
-            effects = SetMaxTroops value = Value + 20
+            stackinggroup = "POPULATION_TROOPS_STACK"
+            accountinglabel = "DEF_ROOT_DEFENSE"
+            effects = SetMaxTroops Value = Value + Target.Population * [[TROOPS_PER_POP]]
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
+                OwnerHasTech name = "GRO_CYBORG"
+            ]
+            stackinggroup = "CYBORG_TROOPS_STACK"
+            accountinglabel = "GRO_CYBORG"
+            effects = SetMaxTroops value = Value + Target.Population * [[TROOPS_PER_POP]]
              
 EffectsGroup
             scope = AND [
@@ -3052,7 +3062,7 @@ EffectsGroup
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "INDEPENDENT_TROOP_LABEL"
-            effects = SetMaxTroops value = Value + 12
+            effects = SetMaxTroops value = Value + 10 + Target.Population * [[TROOPS_PER_POP]]
 
 '''
 

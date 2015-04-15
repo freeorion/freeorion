@@ -713,7 +713,7 @@ struct FO_COMMON_API Condition::HasTag : public Condition::ConditionBase {
         ConditionBase(),
         m_name(name)
     {}
-    ~HasTag();
+    virtual ~HasTag();
 
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
@@ -1192,7 +1192,7 @@ struct FO_COMMON_API Condition::DesignHasHull : public Condition::ConditionBase 
         ConditionBase(),
         m_name(name)
     {}
-    ~DesignHasHull();
+    virtual ~DesignHasHull();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1267,7 +1267,7 @@ struct FO_COMMON_API Condition::DesignHasPartClass : public Condition::Condition
         m_high(high),
         m_class(part_class)
     {}
-    ~DesignHasPartClass();
+    virtual ~DesignHasPartClass();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1303,7 +1303,7 @@ struct FO_COMMON_API Condition::PredefinedShipDesign : public Condition::Conditi
         ConditionBase(),
         m_name(name)
     {}
-    ~PredefinedShipDesign();
+    virtual ~PredefinedShipDesign();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1464,7 +1464,7 @@ private:
 /** Matches ships that have a ship part meter of type \a meter for part \a part
   * whose current value is >= low and <= high. */
 struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::ConditionBase {
-    ShipPartMeterValue(const std::string& ship_part_name,
+    ShipPartMeterValue(ValueRef::ValueRefBase<std::string>* ship_part_name,
                        MeterType meter,
                        ValueRef::ValueRefBase<double>* low,
                        ValueRef::ValueRefBase<double>* high) :
@@ -1485,20 +1485,20 @@ struct FO_COMMON_API Condition::ShipPartMeterValue : public Condition::Condition
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&                      PartName() const { return m_part_name; }
-    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
-    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
-    MeterType                               GetMeterType() const { return m_meter; }
+    const ValueRef::ValueRefBase<std::string>*  PartName() const { return m_part_name; }
+    const ValueRef::ValueRefBase<double>*       Low() const { return m_low; }
+    const ValueRef::ValueRefBase<double>*       High() const { return m_high; }
+    MeterType                                   GetMeterType() const { return m_meter; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string                     m_part_name;
-    MeterType                       m_meter;
-    ValueRef::ValueRefBase<double>* m_low;
-    ValueRef::ValueRefBase<double>* m_high;
+    ValueRef::ValueRefBase<std::string>*    m_part_name;
+    MeterType                               m_meter;
+    ValueRef::ValueRefBase<double>*         m_low;
+    ValueRef::ValueRefBase<double>*         m_high;
 };
 
 /** Matches all objects if the empire with id \a empire_id has an empire meter
@@ -1595,7 +1595,7 @@ struct FO_COMMON_API Condition::OwnerHasTech : public Condition::ConditionBase {
         ConditionBase(),
         m_name(name)
     {}
-    ~OwnerHasTech();
+    virtual ~OwnerHasTech();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1623,24 +1623,31 @@ private:
 
 /** Matches all objects whose owner who has the building type \a name available. */
 struct FO_COMMON_API Condition::OwnerHasBuildingTypeAvailable : public Condition::ConditionBase {
-    OwnerHasBuildingTypeAvailable(const std::string& name) :
+    explicit OwnerHasBuildingTypeAvailable(const std::string& name);
+    explicit OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+    virtual ~OwnerHasBuildingTypeAvailable();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const std::string&  GetBuildingType() const { return m_name; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    const ValueRef::ValueRefBase<std::string>*  GetBuildingType() const { return m_name; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1649,24 +1656,31 @@ private:
 
 /** Matches all objects whose owner who has the ship design \a id available. */
 struct FO_COMMON_API Condition::OwnerHasShipDesignAvailable : public Condition::ConditionBase {
-    OwnerHasShipDesignAvailable(int id) :
+    explicit OwnerHasShipDesignAvailable(int id);
+    explicit OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id) :
         ConditionBase(),
         m_id(id)
     {}
+    virtual ~OwnerHasShipDesignAvailable();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    int                 GetDesignID() const { return m_id; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    const ValueRef::ValueRefBase<int>*  GetDesignID() const { return m_id; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    int m_id;
+    ValueRef::ValueRefBase<int>*    m_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1675,7 +1689,7 @@ private:
 
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct FO_COMMON_API Condition::VisibleToEmpire : public Condition::ConditionBase {
-    VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
+    explicit VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
@@ -1781,7 +1795,7 @@ private:
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
 struct FO_COMMON_API Condition::CanAddStarlaneConnection :  Condition::ConditionBase {
-    CanAddStarlaneConnection(ConditionBase* condition) :
+    explicit CanAddStarlaneConnection(ConditionBase* condition) :
         ConditionBase(),
         m_condition(condition)
     {}
@@ -1812,7 +1826,7 @@ private:
 /** Matches systems that have been explored by at least one Empire
   * in \a empire_ids. */
 struct FO_COMMON_API Condition::ExploredByEmpire : public Condition::ConditionBase {
-    ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
+    explicit ExploredByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
@@ -1843,8 +1857,7 @@ private:
 /** Matches objects that are moving. ... What does that mean?  Departing this
   * turn, or were located somewhere else last turn...? */
 struct FO_COMMON_API Condition::Stationary : public Condition::ConditionBase {
-    Stationary() : ConditionBase() {}
-    virtual ~Stationary() {}
+    explicit Stationary() : ConditionBase() {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -1865,7 +1878,7 @@ private:
 /** Matches objects that are in systems that can be fleet supplied by the
   * empire with id \a empire_id */
 struct FO_COMMON_API Condition::FleetSupplyableByEmpire : public Condition::ConditionBase {
-    FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
+    explicit FleetSupplyableByEmpire(ValueRef::ValueRefBase<int>* empire_id) :
         ConditionBase(),
         m_empire_id(empire_id)
     {}
@@ -1929,8 +1942,7 @@ private:
 
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API Condition::CanColonize : public Condition::ConditionBase {
-    CanColonize() : ConditionBase() {}
-    virtual ~CanColonize() {}
+    explicit CanColonize() : ConditionBase() {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
@@ -1951,7 +1963,6 @@ private:
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API Condition::CanProduceShips : public Condition::ConditionBase {
     CanProduceShips() : ConditionBase() {}
-    virtual ~CanProduceShips() {}
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }

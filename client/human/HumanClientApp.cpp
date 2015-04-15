@@ -184,8 +184,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDir() / "freeorion.log").string());
 
-    InitLogger(HUMAN_CLIENT_LOG_FILENAME, "%d %p Client : %m%n");
-    SetLoggerPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
+    InitLogger(HUMAN_CLIENT_LOG_FILENAME, "Client");
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
@@ -705,7 +704,7 @@ void HumanClientApp::Reinitialize() {
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
     bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
     std::pair<int, int> size = GetWindowWidthHeight();
-    SetVideoMode (GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
+    SetVideoMode(GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
     HandleWindowResize (GG::X (size.first), GG::Y (size.second));
 }
 
