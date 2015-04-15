@@ -2,6 +2,7 @@
 
 #include "../util/Logger.h"
 #include "../util/Random.h"
+#include "../util/i18n.h"
 #include "UniverseObject.h"
 #include "Universe.h"
 #include "Building.h"
@@ -3537,8 +3538,14 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
         }
     }
     std::string species_str;
-    if (m_species_name)
-        species_str = m_species_name->Description();
+    if (m_species_name) {
+        if (ValueRef::ConstantExpr(m_species_name)) {
+            species_str = m_species_name->Eval();
+            if (UserStringExists(species_str))
+                species_str = UserString(species_str);
+        } else
+            species_str = m_species_name->Description();
+    }
     if (species_str.empty())
         species_str = UserString("DESC_PLANET_ENVIRONMENT_CUR_SPECIES");
     return str(FlexibleFormat((!negated)
