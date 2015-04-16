@@ -8,7 +8,7 @@
 #include "TechTreeWnd.h"
 #include "MapWnd.h"
 #include "EncyclopediaDetailPanel.h"
-#include "InfoPanels.h"
+#include "IconTextBrowseWnd.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
@@ -104,7 +104,7 @@ namespace {
             std::string                                     cost_text;
             std::string                                     time_text;
             std::string                                     desc_text;
-            std::vector<const Condition::ConditionBase*>    location_conditions;
+            std::vector<Condition::ConditionBase*>    location_conditions;
 
             switch (m_item.build_type) {
             case BT_BUILDING: {
@@ -190,11 +190,11 @@ namespace {
     std::string LocationConditionDescription(const std::string& building_name, int candidate_object_id,
                                              int empire_id)
     {
-        std::vector<const Condition::ConditionBase*> location_conditions;
+        std::vector<Condition::ConditionBase*> location_conditions;
         Condition::OwnerHasBuildingTypeAvailable bld_avail_cond(building_name);
         location_conditions.push_back(&bld_avail_cond);
         if (const BuildingType* building_type = GetBuildingType(building_name))
-            location_conditions.push_back(building_type->Location());
+            location_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->Location()));
         TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
         return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
     }
@@ -202,7 +202,7 @@ namespace {
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
                                              int empire_id)
     {
-        std::vector<const Condition::ConditionBase*> location_conditions;
+        std::vector<Condition::ConditionBase*> location_conditions;
         boost::shared_ptr<Condition::ConditionBase> can_prod_ship_cond(new Condition::CanProduceShips());
         location_conditions.push_back(can_prod_ship_cond.get());
         boost::shared_ptr<Condition::ConditionBase> ship_avail_cond(new Condition::OwnerHasShipDesignAvailable(ship_design_id));
@@ -214,13 +214,13 @@ namespace {
                 location_conditions.push_back(can_colonize_cond.get());
             }
             if (const HullType* hull_type = ship_design->GetHull())
-                location_conditions.push_back(hull_type->Location());
+                location_conditions.push_back(const_cast<Condition::ConditionBase*>(hull_type->Location()));
             std::vector<std::string> parts = ship_design->Parts();
             for (std::vector<std::string>::const_iterator it = parts.begin();
                  it != parts.end(); ++it)
             {
                 if (const PartType* part_type = GetPartType(*it))
-                    location_conditions.push_back(part_type->Location());
+                    location_conditions.push_back(const_cast<Condition::ConditionBase*>(part_type->Location()));
             }
         }
         TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);

@@ -23,9 +23,9 @@ namespace {
 }
 
 namespace {
-    boost::shared_ptr<const Effect::EffectsGroup>
+    boost::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float increase) {
-        typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
+        typedef boost::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
@@ -40,24 +40,30 @@ namespace {
                 scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
     }
 
-    boost::shared_ptr<const Effect::EffectsGroup>
+    boost::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, const std::string& part_name, float increase, bool allow_stacking = true) {
-        typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
+        typedef boost::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
-        ValueRef::ValueRefBase<double>* vr =
+
+        ValueRef::ValueRefBase<double>* value_vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
                 new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE, std::vector<std::string>()),
                 new ValueRef::Constant<double>(increase)
             );
+
+        ValueRef::ValueRefBase<std::string>* part_name_vr =
+            new ValueRef::Constant<std::string>(part_name);
+
         std::string stacking_group = (allow_stacking ? "" :
             (part_name + "_" + boost::lexical_cast<std::string>(meter_type) + "_PartMeter"));
+
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
                 scope, activation,
-                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name, vr)),
+                Effects(1, new Effect::SetShipPartMeter(meter_type, part_name_vr, value_vr)),
                 part_name, stacking_group));
     }
 
@@ -173,7 +179,7 @@ namespace {
 ////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
-void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects) {
+void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
     if (m_capacity != 0) {
         switch (m_class) {
         case PC_SHORT_RANGE:
@@ -197,11 +203,8 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
         case PC_ARMOUR:
             m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_capacity));
             break;
-        case PC_BATTLE_SPEED:
-            m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_capacity));
-            break;
-        case PC_STARLANE_SPEED:
-            m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_capacity));
+        case PC_SPEED:
+            m_effects.push_back(IncreaseMeter(METER_SPEED,          m_capacity));
             break;
         case PC_RESEARCH:
             m_effects.push_back(IncreaseMeter(METER_TARGET_RESEARCH,m_capacity));
@@ -217,9 +220,12 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
         }
     }
 
-    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator
          it = effects.begin(); it != effects.end(); ++it)
-    { m_effects.push_back(*it); }
+    {
+        (*it)->SetTopLevelContent(m_name);
+        m_effects.push_back(*it);
+    }
 }
 
 PartType::~PartType()
@@ -293,21 +299,22 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
 ////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
-void HullType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects) {
+void HullType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
     if (m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
     if (m_stealth != 0)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
     if (m_structure != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
-    if (m_battle_speed != 0)
-        m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
-    if (m_starlane_speed != 0)
-        m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
+    if (m_speed != 0)
+        m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed));
 
-    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin();
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = effects.begin();
          it != effects.end(); ++it)
-    { m_effects.push_back(*it); }
+    {
+        (*it)->SetTopLevelContent(m_name);
+        m_effects.push_back(*it);
+    }
 }
 
 HullType::~HullType()
@@ -450,8 +457,7 @@ ShipDesign::ShipDesign() :
     m_fuel(0.0),
     m_shields(0.0),
     m_structure(0.0),
-    m_battle_speed(0.0),
-    m_starlane_speed(0.0),
+    m_speed(0.0),
     m_research_generation(0.0),
     m_industry_generation(0.0),
     m_trade_generation(0.0),
@@ -483,8 +489,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_fuel(0.0),
     m_shields(0.0),
     m_structure(0.0),
-    m_battle_speed(0.0),
-    m_starlane_speed(0.0),
+    m_speed(0.0),
     m_research_generation(0.0),
     m_industry_generation(0.0),
     m_trade_generation(0.0),
@@ -785,8 +790,7 @@ void ShipDesign::BuildStatCaches() {
     m_fuel =            hull->Fuel();
     m_shields =         hull->Shields();
     m_structure =       hull->Structure();
-    m_battle_speed =    hull->BattleSpeed();
-    m_starlane_speed =  hull->StarlaneSpeed();
+    m_speed =           hull->Speed();
 
     for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         if (it->empty())
@@ -818,11 +822,8 @@ void ShipDesign::BuildStatCaches() {
         case PC_STEALTH:
             m_stealth += part->Capacity();
             break;
-        case PC_BATTLE_SPEED:
-            m_battle_speed += part->Capacity();
-            break;
-        case PC_STARLANE_SPEED:
-            m_starlane_speed += part->Capacity();
+        case PC_SPEED:
+            m_speed += part->Capacity();
             break;
         case PC_SHIELD:
             m_shields += part->Capacity();

@@ -5,7 +5,7 @@
 #include "CUIDrawUtil.h"
 #include "CUIWnd.h"
 #include "Sound.h"
-#include "InfoPanels.h"
+#include "IconTextBrowseWnd.h"
 #include "EncyclopediaDetailPanel.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/i18n.h"

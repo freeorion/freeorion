@@ -117,20 +117,10 @@ GG_ENUM(MeterType,
     METER_SIZE,
     METER_STEALTH,
     METER_DETECTION,
-    METER_BATTLE_SPEED,
-    METER_STARLANE_SPEED,
-
-    // These meter enumerators only apply to ship part meters.
-    METER_DAMAGE,
-    METER_ROF,
-    METER_RANGE,
     METER_SPEED,
+
+    METER_DAMAGE,
     METER_CAPACITY,
-    METER_ANTI_SHIP_DAMAGE,
-    METER_ANTI_FIGHTER_DAMAGE,
-    METER_LAUNCH_RATE,
-    METER_FIGHTER_WEAPON_RANGE,
-    // End only ship part meters
 
     NUM_METER_TYPES
 )
@@ -240,19 +230,6 @@ GG_ENUM(ResourceType,
     NUM_RESOURCE_TYPES
 )
 
-/** Types of fighters. */
-GG_ENUM(CombatFighterType,
-    INVALID_COMBAT_FIGHTER_TYPE,
-
-    /** A fighter that is better at attacking other fighters than at
-        attacking ships. */
-    INTERCEPTOR,
-
-    /** A fighter that is better at attacking ships than at attacking
-        other fighters. */
-    BOMBER
-)
-
 /** Types "classes" of ship parts */
 GG_ENUM(ShipPartClass,
     INVALID_SHIP_PART_CLASS = -1,
@@ -267,8 +244,7 @@ GG_ENUM(ShipPartClass,
     PC_STEALTH,             ///< hiding from enemies
     PC_FUEL,                ///< distance that can be traveled away from resupply
     PC_COLONY,              ///< transports colonists and allows ships to make new colonies
-    PC_BATTLE_SPEED,        ///< affects ship speed in battle
-    PC_STARLANE_SPEED,      ///< affects ship speed on starlanes
+    PC_SPEED,               ///< affects ship speed on starlanes
     PC_GENERAL,             ///< special purpose parts that don't fall into another class
     PC_BOMBARD,             ///< permit orbital bombardment by ships against planets
     PC_INDUSTRY,            ///< generates production points for owner at its location

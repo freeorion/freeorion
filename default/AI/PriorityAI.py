@@ -203,6 +203,12 @@ def calculateExplorationPriority():
                 queuedScoutShips += element.remaining * element.blocksize
 
     milShips = MilitaryAI.num_milships
+    # intent of the following calc is essentially 
+    # new_scouts_needed = min(need_cap_A, need_cap_B, base_need) - already_got_or_queued
+    # where need_cap_A is to help prevent scouting needs from swamping military needs, and 
+    # need_cap_B is to help regulate investment into scouting while the empire is small.
+    # These caps could perhaps instead be tied more directly to military priority and 
+    # total empire production.
     scoutsNeeded = max(0, min( 4+int(milShips/5), 4+int(fo.currentTurn()/50) , 2+ numUnexploredSystems**0.5 ) - numScouts - queuedScoutShips )
     explorationPriority = int(40*scoutsNeeded)
 

@@ -12,14 +12,8 @@ Deutsch
 #    Common     #
 #################
 
-APPNAME
-FreeOrion
-
 BROWSE_BTN
 Durchsuchen...
-
-OK
-OK
 
 APPLY
 Anwenden
@@ -72,17 +66,11 @@ Eine KI hinzufügen
 OBSERVER
 Beobachter
 
-MODERATOR
-Moderator
-
 NO_PLAYER
 Keiner
 
 DROP_PLAYER
 Absetzen
-
-HOST
-Host
 
 ALL
 Alle
@@ -92,15 +80,6 @@ Umbenennen
 
 ENTER_NEW_NAME
 Neuen Namen eingeben
-
-NOTHING_VALUE_SYMBOL
---
-
-UNKNOWN_VALUE_SYMBOL
-?
-
-UNKNOWN_VALUE_SYMBOL_2
-???
 
 ERROR
 FEHLER
@@ -145,9 +124,6 @@ Unerforschtes System
 NOT_APPLICABLE
 N.v.
 
-BOMBER
-Bomber
-
 INTERCEPTOR
 Abfangjäger
 
@@ -168,9 +144,6 @@ Voraussetzungen:
 
 ANY_OF
 Irgendein:
-
-DUMP
-Debug Data Dump
 
 UNOWNED
 Ohne Besitzer
@@ -244,9 +217,6 @@ Alter Schiffsentwurf mit fortgeschrittener Bewaffnung und Verteidigungssysteme.
 # Monsters #
 ############
 
-SM_MONSTER
-Monster
-
 SM_KRILL_1
 Kleiner Krillschwarm
 SM_KRILL_1_DESC
@@ -317,8 +287,6 @@ Krakenlarve
 SM_KRAKEN_1_DESC
 In ihrer Larvenform ist der Kraken eine vorsichtige und harmlose Art der im Raum gebornen Fauna. Seine natürliche Beue sind Raumkrillschwärme, welche sie damit reguliert. Aber eine gut genährte Krakenlarve kann sich in eine größere und gefährlichere erwachsene Form weiterentwickeln.
 
-SM_KRAKEN_2
-Kraken
 SM_KRAKEN_2_DESC
 Ein gewaltiges, mittelschweres Weltraummonster.
 
@@ -387,8 +355,6 @@ Dimensionswanderer
 SM_DIM_DESC
 Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
-SM_VOID
-Behemoth of the Void
 SM_VOID_DESC
 Eine nebelartige Kreatur, welche [[encyclopedia STEALTH_TITLE]] zu zufälligen Planeten hinzufügt.
 
@@ -438,12 +404,6 @@ Nebel
 
 FLD_NEBULA_1_DESC
 Wolken aus Wasserstoff, die zusammenfallen können und einen neuen Stern bilden.
-
-FLD_NEBULA_2
-[[FLD_NEBULA_1]]
-
-FLD_NEBULA_2_DESC
-[[FLD_NEBULA_1_DESC]]
 
 ##############################
 # Predefined Starting Fleets #
@@ -628,23 +588,11 @@ Zwinge den Client dazu keinen Server zu starten, selbst wenn ein Spiel auf dem l
 OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
 Verbindungsadresse für externen Servermodus. Wird der Wert gesetzt wird dieser Client der Manager des Spiels.
 
-OPTIONS_DB_MP_HOST_ADDRESS
-Address to connect to when joining a multiplayer game.
-
-OPTIONS_DB_MP_PLAYER_NAME
-Player name to use when hosting or joining a multiplayer game.
-
 OPTIONS_DB_UI_MAIN_MENU_X
 Position der Mitte des Intro Hauptmenüs, als Teil der Gesamtbreite der Anwendung.
 
 OPTIONS_DB_UI_MAIN_MENU_Y
 Position der Mitte des Intro Hauptmenüs, als Teil der Gesamthöhe der Anwendung.
-
-OPTIONS_DB_APP_WIDTH
-Sets horizontal app resolution in fullscreen mode. Options are determined by the rendering plugin, and may not match the actual monitor size.
-
-OPTIONS_DB_APP_HEIGHT
-Sets vertical app resolution in fullscreen mode. Options are determined by the rendering plugin, and may not match the actual monitor size.
 
 OPTIONS_DB_APP_WIDTH_WINDOWED
 Setzt die horizontale Auflösung des Fenstermodus
@@ -765,9 +713,6 @@ Setzt die Rahmenfarbe der Kontrollelemente.
 
 OPTIONS_DB_UI_STATE_BUTTON_COLOR
 Setzt die Farbe für einen gedrückten Wechselknopf.
-
-OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
-Sets UI drop-down-list arrow color.
 
 OPTIONS_DB_UI_EDIT_HILITE
 Setzt die Hervorhebungsfarbe in Textfelder.
@@ -971,9 +916,6 @@ Benutzt einen Ausfülleffekt anstatt eines Umrandungseffekts für ausgewählte O
 OPTIONS_DB_QUICKSTART
 Beginnt ein neues Schnellstartspiel. Das Hauptmenü wird umgangen.
 
-OPTIONS_DB_AUTO_FIRST_TURN
-Führt den ersten Zug automatisch aus. Hilfreich für die Fehlersuche, besonders in Kombination mit --quickstart.
-
 OPTIONS_DB_CHECKED_GL_VERSION
 Speichert ob die OpenGL Version des Systems überprüft wurde. Wenn nicht, werden einige Zeichenoptionen abhängig von der GL Version angepasst, nachdem die Version überprüft wurde.
 
@@ -997,7 +939,6 @@ Tested die 3D Kampfauflösung.
 
 OPTIONS_DB_LOAD
 Lädt einen angegebenen Einzelspielerspielstand.
-
 
 #################
 # File Dialog   #
@@ -1031,7 +972,6 @@ existiert nicht.'''
 FILE_DLG_DEVICE_IS_NOT_READY
 Gerät ist nicht bereit.
 
-
 #################
 # Color Dialog  #
 #################
@@ -1042,28 +982,6 @@ Neu
 COLOR_DLG_OLD
 Alt
 
-COLOR_DLG_RED
-R:
-
-COLOR_DLG_GREEN
-G:
-
-COLOR_DLG_BLUE
-B:
-
-COLOR_DLG_HUE
-H:
-
-COLOR_DLG_SATURATION
-S:
-
-COLOR_DLG_VALUE
-V:
-
-COLOR_DLG_ALPHA
-A:
-
-
 #################
 # Intro Screen  #
 #################
@@ -1072,7 +990,6 @@ A:
 
 INTRO_WINDOW_TITLE
 FreeOrion Hauptmenü
-
 
 #Button names####
 
@@ -1100,7 +1017,6 @@ Mitwirkende
 INTRO_BTN_EXIT
 Beenden
 
-
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
@@ -1108,7 +1024,6 @@ Die Verbindungszeit zum Server wurde überschritten
 
 ERR_VERSION_MISMATCH
 Kann keine Verbindung zum Server herstellen, da dieser Client eine andere Version folgender Einstellungen und/oder Quelldateien verwendet:
-
 
 ########################
 # Server Setup Screen  #
@@ -1118,7 +1033,6 @@ Kann keine Verbindung zum Server herstellen, da dieser Client eine andere Versio
 
 SCONNECT_WINDOW_TITLE
 Verbindung zum Server
-
 
 #Static labels####
 
@@ -1131,7 +1045,6 @@ Internet Spiel bei:
 PLAYER_NAME_LABEL
 Spielername
 
-
 #Button names####
 
 HOST_GAME_BN
@@ -1142,7 +1055,6 @@ Einem Spiel beitreten
 
 REFRESH_LIST_BN
 Aktualisieren
-
 
 ########################
 # Multiplayer Lobby    #
@@ -1183,7 +1095,6 @@ Spiel laden
 
 START_GAME_BN
 Spiel starten
-
 
 ########################
 # Galaxy Setup Screen  #
@@ -1250,8 +1161,6 @@ GSETUP_CLUSTER
 Haufen
 GSETUP_ELLIPTICAL
 Elliptisch
-GSETUP_RING
-Ring
 GSETUP_RANDOM
 Zufällig
 
@@ -1304,9 +1213,6 @@ ABOUT_WINDOW_TITLE
 CREDITS
 Mitwirkende
 
-VISION
-Vision
-
 FREEORION_VISION
 FreeOrion ist ein runden-basierendes (TBS = Turned Based Strategy) Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion-Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen-Modell zu erschaffen.
 
@@ -1358,9 +1264,6 @@ Einzelspieler
 OPTIONS_MULTIPLAYER
 Mehrspieler
 
-OPTIONS_AUTOSAVE_LIMIT
-Autosaves limit
-
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Runden zwischen dem automatischem Speichern
 
@@ -1372,9 +1275,6 @@ Schriftart
 
 OPTIONS_FONT_SIZES
 Schriftgrößen
-
-OPTIONS_FONT_TEXT
-Text
 
 OPTIONS_FONT_TITLE
 Fenstertitel
@@ -1433,14 +1333,8 @@ Zeige FPS
 OPTIONS_LIMIT_FPS
 FPS begrenzen
 
-OPTIONS_MAX_FPS
-Max FPS
-
 OPTIONS_APPLY
 Anwenden
-
-OPTIONS_CHAT
-Chat
 
 OPTIONS_CHAT_HISTORY
 Chatverlauf
@@ -1477,9 +1371,6 @@ Relative Größe der Systemkreise
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Relative Größe der Systemauswahlanzeiger
-
-OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
-System selection indicator animation frame rate
 
 OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Winzige Systemsymbole Größe Grenzwert
@@ -1525,9 +1416,6 @@ Tarngrenzwertregler der Galaxiekarte
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Kreise für Aufklärungsreichweite
-
-OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY
-Range circle opacity
 
 OPTIONS_GALAXY_MAP_POPUP
 Galaxiekarte Popupmenü
@@ -1640,9 +1528,6 @@ Hintergrund
 OPTIONS_BORDER_COLOR
 Rahmen
 
-OPTIONS_TEXT_COLOR
-Text
-
 OPTIONS_DEFAULT_LINK_COLOR
 Links
 
@@ -1675,9 +1560,6 @@ Innere Kante
 
 OPTIONS_OUTER_BORDER_COLOR
 Äußere Kante
-
-OPTIONS_PAGE_VIDEO
-Video
 
 OPTIONS_PAGE_AUDIO
 Ton
@@ -1763,7 +1645,6 @@ Ausführliche Protokollierung zur Fehlersuche
 OPTIONS_VERBOSE_SITREP_DESC
 Statusberichte mit Fehlermeldungen
 
-
 ##################
 # CombatSetupWnd #
 ##################
@@ -1781,17 +1662,8 @@ Platzierungen wiederholen
 MAP_BTN_TURN_UPDATE
 Runde %1%
 
-MAP_INDICATOR_FPS
-%1% FPS
-
-MAP_SCALE_INDICATOR
-%1% uu
-
 MAP_BTN_MENU
 Menü
-
-MAP_BTN_MODERATOR
-Moderator
 
 MAP_BTN_OBJECTS
 Objekte
@@ -1807,9 +1679,6 @@ Produktion
 
 MAP_BTN_DESIGN
 Schiffsdesign
-
-MAP_BTN_PEDIA
-Pedia
 
 MAP_PRODUCTION_TITLE
 Produktion
@@ -1843,9 +1712,6 @@ Hier anklicken um das Forschungsmenü zu öffnen'''
 
 MAP_POPULATION_DISTRIBUTION
 Volkszählung
-
-MAP_POPULATION_COUNT
-%1%: %2%
 
 CENSUS_SPECIES_HEADER
 Spezies
@@ -1881,11 +1747,6 @@ Seitenfenster
 SP_SYSTEM_PRODUCTION
 System Produktion
 
-RESOURCE_PRODUCTION_TOOLTIP
-System %1%: %2%
-RESOURCE_ALLOCATION_TOOLTIP
-System %1%: %2%
-
 INDUSTRY_PRODUCTION
 Industrieproduktion
 RESEARCH_PRODUCTION
@@ -1902,8 +1763,6 @@ Handelsverbrauch
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
 Inter-System Austausch
-IMPORT_EXPORT_TOOLTIP
-Import / Export
 RESOURCE_IMPORT
 Importieren
 RESOURCE_EXPORT
@@ -1937,10 +1796,6 @@ PL_CANCEL_INVADE
 Einmarschieren abbrechen
 PL_SELECT_COLONY_SHIP_INSTRUCTION
 Wähle Siedlungsschiff zum kolonisieren.
-PL_TYPE_SIZE
-%1% %2%
-PL_TYPE_SIZE_ENV
-%1% %2% (%3%)
 PL_NO_VISIBILITY
 Planet ist momentan nicht sichtbar.
 PL_BASIC_VISIBILITY
@@ -1969,11 +1824,6 @@ Fokus: %1%
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
 '''%1% (unvollständig)
-
-%2%'''
-
-BP_COMPLETE_BUILDING_TOOLTIP
-'''%1%
 
 %2%'''
 
@@ -2021,9 +1871,6 @@ Besonderheit <i>%2%</i>
 TT_SPECIES
 Spezies <i>%2%</i>
 
-TT_FIELD
-<i>%2%</i>
-
 TT_UNKNOWN
 Unbekannt
 
@@ -2032,9 +1879,6 @@ TT_RESOURCE_PRODUCTION
 
 TT_RESOURCE_ALLOCATION
 %1% verbraucht %2%
-
-TT_SPECIES_POPULATION
-%1% [[METER_POPULATION]]
 
 SP_RENAME_PLANET
 Planet umbenennen
@@ -2090,9 +1934,6 @@ Schiffsklasse
 
 FW_UNKNOWN_DESIGN_NAME
 Unbekannter Entwurf
-
-FW_SPECIES_SHIP_DESIGN_LABEL
-(%2%) %1%
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
@@ -2192,7 +2033,6 @@ Erkunden
 ORDER_CANCEL_FLEET_EXPLORE
 Erkundung beenden
 
-
 ###############
 #  Moderator  #
 ###############
@@ -2243,16 +2083,12 @@ Friedensantrag annullieren
 PEACE_ACCEPT
 Friedensantrag annehmen
 
-
 ###############
 # TechTreeWnd #
 ###############
 
 TECH_DISPLAY
 Anzeige
-
-TECH_NAVIGATION
-Navigation
 
 TECH_TOTAL_COST_STR
 %1% FP und %2% Rnd
@@ -2321,7 +2157,6 @@ TECH_WND_PROGRESS
 TECH_WND_ETA
 %1% Runde übrig
 
-
 #######################
 # ProductionInfoPanel #
 #######################
@@ -2341,7 +2176,6 @@ Unterbezahlte Projekte
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
 Anzahl der Projekte
 
-
 ###############
 # ResearchWnd #
 ###############
@@ -2357,7 +2191,6 @@ FP
 
 RESEARCH_QUEUE_PROMPT
 Klicke doppelt oder mit Shift auf ein verfügbares Objekt um es zur Forschungswarteschlange hinzufügen.
-
 
 ####################
 # BuildSelectorWnd #
@@ -2384,9 +2217,6 @@ Nicht verfüg.
 PRODUCTION_TOTAL_COST_STR
 %1% PP und %2% Rnd
 
-PRODUCTION_TURN_COST_STR
-+%1% PP
-
 PRODUCTION_TURNS_LEFT_STR
 %1% Rnd
 
@@ -2405,7 +2235,6 @@ Auf Bau zentrieren
 PRODUCTION_QUEUE_PROMPT
 Doppelklick auf ein verfügbares Objekt um es zur Produktionswarteschlange hinzufügen.
 
-
 #################
 # ProductionWnd #
 #################
@@ -2415,15 +2244,6 @@ Produktion
 
 PRODUCTION_INFO_PANEL_TITLE
 Produktion
-
-PRODUCTION_INFO_PP
-PP
-
-PRODUCTION_QUEUE_MULTIPLES
-%1%x 
-
-PRODUCTION_QUEUE_REPETITIONS
-%1%⟳
 
 PRODUCTION_QUEUE_EMPTY
 '''Die Produktionswarteschlange des Imperiums ist leer.
@@ -2481,22 +2301,14 @@ Alles entfernen
 DESIGN_DELETE
 Entwurf löschen
 
-
 ################
 ## Statistics ##
 ################
     
 
-
 #############################################################
 ####               E N C Y C L O P E D I A               ####
 #############################################################
-
-ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1
-%1%:	
-
-ENC_SPECIES_PLANET_TYPE_SUITABILITY
-%1%	%2% (%3%)
 
 ENC_SUITABILITY_REPORT_POSITIVE_HEADER
 '''%1% eignet sich zur Besiedlung durch diese Spezies.
@@ -2600,17 +2412,9 @@ Gebäude
 ENC_SYSTEM
 System
 
-ENC_INDEX
-Encyclopedia Index
-
 # type of thing being shown. %1% is a bit of detail, and %2% is the general type.
 # for example: %1% = "Point Defense" or "Growth" and %2% = "Ship Part" or "Building".
 # %1% may be an empty string for most general types of things that can be shown.
-ENC_DETAIL_TYPE_STR
-%1% %2%
-
-ENC_PP
-PP
 
 ENC_RP
 FP
@@ -2640,6 +2444,12 @@ ENC_EFFECTS_STR
 
 %1%'''
 
+# auto-generated production cost description. %1% will be the auto-generated cost text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
+# auto-generated production time description. %1% will be the auto-generated time text. This string should
+# provide an appropriate heading to appear before the auto-generated text.
+
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
@@ -2656,14 +2466,15 @@ Besiedlungsvermögen: %15%
 Truppen: %16%
 Geschwindigkeit auf Sternstraße: %13%
 '''
-
 ## Temporarily removed
 # Direct Fire Parts: %4%
 # Missile Parts: %5%
 # Fighter Bays: %6%
 # Point Defense Parts: %7%
-# Kampf Geschwindigkeit: %12%
+# Battle Speed: %12%
 ##
+
+# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
 
 ENC_UNLOCKED_BY
 '''<u>Durch Technologie freigeschaltet:</u>
@@ -2674,13 +2485,6 @@ ENC_UNLOCKS
 '''<u>Schaltet frei:</u>
 
 '''
-
-ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
-'''%1%: %2%
-'''
-
-ENC_TECH_DETAIL_TYPE_STR
-%3%
 
 ENC_LOOKUP
 Pedia durchsuchen %1%
@@ -2696,6 +2500,10 @@ Runde %4%: %1% greift %2% an und verursacht %3% Schaden
 
 ENC_COMBAT_UNKNOWN_OBJECT
 Unbekannt
+
+###########################################
+# Combat Report #
+###########################################
 
 ###########################################
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
@@ -2747,19 +2555,11 @@ Wachstumsfokus
 GROWTH_FOCUS_TEXT
 '''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]] lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
 
-MINING_FOCUS_TITLE
-Mining Focus
-MINING_FOCUS_TEXT
-'''Mining Focus is currently disabled.'''
 #The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
-TRADE_FOCUS_TITLE
-Trade Focus
 TRADE_FOCUS_TEXT
 '''Trade doesn't do anything, yet.  It is just a placeholder to show that more resources are planned.'''
 
-PROTECTION_FOCUS_TITLE
-Protection Focus
 PROTECTION_FOCUS_TEXT
 '''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are doubled.'''
 
@@ -2781,11 +2581,6 @@ RESEARCH_TEXT
 The tech at the top of the queue is given RPs first.  Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on.  You can re-prioritize the items in the queue by dragging the most important items closer to the top.
 
 Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be used.'''
-
-HAPPINESS_TITLE
-Happiness
-HAPPINESS_TEXT
-'''Happiness doesn't do anything yet.'''
 
 INFRASTRUCTURE_TITLE
 Infrastruktur
@@ -2810,10 +2605,6 @@ Both space ships and planets have a Shields meter.'''
 
 STEALTH_TITLE
 Tarnung
-STEALTH_TEXT
-'''The term Stealth represents the ability of an object to dodge all kinds of sensors. Only empires with a [[encyclopedia DETECTION_TITLE]] higher than or equal to the Stealth value can see the object.
-
-Space ships, buildings, specials, systems and planets have a Stealth meter.'''
 
 DETECTION_TITLE
 Erkennung Stärke
@@ -2863,8 +2654,6 @@ Yellow Star, Orange Star: No changes.
 Red Star, Neutron Star: Tiny -1 , Small -2 , Medium -3 , Large -4 , Huge -5.
 Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.'''
 
-SELF_SUSTAINING_SPECIES_TITLE
-Self-Sustaining Metabolism
 SELF_SUSTAINING_SPECIES_TEXT
 '''Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.'''
 
@@ -2873,8 +2662,6 @@ Telepathie
 TELEPATHY_TEXT
 '''Telepathische Spezies sind immun gegen Gedankenkontrolle und somit besser für die Erforschung der [[tech LRN_PSIONICS]] geeignet.'''
 
-XENOPHOBIC_SPECIES_TITLE
-Xenophobic
 XENOPHOBIC_SPECIES_TEXT
 '''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of Self-Sustaining metabolism will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harrassing the alien species, has not been determined) resulting in a reduced maximum population.
 
@@ -2891,7 +2678,6 @@ SUPPLY_TEXT
 '''Versorgungslinien werden durch in den Imperiumsfarben markierte Sternenstraßen angezeigt. Planeten, die durch Versorgungslinien verbunden sind, teilen ihre physikalischen Ressourcen -- die erzeugte Produktion eines Planeten kann von anderen verbundenen Planeten genutzt werden, um Schiffe oder Gebäude zu herzustellen. Versorgungslinien können außerdem die [[encyclopedia FUEL_TITLE]] von Raumschiffen auffüllen.
 
 Der Versorgungsgrad eines Planeten zeigt die Entfernung an, die die Versorgung erreicht.'''
-
 
 FLEET_UPKEEP_TITLE
 Flotten Unterhalt
@@ -2933,7 +2719,7 @@ Aggressive:
 Maniacal: 
 [[AI_CAPITOL_NAMES_MANIACAL]]'''
 
-# Functional list; do not translate. Used for logging during universe creation
+# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 
 ####################
 # Combat Messages  #
@@ -2971,7 +2757,6 @@ COMBAT_DEFENSELESS
 
 COMBAT_LOST
  Verloren!
-
 
 ####################
 # TurnProgress     #
@@ -3062,7 +2847,6 @@ Aufklappen
 ## Objects Columns ##
 #####################
 
-
 ####################
 ## Filters Dialog ##
 ####################
@@ -3088,9 +2872,6 @@ Bewaffnet
 CONDITION_CAPITAL
 Hauptstadt
 
-CONDITION_MONSTER
-Monster
-
 CONDITION_STATIONARY
 Stehend
 
@@ -3102,12 +2883,6 @@ Spezies kann Schiffe herstellen
 
 CONDITION_HOMEWORLD
 Heimatwelt
-
-CONDITION_HASSPECIAL
-Has Special
-
-CONDITION_HASTAG
-Has Tag
 
 CONDITION_SPECIES
 Speziesname
@@ -3124,13 +2899,9 @@ Fokus Einstellung
 CONDITION_STARTYPE
 Sternentyp
 
-CONDITION_METERVALUE
-Object Property Value
-
 #############################################################
 ####                    S I T   R E P                    ####
 #############################################################
-
 
 #Window title####
 
@@ -3145,7 +2916,6 @@ Ein unbekanntes Ereignis ist aufgetreten.
 
 FILTERS
 Filter
-
 
 ## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.
@@ -3326,50 +3096,29 @@ SITREP_EMPIRE_ELIMINATED
 SITREP_EMPIRE_ELIMINATED_LABEL
 Imperium ausgeloescht
 
-SITREP_VICTORY
-%empire% %text%
 SITREP_VICTORY_LABEL
 Sieg
 
 SITREP_VICTORY_DESTRUCTION
 At last, the mysterious violent threat plagueing the galaxy has been eliminated.  The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
-SITREP_VICTORY_DESTRUCTION_LABEL
-Victory Destruction
 
 SITREP_VICTORY_CAPTURE
 The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have fallen uder your control.
-SITREP_VICTORY_CAPTURE_LABEL
-Victory Capture
-
-SITREP_VICTORY_TECH
-Your Empire has discovered the Singularity of Transcendence. You win!
-SITREP_VICTORY_TECH_LABEL
-Victory Technology
 
 SITREP_VICTORY_BIO
 The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty warfleet.
-SITREP_VICTORY_BIO_LABEL
-Victory Biological
 
 EFFECT_ANCIENT_SHIP
 Ancient Ruins in %planet% have revealed a %predefinedshipdesign%.
-EFFECT_ANCIENT_SHIP_LABEL
-Ancient Ruins Ship
 
 EFFECT_ANCIENT_BUILDING
 Ancient Ruins in %planet% have revealed a %buildingtype%.
-EFFECT_ANCIENT_BUILDING_LABEL
-Ancient Ruins Building
 
 EFFECT_ANCIENT_TECH
 Ancient Ruins in %planet% have revealed %tech%.
-EFFECT_ANCIENT_TECH_LABEL
-Ancient Ruins Tech
 
 EFFECT_CONC_CAMP_COMLETE
 Ethnic cleansing at %planet% is complete.
-EFFECT_CONC_CAMP_COMLETE_LABEL
-Ethnic Cleansing
 
 EFFECT_DRYDOCK_SHIP_REPAIR
 %ship% ist im %building% auf %planet% repariert worden.
@@ -3388,8 +3137,6 @@ Gaia terraformiert
 
 EFFECT_TERRAFORM
 %planet% wurde terraformiert.
-EFFECT_TERRAFORM_LABEL
-Terraform
 
 EFFECT_STARVATION
 Hungersnot hat %planet% getroffen.
@@ -3431,11 +3178,6 @@ EFFECT_BIOWEAPON
 EFFECT_BIOWEAPON_LABEL
 Biowaffen-Angriff
 
-EFFECT_EXOBOT
-Eine Exobotkolonie wurde auf %planet% errichtet.
-EFFECT_EXOBOT_LABEL
-Exobotschiff
-
 EFFECT_EVACUEES
 Evakuierte siedelten auf %planet%.
 EFFECT_EVACUEES_LABEL
@@ -3461,12 +3203,9 @@ The %empire% ship %ship% has been destroyed by mines in the %system% system!
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Systemminem zerstörten Schiff
 
-
-
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
-
 
 TECH_VICTORY
 Das %1% Imperium hat den technologischen Sieg errungen.
@@ -3474,11 +3213,9 @@ Das %1% Imperium hat den technologischen Sieg errungen.
 ALL_ENEMIES_ELIMINATED_VICTORY
 Das %1% Imperium hat den Sieg als letztes bestehendes Imperium erreicht.
 
-
 #############################################################
 ####                    S P E C I E S                    ####
 #############################################################
-
 
 HOMEWORLD
 Heimatwelt:
@@ -3523,11 +3260,6 @@ Bevorzugt erdähnliche Planeten.
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
-SP_HUMAN_DESC
-''''''
-
-SP_SCYLIOR
-Scylior
 SP_SCYLIOR_GAMEPLAY_DESC
 '''Besitzt drei Tentakel, aquatischer Nautilus.
 Bevorzugt ozeanische Planeten.
@@ -3555,8 +3287,6 @@ History:
 Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
 '''
 
-SP_GYSACHE
-Gysache
 SP_GYSACHE_GAMEPLAY_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Bevorzugt sumpfige Planeten.
@@ -3583,8 +3313,6 @@ Homeworld:
 Their homeworld has a thick atmosphere of nitrogen, ammonina and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
 '''
 
-SP_CHATO
-Chato
 SP_CHATO_GAMEPLAY_DESC
 '''Sessile crystalline entities which ride the animal Goshk.
 Bevorzugt toxische Planeten.
@@ -3607,8 +3335,6 @@ Social Structure:
 In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
 '''
 
-SP_TRITH
-Trith
 SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
 Bevorzugt wüstenhafte Planeten.
@@ -3634,8 +3360,6 @@ Social Structure:
 The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought noise in the universe.
 '''
 
-SP_HHHOH
-Hhhoh
 SP_HHHOH_GAMEPLAY_DESC
 '''Huge, slow, multi-trunked Mammoths.
 Bevorzugt Tundra Planeten.
@@ -3659,8 +3383,6 @@ Personality:
 Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
 '''
 
-SP_EAXAW
-Eaxaw
 SP_EAXAW_GAMEPLAY_DESC
 '''Evil amazonian xenophobic agressive worms.
 Bevorzugt erdähnliche Planeten.
@@ -3685,8 +3407,6 @@ History:
 A long time ago a derelict ship of the Precursers crashed on the Eaxaws homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation "All of this must Go!".
 '''
 
-SP_DERTHREAN
-Derthrean
 SP_DERTHREAN_GAMEPLAY_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Bevorzugt toxische Planeten.
@@ -3704,8 +3424,6 @@ Social Structure:
 The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays the fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
 '''
 
-SP_LAENFA
-Laenfa
 SP_LAENFA_GAMEPLAY_DESC
 '''Sneaky, telepathic, sentient vines.
 Bevorzugt ozeanische Planeten.
@@ -3729,8 +3447,6 @@ Social Structure:
 The Laenfa have a unified culture due to their telepathy, but as their ability to communicate telepathically weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret, but takes into account the voices of all Laenfa they are able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goal of gaining knowledge of other species and protecting knowledge of themselves.
 '''
 
-SP_TAEGHIRUS
-Tae Ghirus
 SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Bevorzugt sumpfige Planeten.
@@ -3743,17 +3459,6 @@ Bevorzugt sumpfige Planeten.
 [[GOOD_POPULATION]]
 '''
 
-SP_TAEGHIRUS_DESC
-'''Description:
-The Tae Ghirus look like feather-less vultures with a fragile grey body. Their wings were designed for gliding, not flying, but even this aerodynamic function was lost in evolution.
-
-Social Structure:
-The Tae Ghirus are very social and cooperative to make up for their weak bodies. Their social and political system, called "The Allegiance", is a mixture of participative democracy and a brotherhood which works surprisingly well.
-'''
-
-
-SP_MUURSH
-Mu Ursh
 SP_MUURSH_GAMEPLAY_DESC
 '''Militantly peaceful herbivores.
 Bevorzugt wüstenhafte Planeten.
@@ -3769,8 +3474,6 @@ Bevorzugt wüstenhafte Planeten.
 SP_MUURSH_DESC
 ''''''
 
-SP_GEORGE
-George
 SP_GEORGE_GAMEPLAY_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Bevorzugt Tundra Planeten.
@@ -3792,9 +3495,6 @@ Description:
 The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
 '''
 
-
-SP_CRAY
-Cray
 SP_CRAY_GAMEPLAY_DESC
 '''Cheerful enthusiastic robots.
 Bevorzugt unfruchtbare Planeten.
@@ -3818,9 +3518,6 @@ The Cray are a tribal society. Each tribe is formed around a single Cray known a
 Day to day decisions run on an extremely complex web of favors, all Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
 '''
 
-
-SP_ETTY
-Etty
 SP_ETTY_GAMEPLAY_DESC
 '''Cybernetic plants.
 Bevorzugt wüstenhafte Planeten.
@@ -3848,9 +3545,6 @@ Social Structure:
 The Etty are exceedingly polite and strictly honor all contracts and agreements. Their culture is very clean, civil, kind and courteous, but very withdrawn. Etty government is a true democracy with a strong civil service held in check by a powerful press.
 '''
 
-
-SP_CYNOS
-Cynos
 SP_CYNOS_GAMEPLAY_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 Bevorzugt sumpfige Planeten.
@@ -3878,8 +3572,6 @@ Reason for Staying:
 Neither can the Cynos reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
 '''
 
-SP_PHINNERT
-Phinnert
 SP_PHINNERT_GAMEPLAY_DESC
 '''Flying Monkeys.
 Bevorzugt sumpfige Planeten.
@@ -3903,8 +3595,6 @@ Heimatwelt:
 Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gasses. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
 '''
 
-SP_EGASSEM
-Egassem
 SP_EGASSEM_GAMEPLAY_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Bevorzugt vulkanische Planeten.
@@ -3929,8 +3619,6 @@ Heimatwelt:
 A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface.  
 '''
 
-SP_SSLITH
-Sslith
 SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
 Bevorzugt Tundra Planeten.
@@ -3945,16 +3633,6 @@ Bevorzugt Tundra Planeten.
 [[NARROW_EP]]
 '''
 
-SP_SSLITH_DESC
-'''Description:
-In its relaxed state, an individual Sslith is essentially a 2.15cm thick rectangular sheet, that's always 132cm long, and between 31 and 53cm wide. Its only appendage is a single tentacle that is used to sense sound and infrared light, it is also used for communication via ultrasound. Sslith are able to flex their bodies into other shapes, an ability originally evolved for the purpose of sliding into the shells of Vreen (a creature that recedes into its shell when it detects danger). Their flexibility allows them to move astonishingly fast in the oceans, by a ripple effect that looks like they are folding themselves through the water. They don't have a central brain, a Sslith's mental capacity is a collection of multiple nodes that are linked together to form a distributed consciousness allowing a Sslith to perform many tasks at once.
-
-Social Structure:
-The Sslith are organized into groups called Pnacra which serve as independent governmental units. Though there are a few global laws that all Sslith in all Pnacra obey, each Pnacra has it's own rules and laws as to conduct and actions. The Pnacra move around of their own accord, and have no fixed geographic location. If two or more of them meet, then members who are discontented with their present Pnacra can move to another to try out its ways and customs.
-'''
-
-SP_FIFTYSEVEN
-Fifty-seven
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 Bevorzugt sumpfige Planeten.
@@ -3981,9 +3659,6 @@ Reason for Staying:
 The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.
 '''
 
-
-SP_SETINON
-Setinon
 SP_SETINON_GAMEPLAY_DESC
 '''Individualistic sentient microscopic cells.
 Bevorzugt sumpfige Planeten.
@@ -4009,9 +3684,6 @@ Heimatwelt:
 A swamp world with a dense atmosphere and fairly dense biosphere.
 '''
 
-
-SP_NYMNMN
-Nymnmn
 SP_NYMNMN_GAMEPLAY_DESC
 '''Planet-wide sapient magnetic waveforms.
 Bevorzugt wüstenhafte Planeten.
@@ -4027,11 +3699,6 @@ Bevorzugt wüstenhafte Planeten.
 [[GOOD_STEALTH]]
 '''
 
-SP_NYMNMN_DESC
-''''''
-
-SP_TRENCHERS
-Trenchers
 SP_TRENCHERS_GAMEPLAY_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Bevorzugt unfruchtbare Planeten.
@@ -4044,11 +3711,6 @@ Bevorzugt unfruchtbare Planeten.
 [[BAD_GROUND_TROOPS]]
 '''
 
-SP_TRENCHERS_DESC
-''''''
-
-SP_RAAAGH
-Raaagh
 SP_RAAAGH_GAMEPLAY_DESC
 '''Highly territorial felinoids.
 Bevorzugt erdähnliche Planeten.
@@ -4074,9 +3736,6 @@ Reason for Staying:
 There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries.  The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land.  Abandoning one's territory is inconcievable, and a Raaagh forcibly removed from his territory goes violently insane.
 '''
 
-
-SP_BEIGEGOO
-Beige Goo
 SP_BEIGEGOO_GAMEPLAY_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Bevorzugt verstrahlte Planeten.
@@ -4093,8 +3752,6 @@ SP_BEIGEGOO_DESC
 '''The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
 '''
 
-SP_SILEXIAN
-Silexian
 SP_SILEXIAN_GAMEPLAY_DESC
 '''Gleaming gardener robots, left on their own.
 Bevorzugt erdähnliche Planeten.
@@ -4107,22 +3764,6 @@ Bevorzugt erdähnliche Planeten.
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
-SP_SILEXIAN_DESC
-'''The Silexians are a race of ecological maintenance robots. They see their own existence as a means of bringing biological beauty and balance to the galaxy.
-
-Description:
-As each type of Silexian is customized for a specific task, there are variations in appearance. The majority of Silexians however, share many similar features: They are wholly artificial robotic beings made primarily of metals. They have an antennae used for short range radio communication, advanced tactile sensors as well as wide-frequency photon detectors.
-Silexians generally have a flat base equipped with wheels and rocket boosters, but the occasional model is bipedal, to allow greater agility. Many have pincer-like appendages and injector tubules for manipulating objects.
-
-Social Structure:
-The Silexians have a hierarchical caste system under a dictatorship government. Each Silexian is created for a specific job, and fills that job until declared obsolete. There is no social mobility. In fact the very idea would be alien and somewhat unwholesome to a Silexian. The race is led by a caste of supervisors giving work assignments, determine upgrades and declare models obsolete. Supervisors themselves defer to the Prime Operator, whom nobody has the authority to deem obsolete, and therefore is practically immortal.
-
-History:
-The Silexians were created by the Caretakers in order to increase the efficiency and automation of their environmental maintenance projects. Eventually, all of the Caretakers’ worlds were inhabited and maintained by the peaceful and loyal Silexians. When the Caretakers left the galaxy, some Silexians were abandoned.
-'''
-
-SP_KOBUNTURA
-Kobuntura
 SP_KOBUNTURA_GAMEPLAY_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Bevorzugt unfruchtbare Planeten.
@@ -4135,16 +3776,6 @@ Bevorzugt unfruchtbare Planeten.
 [[BAD_GROUND_TROOPS]]
 '''
 
-SP_KOBUNTURA_DESC
-'''Description:
-A Kobuntura is composed of trillions of magnetic dust particles. Their dense core of vibrating molecules generates a magnetic field which manipulates a less dense cloud of particles orbiting it in complex patterns. Kobuntura can directly detect and manipulate objects on the outer reaches of their particle clouds, but can indirectly detect, manipulate and communicate with objects and individuals much further away using there magnetic fields. The primary method of locomotion involves interaction with the planet’s magnetic field. Whenever a Kobuntura moves, there is a small chance that the movement will magnetize and agitate the surrounding dust particles to a sufficient extent to trigger a chain reaction which causes a new fully matured Kobuntura to form in a matter of seconds.
-
-Social Structure:
-The Kobuntura have a guild system since ancient times, but one of the guilds, the Dark Enclave specialized in martial arts, has gained control over all the other guilds and established a military dictatorship. Despite this, there are no secrets amongst Kobuntura as they can't communicate without all the other Kobuntura noticing. Recreation and trade are very limited, as the sole intent of the Dark Enclave, and indeed all of Kobuntura society, is to find one of the Precursor species, the Builders, and unlock the greatest secrets of construction. This goal is the impetus driving their entire civilization.
-'''
-
-SP_UGMORS
-Ugmors
 SP_UGMORS_GAMEPLAY_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Bevorzugt vulkanische Planeten.
@@ -4174,8 +3805,6 @@ Heimatwelt:
 The Ugmors home world is a rockey planet that rotates very quickly, (once every 3 and a half hours) and 30% of it’s surface is covered by seas of lava and liquid metals.
 '''
 
-SP_GISGUFGTHRIM
-'''Gis Guf Gthrim'''
 SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Bevorzugt toxische Planeten.
@@ -4192,8 +3821,6 @@ SP_GISGUFGTHRIM_DESC
 '''Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
 '''
 
-SP_HIDDENGARDENER
-Hidden Gardener
 SP_HIDDENGARDENER_GAMEPLAY_DESC
 '''A sapient fungal network that tends its plant food from beneath
 Bevorzugt erdähnliche Planeten
@@ -4207,18 +3834,6 @@ Bevorzugt erdähnliche Planeten
 [[NO_GROUND_TROOPS]]
 '''
 
-SP_HIDDENGARDENER_DESC
-'''The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kilometers. Its actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener, by means of enzymes, the encapsulation and releases of seeds, and the control of water, tends its garden to produce precisely the rotting plant matter it needs to survive.
-
-Fungal-type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
-
-Their terran homeworld is an eerily park-like place with plants arranged with unnatural precision, but no other signs of habitation.
-
-The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
-
-
-SP_ABADDONI
-Abaddoni
 SP_ABADDONI_GAMEPLAY_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Bevorzugt vulkanische Planeten.
@@ -4231,18 +3846,6 @@ Bevorzugt vulkanische Planeten.
 [[BAD_GROUND_TROOPS]]
 '''
 
-SP_ABADDONI_DESC
-'''Description:
-Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
-At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
-
-Social Structure:
-The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves. 
-'''
-
-
-SP_ACIREMA
-Acirema
 SP_ACIREMA_GAMEPLAY_DESC
 '''Eine Rasse von nahezu unbegrenzte Kraft, das in diesem Universum nicht überleben kann.
 Bevorzugt verstrahlte Planeten.
@@ -4269,9 +3872,6 @@ Portal is a Radiated world close to an unusually bright Blue Giant Star, with a 
 Reason for staying
 They can't stay here long enough to actually move to another planet and still survive.'''
 
-
-SP_OURBOOLS
-Ourbools
 SP_OURBOOLS_GAMEPLAY_DESC
 '''Riesige Blinde Schwimmer die, die Schwerkraft "sehen" können.
 Bevorzugt ozeanische Planeten.
@@ -4301,8 +3901,6 @@ Reason for Staying:
 The Ourbools find their sense of position via the regular movements of the 23 moons.  Everything is perceived against that gravitational background.  To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler.  He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
 '''
 
-SP_VOLP
-Volp-Uglush
 SP_VOLP_GAMEPLAY_DESC
 '''Highly bureacratic, overcrowded burrowers.
 Bevorzugt unfruchtbare Planeten.
@@ -4328,8 +3926,6 @@ Reason for Staying:
 Volp-Uglush are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
 '''
 
-SP_FURTHEST
-Furthest
 SP_FURTHEST_GAMEPLAY_DESC
 '''Paranoid three-headed, triped herbivores
 Bevorzugt Tundra Planeten.
@@ -4359,8 +3955,6 @@ Reason for Staying:
 The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
 '''
 
-SP_EXOBOT
-Exobot
 SP_EXOBOT_GAMEPLAY_DESC
 '''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -4376,8 +3970,6 @@ SP_EXOBOT_DESC
 '''While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
 '''
 
-SP_EXPERIMENTOR
-Experimentor
 SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''Precursor mad scientists
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
@@ -4395,9 +3987,6 @@ SP_EXPERIMENTOR_GAMEPLAY_DESC
 SP_EXPERIMENTOR_DESC
 '''The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
 
-
-SP_SUPER_TEST
-Super Testers
 SP_SUPER_TEST_GAMEPLAY_DESC
 '''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. (Stealth-busting power only works when they are in a Capital)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
@@ -4413,31 +4002,12 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 [[ULTIMATE_WEAPONS]]
 '''
 
-SP_SUPER_TEST_DESC
-''''''
-
-
-
 #############################################################
 ####                   S P E C I A L S                   ####
 #############################################################
 
-
-GAIA_SPECIAL
-Gaia
-
-GAIA_SPECIAL_DESC
-'''Increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15.
-
-This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
-
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Uralte Ruinen
-
-ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
-
-This planet holds the ruins of an unknown, advanced ancient race. A valuable discovery has already been made here.'''
 
 ANCIENT_RUINS_SPECIAL
 Uralte Ruinen
@@ -4447,13 +4017,6 @@ ANCIENT_RUINS_SPECIAL_DESCRIPTION
 
 Auf diesem Planet befinden sich die Überreste einer uralten, technologisch forschrittlichen Rasse. Das erster Imperium, welches die Technologie tech [[tech LRN_XENOARCH]] erforscht hat und diesen Planeten in Besitz nimmt erhält eine kostenlose fortgeschrittene Technologie oder entdeckt ein mächtiges Gebäude oder Schiff.'''
 
-PANOPTICON_SPECIAL
-Panopticon Complex
-PANOPTICON_SPECIAL_DESC
-'''Increases empire-wide [[encyclopedia DETECTION_TITLE]] by 10. Also increases [[encyclopedia DETECTION_RANGE_TITLE]] on this planet by 75.
-
-Buried deep within the crust of the planet, the Panopticon is a powerful relic of an unknown precursor civilization. When fed the data from an empire's detection equipment, it has the power to pull reliable information from the chaotic static beyond the edges of certainty.'''
-
 ECCENTRIC_ORBIT_SPECIAL
 Exzentrischer Orbit
 
@@ -4462,95 +4025,30 @@ ECCENTRIC_ORBIT_SPECIAL_DESC
 
 Der Orbit dieses Planeten ist sehr exzentrisch; der Unterschied zwischen seiner geringsten und größten Entfernung zu seinem Stern ist sehr groß. Der Lichteinfall schwankt während des Jahres erheblich. Die veränderlichen Bedingungen behindern die Entwicklung der Infrastruktur, sind aber auch eine gute Forschungsgrundlage.'''
 
-RESONANT_MOON_SPECIAL
-Resonant Moon
-
-RESONANT_MOON_SPECIAL_DESC
-'''[[encyclopedia STEALTH_TITLE]] of buildings on the planet and controlled ships in the same system is increased by 10.
-
-This planet has a natural satellite, the orbital period of which is in 1:1 resonance with its rotational period, causing there to be a "dark side" which is constantly facing away from the planet. This "dark side" is a perfect site for clandestine facilities. The space between the planet and the moon can be used to hide buildings and fleets from other empires.'''
-
-COMPUTRONIUM_SPECIAL
-Computronium Moon
-COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on [[encyclopedia RESEARCH_TITLE]], all research focused planets in the empire gain 0.2 [[encyclopedia RESEARCH_TITLE]] per Population.
-
-Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
-
-PHILOSOPHER_SPECIAL
-Philosopher Planet
-PHILOSOPHER_SPECIAL_DESC
-'''As long as the Philosopher Planet is uninhabited, all inhabited planets in the same system have their [[encyclopedia RESEARCH_TITLE]] increased by 5. [[encyclopedia INFRASTRUCTURE_TITLE]] on the Philosopher Planet is decreased by 20.
-
-The lone remnant of a planet-sized space wandering species has found his final rest orbiting in this system like a normal planet. Having lived for thousands of years he lost the will and ability to travel and resorts to pondering about the mysteries of the universe he has seen and learned about. Eccentric and slightly demented he refuses to communicate with anything that isn't the size and shape of his kin, leaving scientists no choice but to ask questions via the planet they are living on. Understandably colonizing the Philosopher Planet will disturb him gravely and he will fall silent. Construction on his surface is difficult as is to be expected from a living being.'''
-
-ABANDONED_COLONY_SPECIAL
-Abandoned Colony
-ABANDONED_COLONY_SPECIAL_DESC
-An old abandoned colony. Some of the [[encyclopedia INFRASTRUCTURE_TITLE]] should still be useful.
-
-KRAKEN_NEST_SPECIAL
-Kraken Nest
-KRAKEN_NEST_SPECIAL_DESC
-At some point young kraken will rise from this place. With knowledge of [[tech SHP_DOMESTIC_MONSTER]], these mega-fauna could be domesticated.
-
-SNOWFLAKE_NEST_SPECIAL
-Snowflake Nest
 SNOWFLAKE_NEST_SPECIAL_DESC
 At some point young snowflakes will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
-JUGGERNAUT_NEST_SPECIAL
-Juggernaut Nest
 JUGGERNAUT_NEST_SPECIAL_DESC
 At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
-CONC_CAMP_MASTER_SPECIAL
-Pall of Death
-CONC_CAMP_MASTER_SPECIAL_DESC
-A visitor may not see [[buildingtype BLD_CONC_CAMP]] operating on this planet, but they have been operating relentlessly and exact a harsh toll on the population; a Pall of Death can be discerned by sensitive beings.
-
-CONC_CAMP_SLAVE_SPECIAL
-Psychic Fatigue
-CONC_CAMP_SLAVE_SPECIAL_DESC
-There may no longer be [[buildingtype BLD_CONC_CAMP]] operating on this planet today, but memories are still close to the surface, and remnants such as poorly hidden mass graves are still occasionally found. A psychic wound still lies upon the populace, and they do not thrive.
-
-CLOUD_COVER_MASTER_SPECIAL
-Cloud Spawns
 CLOUD_COVER_MASTER_SPECIAL_DESC
 This planet is populated with aerial creatures that emit humidity, causing high cloud cover.  Later in their lifecycle, they will burrow into the ground, causing high amounts of volcanic activity.
 
-CLOUD_COVER_SLAVE_SPECIAL
-High Cloud Cover
 CLOUD_COVER_SLAVE_SPECIAL_DESC
 This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]] by 20.
 
-VOLCANIC_ASH_MASTER_SPECIAL
-Hidden Burrowers
 VOLCANIC_ASH_MASTER_SPECIAL_DESC
 This planet has monsters burrowing around in its core causing high volcanic activity.  These burrowers are undergoing metamorphasis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
 
-VOLCANIC_ACTIVITY_SPECIAL
-High Volcanic Activity
-VOLCANIC_ACTIVITY_SPECIAL_DESC
-'''This planet has high levels of volcanic activity, possibly obscuring the planet's surface.'''
-
-VOLCANIC_ASH_SLAVE_SPECIAL
-Volcanic Ash
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
 This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]] by 40.
 
-DIM_RIFT_MASTER_SPECIAL
-Dimensional Burrowers
 DIM_RIFT_MASTER_SPECIAL_DESC
 This planet has monsters burrowing around in its core causing dimensional tears in and around the planet.  Later on, these monsters will mature and begin dragging the planet into the void.
 
-DIM_RIFT_SLAVE_SPECIAL
-Dimensional Rift
 DIM_RIFT_SLAVE_SPECIAL_DESC
 This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]] by 60.
 
-VOID_MASTER_SPECIAL
-Void Monsters
 VOID_MASTER_SPECIAL_DESC
 Monsters inside the core of this planet are dragging it into the void.  There should perhaps be some impending doom associated with this special.
 
@@ -4559,91 +4057,8 @@ Void Metamorphisis
 VOID_SLAVE_SPECIAL_DESC
 This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80.
 
-DERELICT_SPECIAL
-Derelict
-DERELICT_SPECIAL2
-Derelict
-DERELICT_SPECIAL3
-Derelict
-DERELICT_SPECIAL_REMOVE
-Derelict
-DERELICT_SPECIAL_DESC
-An ancient, derelict ship from an unknown species. Who knows what it could reveal...
-
-SUPERNOVA_SPECIAL
-New Supernova
-SUPERNOVA_SPECIAL2
-Young Supernova
-SUPERNOVA_SPECIAL3
-Mature Supernova
-SUPERNOVA_SPECIAL4
-Supernova Remnant
-SUPERNOVA_SPECIAL_DESC
-A supernova occurred in this system in the relatively recent past, leaving only scattered debris where another majestic star system once lay.
-
-NOVA_BOMB_ACTIVATOR_SPECIAL
-Nova Bomb Activator
-NOVA_BOMB_ACTIVATOR_SPECIAL_DESC
-This dimensional integrity of this region of space is highly unstable, causing any Nova Bombs in the vicinity to detonate.
-
-EXPERIMENTOR_OUTPOST_SPECIAL
-Experimentor Outpost
 EXPERIMENTOR_OUTPOST_SPECIAL_DESC
 En Experimentor outpost exists in this system, and defeating them is necessary to ensure the safety of the galaxy.
-
-PROBIOTIC_SPECIAL
-Probiotic Soup
-PROBIOTIC_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Probiotic Soup is focused on Growth, all connected planets with Organic species receive the same bonus.
-
-The great diversity of unique single-celled organisms have applications to the health and maintenance of all types of organic life.'''
-
-FRUIT_SPECIAL
-Caretaker's Fruit
-FRUIT_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Caretaker's Fruit is focused on Growth, all connected planets with Organic species receive the same bonus.
-
-What appears to be a forest is actually part of a continent-spanning symbiotic organism. The fruit of these trees contains marvelously complex organic chemicals beneficial to all sorts of organic life.'''
-
-SPICE_SPECIAL
-Ki Spice
-SPICE_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Ki Spice is focused on Growth, all connected planets with Organic species receive the same bonus.
-
-A unique substance produced by this planet's ecology, Ki Spice has the capacity to lengthen the lives, clarify the thoughts, or sharpen the senses of organic beings.'''
-
-MONOPOLE_SPECIAL
-Monopole Magnets
-MONOPOLE_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species receive the same bonus.
-
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
-
-Monopole Magnets make better robots!'''
-
-SUPERCONDUCTOR_SPECIAL
-Ambient Superconductors
-SUPERCONDUCTOR_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species receive the same bonus.
-
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
-
-Ambient Superconductors make better robots!'''
-
-POSITRONIUM_SPECIAL
-Positronium Ash
-POSITRONIUM_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species receive the same bonus. 
-
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
-
-Positronium Ash make better robots brains!'''
 
 MINERALS_SPECIAL
 Mineralienreichtum
@@ -4655,26 +4070,9 @@ When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.
 
 This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
-CRYSTALS_SPECIAL
-Silmaline Crystals
-CRYSTALS_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Silmaline Crystals is focused on Growth, all connected planets with Lithic species receive the same bonus.
-
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
-
-This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
-
-STARSPAWN_NEBULA_SPECIAL
-Starspawn Nebula
-STARSPAWN_NEBULA_SPECIAL_DESC
-Systems with this special have a nebula created around them. This nebula may collapse to form a new star.
-
-
 #############################################################
 ####        E N U M E R A T I O N   V A L U E S          ####
 #############################################################
-
 
 # UniverseObjectTypes
 
@@ -4686,17 +4084,12 @@ OBJ_SHIP
 Schiff
 OBJ_FLEET
 Flotte
-OBJ_PLANET
-Planet
 OBJ_POP_CENTER
 Bevölkerungszentrum
 OBJ_PROD_CENTER
 Produktionszentrum
-OBJ_SYSTEM
-System
 OBJ_FIELD
 Feld
-
 
 # StarTypes
 
@@ -4706,8 +4099,6 @@ STAR_WHITE
 weiß
 STAR_YELLOW
 gelb
-STAR_ORANGE
-orange
 STAR_RED
 rot
 STAR_NEUTRON
@@ -4744,7 +4135,6 @@ Asteroiden
 PT_GASGIANT
 Gasriese
 
-
 # Planet Sizes
 
 SZ_NOWORLD
@@ -4764,7 +4154,6 @@ Asteroiden
 SZ_GASGIANT
 Gasriese
 
-
 # PlanetEnvironments
 
 PE_UNINHABITABLE
@@ -4777,7 +4166,6 @@ PE_ADEQUATE
 Adäquat
 PE_GOOD
 Gut
-
 
 # FocusTypes
 
@@ -4799,8 +4187,6 @@ FOCUS_LOGISTICS
 Logistik
 FOCUS_STEALTH
 Tarnung
-FOCUS_BIOTERROR
-Bioterror
 FOCUS_STARGATE_SEND
 Stargate Sendung
 FOCUS_STARGATE_SEND_DESC
@@ -4809,8 +4195,6 @@ FOCUS_STARGATE_RECEIVE
 Stargate Empfang
 FOCUS_STARGATE_RECEIVE_DESC
 Das Stargate öffnen um ankommende Schiffe von anderswo zu empfangen
-FOCUS_PLANET_DRIVE
-Planet Drive
 FOCUS_DISTORTION
 Weltraum Verzerrung
 FOCUS_PROTECTION
@@ -4886,64 +4270,20 @@ METER_STEALTH
 Tarnung
 METER_DETECTION
 Aufklärungsreichweite
-METER_BATTLE_SPEED
-Kampfgeschwindigkeit
-METER_STARLANE_SPEED
-Geschwindigkeit in Sternstraße
 METER_DAMAGE
 Schaden
-METER_ROF
-Feuerrate
-METER_RANGE
-Reichweite
 METER_SPEED
 Geschwindigkeit
 METER_CAPACITY
 Kapazität
-METER_ANTI_SHIP_DAMAGE
-Anti-Ship Damage
-METER_ANTI_FIGHTER_DAMAGE
-Anti-Fighter Damage
-METER_LAUNCH_RATE
-Abschussrate
-METER_FIGHTER_WEAPON_RANGE
-Waffenreichweite der Abfangjäger
-
 METER_SIZE
 Größe
-
-METER_DETECTION_STRENGTH
-[[encyclopedia DETECTION_TITLE]]
 
 ALIGN_MILITARISM
 Militarismus
 
-ALIGN_MILITARY_STRENGTH_DESC
-Strength and size of military
-
-ALIGN_SOCIAL_CONTROL
-Social Control
-
-ALIGN_SOCIAL_CONTROL_DESC
-Degree to which population is monitored, restricted and manipulated
-
 ALIGN_ENVIRONMENT_MODIFICATION
 Veränderung der Umgebung
-
-ALIGN_ENVIRONMENT_MODIFICATION_DESC
-Use of terraforming or other large-scale 
-
-ALIGN_BIOLOGICAL_ALTERATION
-Biological Alteration
-
-ALIGN_BIOLOGICAL_ALTERATION_DESC
-Use of biological engineering and alteration
-
-ALIGN_MECHANIZATION
-Mechanization
-
-ALIGN_MECHANIZATION_DESC
-Use of artificial sentience and automation
 
 # EmpireAffiliationTypes
 
@@ -4955,7 +4295,6 @@ AFFIL_ALLY
 Verbündeter
 AFFIL_ANY
 jeder(s)
-
 
 # UnlockableItemTypes
 
@@ -4979,7 +4318,6 @@ Anwendung
 TT_REFINEMENT
 Verbesserung
 
-
 # BuildTypes
 
 BT_NOT_BUILDING
@@ -4989,7 +4327,6 @@ baue
 BT_SHIP
 Schiff
 
-
 # StockpileTypes
 
 ST_FOOD
@@ -4998,7 +4335,6 @@ ST_MINERAL
 Mineralien
 ST_TRADE
 Handel
-
 
 # Resource Types
 
@@ -5013,7 +4349,6 @@ Industrie
 RE_RESEARCH
 Forschung
 
-
 # Ship Slot Types
 
 SL_EXTERNAL
@@ -5022,7 +4357,6 @@ SL_INTERNAL
 Internen Steckplatz
 SL_TOOLTIP_DESC
 Leer
-
 
 # Ship Part Classes
 
@@ -5048,13 +4382,8 @@ PC_FUEL
 Treibstoff
 PC_COLONY
 Kolonisten
-PC_BATTLE_SPEED
-Kampf Geschwindigkeit
-PC_STARLANE_SPEED
-Sternstraßen Geschwindigkeit
 PC_GENERAL
 Sonstiges
-
 
 #############################################################
 ####      ValueRef, Effect, & Condition Descriptions     ####
@@ -5077,15 +4406,6 @@ Ur-
 DESC_VAR_TARGET
 Ziel
 
-DESC_VAR_LOCAL_CANDIDATE
-local condition candidate
-
-DESC_VAR_ROOT_CANDIDATE
-root condition candidate
-
-DESC_STATISTIC
-statistic
-
 DESC_VAR_PLANETSIZE
 Planetengröße
 
@@ -5094,9 +4414,6 @@ Planetengröße
 
 DESC_VAR_PLANETTYPE
 Planetenklasse
-
-DESC_VAR_NEXTBETTERPLANETTYPE
-next better planet type for planet's species
 
 DESC_VAR_PLANETENVIRONMENT
 Planetare Umwelt
@@ -5110,83 +4427,6 @@ Sternenklasse
 DESC_VAR_VALUE
 previous value for this meter
 
-DESC_VAR_TARGETPOPULATION
-[[METER_TARGET_POPULATION]]
-DESC_VAR_TARGETHEALTH
-[[METER_TARGET_HEALTH]]
-DESC_VAR_TARGETINDUSTRY
-[[METER_TARGET_INDUSTRY]]
-DESC_VAR_TARGETRESEARCH
-[[METER_TARGET_RESEARCH]]
-DESC_VAR_TARGETTRADE
-[[METER_TARGET_TRADE]]
-DESC_VAR_TARGETMINING
-[[METER_TARGET_MINING]]
-DESC_VAR_TARGETCONSTRUCTION
-[[METER_TARGET_CONSTRUCTION]]
-DESC_VAR_MAXFUEL
-[[METER_MAX_FUEL]]
-DESC_VAR_MAXSHIELD
-[[METER_MAX_SHIELD]]
-DESC_VAR_MAXSTRUCTURE
-[[METER_MAX_STRUCTURE]]
-DESC_VAR_MAXDEFENSE
-[[METER_MAX_DEFENSE]]
-DESC_VAR_MAXTROOPS
-[[METER_MAX_TROOPS]]
-DESC_VAR_POPULATION
-[[METER_POPULATION]]
-DESC_VAR_HEALTH
-[[METER_HEALTH]]
-DESC_VAR_INDUSTRY
-[[METER_INDUSTRY]]
-DESC_VAR_RESEARCH
-[[METER_RESEARCH]]
-DESC_VAR_TRADE
-[[METER_TRADE]]
-DESC_VAR_MINING
-[[METER_MINING]]
-DESC_VAR_CONSTRUCTION
-[[METER_CONSTRUCTION]]
-DESC_VAR_FUEL
-[[METER_FUEL]]
-DESC_VAR_SHIELD
-[[METER_SHIELD]]
-DESC_VAR_STRUCTURE
-[[METER_STRUCTURE]]
-DESC_VAR_DEFENSE
-[[METER_DEFENSE]]
-DESC_VAR_TROOPS
-[[METER_TROOPS]]
-DESC_VAR_SUPPLY
-[[METER_SUPPLY]]
-DESC_VAR_STEALTH
-[[METER_STEALTH]]
-DESC_VAR_DETECTION
-[[METER_DETECTION]]
-DESC_VAR_BATTLESPEED
-[[METER_BATTLE_SPEED]]
-DESC_VAR_STARLANESPEED
-[[METER_STARLANE_SPEED]]
-DESC_VAR_DAMAGE
-[[METER_DAMAGE]]
-DESC_VAR_ROF
-[[METER_ROF]]
-DESC_VAR_RANGE
-[[METER_RANGE]]
-DESC_VAR_SPEED
-[[METER_SPEED]]
-DESC_VAR_CAPACITY
-[[METER_CAPACITY]]
-DESC_VAR_ANTISHIPDAMAGE
-[[METER_ANTI_SHIP_DAMAGE]]
-DESC_VAR_ANTIFIGHTERDAMAGE
-[[METER_ANTI_FIGHTER_DAMAGE]]
-DESC_VAR_LAUNCHRATE
-[[METER_LAUNCH_RATE]]
-DESC_VAR_FIGHTERWEAPONRANGE
-[[METER_FIGHTER_WEAPON_RANGE]]
-
 DESC_VAR_TRADESTOCKPILE
 Handelslager
 
@@ -5199,9 +4439,6 @@ Forschungsproduktion
 
 DESC_VAR_OWNER
 Besitzer
-
-DESC_VAR_ID
-ID
 
 DESC_VAR_AGE
 Alter in Zügen
@@ -5224,15 +4461,6 @@ ID des Planeten
 DESC_VAR_SYSTEMID
 ID des Systems
 
-DESC_VAR_FINALDESTINATIONID
-final destination id
-
-DESC_VAR_NEXTSYSTEMID
-next system id
-
-DESC_VAR_PREVIOUSSYSTEMID
-previous system id
-
 DESC_VAR_NUMSHIPS
 Anzahl der Schiffe
 
@@ -5245,41 +4473,15 @@ Name
 DESC_VAR_SPECIES
 Spezies
 
-DESC_VAR_BUILDINGTYPE
-building type name
-
 DESC_VAR_FOCUS
 Fokus
 
-DESC_VAR_LASTTURNBATTLEHERE
-last turn a battle occurred here
-
-
-
 # this one is intentionally left empty
-DESC_VALUE_REF_MULTIPART_VARIABLE0
-%1%
 
 DESC_VALUE_REF_MULTIPART_VARIABLE1
 %1% %2%
 
-DESC_VALUE_REF_MULTIPART_VARIABLE2
-%1%'s %2%'s %3%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE3
-%1%'s %2%'s %3%'s %4%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE4
-%1%'s %2%'s %3%'s %4%'s %5%
-
-DESC_VALUE_REF_MULTIPART_VARIABLE5
-%1%'s %2%'s %3%'s %4%'s %5%'s %6%
-
 # six is probably more than will be needed, but just in case ...
-DESC_VALUE_REF_MULTIPART_VARIABLE6
-%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
-
-
 
 # Effects
 
@@ -5295,31 +4497,12 @@ Effekt ist aktiv, wenn die Quelle ein Objekt ist%1%
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effekt ist immer aktiv
 
-DESC_EFFECTS_GROUP_SCOPE_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_ACTIVATION_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_EFFECT_DESC
-'''%1%
-'''
-
-DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-'''%1%
-'''
-
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 '''Effektgruppe %1%:
 %2%
 '''
 
 # SetMeter
-
-DESC_SIMPLE_SET_METER
-%1% %2%%3%
 
 DESC_COMPLEX_SET_METER
 Setze %1% auf %2%
@@ -5329,7 +4512,6 @@ Setze %1% für %2% auf %3%
 
 DESC_SET_EMPIRE_METER
 Setze %2% des %1% Imperiums auf %3%
-
 
 # others
 
@@ -5344,12 +4526,6 @@ DESC_SET_PLANET_TYPE
 
 DESC_SET_PLANET_SIZE
 Ändert die Größe des Planeten auf %1%
-
-DESC_SET_SPECIES
-Changes the object's species to %1%
-
-DESC_SET_OWNER
-Sets %1% as the owner of object
 
 DESC_DESTROY
 Objekt zerstören
@@ -5372,39 +4548,8 @@ DESC_SET_STAR_TYPE
 DESC_MOVE_TO
 Bewegt das Objekt zum Ort des Objekts %1%
 
-DESC_MOVE_IN_ORBIT_OF_OBJECT
-Moves the object in orbit of an object%1% at speed %2%
-
-DESC_MOVE_IN_ORBIT_OF_XY
-Moves the object in orbit of an object located at %1% and %2% at speed %3%
-
-DESC_MOVE_TOWARDS_OBJECT
-Moves the object toward an object%1% at speed %2%
-
-DESC_MOVE_TOWARDS_XY
-Moves the object toward an object located at %1% and %2% at speed %3%
-
-DESC_SET_DESTINATION
-Sets the destination of the object to an object%1%
-
 DESC_VICTORY
 Macht den Objekteigentümer zum Gewinner des Spiels
-
-DESC_GENERATE_SITREP
-Generates a SitRep message for empire %1%
-
-DESC_SET_EMPIRE_TECH_PROGRESS
-Sets the research progress of tech %1% to %2% for empire %3%
-
-DESC_GIVE_EMPIRE_TECH
-Gives tech %1% to empire %2%
-
-DESC_SET_OVERLAY_TEXTURE
-Modifies the appearance of the object
-
-DESC_SET_TEXTURE
-Modifies the appearance of the object
-
 
 # Object Creation
 
@@ -5417,21 +4562,8 @@ Erzeugt ein neues %1% Gebäude
 DESC_CREATE_SHIP
 Erzeugt ein neues Schiff mit dem Entwurf %1% durch das Imperium %2% bemannt mit %3%
 
-DESC_CREATE_SHIP_SIMPLE
-Creates a new ship of design %1% with no owner and no species
-
-DESC_CREATE_FIELD_SIZE
-Creates a new field of type %1% with radius %2%
-
-DESC_CREATE_FIELD
-Creates a new field of type %1%
-
-DESC_CREATE_SYSTEM_TYPE
-Creates a new system of star type %1%
-
 DESC_CREATE_SYSTEM
 Ein neues System erschaffen
-
 
 # Conditions
 
@@ -5459,24 +4591,6 @@ DESC_EMPIRE_AFFILIATION_ANY
 DESC_EMPIRE_AFFILIATION_ANY_NOT
  die nicht zu einem Imperium gehören
 
-DESC_SOURCE
- that is the source object
-
-DESC_SOURCE_NOT
- that is not the source object
-
-DESC_ROOT_CANDIDATE
- that is the root candidate object
-
-DESC_ROOT_CANDIDATE_NOT
- that is not the root candidate object
-
-DESC_TARGET
- that is the target object
-
-DESC_TARGET_NOT
- that is not the target object
-
 DESC_HOMEWORLD
  der eine Heimatwelt der Spezies %1% ist
 
@@ -5488,18 +4602,6 @@ DESC_CAPITAL
 
 DESC_CAPITAL_NOT
  der nicht der Hauptplanet eines Imperiums ist
-
-DESC_MONSTER
- that is a space monster
-
-DESC_MONSTER_NOT
- that is not a space monster
-
-DESC_ARMED
- that is an armed ship
-
-DESC_ARMED_NOT
- that is not an armed ship
 
 DESC_TYPE
  dass es ein %1% ist
@@ -5518,18 +4620,6 @@ DESC_SPECIAL
 
 DESC_SPECIAL_NOT
  ohne die Besonderheit %1%
-
-DESC_SPECIAL_TURN_RANGE
- that has had a %1% special since between turns %2% and %3%
-
-DESC_SPECIAL_TURN_RANGE_NOT
- that has not had a %1% special since between turns %2% and %3%
-
-DESC_CREATED_ON_TURN
- that was created between turns %1% and %2%
-
-DESC_CREATED_ON_TURN_NOT
- that was not created between turns %1% and %2%
 
 DESC_CONTAINS
  dass es ein Objekt,%1%, enthält
@@ -5555,35 +4645,10 @@ DESC_PLANET_ENVIRONMENT
 DESC_PLANET_ENVIRONMENT_NOT
  der kein %1% Planet ist
 
-DESC_SPECIES
- that has species %1%
-
-DESC_SPECIES_NOT
- that does not contain species %1%
-
-DESC_ENQUEUED
- where empire %1% has between %2% and %3% things on the production queue
-
-DESC_ENQUEUED_NOT
- where empire %1% does not have between %2% and %3% things on the production queue
-
-DESC_ENQUEUED_BUILDING
- where empire %1% has between %2% and %3% %4% buildings on the production queue
-
-DESC_ENQUEUED_BUILDING_NOT
- where empire %1% does not have between %2% and %3% %4% buildings on the production queue
-
-DESC_ENQUEUED_DESIGN
- where empire %1% has between %2% and %3% %4% ships on the production queue
+ 
 
 DESC_ENQUEUED_DESIGN_NOT
  where empire %1% dows not have between %2% and %3% %4% ships on the production queue
-
-DESC_FOCUS_TYPE
- that has focus %1%
-
-DESC_FOCUS_TYPE_NOT
- that does not have focus %1%
 
 DESC_STAR_TYPE
  der ein System mit %1% Stern ist
@@ -5603,24 +4668,6 @@ DESC_DESIGN_HAS_PART
 DESC_DESIGN_HAS_PART_NOT
  ohne zwischen %1% und %2% des %3% Teils
 
-DESC_DESIGN_HAS_PART_CLASS
- that has a part of class %1%
-
-DESC_DESIGN_HAS_PART_CLASS_NOT
- that does not have a part of class %1%
-
-DESC_PREDEFINED_SHIP_DESIGN
- that is of the design %1%
-
-DESC_PREDEFINED_SHIP_DESIGN_NOT
- that is not of the design %1%
-
-DESC_NUMBERED_SHIP_DESIGN
- that is of the design %1%
-
-DESC_NUMBERED_SHIP_DESIGN_NOT
- that is not of the design %1%
-
 DESC_CHANCE_PERCENTAGE
  mit einer %1%%% Chance
 
@@ -5633,29 +4680,11 @@ DESC_CHANCE
 DESC_CHANCE_NOT
  mit einer Wahrscheinlichkeit von 1 - %1%
 
-DESC_PRODUCED_BY_EMPIRE
- that was produced by the %1% empire
-
-DESC_PRODUCED_BY_EMPIRE_NOT
- that was not produced by the %1% empire
-
 DESC_METER_VALUE_CURRENT
  dass es eine %1% zwischen %2% und %3% hat
 
 DESC_METER_VALUE_CURRENT_NOT
  dass es keine %1% zwischen %2% und %3% hat
-
-DESC_SHIP_PART_METER_VALUE_CURRENT
- that has a %2% %1% between %3% and %4%
-
-DESC_SHIP_PART_METER_VALUE_CURRENT_NOT
- that doesn't have a %2% %1% between %3% and %4%
-
-DESC_EMPIRE_METER_VALUE_CURRENT
- if empire %4% has a %1% between %2% and %3%
-
-DESC_EMPIRE_METER_VALUE_CURRENT_NOT
- if empire %4% doesn't have a %1% between %2% and %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE
  die zu einem Imperium gehört, mit einem %1% Vorrat zwischen %2% und %3% 
@@ -5716,18 +4745,7 @@ DESC_CAN_PRODUCE_SHIPS
 
 DESC_CAN_PRODUCE_SHIPS_NOT
  ohne eine Spezies, die Schiffe produzieren kann
-
-DESC_SUPPLY_CONNECTED_FLEET
- that is in a system where the %1% empire can provide fleet supply
-
-DESC_SUPPLY_CONNECTED_FLEET_NOT
- that is not in a system where the %1% empire can provide fleet supply
-
-DESC_SUPPLY_CONNECTED_RESOURCE
- that is resource connected for the %1% empire to an object%2%
-
-DESC_SUPPLY_CONNECTED_RESOURCE_NOT
- that is not resource connected for the %1% empire to an object%2%
+ 
 
 DESC_AND_BETWEEN_OPERANDS
  und
@@ -5741,71 +4759,17 @@ DESC_TURN
 DESC_TURN_NOT
  wenn die aktuelle Runde nicht zwischen %1% und %2% ist
 
-DESC_TURN_MIN_ONLY
- starting on turn %1%
-
-DESC_TURN_MIN_ONLY_NOT
- before turn %1%
-
-DESC_TURN_MAX_ONLY
- until turn %1%
-
-DESC_TURN_MAX_ONLY_NOT
- after turn %1%
-
-DESC_TURN_ANY
- on any turn
-
-DESC_TURN_ANY_NOT
- on no turn
-
 DESC_NUMBER_OF
  das eins von %1% zufällig ausgewählten Objekten ist%2%
 
 DESC_NUMBER_OF_NOT
  keines der %1% zufällig ausgewählten Objekte ist%2%
 
-DESC_MAX_NUMBER_OF
- that is one of %1% objects with the largest value of%2% and%3%
-
-DESC_MAX_NUMBER_OF_NOT
- that is not one of %1% objects with the largest value of%2% and%3%
-
-DESC_MIN_NUMBER_OF
- that is one of %1% objects with the smallest value of%2% and%3%
-
-DESC_MIN_NUMBER_OF_NOT
- that is not one of %1% objects with the smallest value of%2% and%3%
-
-DESC_MODE_NUMBER_OF
- that is one of %1% objects with the most common value of%2% and%3%
-
-DESC_MODE_NUMBER_OF_NOT
- that is not one of %1% objects with the most common value of%2% and%3%
-
 DESC_CONTAINED_BY
  Teil eines Objekts %1% ist
 
 DESC_CONTAINED_BY_NOT
  nicht Teil eines Objekts %1% ist
-
-DESC_IN_SYSTEM
- that is in the system with id %1%
-
-DESC_IN_SYSTEM_NOT
- that is not in the system with id %1%
-
-DESC_IN_SYSTEM_SIMPLE
- that is in a system
-
-DESC_IN_SYSTEM_SIMPLE_NOT
- that is not in a system
-
-DESC_OBJECT_ID
- that is the object with id %1%
-
-DESC_OBJECT_ID_NOT
- that is not the object with id %1%
 
 DESC_OWNER_HAS_TECH
  die zu einem Imperium gehören, dass die Technologie %1% besitzt
@@ -5837,8 +4801,6 @@ DESC_HAS_TAG
 DESC_HAS_TAG_NOT
  das ist nicht %1%
 
-
-
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
 #############################################################
@@ -5859,7 +4821,6 @@ DEFENSE_CATEGORY
 Verteidigung
 SPY_CATEGORY
 Nachrichtendienst
-
 
 #############################################################
 ####               T E C H   T H E O R I E S             ####
@@ -5986,10 +4947,6 @@ Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwoll
 GRO_MEDICAL_PATH
 Medizinische Pathologie
 
-GRO_MEDICAL_PATH_DESC
-'''Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments. By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
-Treatment of diseases and injuries requires a thorough understanding of their causes. By studying the subtleties and intricacies of various ailments, it is possible to develop far more effective treatment methods.'''
-
 GRO_PLANET_ECOL
 Planetare Ökologie
 
@@ -6001,12 +4958,6 @@ Gentechnik
 
 GRO_GENETIC_ENG_DESC
 Die genetische Palette ist so vielfältig wie die Lebensformen, von denen sie sich ableitet. Gene können entfernt, kopiert und wieder in ein Genom eingebracht werden; so können transgene Organismen mit Eigenschaftskombinationen geschaffen werden, die in der Natur zuvor nicht vorkamen. Außerdem können Gene vor ihrer Wiedereinbringung durch direkte Veränderung des Basenkodes modifiziert werden; so können völlig neue Gene erzeugt werden. Diese Methoden sind jedoch auf kleine Veränderungen von in der Forschung verfügbaren Genen beschränkt.
-
-CON_ENV_ENCAPSUL
-Habitate
-
-CON_ENV_ENCAPSUL_DESC
-Ummantelte und versiegelte Räume zur Beherbergung eines bestimmten Lebensraums sind für Raumreisen, die Besiedelung gefährlicher Planeten oder die Erhaltung der natürlichen Vielfalt auf stark industrialisierten Welten unerlässlich. Die Aufrechterhaltung der erwünschten Bedingungen ist nicht so simpel, wie es erscheinen mag, da es in vielen Fällen keine äußere Quelle für reine Materialien oder Organismen gibt. Es ist daher notwendig, eine selbständige Umwelt, oft ein ganzes Ökosystem, zu erschaffen, das fähig ist, seine Abfälle wieder zu verwerten und alle seine Bedürfnisse selbst zu decken.
 
 GRO_SYMBIOTIC_BIO
 Symbiotische Biologie
@@ -6031,9 +4982,6 @@ Die meisten komplexen Organismen durchschreiten während ihres Lebens physiologi
 GRO_ADV_ECOMAN
 Verbesserte Ökomanipulation
 
-GRO_ADV_ECOMAN_DESC
-Even in an artificial environment, weather patterns and natural ecological cycles can get out of control, causing large amounts of damage. By introducing stabilizing factors, incidents of destructive ecological forces in artificial environments can be reduced, allowing large-scale environmental modifications.
-
 GRO_XENO_GENETICS
 Xenogenetik
 
@@ -6051,12 +4999,6 @@ GRO_NANOTECH_MED_DESC
 '''Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections. By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.
 
 Während genetische Modifikationen die Effekte unerwünschter oder schädlicher Mutationen rückgängig machen können, sind für die Behandlung größerer physikalischer Traumen und nicht-genetischer angeborener Defekte wirkliche physikalische Maßnahmen notwendig. Für diese Aufgaben kann Nanotechnologie eingesetzt werden, was zwei Vorteile mit sich bringt: die Korrektur kann ohne invasive Chirurgie mit den damit verbundenen Sekundärschäden und Risiken durchgeführt werden; außerdem wird die Vorbereitungszeit vor der Behandlung signifikant reduziert, da die benötigten Werkzeuge immer an Ort und Stelle und einsatzbereit sind.'''
-
-GRO_ECO_METAMORPH
-Ecological Metamorphosis
-
-GRO_ECO_METAMORPH_DESC
-Often, it is helpful to think of an ecosystem as a gigantic organism in and of itself, with predator-prey relationships acting as negative feedback loops, with newly introduced species acting as symbiotes or parasites, with populations acting as systems and individuals acting as cells. In this sense, every planet is alive, and as such, goes through various phases of "life". By manipulating these phases as one would in a biological organism, it would be possible to affect a planets environment with comparative ease and efficiency.
 
 GRO_XENO_HYBRIDS
 Xenohybridisierung
@@ -6076,9 +5018,6 @@ Der nächste Schritt nach der Anwendung von Nanotechnologie zur Heilung von Defe
 
 GRO_TRANSORG_SENT
 Transorganisches Bewusstsein
-
-GRO_TRANSORG_SENT_DESC
-Sentience as we know it is always observed as being inextricably tied to biological life. By grasping the true nature and origin of sentience itself, it would be possible to create conscious entities that could not possibly be classified as life as we know it.
 
 GRO_ENERGY_META
 Transmetabolismus
@@ -6120,16 +5059,8 @@ Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es h
 
 Obwohl das erste grundsätzliche Design von Produkten und der Aufbau von Fabriken noch aktiv überwacht werden muss, werden durch den Abzug von Arbeitern aus der Produktion viele Engpässe beseitigt. Roboter arbeiten durchgehend und haben keine ständig steigenden Lohnansprüche. Sie sind besser für gefährliche Arbeitsbedingungen geeignet und brauchen keinen zusätzlichen Wohnraum außerhalb der Fabrik. Die ihnen zugewiesenen Aufgaben führen Roboter fehlerlos aus, zumindest aber so gut, wie sie instruiert wurden.'''
 
-PRO_EXOBOTS
-Exobots
 PRO_EXOBOTS_DESC
 Allows the construction of Exobots optimized for industry on hostile planets.
-
-PRO_RAPID_EXO_PROD
-Rapid Exobot Production
-
-PRO_RAPID_EXO_PROD_DESC
-Allows more exobots.
 
 PRO_FUSION_GEN
 Kernfusion
@@ -6231,9 +5162,6 @@ Asymptotische Materialien
 CON_ASYMP_MATS_DESC
 Sobald gewisse Leistungsgrenzen überschritten werden, wird die relative Messung der physikalischen Eigenschaften von Materialien außer auf exponentiellen oder logarithmischen Skalen unhandlich. Genau wie bei der Supraleitfähigkeit in der Elektronik werden die Zugstärke, Härte, Dichte, Elastizität, der Refraktionsindex und andere mechanische Eigenschaften von Materialien praktisch grenzenlos kontrollierbar. Durch die Beseitigung aller vorherigen Hindernisse öffnen sich neue Möglichkeiten für Gebäude, so dass sie im gleichen Maße wie der Fortschritt der Materialtechnik verbessert werden können.
 
-CON_FRC_ENRG_STRC
-Force-Energy Structures
-
 CON_FRC_ENRG_STRC_DESC
 '''Increases the growth of resource meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
 
@@ -6303,146 +5231,38 @@ Raumtaktik
 SHP_SPACE_TACTICS_DESC
 Kämpfe in minimaler Schwerkraft und Vakuum benötigen spezialisierte Waffen und Verteidigungssysteme, und eine durchdachte Taktik wie man sie einsetzen kann.
 
-SHP_INTSTEL_LOG
-Interstellar Logistics
-
 SHP_INTSTEL_LOG_DESC
 '''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] meter of planets by an amount equal to one half the planet's population.
 
 Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 
-SHP_MIL_ROBO_CONT
-Military Robotic Control
-
-SHP_MIL_ROBO_CONT_DESC
-Robotic control can be used effectively for tasks such as mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.
-
-SHP_SPACE_FLUX_DRIVE
-Spatial Flux Drive
-
-SHP_SPACE_FLUX_DRIVE_DESC
-Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects.
-
 SHP_CONTGRAV_MAINT
 Contra-Gravitational Maintenance
-
-SHP_CONTGRAV_MAINT_DESC
-When the mass of the ship surpasses a certain threshold, it becomes necessary to consider the gravitational stresses on vital architectural points in the ship's structure. These points will be unable to withstand the gravitational stresses and collapse, destroying the vessel. This necessitates nearly constant maintenance of these points to avoid total structural failure.
-
-SHP_NANOROBO_MAINT
-Nano-Robotic Maintenance
-
-SHP_NANOROBO_MAINT_DESC
-Just as nanorobots can be used for production, so also can they be used for maintenance. A hull with a complement of centrally organized nanite engineers would be able to rapidly repair damage, even during combat. Such machines would have great difficulty distinguishing organic beings from a part of the hull in need of repair however, and as such this concept could only be applied to automated hulls.
 
 SHP_MASSPROP_SPEC
 Mass-Propulsion Specialization
 
-SHP_MASSPROP_SPEC_DESC
-Traditional propulsion devices operate well on objects of relatively low mass. However, when the mass of a ship approaches that of a small moon, ordinary methods of propulsion are very clumsy and require tremendous amounts of energy. A new approach to propulsion, taking into account the size of the object in question as a fundamental aspect of the system, could allow such vessels to have useful mobility.
-
-SHP_TRANSSPACE_DRIVE
-Trans-Spatial Drive
-
-SHP_TRANSSPACE_DRIVE_DESC
-Even when spatial dimensions are skewed by relativistic effects, an object generally has constant space-time characteristics. By creating a device which alters the characteristics of space-time itself using quasi-relativistic effects, it would be possible to create a fast, stealthy method of propulsion. 
-
-SHP_MIDCOMB_LOG
-Mid-Combat Logistics
-
 SHP_MIDCOMB_LOG_DESC
 When interstellar fleets are in regular, commonplace use, the transfer of personnel and materiel in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the coordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
-
-SHP_ASTEROID_HULLS
-Asteroid Hulls
-
-SHP_ASTEROID_HULLS_DESC
-Rather than constructing a hull from scratch, it is far easier to take a pre-existing space-borne object and adapt it to fill the role of a ship's hull. Not only would such ships be very inexpensive to produce, but they would also be able to avoid detection by enemy ships by hiding amongst other asteroids.
-
-SHP_ASTEROID_REFORM
-Asteroid Reformation
-
-SHP_ASTEROID_REFORM_DESC
-Through advanced processing of asteroid bodies rock armor can be produced which is as cheap as but more durable than lead armor plating.
-
-SHP_MONOMOLEC_LATTICE
-Monomolecular Latticing
-
-SHP_MONOMOLEC_LATTICE_DESC
-Asteroid Hulls can be reinforced and armor plated, but the fact remains that the basic substance of which most asteroids are primarily composed is of lesser strength than most modern alloys. However, if the molecular structure of the rock itself were to be rearranged into a crystal lattice, its strength could be increased tremendously, allowing the production of asteroid hulls of previously impossible strengths.
-
-SHP_MULTICELL_CAST
-Multi-Cellular Casting
-
-SHP_MULTICELL_CAST_DESC
-Even when it is inert, organic material is much more versatile than standard materials. A non-living multi-cellular ship would provide some of the advantages of organic materials without the customary nuisances of organic life.
-
-SHP_DOMESTIC_MONSTER
-Domesticated Mega-Fauna
 
 SHP_DOMESTIC_MONSTER_DESC
 '''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the Sternstraßen. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
 
-SHP_ENDOCRINE_SYSTEMS
-Mega-Fauna Endocrine Systems
-
 SHP_ENDOCRINE_SYSTEMS_DESC
 The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  
 
-SHP_HAB_MEGAFAUN
-Habitable Mega-Fauna
-
-SHP_HAB_MEGAFAUN_DESC
-It is generally uncommon to find comfortable living conditions within a gigantic space monster. This is exactly what must exist within an organic hull however, if it is to be adequately controlled from within. The development of massive, habitable creatures opens up numerous possibilities for ship design.
-
-SHP_MONOCELL_EXP
-Mono-Cellular Expansion
-
-SHP_MONOCELL_EXP_DESC
-Multi-cellular organisms tend to have longer life spans than single celled organisms due to specialization and interdependency. However, with the appropriate technological refinements, these aspects of multi-cellular life can be applied to a massive mono-cellular organism, allowing it to have practical functionality in combat.
-
-SHP_CONT_SYMB
-Contrived Symbiosis
-
-SHP_CONT_SYMB_DESC
-Any ship's hull is in a symbiotic relationship with its makers in that they bring it into being and sustain it, and it performs its desired functions. However, this is a purely behavioral type of symbiosis. Through careful planning and design, an organic ship can be made to have a biological symbiotic relationship with its crew, each providing the other with the essentials of life.
-
-SHP_CONT_BIOADAPT
-Controlled Ravenous Bioadaption
-
-SHP_CONT_BIOADAPT_DESC
-It is very difficult to predict the actions of a living being to any useful degree of certainty without having an intimate understanding of its behavioral patterns. By placing a life form under harshly competitive developmental conditions, its behavioral patterns can be manipulated, strengthened and effectively utilized in war.
-
-SHP_BIOADAPTIVE_SPEC
-Bio-Neural Specialization
-
-SHP_BIOADAPTIVE_SPEC_DESC
-As a species evolves mental capabilities, the individuals whose minds are not perfectly attuned to the needs of their bodies cannot compete with those whose minds are perfectly specialized for their bodies. Thus, all evolved life forms have nearly ideal mental development for their type of body. There are no such guarantees for artificial life forms however, and often the true potential of such a being is unrealized due to subtle incompatibilities between mind and body. By specializing the organism's neural patterns to conform to its body type, these incompatibilities can be eliminated.
-
 SHP_FRC_ENRG_COMP
 Kraft-Energie Kompression
-
-SHP_FRC_ENRG_COMP_DESC
-Typically, the manipulation of energy requires it to be in the form of matter so that potential energy can be stored as desired and released on demand. Matter converted to pure energy stored in the fabric of space-time itself would be more versatile than any material substance, but impossible to contain without advanced force-field technology.
-
-SHP_QUANT_ENRG_MAG
-Quantum Energy Magnification
 
 SHP_QUANT_ENRG_MAG_DESC
 '''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
 
 Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.'''
 
-SHP_ENRG_BOUND_MAN
-Energy Boundary Manipulation
-
 SHP_ENRG_BOUND_MAN_DESC
 '''Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility. Pure energy however, has no such restrictions. This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
 
 This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.'''
-
-SHP_SOLAR_CONT
-Solar Containment
 
 SHP_SOLAR_CONT_DESC
 '''A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects. If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
@@ -6451,14 +5271,10 @@ This mighty flagship is essentially a miniature sun, and as such is a great sour
 
 SPY_ROOT_DECEPTION
 Täuschung
-SPY_ROOT_DECEPTION_DESC
-'''The art of deception is not natural to every species, but the ability to hide the truth can be most useful.'''
-
 
 #############################################################
 ####          T E C H   A P P L I C A T I O N S          ####
 #############################################################
-
 
 VICTORY_SHORT_DESC
 Bringt den Sieg!
@@ -6502,9 +5318,6 @@ Verbessert Planetenverteidigung
 TROOPS_SHORT_DESC
 Erhöht Truppen
 
-METER_GROWTH_SHORT_DESC
-Improves Meter Growth
-
 POPULATION_SHORT_DESC
 Erhöht Planetare Bevölkerung
 
@@ -6535,18 +5348,6 @@ Schützt Planeten
 VARIOUS_SHORT_DESC
 Verbessert verschiedene Sachen
 
-PENALTY_ELIMINATE_SHORT_DESC
-Eliminates Penalties
-
-GAME_MAKE_WORK_SHORT_DESC
-Makes the Game Work
-
-TAME_MONSTER_SHORT_DESC
-Tames Space Monsters
-
-EXOBOT_SHORT_DESC
-Builds Exobot Citizens
-
 STARLANE_SPEED_SHORT_DESC
 Steigert die Sternstraßegeschwindigkeit
 
@@ -6561,12 +5362,6 @@ Auf einem Planeten gibt es immer die festgelegte Referenzrichtung "hoch"; bei Mi
 CON_CONC_CAMP
 Arbeitslager
 
-CON_CONC_CAMP_DESC
-Typically, when forced to work to death, citizens will put up some resistance and have the sympathy and support of outside observers. However, by carefully creating buildings designed to quench the fire of justice within outsiders, and to promote feelings of worthlessness and subservience in those on the inside, concentration camps can be effectively utilized without fear of revolt.
-
-CON_FRC_ENRG_CAMO
-Force-Energy Camouflage
-
 CON_FRC_ENRG_CAMO_DESC
 '''Increases the [[encyclopedia STEALTH_TITLE]] of all buildings by 20.
 
@@ -6578,23 +5373,11 @@ Planetarer Sternenantrieb
 CON_PLANET_DRIVE_DESC
 Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials. By equipping an entire planet with the means to open and navigate a Sternstraße, it would be possible to move such planets to a safer location in times of necessity.
 
-CON_STARGATE
-Stargate
-
-CON_STARGATE_DESC
-Particularly in more expansive empires, the need to move ships to a specific defensive location in great haste often exceeds the feasibility. By creating a warp between two or more points in space-time, it can be made possible to move ships even across an entire empire at need, allowing new offensive and defensive strategies.
-
 CON_ART_PLANET
 Künstlicher Planet
 
 CON_ART_PLANET_DESC
 Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centres for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
-
-CON_PALACE_EXCLUDE
-Palace Excluder
-
-CON_PALACE_EXCLUDE_DESC
-Ensures that only one imperial palace will be present in an empire at a time. Make sure you scrap your old imperial palace before your new one is built.
 
 GRO_SUBTER_HAB
 Unterirdische Wohnanlagen
@@ -6614,20 +5397,11 @@ Industrielles Klonen
 GRO_INDUSTRY_CLONE_DESC
 Primitive Klontechniken wie z. B. manueller Zellkerntransfer sind für große Organismen ungeeignet. Durch den Einsatz von Techniken, die industrieller Massenproduktion und biochemischer Manipulation nachempfunden sind, wird es möglich, von einer einzigen genetischen Blaupause Dutzende bis hin zu Millionen von ausgewachsenen Kopien zu erstellen. Ganze Bevölkerungen können bestellt werden, maßgeschneidert für die besonderen Bedürfnisse der Gesellschaft.
 
-GRO_TERRAFORM
-Terraforming
-
 GRO_TERRAFORM_DESC
 Die Umwelt eines Planeten zu verändern is eine gewaltige Aufgabe, die Herausforderung ist zu einem großen Teil logistischer Natur. Die exakte Methode hängt sehr stark von der Art des Planeten ab, der verändert werden soll und was das erwünschte Resultat ist. Auf jeden Fall muss ein großer Teil der Oberfläche des gesamten Planeten und seiner Atmosphäre, in andere Moleküle umgewandelt, ins Weltall entsorgt oder unter der Kruste vergraben werden. Für diesen Prozess muss ein Großteil des Planeten für die Terraformer erreichbar sein und er kann nicht auf Welten mit einer maximalen Bevölkerung von weniger als eins durchgeführt werden.
 
 GRO_TERRAFORM_SHORT_DESC
 Ermöglicht Terraforming
-
-GRO_REMOTE_TERRAFORM
-Remote Terraforming
-
-GRO_REMOTE_TERRAFORM_DESC
-Traditional terraforming methods treat the planet as a structure and attempt to alter its environment through physical and chemical means. This necessitates that the majority of the planet be accessible to the terraforming species, which generally limits its usefulness. By treating the planet as an organism and altering its physiology indirectly, it is possible to make use of less labour intensive, though more time consuming terraforming methods, allowing outposts on poor and hostile worlds to make use of terraforming.
 
 GRO_BIOTERROR
 Bioterroranlage
@@ -6635,37 +5409,16 @@ Bioterroranlage
 GRO_BIOTERROR_DESC
 Ein Forschungszentrum erschaffen, um sicher die gefährlichsten Biologischen Waffen zu entwickeln, versteckt vor neugierigen Augen. Biologische Waffen wirken zu langsam um in einem offenen miliärischen Konflikt wirksam zu sein, als Terrorwaffe sind sie unerreicht, eine langsam wachsende Kontamination verbreitet Angst und Schrecken. Bilder von verzweifelten Personen, in Quarantäne gehalten durch ihre eigene Regierung, säen Verzweiflung jenseits der betroffenen Gebiete. Jedoch müssen größte Sicherheitsmaßnahmen eingehalten werden, wenn man solche Organismen entwickelt, um sicherzustellen, dass sie nicht versehentlich freigesetzt werden. Außerdem ist strikte Geheimhaltung notwendig, um nicht zu riskieren, dass diplomatische Beziehungen mit anderen Imperien und zur eigenen Bevölkerung leiden.
 
-GRO_REMOTE_TERRAFORM_SHORT_DESC
-Allows remote terraforming
-
-GRO_CYBORG
-Cyborgs
-
 GRO_CYBORG_DESC
 ''''''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_HOSTILE]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
-
-GRO_GAIA_TRANS
-Gaia Transformation
-
-GRO_GAIA_TRANS_DESC
-Theoretically, it is possible to completely predict the ecology of a single planet by mapping out its entire web of biological interdependence, both sentient and non-sentient, in fractal algorithms. In practice however, this could only be realized by constructing a vast planet-spanning network running a computer program dedicated to regulating the planet's entire biosphere. This computer would become, in effect, the brain of a new type of life - a single planetary organism, with intelligent citizens as part of its fabric, subject to the greater will.
-
-GRO_GAIA_TRANS_SHORT_DESC
-Allows Gaia Transformation
 
 LRN_OBSERVATORY_I
 Observatorium
 
 LRN_OBSERVATORY_I_DESC
 Studying and understanding the nature of stars and their internal and external attributes provides powerful insight into the nature of stellar phenomena and planetary bodies. Furthermore, fractal algorithms can be employed to decipher the dispersal of Sternstraßen throughout the galaxy, allowing any stars which are in some way connected, however indirectly, to the known network of Sternstraßen to be identified an monitored.
-
-LRN_SOLAR_MAN
-Solar Manipulation
-
-LRN_SOLAR_MAN_DESC
-Different star types not only have their own distinct attributes and opportunities for exploitation, but also tend to give rise to a particular planet type. Often, a star of a particular type will give a desired bonus, but will almost certainly be devoid of any desirable planets, or will not be present in an opportune location in the galaxy. By manipulating the high-energy reactions within a star's core, it would be possible to either reverse or accelerate the natural processes within the star, allowing it to be changed to an entirely different type at need.
 
 LRN_DISTRIB_THOUGHT
 Hirnrechennetzwerk
@@ -6683,19 +5436,10 @@ LRN_STELLAR_TOMOGRAPHY_DESC
 
 Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im Inneren eines Sterns rekonstruieren. Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.'''
 
-LRN_SPATIAL_DISTORT_GEN
-Spatial Distortion Generator
-
 LRN_SPATIAL_DISTORT_GEN_DESC
 '''By manipulating the dimensional properties of a Sternstraße, it would be possible to selectively bend it so that an incoming ship of sufficiently low speed would inadvertently arrive back where it began, having wasted its time and fuel.
 
 Alternatively, such a ship may be sent randomly along a completely different Sternstraße adjacent to the building.'''
-
-LRN_GATEWAY_VOID
-Gateway to the Void
-
-LRN_GATEWAY_VOID_DESC
-The power of the Void Mind is almost imperceptible in a mere four-dimensional space-time. By creating a permanent gateway accessing an immense number of dimensions, a dangerous, non-discriminating force can be unleashed in a localized area.
 
 LRN_ENCLAVE_VOID
 Enklave der Leere
@@ -6706,31 +5450,16 @@ Das Studium des Geistes der Leere könnte beschleunigt werden, indem man die Bev
 LRN_ART_BLACK_HOLE
 Künstliches schwarzes Loch
 
-LRN_ART_BLACK_HOLE_DESC
-By carefully collapsing a red star, a Black Hole can be formed. This is an expensive and dangerous task, but with great potential benefits for [[encyclopedia RESEARCH_TITLE]] and [[encyclopedia INDUSTRY_TITLE]].
-
-LRN_PSY_DOM
-Psychogenic Domination
-
 LRN_PSY_DOM_DESC
 '''Has a 10% chance of taking control of any enemy ship within one Sternstraße jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech or piloted by a telepathic species.
 
 It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
-
-MIND_CONTROL_SHORT_DESC
-Allows Mind Control
 
 PRO_HEAVY_MINING_I
 Teilautomatisierter Massenbergbau
 
 PRO_HEAVY_MINING_I_DESC
 Wenn die Rohstoffproduktion im Vordergrund steht, keine Umweltbedenken bestehen und die Umgebung es erlaubt, kann teilautomatisierter Massenbergbau das Mittel der Wahl sein. Heavy mining processors are expensive however, and are only practical to use on worlds with primary focus mining. As well, these processors severely damage the ecology of a planet, reducing its maximum population somewhat.
-
-PRO_SOL_ORB_GEN
-Solar Orbital Generation
-
-PRO_SOL_ORB_GEN_DESC
-Traditional solar generation methods rely solely on radiating solar energy. By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizable and far-reaching benefit to [[encyclopedia INDUSTRY_TITLE]] can be obtained.
 
 PRO_INDUSTRY_CENTER_I
 Industriezentren
@@ -6740,14 +5469,8 @@ PRO_INDUSTRY_CENTER_I_DESC
 
 Die Baukosten, die Bauzeit dieses Gebäudes und auch sein zukünftiges Wachstumspotential setzen eine sorgfältige Planung voraus, um an einem Ort zu produzieren der in der Zukunft am nützlichsten sein wird. Um große Gewinnspannen zu ermöglichen, sind entsprechende Vorinvestitionen unvermeidlich, sowohl was die Baustoffe, als auch die Bauzeit betrifft. Dagegen sind die wissenschaftlichen Vorraussetzungen minimal; dieses Gebäude ist damit für produktionsorientierte Strategien geeignet, nicht aber für auf Forschung ausgerichtete Imperien.'''
 
-PRO_INDUSTRY_MOD
-Industry Modifier
-
 SPY_LIGHTHOUSE
 Interstellarer Leuchtturm
-
-SPY_LIGHTHOUSE_DESC
-By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
 DEF_DEFENSE_NET_1
 Planetares Abwehrnetz 1
@@ -6867,40 +5590,11 @@ Planetare Bodentruppen 4
 DEF_GARRISON_4_DESC
 Erhöht das Maximum der [[encyclopedia TROOP_TITLE]] auf allen Planeten um 20.
 
-DEF_PLANET_CLOAK
-Planetary Cloaking Device
-
-DEF_PLANET_CLOAK_DESC
-By phasing parts a planet in and out of space-time, its [[encyclopedia STEALTH_TITLE]] can be increased massively.
-
-SHP_FLEET_REPAIR
-Fleet Field Repair
-
 SHP_FLEET_REPAIR_DESC
 Allows ships within [[encyclopedia SUPPLY_TITLE]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
 
-SHP_REINFORCED_HULL
-Reinforced Hull
-
-SHP_REINFORCED_HULL_DESC
-'''Increases max structure of all ships by 5.
-
-Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials. However, the limitations of physical matter impose a severe limitation on the strength of hulls. By enhancing the hull with structural integrity fields, a sizable increase in strength can be obtained.'''
-
-SHP_BASIC_DAM_CONT
-Basic Damage Control
-
-SHP_BASIC_DAM_CONT_DESC
-Gradually repairs damaged ships. Current structure of all ships is replenished at a rate of 1 per turn.
-
-SHP_ADV_DAM_CONT
-Advanced Damage Control
-
 SHP_ADV_DAM_CONT_DESC
 '''Repairs damaged ships by 25% of structure per turn-- not during battles.'''
-
-SHP_ROOT_AGGRESSION
-Aggression
 
 SHP_ROOT_AGGRESSION_DESC
 Erlaubt Grundbewaffnung und [[shippart GT_TROOP_POD]].
@@ -6920,23 +5614,15 @@ Massenkatapult 4
 SHP_WEAPON_1_4_DESC
 '''Verbessert das Massenkatapult auf Stufe 4.'''
 
-SHP_WEAPON_2_1
-Laser 1
 SHP_WEAPON_2_1_DESC
 '''Entsperrt den Laser, eine leistungsfähigere Schiffswaffe als das Massenkatapult.'''
 
-SHP_WEAPON_2_2
-Laser 2
 SHP_WEAPON_2_2_DESC
 '''Verbessert den Laser auf Stufe 2.'''
 
-SHP_WEAPON_2_3
-Laser 3
 SHP_WEAPON_2_3_DESC
 '''Verbessert den Laser auf Stufe 3.'''
 
-SHP_WEAPON_2_4
-Laser 4
 SHP_WEAPON_2_4_DESC
 '''Verbessert den Laser auf Stufe 4.'''
 
@@ -6960,26 +5646,6 @@ Plasmakanone 4
 SHP_WEAPON_3_4_DESC
 '''Verbessert die Plasmakanone auf Stufe 4.'''
 
-SHP_WEAPON_4_1
-Death Ray 1
-SHP_WEAPON_4_1_DESC
-'''Unlocks the Death Ray, the ultimate ship's weapon.'''
-
-SHP_WEAPON_4_2
-Death Ray 2
-SHP_WEAPON_4_2_DESC
-'''Refines Death Ray to level 2.'''
-
-SHP_WEAPON_4_3
-Death Ray 3
-SHP_WEAPON_4_3_DESC
-'''Refines Death Ray to level 3.'''
-
-SHP_WEAPON_4_4
-Death Ray 4
-SHP_WEAPON_4_4_DESC
-'''Refines Death Ray to level 4. The ultimate refinement of the ultimate weapon.'''
-
 SHP_ION_CANNON
 Ionenkanone
 
@@ -6989,44 +5655,11 @@ Schaltet das Schiffsteil Ionenkanone frei.
 SHP_WEAPON_1
 Massenkatapult
 
-SHP_WEAPON_1_DESC
-With the advent of space age weaponry, a paradigm shift tends to occur away from projectile weapons and towards energy or particle weapons. However, as the ability to manipulate matter continuously increases, it becomes possible to fire massive projectiles at relativistic speeds, more deadly than most energy weapons.
-
-SHP_WEAPON_4
-Death Ray
-
-SHP_WEAPON_4_DESC
-A devastating beam of ultra-massive high-energy particles, tearing open deadly rifts in space-time as well as delivering an incredibly high-energy impact.
-
 SHP_PULSE_LASER
 Impulslaser
 
 SHP_PULSE_LASER_DESC
 Schaltet das Schiffsteil Impulslaser frei.
-
-SHP_PHASOR
-Phasor
-
-SHP_PHASOR_DESC
-Unlocks Phasor ship part.
-
-SHP_INTERCEPTOR
-Interceptor
-
-SHP_INTERCEPTOR_DESC
-Unlocks Interceptor ship part.
-
-SHP_BOMBER
-Bomber
-
-SHP_BOMBER_DESC
-Unlocks Bomber ship part.
-
-SHP_RECON_FIGHT
-Reconnaissance Fighter
-
-SHP_RECON_FIGHT_DESC
-Unlocks Reconnaissance Fighter ship part.
 
 SHP_NUCLEAR_MISSILE
 Nuklearrakete
@@ -7034,64 +5667,11 @@ Nuklearrakete
 SHP_NUCLEAR_MISSILE_DESC
 Schaltet das Schiffsteil Nuklearrakete frei.
 
-SHP_NEUTRONIUM_PLATE_NUC_MIS
-Neutronium Plated Nuclear Missile
-
-SHP_NEUTRONIUM_PLATE_NUC_MIS_DESC
-Unlocks Neutronium Plated Nuclear Missile ship part.
-
-SHP_SPECTRAL_MISSILE
-Spectral Missile
-
-SHP_SPECTRAL_MISSILE_DESC
-Unlocks Spectral Missile ship part.
-
-SHP_NEUTRONIUM_PLATE_SPEC_MIS
-Neutronium Plated Spectral Missile
-
-SHP_NEUTRONIUM_PLATE_SPEC_MIS_DESC
-Unlocks Neutronium Plated Spectral Missile ship part.
-
-SHP_MULTISPEC_SHIELD
-Multi-Spectral Shielding
-
-SHP_MULTISPEC_SHIELD_DESC
-Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than Black Hole and Neutron receive a mighty [[encyclopedia STEALTH_TITLE]] bonus.
-
 SPY_DETECT_1
 Optischer Scanner
 
-SPY_DETECT_1_DESC
-All colonies start the game with a [[encyclopedia DETECTION_RANGE_TITLE]] of 50, and the imperial [[encyclopedia DETECTION_TITLE]] to 10, and the ship part Optical Scanner permits ships to reach the same level of detection.
-
 SPY_DETECT_2
 Aktives Radar
-
-SPY_DETECT_2_DESC
-'''Unlocks the Active Radar ship part and the Scanning Facility building, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 75, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 30.
-
-Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
-
-SPY_DETECT_3
-Neutron Scanner
-
-SPY_DETECT_3_DESC
-'''Unlocks the Neutron Scanner ship part, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 150, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 50.
-
-Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
-
-SPY_DETECT_4
-Sensors
-
-SPY_DETECT_4_DESC
-Unlocks the Sensors ship part, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 200, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 70.
-
-SPY_DETECT_5
-Omni-scanner
-
-SPY_DETECT_5_DESC
-The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 300, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 200.
-
 
 SPY_STEALTH_1
 Elektromagnetischer Dämpfer
@@ -7099,42 +5679,24 @@ Elektromagnetischer Dämpfer
 SPY_STEALTH_1_DESC
 Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. This bonus is not cumulative with that of other stealth techs.
 
-SPY_STEALTH_2
-Absorption Field
-
 SPY_STEALTH_2_DESC
 '''Increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. This bonus is not cumulative with that of other stealth techs.
 
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
 
-SPY_STEALTH_3
-Dimensional Cloak
-
 SPY_STEALTH_3_DESC
 Unlocks the Dimensional Cloak ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60. This bonus is not cumulative with that of other stealth techs.
-
-SPY_STEALTH_4
-Phasing Cloak
 
 SPY_STEALTH_4_DESC
 '''Increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. This bonus is not cumulative with that of other stealth techs.
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 
-SHP_IMPROVED_ENGINE_COUPLINGS
-Improved Engine Couplings
-
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
 Better engine parts equate to better engines. Increases Sternstraße speed by 10. May be added more than once to a hull.
 
-SHP_N_DIMENSIONAL_ENGINE_MATRIX
-N-Dimensional Engine Matrix
-
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Sternstraße speed by 15. May be added more than once to a hull.
-
-SHP_SINGULARITY_ENGINE_CORE
-Singularity Engine Core
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
 A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternstraße speed by 20. May be added more than once to a hull.
@@ -7154,152 +5716,53 @@ Schaltet das Schiffsteil Antimaterietank frei.
 SHP_ROOT_ARMOR
 Panzerplatten
 
-SHP_ROOT_ARMOR_DESC
-Researching special alloys that allow to equip ship hulls with armor plating greatly enhances their durability, especially in battle.
-
 SHP_ZORTRIUM_PLATE
 Zortrium Panzerplatten
-
-SHP_ZORTRIUM_PLATE_DESC
-By refining the methods to construct armor plating, better, more durable special materials can be employed, giving stronger armor parts.
 
 SHP_DIAMOND_PLATE
 Diamant Panzerplatten
 
-SHP_DIAMOND_PLATE_DESC
-Advanced processing techniques allow the construction of armor plating cut out of single huge synthetic diamonds. Provides very durable armor parts.
-
 SHP_XENTRONIUM_PLATE
 Xentronium Panzerplatten
 
-SHP_XENTRONIUM_PLATE_DESC
-Xentronium is one of the most durable materials known, but also very difficult to process. Mastering the art of constructing armor plating made of xentronium  allows to build extremely durable armor parts.
-
 SHP_DEFLECTOR_SHIELD
 Deflektorschild
-
-SHP_DEFLECTOR_SHIELD_DESC
-'''Advanced ship shielding technology.
-
-By refining and perfecting basic shield technology more effective shield generators can be build.'''
-
-SHP_PLASMA_SHIELD
-Plasma Shield
-
-SHP_PLASMA_SHIELD_DESC
-'''Very advanced ship shielding technology.
-
-By combining the techniques for controlled plasma containment and advanced force field projection it becomes possible to create what can be best described as a plasma bubble around a space ship. This plasma bubble is capable of absorbing high amounts of energy, particles and projectiles.'''
-
-SHP_BLACKSHIELD
-Blackshield
 
 SHP_BLACKSHIELD_DESC
 '''Most advanced ship shielding technology.
 
 Blackshields got their name because they create what looks like an almost inpenetrable black sphere around the object they protect. A blackshield is in essence some kind of dimensional rift projected around a space ship that completely swallows up almost anything thrown at it. It requires tremendous amounts of energy to penetrate a blackshield.'''
 
-SPY_DIST_MOD
-Distortion Modulator
-
-SPY_DIST_MOD_DESC
-All objects with mass cause a curvature in space-time due to gravitational effects. Other forces such as the electromagnetic force have similar geometric effects. By indiscriminately amplifying these effects in a localized area, space-time distortion caused by ships can easily be distinguished from background electromagnetic and gravitational radiation.
-
-SHP_ANTIMAT_TORP
-Antimatter Torpedo
-
-SHP_ANTIMAT_TORP_DESC
-A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead.
-
-SHP_PLASMA_TORP
-Plasma Torpedo
-
-SHP_PLASMA_TORP_DESC
-A fast, long-range missile with excellent stealth, powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead.
-
-SHP_CAMO_AST_HULL
-Camouflage Asteroid Hull
-
 SHP_CAMO_AST_HULL_DESC
 This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-SHP_MINIAST_SWARM
-Mini-Asteroid Swarm
 
 SHP_MINIAST_SWARM_DESC
 This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-SHP_SCAT_AST_HULL
-Scattered Asteroid Hull
-
 SHP_SCAT_AST_HULL_DESC
 This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-SHP_ORG_HULL
-Organic Hull
 
 SHP_ORG_HULL_DESC
 This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. [[encyclopedia STEALTH_TITLE]] is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
 
-SHP_ENDOSYMB_HULL
-Endosymbiotic Hull
-
 SHP_ENDOSYMB_HULL_DESC
 This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and [[encyclopedia STEALTH_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
-
-SHP_SENT_HULL
-Sentient Hull
 
 SHP_SENT_HULL_DESC
 This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
 
-SHP_BIOINTERCEPTOR
-Biointerceptors
-
-SHP_BIOINTERCEPTOR_DESC
-Living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. This part can only be built if there is a Xenocoordination Facility and a Cellular Growth Chamber somewhere in the empire or an ally's empire.
-
-SHP_BIOBOMBER
-Biobombers
-
-SHP_BIOBOMBER_DESC
-Living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
-
-SHP_NOVA_BOMB
-Nova Bomb
-
-SHP_NOVA_BOMB_DESC
-The most powerful weapon ever devised, capable of destroying an entire star system.
-
-SHP_DEATH_SPORE
-Death Spores
-
 SHP_DEATH_SPORE_DESC
 Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets.
 
-SHP_BIOTERM
-Bio-Terminators
-
 SHP_BIOTERM_DESC
 Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
-
-SPY_PLANET_STEALTH_MOD
-Planet Stealth Modifier
-
-SPY_PLANET_STEALTH_MOD_DESC
-'''Increases the natural [[encyclopedia STEALTH_TITLE]] of planets to 4.99, so that systems will be made visible to empires before their planets.'''
-
 
 #############################################################
 ####            T E C H   R E F I N E M E N T            ####
 #############################################################
 
-
 BUILDING_REFINE_SHORT_DESC
 Verfeinert Gebäude
-
-TECH_REFINE_SHORT_DESC
-Refines Tech
 
 PRO_INDUSTRY_CENTER_II
 Erweitertes Industriezentrum
@@ -7321,7 +5784,6 @@ PRO_ENVIRO_MINING_DESC
 
 Halbiert die Bevökerungssanktionen auf Planeten mit einem Fokus auf Massenbergbau.'''
 
-
 #############################################################
 ####                  B U I L D I N G S                  ####
 #############################################################
@@ -7340,14 +5802,6 @@ BLD_OBSERVATORY_DESC
 
 An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of Sternstraßen.'''
 
-BLD_CULTURE_ARCHIVES
-Cultural Archives
-
-BLD_CULTURE_ARCHIVES_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] by 5, target [[encyclopedia INDUSTRY_TITLE]] by half the planet's Population.
-
-Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
-
 BLD_IMPERIAL_PALACE
 Imperialer Palast
 
@@ -7355,11 +5809,6 @@ BLD_IMPERIAL_PALACE_DESC
 '''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, [[encyclopedia INFRASTRUCTURE_TITLE]] by 20, [[encyclopedia DEFENSE_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 3. Also sets the owner's Capital for the empire.
 
 Der imperiale Palast spiegelt die Macht und das Ansehen eines Imperiums wider, und fungiert als Steuerzentrale über die Besitztümer des Imperiums.'''
-
-BLD_SUPER_TESTERS
-Super-Tester Takeover
-BLD_SUPER_TESTERS_DESC
-'''Switches the species of the planet to Super-Testers.  For Official Testing Purposes, or for cheating.'''
 
 BLD_SHIPYARD_BASE
 Einfache Werft
@@ -7375,9 +5824,6 @@ BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
 
 When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
 
-BLD_SHIPYARD_CON_NANOROBO
-Nanorobotic Processing Unit
-
 BLD_SHIPYARD_CON_NANOROBO_DESC
 '''This is an upgrade for the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_NANOROBOTIC]]s.
 
@@ -7391,32 +5837,15 @@ BLD_SHIPYARD_CON_GEOINT_DESC
 
 When the needs of a shipyard become sufficiently great, it is no longer practical for the shipyard and the planet on which it is built to remain separate entities. Rather, it is more useful to integrate the two into a harmonious unit, with the shipyard extending from below the surface to beyond geosynchronous orbit, making full use of all the geological aspects of the planet.'''
 
-BLD_SHIPYARD_CON_ADV_ENGINE
-Advanced Engineering Bay
-
 BLD_SHIPYARD_CON_ADV_ENGINE_DESC
 '''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
 
 An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.'''
 
-BLD_SHIPYARD_AST
-Asteroid Processor
-
 BLD_SHIPYARD_AST_DESC
 '''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades.
 
 A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a shipyard in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
-
-BLD_SHIPYARD_AST_REF
-Asteroid Reformation Processor
-
-BLD_SHIPYARD_AST_REF_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_AST]] and allows production of [[shiphull SH_MINIASTEROID_SWARM]]s, [[shiphull SH_SCATTERED_ASTEROID]]s, and [[shiphull SH_CRYSTALLIZED_ASTEROID]]s. In addition, this processor upgrade allows any shipyard in the empire or an ally's empire to produce ships with the [[shippart AR_ROCK_PLATE]] and [[shippart AR_CRYSTAL_PLATE]] ship parts.
-
-An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and prepare them to be used as hulls.'''
-
-BLD_SHIPYARD_ORG_ORB_INC
-Orbital Incubator
 
 BLD_SHIPYARD_ORG_ORB_INC_DESC
 '''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the development of all organic hulls with the exception of the Static Multicellular Hull, and for the production of all further organic hull shipyard upgrades.
@@ -7431,29 +5860,10 @@ BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
 
 Eine Werft Verbesserung die darauf zielt, die Größe von einzelligen Organismen um wirklich massive Proportionen zu erhöhen.'''
 
-BLD_SHIPYARD_ORG_XENO_FAC
-Xenocoordination Facility
-
 BLD_SHIPYARD_ORG_XENO_FAC_DESC
 '''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_STATIC_MULTICELLULAR]]s, [[shiphull SH_ENDOMORPHIC]]s and [[shiphull SH_RAVENOUS]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
 
 A facility dedicated to creating a fully symbiotic relationship between a ship and its crew.'''
-
-BLD_SHIPYARD_ENRG_COMP
-Energy Compressor
-
-BLD_SHIPYARD_ENRG_COMP_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the formation of all energy hulls and all further energy hull shipyard upgrades.
-
-A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy. This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of damage.'''
-
-BLD_SHIPYARD_ENRG_SOLAR
-Solar Containment Unit
-
-BLD_SHIPYARD_ENRG_SOLAR_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and allows formation of [[shiphull SH_SOLAR]]s.
-
-The task of creating a miniature sun is a gargantuan task in and of itself. The production of such a body on which ship parts can be safely mounted is even more so.'''
 
 BLD_BIOTERROR_PROJECTOR
 Bioterror Angriffsbasis
@@ -7469,19 +5879,8 @@ Interstellarer Leuchtturm
 BLD_LIGHTHOUSE_DESC
 Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. This building can be built at an outpost.
 
-BLD_SCANNING_FACILITY
-Scanning Facility
-
-BLD_SCANNING_FACILITY_DESC
-'''Increases [[encyclopedia DETECTION_RANGE_TITLE]] of the planet by 75.
-
-A combination of long-range scanning devices and great computing power to analyze the data allows a larger area of space to be scanned for any objects.'''
-
 BLD_HEAVY_MINE_PROCESSOR
 Verarbeitungsstation für Massenbergbau
-
-BLD_HEAVY_MINE_PROCESSOR_DESC
-Gives all colonies in the empire access to the Heavy Mining focus.
 
 BLD_INDUSTRY_CENTER
 Industriezentrum
@@ -7492,14 +5891,6 @@ BLD_INDUSTRY_CENTER_DESC
 Die [[tech PRO_INDUSTRY_CENTER_II]] Aufrüstung verdoppelt den Bonus.
 
 Die [[tech PRO_INDUSTRY_CENTER_III]] Aufrüstung erhöht den Bonus auf das dreifache des Grundbonuses.'''
-
-BLD_EXOBOT_SHIP
-Exobot Colony Origin
-BLD_EXOBOT_SHIP_DESC
-'''Constructing the first group of exobots is a major production.  However, once established on their own planet, they will be able to build themselves.'''
-
-BLD_MEGALITH
-Megalith
 
 BLD_MEGALITH_DESC
 '''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Additionally all resource meters are able to reach target in a single turn.
@@ -7522,9 +5913,6 @@ BLD_GENOME_BANK_DESC
 
 Die größte jemals erfasste Datenbank. Die Genombank beinhaltet Genkarten der Genome eines jeden dem Imperium bekannten Organismus. Diese Datenbank ist von unschätzbarem Wert bei der Behandlung von Krankheiten.'''
 
-BLD_GAIA_TRANS
-Gaia Transformation
-
 BLD_GAIA_TRANS_DESC
 '''Increases max Population according to planet size; Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
 
@@ -7538,14 +5926,6 @@ BLD_COLLECTIVE_NET_DESC
 
 Durch die Übertragung eines Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.'''
 
-BLD_GATEWAY_VOID
-Gateway to the Void
-
-BLD_GATEWAY_VOID_DESC
-'''Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are reduced to outpost status, with a max population of one tenth. Furthermore, it is impossible for anyone outside a system containing this building to see into it.
-
-A dimensional tear capable of magnifying the destructive potential of the Void Mind in a localized region.'''
-
 BLD_ENCLAVE_VOID
 Enklave der Leere
 
@@ -7557,80 +5937,13 @@ Die Bevölkerung eines ganzen Planeten wird genetisch auf den Geist der Leere au
 BLD_ART_BLACK_HOLE
 Künstliches schwarzes Loch
 
-BLD_ART_BLACK_HOLE_DESC
-By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an outpost.
-
 BLD_HYPER_DAM
 Hyperspatialdamm
-
-BLD_HYPER_DAM_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 0.4 per Population, but decreases Population on such planets by 5.
-
-A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
-
-BLD_SOL_ACCEL
-Solar Accelerator
-
-BLD_SOL_ACCEL_DESC
-A Solar Accelerator artificially ages a star by speeding up its natural processes. The star becomes one type older, according to the following order: Blue, White, Yellow, Orange, Red. This process can be enacted at an outpost.
-
-BLD_SOL_ORB_GEN
-Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population for Blue and White, Yellow and Orange, or Red stars, respectively.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
-
-BLD_CLONING_CENTER
-Cloning Center
-
-BLD_CLONING_CENTER_DESC
-'''Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-
-Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving population.'''
-
-BLD_TERRAFORM
-Terraforming
-
-BLD_TERRAFORM_DESC
-Terraforms a world one step closer to the environmental preference of the inhabiting species.
-
-BLD_TERRAFORM_REVERT
-Terraforming Reversion
-
-BLD_TERRAFORM_REVERT_DESC
-Terraforms a world one step back towards its original type.
-
-BLD_REMOTE_TERRAFORM
-Remote Terraforming
-
-BLD_REMOTE_TERRAFORM_DESC
-Terraforms a world one step closer to the environmental preference of the inhabiting species. This process can be enacted at an outpost.
-
-BLD_NEUTRONIUM_EXTRACTOR
-Neutronium Extractor
-
-BLD_NEUTRONIUM_EXTRACTOR_DESC
-'''Permits construction of ships with Neutronium ship parts.
-
-Before parts can be built using Neutronium, it must be extracted from a neutron star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. This building can be built at an outpost.'''
-
-BLD_NEUTRONIUM_FORGE
-Neutronium Forge
-
-BLD_NEUTRONIUM_FORGE_DESC
-'''This building is required at the same location as a shipyard to enable building ships with neutronium parts.
-
-The industrial processing of neutronium requires an extensive specialized facility. Unlike most shipyards and shipyard upgrades, this building cannot be built at an outpost.'''
-
-BLD_NEUTRONIUM_SYNTH
-Neutronium Synthesizer
-
-BLD_NEUTRONIUM_SYNTH_DESC
-'''An empire with this building does not need a Neutronium Extractor to build neutronium ship parts.
-
-An ancient building designed long ago to synthesize neutronium.'''
 
 BLD_CONC_CAMP
 Arbeitslager
@@ -7639,26 +5952,6 @@ BLD_CONC_CAMP_DESC
 '''Verringert die Bevölkerung eines Planeten jede Runde um 3 und erhöht die maximale [[encyclopedia INDUSTRY_TITLE]] des Planeten um das fünffache seiner Bevölkerung.
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
-
-BLD_CONC_CAMP_REMNANT
-Concentration Camp Remnants
-
-BLD_CONC_CAMP_REMNANT_DESC
-Though the local authorities may try to hide these remnants of old [[buildingtype BLD_CONC_CAMP]], the populace is still aware of their presence.
-
-BLD_BLACK_HOLE_POW_GEN
-Black Hole Power Generator
-
-BLD_BLACK_HOLE_POW_GEN_DESC
-Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population. This building can be built at an outpost, but must be in a black hole system.
-
-BLD_REPLICATORS
-Replicators
-
-BLD_REPLICATORS_DESC
-'''When activated, half of all industrial production in the empire goes towards replicating extra food or minerals at a 2:1 ratio. If the planet on which it is built has focus set to Food Replication, food will be produced at the expense of industry. When the focus is set to Mineral Replication, minerals will be produced at the expense of industry.
-
-Only one replication focus can take effect in the empire at one time.'''
 
 BLD_PLANET_DRIVE
 Planetary Sternstraße Drive
@@ -7670,71 +5963,22 @@ Due to a lack of UI targeting, a second building is currently required on the ot
 
 To use this building, set the planet to Planet Drive focus, and construct a Planetary Beacon in an adjacent system. The planet will then be moved to that system.'''
 
-BLD_PLANET_BEACON
-Planetary Beacon
-
 BLD_PLANET_BEACON_DESC
 Designates the target for the planetary Sternstraße drive. This building can be built at an outpost.
 
 BLD_ART_PLANET
 Künstlicher Planet
 
-BLD_ART_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
-
 BLD_ART_MOON
 Künstlicher Mond
-
-BLD_ART_MOON_DESC
-'''Forms an artificial moon with 1:1 orbital period - rotational period resonance. Adds the [[special RESONANT_MOON_SPECIAL]] special to the planet.
-
-This cannot be constructed at a Gas Giant or Asteroid Belt.
-
-Though natural satellites are relatively commonplace occurrences amongst planetary bodies, it is truly rare to find a moon with an orbital period equal to that of its rotational period. Such a satellite would have one side constantly facing away from the planet, allowing the construction of massive installations - which under normal circumstances would be easily visible from the planet's surface - to be constructed with total secrecy, completely invisible to the unsuspecting populace on the planet below.'''
-
-BLD_SOL_REJUV
-Solar Rejuvenator
-
-BLD_SOL_REJUV_DESC
-A Solar Rejuvenator artificially rejuvenates a star by increasing its fuel supply. The star becomes one type younger, according to the following order: Red, Orange, Yellow, White, Blue. This process can be enacted at an outpost.
-
-BLD_TRANSFORMER
-Transformer
 
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
 This building can be given the effects of a Replicator, a Planetary Cloaking Device, a Bioterror Projector, a Stargate, a Planetary Sternstraße Drive, or a Spatial Distortion Generator, provided the owner has the appropriate technology.'''
 
-BLD_PLANET_CLOAK
-Planetary Cloaking Device
-
-BLD_PLANET_CLOAK_DESC
-'''Gives the planet it is built on a huge bonus to [[encyclopedia STEALTH_TITLE]].
-
-A powerful cloaking device able to shroud an entire world.'''
-
-BLD_SPATIAL_DISTORT_GEN
-Spatial Distortion Generator
-
 BLD_SPATIAL_DISTORT_GEN_DESC
 Manipulates the dimensional properties of adjacent Sternstraßen. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the Sternstraße in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
-
-BLD_STARGATE
-Stargate
-
-BLD_STARGATE_DESC
-'''Capable of creating a shortcut through space-time between itself and any other stargate owned by the empire. The power expenditures of such a device can shut down a whole planet while it is being activated, although there are no adverse effects at other times. Unfortunately, due to quantum fluctuations, it is impossible to predict where a sent ship will end up if more than one Stargate is open for receiving at a time.
-
-To activate the stargate, set the planet to the Stargate Send focus and a planet with a Stargate in another system to the Stargate Receive focus.'''
-
-BLD_GAS_GIANT_GEN
-Gas Giant Generator
-
-BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system. Multiple generators in the same system do not stack.
-
-A power generator designed to harvest the energy of a Gas Giant.'''
 
 BLD_COLONY_BASE
 Siedlungsbasis
@@ -7742,16 +5986,11 @@ Siedlungsbasis
 BLD_COLONY_BASE_DESC
 Erstellt ein Siedlungsbasisschiff, welches zur Besiedlung eines Planetes im gleichen System genutzt werden kann. Kann nur auf Planeten gebaut werden, die eine Bevölkerung von 3 oder mehr haben.
 
-BLD_EXPERIMENTOR_OUTPOST
-Experimentor Outpost
 BLD_EXPERIMENTOR_OUTPOST_DESC
 The outpost of the Experimentors, used for carrying out highly advanced experiments.  This structure also acts as a cloak to prevent anyone from interfering with their work.
 
-BLD_NOVA_BOMB_ACTIVATOR
-Nova Bomb Activator
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all Nova Bombs within one Sternstraße jump.
-
 
 #############################################################
 ####           Hull/Part Description Templates           ####
@@ -7768,6 +6007,7 @@ Fassungsvermögen: %1%
 
 PART_DESC_STRENGTH
 Stärke: %1%
+
 # Detection Range: %2%
 
 PART_DESC_DIRECT_FIRE_STATS
@@ -7797,11 +6037,9 @@ Abfangjäger [[encyclopedia STEALTH_TITLE]]: %7%
 Abfangjäger Aufklärungsreichweite: %8%
 Fassungsvermögen: %9% Abfangjäger'''
 
-
 #############################################################
 ####                 S H I P   P A R T S                 ####
 #############################################################
-
 
 SR_WEAPON_1_1
 Massenkatapult 1
@@ -7823,23 +6061,15 @@ Massenkatapult 4
 SR_WEAPON_1_4_DESC
 '''Der Massenkatapult, auf Stufe 4 verbessert.'''
 
-SR_WEAPON_2_1
-Laser 1
 SR_WEAPON_2_1_DESC
 '''Der Laser, eine viel leistungsfähigere Schiffswaffe als der Massenkatapult.'''
 
-SR_WEAPON_2_2
-Laser 2
 SR_WEAPON_2_2_DESC
 '''Laser, auf Stufe 2 verbessert.'''
 
-SR_WEAPON_2_3
-Laser 3
 SR_WEAPON_2_3_DESC
 '''Laser, auf Stufe 3 verbessert.'''
 
-SR_WEAPON_2_4
-Laser 4
 SR_WEAPON_2_4_DESC
 '''Laser, auf Stufe 4 verbessert.'''
 
@@ -7883,9 +6113,6 @@ Todesstrahl 4
 SR_WEAPON_4_4_DESC
 '''Todesstrahl, auf Stufe 4 verbessert. Die ultimative Verbesserung der ultimativen Waffe.'''
 
-SR_WEAPON_2
-Laser
-
 SR_WEAPON_2_DESC
 Wenig Durchschlagskraft und Masse
 
@@ -7898,59 +6125,14 @@ Akzeptable Durchschlagskraft und Masse
 SR_WEAPON_1
 Masstreiber
 
-SR_WEAPON_1_DESC
-A projectile weapon capable of launching objects of tremendous mass at relativistic speeds.
-
 SR_WEAPON_4
 Todesstrahl
-
-SR_WEAPON_4_DESC
-Ultimate short range weapon
 
 PD_PULSE_LASER
 Impulslaser
 
 PD_PULSE_LASER_DESC
 Kurze Reichweite, hohe Feuerrate
-
-PD_PHASOR
-Phasor
-
-PD_PHASOR_DESC
-Stronger, faster point defense weapon
-
-PD_PARTICLE_BEAM
-Particle Beam
-
-PD_PARTICLE_BEAM_DESC
-Ultimate point defense weapon
-
-FI_INTERCEPTOR
-Interceptor
-
-FI_INTERCEPTOR_DESC
-Twelve fast interceptors designed to destroy missiles and enemy fighters
-
-FI_BOMBER
-Bomber
-
-FI_BOMBER_DESC
-Six bombers designed to target ships and planets
-
-FI_RECON
-Reconnaissance Fighter
-
-FI_RECON_DESC
-Twelve fast, unarmed fighters designed for reconnaissance
-
-FI_BIOINTERCEPTOR
-Bio-Interceptor
-
-FI_BIOINTERCEPTOR_DESC
-Thirty-six living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
-
-FI_BIOBOMBER
-Bio-Bomber
 
 FI_BIOBOMBER_DESC
 Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers.  This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
@@ -7960,36 +6142,6 @@ Atomare Rakete
 
 LR_NUCLEAR_MISSILE_DESC
 Hohe Reichweite und akzeptable Durchschlagskraft
-
-LR_SPECTRAL_MISSILE
-Spectral Missile
-
-LR_SPECTRAL_MISSILE_DESC
-A fast, stealthy missile.
-
-LR_NEUTRONIUM_PLATE_NUC_MIS
-Neutronium Plated Nuclear Missile
-
-LR_NEUTRONIUM_PLATE_NUC_MIS_DESC
-Heavily armored nuclear missile
-
-LR_NEUTRONIUM_PLATE_SPEC_MIS
-Neutronium Plated Spectral Missile
-
-LR_NEUTRONIUM_PLATE_SPEC_MIS_DESC
-Heavily armored spectral missile
-
-LR_ANTIMATTER_TORPEDO
-Antimatter Torpedo
-
-LR_ANTIMATTER_TORPEDO_DESC
-A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
-
-LR_PLASMA_TORPEDO
-Plasma Torpedo
-
-LR_PLASMA_TORPEDO_DESC
-A fast, long-range missile with excellent [[encyclopedia STEALTH_TITLE]], powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
 
 DT_DETECTOR_1
 Optischer Scanner
@@ -8015,24 +6167,15 @@ Sensoren
 DT_DETECTOR_4_DESC
 Überlangstreckenaufklärung.
 
-FU_IMPROVED_ENGINE_COUPLINGS
-Improved Engine Couplings
-
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
 '''Increases Sternstraße Schnelligkeit by 10.
 
 Better engine parts equate to better engines.'''
 
-FU_N_DIMENSIONAL_ENGINE_MATRIX
-N-Dimensional Engine Matrix
-
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 '''Increases Sternstraße Schnelligkeit by 15. 
 
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
-
-FU_SINGULARITY_ENGINE_CORE
-Singularity Engine Core
 
 FU_SINGULARITY_ENGINE_CORE_DESC
 A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternstraße Schnelligkeit by 20. 
@@ -8055,12 +6198,6 @@ Antimaterietank
 FU_ANTIMATTER_TANK_DESC
 Moderate Steigerung der Schiffsreichweite durch eine verbesserte Treibstoffkapazität. Kompakt und geringe Masse.
 
-FU_ZERO_FUEL
-Zero-Point Fuel Generator
-
-FU_ZERO_FUEL_DESC
-Generates energy using Zero-Point generation and converts it into fuel using matter-energy conversion techniques.
-
 ST_CLOAK_1
 Elektromagnetische Dämpfung
 
@@ -8069,29 +6206,10 @@ ST_CLOAK_1_DESC
 
 Verbessert die [[encyclopedia STEALTH_TITLE]] des Schiffes auf dem es installiert wurde, indem es die Elektromagnetische Abstrahlung der Schiffssysteme dämpft. Kann nur kleine Emissionsmengen kompensieren, und wird von vorhandenen Schiffsteilen die hohe Strahlungsmengen abgeben überladen. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
-ST_CLOAK_2
-Absorption Field
-
-ST_CLOAK_2_DESC
-'''Moderate Cloaking (+40)
-
-Creates an absorption field around the ship, effectively transforming it into a perfect blackbody. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
-
-ST_CLOAK_3
-Dimensional Cloak
-
 ST_CLOAK_3_DESC
 '''Strong Cloking (+60)
 
 Hides this ship within a dimensional rift, greatly increasing [[encyclopedia STEALTH_TITLE]]. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
-
-ST_CLOAK_4
-Phasing Cloak
-
-ST_CLOAK_4_DESC
-'''Very Strong Cloaking (+80)
-
-Modulates the frequency of any matter waves emitted from the ship to match that of the background radiation. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
 AR_STD_PLATE
 Standardpanzerplatten
@@ -8120,66 +6238,20 @@ AR_XENTRONIUM_PLATE_DESC
 AR_ROCK_PLATE
 Gestein Panzerplatten
 
-AR_ROCK_PLATE_DESC
-'''A strong, cheap alternative to alloys. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.'''
-
 AR_CRYSTAL_PLATE
 Kristall Panzerplatten
-
-AR_CRYSTAL_PLATE_DESC
-'''An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.'''
 
 AR_NEUTRONIUM_PLATE
 Neutronium Panzerplatten
 
-AR_NEUTRONIUM_PLATE_DESC
-'''Strongest, most durable armor plating. Admirable defense.'''
-
 AR_PRECURSOR_PLATE
 Vorläufer Panzerplatten
-
-AR_PRECURSOR_PLATE_DESC
-Marvelously effective armor of unknown composition
 
 SH_DEFENSE_GRID
 Verteidigungsperimeter
 
-SH_DEFENSE_GRID_DESC
-'''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons. Reduces damage sustained from a hit by 4.
-
-There can only be one active shield generator on a ship, so shield parts do not stack.'''
-
 SH_DEFLECTOR
 Deflektorschild
-
-SH_DEFLECTOR_DESC
-'''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons. Reduces damage sustained from a hit by 7.
-
-There can only be one active shield generator on a ship, so shield parts do not stack.'''
-
-SH_PLASMA
-Plasma Shield
-
-SH_PLASMA_DESC
-'''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less. Reduces damage sustained from a hit by 12.
-
-There can only be one active shield generator on a ship, so shield parts do not stack.'''
-
-SH_BLACK
-Blackshield
-
-SH_BLACK_DESC
-'''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build. Reduces damage sustained from a hit by 20.
-
-There can only be one active shield generator on a ship, so shield parts do not stack.'''
-
-SH_MULTISPEC
-Multi-Spectral Shield
-
-SH_MULTISPEC_DESC
-'''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat. Reduces damage sustained from a hit by 15.
-
-There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 CO_COLONY_POD
 Besiedlungsmodul
@@ -8197,9 +6269,6 @@ CO_SUSPEND_ANIM_POD_DESC
 
 Alle Siedlungschiffstypen benötigen auf dem Planet, wo sie gebaut werden sollen, eine Bevölkerung von mindestens 3.'''
 
-CO_OUTPOST_POD
-Outpost Module
-
 CO_OUTPOST_POD_DESC
 '''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the rigth tech is researched. Colonies can be founded on planets that already have an Outpost.'''
 
@@ -8209,274 +6278,161 @@ Bodentruppen Kapsel
 GT_TROOP_POD_DESC
 Trägt eine Brigade Boden[[encyclopedia TROOP_TITLE]], samt Ausrüstung, die auf einen Planeten eingesetzt werden kann.
 
-SP_DISTORTION_MODULATOR
-Distortion Modulator
-
 SP_DISTORTION_MODULATOR_DESC
 Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity. All objects within 0 uus have max [[encyclopedia STEALTH_TITLE]] reduced by 20. The effect is non-stacking.
-
-SP_CLOUD
-Cloud Generator
-
-SP_ASH
-Ash Generator
-
-SP_DIM
-Dimensional Cleaver
-
-SP_VOID
-Void Eruptor
-
-SP_DEATH_SPORE
-Death Spores
 
 SP_DEATH_SPORE_DESC
 A biological weapon which gradually reduces the population of a planet.
 
-SP_BIOTERM
-Bio-Terminators
-
 SP_BIOTERM_DESC
 A powerful biological weapon which quickly reduces the population of a planet.
-
-SP_NOVA_BOMB
-Nova Bomb
 
 SP_NOVA_BOMB_DESC
 A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one Sternstraße jump away.
 
-
 #############################################################
 ####                 S H I P   H U L L S                 ####
 #############################################################
-
-
-SH_ROBOTIC
-Robotic Hull
 
 SH_ROBOTIC_DESC
 '''This hull is completely automated and functions under the principals of Military Robotic Control. Like the standard hull, it has four external slots and one internal slot. It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
 
 In addition to a [[buildingtype BLD_SHIPYARD_BASE]] an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
 
-SH_SPATIAL_FLUX
-Spatial Flux Hull
-
 SH_SPATIAL_FLUX_DESC
 '''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. [[encyclopedia STEALTH_TITLE]] is fairly high, but it receives a large [[encyclopedia STEALTH_TITLE]] penalty for movement both in combat and on the galaxy map.
 
 In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] is required at the planet where it is constructed.'''
-
-SH_SELF_GRAVITATING
-Self-Gravitating Hull
 
 SH_SELF_GRAVITATING_DESC
 '''This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but [[encyclopedia STEALTH_TITLE]] and speed are fairly low.
 
 In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] is required at the planet where it is constructed.'''
 
-SH_NANOROBOTIC
-Nano-Robotic Hull
-
 SH_NANOROBOTIC_DESC
 '''This automated hull is large and fast, and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, but it has low [[encyclopedia STEALTH_TITLE]] and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] unit at the planet where it is constructed.'''
-
-SH_TITANIC
-Titanic Hull
 
 SH_TITANIC_DESC
 '''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and [[encyclopedia STEALTH_TITLE]].
 
 Requires a Basic [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] at the planet where it is constructed.'''
 
-SH_TRANSSPATIAL
-Trans-Spatial Hull
-
 SH_TRANSSPATIAL_DESC
 '''This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive. It has only a single external slot however, and its max structure is extremely low.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
-
-SH_LOGISTICS_FACILITATOR
-Logistics Facilitator
 
 SH_LOGISTICS_FACILITATOR_DESC
 '''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
 
-SH_ASTEROID
-Asteroid Hull
-
 SH_ASTEROID_DESC
 '''This hull is constructed from an average-sized asteroid. A bit roomier than the standard hull, it has four external slots and two internal slots. Geschwindigkeit and structure are relatively low, but it is fairly inexpensive to build. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
-
-SH_SMALL_ASTEROID
-Small Asteroid Hull
 
 SH_SMALL_ASTEROID_DESC
 '''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. Geschwindigkeit is very good, but structure is quite low. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
-SH_HEAVY_ASTEROID
-Heavy Asteroid Hull
-
 SH_HEAVY_ASTEROID_DESC
 '''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. Geschwindigkeit is very low, but structure is moderately high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
-
-SH_CAMOUFLAGE_ASTEROID
-Camouflage Asteroid Hull
 
 SH_CAMOUFLAGE_ASTEROID_DESC
 '''This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
 
-SH_SMALL_CAMOUFLAGE_ASTEROID
-Small Camouflage Asteroid Hull
-
 SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
 '''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its [[encyclopedia STEALTH_TITLE]] bonus. It has a single external slot and a single internal slot. Geschwindigkeit is average, but structure is quite low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
-
-SH_AGREGATE_ASTEROID
-Aggregate Asteroid Hull
 
 SH_AGREGATE_ASTEROID_DESC
 '''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
 
-SH_MINIASTEROID_SWARM
-Mini-Asteroid Swarm
-
 SH_MINIASTEROID_SWARM_DESC
 '''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
-
-SH_SCATTERED_ASTEROID
-Scattered Asteroid Hull
 
 SH_SCATTERED_ASTEROID_DESC
 '''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Geschwindigkeit is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
 
-SH_CRYSTALLIZED_ASTEROID
-Crystallized Asteroid Hull
-
 SH_CRYSTALLIZED_ASTEROID_DESC
 '''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Geschwindigkeit is somewhat low, but structure is extremely high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
-
-SH_ORGANIC
-Organic Hull
 
 SH_ORGANIC_DESC
 '''This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. [[encyclopedia STEALTH_TITLE]] is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is developed.'''
 
-SH_STATIC_MULTICELLULAR
-Static Multicellular Hull
-
 SH_STATIC_MULTICELLULAR_DESC
 '''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems, it cannot replenish health or energy. It has three external slots and two internal slots. Structure is average and speed is good, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is constructed.'''
-
-SH_ENDOMORPHIC
-Endomorphic Hull
 
 SH_ENDOMORPHIC_DESC
 '''This hull contains non-living multicellular components for greater external modularity. This hull has four external slots and two internal slots. Structure is good and speed is average, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.'''
 
-SH_SYMBIOTIC
-Symbiotic Hull
-
 SH_SYMBIOTIC_DESC
 '''This living hull exists in a symbiotic relationship with its crew, increasing its [[encyclopedia STEALTH_TITLE]] and speed. It has two of each internal and external slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all good. This hull regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
-
-SH_PROTOPLASMIC
-Protoplasmic Hull
 
 SH_PROTOPLASMIC_DESC
 '''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three internal slots and two external slots. Structure is high, and speed and [[encyclopedia STEALTH_TITLE]] are good. This hull regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
 
-SH_ENDOSYMBIOTIC
-Endosymbiotic Hull
-
 SH_ENDOSYMBIOTIC_DESC
 '''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and [[encyclopedia STEALTH_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
-
-SH_RAVENOUS
-Ravenous Hull
 
 SH_RAVENOUS_DESC
 '''This hull has been raised on the blood of its brethren. It has five external slots and two internal slots. [[encyclopedia STEALTH_TITLE]] is low, but speed and structure are high. This hull regenerates neither structure nor fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.'''
 
-SH_BIOADAPTIVE
-Bio-Adaptive Hull
-
 SH_BIOADAPTIVE_DESC
 '''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has three external slots and three internal slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
-
-SH_SENTIENT
-Sentient Hull
 
 SH_SENTIENT_DESC
 '''This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
 
-SH_COMPRESSED_ENERGY
-Compressed Energy Hull
-
 SH_COMPRESSED_ENERGY_DESC
 '''This fast hull is comprised entirely of compressed energy and has a single external slot. Structure is low, but [[encyclopedia STEALTH_TITLE]] and speed are very high. This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
-
-SH_FRACTAL_ENERGY
-Fractal Energy Hull
 
 SH_FRACTAL_ENERGY_DESC
 '''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has fourteen external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
-SH_QUANTUM_ENERGY
-Quantum Energy Hull
-
 SH_QUANTUM_ENERGY_DESC
 '''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
 
 Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
-
-SH_SOLAR
-Solar Hull
 
 SH_SOLAR_DESC
 '''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
@@ -8504,12 +6460,6 @@ SH_STANDARD_DESC
 '''Ein großer Schiffsrumpf für interstellare Reisen.
 
 Ein Planet benötigt eine [[buildingtype BLD_SHIPYARD_BASE]], um ein solches Schiff zu bauen.'''
-
-SH_XENTRONIUM
-Xentronium Hull
-
-SH_XENTRONIUM_DESC
-A hull constructed primarily with xentronium. Though small, it has extremely high max structure.
 
 SH_COLONY_BASE
 Siedlungsbasis Rumpf
@@ -8587,72 +6537,13 @@ Ein gewaltiges mittelgewichtiges Weltraummonster.
 
 SH_BLACK_KRAKEN_BODY
 Schwarzkrakenkörper
-SH_BLACK_KRAKEN_BODY_DESC
-A monstrous black Kraken with an unnatural aura about it.
 
-SH_SNOWFLAKE_1_BODY
-Small Snowflake Body
-SH_SNOWFLAKE_1_BODY_DESC
-A formidable light-weight space monster.
-
-SH_SNOWFLAKE_2_BODY
-Snowflake Body
-SH_SNOWFLAKE_2_BODY_DESC
-A formidable light-weight space monster.
-
-SH_SNOWFLAKE_3_BODY
-Large Snowflake Body
-SH_SNOWFLAKE_3_BODY_DESC
-A formidable light-weight space monster.
-
-SH_PSIONIC_SNOWFLAKE_BODY
-Psionic Snowflake Body
-SH_PSIONIC_SNOWFLAKE_BODY_DESC
-A mentally powerful space monster.
-
-SH_JUGGERNAUT_1_BODY
-Small Juggernaut Body
-SH_JUGGERNAUT_1_BODY_DESC
-A formidable heavy-weight space monster.
-
-SH_JUGGERNAUT_2_BODY
-Juggernaut Body
-SH_JUGGERNAUT_2_BODY_DESC
-A formidable heavy-weight space monster.
-
-SH_JUGGERNAUT_3_BODY
-Large Juggernaut Body
-SH_JUGGERNAUT_3_BODY_DESC
-A formidable heavy-weight space monster.
-
-SH_BLOATED_JUGGERNAUT_BODY
-Bloated Juggernaut Body
-SH_BLOATED_JUGGERNAUT_BODY_DESC
-An unnaturally large space monster.
-
-SH_NEBULOUS_BODY
-Nebulous Body
-
-SH_EXP_OUTPOST_HULL
-Experimentor Outpost Hull
-SH_EXP_OUTPOST_HULL_DESC
-A hull used by the Experimentors use to transport experimental equipment to other galaxies.
-
-SH_COSMIC_DRAGON_BODY
-Cosmic Dragon Body
 SH_COSMIC_DRAGON_BODY_DESC
 A fearsom space dragon the size of a small planet.
-
-SH_DAMPENING_CLOUD_BODY
-Dampening Cloud Body
-SH_DAMPENING_CLOUD_BODY_DESC
-A cosmic cloud of high energetic particles.
-
 
 #############################################################
 ####              S P E C I E S   P I C K S              ####
 #############################################################
-
 
 NO_INDUSTRY
 '''−−−	Keine [[encyclopedia INDUSTRY_TITLE]]'''
@@ -8689,7 +6580,6 @@ GREAT_RESEARCH
 
 ULTIMATE_RESEARCH
 '''+++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 400%'''
-
 
 NO_GROUND_TROOPS
 '''−−−	Keine Boden[[encyclopedia TROOP_TITLE]]'''
@@ -8754,16 +6644,9 @@ AVERAGE_POPULATION
 GOOD_POPULATION
 '''+	Gesunde Bevölkerung 125%'''
 
-BROAD_EP
-'''++	Broad Planet Tolerance: flourishes on more types.'''
-
-NARROW_EP
-'''−	Narrow Planet Tolerance: flourishes on fewer types.'''
-
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
-
 
 STANDARD_CONSTRUCTION_LABEL
 '''%1% Mittelmäßige [[encyclopedia INFRASTRUCTURE_TITLE]]'''
@@ -8779,15 +6662,6 @@ POOR_ENVIRONMENT_LABEL
 
 HOSTILE_ENVIRONMENT_LABEL
 '''%1% Feindliche Umgebung'''
-
-ENV_ENCAPSUL_LABEL
-'''%1% Environmental Encapsulation'''
-
-SELF_SUSTAINING_LABEL
-'''Self-Sustaining'''
-
-GAIA_LABEL
-'''Gaia Bonus'''
 
 HOMEWORLD_LABEL
 '''Heimatwelt'''
@@ -8867,18 +6741,6 @@ INDEPENDENT_TROOP_LABEL
 OUTPOST_TROOP_LABEL
 '''Außenposten'''
 
-VERY_BRIGHT_STAR
-'''Very bright star'''
-
-BRIGHT_STAR
-'''Bright star'''
-
-DIM_STAR
-'''Dim star'''
-
-NO_STAR
-'''No star'''
-
 HOMEWORLD_SUPPLY
 '''Versorgung der Heimatwelt'''
 
@@ -8903,19 +6765,6 @@ GOOD_VISION_LABEL
 EXCELLENT_VISION_LABEL
 '''Ausgezeichnete Sicht'''
 
-FOCUS_PROTECTION_LABEL
-'''Protection Focus'''
-
-XENOPHOBIC_LABEL_SELF
-'''Xenophobic Frenzy (other species nearby)'''
-
-XENOPHOBIC_LABEL_TRITH_OTHER
-'''Xenophobic Harassment: Trith'''
-
-XENOPHOBIC_LABEL_EAXAW_OTHER
-'''Xenophobic Harassment: Eaxaw'''
-
-
 #############################################################
 ####                       T A G S                       ####
 #############################################################
@@ -8926,46 +6775,11 @@ XENOPHOBIC_LABEL_EAXAW_OTHER
 ## since those won't be displayed in the census anyway.
 
 ## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
-CENSUS_TAG_ORDER
-'''LITHIC
-ORGANIC
-PHOTOTROPHIC
-ROBOTIC
-SELF_SUSTAINING
-TELEPATHIC'''
 ##STYLISH  // add to tag order list if ever this tag is given a function
-
-ANTIQUATED
-Antiquated
-
-STYLISH
-Stylish
-
-ORGANIC
-Organic
-
-ROBOTIC
-Robotic
-
-LITHIC
-Lithic
-
-PHOTOTROPHIC
-Phototrophic
-
-SELF_SUSTAINING
-Self-Sustaining
-
-TELEPATHIC
-Telepathic
-
-ORBITAL
-Orbital
 
 #############################################################
 ####           A I   S T R I N G S                       ####
 #############################################################
-
 
 ### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
 ### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
@@ -9003,59 +6817,8 @@ Glorious Revolutionary Planning Center, '''
 ####           HOTKEYS NAMES AND DESCRIPTIONS            ####
 #############################################################
 
-
 ################
 ## Name Lists ##
 ################
 
-STAR_GROUP_WORDS
-'''Alpha
-Beta
-Gamma
-Delta
-Epsilon
-Zeta
-Eta
-Theta
-Iota
-Kappa
-Lambda
-Mu
-Nu
-Xi
-Omicron
-Pi
-Rho
-Sigma
-Tau
-Upsilon
-Phi
-Chi
-Psi
-Omega'''
-
-STAR_GROUP_CHARS
-'''α
-β
-γ
-δ
-ε
-ζ
-η
-θ
-ι
-κ
-λ
-μ
-ν
-ξ
-ο
-π
-ρ
-σ
-τ
-υ
-φ
-χ
-ψ
-ω'''
+# TODO: Sort these into their proper locations?

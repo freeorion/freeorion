@@ -7,6 +7,7 @@
 
 #include "../PythonWrappers.h"
 
+#include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/python.hpp>
 #include <boost/python/list.hpp>
@@ -29,6 +30,7 @@ using boost::python::make_tuple;
 using boost::python::extract;
 using boost::python::len;
 
+namespace fs = boost::filesystem;
 
 // Python module for logging functions
 BOOST_PYTHON_MODULE(fo_logger) {
@@ -142,12 +144,10 @@ bool PythonInit() {
     if (!PythonAddToSysPath(GetPythonCommonDir()))
         return false;
 
-    // Set Python current work directory to directory containing
-    // the universe generation Python scripts...
-    if (!PythonSetCurrentDir(GetPythonUniverseGeneratorDir()))
-        return false;
-    // ...and also add it to Pythons sys.path to make sure Python will find our scripts
-    if (!PythonAddToSysPath(GetPythonUniverseGeneratorDir()))
+    // Confirm existence of the directory containing the universe generation
+    // Python scripts and add it to Pythons sys.path to make sure Python will
+    // find our scripts
+    if (!fs::exists(GetPythonUniverseGeneratorDir()) || !PythonAddToSysPath(GetPythonUniverseGeneratorDir()))
         return false;
 
     try {
@@ -160,12 +160,10 @@ bool PythonInit() {
         return false;
     }
 
-    // Set Python current work directory to directory containing
-    // the turn event Python scripts...
-    if (!PythonSetCurrentDir(GetPythonTurnEventsDir()))
-        return false;
-    // ...and also add it to Pythons sys.path to make sure Python will find our scripts
-    if (!PythonAddToSysPath(GetPythonTurnEventsDir()))
+    // Confirm existence of the directory containing the turn event Python
+    // scripts and add it to Pythons sys.path to make sure Python will find
+    // our scripts
+    if (!fs::exists(GetPythonTurnEventsDir()) || !PythonAddToSysPath(GetPythonTurnEventsDir()))
         return false;
 
     try {

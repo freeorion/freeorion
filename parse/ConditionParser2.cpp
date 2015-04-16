@@ -17,8 +17,8 @@ namespace {
             const parse::lexer& tok = parse::lexer::instance();
 
             const parse::value_ref_parser_rule<int>::type& int_value_ref = parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule< int >::type& flexible_int_ref = 
-                parse::value_ref_parser_flexible_int();
+            const parse::value_ref_parser_rule<int>::type& flexible_int_ref = parse::value_ref_parser_flexible_int();
+            const parse::value_ref_parser_rule<std::string>::type& string_value_ref = parse::value_ref_parser<std::string>();
 
             qi::_1_type _1;
             qi::_a_type _a; // intref
@@ -31,13 +31,11 @@ namespace {
             using phoenix::new_;
 
             has_special_since_turn
-                =    (
-                            tok.HasSpecialSinceTurn_
-                        >   parse::label(Name_token) >  tok.string [ _e = _1 ]
+                =   (       tok.HasSpecialSinceTurn_
+                        >   parse::label(Name_token) >  string_value_ref [ _e = _1 ]
                         > -(parse::label(Low_token)  >  flexible_int_ref [ _a = _1 ] )
                         > -(parse::label(High_token) >  flexible_int_ref [ _b = _1 ] )
-                     )
-                     [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
+                    ) [ _val = new_<Condition::HasSpecial>(_e, _a, _b) ]
                 ;
 
             enqueued
@@ -48,55 +46,48 @@ namespace {
                 ;
 
             enqueued1
-                =   (
-                        tok.Enqueued_
-                        >> parse::label(Type_token) >> tok.Building_
-                        >  (
-                                parse::label(Name_token) >       tok.string [ _e = _1 ]
-                            |                                    eps [ _e = "" ]
-                           )
-                        >  -(   parse::label(Empire_token) >     int_value_ref [ _a = _1 ] )
-                        >  -(   parse::label(Low_token)    >     flexible_int_ref [ _b = _1 ] )
-                        >  -(   parse::label(High_token)   >     flexible_int_ref [ _c = _1 ] )
+                =   (   tok.Enqueued_
+                        >>  parse::label(Type_token)   >>   tok.Building_
+                        > -(parse::label(Name_token)   >    string_value_ref[ _e = _1 ])
+                        > -(parse::label(Empire_token) >    int_value_ref   [ _a = _1 ])
+                        > -(parse::label(Low_token)    >    flexible_int_ref[ _b = _1 ])
+                        > -(parse::label(High_token)   >    flexible_int_ref[ _c = _1 ])
                     ) [ _val = new_<Condition::Enqueued>(BT_BUILDING, _e, _a, _b, _c) ]
                 ;
 
             enqueued2
-                =   (
-                        tok.Enqueued_
-                        >>      parse::label(Type_token)   >>   tok.Ship_
-                        >  -(   parse::label(Design_token) >    int_value_ref [ _d = _1 ] )
-                        >  -(   parse::label(Empire_token) >    int_value_ref [ _a = _1 ] )
-                        >  -(   parse::label(Low_token)    >    flexible_int_ref [ _b = _1 ] )
-                        >  -(   parse::label(High_token)   >    flexible_int_ref [ _c = _1 ] )
+                =   (   tok.Enqueued_
+                        >>  parse::label(Type_token)   >>   tok.Ship_
+                        > -(parse::label(Design_token) >    int_value_ref   [ _d = _1 ])
+                        > -(parse::label(Empire_token) >    int_value_ref   [ _a = _1 ])
+                        > -(parse::label(Low_token)    >    flexible_int_ref[ _b = _1 ])
+                        > -(parse::label(High_token)   >    flexible_int_ref[ _c = _1 ])
                     ) [ _val = new_<Condition::Enqueued>(_d, _a, _b, _c) ]
                 ;
 
             enqueued3
-                =   (
-                        tok.Enqueued_
-                        >>      parse::label(Type_token)   >>   tok.Ship_
-                        >>      parse::label(Name_token)   >    tok.string [ _e = _1 ]
-                        >  -(   parse::label(Empire_token) >    int_value_ref [ _a = _1 ] )
-                        >  -(   parse::label(Low_token)    >    flexible_int_ref [ _b = _1 ] )
-                        >  -(   parse::label(High_token)   >    flexible_int_ref [ _c = _1 ] )
+                =   (   tok.Enqueued_
+                        >>  parse::label(Type_token)   >>   tok.Ship_
+                        >>  parse::label(Name_token)   >    string_value_ref[ _e = _1 ]
+                        > -(parse::label(Empire_token) >    int_value_ref   [ _a = _1 ])
+                        > -(parse::label(Low_token)    >    flexible_int_ref[ _b = _1 ])
+                        > -(parse::label(High_token)   >    flexible_int_ref[ _c = _1 ])
                     ) [ _val = new_<Condition::Enqueued>(BT_SHIP, _e, _a, _b, _c) ]
                 ;
 
             enqueued4
-                =   (
-                        tok.Enqueued_
-                        >  -(   parse::label(Empire_token) >     int_value_ref [ _a = _1 ] )
-                        >  -(   parse::label(Low_token)    >     flexible_int_ref [ _b = _1 ] )
-                        >  -(   parse::label(High_token)   >     flexible_int_ref [ _c = _1 ] )
-                    ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, "", _a, _b, _c) ]
+                =   (   tok.Enqueued_
+                        > -(parse::label(Empire_token) >    int_value_ref   [ _a = _1 ])
+                        > -(parse::label(Low_token)    >    flexible_int_ref[ _b = _1 ])
+                        > -(parse::label(High_token)   >    flexible_int_ref[ _c = _1 ])
+                    ) [ _val = new_<Condition::Enqueued>(INVALID_BUILD_TYPE, _e, _a, _b, _c) ]
                 ;
 
             design_has_part
                 =    tok.DesignHasPart_
                 >    parse::label(Low_token)   > flexible_int_ref [ _a = _1 ]
                 >    parse::label(High_token)  > flexible_int_ref [ _b = _1 ]
-                >    parse::label(Name_token)  > tok.string
+                >    parse::label(Name_token)  > string_value_ref
                 [ _val = new_<Condition::DesignHasPart>(_a, _b, _1) ]
                 ;
 
@@ -109,8 +100,7 @@ namespace {
                 ;
 
             in_system
-                =   (
-                        tok.InSystem_
+                =   (   tok.InSystem_
                     >  -(parse::label(ID_token)  > int_value_ref [ _a = _1 ])
                     )
                     [ _val = new_<Condition::InSystem>(_a) ]
@@ -147,7 +137,7 @@ namespace {
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<int>*,
-                std::string
+                ValueRef::ValueRefBase<std::string>*
             >,
             parse::skipper_type
         > common_rule;

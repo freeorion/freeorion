@@ -53,7 +53,10 @@ set(freeorion_HEADER
     HumanClientApp.h
     ../../network/ClientNetworking.h
     ../../UI/About.h
+    ../../UI/AccordionPanel.h
     ../../UI/BuildDesignatorWnd.h
+    ../../UI/BuildingsPanel.h
+    ../../UI/CensusBrowseWnd.h
     ../../UI/ChatWnd.h
     ../../UI/ClientUI.h
     ../../UI/CombatReport/GraphicalSummary.h
@@ -76,30 +79,40 @@ set(freeorion_HEADER
     ../../GG/GG/GLClientAndServerBuffer.h
     ../../UI/GraphControl.h
     ../../UI/Hotkeys.h
-    ../../UI/InfoPanels.h
+    ../../UI/IconTextBrowseWnd.h
     ../../UI/InGameMenu.h
     ../../UI/IntroScreen.h
     ../../UI/LinkText.h
     ../../UI/MapWnd.h
     ../../UI/MarkupBox.h
+    ../../UI/MeterBrowseWnd.h
+    ../../UI/MilitaryPanel.h
     ../../UI/ModeratorActionsWnd.h
+    ../../UI/MultiIconValueIndicator.h
+    ../../UI/MultiMeterStatusBar.h
     ../../UI/MultiplayerLobbyWnd.h
     ../../UI/ObjectListWnd.h
     ../../UI/OptionsWnd.h
     ../../UI/PlayerListWnd.h
+    ../../UI/PopulationPanel.h
     ../../UI/ProductionWnd.h
     ../../UI/QueueListBox.h
     ../../UI/ResearchWnd.h
+    ../../UI/ResourcePanel.h
     ../../UI/SaveFileDialog.h
     ../../UI/ServerConnectWnd.h
     ../../UI/ShaderProgram.h
+    ../../UI/ShipDesignPanel.h
     ../../UI/SidePanel.h
     ../../UI/SitRepPanel.h
     ../../UI/Sound.h
+    ../../UI/SpecialsPanel.h
     ../../UI/SystemIcon.h
+    ../../UI/SystemResourceSummaryBrowseWnd.h
     ../../UI/TechTreeArcs.h
     ../../UI/TechTreeLayout.h
     ../../UI/TechTreeWnd.h
+    ../../UI/TextBrowseWnd.h
 )
 
 set(freeorion_SOURCES
@@ -111,7 +124,10 @@ set(freeorion_SOURCES
     ../../combat/CombatSystem.cpp
     ../../network/ClientNetworking.cpp
     ../../UI/About.cpp
+    ../../UI/AccordionPanel.cpp
     ../../UI/BuildDesignatorWnd.cpp
+    ../../UI/BuildingsPanel.cpp
+    ../../UI/CensusBrowseWnd.cpp
     ../../UI/ChatWnd.cpp
     ../../UI/ClientUI.cpp
     ../../UI/CombatReport/GraphicalSummary.cpp
@@ -131,30 +147,40 @@ set(freeorion_SOURCES
     ../../GG/src/GLClientAndServerBuffer.cpp
     ../../UI/GraphControl.cpp
     ../../UI/Hotkeys.cpp
-    ../../UI/InfoPanels.cpp
+    ../../UI/IconTextBrowseWnd.cpp
     ../../UI/InGameMenu.cpp
     ../../UI/IntroScreen.cpp
     ../../UI/LinkText.cpp
     ../../UI/MapWnd.cpp
     ../../UI/MarkupBox.cpp
+    ../../UI/MeterBrowseWnd.cpp
+    ../../UI/MilitaryPanel.cpp
     ../../UI/ModeratorActionsWnd.cpp
+    ../../UI/MultiIconValueIndicator.cpp
+    ../../UI/MultiMeterStatusBar.cpp
     ../../UI/MultiplayerLobbyWnd.cpp
     ../../UI/ObjectListWnd.cpp
     ../../UI/OptionsWnd.cpp
     ../../UI/PlayerListWnd.cpp
+    ../../UI/PopulationPanel.cpp
     ../../UI/ProductionWnd.cpp
     ../../UI/QueueListBox.cpp
     ../../UI/ResearchWnd.cpp
+    ../../UI/ResourcePanel.cpp
     ../../UI/SaveFileDialog.cpp
     ../../UI/ServerConnectWnd.cpp
     ../../UI/ShaderProgram.cpp
+    ../../UI/ShipDesignPanel.cpp
     ../../UI/SidePanel.cpp
     ../../UI/SitRepPanel.cpp
     ../../UI/Sound.cpp
+    ../../UI/SpecialsPanel.cpp
     ../../UI/SystemIcon.cpp
+    ../../UI/SystemResourceSummaryBrowseWnd.cpp
     ../../UI/TechTreeArcs.cpp
     ../../UI/TechTreeLayout.cpp
     ../../UI/TechTreeWnd.cpp
+    ../../UI/TextBrowseWnd.cpp
 )
 
 set(freeorion_LINK_LIBS

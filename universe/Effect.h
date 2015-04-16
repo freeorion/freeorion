@@ -73,19 +73,12 @@ namespace ValueRef {
   * active in the current turn. */
 class FO_COMMON_API Effect::EffectsGroup {
 public:
-    struct Description {
-        std::string scope_description;
-        std::string activation_description;
-        std::vector<std::string> effect_descriptions;
-    };
-
-    EffectsGroup(const Condition::ConditionBase* scope, const Condition::ConditionBase* activation,
+    EffectsGroup(Condition::ConditionBase* scope, Condition::ConditionBase* activation,
                  const std::vector<EffectBase*>& effects, const std::string& accounting_label = "",
                  const std::string& stacking_group = "") :
         m_scope(scope),
         m_activation(activation),
         m_stacking_group(stacking_group),
-        m_explicit_description(""), // TODO: Get this from stringtable when available
         m_effects(effects),
         m_accounting_label(accounting_label)
     {}
@@ -107,21 +100,21 @@ public:
                     bool include_empire_meter_effects = false) const;
 
     const std::string&              StackingGroup() const       { return m_stacking_group; }
-    const Condition::ConditionBase* Scope() const               { return m_scope; }
-    const Condition::ConditionBase* Activation() const          { return m_activation; }
+    Condition::ConditionBase* Scope() const               { return m_scope; }
+    Condition::ConditionBase* Activation() const          { return m_activation; }
     const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
-    Description                     GetDescription() const;
     std::string                     DescriptionString() const;
     const std::string&              AccountingLabel() const     { return m_accounting_label; }
     std::string                     Dump() const;
 
+    void                            SetTopLevelContent(const std::string& content_name);
+
 protected:
-    const Condition::ConditionBase* m_scope;
-    const Condition::ConditionBase* m_activation;
-    std::string                     m_stacking_group;
-    std::string                     m_explicit_description;
-    std::vector<EffectBase*>        m_effects;
-    std::string                     m_accounting_label;
+    Condition::ConditionBase*   m_scope;
+    Condition::ConditionBase*   m_activation;
+    std::string                 m_stacking_group;
+    std::vector<EffectBase*>    m_effects;
+    std::string                 m_accounting_label;
 
 private:
     friend class boost::serialization::access;
@@ -130,7 +123,7 @@ private:
 };
 
 /** Returns a single string which describes a vector of EffectsGroups. */
-FO_COMMON_API std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups);
+FO_COMMON_API std::string EffectsDescription(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups);
 
 /** The base class for all Effects.  When an Effect is executed, the source
   * object (the object to which the Effect or its containing EffectGroup is
@@ -152,6 +145,8 @@ public:
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0;
 
+    virtual void        SetTopLevelContent(const std::string& content_name) = 0;
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -164,7 +159,7 @@ private:
   * done. */
 class FO_COMMON_API Effect::SetMeter : public Effect::EffectBase {
 public:
-    SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value);
+    SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value);
     virtual ~SetMeter();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -173,9 +168,11 @@ public:
     virtual std::string Dump() const;
     MeterType GetMeterType() const {return m_meter;};
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    MeterType                             m_meter;
-    const ValueRef::ValueRefBase<double>* m_value;
+    MeterType                       m_meter;
+    ValueRef::ValueRefBase<double>* m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -190,39 +187,27 @@ private:
   * located in a different type than specified, and would be matched). */
 class FO_COMMON_API Effect::SetShipPartMeter : public Effect::EffectBase {
 public:
-    /** Affects the \a meter_type meters that belong to all parts of class \a
-        part_class.  \a part_class must specify a class of parts for which
-        there is a ship meter (i.e. specifying PC_FUEL would be illegal). */
-    SetShipPartMeter(MeterType meter_type,
-                     ShipPartClass part_class,
-                     const ValueRef::ValueRefBase<double>* value);
-
-    /** Affects the \a meter_type meters that belong to all PC_FIGHTERS parts
-        of type \a fighter_type. */
-    SetShipPartMeter(MeterType meter_type,
-                     CombatFighterType fighter_type,
-                     const ValueRef::ValueRefBase<double>* value);
-
-    /** Affects the \a meter_type meters that belong to all parts named \a
+    /** Affects the \a meter_type meter that belongs to part(s) named \a
         part_name. */
     SetShipPartMeter(MeterType meter_type,
-                     const std::string& part_name,
-                     const ValueRef::ValueRefBase<double>* value);
+                     ValueRef::ValueRefBase<std::string>* part_name,
+                     ValueRef::ValueRefBase<double>* value);
 
     virtual ~SetShipPartMeter();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
-    const std::string&  GetPartName() const {return m_part_name;}
-    MeterType           GetMeterType() const {return m_meter;};
+
+    const ValueRef::ValueRefBase<std::string>*  GetPartName() const { return m_part_name; }
+    MeterType                                   GetMeterType() const { return m_meter; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
-    ShipPartClass                         m_part_class;
-    CombatFighterType                     m_fighter_type;
-    std::string                           m_part_name;
-    MeterType                             m_meter;
-    const ValueRef::ValueRefBase<double>* m_value;
+    ValueRef::ValueRefBase<std::string>*    m_part_name;
+    MeterType                               m_meter;
+    ValueRef::ValueRefBase<double>*         m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -234,19 +219,21 @@ private:
   * does nothing. */
 class FO_COMMON_API Effect::SetEmpireMeter : public Effect::EffectBase {
 public:
-    SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value);
-    SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter,
-                   const ValueRef::ValueRefBase<double>* value);
+    SetEmpireMeter(const std::string& meter, ValueRef::ValueRefBase<double>* value);
+    SetEmpireMeter(ValueRef::ValueRefBase<int>* empire_id, const std::string& meter,
+                   ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireMeter();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<int>*      m_empire_id;
-    const std::string                       m_meter;
-    const ValueRef::ValueRefBase<double>*   m_value;
+    ValueRef::ValueRefBase<int>*    m_empire_id;
+    std::string                     m_meter;
+    ValueRef::ValueRefBase<double>* m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -258,20 +245,22 @@ private:
 class FO_COMMON_API Effect::SetEmpireStockpile : public Effect::EffectBase {
 public:
     SetEmpireStockpile(ResourceType stockpile,
-                       const ValueRef::ValueRefBase<double>* value);
-    SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id,
+                       ValueRef::ValueRefBase<double>* value);
+    SetEmpireStockpile(ValueRef::ValueRefBase<int>* empire_id,
                        ResourceType stockpile,
-                       const ValueRef::ValueRefBase<double>* value);
+                       ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireStockpile();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<int>*      m_empire_id;
-    ResourceType                            m_stockpile;
-    const ValueRef::ValueRefBase<double>*   m_value;
+    ValueRef::ValueRefBase<int>*    m_empire_id;
+    ResourceType                    m_stockpile;
+    ValueRef::ValueRefBase<double>* m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -283,16 +272,18 @@ private:
   * the effect does nothing. */
 class FO_COMMON_API Effect::SetEmpireCapital : public Effect::EffectBase {
 public:
-    SetEmpireCapital();
-    SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id);
+    explicit SetEmpireCapital();
+    explicit SetEmpireCapital(ValueRef::ValueRefBase<int>* empire_id);
     virtual ~SetEmpireCapital();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<int>*      m_empire_id;
+    ValueRef::ValueRefBase<int>*    m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -305,15 +296,17 @@ private:
     SZ_GASGIANT, respectively. */
 class FO_COMMON_API Effect::SetPlanetType : public Effect::EffectBase {
 public:
-    SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type);
+    explicit SetPlanetType(ValueRef::ValueRefBase<PlanetType>* type);
     virtual ~SetPlanetType();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<PlanetType>* m_type;
+    ValueRef::ValueRefBase<PlanetType>* m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -327,15 +320,17 @@ private:
   * or PT_GASGIANT, respectively. */
 class FO_COMMON_API Effect::SetPlanetSize : public Effect::EffectBase {
 public:
-    SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size);
+    explicit SetPlanetSize(ValueRef::ValueRefBase<PlanetSize>* size);
     virtual ~SetPlanetSize();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<PlanetSize>* m_size;
+    ValueRef::ValueRefBase<PlanetSize>* m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -346,15 +341,17 @@ private:
   * and ships, but has no effect on other objects. */
 class FO_COMMON_API Effect::SetSpecies : public Effect::EffectBase {
 public:
-    SetSpecies(const ValueRef::ValueRefBase<std::string>* species);
+    explicit SetSpecies(ValueRef::ValueRefBase<std::string>* species);
     virtual ~SetSpecies();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<std::string>* m_species_name;
+    ValueRef::ValueRefBase<std::string>*    m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -365,15 +362,17 @@ private:
   * \a empire_id was already the owner of the target object. */
 class FO_COMMON_API Effect::SetOwner : public Effect::EffectBase {
 public:
-    SetOwner(const ValueRef::ValueRefBase<int>* empire_id);
+    explicit SetOwner(ValueRef::ValueRefBase<int>* empire_id);
     virtual ~SetOwner();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<int>* m_empire_id;
+    ValueRef::ValueRefBase<int>*    m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -384,19 +383,21 @@ private:
   * \a opinion */
 class FO_COMMON_API Effect::SetSpeciesEmpireOpinion : public Effect::EffectBase {
 public:
-    SetSpeciesEmpireOpinion(const ValueRef::ValueRefBase<std::string>* species_name,
-                            const ValueRef::ValueRefBase<int>* empire_id,
-                            const ValueRef::ValueRefBase<double>* opinion);
+    SetSpeciesEmpireOpinion(ValueRef::ValueRefBase<std::string>* species_name,
+                            ValueRef::ValueRefBase<int>* empire_id,
+                            ValueRef::ValueRefBase<double>* opinion);
     virtual ~SetSpeciesEmpireOpinion();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<std::string>*  m_species_name;
-    const ValueRef::ValueRefBase<int>*          m_empire_id;
-    const ValueRef::ValueRefBase<double>*       m_opinion;
+    ValueRef::ValueRefBase<std::string>*  m_species_name;
+    ValueRef::ValueRefBase<int>*          m_empire_id;
+    ValueRef::ValueRefBase<double>*       m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -407,19 +408,21 @@ private:
   * \a rated_species to \a opinion */
 class FO_COMMON_API Effect::SetSpeciesSpeciesOpinion : public Effect::EffectBase {
 public:
-    SetSpeciesSpeciesOpinion(const ValueRef::ValueRefBase<std::string>* opinionated_species_name,
-                             const ValueRef::ValueRefBase<std::string>* rated_species_name,
-                             const ValueRef::ValueRefBase<double>* opinion);
+    SetSpeciesSpeciesOpinion(ValueRef::ValueRefBase<std::string>* opinionated_species_name,
+                             ValueRef::ValueRefBase<std::string>* rated_species_name,
+                             ValueRef::ValueRefBase<double>* opinion);
     virtual ~SetSpeciesSpeciesOpinion();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<std::string>*  m_opinionated_species_name;
-    const ValueRef::ValueRefBase<std::string>*  m_rated_species_name;
-    const ValueRef::ValueRefBase<double>*       m_opinion;
+    ValueRef::ValueRefBase<std::string>*  m_opinionated_species_name;
+    ValueRef::ValueRefBase<std::string>*  m_rated_species_name;
+    ValueRef::ValueRefBase<double>*       m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -430,16 +433,21 @@ private:
   * specified \a location_id */
 class FO_COMMON_API Effect::CreatePlanet : public Effect::EffectBase {
 public:
-    CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type,
-                 const ValueRef::ValueRefBase<PlanetSize>* size);
+    CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
+                 ValueRef::ValueRefBase<PlanetSize>* size,
+                 ValueRef::ValueRefBase<std::string>* name = 0);
     virtual ~CreatePlanet();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<PlanetType>*   m_type;
-    const ValueRef::ValueRefBase<PlanetSize>*   m_size;
+    ValueRef::ValueRefBase<PlanetType>*     m_type;
+    ValueRef::ValueRefBase<PlanetSize>*     m_size;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -449,14 +457,19 @@ private:
 /** Creates a new Building with specified \a type on the \a target Planet. */
 class FO_COMMON_API Effect::CreateBuilding : public Effect::EffectBase {
 public:
-    CreateBuilding(const ValueRef::ValueRefBase<std::string>* building_type_name);
+    explicit CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
+                            ValueRef::ValueRefBase<std::string>* name = 0);
     virtual ~CreateBuilding();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<std::string>*  m_building_type_name;
+    ValueRef::ValueRefBase<std::string>*    m_building_type_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -468,25 +481,28 @@ private:
   * empire with the specified \a empire_id */
 class FO_COMMON_API Effect::CreateShip : public Effect::EffectBase {
 public:
-    CreateShip(const std::string& predefined_ship_design_name,
-               const ValueRef::ValueRefBase<int>* empire_id,
-               const ValueRef::ValueRefBase<std::string>* species_name);
-    CreateShip(const ValueRef::ValueRefBase<int>* ship_design_id,
-               const ValueRef::ValueRefBase<int>* empire_id,
-               const ValueRef::ValueRefBase<std::string>* species_name);
-    CreateShip(const std::string& predefined_ship_design_name,
-               const ValueRef::ValueRefBase<int>* empire_id);
-    CreateShip(const std::string& predefined_ship_design_name);
+    explicit CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
+                        ValueRef::ValueRefBase<int>* empire_id = 0,
+                        ValueRef::ValueRefBase<std::string>* species_name = 0,
+                        ValueRef::ValueRefBase<std::string>* ship_name = 0);
+    explicit CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
+                        ValueRef::ValueRefBase<int>* empire_id = 0,
+                        ValueRef::ValueRefBase<std::string>* species_name = 0,
+                        ValueRef::ValueRefBase<std::string>* ship_name = 0);
     virtual ~CreateShip();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const std::string                           m_design_name;
-    const ValueRef::ValueRefBase<int>*          m_design_id;
-    const ValueRef::ValueRefBase<int>*          m_empire_id;
-    const ValueRef::ValueRefBase<std::string>*  m_species_name;
+    ValueRef::ValueRefBase<std::string>*    m_design_name;
+    ValueRef::ValueRefBase<int>*            m_design_id;
+    ValueRef::ValueRefBase<int>*            m_empire_id;
+    ValueRef::ValueRefBase<std::string>*    m_species_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -497,22 +513,28 @@ private:
   * of the specified \a size. */
 class FO_COMMON_API Effect::CreateField : public Effect::EffectBase {
 public:
-    CreateField(const std::string& field_type_name,
-                const ValueRef::ValueRefBase<double>* size = 0);
-    CreateField(const std::string& field_type_name,
-                const ValueRef::ValueRefBase<double>* x,
-                const ValueRef::ValueRefBase<double>* y,
-                const ValueRef::ValueRefBase<double>* size = 0);
+    explicit CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
+                         ValueRef::ValueRefBase<double>* size = 0,
+                         ValueRef::ValueRefBase<std::string>* name = 0);
+    CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
+                ValueRef::ValueRefBase<double>* x,
+                ValueRef::ValueRefBase<double>* y,
+                ValueRef::ValueRefBase<double>* size = 0,
+                ValueRef::ValueRefBase<std::string>* name = 0);
     virtual ~CreateField();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const std::string                       m_field_type_name;
-    const ValueRef::ValueRefBase<double>*   m_x;
-    const ValueRef::ValueRefBase<double>*   m_y;
-    const ValueRef::ValueRefBase<double>*   m_size;
+    ValueRef::ValueRefBase<std::string>*    m_field_type_name;
+    ValueRef::ValueRefBase<double>*         m_x;
+    ValueRef::ValueRefBase<double>*         m_y;
+    ValueRef::ValueRefBase<double>*         m_size;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -523,20 +545,26 @@ private:
   * location. */
 class FO_COMMON_API Effect::CreateSystem : public Effect::EffectBase {
 public:
-    CreateSystem(const ValueRef::ValueRefBase< ::StarType>* type,
-                 const ValueRef::ValueRefBase<double>* x,
-                 const ValueRef::ValueRefBase<double>* y);
-    CreateSystem(const ValueRef::ValueRefBase<double>* x,
-                 const ValueRef::ValueRefBase<double>* y);
+    CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
+                 ValueRef::ValueRefBase<double>* x,
+                 ValueRef::ValueRefBase<double>* y,
+                 ValueRef::ValueRefBase<std::string>* name = 0);
+    CreateSystem(ValueRef::ValueRefBase<double>* x,
+                 ValueRef::ValueRefBase<double>* y,
+                 ValueRef::ValueRefBase<std::string>* name = 0);
     virtual ~CreateSystem();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase< ::StarType>*  m_type;
-    const ValueRef::ValueRefBase<double>*       m_x;
-    const ValueRef::ValueRefBase<double>*       m_y;
+    ValueRef::ValueRefBase< ::StarType>*    m_type;
+    ValueRef::ValueRefBase<double>*         m_x;
+    ValueRef::ValueRefBase<double>*         m_y;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -556,6 +584,8 @@ public:
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -566,16 +596,19 @@ private:
 class FO_COMMON_API Effect::AddSpecial : public Effect::EffectBase {
 public:
     explicit AddSpecial(const std::string& name, float capacity = 1.0f);
-    explicit AddSpecial(const ValueRef::ValueRefBase<std::string>* name,
-                        const ValueRef::ValueRefBase<double>* capacity = 0);
+    explicit AddSpecial(ValueRef::ValueRefBase<std::string>* name,
+                        ValueRef::ValueRefBase<double>* capacity = 0);
+    ~AddSpecial();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<std::string>*  m_name;
-    const ValueRef::ValueRefBase<double>*       m_capacity;
+    ValueRef::ValueRefBase<std::string>*    m_name;
+    ValueRef::ValueRefBase<double>*         m_capacity;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -586,14 +619,18 @@ private:
   * no effect if no such Special was already attached to the target object. */
 class FO_COMMON_API Effect::RemoveSpecial : public Effect::EffectBase {
 public:
-    RemoveSpecial(const std::string& name);
+    explicit RemoveSpecial(const std::string& name);
+    explicit RemoveSpecial(ValueRef::ValueRefBase<std::string>* name);
+    ~RemoveSpecial();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    std::string m_name;
+    ValueRef::ValueRefBase<std::string>*    m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -604,15 +641,17 @@ private:
   * \a other_lane_endpoint_condition */
 class FO_COMMON_API Effect::AddStarlanes : public Effect::EffectBase {
 public:
-    explicit AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
+    explicit AddStarlanes(Condition::ConditionBase* other_lane_endpoint_condition);
     virtual ~AddStarlanes();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const Condition::ConditionBase* m_other_lane_endpoint_condition;
+    Condition::ConditionBase*   m_other_lane_endpoint_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -623,15 +662,17 @@ private:
   * \a other_lane_endpoint_condition */
 class FO_COMMON_API Effect::RemoveStarlanes : public Effect::EffectBase {
 public:
-    explicit RemoveStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
+    explicit RemoveStarlanes(Condition::ConditionBase* other_lane_endpoint_condition);
     virtual ~RemoveStarlanes();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const Condition::ConditionBase* m_other_lane_endpoint_condition;
+    Condition::ConditionBase*   m_other_lane_endpoint_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -642,15 +683,17 @@ private:
   * non-System targets. */
 class FO_COMMON_API Effect::SetStarType : public Effect::EffectBase {
 public:
-    explicit SetStarType(const ValueRef::ValueRefBase<StarType>* type);
+    explicit SetStarType(ValueRef::ValueRefBase<StarType>* type);
     virtual ~SetStarType();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<StarType>* m_type;
+    ValueRef::ValueRefBase<StarType>*   m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -663,15 +706,17 @@ private:
   * nothing is done. */
 class FO_COMMON_API Effect::MoveTo : public Effect::EffectBase {
 public:
-    explicit MoveTo(const Condition::ConditionBase* location_condition);
+    explicit MoveTo(Condition::ConditionBase* location_condition);
     virtual ~MoveTo();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const Condition::ConditionBase* m_location_condition;
+    Condition::ConditionBase*   m_location_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -683,11 +728,11 @@ private:
   * rotation.*/
 class FO_COMMON_API Effect::MoveInOrbit : public Effect::EffectBase {
 public:
-    MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
-                const Condition::ConditionBase* focal_point_condition);
-    MoveInOrbit(const ValueRef::ValueRefBase<double>* speed,
-                const ValueRef::ValueRefBase<double>* focus_x = 0,
-                const ValueRef::ValueRefBase<double>* focus_y = 0);
+    MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
+                Condition::ConditionBase* focal_point_condition);
+    MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
+                ValueRef::ValueRefBase<double>* focus_x = 0,
+                ValueRef::ValueRefBase<double>* focus_y = 0);
 
     virtual ~MoveInOrbit();
 
@@ -695,11 +740,13 @@ public:
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<double>*   m_speed;
-    const Condition::ConditionBase*         m_focal_point_condition;
-    const ValueRef::ValueRefBase<double>*   m_focus_x;
-    const ValueRef::ValueRefBase<double>*   m_focus_y;
+    ValueRef::ValueRefBase<double>* m_speed;
+    Condition::ConditionBase*       m_focal_point_condition;
+    ValueRef::ValueRefBase<double>* m_focus_x;
+    ValueRef::ValueRefBase<double>* m_focus_y;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -710,11 +757,11 @@ private:
   * position on the map. */
 class FO_COMMON_API Effect::MoveTowards : public Effect::EffectBase {
 public:
-    MoveTowards(const ValueRef::ValueRefBase<double>* speed,
-                const Condition::ConditionBase* dest_condition);
-    MoveTowards(const ValueRef::ValueRefBase<double>* speed,
-                const ValueRef::ValueRefBase<double>* dest_x = 0,
-                const ValueRef::ValueRefBase<double>* dest_y = 0);
+    MoveTowards(ValueRef::ValueRefBase<double>* speed,
+                Condition::ConditionBase* dest_condition);
+    MoveTowards(ValueRef::ValueRefBase<double>* speed,
+                ValueRef::ValueRefBase<double>* dest_x = 0,
+                ValueRef::ValueRefBase<double>* dest_y = 0);
 
     virtual ~MoveTowards();
 
@@ -722,11 +769,13 @@ public:
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const ValueRef::ValueRefBase<double>*   m_speed;
-    const Condition::ConditionBase*         m_dest_condition;
-    const ValueRef::ValueRefBase<double>*   m_dest_x;
-    const ValueRef::ValueRefBase<double>*   m_dest_y;
+    ValueRef::ValueRefBase<double>* m_speed;
+    Condition::ConditionBase*       m_dest_condition;
+    ValueRef::ValueRefBase<double>* m_dest_x;
+    ValueRef::ValueRefBase<double>* m_dest_y;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -739,15 +788,17 @@ private:
   * nothing is done. */
 class FO_COMMON_API Effect::SetDestination : public Effect::EffectBase {
 public:
-    explicit SetDestination(const Condition::ConditionBase* location_condition);
+    explicit SetDestination(Condition::ConditionBase* location_condition);
     virtual ~SetDestination();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    const Condition::ConditionBase* m_location_condition;
+    Condition::ConditionBase*   m_location_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -763,8 +814,10 @@ public:
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+
 private:
-    bool m_aggressive;
+    bool    m_aggressive;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -775,11 +828,13 @@ private:
   * target object has multiple owners, nothing is done. */
 class FO_COMMON_API Effect::Victory : public Effect::EffectBase {
 public:
-    explicit Victory(const std::string& reason_string);
+    explicit Victory(const std::string& reason_string); // TODO: Make this a ValueRefBase<std::string>*
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
 
 private:
     std::string m_reason_string;
@@ -797,17 +852,19 @@ public:
                           ValueRef::ValueRefBase<double>* research_progress);
     SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>* tech_name,
                           ValueRef::ValueRefBase<double>* research_progress,
-                          const ValueRef::ValueRefBase<int>* empire_id);
+                          ValueRef::ValueRefBase<int>* empire_id);
     virtual ~SetEmpireTechProgress();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    ValueRef::ValueRefBase<std::string>*m_tech_name;
-    ValueRef::ValueRefBase<double>*     m_research_progress;
-    const ValueRef::ValueRefBase<int>*  m_empire_id;
+    ValueRef::ValueRefBase<std::string>*    m_tech_name;
+    ValueRef::ValueRefBase<double>*         m_research_progress;
+    ValueRef::ValueRefBase<int>*            m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -816,18 +873,19 @@ private:
 
 class FO_COMMON_API Effect::GiveEmpireTech : public Effect::EffectBase {
 public:
-    explicit GiveEmpireTech(const std::string& tech_name);
-    GiveEmpireTech(const std::string& tech_name,
-                   const ValueRef::ValueRefBase<int>* empire_id);
+    explicit GiveEmpireTech(ValueRef::ValueRefBase<std::string>* tech_name,
+                            ValueRef::ValueRefBase<int>* empire_id = 0);
     virtual ~GiveEmpireTech();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    std::string                         m_tech_name;
-    const ValueRef::ValueRefBase<int>*  m_empire_id;
+    ValueRef::ValueRefBase<std::string>*    m_tech_name;
+    ValueRef::ValueRefBase<int>*            m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -843,35 +901,37 @@ private:
 class FO_COMMON_API Effect::GenerateSitRepMessage : public Effect::EffectBase {
 public:
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
-                          const ValueRef::ValueRefBase<int>* recipient_empire_id,
+                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                          ValueRef::ValueRefBase<int>* recipient_empire_id,
                           EmpireAffiliationType affiliation);
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                           EmpireAffiliationType affiliation,
-                          const Condition::ConditionBase* condition = 0);
+                          Condition::ConditionBase* condition = 0);
     virtual ~GenerateSitRepMessage();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
-    const std::string&                  MessageString() const       { return m_message_string; }
-    const std::string&                  Icon() const                { return m_icon; }
-    const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >&
-                                        MessageParameters() const   { return m_message_parameters; }
-    const ValueRef::ValueRefBase<int>*  RecipientID() const         { return m_recipient_empire_id; }
-    const Condition::ConditionBase*     GetCondition() const        { return m_condition; }
-    EmpireAffiliationType               Affiliation() const         { return m_affiliation; }
+    const std::string&              MessageString() const       { return m_message_string; }
+    const std::string&              Icon() const                { return m_icon; }
+    const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >&
+                                    MessageParameters() const   { return m_message_parameters; }
+    ValueRef::ValueRefBase<int>*    RecipientID() const         { return m_recipient_empire_id; }
+    Condition::ConditionBase*       GetCondition() const        { return m_condition; }
+    EmpireAffiliationType           Affiliation() const         { return m_affiliation; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
-    std::string                                         m_message_string;
-    std::string                                         m_icon;
+    std::string                                 m_message_string;
+    std::string                                 m_icon;
     std::vector<std::pair<std::string,
-        const ValueRef::ValueRefBase<std::string>*> >   m_message_parameters;
-    const ValueRef::ValueRefBase<int>*                  m_recipient_empire_id;
-    const Condition::ConditionBase*                     m_condition;
-    EmpireAffiliationType                               m_affiliation;
+        ValueRef::ValueRefBase<std::string>*> > m_message_parameters;
+    ValueRef::ValueRefBase<int>*                m_recipient_empire_id;
+    Condition::ConditionBase*                   m_condition;
+    EmpireAffiliationType                       m_affiliation;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -881,16 +941,18 @@ private:
 /** Applies an overlay texture to Systems. */
 class FO_COMMON_API Effect::SetOverlayTexture : public Effect::EffectBase {
 public:
-    SetOverlayTexture(const std::string& texture, const ValueRef::ValueRefBase<double>* size);
+    SetOverlayTexture(const std::string& texture, ValueRef::ValueRefBase<double>* size);
     virtual ~SetOverlayTexture();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
 private:
-    std::string                             m_texture;
-    const ValueRef::ValueRefBase<double>*   m_size;
+    std::string                     m_texture;
+    ValueRef::ValueRefBase<double>* m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -905,6 +967,8 @@ public:
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
 
 private:
     std::string m_texture;
@@ -921,7 +985,6 @@ void Effect::EffectsGroup::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_scope)
         & BOOST_SERIALIZATION_NVP(m_activation)
         & BOOST_SERIALIZATION_NVP(m_stacking_group)
-        & BOOST_SERIALIZATION_NVP(m_explicit_description)
         & BOOST_SERIALIZATION_NVP(m_effects);
 }
 
@@ -941,8 +1004,6 @@ template <class Archive>
 void Effect::SetShipPartMeter::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_NVP(m_part_class)
-        & BOOST_SERIALIZATION_NVP(m_fighter_type)
         & BOOST_SERIALIZATION_NVP(m_part_name)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_value);
@@ -1006,14 +1067,16 @@ void Effect::CreatePlanet::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_type)
-        & BOOST_SERIALIZATION_NVP(m_size);
+        & BOOST_SERIALIZATION_NVP(m_size)
+        & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
 void Effect::CreateBuilding::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_NVP(m_building_type_name);
+        & BOOST_SERIALIZATION_NVP(m_building_type_name)
+        & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
@@ -1021,7 +1084,10 @@ void Effect::CreateShip::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_design_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
+        & BOOST_SERIALIZATION_NVP(m_design_id)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_species_name)
+        & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
@@ -1031,7 +1097,8 @@ void Effect::CreateField::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_field_type_name)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
-        & BOOST_SERIALIZATION_NVP(m_size);
+        & BOOST_SERIALIZATION_NVP(m_size)
+        & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>
@@ -1040,7 +1107,8 @@ void Effect::CreateSystem::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_x)
-        & BOOST_SERIALIZATION_NVP(m_y);
+        & BOOST_SERIALIZATION_NVP(m_y)
+        & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>

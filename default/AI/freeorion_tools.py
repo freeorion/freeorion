@@ -17,6 +17,22 @@ def dict_from_map(thismap):
     return {el.key(): el.data() for el in thismap}
 
 
+def get_ai_tag_grade(tag_list, tag_type):
+    '''
+    Accepts a list of string tags and a tag_type (like 'WEAPONS').
+    Checks for the first tag in the list (if any), for tag_type "TYPE",
+    having the structure AI_TAG_X_TYPE
+    and then returns 'X'
+    X is most commonly (but not necessarily) one of [NO, BAD, AVERAGE, GOOD, GREAT, ULTIMATE]
+    If no matching tags, returns empty string (which for most types should be considered equivalent to AVERAGE)
+    '''
+    for tag in tag_list:
+        parts = tag.split("_")
+        if parts[:2] == ["AI","TAG"] and [x.upper() for x in parts[3:4]] == [tag_type.upper()]:
+            return parts[2]
+    return ""
+
+
 def UserString(label, default=None):  # this name left with C naming style for compatibility with translation assistance procedures  #pylint: disable=invalid-name
     """ A translation assistance tool is intended to search for this method to identify translatable strings."""
     table_string = fo.userString(label)

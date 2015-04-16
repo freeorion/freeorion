@@ -12,7 +12,7 @@ import ResourcesAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType
 from MilitaryAI import MinThreat
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map
+from freeorion_tools import dict_from_map, get_ai_tag_grade
 
 
 ## moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -666,30 +666,17 @@ class AIstate(object):
         return self.get_rating(fleetID, forceNew=True)
 
     def get_piloting_grades(self, species_name):
-        if species_name in piloting_grades:
-            return piloting_grades[species_name]
-        weapons_grade=""
-        shields_grade=""
-        if species_name == "":
+        if species_name not in piloting_grades:
             spec_tags = []
-        else:
-            species = fo.getSpecies(species_name)
-            if species:
-                spec_tags = species.tags
-            else:
-                print "Error: get_piloting_grades couldn't retrieve species '%s'" % species_name
-                spec_tags = []
-        for tag in spec_tags:
-            if "AI_TAG" not in tag:
-                continue
-            tag_parts = tag.split('_')
-            tag_type = tag_parts[3]
-            if tag_type == 'WEAPONS':
-                weapons_grade = tag_parts[2]
-            elif tag_type == 'SHIELDS':
-                shields_grade = tag_parts[2]
-        piloting_grades[species_name] = (weapons_grade, shields_grade)
-        return weapons_grade, shields_grade
+            if species_name:
+                species = fo.getSpecies(species_name)
+                if species:
+                    spec_tags = species.tags
+                else:
+                    print "Error: get_piloting_grades couldn't retrieve species '%s'" % species_name
+            piloting_grades[species_name] = (get_ai_tag_grade(spec_tags,'WEAPONS'),
+                                             get_ai_tag_grade(spec_tags, 'SHIELDS'))
+        return piloting_grades[species_name]
 
     def weight_attacks(self, attacks, grade):
         """re-weights attacks based on species piloting grade"""

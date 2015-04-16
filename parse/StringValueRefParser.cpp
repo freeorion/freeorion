@@ -19,12 +19,13 @@ namespace { struct string_parser_rules {
                 ;
 
             constant
-                =   tok.string [ _val = new_<ValueRef::Constant<std::string> >(_1) ]
+                =   tok.string          [ _val = new_<ValueRef::Constant<std::string> >(_1) ]
+                |   tok.CurrentContent_ [ _val = new_<ValueRef::Constant<std::string> >(_1) ]
                 ;
 
             free_variable
-                =   tok.Value_      [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
-                |   tok.GalaxySeed_ [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+                =   tok.Value_          [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+                |   tok.GalaxySeed_     [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
                 ;
 
             initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name);

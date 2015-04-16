@@ -207,6 +207,8 @@ namespace {
     bool                    ObjectInField(const Field& field, const UniverseObject& obj)
     { return field.InField(obj.X(), obj.Y()); }
     bool                    (Field::*LocationInField)(double x, double y) const =               &Field::InField;
+
+    float                   (Special::*SpecialInitialCapacityOnObject)(int) const =             &Special::InitialCapacity;
 }
 
 namespace FreeOrionPython {
@@ -440,8 +442,7 @@ namespace FreeOrionPython {
             .def("name",                        make_function(&ShipDesign::Name,            return_value_policy<copy_const_reference>()))
             .def("description",                 make_function(&ShipDesign::Description,     return_value_policy<copy_const_reference>()))
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,  return_value_policy<return_by_value>()))
-            .add_property("battleSpeed",        make_function(&ShipDesign::BattleSpeed,     return_value_policy<return_by_value>()))
-            .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,   return_value_policy<return_by_value>()))
+            .add_property("starlaneSpeed",      make_function(&ShipDesign::Speed,           return_value_policy<return_by_value>()))
             .add_property("structure",          make_function(&ShipDesign::Structure,       return_value_policy<return_by_value>()))//since defense does not include Hull
             .add_property("shields",            make_function(&ShipDesign::Shields,         return_value_policy<return_by_value>()))
             .add_property("defense",            make_function(&ShipDesign::Defense,         return_value_policy<return_by_value>()))
@@ -485,7 +486,7 @@ namespace FreeOrionPython {
             .add_property("structure",          &HullType::Structure)
             .add_property("stealth",            &HullType::Stealth)
             .add_property("fuel",               &HullType::Fuel)
-            .add_property("starlaneSpeed",      &HullType::StarlaneSpeed)
+            .add_property("starlaneSpeed",      &HullType::Speed)
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
             .add_property("slots",              make_function(
                                                     HullSlotsFunc,
@@ -607,6 +608,7 @@ namespace FreeOrionPython {
             .add_property("spawnrate",          make_function(&Special::SpawnRate,      return_value_policy<return_by_value>()))
             .add_property("spawnlimit",         make_function(&Special::SpawnLimit,     return_value_policy<return_by_value>()))
             .add_property("dump",               &Special::Dump)
+            .def("initialCapacity",             SpecialInitialCapacityOnObject)
         ;
         def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>());
 

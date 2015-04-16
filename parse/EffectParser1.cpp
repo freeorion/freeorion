@@ -45,12 +45,10 @@ namespace {
                 ;
 
             give_empire_tech
-                =    tok.GiveEmpireTech_
-                >    parse::label(Name_token) >   tok.string [ _a = _1 ]
-                >    (
-                        (parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::GiveEmpireTech>(_a, _1) ])
-                     |   eps [ _val = new_<Effect::GiveEmpireTech>(_a) ]
-                     )
+                =   (   tok.GiveEmpireTech_
+                    >   parse::label(Name_token) >      string_value_ref [ _d = _1 ]
+                    > -(parse::label(Empire_token) >    int_value_ref    [ _b = _1 ])
+                    ) [ _val = new_<Effect::GiveEmpireTech>(_d, _b) ]
                 ;
 
             set_empire_tech_progress
@@ -157,7 +155,8 @@ namespace {
             qi::locals<
                 std::string,
                 ValueRef::ValueRefBase<int>*,
-                ValueRef::ValueRefBase<int>*
+                ValueRef::ValueRefBase<int>*,
+                ValueRef::ValueRefBase<std::string>*
             >,
             parse::skipper_type
         > string_and_intref_and_intref_rule;
@@ -179,13 +178,13 @@ namespace {
             qi::locals<
                 std::string,
                 std::string,
-                std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >,
+                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >,
                 EmpireAffiliationType
             >,
             parse::skipper_type
         > generate_sitrep_message_rule;
 
-        typedef std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> string_and_string_ref_pair;
+        typedef std::pair<std::string, ValueRef::ValueRefBase<std::string>*> string_and_string_ref_pair;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,

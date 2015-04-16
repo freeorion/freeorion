@@ -1911,13 +1911,13 @@ Tech
             scope = And [
                 Ship
                 OwnedBy empire = Source.Owner
-                StarlaneSpeed low = 1 // Immobile objects do not get the starlane speed boost.
+                Speed low = 1 // Immobile objects do not get the starlane speed boost.
                 WithinDistance distance = 50 condition = And [
                     Planet
                     OwnedBy empire = Source.Owner
                 ]
             ]
-        effects = SetStarlaneSpeed value = Value + 20
+        effects = SetSpeed value = Value + 20
     graphic = "icons/tech/stellar_navigation.png"
     
 //########################################################
@@ -2160,7 +2160,7 @@ Tech
     prerequisites = [
         "SHP_MINIAST_SWARM"
         "SHP_HEAVY_AST_HULL"
-	]
+    ]
     unlock = [
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
