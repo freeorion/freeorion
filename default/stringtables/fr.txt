@@ -116,6 +116,10 @@ Flotte %1%
 NEW_FLEET_NAME_NO_NUMBER
 Flotte
 
+# used to generate name for effect-created planets. %1% is the system name.
+NEW_PLANET_NAME
+Nova %1%
+
 EMPTY_SPACE
 Espace Interstellaire
 
@@ -1011,6 +1015,9 @@ Fixe le niveau minimal de zoom auquel les icônes des flottes minuscules apparai
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de flottes sélectionnées, relativement à celle de ces dernières.
+
+OPTIONS_DB_SHOW_FLEET_ETA
+Afficher l'ETA d'une flotte (pour les flottes en mouvement) dans la Fenêtre des Flottes.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de système stellaire sélectionnées, relativement à celle de ces dernières.
@@ -2245,6 +2252,14 @@ Régler focus
 RP_FOCUS_TOOLTIP
 Focus %1%
 
+## Specials Panel ##########
+
+SPECIAL_CAPACITY
+Capacité : %1%
+
+ADDED_ON_TURN
+Disponible depuis Tour : %1%
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -2270,7 +2285,7 @@ TT_CHANGE
 Évolution
 
 TT_BREAKDOWN_SUMMARY
-'''%1% : %2% '''
+%1% : %2%
 
 TT_TARGETS_BREAKDOWN_SUMMARY
 %1% Modifications : %2%
@@ -2324,6 +2339,9 @@ Dans %1%
 FW_FLEET_MOVING_TO
 En route vers %1%
 
+FW_FLEET_MOVING_TO_ETA
+En route vers %1% (ETA %2%)
+
 FW_FLEET_EXPLORING_REFUEL
 En attente de carburant
 
@@ -2361,7 +2379,7 @@ FW_AUTO_DESC
 Attribe automatiquement un comportement belliqueux à toute nouvelle flotte si celle-ci est équipée d'armes.
 
 FW_SHIP_CLASS
-'''Classe d'astronef '''
+Classe d'astronef
 
 FW_UNKNOWN_DESIGN_NAME
 Conception inconnue
@@ -4054,7 +4072,7 @@ SITREP_VICTORY_DESTRUCTION_LABEL
 Victoire par Éradication
 
 SITREP_VICTORY_CAPTURE
-'''Victoire! Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, sont désormais sous votre contrôle. Vous pouvez continuer la partie si vous le désirez. '''
+Victoire! Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, sont désormais sous votre contrôle. Vous pouvez continuer la partie si vous le désirez.
 SITREP_VICTORY_CAPTURE_LABEL
 Victoire par Capture
 
@@ -4107,6 +4125,11 @@ EFFECT_ANCIENT_TECH_RUMORS
 Une rumeur se propageant dans toute la galaxie prétend qu'une technologie %tech% a été découverte par une expédition xénoarchéologique au sein de Ruines Ancestrales!
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Rumeur de technologie ancestrale
+
+EFFECT_ANCIENT_RUINS_EMPTY
+Sur %planet%, des Ruines Ancestrales ont été excavées, mais ne révélant que de faibles traces d'une technologie ancestrale.
+EFFECT_ANCIENT_RUINS_EMPTY_LABEL
+Fouille infructueuse de Ruines Ancestrales
 
 EFFECT_CONC_CAMP_COMLETE
 L'épuration ethnique est achevée sur la planète %planet%.
@@ -5280,7 +5303,7 @@ DIM_RIFT_SLAVE_SPECIAL_DESC
 Cette planète est partiellement dissimulée dans une faille dimensionnelle, ce qui accroît de 60 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que le [[tech SPY_STEALTH_3]].
 
 VOID_MASTER_SPECIAL
-'''Monstres du Vide '''
+Monstres du Vide
 VOID_MASTER_SPECIAL_DESC
 Des monstres évoluant au coeur de la planète l'entraînent dans le Vide. Une catastrophe imminente pourrait peut-être découler de cette Particularité.
 
@@ -5630,31 +5653,31 @@ METER_SIZE
 Taille
 
 ALIGN_MILITARISM
-'''Militarisme '''
+Militarisme
 
 ALIGN_MILITARY_STRENGTH_DESC
-'''Grandeur et puissance des forces militaires '''
+Grandeur et puissance des forces militaires
 
 ALIGN_SOCIAL_CONTROL
-'''Contrôle social '''
+Contrôle social
 
 ALIGN_SOCIAL_CONTROL_DESC
 Degré auquel une population est surveillée, contrôlée et manipulée.
 
 ALIGN_ENVIRONMENT_MODIFICATION
-'''Modification de l'environnement '''
+Modification de l'environnement
 
 ALIGN_ENVIRONMENT_MODIFICATION_DESC
 Usage de la terraformation ou autres actions environnementales à grande échelle.
 
 ALIGN_BIOLOGICAL_ALTERATION
-'''Modification biologique '''
+Modification biologique
 
 ALIGN_BIOLOGICAL_ALTERATION_DESC
 Usage de la modification et de l'ingéniérie biologique.
 
 ALIGN_MECHANIZATION
-'''Mécanisation '''
+Mécanisation
 
 ALIGN_MECHANIZATION_DESC
 Usage de sens artificiels et de l'automatisation
@@ -6174,6 +6197,12 @@ DESC_SPECIAL
 DESC_SPECIAL_NOT
 ''' qui ne présente pas la Particularité %1%'''
 
+DESC_SPECIAL_CAPACITY_RANGE
+''' qui présente une Particularité %1% ayant une capacité comprise entre %2% et %3%'''
+
+DESC_SPECIAL_CAPACITY_RANGE_NOT
+''' qui ne présente pas une Particularité %1% ayant une capacité comprise entre %2% et %3%'''
+
 DESC_SPECIAL_TURN_RANGE
 ''' qui présente une Particularité %1% depuis l'entre-tour %2%-%3%'''
 
@@ -6217,7 +6246,7 @@ DESC_SPECIES
 ''' qui héberge l'espèce %1%'''
 
 DESC_SPECIES_NOT
-''' qui n'heberge pas l'espèce %1%'''
+''' qui n'héberge pas l'espèce %1%'''
 
 DESC_ENQUEUED
 ''' où l'empire %1% a entre %2% et %3% projets dans la file d'attente de production'''
@@ -6623,7 +6652,7 @@ LRN_NDIM_SUBSPACE_DESC
 Les premiers théoriciens des super-cordes mentionnaient des univers à 10, 11 ou 26 dimensions, mais chacun d'eux présentaient 4 macro-dimensions "imbriquées" si étroitement qu'elles demeuraient invisibles. Ces dernières et d'autres dimensions de même type peuvent désormais être séparées et ouvertes: la surface de l'espace lui-même peut être étiré et transpercé par de la matière en mouvement, en direction ou en provenance de niveaux d'existence précédemment dissimulés sous la surface de notre perception limitée. Cette manipulation des macro-dimensions est à même de créer de nouvelles couches ou bulles dimensionnelles, où seul le néant faisait loi auparavant.
 
 LRN_UNIF_CONC
-'''Conscience Unifiée '''
+Conscience Unifiée
 
 LRN_UNIF_CONC_DESC
 '''En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, leurs actions étant parfaitement unifiées et orientées pour le bien de l'ensemble.
@@ -6879,7 +6908,7 @@ The primary limiting factors on a planets population capacity are environmental 
 Of all the bizarre feats of applied physics, the ability to to fold space onto itself has the most direct and profound influence on structural form and design. The potential is endless, literally as hallways are made to bend back upon their beginning, or given a twist so that their ceiling becomes their floor. As well, the concept of urban sprawl becomes laughable, as any number of people may fit into an arbitrarily small volume, safely tucked into an adjacent plane of existence.'''
 
 SHP_GAL_EXPLO
-'''Exploration Galactique '''
+Exploration Galactique
 
 SHP_GAL_EXPLO_DESC
 La découverte du voyage interstellaire par liaisons spatiales inaugure une nouvelle ère de développement de la société. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entière est confrontée au possibilités illimitées des étoiles ... la croissance et la prospérité, ou la destruction totale.
@@ -7126,7 +7155,7 @@ GRO_REMOTE_TERRAFORM_SHORT_DESC
 Permet la terraformation à distance
 
 GRO_CYBORG_DESC
-'''Accroît le plafond de population des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
+'''Accroît le plafond de population des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5. Accroît l'[[encyclopedia TROOP_TITLE]] max de 0.2 par population sur toutes les planètes.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
@@ -7246,7 +7275,7 @@ DEF_ROOT_DEFENSE
 Défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Augmente de 2 le max [[encyclopedia TROOP_TITLE]] sur toutes les planètes de l'empire.
+'''Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.2 par population sur toutes les planètes de l'empire.
 
 Le concept de 'Défense' est à la racine de maints développements technologiques.'''
 
@@ -7620,7 +7649,7 @@ BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
 
 BLD_IMPERIAL_PALACE
-'''Palais Impérial '''
+Palais Impérial
 
 BLD_IMPERIAL_PALACE_DESC
 '''Augmente la porté des lignes d'[[encyclopedia SUPPLY_TITLE]] de 1, l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5 et l'[[encyclopedia TROOP_TITLE]] de 3. Sa place définit également la capitale de l'empire.
@@ -7993,10 +8022,10 @@ PART_DESC_STRENGTH
 Résistance : %1%
 
 PART_DESC_SHIELD_STRENGTH
-Résistance Bouclier: %1%
+Résistance Bouclier : %1%
 
 PART_DESC_DETECTION
-Puissance Détection: %1%
+Puissance Détection : %1%
 # Detection Range: %2%
 
 PART_DESC_DIRECT_FIRE_STATS
@@ -8350,6 +8379,14 @@ Module d'Infanterie
 
 GT_TROOP_POD_DESC
 '''Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être déployés sur une planète. 
+  * Les troupes d'infanterie ne peuvent être utilisées que pour une seule invasion.  
+  * Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et périlleux, ce qui les rend inutilisables par la suite.'''
+
+GT_TROOP_POD_2
+Module d'Infanterie Avancée
+
+GT_TROOP_POD_2_DESC
+'''Transporte 4 unités d'[[encyclopedia TROOP_TITLE]] cybernétique et l'équipement pouvant être déployés sur une planète.
   * Les troupes d'infanterie ne peuvent être utilisées que pour une seule invasion.  
   * Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et périlleux, ce qui les rend inutilisables par la suite.'''
 
@@ -8825,7 +8862,7 @@ ULTIMATE_SUPPLY
 ++	Parfait en [[encyclopedia SUPPLY_TITLE]] : +3
 
 BROAD_EP
-++	Grande adaptabilité : s'acclimate à plus de types planétaires.
+++	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
 
 NARROW_EP
 −	Faible adaptabilité : s'acclimate à moins de types planétaires.
