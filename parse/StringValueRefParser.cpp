@@ -20,7 +20,15 @@ namespace { struct string_parser_rules {
 
             constant
                 =   tok.string          [ _val = new_<ValueRef::Constant<std::string> >(_1) ]
-                |   tok.CurrentContent_ [ _val = new_<ValueRef::Constant<std::string> >(_1) ]
+                |  (    tok.CurrentContent_
+                    |   tok.ThisBuilding_
+                    |   tok.ThisField_
+                    |   tok.ThisHull_
+                    |   tok.ThisPart_   // various aliases for this reference in scripts, allowing scripter to use their preference
+                    |   tok.ThisTech_
+                    |   tok.ThisSpecies_
+                    |   tok.ThisSpecial_
+                   ) [ _val = new_<ValueRef::Constant<std::string> >("CurrentContent") ]
                 ;
 
             free_variable
@@ -48,7 +56,7 @@ namespace { struct string_parser_rules {
                 ;
 
             bound_variable_name.name("string bound_variable name (e.g., Name)");
-            constant.name("string");
+            constant.name("quoted string or CurrentContent");
             free_variable.name("free string variable");
             bound_variable.name("string bound_variable");
             statistic.name("string statistic");
