@@ -134,7 +134,9 @@ Fleet %1%
 NEW_FLEET_NAME_NO_NUMBER
 Fleet
 
-# used to generate name for effect-created planets. %1% is the system name.
+# used to generate name for effect-created planets, when no name = (string) is specified.
+# For this, and any other effect-created object, with specified or default strings for the name,
+# and when each exists: %1% is the system name, %2% is the target object name, and %3% is the source object name
 NEW_PLANET_NAME
 %1% Nova
 
