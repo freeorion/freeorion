@@ -77,7 +77,6 @@ namespace {
         int result = AIInterface::IssueCreateShipDesignOrder(name, description, hull, parts, icon, model, nameDescInStringTable);
         return result;
     }
-    
 }
 
 
