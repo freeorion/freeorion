@@ -81,16 +81,20 @@ void StringTable_::Load() {
     const sregex KEY = IDENTIFIER;
     const sregex SINGLE_LINE_VALUE = *(~_n);
     const sregex MULTI_LINE_VALUE = -*_;
+
     const sregex ENTRY =
         *(space | COMMENT) >>
-        KEY >> _n >>
+        KEY >> (_n | *space >> COMMENT) >>
         (("'''" >> MULTI_LINE_VALUE >> "'''" >> *space >> _n) | SINGLE_LINE_VALUE >> _n);
+
     const sregex TRAILING_WS =
         *(space | COMMENT);
+
     const sregex REFERENCE =
-        "[[" >> *space >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> *space >> "]]";
+        "[[" >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> "]]";
+
     const sregex KEYEXPANSION =
-        "[[" >> *space >> (s1 = IDENTIFIER) >> *space >> "]]";
+        "[[" >> (s1 = IDENTIFIER) >> "]]";
 
     // parse input text stream
     std::string::iterator it = file_contents.begin();
