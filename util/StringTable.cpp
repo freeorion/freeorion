@@ -102,6 +102,7 @@ void StringTable_::Load() {
 
     smatch matches;
     bool well_formed = false;
+    std::string key, prev_key;
     try {
         // grab first line of file, which should be the name of this language
         well_formed = regex_search(it, end, matches, SINGLE_LINE_VALUE, regex_constants::match_continuous);
@@ -115,7 +116,6 @@ void StringTable_::Load() {
             it = end - matches.suffix().length();
 
             if (well_formed) {
-                std::string key;
                 for (smatch::nested_results_type::const_iterator match_it = matches.nested_results().begin();
                      match_it != matches.nested_results().end(); ++match_it)
                 {
@@ -133,7 +133,8 @@ void StringTable_::Load() {
                                                    << "' in file: '" << m_filename
                                                    << "'.  Ignoring duplicate.";
                         }
-                        key = "";
+                        prev_key = key;
+                        key.clear();
                     }
                 }
             }
@@ -145,7 +146,9 @@ void StringTable_::Load() {
         well_formed = it == end;
     } catch (std::exception& e) {
         ErrorLogger() << "Exception caught regex parsing Stringtable: " << e.what();
+        ErrorLogger() << "Last and prior keys matched: " << key << ", " << prev_key;
         std::cerr << "Exception caught regex parsing Stringtable: " << e.what() << std::endl;
+        std::cerr << "Last and prior keys matched: " << key << ", " << prev_key << std::endl;
         return;
     }
 
