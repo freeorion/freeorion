@@ -77,24 +77,24 @@ void StringTable_::Load() {
     using namespace boost::xpressive;
 
     const sregex IDENTIFIER = +_w;
-    const sregex COMMENT = '#' >> *(~_n) >> _n;
+    const sregex COMMENT = keep('#' >> *(~_n) >> _n);
     const sregex KEY = IDENTIFIER;
     const sregex SINGLE_LINE_VALUE = *(~_n);
     const sregex MULTI_LINE_VALUE = -*_;
 
     const sregex ENTRY =
         *(space | COMMENT) >>
-        KEY >> (_n | *space >> COMMENT) >>
+        KEY >> *blank >> (_n | COMMENT) >>
         (("'''" >> MULTI_LINE_VALUE >> "'''" >> *space >> _n) | SINGLE_LINE_VALUE >> _n);
 
     const sregex TRAILING_WS =
         *(space | COMMENT);
 
     const sregex REFERENCE =
-        "[[" >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> "]]";
+        keep("[[" >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> "]]");
 
     const sregex KEYEXPANSION =
-        "[[" >> (s1 = IDENTIFIER) >> "]]";
+        keep("[[" >> (s1 = IDENTIFIER) >> "]]");
 
     // parse input text stream
     std::string::iterator it = file_contents.begin();
