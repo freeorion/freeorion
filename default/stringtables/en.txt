@@ -8741,6 +8741,7 @@ Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
 '''Initially provides a bonus to [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus by 0.2 per Population.
+Multiple copies in the same supply connection do not stack.
 
 [[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
 
@@ -8783,6 +8784,7 @@ Collective Thought Network
 
 BLD_COLLECTIVE_NET_DESC
 '''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
+Multiple copies in the same supply connection do not stack.
 
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
@@ -8799,6 +8801,7 @@ Enclave of the Void
 
 BLD_ENCLAVE_VOID_DESC
 '''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.75 per Population.
+Multiple copies do not stack.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
 
@@ -8813,6 +8816,7 @@ Hyperspatial Dam
 
 BLD_HYPER_DAM_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 0.4 per Population, but decreases Population on such planets by 5.
+Multiple copies in the same supply connection do not stack.
 
 A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
 
@@ -8826,7 +8830,8 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population for Blue and White, Yellow and Orange, or Red stars, respectively.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population when build in systems with Blue/White, Yellow/Orange, or Red stars, respectively.
+Multiple copies in the same supply connection do not stack. The best bonus apllies.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an outpost.'''
 
@@ -8898,7 +8903,10 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population. This building can be built at an outpost, but must be in a black hole system.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population. 
+Multiple copies in the same supply connection do not stack.
+
+This building can be built at an outpost, but must be in a black hole system.'''
 
 BLD_REPLICATORS
 Replicators
@@ -8992,7 +9000,8 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system. Multiple generators in the same system do not stack.
+'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system.
+Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
 
