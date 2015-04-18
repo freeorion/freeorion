@@ -24,14 +24,24 @@ namespace {
         if (stringtable_filename.empty())
             stringtable_filename = GetStringTableFileName();
 
+        // ensure the default stringtable is loaded first
+        std::map<std::string, const StringTable_*>::const_iterator default_stringtable_it =
+            stringtables.find(GetDefaultStringTableFileName());
+        if (default_stringtable_it == stringtables.end()) {
+            const StringTable_* table = new StringTable_(GetDefaultStringTableFileName());
+            stringtables[GetDefaultStringTableFileName()] = table;
+            default_stringtable_it = stringtables.find(GetDefaultStringTableFileName());
+        }
+
         // attempt to find requested stringtable...
         std::map<std::string, const StringTable_*>::const_iterator it =
             stringtables.find(stringtable_filename);
         if (it != stringtables.end())
             return *(it->second);
 
-        // if already loaded, load, store, and return
-        const StringTable_* table = new StringTable_(stringtable_filename);
+        // if not already loaded, load, store, and return,
+        // using default stringtable for fallback expansion lookups
+        const StringTable_* table = new StringTable_(stringtable_filename, default_stringtable_it->second);
         stringtables[stringtable_filename] = table;
 
         return *table;

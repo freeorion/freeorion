@@ -21,9 +21,9 @@ StringTable_::StringTable_():
     m_filename(S_DEFAULT_FILENAME)
 { Load(); }
 
-StringTable_::StringTable_(const std::string& filename):
+StringTable_::StringTable_(const std::string& filename, const StringTable_* lookups_fallback_table /* = 0 */):
     m_filename(filename)
-{ Load(); }
+{ Load(lookups_fallback_table); }
 
 StringTable_::~StringTable_()
 {}
@@ -64,7 +64,7 @@ namespace {
     }
 }
 
-void StringTable_::Load() {
+void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
     boost::filesystem::path path = FilenameToPath(m_filename);
     std::string file_contents;
 
@@ -72,6 +72,12 @@ void StringTable_::Load() {
     if (!read_success) {
         ErrorLogger() << "StringTable_::Load failed to read file at path: " << path.string();
         return;
+    }
+    std::map<std::string, std::string> fallback_lookup_strings;
+    std::string fallback_table_file;
+    if (lookups_fallback_table) {
+        fallback_table_file = lookups_fallback_table->Filename();
+        fallback_lookup_strings.insert(lookups_fallback_table->GetStrings().begin(), lookups_fallback_table->GetStrings().end());
     }
 
     using namespace boost::xpressive;
@@ -191,7 +197,14 @@ void StringTable_::Load() {
                     //DebugLogger() << "Pushing to cyclic ref check: " << match[1];
                     cyclic_reference_check[match[1]] = position + match.length();
                     std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[1]);
-                    if (map_lookup_it != m_strings.end()) {
+                    bool foundmatch = map_lookup_it != m_strings.end();
+                    if (!foundmatch && lookups_fallback_table) {
+                        DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename 
+                                      << "; checking in fallback file" << fallback_table_file;
+                        map_lookup_it = fallback_lookup_strings.find(match[1]);
+                        foundmatch = map_lookup_it != fallback_lookup_strings.end();
+                    }
+                    if (foundmatch) {
                         const std::string substitution = map_lookup_it->second;
                         cumulative_subsititions += substitution + "|**|";
                         map_it->second.replace(position, match.length(), substitution);
@@ -226,7 +239,14 @@ void StringTable_::Load() {
             while (regex_search(map_it->second.begin() + position, map_it->second.end(), match, REFERENCE)) {
                 position += match.position();
                 std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[2]);
-                if (map_lookup_it != m_strings.end()) {
+                bool foundmatch = map_lookup_it != m_strings.end();
+                if (!foundmatch && lookups_fallback_table) {
+                    DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename 
+                                  << "; checking in fallback file" << fallback_table_file;
+                    map_lookup_it = fallback_lookup_strings.find(match[2]);
+                    foundmatch = map_lookup_it != fallback_lookup_strings.end();
+                }
+                if (foundmatch) {
                     const std::string substitution =
                         '<' + match[1].str() + ' ' + match[2].str() + '>' + map_lookup_it->second + "</" + match[1].str() + '>';
                     map_it->second.replace(position, match.length(), substitution);
