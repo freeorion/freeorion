@@ -77,13 +77,13 @@ void StringTable_::Load() {
     using namespace boost::xpressive;
 
     const sregex IDENTIFIER = +_w;
-    const sregex COMMENT = keep('#' >> *(~_n) >> _n);
+    const sregex COMMENT = '#' >> *(~_n) >> _n;
     const sregex KEY = IDENTIFIER;
     const sregex SINGLE_LINE_VALUE = *(~_n);
     const sregex MULTI_LINE_VALUE = -*_;
 
     const sregex ENTRY =
-        *(space | COMMENT) >>
+        keep(*(space | +COMMENT)) >>
         KEY >> *blank >> (_n | COMMENT) >>
         (("'''" >> MULTI_LINE_VALUE >> "'''" >> *space >> _n) | SINGLE_LINE_VALUE >> _n);
 
