@@ -436,6 +436,13 @@
     (TestValue)                                 \
     (TheEmpire)                                 \
     (Theory)                                    \
+    (ThisBuilding)                              \
+    (ThisField)                                 \
+    (ThisHull)                                  \
+    (ThisPart)                                  \
+    (ThisTech)                                  \
+    (ThisSpecies)                               \
+    (ThisSpecial)                               \
     (Tiny)                                      \
     (TopPriorityEnqueuedTech)                   \
     (TopPriorityResearchableTech)               \

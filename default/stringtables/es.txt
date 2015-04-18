@@ -68,6 +68,8 @@ Nueva Flota %1%
 NEW_FLEET_NAME_NO_NUMBER
 Nueva Flota
 
+# used to generate name for effect-created planets. %1% is the system name.
+
 BOMBER
 Bombardero
 
@@ -1339,6 +1341,8 @@ Seleccionar colonizador
 RP_FOCUS_TOOLTIP
 Enfoque: %1%
 
+## Specials Panel ##########
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -1828,19 +1832,19 @@ COMBAT_PLANETS
 Planetas
 
 COMBAT_REMAINING
- Restantes
+''' Restantes'''
 
 COMBAT_RETREATED
- Retirada
+''' Retirada'''
 
 COMBAT_DESTROYED
- Destruido
+''' Destruido'''
 
 COMBAT_DEFENSELESS
- Indefenso
+''' Indefenso'''
 
 COMBAT_LOST
- ¡Destruido!
+''' ¡Destruido!'''
 
 ####################
 # TurnProgress     #
@@ -2392,185 +2396,185 @@ Crea una nueva nave del diseño %1% que pertenece al imperio %2%
 # Conditions
 
 DESC_ALL
- en el universo
+''' en el universo'''
 
 DESC_EMPIRE_AFFILIATION_SELF
- que pertenece al imperio %1%
+''' que pertenece al imperio %1%'''
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- que no pertenece al imperio %1%
+''' que no pertenece al imperio %1%'''
 
 DESC_EMPIRE_AFFILIATION
- que pertenece a un %1% del imperio %2%
+''' que pertenece a un %1% del imperio %2%'''
 
 DESC_EMPIRE_AFFILIATION_NOT
- que no pertenece a un %1% del %2% imperio
+''' que no pertenece a un %1% del %2% imperio'''
 
 DESC_HOMEWORLD
- que es un mundo hogar
+''' que es un mundo hogar'''
 
 DESC_HOMEWORLD_NOT
- que no es un mundo hogar
+''' que no es un mundo hogar'''
 
 DESC_CAPITAL
- que es un planeta capital del imperio
+''' que es un planeta capital del imperio'''
 
 DESC_CAPITAL_NOT
- que no es un planeta capital del imperio
+''' que no es un planeta capital del imperio'''
 
 DESC_TYPE
- que es un %1%
+''' que es un %1%'''
 
 DESC_TYPE_NOT
- que no es un %1%
+''' que no es un %1%'''
 
 DESC_BUILDING
- que contiene un edificio %1%
+''' que contiene un edificio %1%'''
 
 DESC_BUILDING_NOT
- que no contiene un edificio %1%
+''' que no contiene un edificio %1%'''
 
 DESC_SPECIAL
- que tiene un especial %1%
+''' que tiene un especial %1%'''
 
 DESC_SPECIAL_NOT
- que no tiene un especial %1%
+''' que no tiene un especial %1%'''
 
 DESC_CONTAINS
- que contiene un objeto%1%
+''' que contiene un objeto%1%'''
 
 DESC_CONTAINS_NOT
- que no contiene un objeto%1%
+''' que no contiene un objeto%1%'''
 
 DESC_PLANET_TYPE
- que es un planeta %1%
+''' que es un planeta %1%'''
 
 DESC_PLANET_TYPE_NOT
- que no es un planeta %1%
+''' que no es un planeta %1%'''
 
 DESC_PLANET_SIZE
- que es un planeta %1%
+''' que es un planeta %1%'''
 
 DESC_PLANET_SIZE_NOT
- que no es un planeta %1%
+''' que no es un planeta %1%'''
 
 DESC_PLANET_ENVIRONMENT
- que es un planeta %1%
+''' que es un planeta %1%'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- que no es un planeta %1%
+''' que no es un planeta %1%'''
 
 DESC_SPECIES
- que contiene especies %1%
+''' que contiene especies %1%'''
 
 DESC_SPECIES_NOT
- que no contiene especies %1%
+''' que no contiene especies %1%'''
 
  
 
 DESC_FOCUS_TYPE
- que tiene un enfoque %1%
+''' que tiene un enfoque %1%'''
 
 DESC_FOCUS_TYPE_NOT
- que no tiene un enfoque %1%
+''' que no tiene un enfoque %1%'''
 
 DESC_STAR_TYPE
- que tiene un sistema con una estrella %1%
+''' que tiene un sistema con una estrella %1%'''
 
 DESC_STAR_TYPE_NOT
- que no tiene un sistema con una estrella %1%
+''' que no tiene un sistema con una estrella %1%'''
 
 DESC_DESIGN_HAS_HULL
- que contiene un casco %1%
+''' que contiene un casco %1%'''
 
 DESC_DESIGN_HAS_HULL_NOT
- que no contiene un casco %1%
+''' que no contiene un casco %1%'''
 
 DESC_DESIGN_HAS_PART
- que contiene entre %1% y %2% de la parte %3%
+''' que contiene entre %1% y %2% de la parte %3%'''
 
 DESC_DESIGN_HAS_PART_NOT
- que no contiene entre %1% y %2% de la parte %3%
+''' que no contiene entre %1% y %2% de la parte %3%'''
 
 DESC_CHANCE_PERCENTAGE
- una posibilidad entre %1%%%
+''' una posibilidad entre %1%%%'''
 
 DESC_CHANCE_PERCENTAGE_NOT
- en una (100 - %1%)%% posibilidad
+''' en una (100 - %1%)%% posibilidad'''
 
 DESC_CHANCE
- con una probabilidad del %1%
+''' con una probabilidad del %1%'''
 
 DESC_CHANCE_NOT
- con una probabilidad del 1 - %1%
+''' con una probabilidad del 1 - %1%'''
 
 DESC_METER_VALUE_CURRENT
- que tiene un valor actual %1% entre %2% y %3%
+''' que tiene un valor actual %1% entre %2% y %3%'''
 
 DESC_METER_VALUE_CURRENT_NOT
- que no tiene un valor actual %1% entre %2% y %3%
+''' que no tiene un valor actual %1% entre %2% y %3%'''
 
 DESC_EMPIRE_STOCKPILE_VALUE
- que pertenece a un imperio con unas existencias %1% entre %2% y %3%
+''' que pertenece a un imperio con unas existencias %1% entre %2% y %3%'''
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
- que no pertenece a un imperio con unas existencias %1% entre %2% y %3%
+''' que no pertenece a un imperio con unas existencias %1% entre %2% y %3%'''
 
 DESC_WITHIN_DISTANCE
- que esta entre %1% uno de los objetos%2%
+''' que esta entre %1% uno de los objetos%2%'''
 
 DESC_WITHIN_DISTANCE_NOT
- que no esta entre %1% uno de los objetos%2%
+''' que no esta entre %1% uno de los objetos%2%'''
 
 DESC_WITHIN_STARLANE_JUMPS
- que esta a %1% saltos de líneas estelares de cualquier objeto%2%
+''' que esta a %1% saltos de líneas estelares de cualquier objeto%2%'''
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
- que no esta a %1% saltos de líneas estelares de cualquier objeto%2%
+''' que no esta a %1% saltos de líneas estelares de cualquier objeto%2%'''
 
 DESC_STATIONARY
- que es estacionario
+''' que es estacionario'''
 
 DESC_STATIONARY_NOT
- que no es estacionario
+''' que no es estacionario'''
 
  
 
 DESC_AND_BETWEEN_OPERANDS
- y
+''' y'''
 
 DESC_OR_BETWEEN_OPERANDS
- o
+''' o'''
 
 DESC_TURN
- cuando el actual turno esta entre %1% y %2%
+''' cuando el actual turno esta entre %1% y %2%'''
 
 DESC_TURN_NOT
- cuando el actual turno no esta entre %1% y %2%
+''' cuando el actual turno no esta entre %1% y %2%'''
 
 DESC_NUMBER_OF
- que es uno de %1% objetos%2%
+''' que es uno de %1% objetos%2%'''
 
 DESC_NUMBER_OF_NOT
- que no es uno de %1% objetos%2%
+''' que no es uno de %1% objetos%2%'''
 
 DESC_CONTAINED_BY
- que es contenido por un objeto%1%
+''' que es contenido por un objeto%1%'''
 
 DESC_CONTAINED_BY_NOT
- que no es contenido por un objeto%1%
+''' que no es contenido por un objeto%1%'''
 
 DESC_OWNER_HAS_TECH
- que pertenece a un imperio que tiene la tecnología %1%
+''' que pertenece a un imperio que tiene la tecnología %1%'''
 
 DESC_OWNER_HAS_TECH_NOT
- que no pertenece a un imperio que tiene la tecnología %1%
+''' que no pertenece a un imperio que tiene la tecnología %1%'''
 
 DESC_NUMBER
- si esta entre %1% y %2% objetos%3%
+''' si esta entre %1% y %2% objetos%3%'''
 
 DESC_NUMBER_NOT
- si no esta entre %1% y %2% objetos%3%
+''' si no esta entre %1% y %2% objetos%3%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####

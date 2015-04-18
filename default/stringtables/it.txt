@@ -107,6 +107,8 @@ Flotta %1%
 NEW_FLEET_NAME_NO_NUMBER
 Flotta
 
+# used to generate name for effect-created planets. %1% is the system name.
+
 EMPTY_SPACE
 Spazio Profondo
 
@@ -209,10 +211,10 @@ SM_MONSTER
 Mostri
 
 SM_KRILL_3_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
 
 SM_KRILL_4_DESC
-'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
+Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
 
 SM_FLOATER_DESC
 Gas-filled bulbous sac drifting through space.
@@ -372,10 +374,10 @@ Impossibile generare una partita senza giocatori attivi.
 ######################################
 
 COMMAND_LINE_USAGE
-Utilizzo: 
+'''Utilizzo: '''
 
 COMMAND_LINE_DEFAULT
-Predefiniti: 
+'''Predefiniti: '''
 
 OPTIONS_DB_HELP
 Mostra questo messaggio di aiuto.
@@ -689,13 +691,13 @@ OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 Il numero di apparizioni speciali da generare.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
-'''Il nome del tuo impero.'''
+Il nome del tuo impero.
 
 OPTIONS_DB_GAMESETUP_PLAYER_NAME
-'''Il nome usato nel gioco dal giocatore.'''
+Il nome usato nel gioco dal giocatore.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
-'''Il colore usato per il tuo impero.'''
+Il colore usato per il tuo impero.
 
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
 Il numero di avversari IA nel gioco.
@@ -911,7 +913,7 @@ Avvia Partita
 #Window title####
 
 GSETUP_WINDOW_TITLE
-Impostazioni Galassia 
+'''Impostazioni Galassia '''
 
 #Strings
 GSETUP_GRAPHICS_FILES
@@ -1023,7 +1025,7 @@ VISION
 Visione
 
 FREEORION_VISION
-FreeOrion, un gioco open-source basato su Master of Orion, è un gioco epico spaziale di strategia a turni che si basa sul classico modello '4X' che prevede la costruzione degli elementi di gioco come Europa Universalis 2 ed un versatile motore della battaglia. Mentre la sua struttura open-source modulare permette un notevole grado di personalizzazione del motore di gioco e degli elementi della storia da parte della comunità, la squadra di FreeOrion si è dedicata alla costruzione di un modello di 'grande campagna' in un universo vivibile e di grande respiro. 
+'''FreeOrion, un gioco open-source basato su Master of Orion, è un gioco epico spaziale di strategia a turni che si basa sul classico modello '4X' che prevede la costruzione degli elementi di gioco come Europa Universalis 2 ed un versatile motore della battaglia. Mentre la sua struttura open-source modulare permette un notevole grado di personalizzazione del motore di gioco e degli elementi della storia da parte della comunità, la squadra di FreeOrion si è dedicata alla costruzione di un modello di 'grande campagna' in un universo vivibile e di grande respiro. '''
 
 ###########################
 # Game Menu               #
@@ -1600,6 +1602,8 @@ Seleziona nave colonizzatrice per colonizzare.
 RP_FOCUS_TOOLTIP
 Obbiettivo: %1%
 
+## Specials Panel ##########
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -1625,7 +1629,7 @@ TT_CHANGE
 Variazione
 
 TT_BREAKDOWN_SUMMARY
-%1%: %2% 
+'''%1%: %2% '''
 
 TT_TARGETS_BREAKDOWN_SUMMARY
 %1% Modifiche: %2%
@@ -1904,7 +1908,7 @@ TECH_WND_ENQUEUED
 Accodato
 
 TECH_WND_UNRESEARCHED_PREREQUISITES
-Prerequisiti Non Ricercati: 
+'''Prerequisiti Non Ricercati: '''
 
 TECH_WND_LIST_VIEW
 Visualizza come Lista
@@ -2103,7 +2107,7 @@ ENC_SPECIAL
 Speciale
 
 OBJECTS_WITH_SPECIAL
-Oggetti con Speciale: 
+'''Oggetti con Speciale: '''
 
 ENC_BUILDING_TYPE
 Tipo Struttura
@@ -2115,7 +2119,7 @@ ENC_SHIP_DESIGN
 Progetto Nave
 
 SHIPS_OF_DESIGN
-Navi di questo Progetto: 
+'''Navi di questo Progetto: '''
 
 ENC_INCOMPETE_SHIP_DESIGN
 Progetto Nave Incompleto
@@ -2124,7 +2128,7 @@ ENC_EMPIRE
 Impero
 
 EMPIRE_CAPITAL
-Capitale: 
+'''Capitale: '''
 
 NO_CAPITAL
 Nessuna Capitale Conosciuta
@@ -2133,13 +2137,13 @@ EMPIRE_METERS
 Metri:
 
 OWNED_PLANETS
-Pianeti Posseduti: 
+'''Pianeti Posseduti: '''
 
 NO_OWNED_PLANETS_KNOWN
 Nessun pianeta posseduto noto
 
 OWNED_FLEETS
-Flotte Possedute: 
+'''Flotte Possedute: '''
 
 OWNED_FLEET_AT_SYSTEM
 %1% su %2%
@@ -2157,7 +2161,7 @@ MONSTER_TYPES
 Tipi Mostro
 
 MONSTER_OBJECTS
-Mostri: 
+'''Mostri: '''
 
 NO_MONSTER_OBJECTS
 Nessun mostro conosciuto
@@ -2313,28 +2317,28 @@ La pace è lo stato diplomatico tra imperi in cui reciprocamente si impegnano a 
 OUTPOSTS_TITLE
 Avamposti
 OUTPOSTS_TEXT
-'''Gli avamposti sono stazioni non presidiate che possono essere fondati in luoghi troppo ostili per la sopravvivenza di una colonia. Non hanno popolazione e di norma non producono risorse. Ma creano [[encyclopedia SUPPLY_TITLE]] (con la giusta tecnologia) e forniscono la visione. Le colonie possono essere fondate su pianeti che hanno già un avamposto. Per costruire un avamposto, è necessario mettere un [[shippart CO_OUTPOST_POD]] su una nave. Gli avamposti si possono creare anche quando la popolazione di una colonia scende a zero per qualsiasi motivo.'''
+Gli avamposti sono stazioni non presidiate che possono essere fondati in luoghi troppo ostili per la sopravvivenza di una colonia. Non hanno popolazione e di norma non producono risorse. Ma creano [[encyclopedia SUPPLY_TITLE]] (con la giusta tecnologia) e forniscono la visione. Le colonie possono essere fondate su pianeti che hanno già un avamposto. Per costruire un avamposto, è necessario mettere un [[shippart CO_OUTPOST_POD]] su una nave. Gli avamposti si possono creare anche quando la popolazione di una colonia scende a zero per qualsiasi motivo.
 
 GROWTH_FOCUS_TITLE
 Focus sulla Crescita
 GROWTH_FOCUS_TEXT
-'''Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia SUPPLY_TITLE]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita concentrandosi sulla crescita, fà progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.'''
+Il focus sulla crescita rappresenta l'esportazione di materiali rari e sostanze che aiutano la crescita della popolazione di una determinata specie. È disponibile solo in determinate situazioni: su alcuni mondi e su pianeti con speciali caratteristiche di crescita. Un pianeta incentrato sulla crescita aumenta la popolazione massima solo su altri pianeti ad esso collegati da linee di [[enciclopedia SUPPLY_TITLE]]. Un pianeta natale focalizzato sulla crescita aiuta solo altri pianeti della stessa specie. Pianeti con caratteristiche speciali di crescita concentrandosi sulla crescita, fà progredire lo sviluppo di una singola specie, per esempio, alcuni aiutano lo sviluppo delle specie organiche.
 
 MINING_FOCUS_TITLE
 Focus Minerario
 MINING_FOCUS_TEXT
-'''Il focus minerario è al momento disabilitato.'''
+Il focus minerario è al momento disabilitato.
 #The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TITLE
 Focus sul Commercio
 TRADE_FOCUS_TEXT
-'''Il focus sul commercio non fa nulla, ancora. E' solo un segnaposto per i prossimi aggiornamenti.'''
+Il focus sul commercio non fa nulla, ancora. E' solo un segnaposto per i prossimi aggiornamenti.
 
 PROTECTION_FOCUS_TITLE
 Focus sulla Protezione
 PROTECTION_FOCUS_TEXT
-'''Il focus sulla protezione rappresenta un pianeta interamente dedicato sulla sua difesa.  [[encyclopedia TROOP_TITLE]], [[encyclopedia DEFENSE_TITLE]] planetaria e [[encyclopedia SHIELDS_TITLE]] planetari sono raddoppiati.'''
+Il focus sulla protezione rappresenta un pianeta interamente dedicato sulla sua difesa.  [[encyclopedia TROOP_TITLE]], [[encyclopedia DEFENSE_TITLE]] planetaria e [[encyclopedia SHIELDS_TITLE]] planetari sono raddoppiati.
 
 INDUSTRY_TITLE
 Industria
@@ -2358,17 +2362,17 @@ La ricerca non richiede la connessione di linee[[encyclopedia SUPPLY_TITLE]] per
 HAPPINESS_TITLE
 Felicità
 HAPPINESS_TEXT
-'''La felicità non svolge ancora nessuna funzione.'''
+La felicità non svolge ancora nessuna funzione.
 
 INFRASTRUCTURE_TITLE
 Infrastrutture
 INFRASTRUCTURE_TEXT
-'''Il termine infrastruttura si riferisce a strutture tecniche che supportano un pianeta colonizzato: servizi di energia, trasporti, telecomunicazioni e sociali per i cittadini.'''
+Il termine infrastruttura si riferisce a strutture tecniche che supportano un pianeta colonizzato: servizi di energia, trasporti, telecomunicazioni e sociali per i cittadini.
 
 DEFENSE_TITLE
 Difesa
 DEFENSE_TEXT
-'''Il misuratore difesa di un pianeta rappresenta il potere delle armi installate dalla terra rivolte verso lo spazio. E' paragonabile al valore di danno di una nave spaziale.'''
+Il misuratore difesa di un pianeta rappresenta il potere delle armi installate dalla terra rivolte verso lo spazio. E' paragonabile al valore di danno di una nave spaziale.
 
 SHIELDS_TITLE
 Scudi
@@ -2412,17 +2416,17 @@ Il misuratore delle truppe su un pianeta rappresenta il potere delle forze di te
 ORGANIC_SPECIES_TITLE
 Metabolismo Organico
 ORGANIC_SPECIES_TEXT
-'''Le specie organiche sono, 'la vita come noi la conosciamo', più o meno.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.'''
+Le specie organiche sono, 'la vita come noi la conosciamo', più o meno.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth.  Organic Growth specials are marked with a little green 'O' in the corner.
 
 LITHIC_SPECIES_TITLE
 Metabolismo Litico
 LITHIC_SPECIES_TEXT
-'''Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.'''
+Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.
 
 ROBOTIC_SPECIES_TITLE
 Metabolismo Robotico
 ROBOTIC_SPECIES_TEXT
-'''Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.'''
+Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Metabolismo Fototrofico
@@ -2439,7 +2443,7 @@ Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.''
 SELF_SUSTAINING_SPECIES_TITLE
 Metabolismo Auto-Sostenibile
 SELF_SUSTAINING_SPECIES_TEXT
-'''Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.'''
+Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.
 
 TELEPATHIC_TITLE
 Telepatia
@@ -2447,7 +2451,7 @@ Telepatia
 FUEL_TITLE
 Carburante
 FUEL_TEXT
-'''Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.'''
+Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.
 
 SUPPLY_TITLE
 Rifornimenti
@@ -2459,16 +2463,13 @@ The supply meter on a planet represents the number of star-lanes supply can reac
 FLEET_UPKEEP_TITLE
 Mantenimento della Flotta
 FLEET_UPKEEP_TEXT
-'''The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, hull costs increase by 5% for each ship already owned by the empire.'''
+The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, hull costs increase by 5% for each ship already owned by the empire.
 
 EVACUATION_TITLE
 Evacuazione
 EVACUATION_TEXT
 '''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
-During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''  
-
-AI_LEVELS_TITLE
-AI Aggression Levels
+During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''
 
 AI_LEVELS_TEXT
 '''AI aggression levels are meant to be roughly akin to difficulty levels, but not exactly, particularly in that they are differentiated in various aspects of risk-taking and aggression, with only some actual limitations being applied to the lower level ones. They can all still play pretty well, but the lower aggression ones may be a bit easier to manage, even if not necessarily easier to actually take over. The more aggressive ones do a bit better over the course of a game.
@@ -2492,10 +2493,10 @@ COMBAT_WINDOW_TITLE
 Finestra di Combattimento
 
 COMBAT_BATTLE
-BATTAGLIA : 
+'''BATTAGLIA : '''
 
 COMBAT_SYSTEM
-Il sistema %1% 
+'''Il sistema %1% '''
 
 COMBAT_MILITARY_SHIPS
 Navi militari
@@ -2507,19 +2508,19 @@ COMBAT_PLANETS
 Pianeti
 
 COMBAT_REMAINING
- Rimanenti
+''' Rimanenti'''
 
 COMBAT_RETREATED
- Ritirati
+''' Ritirati'''
 
 COMBAT_DESTROYED
- Distrutti
+''' Distrutti'''
 
 COMBAT_DEFENSELESS
- Senza difese
+''' Senza difese'''
 
 COMBAT_LOST
- Persi!
+''' Persi!'''
 
 ####################
 # TurnProgress     #
@@ -4036,92 +4037,92 @@ Crea una nuova struttura %1%
 # Conditions
 
 DESC_ALL
-  nell'universo
+'''  nell'universo'''
 
 DESC_ALL_NOT
- non nell'universo
+''' non nell'universo'''
 
 DESC_EMPIRE_AFFILIATION_SELF
- che appartengono all'impero %1%
+''' che appartengono all'impero %1%'''
 
 DESC_EMPIRE_AFFILIATION
- che appartengono ad un %1% dell'impero %2%
+''' che appartengono ad un %1% dell'impero %2%'''
 
 DESC_EMPIRE_AFFILIATION_NOT
- che non appartengono ad un %1% dell'impero %2%
+''' che non appartengono ad un %1% dell'impero %2%'''
 
 DESC_EMPIRE_AFFILIATION_ANY_NOT
- che non appartengono solo ad un %1% dell'impero %2%
+''' che non appartengono solo ad un %1% dell'impero %2%'''
 
 DESC_SOURCE
- che è l'oggetto sorgente
+''' che è l'oggetto sorgente'''
 
 DESC_HOMEWORLD
- che è il sistema di provenienza
+''' che è il sistema di provenienza'''
 
 DESC_HOMEWORLD_NOT
- che non è il sistema di provenienza
+''' che non è il sistema di provenienza'''
 
 DESC_CAPITAL
- that is an empirès capital planet
+''' that is an empirès capital planet'''
 
 DESC_CAPITAL_NOT
- that is not an empirès capital planet
+''' that is not an empirès capital planet'''
 
 DESC_TYPE
- che è un %1%
+''' che è un %1%'''
 
 DESC_TYPE_NOT
- che non è un %1%
+''' che non è un %1%'''
 
 DESC_BUILDING
- che contiene una struttura %1%
+''' che contiene una struttura %1%'''
 
 DESC_BUILDING_NOT
- che non contiene una struttura %1%
+''' che non contiene una struttura %1%'''
 
 DESC_SPECIAL
- che ha uno speciale %1%
+''' che ha uno speciale %1%'''
 
 DESC_CONTAINS
- che contiene un'oggetto %1%
+''' che contiene un'oggetto %1%'''
 
 DESC_CONTAINS_NOT
- che non contiene un'oggetto %1%
+''' che non contiene un'oggetto %1%'''
 
 DESC_PLANET_TYPE
- che è un pianeta %1%
+''' che è un pianeta %1%'''
 
 DESC_PLANET_TYPE_NOT
- che non è un pianeta %1%
+''' che non è un pianeta %1%'''
 
 DESC_PLANET_SIZE
- che è un pianeta %1%
+''' che è un pianeta %1%'''
 
 DESC_PLANET_SIZE_NOT
- che non è un pianeta %1%
+''' che non è un pianeta %1%'''
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+''' that is a %1% planet'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+''' that is not a %1% planet'''
 
  
 
 DESC_ENQUEUED_DESIGN_NOT
- where empire %1% dows not have between %2% and %3% %4% ships on the production queue
+''' where empire %1% dows not have between %2% and %3% %4% ships on the production queue'''
 
  
 
 DESC_AND_BETWEEN_OPERANDS
- e
+''' e'''
 
 DESC_OR_BETWEEN_OPERANDS
- o
+''' o'''
 
 DESC_TURN
- quando il turno in corso è compreso tra %1% e %2%
+''' quando il turno in corso è compreso tra %1% e %2%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
@@ -4248,13 +4249,13 @@ GRO_GENETIC_ENG
 Ingegneria Genetica
 
 GRO_GENETIC_ENG_DESC
-'''Il repertorio della genetica è tanto varia quanto le forme di vita da cui trae ispirazione. I geni possono essere rimossi, copiati e reinseriti nei genomi per creare organismi transgenici con combinazioni di caratteristiche non esistenti o possibili in natura inoltre, i geni possono essere alterati prima del reinserimento, alterando direttamente la base del codice e permettendo la creazione di interi geni. Tuttavia, le tecniche sono limitate a piccole modifiche di geni che sono disponibili per lo studio.'''
+Il repertorio della genetica è tanto varia quanto le forme di vita da cui trae ispirazione. I geni possono essere rimossi, copiati e reinseriti nei genomi per creare organismi transgenici con combinazioni di caratteristiche non esistenti o possibili in natura inoltre, i geni possono essere alterati prima del reinserimento, alterando direttamente la base del codice e permettendo la creazione di interi geni. Tuttavia, le tecniche sono limitate a piccole modifiche di geni che sono disponibili per lo studio.
 
 GRO_SYMBIOTIC_BIO
 Biologia simbiotica
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Accresce la popolazione massima dei pianeti buoni, adeguati e poveri in base alla dimensione del pianeta; Molto piccolo: +1, Piccolo: +2, Medio: +3, Grande: +4, Enorme: +5.'''
+Accresce la popolazione massima dei pianeti buoni, adeguati e poveri in base alla dimensione del pianeta; Molto piccolo: +1, Piccolo: +2, Medio: +3, Grande: +4, Enorme: +5.
 
 GRO_GENETIC_MED
 Medicina Genetica
@@ -4370,7 +4371,7 @@ PRO_INTSTEL_COPRO
 Coproduzione Interstellare
 
 PRO_INTSTEL_COPRO_DESC
-I tradizionali mezzi di produzione sono limitati dal bisogno di autosufficienza dovuti al trasporto e altri problemi logistici. Le cooperazioni regionali dei pianeti permettevano un certo grado di specializzazione e cooperazione, con ogni stabilimento che produceva solo alcune parti o sottosistemi, e l'intero sistema beneficiava nel possedere un elevata esperienza e un economia di scala. Espandendo questo concetto diversi ordini di grandezza, può essere adattato ad una scala galattica, con pianeti o interi sistemi che lavorano nel funzionamento di unica struttura specializzata. Le difficoltà logistiche inerenti a questo paradigma sono inoltre simili a quello precedente e sono scalati nella stessa maniera dei potenziali benefici. 
+'''I tradizionali mezzi di produzione sono limitati dal bisogno di autosufficienza dovuti al trasporto e altri problemi logistici. Le cooperazioni regionali dei pianeti permettevano un certo grado di specializzazione e cooperazione, con ogni stabilimento che produceva solo alcune parti o sottosistemi, e l'intero sistema beneficiava nel possedere un elevata esperienza e un economia di scala. Espandendo questo concetto diversi ordini di grandezza, può essere adattato ad una scala galattica, con pianeti o interi sistemi che lavorano nel funzionamento di unica struttura specializzata. Le difficoltà logistiche inerenti a questo paradigma sono inoltre simili a quello precedente e sono scalati nella stessa maniera dei potenziali benefici. '''
 
 PRO_NDIM_ASSMB
 Assemblaggio N-Dimensionale
@@ -4425,7 +4426,7 @@ SHP_MIDCOMB_LOG_DESC
 When interstellar fleets are in regular, commonplace use, the transfer of personnel and materiel in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the coordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
 
 SHP_ENDOCRINE_SYSTEMS_DESC
-The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  
+'''The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  '''
 
 SHP_QUANT_ENRG_MAG_DESC
 '''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
@@ -4661,13 +4662,13 @@ DEF_SYST_DEF_MINE_2
 Mine di Difesa del Sistema 2
 
 DEF_SYST_DEF_MINE_2_DESC
-'''Riduce la struttura delle navi nemiche di altri 4 punti per turno, cumulati con [[tech DEF_SYST_DEF_MINE_1]].'''
+Riduce la struttura delle navi nemiche di altri 4 punti per turno, cumulati con [[tech DEF_SYST_DEF_MINE_1]].
 
 DEF_SYST_DEF_MINE_3
 Mine di Difesa del Sistema 3
 
 DEF_SYST_DEF_MINE_3_DESC
-'''Riduce la struttura delle navi nemiche di altri 8 punti per turno, cumulativo con il prerequisito tecnologico.'''
+Riduce la struttura delle navi nemiche di altri 8 punti per turno, cumulativo con il prerequisito tecnologico.
 
 DEF_ROOT_DEFENSE
 Difesa Personale
@@ -4708,7 +4709,7 @@ SHP_ADV_DAM_CONT
 Controllo Avanzato dei Danni
 
 SHP_ADV_DAM_CONT_DESC
-'''Riparazione del 25% per turno della struttura delle navi danneggiate-- non durante le battaglie.'''
+Riparazione del 25% per turno della struttura delle navi danneggiate-- non durante le battaglie.
 
 SHP_ROOT_AGGRESSION
 Aggressione
@@ -5107,7 +5108,7 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. 
+'''A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. '''
 
 FU_DEUTERIUM_TANK
 Serbatoio Deuterio
@@ -5158,7 +5159,7 @@ CO_SUSPEND_ANIM_POD_DESC
 All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the rigth tech is researched. Colonies can be founded on planets that already have an Outpost.'''
+Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the rigth tech is researched. Colonies can be founded on planets that already have an Outpost.
 
 GT_TROOP_POD_DESC
 Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet.
@@ -5356,20 +5357,20 @@ A fearsom space dragon the size of a small planet.
 #############################################################
 
 GOOD_WEAPONS
-'''+	Starts with [[tech SHP_WEAPON_1_3]] and one additional ship.'''
++	Starts with [[tech SHP_WEAPON_1_3]] and one additional ship.
 
 GREAT_WEAPONS
-'''++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.'''
+++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.
 
 ULTIMATE_WEAPONS
-'''+++	Starts with [[tech SHP_WEAPON_2_4]] and three additional ships.'''
++++	Starts with [[tech SHP_WEAPON_2_4]] and three additional ships.
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
 
 ENV_ENCAPSUL_LABEL
-'''%1% Incapsulamento Ambientale'''
+%1% Incapsulamento Ambientale
 
 #############################################################
 ####                       T A G S                       ####
