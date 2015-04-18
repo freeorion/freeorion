@@ -356,7 +356,7 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
     }
 }
 
-void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
         ErrorLogger() << "ServerApp::HandleMessage : Received an message with a sender ID ("
                                << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
@@ -394,7 +394,7 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     }
 }
 
-void ServerApp::HandleShutdownMessage(Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     int player_id = player_connection->PlayerID();
     bool is_host = m_networking.PlayerIsHost(player_id);
     if (!is_host) {
@@ -405,7 +405,7 @@ void ServerApp::HandleShutdownMessage(Message& msg, PlayerConnectionPtr player_c
     Exit(1);
 }
 
-void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
     case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
     case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
