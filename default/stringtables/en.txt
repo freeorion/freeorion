@@ -3191,6 +3191,9 @@ EMPIRE_CAPITAL
 NO_CAPITAL
 No Known Capital
 
+EMPIRE_ID
+Empire ID
+
 EMPIRE_METERS
 Meters:
 

@@ -1282,6 +1282,9 @@ namespace {
         else
             detailed_description += UserString("NO_CAPITAL");
 
+        // to facilitate AI debugging
+        detailed_description += "\n" + UserString("EMPIRE_ID") + ": " + item_name;
+
         // Empire meters
         detailed_description += "\n\n" + UserString("EMPIRE_METERS") + "\n";
         for (std::map<std::string, Meter>::const_iterator meter_it = empire->meter_begin();
