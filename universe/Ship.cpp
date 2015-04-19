@@ -274,6 +274,20 @@ bool Ship::CanBombard() const {
 float Ship::Speed() const
 { return CurrentMeterValue(METER_SPEED); }
 
+float Ship::ColonyCapacity() const {
+    // todo: replace with part meters
+    if (const ShipDesign* design = Design())
+        return design->ColonyCapacity();
+    return 0.0f;
+}
+
+float Ship::TroopCapacity() const {
+    // todo: replace with part meters
+    if (const ShipDesign* design = Design())
+        return design->TroopCapacity();
+    return 0.0f;
+}
+
 const std::string& Ship::PublicName(int empire_id) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who
     // doesn't know the design for a particular ship can easily guess it if the

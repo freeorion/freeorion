@@ -40,6 +40,8 @@ public:
     bool                        CanBombard() const;
     const std::string&          SpeciesName() const         { return m_species_name; }
     float                       Speed() const;
+    float                       ColonyCapacity() const;
+    float                       TroopCapacity() const;
 
     virtual TemporaryPtr<UniverseObject>
                                 Accept(const UniverseObjectVisitor& visitor) const;
