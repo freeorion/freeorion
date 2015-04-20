@@ -275,17 +275,57 @@ float Ship::Speed() const
 { return CurrentMeterValue(METER_SPEED); }
 
 float Ship::ColonyCapacity() const {
-    // todo: replace with part meters
-    if (const ShipDesign* design = Design())
-        return design->ColonyCapacity();
-    return 0.0f;
+    float retval = 0.0f;
+    // find which colony parts are present in design (one copy of name for each instance of a part, allowing duplicate names to appear)
+    const ShipDesign* design = Design();
+    if (!design)
+        return retval;
+
+    const std::vector<std::string>& parts = design->Parts();
+    for (std::vector<std::string>::const_iterator part_it = parts.begin();
+         part_it != parts.end(); ++part_it)
+    {
+        const std::string& part_name = *part_it;
+        if (part_name.empty())
+            continue;
+        const PartType* part_type = GetPartType(part_name);
+        if (!part_type)
+            continue;
+        ShipPartClass part_class = part_type->Class();
+        if (part_class != PC_COLONY)
+            continue;
+        // add capacity for all instances of colony parts to accumulator
+        retval += this->CurrentPartMeterValue(METER_CAPACITY, part_name);
+    }
+
+    return retval;
 }
 
 float Ship::TroopCapacity() const {
-    // todo: replace with part meters
-    if (const ShipDesign* design = Design())
-        return design->TroopCapacity();
-    return 0.0f;
+    float retval = 0.0f;
+    // find which troop parts are present in design (one copy of name for each instance of a part, allowing duplicate names to appear)
+    const ShipDesign* design = Design();
+    if (!design)
+        return retval;
+
+    const std::vector<std::string>& parts = design->Parts();
+    for (std::vector<std::string>::const_iterator part_it = parts.begin();
+         part_it != parts.end(); ++part_it)
+    {
+        const std::string& part_name = *part_it;
+        if (part_name.empty())
+            continue;
+        const PartType* part_type = GetPartType(part_name);
+        if (!part_type)
+            continue;
+        ShipPartClass part_class = part_type->Class();
+        if (part_class != PC_TROOPS)
+            continue;
+        // add capacity for all instances of colony parts to accumulator
+        retval += this->CurrentPartMeterValue(METER_CAPACITY, part_name);
+    }
+
+    return retval;
 }
 
 const std::string& Ship::PublicName(int empire_id) const {
