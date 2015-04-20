@@ -256,8 +256,8 @@ bool Ship::CanColonize() const {
         return false;
     if (!species->CanColonize())
         return false;
-
-    return this->ColonyCapacity() > 0.0f;
+    const ShipDesign* design = this->Design();
+    return design && design->CanColonize(); // use design->CanColonize because zero-capacity colony ships still count as outpost ships, can "can colonize" as far as order / the UI are concerned
 }
 
 bool Ship::HasTroops() const
