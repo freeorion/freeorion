@@ -52,7 +52,9 @@ public:
     StringTable_();  //!< default construction, uses S_DEFAULT_FILENAME
 
     //! @param filename A file containing the data for this StringTable_
-    StringTable_(const std::string& filename);   //!< construct a StringTable_ from the given filename
+    //! @param lookups_fallback_table A StringTable_ to be used as fallback expansions lookup
+    StringTable_(const std::string& filename, const StringTable_* lookups_fallback_table = 0);   //!< construct a StringTable_ from the given filename
+
     ~StringTable_();                             //!< default destructor
     //!@}
 
@@ -85,7 +87,11 @@ public:
 private:
     //! \name Internal Functions
     //!@{
-    void Load();    //!< Loads the String table file from m_filename
+    //! @param lookups_fallback_table A StringTable_ to be used as fallback expansions lookup
+    void Load(const StringTable_* lookups_fallback_table = 0);    //!< Loads the String table file from m_filename
+
+    const std::map<std::string, std::string>& GetStrings() const {return m_strings;}    //!< returns a const reference to the strings in this table
+
     //!@}
 
     //! \name Data Members
