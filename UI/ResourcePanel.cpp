@@ -96,10 +96,10 @@ namespace {
             if (left.first == METER_TRADE && right.first == METER_CONSTRUCTION) {
                 // swap order of METER_TRADE and METER_CONSTRUCTION in relation to
                 // MeterType enum.
-                return true;
+                return false;
             }
 
-            return left.first > right.first;
+            return left.first < right.first;
         }
 
         return left.second->GetValue() > right.second->GetValue();

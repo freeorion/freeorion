@@ -21,9 +21,9 @@ StringTable_::StringTable_():
     m_filename(S_DEFAULT_FILENAME)
 { Load(); }
 
-StringTable_::StringTable_(const std::string& filename):
+StringTable_::StringTable_(const std::string& filename, const StringTable_* lookups_fallback_table /* = 0 */):
     m_filename(filename)
-{ Load(); }
+{ Load(lookups_fallback_table); }
 
 StringTable_::~StringTable_()
 {}
@@ -64,7 +64,7 @@ namespace {
     }
 }
 
-void StringTable_::Load() {
+void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
     boost::filesystem::path path = FilenameToPath(m_filename);
     std::string file_contents;
 
@@ -72,6 +72,12 @@ void StringTable_::Load() {
     if (!read_success) {
         ErrorLogger() << "StringTable_::Load failed to read file at path: " << path.string();
         return;
+    }
+    std::map<std::string, std::string> fallback_lookup_strings;
+    std::string fallback_table_file;
+    if (lookups_fallback_table) {
+        fallback_table_file = lookups_fallback_table->Filename();
+        fallback_lookup_strings.insert(lookups_fallback_table->GetStrings().begin(), lookups_fallback_table->GetStrings().end());
     }
 
     using namespace boost::xpressive;
@@ -81,16 +87,20 @@ void StringTable_::Load() {
     const sregex KEY = IDENTIFIER;
     const sregex SINGLE_LINE_VALUE = *(~_n);
     const sregex MULTI_LINE_VALUE = -*_;
+
     const sregex ENTRY =
-        *(space | COMMENT) >>
-        KEY >> _n >>
+        keep(*(space | +COMMENT)) >>
+        KEY >> *blank >> (_n | COMMENT) >>
         (("'''" >> MULTI_LINE_VALUE >> "'''" >> *space >> _n) | SINGLE_LINE_VALUE >> _n);
+
     const sregex TRAILING_WS =
         *(space | COMMENT);
+
     const sregex REFERENCE =
-        "[[" >> *space >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> *space >> "]]";
+        keep("[[" >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> "]]");
+
     const sregex KEYEXPANSION =
-        "[[" >> *space >> (s1 = IDENTIFIER) >> *space >> "]]";
+        keep("[[" >> (s1 = IDENTIFIER) >> "]]");
 
     // parse input text stream
     std::string::iterator it = file_contents.begin();
@@ -98,6 +108,7 @@ void StringTable_::Load() {
 
     smatch matches;
     bool well_formed = false;
+    std::string key, prev_key;
     try {
         // grab first line of file, which should be the name of this language
         well_formed = regex_search(it, end, matches, SINGLE_LINE_VALUE, regex_constants::match_continuous);
@@ -111,7 +122,6 @@ void StringTable_::Load() {
             it = end - matches.suffix().length();
 
             if (well_formed) {
-                std::string key;
                 for (smatch::nested_results_type::const_iterator match_it = matches.nested_results().begin();
                      match_it != matches.nested_results().end(); ++match_it)
                 {
@@ -129,7 +139,8 @@ void StringTable_::Load() {
                                                    << "' in file: '" << m_filename
                                                    << "'.  Ignoring duplicate.";
                         }
-                        key = "";
+                        prev_key = key;
+                        key.clear();
                     }
                 }
             }
@@ -141,7 +152,9 @@ void StringTable_::Load() {
         well_formed = it == end;
     } catch (std::exception& e) {
         ErrorLogger() << "Exception caught regex parsing Stringtable: " << e.what();
+        ErrorLogger() << "Last and prior keys matched: " << key << ", " << prev_key;
         std::cerr << "Exception caught regex parsing Stringtable: " << e.what() << std::endl;
+        std::cerr << "Last and prior keys matched: " << key << ", " << prev_key << std::endl;
         return;
     }
 
@@ -184,7 +197,14 @@ void StringTable_::Load() {
                     //DebugLogger() << "Pushing to cyclic ref check: " << match[1];
                     cyclic_reference_check[match[1]] = position + match.length();
                     std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[1]);
-                    if (map_lookup_it != m_strings.end()) {
+                    bool foundmatch = map_lookup_it != m_strings.end();
+                    if (!foundmatch && lookups_fallback_table) {
+                        DebugLogger() << "Key expansion: " << match[1] << " not found in primary stringtable: " << m_filename 
+                                      << "; checking in fallback file" << fallback_table_file;
+                        map_lookup_it = fallback_lookup_strings.find(match[1]);
+                        foundmatch = map_lookup_it != fallback_lookup_strings.end();
+                    }
+                    if (foundmatch) {
                         const std::string substitution = map_lookup_it->second;
                         cumulative_subsititions += substitution + "|**|";
                         map_it->second.replace(position, match.length(), substitution);
@@ -219,7 +239,14 @@ void StringTable_::Load() {
             while (regex_search(map_it->second.begin() + position, map_it->second.end(), match, REFERENCE)) {
                 position += match.position();
                 std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[2]);
-                if (map_lookup_it != m_strings.end()) {
+                bool foundmatch = map_lookup_it != m_strings.end();
+                if (!foundmatch && lookups_fallback_table) {
+                    DebugLogger() << "Key reference: " << match[2] << " not found in primary stringtable: " << m_filename 
+                                  << "; checking in fallback file" << fallback_table_file;
+                    map_lookup_it = fallback_lookup_strings.find(match[2]);
+                    foundmatch = map_lookup_it != fallback_lookup_strings.end();
+                }
+                if (foundmatch) {
                     const std::string substitution =
                         '<' + match[1].str() + ' ' + match[2].str() + '>' + map_lookup_it->second + "</" + match[1].str() + '>';
                     map_it->second.replace(position, match.length(), substitution);

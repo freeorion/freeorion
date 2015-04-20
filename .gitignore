@@ -82,3 +82,4 @@ Installer/FreeOrion_Install_Script.nsi
 # KDevelop4
 *.kdev4
 Installer/FreeOrion_Install_Script.nsi
+*.res

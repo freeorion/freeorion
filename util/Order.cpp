@@ -484,7 +484,7 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-    if (!ship->CanColonize()) { // verifies that species exists and can colonize and that ship design can colonize
+    if (!ship->CanColonize()) { // verifies that species exists and can colonize and that ship can colonize
         ErrorLogger() << "ColonizeOrder::ExecuteImpl got ship that can't colonize";
         return;
     }
@@ -492,19 +492,15 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return;
     }
-    const ShipDesign* design = ship->Design();
-    if (!design) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't find ship's design!";
-        return;
-    }
-    double colonist_capacity = design->ColonyCapacity();
+
+    float colonist_capacity = ship->ColonyCapacity();
 
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
-    if (planet->CurrentMeterValue(METER_POPULATION) > 0.0) {
+    if (planet->CurrentMeterValue(METER_POPULATION) > 0.0f) {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that already has population";
         return;
     }
@@ -512,7 +508,7 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that owned by another empire";
         return;
     }
-    if (planet->OwnedBy(empire_id) && colonist_capacity == 0.0) {
+    if (planet->OwnedBy(empire_id) && colonist_capacity == 0.0f) {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that is already owned by empire and colony ship with zero capcity";
         return;
     }
@@ -520,7 +516,7 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
         return;
     }
-    if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
+    if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity and planet that ship's species can't colonize";
         return;
     }
@@ -649,7 +645,7 @@ void InvadeOrder::ExecuteImpl() const {
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
     DebugLogger() << "InvadeOrder::ExecuteImpl set for ship " << m_ship << " "
-                           << ship->Name() << " to invade planet " << m_planet << " " << planet->Name();
+                  << ship->Name() << " to invade planet " << m_planet << " " << planet->Name();
     planet->SetIsAboutToBeInvaded(true);
     ship->SetInvadePlanet(m_planet);
 

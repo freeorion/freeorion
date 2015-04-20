@@ -112,6 +112,8 @@ Flotte %1%
 NEW_FLEET_NAME_NO_NUMBER
 Flotte
 
+# used to generate name for effect-created planets. %1% is the system name.
+
 EMPTY_SPACE
 Tiefe des Alls
 
@@ -220,27 +222,27 @@ Alter Schiffsentwurf mit fortgeschrittener Bewaffnung und Verteidigungssysteme.
 SM_KRILL_1
 Kleiner Krillschwarm
 SM_KRILL_1_DESC
-'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.'''
+Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_KRILL_2
 Mittlerer Krillschwarm
 SM_KRILL_2_DESC
-'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.'''
+Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Obwohl sie in der Regel nicht aggressiv sind, werden sie durch ihre Zahl eine Gefahr für die Navigation der Raumfahrt und können dadurch den Nachschub blockieren. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_KRILL_3
 Großer Krillschwarm
 SM_KRILL_3_DESC
-'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Wenn ihre Anzahl hoch genug ist, beginnen sie ein aggressives Verhalten gegenüber Schiffen zu zeigen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.'''
+Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Wenn ihre Anzahl hoch genug ist, beginnen sie ein aggressives Verhalten gegenüber Schiffen zu zeigen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_KRILL_4
 Krillplage
 SM_KRILL_4_DESC
-'''Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Das Verhalten der des Krill ändert sich radikal, sobald ein kritischer Bestand von ungefähr 10 Millionen Individuen überschritten wurde. Der normalerweise scheue Krill attackiert nun Schiffe und orbitale Strukturen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.'''
+Raumkrill sind kleine, insektenähnliche Organismen, welche sich weit entfernt von jedem Gravitationsfeld von Staub und Felsen ernähren. Obwohl als Individuum einfach, kommuniziert Krill durch kohärentes Licht, was der Schwarm zur Koordination und zur Berechnung von Flugbahnen nutzt. Das Verhalten der des Krill ändert sich radikal, sobald ein kritischer Bestand von ungefähr 10 Millionen Individuen überschritten wurde. Der normalerweise scheue Krill attackiert nun Schiffe und orbitale Strukturen. Die hohe Anzahl von Ressourcen mit niedrigem Gravitationsfeld innerhalb eines Asteroidengürtels bieten Krill perfekte Bedingungen, um sich schnell zu vermehren.
 
 SM_TREE
 Dysonwald
 SM_TREE_DESC
-'''Der Dysonwald setzt sich aus vielerlei im Weltraum entwickelten "Bäumen" mit dichtem Astwerk zusammen. Die Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Sie dehnen sich aus und es wird schwierig sie mit fortschreitendem Alter auszurotten. Von Zeit zu Zeit senden sie Samen aus um andere Sterne zu besiedeln.'''
+Der Dysonwald setzt sich aus vielerlei im Weltraum entwickelten "Bäumen" mit dichtem Astwerk zusammen. Die Bäume ordnen sich in einem geeigneten Abstand als Hülle um ihren Wirtsstern an. Dysonwälder sind eine Gefahr für die Raumnavigation. Sie dehnen sich aus und es wird schwierig sie mit fortschreitendem Alter auszurotten. Von Zeit zu Zeit senden sie Samen aus um andere Sterne zu besiedeln.
 
 SM_SEED
 Dysonsamen
@@ -260,7 +262,7 @@ Schreckliches, riesiges Monster, das im Raum auf Beutezug umherschleicht.
 SM_DRONE
 Drohne
 SM_DRONE_DESC
-'''Als Werkzeug eines vergessenen Krieges erfüllen die Drohnen immer noch ihren ursprünglichen Zweck: gedankenlos Schiffe in Reichweite angreifen.'''
+Als Werkzeug eines vergessenen Krieges erfüllen die Drohnen immer noch ihren ursprünglichen Zweck: gedankenlos Schiffe in Reichweite angreifen.
 
 SM_DRONE_FACTORY
 Drohnenfabrik
@@ -366,7 +368,7 @@ Die Gehäuse der Asteroidenschnecken ähneln aufgrund ihrer auf Mineralien basie
 SM_DAMPENING_CLOUD
 Dämpfende Wolke
 SM_DAMPENING_CLOUD_DESC
-'''Eine kosmische Wolke aus hochenergetischen elektrischen Partikeln, welche eine Art von Empfindung erlangt hat. Sie wird von Energiefeldern angezogen und entlädt jedes größere Energiepotenzial, was dazu führt das ganze Raumschiffflotten innerhalb von Sekunden ihres Treibstoffes beraubt werden können.'''
+Eine kosmische Wolke aus hochenergetischen elektrischen Partikeln, welche eine Art von Empfindung erlangt hat. Sie wird von Energiefeldern angezogen und entlädt jedes größere Energiepotenzial, was dazu führt das ganze Raumschiffflotten innerhalb von Sekunden ihres Treibstoffes beraubt werden können.
 
 SM_ACIREMA_GUARD
 Acirema Wächterschiff
@@ -499,10 +501,10 @@ Kann kein Spiel erstellen ohne aktive Spieler.
 ######################################
 
 COMMAND_LINE_USAGE
-Verwendung: 
+'''Verwendung: '''
 
 COMMAND_LINE_DEFAULT
-Standard: 
+'''Standard: '''
 
 OPTIONS_DB_HELP
 Diese Hilfe ausgeben.
@@ -850,13 +852,13 @@ OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION
 Die maximale Aggressionsstufe für KI Gegner.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
-'''Der Name Ihres Imperiums.'''
+Der Name Ihres Imperiums.
 
 OPTIONS_DB_GAMESETUP_PLAYER_NAME
-'''Der im Spiel verwendete Name der den Spieler im  Einzelspiel darstellt.'''
+Der im Spiel verwendete Name der den Spieler im  Einzelspiel darstellt.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
-'''Die Farbe Ihres Imperiums.'''
+Die Farbe Ihres Imperiums.
 
 OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
 '''Die Spezies mit der in Ihrem Imperium gestartet wird.
@@ -1820,6 +1822,8 @@ Neuste bekannte Tarnung ist nicht aktuell.  Tatsächliche Tarnung übersteigt di
 RP_FOCUS_TOOLTIP
 Fokus: %1%
 
+## Specials Panel ##########
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -1845,7 +1849,7 @@ TT_CHANGE
 Änderung
 
 TT_BREAKDOWN_SUMMARY
-%1%: %2% 
+'''%1%: %2% '''
 
 TT_TARGETS_BREAKDOWN_SUMMARY
 %1% Änderungen: %2%
@@ -1894,7 +1898,7 @@ Planet Eignung
 #################
 
 FW_FLEET_HOLDING_AT
-Hält in System %1% 
+'''Hält in System %1% '''
 
 FW_FLEET_MOVING_TO
 Fliegt nach %1%
@@ -2136,7 +2140,7 @@ TECH_WND_ENQUEUED
 In der Warteschlange
 
 TECH_WND_UNRESEARCHED_PREREQUISITES
-Unerforschte Voraussetzungen: 
+'''Unerforschte Voraussetzungen: '''
 
 TECH_WND_LIST_VIEW
 Listenansicht
@@ -2335,7 +2339,7 @@ ENC_SPECIAL
 Besonderheit
 
 OBJECTS_WITH_SPECIAL
-Objekte mit Besonderheit: 
+'''Objekte mit Besonderheit: '''
 
 ENC_BUILDING_TYPE
 Gebäudetyp
@@ -2350,7 +2354,7 @@ ENC_SHIP_DESIGN
 Schiffsentwurf
 
 SHIPS_OF_DESIGN
-Schiffe dieser Klasse: 
+'''Schiffe dieser Klasse: '''
 
 NO_SHIPS_OF_DESIGN
 Keine Schiffe dieser Klasse bekannt
@@ -2362,7 +2366,7 @@ ENC_EMPIRE
 Imperium
 
 EMPIRE_CAPITAL
-Hauptstadt: 
+'''Hauptstadt: '''
 
 NO_CAPITAL
 Keine Hauptstadt bekannt
@@ -2371,13 +2375,13 @@ EMPIRE_METERS
 Metrik:
 
 OWNED_PLANETS
-Eigene Planeten: 
+'''Eigene Planeten: '''
 
 NO_OWNED_PLANETS_KNOWN
 Keine eigene Planeten bekannt
 
 OWNED_FLEETS
-Eigene Flotten: 
+'''Eigene Flotten: '''
 
 OWNED_FLEET_AT_SYSTEM
 %1% an %2%
@@ -2395,7 +2399,7 @@ MONSTER_TYPES
 Monstertypen
 
 MONSTER_OBJECTS
-Monster: 
+'''Monster: '''
 
 NO_MONSTER_OBJECTS
 Keine Monster bekannt
@@ -2548,20 +2552,20 @@ Frieden ist der diplomatische Zustand zwischen Imperien, in welchem beide Partei
 OUTPOSTS_TITLE
 Außenposten
 OUTPOSTS_TEXT
-'''Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auch, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.'''
+Außenposten sind unbemannte Raumstation, welche an Standorten gefunden werden können, die zu lebensfeindlich für eine Siedlung wären. Sie haben keine Bevölkerung und produzieren üblicherweise keine Ressourcen. Dafür erzeugen sie aber [[encyclopedia SUPPLY_TITLE]] (mit der geeigneten Technologie) und stellen Ortungskapazitäten bereit. Siedlungen können auf Planeten mit einem bereits existierenden Außenposten gegründet werden. Um einen Außenposten zu erstellen musst du eine [[shippart CO_OUTPOST_POD]] zu einem Schiff hinzufügen. Außenposten entstehen auch, wenn die Bevölkerung einer Siedlung aus irgendeinem Grund auf null fällt.
 
 GROWTH_FOCUS_TITLE
 Wachstumsfokus
 GROWTH_FOCUS_TEXT
-'''The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]] lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.'''
+The Growth Focus represents exporting rare materials and substances that aid the population growth of a certain species. Is only available in certain situations: on some homeworlds, and on planets with growth specials.  A planet focused on Growth increases the max Population only of other planets connected to it by [[encyclopedia SUPPLY_TITLE]] lines.  A Homeworld focused on Growth only helps other planets of the same species.  Growth Special planets focused on growth, only help a single classification of species, for instance some only help Organic Species.
 
 #The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
 
 TRADE_FOCUS_TEXT
-'''Trade doesn't do anything, yet.  It is just a placeholder to show that more resources are planned.'''
+Trade doesn't do anything, yet.  It is just a placeholder to show that more resources are planned.
 
 PROTECTION_FOCUS_TEXT
-'''The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are doubled.'''
+The Protection focus represents a planet wholly focused on defending itself.  [[encyclopedia TROOP_TITLE]], Planetary [[encyclopedia DEFENSE_TITLE]], and Planetary [[encyclopedia SHIELDS_TITLE]] are doubled.
 
 INDUSTRY_TITLE
 Industrie
@@ -2585,12 +2589,12 @@ Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be u
 INFRASTRUCTURE_TITLE
 Infrastruktur
 INFRASTRUCTURE_TEXT
-'''Die Bezeichnung Infrastruktur bezieht sich auf sämtliche Netzwerke, die einen kolonialisierten Planeten betreffen: Energie, Transport, Telekommunikation und soziale Einrichtungen für die Bewohner.'''
+Die Bezeichnung Infrastruktur bezieht sich auf sämtliche Netzwerke, die einen kolonialisierten Planeten betreffen: Energie, Transport, Telekommunikation und soziale Einrichtungen für die Bewohner.
 
 DEFENSE_TITLE
 Verteidigung
 DEFENSE_TEXT
-'''Der Verteidigungswert eines Planeten stellt die Feuerkraft der installierten Boden-All-Waffen da. Er ist mit dem Angriffswert eines Schiffes vergleichbar.'''
+Der Verteidigungswert eines Planeten stellt die Feuerkraft der installierten Boden-All-Waffen da. Er ist mit dem Angriffswert eines Schiffes vergleichbar.
 
 SHIELDS_TITLE
 Schild
@@ -2630,17 +2634,17 @@ Die Truppenstärke auf einem Planeten spiegelt die Schlagkraft der dort stationi
 ORGANIC_SPECIES_TITLE
 Organischer Stoffwechsel
 ORGANIC_SPECIES_TEXT
-'''Organische Spezies meint mehr oder weniger "Leben, wie wir es kennen". Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein organischer Wachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist.'''
+Organische Spezies meint mehr oder weniger "Leben, wie wir es kennen". Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein organischer Wachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist.
 
 LITHIC_SPECIES_TITLE
 Lithischer Stoffwechsel
 LITHIC_SPECIES_TEXT
-'''Lithische Spezies sind Silizium- oder Mineral-basierend. Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein lithischer Wachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist.'''
+Lithische Spezies sind Silizium- oder Mineral-basierend. Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein lithischer Wachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist.
 
 ROBOTIC_SPECIES_TITLE
 Roboter Stoffwechsel
 ROBOTIC_SPECIES_TEXT
-'''Roboterspezies sind intelligente Maschinen. Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein Roboterwachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist. Roboterwachstums-Boni sind markiert mit einem kleinen roten "R" in der Ecke.'''
+Roboterspezies sind intelligente Maschinen. Die maximale Bevölkerung dieser Spezies kann anwachsen, wenn die verbundene Heimatwelt auf den Fokus [[encyclopedia GROWTH_FOCUS_TITLE]] gesetzt ist oder wenn ein Roboterwachstums-Bonus auf einem kolonisierten Planeten vorhanden ist und dessen Fokus auf Wachstum gesetzt ist. Roboterwachstums-Boni sind markiert mit einem kleinen roten "R" in der Ecke.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototropher Stoffwechsel
@@ -2655,12 +2659,12 @@ Red Star, Neutron Star: Tiny -1 , Small -2 , Medium -3 , Large -4 , Huge -5.
 Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.'''
 
 SELF_SUSTAINING_SPECIES_TEXT
-'''Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.'''
+Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.
 
 TELEPATHIC_TITLE
 Telepathie
 TELEPATHY_TEXT
-'''Telepathische Spezies sind immun gegen Gedankenkontrolle und somit besser für die Erforschung der [[tech LRN_PSIONICS]] geeignet.'''
+Telepathische Spezies sind immun gegen Gedankenkontrolle und somit besser für die Erforschung der [[tech LRN_PSIONICS]] geeignet.
 
 XENOPHOBIC_SPECIES_TEXT
 '''Xenophobic species will automatically divert some of their industrial efforts into harassing other species that are nearby. The affected nearby species will suffer an industrial penalty due to this harassment. A Xenophobic species of Self-Sustaining metabolism will also find the presence of alien species nearby to be disruptive to its natural balances (whether due to some direct effect or simply due to wasted energies being applied to harrassing the alien species, has not been determined) resulting in a reduced maximum population.
@@ -2670,7 +2674,7 @@ Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 FUEL_TITLE
 Treibstoff
 FUEL_TEXT
-'''Treibstoff erlaubt Schiffe entlang der Sternstraßen zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Treibstoff. Treibstoff wird bei keiner anderen Aktion verbraucht. Die [[encyclopedia SUPPLY_TITLE]] tanken ein Schiff vollständig auf. Wenn ein Schiff jenseits einer verbündeten Sternstraße reist, wird der Treibstoff langsam wiederhergestellt, sobald sich das Schiff nicht mehr auf einer Sternstraße befindet.'''
+Treibstoff erlaubt Schiffe entlang der Sternstraßen zu reisen. Für jede Sternstraße verbraucht ein Schiff 1 Einheit Treibstoff. Treibstoff wird bei keiner anderen Aktion verbraucht. Die [[encyclopedia SUPPLY_TITLE]] tanken ein Schiff vollständig auf. Wenn ein Schiff jenseits einer verbündeten Sternstraße reist, wird der Treibstoff langsam wiederhergestellt, sobald sich das Schiff nicht mehr auf einer Sternstraße befindet.
 
 SUPPLY_TITLE
 Versorgung
@@ -2682,7 +2686,7 @@ Der Versorgungsgrad eines Planeten zeigt die Entfernung an, die die Versorgung e
 FLEET_UPKEEP_TITLE
 Flotten Unterhalt
 FLEET_UPKEEP_TEXT
-'''Die Unterhaltskosten einer Flotte sind mehr als die Summe der Kosten aller Schiffe, da die Betriebs- und Verwaltungskosten von mehreren Schiffen dazu kommen. Wenn neue Schiffe produziert werden, steigen die Kosten um 1% für jedes Schiff im Besitz des Imperiums. Die Kosten von [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] und [[shippart CO_OUTPOST_POD]] im Gegensatz steigen um 6% für jeden Planeten im Besitz des Imperiums.'''
+Die Unterhaltskosten einer Flotte sind mehr als die Summe der Kosten aller Schiffe, da die Betriebs- und Verwaltungskosten von mehreren Schiffen dazu kommen. Wenn neue Schiffe produziert werden, steigen die Kosten um 1% für jedes Schiff im Besitz des Imperiums. Die Kosten von [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]] und [[shippart CO_OUTPOST_POD]] im Gegensatz steigen um 6% für jeden Planeten im Besitz des Imperiums.
 
 EVACUATION_TITLE
 Evakuierung
@@ -2729,7 +2733,7 @@ COMBAT_WINDOW_TITLE
 Kampffenster
 
 COMBAT_BATTLE
-KAMPF : 
+'''KAMPF : '''
 
 COMBAT_SYSTEM
 Das %1% System
@@ -2744,19 +2748,19 @@ COMBAT_PLANETS
 Planeten
 
 COMBAT_REMAINING
- Verbleibend
+''' Verbleibend'''
 
 COMBAT_RETREATED
- Zurückgezogen
+''' Zurückgezogen'''
 
 COMBAT_DESTROYED
- Zerstört
+''' Zerstört'''
 
 COMBAT_DEFENSELESS
- Wehrlos
+''' Wehrlos'''
 
 COMBAT_LOST
- Verloren!
+''' Verloren!'''
 
 ####################
 # TurnProgress     #
@@ -3985,7 +3989,7 @@ SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''
 
 SP_EXPERIMENTOR_DESC
-'''The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
+The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.
 
 SP_SUPER_TEST_GAMEPLAY_DESC
 '''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. (Stealth-busting power only works when they are in a Capital)
@@ -4568,238 +4572,238 @@ Ein neues System erschaffen
 # Conditions
 
 DESC_ALL
- im Universum
+''' im Universum'''
 
 DESC_ALL_NOT
- nicht im Universum
+''' nicht im Universum'''
 
 DESC_EMPIRE_AFFILIATION_SELF
- dass es zum %1% des Imperiums gehört
+''' dass es zum %1% des Imperiums gehört'''
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- dass es nicht zum %1% des Imperiums gehört
+''' dass es nicht zum %1% des Imperiums gehört'''
 
 DESC_EMPIRE_AFFILIATION
- die zu einem %1% des Imperiums %2% gehören
+''' die zu einem %1% des Imperiums %2% gehören'''
 
 DESC_EMPIRE_AFFILIATION_NOT
- die nicht zu einem %1% des Imperiums %2% gehören
+''' die nicht zu einem %1% des Imperiums %2% gehören'''
 
 DESC_EMPIRE_AFFILIATION_ANY
- die zu irgendeinem Imperium gehören
+''' die zu irgendeinem Imperium gehören'''
 
 DESC_EMPIRE_AFFILIATION_ANY_NOT
- die nicht zu einem Imperium gehören
+''' die nicht zu einem Imperium gehören'''
 
 DESC_HOMEWORLD
- der eine Heimatwelt der Spezies %1% ist
+''' der eine Heimatwelt der Spezies %1% ist'''
 
 DESC_HOMEWORLD_NOT
- der keine Heimatwelt der Spezies %1% ist
+''' der keine Heimatwelt der Spezies %1% ist'''
 
 DESC_CAPITAL
- der der Hauptplanet eines Imperiums ist
+''' der der Hauptplanet eines Imperiums ist'''
 
 DESC_CAPITAL_NOT
- der nicht der Hauptplanet eines Imperiums ist
+''' der nicht der Hauptplanet eines Imperiums ist'''
 
 DESC_TYPE
- dass es ein %1% ist
+''' dass es ein %1% ist'''
 
 DESC_TYPE_NOT
- dass es kein %1% ist
+''' dass es kein %1% ist'''
 
 DESC_BUILDING
- was ein %1%sbau ist
+''' was ein %1%sbau ist'''
 
 DESC_BUILDING_NOT
- was kein %1%sbau ist
+''' was kein %1%sbau ist'''
 
 DESC_SPECIAL
- mit der Besonderheit %1%
+''' mit der Besonderheit %1%'''
 
 DESC_SPECIAL_NOT
- ohne die Besonderheit %1%
+''' ohne die Besonderheit %1%'''
 
 DESC_CONTAINS
- dass es ein Objekt,%1%, enthält
+''' dass es ein Objekt,%1%, enthält'''
 
 DESC_CONTAINS_NOT
- dass es kein Objekt,%1%, enthält
+''' dass es kein Objekt,%1%, enthält'''
 
 DESC_PLANET_TYPE
- der ein %1% Planet ist
+''' der ein %1% Planet ist'''
 
 DESC_PLANET_TYPE_NOT
- der kein %1% Planet ist
+''' der kein %1% Planet ist'''
 
 DESC_PLANET_SIZE
- der ein %1% Planet ist
+''' der ein %1% Planet ist'''
 
 DESC_PLANET_SIZE_NOT
- der kein %1% Planet ist
+''' der kein %1% Planet ist'''
 
 DESC_PLANET_ENVIRONMENT
- der ein %1% Planet ist
+''' der ein %1% Planet ist'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- der kein %1% Planet ist
+''' der kein %1% Planet ist'''
 
  
 
 DESC_ENQUEUED_DESIGN_NOT
- where empire %1% dows not have between %2% and %3% %4% ships on the production queue
+''' where empire %1% dows not have between %2% and %3% %4% ships on the production queue'''
 
 DESC_STAR_TYPE
- der ein System mit %1% Stern ist
+''' der ein System mit %1% Stern ist'''
 
 DESC_STAR_TYPE_NOT
- der kein System mit %1% Stern ist
+''' der kein System mit %1% Stern ist'''
 
 DESC_DESIGN_HAS_HULL
- mit dem Rumpf %1%
+''' mit dem Rumpf %1%'''
 
 DESC_DESIGN_HAS_HULL_NOT
- ohne den Rumpf %1%
+''' ohne den Rumpf %1%'''
 
 DESC_DESIGN_HAS_PART
- mit zwischen %1% und %2% des %3% Teils
+''' mit zwischen %1% und %2% des %3% Teils'''
 
 DESC_DESIGN_HAS_PART_NOT
- ohne zwischen %1% und %2% des %3% Teils
+''' ohne zwischen %1% und %2% des %3% Teils'''
 
 DESC_CHANCE_PERCENTAGE
- mit einer %1%%% Chance
+''' mit einer %1%%% Chance'''
 
 DESC_CHANCE_PERCENTAGE_NOT
- mit einer (100 - %1%)%% Chance
+''' mit einer (100 - %1%)%% Chance'''
 
 DESC_CHANCE
- mit einer Wahrscheinlichkeit von %1%
+''' mit einer Wahrscheinlichkeit von %1%'''
 
 DESC_CHANCE_NOT
- mit einer Wahrscheinlichkeit von 1 - %1%
+''' mit einer Wahrscheinlichkeit von 1 - %1%'''
 
 DESC_METER_VALUE_CURRENT
- dass es eine %1% zwischen %2% und %3% hat
+''' dass es eine %1% zwischen %2% und %3% hat'''
 
 DESC_METER_VALUE_CURRENT_NOT
- dass es keine %1% zwischen %2% und %3% hat
+''' dass es keine %1% zwischen %2% und %3% hat'''
 
 DESC_EMPIRE_STOCKPILE_VALUE
- die zu einem Imperium gehört, mit einem %1% Vorrat zwischen %2% und %3% 
+''' die zu einem Imperium gehört, mit einem %1% Vorrat zwischen %2% und %3% '''
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
- die nicht zu einem Imperium gehört, mit einem %1% Vorrat zwischen %2% und %3% 
+''' die nicht zu einem Imperium gehört, mit einem %1% Vorrat zwischen %2% und %3% '''
 
 DESC_VISIBLE_TO_EMPIRE
- die sichtbar für das %1% Imperium sind
+''' die sichtbar für das %1% Imperium sind'''
 
 DESC_VISIBLE_TO_EMPIRE_NOT
- die nicht sichtbar für das %1% Imperium sind
+''' die nicht sichtbar für das %1% Imperium sind'''
 
 DESC_WITHIN_DISTANCE
- die innerhalb %1% eines beliebigen %2% Objekts sind
+''' die innerhalb %1% eines beliebigen %2% Objekts sind'''
 
 DESC_WITHIN_DISTANCE_NOT
- die nicht innerhalb %1% eines beliebigen %2% Objekts sind
+''' die nicht innerhalb %1% eines beliebigen %2% Objekts sind'''
 
 DESC_WITHIN_STARLANE_JUMPS
- die innerhalb von %1% Sternstraßensprünge Objekt %2% erreichen
+''' die innerhalb von %1% Sternstraßensprünge Objekt %2% erreichen'''
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
- die nicht innerhalb von %1% Sternstraßensprünge Objekt %2% erreichen
+''' die nicht innerhalb von %1% Sternstraßensprünge Objekt %2% erreichen'''
 
 DESC_CAN_ADD_STARLANE_CONNECTION
- that can have Sternstraßen added connecting to all systems that contain objects%1%
+''' that can have Sternstraßen added connecting to all systems that contain objects%1%'''
 
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
- that can not have Sternstraßen added connecting to all systems that contain objects%1%
+''' that can not have Sternstraßen added connecting to all systems that contain objects%1%'''
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION
- that can have Sternstraßen removed that connect to all systems that contain objects%1%
+''' that can have Sternstraßen removed that connect to all systems that contain objects%1%'''
 
 DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
- that can not have Sternstraßen removed that connect to all systems that contain objects%1%
+''' that can not have Sternstraßen removed that connect to all systems that contain objects%1%'''
 
 DESC_EXPLORED_BY_EMPIRE
- erkundet durch das %1% Imperium
+''' erkundet durch das %1% Imperium'''
 
 DESC_EXPLORED_BY_EMPIRE_NOT
- nicht erkundet durch das %1% Imperium
+''' nicht erkundet durch das %1% Imperium'''
 
 DESC_STATIONARY
- welches stationär ist
+''' welches stationär ist'''
 
 DESC_STATIONARY_NOT
- welches sich bewegt
+''' welches sich bewegt'''
 
 DESC_CAN_COLONIZE
- eine Spezies, die Kolonisieren kann
+''' eine Spezies, die Kolonisieren kann'''
 
 DESC_CAN_COLONIZE_NOT
- ohne eine Spezies, die Kolonisieren kann
+''' ohne eine Spezies, die Kolonisieren kann'''
 
 DESC_CAN_PRODUCE_SHIPS
- von einer Spezies, die Schiffe produzieren kann
+''' von einer Spezies, die Schiffe produzieren kann'''
 
 DESC_CAN_PRODUCE_SHIPS_NOT
- ohne eine Spezies, die Schiffe produzieren kann
+''' ohne eine Spezies, die Schiffe produzieren kann'''
  
 
 DESC_AND_BETWEEN_OPERANDS
- und
+''' und'''
 
 DESC_OR_BETWEEN_OPERANDS
- oder
+''' oder'''
 
 DESC_TURN
- wenn die aktuelle Runde zwischen %1% und %2% ist
+''' wenn die aktuelle Runde zwischen %1% und %2% ist'''
 
 DESC_TURN_NOT
- wenn die aktuelle Runde nicht zwischen %1% und %2% ist
+''' wenn die aktuelle Runde nicht zwischen %1% und %2% ist'''
 
 DESC_NUMBER_OF
- das eins von %1% zufällig ausgewählten Objekten ist%2%
+''' das eins von %1% zufällig ausgewählten Objekten ist%2%'''
 
 DESC_NUMBER_OF_NOT
- keines der %1% zufällig ausgewählten Objekte ist%2%
+''' keines der %1% zufällig ausgewählten Objekte ist%2%'''
 
 DESC_CONTAINED_BY
- Teil eines Objekts %1% ist
+''' Teil eines Objekts %1% ist'''
 
 DESC_CONTAINED_BY_NOT
- nicht Teil eines Objekts %1% ist
+''' nicht Teil eines Objekts %1% ist'''
 
 DESC_OWNER_HAS_TECH
- die zu einem Imperium gehören, dass die Technologie %1% besitzt
+''' die zu einem Imperium gehören, dass die Technologie %1% besitzt'''
 
 DESC_OWNER_HAS_TECH_NOT
- die zu einem Imperium gehören, dass nicht die Technologie %1% besitzt
+''' die zu einem Imperium gehören, dass nicht die Technologie %1% besitzt'''
 
 DESC_OWNER_HAS_BUILDING_TYPE
- Gebäude ist freigegeben für das Imperium
+''' Gebäude ist freigegeben für das Imperium'''
 
 DESC_OWNER_HAS_BUILDING_TYPE_NOT
- Gebäude ist nicht freigegeben für das Imperium
+''' Gebäude ist nicht freigegeben für das Imperium'''
 
 DESC_OWNER_HAS_SHIP_DESIGN
- Schiffsentwurf ist freigegeben für das Imperium
+''' Schiffsentwurf ist freigegeben für das Imperium'''
 
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
- Schiffsentwurf ist nicht freigegeben für das Imperium
+''' Schiffsentwurf ist nicht freigegeben für das Imperium'''
 
 DESC_NUMBER
- wenn es zwischen %1% und %2% Objekte%3%
+''' wenn es zwischen %1% und %2% Objekte%3%'''
 
 DESC_NUMBER_NOT
- wenn es nicht zwischen %1% und %2% Objekte%3%
+''' wenn es nicht zwischen %1% und %2% Objekte%3%'''
 
 DESC_HAS_TAG
- das ist %1%
+''' das ist %1%'''
 
 DESC_HAS_TAG_NOT
- das ist nicht %1%
+''' das ist nicht %1%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
@@ -4963,7 +4967,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotische Biologie
 
 GRO_SYMBIOTIC_BIO_DESC
-'''Erhöht die maximale Bevölkerung von Planeten des Typs [[PE_GOOD]]>, [[PE_ADEQUATE]] oder [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.'''
+Erhöht die maximale Bevölkerung von Planeten des Typs [[PE_GOOD]]>, [[PE_ADEQUATE]] oder [[PE_POOR]], abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.
 
 GRO_GENETIC_MED
 Genetische Medizin
@@ -5207,7 +5211,7 @@ CON_ORBITAL_HAB
 Orbitale Wohnanlagen
 
 CON_ORBITAL_HAB_DESC
-'''Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.'''
+Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.
 
 CON_NDIM_STRC
 N-Dimensionale Gebäude
@@ -5246,10 +5250,10 @@ SHP_MIDCOMB_LOG_DESC
 When interstellar fleets are in regular, commonplace use, the transfer of personnel and materiel in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the coordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
 
 SHP_DOMESTIC_MONSTER_DESC
-'''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the Sternstraßen. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
+Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the Sternstraßen. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.
 
 SHP_ENDOCRINE_SYSTEMS_DESC
-The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  
+'''The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  '''
 
 SHP_FRC_ENRG_COMP
 Kraft-Energie Kompression
@@ -5383,7 +5387,7 @@ GRO_SUBTER_HAB
 Unterirdische Wohnanlagen
 
 GRO_SUBTER_HAB_DESC
-'''Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.'''
+Erhöht die Bevölkerungskapazität auf allen bewohnbaren Planeten, abhängig von deren Größe; [[SZ_TINY]]: +1, [[SZ_SMALL]]: +2, [[SZ_MEDIUM]]: +3, [[SZ_LARGE]]: +4, [[SZ_HUGE]]: +5.
 
 GRO_GENOME_BANK
 Genombank
@@ -5484,13 +5488,13 @@ DEF_DEFENSE_NET_2
 Planetares Abwehrnetz 2
 
 DEF_DEFENSE_NET_2_DESC
-'''Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um weitere 15, zusätzlich zu [[tech DEF_DEFENSE_NET_1]].'''
+Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um weitere 15, zusätzlich zu [[tech DEF_DEFENSE_NET_1]].
 
 DEF_DEFENSE_NET_3
 Planetares Abwehrnetz 3
 
 DEF_DEFENSE_NET_3_DESC
-'''Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um weitere 25, zusätzlich zu allen vorhergehenden Abwehrnetzen.'''
+Erhöht die maximale [[encyclopedia DEFENSE_TITLE]] auf allen Planeten um weitere 25, zusätzlich zu allen vorhergehenden Abwehrnetzen.
 
 DEF_DEFENSE_NET_REGEN_1
 Abwehrnetz Regeneration 1
@@ -5504,37 +5508,37 @@ DEF_DEFENSE_NET_REGEN_2
 Abwehrnetz Regeneration 2
 
 DEF_DEFENSE_NET_REGEN_2_DESC
-'''Regeneriert die planetare [[encyclopedia DEFENSE_TITLE]] jede Runde zusätzlich um 25% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
+Regeneriert die planetare [[encyclopedia DEFENSE_TITLE]] jede Runde zusätzlich um 25% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_1
 Planetarer Schutzschild 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 30, zusätzlich zur [[tech LRN_FORCE_FIELD]] und regeneriert den Schild jede Runde um 1 plus 25% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
+Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 30, zusätzlich zur [[tech LRN_FORCE_FIELD]] und regeneriert den Schild jede Runde um 1 plus 25% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_2
 Planetarer Schutzschild 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 60. Die Schildregeneration pro Runde erhöht sich auf 1 plus 100% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
+Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 60. Die Schildregeneration pro Runde erhöht sich auf 1 plus 100% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_3
 Planetarer Schutzschild 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 90. Die Schildregeneration pro Runde erhöht sich auf 1 plus 200% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
+Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 90. Die Schildregeneration pro Runde erhöht sich auf 1 plus 200% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_4
 Planetarer Schutzschild 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 250% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
+Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 250% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_5
 Planetarer Schutzschild 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-'''Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 500% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].'''
+Erhöht den maximalen [[encyclopedia SHIELDS_TITLE]] der Planeten um weitere 150. Die Schildregeneration pro Runde erhöht sich auf 1 plus 500% des Wertes der planetaren [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_SYST_DEF_MINE_1
 Systemweites Minennetz 1
@@ -5550,13 +5554,13 @@ DEF_SYST_DEF_MINE_2
 Systemweites Minennetz 2
 
 DEF_SYST_DEF_MINE_2_DESC
-'''Reduziert die Panzerung von feindlichen Schiffen um weitere 4 pro Runde, zusätzlich zu [[tech DEF_SYST_DEF_MINE_1]].'''
+Reduziert die Panzerung von feindlichen Schiffen um weitere 4 pro Runde, zusätzlich zu [[tech DEF_SYST_DEF_MINE_1]].
 
 DEF_SYST_DEF_MINE_3
 Systemweites Minennetz 3
 
 DEF_SYST_DEF_MINE_3_DESC
-'''Reduziert die Panzerung von feindlichen Schiffen um weitere 8 pro Runde, zusätzlich zu allen vorhergehenden Technologien.'''
+Reduziert die Panzerung von feindlichen Schiffen um weitere 8 pro Runde, zusätzlich zu allen vorhergehenden Technologien.
 
 DEF_ROOT_DEFENSE
 Selbstverteidigung
@@ -5594,7 +5598,7 @@ SHP_FLEET_REPAIR_DESC
 Allows ships within [[encyclopedia SUPPLY_TITLE]] line range to repair damage at a rate of 1 per turn. Does not function immediately after battles.
 
 SHP_ADV_DAM_CONT_DESC
-'''Repairs damaged ships by 25% of structure per turn-- not during battles.'''
+Repairs damaged ships by 25% of structure per turn-- not during battles.
 
 SHP_ROOT_AGGRESSION_DESC
 Erlaubt Grundbewaffnung und [[shippart GT_TROOP_POD]].
@@ -5602,49 +5606,49 @@ Erlaubt Grundbewaffnung und [[shippart GT_TROOP_POD]].
 SHP_WEAPON_1_2
 Massenkatapult 2
 SHP_WEAPON_1_2_DESC
-'''Verbessert das Massenkatapult auf Stufe 2.'''
+Verbessert das Massenkatapult auf Stufe 2.
 
 SHP_WEAPON_1_3
 Massenkatapult 3
 SHP_WEAPON_1_3_DESC
-'''Verbessert das Massenkatapult auf Stufe 3.'''
+Verbessert das Massenkatapult auf Stufe 3.
 
 SHP_WEAPON_1_4
 Massenkatapult 4
 SHP_WEAPON_1_4_DESC
-'''Verbessert das Massenkatapult auf Stufe 4.'''
+Verbessert das Massenkatapult auf Stufe 4.
 
 SHP_WEAPON_2_1_DESC
-'''Entsperrt den Laser, eine leistungsfähigere Schiffswaffe als das Massenkatapult.'''
+Entsperrt den Laser, eine leistungsfähigere Schiffswaffe als das Massenkatapult.
 
 SHP_WEAPON_2_2_DESC
-'''Verbessert den Laser auf Stufe 2.'''
+Verbessert den Laser auf Stufe 2.
 
 SHP_WEAPON_2_3_DESC
-'''Verbessert den Laser auf Stufe 3.'''
+Verbessert den Laser auf Stufe 3.
 
 SHP_WEAPON_2_4_DESC
-'''Verbessert den Laser auf Stufe 4.'''
+Verbessert den Laser auf Stufe 4.
 
 SHP_WEAPON_3_1
 Plasmakanone 1
 SHP_WEAPON_3_1_DESC
-'''Entsperrt die Plasmakanone, eine leistungsfähigere Schiffswaffe als der Laser.'''
+Entsperrt die Plasmakanone, eine leistungsfähigere Schiffswaffe als der Laser.
 
 SHP_WEAPON_3_2
 Plasmakanone 2
 SHP_WEAPON_3_2_DESC
-'''Verbessert die Plasmakanone auf Stufe 2.'''
+Verbessert die Plasmakanone auf Stufe 2.
 
 SHP_WEAPON_3_3
 Plasmakanone 3
 SHP_WEAPON_3_3_DESC
-'''Verbessert die Plasmakanone auf Stufe 3.'''
+Verbessert die Plasmakanone auf Stufe 3.
 
 SHP_WEAPON_3_4
 Plasmakanone 4
 SHP_WEAPON_3_4_DESC
-'''Verbessert die Plasmakanone auf Stufe 4.'''
+Verbessert die Plasmakanone auf Stufe 4.
 
 SHP_ION_CANNON
 Ionenkanone
@@ -6011,7 +6015,7 @@ Stärke: %1%
 # Detection Range: %2%
 
 PART_DESC_DIRECT_FIRE_STATS
-'''Angriffsschaden: %1%'''
+Angriffsschaden: %1%
 
 ## TEMPORARILY HIDDEN
 # Rate of Fire: %2% shots/turn
@@ -6044,74 +6048,74 @@ Fassungsvermögen: %9% Abfangjäger'''
 SR_WEAPON_1_1
 Massenkatapult 1
 SR_WEAPON_1_1_DESC
-'''Der Massenkatapult, eine Standardwaffe.'''
+Der Massenkatapult, eine Standardwaffe.
 
 SR_WEAPON_1_2
 Massenkatapult 2
 SR_WEAPON_1_2_DESC
-'''Der Massenkatapult, auf Stufe 2 verbessert.'''
+Der Massenkatapult, auf Stufe 2 verbessert.
 
 SR_WEAPON_1_3
 Massenkatapult 3
 SR_WEAPON_1_3_DESC
-'''Der Massenkatapult, auf Stufe 3 verbessert.'''
+Der Massenkatapult, auf Stufe 3 verbessert.
 
 SR_WEAPON_1_4
 Massenkatapult 4
 SR_WEAPON_1_4_DESC
-'''Der Massenkatapult, auf Stufe 4 verbessert.'''
+Der Massenkatapult, auf Stufe 4 verbessert.
 
 SR_WEAPON_2_1_DESC
-'''Der Laser, eine viel leistungsfähigere Schiffswaffe als der Massenkatapult.'''
+Der Laser, eine viel leistungsfähigere Schiffswaffe als der Massenkatapult.
 
 SR_WEAPON_2_2_DESC
-'''Laser, auf Stufe 2 verbessert.'''
+Laser, auf Stufe 2 verbessert.
 
 SR_WEAPON_2_3_DESC
-'''Laser, auf Stufe 3 verbessert.'''
+Laser, auf Stufe 3 verbessert.
 
 SR_WEAPON_2_4_DESC
-'''Laser, auf Stufe 4 verbessert.'''
+Laser, auf Stufe 4 verbessert.
 
 SR_WEAPON_3_1
 Plasmakanone 1
 SR_WEAPON_3_1_DESC
-'''Die Plasmakanone, eine viel leistungsfähigere Schiffswaffe als der Laser.'''
+Die Plasmakanone, eine viel leistungsfähigere Schiffswaffe als der Laser.
 
 SR_WEAPON_3_2
 Plasmakanone 2
 SR_WEAPON_3_2_DESC
-'''Plasmakanone, auf Stufe 2 verbessert.'''
+Plasmakanone, auf Stufe 2 verbessert.
 
 SR_WEAPON_3_3
 Plasmakanone 3
 SR_WEAPON_3_3_DESC
-'''Plasmakanone, auf Stufe 3 verbessert.'''
+Plasmakanone, auf Stufe 3 verbessert.
 
 SR_WEAPON_3_4
 Plasmakanone 4
 SR_WEAPON_3_4_DESC
-'''Plasmakanone, auf Stufe 4 verbessert.'''
+Plasmakanone, auf Stufe 4 verbessert.
 
 SR_WEAPON_4_1
 Todesstrahl 1
 SR_WEAPON_4_1_DESC
-'''Der Todesstrahl, die ultimative Schiffswaffe.'''
+Der Todesstrahl, die ultimative Schiffswaffe.
 
 SR_WEAPON_4_2
 Todesstrahl 2
 SR_WEAPON_4_2_DESC
-'''Todesstrahl, auf Stufe 2 verbessert.'''
+Todesstrahl, auf Stufe 2 verbessert.
 
 SR_WEAPON_4_3
 Todesstrahl 3
 SR_WEAPON_4_3_DESC
-'''Todesstrahl, auf Stufe 3 verbessert.'''
+Todesstrahl, auf Stufe 3 verbessert.
 
 SR_WEAPON_4_4
 Todesstrahl 4
 SR_WEAPON_4_4_DESC
-'''Todesstrahl, auf Stufe 4 verbessert. Die ultimative Verbesserung der ultimativen Waffe.'''
+Todesstrahl, auf Stufe 4 verbessert. Die ultimative Verbesserung der ultimativen Waffe.
 
 SR_WEAPON_2_DESC
 Wenig Durchschlagskraft und Masse
@@ -6178,7 +6182,7 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternstraße Schnelligkeit by 20. 
+'''A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Sternstraße Schnelligkeit by 20. '''
 
 FU_BASIC_TANK
 Zusatz Treibstofftank
@@ -6215,25 +6219,25 @@ AR_STD_PLATE
 Standardpanzerplatten
 
 AR_STD_PLATE_DESC
-'''Standardpanzerplatten bieten nur mässige Erweiterung zur Widerstandsfähigkeit eines Schiffsrumpfes.'''
+Standardpanzerplatten bieten nur mässige Erweiterung zur Widerstandsfähigkeit eines Schiffsrumpfes.
 
 AR_ZORTRIUM_PLATE
 Zortrium Panzerplatten
 
 AR_ZORTRIUM_PLATE_DESC
-'''Stärkere Abwehr als Standardpanzerplatten.'''
+Stärkere Abwehr als Standardpanzerplatten.
 
 AR_DIAMOND_PLATE
 Diamant Panzerplatten
 
 AR_DIAMOND_PLATE_DESC
-'''Stärkere Abwehr als Zortrium Panzerplatten.'''
+Stärkere Abwehr als Zortrium Panzerplatten.
 
 AR_XENTRONIUM_PLATE
 Xentronium Panzerplatten
 
 AR_XENTRONIUM_PLATE_DESC
-'''Äusserst starke und dauerhafte Panzerplatten.'''
+Äusserst starke und dauerhafte Panzerplatten.
 
 AR_ROCK_PLATE
 Gestein Panzerplatten
@@ -6270,7 +6274,7 @@ CO_SUSPEND_ANIM_POD_DESC
 Alle Siedlungschiffstypen benötigen auf dem Planet, wo sie gebaut werden sollen, eine Bevölkerung von mindestens 3.'''
 
 CO_OUTPOST_POD_DESC
-'''Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the rigth tech is researched. Colonies can be founded on planets that already have an Outpost.'''
+Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the rigth tech is researched. Colonies can be founded on planets that already have an Outpost.
 
 GT_TROOP_POD
 Bodentruppen Kapsel
@@ -6546,224 +6550,224 @@ A fearsom space dragon the size of a small planet.
 #############################################################
 
 NO_INDUSTRY
-'''−−−	Keine [[encyclopedia INDUSTRY_TITLE]]'''
+−−−	Keine [[encyclopedia INDUSTRY_TITLE]]
 
 BAD_INDUSTRY
-'''−	Schlechte [[encyclopedia INDUSTRY_TITLE]]: -50%'''
+−	Schlechte [[encyclopedia INDUSTRY_TITLE]]: -50%
 
 AVERAGE_INDUSTRY
 '''	Mittelmässige [[encyclopedia INDUSTRY_TITLE]]: 100%'''
 
 GOOD_INDUSTRY
-'''+	Gute [[encyclopedia INDUSTRY_TITLE]]: 150%'''
++	Gute [[encyclopedia INDUSTRY_TITLE]]: 150%
 
 GREAT_INDUSTRY
-'''++	Große [[encyclopedia INDUSTRY_TITLE]]: 200%'''
+++	Große [[encyclopedia INDUSTRY_TITLE]]: 200%
 
 ULTIMATE_INDUSTRY
-'''+++	Perfekte [[encyclopedia INDUSTRY_TITLE]]: 400%'''
++++	Perfekte [[encyclopedia INDUSTRY_TITLE]]: 400%
 
 NO_RESEARCH
-'''−−−	Keine [[encyclopedia RESEARCH_TITLE]]'''
+−−−	Keine [[encyclopedia RESEARCH_TITLE]]
 
 BAD_RESEARCH
-'''−	Schlechte [[encyclopedia RESEARCH_TITLE]]: -50%'''
+−	Schlechte [[encyclopedia RESEARCH_TITLE]]: -50%
 
 AVERAGE_RESEARCH
 '''	Mittelmässige [[encyclopedia RESEARCH_TITLE]]: 100%'''
 
 GOOD_RESEARCH
-'''+	Gute [[encyclopedia RESEARCH_TITLE]]: 150%'''
++	Gute [[encyclopedia RESEARCH_TITLE]]: 150%
 
 GREAT_RESEARCH
-'''++	Große [[encyclopedia RESEARCH_TITLE]]: 200%'''
+++	Große [[encyclopedia RESEARCH_TITLE]]: 200%
 
 ULTIMATE_RESEARCH
-'''+++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 400%'''
++++	Perfekte [[encyclopedia RESEARCH_TITLE]]: 400%
 
 NO_GROUND_TROOPS
-'''−−−	Keine Boden[[encyclopedia TROOP_TITLE]]'''
+−−−	Keine Boden[[encyclopedia TROOP_TITLE]]
 
 BAD_GROUND_TROOPS
-'''−	Schlechte Boden[[encyclopedia TROOP_TITLE]]: -50%'''
+−	Schlechte Boden[[encyclopedia TROOP_TITLE]]: -50%
 
 AVERAGE_GROUND_TROOPS
 '''	Mittelmäßige Boden[[encyclopedia TROOP_TITLE]]: 100%'''
 
 GOOD_GROUND_TROOPS
-'''+	Gute Boden[[encyclopedia TROOP_TITLE]]: 150%.'''
++	Gute Boden[[encyclopedia TROOP_TITLE]]: 150%.
 
 GREAT_GROUND_TROOPS
-'''++	Große Boden[[encyclopedia TROOP_TITLE]]: 200%.'''
+++	Große Boden[[encyclopedia TROOP_TITLE]]: 200%.
 
 ULTIMATE_GROUND_TROOPS
-'''+++	Perfekte Boden[[encyclopedia TROOP_TITLE]]: 300%.'''
++++	Perfekte Boden[[encyclopedia TROOP_TITLE]]: 300%.
 
 BAD_DETECTION
-'''−	Schlechte [[encyclopedia DETECTION_RANGE_TITLE]]: −20 Malus.'''
+−	Schlechte [[encyclopedia DETECTION_RANGE_TITLE]]: −20 Malus.
 
 GOOD_DETECTION
-'''+	Gute [[encyclopedia DETECTION_RANGE_TITLE]]: +25 Bonus.'''
++	Gute [[encyclopedia DETECTION_RANGE_TITLE]]: +25 Bonus.
 
 GREAT_DETECTION
-'''++	Große [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.'''
+++	Große [[encyclopedia DETECTION_RANGE_TITLE]]: +50 Bonus.
 
 ULTIMATE_DETECTION
-'''+++	Perfekte [[encyclopedia DETECTION_RANGE_TITLE]]: +100 Bonus.'''
++++	Perfekte [[encyclopedia DETECTION_RANGE_TITLE]]: +100 Bonus.
 
 BAD_STEALTH
-'''−	Schlechte [[encyclopedia STEALTH_TITLE]]: −15 Malus.'''
+−	Schlechte [[encyclopedia STEALTH_TITLE]]: −15 Malus.
 
 AVERAGE_STEALTH
 '''	Mittelmäßige [[encyclopedia STEALTH_TITLE]].'''
 
 GOOD_STEALTH
-'''+	Gute [[encyclopedia STEALTH_TITLE]]: +15 Bonus.'''
++	Gute [[encyclopedia STEALTH_TITLE]]: +15 Bonus.
 
 GREAT_STEALTH
-'''++	Grosse [[encyclopedia STEALTH_TITLE]]: +40 Bonus.'''
+++	Grosse [[encyclopedia STEALTH_TITLE]]: +40 Bonus.
 
 ULTIMATE_STEALTH
-'''+++	Perfekte [[encyclopedia STEALTH_TITLE]]: +60 Bonus.'''
++++	Perfekte [[encyclopedia STEALTH_TITLE]]: +60 Bonus.
 
 GOOD_WEAPONS
-'''+	Starts with [[tech SHP_WEAPON_1_3]] and one additional ship.'''
++	Starts with [[tech SHP_WEAPON_1_3]] and one additional ship.
 
 GREAT_WEAPONS
-'''++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.'''
+++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.
 
 ULTIMATE_WEAPONS
-'''+++	Starts with [[tech SHP_WEAPON_2_3]] and three additional ships.'''
++++	Starts with [[tech SHP_WEAPON_2_3]] and three additional ships.
 
 BAD_POPULATION
-'''−	Arme Bevölkerung 75%'''
+−	Arme Bevölkerung 75%
 
 AVERAGE_POPULATION
 '''	Mittelmäßige Bevölkerung'''
 
 GOOD_POPULATION
-'''+	Gesunde Bevölkerung 125%'''
++	Gesunde Bevölkerung 125%
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
 
 STANDARD_CONSTRUCTION_LABEL
-'''%1% Mittelmäßige [[encyclopedia INFRASTRUCTURE_TITLE]]'''
+%1% Mittelmäßige [[encyclopedia INFRASTRUCTURE_TITLE]]
 
 GOOD_ENVIRONMENT_LABEL
-'''%1% Gute Umgebung'''
+%1% Gute Umgebung
 
 ADEQUATE_ENVIRONMENT_LABEL
-'''%1% Passende Umgebung'''
+%1% Passende Umgebung
 
 POOR_ENVIRONMENT_LABEL
-'''%1% Arme Umgebung'''
+%1% Arme Umgebung
 
 HOSTILE_ENVIRONMENT_LABEL
-'''%1% Feindliche Umgebung'''
+%1% Feindliche Umgebung
 
 HOMEWORLD_LABEL
-'''Heimatwelt'''
+Heimatwelt
 
 BAD_POPULATION_LABEL
-'''%2% Schlechte Bevölkerung 75%%'''
+%2% Schlechte Bevölkerung 75%%
 
 GOOD_POPULATION_LABEL
-'''%2% Gute Bevölkerung 125%%'''
+%2% Gute Bevölkerung 125%%
 
 FOCUS_MINING_LABEL
-'''%1% Bergbau Fokus'''
+%1% Bergbau Fokus
 
 FOCUS_HEAVY_MINING_LABEL
-'''%1% Massenbergbau Fokus'''
+%1% Massenbergbau Fokus
 
 BAD_MINING_LABEL
-'''%1% Schlechter Bergbau'''
+%1% Schlechter Bergbau
 
 GOOD_MINING_LABEL
-'''%1% Guter Bergbau'''
+%1% Guter Bergbau
 
 GREAT_MINING_LABEL
-'''%1% Bester Bergbau'''
+%1% Bester Bergbau
 
 ULTIMATE_MINING_LABEL
-'''%1% Top Bergbau'''
+%1% Top Bergbau
 
 FOCUS_INDUSTRY_LABEL
-'''%2% Industrie Fokus'''
+%2% Industrie Fokus
 
 BAD_INDUSTRY_LABEL
-'''%2% Schlechte Industrie'''
+%2% Schlechte Industrie
 
 GOOD_INDUSTRY_LABEL
-'''%2% Gute Industrie'''
+%2% Gute Industrie
 
 GREAT_INDUSTRY_LABEL
-'''%2% Beste Industrie'''
+%2% Beste Industrie
 
 ULTIMATE_INDUSTRY_LABEL
-'''%2% Top Industrie'''
+%2% Top Industrie
 
 FOCUS_RESEARCH_LABEL
-'''%2% Forschung Fokus'''
+%2% Forschung Fokus
 
 BAD_RESEARCH_LABEL
-'''%2% Schlechte Forschung'''
+%2% Schlechte Forschung
 
 GOOD_RESEARCH_LABEL
-'''%2% Gute Forschung'''
+%2% Gute Forschung
 
 GREAT_RESEARCH_LABEL
-'''%2% Beste Forschung'''
+%2% Beste Forschung
 
 ULTIMATE_RESEARCH_LABEL
-'''%2% Top Forschung'''
+%2% Top Forschung
 
 BAD_TROOPS_LABEL
-'''%2% Schlechte Bodentruppe'''
+%2% Schlechte Bodentruppe
 
 AVERAGE_TROOPS_LABEL
-'''%2% Mittelmäßige Bodentruppe'''
+%2% Mittelmäßige Bodentruppe
 
 GOOD_TROOPS_LABEL
-'''%2% Gute Bodentruppe'''
+%2% Gute Bodentruppe
 
 GREAT_TROOPS_LABEL
-'''%2% Beste Bodentruppe'''
+%2% Beste Bodentruppe
 
 ULTIMATE_TROOPS_LABEL
-'''%2% Top Bodentruppe'''
+%2% Top Bodentruppe
 
 INDEPENDENT_TROOP_LABEL
-'''Unabhängige Heimatwelt'''
+Unabhängige Heimatwelt
 
 OUTPOST_TROOP_LABEL
-'''Außenposten'''
+Außenposten
 
 HOMEWORLD_SUPPLY
-'''Versorgung der Heimatwelt'''
+Versorgung der Heimatwelt
 
 HOMEWORLD_BONUS
-'''Heimatwelt'''
+Heimatwelt
 
 ORBITAL_HAB_LABEL
-'''Orbitale Wohnanlagen'''
+Orbitale Wohnanlagen
 
 NDIM_STRC_LABEL
-'''N-dimensionale Strukturen'''
+N-dimensionale Strukturen
 
 WEAK_VISION_LABEL
-'''Schwache Sicht'''
+Schwache Sicht
 
 MODERATE_VISION_LABEL
-'''Mittelmäßige Sicht'''
+Mittelmäßige Sicht
 
 GOOD_VISION_LABEL
-'''Gute Sicht'''
+Gute Sicht
 
 EXCELLENT_VISION_LABEL
-'''Ausgezeichnete Sicht'''
+Ausgezeichnete Sicht
 
 #############################################################
 ####                       T A G S                       ####

@@ -80,6 +80,11 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
                 m_part_meters[std::make_pair(METER_DAMAGE,  part->Name())];
                 break;
             }
+            case PC_COLONY:
+            case PC_TROOPS: {
+                m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
+                break;
+            }
             default:
                 break;
             }
@@ -251,20 +256,12 @@ bool Ship::CanColonize() const {
         return false;
     if (!species->CanColonize())
         return false;
-
-    const ShipDesign* design = Design();
-    if (!design)
-        return false;
-    if (!design->CanColonize())
-        return false;
-
-    return true;
+    const ShipDesign* design = this->Design();
+    return design && design->CanColonize(); // use design->CanColonize because zero-capacity colony ships still count as outpost ships, can "can colonize" as far as order / the UI are concerned
 }
 
-bool Ship::HasTroops() const {
-    const ShipDesign* design = Design();
-    return design && design->HasTroops();
-}
+bool Ship::HasTroops() const
+{ return this->TroopCapacity() > 0.0f; }
 
 bool Ship::CanBombard() const {
     const ShipDesign* design = Design();
@@ -273,6 +270,60 @@ bool Ship::CanBombard() const {
 
 float Ship::Speed() const
 { return CurrentMeterValue(METER_SPEED); }
+
+float Ship::ColonyCapacity() const {
+    float retval = 0.0f;
+    // find which colony parts are present in design (one copy of name for each instance of a part, allowing duplicate names to appear)
+    const ShipDesign* design = Design();
+    if (!design)
+        return retval;
+
+    const std::vector<std::string>& parts = design->Parts();
+    for (std::vector<std::string>::const_iterator part_it = parts.begin();
+         part_it != parts.end(); ++part_it)
+    {
+        const std::string& part_name = *part_it;
+        if (part_name.empty())
+            continue;
+        const PartType* part_type = GetPartType(part_name);
+        if (!part_type)
+            continue;
+        ShipPartClass part_class = part_type->Class();
+        if (part_class != PC_COLONY)
+            continue;
+        // add capacity for all instances of colony parts to accumulator
+        retval += this->CurrentPartMeterValue(METER_CAPACITY, part_name);
+    }
+
+    return retval;
+}
+
+float Ship::TroopCapacity() const {
+    float retval = 0.0f;
+    // find which troop parts are present in design (one copy of name for each instance of a part, allowing duplicate names to appear)
+    const ShipDesign* design = Design();
+    if (!design)
+        return retval;
+
+    const std::vector<std::string>& parts = design->Parts();
+    for (std::vector<std::string>::const_iterator part_it = parts.begin();
+         part_it != parts.end(); ++part_it)
+    {
+        const std::string& part_name = *part_it;
+        if (part_name.empty())
+            continue;
+        const PartType* part_type = GetPartType(part_name);
+        if (!part_type)
+            continue;
+        ShipPartClass part_class = part_type->Class();
+        if (part_class != PC_TROOPS)
+            continue;
+        // add capacity for all instances of colony parts to accumulator
+        retval += this->CurrentPartMeterValue(METER_CAPACITY, part_name);
+    }
+
+    return retval;
+}
 
 const std::string& Ship::PublicName(int empire_id) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who

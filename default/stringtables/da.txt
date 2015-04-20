@@ -28,6 +28,8 @@ Gem
 
 # used to generate names for new fleets when they are created
 
+# used to generate name for effect-created planets. %1% is the system name.
+
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -251,7 +253,7 @@ Gemte Spil filer
 #################
 
 MAP_BTN_TURN_UPDATE
-Tur 
+'''Tur '''
 
 #################
 # SidePanel     #
@@ -268,6 +270,8 @@ PL_COLONIZE
 Kolonisér
 
 ## Resources Panel ##########
+
+## Specials Panel ##########
 
 ## Buildings Panel##########
 

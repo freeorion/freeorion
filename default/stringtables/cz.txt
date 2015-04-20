@@ -75,6 +75,8 @@ Nové loďstvo "%1%""
 NEW_FLEET_NAME_NO_NUMBER
 Nové loďstvo
 
+# used to generate name for effect-created planets. %1% is the system name.
+
 BOMBER
 Bombardér
 
@@ -947,6 +949,8 @@ Kolonizovat (%1%)
 
 ## Resources Panel ##########
 
+## Specials Panel ##########
+
 ## Buildings Panel##########
 
 ## General Tooltips#########
@@ -980,7 +984,7 @@ FW_FLEET_ETA_UNKNOWN
 Neznámý
 
 FW_SHIP_CLASS
-Třída lodi 
+'''Třída lodi '''
 
 FW_UNKNOWN_DESIGN_NAME
 Neznámý Desing
@@ -1231,7 +1235,7 @@ COMBAT_WINDOW_TITLE
 Bitevní okno
 
 COMBAT_BATTLE
-Bitva : 
+'''Bitva : '''
 
 COMBAT_SYSTEM
 Systém "%1%"
@@ -1246,19 +1250,19 @@ COMBAT_PLANETS
 Planeta
 
 COMBAT_REMAINING
- Zbývající
+''' Zbývající'''
 
 COMBAT_RETREATED
- Ustoupil
+''' Ustoupil'''
 
 COMBAT_DESTROYED
- Zničen
+''' Zničen'''
 
 COMBAT_DEFENSELESS
- Bezbranný
+''' Bezbranný'''
 
 COMBAT_LOST
- Prohra!
+''' Prohra!'''
 
 ####################
 # TurnProgress     #
@@ -1617,44 +1621,44 @@ Creates a new ship of design %1% owned by the %2% empire
 # Conditions
 
 DESC_HOMEWORLD
- that is a homeworld
+''' that is a homeworld'''
 
 DESC_HOMEWORLD_NOT
- that is not a homeworld
+''' that is not a homeworld'''
 
 DESC_BUILDING
- that contains a %1% building
+''' that contains a %1% building'''
 
 DESC_BUILDING_NOT
- that does't contain a %1% building
+''' that does't contain a %1% building'''
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+''' that is a %1% planet'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+''' that is not a %1% planet'''
 
  
 
 DESC_METER_VALUE_CURRENT
- that has a current %1% between %2% and %3%
+''' that has a current %1% between %2% and %3%'''
 
 DESC_METER_VALUE_CURRENT_NOT
- that doesn't have a current %1% between %2% and %3%
+''' that doesn't have a current %1% between %2% and %3%'''
 
  
 
 DESC_TURN
- when the current turn is between %1% and %2%
+''' when the current turn is between %1% and %2%'''
 
 DESC_TURN_NOT
- when the current turn is not between %1% and %2%
+''' when the current turn is not between %1% and %2%'''
 
 DESC_NUMBER_OF
- that is one of %1% objects%2%
+''' that is one of %1% objects%2%'''
 
 DESC_NUMBER_OF_NOT
- that is not one of %1% objects%2%
+''' that is not one of %1% objects%2%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
@@ -2109,7 +2113,7 @@ BLD_GENOME_BANK_DESC
 The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease and in establishing farming colonies.
 
 BLD_COLLECTIVE_NET
-Síť kolektivního myšlení 
+'''Síť kolektivního myšlení '''
 
 BLD_COLLECTIVE_NET_DESC
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.

@@ -152,10 +152,10 @@ Disconnection::Disconnection(PlayerConnectionPtr& player_connection) :
 ////////////////////////////////////////////////////////////
 // MessageEventBase
 ////////////////////////////////////////////////////////////
-MessageEventBase::MessageEventBase(Message& message, PlayerConnectionPtr& player_connection) :
-    m_message(),
+MessageEventBase::MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection) :
+    m_message(message),
     m_player_connection(player_connection)
-{ swap(m_message, message); }
+{}
 
 
 ////////////////////////////////////////////////////////////
