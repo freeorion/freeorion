@@ -500,7 +500,7 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
-    if (planet->CurrentMeterValue(METER_POPULATION) > 0.0) {
+    if (planet->CurrentMeterValue(METER_POPULATION) > 0.0f) {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that already has population";
         return;
     }
@@ -508,7 +508,7 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that owned by another empire";
         return;
     }
-    if (planet->OwnedBy(empire_id) && colonist_capacity == 0.0) {
+    if (planet->OwnedBy(empire_id) && colonist_capacity == 0.0f) {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that is already owned by empire and colony ship with zero capcity";
         return;
     }
@@ -516,7 +516,7 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
         return;
     }
-    if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
+    if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl nonzero colonist capacity and planet that ship's species can't colonize";
         return;
     }

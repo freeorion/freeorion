@@ -2199,11 +2199,11 @@ namespace {
                 ErrorLogger() << "HandleInvasion couldn't get planet";
                 continue;
             }
-            if (planet->CurrentMeterValue(METER_TROOPS) > 0.0) {
+            if (planet->CurrentMeterValue(METER_TROOPS) > 0.0f) {
                 // empires may have garrisons on planets
                 planet_empire_troops[planet->ID()][planet->Owner()] += planet->CurrentMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
             }
-            if (!planet->Unowned() && planet->CurrentMeterValue(METER_REBEL_TROOPS) > 0.0) {
+            if (!planet->Unowned() && planet->CurrentMeterValue(METER_REBEL_TROOPS) > 0.0f) {
                 // rebels may be present on empire-owned planets
                 planet_empire_troops[planet->ID()][ALL_EMPIRES] += planet->CurrentMeterValue(METER_REBEL_TROOPS);
             }

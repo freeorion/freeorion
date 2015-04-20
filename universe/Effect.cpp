@@ -637,7 +637,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target);
     if (!ship) {
         ErrorLogger() << "SetShipPartMeter::Execute acting on non-ship target:";
-        context.effect_target->Dump();
+        //context.effect_target->Dump();
         return;
     }
 
