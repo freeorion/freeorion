@@ -295,7 +295,10 @@ Tech
                         OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
             ]
             activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
             effects = SetStructure value = Value - 2
@@ -373,7 +376,10 @@ Tech
                         OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
             ]
             activation = Not OwnerHasTech name = "DEF_SYST_DEF_MINE_3"
             effects = SetStructure value = Value - 6
@@ -451,7 +457,10 @@ Tech
                         OwnedBy empire = Source.Owner
                     ]
                 ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
             ]
             effects = SetStructure value = Value - 14
         EffectsGroup
