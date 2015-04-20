@@ -124,35 +124,6 @@ class AIFleetMissionType(EnumsType):
 FLEET_MISSION_TYPES = range(0, 17)
 
 
-class AIFleetOrderType(object):
-    ORDER_INVALID = -1
-    ORDER_SCRAP = 0
-    ORDER_MOVE = 1
-    ORDER_RESUPPLY = 2
-    ORDER_SPLIT_FLEET = 3
-    ORDER_MERGE_FLEET = 4
-    ORDER_OUTPOST = 5
-    ORDER_COLONISE = 6
-    ORDER_ATTACK = 7
-    ORDER_DEFEND = 8
-    ORDER_INVADE = 9
-    ORDER_MILITARY = 10
-    ORDER_STAGING = 11
-    ORDER_REPAIR = 12
-    FleetOrderTypeNames = [ "scrap", "move", "resupply", "split_fleet", "mergeFleet", "outpost", "colonize", "attack",
-                                          "defend", "invade", "military", "staging", "repair", "invalid"]
-
-    def name(self, otype):
-        try:
-            return self.FleetOrderTypeNames[otype]
-        except IndexError:
-            return "invalidFleetOrderType"
-
-
-def get_fleet_order_types():
-    return range(0, 13)
-
-
 class AIShipDesignTypes(object):
     explorationShip = {"SD_SCOUT":"A", "Scout":"B", "Tracker":"C"}
     colonyShip = {"SD_COLONY_SHIP":"A", "Seeder":"B", "Nest-Maker":"C", "Den-Maker":"D"}

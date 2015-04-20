@@ -13,26 +13,26 @@ import PlanetUtilsAI
 import math
 from freeorion_tools import dict_from_map
 from universe_object import System, Fleet, Planet
-from EnumsAI import FLEET_MISSION_TYPES, AIFleetMissionType, AIFleetOrderType
+from EnumsAI import FLEET_MISSION_TYPES, AIFleetMissionType
 
 ORDERS_FOR_MISSION = {
-        AIFleetMissionType.FLEET_MISSION_EXPLORATION: AIFleetOrderType.ORDER_MOVE,
-        AIFleetMissionType.FLEET_MISSION_OUTPOST: AIFleetOrderType.ORDER_OUTPOST,
-        AIFleetMissionType.FLEET_MISSION_COLONISATION: AIFleetOrderType.ORDER_COLONISE,
-        AIFleetMissionType.FLEET_MISSION_SPLIT_FLEET: AIFleetOrderType.ORDER_SPLIT_FLEET,  # not really supported in this fashion currently
-        AIFleetMissionType.FLEET_MISSION_MERGE_FLEET: AIFleetOrderType.ORDER_MERGE_FLEET,  # not really supported in this fashion currently
-        AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN: AIFleetOrderType.ORDER_MILITARY,  # currently same as MILITARY
-        AIFleetMissionType.FLEET_MISSION_ATTACK: AIFleetOrderType.ORDER_MILITARY,  # currently same as MILITARY
-        AIFleetMissionType.FLEET_MISSION_DEFEND: AIFleetOrderType.ORDER_MILITARY,  # currently same as MILITARY
-        AIFleetMissionType.FLEET_MISSION_LAST_STAND: AIFleetOrderType.ORDER_MILITARY,  # currently same as MILITARY
-        AIFleetMissionType.FLEET_MISSION_INVASION: AIFleetOrderType.ORDER_INVADE,
-        AIFleetMissionType.FLEET_MISSION_MILITARY: AIFleetOrderType.ORDER_MILITARY,
-        AIFleetMissionType.FLEET_MISSION_SECURE: AIFleetOrderType.ORDER_MILITARY,  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE: AIFleetOrderType.ORDER_DEFEND,
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION: AIFleetOrderType.ORDER_INVADE,
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST: AIFleetOrderType.ORDER_OUTPOST,
-        AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION: AIFleetOrderType.ORDER_COLONISE,
-        AIFleetMissionType.FLEET_MISSION_REPAIR: AIFleetOrderType.ORDER_REPAIR}
+        AIFleetMissionType.FLEET_MISSION_EXPLORATION: AIFleetOrder.OrderMove,
+        AIFleetMissionType.FLEET_MISSION_OUTPOST: AIFleetOrder.OrderOutpost,
+        AIFleetMissionType.FLEET_MISSION_COLONISATION: AIFleetOrder.OrderColonize,
+        AIFleetMissionType.FLEET_MISSION_SPLIT_FLEET: AIFleetOrder.OrderSplitFleet,  # not really supported in this fashion currently
+        AIFleetMissionType.FLEET_MISSION_MERGE_FLEET: AIFleetOrder.OrderMergeFleet,  # not really supported in this fashion currently
+        AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN: AIFleetOrder.OrderMilitary,  # currently same as MILITARY
+        AIFleetMissionType.FLEET_MISSION_ATTACK: AIFleetOrder.OrderMilitary,  # currently same as MILITARY
+        AIFleetMissionType.FLEET_MISSION_DEFEND: AIFleetOrder.OrderMilitary,  # currently same as MILITARY
+        AIFleetMissionType.FLEET_MISSION_LAST_STAND: AIFleetOrder.OrderMilitary,  # currently same as MILITARY
+        AIFleetMissionType.FLEET_MISSION_INVASION: AIFleetOrder.OrderInvade,
+        AIFleetMissionType.FLEET_MISSION_MILITARY:AIFleetOrder.OrderMilitary,
+        AIFleetMissionType.FLEET_MISSION_SECURE: AIFleetOrder.OrderMilitary,  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
+        AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE: AIFleetOrder.OrderDefend,
+        AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION: AIFleetOrder.OrderInvade,
+        AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST: AIFleetOrder.OrderOutpost,
+        AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION: AIFleetOrder.OrderColonize,
+        AIFleetMissionType.FLEET_MISSION_REPAIR: AIFleetOrder.OrderRepair}
 
 COMBAT_MISSION_TYPES = (AIFleetMissionType.FLEET_MISSION_MILITARY,
                        AIFleetMissionType.FLEET_MISSION_ATTACK,
@@ -109,8 +109,7 @@ class AIFleetMission(object):
 
     def _get_fleet_order_from_target(self, mission_type, target):
         fleet_targets = Fleet(self.target_id)
-        order_type = ORDERS_FOR_MISSION.get(mission_type, AIFleetOrderType.ORDER_INVALID)
-        return AIFleetOrder.AIFleetOrder(order_type, fleet_targets, target)
+        return ORDERS_FOR_MISSION[mission_type](fleet_targets, target)
 
     def check_mergers(self, fleet_id=None, context=""):
         if fleet_id is None:
@@ -270,14 +269,13 @@ class AIFleetMission(object):
         """ checks if current mission (targeting a planet) should be aborted"""
         planet = fo.getUniverse().getPlanet(fleet_order.target.target_id)
         if planet:
-            order_type = fleet_order.order_type
-            if order_type == AIFleetOrderType.ORDER_COLONISE:
+            if isinstance(fleet_order, AIFleetOrder.OrderColonize):
                 if planet.currentMeterValue(fo.meterType.population) == 0 and (planet.ownedBy(fo.empireID()) or planet.unowned):
                     return False
-            elif order_type == AIFleetOrderType.ORDER_OUTPOST:
+            elif isinstance(fleet_order, AIFleetOrder.OrderOutpost):
                 if planet.unowned:
                     return False
-            elif order_type == AIFleetOrderType.ORDER_INVADE: #TODO add substantive abort check
+            elif isinstance(fleet_order, AIFleetOrder.OrderInvade):  # TODO add substantive abort check
                 return False
             else:
                 return False
@@ -373,19 +371,16 @@ class AIFleetMission(object):
             self._check_retarget_invasion()
         for fleet_order in self.orders:
             print "\t| checking Order: %s" % fleet_order
-            order_type = fleet_order.order_type
-            if order_type in [AIFleetOrderType.ORDER_COLONISE,
-                              AIFleetOrderType.ORDER_OUTPOST,
-                              AIFleetOrderType.ORDER_INVADE]:  # TODO: invasion?
+            if isinstance(fleet_order, AIFleetOrder.OrderColonize, AIFleetOrder.OrderOutpost, AIFleetOrder.OrderInvade): # TODO: invasion?
                 if self._check_abort_mission(fleet_order):
                     print "\t\t| Aborting fleet order %s" % fleet_order
                     return
             self.check_mergers(context=str(fleet_order))
             if fleet_order.can_issue_order(verbose=True):
-                if order_type == AIFleetOrderType.ORDER_MOVE and order_completed:  # only move if all other orders completed
+                if isinstance(fleet_order, AIFleetOrder.OrderMove) and order_completed:  # only move if all other orders completed
                     print "\t\t| issuing fleet order %s" % fleet_order
                     fleet_order.issue_order()
-                elif order_type not in [AIFleetOrderType.ORDER_MOVE, AIFleetOrderType.ORDER_DEFEND]:
+                elif not isinstance(fleet_order, (AIFleetOrder.OrderMove, AIFleetOrder.OrderDefend)):
                     print "\t\t| issuing fleet order %s" % fleet_order
                     fleet_order.issue_order()
                 else:
@@ -395,7 +390,7 @@ class AIFleetMission(object):
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
                 print "\t\t| CAN'T issue fleet order %s" % fleet_order
-                if order_type == AIFleetOrderType.ORDER_MOVE:
+                if isinstance(fleet_order, AIFleetOrder.OrderMove):
                     this_system_id = fleet_order.target.target_id
                     this_status = foAI.foAIstate.systemStatus.setdefault(this_system_id, {})
                     if this_status.get('monsterThreat', 0) > fo.currentTurn() * ProductionAI.cur_best_mil_ship_rating()/4.0:
@@ -416,7 +411,7 @@ class AIFleetMission(object):
                             return
             # moving to another system stops issuing all orders in system where fleet is
             # move order is also the last order in system
-            if order_type == AIFleetOrderType.ORDER_MOVE:
+            if isinstance(fleet_order, AIFleetOrder.OrderMove):
                 fleet = fo.getUniverse().getFleet(self.target_id)
                 if fleet.systemID != fleet_order.target.target_id:
                     break
@@ -427,7 +422,7 @@ class AIFleetMission(object):
                 last_order = orders[-1] if orders else None
                 universe = fo.getUniverse()
 
-                if last_order and last_order.order_type == AIFleetOrderType.ORDER_COLONISE:
+                if last_order and isinstance(last_order, AIFleetOrder.OrderColonize):
                     planet = universe.getPlanet(last_order.target.target_id)
                     sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
                     planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
@@ -442,7 +437,7 @@ class AIFleetMission(object):
                         return  # colonize order must not have completed yet
                 clearAll = True
                 last_sys_target = -1
-                if last_order and last_order.order_type == AIFleetOrderType.ORDER_MILITARY:
+                if last_order and isinstance(last_order, AIFleetOrder.OrderMilitary):
                     last_sys_target = last_order.target.target_id
                     # if (AIFleetMissionType.FLEET_MISSION_SECURE in self.get_mission_types()) or # not doing this until decide a way to release from a SECURE mission
                     secure_targets = set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
