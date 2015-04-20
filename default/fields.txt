@@ -100,7 +100,17 @@ FieldType
                 Size high = 3
                 Star type = NoStar
             ]
-            effects = SetStarType type = Blue         
+            effects = [
+				SetStarType type = Blue
+                CreatePlanet type = asteroids planetsize = asteroids name = "NEW_PLANET_NAME" 
+                GenerateSitRepMessage
+                    message = "EFFECT_NEBULA"
+                    icon = "stars/blue01.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        ]
+                    affiliation = CanSee condition = Source
+                ]
     ]
     graphic = "nebulae/nebula9.png"
     
@@ -136,7 +146,17 @@ FieldType
                 Size high = 3
                 Star type = NoStar
             ]
-            effects = SetStarType type = White         
+            effects = [
+				SetStarType type = White
+                CreatePlanet type = asteroids planetsize = asteroids name = "NEW_PLANET_NAME" 
+                GenerateSitRepMessage
+                    message = "EFFECT_NEBULA"
+                    icon = "stars/white01.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        ]
+                    affiliation = CanSee condition = Source
+                ]
     ]
     graphic = "nebulae/nebula15.png"
     
