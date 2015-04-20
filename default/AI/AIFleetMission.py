@@ -366,7 +366,7 @@ class AIFleetMission(object):
         print "\t Full Orders are:"
         for this_order in self.orders:
             print "\t\t| %s" % this_order
-        print "/t/t------"
+        print "\t\t------"
         if AIFleetMissionType.FLEET_MISSION_INVASION in self.get_mission_types():
             self._check_retarget_invasion()
         for fleet_order in self.orders:
