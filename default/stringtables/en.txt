@@ -136,7 +136,7 @@ Fleet
 
 # used to generate name for effect-created planets. %1% is the system name.
 NEW_PLANET_NAME
-%1% Nova
+%1% Unnamed Planet
 
 EMPTY_SPACE
 Deep Space
@@ -4207,6 +4207,9 @@ EFFECT_CONC_CAMP_COMLETE
 EFFECT_GAIAN_TERRAFORM
 EFFECT_TERRAFORM
 EFFECT_BLACKHOLE
+EFFECT_TREE
+EFFECT_DAMP_CLOUD
+EFFECT_NEBULA
 EFFECT_ART_PLANET
 EFFECT_TAME_MONSTER_HATCHED
 EFFECT_TAME_MONSTER_MATURED
@@ -4549,6 +4552,21 @@ EFFECT_GATEWAY_VOID_DESTROY
 The %buildingtype% at %planet% destroyed the %fleet% fleet.
 EFFECT_GATEWAY_VOID_DESTROY_LABEL
 Gateway Void Destroy
+
+EFFECT_DAMP_CLOUD
+At %system%: the crew of %ship% report they are losing fuel to a %predefinedshipdesign%.
+EFFECT_DAMP_CLOUD_LABEL
+Dampening Cloud
+
+EFFECT_NEBULA
+At %system%: astronomers report they have observed a new star being formed from a nebula.
+EFFECT_NEBULA_LABEL
+Nebula
+
+EFFECT_TREE
+At %system%: a new Dyson Forest has started to grow and surround the star.
+EFFECT_TREE_LABEL
+Dyson Forest
 
 EFFECT_DERELICT_MINERALS
 At %system%: 20 minerals were scavenged from an abandoned derelict.

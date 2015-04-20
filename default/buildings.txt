@@ -1604,7 +1604,11 @@ BuildingType
                     Planet
                 ]
             ]
-            effects = SetStealth value = Value + 60
+            effects = [
+                SetStealth value = Value + 60
+                SetMaxShield value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
+                SetMaxDefense value = Value + ( [[EXPERIMENTOR_SPAWN_START_TURN]] / 5 )
+                ]
 
         EffectsGroup
             scope = Or [

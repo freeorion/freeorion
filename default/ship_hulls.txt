@@ -1692,7 +1692,16 @@ Hull
                 Random probability = 0.1
             ]
             stackinggroup = "TREE_GROWTH"
-            effects = CreateShip designname = "SM_TREE"
+            effects = [
+                CreateShip designname = "SM_TREE"
+                GenerateSitRepMessage
+                    message = "EFFECT_TREE"
+                    icon = "icons/monsters/tree.png"
+                    parameters = [
+                        tag = "system" data = Source.SystemID
+                        ]
+                    affiliation = CanSee condition = Source
+                ]
         ]
     icon = ""
     graphic = "icons/monsters/floater.png"
@@ -2830,15 +2839,25 @@ Hull
     location = All
     effectsgroups = [
         [[INFINITE_FUEL]]
-        [[MONSTER_MOVE_PRE]]0.05[[MONSTER_MOVE_POST_NOT_OWNED]]
+        [[MONSTER_MOVE_PRE]]0.10[[MONSTER_MOVE_POST_NOT_OWNED]]
         EffectsGroup
             scope = NumberOf number = 1 condition = And [
                 Ship
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
             ]
+            activation = InSystem
             effects = [
                 SetFuel value = Value - 99
+                GenerateSitRepMessage
+                    message = "EFFECT_DAMP_CLOUD"
+                    icon = "icons/monsters/dampening-cloud.png"
+                    parameters = [
+                        tag = "ship" data = Target.ID
+                        tag = "system" data = Source.SystemID
+                        tag = "predefinedshipdesign" data = "SM_DAMPENING_CLOUD"
+                        ]
+                    empire = Target.Owner
             ]
     ]
     icon = ""
