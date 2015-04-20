@@ -45,10 +45,9 @@ class AIFleetOrder(object):
             return False
 
         if verbose:
-            universe = fo.getUniverse()
             fleet_id = self.fleet.target_id
-            system_id = self.fleet.get_system()
-            sys1 = universe.getSystem(system_id)
+            system_id = self.fleet.target_id
+            sys1 = self.fleet.get_object()
             sys_name = sys1 and sys1.name or "unknown"
             main_fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
             main_mission_type = (main_fleet_mission.get_mission_types() + [-1])[0]

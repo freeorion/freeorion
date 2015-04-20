@@ -9,7 +9,7 @@ import ExplorationAI
 import FleetUtilsAI
 import ProductionAI
 import ResourcesAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType
 from MilitaryAI import MinThreat
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map, get_ai_tag_grade
