@@ -1954,14 +1954,9 @@ namespace {
             return false;
         }
 
-        const ShipDesign* design = ship->Design();
-        if (!design) {
-            ErrorLogger() << "ColonizePlanet couldn't find ship's design!";
-            return false;
-        }
-        double colonist_capacity = design->ColonyCapacity();
+        float colonist_capacity = ship->ColonyCapacity();
 
-        if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
+        if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
             ErrorLogger() << "ColonizePlanet nonzero colonist capacity and planet that ship's species can't colonize";
             return false;
         }
@@ -1997,7 +1992,7 @@ namespace {
 
         if (system)
             system->Remove(ship->ID());
-        GetUniverse().RecursiveDestroy(ship->ID());
+        GetUniverse().RecursiveDestroy(ship->ID()); // does not count as a loss of a ship for the species / empire
 
         return true;
     }
@@ -2153,9 +2148,6 @@ namespace {
                 continue;
             if (ship->SystemID() == INVALID_OBJECT_ID)
                 continue;
-            const ShipDesign* design = ship->Design();
-            if (!design)
-                continue;
 
             int invade_planet_id = ship->OrderedInvadePlanet();
             if (invade_planet_id == INVALID_OBJECT_ID)
@@ -2171,7 +2163,7 @@ namespace {
                 continue;
 
             // how many troops are invading?
-            planet_empire_troops[invade_planet_id][ship->Owner()] += design->TroopCapacity();
+            planet_empire_troops[invade_planet_id][ship->Owner()] += ship->TroopCapacity();
 
             TemporaryPtr<System> system = GetSystem(ship->SystemID());
 
@@ -2188,12 +2180,12 @@ namespace {
             if (system)
                 system->Remove(ship->ID());
 
-            DebugLogger() << "HandleInvasion has accounted for "<< design->TroopCapacity()
-                                   << " troops to invade " << planet->Name()
-                                   << " and is destroying ship " << ship->ID()
-                                   << " named " << ship->Name();
+            DebugLogger() << "HandleInvasion has accounted for "<< ship->TroopCapacity()
+                          << " troops to invade " << planet->Name()
+                          << " and is destroying ship " << ship->ID()
+                          << " named " << ship->Name();
 
-            GetUniverse().RecursiveDestroy(ship->ID());
+            GetUniverse().RecursiveDestroy(ship->ID()); // does not count as ship loss for empire/species
         }
 
         // store invasion info in empires

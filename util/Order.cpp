@@ -484,7 +484,7 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-    if (!ship->CanColonize()) { // verifies that species exists and can colonize and that ship design can colonize
+    if (!ship->CanColonize()) { // verifies that species exists and can colonize and that ship can colonize
         ErrorLogger() << "ColonizeOrder::ExecuteImpl got ship that can't colonize";
         return;
     }
@@ -492,12 +492,8 @@ void ColonizeOrder::ExecuteImpl() const {
         ErrorLogger() << "ColonizeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
         return;
     }
-    const ShipDesign* design = ship->Design();
-    if (!design) {
-        ErrorLogger() << "ColonizeOrder::ExecuteImpl couldn't find ship's design!";
-        return;
-    }
-    double colonist_capacity = design->ColonyCapacity();
+
+    float colonist_capacity = ship->ColonyCapacity();
 
     TemporaryPtr<Planet> planet = GetPlanet(m_planet);
     if (!planet) {
@@ -649,7 +645,7 @@ void InvadeOrder::ExecuteImpl() const {
 
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
     DebugLogger() << "InvadeOrder::ExecuteImpl set for ship " << m_ship << " "
-                           << ship->Name() << " to invade planet " << m_planet << " " << planet->Name();
+                  << ship->Name() << " to invade planet " << m_planet << " " << planet->Name();
     planet->SetIsAboutToBeInvaded(true);
     ship->SetInvadePlanet(m_planet);
 

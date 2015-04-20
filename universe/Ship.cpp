@@ -80,6 +80,11 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
                 m_part_meters[std::make_pair(METER_DAMAGE,  part->Name())];
                 break;
             }
+            case PC_COLONY:
+            case PC_TROOPS: {
+                m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
+                break;
+            }
             default:
                 break;
             }
@@ -252,19 +257,11 @@ bool Ship::CanColonize() const {
     if (!species->CanColonize())
         return false;
 
-    const ShipDesign* design = Design();
-    if (!design)
-        return false;
-    if (!design->CanColonize())
-        return false;
-
-    return true;
+    return this->ColonyCapacity() > 0.0f;
 }
 
-bool Ship::HasTroops() const {
-    const ShipDesign* design = Design();
-    return design && design->HasTroops();
-}
+bool Ship::HasTroops() const
+{ return this->TroopCapacity() > 0.0f; }
 
 bool Ship::CanBombard() const {
     const ShipDesign* design = Design();
