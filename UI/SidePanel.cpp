@@ -1572,7 +1572,7 @@ void SidePanel::PlanetPanel::Refresh() {
              ship_it != invasion_ships.end(); ++ship_it)
         {
             TemporaryPtr<const Ship> invasion_ship = *ship_it;
-            invasion_troops = invasion_ship->TroopCapacity();
+            invasion_troops += invasion_ship->TroopCapacity();
         }
         std::string invasion_troops_text = DoubleToString(invasion_troops, 2, false);
         std::string invasion_text = boost::io::str(FlexibleFormat(UserString("PL_INVADE")) % invasion_troops_text);
