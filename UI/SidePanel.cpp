@@ -1339,8 +1339,7 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenInvasionShips(int target_
         if (!AvailableToInvade(ship, system_id, empire_id))
             continue;
 
-        if (const ShipDesign* design = ship->Design())
-            invasion_troops += design->TroopCapacity();
+        invasion_troops += ship->TroopCapacity();
 
         retval.insert(ship);
 
