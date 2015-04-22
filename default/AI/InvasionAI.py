@@ -394,112 +394,113 @@ def evaluate_invasion_planet(planetID, missionType, fleetSupplyablePlanetIDs, em
     return invscore
 
 
-def send_invasion_fleets(invasionFleetIDs, evaluatedPlanets, missionType):
+def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
     """sends a list of invasion fleets to a list of planet_value_pairs"""
-    universe=fo.getUniverse()
-    invasionPool = invasionFleetIDs[:]  #need to make a copy
-    bestShip, bestDesign, buildChoices = ProductionAI.getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION)
-    if bestDesign:
-        troopsPerBestShip = 2*( list(bestDesign.parts).count("GT_TROOP_POD") )
-    else:
-        troopsPerBestShip=5 #may actually not have any troopers available, but this num will do for now
+    universe = fo.getUniverse()
+    invasion_fleet_pool = set(fleet_ids)
+    if not invasion_fleet_pool:
+        return
 
-    #sortedTargets=sorted( [ ( pscore-ptroops/2 , pID, pscore, ptroops) for pID, pscore, ptroops in evaluatedPlanets ] , reverse=True)
-
-    invasionPool=set(invasionPool)
-    for pID, pscore, ptroops in evaluatedPlanets: #
-        if not invasionPool: return
-        planet=universe.getPlanet(pID)
-        if not planet: continue
-        sysID = planet.systemID
-        foundFleets = []
-        podsNeeded= math.ceil( (ptroops+0.05)/2.0)
-        foundStats={}
-        minStats= {'rating':0, 'troopPods':podsNeeded}
-        targetStats={'rating':10,'troopPods':podsNeeded+1}
-        theseFleets = FleetUtilsAI.get_fleets_for_mission(1, targetStats , minStats, foundStats, "", systems_to_check=[sysID], systems_checked=[], fleet_pool_set=invasionPool, fleet_list=foundFleets, verbose=False)
-        if not theseFleets:
-            if not FleetUtilsAI.stats_meet_reqs(foundStats, minStats):
-                print "Insufficient invasion troop allocation for system %d ( %s ) -- requested %s , found %s"%(sysID, universe.getSystem(sysID).name, minStats, foundStats)
-                invasionPool.update( foundFleets )
+    for pID, pscore, ptroops in evaluated_planets:
+        planet = universe.getPlanet(pID)
+        if not planet:
+            continue
+        sys_id = planet.systemID
+        found_fleets = []
+        found_stats = {}
+        min_stats = {'rating': 0, 'troopCapacity': ptroops}
+        target_stats = {'rating': 10, 'troopCapacity': ptroops+1}
+        these_fleets = FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, found_stats, "",
+                                                           systems_to_check=[sys_id], systems_checked=[],
+                                                           fleet_pool_set=invasion_fleet_pool, fleet_list=found_fleets,
+                                                           verbose=False)
+        if not these_fleets:
+            if not FleetUtilsAI.stats_meet_reqs(found_stats, min_stats):
+                print "Insufficient invasion troop allocation for system %d ( %s ) -- requested %s , found %s" % (
+                    sys_id, universe.getSystem(sys_id).name, min_stats, found_stats)
+                invasion_fleet_pool.update(found_fleets)
                 continue
             else:
-                theseFleets = foundFleets
-        aiTarget = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, pID)
-        print "assigning invasion fleets %s to target %s"%(theseFleets, aiTarget)
-        for fleetID in theseFleets:
-            fleet=universe.getFleet(fleetID)
-            aiFleetMission = foAI.foAIstate.get_fleet_mission(fleetID)
-            aiFleetMission.clear_fleet_orders()
-            aiFleetMission.clear_targets( (aiFleetMission.get_mission_types() + [-1])[0] )
-            aiFleetMission.add_target(missionType, aiTarget)
+                these_fleets = found_fleets
+        target = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, pID)
+        print "assigning invasion fleets %s to target %s" % (these_fleets, target)
+        for fleetID in these_fleets:
+            fleet_mission = foAI.foAIstate.get_fleet_mission(fleetID)
+            fleet_mission.clear_fleet_orders()
+            fleet_mission.clear_targets((fleet_mission.get_mission_types() + [-1])[0])
+            fleet_mission.add_target(mission_type, target)
 
 
 def assign_invasion_fleets_to_invade():
-    # assign fleet targets to invadable planets
-    
+    """assign fleet targets to invadable planets"""
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empireID = empire.empireID
-    fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-    fleetSupplyablePlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(fleetSupplyableSystemIDs)
+    fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
+    fleet_supplyable_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(fleet_supplyable_system_ids)
 
-    allTroopBaseFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION)
-    availTroopBaseFleetIDs = set(FleetUtilsAI.extract_fleet_ids_without_mission_types(allTroopBaseFleetIDs))
-    for fid in list(availTroopBaseFleetIDs):
-        if fid not in availTroopBaseFleetIDs:
+    all_troopbase_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.
+                                                                        FLEET_MISSION_ORBITAL_INVASION)
+    available_troopbase_fleet_ids = set(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_troopbase_fleet_ids))
+    for fid in list(available_troopbase_fleet_ids):
+        if fid not in available_troopbase_fleet_ids:  # ToDo: I do not see how this check makes sense, maybe remove?
             continue
         fleet = universe.getFleet(fid)
         if not fleet: 
             continue
-        sysID = fleet.systemID
-        system = universe.getSystem(sysID)
-        availPlanets = set(system.planetIDs).intersection(set( foAI.foAIstate.qualifyingTroopBaseTargets.keys()))
-        print "Considering Base Troopers in %s, found planets %s and regtistered targets %s with status %s"%(system.name, list(system.planetIDs), availPlanets,
-                                                                                                           [(pid, foAI.foAIstate.qualifyingTroopBaseTargets[pid]) for pid in availPlanets])
-        targets = [pid for pid in availPlanets if foAI.foAIstate.qualifyingTroopBaseTargets[pid][1] != -1 ]
+        sys_id = fleet.systemID
+        system = universe.getSystem(sys_id)
+        available_planets = set(system.planetIDs).intersection(set(foAI.foAIstate.qualifyingTroopBaseTargets.keys()))
+        print "Considering Base Troopers in %s, found planets %s and registered targets %s with status %s" % (
+            system.name, list(system.planetIDs), available_planets,
+            [(pid, foAI.foAIstate.qualifyingTroopBaseTargets[pid]) for pid in available_planets])
+        targets = [pid for pid in available_planets if foAI.foAIstate.qualifyingTroopBaseTargets[pid][1] != -1]
         if not targets:
-            print "Error found no valid target for troop base in system %s (%d)"%(system.name, sysID)
+            print "Error: found no valid target for troop base in system %s (%d)" % (system.name, sys_id)
             continue
-        status=foAI.foAIstate.systemStatus.get( sysID, {} )
-        local_base_troops = set(status.get('myfleets', [])).intersection(availTroopBaseFleetIDs)
-        troop_pod_tally = 0
+        status = foAI.foAIstate.systemStatus.get(sys_id, {})
+        local_base_troops = set(status.get('myfleets', [])).intersection(available_troopbase_fleet_ids)
+        troop_capacity_tally = 0
         for fid2 in local_base_troops:
-            troop_pod_tally += FleetUtilsAI.count_parts_fleetwide(fid2, ["GT_TROOP_POD"])
-        targetID=-1
-        bestScore=-1
-        target_troops = 0
-        #
-        for pid, rating in assign_invasion_values(targets, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION, fleetSupplyablePlanetIDs, empire).items():
-            p_score, p_troops = rating
-            if p_score>bestScore:
-                if p_troops >= 2*troop_pod_tally:
-                    pass
-                    #continue
-                bestScore = p_score
-                targetID = pid
-                target_troops = p_troops
-        if targetID != -1:
-            local_base_troops.discard(fid)
-            foundFleets = []
-            podsNeeded= math.ceil( (target_troops - 2*(FleetUtilsAI.count_parts_fleetwide(fid, ["GT_TROOP_POD"]))+0.05)/2.0)
-            foundStats={}
-            minStats= {'rating':0, 'troopPods':podsNeeded}
-            targetStats={'rating':10,'troopPods':podsNeeded}
-            theseFleets = FleetUtilsAI.get_fleets_for_mission(1, targetStats , minStats, foundStats, "", systems_to_check=[sysID], systems_checked=[], fleet_pool_set=local_base_troops, fleet_list=foundFleets, verbose=False)
-            for fid2 in foundFleets:
-                FleetUtilsAI.merge_fleet_a_into_b(fid2, fid)
-                availTroopBaseFleetIDs.discard(fid2)
-            availTroopBaseFleetIDs.discard(fid)
-            foAI.foAIstate.qualifyingTroopBaseTargets[targetID][1] = -1 #TODO: should probably delete
-            aiTarget = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, targetID)
-            aiFleetMission = foAI.foAIstate.get_fleet_mission(fid)
-            aiFleetMission.add_target(EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, aiTarget)
-    
-    invasionFleetIDs = AIstate.invasionFleetIDs
+            troop_capacity_tally += FleetUtilsAI.count_troops_in_fleet(fid2)
 
-    send_invasion_fleets(invasionFleetIDs, AIstate.invasionTargets, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
-    allInvasionFleetIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
-    for fid in FleetUtilsAI.extract_fleet_ids_without_mission_types(allInvasionFleetIDs):
-        thisMission = foAI.foAIstate.get_fleet_mission(fid)
-        thisMission.check_mergers(context="Post-send consolidation of unassigned troops")
+        target_id = -1
+        best_score = -1
+        target_troops = 0
+        for pid, rating in assign_invasion_values(targets, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION,
+                                                  fleet_supplyable_planet_ids, empire).items():
+            p_score, p_troops = rating
+            if p_score > best_score:
+                if p_troops >= troop_capacity_tally:
+                    pass  # ToDo: Please either delete this or add some short ToDo comment with intention
+                    # continue
+                best_score = p_score
+                target_id = pid
+                target_troops = p_troops
+        if target_id != -1:
+            local_base_troops.discard(fid)
+            found_fleets = []
+            troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fid))
+            found_stats = {}
+            min_stats = {'rating': 0, 'troopCapacity': troops_needed}
+            target_stats = {'rating': 10, 'troopCapacity': troops_needed}
+
+            theseFleets = FleetUtilsAI.get_fleets_for_mission(1, target_stats, min_stats, found_stats, "",
+                                                              systems_to_check=[sys_id], systems_checked=[],
+                                                              fleet_pool_set=local_base_troops, fleet_list=found_fleets,
+                                                              verbose=False)
+            for fid2 in found_fleets:
+                FleetUtilsAI.merge_fleet_a_into_b(fid2, fid)
+                available_troopbase_fleet_ids.discard(fid2)
+            available_troopbase_fleet_ids.discard(fid)
+            foAI.foAIstate.qualifyingTroopBaseTargets[target_id][1] = -1  # TODO: should probably delete
+            target = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, target_id)
+            fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
+            fleet_mission.add_target(EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, target)
+    
+    invasion_fleet_ids = AIstate.invasionFleetIDs
+
+    send_invasion_fleets(invasion_fleet_ids, AIstate.invasionTargets, EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
+    all_invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION)
+    for fid in FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids):
+        this_mission = foAI.foAIstate.get_fleet_mission(fid)
+        this_mission.check_mergers(context="Post-send consolidation of unassigned troops")
