@@ -756,6 +756,35 @@ namespace {
         }
     };
 
+    const std::set<int> ValidTargetsForAttackerType(TemporaryPtr<UniverseObject>& attacker, 
+                                                     AutoresolveInfo& combat_state,
+                                                     const std::set<int>& potential_target_ids) {
+        // currently, only planets are restricted as to what target types they can attack
+        if (attacker->ObjectType() != OBJ_PLANET)
+            return potential_target_ids;
+
+        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
+        std::set<int> valid_target_ids;
+        std::string invalid_target_ids;
+        for (std::set<int>::const_iterator target_it = potential_target_ids.begin();
+                target_it != potential_target_ids.end(); ++target_it)
+        { 
+            TemporaryPtr<UniverseObject> target = combat_state.combat_info.objects.Object(*target_it);
+            if (!target) {
+                ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << *target_it;
+                continue;
+            }
+            if (target->ObjectType() != OBJ_PLANET)
+                valid_target_ids.insert(*target_it);
+            else
+                invalid_target_ids += boost::lexical_cast<std::string>(*target_it) + " ";
+        }
+        if (verbose_logging && !invalid_target_ids.empty())
+            DebugLogger() << "Planet " << attacker->ID() << " can't attack potential targets: " << invalid_target_ids;
+
+        return valid_target_ids;
+    }
+
     void ShootAllWeapons(TemporaryPtr<UniverseObject>& attacker,
                          const std::vector<PartAttackInfo>& weapons,
                          AutoresolveInfo& combat_state,
@@ -783,11 +812,17 @@ namespace {
             std::map<int, EmpireCombatInfo >::iterator target_vec_it = combat_state.empire_infos.find(attacker_owner_id);
             if (target_vec_it == combat_state.empire_infos.end() || !target_vec_it->second.HasTargets()) {
                 if (verbose_logging)
-                    DebugLogger() << "No targets for attacker with id: " << attacker_owner_id;
+                    DebugLogger() << "No targets for empire: " << attacker_owner_id;
                 break;
             }
 
-            const std::set<int>& valid_target_ids = target_vec_it->second.target_ids;
+            const std::set<int> valid_target_ids = ValidTargetsForAttackerType(attacker, combat_state, target_vec_it->second.target_ids);
+            if (valid_target_ids.empty()) {
+                if (verbose_logging)
+                    DebugLogger() << "No valid targets for attacker " << attacker->ID();
+                break;
+            }
+            //const std::set<int>& valid_target_ids = target_vec_it->second.target_ids;
 
             // DEBUG
             std::string id_list;
@@ -796,7 +831,7 @@ namespace {
             { id_list += boost::lexical_cast<std::string>(*target_it) + " "; }
 
             if (verbose_logging) { 
-                DebugLogger() << "Valid targets for attacker with id: " << attacker_owner_id
+                DebugLogger() << "Valid targets for attacker with id: " << attacker->ID()
                 << " owned by empire: " << attacker_owner_id
                 << " :  " << id_list;
             }
