@@ -13,8 +13,20 @@ if 3 != len(sys.argv):
 
 os.chdir(sys.argv[1])
 build_sys = sys.argv[2]
-infile = 'util/Version.cpp.in'
-outfile = 'util/Version.cpp'
+# A list of tuples containing input and output files.
+# Tuple index 0 contains the input file.
+# Tuple index 1 contains the output file.
+io_files = [('util/Version.cpp.in', 'util/Version.cpp')]
+
+if system() == 'Windows':
+    io_files.append((
+        'Installer/FreeOrion_Install_Script.nsi.in',
+        'Installer/FreeOrion_Install_Script.nsi'))
+
+if system() == 'Darwin':
+    io_files.append((
+        'Xcode/Info.plist.in',
+        'Xcode/Info.plist'))
 
 version = "0.4.4+"
 build_no = "???"
@@ -27,65 +39,28 @@ try:
 except:
     print "WARNING: git not installed"
 
-if build_no == "???" and os.path.exists(outfile):
-   print "WARNING: Can't determine git commit, %s not updated!" % outfile
-   quit()
 
-try:
-    template_file = open(infile)
-    template = Template(template_file.read())
-    template_file.close()
-except:
-    print "WARNING: Can't access %s, %s not updated!" % (infile, outfile)
-    quit()
+for infile, outfile in io_files:
+    if build_no == "???" and os.path.exists(outfile):
+        print "WARNING: Can't determine git commit, %s not updated!" % outfile
+        continue
 
-print "Writing file: %s" % outfile
-
-version_cpp = open(outfile, "w")
-version_cpp.write(template.substitute(
-    FreeOrion_VERSION=version,
-    FreeOrion_BRANCH=branch,
-    FreeOrion_BUILD_NO=build_no,
-    FreeOrion_BUILDSYS=build_sys))
-version_cpp.close()
-
-if system() == "Windows":
-    infile = "Installer/FreeOrion_Install_Script.nsi.in"
-    outfile = "Installer/FreeOrion_Install_Script.nsi"
     try:
         template_file = open(infile)
         template = Template(template_file.read())
         template_file.close()
     except:
         print "WARNING: Can't access %s, %s not updated!" % (infile, outfile)
-        quit()
+        continue
 
     print "Writing file: %s" % outfile
 
-    installer_script = open(outfile, "w")
-    installer_script.write(template.substitute(
-        FreeOrion_VERSION=version,
-        FreeOrion_BUILD_NO=build_no))
-    installer_script.close()
-
-if system() == "Darwin":
-    infile = "Xcode/Info.plist.in"
-    outfile = "Xcode/Info.plist"
-    try:
-        template_file = open(infile)
-        template = Template(template_file.read())
-        template_file.close()
-    except:
-        print "WARNING: Can't access %s, %s not updated!" % (infile, outfile)
-        quit()
-
-    print "Writing file: %s" % outfile
-
-    info_plist = open(outfile, "w")
-    info_plist.write(template.substitute(
+    generated_file = open(outfile, "w")
+    generated_file.write(template.substitute(
         FreeOrion_VERSION=version,
         FreeOrion_BRANCH=branch,
-        FreeOrion_BUILD_NO=build_no))
-    info_plist.close()
+        FreeOrion_BUILD_NO=build_no,
+        FreeOrion_BUILDSYS=build_sys))
+    generated_file.close()
 
 print "Building v%s build %s" %(version, build_no)
