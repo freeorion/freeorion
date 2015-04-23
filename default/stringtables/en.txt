@@ -1305,6 +1305,9 @@ Toggles inclusion of auto-generated text in tech, building or ship part descript
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Toggles verbose logging of universe contents and effect evaluation.
 
+OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC
+Toggles verbose logging of combat resolution information.
+
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Toggles inclusion of situation report messages with errors.
 
