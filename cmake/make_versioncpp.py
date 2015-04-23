@@ -45,6 +45,9 @@ for infile, outfile in io_files:
         print "WARNING: Can't determine git commit, %s not updated!" % outfile
         continue
 
+    if build_no in open(outfile).read():
+        continue
+
     try:
         template_file = open(infile)
         template = Template(template_file.read())
