@@ -66,7 +66,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     {
         TemporaryPtr<Planet> planet = *planet_it;
         // if planet is populated, add owner to empires that have assets in this battle
-        if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+        if (!planet->Unowned() || planet->CurrentMeterValue(METER_POPULATION) > 0.0)
             empire_ids.insert(planet->Owner());
 
         objects.Insert(planet);
