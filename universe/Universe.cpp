@@ -53,6 +53,7 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         db.Add("verbose-logging",   UserStringNop("OPTIONS_DB_VERBOSE_LOGGING_DESC"),   false,  Validator<bool>());
+        db.Add("verbose-combat-logging",   UserStringNop("OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC"),   false,  Validator<bool>());
         db.Add("effects-threads",   UserStringNop("OPTIONS_DB_EFFECTS_THREADS_DESC"),   8,      RangedValidator<int>(1, 32));
     }
     bool temp_bool = RegisterOptions(&AddOptions);

@@ -56,7 +56,7 @@ def handle_debug_chat(sender, message):
             chat_human(WHITE % "Empire ids:")
             for player in fo.allPlayerIDs():
                 if not fo.playerIsHost(player):
-                    chat_human('  <rgba {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}>id={0.empireID} name={0.name}</rgba>'.format(fo.getEmpire(player)))
+                    chat_human('  <rgba {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}>id={0.empireID} empire_name={0.name}</rgba> player_name={1}'.format(fo.getEmpire(fo.playerEmpireID(player)), fo.playerName(player)))
 
 
 def shell(msg):

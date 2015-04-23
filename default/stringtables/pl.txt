@@ -72,6 +72,8 @@ Nowa flota %1%
 NEW_FLEET_NAME_NO_NUMBER
 Nowa flota
 
+# used to generate name for effect-created planets. %1% is the system name.
+
 NOT_APPLICABLE
 N.D.
 
@@ -136,10 +138,10 @@ Twój ostatni przeciwnik został pokonany. Zwycięstwo!
 ######################################
 
 COMMAND_LINE_USAGE
-Sposób użycia: 
+'''Sposób użycia: '''
 
 COMMAND_LINE_DEFAULT
-Domyślne: 
+'''Domyślne: '''
 
 OPTIONS_DB_HELP
 Wyświetl ten tekst pomocniczy.
@@ -832,6 +834,8 @@ Kolonizuj
 
 ## Resources Panel ##########
 
+## Specials Panel ##########
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -858,7 +862,7 @@ FW_FLEET_MOVING_TO
 Moving to %1%, ETA %2% (%3%)
 
 FW_SHIP_CLASS
-Ship Class 
+'''Ship Class '''
 
 FW_UNKNOWN_DESIGN_NAME
 Unknown
@@ -880,7 +884,7 @@ Fleets At %1% System
 # the name that is used for ships that no player controls
 
 FW_FLEET_FUEL_SUMMARY
-'''Fleet Fuel - Equal to the minimum fuel of the ships in the fleet.'''
+Fleet Fuel - Equal to the minimum fuel of the ships in the fleet.
 
 ###############
 #  Moderator  #
@@ -1255,44 +1259,44 @@ Makes the object the object's owner's capital planet
 # Conditions
 
 DESC_HOMEWORLD
- that is a homeworld
+''' that is a homeworld'''
 
 DESC_HOMEWORLD_NOT
- that is not a homeworld
+''' that is not a homeworld'''
 
 DESC_BUILDING
- that contains a %1% building
+''' that contains a %1% building'''
 
 DESC_BUILDING_NOT
- that does't contain a %1% building
+''' that does't contain a %1% building'''
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+''' that is a %1% planet'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+''' that is not a %1% planet'''
 
  
 
 DESC_METER_VALUE_CURRENT
- that has a current %1% between %2% and %3%
+''' that has a current %1% between %2% and %3%'''
 
 DESC_METER_VALUE_CURRENT_NOT
- that doesn't have a current %1% between %2% and %3%
+''' that doesn't have a current %1% between %2% and %3%'''
 
  
 
 DESC_TURN
- when the current turn is between %1% and %2%
+''' when the current turn is between %1% and %2%'''
 
 DESC_TURN_NOT
- when the current turn is not between %1% and %2%
+''' when the current turn is not between %1% and %2%'''
 
 DESC_NUMBER_OF
- that is one of %1% objects%2%
+''' that is one of %1% objects%2%'''
 
 DESC_NUMBER_OF_NOT
- that is not one of %1% objects%2%
+''' that is not one of %1% objects%2%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
@@ -1357,7 +1361,7 @@ LRN_TRANSCEND_DESC
 What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infinitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
 GRO_MEDICAL_PATH_DESC
-Treatment of diseases and injuries requires thorough understanding of their causes.  
+'''Treatment of diseases and injuries requires thorough understanding of their causes.  '''
 
 GRO_PLANET_ECOL_DESC
 Agriculture and medical science can drastically increase survivability, causing population growth to become hyperexponential, for a time.  Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it.  Understanding natural ecology and its interaction to stresses permits the system to be sustained, and its benefits reaped for generations to come.

@@ -51,7 +51,7 @@ ALL
 Kaikki
 
 RENAME
-Uudelleennimeä 
+'''Uudelleennimeä '''
 
 ENTER_NEW_NAME
 Syötä uusi nimi
@@ -74,6 +74,8 @@ Uusi Laivasto %1%
 
 NEW_FLEET_NAME_NO_NUMBER
 Uusi Laivasto
+
+# used to generate name for effect-created planets. %1% is the system name.
 
 BOMBER
 Pommittaja
@@ -170,7 +172,7 @@ UNABLE_TO_WRITE_CONFIG_XML
 Config.xml tiedoston kirjoituksessa tapahtui virhe. Asetuksia ei voitu tallentaa.
 
 UNABLE_TO_READ_CONFIG_XML
-Config.xml tiedostoa luettaessa tapahtui virhe. Käytetään oletusasetuksia. 
+'''Config.xml tiedostoa luettaessa tapahtui virhe. Käytetään oletusasetuksia. '''
 
 UNABLE_TO_WRITE_SAVE_FILE
 Tallennuksessa tapahtui virhe.
@@ -183,10 +185,10 @@ Tallennusta ladattaessa tapahtui virhe.
 ######################################
 
 COMMAND_LINE_USAGE
-Käyttö: 
+'''Käyttö: '''
 
 COMMAND_LINE_DEFAULT
-Oletus: 
+'''Oletus: '''
 
 OPTIONS_DB_HELP
 Tulosta ohje.
@@ -201,7 +203,7 @@ OPTIONS_DB_FULLSCREEN
 Aloita peli täydellä ruudulla.
 
 OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Aikaväli, sekunneissa, jonka kuluttua moninpelin chat-ikkuna katoaa, jos siihen ei lisätä mitään. Arvo 0 merkitsee, että ikkunan ei pitäisi kadota ollenkaan.  
+'''Aikaväli, sekunneissa, jonka kuluttua moninpelin chat-ikkuna katoaa, jos siihen ei lisätä mitään. Arvo 0 merkitsee, että ikkunan ei pitäisi kadota ollenkaan.  '''
 
 OPTIONS_DB_UI_CHAT_EDIT_HISTORY
 Lähetettyjen viestien määrä, joka tulisi säilyttää chatin editointilaatikon historiassa.
@@ -303,7 +305,7 @@ OPTIONS_DB_UI_SOUND_TEXT_TYPING
 Kirjoituksen yhteydessä toistettava äänitiedosto.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE
-Peli-ikkunan suurentamisen yhteydessä toistettava äänitiedosto. 
+'''Peli-ikkunan suurentamisen yhteydessä toistettava äänitiedosto. '''
 
 OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE
 Peli-ikkunan pienentämisen yhteydessä toistettava äänitiedosto.
@@ -357,7 +359,7 @@ OPTIONS_DB_UI_CTRL_COLOR
 Sets UI control color.
 
 OPTIONS_DB_UI_STATE_BUTTON_COLOR
-Sets UI state button selected color. 
+'''Sets UI state button selected color. '''
 
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
 Asettaa käyttöliittymän pudotuslistan nuolen värin.
@@ -378,13 +380,13 @@ OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
 Sets UI inner border color.
 
 OPTIONS_DB_UI_KNOWN_TECH
-Asettaa tunnettujen tekniikoiden värin teknologiapuussa. 
+'''Asettaa tunnettujen tekniikoiden värin teknologiapuussa. '''
 
 OPTIONS_DB_UI_KNOWN_TECH_BORDER
-Asettaa tunnettujen tekniikoiden raja- ja tekstinvärin teknologiapuussa. 
+'''Asettaa tunnettujen tekniikoiden raja- ja tekstinvärin teknologiapuussa. '''
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH
-Asettaa tutkittavien tekniikoiden värin teknologiapuussa. 
+'''Asettaa tutkittavien tekniikoiden värin teknologiapuussa. '''
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
 Asettaa tutkittavien tekniikoiden raja- ja tekstinvärin teknologiapuussa.
@@ -483,7 +485,7 @@ OPTIONS_DB_STRINGTABLE_FILENAME
 Asettaa käännöstiedoston.
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Jos päällä peli tallentaa itsensä automaattisesti tietyin väliajoin yksinpelissä. 
+'''Jos päällä peli tallentaa itsensä automaattisesti tietyin väliajoin yksinpelissä. '''
 
 OPTIONS_DB_AUTOSAVE_MULTIPLAYER
 Jos päällä peli tallentaa itsensä automaattisesti tietyin väliajoin moninpelissä.
@@ -498,7 +500,7 @@ OPTIONS_DB_QUICKSTART
 Aloittaa uuden nopean aloituksen pelin sivuuttaen päävalikon.
 
 OPTIONS_DB_CHECKED_GL_VERSION
-Stores whether the OpenGL version of this system has been checked.  If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true. 
+'''Stores whether the OpenGL version of this system has been checked.  If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true. '''
 
 OPTIONS_DB_AUTO_EFFECT_DESC
 Valitsee käytetäänkö automaattisesti luotuja tekstejä tekniikoiden, rakennusten ja alusten osia kuvailtaessa.
@@ -603,7 +605,7 @@ ERR_CONNECT_TIMED_OUT
 Aikakatkaisu yritettäessä yhdistää palvelimeen.
 
 ERR_VERSION_MISMATCH
-Ei voida yhdistää palvelimeen, koska pelaaja käyttää eri versioita seuraavista asetuksista ja/tai lähdetiedostoista: 
+'''Ei voida yhdistää palvelimeen, koska pelaaja käyttää eri versioita seuraavista asetuksista ja/tai lähdetiedostoista: '''
 
 ########################
 # Server Setup Screen  #
@@ -769,7 +771,7 @@ VISION
 Johtoajatus
 
 FREEORION_VISION
-FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä peleistä kuten Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, suuren kampanjan muodossa. 
+'''FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä peleistä kuten Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, suuren kampanjan muodossa. '''
 
 ###########################
 # Game Menu               #
@@ -928,7 +930,7 @@ OPTIONS_FLEET_SUPPLY_LINES
 Laivastojen täydennyslinjat
 
 OPTIONS_FLEET_SUPPLY_LINE_WIDTH
-Laivastojen täydennyslinjojen leveys 
+'''Laivastojen täydennyslinjojen leveys '''
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
 Laivastojen täydennyslinjojen pisteiden välit.
@@ -1184,6 +1186,8 @@ Valitse kolonisaatioalus kolonisoidaksesi.
 RP_FOCUS_TOOLTIP
 Painotus: %1%
 
+## Specials Panel ##########
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -1209,7 +1213,7 @@ TT_CHANGE
 Muutos
 
 TT_BREAKDOWN_SUMMARY
-%1%: %2% 
+'''%1%: %2% '''
 
 TT_TECH
 %1% Tekniikka <i>%2%</i>
@@ -1274,7 +1278,7 @@ FW_NEW_FLEET_LABEL
 <i>Uusi laivasto</i>
 
 FW_EMPIRE_FLEETS_AT_SYSTEM
-%1% Laivastoja %2% järjestelmässä 
+'''%1% Laivastoja %2% järjestelmässä '''
 
 FW_EMPIRE_FLEETS
 %1% laivastot
@@ -1663,13 +1667,13 @@ COMBAT_WINDOW_TITLE
 Taisteluikkuna
 
 COMBAT_BATTLE
-TAISTELU : 
+'''TAISTELU : '''
 
 COMBAT_SYSTEM
 %1% tähtijärjestelmä
 
 COMBAT_MILITARY_SHIPS
-Sotilasaluksia 
+'''Sotilasaluksia '''
 
 COMBAT_CIVILIAN_SHIPS
 Siviilialuksia
@@ -1678,19 +1682,19 @@ COMBAT_PLANETS
 Planeetat
 
 COMBAT_REMAINING
- Jäljellä
+''' Jäljellä'''
 
 COMBAT_RETREATED
- Perääntynyt
+''' Perääntynyt'''
 
 COMBAT_DESTROYED
- Tuhottu
+''' Tuhottu'''
 
 COMBAT_DEFENSELESS
- Puolustuskyvytön
+''' Puolustuskyvytön'''
 
 COMBAT_LOST
- Kadonnut!
+''' Kadonnut!'''
 
 ####################
 # TurnProgress     #
@@ -1769,7 +1773,7 @@ SITREP_PLANET_CAPTURED
 %empire% valloitti %planet% planeetan.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-%planet% planeetan väestö on kuollut nälkään.  
+'''%planet% planeetan väestö on kuollut nälkään.  '''
 
 SITREP_PLANET_COLONIZED
 %planet% on kolonisoitu.
@@ -1788,7 +1792,7 @@ SITREP_VICTORY
 #############################################################
 
 TECH_VICTORY
-on saavuttanut teknologisen voiton. 
+'''on saavuttanut teknologisen voiton. '''
 
 ALL_ENEMIES_ELIMINATED_VICTORY
 on saavuttanut voiton ainoana jäljellä olevana imperiumina.
@@ -2185,67 +2189,67 @@ Luo uuden mallia %1% olevan aluksen, jonka omistaa %2% imperiumi
 # Conditions
 
 DESC_ALL
- universumissa
+''' universumissa'''
 
 DESC_EMPIRE_AFFILIATION_SELF
- joka kuuluu %1% imperiumille
+''' joka kuuluu %1% imperiumille'''
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- joka ei kuulu %1% imperiumille
+''' joka ei kuulu %1% imperiumille'''
 
 DESC_HOMEWORLD
- joka on kotiplaneetta
+''' joka on kotiplaneetta'''
 
 DESC_HOMEWORLD_NOT
- joka ei ole kotiplaneetta
+''' joka ei ole kotiplaneetta'''
 
 DESC_CAPITAL
- joka on imperiumin pääplaneetta
+''' joka on imperiumin pääplaneetta'''
 
 DESC_CAPITAL_NOT
- joka ei ole imperiumin pääplaneetta
+''' joka ei ole imperiumin pääplaneetta'''
 
 DESC_TYPE
- joka on %1%
+''' joka on %1%'''
 
 DESC_TYPE_NOT
- joka ei ole %1%
+''' joka ei ole %1%'''
 
 DESC_BUILDING
- joka sisältää %1% rakennuksen
+''' joka sisältää %1% rakennuksen'''
 
 DESC_BUILDING_NOT
- joka ei sisällä %1% rakennusta
+''' joka ei sisällä %1% rakennusta'''
 
 DESC_SPECIAL
- jolla on %1% erikoisuus
+''' jolla on %1% erikoisuus'''
 
 DESC_SPECIAL_NOT
- jolla ei ole %1% erikoisuutta
+''' jolla ei ole %1% erikoisuutta'''
 
 DESC_CONTAINS
- joka sisältää kohteen%1%
+''' joka sisältää kohteen%1%'''
 
 DESC_CONTAINS_NOT
- joka ei sisällä kohdetta%1%
+''' joka ei sisällä kohdetta%1%'''
 
 DESC_PLANET_TYPE
- joka on %1% planeetta
+''' joka on %1% planeetta'''
 
 DESC_PLANET_TYPE_NOT
- joka ei ole %1% planeetta
+''' joka ei ole %1% planeetta'''
 
 DESC_PLANET_SIZE
- joka on %1% planeetta
+''' joka on %1% planeetta'''
 
 DESC_PLANET_SIZE_NOT
- joka ei ole %1% planeetta
+''' joka ei ole %1% planeetta'''
 
 DESC_PLANET_ENVIRONMENT
- joka on %1% planeetta
+''' joka on %1% planeetta'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- joka ei ole %1% planeetta
+''' joka ei ole %1% planeetta'''
 
 DESC_SPECIES
 jolla on %1% lajia
@@ -2262,10 +2266,10 @@ DESC_FOCUS_TYPE_NOT
 jolla ei ole fokus %1%
 
 DESC_STAR_TYPE
- joka on järjestelmässä, jossa on %1% tähti
+''' joka on järjestelmässä, jossa on %1% tähti'''
 
 DESC_STAR_TYPE_NOT
- joka ei ole järjestelmässä, jossa on %1% tähti
+''' joka ei ole järjestelmässä, jossa on %1% tähti'''
 
 DESC_DESIGN_HAS_HULL
 jolla on runko %1%
@@ -2280,40 +2284,40 @@ DESC_DESIGN_HAS_PART_NOT
 that does not contain between %1% and %2% of the %3% part
 
 DESC_CHANCE_PERCENTAGE
- %1%%% mahdollisuus
+''' %1%%% mahdollisuus'''
 
 DESC_CHANCE_PERCENTAGE_NOT
- (100 - %1%)%% mahdollisuus
+''' (100 - %1%)%% mahdollisuus'''
 
 DESC_CHANCE
- %1% todennäköisyydellä
+''' %1% todennäköisyydellä'''
 
 DESC_CHANCE_NOT
- 1 - %1% todennäköisyydellä
+''' 1 - %1% todennäköisyydellä'''
 
 DESC_METER_VALUE_CURRENT
- jolla on nykyinen %1% välillä %2% ja %3%
+''' jolla on nykyinen %1% välillä %2% ja %3%'''
 
 DESC_METER_VALUE_CURRENT_NOT
- jolla ei ole nykyinen %1% välillä %2% ja %3%
+''' jolla ei ole nykyinen %1% välillä %2% ja %3%'''
 
 DESC_EMPIRE_STOCKPILE_VALUE
- joka kuuluu imperiumiin jolla on %1% varanto välillä %2% ja %3%
+''' joka kuuluu imperiumiin jolla on %1% varanto välillä %2% ja %3%'''
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
- joka ei kuuluu imperiumiin jolla on %1% varanto välillä %2% ja %3%
+''' joka ei kuuluu imperiumiin jolla on %1% varanto välillä %2% ja %3%'''
 
 DESC_WITHIN_DISTANCE
- joka on %1% etäisyydellä %2% kohteista
+''' joka on %1% etäisyydellä %2% kohteista'''
 
 DESC_WITHIN_DISTANCE_NOT
- joka ei ole %1% etäisyydellä %2% kohteista
+''' joka ei ole %1% etäisyydellä %2% kohteista'''
 
 DESC_WITHIN_STARLANE_JUMPS
- joka on %1% tähtilinjahypyn etäisyydellä mistä tahansa kohteesta%2%
+''' joka on %1% tähtilinjahypyn etäisyydellä mistä tahansa kohteesta%2%'''
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
- joka ei ole %1% tähtilinjahypyn etäisyydellä mistä tahansa kohteesta%2%
+''' joka ei ole %1% tähtilinjahypyn etäisyydellä mistä tahansa kohteesta%2%'''
 
 DESC_STATIONARY
 joka on paikallaan
@@ -2324,28 +2328,28 @@ joka on liikkeessä
  
 
 DESC_AND_BETWEEN_OPERANDS
- ja
+''' ja'''
 
 DESC_OR_BETWEEN_OPERANDS
- tai
+''' tai'''
 
 DESC_TURN
- kun tämänhetkinen vuoro on välillä %1% ja %2%
+''' kun tämänhetkinen vuoro on välillä %1% ja %2%'''
 
 DESC_TURN_NOT
- kun tämänhetkinen vuoro ei ole välillä %1% ja %2%
+''' kun tämänhetkinen vuoro ei ole välillä %1% ja %2%'''
 
 DESC_NUMBER_OF
- joka on yksi %1% kohteesta%2%
+''' joka on yksi %1% kohteesta%2%'''
 
 DESC_NUMBER_OF_NOT
- joka ei ole yksi %1% kohteesta%2%
+''' joka ei ole yksi %1% kohteesta%2%'''
 
 DESC_OWNER_HAS_TECH
- joka kuuluu imperiumille, jolla on tekniikka %1%
+''' joka kuuluu imperiumille, jolla on tekniikka %1%'''
 
 DESC_OWNER_HAS_TECH_NOT
- joka ei kuuluu imperiumille, jolla on tekniikka %1%
+''' joka ei kuuluu imperiumille, jolla on tekniikka %1%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
@@ -2420,7 +2424,7 @@ LRN_TRANSCEND_DESC
 What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infinitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
 GRO_MEDICAL_PATH_DESC
-Treatment of diseases and injuries requires thorough understanding of their causes.  
+'''Treatment of diseases and injuries requires thorough understanding of their causes.  '''
 
 GRO_PLANET_ECOL_DESC
 Agriculture and medical science can drastically increase survivability, causing population growth to become hyperexponential, for a time.  Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it.  Understanding natural ecology and its interaction to stresses permits the system to be sustained, and its benefits reaped for generations to come.
@@ -2562,7 +2566,7 @@ INDUSTRY_SHORT_DESC
 Parantaa teollisuutta
 
 TRADE_SHORT_DESC
-Parantaa vaihdantaa 
+'''Parantaa vaihdantaa '''
 
 CONSTRUCTION_SHORT_DESC
 Parantaa infrastruktuuria
@@ -2571,7 +2575,7 @@ POPULATION_SHORT_DESC
 Kasvattaa planeetan väestöä
 
 FLEET_RANGE_DESC
-Parantaa alusten täydennysmahdollisuuksia 
+'''Parantaa alusten täydennysmahdollisuuksia '''
 
 CON_ORBITAL_CON_DESC
 On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.

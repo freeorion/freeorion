@@ -1604,7 +1604,11 @@ BuildingType
                     Planet
                 ]
             ]
-            effects = SetStealth value = Value + 60
+            effects = [
+                SetStealth value = Value + 60
+                SetMaxShield value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
+                SetMaxDefense value = Value + ( [[EXPERIMENTOR_SPAWN_START_TURN]] / 5 )
+                ]
 
         EffectsGroup
             scope = Or [
@@ -1627,16 +1631,16 @@ BuildingType
                 Species name = "SP_EXPERIMENTOR" 
             ]
             effects = [
-                        GenerateSitRepMessage
-                            message = "SITREP_VICTORY_CAPTURE"
-                            icon = "icons/sitrep/victory.png"
-                            empire = Source.Owner
-                        AddStarlanes endpoint = NumberOf number = 1 condition = And [
-                            WithinDistance distance = 100 condition = Source
-                            System
-                        ]
-                        Destroy
-                    ]
+                GenerateSitRepMessage
+                    message = "SITREP_VICTORY_CAPTURE"
+                    icon = "icons/sitrep/victory.png"
+                    empire = Source.Owner
+                AddStarlanes endpoint = NumberOf number = 1 condition = And [
+                    WithinDistance distance = 100 condition = Source
+                    System
+                ]
+                Destroy
+            ]
 
         EffectsGroup
             scope = Source

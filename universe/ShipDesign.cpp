@@ -188,6 +188,10 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
         case PC_FIGHTERS:
             m_effects.push_back(IncreaseMeter(METER_DAMAGE,         m_name, m_capacity, false));
             break;
+        case PC_COLONY:
+        case PC_TROOPS:
+            m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
+            break;
         case PC_SHIELD:
             m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     m_capacity));
             break;
@@ -585,8 +589,6 @@ int ShipDesign::ProductionTime(int empire_id, int location_id) const {
 }
 
 bool ShipDesign::CanColonize() const {
-    //if (m_colony_capacity > 0.0)
-    //    return true;
     for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         const std::string& part_name = *it;
         if (part_name.empty())

@@ -637,7 +637,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     TemporaryPtr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target);
     if (!ship) {
         ErrorLogger() << "SetShipPartMeter::Execute acting on non-ship target:";
-        context.effect_target->Dump();
+        //context.effect_target->Dump();
         return;
     }
 
@@ -1278,8 +1278,8 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "CreatePlanet::Execute passed no target object";
         return;
     }
-    TemporaryPtr<System> location = GetSystem(context.effect_target->SystemID());
-    if (!location) {
+    TemporaryPtr<System> system = GetSystem(context.effect_target->SystemID());
+    if (!system) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
     }
@@ -1299,7 +1299,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
     }
 
     // determine if and which orbits are available
-    std::set<int> free_orbits = location->FreeOrbits();
+    std::set<int> free_orbits = system->FreeOrbits();
     if (free_orbits.empty()) {
         ErrorLogger() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
         return;
@@ -1311,15 +1311,15 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    location->Insert(planet);   // let system chose an orbit for planet
+    system->Insert(planet);   // let system chose an orbit for planet
 
     std::string name;
     if (m_name) {
         name = m_name->Eval(context);
         if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = UserString(name);
+            name = str(FlexibleFormat(UserString(name)) % system->Name() % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
     } else {
-        name = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % location->Name());
+        name = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name());
     }
     planet->Rename(name);
 }
@@ -1416,7 +1416,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
     if (m_name) {
         std::string name = m_name->Eval(context);
         if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = UserString(name);
+            name = str(FlexibleFormat(UserString(name)) % system->Name() % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
         building->Rename(name);
     }
 }
@@ -1550,7 +1550,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     if (m_name) {
         std::string name = m_name->Eval(context);
         if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = UserString(name);
+            name = str(FlexibleFormat(UserString(name)) % system->Name() % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
         ship->Rename(name);
     } else if (ship->IsMonster()) {
         ship->Rename(NewMonsterName());
@@ -1731,15 +1731,13 @@ void CreateField::Execute(const ScriptingContext& context) const {
     // if target is a system, and location matches system location, can put
     // field into system
     TemporaryPtr<System> system = boost::dynamic_pointer_cast<System>(target);
-    if (!system)
-        return;
-    if ((!m_y || y == system->Y()) && (!m_x || x == system->X()))
+    if (system && (!m_y || y == system->Y()) && (!m_x || x == system->X()))
         system->Insert(field);
 
     if (m_name) {
         std::string name = m_name->Eval(context);
         if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = UserString(name);
+            name = str(FlexibleFormat(UserString(name)) % (system ? system->Name() : "") % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
         field->Rename(name);
     }
 }
@@ -1852,7 +1850,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     if (m_name) {
         name = m_name->Eval(context);
         if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = UserString(name);
+            name = str(FlexibleFormat(UserString(name)) % "" % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
     } else {
         name = GenerateSystemName();
     }

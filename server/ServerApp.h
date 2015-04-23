@@ -208,15 +208,15 @@ private:
 
     /** Handles an incoming message from the server with the appropriate action
       * or response */
-    void    HandleMessage(Message& msg, PlayerConnectionPtr player_connection);
+    void    HandleMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
     /** Checks validity of shut down message from player, then attempts to
       * cleanly shut down this server process. */
-    void    HandleShutdownMessage(Message& msg, PlayerConnectionPtr player_connection);
+    void    HandleShutdownMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
     /** When Messages arrive from connections that are not established players,
       * they arrive via a call to this function*/
-    void    HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_connection);
+    void    HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
     /** Called by ServerNetworking when a player's TCP connection is closed*/
     void    PlayerDisconnected(PlayerConnectionPtr player_connection);

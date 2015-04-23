@@ -422,7 +422,8 @@ namespace parse {
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<MeterType>::type retval
-            =    tok.SetDamage_             [ _val = METER_DAMAGE ]
+            =   tok.SetDamage_              [ _val = METER_DAMAGE ]
+            |   tok.SetCapacity_            [ _val = METER_CAPACITY ]
             ;
         static bool once = true;
         if (once) {

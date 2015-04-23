@@ -1339,8 +1339,7 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenInvasionShips(int target_
         if (!AvailableToInvade(ship, system_id, empire_id))
             continue;
 
-        if (const ShipDesign* design = ship->Design())
-            invasion_troops += design->TroopCapacity();
+        invasion_troops += ship->TroopCapacity();
 
         retval.insert(ship);
 
@@ -1424,12 +1423,10 @@ void SidePanel::PlanetPanel::Refresh() {
 
     std::string colony_ship_species_name;
     const ShipDesign* design = 0;
-    double colony_ship_capacity = 0.0;
+    float colony_ship_capacity = 0.0f;
     if (selected_colony_ship) {
         colony_ship_species_name = selected_colony_ship->SpeciesName();
-        design = selected_colony_ship->Design();
-        if (design)
-            colony_ship_capacity = design->ColonyCapacity();
+        colony_ship_capacity = selected_colony_ship->ColonyCapacity();
     }
     const Species* colony_ship_species = GetSpecies(colony_ship_species_name);
     PlanetEnvironment planet_env_for_colony_species = PE_UNINHABITABLE;
@@ -1447,7 +1444,7 @@ void SidePanel::PlanetPanel::Refresh() {
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
     bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
-    bool can_colonize =     selected_colony_ship && (colonizable  && colony_ship_capacity > 0.0 || (outpostable && colony_ship_capacity == 0.0));
+    bool can_colonize =     selected_colony_ship && (colonizable  && colony_ship_capacity > 0.0f || (outpostable && colony_ship_capacity == 0.0f));
 
     bool at_war_with_me =   !mine && (populated || (has_owner && Empires().GetDiplomaticStatus(client_empire_id, planet->Owner()) == DIPLO_WAR));
 
@@ -1520,8 +1517,8 @@ void SidePanel::PlanetPanel::Refresh() {
         std::map<std::pair<int,int>,float>::iterator pair_it = colony_projections.find(this_pair);
         if (pair_it != colony_projections.end()) {
             planet_capacity = pair_it->second;
-        } else if (colony_ship_capacity==0.0) {
-            planet_capacity = 0.0;
+        } else if (colony_ship_capacity == 0.0f) {
+            planet_capacity = 0.0f;
             colony_projections[this_pair] = planet_capacity;
         } else {
             GetUniverse().InhibitUniverseObjectSignals(true);
@@ -1530,7 +1527,7 @@ void SidePanel::PlanetPanel::Refresh() {
             float orig_initial_target_pop = planet->GetMeter(METER_TARGET_POPULATION)->Initial();
             planet->SetOwner(client_empire_id);
             planet->SetSpecies(colony_ship_species_name);
-            planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0, 0.0);
+            planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0f, 0.0f);
             GetUniverse().UpdateMeterEstimates(m_planet_id);
             planet_capacity = ((planet_env_for_colony_species == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));
             planet->SetOwner(orig_owner);
@@ -1542,13 +1539,13 @@ void SidePanel::PlanetPanel::Refresh() {
         }
 
         std::string colonize_text;
-        if (colony_ship_capacity > 0.0) {
+        if (colony_ship_capacity > 0.0f) {
             std::string initial_pop = DoubleToString(colony_ship_capacity, 2, false);
 
             std::string clr_tag;
-            if (planet_capacity < colony_ship_capacity && colony_ship_capacity > 0.0)
+            if (planet_capacity < colony_ship_capacity && colony_ship_capacity > 0.0f)
                 clr_tag = GG::RgbaTag(ClientUI::StatDecrColor());
-            else if (planet_capacity > colony_ship_capacity && colony_ship_capacity > 0.0)
+            else if (planet_capacity > colony_ship_capacity && colony_ship_capacity > 0.0f)
                 clr_tag = GG::RgbaTag(ClientUI::StatIncrColor());
             std::string clr_tag_close = (clr_tag.empty() ? "" : "</rgba>");
             std::string target_pop = clr_tag + DoubleToString(planet_capacity, 2, false) + clr_tag_close;
@@ -1570,13 +1567,12 @@ void SidePanel::PlanetPanel::Refresh() {
     if (invadable) {
         // show invade button
         AttachChild(m_invade_button);
-        double invasion_troops = 0.0;
+        float invasion_troops = 0.0f;
         for (std::set<TemporaryPtr<const Ship> >::const_iterator ship_it = invasion_ships.begin();
              ship_it != invasion_ships.end(); ++ship_it)
         {
             TemporaryPtr<const Ship> invasion_ship = *ship_it;
-            if (const ShipDesign* design = invasion_ship->Design())
-                invasion_troops += design->TroopCapacity();
+            invasion_troops += invasion_ship->TroopCapacity();
         }
         std::string invasion_troops_text = DoubleToString(invasion_troops, 2, false);
         std::string invasion_text = boost::io::str(FlexibleFormat(UserString("PL_INVADE")) % invasion_troops_text);

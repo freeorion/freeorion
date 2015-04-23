@@ -59,6 +59,8 @@ viska
 
 # used to generate names for new fleets when they are created
 
+# used to generate name for effect-created planets. %1% is the system name.
+
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -331,7 +333,7 @@ ERR_CONNECT_TIMED_OUT
 Kunde inte få något svar från servern
 
 ERR_VERSION_MISMATCH
-Kan inte ansluta till servern eftersom denna klient använder en annan version av följande inställningar och/eller källfiler: 
+'''Kan inte ansluta till servern eftersom denna klient använder en annan version av följande inställningar och/eller källfiler: '''
 
 ########################
 # Server Setup Screen  #
@@ -767,6 +769,8 @@ Kolonisera
 
 ## Resources Panel ##########
 
+## Specials Panel ##########
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -818,7 +822,7 @@ FW_FLEET_ETA_UNKNOWN
 Okänt
 
 FW_SHIP_CLASS
-Skeppsklass 
+'''Skeppsklass '''
 
 FW_UNKNOWN_DESIGN_NAME
 Okänt
@@ -1102,7 +1106,7 @@ COMBAT_WINDOW_TITLE
 Stridsfönster
 
 COMBAT_BATTLE
-SLAG : 
+'''SLAG : '''
 
 COMBAT_MILITARY_SHIPS
 Militära skepp
@@ -1114,19 +1118,19 @@ COMBAT_PLANETS
 Planeter
 
 COMBAT_REMAINING
- Kvarstående
+''' Kvarstående'''
 
 COMBAT_RETREATED
- Retirerade
+''' Retirerade'''
 
 COMBAT_DESTROYED
- Förintad
+''' Förintad'''
 
 COMBAT_DEFENSELESS
- Försvarslös
+''' Försvarslös'''
 
 COMBAT_LOST
- Förlorade!
+''' Förlorade!'''
 
 ####################
 # TurnProgress     #
@@ -1465,15 +1469,6 @@ turn of creation
 
 # Effects
 
-DESC_EFFECTS_GROUP_SCOPE_DESC
-%1%\n
-
-DESC_EFFECTS_GROUP_ACTIVATION_DESC
-%1%\n
-
-DESC_EFFECTS_GROUP_EFFECT_DESC
-%1%\n
-
 DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
 %1%\n
 
@@ -1492,50 +1487,50 @@ Sets the stockpile of %1% of the object's owner to %2%
 # Conditions
 
 DESC_ALL
- i universumet
+''' i universumet'''
 
 DESC_EMPIRE_AFFILIATION_SELF
- det tillhör %1%-imperiet
+''' det tillhör %1%-imperiet'''
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- det tillhör inte %1%-imperiet
+''' det tillhör inte %1%-imperiet'''
 
 DESC_EMPIRE_AFFILIATION
- det tillhör en %1% av %2%-imperiet
+''' det tillhör en %1% av %2%-imperiet'''
 
 DESC_BUILDING
- that contains a %1% building
+''' that contains a %1% building'''
 
 DESC_BUILDING_NOT
- that does't contain a %1% building
+''' that does't contain a %1% building'''
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+''' that is a %1% planet'''
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+''' that is not a %1% planet'''
 
  
 
 DESC_METER_VALUE_CURRENT
- that has a current %1% between %2% and %3%
+''' that has a current %1% between %2% and %3%'''
 
 DESC_METER_VALUE_CURRENT_NOT
- that doesn't have a current %1% between %2% and %3%
+''' that doesn't have a current %1% between %2% and %3%'''
 
  
 
 DESC_TURN
- when the current turn is between %1% and %2%
+''' when the current turn is between %1% and %2%'''
 
 DESC_TURN_NOT
- when the current turn is not between %1% and %2%
+''' when the current turn is not between %1% and %2%'''
 
 DESC_NUMBER_OF
- that is one of %1% objects%2%
+''' that is one of %1% objects%2%'''
 
 DESC_NUMBER_OF_NOT
- that is not one of %1% objects%2%
+''' that is not one of %1% objects%2%'''
 
 #############################################################
 ####            T E C H   C A T A G O R I E S            ####
@@ -1604,7 +1599,7 @@ LRN_TRANSCEND_DESC
 What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
 GRO_MEDICAL_PATH_DESC
-Treatment of diseases and injuries requires thorough understanding of their causes.  
+'''Treatment of diseases and injuries requires thorough understanding of their causes.  '''
 
 GRO_PLANET_ECOL_DESC
 Agriculture and medical science can drastically increase survivability, causing population growth to become hyperexponential, for a time.  Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it.  Understanding natural ecology and its interaction to stresses permits the system to be sustained, and its benefits reaped for generations to come.

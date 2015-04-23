@@ -963,7 +963,7 @@ void Fleet::MovementPhase() {
             if (fleet->m_travel_route.front() == system->ID()) {
                 m_travel_route.erase(m_travel_route.begin());
             } else {
-                ErrorLogger() << "Encountered a system not on our route.";
+                ErrorLogger() << "Fleet::MovementPahse: Encountered a system not on route.";
                 // TODO: Notify the suer with a sitrep?
             }
 
@@ -972,7 +972,7 @@ void Fleet::MovementPhase() {
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {
                 //DebugLogger() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
-                fuel_consumed = 0.0;
+                fuel_consumed = 0.0f;
                 for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
                      ship_it != ships.end(); ++ship_it)
                 {
@@ -998,7 +998,7 @@ void Fleet::MovementPhase() {
                 // fleet will continue past this system this turn.
                 fleet->m_arrival_starlane = fleet->m_prev_system;
                 if (!resupply_here) {
-                    fuel_consumed += 1.0;
+                    fuel_consumed += 1.0f;
                 }
             }
 
@@ -1032,7 +1032,7 @@ void Fleet::MovementPhase() {
 
 
     // consume fuel from ships in fleet
-    if (fuel_consumed > 0.0) {
+    if (fuel_consumed > 0.0f) {
         for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = ships.begin();
              ship_it != ships.end(); ++ship_it)
         {
@@ -1053,7 +1053,7 @@ void Fleet::ResetTargetMaxUnpairedMeters() {
     // that visibility is propegated to the fleet that contains the ships
     if (Meter* stealth = GetMeter(METER_STEALTH)) {
         stealth->ResetCurrent();
-        stealth->AddToCurrent(2000.0);
+        stealth->AddToCurrent(2000.0f);
     }
 }
 
@@ -1219,7 +1219,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         }
     }
 
-    float lowestShipStealth = 99999.9f;
+    float lowestShipStealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
     std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(this->ShipIDs());
     for (std::vector<TemporaryPtr<const Ship> >::iterator it = ships.begin();
          it != ships.end(); ++it)

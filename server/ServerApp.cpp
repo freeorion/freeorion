@@ -356,7 +356,7 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
     }
 }
 
-void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
         ErrorLogger() << "ServerApp::HandleMessage : Received an message with a sender ID ("
                                << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
@@ -394,7 +394,7 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     }
 }
 
-void ServerApp::HandleShutdownMessage(Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     int player_id = player_connection->PlayerID();
     bool is_host = m_networking.PlayerIsHost(player_id);
     if (!is_host) {
@@ -405,7 +405,7 @@ void ServerApp::HandleShutdownMessage(Message& msg, PlayerConnectionPtr player_c
     Exit(1);
 }
 
-void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
     case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
     case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
@@ -1954,14 +1954,9 @@ namespace {
             return false;
         }
 
-        const ShipDesign* design = ship->Design();
-        if (!design) {
-            ErrorLogger() << "ColonizePlanet couldn't find ship's design!";
-            return false;
-        }
-        double colonist_capacity = design->ColonyCapacity();
+        float colonist_capacity = ship->ColonyCapacity();
 
-        if (colonist_capacity > 0.0 && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
+        if (colonist_capacity > 0.0f && planet->EnvironmentForSpecies(ship->SpeciesName()) < PE_HOSTILE) {
             ErrorLogger() << "ColonizePlanet nonzero colonist capacity and planet that ship's species can't colonize";
             return false;
         }
@@ -1997,7 +1992,7 @@ namespace {
 
         if (system)
             system->Remove(ship->ID());
-        GetUniverse().RecursiveDestroy(ship->ID());
+        GetUniverse().RecursiveDestroy(ship->ID()); // does not count as a loss of a ship for the species / empire
 
         return true;
     }
@@ -2153,9 +2148,6 @@ namespace {
                 continue;
             if (ship->SystemID() == INVALID_OBJECT_ID)
                 continue;
-            const ShipDesign* design = ship->Design();
-            if (!design)
-                continue;
 
             int invade_planet_id = ship->OrderedInvadePlanet();
             if (invade_planet_id == INVALID_OBJECT_ID)
@@ -2171,7 +2163,7 @@ namespace {
                 continue;
 
             // how many troops are invading?
-            planet_empire_troops[invade_planet_id][ship->Owner()] += design->TroopCapacity();
+            planet_empire_troops[invade_planet_id][ship->Owner()] += ship->TroopCapacity();
 
             TemporaryPtr<System> system = GetSystem(ship->SystemID());
 
@@ -2188,12 +2180,12 @@ namespace {
             if (system)
                 system->Remove(ship->ID());
 
-            DebugLogger() << "HandleInvasion has accounted for "<< design->TroopCapacity()
-                                   << " troops to invade " << planet->Name()
-                                   << " and is destroying ship " << ship->ID()
-                                   << " named " << ship->Name();
+            DebugLogger() << "HandleInvasion has accounted for "<< ship->TroopCapacity()
+                          << " troops to invade " << planet->Name()
+                          << " and is destroying ship " << ship->ID()
+                          << " named " << ship->Name();
 
-            GetUniverse().RecursiveDestroy(ship->ID());
+            GetUniverse().RecursiveDestroy(ship->ID()); // does not count as ship loss for empire/species
         }
 
         // store invasion info in empires
@@ -2207,11 +2199,11 @@ namespace {
                 ErrorLogger() << "HandleInvasion couldn't get planet";
                 continue;
             }
-            if (planet->CurrentMeterValue(METER_TROOPS) > 0.0) {
+            if (planet->CurrentMeterValue(METER_TROOPS) > 0.0f) {
                 // empires may have garrisons on planets
                 planet_empire_troops[planet->ID()][planet->Owner()] += planet->CurrentMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
             }
-            if (!planet->Unowned() && planet->CurrentMeterValue(METER_REBEL_TROOPS) > 0.0) {
+            if (!planet->Unowned() && planet->CurrentMeterValue(METER_REBEL_TROOPS) > 0.0f) {
                 // rebels may be present on empire-owned planets
                 planet_empire_troops[planet->ID()][ALL_EMPIRES] += planet->CurrentMeterValue(METER_REBEL_TROOPS);
             }

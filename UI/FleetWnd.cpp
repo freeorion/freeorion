@@ -1458,11 +1458,11 @@ void FleetDataPanel::SetStatIconValues() {
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
     int ship_count =        0;
-    float damage_tally =    0.0;
-    float structure_tally = 0.0;
-    float shield_tally =    0.0;
-    float min_fuel =        0;
-    float min_speed =       0;
+    float damage_tally =    0.0f;
+    float structure_tally = 0.0f;
+    float shield_tally =    0.0f;
+    float min_fuel =        0.0f;
+    float min_speed =       0.0f;
     std::vector<float> fuels;
     std::vector<float> speeds;
 
