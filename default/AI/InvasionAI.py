@@ -401,8 +401,8 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
     if not invasion_fleet_pool:
         return
 
-    for pID, pscore, ptroops in evaluated_planets:
-        planet = universe.getPlanet(pID)
+    for planet_id, pscore, ptroops in evaluated_planets:
+        planet = universe.getPlanet(planet_id)
         if not planet:
             continue
         sys_id = planet.systemID
@@ -422,7 +422,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
                 continue
             else:
                 these_fleets = found_fleets
-        target = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, pID)
+        target = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, planet_id)
         print "assigning invasion fleets %s to target %s" % (these_fleets, target)
         for fleetID in these_fleets:
             fleet_mission = foAI.foAIstate.get_fleet_mission(fleetID)
@@ -432,7 +432,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
 
 
 def assign_invasion_fleets_to_invade():
-    """assign fleet targets to invadable planets"""
+    """Assign fleet targets to invadable planets."""
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs

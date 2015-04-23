@@ -339,27 +339,28 @@ def assess_fleet_role(fleet_id):
 
 
 def assess_ship_design_role(design):
-    parts = [fo.getPartType(partname) for partname in design.parts if partname]
-    if any((p.partClass == fo.shipPartClass.colony and p.capacity == 0) for p in parts):
+    parts = [fo.getPartType(partname) for partname in design.parts if partname and fo.getPartType(partname)]
+
+    if any(p.partClass == fo.shipPartClass.colony and p.capacity == 0 for p in parts):
         if design.starlaneSpeed > 0:
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_OUTPOST
 
-    if any((p.partClass == fo.shipPartClass.colony and p.capacity > 0 for p in parts)):
+    if any(p.partClass == fo.shipPartClass.colony and p.capacity > 0 for p in parts):
         if design.starlaneSpeed > 0:
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_COLONISATION
 
-    if any((p.partClass == fo.shipPartClass.troops for p in parts)):
+    if any(p.partClass == fo.shipPartClass.troops for p in parts):
         if design.starlaneSpeed > 0:
             return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_INVASION
 
     if design.starlaneSpeed == 0:
-        if len(parts) == 0 or parts[0].partClass == fo.shipPartClass.shields:
+        if not parts or parts[0].partClass == fo.shipPartClass.shields:  # ToDo: Update logic for new ship designs
             return AIShipRoleType.SHIP_ROLE_BASE_DEFENSE
         else:
             return AIShipRoleType.SHIP_ROLE_INVALID
@@ -368,7 +369,7 @@ def assess_ship_design_role(design):
     rating = stats['attack'] * (stats['structure'] + stats['shields'])
     if rating > 0:  # positive attack stat
         return AIShipRoleType.SHIP_ROLE_MILITARY
-    if any((p.partClass == fo.shipPartClass.detection for p in parts)):
+    if any(p.partClass == fo.shipPartClass.detection for p in parts):
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
     else:   # if no suitable role found, use as (bad) scout as it still has inherent detection
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
