@@ -4,7 +4,6 @@ import sys
 import os
 from string import Template
 from subprocess import check_output
-from datetime import datetime
 from platform import system
 
 if 3 != len(sys.argv):
@@ -21,12 +20,10 @@ version = "0.4.4+"
 build_no = "???"
 
 try:
-    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
+    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], shell=False).strip()
     if branch == "master":
         branch = ""
-    commit = check_output(["git", "show", "-s", "--format=%h", "HEAD"]).strip()
-    timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"]).strip())
-    build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
+    build_no = check_output(['git', 'show', '-s', '--format=%cd.%h', '--date=short', 'HEAD'], shell=False).strip()
 except:
     print "WARNING: git not installed"
 
