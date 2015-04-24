@@ -70,24 +70,16 @@ else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
 
-find_package(Subversion)
-set(FreeOrion_WC_REVISION ???)
-set(FreeOrion_BUILDSYS "CMake")
-if (Subversion_FOUND AND (
-  IS_DIRECTORY "${CMAKE_SOURCE_DIR}/.svn" OR
-  IS_DIRECTORY "${CMAKE_SOURCE_DIR}/../.svn" OR
-  IS_DIRECTORY "${CMAKE_SOURCE_DIR}/../../.svn")
-)
-    Subversion_WC_INFO("${CMAKE_SOURCE_DIR}" FreeOrion)
-endif ()
-configure_file(
-    ${CMAKE_SOURCE_DIR}/util/Version.cpp.in
-    ${CMAKE_BINARY_DIR}/util/Version.cpp
-)
+find_package(PythonInterp REQUIRED)
 
-if("${FreeOrion_WC_REVISION}" STREQUAL "???")
-    set(FreeOrion_WC_REVISION "unknown")
-endif ()
+# To run the version generation every compile we need to deferr the
+# execution to a separate target and the existing python command
+add_custom_target(freeorionversion
+    COMMAND
+    "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
+    "${CMAKE_SOURCE_DIR}"
+    "CMake"
+)
 
 if (WIN32)
     # Add icon resource file to freeorion.exe
@@ -245,8 +237,7 @@ set (freeorioncommon_SOURCE
     util/StringTable.cpp
     util/VarText.cpp
     util/XMLDoc.cpp
-    util/Version.cpp.in
-    ${CMAKE_BINARY_DIR}/util/Version.cpp
+    util/Version.cpp
 )
 
 if (NOT WIN32)
@@ -259,6 +250,8 @@ add_library(freeorioncommon
     ${freeorioncommon_HEADER}
     ${freeorioncommon_SOURCE}
 )
+
+add_dependencies(freeorioncommon freeorionversion)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set_property(
