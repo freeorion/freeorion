@@ -376,6 +376,7 @@
     (ShipPartMeter)                             \
     (Ships)                                     \
     (Short_Description)                         \
+    (ShortestPath)                              \
     (ShortRange)                                \
     (Sin)                                       \
     (Size)                                      \
