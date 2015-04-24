@@ -271,8 +271,8 @@ namespace {
         float shield = (target_shield ? target_shield->Current() : 0.0f);
 
         DebugLogger() << "AttackShipShip: attacker: " << attacker->Name() << " damage: " << damage
-                               << "  target: " << target->Name() << " shield: " << target_shield->Current()
-                                                                 << " structure: " << target_structure->Current();
+                      << "  target: " << target->Name() << " shield: " << target_shield->Current()
+                      << " structure: " << target_structure->Current();
 
         damage = std::max(0.0f, damage - shield);
 
@@ -319,9 +319,8 @@ namespace {
 
         if (verbose_logging) {
             DebugLogger() << "AttackShipPlanet: attacker: " << attacker->Name() << " damage: " << damage
-                               << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
-                                                                 << " defense: " << target_defense->Current()
-                                                                 << " infra: " << target_construction->Current();
+                          << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+                          << " defense: " << target_defense->Current() << " infra: " << target_construction->Current();
         }
 
         // damage shields, limited by shield current value and damage amount.
@@ -383,8 +382,8 @@ namespace {
 
         if (verbose_logging) {
             DebugLogger() << "AttackPlanetShip: attacker: " << attacker->Name() << " damage: " << damage
-                               << "  target: " << target->Name() << " shield: " << target_shield->Current()
-                                                                 << " structure: " << target_structure->Current();
+                          << "  target: " << target->Name() << " shield: " << target_shield->Current()
+                          << " structure: " << target_structure->Current();
         }
 
         damage = std::max(0.0f, damage - shield);
@@ -879,7 +878,7 @@ namespace {
             {
                 if (verbose_logging) {
                     DebugLogger() << "weapon: " << part_it->part_type_name
-                                           << " attack: " << part_it->part_attack;
+                                  << " attack: " << part_it->part_attack;
                 }
             }
         } else if (attack_planet) { // treat planet defenses as short range
