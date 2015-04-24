@@ -32,10 +32,10 @@ version = "0.4.4+"
 build_no = "???"
 
 try:
-    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], shell=False).strip()
+    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
     if branch == "master":
         branch = ""
-    build_no = check_output(['git', 'show', '-s', '--format=%cd.%h', '--date=short', 'HEAD'], shell=False).strip()
+    build_no = check_output(['git', 'show', '-s', '--format=%cd.%h', '--date=short', 'HEAD']).strip()
 except:
     print "WARNING: git not installed"
 
