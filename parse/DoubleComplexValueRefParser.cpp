@@ -31,6 +31,19 @@ namespace parse {
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
+            // in shortest_path would have liked to be able to use 
+            //            >   parse::label(Object_token) >   (simple_int [ _b = _1 ] | int_var_statistic() [ _b = _1 ])
+            //            >   parse::label(Object_token) >   (simple_int [ _c = _1 ] | int_var_statistic() [ _c = _1 ])
+            // but getting crashes upon program start, presumably due to initialization order problems
+
+            shortest_path
+                =   (
+                            tok.ShortestPath_ [ _a = construct<std::string>(_1) ]
+                        >   parse::label(Object_token) >   simple_int [ _b = _1 ]
+                        >   parse::label(Object_token) >   simple_int [ _c = _1 ]
+                    )       [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
+                ;
+
             species_empire_opinion
                 = (
                     (  tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesEmpireOpinion") ]
@@ -52,12 +65,14 @@ namespace parse {
             start
                 %=  part_capacity
                 |   direct_distance
+                |   shortest_path
                 |   species_empire_opinion
                 |   species_species_opinion
                 ;
 
             part_capacity.name("PartCapacity");
             direct_distance.name("DirectDistanceBetween");
+            shortest_path.name("ShortestPathBetween");
             species_empire_opinion.name("SpeciesOpinion (of empire)");
             species_species_opinion.name("SpeciesOpinion (of species)");
 
@@ -68,6 +83,7 @@ namespace parse {
 
         complex_variable_rule<double>::type part_capacity;
         complex_variable_rule<double>::type direct_distance;
+        complex_variable_rule<double>::type shortest_path;
         complex_variable_rule<double>::type species_empire_opinion;
         complex_variable_rule<double>::type species_species_opinion;
         complex_variable_rule<double>::type start;
