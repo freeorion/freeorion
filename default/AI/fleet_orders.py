@@ -13,7 +13,15 @@ dumpTurn = 0
 
 class AIFleetOrder(object):
     """Stores information about orders which can be executed."""
+
     def __init__(self, fleet, target):
+        """
+        :param fleet: fleet to execute order
+        :type fleet: universe_object.Fleet
+        :param target: fleet target, depends of order type
+        :type target: universe_object.UniverseObject
+        """
+
         self.fleet = fleet
         self.target = target
         self.executed = False

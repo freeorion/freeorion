@@ -9,6 +9,16 @@ from freeorion_tools import ppstring
 
 
 def get_fleet_orders_from_system_targets(fleet_target, targets):
+    """
+    Return Move orders to fleet.
+
+    :param fleet_target:
+    :type fleet_target: universe_object.Fleet
+    :param targets:
+    :type targets: list
+    :return: list of OrdersMove
+    :rtype: list
+    """
     result = []
     # TODO: use Graph Theory to construct move orders
     # TODO: add priority
@@ -36,6 +46,20 @@ def get_fleet_orders_from_system_targets(fleet_target, targets):
 
 
 def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_return=False):
+    """
+    Return list systems to be visited.
+
+    :param fleet_id:
+    :param fleet_id: int
+    :param from_system_target:
+    :type from_system_target: universe_object.System
+    :param to_system_target:
+    :type to_system_target:  universe_object.System
+    :param ensure_return:
+    :type ensure_return: bool
+    :return:
+    :rtype: list
+    """
     empire = fo.getEmpire()
     empire_id = empire.empireID
     fleet_supplyable_system_ids = set(empire.fleetSupplyableSystemIDs)
@@ -82,7 +106,18 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
 
 
 def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target):
-    """ Check if fleet can travel from starting system to wanted system."""
+    """
+    Filter systems where fleet can travel from starting system. # TODO rename function
+    
+    :param fleet_id:
+    :type fleet_id: int
+    :param from_system_target:
+    :type from_system_target: universe_object.System
+    :param to_system_target:
+    :type to_system_target: universe_object.System
+    :return:
+    :rtype: list
+    """
     system_targets = []
     if not from_system_target.target_id == to_system_target.target_id:
         # get supplyable systems
@@ -161,7 +196,26 @@ def get_safe_path_leg_to_dest(fleet_id, start_id, dest_id):
 
 
 def __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_system_target, result_system_targets, fleet_supplyable_system_ids, max_fuel, fuel, supply_system_target):
-    """ Return system AITargets required to visit with fuel to nearest supplied system."""
+    """
+    Return systems required to visit with fuel to nearest supplied system.
+
+    :param from_system_target:
+    :type from_system_target: universe_object.System
+    :param to_system_target:
+    :type to_system_target: universe_object.System
+    :param result_system_targets:
+    :type result_system_targets: list
+    :param fleet_supplyable_system_ids:
+    :type fleet_supplyable_system_ids: list
+    :param max_fuel:
+    :type max_fuel: int
+    :param fuel:
+    :type fuel: int
+    :param supply_system_target:
+    :type supply_system_target: universe_object.System
+    :return:
+    :rtype list:
+    """
     empire_id = fo.empireID()
     result = True
     # try to find if there is possible path to wanted system from system
@@ -209,7 +263,17 @@ def __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_
 
 
 def get_resupply_fleet_order(fleet_target, current_system_target):
-    """ Return resupply AIFleetOrder to nearest supplied system."""
+    """
+    Return fleet_orders.OrderResupply to nearest supplied system.
+
+    :param fleet_target: fleet that need to be resupplied
+    :type fleet_target: universe_object.Fleet
+    # TODO check if we can remove this id, because fleet already have it.
+    :param current_system_target: current system of fleet
+    :type current_system_target: universe_object.System
+    :return: order to resupply
+    :rtype fleet_orders.OrderResupply
+    """
     # find nearest supplied system
     supplied_system_target = get_nearest_supplied_system(current_system_target.target_id)
     # create resupply AIFleetOrder
@@ -217,10 +281,19 @@ def get_resupply_fleet_order(fleet_target, current_system_target):
 
 
 def get_repair_fleet_order(fleet_target, current_sys_id):
-    """ Returns repair AIFleetOrder to [nearest safe] drydock."""
+    """
+    Return fleet_orders.OrderRepair for fleet to proceed system with drydock.
+
+    :param fleet_target: fleet that need to be repaired
+    :type fleet_target: universe_object.Fleet
+    # TODO check if we can remove this id, because fleet already have it.
+    :param current_sys_id: current system id
+    :type current_sys_id: int
+    :return: order to repair
+    :rtype fleet_orders.OrderRepair
+    """
     # find nearest supplied system
     drydock_sys_id = get_nearest_drydock_system_id(current_sys_id)
-    drydock_system_target = universe_object.System(drydock_sys_id)
     print "ordering fleet %d to %s for repair" % (fleet_target.target_id, ppstring(PlanetUtilsAI.sys_name_ids([drydock_sys_id])))
     # create resupply AIFleetOrder
-    return fleet_orders.OrderRepair(fleet_target, drydock_system_target)
+    return fleet_orders.OrderRepair(fleet_target, universe_object.System(drydock_sys_id))
