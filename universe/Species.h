@@ -293,6 +293,11 @@ public:
 
     /** clears all species opinion data */
     void    ClearSpeciesOpinions();
+
+    std::map<int, float>        ObjectPopulations()     { return m_object_populations; }
+    std::map<std::string, int>& SpeciesShipsDestroyed() { return m_species_ships_destroyed; }
+
+
     //@}
 
 private:
@@ -306,6 +311,9 @@ private:
     std::map<std::string, Species*>                         m_species;
     std::map<std::string, std::map<int, double> >           m_species_empire_opinions;
     std::map<std::string, std::map<std::string, double> >   m_species_species_opinions;
+
+    std::map<int, float>                                    m_object_populations;
+    std::map<std::string, int>                              m_species_ships_destroyed;
 
     static SpeciesManager* s_instance;
 
