@@ -321,24 +321,24 @@ def assess_fleet_role(fleet_id):
 
 def assess_ship_design_role(design):
     if "CO_OUTPOST_POD" in design.parts:
-        if design.starlaneSpeed > 0:
+        if design.speed > 0:
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_OUTPOST
 
     if "CO_COLONY_POD" in design.parts or "CO_SUSPEND_ANIM_POD" in design.parts:
-        if design.starlaneSpeed > 0:
+        if design.speed > 0:
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_COLONISATION
 
     if "GT_TROOP_POD" in design.parts:
-        if design.starlaneSpeed > 0:
+        if design.speed > 0:
             return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_INVASION
 
-    if design.starlaneSpeed == 0:
+    if design.speed == 0:
         if len(design.parts) == 0 or design.parts[0] in ["SH_DEFENSE_GRID", "SH_DEFLECTOR", "SH_MULTISPEC"] or (len(design.parts) == 1 and design.parts[0] == ''):
             return AIShipRoleType.SHIP_ROLE_BASE_DEFENSE
         else:
