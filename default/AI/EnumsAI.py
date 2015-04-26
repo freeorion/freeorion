@@ -104,18 +104,12 @@ class AIFleetMissionType(EnumsType):
     FLEET_MISSION_COLONISATION = 2
     FLEET_MISSION_SPLIT_FLEET = 3
     FLEET_MISSION_MERGE_FLEET = 4  # not really supported yet
-    FLEET_MISSION_HIT_AND_RUN = 5  # currently same as MILITARY
-    FLEET_MISSION_ATTACK = 6  # currently same as MILITARY
-    FLEET_MISSION_DEFEND = 7  # currently same as MILITARY
-    FLEET_MISSION_LAST_STAND = 8  # currently same as MILITARY
     FLEET_MISSION_INVASION = 9
     FLEET_MISSION_MILITARY = 10
     FLEET_MISSION_SECURE = 11  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
     FLEET_MISSION_ORBITAL_DEFENSE = 12
     FLEET_MISSION_ORBITAL_INVASION = 13
     FLEET_MISSION_ORBITAL_OUTPOST = 14
-    FLEET_MISSION_ORBITAL_COLONISATION = 15
-    FLEET_MISSION_REPAIR = 16  # though currently, repair will be handled w/o mission, like resupply
 
     names = ['explore', 'outpost', 'colonize', 'split_fleet', 'mergeFleet', 'hit&Run', 'attack', 'defend', 'last_stand', 'invasion', 'military', 'secure',
                                                     'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'repair', 'invalid']

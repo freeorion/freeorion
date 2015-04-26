@@ -863,7 +863,6 @@ class AIstate(object):
             if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  
                         AIFleetMissionType.FLEET_MISSION_OUTPOST,
                         AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION,
-                        AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION,
                         AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST
                         ]:
                 pass

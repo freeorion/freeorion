@@ -5,6 +5,8 @@ import FreeOrionAI as foAI
 import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
+from freeorion_tools import print_error
+from universe_object import Fleet, System, Planet
 
 
 AIFleetMissionTypeNames = AIFleetMissionType()
@@ -13,6 +15,7 @@ dumpTurn = 0
 
 class AIFleetOrder(object):
     """Stores information about orders which can be executed."""
+    TARGET_TYPE = None
 
     def __init__(self, fleet, target):
         """
@@ -21,6 +24,11 @@ class AIFleetOrder(object):
         :param target: fleet target, depends of order type
         :type target: universe_object.UniverseObject
         """
+        if not isinstance(fleet, Fleet):
+            print_error("Order required fleet got %s" % type(fleet))
+
+        if not isinstance(target, self.TARGET_TYPE):
+            print_error("Target is not allowed, got %s expect %s" % (type(target), self.TARGET_TYPE))
 
         self.fleet = fleet
         self.target = target
@@ -75,12 +83,9 @@ class AIFleetOrder(object):
         return isinstance(other, self.__class__) and self.fleet == other.fleet and self.target == other.target
 
 
-class OrderScrap(AIFleetOrder):
-    ORDER_NAME = 'scrap'
-
-
 class OrderMove(AIFleetOrder):
     ORDER_NAME = 'move'
+    TARGET_TYPE = System
 
     def can_issue_order(self, verbose=False):
         if not super(OrderMove, self).can_issue_order(verbose=verbose):
@@ -158,6 +163,7 @@ class OrderMove(AIFleetOrder):
 
 class OrderResupply(AIFleetOrder):
     ORDER_NAME = 'resupply'
+    TARGET_TYPE = System
 
     def is_valid(self):
         if not super(OrderResupply, self).is_valid():
@@ -192,6 +198,7 @@ class OrderResupply(AIFleetOrder):
 
 class OrderSplitFleet(AIFleetOrder):
     ORDER_NAME = 'split_fleet'
+    TARGET_TYPE = System  # TODO check real usage
 
     def can_issue_order(self, verbose=False):
         if not super(OrderSplitFleet, self).is_valid():
@@ -208,12 +215,13 @@ class OrderSplitFleet(AIFleetOrder):
         self.execution_completed = True
 
 
-class OrderMergeFleet(AIFleetOrder):
-    ORDER_NAME = 'mergeFleet'
+# class OrderMergeFleet(AIFleetOrder):  # TODO check remove
+#     pass
 
 
 class OrderOutpost(AIFleetOrder):
     ORDER_NAME = 'outpost'
+    TARGET_TYPE = Planet
 
     def is_valid(self):
         if not super(OrderOutpost, self).is_valid():
@@ -258,6 +266,7 @@ class OrderOutpost(AIFleetOrder):
 
 class OrderColonize(AIFleetOrder):
     ORDER_NAME = 'colonize'
+    TARGET_TYPE = Planet
 
     def issue_order(self):
         if not super(OrderColonize, self).issue_order():
@@ -305,7 +314,7 @@ class OrderColonize(AIFleetOrder):
 
 class OrderAttack(AIFleetOrder):
     ORDER_NAME = 'attack'
-
+    TARGET_TYPE = System
 
     def issue_order(self, verbose=False):
         if not super(OrderAttack, self).is_valid():
@@ -313,12 +322,9 @@ class OrderAttack(AIFleetOrder):
         fo.issueFleetMoveOrder(self.fleet.target_id, self.target.get_system().target_id)
 
 
-class OrderDefend(AIFleetOrder):
-    ORDER_NAME = 'defend'
-
-
 class OrderInvade(AIFleetOrder):
     ORDER_NAME = 'invade'
+    TARGET_TYPE = Planet
 
     def is_valid(self):
         if not super(OrderInvade, self).is_valid():
@@ -387,9 +393,10 @@ class OrderInvade(AIFleetOrder):
 
 class OrderMilitary(AIFleetOrder):
     ORDER_NAME = 'military'
+    TARGET_TYPE = System
 
     def is_valid(self):
-        if not super(OrderInvade, self).is_valid():
+        if not super(OrderMilitary, self).is_valid():
             return False
         return self.fleet.get_object().hasArmedShips
 
@@ -397,8 +404,7 @@ class OrderMilitary(AIFleetOrder):
         ship_id = FleetUtilsAI.get_ship_id_with_role(self.fleet.target_id, AIShipRoleType.SHIP_ROLE_MILITARY)
         universe = fo.getUniverse()
         ship = universe.getShip(ship_id)
-        system = universe.getSystem(self.target.target_id)
-        return ship is not None and self.fleet.get_system() == system.systemID and ship.isArmed
+        return ship is not None and self.fleet.get_system() == self.target.target_id and ship.isArmed
 
     def issue_order(self):
         if not super(OrderMilitary, self).issue_order():
@@ -410,12 +416,9 @@ class OrderMilitary(AIFleetOrder):
             self.execution_completed = True
 
 
-class OrderStaging(AIFleetOrder):
-    ORDER_NAME = 'staging'
-
-
 class OrderRepair(AIFleetOrder):
     ORDER_NAME = 'repair'
+    TARGET_TYPE = System
 
     def is_valid(self):
         if not super(OrderRepair, self).is_valid():
