@@ -138,7 +138,7 @@ Fleet
 # For this, and any other effect-created object, with specified or default strings for the name,
 # and when each exists: %1% is the system name, %2% is the target object name, and %3% is the source object name
 NEW_PLANET_NAME
-%1% Unnamed Planet
+%1% %3% remnants
 
 EMPTY_SPACE
 Deep Space
@@ -4184,6 +4184,8 @@ SITREP_TECH_UNLOCKED
 SITREP_SHIP_PART_UNLOCKED
 SITREP_SHIP_HULL_UNLOCKED
 SITREP_BUILDING_TYPE_UNLOCKED
+SITREP_GROUND_BATTLE
+SITREP_GROUND_BATTLE_ENEMY
 SITREP_PLANET_CAPTURED
 SITREP_PLANET_COLONIZED
 SITREP_NEW_COLONY_ESTABLISHED
@@ -4322,7 +4324,7 @@ SITREP_OBJECT_DAMAGED_AT_SYSTEM_LABEL
 Object Damaged
 
 SITREP_SHIP_DAMAGED_AT_SYSTEM
-At %system%: a %shipdesign%, the '%ship%', was damaged; it is owned by %empire%.
+At %system%: a %empire% %shipdesign%, the '%ship%', was damaged.
 SITREP_SHIP_DAMAGED_AT_SYSTEM_LABEL
 Empire Ship Damaged
 
@@ -4337,7 +4339,7 @@ SITREP_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Empire Planet Bombarded
 
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
-The planet %planet% was bombarded at %system%.
+At %system%: The planet %planet% was bombarded.
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM_LABEL
 Unowned Planet Bombarded
 
@@ -4366,7 +4368,7 @@ SITREP_PLANET_COLONIZED_LABEL
 Planet Colonized
 
 SITREP_NEW_COLONY_ESTABLISHED
-A new %species% colony has been established on %planet%.
+On %planet%: A new %species% colony has been established.
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
 New Colony Established
 
@@ -4441,7 +4443,7 @@ SITREP_VICTORY_BIO_LABEL
 Victory Biological
 
 SITREP_POP_THRESHOLD
-The colony on %planet% has reached recolonizing size.
+On %planet%: The colony has reached recolonizing size.
 SITREP_POP_THRESHOLD_LABEL
 Colonizing Threshold
 
@@ -4451,7 +4453,7 @@ EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Experimentor Monster Spawn
 
 EFFECT_ANCIENT_SHIP
-A %predefinedshipdesign% on %planet% was revealed in the Ancient Ruins!
+On %planet%: A %predefinedshipdesign% was revealed in the Ancient Ruins!
 EFFECT_ANCIENT_SHIP_LABEL
 Ancient Ruins Ship
 
@@ -4461,7 +4463,7 @@ EFFECT_ANCIENT_SHIP_RUMORS_LABEL
 Ancient Ruins Ship Rumors
 
 EFFECT_ANCIENT_BUILDING
-A %buildingtype% on %planet% was revealed in the Ancient Ruins!
+On %planet%: A %buildingtype% was revealed in the Ancient Ruins!
 EFFECT_ANCIENT_BUILDING_LABEL
 Ancient Ruins Building
 
@@ -4471,7 +4473,7 @@ EFFECT_ANCIENT_BUILDING_RUMORS_LABEL
 Ancient Ruins Building Rumors
 
 EFFECT_ANCIENT_TECH
-%tech% was revealed on %planet% in the Ancient Ruins!
+On %planet%: %tech% was revealed in the Ancient Ruins!
 EFFECT_ANCIENT_TECH_LABEL
 Ancient Ruins Tech
 
@@ -4481,7 +4483,7 @@ EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Ancient Ruins Tech Rumors
 
 EFFECT_ANCIENT_RUINS_EMPTY
-On %planet% Ancient Ruins were excavated, but only tantalizing hints of ancient technology were found.
+On %planet%: Ancient Ruins were excavated, but only tantalizing hints of ancient technology were found.
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
 Ancient Ruins Empty Excavation
 
@@ -4491,17 +4493,17 @@ EFFECT_CONC_CAMP_COMLETE_LABEL
 Ethnic Cleansing
 
 EFFECT_DRYDOCK_SHIP_REPAIR
-%ship% was repaired by %building% on %planet%.
+On %planet%: %ship% was repaired by %building%.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
 Drydock Repair
 
 EFFECT_MONSTER_SPAWNING
-A %predefinedshipdesign% was spawned in %system%.
+In %system%: A %predefinedshipdesign% was spawned.
 EFFECT_MONSTER_SPAWNING_LABEL
 Monster Spawn
 
 EFFECT_GAIAN_TERRAFORM
-The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.
+On %planet%: The Gaian planet has terraformed itself to better accommodate its inhabitants.
 EFFECT_GAIAN_TERRAFORM_LABEL
 Gaia Terraform
 
@@ -4591,12 +4593,12 @@ EFFECT_PSY_DOM_LABEL
 Psychogenic Domination
 
 EFFECT_MINES
-At %system%: %rawtext% points of structure damage to %fleet% ships (owned by %empire%) was inflicted by mines.
+At %system%: Mines caused %rawtext% damage to the %empire% fleet %fleet%.
 EFFECT_MINES_LABEL
 System Mines
 
 EFFECT_MINES_SHIP_DESTROYED
-At %system%: mines destroyed the %ship% (owned by %empire%).
+At %system%: mines destroyed the %empire% ship %ship%.
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 System Mines Destroyed Ship
 
