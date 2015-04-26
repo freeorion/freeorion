@@ -660,9 +660,11 @@ SM_ACIREMA_GUARD_DESC
 An unmanned armed ship, built by the Acirema, guards the system.
 
 SM_EXP_OUTPOST
-Experimentor Outpost Ship
+Experiment Zero
 SM_EXP_OUTPOST_DESC
-An outpost ship constructed by the Experimentors to transport experimental equipment between galaxies.
+'''An ancient creation of the Experimentors that reduces shields and damage. 
+
+Experiment Zero was sent to this galaxy to guard the outpost of the Experimentors with its unique abilities. While it does not attack directly it consists of quadrillions of diminutive units that fill the whole space of the system and hamper enemy shields and weapons to the point that all but the very best equipment will be ineffective.'''
 
 SM_COSMIC_DRAGON
 Cosmic Dragon

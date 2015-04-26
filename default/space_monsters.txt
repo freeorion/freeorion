@@ -348,7 +348,7 @@ ShipDesign
     parts = [
         ""
     ]
-    icon = ""
+    icon = "icons/monsters/experiment0.png"
     model = "seed"
     
 ShipDesign

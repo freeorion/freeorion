@@ -2652,7 +2652,7 @@ Hull
     speed = 0
     fuel = 1
     stealth = 50
-    structure = 1
+    structure = 1700
     slots = [
         Slot type = External position = (0.60, 0.45)
     ]
@@ -2667,15 +2667,38 @@ Hull
                 Not Planet type = [Asteroids GasGiant]
                 InSystem id = Source.SystemID
             ]
+            activation = Turn high = 0 
             effects = [
                 SetSpecies name = "SP_EXPERIMENTOR"
                 SetPopulation value = Target.TargetPopulation
                 CreateBuilding type = "BLD_EXPERIMENTOR_OUTPOST"
             ]
 
-        EffectsGroup
-            scope = Source
-            effects = Destroy
+            EffectsGroup // Render most shields and most of the weapons useless
+            scope = And [
+                Ship
+                OwnedBy affiliation = AnyEmpire
+                InSystem id = Source.SystemID
+            ]   
+            effects = [
+                SetShield value = Value - 18
+                SetDamage partname = "SR_WEAPON_1_1" value = Value - 10
+                SetDamage partname = "SR_WEAPON_1_2" value = Value - 10
+                SetDamage partname = "SR_WEAPON_1_3" value = Value - 10
+                SetDamage partname = "SR_WEAPON_1_4" value = Value - 10
+                SetDamage partname = "SR_WEAPON_2_1" value = Value - 10
+                SetDamage partname = "SR_WEAPON_2_2" value = Value - 10
+                SetDamage partname = "SR_WEAPON_2_3" value = Value - 10
+                SetDamage partname = "SR_WEAPON_2_4" value = Value - 10
+                SetDamage partname = "SR_WEAPON_3_1" value = Value - 15
+                SetDamage partname = "SR_WEAPON_3_2" value = Value - 15
+                SetDamage partname = "SR_WEAPON_3_3" value = Value - 15
+                SetDamage partname = "SR_WEAPON_3_4" value = Value - 15
+                SetDamage partname = "SR_WEAPON_4_1" value = Value - 20
+                SetDamage partname = "SR_WEAPON_4_2" value = Value - 20
+                SetDamage partname = "SR_WEAPON_4_3" value = Value - 20
+                SetDamage partname = "SR_WEAPON_4_4" value = Value - 20
+            ]
     ]
     icon = ""
     graphic = ""
