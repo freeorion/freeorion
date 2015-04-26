@@ -89,10 +89,10 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     m_list(0),
     m_tags_text(0),
     m_tags_list(0)
-    {
+{
     const GG::Y ROW_HEIGHT(MeterIconSize().y);
     const GG::Y HALF_HEIGHT(GG::Y(int(ClientUI::Pts()/2)));
-    
+
     GG::Y top = GG::Y0;
 
     m_row_height = GG::Y(MeterIconSize().y);
@@ -165,7 +165,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     //DebugLogger() << "Census Tag Order: " << UserString("CENSUS_TAG_ORDER");
     std::istringstream tag_stream(UserString("CENSUS_TAG_ORDER"));
     std::vector<std::string> tag_order;
-    std::copy(std::istream_iterator<std::string>(tag_stream), 
+    std::copy(std::istream_iterator<std::string>(tag_stream),
         std::istream_iterator<std::string>(),
         std::back_inserter<std::vector<std::string> >(tag_order));
 

@@ -1037,6 +1037,17 @@ namespace ValueRef {
             double dy = obj2->Y() - obj1->Y();
             return static_cast<float>(std::sqrt(dx*dx + dy*dy));
 
+        } else if (variable_name == "ShortestPath") {
+            int object1_id = INVALID_OBJECT_ID;
+            if (m_int_ref1)
+                object1_id = m_int_ref1->Eval(context);
+
+            int object2_id = INVALID_OBJECT_ID;
+            if (m_int_ref2)
+                object2_id = m_int_ref2->Eval(context);
+
+            return GetUniverse().ShortestPathDistance(object1_id, object2_id);
+
         } else if (variable_name == "SpeciesEmpireOpinion") {
             int empire_id = ALL_EMPIRES;
             if (m_int_ref1)

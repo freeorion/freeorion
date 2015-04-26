@@ -179,6 +179,12 @@ public:
     std::pair<std::list<int>, double>
                             ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
+    /** Returns the shortest starlane path distance between any two objects, accounting
+      * for cases where one or the other are fleets / ships on starlanes between
+      * systems. Returns -1 when no path exists, or either object does not
+      * exist. */
+    double                  ShortestPathDistance(int object1_id, int object2_id) const;
+
     /** Returns the sequence of systems, including \a system1 and \a system2,
       * that defines the path with the fewest jumps from \a system1 to
       * \a system2, and the number of jumps to get there.  If no such path

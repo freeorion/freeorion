@@ -995,6 +995,53 @@ int Universe::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
     return INT_MAX;
 }
 
+double Universe::ShortestPathDistance(int object1_id, int object2_id) const {
+    // If one or both objects are (in) a fleet between systems, use the destination system
+    // and add the distance from the fleet to the destination system, essentially calculating
+    // the distance travelled until both could be in the same system.
+    TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    if (!obj1)
+        return -1;
+
+    TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    if (!obj2)
+        return -1;
+
+    TemporaryPtr<const System> system_one = GetSystem(obj1->SystemID());
+    TemporaryPtr<const System> system_two = GetSystem(obj2->SystemID());
+    std::pair< std::list< int >, double > path_len_pair;
+    double dist1(0.0), dist2(0.0);
+    TemporaryPtr<const Fleet> fleet;
+
+    if (!system_one) {
+        fleet = FleetFromObject(obj1);
+        if (!fleet)
+            return -1;
+        if (TemporaryPtr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+            system_one = next_sys;
+            dist1 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
+        }
+    }
+
+    if (!system_two) {
+        fleet = FleetFromObject(obj2);
+        if (!fleet)
+            return -1;
+        if (TemporaryPtr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+            system_two = next_sys;
+            dist2 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
+        }
+    }
+
+    try {
+        path_len_pair = ShortestPath(system_one->ID(), system_two->ID());
+    } catch (...) {
+        ErrorLogger() << "ShortestPathDistance caught exception when calling ShortestPath";
+        return -1;
+    }
+    return path_len_pair.second + dist1 + dist2;
+}
+
 bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const {
     //DebugLogger() << "SystemsConnected(" << system1_id << ", " << system2_id << ", " << empire_id << ")";
     std::pair<std::list<int>, int> path = LeastJumpsPath(system1_id, system2_id, empire_id);

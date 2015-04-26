@@ -271,7 +271,9 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
 
     ar  & BOOST_SERIALIZATION_NVP(species_homeworlds)
         & BOOST_SERIALIZATION_NVP(empire_opinions)
-        & BOOST_SERIALIZATION_NVP(other_species_opinions);
+        & BOOST_SERIALIZATION_NVP(other_species_opinions)
+        & BOOST_SERIALIZATION_NVP(m_object_populations)
+        & BOOST_SERIALIZATION_NVP(m_species_ships_destroyed);
 
     if (Archive::is_loading::value) {
         SetSpeciesHomeworlds(species_homeworlds);

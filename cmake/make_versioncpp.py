@@ -32,21 +32,22 @@ version = "0.4.4+"
 build_no = "???"
 
 try:
-    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], shell=False).strip()
+    branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
     if branch == "master":
         branch = ""
-    build_no = check_output(['git', 'show', '-s', '--format=%cd.%h', '--date=short', 'HEAD'], shell=False).strip()
+    build_no = check_output(['git', 'show', '-s', '--format=%cd.%h', '--date=short', 'HEAD']).strip()
 except:
     print "WARNING: git not installed"
 
 
 for infile, outfile in io_files:
-    if build_no == "???" and os.path.exists(outfile):
-        print "WARNING: Can't determine git commit, %s not updated!" % outfile
-        continue
-
-    if build_no in open(outfile).read():
-        continue
+    if os.path.isfile(outfile):
+        if build_no == "???":
+            print "WARNING: Can't determine git commit, %s not updated!" % outfile
+            continue
+        with open(outfile) as check_file:
+            if build_no in check_file.read():
+                continue
 
     try:
         template_file = open(infile)
