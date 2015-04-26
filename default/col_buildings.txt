@@ -90,7 +90,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/other-04.png"
 
 BuildingType
     name = "BLD_COL_ABADDONI"
@@ -184,7 +184,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/abaddonnian.png"
 
 BuildingType
     name = "BLD_COL_CHATO"
@@ -278,7 +278,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/chato-matou-gormoshk.png"
 
 BuildingType
     name = "BLD_COL_CRAY"
@@ -372,7 +372,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/cray.png"
 
 BuildingType
     name = "BLD_COL_DERTHREAN"
@@ -466,7 +466,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/derthrean.png"
 
 BuildingType
     name = "BLD_COL_EAXAW"
@@ -560,7 +560,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/eaxaw.png"
 
 BuildingType
     name = "BLD_COL_EGASSEM"
@@ -654,7 +654,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/egassem.png"
 
 BuildingType
     name = "BLD_COL_ETTY"
@@ -748,7 +748,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/etty.png"
 
 BuildingType
     name = "BLD_COL_GEORGE"
@@ -842,7 +842,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/george.png"
 
 BuildingType
     name = "BLD_COL_GYSACHE"
@@ -936,7 +936,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/gysache.png"
 
 BuildingType
     name = "BLD_COL_HHHOH"
@@ -1030,7 +1030,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/hhhoh.png"
 
 BuildingType
     name = "BLD_COL_HUMAN"
@@ -1124,7 +1124,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/human.png"
 
 BuildingType
     name = "BLD_COL_KOBUNTURA"
@@ -1218,7 +1218,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/intangible-04.png"
 
 BuildingType
     name = "BLD_COL_LAENFA"
@@ -1312,7 +1312,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/laenfa.png"
 
 BuildingType
     name = "BLD_COL_MUURSH"
@@ -1406,7 +1406,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/muursh.png"
 
 BuildingType
     name = "BLD_COL_SCYLIOR"
@@ -1500,7 +1500,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/scylior.png"
 
 BuildingType
     name = "BLD_COL_SETINON"
@@ -1594,7 +1594,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/amorphous-02.png"
 
 BuildingType
     name = "BLD_COL_SSLITH"
@@ -1688,7 +1688,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/sslith.png"
 
 BuildingType
     name = "BLD_COL_TAEGHIRUS"
@@ -1782,7 +1782,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/t-aeghirus.png"
 
 BuildingType
     name = "BLD_COL_TRITH"
@@ -1876,7 +1876,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/trith.png"
 
 BuildingType
     name = "BLD_COL_UGMORS"
@@ -1970,7 +1970,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/amorphous-06.png"
 
 BuildingType
     name = "BLD_COL_EXOBOT"
@@ -2042,5 +2042,5 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"
+    icon = "icons/species/robotic-01.png"
 
