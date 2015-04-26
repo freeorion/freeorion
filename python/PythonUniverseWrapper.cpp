@@ -446,8 +446,6 @@ namespace FreeOrionPython {
             .def("description",                 make_function(&ShipDesign::Description,     return_value_policy<copy_const_reference>()))
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,  return_value_policy<return_by_value>()))
             .add_property("speed",              make_function(&ShipDesign::Speed,           return_value_policy<return_by_value>()))
-            // TODO: remove starlaneSpeed after transition period for current content
-            .add_property("starlaneSpeed",      make_function(&ShipDesign::Speed,           return_value_policy<return_by_value>()))
             .add_property("structure",          make_function(&ShipDesign::Structure,       return_value_policy<return_by_value>()))
             .add_property("shields",            make_function(&ShipDesign::Shields,         return_value_policy<return_by_value>()))
             .add_property("fuel",               make_function(&ShipDesign::Fuel,            return_value_policy<return_by_value>()))

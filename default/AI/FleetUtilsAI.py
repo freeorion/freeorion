@@ -37,6 +37,23 @@ def count_parts_fleetwide(fleet_id, parts_list):
     return tally
 
 
+def count_troops_in_fleet(fleet_id):
+    """
+    :param fleet_id:
+    :return: total troopCapacity of the fleet
+    """
+    universe = fo.getUniverse()
+    fleet = universe.getFleet(fleet_id)
+    if not fleet:
+        return 0
+    fleet_troop_capacity = 0
+    for ship_id in fleet.shipIDs:
+        ship = universe.getShip(ship_id)
+        if ship:
+            fleet_troop_capacity += ship.troopCapacity
+    return fleet_troop_capacity
+
+
 def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check, systems_checked, fleet_pool_set, fleet_list,
                                                             take_any=False, extend_search=True, tried_fleets=None, verbose=False, depth=0):
     """Implements breadth-first search through systems
@@ -83,12 +100,13 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
                 if has_species == species:
                     meets_species_req = True
                     break
-        has_pods = 0
-        needs_troops = 'troopPods' in target_stats
+        troop_capacity = 0
+        needs_troops = 'troopCapacity' in target_stats
         if needs_troops:
-            has_pods = count_parts_fleetwide(fleet_id, ["GT_TROOP_POD"])
+            troop_capacity = count_troops_in_fleet(fleet_id)
 
-        use_fleet = ((not needs_species and not has_species) or meets_species_req) and ((needs_troops and has_pods > 0) or (not needs_troops and not has_pods))
+        use_fleet = ((not needs_species and not has_species) or meets_species_req)\
+                    and ((needs_troops and troop_capacity > 0) or (not needs_troops and not troop_capacity))
         if use_fleet:
             fleet_list.append(fleet_id)
             fleet_pool_set.remove(fleet_id)
@@ -96,9 +114,10 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
             cur_stats['attack'] = cur_stats.get('attack', 0) + this_rating['attack']
             cur_stats['health'] = cur_stats.get('health', 0) + this_rating['health']
             cur_stats['rating'] = cur_stats['attack'] * cur_stats['health']
-            if 'troopPods' in target_stats:
-                cur_stats['troopPods'] = cur_stats.get('troopPods', 0) + count_parts_fleetwide(fleet_id, ["GT_TROOP_POD"])
-            if (sum([len(universe.getFleet(fid).shipIDs) for fid in fleet_list]) >= nships) and stats_meet_reqs(cur_stats, target_stats):
+            if 'troopCapacity' in target_stats:
+                cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + count_troops_in_fleet(fleet_id)  # ToDo: Check if replacable by troop_capacity
+            if (sum([len(universe.getFleet(fid).shipIDs) for fid in fleet_list]) >= nships)\
+                    and stats_meet_reqs(cur_stats, target_stats):
                 if verbose:
                     print "returning fleetlist: %s" % fleet_list
                 return fleet_list
@@ -320,41 +339,40 @@ def assess_fleet_role(fleet_id):
 
 
 def assess_ship_design_role(design):
-    if "CO_OUTPOST_POD" in design.parts:
-        if design.starlaneSpeed > 0:
+    parts = [fo.getPartType(partname) for partname in design.parts if partname and fo.getPartType(partname)]
+
+    if any(p.partClass == fo.shipPartClass.colony and p.capacity == 0 for p in parts):
+        if design.speed > 0:
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_OUTPOST
 
-    if "CO_COLONY_POD" in design.parts or "CO_SUSPEND_ANIM_POD" in design.parts:
-        if design.starlaneSpeed > 0:
+    if any(p.partClass == fo.shipPartClass.colony and p.capacity > 0 for p in parts):
+        if design.speed > 0:
             return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_COLONISATION
 
-    if "GT_TROOP_POD" in design.parts:
-        if design.starlaneSpeed > 0:
+    if any(p.partClass == fo.shipPartClass.troops for p in parts):
+        if design.speed > 0:
             return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
         else:
             return AIShipRoleType.SHIP_ROLE_BASE_INVASION
 
-    if design.starlaneSpeed == 0:
-        if len(design.parts) == 0 or design.parts[0] in ["SH_DEFENSE_GRID", "SH_DEFLECTOR", "SH_MULTISPEC"] or (len(design.parts) == 1 and design.parts[0] == ''):
+    if design.speed == 0:
+        if not parts or parts[0].partClass == fo.shipPartClass.shields:  # ToDo: Update logic for new ship designs
             return AIShipRoleType.SHIP_ROLE_BASE_DEFENSE
         else:
             return AIShipRoleType.SHIP_ROLE_INVALID
 
     stats = foAI.foAIstate.get_design_id_stats(design.id)
     rating = stats['attack'] * (stats['structure'] + stats['shields'])
-    scout_names = AIShipDesignTypes.explorationShip.keys()
-    if "SD_SCOUT" in design.name(False) or design.name(False).split('-')[0] in scout_names:
-        for part in design.parts:
-            if "DT_DETECTOR" in part:
-                return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
     if rating > 0:  # positive attack stat
         return AIShipRoleType.SHIP_ROLE_MILITARY
-    else:
-        return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION  # let this be the default since even without detection part a ship has some inherent
+    if any(p.partClass == fo.shipPartClass.detection for p in parts):
+        return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
+    else:   # if no suitable role found, use as (bad) scout as it still has inherent detection
+        return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
 
 
 def generate_fleet_orders_for_fleet_missions():
