@@ -309,7 +309,7 @@ class AIFleetMission(object):
         if last_sys_target == fleet.systemID:
             return  # TODO: check for best local target
         open_targets = []
-        already_targeted = InvasionAI.get_invasion_targeted_planet_ids(system.planetIDs, AIFleetMissionType.FLEET_MISSION_INVASION, empire_id)
+        already_targeted = InvasionAI.get_invasion_targeted_planet_ids(system.planetIDs, AIFleetMissionType.FLEET_MISSION_INVASION)
         for pid in system.planetIDs:
             if pid in already_targeted or (pid in foAI.foAIstate.qualifyingTroopBaseTargets):
                 continue
