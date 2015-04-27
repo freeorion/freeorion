@@ -123,7 +123,7 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
                 return fleet_list
     # finished loop without meeting reqs
     if extend_search:
-        for neighborID in [el.key() for el in universe.getSystemNeighborsMap(this_system_id, foAI.foAIstate.empireID)]:
+        for neighborID in universe.getSystemNeighborsMap(this_system_id, foAI.foAIstate.empireID):
             if neighborID not in systems_checked and neighborID not in systems_to_check and neighborID in foAI.foAIstate.exploredSystemIDs:
                 systems_to_check.append(neighborID)
     try:

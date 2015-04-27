@@ -86,9 +86,8 @@ def get_invasion_fleets():
     reserved_troop_base_targets = []
     if foAI.foAIstate.aggression > fo.aggression.typical:
         available_pp = {}
-        for el in empire.planetsWithAvailablePP:  # keys are sets of ints; data is doubles
-            avail_pp = el.data()
-            for pid in el.key():
+        for planets, avail_pp in empire.planetsWithAvailablePP.items():  # keys are tuple of unique ints; values are doubles
+            for pid in planets:
                 available_pp[pid] = avail_pp
         for pid in invadable_planet_ids:  # TODO: reorganize
             planet = universe.getPlanet(pid)

@@ -12,7 +12,7 @@ import ResourcesAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType
 from MilitaryAI import MinThreat
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map, get_ai_tag_grade
+from freeorion_tools import get_ai_tag_grade
 
 
 ## moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -444,7 +444,7 @@ class AIstate(object):
                 sysStatus['myFleetRating'] = myattack * myhealth
 
             system = universe.getSystem(sysID)
-            neighborDict = dict_from_map(universe.getSystemNeighborsMap(sysID, self.empireID))
+            neighborDict = universe.getSystemNeighborsMap(sysID, self.empireID)
             neighbors = set(neighborDict.keys())
             sysStatus['neighbors'] = neighbors
             

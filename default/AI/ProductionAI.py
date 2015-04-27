@@ -10,12 +10,12 @@ import PriorityAI
 import ColonisationAI
 import EnumsAI
 import MilitaryAI
-from freeorion_tools import dict_from_map, ppstring
+from freeorion_tools import ppstring
 from TechsListsAI import EXOBOT_TECH_NAME
 from freeorion_tools import print_error
 
 bestMilRatingsHistory = {}  # dict of (rating, cost) keyed by turn
-design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
+design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
 shipTypeMap = {EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.AIShipDesignTypes.explorationShip,
                EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST: EnumsAI.AIShipDesignTypes.outpostShip,
                EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST: EnumsAI.AIShipDesignTypes.outpostBase,
@@ -677,8 +677,8 @@ def generateProductionOrders():
     productionQueue = empire.productionQueue
     totalPP = empire.productionPoints
     #prodResPool = empire.getResourcePool(fo.resourceType.industry)
-    #availablePP = dict_from_map(productionQueue.availablePP(prodResPool))
-    #allocatedPP = dict_from_map(productionQueue.allocatedPP)
+    # availablePP = productionQueue.availablePP(prodResPool)
+    # allocatedPP = productionQueue.allocatedPP
     #objectsWithWastedPP = productionQueue.objectsWithWastedPP(prodResPool)
     currentTurn = fo.currentTurn()
     print
@@ -1480,7 +1480,7 @@ def generateProductionOrders():
             if sysID in scannerLocs:
                 continue
             needScanner=False
-            for nSys in dict_from_map(universe.getSystemNeighborsMap(sysID, empire.empireID)):
+            for nSys in universe.getSystemNeighborsMap(sysID, empire.empireID):
                 if universe.getVisibility(nSys, empire.empireID) < fo.visibility.partial:
                     needScanner=True
                     break
@@ -1517,7 +1517,7 @@ def generateProductionOrders():
                                                (covered_drydoc_locs, covered_drydoc_locs) ]:  #coverage of neighbors up to 2 jumps away from a drydock
             for dd_sys_id in start_set.copy():
                 dest_set.add(dd_sys_id)
-                dd_neighbors = dict_from_map(universe.getSystemNeighborsMap(dd_sys_id, empire.empireID))
+                dd_neighbors = universe.getSystemNeighborsMap(dd_sys_id, empire.empireID)
                 dest_set.update( dd_neighbors.keys() )
             
         max_dock_builds = int(0.8 + empire.productionPoints/120.0)
@@ -1548,7 +1548,7 @@ def generateProductionOrders():
                 if res:
                     queued_locs.append( planet.systemID )
                     covered_drydoc_locs.add( planet.systemID )
-                    dd_neighbors = dict_from_map(universe.getSystemNeighborsMap(planet.systemID, empire.empireID))
+                    dd_neighbors = universe.getSystemNeighborsMap(planet.systemID, empire.empireID)
                     covered_drydoc_locs.update( dd_neighbors.keys() )
                     if max_dock_builds >= 2:
                         res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
@@ -1716,8 +1716,8 @@ def generateProductionOrders():
         filteredPriorities[pty] **= scalingPower
 
 
-    availablePP = dict( [ (tuple(el.key()), el.data() ) for el in empire.planetsWithAvailablePP ])  #keys are sets of ints; data is doubles
-    allocatedPP = dict( [ (tuple(el.key()), el.data() ) for el in empire.planetsWithAllocatedPP ])  #keys are sets of ints; data is doubles
+    availablePP = empire.planetsWithAvailablePP  # keys are tuple of unique ints; values are doubles
+    allocatedPP = empire.planetsWithAllocatedPP  # keys are tuple of unique ints; values are doubles
     planetsWithWastedPP = set( [tuple(pidset) for pidset in empire.planetsWithWastedPP ] )
     print "availPP ( <systems> : pp ):"
     for pSet in availablePP:
