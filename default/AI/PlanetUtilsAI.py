@@ -1,6 +1,7 @@
-import freeOrionAIInterface as fo # pylint: disable=import-error
-import FreeOrionAI as foAI
+import sys
+import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
+from freeorion_tools import print_error
 
 
 def sys_name_ids(sys_ids):
@@ -11,12 +12,10 @@ def sys_name_ids(sys_ids):
     """
     universe = fo.getUniverse()
     res = []
-    for sysID in sys_ids:
-        sys = universe.getSystem(sysID)
+    for sys_id in sys_ids:
+        sys = universe.getSystem(sys_id)
         if sys:
-            res.append("%s:%d" % (sys.name, sysID))
-        else:
-            res.append("unknown:%d" % sysID)
+            res.append(str(sys))
     return res
 
 
@@ -31,9 +30,7 @@ def planet_name_ids(planet_ids):
     for pid in planet_ids:
         planet = universe.getPlanet(pid)
         if planet:
-            res.append("%s:%d" % (planet.name, pid))
-        else:
-            res.append("unknown:%d" % pid)
+            res.append(str(planet))
     return res
 
 
@@ -47,7 +44,7 @@ def get_capital():
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     if empire is None:
-        print "Danger Danger! FO can't find an empire for me!!!!"
+        print >> sys.stderr, "Danger Danger! FO can't find an empire for me!!!!"
         return -1
     empire_id = empire.empireID
     capital_id = empire.capitalID
@@ -56,9 +53,8 @@ def get_capital():
         if homeworld.owner == empire_id:
             return capital_id
         else:
-            print "Nominal Capitol %s does not appear to be owned by empire %d %s" % (homeworld.name, empire_id, empire.name)
-    #exploredSystemIDs = empire.exploredSystemIDs
-    #exploredPlanetIDs = PlanetUtilsAI.get_planets_in__systems_ids(exploredSystemIDs)
+            print "Nominal Capitol %s does not appear to be owned by empire %d %s" % (
+                homeworld.name, empire_id, empire.name)
     empire_owned_planet_ids = get_owned_planets_by_empire(universe.planetIDs)
     peopled_planets = get_populated_planet_ids(empire_owned_planet_ids)
     if not peopled_planets:
@@ -75,8 +71,8 @@ def get_capital():
                     population_id_pairs.append((planet.currentMeterValue(fo.meterType.population), planet_id))
             if population_id_pairs:
                 return max(population_id_pairs)[-1]
-    except:
-        pass
+    except Exception as e:
+        print_error(e)
     return -1  # shouldn't ever reach here
 
 
@@ -119,7 +115,8 @@ def get_owned_planets_by_empire(planet_ids):
     for pid in planet_ids:
         planet = universe.getPlanet(pid)
         # even if our universe says we own it, if we can't see it we must have lost it
-        if planet and not planet.unowned and planet.ownedBy(empire_id) and universe.getVisibility(pid, empire_id) >= fo.visibility.partial:
+        if (planet and not planet.unowned and planet.ownedBy(empire_id)
+                and universe.getVisibility(pid, empire_id) >= fo.visibility.partial):
             result.append(pid)
     return result
 

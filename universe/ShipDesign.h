@@ -103,9 +103,10 @@ public:
 
     /** \name Accessors */ //@{
     const std::string&      Name() const            { return m_name; };             ///< returns name of part
-    const std::string&      Description() const     { return m_description; }       ///< returns description, including a description of the stats and effects of this part
+    const std::string&      Description() const     { return m_description; }       ///< returns description string, generally a UserString key.
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
     float                   Capacity() const;
+    const std::string       CapacityDescription() const;                            ///< returns a translated description of the part capacity, with numeric value
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
     const std::vector<ShipSlotType>&
                             MountableSlotTypes() const  { return m_mountable_slot_types; }

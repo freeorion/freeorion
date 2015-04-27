@@ -361,7 +361,7 @@ PartControl::PartControl(const PartType* part) :
         SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new IconTextBrowseWnd(ClientUI::PartIcon(m_part->Name()),
                                                      UserString(m_part->Name()),
-                                                     UserString(m_part->Description()))
+                                                     UserString(m_part->Description()) + "\n" + m_part->CapacityDescription())
                                                     )
                                  );
 }
