@@ -369,35 +369,6 @@ namespace {
 }
 
 namespace {
-    void GetPartDescription(const PartType* part, std::string& description) {
-        if (!part)
-            return;
-        ShipPartClass part_class = part->Class();
-        std::string desc_string;
-        float d = part->Capacity();
-
-        switch (part_class) {
-        case PC_FUEL:
-        case PC_TROOPS:
-        case PC_COLONY:
-            desc_string += UserString("PART_DESC_CAPACITY");
-            break;
-        case PC_SHIELD:
-            desc_string = UserString("PART_DESC_SHIELD_STRENGTH");
-            break;
-        case PC_DETECTION:
-            desc_string = UserString("PART_DESC_DETECTION");
-            break;
-        default:
-            desc_string = UserString("PART_DESC_STRENGTH");
-            break;
-        }
-        description +=
-            str(FlexibleFormat(desc_string) % d);
-    }
-}
-
-namespace {
     class SearchEdit : public CUIEdit {
     public:
         SearchEdit() :
@@ -960,9 +931,7 @@ namespace {
         general_type = UserString("ENC_SHIP_PART");
         specific_type = UserString(boost::lexical_cast<std::string>(part->Class()));
 
-        std::string stat_description;
-        GetPartDescription(part, stat_description);
-        detailed_description += UserString(part->Description()) + "\n\n" + stat_description;
+        detailed_description += UserString(part->Description()) + "\n\n" + part->CapacityDescription();
 
         std::string slot_types_list;
         if (part->CanMountInSlotType(SL_EXTERNAL))
