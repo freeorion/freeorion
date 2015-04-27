@@ -1638,19 +1638,28 @@ namespace {
         }
 
         // occupied planets
-        std::vector<TemporaryPtr<Planet> > planets = Objects().FindObjects<Planet>();
         std::vector<TemporaryPtr<const Planet> > species_occupied_planets;
-        for (std::vector<TemporaryPtr<Planet> >::const_iterator planet_it = planets.begin();
-             planet_it != planets.end(); ++planet_it)
-        {
-            TemporaryPtr<const Planet> planet = *planet_it;
-            if (planet->SpeciesName() == item_name)
-                species_occupied_planets.push_back(planet);
+        std::map<std::string, std::map<int, float> >& species_object_populations = GetSpeciesManager().SpeciesObjectPopulations();
+        std::map<std::string, std::map<int, float> >::const_iterator sp_op_it = species_object_populations.find(item_name);
+        if (sp_op_it != species_object_populations.end()) {
+            const std::map<int, float>& object_pops = sp_op_it->second;
+            for (std::map<int, float>::const_iterator obj_it = object_pops.begin();
+                 obj_it != object_pops.end(); ++obj_it)
+            {
+                TemporaryPtr<const Planet> plt = GetPlanet(obj_it->first);
+                if (!plt)
+                    continue;
+                if (plt->SpeciesName() != item_name) {
+                    ErrorLogger() << "SpeciesManager SpeciesObjectPopulations suggested planet had a species, but it doesn't?";
+                    continue;
+                }
+                species_occupied_planets.push_back(plt);
+            }
         }
+
         if (!species_occupied_planets.empty()) {
             detailed_description += "\n" + UserString("OCCUPIED_PLANETS") + "\n";
-            for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it =
-                     species_occupied_planets.begin();
+            for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it = species_occupied_planets.begin();
                  planet_it != species_occupied_planets.end(); ++planet_it)
             {
                 TemporaryPtr<const Planet> planet = *planet_it;
