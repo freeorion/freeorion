@@ -262,23 +262,30 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
     std::map<std::string, std::set<int> >                   species_homeworlds;
     std::map<std::string, std::map<int, double> >           empire_opinions;
     std::map<std::string, std::map<std::string, double> >   other_species_opinions;
+    std::map<std::string, std::map<int, float> >            species_object_populations;
+    std::map<std::string, std::map<std::string, int> >      species_ships_destroyed;
 
     if (Archive::is_saving::value) {
-        species_homeworlds =    GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
-        empire_opinions =       GetSpeciesEmpireOpinionsMap(GetUniverse().EncodingEmpire());
-        other_species_opinions= GetSpeciesSpeciesOpinionsMap(GetUniverse().EncodingEmpire());
+        species_homeworlds =        GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());
+        empire_opinions =           GetSpeciesEmpireOpinionsMap(GetUniverse().EncodingEmpire());
+        other_species_opinions =    GetSpeciesSpeciesOpinionsMap(GetUniverse().EncodingEmpire());
+        species_object_populations =SpeciesObjectPopulations(GetUniverse().EncodingEmpire());
+        species_ships_destroyed =   SpeciesShipsDestroyed(GetUniverse().EncodingEmpire());
     }
 
     ar  & BOOST_SERIALIZATION_NVP(species_homeworlds)
         & BOOST_SERIALIZATION_NVP(empire_opinions)
         & BOOST_SERIALIZATION_NVP(other_species_opinions)
-        & BOOST_SERIALIZATION_NVP(m_object_populations)
-        & BOOST_SERIALIZATION_NVP(m_species_ships_destroyed);
+        & BOOST_SERIALIZATION_NVP(species_object_populations)
+        & BOOST_SERIALIZATION_NVP(species_ships_destroyed)
+    ;
 
     if (Archive::is_loading::value) {
         SetSpeciesHomeworlds(species_homeworlds);
         SetSpeciesEmpireOpinions(empire_opinions);
         SetSpeciesSpeciesOpinions(other_species_opinions);
+        m_species_object_populations = species_object_populations;
+        m_species_species_ships_destroyed = species_ships_destroyed;
     }
 }
 

@@ -53,6 +53,7 @@ std::string DumpIndent()
 void InitLogger(const std::string& logFile, const std::string& pattern) {
     logging::add_file_log(
         keywords::file_name = logFile.c_str(),
+        keywords::auto_flush = true,
         keywords::format = expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
             << " [" << expr::attr<logging::trivial::severity_level>("Severity") << "] "

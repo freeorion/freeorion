@@ -9,6 +9,9 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
+#include "../universe/UniverseObject.h"
+#include "../universe/PopCenter.h"
+#include "../universe/Ship.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -482,6 +485,38 @@ void SpeciesManager::ClearSpeciesOpinions() {
     m_species_empire_opinions.clear();
     m_species_species_opinions.clear();
 }
+
+void SpeciesManager::UpdatePopulationCounter() {
+    // ships of each species and design
+    m_species_object_populations.clear();
+    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator obj_it = Objects().ExistingObjectsBegin();
+         obj_it != Objects().ExistingObjectsEnd(); ++obj_it)
+    {
+        TemporaryPtr<UniverseObject> obj = obj_it->second;
+        if (obj->ObjectType() != OBJ_PLANET && obj->ObjectType() != OBJ_POP_CENTER)
+            continue;
+
+        TemporaryPtr<PopCenter> pop_center = boost::dynamic_pointer_cast<PopCenter>(obj);
+        if (!pop_center)
+            continue;
+
+        const std::string& species = pop_center->SpeciesName();
+        if (species.empty())
+            continue;
+
+        try {
+            m_species_object_populations[species][obj->ID()] += obj->CurrentMeterValue(METER_POPULATION);
+        } catch (...) {
+            continue;
+        }
+    }
+}
+
+std::map<std::string, std::map<int, float> >& SpeciesManager::SpeciesObjectPopulations(int encoding_empire)
+{ return m_species_object_populations; }
+
+std::map<std::string, std::map<std::string, int> >& SpeciesManager::SpeciesShipsDestroyed(int encoding_empire)
+{ return m_species_species_ships_destroyed; }
 
 
 ///////////////////////////////////////////////////////////

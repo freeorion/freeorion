@@ -4651,6 +4651,12 @@ Environmental Preferences:
 FOCUS_PREFERENCE
 '''Preferred Focus: '''
 
+OPINIONS_OF_EMPIRES
+Opinions of Empires:
+
+OPINIONS_OF_OTHER_SPECIES
+Opinions of Other Species:
+
 ### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
 SP_HUMAN

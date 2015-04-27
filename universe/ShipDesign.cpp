@@ -18,6 +18,8 @@
 #include <cfloat>
 #include <boost/filesystem/fstream.hpp>
 
+using boost::io::str;
+
 namespace {
     const bool CHEAP_AND_FAST_SHIP_PRODUCTION = false;    // makes all ships cost 1 PP and take 1 turn to build
 }
@@ -237,6 +239,29 @@ PartType::~PartType()
 
 float PartType::Capacity() const
 { return m_capacity; }
+
+const std::string PartType::CapacityDescription() const {
+    std::string desc_string;
+    float d = Capacity();
+
+    switch (m_class) {
+    case PC_FUEL:
+    case PC_TROOPS:
+    case PC_COLONY:
+        desc_string += UserString("PART_DESC_CAPACITY");
+        break;
+    case PC_SHIELD:
+        desc_string = UserString("PART_DESC_SHIELD_STRENGTH");
+        break;
+    case PC_DETECTION:
+        desc_string = UserString("PART_DESC_DETECTION");
+        break;
+    default:
+        desc_string = UserString("PART_DESC_STRENGTH");
+        break;
+    }
+    return str(FlexibleFormat(desc_string) % d);
+}
 
 bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     if (INVALID_SHIP_SLOT_TYPE == slot_type)
