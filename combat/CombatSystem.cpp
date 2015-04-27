@@ -38,6 +38,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
         ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
         return;
     }
+    bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
     // add system to full / complete objects in combat - NOTE: changed from copy of system
     objects.Insert(system);
@@ -101,6 +102,8 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
             continue;
         }
 
+        std::string ship_known = "At " + system->Name() + " Ship " + boost::lexical_cast<std::string>(ship_id) + " owned by empire " +
+                                    boost::lexical_cast<std::string>(ship->Owner()) + " visible to empires: ";
         for (std::set<int>::const_iterator empire_it = empire_ids.begin();
              empire_it != empire_ids.end(); ++empire_it)
         {
@@ -112,8 +115,12 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
                        (empire_id == ALL_EMPIRES ||
                         fleet->Unowned() ||
                         Empires().GetDiplomaticStatus(empire_id, fleet->Owner()) == DIPLO_WAR)))
-            { empire_known_objects[empire_id].Insert(GetEmpireKnownShip(ship->ID(), empire_id));}
+            {
+                empire_known_objects[empire_id].Insert(GetEmpireKnownShip(ship->ID(), empire_id));}
+                ship_known += boost::lexical_cast<std::string>(empire_id) + ", ";
         }
+        if (verbose_logging)
+            DebugLogger() << ship_known;
     }
 
     // planets
@@ -122,6 +129,8 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     {
         TemporaryPtr<Planet> planet = *it;
         int planet_id = planet->ID();
+        std::string planet_known = "At " + system->Name() + " Planet " + boost::lexical_cast<std::string>(planet_id) + " owned by empire " +
+                                    boost::lexical_cast<std::string>(planet->Owner()) + " visible to empires: ";
 
         for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
             int empire_id = *empire_it;
@@ -129,8 +138,11 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
                 continue;
             if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
                 empire_known_objects[empire_id].Insert(GetEmpireKnownPlanet(planet->ID(), empire_id));
+                planet_known += boost::lexical_cast<std::string>(empire_id) + ", ";
             }
         }
+        if (verbose_logging)
+            DebugLogger() << planet_known;
     }
 
     // after battle is simulated, any changes to latest known or actual objects
@@ -436,6 +448,7 @@ namespace {
     }
 
     bool ObjectAttackableByEmpire(TemporaryPtr<const UniverseObject> obj, int empire_id) {
+        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
         if (obj->OwnedBy(empire_id))
             return false;
         if (obj->Unowned() && empire_id == ALL_EMPIRES)
@@ -445,8 +458,11 @@ namespace {
             Empires().GetDiplomaticStatus(empire_id, obj->Owner()) != DIPLO_WAR)
         { return false; }
 
-        if (GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) < VIS_BASIC_VISIBILITY)
+        if (GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) < VIS_BASIC_VISIBILITY) {
+            if (verbose_logging)
+                DebugLogger() << obj->Name() << " not sufficiently visible to empire " << empire_id;
             return false;
+        }
 
         return ObjectCanBeAttacked(obj);
     }
@@ -610,7 +626,7 @@ namespace {
             if (target->ObjectType() == OBJ_SHIP) {
                 if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0) {
                     if (verbose_logging)
-                        DebugLogger() << "!! Target Ship is destroyed!";
+                        DebugLogger() << "!! Target Ship " << target_id << " is destroyed!";
                     // object id destroyed
                     combat_info.destroyed_object_ids.insert(target_id);
                     // all empires in battle know object was destroyed
@@ -644,7 +660,7 @@ namespace {
                     valid_attacker_object_ids.find(target_id) != valid_attacker_object_ids.end())
                 {
                     if (verbose_logging)
-                        DebugLogger() << "!! Target Planet defenses knocked out, can no longer attack";
+                        DebugLogger() << "!! Target Planet " << target_id << " knocked out, can no longer attack";
                     // remove disabled planet's ID from lists of valid attackers
                     valid_attacker_object_ids.erase(target_id);
                 }
@@ -653,7 +669,7 @@ namespace {
                     target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0)
                 {
                     if (verbose_logging) {
-                        DebugLogger() << "!! Target Planet is entirely knocked out of battle";
+                        DebugLogger() << "!! Target Planet " << target_id << " is entirely knocked out of battle";
                     }
 
                     // remove disabled planet's ID from lists of valid targets
@@ -707,31 +723,41 @@ namespace {
 
         // Populate lists of things that can attack and be attacked. List attackers also by empire.
         void PopulateAttackersAndTargets(const CombatInfo& combat_info) {
+            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
             for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
                 TemporaryPtr<const UniverseObject> obj = *it;
-                //DebugLogger() << "Considerting object " << obj->Name() << " owned by " << obj->Owner();
+                std::string obj_status = "Considerting object " + obj->Name() + " owned by " + boost::lexical_cast<std::string>(obj->Owner());
                 if (ObjectCanAttack(obj)) {
-                    //DebugLogger() << "... can attack";
+                    if (verbose_logging)
+                        obj_status += "... can attack";
                     valid_attacker_object_ids.insert(it->ID());
                     empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
                 }
                 if (ObjectCanBeAttacked(obj)) {
-                    //DebugLogger() << "... can be attacked";
+                    obj_status += "... can be attacked";
                     valid_target_object_ids.insert(it->ID());
                 }
+                if (verbose_logging)
+                    DebugLogger() << obj_status;
             }
         }
 
         // Get a map from empire to set of IDs of objects that empire's objects
         // could potentially target.
         void PopulateEmpireTargets(const CombatInfo& combat_info) {
+            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
             for (std::set<int>::const_iterator target_it = valid_target_object_ids.begin();
                  target_it != valid_target_object_ids.end(); ++target_it)
             {
                 int object_id = *target_it;
                 TemporaryPtr<const UniverseObject> obj = combat_info.objects.Object(object_id);
-                // DebugLogger() << "Considering attackability of object " << obj->Name() << " owned by " << obj->Owner();
+                if (verbose_logging)
+                    DebugLogger() << "Considering attackability of object " << obj->Name() 
+                                  << " owned by " << boost::lexical_cast<std::string>(obj->Owner());
 
+                std::string obj_status = "object: " + obj->Name() + " attackable by ";
+                std:: string empire_list;
+                std:: string empire_list_all;
                 // for all empires, can they attack this object?
                 for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
                      empire_it != combat_info.empire_ids.end(); ++empire_it)
@@ -739,16 +765,24 @@ namespace {
                     int attacking_empire_id = *empire_it;
                     if (attacking_empire_id == ALL_EMPIRES) {
                         if (ObjectAttackableByMonsters(obj, monster_detection)) {
-                            // DebugLogger() << "object: " << obj->Name() << " attackable by monsters";
+                            obj_status += "monsters and ";
                             empire_infos[ALL_EMPIRES].target_ids.insert(object_id);
                         }
 
                     } else {
+                        empire_list_all += boost::lexical_cast<std::string>(attacking_empire_id) + ", ";
                         if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
-                            // DebugLogger() << "object: " << obj->Name() << " attackable by empire " << attacking_empire_id;
+                            empire_list += boost::lexical_cast<std::string>(attacking_empire_id) + ", ";
                             empire_infos[attacking_empire_id].target_ids.insert(object_id);
                         }
                     }
+                }
+                if (verbose_logging) {
+                    if (empire_list.empty())
+                        obj_status += "NONE of the empires present (" + empire_list_all + ")";
+                    else
+                        obj_status += "empires " + empire_list;
+                    DebugLogger() << obj_status;
                 }
             }
         }
