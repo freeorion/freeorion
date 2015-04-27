@@ -1621,7 +1621,7 @@ namespace {
         detailed_description += UserString(species->Description());
 
         // homeworld
-        detailed_description += "\n\n";
+        detailed_description += "\n";
         if (species->Homeworlds().empty()) {
             detailed_description += UserString("NO_HOMEWORLD") + "\n";
         } else {
