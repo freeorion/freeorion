@@ -2973,6 +2973,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateStatRecords();
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
         empire_it->second->UpdateOwnedObjectCounters();
+    GetSpeciesManager().UpdatePopulationCounter();
 
 
     // indicate that the clients are waiting for their new gamestate
