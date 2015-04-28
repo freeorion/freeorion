@@ -144,12 +144,12 @@ def getBestShipInfo(priority, loc=None):
         return None, None, None
 
     if priority in design_cache:  # use new framework
-        bestDesigns = design_cache[priority]
-        if not bestDesigns:
+        best_designs = design_cache[priority]
+        if not best_designs:
             return None, None, None
-        topRating, topID = bestDesigns[0][0], bestDesigns[0][2]
-        validLocs = [item[1] for item in bestDesigns if item[0] == topRating and item[2] == topID]
-        return topID, fo.getShipDesign(topID), validLocs
+        top_rating, top_id = best_designs[0][0], best_designs[0][2]
+        valid_locs = [item[1] for item in best_designs if item[0] == top_rating and item[2] == top_id]
+        return top_id, fo.getShipDesign(top_id), valid_locs
     else:  # use old framework
         empire = fo.getEmpire()
         empire_id = empire.empireID
