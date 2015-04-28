@@ -107,8 +107,8 @@ def cur_best_mil_ship_rating():
     if priority in design_cache:  # use new framework
         try:
             return design_cache[priority][0][0]
-        except Exception:
-            print traceback.format_exc()
+        except KeyError:
+            traceback.print_exc()
             return 0.0001
     else:
         if fo.currentTurn() not in bestMilRatingsHistory:
@@ -122,7 +122,7 @@ def curBestMilShipCost():
         try:
             return design_cache[priority][0][3]
         except Exception:
-            print traceback.format_exc()
+            traceback.print_exc()
             return 0.0001
     else:
         if fo.currentTurn() not in bestMilRatingsHistory:

@@ -277,7 +277,7 @@ class ShipDesignCache(object):
                     print "Expected: %s, got: %s. Cache was repaired." % (partname, cached_name)
         except Exception:
             self.part_by_partname.clear()
-            print traceback.format_exc()
+            traceback.print_exc()
 
         corrupted = []
         for designname in self.design_id_by_name:
@@ -294,7 +294,7 @@ class ShipDesignCache(object):
                         corrupted.append(designname)
             except AttributeError:
                 print "WARNING: ShipID cache corrupted. Could not get cached shipdesign. Repairing Cache."
-                print traceback.format_exc()
+                print traceback.format_exc()  # do not print to stderr as this is an "expected" exception.
                 design_id = next(iter([shipDesignID for shipDesignID in fo.getEmpire().allShipDesigns
                                       if designname == fo.getShipDesign(shipDesignID).name(False)]), None)
                 if design_id is not None:
@@ -333,8 +333,9 @@ class ShipDesignCache(object):
             idx = available_hulls.index(TESTDESIGN_PREFERED_HULL)
             available_hulls[0], available_hulls[idx] = available_hulls[idx], available_hulls[0]
         except ValueError:
-            print "WARNING: '%s' not in available_hulls." % TESTDESIGN_PREFERED_HULL,
-            print "Please update ShipDesignAI.py according to the new content.", traceback.format_exc()
+            print "WARNING: Tried to use '%s' as testhull but it is not in available_hulls." % TESTDESIGN_PREFERED_HULL,
+            print "Please update ShipDesignAI.py according to the new content."
+            traceback.print_exc()
         testdesign_ids = [shipDesignID for shipDesignID in empire.allShipDesigns
                           if get_shipdesign(shipDesignID).name(False).startswith(TESTDESIGN_NAME_BASE)]
 
@@ -403,7 +404,7 @@ class ShipDesignCache(object):
                     continue
             except Exception:
                 print "Error: exception triggered and caught when adding Test Design %s:" % testdesign_name
-                print traceback.format_exc()
+                traceback.print_exc()
                 continue
 
         # 2. Cache the list of buildable ship hulls for each planet
@@ -477,7 +478,7 @@ class ShipDesignCache(object):
                             continue
                     except Exception:
                         print "Error: exception triggered and caught when adding Test Design %s:" % testdesign_name
-                        print traceback.format_exc()
+                        traceback.print_exc()
                         continue
                     needs_update.remove(part)  # We only need one design per part, not for every possible slot
 
@@ -490,8 +491,9 @@ class ShipDesignCache(object):
                 if i != idx:
                     available_hulls[i], available_hulls[idx] = available_hulls[idx], available_hulls[i]
             except ValueError:
-                print "FAILURE: hull in testhull cache not in available_hulls",
-                print "eventhough it is supposed to be a proper subset.", traceback.format_exc()
+                print "ERROR: hull in testhull cache not in available_hulls",
+                print "eventhough it is supposed to be a proper subset."
+                traceback.print_exc()
         number_of_testhulls = len(self.testhulls)
 
         # 4. Cache the list of buildable ship parts for each planet
@@ -810,8 +812,9 @@ class AIShipDesign(object):
                 return _get_design_by_name(Cache.map_reference_design_name[reference_name]).id
             except AttributeError:
                 cached_name = Cache.map_reference_design_name[reference_name]
-                print "FAILURE: %s maps to %s in Cache.map_reference_design_name." % (reference_name, cached_name),
-                print "But the design seems not to exist...", traceback.format_exc()
+                print "ERROR: %s maps to %s in Cache.map_reference_design_name." % (reference_name, cached_name),
+                print "But the design seems not to exist..."
+                traceback.print_exc()
                 return None
 
         if verbose:
@@ -827,12 +830,14 @@ class AIShipDesign(object):
                 print "Failure: Tried to add design %s but returned %d, expected 1" % (name, res)
                 return None
         except Exception:
-            print "Error: exception triggered and caught adding ship design %s: " % name, traceback.format_exc()
+            print "Error: exception triggered and caught adding ship design %s: " % name
+            traceback.print_exc()
             return None
         try:
             new_id = _get_design_by_name(name).id
         except AttributeError:
-            print "FAILURE: Could not find the design we just tried to add", traceback.format_exc()
+            print "ERROR: Could not find the design we just tried to add"
+            traceback.print_exc()
             return None
         if new_id:
             self.__class__.running_index += 1
@@ -1273,7 +1278,7 @@ class AIShipDesign_Trooper(AIShipDesign):
                 idx = available_parts.index(biggest_troop_pod)
             except ValueError:
                 idx = len(available_parts)
-                print traceback.format_exc()
+                traceback.print_exc()
         else:
             idx = len(available_parts)
         ret_val[idx] = num_slots
