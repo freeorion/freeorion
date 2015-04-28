@@ -110,7 +110,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
             int empire_id = *empire_it;
             if (empire_id == ALL_EMPIRES)
                 continue;
-            if (GetUniverse().GetObjectVisibilityByEmpire(ship_id, empire_id) >= VIS_BASIC_VISIBILITY ||
+            if (GetUniverse().GetObjectVisibilityByEmpire(ship_id, empire_id) > VIS_BASIC_VISIBILITY ||
                    (fleet->Aggressive() &&
                        (empire_id == ALL_EMPIRES ||
                         fleet->Unowned() ||
@@ -136,7 +136,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
             int empire_id = *empire_it;
             if (empire_id == ALL_EMPIRES)
                 continue;
-            if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
+            if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) > VIS_BASIC_VISIBILITY) {
                 empire_known_objects[empire_id].Insert(GetEmpireKnownPlanet(planet->ID(), empire_id));
                 planet_known += boost::lexical_cast<std::string>(empire_id) + ", ";
             }
@@ -458,7 +458,7 @@ namespace {
             Empires().GetDiplomaticStatus(empire_id, obj->Owner()) != DIPLO_WAR)
         { return false; }
 
-        if (GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) < VIS_BASIC_VISIBILITY) {
+        if (GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) <= VIS_BASIC_VISIBILITY) {
             if (verbose_logging)
                 DebugLogger() << obj->Name() << " not sufficiently visible to empire " << empire_id;
             return false;
