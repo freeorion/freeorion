@@ -39,7 +39,7 @@ design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating 
 
 
 def find_best_designs_this_turn():
-    """calculates the best designs for each ship class available at this turn."""
+    """Calculate the best designs for each ship class available at this turn."""
     pr = cProfile.Profile()
     pr.enable()
     start = time.clock()

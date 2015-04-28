@@ -104,8 +104,10 @@ class ShipDesignCache(object):
         self.production_time = {}
 
     def update_for_new_turn(self):
-        """ Update the cache for the current turn. Make sure this function is called once
-        at the beginning of the turn, i.e. before any other function of this module is used.
+        """ Update the cache for the current turn.
+
+        Make sure this function is called once at the beginning of the turn,
+        i.e. before any other function of this module is used.
         """
         print
         print "-----   Updating ShipDesign cache for new turn   -----"
@@ -134,11 +136,12 @@ class ShipDesignCache(object):
             print "  %s:" % part, self.strictly_worse_parts[part]
 
     def print_map_reference_design_name(self):
-        """Prints the ingame, reference name map of shipdesigns."""
+        """Print the ingame, reference name map of shipdesigns."""
         print "Design name map:", self.map_reference_design_name
 
     def print_hulls_for_planets(self, pid=None):
-        """Prints the hulls buildable on each planet.
+        """Print the hulls buildable on each planet.
+
         :param pid: None, int or list of ints
         """
         if pid is None:
@@ -157,6 +160,7 @@ class ShipDesignCache(object):
 
     def print_parts_for_planets(self, pid=None):
         """Print the parts buildable on each planet.
+
         :param pid: int or list of ints
         """
         if pid is None:
@@ -242,7 +246,7 @@ class ShipDesignCache(object):
                 self.production_time[pid][hullname] = hull.productionTime(empire_id, pid)
 
     def _build_cache_after_load(self):
-        """As the cache is empty after a reload, we need to rebuild it from scratch.
+        """Build cache after loading or starting a game.
 
         This function is supposed to be called after a reload or at the first turn.
         It reads out all the existing ship designs and then updates the following cache:
@@ -258,10 +262,9 @@ class ShipDesignCache(object):
             self.design_id_by_name[design.name(False)] = design.id
 
     def _check_cache_for_consistency(self):
-        """Checks if the persistent cache is consistent with the gamestate. If some
-        inconsistency is found, the cache is corrected. This function should be
-        called once at the beginning of the turn (before update_shipdesign_cache()).
+        """Check if the persistent cache is consistent with the gamestate and fix it if not.
 
+        This function should be called once at the beginning of the turn (before update_shipdesign_cache()).
         Especially (only?) in multiplayer games, the shipDesignIDs may sometimes change across turns.
         """
         print "Checking persistent cache for consistency..."
@@ -303,6 +306,7 @@ class ShipDesignCache(object):
 
     def _update_buildable_items_this_turn(self, verbose=False):
         """Calculate which parts and hulls can be built on each planet this turn.
+
         :param verbose: bool - toggles detailed debugging output.
         """
         # The AI currently has no way of checking building requirements of individual parts and hulls directly.
@@ -548,7 +552,9 @@ class AdditionalSpecifications(object):
 
     def update_enemy(self, enemy):
         """Read out the enemies stats and save them.
-        :param enemy: enemy as defined in AIstate"""
+
+        :param enemy: enemy as defined in AIstate
+        """
         self.enemy_shields = enemy[2]
         enemy_attack_stats = enemy[1]
         self.enemy_weapon_strength = 0
@@ -558,6 +564,7 @@ class AdditionalSpecifications(object):
 
     def convert_to_tuple(self):
         """Create a tuple of this class' attributes (e.g. to use as key in dict).
+
         :returns: tuple (minFuel,minSpeed,enemyDmg,enemyShield,enemyMineDmg)
         """
         tup = ("minFuel: %s" % self.minimum_fuel, "minSpeed: %s" % self.minimum_speed,
@@ -617,7 +624,9 @@ class AIShipDesign(object):
         self.additional_specifications = AdditionalSpecifications()
 
     def evaluate(self):
-        """Checks if the minimum requirements are met. If so, return the _rating_function().
+        """ Return a rating for the design.
+
+        First, check if the minimum requirements are met. If so, return the _rating_function().
         Otherwise, return a large negative number scaling with distance to the requirements.
 
         :returns: float - rating of the current part/hull combo
@@ -641,13 +650,16 @@ class AIShipDesign(object):
 
     def _rating_function(self):
         """Rate the design according to current hull/part combo.
+
         :returns: float - rating
         """
         print "WARNING: Rating function not overloaded for class %s!" % self.__class__.__name__
         return -9999
 
     def _set_stats_to_default(self):
-        """Set stats to default. Call this if design is invalid to avoid miscalculation of ratings."""
+        """Set stats to default.
+
+        Call this if design is invalid to avoid miscalculation of ratings."""
         self.structure = 0
         self.attacks.clear()
         self.shields = 0
@@ -677,11 +689,14 @@ class AIShipDesign(object):
     def update_species(self, speciesname):
         """Set the piloting species.
 
-        :param speciesname: string - name of species"""
+        :param speciesname: string - name of species
+        """
         self.species = speciesname
 
     def update_stats(self):
-        """Calculate and update all stats of the design. Default stats if no hull in design."""
+        """Calculate and update all stats of the design.
+
+        Default stats if no hull in design."""
         if not self.hull:
             print "WARNING: Tried to update stats of design without hull. Reset values to default."
             self._set_stats_to_default()
@@ -825,7 +840,10 @@ class AIShipDesign(object):
             return new_id
 
     def _class_specific_filter(self, partname_dict):
-        """This function (if implemented in subclasses) adds additional filtering to _filter_parts()."""
+        """Add additional filtering to _filter_parts().
+
+        To be implemented in subclasses.
+        """
         pass
 
     def optimize_design(self, loc=None, verbose=False):
@@ -927,7 +945,9 @@ class AIShipDesign(object):
         return sorted_design_list
 
     def _filter_parts(self, partname_dict, verbose=False):
-        """This function filters a list of parts according to the following criteria:
+        """Filter the partname_dict.
+
+        This function filters a list of parts according to the following criteria:
 
             1) filter out parts not in self.useful_part_classes
             2) filter_inefficient_parts (optional): filters out parts that are weaker and have a worse effect/cost ratio
@@ -986,9 +1006,11 @@ class AIShipDesign(object):
                 print x, ":", partname_dict[x]
 
     def _starting_guess(self, available_parts, num_slots):
-        """This function returns an initial guess for the filling of the slots. The closer the guess to the
-        final result, the less time the optimizing algorithm takes to finish. In order to improve performance
-        it thus makes sense to state a very informed guess so only a few parts if any have to be changed.
+        """Return an initial guess for the filling of the slots.
+
+        The closer the guess to the final result, the less time the optimizing algorithm takes to finish.
+        In order to improve performance it thus makes sense to state a very informed guess so only a few
+        parts if any have to be changed.
 
         If not overloaded in the subclasses, the initial guess is an empty design.
 
@@ -999,7 +1021,9 @@ class AIShipDesign(object):
         return len(available_parts)*[0]+[num_slots]  # corresponds to an entirely empty design
 
     def _combinatorial_filling(self, available_parts):
-        """This generic filling algorithm considers the problem of filling the slots as combinatorial problem.
+        """Fill the design using a combinatorial approach.
+
+        This generic filling algorithm considers the problem of filling the slots as combinatorial problem.
         We are interested in the best combination of parts without considering order.
         In general, this yields (n+k-1) choose k possibilities in total per slottype where
         n is the number of parts and k is the number of slots.
@@ -1104,7 +1128,9 @@ class AIShipDesign(object):
         return rating, partlist
 
     def _filling_algorithm(self, available_parts):
-        """Fill the slots of the design using some optimizing algorithm (default: _combinatorial_filling()).
+        """Fill the slots of the design using some optimizing algorithm.
+
+        Default algorithm is _combinatorial_filling().
 
         :param available_parts: dict, indexed by slottype, containing a list of partnames for the slot
         """
@@ -1112,17 +1138,20 @@ class AIShipDesign(object):
         return rating, parts
 
     def _total_dmg_vs_shields(self):
-        """Sums up the damage of weapon parts vs a shielded enemy as defined in additional_specifications.
-        :return: summed up damage vs shielded enemy"""
+        """Sum up and return the damage of weapon parts vs a shielded enemy as defined in additional_specifications.
+
+        :return: summed up damage vs shielded enemy
+        """
         total_dmg = 0
         for dmg, count in self.attacks.items():
             total_dmg += max(0, dmg - self.additional_specifications.enemy_shields)*count
         return total_dmg
 
     def _total_dmg(self):
-        """Sum up the damage of all weapon parts.
+        """Sum up and return the damage of all weapon parts.
 
-        :return: Total damage of the design (against no shields)"""
+        :return: Total damage of the design (against no shields)
+        """
         total_dmg = 0
         for dmg, count in self.attacks.items():
             total_dmg += dmg*count
@@ -1497,7 +1526,8 @@ def _get_planets_with_shipyard():
 
 
 def _get_design_by_name(design_name):
-    """Returns the shipDesign object with the name design_name.
+    """Return the shipDesign object of the design with the name design_name.
+
     Results are cached for performance improvements. The cache is to be
     checked for consistency with check_cache_for_consistency() once per turn
     as there appears to be a random bug in multiplayer, changing IDs.
@@ -1520,7 +1550,8 @@ def _get_design_by_name(design_name):
 
 
 def _get_part_type(partname):
-    """Returns the partType object (fo.getPartType(partname)) of the given partname.
+    """Return the partType object (fo.getPartType(partname)) of the given partname.
+
     As the function in lategame may be called some thousand times, the results are cached.
 
     :param partname: string
@@ -1540,6 +1571,7 @@ def _get_part_type(partname):
 
 def _build_reference_name(hullname, partlist):
     """Build a reference name for the design based on the hull and the partlist.
+
     This reference name is used to identify existing designs and is mapped by
     Cache.map_reference_design_name to the ingame design name.
 
@@ -1553,7 +1585,9 @@ def _build_reference_name(hullname, partlist):
 
 def _can_build(design, empire_id, pid):
     # ToDo: Remove this function once we stop profiling this module
-    """This function only exists for profiling reasons to add an extra entry to cProfile.
+    """Check if a design can be built by an empire on a particular planet.
+
+    This function only exists for profiling reasons to add an extra entry to cProfile.
 
     :param design: design object
     :param empire_id:
