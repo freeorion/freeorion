@@ -69,6 +69,7 @@ namespace {
             qi::_f_type _f;
             qi::_val_type _val;
             qi::lit_type lit;
+            qi::eps_type eps;
             using phoenix::construct;
             using phoenix::new_;
             using phoenix::push_back;
@@ -79,7 +80,7 @@ namespace {
                 > -(parse::label(Activation_token)       > parse::detail::condition_parser [ _b = _1 ])
                 > -(parse::label(StackingGroup_token)    > tok.string [ _c = _1 ])
                 > -(parse::label(AccountingLabel_token)  > tok.string [ _e = _1 ])
-                > -(parse::label(Priority_token)         > tok.int_ [ _f = _1 ])
+                > ((parse::label(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
                 >   parse::label(Effects_token)
                 >   (
                             '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
