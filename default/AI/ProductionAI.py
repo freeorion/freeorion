@@ -180,35 +180,35 @@ def getBestShipRatings(loc=None, verbose=False):
     """returns list of [partition, pid, designID, design] sublists, currently only for military ships"""
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     if loc is None:
-        planetIDs = ColonisationAI.empire_shipyards
+        planet_ids = ColonisationAI.empire_shipyards
     elif isinstance(loc, list):
-        planetIDs = set(loc).intersection(ColonisationAI.empire_shipyards)
+        planet_ids = set(loc).intersection(ColonisationAI.empire_shipyards)
     elif isinstance(loc, int):
         if loc in ColonisationAI.empire_shipyards:
-            planetIDs = [loc]
+            planet_ids = [loc]
         else:
             return []
     else:  # problem
         return []
 
     if priority in design_cache:  # use new framework
-        buildChoices = design_cache[priority]
-        locChoices = [[item[0], item[1], item[2], fo.getShipDesign(item[2])]
-                      for item in buildChoices if item[1] in planetIDs]
-        if not locChoices:
+        build_choices = design_cache[priority]
+        loc_choices = [[item[0], item[1], item[2], fo.getShipDesign(item[2])]
+                      for item in build_choices if item[1] in planet_ids]
+        if not loc_choices:
             return []
-        bestRating = locChoices[0][0]
-        pSum = 0
-        retVal = []
-        for choice in locChoices:
-            if choice[0] < 0.7*bestRating:
+        best_rating = loc_choices[0][0]
+        p_sum = 0
+        ret_val = []
+        for choice in loc_choices:
+            if choice[0] < 0.7*best_rating:
                 break
-            p = math.exp(10*(choice[0]/bestRating - 1))
-            pSum += p
-            retVal.append([pSum, choice[1], choice[2], choice[3]])
-        for item in retVal:
-            item[0] /= pSum
-        return retVal
+            p = math.exp(10*(choice[0]/best_rating - 1))
+            p_sum += p
+            ret_val.append([p_sum, choice[1], choice[2], choice[3]])
+        for item in ret_val:
+            item[0] /= p_sum
+        return ret_val
     else:  # old framework
         empire = fo.getEmpire()
         empireID = empire.empireID
@@ -227,9 +227,9 @@ def getBestShipRatings(loc=None, verbose=False):
         bestCostRating = 0.0
         style_index = fo.empireID() % 2
         if verbose:
-            print "getBestShipRatings checking %d designs w/r/t enemy stats %s on planetIDs %s from loc set %s" % (
-                        len(theseDesignIDs), foAI.foAIstate.fleet_sum_tups_to_estat_dicts([(1, foAI.foAIstate.empire_standard_enemy)]), planetIDs, loc)
-        for pid in planetIDs:
+            print "getBestShipRatings checking %d designs w/r/t enemy stats %s on planet_ids %s from loc set %s" % (
+                        len(theseDesignIDs), foAI.foAIstate.fleet_sum_tups_to_estat_dicts([(1, foAI.foAIstate.empire_standard_enemy)]), planet_ids, loc)
+        for pid in planet_ids:
             localBestCostRating = 0.0
             bestDesignID = -1
             bestDesign = None
