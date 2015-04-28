@@ -71,7 +71,7 @@ class ShipDesignCache(object):
     """This class handles the caching of information used to assess and build shipdesigns in this module.
 
     Important methods:
-    update_for_new_turn(self): Updates the cach for the current turn, to be called once at the beginning of each turn.
+    update_for_new_turn(self): Updates the cache for the current turn, to be called once at the beginning of each turn.
 
     Important members:
     testhulls:                 # set of all hullnames used for testdesigns
@@ -255,11 +255,11 @@ class ShipDesignCache(object):
         """
         if self.map_reference_design_name or self.design_id_by_name:
             print "WARNING: In ShipDesignAI.py: Cache._build_cache_after_load() called but cache is not empty."
-        for ID in fo.getEmpire().allShipDesigns:
-            design = fo.getShipDesign(ID)
-            reference_name = _build_reference_name(design.hull, [part for part in design.parts])
+        for design_id in fo.getEmpire().allShipDesigns:
+            design = fo.getShipDesign(design_id)
+            reference_name = _build_reference_name(design.hull, design.parts)
             self.map_reference_design_name[reference_name] = design.name(False)
-            self.design_id_by_name[design.name(False)] = design.id
+            self.design_id_by_name[design.name(False)] = design_id
 
     def _check_cache_for_consistency(self):
         """Check if the persistent cache is consistent with the gamestate and fix it if not.
@@ -1584,8 +1584,7 @@ def _build_reference_name(hullname, partlist):
     :param partlist: list of partnames
     :return: string
     """
-    reference_name = "-".join([hullname]+[part for part in partlist])  # "Hull-Part1-Part2-Part3-Part4"
-    return reference_name
+    return "%s-%s" % (hullname, "-".join(partlist))  # "Hull-Part1-Part2-Part3-Part4"
 
 
 def _can_build(design, empire_id, pid):
