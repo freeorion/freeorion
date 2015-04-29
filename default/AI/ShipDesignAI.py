@@ -329,6 +329,9 @@ class ShipDesignCache(object):
         universe = fo.getUniverse()
         planets_with_shipyards = _get_planets_with_shipyard()
         available_hulls = list(empire.availableShipHulls)   # copy so we can sort it locally
+        # Later on in the code, we need to find suitable testhulls, i.e. buildable hulls for all slottypes.
+        # To reduce the number of lookups, move the hardcoded TESTDESIGN_PREFERED_HULL to the front of the list.
+        # This hull should be buiildable on each planet and also cover the most common slottypes.
         try:
             idx = available_hulls.index(TESTDESIGN_PREFERED_HULL)
             available_hulls[0], available_hulls[idx] = available_hulls[idx], available_hulls[0]
@@ -336,20 +339,15 @@ class ShipDesignCache(object):
             print "WARNING: Tried to use '%s' as testhull but it is not in available_hulls." % TESTDESIGN_PREFERED_HULL,
             print "Please update ShipDesignAI.py according to the new content."
             traceback.print_exc()
-        testdesign_ids = [shipDesignID for shipDesignID in empire.allShipDesigns
-                          if get_shipdesign(shipDesignID).name(False).startswith(TESTDESIGN_NAME_BASE)]
-
-        testdesign_names_hull = [get_shipdesign(ID).name(False) for ID in testdesign_ids
-                                 if get_shipdesign(ID).name(False).startswith(TESTDESIGN_NAME_HULL)]
-        testdesign_names_part = [get_shipdesign(ID).name(False) for ID in testdesign_ids
-                                 if get_shipdesign(ID).name(False).startswith(TESTDESIGN_NAME_PART)]
-
+        testdesign_names = [get_shipdesign(design_id).name(False) for design_id in empire.allShipDesigns
+                            if get_shipdesign(design_id).name(False).startswith(TESTDESIGN_NAME_BASE)]
+        testdesign_names_hull = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_HULL)]
+        testdesign_names_part = [name for name in testdesign_names if name.startswith(TESTDESIGN_NAME_PART)]
         available_slot_types = {slottype for slotlist in [get_hulltype(hull).slots for hull in available_hulls]
                                 for slottype in slotlist}
-
         new_parts = [_get_part_type(part) for part in empire.availableShipParts
                      if part not in self.strictly_worse_parts]
-        pid = self.production_cost.keys()[0]  # TODO: Check if actually location invariant
+        pid = self.production_cost.keys()[0]  # TODO: Check if location invariant. If not, implement different handling
         for new_part in new_parts:
             self.strictly_worse_parts[new_part.name] = []
             for part_class in ALL_META_CLASSES:
@@ -365,7 +363,7 @@ class ShipDesignCache(object):
                                 b = new_part
                             if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name]
                                     and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}):
-                                # ToDo: Maybe add production_time as additional condition?
+                                # ToDo: add production_time as additional condition?
                                 self.strictly_worse_parts[a.name].append(b.name)
                     break
         available_parts = sorted(self.strictly_worse_parts.keys(),
@@ -389,22 +387,14 @@ class ShipDesignCache(object):
             print [x.replace(TESTDESIGN_NAME_HULL, "") for x in testdesign_names_hull]
         for hull in [get_hulltype(hullname) for hullname in available_hulls
                      if "%s_%s" % (TESTDESIGN_NAME_HULL, hullname) not in testdesign_names_hull]:
-            num_slots = len([slot for slot in hull.slots])
-            partlist = num_slots * [""]
+            partlist = len(hull.slots) * [""]
             testdesign_name = "%s_%s" % (TESTDESIGN_NAME_HULL, hull.name)
-            try:
-                lcopy = list(partlist)
-                res = fo.issueCreateShipDesignOrder(testdesign_name, "TESTPURPOSE ONLY", hull.name,
-                                                    lcopy, "", "fighter", False)
-                del lcopy
-                if res == 1:
-                    print "Success: Added Test Design %s, with result %d" % (testdesign_name, res)
-                else:
-                    print "Failure: When adding test design %s - got result %d but expected 1" % (testdesign_name, res)
-                    continue
-            except Exception:
-                print "Error: exception triggered and caught when adding Test Design %s:" % testdesign_name
-                traceback.print_exc()
+            res = fo.issueCreateShipDesignOrder(testdesign_name, "TESTPURPOSE ONLY", hull.name,
+                                                partlist, "", "fighter", False)
+            if res:
+                print "Success: Added Test Design %s, with result %d" % (testdesign_name, res)
+            else:
+                print "Error: When adding test design %s - got result %d but expected 1" % (testdesign_name, res)
                 continue
 
         # 2. Cache the list of buildable ship hulls for each planet
@@ -464,21 +454,14 @@ class ShipDesignCache(object):
                     partlist = num_slots * [""]
                     partlist[slot_index] = part.name
                     testdesign_name = "%s_%s_%s" % (TESTDESIGN_NAME_PART, part.name, testhull)
-                    try:
-                        lcopy = partlist
-                        res = fo.issueCreateShipDesignOrder(testdesign_name, "TESTPURPOSE ONLY", testhull,
-                                                            lcopy, "", "fighter", False)
-                        del lcopy
-                        if res == 1:
-                            print "Success: Added Test Design %s, with result %d" % (testdesign_name, res)
-                            testdesign_names_part.append(testdesign_name)
-                        else:
-                            print "Failure: Unknown error when adding test design %s" % testdesign_name,
-                            print "got result %d but expected 1" % res
-                            continue
-                    except Exception:
-                        print "Error: exception triggered and caught when adding Test Design %s:" % testdesign_name
-                        traceback.print_exc()
+                    res = fo.issueCreateShipDesignOrder(testdesign_name, "TESTPURPOSE ONLY", testhull,
+                                                        partlist, "", "fighter", False)
+                    if res:
+                        print "Success: Added Test Design %s, with result %d" % (testdesign_name, res)
+                        testdesign_names_part.append(testdesign_name)
+                    else:
+                        print "Failure: Unknown error when adding test design %s" % testdesign_name,
+                        print "got result %d but expected 1" % res
                         continue
                     needs_update.remove(part)  # We only need one design per part, not for every possible slot
 
@@ -819,26 +802,15 @@ class AIShipDesign(object):
 
         if verbose:
             print "Trying to add Design... %s" % name
-        try:
-            lcopy = list(self.partnames)
-            res = fo.issueCreateShipDesignOrder(name, self.description, self.hull.name, lcopy, "", "fighter", False)
-            del lcopy
-            if res == 1:
-                if verbose:
-                    print "Success: Added Design %s, with result %d" % (name, res)
-            else:
-                print "Failure: Tried to add design %s but returned %d, expected 1" % (name, res)
-                return None
-        except Exception:
-            print "Error: exception triggered and caught adding ship design %s: " % name
-            traceback.print_exc()
+        res = fo.issueCreateShipDesignOrder(name, self.description, self.hull.name,
+                                            self.partnames, "", "fighter", False)
+        if res:
+            if verbose:
+                print "Success: Added Design %s, with result %d" % (name, res)
+        else:
+            print "Failure: Tried to add design %s but returned %d, expected 1" % (name, res)
             return None
-        try:
-            new_id = _get_design_by_name(name).id
-        except AttributeError:
-            print "ERROR: Could not find the design we just tried to add"
-            traceback.print_exc()
-            return None
+        new_id = _get_design_by_name(name).id
         if new_id:
             self.__class__.running_index += 1
             Cache.map_reference_design_name[reference_name] = name
