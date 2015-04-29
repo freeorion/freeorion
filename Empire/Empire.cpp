@@ -1190,13 +1190,13 @@ void Empire::Init() {
     m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
 
-    // Add alignment meters to empire
-    const AlignmentManager& alignment_manager = GetAlignmentManager();
-    const std::vector<Alignment>& alignments = alignment_manager.Alignments();
-    for (std::vector<Alignment>::const_iterator it = alignments.begin(); it != alignments.end(); ++it) {
-        const Alignment& alignment = *it;
-        m_meters[alignment.Name()];
-    }
+    //// Add alignment meters to empire
+    //const AlignmentManager& alignment_manager = GetAlignmentManager();
+    //const std::vector<Alignment>& alignments = alignment_manager.Alignments();
+    //for (std::vector<Alignment>::const_iterator it = alignments.begin(); it != alignments.end(); ++it) {
+    //    const Alignment& alignment = *it;
+    //    m_meters[alignment.Name()];
+    //}
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
 }
