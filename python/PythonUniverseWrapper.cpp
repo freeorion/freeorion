@@ -465,6 +465,8 @@ namespace FreeOrionPython {
             .def("productionCost",              &ShipDesign::ProductionCost)
             .def("productionTime",              &ShipDesign::ProductionTime)
             .def("perTurnCost",                 &ShipDesign::PerTurnCost)
+            .add_property("costTimeLocationInvariant",
+                                                &ShipDesign::ProductionCostTimeLocationInvariant)
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
             .add_property("attackStats",        make_function(
@@ -488,6 +490,8 @@ namespace FreeOrionPython {
             .def("productionCost",              &PartType::ProductionCost)
             .def("productionTime",              &PartType::ProductionTime)
             .def("canMountInSlotType",          &PartType::CanMountInSlotType)
+            .add_property("costTimeLocationInvariant",
+                                                &PartType::ProductionCostTimeLocationInvariant)
         ;
         def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>());
 
@@ -507,6 +511,8 @@ namespace FreeOrionPython {
                                                 ))
             .def("productionCost",              &HullType::ProductionCost)
             .def("productionTime",              &HullType::ProductionTime)
+            .add_property("costTimeLocationInvariant",
+                                                &HullType::ProductionCostTimeLocationInvariant)
         ;
         def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>());
 
@@ -531,6 +537,8 @@ namespace FreeOrionPython {
             .def("perTurnCost",                 &BuildingType::PerTurnCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
             .def("canBeProduced",               &BuildingType::ProductionLocation)  //(int empire_id, int location_id)
+            .add_property("costTimeLocationInvariant",
+                                                &BuildingType::ProductionCostTimeLocationInvariant)
             .add_property("dump",               &BuildingType::Dump)
         ;
         def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>());
