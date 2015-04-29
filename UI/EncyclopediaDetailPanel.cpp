@@ -1255,11 +1255,11 @@ namespace {
         detailed_description += "\n" + UserString("EMPIRE_ID") + ": " + item_name;
 
         // Empire meters
-        detailed_description += "\n\n" + UserString("EMPIRE_METERS") + "\n";
-        for (std::map<std::string, Meter>::const_iterator meter_it = empire->meter_begin();
-             meter_it != empire->meter_end(); ++meter_it)
-        {
-            detailed_description += UserString(meter_it->first) + ": " + DoubleToString(meter_it->second.Initial(), 3, false) + "\n";
+        if (empire->meter_begin() != empire->meter_end()) {
+            detailed_description += "\n\n";
+            for (std::map<std::string, Meter>::const_iterator meter_it = empire->meter_begin();
+                 meter_it != empire->meter_end(); ++meter_it)
+            { detailed_description += UserString(meter_it->first) + ": " + DoubleToString(meter_it->second.Initial(), 3, false); }
         }
 
         // Planets
