@@ -347,6 +347,7 @@
     (SetResearch)                               \
     (SetShield)                                 \
     (SetSize)                                   \
+    (SetSpecialCapacity)                        \
     (SetSpecies)                                \
     (SetSpeciesOpinion)                         \
     (SetSpeed)                                  \
