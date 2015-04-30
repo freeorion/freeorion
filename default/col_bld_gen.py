@@ -99,7 +99,7 @@ t_main = string.Template('''BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"''')
+    icon = "${graphic}"''')
 
 t_species_condition = string.Template('''ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet
