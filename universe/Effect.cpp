@@ -1955,7 +1955,7 @@ void AddSpecial::Execute(const ScriptingContext& context) const {
     std::string name = (m_name ? m_name->Eval(context) : "");
 
     float initial_capacity = context.effect_target->SpecialCapacity(name);  // returns 0.0f if no such special yet present
-    float capacity = (m_capacity ? m_capacity->Eval(ScriptingContext(context, initial_capacity)) : 0.0f);
+    float capacity = (m_capacity ? m_capacity->Eval(ScriptingContext(context, initial_capacity)) : initial_capacity);
 
     context.effect_target->AddSpecial(name, capacity);
 }
