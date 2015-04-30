@@ -713,7 +713,7 @@ namespace {
             shuffled.insert(shuffled.begin(), valid_attacker_object_ids.begin(), valid_attacker_object_ids.end());
 
             const unsigned swaps = shuffled.size();
-            for (unsigned i = 0; i < swaps - 1; ++i){
+            for (unsigned i = 0; i < swaps; ++i){
                 int pos2 = RandInt(i, swaps - 1);
                 std::swap(shuffled[i], shuffled[pos2]);
             }
@@ -924,6 +924,11 @@ namespace {
     void CombatRound(int bout, CombatInfo& combat_info, AutoresolveInfo& combat_state) {
         combat_info.combat_events.push_back(boost::make_shared<BoutBeginEvent>(bout));
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
+        if (combat_state.valid_attacker_object_ids.empty()) {
+            if (verbose_logging)
+                DebugLogger() << "Combat bout " << bout << " aborted due to no remaining attackers.";
+            return;
+        }
 
         std::vector<int> shuffled_attackers;
         combat_state.GiveAttackersShuffled(shuffled_attackers);
