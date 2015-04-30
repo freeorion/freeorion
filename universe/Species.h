@@ -5,6 +5,7 @@
 #include "Enums.h"
 #include "../util/Export.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/iterator/filter_iterator.hpp>
@@ -124,9 +125,13 @@ public:
         m_native(params.native),
         m_can_colonize(params.can_colonize),
         m_can_produce_ships(params.can_produce_ships),
-        m_tags(tags),
+        m_tags(),
         m_graphic(graphic)
-    { Init(); }
+    { 
+        Init(); 
+        for ( std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+    }
 
     ~Species();
     //@}
