@@ -106,7 +106,8 @@ namespace FreeOrionPython {
             .value("size",              METER_SIZE)
             .value("stealth",           METER_STEALTH)
             .value("detection",         METER_DETECTION)
-            .value("starlaneSpeed",     METER_SPEED)
+            .value("starlaneSpeed",     METER_SPEED) // TODO: Remove this after some transition period
+            .value("speed",             METER_SPEED)
 
             .value("damage",            METER_DAMAGE)
             .value("capacity",          METER_CAPACITY)
@@ -144,7 +145,8 @@ namespace FreeOrionPython {
             .value("stealth",           PC_STEALTH)
             .value("fuel",              PC_FUEL)
             .value("colony",            PC_COLONY)
-            .value("starlaneSpeed",     PC_SPEED)
+            .value("starlaneSpeed",     PC_SPEED) // TODO: Remove this after some transition period
+            .value("speed",             PC_SPEED)
             .value("general",           PC_GENERAL)
             .value("bombard",           PC_BOMBARD)
             .value("research",          PC_RESEARCH)

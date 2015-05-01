@@ -77,56 +77,57 @@ namespace {
                 ;
 
             add_special_1
-                =    tok.AddSpecial_
-                >    parse::label(Name_token) > string_value_ref [ _val = new_<Effect::AddSpecial>(_1) ]
+                =   tok.AddSpecial_
+                >   parse::label(Name_token) > string_value_ref [ _val = new_<Effect::AddSpecial>(_1) ]
                 ;
 
             add_special_2
-                =    tok.AddSpecial_
-                >>   parse::label(Name_token) >> string_value_ref [ _c = _1 ]
-                >>   parse::label(Capacity_token) > double_value_ref [ _val = new_<Effect::AddSpecial>(_c, _1) ]
+                =  (tok.AddSpecial_ | tok.SetSpecialCapacity_)
+                >>  parse::label(Name_token) >> string_value_ref [ _c = _1 ]
+                >> (parse::label(Capacity_token) | parse::label(Value_token))
+                >   double_value_ref [ _val = new_<Effect::AddSpecial>(_c, _1) ]
                 ;
 
             remove_special
-                =    tok.RemoveSpecial_
-                >    parse::label(Name_token) > string_value_ref [ _val = new_<Effect::RemoveSpecial>(_1) ]
+                =   tok.RemoveSpecial_
+                >   parse::label(Name_token) > string_value_ref [ _val = new_<Effect::RemoveSpecial>(_1) ]
                 ;
 
             add_starlanes
-                =    tok.AddStarlanes_
-                >    parse::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
+                =   tok.AddStarlanes_
+                >   parse::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
                 ;
 
             remove_starlanes
-                =    tok.RemoveStarlanes_
-                >    parse::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
+                =   tok.RemoveStarlanes_
+                >   parse::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
                 ;
 
             set_star_type
-                =    tok.SetStarType_
-                >    parse::label(Type_token) > star_type_value_ref [ _val = new_<Effect::SetStarType>(_1) ]
+                =   tok.SetStarType_
+                >   parse::label(Type_token) > star_type_value_ref [ _val = new_<Effect::SetStarType>(_1) ]
                 ;
 
             set_texture
-                =    tok.SetTexture_
-                >    parse::label(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
+                =   tok.SetTexture_
+                >   parse::label(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
                 ;
 
             start
-                %=   move_to
-                |    move_in_orbit
-                |    move_towards
-                |    set_destination
-                |    set_aggression
-                |    destroy
-                |    victory
-                |    add_special_2
-                |    add_special_1
-                |    remove_special
-                |    add_starlanes
-                |    remove_starlanes
-                |    set_star_type
-                |    set_texture
+                %=  move_to
+                |   move_in_orbit
+                |   move_towards
+                |   set_destination
+                |   set_aggression
+                |   destroy
+                |   victory
+                |   add_special_2
+                |   add_special_1
+                |   remove_special
+                |   add_starlanes
+                |   remove_starlanes
+                |   set_star_type
+                |   set_texture
                 ;
 
             move_to.name("MoveTo");

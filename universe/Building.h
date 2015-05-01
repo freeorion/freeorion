@@ -7,6 +7,8 @@
 #include "ValueRefFwd.h"
 #include "../util/Export.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 class BuildingType;
 namespace Effect {
     class EffectsGroup;
@@ -129,12 +131,16 @@ public:
         m_production_time(params.prod_time),
         m_producible(params.producible),
         m_capture_result(params.capture_result),
-        m_tags(tags),
+        m_tags(),
         m_location(location),
         m_enqueue_location(enqueue_location),
         m_effects(effects),
         m_icon(icon)
-    { Init(); }
+    {
+        Init(); 
+        for ( std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+    }
 
     ~BuildingType();
     //@}

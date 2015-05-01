@@ -147,7 +147,7 @@ int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
 float UniverseObject::SpecialCapacity(const std::string& name) const {
     std::map<std::string, std::pair<int, float> >::const_iterator it = m_specials.find(name);
     if (it == m_specials.end())
-        return INVALID_GAME_TURN;
+        return 0.0f;
     return it->second.second;
 }
 
