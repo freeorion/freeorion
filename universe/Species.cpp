@@ -78,6 +78,9 @@ Species::~Species()
 void Species::Init() {
     if (m_location)
         m_location->SetTopLevelContent(this->m_name);
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::iterator it = m_effects.begin();
+         it != m_effects.end(); ++it)
+    { (*it)->SetTopLevelContent(m_name); }
 }
 
 std::string Species::Dump() const {
@@ -425,16 +428,16 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
     }
 }
 
-void SpeciesManager::SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions)
+void SpeciesManager::SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, float> >& species_empire_opinions)
 { m_species_empire_opinions = species_empire_opinions; }
 
-void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, double opinion)
+void SpeciesManager::SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion)
 { m_species_empire_opinions[species_name][empire_id] = opinion; }
 
-void SpeciesManager::SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions)
+void SpeciesManager::SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, float> >& species_species_opinions)
 { m_species_species_opinions = species_species_opinions; }
 
-void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, double opinion)
+void SpeciesManager::SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, float opinion)
 { m_species_species_opinions[opinionated_species][rated_species] = opinion; }
 
 std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
@@ -453,31 +456,31 @@ std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(in
     return retval;
 }
 
-const std::map<std::string, std::map<int, double> >& SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
+const std::map<std::string, std::map<int, float> >& SpeciesManager::GetSpeciesEmpireOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
 { return m_species_empire_opinions; }
 
-const std::map<std::string, std::map<std::string, double> >& SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
+const std::map<std::string, std::map<std::string, float> >& SpeciesManager::GetSpeciesSpeciesOpinionsMap(int encoding_empire/* = ALL_EMPIRES*/) const
 { return m_species_species_opinions; }
 
-double SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
-    std::map<std::string, std::map<int, double> >::const_iterator sp_it = m_species_empire_opinions.find(species_name);
+float SpeciesManager::SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const {
+    std::map<std::string, std::map<int, float> >::const_iterator sp_it = m_species_empire_opinions.find(species_name);
     if (sp_it == m_species_empire_opinions.end())
-        return 0.0;
-    const std::map<int, double>& emp_map = sp_it->second;
-    std::map<int, double>::const_iterator emp_it = emp_map.find(empire_id);
+        return 0.0f;
+    const std::map<int, float>& emp_map = sp_it->second;
+    std::map<int, float>::const_iterator emp_it = emp_map.find(empire_id);
     if (emp_it == emp_map.end())
-        return 0.0;
+        return 0.0f;
     return emp_it->second;
 }
 
-double SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name, const std::string& rated_species_name) const {
-    std::map<std::string, std::map<std::string, double> >::const_iterator sp_it = m_species_species_opinions.find(opinionated_species_name);
+float SpeciesManager::SpeciesSpeciesOpinion(const std::string& opinionated_species_name, const std::string& rated_species_name) const {
+    std::map<std::string, std::map<std::string, float> >::const_iterator sp_it = m_species_species_opinions.find(opinionated_species_name);
     if (sp_it == m_species_species_opinions.end())
-        return 0.0;
-    const std::map<std::string, double>& ra_sp_map = sp_it->second;
-    std::map<std::string, double>::const_iterator ra_sp_it = ra_sp_map.find(rated_species_name);
+        return 0.0f;
+    const std::map<std::string, float>& ra_sp_map = sp_it->second;
+    std::map<std::string, float>::const_iterator ra_sp_it = ra_sp_map.find(rated_species_name);
     if (ra_sp_it == ra_sp_map.end())
-        return 0.0;
+        return 0.0f;
     return ra_sp_it->second;
 }
 

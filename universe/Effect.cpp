@@ -1223,8 +1223,8 @@ void SetSpeciesSpeciesOpinion::Execute(const ScriptingContext& context) const {
     if (rated_species_name.empty())
         return;
 
-    double initial_opinion = GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
-    double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
+    float initial_opinion = GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+    float opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
 
     GetSpeciesManager().SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
 }
