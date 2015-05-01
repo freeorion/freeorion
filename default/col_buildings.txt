@@ -2,8 +2,8 @@ BuildingType
     name = "BLD_COL_SUPER_TEST"
     description = "BLD_COL_SUPER_TEST_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -12,6 +12,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -96,8 +103,8 @@ BuildingType
     name = "BLD_COL_ABADDONI"
     description = "BLD_COL_ABADDONI_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -106,6 +113,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -190,8 +204,8 @@ BuildingType
     name = "BLD_COL_CHATO"
     description = "BLD_COL_CHATO_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -200,6 +214,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -284,8 +305,8 @@ BuildingType
     name = "BLD_COL_CRAY"
     description = "BLD_COL_CRAY_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -294,6 +315,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -378,8 +406,8 @@ BuildingType
     name = "BLD_COL_DERTHREAN"
     description = "BLD_COL_DERTHREAN_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -388,6 +416,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -472,8 +507,8 @@ BuildingType
     name = "BLD_COL_EAXAW"
     description = "BLD_COL_EAXAW_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -482,6 +517,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -566,8 +608,8 @@ BuildingType
     name = "BLD_COL_EGASSEM"
     description = "BLD_COL_EGASSEM_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -576,6 +618,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -660,8 +709,8 @@ BuildingType
     name = "BLD_COL_ETTY"
     description = "BLD_COL_ETTY_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -670,6 +719,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -754,8 +810,8 @@ BuildingType
     name = "BLD_COL_GEORGE"
     description = "BLD_COL_GEORGE_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -764,6 +820,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -848,8 +911,8 @@ BuildingType
     name = "BLD_COL_GYSACHE"
     description = "BLD_COL_GYSACHE_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -858,6 +921,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -942,8 +1012,8 @@ BuildingType
     name = "BLD_COL_HHHOH"
     description = "BLD_COL_HHHOH_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -952,6 +1022,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1036,8 +1113,8 @@ BuildingType
     name = "BLD_COL_HUMAN"
     description = "BLD_COL_HUMAN_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1046,6 +1123,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1130,8 +1214,8 @@ BuildingType
     name = "BLD_COL_KOBUNTURA"
     description = "BLD_COL_KOBUNTURA_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1140,6 +1224,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1224,8 +1315,8 @@ BuildingType
     name = "BLD_COL_LAENFA"
     description = "BLD_COL_LAENFA_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1234,6 +1325,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1318,8 +1416,8 @@ BuildingType
     name = "BLD_COL_MUURSH"
     description = "BLD_COL_MUURSH_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1328,6 +1426,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1412,8 +1517,8 @@ BuildingType
     name = "BLD_COL_SCYLIOR"
     description = "BLD_COL_SCYLIOR_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1422,6 +1527,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1506,8 +1618,8 @@ BuildingType
     name = "BLD_COL_SETINON"
     description = "BLD_COL_SETINON_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1516,6 +1628,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1600,8 +1719,8 @@ BuildingType
     name = "BLD_COL_SSLITH"
     description = "BLD_COL_SSLITH_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1610,6 +1729,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1694,8 +1820,8 @@ BuildingType
     name = "BLD_COL_TAEGHIRUS"
     description = "BLD_COL_TAEGHIRUS_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1704,6 +1830,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1788,8 +1921,8 @@ BuildingType
     name = "BLD_COL_TRITH"
     description = "BLD_COL_TRITH_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1798,6 +1931,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
@@ -1882,8 +2022,8 @@ BuildingType
     name = "BLD_COL_UGMORS"
     description = "BLD_COL_UGMORS_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
-    buildtime = max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+    buildtime = max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -1892,6 +2032,13 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )
     location = And [
         Planet
