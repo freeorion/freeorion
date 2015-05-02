@@ -63,6 +63,21 @@ def to_map(method):
     return wrapper
 
 fo.universe.getVisibilityTurnsMap = to_map(fo.universe.getVisibilityTurnsMap)
+fo.universe.getSystemNeighborsMap = to_map(fo.universe.getSystemNeighborsMap)
+fo.productionQueue.availablePP = to_map(fo.productionQueue.availablePP)
+
+# update properties
+fo.empire.__systemSupplyRanges = fo.empire.systemSupplyRanges
+fo.empire.systemSupplyRanges = property(lambda self: dict_from_map(self.__systemSupplyRanges))
+
+fo.productionQueue.__allocatedPP = fo.productionQueue.allocatedPP
+fo.productionQueue.allocatedPP = property(lambda self: dict_from_map(self.__allocatedPP))
+
+fo.empire.__planetsWithAvailablePP = fo.empire.planetsWithAvailablePP
+fo.empire.planetsWithAvailablePP = property(lambda self: dict_from_map(self.__planetsWithAvailablePP))
+
+fo.empire.__planetsWithAllocatedPP = fo.empire.planetsWithAllocatedPP
+fo.empire.planetsWithAllocatedPP = property(lambda self: dict_from_map(self.__planetsWithAllocatedPP))
 
 
 def to_str(prefix, id, name):

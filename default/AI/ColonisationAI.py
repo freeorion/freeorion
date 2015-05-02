@@ -11,7 +11,7 @@ import ProductionAI
 import TechsListsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType, AIFocusType
 import EnumsAI
-from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade
+from freeorion_tools import tech_is_complete, get_ai_tag_grade
 from freeorion_debug import Timer
 
 colonization_timer = Timer('getColonyFleets()')
@@ -167,7 +167,7 @@ def check_supply():
     new_supply_map = empire.supplyProjections(-3, False)
     print "New Supply Calc:"
     print "Known Systems:", list(universe.systemIDs)
-    print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
+    print "Base Supply:", empire.systemSupplyRanges
     for el in new_supply_map:
         # print PlanetUtilsAI.sys_name_ids([el.key()]), ' -- ', el.data()
         systems_by_supply_tier.setdefault(min(0, el.data()), []).append(el.key())
@@ -468,8 +468,7 @@ def get_colony_fleets():
     print "Outpost Fleets Without Missions: %s" % num_outpost_fleets
     colonization_timer.start('Identify colony base targets')
 
-    available_pp = dict([(tuple(el.key()), el.data()) for el in
-                         empire.planetsWithAvailablePP])  # keys are sets of ints; data is doubles
+    available_pp = empire.planetsWithAvailablePP  # keys are tuple of unique ints; values are doubles
     avail_pp_by_sys = {}
     for p_set in available_pp:
         avail_pp_by_sys.update([(sys_id, available_pp[p_set]) for sys_id in set(PlanetUtilsAI.get_systems(p_set))])

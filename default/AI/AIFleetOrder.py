@@ -5,7 +5,6 @@ import FreeOrionAI as foAI
 import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map
 
 AIFleetOrderTypeNames = AIFleetOrderType()
 AIFleetMissionTypeNames = AIFleetMissionType()

@@ -12,9 +12,20 @@ RED = '<rgba 255 0 0 255>%s</rgba>'
 WHITE = '<rgba 255 255 255 255>%s</rgba>'
 
 
+def __set_to_tuple(key):
+    """
+    Convert set to tuple, python does not support set as dict key.
+    Best hashable analog in python is frozenset, but all code examples used tuple.
+    """
+    if isinstance(key, set):
+        return tuple(key)
+    else:
+        return key
+
+
 def dict_from_map(thismap):
     """Convert C++ map to python dict."""
-    return {el.key(): el.data() for el in thismap}
+    return {__set_to_tuple(el.key()): el.data() for el in thismap}
 
 
 def get_ai_tag_grade(tag_list, tag_type):

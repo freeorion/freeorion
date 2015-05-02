@@ -5,7 +5,6 @@ from EnumsAI import AIFleetMissionType, TargetType
 import AITarget
 import MoveUtilsAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map
 
 
 TARGET_POP = 'targetPop'
@@ -149,8 +148,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
             foAI.foAIstate.visInteriorSystemIDs[cur_system_id] = 1
             if cur_system_id in foAI.foAIstate.visBorderSystemIDs:
                 del foAI.foAIstate.visBorderSystemIDs[cur_system_id]
-            #neighbors= dict( [(el.key(), el.data()) for el in universe.getSystemNeighborsMap(cur_system_id, empire_id)] )  #
-            neighbors = set(dict_from_map(universe.getSystemNeighborsMap(cur_system_id, empire_id)).keys())
+            neighbors = set(universe.getSystemNeighborsMap(cur_system_id, empire_id))
             sys_status.setdefault('neighbors', set()).update(neighbors)
             sys_planets = sys_status.setdefault('planets', {})
             if fo.currentTurn() < 50:
