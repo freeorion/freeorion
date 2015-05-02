@@ -889,10 +889,18 @@ namespace {
             // do actual attacks
             Attack(attacker, *weapon_it, target, combat_state.combat_info, bout, round);
 
-            // mark attackers as valid targets for attacked object's owners, so
-            // attacker they can be counter-attacked in subsequent rounds if it
+            // mark attacker as valid target for attacked object's owner, so that regardless
+            // of visibility the attacker can be counter-attacked in subsequent rounds if it
             // was not already attackable
             combat_state.empire_infos[target->Owner()].target_ids.insert(attacker->ID());
+            // Also ensure that attacker (and their fleet if attacker was a ship) are
+            // revealed with at least BASIC_VISIBILITY to the taget empire
+            combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()] = 
+                    std::max(GetUniverse().GetObjectVisibilityByEmpire(attacker->ID(), target->Owner()), VIS_BASIC_VISIBILITY);
+            if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
+                combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] = 
+                        std::max(GetUniverse().GetObjectVisibilityByEmpire(attacker->ContainerObjectID(), target->Owner()), VIS_BASIC_VISIBILITY);
+            }
         } // end for over weapons
     }
 

@@ -1661,6 +1661,16 @@ namespace {
             // indexed by fleet id, which empire ids to inform that a fleet is destroyed
             std::map<int, std::set<int> > empires_to_update_of_fleet_destruction;
 
+            // update visibilities.
+            for (Universe::EmpireObjectVisibilityMap::const_iterator empire_it = combat_info.empire_object_visibility.begin();
+                 empire_it != combat_info.empire_object_visibility.end(); ++empire_it)
+            {
+                for (Universe::ObjectVisibilityMap::const_iterator object_it = empire_it->second.begin(); object_it != empire_it->second.end(); ++object_it) {
+                    Visibility vis = object_it->second;
+                    universe.SetEmpireObjectVisibility(empire_it->first, object_it->first, vis);
+                }
+            }
+
             // update which empires know objects are destroyed.  this may
             // duplicate the destroyed object knowledge that is set when the
             // object is destroyed with Universe::Destroy, but there may also
@@ -2745,6 +2755,8 @@ void ServerApp::ProcessCombats() {
     UpdateEmpireCombatDestructionInfo(combats);
 
     DisseminateSystemCombatInfo(combats);
+    // update visibilities with any new info gleaned during combat
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     CreateCombatSitReps(combats);
 
