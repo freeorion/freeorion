@@ -30,11 +30,6 @@ shipTypeMap = {EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.A
                EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION: EnumsAI.AIShipDesignTypes.troopBase,
                }
 
-# TODO: dynamic lookup of hull stats
-hullStats = {}
-
-doDoubleShields = False
-
 design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating and indexed by priority type
 
 
@@ -45,14 +40,14 @@ def find_best_designs_this_turn():
     start = time.clock()
     ShipDesignAI.Cache.update_for_new_turn()
     design_cache.clear()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY] = ShipDesignAI.AIShipDesign_Military().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.AIShipDesign_Trooper_Orbital().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION] = ShipDesignAI.AIShipDesign_Trooper_Ship().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION] = ShipDesignAI.AIShipDesign_Colonisation_Ship().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_COLONISATION] = ShipDesignAI.AIShipDesign_Colonisation_Orbital().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST] = ShipDesignAI.AIShipDesign_Outposter_Ship().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.AIShipDesign_Outposter_Orbital().optimize_design()
-    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.AIShipDesign_OrbitalDefense().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY] = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION] = ShipDesignAI.OrbitalTroopShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION] = ShipDesignAI.StandardTroopShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION] = ShipDesignAI.StandardColonisationShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_COLONISATION] = ShipDesignAI.OrbitalColonisationShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST] = ShipDesignAI.StandardOutpostShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
     end = time.clock()
     print "DEBUG INFORMATION: The design evaluations took %f s" % (end-start)
     print "-----"

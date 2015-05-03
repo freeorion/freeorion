@@ -1,40 +1,41 @@
 """
 This module deals with the autonomous shipdesign from the AI. The design process is class-based.
-The basic functionality is defined in the class AIShipDesign. The more specialised classes mostly 
+The basic functionality is defined in the class ShipDesigner. The more specialised classes mostly 
 implement the rating function and some additional information for the optimizing algorithms to improve performance. 
 
 Example usage of this module:
 import ShipDesignAI
-myDesign = ShipDesignAI.AIShipDesign_Military()
+myDesign = ShipDesignAI.MilitaryShipDesigner()
 myDesign.additional_specifications.enemy_mine_dmg = 10
 best_military_designs = myDesign.optimize_design()  # best designs per planet: (rating,planetID,design_id,cost) tuples
 
 
 Available ship classes:
-- AIShipDesign_Military: basic military ship
-- AIShipDesign_Trooper_Orbital: Troop ships for invasion in the same system
-- AIShipDesign_Trooper_Ship: Troop ships for invasion of other systems
-- AIShipDesign_Colonisation_Orbital: Ships for colonization in the same system
-- AIShipDesign_Colonisation_Ship: Ships for colonization of other systems
-- AIShipDesign_Outposter_Orbital: Ships for outposting in the same system
-- AIShipDesign_Outposter_Ship: Troop ships for outposting in other systems
-- AIShipDesign_OrbitalDefense: Ships for stationary defense
+- MilitaryShipDesigner: basic military ship
+- OrbitalTroopShipDesigner: Troop ships for invasion in the same system
+- StandardTroopShipDesigner: Troop ships for invasion of other systems
+- OrbitalColonisationShipDesigner: Ships for colonization in the same system
+- StandardColonisationShipDesigner: Ships for colonization of other systems
+- OrbitalOutpostShipDesigner: Ships for outposting in the same system
+- StandardOutpostShipDesigner: Ships for outposting in other systems
+- OrbitalDefenseShipDesigner: Ships for stationary defense
 
 Internal use only:
 Classes:
 - ShipDesignCache: caches information used in this module. Only use the defined instance (variable name "Cache")
-- AIShipDesign: base class for all designs. Provides basic and general functionalities
-- AIShipDesign_Colonisation: base class for all (specialised) colonisation ships which provides common functionalities
-- AIShipDesign_Outposter: same but for outposter ships
-- AIShipDesign_Trooper: same but for troop ships
+- ShipDesigner: base class for all designs. Provides basic and general functionalities
+- ColonisationShipDesignerBaseClass: base class for all (specialised) colonisation ships which provides common functionalities
+- OutpostShipDesignerBaseClass: same but for outposter ships
+- TroopShipDesignerBaseClass: same but for troop ships
 - AdditionalSpecifications:  Defines all requirements we have for our designs such as minimum fuel or minimum starlane speed.
 
 global variables:
 - Cache: Instance of the ShipDesignCache class - all cached information is stored in here.
 """
 
-# ToDo: Implement a nicer naming system (based on rating? Hull?)
-# ToDo: add hull.detection to interface, then add scout class
+# TODO: Implement a nicer naming system (based on rating? Hull?)
+# TODO: add hull.detection to interface, then add scout class
+# TODO: Document handling of negative rating / Implement it
 
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
@@ -44,6 +45,7 @@ import traceback
 import math
 from collections import Counter
 from collections import defaultdict
+from freeorion_tools import print_error
 
 # Define meta classes for the ship parts
 ARMOUR = frozenset({fo.shipPartClass.armour})
@@ -322,16 +324,19 @@ class ShipDesignCache(object):
         #
         self.hulls_for_planets.clear()
         self.parts_for_planets.clear()
+        planets_with_shipyards = _get_planets_with_shipyard()
+        if not planets_with_shipyards:
+            print "No shipyards found. The design process was aborted."
+            return
         get_shipdesign = fo.getShipDesign
         get_hulltype = fo.getHullType
         empire = fo.getEmpire()
         empire_id = empire.empireID
         universe = fo.getUniverse()
-        planets_with_shipyards = _get_planets_with_shipyard()
         available_hulls = list(empire.availableShipHulls)   # copy so we can sort it locally
         # Later on in the code, we need to find suitable testhulls, i.e. buildable hulls for all slottypes.
         # To reduce the number of lookups, move the hardcoded TESTDESIGN_PREFERED_HULL to the front of the list.
-        # This hull should be buiildable on each planet and also cover the most common slottypes.
+        # This hull should be buildable on each planet and also cover the most common slottypes.
         try:
             idx = available_hulls.index(TESTDESIGN_PREFERED_HULL)
             available_hulls[0], available_hulls[idx] = available_hulls[idx], available_hulls[0]
@@ -347,7 +352,8 @@ class ShipDesignCache(object):
                                 for slottype in slotlist}
         new_parts = [_get_part_type(part) for part in empire.availableShipParts
                      if part not in self.strictly_worse_parts]
-        pid = self.production_cost.keys()[0]  # TODO: Check if location invariant. If not, implement different handling
+        # TODO: Check for location invariance and if not, use different caching system
+        pid = self.production_cost.keys()[0]
         for new_part in new_parts:
             self.strictly_worse_parts[new_part.name] = []
             for part_class in ALL_META_CLASSES:
@@ -363,7 +369,7 @@ class ShipDesignCache(object):
                                 b = new_part
                             if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name]
                                     and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}):
-                                # ToDo: add production_time as additional condition?
+                                # TODO: add production_time as additional condition?
                                 self.strictly_worse_parts[a.name].append(b.name)
                     break
         available_parts = sorted(self.strictly_worse_parts.keys(),
@@ -404,13 +410,12 @@ class ShipDesignCache(object):
             self.hulls_for_planets[pid] = []
         for hullname in available_hulls:
             testdesign = _get_design_by_name(testname % hullname)
-            try:
+            if testdesign:
                 for pid in planets_with_shipyards:
                     if _can_build(testdesign, empire_id, pid):
                         self.hulls_for_planets[pid].append(hullname)
-            except AttributeError:
+            else:
                 print "Missing testdesign for hull %s!" % hullname
-                continue
 
         # 3. Update ship part test designs
         #     Because there are different slottypes, we need to find a hull that can host said slot.
@@ -552,13 +557,12 @@ class AdditionalSpecifications(object):
 
         :returns: tuple (minFuel,minSpeed,enemyDmg,enemyShield,enemyMineDmg)
         """
-        tup = ("minFuel: %s" % self.minimum_fuel, "minSpeed: %s" % self.minimum_speed,
+        return ("minFuel: %s" % self.minimum_fuel, "minSpeed: %s" % self.minimum_speed,
                "enemyDmg: %s" % self.enemy_weapon_strength, "enemyShields: %s" % self.enemy_shields,
                "enemyMineDmg: %s" % self.enemy_mine_dmg)
-        return tup
 
 
-class AIShipDesign(object):
+class ShipDesigner(object):
     """This class and its subclasses implement the building of a ship design and its rating.
      Specialised Designs with their own rating system or optimizing algorithms should inherit from this class.
 
@@ -617,19 +621,19 @@ class AIShipDesign(object):
         :returns: float - rating of the current part/hull combo
         """
         self.update_stats()
-        ret_val = 0
+        rating = 0
 
         # If we do not meet the requirements, we want to return a negative rating.
         # However, we also need to make sure, that the closer we are to requirements,
         # the better our rating is so the optimizing heuristic finds "the right way".
         if self.fuel < self.additional_specifications.minimum_fuel:
-            ret_val += -1000 * (self.additional_specifications.minimum_fuel - self.fuel)
+            rating += -1000 * (self.additional_specifications.minimum_fuel - self.fuel)
         if self.speed < self.additional_specifications.minimum_speed:
-            ret_val += -1000 * (self.additional_specifications.minimum_speed - self.speed)
+            rating += -1000 * (self.additional_specifications.minimum_speed - self.speed)
         if self.structure < self.additional_specifications.minimum_structure:
-            ret_val += -1000 * (self.additional_specifications.minimum_structure - self.structure)
-        if ret_val < 0:
-            return ret_val
+            rating += -1000 * (self.additional_specifications.minimum_structure - self.structure)
+        if rating < 0:
+            return rating
         else:
             return self._rating_function()
 
@@ -638,7 +642,7 @@ class AIShipDesign(object):
 
         :returns: float - rating
         """
-        print "WARNING: Rating function not overloaded for class %s!" % self.__class__.__name__
+        print_error("WARNING: Rating function not overloaded for class %s!" % self.__class__.__name__)
         return -9999
 
     def _set_stats_to_default(self):
@@ -667,9 +671,8 @@ class AIShipDesign(object):
         """Set both partnames and parts attributes.
 
         :param partname_list: list of strings (partnames)"""
-        local__get_part_type = _get_part_type  # local reference to improve lookup time
         self.partnames = partname_list
-        self.parts = [local__get_part_type(part) for part in partname_list if part]
+        self.parts = [_get_part_type(part) for part in partname_list if part]
 
     def update_species(self, speciesname):
         """Set the piloting species.
@@ -696,9 +699,9 @@ class AIShipDesign(object):
         self.speed = self.hull.starlaneSpeed
         self.stealth = self.hull.stealth
         self.attacks.clear()
-        self.detection = 0  # ToDo: Add self.hull.detection once available in interface
-        self.shields = 0    # ToDo: Add self.hull.shields if added to interface
-        self.troops = 0     # ToDo: Add self.hull.troops if added to interface
+        self.detection = 0  # TODO: Add self.hull.detection once available in interface
+        self.shields = 0    # TODO: Add self.hull.shields if added to interface
+        self.troops = 0     # TODO: Add self.hull.troops if added to interface
         self.production_cost = local_cost_cache[self.hull.name]
         self.production_time = local_time_cache[self.hull.name]
         self.colonisation = -1  # -1 as 0 corresponds to outpost pod (capacity = 0)
@@ -708,49 +711,49 @@ class AIShipDesign(object):
         for part in self.parts:
             self.production_cost += local_cost_cache[part.name]
             self.production_time = max(self.production_time, local_time_cache[part.name])
-            pc = part.partClass
-            cap = part.capacity
-            if pc in FUEL:
-                self.fuel += cap
-            elif pc in ENGINES:
-                self.speed += cap
-            elif pc in COLONISATION:
+            partclass = part.partClass
+            capacity = part.capacity
+            if partclass in FUEL:
+                self.fuel += capacity
+            elif partclass in ENGINES:
+                self.speed += capacity
+            elif partclass in COLONISATION:
                 colonization_counter += 1
                 if colonization_counter == 1:
-                    self.colonisation = cap
+                    self.colonisation = capacity
                 else:
                     self.colonisation = -1
-            elif pc in DETECTION:
+            elif partclass in DETECTION:
                 detection_counter += 1
                 if detection_counter == 1:
-                    self.detection += cap
+                    self.detection += capacity
                 else:
                     self.detection = 0
-            elif pc in ARMOUR:
-                self.structure += cap
-            elif pc in WEAPONS:
-                if cap in self.attacks:
-                    self.attacks[cap] += 1
+            elif partclass in ARMOUR:
+                self.structure += capacity
+            elif partclass in WEAPONS:
+                if capacity in self.attacks:
+                    self.attacks[capacity] += 1
                 else:
-                    self.attacks[cap] = 1
-            elif pc in SHIELDS:
+                    self.attacks[capacity] = 1
+            elif partclass in SHIELDS:
                 shield_counter += 1
                 if shield_counter == 1:
-                    self.shields = cap
+                    self.shields = capacity
                 else:
                     self.shields = 0
-            elif pc in TROOPS:
-                self.troops += cap
-            elif pc in STEALTH:
+            elif partclass in TROOPS:
+                self.troops += capacity
+            elif partclass in STEALTH:
                 cloak_counter += 1
                 if cloak_counter == 1:
-                    self.stealth += cap
+                    self.stealth += capacity
                 else:
                     self.stealth = 0
-            # ToDo: (Hardcode?) extra effect modifiers such as the transspatial drive or multispectral shields, ...
+            # TODO: (Hardcode?) extra effect modifiers such as the transspatial drive or multispectral shields, ...
 
         if self.species:
-            # ToDo: Add troop modifiers once added
+            # TODO: Add troop modifiers once added
             weapons_grade, shields_grade = foAI.foAIstate.get_piloting_grades(self.species)
             self.shields = foAI.foAIstate.weight_shields(self.shields, shields_grade)
             if self.attacks:
@@ -767,7 +770,7 @@ class AIShipDesign(object):
         # The real name that is shown in the game AI differs from that one. Current
         # implementation is a simple running index that gets counted up in addition
         # to a base name. The real name is mapped using a dictionary.
-        name_template = "%s %s v%d"  # e.g. "EmpireName Warship v1"
+        name_template = "%s %s Mk. %d"  # e.g. "EmpireName Warship Mk. 1"
 
         # As the running_index for each part does not get stored in the save file,
         # we need to find the current correct running_index after load. So find
@@ -826,7 +829,9 @@ class AIShipDesign(object):
     def optimize_design(self, loc=None, verbose=False):
         """Try to find the optimimum designs for the shipclass for each planet and add it as gameobject.
 
-        :return: list of (rating,planetID,design_id,cost) tuples, i.e. the best design for each planet.
+        Only designs with a positive rating (i.e. matching the minimum requirements) will be returned.
+
+        :return: list of (rating,planet_id,design_id,cost) tuples, i.e. best available design for each planet
         :param loc: int or list of ints (optional) - planet ids where the designs are to be built. Default: All planets.
         :param verbose: bool - Toggles detailed logging for debugging.
         """
@@ -839,13 +844,9 @@ class AIShipDesign(object):
         else:
             print "ERROR: Invalid loc parameter for optimize_design(). Expected int or list but got", loc
             return []
-        if self.__class__.__name__ not in Cache.best_designs:
-            Cache.best_designs.update({self.__class__.__name__: {}})
-        design_cache_class = Cache.best_designs[self.__class__.__name__]
+        design_cache_class = Cache.best_designs.setdefault(self.__class__.__name__, {})
         req_tuple = self.additional_specifications.convert_to_tuple()
-        if req_tuple not in design_cache_class:
-            design_cache_class.update({req_tuple: {}})
-        design_cache_reqs = design_cache_class[req_tuple]
+        design_cache_reqs = design_cache_class.setdefault(req_tuple, {})
         universe = fo.getUniverse()
         best_design_list = []
 
@@ -867,9 +868,7 @@ class AIShipDesign(object):
             # TODO: Add troop modifiers once added
             species_tuple = tuple(relevant_grades)
 
-            if species_tuple not in design_cache_reqs:
-                design_cache_reqs.update({species_tuple: {}})
-            design_cache_species = design_cache_reqs[species_tuple]
+            design_cache_species = design_cache_reqs.setdefault(species_tuple, {})
             available_hulls = Cache.hulls_for_planets[pid]
             if verbose:
                 print "Evaluating planet %s" % planet.name
@@ -882,11 +881,8 @@ class AIShipDesign(object):
             all_parts = []
             for partlist in available_parts.values():
                 all_parts += partlist
-            all_parts = frozenset(all_parts)
-            if all_parts not in design_cache_species:
-                design_cache_species.update({all_parts: {}})
-            design_cache_parts = design_cache_species[all_parts]
-            best_rating_for_planet = -99999
+            design_cache_parts = design_cache_species.setdefault(frozenset(all_parts), {})
+            best_rating_for_planet = 0
             best_hull = None
             best_parts = None
             for hullname in available_hulls:
@@ -916,6 +912,9 @@ class AIShipDesign(object):
                 design_id = self.add_design()
                 if design_id:
                     best_design_list.append((best_rating_for_planet, pid, design_id, self.production_cost))
+                else:
+                    print_error("The best design for %s on planet %d could not be added."
+                                % (self.__class__.__name__, pid))
             else:
                 print "Could not find a suitable design for this planet."
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
@@ -958,7 +957,7 @@ class AIShipDesign(object):
                         partclass_dict[partclass].append(tup[1])
                 for shipPartsPerClass in partclass_dict.itervalues():
                     for a in shipPartsPerClass:
-                        if a.capacity == 0:  # ToDo: Modify this if effects of items get hardcoded
+                        if a.capacity == 0:  # TODO: Modify this if effects of items get hardcoded
                             part_dict[slottype].remove((a.name, a))
                             if verbose:
                                 print "removing %s because capacity is zero." % a.name
@@ -1135,7 +1134,7 @@ class AIShipDesign(object):
         return total_dmg
 
 
-class AIShipDesign_Military(AIShipDesign):
+class MilitaryShipDesigner(ShipDesigner):
     """Class that implements military designs.
 
     Extends __init__()
@@ -1150,12 +1149,12 @@ class AIShipDesign_Military(AIShipDesign):
     filter_inefficient_parts = True
 
     def __init__(self):
-        AIShipDesign.__init__(self)
+        ShipDesigner.__init__(self)
         self.additional_specifications.minimum_fuel = 1
         self.additional_specifications.minimum_speed = 30
 
     def _rating_function(self):
-        # ToDo: Find a better way to determine the value of speed and fuel
+        # TODO: Find a better way to determine the value of speed and fuel
         enemy_dmg = self.additional_specifications.enemy_weapon_strength
         total_dmg = max(self._total_dmg_vs_shields(), 0.1)
         shield_factor = max(enemy_dmg / max(0.01, enemy_dmg - self.shields), 1)
@@ -1214,7 +1213,7 @@ class AIShipDesign_Military(AIShipDesign):
         return ret_val
 
 
-class AIShipDesign_Trooper(AIShipDesign):
+class TroopShipDesignerBaseClass(ShipDesigner):
     """Base class for troop ships. To be inherited from.
 
     Extends __init__()
@@ -1230,7 +1229,7 @@ class AIShipDesign_Trooper(AIShipDesign):
     running_index = 1
 
     def __init__(self):
-        AIShipDesign.__init__(self)
+        ShipDesigner.__init__(self)
         self.additional_specifications.minimum_structure = self.additional_specifications.enemy_mine_dmg * 2
 
     def _rating_function(self):
@@ -1262,7 +1261,7 @@ class AIShipDesign_Trooper(AIShipDesign):
             partname_dict[slot] = remaining_parts
 
 
-class AIShipDesign_Trooper_Orbital(AIShipDesign_Trooper):
+class OrbitalTroopShipDesigner(TroopShipDesignerBaseClass):
     """Class implementing orbital invasion designs
 
     Extends __init__()
@@ -1274,12 +1273,12 @@ class AIShipDesign_Trooper_Orbital(AIShipDesign_Trooper):
     useful_part_classes = TROOPS
 
     def __init__(self):
-        AIShipDesign_Trooper.__init__(self)
+        TroopShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_speed = 0
         self.additional_specifications.minimum_fuel = 0
 
 
-class AIShipDesign_Trooper_Ship(AIShipDesign_Trooper):
+class StandardTroopShipDesigner(TroopShipDesignerBaseClass):
     """Class implementing standard troop ship designs.
 
     Extends __init__()
@@ -1290,12 +1289,12 @@ class AIShipDesign_Trooper_Ship(AIShipDesign_Trooper):
     useful_part_classes = TROOPS
 
     def __init__(self):
-        AIShipDesign_Trooper.__init__(self)
+        TroopShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_speed = 30
         self.additional_specifications.minimum_fuel = 2
 
 
-class AIShipDesign_Colonisation(AIShipDesign):
+class ColonisationShipDesignerBaseClass(ShipDesigner):
     """Base class for colonization ships. To be inherited from.
 
     Extends __init__()
@@ -1312,7 +1311,7 @@ class AIShipDesign_Colonisation(AIShipDesign):
     running_index = 1
 
     def __init__(self):
-        AIShipDesign.__init__(self)
+        ShipDesigner.__init__(self)
 
     def _rating_function(self):
         if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
@@ -1344,7 +1343,7 @@ class AIShipDesign_Colonisation(AIShipDesign):
                     partname_dict[slot].remove(part.name)
 
 
-class AIShipDesign_Colonisation_Ship(AIShipDesign_Colonisation):
+class StandardColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     """Class that implements standard colonisation ships.
 
     Extends __init__()
@@ -1355,12 +1354,12 @@ class AIShipDesign_Colonisation_Ship(AIShipDesign_Colonisation):
     useful_part_classes = FUEL | COLONISATION | ENGINES | DETECTION
 
     def __init__(self):
-        AIShipDesign_Colonisation.__init__(self)
+        ColonisationShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_speed = 30
         self.additional_specifications.minimum_fuel = 1
 
 
-class AIShipDesign_Colonisation_Orbital(AIShipDesign_Colonisation):
+class OrbitalColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     """Class implementing orbital colonisation ships.
 
     Extends __init__()
@@ -1372,7 +1371,7 @@ class AIShipDesign_Colonisation_Orbital(AIShipDesign_Colonisation):
     useful_part_classes = COLONISATION
 
     def __init__(self):
-        AIShipDesign_Colonisation.__init__(self)
+        ColonisationShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_speed = 0
         self.additional_specifications.minimum_fuel = 0
 
@@ -1382,7 +1381,7 @@ class AIShipDesign_Colonisation_Orbital(AIShipDesign_Colonisation):
         return self.colonisation/self.production_cost
 
 
-class AIShipDesign_Outposter(AIShipDesign):
+class OutpostShipDesignerBaseClass(ShipDesigner):
     """Base class for outposter designs. To be inherited.
 
     Extends __init__()
@@ -1399,7 +1398,7 @@ class AIShipDesign_Outposter(AIShipDesign):
     running_index = 1
 
     def __init__(self):
-        AIShipDesign.__init__(self)
+        ShipDesigner.__init__(self)
 
     def _rating_function(self):
         if self.colonisation != 0:
@@ -1431,7 +1430,7 @@ class AIShipDesign_Outposter(AIShipDesign):
         return ret_val
 
 
-class AIShipDesign_Outposter_Orbital(AIShipDesign_Outposter):
+class OrbitalOutpostShipDesigner(OutpostShipDesignerBaseClass):
     """Class that implements orbital outposting ships.
 
     Extends __init__()
@@ -1445,7 +1444,7 @@ class AIShipDesign_Outposter_Orbital(AIShipDesign_Outposter):
     running_index = 1
 
     def __init__(self):
-        AIShipDesign_Outposter.__init__(self)
+        OutpostShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_fuel = 0
         self.additional_specifications.minimum_speed = 0
 
@@ -1455,7 +1454,7 @@ class AIShipDesign_Outposter_Orbital(AIShipDesign_Outposter):
         return 1/self.production_cost
 
 
-class AIShipDesign_Outposter_Ship(AIShipDesign_Outposter):
+class StandardOutpostShipDesigner(OutpostShipDesignerBaseClass):
     """Class that implements standard outposting ships.
 
     Extends __init__()
@@ -1466,12 +1465,12 @@ class AIShipDesign_Outposter_Ship(AIShipDesign_Outposter):
     useful_part_classes = COLONISATION | FUEL | ENGINES | DETECTION
 
     def __init__(self):
-        AIShipDesign_Outposter.__init__(self)
+        OutpostShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_fuel = 2
         self.additional_specifications.minimum_speed = 30
 
 
-class AIShipDesign_OrbitalDefense(AIShipDesign):
+class OrbitalDefenseShipDesigner(ShipDesigner):
     """Class that implements orbital defense designs.
 
     Extends __init__()
@@ -1486,7 +1485,7 @@ class AIShipDesign_OrbitalDefense(AIShipDesign):
     running_index = 1
 
     def __init__(self):
-        AIShipDesign.__init__(self)
+        ShipDesigner.__init__(self)
 
     def _rating_function(self):
         if self.speed > 10:
@@ -1560,7 +1559,7 @@ def _build_reference_name(hullname, partlist):
 
 
 def _can_build(design, empire_id, pid):
-    # ToDo: Remove this function once we stop profiling this module
+    # TODO: Remove this function once we stop profiling this module
     """Check if a design can be built by an empire on a particular planet.
 
     This function only exists for profiling reasons to add an extra entry to cProfile.
