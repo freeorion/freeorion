@@ -44,7 +44,7 @@ class Generator(object):
         if os.path.isfile(self.outfile):
             with open(self.outfile) as check_file:
                 if build_no in check_file.read():
-                    pass #return
+                    return
 
         try:
             with open(self.infile) as template_file:
