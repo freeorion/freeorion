@@ -12,7 +12,7 @@ INVALID_BUILD_NO = "???"
 
 required_boost_libraries = [
     "boost_chrono",
-    "boost_datetime",
+    "boost_date_time",
     "boost_filesystem",
     "boost_log",
     "boost_python",
