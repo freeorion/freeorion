@@ -121,11 +121,11 @@ private:
 CombatReportWnd::CombatReportWnd() :
     CUIWnd(UserString("COMBAT_REPORT_TITLE"), GG::X(150), GG::Y(50), COMBAT_LOG_WIDTH, COMBAT_LOG_HEIGHT,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE),
-    m_impl(new CombatReportPrivate(*this))
-{ }
+    m_impl(0)
+{ m_impl.reset(new CombatReportPrivate(*this)); }
 
 CombatReportWnd::~CombatReportWnd()
-{}
+{ }
 
 void CombatReportWnd::SetLog(int log_id)
 { m_impl->SetLog(log_id); }
