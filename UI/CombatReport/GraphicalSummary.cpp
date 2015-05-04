@@ -113,10 +113,16 @@ public:
         assert(m_max_total_max_health > 0);
     }
 
-    GG::Pt GetBarSize( const ParticipantSummary& participant ) const {
+    GG::Pt GetBarSize( const ParticipantSummary& participant, const GG::X& extra_margin ) const {
         GG::Pt total_space = GetSideBarSize(participant.empire_id);
 
         total_space = AdjustForAxes(total_space);
+
+        // HACK: extra_margin originates from SideBar::DoLayout, is passed to
+        //       ParticipantBar::DoLayout and finally passed here. This is
+        //       necessary because extra_margin depends on a private member
+        //       CUILabel* of SideBar which isn't made available to this class.
+        total_space.x -= extra_margin;
 
         CombatSummaryMap::const_iterator side_summary_it = m_summaries.find(participant.empire_id);
 
@@ -262,8 +268,8 @@ public:
 
     /// Resizes the bar to have a width and height based on the
     /// current and maximal health of the participant.
-    void DoLayout() {
-        Resize(m_sizer.GetBarSize(m_participant));
+    void DoLayout(const GG::X& extra_margin) {
+        Resize(m_sizer.GetBarSize(m_participant, extra_margin));
     }
 
     /// Moves the bottom left of the bar to \a pt
@@ -342,7 +348,10 @@ public:
                 ++it)
         {
             ParticipantBar* bar = *it;
-            bar->DoLayout();
+            // The argument to DoLayout compensates for the fact that
+            // BarSizer::GetBarSize does not have access to
+            // m_y_axis_label->MinUsableSize.
+            bar->DoLayout(m_y_axis_label->MinUsableSize().x);
             if(bar->Alive()) {
                 bar->MoveBottomTo(alive_ll);
                 alive_ll.x += bar->Width();
@@ -627,7 +636,7 @@ void GraphicalSummaryWnd::DoLayout() {
         ul.y += box->Height() + SIDE_BOX_MARGIN;
     }
 
-    m_options_bar->MoveTo(GG::Pt(GG::X(10), ClientSize().y - m_options_bar->Height() ));
+    m_options_bar->MoveTo(GG::Pt(GG::X(4), ClientSize().y - m_options_bar->Height()));
 }
 
 void GraphicalSummaryWnd::Render()
