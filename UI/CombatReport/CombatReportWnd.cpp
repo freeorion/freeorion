@@ -14,8 +14,6 @@
 namespace {
     GG::X COMBAT_LOG_WIDTH(400);
     GG::Y COMBAT_LOG_HEIGHT(300);
-    GG::X RESIZE_MARGIN_X(4);
-    GG::Y RESIZE_MARGIN_Y(4);
 }
 
 // The implementation class for CombatReportWnd
@@ -35,6 +33,10 @@ public:
         GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
         GG::Connect(m_log->LinkDoubleClickedSignal, &CombatReportPrivate::HandleLinkDoubleClick,    this);
         GG::Connect(m_log->LinkRightClickedSignal,  &CombatReportPrivate::HandleLinkDoubleClick,    this);
+
+        // Allow m_wnd to catch mouse events over the portion of the resize tab
+        // that is covered by m_graphical.
+        m_graphical->InstallEventFilter(&m_wnd);
     }
 
     void SetLog(int log_id) {
@@ -130,17 +132,39 @@ CombatReportWnd::~CombatReportWnd()
 void CombatReportWnd::SetLog(int log_id)
 { m_impl->SetLog(log_id); }
 
-GG::Pt CombatReportWnd::ClientLowerRight() const {
-    GG::Pt lr = CUIWnd::ClientLowerRight();
-    lr.x -= RESIZE_MARGIN_X;
-    lr.y -= RESIZE_MARGIN_Y;
-    return lr;
-}
-
 void CombatReportWnd::CloseClicked()
 { Hide(); }
 
 void CombatReportWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
     m_impl->DoLayout();
+}
+
+bool CombatReportWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& wnd_event) {
+    switch(wnd_event.Type()) {
+        case GG::WndEvent::LDrag:
+            LDrag(wnd_event.Point(), wnd_event.DragMove(), wnd_event.ModKeys());
+            break;
+        case GG::WndEvent::LButtonUp:
+            LButtonUp(wnd_event.Point(), wnd_event.ModKeys());
+            break;
+        case GG::WndEvent::LButtonDown:
+            // HACK: CUIWnd uses m_drag_offset to determine whether LDrag messages
+            //       should move or resize the wnd, but this event filtering doesn't
+            //       seem to reset it properly on LButtonUp events so it is instead
+            //       reset here.
+            if(!InResizeTab(wnd_event.Point())) {
+                m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
+            }
+            LButtonDown(wnd_event.Point(), wnd_event.ModKeys());
+            break;
+        case GG::WndEvent::MouseEnter:
+            MouseEnter(wnd_event.Point(), wnd_event.ModKeys());
+            break;
+        case GG::WndEvent::MouseHere:
+            MouseHere(wnd_event.Point(), wnd_event.ModKeys());
+            break;
+    }
+
+    return false;
 }
