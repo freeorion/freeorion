@@ -625,7 +625,7 @@ BuildingType
             stackinggroup = "INDUSTRY_CENTER_STACK"
             effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
     ]
-    icon = ""
+    icon = "icons/tech/industrial_centre_ii.png"
 
 BuildingType
     name = "BLD_MEGALITH"
@@ -704,7 +704,7 @@ BuildingType
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
-    icon = ""
+    icon = "icons/building/psi-corps.png"
 
 BuildingType
     name = "BLD_GENOME_BANK"
@@ -1242,7 +1242,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Not Planet type = Asteroids
     ]
-    icon = ""
+    icon = "icons/building/shipyard-11.png"
 
 BuildingType
     name = "BLD_PLANET_BEACON"
@@ -1374,7 +1374,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    icon = "icons/specials_huge/gaia.png"
+    icon = "icons/tech/paradise_planet.png"
 
 BuildingType
     name = "BLD_ART_MOON"
@@ -1448,7 +1448,7 @@ BuildingType
             activation = Source
             effects = SetStealth value = Value + 1000
     ]
-    icon = ""
+    icon = "icons/building/monument_to_exodus.png"
 
 BuildingType
     name = "BLD_ENCLAVE_VOID"
@@ -1470,7 +1470,7 @@ BuildingType
             stackinggroup = "BLD_ENCLAVE_VOID_STACK"
             effects = SetTargetResearch value = Value + Target.Population * 3.75 *  [[RESEARCH_PER_POP]]
     ]
-    icon = ""
+    icon = "icons/building/science-institute.png"
 
 BuildingType
     name = "BLD_PLANET_CLOAK"
@@ -1630,6 +1630,7 @@ BuildingType
                 SetMaxDefense value = Value + 200
                 SetMaxTroops value = Value + 300
                 SetDetection value = Value + 100
+                SetTargetResearch value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
                 // Regeneration
                 SetDefense value = Value + 10
                 SetShield value = Value + 50
