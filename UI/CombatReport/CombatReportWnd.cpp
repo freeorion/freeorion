@@ -118,6 +118,17 @@ private:
         DebugLogger() << "RectangleHover " << data;
         SetFocus(data);
     }
+
+    void HandleTabChanged(int index) {
+        // This will handle multiple GraphicalSummaryWnds in the tab group.
+        // It would be simpler to call this class's DoLayout without the check,
+        // but updating the entire window is not necessary.
+        GraphicalSummaryWnd* selected_wnd =
+            dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd());
+        if(selected_wnd) {
+            selected_wnd->DoLayout();
+        }
+    }
 };
 
 CombatReportWnd::CombatReportWnd() :
