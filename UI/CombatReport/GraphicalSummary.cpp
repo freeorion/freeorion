@@ -96,11 +96,12 @@ public:
     typedef std::map<int, CombatSummary> CombatSummaryMap;
 
     BarSizer( const CombatSummaryMap& combat_summaries , const GG::Pt& available_size):
-    m_max_total_max_health(-1.0f),
-    m_max_units_on_a_side(-1),
-    m_sum_of_max_max_healths(0),
-    m_summaries(combat_summaries),
-    m_available_space(available_size) {
+        m_max_total_max_health(-1.0f),
+        m_max_units_on_a_side(-1),
+        m_sum_of_max_max_healths(0),
+        m_summaries(combat_summaries),
+        m_available_space(available_size)
+    {
         // We want to measure health on a single scale that shows as much as possible
         // while fitting the data of both sides.
         // Therefore we make the side with more health fill the window
@@ -177,15 +178,15 @@ public:
     }
 
 private:
-    float m_max_total_max_health;
-    int m_max_units_on_a_side;
-    float m_sum_of_max_max_healths;
-    const CombatSummaryMap& m_summaries;
+    float  m_max_total_max_health;
+    int    m_max_units_on_a_side;
+    float  m_sum_of_max_max_healths;
     GG::Pt m_available_space;
+    bool   m_use_relative_side_bar_heights;
 
-    bool m_use_relative_side_bar_heights;
+    const CombatSummaryMap& m_summaries;
 
-    GG::Pt GetSideBarSize( int empire_id ) const{
+    GG::Pt GetSideBarSize( int empire_id ) const {
         GG::Pt bar_size = m_available_space - GG::Pt(BEVEL_MARGIN_X, BEVEL_MARGIN_Y + static_cast<int>(m_summaries.size()) * SIDE_BOX_MARGIN);
 
         CombatSummaryMap::const_iterator summary_it = m_summaries.find(empire_id);
@@ -203,7 +204,7 @@ private:
     }
 };
 
-/// A Bar tha shows the health of a single battle participant
+/// A Bar that shows the health of a single battle participant
 class ParticipantBar : public GG::Wnd {
 public:
     ParticipantBar(const ParticipantSummary& participant, const BarSizer& sizer):
@@ -227,7 +228,6 @@ public:
     }
 
     virtual void Render() {
-
         GG::Clr base_color = Alive() ? m_wound_color : m_dead_color;
 
         // Always draw the red background, health will cover it
@@ -293,8 +293,8 @@ public:
         GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
         m_side_summary(combat_summary),
         m_x_axis_label(0),
-        m_sizer(sizer){
-
+        m_sizer(sizer)
+    {
         GG::Clr axis_label_color = combat_summary.SideColor();
 
         m_x_axis_label = new CUILabel( (boost::format( UserString("COMBAT_FLEET_HEALTH_AXIS_LABEL") )
@@ -328,8 +328,6 @@ public:
     }
 
     void DoLayout() {
-
-
         GG::Pt bar_size = m_sizer.GetSideBarSize(m_side_summary.empire);
         if( bar_size != Size() ) {
             Resize(bar_size);
@@ -487,8 +485,9 @@ public:
     boost::signals2::signal<void ()> ChangedSignal;
 
     OptionsBar(boost::scoped_ptr<BarSizer>& sizer):
-    GG::Wnd(),
-    m_sizer(sizer) {
+        GG::Wnd(),
+        m_sizer(sizer)
+    {
         m_toggles.push_back(new ToggleData(UserString("COMBAT_SUMMARY_PARTICIPANT_RELATIVE"),
                                            UserString("COMBAT_SUMMARY_PARTICIPANT_EQUAL"),
                                            UserString("COMBAT_SUMMARY_PARTICIPANT_RELATIVE_TIP"),
@@ -597,8 +596,8 @@ private:
 GraphicalSummaryWnd::GraphicalSummaryWnd() :
     GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_sizer(0),
-    m_options_bar(0){
-    }
+    m_options_bar(0)
+{ }
 
 void GraphicalSummaryWnd::SetLog(int log_id) {
     MakeSummaries(log_id);
@@ -653,9 +652,9 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
                 if( m_summaries.find(owner_id) == m_summaries.end() ) {
                     m_summaries.insert( std::map<int, CombatSummary>::value_type(owner_id,CombatSummary(owner_id)) );
                 }
-                std::map<int, CombatParticipantState>::const_iterator it = log.participant_states.find(object_id);
-                if ( it != log.participant_states.end() ) {
-                    m_summaries[owner_id].AddUnit(object_id, it->second);
+                std::map<int, CombatParticipantState>::const_iterator map_it = log.participant_states.find(object_id);
+                if(map_it != log.participant_states.end()) {
+                    m_summaries[owner_id].AddUnit(object_id, map_it->second);
                 } else {
                     ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
                 }
