@@ -2217,9 +2217,9 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     }
 
     // execute each effects group one by one
-    std::map<int, std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> > >::reverse_iterator priority_group_it;
-    for (priority_group_it = dispatched_targets_causes.rbegin();
-         priority_group_it != dispatched_targets_causes.rend(); ++priority_group_it)
+    std::map<int, std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> > >::iterator priority_group_it;
+    for (priority_group_it = dispatched_targets_causes.begin();
+         priority_group_it != dispatched_targets_causes.end(); ++priority_group_it)
     {
         std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> >::iterator effect_group_it;
         for (effect_group_it = priority_group_it->second.begin();

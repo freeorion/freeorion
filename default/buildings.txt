@@ -19,17 +19,17 @@ BuildingType
         EffectsGroup
             scope = Object id = Source.PlanetID
             accountinglabel = "research_times_2"
-            priority = 101
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value * 2
         EffectsGroup
             scope = Object id = Source.PlanetID
             accountinglabel = "industry_plus_5"
-            priority = 101
+            priority = [[DEFAULT_PRIORITY]]
             effects = SetTargetIndustry value = Value + 5
         EffectsGroup
             scope = Object id = Source.PlanetID
             accountinglabel = "industry_times_2"
-            priority = 100
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value * 2
 */
 /*  // testing effects
