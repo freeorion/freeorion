@@ -771,23 +771,25 @@ class ShipDesigner(object):
         # The real name that is shown in the game AI differs from that one. Current
         # implementation is a simple running index that gets counted up in addition
         # to a base name. The real name is mapped using a dictionary.
-        name_template = "%s %s Mk. %d"  # e.g. "EmpireName Warship Mk. 1"
+        # For now, abbreviating the Empire name to uppercase first and last initials
+        name_template = "%s %s Mk. %d"  # e.g. "EmpireAbbreviation Warship Mk. 1"
 
         # As the running_index for each part does not get stored in the save file,
         # we need to find the current correct running_index after load. So find
         # the smallest index that has not an existing design yet.
-        empire_name = fo.getEmpire().name
+        empire_name = fo.getEmpire().name.upper()
+        empire_initials = empire_name[:1] + empire_name[-1:]
         if self.running_index_needs_update:
             print "WARNING: It appears the RunningIndex for %s needs to be updated." % self.__class__.__name__,
             print "This should only happen at first turn after game start or load."
         while self.running_index_needs_update:
-            name = name_template % (empire_name, self.basename, self.running_index)
+            name = name_template % (empire_initials, self.basename, self.running_index)
             if _get_design_by_name(name):
                 self.__class__.running_index += 1
             else:
                 self.__class__.running_index_needs_update = False
                 break
-        name = name_template % (empire_name, self.basename, self.running_index)
+        name = name_template % (empire_initials, self.basename, self.running_index)
 
         # reference_name = "-".join([self.hull.name]+[part.name for part in self.parts])
         reference_name = _build_reference_name(self.hull.name, self.partnames)  # "Hull-Part1-Part2-Part3-Part4"
