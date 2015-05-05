@@ -346,9 +346,9 @@ ShipDesign
     description = "SM_EXP_OUTPOST_DESC"
     hull = "SH_EXP_OUTPOST_HULL"
     parts = [
-        ""
+        "SH_BLACK"
     ]
-    icon = ""
+    icon = "icons/monsters/experiment0.png"
     model = "seed"
     
 ShipDesign
