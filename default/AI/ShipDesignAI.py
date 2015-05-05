@@ -580,6 +580,7 @@ class ShipDesigner(object):
     _rating_function()
     _class_specific_filter()
     _starting_guess()
+    _calc_rating_for_name()
 
     For improved performance, maybe override _filling_algorithm() with a more specialised algorithm as well.
     """
@@ -590,8 +591,8 @@ class ShipDesigner(object):
     filter_useful_parts = True              # removes any part not belonging to self.useful_part_classes
     filter_inefficient_parts = False        # removes cost-inefficient parts (less capacity and less capacity/cost)
 
-    design_name_dict = {}
-    running_index = {}
+    design_name_dict = {}                   # {min_rating: basename}: based on rating, the highest unlocked name is used
+    running_index = {}                      # {basename: int}: a running index per design name
 
     def __init__(self):
         """Make sure to call this constructor in each subclass."""
@@ -685,7 +686,10 @@ class ShipDesigner(object):
     def update_stats(self, ignore_species=False):
         """Calculate and update all stats of the design.
 
-        Default stats if no hull in design."""
+        Default stats if no hull in design.
+
+        :param ignore_species: bool, toggles whether species piloting grades are considered in the stats.
+        """
         if not self.hull:
             print "WARNING: Tried to update stats of design without hull. Reset values to default."
             self._set_stats_to_default()
@@ -1118,6 +1122,12 @@ class ShipDesigner(object):
         return total_dmg
 
     def _build_design_name(self):
+        """Build the ingame design name.
+
+        The design name is based on empire name, shipclass and, if a design_name_dict is implemented for this class,
+        on the strength of the design.
+        :return: string
+        """
         name_template = "%s %s Mk. %d"  # e.g. "EmpireAbbreviation Warship Mk. 1"
         empire_name = fo.getEmpire().name.upper()
         empire_initials = empire_name[:1] + empire_name[-1:]
@@ -1133,19 +1143,15 @@ class ShipDesigner(object):
             self.__class__.running_index[basename] += 1
         return design_name()
 
-        # if self.running_index_needs_update:
-        #     print "WARNING: It appears the RunningIndex for %s needs to be updated." % self.__class__.__name__,
-        #     print "This should only happen at first turn after game start or load."
-        # while self.running_index_needs_update:
-        #     name = name_template % (empire_initials, self.basename, self.running_index)
-        #     if _get_design_by_name(name):
-        #         self.__class__.running_index += 1
-        #     else:
-        #         self.__class__.running_index_needs_update = False
-        #         break
-        # return name_template % (empire_initials, self.basename, self.running_index)
-
     def _calc_rating_for_name(self):
+        """Return a rough rating for the design independent of special requirements and species.
+
+         The design name should not depend on the strength of the enemy or upon some additional requests we have
+         for the design but only compare the basic functionality. If not overloaded in the subclass, this function
+         returns the structure of the design.
+
+         :return: float - a rough approximation of the strength of this design
+         """
         self.update_stats(ignore_species=True)
         return self.structure
 
