@@ -102,7 +102,7 @@ def cur_best_mil_ship_rating():
     if priority in design_cache:  # use new framework
         try:
             return design_cache[priority][0][0]
-        except KeyError:
+        except IndexError:
             traceback.print_exc()
             return 0.0001
     else:
