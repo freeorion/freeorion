@@ -258,7 +258,7 @@ class ShipDesignCache(object):
             print "WARNING: In ShipDesignAI.py: Cache._build_cache_after_load() called but cache is not empty."
         for design_id in fo.getEmpire().allShipDesigns:
             design = fo.getShipDesign(design_id)
-            if TESTDESIGN_NAME_BASE in design.name:
+            if TESTDESIGN_NAME_BASE in design.name(False):
                 continue
             reference_name = _build_reference_name(design.hull, design.parts)
             self.map_reference_design_name[reference_name] = design.name(False)
