@@ -590,8 +590,8 @@ class ShipDesigner(object):
     filter_useful_parts = True              # removes any part not belonging to self.useful_part_classes
     filter_inefficient_parts = False        # removes cost-inefficient parts (less capacity and less capacity/cost)
 
-    running_index = 1                       # running index used in the design name
-    running_index_needs_update = True       # To check if we need to update the running_index after a load.
+    design_name_dict = {}
+    running_index = {}
 
     def __init__(self):
         """Make sure to call this constructor in each subclass."""
@@ -682,7 +682,7 @@ class ShipDesigner(object):
         """
         self.species = speciesname
 
-    def update_stats(self):
+    def update_stats(self, ignore_species=False):
         """Calculate and update all stats of the design.
 
         Default stats if no hull in design."""
@@ -753,7 +753,7 @@ class ShipDesigner(object):
                     self.stealth = 0
             # TODO: (Hardcode?) extra effect modifiers such as the transspatial drive or multispectral shields, ...
 
-        if self.species:
+        if self.species and not ignore_species:
             # TODO: Add troop modifiers once added
             weapons_grade, shields_grade = foAI.foAIstate.get_piloting_grades(self.species)
             self.shields = foAI.foAIstate.weight_shields(self.shields, shields_grade)
@@ -772,26 +772,8 @@ class ShipDesigner(object):
         # implementation is a simple running index that gets counted up in addition
         # to a base name. The real name is mapped using a dictionary.
         # For now, abbreviating the Empire name to uppercase first and last initials
-        name_template = "%s %s Mk. %d"  # e.g. "EmpireAbbreviation Warship Mk. 1"
 
-        # As the running_index for each part does not get stored in the save file,
-        # we need to find the current correct running_index after load. So find
-        # the smallest index that has not an existing design yet.
-        empire_name = fo.getEmpire().name.upper()
-        empire_initials = empire_name[:1] + empire_name[-1:]
-        if self.running_index_needs_update:
-            print "WARNING: It appears the RunningIndex for %s needs to be updated." % self.__class__.__name__,
-            print "This should only happen at first turn after game start or load."
-        while self.running_index_needs_update:
-            name = name_template % (empire_initials, self.basename, self.running_index)
-            if _get_design_by_name(name):
-                self.__class__.running_index += 1
-            else:
-                self.__class__.running_index_needs_update = False
-                break
-        name = name_template % (empire_initials, self.basename, self.running_index)
-
-        # reference_name = "-".join([self.hull.name]+[part.name for part in self.parts])
+        design_name = self._build_design_name()
         reference_name = _build_reference_name(self.hull.name, self.partnames)  # "Hull-Part1-Part2-Part3-Part4"
 
         if reference_name in Cache.map_reference_design_name:
@@ -807,19 +789,18 @@ class ShipDesigner(object):
                 return None
 
         if verbose:
-            print "Trying to add Design... %s" % name
-        res = fo.issueCreateShipDesignOrder(name, self.description, self.hull.name,
+            print "Trying to add Design... %s" % design_name
+        res = fo.issueCreateShipDesignOrder(design_name, self.description, self.hull.name,
                                             self.partnames, "", "fighter", False)
         if res:
             if verbose:
-                print "Success: Added Design %s, with result %d" % (name, res)
+                print "Success: Added Design %s, with result %d" % (design_name, res)
         else:
-            print "Failure: Tried to add design %s but returned %d, expected 1" % (name, res)
+            print "Failure: Tried to add design %s but returned %d, expected 1" % (design_name, res)
             return None
-        new_id = _get_design_by_name(name).id
+        new_id = _get_design_by_name(design_name).id
         if new_id:
-            self.__class__.running_index += 1
-            Cache.map_reference_design_name[reference_name] = name
+            Cache.map_reference_design_name[reference_name] = design_name
             return new_id
 
     def _class_specific_filter(self, partname_dict):
@@ -1136,6 +1117,38 @@ class ShipDesigner(object):
             total_dmg += dmg*count
         return total_dmg
 
+    def _build_design_name(self):
+        name_template = "%s %s Mk. %d"  # e.g. "EmpireAbbreviation Warship Mk. 1"
+        empire_name = fo.getEmpire().name.upper()
+        empire_initials = empire_name[:1] + empire_name[-1:]
+        rating = self._calc_rating_for_name()
+        basename = next((name for (maxRating, name) in sorted(self.design_name_dict.items(), reverse=True)
+                        if rating > maxRating), self.__class__.basename)
+
+        def design_name():
+            """return the design name based on the name_template"""
+            return name_template % (empire_initials, basename, self.running_index[basename])
+        self.__class__.running_index.setdefault(basename, 1)
+        while _get_design_by_name(design_name()):
+            self.__class__.running_index[basename] += 1
+        return design_name()
+
+        # if self.running_index_needs_update:
+        #     print "WARNING: It appears the RunningIndex for %s needs to be updated." % self.__class__.__name__,
+        #     print "This should only happen at first turn after game start or load."
+        # while self.running_index_needs_update:
+        #     name = name_template % (empire_initials, self.basename, self.running_index)
+        #     if _get_design_by_name(name):
+        #         self.__class__.running_index += 1
+        #     else:
+        #         self.__class__.running_index_needs_update = False
+        #         break
+        # return name_template % (empire_initials, self.basename, self.running_index)
+
+    def _calc_rating_for_name(self):
+        self.update_stats(ignore_species=True)
+        return self.structure
+
 
 class MilitaryShipDesigner(ShipDesigner):
     """Class that implements military designs.
@@ -1147,7 +1160,6 @@ class MilitaryShipDesigner(ShipDesigner):
     basename = "Warship"
     description = "Military Ship"
     useful_part_classes = ARMOUR | WEAPONS | SHIELDS | FUEL | ENGINES
-    running_index = 1
     filter_useful_parts = True
     filter_inefficient_parts = True
 
@@ -1229,7 +1241,6 @@ class TroopShipDesignerBaseClass(ShipDesigner):
     useful_part_classes = TROOPS
     filter_useful_parts = True
     filter_inefficient_parts = True
-    running_index = 1
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1271,7 +1282,6 @@ class OrbitalTroopShipDesigner(TroopShipDesignerBaseClass):
     """
     basename = "SpaceInvaders"
     description = "Ship designed for local invasions of enemy planets"
-    running_index = 1
 
     useful_part_classes = TROOPS
 
@@ -1288,7 +1298,6 @@ class StandardTroopShipDesigner(TroopShipDesignerBaseClass):
     """
     basename = "StormTroopers"
     description = "Ship designed for the invasion of enemy planets"
-    running_index = 1
     useful_part_classes = TROOPS
 
     def __init__(self):
@@ -1311,7 +1320,6 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
 
     filter_useful_parts = True
     filter_inefficient_parts = True
-    running_index = 1
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1353,7 +1361,6 @@ class StandardColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     """
     basename = "Seeder"
     description = "Unarmed ship designed for the colonisation of distant planets"
-    running_index = 1
     useful_part_classes = FUEL | COLONISATION | ENGINES | DETECTION
 
     def __init__(self):
@@ -1370,7 +1377,6 @@ class OrbitalColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     """
     basename = "Orbital Seeder"
     description = "Unarmed ship designed for the colonisation of local planets"
-    running_index = 1
     useful_part_classes = COLONISATION
 
     def __init__(self):
@@ -1398,7 +1404,6 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
 
     filter_useful_parts = True
     filter_inefficient_parts = True
-    running_index = 1
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1444,7 +1449,6 @@ class OrbitalOutpostShipDesigner(OutpostShipDesignerBaseClass):
     useful_part_classes = COLONISATION
     filter_useful_parts = True
     filter_inefficient_parts = False
-    running_index = 1
 
     def __init__(self):
         OutpostShipDesignerBaseClass.__init__(self)
@@ -1464,7 +1468,6 @@ class StandardOutpostShipDesigner(OutpostShipDesignerBaseClass):
     """
     basename = "Outposter"
     description = "Unarmed ship designed for founding distant outposts"
-    running_index = 1
     useful_part_classes = COLONISATION | FUEL | ENGINES | DETECTION
 
     def __init__(self):
@@ -1485,7 +1488,6 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
 
     filter_useful_parts = True
     filter_inefficient_parts = True
-    running_index = 1
 
     def __init__(self):
         ShipDesigner.__init__(self)
