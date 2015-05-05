@@ -1163,6 +1163,26 @@ class MilitaryShipDesigner(ShipDesigner):
     filter_useful_parts = True
     filter_inefficient_parts = True
 
+    design_name_dict = {
+        -float('inf'): "INVALID_DESIGN",
+        0: "Harpy",
+        100: "Gorgon",
+        250: "Centaur",
+        500: "Cerberus",
+        1000: "Griffin",
+        2500: "Manticore",
+        5000: "Hydra",
+        7500: "Python",
+        10000: "Pegasus",
+        15000: "Phoenix",
+        20000: "Atlas",
+        25000: "Helios",
+        30000: "Prometheus",
+        35000: "Poseidon",
+        40000: "Hades",
+        45000: "Nemesis",
+    }
+
     def __init__(self):
         ShipDesigner.__init__(self)
         self.additional_specifications.minimum_fuel = 1
@@ -1226,6 +1246,10 @@ class MilitaryShipDesigner(ShipDesigner):
         else:
             ret_val[-1] = num_slots
         return ret_val
+
+    def _calc_rating_for_name(self):
+        self.update_stats(ignore_species=True)
+        return self.structure*self._total_dmg()*(1+self.shields/10)
 
 
 class TroopShipDesignerBaseClass(ShipDesigner):
