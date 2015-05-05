@@ -1627,10 +1627,20 @@ BuildingType
             ]
             effects = [
                 SetMaxShield value = Value + 60000
-                SetMaxDefense value = Value + 200
+                SetMaxDefense value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
                 SetMaxTroops value = Value + 300
                 SetDetection value = Value + 100
-                SetTargetResearch value = Value + [[EXPERIMENTOR_SPAWN_START_TURN]]
+            ]
+        EffectsGroup
+            scope = And [
+                    Object id = Source.PlanetID
+                    Planet
+            ]
+            activation = Or [
+                Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]      // always remove lanes before spawn start turn
+                Not ContainedBy Contains And [ Ship OwnedBy affiliation = AnyEmpire ]
+            ]
+            effects = [
                 // Regeneration
                 SetDefense value = Value + 10
                 SetShield value = Value + 50
