@@ -127,9 +127,9 @@ public:
         m_can_produce_ships(params.can_produce_ships),
         m_tags(),
         m_graphic(graphic)
-    { 
-        Init(); 
-        for ( std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+    {
+        Init();
+        for (std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
     }
 
@@ -258,21 +258,21 @@ public:
 
     /** returns a map from species name to a map from empire id to each the
       * species' opinion of the empire */
-    const std::map<std::string, std::map<int, double> >&            GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+    const std::map<std::string, std::map<int, float> >&             GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns opinion of species with name \a species_name about empire with
       * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
-    double                                                          SpeciesEmpireOpinion(const std::string& species_name,
+    float                                                           SpeciesEmpireOpinion(const std::string& species_name,
                                                                                          int empire_id) const;
 
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
-    const std::map<std::string, std::map<std::string, double> >&    GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+    const std::map<std::string, std::map<std::string, float> >&     GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns opinion of species with name \a opinionated_species_name about
       * other species with name \a rated_species_name or 0.0 if there is no
       * such opinion yet recorded. */
-    double                                                          SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
+    float                                                           SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
                                                                                           const std::string& rated_species_name) const;
 
     /** returns the instance of this singleton class; you should use the free
@@ -288,13 +288,13 @@ public:
 
     /** sets the opinions of species (indexed by name string) of empires (indexed
       * by id) as a double-valued number. */
-    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, double> >& species_empire_opinions);
-    void    SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, double opinion);
+    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, float> >& species_empire_opinions);
+    void    SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion);
 
     /** sets the opinions of species (indexed by name string) of other species
       * (indexed by name string) as a double-valued number. */
-    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, double> >& species_species_opinions);
-    void    SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, double opinion);
+    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, float> >& species_species_opinions);
+    void    SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, float opinion);
 
     /** clears all species opinion data */
     void    ClearSpeciesOpinions();
@@ -314,8 +314,8 @@ private:
     void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
 
     std::map<std::string, Species*>                         m_species;
-    std::map<std::string, std::map<int, double> >           m_species_empire_opinions;
-    std::map<std::string, std::map<std::string, double> >   m_species_species_opinions;
+    std::map<std::string, std::map<int, float> >            m_species_empire_opinions;
+    std::map<std::string, std::map<std::string, float> >    m_species_species_opinions;
 
     std::map<std::string, std::map<int, float> >            m_species_object_populations;
     std::map<std::string, std::map<std::string, int> >      m_species_species_ships_destroyed;

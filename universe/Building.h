@@ -137,8 +137,8 @@ public:
         m_effects(effects),
         m_icon(icon)
     {
-        Init(); 
-        for ( std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+        Init();
+        for (std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
     }
 

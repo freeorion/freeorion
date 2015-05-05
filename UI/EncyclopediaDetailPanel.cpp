@@ -1670,32 +1670,32 @@ namespace {
         }
 
         // empire opinions
-        const std::map<std::string, std::map<int, double> >& seom = GetSpeciesManager().GetSpeciesEmpireOpinionsMap();
-        std::map<std::string, std::map<int, double> >::const_iterator species_it = seom.find(species->Name());
+        const std::map<std::string, std::map<int, float> >& seom = GetSpeciesManager().GetSpeciesEmpireOpinionsMap();
+        std::map<std::string, std::map<int, float> >::const_iterator species_it = seom.find(species->Name());
         if (species_it != seom.end()) {
             detailed_description += "\n" + UserString("OPINIONS_OF_EMPIRES") + "\n";
-            for (std::map<int, double>::const_iterator empire_it = species_it->second.begin();
+            for (std::map<int, float>::const_iterator empire_it = species_it->second.begin();
                  empire_it != species_it->second.end(); ++empire_it)
             {
                 const Empire* empire = GetEmpire(empire_it->first);
                 if (!empire)
                     continue;
-
             }
         }
 
         // species opinions
-        const std::map<std::string, std::map<std::string, double> >& ssom = GetSpeciesManager().GetSpeciesSpeciesOpinionsMap();
-        std::map<std::string, std::map<std::string, double> >::const_iterator species_it2 = ssom.find(species->Name());
+        const std::map<std::string, std::map<std::string, float> >& ssom = GetSpeciesManager().GetSpeciesSpeciesOpinionsMap();
+        std::map<std::string, std::map<std::string, float> >::const_iterator species_it2 = ssom.find(species->Name());
         if (species_it2 != ssom.end()) {
             detailed_description += "\n" + UserString("OPINIONS_OF_OTHER_SPECIES") + "\n";
-            for (std::map<std::string, double>::const_iterator species_it3 = species_it2->second.begin();
+            for (std::map<std::string, float>::const_iterator species_it3 = species_it2->second.begin();
                  species_it3!= species_it2->second.end(); ++species_it3)
             {
                 const Species* species2 = GetSpecies(species_it3->first);
                 if (!species2)
                     continue;
 
+                detailed_description += UserString(species2->Name()) + " : " + DoubleToString(species_it3->second, 3, false) + "\n";
             }
         }
 
