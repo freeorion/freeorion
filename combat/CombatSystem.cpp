@@ -718,6 +718,14 @@ namespace {
                 std::swap(shuffled[i], shuffled[pos2]);
             }
         }
+        
+        /// Ensures that the empire has at least basic visibility of the object.
+        /// This is likely the result of the object shooting at something of the empires
+        void MakeCombatVisible(int object_id, int empire_id) {
+            empire_infos[empire_id].target_ids.insert(object_id);
+            combat_info.empire_object_visibility[empire_id][object_id] = std::max(combat_info.empire_object_visibility[empire_id][object_id], VIS_PARTIAL_VISIBILITY);
+        }
+        
     private:
         typedef std::set<int>::const_iterator const_id_iterator;
 
@@ -892,7 +900,7 @@ namespace {
             // mark attackers as valid targets for attacked object's owners, so
             // attacker they can be counter-attacked in subsequent rounds if it
             // was not already attackable
-            combat_state.empire_infos[target->Owner()].target_ids.insert(attacker->ID());
+            combat_state.MakeCombatVisible(attacker->ID(), target->Owner());
         } // end for over weapons
     }
 

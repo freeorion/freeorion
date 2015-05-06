@@ -1657,6 +1657,17 @@ namespace {
              combat_it != combats.end(); ++combat_it)
         {
             const CombatInfo& combat_info = *combat_it;
+            
+            // update visibilities.
+            for (Universe::EmpireObjectVisibilityMap::const_iterator empire_it = combat_info.empire_object_visibility.begin();
+                 empire_it != combat_info.empire_object_visibility.end();
+            ++empire_it)
+            {
+                for (Universe::ObjectVisibilityMap::const_iterator object_it = empire_it->second.begin(); object_it != empire_it->second.end(); ++object_it) {
+                    Visibility vis = object_it->second;
+                    universe.SetEmpireObjectVisibility(empire_it->first, object_it->first, vis);
+                }
+            }
 
             // indexed by fleet id, which empire ids to inform that a fleet is destroyed
             std::map<int, std::set<int> > empires_to_update_of_fleet_destruction;
@@ -2797,7 +2808,7 @@ void ServerApp::PostCombatProcessTurns() {
     ObjectMap& objects = m_universe.Objects();
 
     // post-combat visibility update
-    m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireObjectVisibilities(false);
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
@@ -2944,7 +2955,7 @@ void ServerApp::PostCombatProcessTurns() {
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     // post-production and meter-effects visibility update
-    m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireObjectVisibilities(false);
 
     m_universe.UpdateEmpireStaleObjectKnowledge();
 
@@ -2963,7 +2974,7 @@ void ServerApp::PostCombatProcessTurns() {
     DebugLogger() << "ServerApp::PostCombatProcessTurns Turn number incremented to " << m_current_turn;
 
 
-    // new turn visibility update
+    // new turn visibility update. Forget combat results now, since the combat happened last turn.
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
