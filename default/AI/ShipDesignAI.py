@@ -44,7 +44,7 @@ import traceback
 import math
 from collections import Counter
 from collections import defaultdict
-from freeorion_tools import print_error
+from freeorion_tools import print_error, UserString
 
 # Define meta classes for the ship parts
 ARMOUR = frozenset({fo.shipPartClass.armour})
@@ -591,6 +591,8 @@ class ShipDesigner(object):
     filter_useful_parts = True              # removes any part not belonging to self.useful_part_classes
     filter_inefficient_parts = False        # removes cost-inefficient parts (less capacity and less capacity/cost)
 
+    NAMETABLE = "AI_SHIPDESIGN_NAME_INVALID"
+    NAME_THRESHOLDS = []                    # list of rating thresholds to choose a different name
     design_name_dict = {}                   # {min_rating: basename}: based on rating, the highest unlocked name is used
     running_index = {}                      # {basename: int}: a running index per design name
 
@@ -613,6 +615,8 @@ class ShipDesigner(object):
         self.production_time = 1
         self.pid = -1               # planetID for checks on production cost if not LocationInvariant.
         self.additional_specifications = AdditionalSpecifications()
+        self.design_name_dict = {k: v for k, v in zip(self.NAME_THRESHOLDS,
+                                                      UserString(self.NAMETABLE, self.basename).split())}
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -1169,25 +1173,9 @@ class MilitaryShipDesigner(ShipDesigner):
     filter_useful_parts = True
     filter_inefficient_parts = True
 
-    design_name_dict = {
-        -float('inf'): "INVALID_DESIGN",
-        0: "Harpy",
-        100: "Gorgon",
-        250: "Centaur",
-        500: "Cerberus",
-        1000: "Griffin",
-        2500: "Manticore",
-        5000: "Hydra",
-        7500: "Python",
-        10000: "Pegasus",
-        15000: "Phoenix",
-        20000: "Atlas",
-        25000: "Helios",
-        30000: "Prometheus",
-        35000: "Poseidon",
-        40000: "Hades",
-        45000: "Nemesis",
-    }
+    NAMETABLE = "AI_SHIPDESIGN_NAME_MILITARY"
+    NAME_THRESHOLDS = sorted([0, 100, 250, 500, 1000, 2500, 5000, 7500, 10000,
+                              15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 60000])
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1314,6 +1302,8 @@ class OrbitalTroopShipDesigner(TroopShipDesignerBaseClass):
     description = "Ship designed for local invasions of enemy planets"
 
     useful_part_classes = TROOPS
+    NAMETABLE = "AI_SHIPDESIGN_NAME_TROOPER_ORBITAL"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         TroopShipDesignerBaseClass.__init__(self)
@@ -1329,6 +1319,8 @@ class StandardTroopShipDesigner(TroopShipDesignerBaseClass):
     basename = "StormTroopers"
     description = "Ship designed for the invasion of enemy planets"
     useful_part_classes = TROOPS
+    NAMETABLE = "AI_SHIPDESIGN_NAME_TROOPER_STANDARD"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         TroopShipDesignerBaseClass.__init__(self)
@@ -1392,6 +1384,8 @@ class StandardColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     basename = "Seeder"
     description = "Unarmed ship designed for the colonisation of distant planets"
     useful_part_classes = FUEL | COLONISATION | ENGINES | DETECTION
+    NAMETABLE = "AI_SHIPDESIGN_NAME_COLONISATION_STANDARD"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         ColonisationShipDesignerBaseClass.__init__(self)
@@ -1408,6 +1402,8 @@ class OrbitalColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     basename = "Orbital Seeder"
     description = "Unarmed ship designed for the colonisation of local planets"
     useful_part_classes = COLONISATION
+    NAMETABLE = "AI_SHIPDESIGN_NAME_COLONISATION_ORBITAL"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         ColonisationShipDesignerBaseClass.__init__(self)
@@ -1479,6 +1475,8 @@ class OrbitalOutpostShipDesigner(OutpostShipDesignerBaseClass):
     useful_part_classes = COLONISATION
     filter_useful_parts = True
     filter_inefficient_parts = False
+    NAMETABLE = "AI_SHIPDESIGN_NAME_OUTPOSTER_ORBITAL"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         OutpostShipDesignerBaseClass.__init__(self)
@@ -1499,6 +1497,8 @@ class StandardOutpostShipDesigner(OutpostShipDesignerBaseClass):
     basename = "Outposter"
     description = "Unarmed ship designed for founding distant outposts"
     useful_part_classes = COLONISATION | FUEL | ENGINES | DETECTION
+    NAMETABLE = "AI_SHIPDESIGN_NAME_OUTPOSTER_STANDARD"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         OutpostShipDesignerBaseClass.__init__(self)
@@ -1515,6 +1515,8 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
     basename = "Decoy"
     description = "Orbital Defense Ship"
     useful_part_classes = WEAPONS | ARMOUR
+    NAMETABLE = "AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE"
+    NAME_THRESHOLDS = sorted([0, 1])
 
     filter_useful_parts = True
     filter_inefficient_parts = True
@@ -1527,6 +1529,10 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
             return -9999
         total_dmg = self._total_dmg_vs_shields()
         return (1+total_dmg*self.structure)/self.production_cost
+
+    def _calc_rating_for_name(self):
+        self.update_stats(ignore_species=True)
+        return self._total_dmg()
 
 
 def _get_planets_with_shipyard():

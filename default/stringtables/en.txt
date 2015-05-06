@@ -10687,6 +10687,52 @@ Invincible'''
 
 ### End of Capital Names Lists
 
+### Beginning of AI Shipdesign Name List
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
+### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+AI_SHIPDESIGN_NAME_INVALID
+Invalid Design
+
+AI_SHIPDESIGN_NAME_MILITARY
+'''Harpy
+Gorgon
+Centaur
+Cerberus
+Griffin
+Manticore
+Hydra
+Python
+Pegasus
+Phoenix
+Atlas
+Helios
+Prometheus
+Poseidon
+Hades
+Nemesis'''
+
+AI_SHIPDESIGN_NAME_TROOPER_ORBITAL
+SpaceInvaders
+
+AI_SHIPDESIGN_NAME_TROOPER_STANDARD
+StormTroopers
+
+AI_SHIPDESIGN_NAME_COLONISATION_ORBITAL
+Orbital Seeder
+
+AI_SHIPDESIGN_NAME_COLONISATION_STANDARD
+Seeder
+
+AI_SHIPDESIGN_NAME_OUTPOSTER_ORBITAL
+Orbital Outposter
+
+AI_SHIPDESIGN_NAME_OUTPOSTER_STANDARD
+Outposter
+
+AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
+'''Decoy
+Starbase'''
+
 #############################################################
 ####           HOTKEYS NAMES AND DESCRIPTIONS            ####
 #############################################################
