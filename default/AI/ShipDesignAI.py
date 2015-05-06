@@ -44,7 +44,7 @@ import traceback
 import math
 from collections import Counter
 from collections import defaultdict
-from freeorion_tools import print_error
+from freeorion_tools import print_error, UserString
 
 # Define meta classes for the ship parts
 ARMOUR = frozenset({fo.shipPartClass.armour})
@@ -580,6 +580,7 @@ class ShipDesigner(object):
     _rating_function()
     _class_specific_filter()
     _starting_guess()
+    _calc_rating_for_name()
 
     For improved performance, maybe override _filling_algorithm() with a more specialised algorithm as well.
     """
@@ -590,8 +591,10 @@ class ShipDesigner(object):
     filter_useful_parts = True              # removes any part not belonging to self.useful_part_classes
     filter_inefficient_parts = False        # removes cost-inefficient parts (less capacity and less capacity/cost)
 
-    running_index = 1                       # running index used in the design name
-    running_index_needs_update = True       # To check if we need to update the running_index after a load.
+    NAMETABLE = "AI_SHIPDESIGN_NAME_INVALID"
+    NAME_THRESHOLDS = []                    # list of rating thresholds to choose a different name
+    design_name_dict = {}                   # {min_rating: basename}: based on rating, the highest unlocked name is used
+    running_index = {}                      # {basename: int}: a running index per design name
 
     def __init__(self):
         """Make sure to call this constructor in each subclass."""
@@ -612,6 +615,8 @@ class ShipDesigner(object):
         self.production_time = 1
         self.pid = -1               # planetID for checks on production cost if not LocationInvariant.
         self.additional_specifications = AdditionalSpecifications()
+        self.design_name_dict = {k: v for k, v in zip(self.NAME_THRESHOLDS,
+                                                      UserString(self.NAMETABLE, self.basename).split())}
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -682,10 +687,13 @@ class ShipDesigner(object):
         """
         self.species = speciesname
 
-    def update_stats(self):
+    def update_stats(self, ignore_species=False):
         """Calculate and update all stats of the design.
 
-        Default stats if no hull in design."""
+        Default stats if no hull in design.
+
+        :param ignore_species: bool, toggles whether species piloting grades are considered in the stats.
+        """
         if not self.hull:
             print "WARNING: Tried to update stats of design without hull. Reset values to default."
             self._set_stats_to_default()
@@ -753,7 +761,7 @@ class ShipDesigner(object):
                     self.stealth = 0
             # TODO: (Hardcode?) extra effect modifiers such as the transspatial drive or multispectral shields, ...
 
-        if self.species:
+        if self.species and not ignore_species:
             # TODO: Add troop modifiers once added
             weapons_grade, shields_grade = foAI.foAIstate.get_piloting_grades(self.species)
             self.shields = foAI.foAIstate.weight_shields(self.shields, shields_grade)
@@ -772,26 +780,8 @@ class ShipDesigner(object):
         # implementation is a simple running index that gets counted up in addition
         # to a base name. The real name is mapped using a dictionary.
         # For now, abbreviating the Empire name to uppercase first and last initials
-        name_template = "%s %s Mk. %d"  # e.g. "EmpireAbbreviation Warship Mk. 1"
 
-        # As the running_index for each part does not get stored in the save file,
-        # we need to find the current correct running_index after load. So find
-        # the smallest index that has not an existing design yet.
-        empire_name = fo.getEmpire().name.upper()
-        empire_initials = empire_name[:1] + empire_name[-1:]
-        if self.running_index_needs_update:
-            print "WARNING: It appears the RunningIndex for %s needs to be updated." % self.__class__.__name__,
-            print "This should only happen at first turn after game start or load."
-        while self.running_index_needs_update:
-            name = name_template % (empire_initials, self.basename, self.running_index)
-            if _get_design_by_name(name):
-                self.__class__.running_index += 1
-            else:
-                self.__class__.running_index_needs_update = False
-                break
-        name = name_template % (empire_initials, self.basename, self.running_index)
-
-        # reference_name = "-".join([self.hull.name]+[part.name for part in self.parts])
+        design_name = self._build_design_name()
         reference_name = _build_reference_name(self.hull.name, self.partnames)  # "Hull-Part1-Part2-Part3-Part4"
 
         if reference_name in Cache.map_reference_design_name:
@@ -807,19 +797,18 @@ class ShipDesigner(object):
                 return None
 
         if verbose:
-            print "Trying to add Design... %s" % name
-        res = fo.issueCreateShipDesignOrder(name, self.description, self.hull.name,
+            print "Trying to add Design... %s" % design_name
+        res = fo.issueCreateShipDesignOrder(design_name, self.description, self.hull.name,
                                             self.partnames, "", "fighter", False)
         if res:
             if verbose:
-                print "Success: Added Design %s, with result %d" % (name, res)
+                print "Success: Added Design %s, with result %d" % (design_name, res)
         else:
-            print "Failure: Tried to add design %s but returned %d, expected 1" % (name, res)
+            print "Failure: Tried to add design %s but returned %d, expected 1" % (design_name, res)
             return None
-        new_id = _get_design_by_name(name).id
+        new_id = _get_design_by_name(design_name).id
         if new_id:
-            self.__class__.running_index += 1
-            Cache.map_reference_design_name[reference_name] = name
+            Cache.map_reference_design_name[reference_name] = design_name
             return new_id
 
     def _class_specific_filter(self, partname_dict):
@@ -1136,6 +1125,40 @@ class ShipDesigner(object):
             total_dmg += dmg*count
         return total_dmg
 
+    def _build_design_name(self):
+        """Build the ingame design name.
+
+        The design name is based on empire name, shipclass and, if a design_name_dict is implemented for this class,
+        on the strength of the design.
+        :return: string
+        """
+        name_template = "%s %s Mk. %d"  # e.g. "EmpireAbbreviation Warship Mk. 1"
+        empire_name = fo.getEmpire().name.upper()
+        empire_initials = empire_name[:1] + empire_name[-1:]
+        rating = self._calc_rating_for_name()
+        basename = next((name for (maxRating, name) in sorted(self.design_name_dict.items(), reverse=True)
+                        if rating > maxRating), self.__class__.basename)
+
+        def design_name():
+            """return the design name based on the name_template"""
+            return name_template % (empire_initials, basename, self.running_index[basename])
+        self.__class__.running_index.setdefault(basename, 1)
+        while _get_design_by_name(design_name()):
+            self.__class__.running_index[basename] += 1
+        return design_name()
+
+    def _calc_rating_for_name(self):
+        """Return a rough rating for the design independent of special requirements and species.
+
+         The design name should not depend on the strength of the enemy or upon some additional requests we have
+         for the design but only compare the basic functionality. If not overloaded in the subclass, this function
+         returns the structure of the design.
+
+         :return: float - a rough approximation of the strength of this design
+         """
+        self.update_stats(ignore_species=True)
+        return self.structure
+
 
 class MilitaryShipDesigner(ShipDesigner):
     """Class that implements military designs.
@@ -1147,9 +1170,12 @@ class MilitaryShipDesigner(ShipDesigner):
     basename = "Warship"
     description = "Military Ship"
     useful_part_classes = ARMOUR | WEAPONS | SHIELDS | FUEL | ENGINES
-    running_index = 1
     filter_useful_parts = True
     filter_inefficient_parts = True
+
+    NAMETABLE = "AI_SHIPDESIGN_NAME_MILITARY"
+    NAME_THRESHOLDS = sorted([0, 100, 250, 500, 1000, 2500, 5000, 7500, 10000,
+                              15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 60000])
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1215,6 +1241,10 @@ class MilitaryShipDesigner(ShipDesigner):
             ret_val[-1] = num_slots
         return ret_val
 
+    def _calc_rating_for_name(self):
+        self.update_stats(ignore_species=True)
+        return self.structure*self._total_dmg()*(1+self.shields/10)
+
 
 class TroopShipDesignerBaseClass(ShipDesigner):
     """Base class for troop ships. To be inherited from.
@@ -1229,7 +1259,6 @@ class TroopShipDesignerBaseClass(ShipDesigner):
     useful_part_classes = TROOPS
     filter_useful_parts = True
     filter_inefficient_parts = True
-    running_index = 1
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1271,9 +1300,10 @@ class OrbitalTroopShipDesigner(TroopShipDesignerBaseClass):
     """
     basename = "SpaceInvaders"
     description = "Ship designed for local invasions of enemy planets"
-    running_index = 1
 
     useful_part_classes = TROOPS
+    NAMETABLE = "AI_SHIPDESIGN_NAME_TROOPER_ORBITAL"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         TroopShipDesignerBaseClass.__init__(self)
@@ -1288,8 +1318,9 @@ class StandardTroopShipDesigner(TroopShipDesignerBaseClass):
     """
     basename = "StormTroopers"
     description = "Ship designed for the invasion of enemy planets"
-    running_index = 1
     useful_part_classes = TROOPS
+    NAMETABLE = "AI_SHIPDESIGN_NAME_TROOPER_STANDARD"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         TroopShipDesignerBaseClass.__init__(self)
@@ -1311,7 +1342,6 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
 
     filter_useful_parts = True
     filter_inefficient_parts = True
-    running_index = 1
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1353,8 +1383,9 @@ class StandardColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     """
     basename = "Seeder"
     description = "Unarmed ship designed for the colonisation of distant planets"
-    running_index = 1
     useful_part_classes = FUEL | COLONISATION | ENGINES | DETECTION
+    NAMETABLE = "AI_SHIPDESIGN_NAME_COLONISATION_STANDARD"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         ColonisationShipDesignerBaseClass.__init__(self)
@@ -1370,8 +1401,9 @@ class OrbitalColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     """
     basename = "Orbital Seeder"
     description = "Unarmed ship designed for the colonisation of local planets"
-    running_index = 1
     useful_part_classes = COLONISATION
+    NAMETABLE = "AI_SHIPDESIGN_NAME_COLONISATION_ORBITAL"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         ColonisationShipDesignerBaseClass.__init__(self)
@@ -1398,7 +1430,6 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
 
     filter_useful_parts = True
     filter_inefficient_parts = True
-    running_index = 1
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1444,7 +1475,8 @@ class OrbitalOutpostShipDesigner(OutpostShipDesignerBaseClass):
     useful_part_classes = COLONISATION
     filter_useful_parts = True
     filter_inefficient_parts = False
-    running_index = 1
+    NAMETABLE = "AI_SHIPDESIGN_NAME_OUTPOSTER_ORBITAL"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         OutpostShipDesignerBaseClass.__init__(self)
@@ -1464,8 +1496,9 @@ class StandardOutpostShipDesigner(OutpostShipDesignerBaseClass):
     """
     basename = "Outposter"
     description = "Unarmed ship designed for founding distant outposts"
-    running_index = 1
     useful_part_classes = COLONISATION | FUEL | ENGINES | DETECTION
+    NAMETABLE = "AI_SHIPDESIGN_NAME_OUTPOSTER_STANDARD"
+    NAME_THRESHOLDS = sorted([0])
 
     def __init__(self):
         OutpostShipDesignerBaseClass.__init__(self)
@@ -1482,10 +1515,11 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
     basename = "Decoy"
     description = "Orbital Defense Ship"
     useful_part_classes = WEAPONS | ARMOUR
+    NAMETABLE = "AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE"
+    NAME_THRESHOLDS = sorted([0, 1])
 
     filter_useful_parts = True
     filter_inefficient_parts = True
-    running_index = 1
 
     def __init__(self):
         ShipDesigner.__init__(self)
@@ -1495,6 +1529,10 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
             return -9999
         total_dmg = self._total_dmg_vs_shields()
         return (1+total_dmg*self.structure)/self.production_cost
+
+    def _calc_rating_for_name(self):
+        self.update_stats(ignore_species=True)
+        return self._total_dmg()
 
 
 def _get_planets_with_shipyard():
