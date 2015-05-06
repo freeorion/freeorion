@@ -11,18 +11,15 @@ public:
     CombatReportWnd ();
     // Must have explicit destructor since CombatReportPrivate is incomplete here
     virtual ~CombatReportWnd();
-    
-    /// Sets which combat to show.
-    void SetLog( int log_id );
-    
-    virtual GG::Pt ClientLowerRight() const;
-    virtual void CloseClicked();
 
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    
+    /// Sets which combat to show.
+    void            SetLog(int log_id);
+    virtual GG::Pt  ClientLowerRight() const;
+    virtual void    CloseClicked();
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
 private:
     class CombatReportPrivate;
-    
     boost::scoped_ptr<CombatReportPrivate> m_impl;
 };
 
