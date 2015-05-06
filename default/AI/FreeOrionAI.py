@@ -11,6 +11,7 @@ import freeOrionAIInterface as fo  # interface used to interact with FreeOrion A
 import AIstate
 import ColonisationAI
 import ExplorationAI
+import DiplomaticCorp
 import FleetUtilsAI
 import InvasionAI
 import MilitaryAI
@@ -19,7 +20,7 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from freeorion_tools import UserString, chat_on_error, print_error
+from freeorion_tools import UserString, UserStringList, chat_on_error, print_error
 from freeorion_debug import Timer
 
 main_timer = Timer('timer', write_log=True)
@@ -34,12 +35,12 @@ except:
     pass
 
 
-_capitols = {fo.aggression.beginner: UserString("AI_CAPITOL_NAMES_BEGINNER", ""),
-             fo.aggression.turtle: UserString("AI_CAPITOL_NAMES_TURTLE", ""),
-             fo.aggression.cautious: UserString("AI_CAPITOL_NAMES_CAUTIOUS", ""),
-             fo.aggression.typical: UserString("AI_CAPITOL_NAMES_TYPICAL", ""),
-             fo.aggression.aggressive: UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),
-             fo.aggression.maniacal: UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
+_capitals = {fo.aggression.beginner: UserStringList("AI_CAPITOL_NAMES_BEGINNER"),
+             fo.aggression.turtle: UserStringList("AI_CAPITOL_NAMES_TURTLE"),
+             fo.aggression.cautious: UserStringList("AI_CAPITOL_NAMES_CAUTIOUS"),
+             fo.aggression.typical: UserStringList("AI_CAPITOL_NAMES_TYPICAL"),
+             fo.aggression.aggressive: UserStringList("AI_CAPITOL_NAMES_AGGRESSIVE"),
+             fo.aggression.maniacal: UserStringList("AI_CAPITOL_NAMES_MANIACAL")}
 
 # AIstate
 foAIstate = None
@@ -68,8 +69,8 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != -1:
         planet = universe.getPlanet(planet_id)
-        new_name = random.choice(_capitols.get(aggression, "").split('\n')).strip() + " " + planet.name
-        print "Capitol City Names are: ", _capitols
+        new_name = " ".join([random.choice(_capitals.get(aggression, []) or [" "]).strip(), planet.name])
+        print "Capitol City Names are: ", _capitals
         print "This Capitol New name is ", new_name
         res = fo.issueRenameOrder(planet_id, new_name)
         print "Capitol Rename attempt result: %d; planet now named %s" % (res, planet.name)
@@ -120,30 +121,14 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
 def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     """Called when this player receives a diplomatic message update from the server,
     such as if another player declares war, accepts peace, or cancels a proposed peace treaty."""
-    print "Received diplomatic %s message from empire %s to empire %s" % (message.type, message.sender, message.recipient)
-    print "my empire id: %s" % fo.empireID()
-    if message.type == fo.diplomaticMessageType.peaceProposal and message.recipient == fo.empireID():
-        reply_sender = message.recipient
-        reply_recipient = message.sender
-        proposal_sender_player = fo.empirePlayerID(message.sender)
-        fo.sendChatMessage(proposal_sender_player, "So, the Terran Hairless Plains Ape advising your empire wishes to scratch its belly for a while?")
-        if (foAIstate.aggression == fo.aggression.beginner or
-                foAIstate.aggression != fo.aggression.maniacal and random.random() < 1.0 / (((foAIstate.aggression + 0.01)*fo.currentTurn()/2)**0.5)):
-            fo.sendChatMessage(proposal_sender_player, "OK, Peace offer accepted.")
-            reply = fo.diplomaticMessage(reply_sender, reply_recipient, fo.diplomaticMessageType.acceptProposal)
-            print "Sending diplomatic message to empire %s of type %s" % (reply_recipient, reply.type)
-            fo.sendDiplomaticMessage(reply)
-        else:
-            fo.sendChatMessage(proposal_sender_player, "Maybe later. We are currently getting busy with Experimental Test Subject yo-Ma-ma.")
-
+    DiplomaticCorp.handle_diplomatic_message(message)
 
 
 @chat_on_error
 def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
-    """Called when this player receives and update about the diplomatic status between players, which may
+    """Called when this player receives an update about the diplomatic status between players, which may
     or may not include this player."""
-    print "Received diplomatic status update to %s about empire %s and empire %s" % (status_update.status, status_update.empire1, status_update.empire2)
-
+    DiplomaticCorp.handle_diplomatic_status_update(status_update)
 
 
 @chat_on_error
