@@ -29,7 +29,7 @@
 #include "../../universe/Species.h"
 #include "../../Empire/Empire.h"
 #include "../../combat/CombatLogManager.h"
-#include "../parse/Parse.h"
+#include "../../parse/Parse.h"
 
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
