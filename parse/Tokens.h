@@ -274,6 +274,7 @@
     (PreferredFocus)                            \
     (Prerequisites)                             \
     (PreviousSystemID)                          \
+    (Priority)                                  \
     (Probability)                               \
     (ProducedByEmpire)                          \
     (ProducedByEmpireID)                        \

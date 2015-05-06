@@ -9,6 +9,29 @@ BuildingType
     tags = "ANTIQUATED"
     location = Described description = "NOWHERE" condition = Not All
     effectsgroups = [
+/*  // testing priority
+    // Research should see a x2 bonus, then a +5 bonus.
+    // Industry should see a +5 bonus, then a x2 bonus.
+        EffectsGroup
+            scope = Object id = Source.PlanetID
+            accountinglabel = "research_plus_5"
+            effects = SetTargetResearch value = Value + 5
+        EffectsGroup
+            scope = Object id = Source.PlanetID
+            accountinglabel = "research_times_2"
+            priority = [[EARLY_PRIORITY]]
+            effects = SetTargetResearch value = Value * 2
+        EffectsGroup
+            scope = Object id = Source.PlanetID
+            accountinglabel = "industry_plus_5"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetTargetIndustry value = Value + 5
+        EffectsGroup
+            scope = Object id = Source.PlanetID
+            accountinglabel = "industry_times_2"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetIndustry value = Value * 2
+*/
 /*  // testing effects
         EffectsGroup
             scope = And [

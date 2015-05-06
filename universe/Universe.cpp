@@ -2243,10 +2243,10 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     // grouping targets causes by effects group
     // sorting by effects group has already been done in GetEffectsAndTargets()
     // FIXME: GetEffectsAndTargets already produces this separation, exploit that
-    std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> > dispatched_targets_causes;
+    std::map<int, std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> > > dispatched_targets_causes;
     {
         const Effect::EffectsGroup* last_effects_group   = 0;
-        Effect::TargetsCauses*      group_targets_causes = 0;
+        Effect::TargetsCauses*      group_targets_causes = 0; // Is this even used?  ~Bigjoe5
 
         for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin();
              targets_it != targets_causes.end(); ++targets_it)
@@ -2256,77 +2256,82 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
             if (effects_group != last_effects_group) {
                 last_effects_group = effects_group;
-                dispatched_targets_causes.push_back(std::make_pair(effects_group, Effect::TargetsCauses()));
-                group_targets_causes = &dispatched_targets_causes.back().second;
+                dispatched_targets_causes[effects_group->Priority()].push_back(std::make_pair(effects_group, Effect::TargetsCauses()));
+                group_targets_causes = &dispatched_targets_causes[effects_group->Priority()].back().second;
             }
             group_targets_causes->push_back(*targets_it);
         }
     }
 
     // execute each effects group one by one
-    std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> >::iterator effect_group_it;
-    for (effect_group_it = dispatched_targets_causes.begin();
-         effect_group_it != dispatched_targets_causes.end(); ++effect_group_it)
+    std::map<int, std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> > >::iterator priority_group_it;
+    for (priority_group_it = dispatched_targets_causes.begin();
+         priority_group_it != dispatched_targets_causes.end(); ++priority_group_it)
     {
-        Effect::EffectsGroup*   effects_group        = effect_group_it->first;
-        Effect::TargetsCauses&  group_targets_causes = effect_group_it->second;
-        std::string             stacking_group       = effects_group->StackingGroup();
-        ScopedTimer update_timer(
-            "Universe::ExecuteEffects effgrp (" + effects_group->AccountingLabel() + ") from "
-            + boost::lexical_cast<std::string>(group_targets_causes.size()) + " sources"
-        );
+        std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> >::iterator effect_group_it;
+        for (effect_group_it = priority_group_it->second.begin();
+             effect_group_it != priority_group_it->second.end(); ++effect_group_it)
+        {
+            Effect::EffectsGroup*   effects_group        = effect_group_it->first;
+            Effect::TargetsCauses&  group_targets_causes = effect_group_it->second;
+            std::string             stacking_group       = effects_group->StackingGroup();
+            ScopedTimer update_timer(
+                "Universe::ExecuteEffects effgrp (" + effects_group->AccountingLabel() + ") from "
+                + boost::lexical_cast<std::string>(group_targets_causes.size()) + " sources"
+            );
 
-        // if other EffectsGroups or sources with the same stacking group have affected some of the 
-        // targets in the scope of the current EffectsGroup, skip them
-        // and add the remaining objects affected by it to executed_nonstacking_effects
-        if (!stacking_group.empty()) {
-            std::set<int>& non_stacking_targets = executed_nonstacking_effects[stacking_group];
+            // if other EffectsGroups or sources with the same stacking group have affected some of the 
+            // targets in the scope of the current EffectsGroup, skip them
+            // and add the remaining objects affected by it to executed_nonstacking_effects
+            if (!stacking_group.empty()) {
+                std::set<int>& non_stacking_targets = executed_nonstacking_effects[stacking_group];
 
-            for (Effect::TargetsCauses::iterator targets_it = group_targets_causes.begin();
-                 targets_it != group_targets_causes.end();)
-            {
-                Effect::TargetsAndCause&           targets_and_cause     = targets_it->second;
-                Effect::TargetSet&                 targets               = targets_and_cause.target_set;
-
-                // this is a set difference/union algorithm: 
-                // targets              -= non_stacking_targets
-                // non_stacking_targets += targets
-                for (Effect::TargetSet::iterator object_it = targets.begin();
-                        object_it != targets.end(); )
+                for (Effect::TargetsCauses::iterator targets_it = group_targets_causes.begin();
+                     targets_it != group_targets_causes.end();)
                 {
-                    int object_id                    = (*object_it)->ID();
-                    std::set<int>::const_iterator it = non_stacking_targets.find(object_id);
+                    Effect::TargetsAndCause&           targets_and_cause     = targets_it->second;
+                    Effect::TargetSet&                 targets               = targets_and_cause.target_set;
 
-                    if (it != non_stacking_targets.end()) {
-                        *object_it = targets.back();
-                        targets.pop_back();
+                    // this is a set difference/union algorithm: 
+                    // targets              -= non_stacking_targets
+                    // non_stacking_targets += targets
+                    for (Effect::TargetSet::iterator object_it = targets.begin();
+                         object_it != targets.end(); )
+                    {
+                        int object_id                    = (*object_it)->ID();
+                        std::set<int>::const_iterator it = non_stacking_targets.find(object_id);
+
+                        if (it != non_stacking_targets.end()) {
+                            *object_it = targets.back();
+                            targets.pop_back();
+                        } else {
+                            non_stacking_targets.insert(object_id);
+                            ++object_it;
+                        }
+                    }
+
+                    if (targets.empty()) {
+                        *targets_it = group_targets_causes.back();
+                        group_targets_causes.pop_back();
                     } else {
-                        non_stacking_targets.insert(object_id);
-                        ++object_it;
+                        ++targets_it;
                     }
                 }
-
-                if (targets.empty()) {
-                    *targets_it = group_targets_causes.back();
-                    group_targets_causes.pop_back();
-                } else {
-                    ++targets_it;
-                }
             }
+
+            if (group_targets_causes.empty())
+                continue;
+
+            if (log_verbose)
+                DebugLogger() << " * * * * * * * * * * * (new effects group log entry)";
+
+            // execute Effects in the EffectsGroup
+            effects_group->Execute(group_targets_causes,
+                update_effect_accounting ? &m_effect_accounting_map : NULL,
+                only_meter_effects,
+                only_appearance_effects,
+                include_empire_meter_effects);
         }
-
-        if (group_targets_causes.empty())
-            continue;
-
-        if (log_verbose)
-            DebugLogger() << " * * * * * * * * * * * (new effects group log entry)";
-
-        // execute Effects in the EffectsGroup
-        effects_group->Execute(group_targets_causes,
-                               update_effect_accounting ? &m_effect_accounting_map : NULL,
-                               only_meter_effects,
-                               only_appearance_effects,
-                               include_empire_meter_effects);
     }
 
     // actually do destroy effect action.  Executing the effect just marks
