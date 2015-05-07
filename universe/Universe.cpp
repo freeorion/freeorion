@@ -2561,7 +2561,7 @@ namespace {
     }
 
     /** for each empire: for each position, what objects have low enough stealth
-      * that the empire could detect them if an object owned by the empire is in
+      * that the empire could detect them if an detector owned by the empire is in
       * range? */
     std::map<int, std::map<std::pair<double, double>, std::vector<int> > >
         GetEmpiresPositionsPotentiallyDetectableObjects(const ObjectMap& objects, int empire_id = ALL_EMPIRES)
@@ -2581,8 +2581,11 @@ namespace {
                 continue;
             float object_stealth = stealth_meter->Current();
             std::pair<double, double> object_pos(obj->X(), obj->Y());
-            // check if each empire might be able to detect object, and if so,
-            // add it to the returned list
+
+            // for each empire being checked for, check if each object could be
+            // detected by the empire if the empire has a detector in range.
+            // being detectable by an empire requires the object to have
+            // low enough stealth (0 or below the empire's detection strength)
             for (std::map<int, float>::const_iterator empire_it = empire_detection_strengths.begin();
                  empire_it != empire_detection_strengths.end(); ++empire_it)
             {
@@ -3262,10 +3265,10 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         std::map<int, std::map<std::pair<double, double>, std::vector<int> > >
             empires_latest_known_objects_that_should_be_detectable =
                 GetEmpiresPositionsPotentiallyDetectableObjects(latest_known_objects, empire_id);
-
-        const std::map<std::pair<double, double>, std::vector<int> >&
+        std::map<std::pair<double, double>, std::vector<int> >&
             empire_latest_known_should_be_still_detectable_objects =
                 empires_latest_known_objects_that_should_be_detectable[empire_id];
+
 
         // get empire detection ranges
         std::map<int, std::map<std::pair<double, double>, float> >::const_iterator
@@ -3275,6 +3278,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         const std::map<std::pair<double, double>, float>& empire_detector_positions_ranges =
             empire_detectors_it->second;
 
+
         // filter should-be-still-detectable objects by whether they are
         // in range of a detector
         std::vector<int> should_still_be_detectable_latest_known_objects =
@@ -3282,9 +3286,12 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                 empire_latest_known_should_be_still_detectable_objects,
                 empire_detector_positions_ranges);
 
-        // filter to exclude objects that are known to have been destroyed
+
+        // filter to exclude objects that are known to have been destroyed, as
+        // their last state is not stale information
         FilterObjectIDsByKnownDestruction(should_still_be_detectable_latest_known_objects,
                                           empire_id, m_empire_known_destroyed_object_ids);
+
 
         // any objects that pass filters but aren't actually still visible
         // represent out-of-date info in empire's latest known objects.  these
@@ -3302,6 +3309,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                 stale_set.insert(object_id);
             }
         }
+
 
         // fleets that are not visible and that contain no ships or only stale ships are stale
         for (ObjectMap::const_iterator<> obj_it = latest_known_objects.const_begin();
