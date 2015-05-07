@@ -80,7 +80,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // known information about all objects in this battle
 
     // system and empire visibility of all objects in it
-    std::vector< int > local_object_ids = Objects().FindObjectIDs();
+    std::vector< int > local_object_ids = system->ContainedObjectIDs();
     for (std::set<int>::const_iterator empire_it = empire_ids.begin();
          empire_it != empire_ids.end(); ++empire_it)
     {
