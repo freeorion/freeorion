@@ -1666,8 +1666,8 @@ namespace {
                  empire_it != combat_info.empire_object_visibility.end(); ++empire_it)
             {
                 for (Universe::ObjectVisibilityMap::const_iterator object_it = empire_it->second.begin(); object_it != empire_it->second.end(); ++object_it) {
-                    Visibility vis = object_it->second;
-                    universe.SetEmpireObjectVisibility(empire_it->first, object_it->first, vis);
+                    if (object_it->second > GetUniverse().GetObjectVisibilityByEmpire(empire_it->first, object_it->first))
+                        universe.SetEmpireObjectVisibility(empire_it->first, object_it->first, object_it->second);
                 }
             }
 

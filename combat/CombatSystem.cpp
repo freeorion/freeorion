@@ -79,7 +79,8 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // objects again to assemble each participant empire's latest
     // known information about all objects in this battle
 
-    // system
+    // system and empire visibility of all objects in it
+    std::vector< int > local_object_ids = Objects().FindObjectIDs();
     for (std::set<int>::const_iterator empire_it = empire_ids.begin();
          empire_it != empire_ids.end(); ++empire_it)
     {
@@ -87,6 +88,12 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
         if (empire_id == ALL_EMPIRES)
             continue;
         empire_known_objects[empire_id].Insert(GetEmpireKnownSystem(system->ID(), empire_id));
+        empire_object_visibility[empire_id][system->ID()] = GetUniverse().GetObjectVisibilityByEmpire(empire_id, system->ID());
+        for (std::vector< int >::iterator obj_it = local_object_ids.begin(); obj_it != local_object_ids.end(); obj_it++) {
+            Visibility obj_vis = GetUniverse().GetObjectVisibilityByEmpire(empire_id, *obj_it);
+            if (obj_vis > VIS_NO_VISIBILITY)  // to ensure an empire doesn't wrongly get info that an object was present
+                empire_object_visibility[empire_id][*obj_it] = obj_vis;
+        }
     }
 
     // ships
@@ -896,10 +903,10 @@ namespace {
             // Also ensure that attacker (and their fleet if attacker was a ship) are
             // revealed with at least BASIC_VISIBILITY to the taget empire
             combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()] = 
-                    std::max(GetUniverse().GetObjectVisibilityByEmpire(attacker->ID(), target->Owner()), VIS_BASIC_VISIBILITY);
+                    std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
             if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
                 combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] = 
-                        std::max(GetUniverse().GetObjectVisibilityByEmpire(attacker->ContainerObjectID(), target->Owner()), VIS_BASIC_VISIBILITY);
+                        std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
             }
         } // end for over weapons
     }
