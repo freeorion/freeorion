@@ -47,6 +47,13 @@ namespace {
     int MIN_SIDE_BAR_WIDTH = 100;
     int MIN_SIDE_BAR_HEIGHT = 40;
 
+    // The participant bar height when its parent side bar height is
+    // MIN_SIDE_BAR_HEIGHT.
+    int MIN_PARTICIPANT_BAR_HEIGHT = MIN_SIDE_BAR_HEIGHT -
+                                     Value(AXIS_HEIGHT) -
+                                     Value(X_AXIS_LABEL_MARGIN) -
+                                     Value(PARTICIPANT_BAR_UP_MARGIN);
+
     const float EPSILON = 0.00001f;
 
     const std::string OPTIONS_ROOT = "UI.combat.summary.graph.";
@@ -100,7 +107,8 @@ public:
         m_max_units_on_a_side(-1),
         m_sum_of_max_max_healths(0),
         m_summaries(combat_summaries),
-        m_available_space(available_size)
+        m_available_space(available_size),
+        m_min_max_max_health(-1.f)
     {
         // We want to measure health on a single scale that shows as much as possible
         // while fitting the data of both sides.
@@ -109,7 +117,16 @@ public:
             m_max_total_max_health = std::max( it->second.total_max_health, m_max_total_max_health );
             m_max_units_on_a_side = std::max( static_cast<int>(it->second.unit_summaries.size()), m_max_units_on_a_side );
             m_sum_of_max_max_healths += it->second.max_max_health;
+            if(0.f > m_min_max_max_health) {
+                m_min_max_max_health = it->second.total_max_health;
+            } else {
+                m_min_max_max_health = std::min(it->second.max_max_health, m_min_max_max_health);
+            }
         }
+
+        // More initialization
+        SetAvailableSize(m_available_space);
+
         assert(m_max_total_max_health > 0);
     }
 
@@ -147,7 +164,7 @@ public:
             height = total_space.y;
         }
 
-        return GG::Pt(width, height);
+        return GG::Pt(std::max(width, GG::X(3)), height);
     }
 
     GG::X CalculateAliveWidth( const ParticipantSummary& participant, const GG::Pt& total_space ) const {
@@ -172,7 +189,17 @@ public:
 
     void SetAvailableSize(GG::Pt size) {
         m_available_space = size;
-    }
+
+        m_available_side_bar_space =
+            m_available_space -
+            GG::Pt(BEVEL_MARGIN_X, static_cast<int>(m_summaries.size() + 1) * SIDE_BOX_MARGIN);
+
+        m_available_participant_bar_height = std::max(
+            GG::Y0,
+            m_available_side_bar_space.y -
+            (AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN) *
+            static_cast<int>(m_summaries.size()) );
+}
 
     bool Get(const std::string& option) const {
         return GetOptionsDB().Get<bool>(OPTIONS_ROOT + option);
@@ -183,30 +210,53 @@ public:
         GetOptionsDB().Commit();
     }
 
+    GG::Pt GetMinSize() const {
+        GG::Y reqd_available_client_height(GG::Y0);
+
+        if(Get(TOGGLE_GRAPH_HEIGHT_PROPORTIONAL)) {
+            // Try to ensure that the smallest bar is at least
+            // MIN_SIDE_BAR_HEIGHT. NB: if this is too large to fit in the app
+            // window, the window size will be constrained and the bars won't
+            // display correctly.
+            reqd_available_client_height = GG::Y(static_cast<int>(static_cast<float>(MIN_PARTICIPANT_BAR_HEIGHT) * m_sum_of_max_max_healths / m_min_max_max_health));
+        } else {
+            reqd_available_client_height = GG::Y(static_cast<int>(m_summaries.size()) * MIN_PARTICIPANT_BAR_HEIGHT);
+        }
+
+        GG::Y reqd_available_total_height(reqd_available_client_height + (SIDE_BOX_MARGIN + AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN) * static_cast<int>(m_summaries.size()) + SIDE_BOX_MARGIN);
+
+        return GG::Pt(GG::X(MIN_SIDE_BAR_WIDTH), reqd_available_total_height);
+    }
+
 private:
     float  m_max_total_max_health;
     int    m_max_units_on_a_side;
     float  m_sum_of_max_max_healths;
+    float  m_min_max_max_health;               //< Used to determine minimum size required for TOGGLE_GRAPH_HEIGHT_PROPORTIONAL mode.
     GG::Pt m_available_space;
+    GG::Pt m_available_side_bar_space;         //< Caches some calculations
+    GG::Y  m_available_participant_bar_height; //< Caches some calculations
     bool   m_use_relative_side_bar_heights;
 
     const CombatSummaryMap& m_summaries;
 
     GG::Pt GetSideBarSize( int empire_id ) const {
-        GG::Pt bar_size = m_available_space - GG::Pt(BEVEL_MARGIN_X, BEVEL_MARGIN_Y + static_cast<int>(m_summaries.size()) * SIDE_BOX_MARGIN);
+        // The client (participant bar) height of this side bar.
+        GG::Y calculated_height(GG::Y0);
 
         CombatSummaryMap::const_iterator summary_it = m_summaries.find(empire_id);
 
         if ( Get(TOGGLE_GRAPH_HEIGHT_PROPORTIONAL) && summary_it != m_summaries.end() ) {
-            bar_size.y *= summary_it->second.max_max_health / m_sum_of_max_max_healths;
+            calculated_height = m_available_participant_bar_height * summary_it->second.max_max_health / m_sum_of_max_max_healths;
         } else {
-            bar_size.y = bar_size.y / static_cast<int>(m_summaries.size());
+            calculated_height = m_available_participant_bar_height / static_cast<int>(m_summaries.size());
         }
 
-        bar_size.x = std::max(GG::X(MIN_SIDE_BAR_WIDTH), bar_size.x);
-        bar_size.y = std::max(GG::Y(MIN_SIDE_BAR_HEIGHT), bar_size.y);
-
-        return bar_size;
+        // Reconstruct the total size for this side bar from the available
+        // total width and the calculated client height (which is converted to
+        // the total height here).
+        return GG::Pt(std::max(GG::X(MIN_SIDE_BAR_WIDTH), m_available_side_bar_space.x),
+                      std::max(GG::Y(MIN_SIDE_BAR_HEIGHT), calculated_height + (AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN)));
     }
 };
 
@@ -539,6 +589,20 @@ public:
         m_toggles.clear();
     }
 
+    virtual GG::Pt MinUsableSize() const {
+        GG::Pt min_size(GG::X0, GG::Y0);
+
+        for(std::vector<ToggleData*>::const_iterator it = m_toggles.begin();
+            it != m_toggles.end();
+            ++it) {
+            min_size.x += (*it)->button->Width() + OPTION_BUTTON_PADDING;
+        }
+
+        min_size.y = OPTION_BAR_HEIGHT;
+
+        return min_size;
+    }
+
     void DoLayout() {
         boost::shared_ptr<GG::Font> cui_font = ClientUI::GetFont();
 
@@ -608,18 +672,38 @@ GraphicalSummaryWnd::GraphicalSummaryWnd() :
     m_options_bar(0)
 { }
 
+GG::Pt GraphicalSummaryWnd::MinUsableSize() const {
+    GG::Pt min_size(GG::X0, GG::Y0);
+
+    // Ask the bar sizer for the required size to display the side bars because
+    // it contains all of the useful sizing information in the first place,
+    // even though it does not derive from GG::Wnd and have a virtual
+    // MinUsableSize function.
+    if(m_sizer) {
+        min_size += m_sizer->GetMinSize();
+    }
+
+    if(m_options_bar) {
+        GG::Pt options_bar_min_size(m_options_bar->MinUsableSize());
+        min_size.x = std::max(min_size.x, options_bar_min_size.x);
+        min_size.y += options_bar_min_size.y;
+    }
+
+    return min_size;
+}
+
 void GraphicalSummaryWnd::SetLog(int log_id) {
     MakeSummaries(log_id);
 }
 
 void GraphicalSummaryWnd::DoLayout() {
-    GG::Pt ul(GG::X0, SIDE_BOX_MARGIN);
-
-    if(!m_options_bar) {
-        m_options_bar = new OptionsBar(m_sizer);
-        AttachChild(m_options_bar);
-        GG::Connect( m_options_bar->ChangedSignal, &GraphicalSummaryWnd::DoLayout, this );
+    if(!m_sizer) {
+        ErrorLogger() << "GraphicalSummaryWnd::DoLayout() called before "
+                         "creating m_sizer.";
+        return;
     }
+
+    GG::Pt ul(GG::X0, SIDE_BOX_MARGIN);
 
     m_options_bar->Resize( GG::Pt( ClientWidth(), OPTION_BAR_HEIGHT ) );
 
@@ -646,6 +730,10 @@ void GraphicalSummaryWnd::Render()
                           8, 1, false, true);
 }
 
+void GraphicalSummaryWnd::HandleButtonChanged() {
+    MinSizeChangedSignal();
+    DoLayout();
+}
 
 void GraphicalSummaryWnd::MakeSummaries(int log_id) {
     m_summaries.clear();
@@ -703,5 +791,17 @@ void GraphicalSummaryWnd::GenerateGraph() {
             AttachChild(box);
         }
     }
+
+    if(m_options_bar) {
+        DebugLogger() << "GraphicalSummaryWnd::GenerateGraph(): m_options_bar "
+                         "already exists, calling DeleteChild(m_options_bar) "
+                         "before creating a new one.";
+        DeleteChild(m_options_bar);
+    }
+    m_options_bar = new OptionsBar(m_sizer);
+    AttachChild(m_options_bar);
+    GG::Connect(m_options_bar->ChangedSignal, &GraphicalSummaryWnd::HandleButtonChanged, this);
+
+    MinSizeChangedSignal();
     DoLayout();
 }
