@@ -66,12 +66,31 @@ void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visi
         MeterType type = it->first;
 
         // get existing meter in this object, or create a default one
-        Meter& this_meter = this->m_meters[type];
+        std::map<MeterType, Meter>::iterator m_meter_it = m_meters.find(type);
+        bool meter_already_known = (m_meter_it != m_meters.end());
+        if (!meter_already_known)
+            m_meters[type]; // default initialize to (0, 0).  Alternative: = Meter(Meter::INVALID_VALUE, Meter::INVALID_VALUE);*/
+        Meter& this_meter = m_meters[type];
 
         // if there is an update to meter from censored meters, update this object's copy
         std::map<MeterType, Meter>::const_iterator censored_it = censored_meters.find(type);
-        if (censored_it != censored_meters.end())
-            this_meter = censored_it->second;
+        if (censored_it != censored_meters.end()) {
+            const Meter& copied_object_meter = censored_it->second;
+
+            if (!meter_already_known) {
+                // have no previous info, so just use whatever is given
+                this_meter = copied_object_meter;
+
+            } else if (meter_already_known) {
+                // don't want to override legit meter history with sentinel values used for insufficiently visible objects
+                if (copied_object_meter.Initial() != Meter::LARGE_VALUE ||
+                    copied_object_meter.Current() != Meter::LARGE_VALUE)
+                {
+                    // some new info available, so can overwrite only meter info
+                    this_meter = copied_object_meter;
+                }
+            }
+        }
     }
 
     if (vis >= VIS_BASIC_VISIBILITY) {
@@ -365,8 +384,11 @@ void UniverseObject::RemoveSpecial(const std::string& name)
 
 std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const {
     std::map<MeterType, Meter> retval;
-    if (vis >= VIS_PARTIAL_VISIBILITY)
+    if (vis >= VIS_PARTIAL_VISIBILITY) {
         retval = m_meters;
+    } else if (vis == VIS_BASIC_VISIBILITY && m_meters.find(METER_STEALTH) != m_meters.end()) {
+        retval[METER_STEALTH] = Meter(Meter::LARGE_VALUE, Meter::LARGE_VALUE);
+    }
     return retval;
 }
 
