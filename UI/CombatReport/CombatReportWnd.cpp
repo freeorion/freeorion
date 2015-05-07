@@ -1,6 +1,7 @@
 #include "CombatReportWnd.h"
 #include "../ClientUI.h"
 #include "../CUIControls.h"
+#include "../client/human/HumanClientApp.h"
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
 #include "../../universe/ShipDesign.h"
@@ -10,10 +11,34 @@
 #include "CombatLogWnd.h"
 
 #include <GG/TabWnd.h>
+#include <GG/Layout.h>
 
 namespace {
     GG::X COMBAT_LOG_WIDTH(400);
     GG::Y COMBAT_LOG_HEIGHT(300);
+
+    // Duplicated from MapWnd.cpp - used here to find maximum size of the
+    // combat report window.
+    GG::X AppWidth() {
+        if(HumanClientApp* app = HumanClientApp::GetApp())
+            return app->AppWidth();
+        return GG::X0;
+    }
+
+    GG::Y AppHeight() {
+        if(HumanClientApp* app = HumanClientApp::GetApp())
+            return app->AppHeight();
+        return GG::Y0;
+    }
+
+    GG::Pt LimitToAppSize(const GG::Pt& sz_in) {
+        if(HumanClientApp* app = HumanClientApp::GetApp()) {
+            return GG::Pt(std::min(sz_in.x, app->AppWidth()),
+                          std::min(sz_in.y, app->AppHeight()) );
+        } else {
+            return GG::Pt(GG::X0, GG::Y0);
+        }
+    }
 }
 
 // The implementation class for CombatReportWnd
@@ -23,7 +48,8 @@ public:
         m_wnd(wnd),
         m_tabs(new GG::TabWnd(GG::X0, GG::Y0, GG::X1, GG::Y1, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor())),
         m_graphical(new GraphicalSummaryWnd()),
-        m_log(new CombatLogWnd())
+        m_log(new CombatLogWnd()),
+        m_min_size(GG::X0, GG::Y0)
     {
         m_tabs->AddWnd(m_graphical, UserString("COMBAT_SUMMARY"));
         m_tabs->AddWnd(m_log, UserString("COMBAT_LOG"));
@@ -33,6 +59,27 @@ public:
         GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
         GG::Connect(m_log->LinkDoubleClickedSignal, &CombatReportPrivate::HandleLinkDoubleClick,    this);
         GG::Connect(m_log->LinkRightClickedSignal,  &CombatReportPrivate::HandleLinkDoubleClick,    this);
+
+        // Catch the window-changed signal from the tab bar so that layout
+        // updates can be performed for the newly-selected window.
+        GG::Connect(m_tabs->WndChangedSignal,
+                    boost::bind(&CombatReportPrivate::HandleTabChanged,
+                                this,
+                                _1));
+
+        // This can be called whether m_graphical is the selected window or
+        // not, but it will still only use the min size of the selected window.
+        GG::Connect(m_graphical->MinSizeChangedSignal,
+                    boost::bind(&CombatReportPrivate::UpdateMinSize, this));
+
+        if(HumanClientApp* app = HumanClientApp::GetApp()) {
+            GG::Connect(HumanClientApp::GetApp()->WindowResizedSignal,
+                        boost::bind(&CombatReportPrivate::UpdateMinSize, this));
+        } else {
+            ErrorLogger() << "CombatReportWnd::CombatReportPrivate(): "
+                             "HumanClientApp not available, cannot connect "
+                             "WindowResizedSignal to this window.";
+        }
 
         // Allow m_wnd to catch mouse events over the portion of the resize tab
         // that is covered by m_graphical.
@@ -44,8 +91,13 @@ public:
         m_log->SetLog(log_id);
     }
 
-    void DoLayout()
-    { m_graphical->DoLayout(); }
+    void DoLayout() {
+        // Only update the selected window.
+        if(GraphicalSummaryWnd* graphical_wnd =
+               dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd()) ) {
+            graphical_wnd->DoLayout();
+        }
+    }
 
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
@@ -105,11 +157,26 @@ public:
         HandleLinkClick(link_type, data);
     }
 
+    // Apply minimum & maximum size constraints. Done here rather than calling
+    // CombatReportWnd::Set(Min|Max)Size because the max size check needs to be
+    // performed every time - the app size can change without sending a signal
+    // for us to bind to SetMaxSize.
+    GG::Pt ValidateSize(const GG::Pt& sz_in) {
+        GG::Pt sz_out = LimitToAppSize(sz_in);
+
+        // The app size can change in between calls.
+        GG::Pt current_sz_min = LimitToAppSize(m_min_size);
+
+        return GG::Pt(std::max(sz_out.x, current_sz_min.x),
+                      std::max(sz_out.y, current_sz_min.y) );
+    }
+
 private:
     CombatReportWnd&        m_wnd;
     GG::TabWnd*             m_tabs;
     GraphicalSummaryWnd*    m_graphical;//< Graphical summary
     CombatLogWnd*           m_log;      //< Detailed log
+    GG::Pt                  m_min_size; //< Minimum size according to the contents, is not constrained by the app window size
 
     void SetFocus(int id)
     { DebugLogger() << "SetFocus " << id; }
@@ -119,15 +186,40 @@ private:
         SetFocus(data);
     }
 
-    void HandleTabChanged(int index) {
-        // This will handle multiple GraphicalSummaryWnds in the tab group.
-        // It would be simpler to call this class's DoLayout without the check,
-        // but updating the entire window is not necessary.
-        GraphicalSummaryWnd* selected_wnd =
-            dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd());
-        if(selected_wnd) {
-            selected_wnd->DoLayout();
+    void UpdateMinSize() {
+        m_min_size = GG::Pt(GG::X0, GG::Y0);
+
+        m_min_size += m_wnd.Size() - m_wnd.ClientSize();
+
+        // The rest of this function could use m_tabs->MinUsableSize instead of
+        // dealing with the children of m_tabs directly, but that checks the
+        // MinUsableSize of _all_ child windows, not just the currently
+        // selected one.
+        m_min_size += m_tabs->CurrentWnd()->MinUsableSize();
+
+        std::list<GG::Wnd*>::const_iterator layout_begin =
+            m_tabs->GetLayout()->Children().begin();
+        // First object in the layout should be the tab bar.
+        if(layout_begin != m_tabs->GetLayout()->Children().end()) {
+            GG::Pt tab_min_size = (*layout_begin)->MinUsableSize();
+            m_min_size.x = std::max(tab_min_size.x, m_min_size.x);
+            // TabBar::MinUsableSize does not seem to return the correct
+            // height, so extra height is added here.
+            m_min_size.y += tab_min_size.y + GG::Y(14);
         }
+
+        // If the window is currently too small, re-validate its size.
+        if(m_wnd.Width() < m_min_size.x || m_wnd.Height() < m_min_size.y) {
+            m_wnd.Resize(m_wnd.Size());
+        }
+    }
+
+    void HandleTabChanged(int index) {
+        // Use the minimum size of the newly selected window.
+        UpdateMinSize();
+
+        // Make sure that the newly selected window gets an update.
+        DoLayout();
     }
 };
 
@@ -147,7 +239,12 @@ void CombatReportWnd::CloseClicked()
 { Hide(); }
 
 void CombatReportWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    CUIWnd::SizeMove(ul, lr);
+    // Using Set(Min|Max)Size would be more elegant but that requires knowing
+    // when the app window changes size.  HumanClientApp (or its superclasses)
+    // don't send signals when switching to fullscreen mode, so we can't rely
+    // on calling SetMaxSize when that changes - we have to perform the size
+    // checks here.
+    CUIWnd::SizeMove(ul, ul + m_impl->ValidateSize(lr - ul));
     m_impl->DoLayout();
 }
 
