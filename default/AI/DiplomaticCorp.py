@@ -44,7 +44,7 @@ def handle_diplomatic_message(message):  # pylint: disable=invalid-name
             print "Sending diplomatic message to empire %s of type %s" % (reply_recipient, diplo_reply.type)
             fo.sendDiplomaticMessage(diplo_reply)
     elif message.type == fo.diplomaticMessageType.warDeclaration:
-        foAI.foAIstate.log_peace_request(message.sender, message.recipient)
+        foAI.foAIstate.log_war_declaration(message.sender, message.recipient)
 
 
 

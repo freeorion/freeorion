@@ -1101,7 +1101,7 @@ class AIstate(object):
         log_index = (initiating_empire_id, recipient_empire_id)
         peace_requests.setdefault(log_index, []).append(fo.currentTurn())
 
-    def log_war_declarations(self, initiating_empire_id, recipient_empire_id):
+    def log_war_declaration(self, initiating_empire_id, recipient_empire_id):
         """Keep a record of war declarations made or received by this empire."""
 
         # if war declaration is made on turn 1, don't hold it against them
