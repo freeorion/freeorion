@@ -124,6 +124,9 @@ void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id)
             if (TemporaryPtr<Fleet> oldFleet = GetFleet(this->m_fleet_id)) 
                 oldFleet->RemoveShip(this->ID());
             this->m_fleet_id =              copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
+        Meter* stealth_meter = this->GetMeter(METER_STEALTH);
+        const Meter* copied_stealth_meter = copied_ship->GetMeter(METER_STEALTH);
+        stealth_meter->Set(copied_stealth_meter->Current(), copied_stealth_meter->Initial());
         }
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {

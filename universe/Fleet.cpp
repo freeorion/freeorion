@@ -134,6 +134,10 @@ void Fleet::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id
         this->m_arrived_this_turn =             copied_fleet->m_arrived_this_turn;
         this->m_arrival_starlane =              copied_fleet->m_arrival_starlane;
 
+        Meter* stealth_meter = this->GetMeter(METER_STEALTH);
+        const Meter* copied_stealth_meter = copied_fleet->GetMeter(METER_STEALTH);
+        stealth_meter->Set(copied_stealth_meter->Current(), copied_stealth_meter->Initial());
+        
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             this->m_aggressive =                copied_fleet->m_aggressive;
             if (this->Unowned())
