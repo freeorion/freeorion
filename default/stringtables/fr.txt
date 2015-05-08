@@ -306,17 +306,17 @@ Chasseur organique avec lasers améliorés et blindage renforcé.
 #SD_SHIELD_BUG_1
 #Shield Bug I
 SD_SHIELD_BUG_1_DESC
-Chasseur organique avec boucliers. Efficace contre les ennemis peu armés.
+Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis peu armés.
 
 #SD_SHIELD_BUG_2
 #Shield Bug II
 SD_SHIELD_BUG_2_DESC
-Chasseur organique avec boucliers. Efficace contre les ennemis peu armés.
+Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis peu armés.
 
 #SD_SHIELD_BUG_3
 #Shield Bug III
 SD_SHIELD_BUG_3_DESC
-Chasseur organique avec boucliers. Efficace contre les ennemis peu armés.
+Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]]. Efficace contre les ennemis peu armés.
 
 #SD_AST_1
 #Rock I
@@ -331,7 +331,7 @@ Un vaisseau astéroïdal équipé de canons à plasma. Ne peut être construit q
 #SD_AST_3
 #Rock III
 SD_AST_3_DESC
-Un vaisseau astéroïdal équipé de canons à plasma améliorés et d'une couche de blindage astéroïdal. Ne peut être construit que dans un système possédant un [[buildingtype BLD_SHIPYARD_AST]].
+Un vaisseau astéroïdal équipé de canons à plasma améliorés et d'une couche de blindage carbone. Ne peut être construit que dans un système possédant un [[buildingtype BLD_SHIPYARD_AST]].
 
 #SD_HEAVY_AST_1
 #Big Rock I
@@ -652,7 +652,7 @@ Se nourrit de minéraux. La coquille de l'Astergot ressemblant à s'y méprendre
 SM_DAMPENING_CLOUD
 Nuage Siphonnant
 SM_DAMPENING_CLOUD_DESC
-Un nuage cosmique de particules à haute énergie qui a développé une forme de sensibilité. Irrésistiblement attiré par les plus grandes réserves d'énergie potentielle dont il se nourrit, une flotte entière d'astronefs peut tomber en panne de carburant en quelques secondes.
+Un nuage cosmique de particules à haute énergie qui a développé une forme de sensibilité. Irrésistiblement attiré par les plus grandes réserves d'énergie potentielle dont il se nourrit, une flotte entière d'astronefs peut tomber en panne de [[encyclopedia FUEL_TITLE]] en quelques secondes.
 
 SM_ACIREMA_GUARD
 Astrogarde Acirema
@@ -660,9 +660,11 @@ SM_ACIREMA_GUARD_DESC
 Un astronef armé, sans équipage, construit par les Acirema pour défendre un système.
 
 SM_EXP_OUTPOST
-Pionnier Galactique Expérimentateur
+Expérience Zero
 SM_EXP_OUTPOST_DESC
-Un astronef colonisateur conçu par les Expérimentateurs pour transporter des équipements expérimentaux entre les galaxies.
+'''Une ancienne création des Expérimentateurs réduisant les [[encyclopedia SHIELDS_TITLE]] et dommages adverses. 
+
+L'Expérience Zero fut envoyée dans cette galaxie pour protéger les avant-postes des Expérimentateurs grâce à ses capacités uniques. Bien que n'attaquant pas directement ses ennemis, elle essaime des quadrillions d'unités microscopiques colonisant l'espace entier d'un système, et neutralisant les boucliers et armements ennemis, la plupart devenant inopérants, exceptés les plus performants issus des toutes dernières technologies.'''
 
 SM_COSMIC_DRAGON
 Dragon Cosmique
@@ -2420,9 +2422,9 @@ Cette planète n'a jamais été complètement détectée par votre empire.
 PL_NOT_IN_RANGE
 Cette planète est hors de portée des détecteurs de votre empire.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
-La dernière furtivité connue (%1%) dépasse votre [[DETECTION_TITLE]] (%2%).
+La dernière [[encyclopedia STEALTH_TITLE]] connue (%1%) dépasse votre [[DETECTION_TITLE]] (%2%).
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
-La dernière furtivité connue est obsolète.  La furtivité réelle dépasse votre [[DETECTION_TITLE]] ou le [[DETECTION_RANGE_TITLE]] local est fortement perturbé.
+La dernière [[encyclopedia STEALTH_TITLE]] connue est obsolète.  La furtivité réelle dépasse votre [[DETECTION_TITLE]] ou le [[DETECTION_RANGE_TITLE]] local est fortement perturbé.
 
 MENUITEM_SET_FOCUS
 Régler focus
@@ -3380,10 +3382,10 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Coque : %2%
 Équipement : %3%
 
-Dommage : %17%      Résistance : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
-                   Vitesse : %13%    Capacité Carburant : %14%
+Dommage : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
+                   Vitesse : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
 [[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
-         Colons à bord : %15%      Troupes à bord : %16%
+         Colons à bord : %15%      [[encyclopedia TROOP_TITLE]] à bord : %16%
 
 Estimation force de combat (sans boucliers): %19$.f (%20$.2f par PP)
 Contre la plupart des armes et boucliers ennemis: %21$.f (%22$.2f par PP)
@@ -3408,10 +3410,10 @@ Coque: %2%
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 Pour espèce : %18%
-               Dommage : %17%      Résistance : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
-                   Vitesse : %13%    Capacité Carburant : %14%
+               Dommage : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
+                   Vitesse : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
 [[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
-         Colons à bord : %15%      Troupes à bord : %16%
+         Colons à bord : %15%      [[encyclopedia TROOP_TITLE]] à bord : %16%
 Estimation force de combat (sans boucliers) :  %19$.f   (%20$.2f par PP)
 Contre les dommages %21$.1f et boucliers %22$.1f ennemis :  %23$.f   (%24$.2f par PP)
 '''
@@ -3647,7 +3649,7 @@ Le Commerce est encore sans effet. Il s'agit juste d'un espace réservé indiqua
 PROTECTION_FOCUS_TITLE
 Focus Protection
 PROTECTION_FOCUS_TEXT
-Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[encyclopedia TROOP_TITLE]], sa capacité de [[encyclopedia DEFENSE_TITLE]], et la résistance de ses [[encyclopedia SHIELDS_TITLE]] sont par conséquent doublés.
+Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[encyclopedia TROOP_TITLE]], sa capacité de [[encyclopedia DEFENSE_TITLE]], et la solidité de ses [[encyclopedia SHIELDS_TITLE]] sont par conséquent doublés.
 
 INDUSTRY_TITLE
 Industrie
@@ -3688,9 +3690,9 @@ Boucliers
 SHIELDS_TEXT
 '''L'indicateur 'Boucliers' désigne toutes sortes de champs d'énergie de protection. Ils constituent en général la première barrière défensive contre toute attaque. Il existe deux types distincts de boucliers, fonctionnant de manière très différente: les Boucliers d'astronefs et les Boucliers planétaires.
 
-Boucliers d'astronefs: les Dommages infligés par chaque tir sont réduits de la valeur de résistance du Bouclier. Une arme ne peut pénétrer un Bouclier seulement si les Dommages qu'elle inflige sont supérieurs à la résistance du Bouclier.
+Boucliers d'astronefs: les Dommages infligés par chaque tir sont réduits de la valeur de solidité du Bouclier. Une arme ne peut pénétrer un Bouclier seulement si les Dommages qu'elle inflige sont supérieurs à la solidité du Bouclier.
 
-Boucliers planétaires: Agit comme une sorte d'armure. Leur résistance s'amenuise après chaque tir, et une fois détruit, les tirs suivants passeront à travers et endommageront les structures planétaires. Les Boucliers planétaires se regénèrent après chaque tour, à un certain taux.
+Boucliers planétaires: Agit comme une sorte d'armure. Leur solidité s'amenuise après chaque tir, et une fois détruit, les tirs suivants passeront à travers et endommageront les structures planétaires. Les Boucliers planétaires se regénèrent après chaque tour, à un certain taux.
 
 Les astronefs et les planètes ont chacun un indicateur 'Boucliers'.'''
 
@@ -4834,7 +4836,7 @@ Préfèrent les Planètes de type terrestre.
 
 SP_EAXAW_DESC
 '''Description:
-Les Eaxaw ont 3 formes différentes. La première est la forme larvaire lors de la naissance, suit celle du jeune mâle et enfin celle de la femelle adulte. Ces 3 formes sont totalement aveugles et utilisent le toucher, l'odorat et l'ouïe, ainsi qu'un sens détectant les courants électriques, pour appréhender leur environnement. La femelle est un ver à segments d'environ 8 mètres de long. À l'avant se situe un orifice à 3 becs leur servant à creuser et à étendre un réseau complexe de tunnels. Le système neuronal de la femelle s'étend tout le long du corps, sous forme de chaines neuronales reliées par des noeuds. Tout le reste du corps se compose de muscles, dont le support est une solide carapace externe segmentée. Un petit espace se trouve entre chaque segment externe (à la manière des écailles), dans lequel les larves sont élevées et grandissent. Les formes mâles des Eaxaw sont plus petites, faibles, et bien moins intelligentes. Au bout de leur queue se situe une griffe préhensile à l'anatomie complexe, présente seulement sur certaines variétés spécialisées.
+Les Eaxaw ont 3 formes différentes. La première est la forme larvaire lors de la naissance, suit celle du jeune mâle et enfin celle de la femelle adulte. Ces 3 formes sont totalement aveugles et utilisent le toucher, l'odorat et l'ouïe, ainsi qu'un sens détectant les courants électriques, pour appréhender leur environnement. La femelle est un ver à segments d'environ 8 mètres de long. À l'avant se situe un orifice à 3 becs leur servant à creuser et à étendre un réseau complexe de tunnels. Le système neuronal de la femelle s'étend tout le long du corps, sous forme de chaines neuronales reliées par des nœuds. Tout le reste du corps se compose de muscles, dont le support est une solide carapace externe segmentée. Un petit espace se trouve entre chaque segment externe (à la manière des écailles), dans lequel les larves sont élevées et grandissent. Les formes mâles des Eaxaw sont plus petites, faibles, et bien moins intelligentes. Au bout de leur queue se situe une griffe préhensile à l'anatomie complexe, présente seulement sur certaines variétés spécialisées.
 
 Structure sociale:
 Les Eaxaw sont organisés en groupes matriarcaux de reproduction. Une femelle domine un "harem" d'environ 200 mâles, lesquels la protègent, la nourrissent et servent de reproducteurs. Tout nouveau mâle que la femelle met au monde est ajouté au harem, mais sert généralement de monnaie d'échange avec les autres femelles. Cela assure la diversité génétique et favorise une large variété de mâles spécialisés pour certaines tâches. Les femelles du plus haut rang (celles dominant les harems les plus grands et les plus diversifiés) forment la Grande Chambre Matriarcal, laquelle édicte la marche à suivre pour les Eaxaw.
@@ -4891,7 +4893,7 @@ SP_LAENFA_DESC
 Les Laenfa sont de longs organismes végétaux semblables à des vignes, capables de se combiner ou de se dissocier à volonté en vignes de tailles différentes. Chaque feuille a sa propre conscience, et en étant séparée des autres feuilles, détient le contrôle sur la petite longueur de vigne à laquelle elle est rattachée. Les Laenfa sont doués d'une grande mobilité sous-marine ainsi que d'une mobilité terrestre raisonnable, du fait de leur capacité à nager et à se faufiler comme un serpent. La communication téléphatique des Laenfa, renforcée par leur physiologie commune, leur permet de synchroniser le mouvement global de la vigne, pour des déplacements toujours plus optimaux.
 
 Structure sociale:
-Les Laenfa jouissent d'une culture unifiée due à la télépathie, mais comme leur capacité télépathique s'affaiblit avec la distance, le tronc central de la vigne est en charge des décisions importantes. Cette vigne centrale gère seule les arbitrages, mais prend en compte les voix des Laenfa qu'elle est en mesure de détecter. Les Laenfa évoluent donc à la manière d'un super-organisme, chaque individu oeuvrant pour le collectif, dont le but est d'acquérir le savoir des autres espèces et de protéger le leur.
+Les Laenfa jouissent d'une culture unifiée due à la télépathie, mais comme leur capacité télépathique s'affaiblit avec la distance, le tronc central de la vigne est en charge des décisions importantes. Cette vigne centrale gère seule les arbitrages, mais prend en compte les voix des Laenfa qu'elle est en mesure de détecter. Les Laenfa évoluent donc à la manière d'un super-organisme, chaque individu œuvrant pour le collectif, dont le but est d'acquérir le savoir des autres espèces et de protéger le leur.
 '''
 
 #SP_TAEGHIRUS
@@ -5035,7 +5037,7 @@ SP_CYNOS_GAMEPLAY_DESC
 
 SP_CYNOS_DESC
 '''Description:
-Les Cynos sont les constituants d'une plante mère semblable à une agave de 90 mètres de haut. Ses énormes feuilles arborent une couleur bleu marine brillante, rayonnant le long d'un bulbe central formant le coeur de la plante. Le sytème racinaire étendu mais peu profond, développe des bourgeons qui grandissent à côté de la plante principale. Une seule de ces plantes peut vivre près de 5000 ans. De nombreuses "chambres d'élevage" se trouvent à l'intérieur des feuilles, dans lesquelles les Cynos "naissent" et se régénèrent.
+Les Cynos sont les constituants d'une plante mère semblable à une agave de 90 mètres de haut. Ses énormes feuilles arborent une couleur bleu marine brillante, rayonnant le long d'un bulbe central formant le cœur de la plante. Le sytème racinaire étendu mais peu profond, développe des bourgeons qui grandissent à côté de la plante principale. Une seule de ces plantes peut vivre près de 5000 ans. De nombreuses "chambres d'élevage" se trouvent à l'intérieur des feuilles, dans lesquelles les Cynos "naissent" et se régénèrent.
 
 Un Cyno naît comme un petit bulbe à l'intérieur d'une chambre d'élevage, atteint sa taille adulte en quelques jours, puis se détache. Il mesure alors 3.5 mètres de long, et prend sa forme définitive rectangulaire, légèrement arrondie, avec une sorte de vigne effilée à chaque coin. Ces membres sont utilisés pour la locomotion, l'alimentation tout comme le combat. Un Cyno est capable d'évoluer indépendamment durant environ 30 heures, avant de devoir se nourrir auprès de la plante-mère qui l'a vu naître. Les substituts artificiels à la nourriture de la plante-mère sont possibles, mais entraîne l'infertilité d'un Cyno. Par conséquent, tout Cyno quittant son monde natal devient stérile.
 
@@ -5234,7 +5236,7 @@ Préfèrent les Planètes de type terrestre.
 '''
 
 SP_RAAAGH_DESC
-'''Les Raaagh sont des organismes bipèdes à fourrure mesurant 1.5 mètre de hauteur. Le corps est penché vers l'avant à 45 degrés, laissant libres leurs mâchoires acérées et leurs membres antérieurs munis de griffes, afin de combattre, capturer des proies ou construire. Leurs oreilles triangulaires et leur iris en forme de fente leur donnent une apparence féline. Ovipares, les Raaagh pondent une moyenne de douze oeufs. Après l'éclosion, peu de soins et d'attention sont portés aux petits-- ils doivent survivre par leurs propres moyens, entrant en compétition avec leurs jeunes semblables pour trouver un abri ou dérober de la nourriture. Après trois années, seul un jeune Raaagh parvient généralement à survivre, ce dernier commençant alors à développer l'aptitude au langage. Cela active soudainement l'instinct parental des adultes, et le jeune rescapé est alors élevé avec attention comme membre de la Tribu.
+'''Les Raaagh sont des organismes bipèdes à fourrure mesurant 1.5 mètre de hauteur. Le corps est penché vers l'avant à 45 degrés, laissant libres leurs mâchoires acérées et leurs membres antérieurs munis de griffes, afin de combattre, capturer des proies ou construire. Leurs oreilles triangulaires et leur iris en forme de fente leur donnent une apparence féline. Ovipares, les Raaagh pondent une moyenne de douze œufs. Après l'éclosion, peu de soins et d'attention sont portés aux petits-- ils doivent survivre par leurs propres moyens, entrant en compétition avec leurs jeunes semblables pour trouver un abri ou dérober de la nourriture. Après trois années, seul un jeune Raaagh parvient généralement à survivre, ce dernier commençant alors à développer l'aptitude au langage. Cela active soudainement l'instinct parental des adultes, et le jeune rescapé est alors élevé avec attention comme membre de la Tribu.
 
 Comportement:
 La territorialité extrême est le trait comportemental le plus distinctif chez les Raaagh- régissant leur vie quotidienne et imprégnant toute leur culture. Ce caractère marqué dénote leur préférence pour ce qui est familier et connu. Leur curiosité est très peu développée, ce qui explique leur technologie très peu avancée.
@@ -5262,7 +5264,7 @@ Préfèrent les Planètes irradiées.
 '''
 
 SP_BEIGEGOO_DESC
-'''La planète entière est recouverte d'un voile beige de nanorobots ou Nanites. Nul ne sait s'ils ont été déployés en tant qu'arme, s'ils sont le résultat d'une expérience ayant mal tourné, ou bien un système défaillant d'extraction de ressources, mais ils se sont appropriés toute la planète. Il n'en reste d'ailleurs rien d'autre qu'un coeur radioactif. Ces Nanites sont des assembleurs très efficaces, et s'exécutent dès que des matériaux viables sont à leur disposition. Cependant, ces Nanites protègent farouchement le secret de leur conception-- ils s'autodétruisent dès qu'ils sont capturés ou éloignés de leur planète.
+'''La planète entière est recouverte d'un voile beige de nanorobots ou Nanites. Nul ne sait s'ils ont été déployés en tant qu'arme, s'ils sont le résultat d'une expérience ayant mal tourné, ou bien un système défaillant d'extraction de ressources, mais ils se sont appropriés toute la planète. Il n'en reste d'ailleurs rien d'autre qu'un cœur radioactif. Ces Nanites sont des assembleurs très efficaces, et s'exécutent dès que des matériaux viables sont à leur disposition. Cependant, ces Nanites protègent farouchement le secret de leur conception-- ils s'autodétruisent dès qu'ils sont capturés ou éloignés de leur planète.
 '''
 
 #SP_SILEXIAN
@@ -5312,7 +5314,7 @@ Préfèrent les Planètes stériles.
 
 SP_KOBUNTURA_DESC
 '''Description:
-Un Kobuntura est composé de billions de particules de poussière magnétique. Leur coeur dense de molécules vibratoires génère un champ magnétique autour duquel orbite de manière complexe un nuage moins dense de particules. Un Kobuntura peut directement détecter et manipuler des objets situés en dehors de son nuage de particules, mais ne peut détecter, manipuler et communiquer qu'indirectement avec les objets ou organismes beaucoup plus éloignés, à l'aide de son champs magnétique. Leur principal moyen de déplacement se base sur une interaction complexe avec le champ magnétique planétaire. Lorsqu'un Kobuntura se déplace, cela induit une agitation et une magnétisation des particules de poussière environnantes. Si la force thermomagnétique générée est suffisante, une réaction en chaîne s'opère, avec pour conséquence la formation en quelques secondes d'un nouveau Kobuntura.
+Un Kobuntura est composé de billions de particules de poussière magnétique. Leur cœur dense de molécules vibratoires génère un champ magnétique autour duquel orbite de manière complexe un nuage moins dense de particules. Un Kobuntura peut directement détecter et manipuler des objets situés en dehors de son nuage de particules, mais ne peut détecter, manipuler et communiquer qu'indirectement avec les objets ou organismes beaucoup plus éloignés, à l'aide de son champs magnétique. Leur principal moyen de déplacement se base sur une interaction complexe avec le champ magnétique planétaire. Lorsqu'un Kobuntura se déplace, cela induit une agitation et une magnétisation des particules de poussière environnantes. Si la force thermomagnétique générée est suffisante, une réaction en chaîne s'opère, avec pour conséquence la formation en quelques secondes d'un nouveau Kobuntura.
 
 Structure sociale:
 Les Kobuntura s'organisent en guilde depuis les temps ancestraux, mais l'une de ces guildes, l'Enclave des Ténèbres, spécialisée dans les arts martiaux, a pris le contrôle sur toutes les autres factions et a instauré une dictature militaire. Malgré cela, il ne peut y avoir aucun secret chez les Kobuntura, dans la mesure où ils ne peuvent communiquer sans que tous les Kobuntura soient au courant. Les échanges et la sociabilité sont très limités, étant donné que le seul but de l'Enclave des Ténèbres, et par là même de toute la société Kobuntura, est de retrouver une espèce précise de Précurseurs, les Constructeurs, afin de découvrir leurs plus grands secrets d'ingénierie. Cet unique objectif cimente la civilisation Kobuntura depuis sa naissance.
@@ -5338,7 +5340,7 @@ SP_UGMORS_DESC
 '''Les Ugmors sont une forme d'écume magmatique utilisant les roches et les minéraux pour fabriquer des entités temporaires, chacune conçue pour accomplir des tâches spécifiques.
 
 Structure sociale:
-Les Trappes de Larar sont le coeur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège. 
+Les Trappes de Larar sont le cœur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège. 
 
 Les Ugmors ont une forme de gouvernement très centralisé, ressemblant à une ruche, mais sans aucune reine. Cela s'explique par le fait que tous les Ugmors naissent avec les mêmes données mémorielles et partagent les mêmes buts. Lorsqu'un Ugmor découvre quelque chose de nouveau, il retourne aux Trappes de Larar les plus proches afin de partager sa découverte avec le reste de l'espèce.
 
@@ -5437,10 +5439,10 @@ Les Acirema sont des organismes purement énergétiques, d'une forme elliptique 
 
 Tout comme les Acirema ont trouvé l'anomalie qui leur permet de voyager entre les univers, ils ont également découvert qu'exploiter leur différence structurelle permet de produire des quantités colossales d'énergie dans les deux univers. Ils se sont également rendus compte que leurs propres corps pouvaient manipuler l'énergie produite. Menant de nombreuses études sur le Portail et construisant même des structures en son sein, il est apparu rapidement que la quantité phénoménale d'énergie produite avait une incidence sur la stabilité du Portail, et qu'exploiter davantage d'énergie pouvait remettre en question la sécurité des Acirema.
 
-La quantité gigantesque d'énergie que les Acirema peuvent transférer dans leur univers via le Portail, leur confère une production excellente en Industrie, tandis que le fait qu'il puisse manipuler eux-mêmes cette énergie, leur permet d'utiliser leur propre corps comme armement. Cela rend le Portail très dangereux à approcher, sans compter que les Acirema se méfient des étrangers, et sont conscients de la vulnérabilité de leur position. Faire commerce de l'énergie du Portail dans cet univers leur est cependant devenu bénéfique, puisque qu'ils ne sont pas en mesure d'exploiter les planètes qui s'y trouvent. Les Acirema du Portail semble avoir un gouvernement de type militaire et/ou d'avant-poste scientifique (un coeur décisionnel resserré donnant les grandes orientations à une population quasiment autonome). Les Acirema restent très discrets sur la nature de leur société dans leur propre univers.
+La quantité gigantesque d'énergie que les Acirema peuvent transférer dans leur univers via le Portail, leur confère une production excellente en Industrie, tandis que le fait qu'il puisse manipuler eux-mêmes cette énergie, leur permet d'utiliser leur propre corps comme armement. Cela rend le Portail très dangereux à approcher, sans compter que les Acirema se méfient des étrangers, et sont conscients de la vulnérabilité de leur position. Faire commerce de l'énergie du Portail dans cet univers leur est cependant devenu bénéfique, puisque qu'ils ne sont pas en mesure d'exploiter les planètes qui s'y trouvent. Les Acirema du Portail semble avoir un gouvernement de type militaire et/ou d'avant-poste scientifique (un cœur décisionnel resserré donnant les grandes orientations à une population quasiment autonome). Les Acirema restent très discrets sur la nature de leur société dans leur propre univers.
 
 Armes vivantes:
-Les astronefs avec un équipage Acirema gagneront 1 point bonus en Bouclier, même si l'astronef n'est pas équipé de boucliers.
+Les astronefs avec un équipage Acirema gagneront 1 point bonus en Bouclier, même si l'astronef n'est pas équipé de [[encyclopedia SHIELDS_TITLE]].
 
 "Monde Natal":
 Le Portail est est un environnement irradié, situé à proximité d'une Géante bleue anormalement plus brillante que la moyenne, et dispose d'une connection à un autre univers. La rumeur veut que des expériences menées par les Précurseurs aient donné naissance à cette connection, ce qui a eu une influence sur l'étoile géante toute proche. On suppose même qu'une vie intelligente s'est développée au sein du Portail, mais qu'elle fut détruite lorsque les Acirema furent les premiers à ouvrir cette connection (par la recherche ou par l'utilisation d'armes avancées).
@@ -5503,7 +5505,7 @@ La société Volp-Uglush agit quasiment comme un organisme unique, car son organ
 Les Volp-Uglush sont très efficaces dans la gestion des flottes marchandes et sont d'excellents bureaucrates. Alors qu'ils possèdent une machine de guerre performante étant capable de prendre part aux plus grandes batailles, le chaos du combat est loin d'être un environnement qui leur convient.
 
 Monde natal:
-Hive est une vaste planète stérile dont la taille est 2 fois plus importante que la masse. Cela suggère que toute sa matière, excepté un petit coeur de métal, a été utilisée pour créer les galeries et construire les infrastructures au sein du vaste réseau de tunnels de la bureaucratie Volp-Uglush.
+Hive est une vaste planète stérile dont la taille est 2 fois plus importante que la masse. Cela suggère que toute sa matière, excepté un petit cœur de métal, a été utilisée pour créer les galeries et construire les infrastructures au sein du vaste réseau de tunnels de la bureaucratie Volp-Uglush.
 
 Raison de la sédentarité:
 Les Volp-Uglush ayant à présent une société hautement complexe et intriquée, il leur est impossible de quitter Hive pour fonder ailleurs une nouvelle colonie, cela nécessitant un esprit d'indépendance et d'innovation leur faisant désormais défaut.
@@ -5529,7 +5531,7 @@ Préfèrent les Planètes avec toundra.
 
 SP_FURTHEST_DESC
 '''Biologie:
-Les Furthest sont des créatures à fourrure mesurant 1.5m de haut. Verticalement symétriques, ils possèdent trois longues jambes, ainsi que trois longs cous flexibles. Au sommet de chaque cou, se trouve un oeil à multi-facettes, et une bouche pour l'alimentation et la manipulation d'objets. Cela permet à la créature d'observer dans toutes les directions à la fois. Leur système cérébral se situe au centre de leur corps.
+Les Furthest sont des créatures à fourrure mesurant 1.5m de haut. Verticalement symétriques, ils possèdent trois longues jambes, ainsi que trois longs cous flexibles. Au sommet de chaque cou, se trouve un œil à multi-facettes, et une bouche pour l'alimentation et la manipulation d'objets. Cela permet à la créature d'observer dans toutes les directions à la fois. Leur système cérébral se situe au centre de leur corps.
 
 Nom:
 Les Furthest pensent que l'intelligence se mesure à la distance qu'un organisme est capable de mettre en lui-même et une menace potentielle. Si bien que le nom "Furthest" est censé décrire leur espèce comme la plus avancée de toutes.
@@ -5583,7 +5585,7 @@ Les Expérimentateurs appartiennent à une ancienne race précurseur, dont l'exi
 SP_SUPER_TEST
 Super Testeurs
 SP_SUPER_TEST_GAMEPLAY_DESC
-'''Les Super Testeurs, performants dans chaque domaine, sont quasiment omniscients. Ils prospèrent sur tous types de planètes. (Leur pouvoir de neutralisation de Furtivité ne fonctionne que lorsqu'ils se trouvent dans leur Capitale)
+'''Les Super Testeurs, performants dans chaque domaine, sont quasiment omniscients. Ils prospèrent sur tous types de planètes. (Leur pouvoir de neutralisation de [[encyclopedia STEALTH_TITLE]] ne fonctionne que lorsqu'ils se trouvent dans leur Capitale)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 
@@ -5711,7 +5713,7 @@ Tête Empalée
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''La tête d'un ancien empereur est empalée à la vue de tous, inspirant une profonde terreur aux ennemis de l'empire.
 
-Tous les flottes n'appartenant pas à l'empire, qu'elles soient ennemies ou alliées, se trouvant dans une zone de 100uu, verront leur bouclier, résistance et puissance de feu légèrement affaiblis.
+Toutes les flottes n'appartenant pas à l'empire, qu'elles soient ennemies ou alliées, se trouvant dans une zone de 100uu, verront leurs [[encyclopedia SHIELDS_TITLE]], [[encyclopedia STRUCTURE_TITLE]] et puissance de feu légèrement affaiblis.
 '''
 
 HEAD_ON_A_SPIKE_SPECIAL_EFFECT
@@ -5740,7 +5742,7 @@ Cette planète est recouverte d'une épaisse couverture nuageuse qui accroît de
 VOLCANIC_ASH_MASTER_SPECIAL
 Fouisseurs Invisibles
 VOLCANIC_ASH_MASTER_SPECIAL_DESC
-Cette planète abrite des monstres fouisseurs évoluant autour de son coeur, ce qui engendre une activité volcanique particulièrement intense. Plus tardivement dans leur cycle de vie, ces Fouisseurs subissent une métamorphose les rendant capables d'entrouvrir une faille dimensionnelle dans le tissu de l'espace-temps.
+Cette planète abrite des monstres fouisseurs évoluant autour de son cœur, ce qui engendre une activité volcanique particulièrement intense. Plus tardivement dans leur cycle de vie, ces Fouisseurs subissent une métamorphose les rendant capables d'entrouvrir une faille dimensionnelle dans le tissu de l'espace-temps.
 
 VOLCANIC_ACTIVITY_SPECIAL
 Volcanisme Intense
@@ -5755,7 +5757,7 @@ Cette planète est recouverte d'un épais nuage de cendres volcaniques qui accro
 DIM_RIFT_MASTER_SPECIAL
 Fouisseurs Dimensionnels
 DIM_RIFT_MASTER_SPECIAL_DESC
-Cette planète abrite des monstres fouisseurs évoluant autour de son coeur, ce qui engendre l'apparition de failles dimensionnelles à l'intérieur et autour de la planète. Ces Fouisseurs, lors de leur dernier stade de mutation, commenceront à entraîner la planète dans le Vide.
+Cette planète abrite des monstres fouisseurs évoluant autour de son cœur, ce qui engendre l'apparition de failles dimensionnelles à l'intérieur et autour de la planète. Ces Fouisseurs, lors de leur dernier stade de mutation, commenceront à entraîner la planète dans le Vide.
 
 DIM_RIFT_SLAVE_SPECIAL
 Faille Dimensionnelle
@@ -5765,7 +5767,7 @@ Cette planète est partiellement dissimulée dans une faille dimensionnelle, ce 
 VOID_MASTER_SPECIAL
 Monstres du Vide
 VOID_MASTER_SPECIAL_DESC
-Des monstres évoluant au coeur de la planète l'entraînent dans le Vide. Une catastrophe imminente pourrait peut-être découler de cette Particularité.
+Des monstres évoluant au cœur de la planète l'entraînent dans le Vide. Une catastrophe imminente pourrait peut-être découler de cette Particularité.
 
 VOID_SLAVE_SPECIAL
 Métamorphose par le Vide
@@ -5891,7 +5893,7 @@ Cette planète abrite de riches gisements de minerai qui accélèrent significat
 STARSPAWN_NEBULA_SPECIAL
 Nébuleuse Mère
 STARSPAWN_NEBULA_SPECIAL_DESC
-Les systèmes présentant cette Particularité se situent au coeur d'une nébuleuse susceptible, en s'effondrant sur elle-même, de donner naissance à une nouvelle étoile.
+Les systèmes présentant cette Particularité se situent au cœur d'une nébuleuse susceptible, en s'effondrant sur elle-même, de donner naissance à une nouvelle étoile.
 
 #############################################################
 ####        E N U M E R A T I O N   V A L U E S          ####
@@ -7154,7 +7156,7 @@ Translinguistique
 LRN_TRANSLING_THT_DESC
 '''Sans effet dans l'immédiat, mais permettra par la suite l'acquisition pacifique de planètes indigènes.
 
-Les faibles d'esprit luttent contre ou acceptent les limites de la langue qu'ils ont apprise. Les esprits plus évolués se sentent limités par les concepts qu'ils parviennent à exprimer. Les vrais grands esprits se libèrent du carcan du langage, formant et analysant des pensées aux frontières du transcendantal. Mais ces grands esprits se retrouvent souvent isolés et désoeuvrés, car sans langage pour exprimer des pensées, comment pourraient-ils bien partager leurs profondes idées?'''
+Les faibles d'esprit luttent contre ou acceptent les limites de la langue qu'ils ont apprise. Les esprits plus évolués se sentent limités par les concepts qu'ils parviennent à exprimer. Les vrais grands esprits se libèrent du carcan du langage, formant et analysant des pensées aux frontières du transcendantal. Mais ces grands esprits se retrouvent souvent isolés et désœuvrés, car sans langage pour exprimer des pensées, comment pourraient-ils bien partager leurs profondes idées?'''
 
 LRN_PSIONICS
 Psionique
@@ -7372,7 +7374,7 @@ Minéralogie Tectonique
 PRO_CORE_MINE_DESC
 '''Extraction minière intensive et risquée.
 
-La pression et les températures dans les manteaux et les coeurs des planètes terrestres créent de grandes quantités de cristal et de formations minérales apparaissant uniquement dans les couches de la croûte supérieure découlant du volcanisme. Les couches atmosphériques basses et les noyaux des planètes gazeuses contiennent des matériaux encore plus exotiques, et ce en grande concentration. Accéder à ces régions pour extraire ces matériaux s'avère difficile et dangereux, mais éminemment lucratif, en comparaison de l'exploitation minière traditionnelle de surface.
+La pression et les températures dans les manteaux et les cœurs des planètes terrestres créent de grandes quantités de cristal et de formations minérales apparaissant uniquement dans les couches de la croûte supérieure découlant du volcanisme. Les couches atmosphériques basses et les noyaux des planètes gazeuses contiennent des matériaux encore plus exotiques, et ce en grande concentration. Accéder à ces régions pour extraire ces matériaux s'avère difficile et dangereux, mais éminemment lucratif, en comparaison de l'exploitation minière traditionnelle de surface.
 
 Les minéraux exploitables sont présents dans tout le volume d'une planète, créés sous différentes conditions chimiques et thermodynamiques données, comme la sédimentation de surface en milieu aqueux, la différenciation sous haute pression, ou la métamorphose en semi-profondeur. Après création, des processus tels que la tectonique des plaques, le volcanisme et les courants de convection profonde, ont une importance égale afin de déterminer la forme et l'emplacement final des ces ressources extractibles. Comprendre ces processus et leurs effets, les causes et les indices, est essentiel pour assurer l'efficacité des opérations d'extraction minière à grande échelle.'''
 
@@ -7384,7 +7386,7 @@ PRO_ROBOTIC_PROD_DESC
 
 Les Exobots, désignation sous laquelle ils sont communément connus, constituent l'aboutissement du design allié à la fonctionnalité. Robots conçus pour effectuer n'importe quelle tâche de production, de l'électronique microscopique à la construction à grande échelle, leur production de masse est aisée, tandis que leur utilisation reste la plus avantageuse dans les colonies assignant une haute priorité à l'industrie. Chaque monde privilégiant l'industrie se voit gratifiée d'une équipe d'Exobots, améliorant ainsi considérablement sa production industrielle.
 
-Bien qu'un haut niveau en conception et en configuration d'usine requiert toujours une supervision permanente, la suppression de la main d'oeuvre classique des processus de production résout bon nombre de problèmes. Les robots peuvent travailler continuellement, sans demander ni compensation financière ni amélioration des conditions de travail. Les robots sont bien plus adaptés à des environnements industriels dangereux, et n'ont pas besoin d'un espace habitable hors-site. Ils exécutent parfaitement leurs tâches, toutefois plus ou moins bien selon la qualité des instructions.'''
+Bien qu'un haut niveau en conception et en configuration d'usine requiert toujours une supervision permanente, la suppression de la main d'œuvre classique des processus de production résout bon nombre de problèmes. Les robots peuvent travailler continuellement, sans demander ni compensation financière ni amélioration des conditions de travail. Les robots sont bien plus adaptés à des environnements industriels dangereux, et n'ont pas besoin d'un espace habitable hors-site. Ils exécutent parfaitement leurs tâches, toutefois plus ou moins bien selon la qualité des instructions.'''
 
 PRO_EXOBOTS  # translated
 Exobots
@@ -7419,7 +7421,7 @@ Génération Orbitale
 PRO_ORBITAL_GEN_DESC
 '''Une fois surmontés les problèmes contraignants de la gravité, les géantes gazeuses offrent une opportunité unique d'exploiter rapidement et efficacement de l'énergie. Les techniques qui tirent avantage de la haute densité de l'atmosphère et de la circulation des courants-jets au niveaux des bandes et des zones, permettent d'accumuler une quantité significative d'énergie et de la transférer vers des planètes proches pour exploitation.
 
-L'orbite basse autour de corps planétaires présente de nombreux avantages pour la production d'énergie en comparaison des surfaces planétaires. L'exposition directe aux radiations solaires sans atténuation atmosphérique, ainsi que les structures imposantes pouvant être assemblées en condition de microgravité afin de collecter cette énergie, font partie de ces nombreux avantages. L'énergie résultante peut être utilisée en orbite, ou bien redirigée vers la surface pour alimenter l'industrie. D'autre part, de nouveaux mécanismes de conversion de l'énergie deviennent possibles en orbite, incluant le couplage du champ magnétique planétaire, l'échange du moment cinétique orbital, ainsi que la chaleur du frottement atmosphérique, chacun étant bénéfiques à la mise en oeuvre d'applications spécialisées.'''
+L'orbite basse autour de corps planétaires présente de nombreux avantages pour la production d'énergie en comparaison des surfaces planétaires. L'exposition directe aux radiations solaires sans atténuation atmosphérique, ainsi que les structures imposantes pouvant être assemblées en condition de microgravité afin de collecter cette énergie, font partie de ces nombreux avantages. L'énergie résultante peut être utilisée en orbite, ou bien redirigée vers la surface pour alimenter l'industrie. D'autre part, de nouveaux mécanismes de conversion de l'énergie deviennent possibles en orbite, incluant le couplage du champ magnétique planétaire, l'échange du moment cinétique orbital, ainsi que la chaleur du frottement atmosphérique, chacun étant bénéfiques à la mise en œuvre d'applications spécialisées.'''
 
 PRO_SENTIENT_AUTOMATION
 Automates Adaptatifs
@@ -7459,7 +7461,7 @@ Génération Zero-Point
 PRO_ZERO_GEN_DESC
 '''Tout mécanisme de génération d'énergie impliquant un apport de carburant est limité par la relation relativiste masse-énergie: aucune énergie supplémentaire ne peut être produite sans la consommation d'une masse équivalente, même avec un taux de conversion parfaitement efficace. Puiser l'énergie inhérente du vide, ou énergie zero-point, rend disponible une source infinie et optimale d'énergie. Le taux, ou puissance, de cette extraction est théoriquement illimité, les limites se situant seulement au niveau des moyens disponibles pour collecter et utiliser la production globale.
 
-À une échelle appropriée et sous certaines conditions, la relation masse-énergie devient un phénomène unifié. À une plus grande échelle, le contrôle complet de la structure de la matière et de la dynamique de l'énergie devient possible, ainsi que les échanges entre les deux grandeurs physiques. La transmutation et la réplication, à petite échelle, deviennent également une réalité. Toutefois, malgré l'énorme équivalence énergétique de la matière, convertir directement cette dernière en énergie, puis l'injecter dans le réseau de consommation, est généralement moins rentable que la génération par fusion, en tenant compte des mêmes impératifs conséquents de mise en oeuvre.
+À une échelle appropriée et sous certaines conditions, la relation masse-énergie devient un phénomène unifié. À une plus grande échelle, le contrôle complet de la structure de la matière et de la dynamique de l'énergie devient possible, ainsi que les échanges entre les deux grandeurs physiques. La transmutation et la réplication, à petite échelle, deviennent également une réalité. Toutefois, malgré l'énorme équivalence énergétique de la matière, convertir directement cette dernière en énergie, puis l'injecter dans le réseau de consommation, est généralement moins rentable que la génération par fusion, en tenant compte des mêmes impératifs conséquents de mise en œuvre.
 
 Les précédentes techniques de production avaient pour but essentiel d'éviter ou d'occulter les problèmes complexes liés à la manipulation de la matière. Aucune de ces techniques n'avaient modifié fondamentalement la méthode de base, à savoir assembler les objets à partir de différents matériaux constituants, qu'ils se présentent sous forme de modules préfabriqués, ou bien de minéraux bruts. En convertissant l'énergie pure directement en objet matériel désiré, le besoin en matériaux de base tels que les minéraux ou la nourriture peut être grandement minimisé si nécessaire.'''
 
@@ -7467,7 +7469,7 @@ PRO_NEUTRONIUM_EXTRACTION
 Extraction Neutronique
 
 PRO_NEUTRONIUM_EXTRACTION_DESC
-Le coeur d'une étoile à neutrons est constitué de matière dégénérée, comprimée par la gravité et d'une densité infiniment plus importante que la matière normale la plus lourde. Ce matériau exotique présente de nombreuses applications une fois extrait de l'étoile, permettant ainsi la production de structures et d'équipements d'astronefs inédits et performants.
+Le cœur d'une étoile à neutrons est constitué de matière dégénérée, comprimée par la gravité et d'une densité infiniment plus importante que la matière normale la plus lourde. Ce matériau exotique présente de nombreuses applications une fois extrait de l'étoile, permettant ainsi la production de structures et d'équipements d'astronefs inédits et performants.
 
 CON_ARCH_PSYCH
 Psychologie Architecturale
@@ -7511,9 +7513,9 @@ Architecture Gravitationnelle
 CON_CONTGRAV_ARCH_DESC
 '''Augmente de 1 la portée de l'[[encyclopedia SUPPLY_TITLE]] pour tous les avant-postes et colonies de l'empire.
 
-L'installation d'un générateur de gravité nulle au coeur d'une planète rend possible le contrôle binaire "marche/arrêt" de la gravité planétaire, mais seulement sur une zone limitée. L'industrie planétaire profite alors des nombreux bénéfices de la faible gravité et de la gravité zéro (low-G et zero-G), mais sans ses inconvénients. Une gravité inversée peut être également générée, rendant les coûts des lancements spatiaux quasiment inexistants.
+L'installation d'un générateur de gravité nulle au cœur d'une planète rend possible le contrôle binaire "marche/arrêt" de la gravité planétaire, mais seulement sur une zone limitée. L'industrie planétaire profite alors des nombreux bénéfices de la faible gravité et de la gravité zéro (low-G et zero-G), mais sans ses inconvénients. Une gravité inversée peut être également générée, rendant les coûts des lancements spatiaux quasiment inexistants.
 
-Le contrôle total de l'orientation et de la puissance des forces gravitationnelles s'exerçant sur ou à l'intérieur d'une structure, permet l'émergence de designs jouissant simultanément de la liberté de l'impesanteur et de la nécessité de définir les directions haut et bas. La structure elle-même, et l'environnement qu'elle fournit, peut prendre n'importe quelle forme dans l'espace, s'étirant sur de grandes distances, formant une boucle sur elle-même, et effectuant des interconnections à volonté. Simultanément, les environnements internes à ces structures reproduisent les mêmes modifications et adaptations, et peuvent présenter quelques similitudes ou être entièrements différents d'une zone adjacente à une autre. Une telle versatilité rend possible de nouveaux designs innovants et fonctionnels pour la société, l'industrie et bien d'autres domaines.'''
+Le contrôle total de l'orientation et de la puissance des forces gravitationnelles s'exerçant sur ou à l'intérieur d'une structure, permet l'émergence de designs jouissant simultanément de la liberté de l'impesanteur et de la nécessité de définir les directions haut et bas. La structure elle-même, et l'environnement qu'elle fournit, peut prendre n'importe quelle forme dans l'espace, s'étirant sur de grandes distances, formant une boucle sur elle-même, et effectuant des interconnections à volonté. Simultanément, les environnements internes à ces structures reproduisent les mêmes modifications et adaptations, et peuvent présenter quelques similitudes ou être entièrements différents d'une zone adjacente à une autre. Une telle souplesse rend possible de nouveaux designs innovants et fonctionnels pour la société, l'industrie et bien d'autres domaines.'''
 
 CON_GAL_INFRA
 Infrastructure Galactique
@@ -7559,172 +7561,172 @@ SHP_GAL_EXPLO
 Exploration Galactique
 
 SHP_GAL_EXPLO_DESC
-La découverte du voyage interstellaire par liaisons spatiales inaugure une nouvelle ère de développement de la société. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entière est confrontée au possibilités illimitées des étoiles ... la croissance et la prospérité, ou la destruction totale.
+La découverte du voyage interstellaire par voies spatiales inaugure une nouvelle ère de développement pour la société. Les vieilles querelles politiques entre factions mineures deviennent insignifiantes lorsque la civilisation tout entière découvre les possibilités illimitées des étoiles... croissance et prospérité, mais aussi destruction totale.
 
 SHP_SPACE_TACTICS
 Tactiques Spatiales
 
 SHP_SPACE_TACTICS_DESC
-Les combats en microgravité et dans le vide exige des armes spécialisées et des systèmes de défense adaptés, ainsi que des tactiques et des théories qui optimisent leur utilisation.
+Les combats dans le vide interstellaire et en microgravité exigent des armes spécialisées et des systèmes de défense adaptés, ainsi que des tactiques théoriques optimisant leur utilisation et leur efficacité.
 
 SHP_INTSTEL_LOG
 Logistique Interstellaire
 
-#SHP_INTSTEL_LOG_DESC
-#'''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] of planets by 3.
-#
-#Increases Starlane Speed of your ships by 20 when they are within 50 uu of a controlled planet.
-#
-#Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
+SHP_INTSTEL_LOG_DESC
+'''Débloque le focus Logistique, augmentant l'[[encyclopedia SUPPLY_TITLE]] de 3 sur toutes les planètes.
+
+Augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]] de tous les astronefs lorsque ces derniers se trouvent à moins de 50 uu d'une planète appartenant à l'empire.
+
+Approvisionner efficacement les astronefs, gérer les déplacements des flottes et planifier le mouvement de bâtiments spécifiques lors des batailles, requièrent une maîtrise complète de la navigation et de la détection, ainsi que des méthodes d'acquisition de l'information.'''
 
 SHP_MIL_ROBO_CONT
 Contrôle Militaire Robotisé
 
-#SHP_MIL_ROBO_CONT_DESC
-#Robotic control can be used effectively for tasks such as mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.
+SHP_MIL_ROBO_CONT_DESC
+Le contrôle robotisé s'avère efficace dans les domaines de l'industrie et de l'extraction minière. L'extension naturelle de ce concept est de développer un équipement militaire robotisé capable de gérer de manière autonome un astronef. Cela permettrait une plus grande souplesse en matière de conception et de design, tous les systèmes encombrants de support vital devenant inutiles. Les coques dotées d'une telle technologie pourraient s'auto-réparer, tandis que la gestion de la sécurité et des limitations physiques des ingénieurs appartiendrait dès lors au passé.
 
 SHP_SPACE_FLUX_DRIVE
-Propulsion Spatiale
+Propulsion Flux Spatial
 
-#SHP_SPACE_FLUX_DRIVE_DESC
-#Ordinarily, propulsion in space is limited to either propellant or field propulsion. On relatively small scales however, it is possible to propel an object in space much like one could in water: by pushing backwards the medium in which the object is immersed. This requires the manipulation of space itself whereby the smallest units of space are collapsed, forcing the matter they once contained into adjacent units of space. This method of propulsion is very efficient, but dangerous on larger scales and easily detectable due to the dimensional effects.
+SHP_SPACE_FLUX_DRIVE_DESC
+D'ordinaire, la propulsion dans l'espace est limitée par le propulseur ou le milieu de propulsion lui-même. Cependant, à des échelles de grandeur relativement petites, il est possible de propulser un objet dans l'espace de la même manière qu'il le serait dans l'eau, c'est-à-dire en agissant directement sur le milieu dans lequel l'objet est immergé. Cela nécessite la manipulation de l'espace lui-même à une dimension quantique, chaque quantum d'espace étant réorganisé en un système d'unités fixes et adjacentes d'espace. Cette méthode de propulsion est très efficace, mais s'avère dangereuse à grande échelle et facilement détectable en raison des effets dimensionnels résultants.
 
 SHP_CONTGRAV_MAINT
 Maintenance Anti-Gravitationnelle
 
-#SHP_CONTGRAV_MAINT_DESC
-#When the mass of the ship surpasses a certain threshold, it becomes necessary to consider the gravitational stresses on vital architectural points in the ship's structure. These points will be unable to withstand the gravitational stresses and collapse, destroying the vessel. This necessitates nearly constant maintenance of these points to avoid total structural failure.
+SHP_CONTGRAV_MAINT_DESC
+Lorsque la masse d'un astronef dépasse un certain seuil, il devient nécessaire de prendre en compte le stress gravitationnel occasionné sur les points structurels vitaux de l'appareil. Ces points ne pourraient supporter la pression gravitationnelle et s'effondreraient sur eux-mêmes, détruisant ainsi le vaisseau. Cela nécessite donc une maintenance quasi-constante de ces secteurs, qui s'avèrent vitaux pour présever une intégrité structurale totale.
 
 SHP_NANOROBO_MAINT
 Maintenance Nano-Robotisée
 
-#SHP_NANOROBO_MAINT_DESC
-#Just as nanorobots can be used for production, so also can they be used for maintenance. A hull with a complement of centrally organized nanite engineers would be able to rapidly repair damage, even during combat. Such machines would have great difficulty distinguishing organic beings from a part of the hull in need of repair however, and as such this concept could only be applied to automated hulls.
+SHP_NANOROBO_MAINT_DESC
+Tout comme les nanorobots sont utilisés pour la production, ils peuvent l'être également pour la maintenance. Une coque intégrant un régiment de nanorobots serait en mesure de réparer rapidement tout dommage, même en cours de combat. De telles machines auraient cependant une grande difficulté à différencier les parties organiques de celles nécessitant une réparation, ce qui implique que cette technologie ne peut être appliquée qu'aux coques mécaniques et automatisées.
 
 SHP_MASSPROP_SPEC
 Spécialisation Propulsion de Masse
 
-#SHP_MASSPROP_SPEC_DESC
-#Traditional propulsion devices operate well on objects of relatively low mass. However, when the mass of a ship approaches that of a small moon, ordinary methods of propulsion are very clumsy and require tremendous amounts of energy. A new approach to propulsion, taking into account the size of the object in question as a fundamental aspect of the system, could allow such vessels to have useful mobility.
+SHP_MASSPROP_SPEC_DESC
+Les systèmes traditionnels de propulsion s'adaptent généralement bien aux objets ayant une masse relativement faible. Toutefois, lorsque la masse d'un astronef atteint celle d'une petite lune, les méthodes classiques de propulsion deviennent peu performantes tout en nécessitant une quantité colossale d'énergie. Une nouvelle conception de la propulsion, intégrant la taille de l'objet en question comme élément fondamental du système, pourrait permettre à de tels vaisseaux d'augmenter considérablement la part efficace de tout déplacement.
 
 SHP_TRANSSPACE_DRIVE
 Propulsion Trans-Spatiale
 
-#SHP_TRANSSPACE_DRIVE_DESC
-#'''Even when spatial dimensions are skewed by relativistic effects, an object generally has constant space-time characteristics. By creating a device which alters the characteristics of space-time itself using quasi-relativistic effects, it would be possible to create a fast, stealthy method of propulsion. '''
+SHP_TRANSSPACE_DRIVE_DESC
+Même lorsque les dimensions spatiales sont déformées par les effets relativistes, un objet conserve généralement des caractéristiques spatio-temporelles constantes. En créant un dispositif capable de modifier les caractéristiques de l'espace-temps lui-même à l'aide d'effets quasi-relativistes, il deviendrait alors possible de concevoir une nouvelle méthode rapide et furtive de propulsion.
 
 SHP_MIDCOMB_LOG
 Logistique de Combat
 
-#SHP_MIDCOMB_LOG_DESC
-#When interstellar fleets are in regular, commonplace use, the transfer of personnel and material in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the co-ordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
+SHP_MIDCOMB_LOG_DESC
+Lorsque les flottes interstellaires se trouvent dans un système connu et contrôlé, le transfert de personnel et de matériel est une tâche relativement aisée en l'absence d'astronefs ennemis. En combat cependant, bien que de telles manœuvres puissent avoir une valeur tactique indéniable, d'importantes difficultés demeurent quant à la la coordination logistique nécessaire en cas de modifications soudaines du scénario tactique global. L'utilisation d'une station unique et mobile de commandement permet de planifier et de mettre en œuvre des modèles d'organisation logistique, et ce, dans le chaos et la confusion des combats.
 
 SHP_ASTEROID_HULLS
 Coques Astéroïdales
 
-#SHP_ASTEROID_HULLS_DESC
-#Rather than constructing a hull from scratch, it is far easier to take a pre-existing space-borne object and adapt it to fill the role of a ship's hull. Not only would such ships be very inexpensive to produce, but they would also be able to avoid detection by enemy ships by hiding amongst other asteroids.
+SHP_ASTEROID_HULLS_DESC
+Plutôt que de concevoir une coque à partir de zéro, il est bien plus facile d'utiliser un objet provenant de l'espace et de l'adapter afin de tenir lieu de coque d'astronef. Non seulement de tels astronefs seraient peu coûteux à produire, mais seraient également en mesure de tromper la détection des astronefs ennemis en se dissimulant parmi les autres astéroïdes.
 
 SHP_HEAVY_AST_HULL
 Coques Astéroïdales Massives
 
-#SHP_HEAVY_AST_HULL_DESC
-#Allows construction of larger asteroid hulls
+SHP_HEAVY_AST_HULL_DESC
+Permet l'élaboration de coques astéroïdales de grande envergure.
 
 SHP_ASTEROID_REFORM
 Recombination Astéroïdale
 
-#SHP_ASTEROID_REFORM_DESC
-#Through advanced processing of asteroid bodies rock armor can be produced which is as cheap as but more durable than lead armor plating.
+SHP_ASTEROID_REFORM_DESC
+Grâce à des procédés avancés de transformation des corps astéroïdaux, un blindage carbone aussi peu coûteux mais plus résistant qu'un blindage standard en plomb peut être produit.
 
 SHP_MONOMOLEC_LATTICE
-Toile Monomoléculaire
+Réseau Monomoléculaire
 
-#SHP_MONOMOLEC_LATTICE_DESC
-#Asteroid Hulls can be reinforced and armor plated, but the fact remains that the basic substance of which most asteroids are primarily composed is of lesser strength than most modern alloys. However, if the molecular structure of the rock itself were to be rearranged into a crystal lattice, its strength could be increased tremendously, allowing the production of asteroid hulls of previously impossible strengths.
+SHP_MONOMOLEC_LATTICE_DESC
+Les Coques Astéroïdales peuvent être renforcées et blindées, mais il demeure que les constituants de base de la majorité des astéroïdes sont généralement moins résistants que la plupart des alliages modernes. Cependant, si la structure moléculaire des roches elles-mêmes est modifiée afin d'obtenir un réseau cristallin, leur résistance pourrait être prodigieusement accrue, permettant l'élaboration de coques astéroïdales à la robustesse auparavant inconcevable.
 
 SHP_MULTICELL_CAST
 Hybridation Multicellulaire
 
-#SHP_MULTICELL_CAST_DESC
-#Even when it is inert, organic material is much more versatile than standard materials. A non-living multi-cellular ship would provide some of the advantages of organic materials without the customary nuisances of organic life.
+SHP_MULTICELL_CAST_DESC
+Même lorsqu'il est inerte, un matériau organique est bien plus versatile que n'importe quel matériau standard. Un astronef multicellulaire non-vivant pourrait offrir certains avantages des matériaux organiques mais sans les inconvénients inhérents à la vie organique.
 
 SHP_DOMESTIC_MONSTER
 Domestication Méga-Faune
 
-#SHP_DOMESTIC_MONSTER_DESC
-#Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the starlanes. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.
+SHP_DOMESTIC_MONSTER_DESC
+La pratique ancestrale de la domestication des autres espèces peut également s'appliquer aux monstres de l'espace peuplant les voies spatiales. Construire des Colonies et des Avant-postes à proximité de leurs lieux de nidification rendrait possible la domestication de tels monstres.
 
 SHP_ENDOCRINE_SYSTEMS
 Endocrinologie Méga-Faune
 
-#SHP_ENDOCRINE_SYSTEMS_DESC
-#The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.
+SHP_ENDOCRINE_SYSTEMS_DESC
+L'étude des systèmes endocriniens des organismes évoluant dans l'espace permet le développement des structures internes des astronefs à caractère organique.
 
 SHP_HAB_MEGAFAUN
 Méga-Faune Habitable
 
-#SHP_HAB_MEGAFAUN_DESC
-#It is generally uncommon to find comfortable living conditions within a gigantic space monster. This is exactly what must exist within an organic hull however, if it is to be adequately controlled from within. The development of massive, habitable creatures opens up numerous possibilities for ship design.
+SHP_HAB_MEGAFAUN_DESC
+Il est en général très rare de découvrir des conditions favorables afin de vivre à l'intérieur d'un gigantesque monstre de l'espace. Cela est cependant indispensable à l'intérieur d'une coque organique, tout comme un contrôle adéquat et fonctionnelle des conditions qui y règnent. La recherche et le développement de créatures massives et habitables ouvrent de nombreuses possibilités en matière de conception d'astronef.
 
 SHP_MONOCELL_EXP
 Expansion Monocellulaire
 
-#SHP_MONOCELL_EXP_DESC
-#Multi-cellular organisms tend to have longer life spans than single celled organisms due to specialization and interdependency. However, with the appropriate technological refinements, these aspects of multi-cellular life can be applied to a massive mono-cellular organism, allowing it to have practical functionality in combat.
+SHP_MONOCELL_EXP_DESC
+Les organismes multicellulaires jouissent d'une durée de vie plus longue que celle des organismes monocellulaires, en raison de leur faculté de spécialisation et d'interdépendance. Cependant, à l'aide des avancées technologiques nécessaires, ces aspects de la vie multicellulaire peuvent être appliqués à un organisme monocellulaire massif, lui permettant de développer ainsi des fonctionnalités avantageuses en situation de combat.
 
 SHP_CONT_SYMB
 Symbiose Artificielle
 
-#SHP_CONT_SYMB_DESC
-#Any ship's hull is in a symbiotic relationship with its makers in that they bring it into being and sustain it, and it performs its desired functions. However, this is a purely behavioral type of symbiosis. Through careful planning and design, an organic ship can be made to have a biological symbiotic relationship with its crew, each providing the other with the essentials of life.
+SHP_CONT_SYMB_DESC
+Toute coque d'astronef est en relation symbiotique avec ses concepteurs dans la mesure où ces derniers l'entretiennent tandis que celle-ci remplit les fonctions désirées. Cependant, il s'agit d'une symbiose purement mécanique. À l'aide d'expérimentations poussées, un astronef organique peut développer une symbiose physiologique avec son équipage, chacun fournissant à l'autre les besoins vitaux nécessaires.
 
 SHP_CONT_BIOADAPT
 Bio-Adaptation Expérimentale
 
-#SHP_CONT_BIOADAPT_DESC
-#It is very difficult to predict the actions of a living being to any useful degree of certainty without having an intimate understanding of its behavioral patterns. By placing a life form under harshly competitive developmental conditions, its behavioral patterns can be manipulated, strengthened and effectively utilized in war.
+SHP_CONT_BIOADAPT_DESC
+Il est très difficile de prédire les actions d'un être vivant avec certitude, sans profondément comprendre ses modes comportementaux. En faisant évoluer une forme de vie dans des conditions extrêmes de développement et de compétition, son comportement peut être manipulé et optimisé à des fins belliqueuses.
 
 SHP_BIOADAPTIVE_SPEC
 Bio-Neurologie Spécialisée
 
-#SHP_BIOADAPTIVE_SPEC_DESC
-#As a species evolves mental capabilities, the individuals whose minds are not perfectly attuned to the needs of their bodies cannot compete with those whose minds are perfectly specialized for their bodies. Thus, all evolved life forms have nearly ideal mental development for their type of body. There are no such guarantees for artificial life forms however, and often the true potential of such a being is unrealized due to subtle incompatibilities between mind and body. By specializing the organism's neural patterns to conform to its body type, these incompatibilities can be eliminated.
+SHP_BIOADAPTIVE_SPEC_DESC
+Telle l'évolution des capacités mentales d'une espèce, les individus dont l'esprit n'est pas parfaitement à l'écoute des besoins du corps ne peuvent pas rivaliser avec ceux dont l'esprit complète idéalement ce dernier. Ainsi, toutes les formes de vie ont développé des capacités mentales quasiment en adéquation avec leurs caractéristiques physiques. Cependant, une telle perfection n'existe pas pour les formes de vie artificielle, dont le potentiel réel demeure inexploité la plupart du temps, en raison d'incompatibilités subtiles entre l'esprit et le corps. En spécialisant le système neuronal de ces organismes afin qu'il s'adapte au potentiel physique, ces problèmes de compatibilité peuvent être résolus.
 
 SHP_FRC_ENRG_COMP
 Compression d'Énergie
 
-#SHP_FRC_ENRG_COMP_DESC
-#Typically, the manipulation of energy requires it to be in the form of matter so that potential energy can be stored as desired and released on demand. Matter converted to pure energy stored in the fabric of space-time itself would be more versatile than any material substance, but impossible to contain without advanced force-field technology.
+SHP_FRC_ENRG_COMP_DESC
+Habituellement, la manipulation de l'énergie nécessite que celle-ci soit disponible sous forme de matière afin de pouvoir être stockée et utilisée au besoin. De la matière convertie en énergie pure et stockée directement dans le tissu de l'espace-temps lui-même, serait bien plus souple et efficace à l'utilisation que n'importe quelle substance matérielle, mais nécessiterait une technologie avancée de champ de force afin de la conserver.
 
 SHP_QUANT_ENRG_MAG
 Amplification d'Énergie Quantique
 
-#SHP_QUANT_ENRG_MAG_DESC
-#Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.
+SHP_QUANT_ENRG_MAG_DESC
+En raison du principe d'incertitude quantique, il est possible pour une particule d'acquérir arbitrairement une petite quantité d'énergie supplémentaire ou bien de nouvelles particules peuvent exister de manière très éphémère. En détectant et en amplifiant ces fluctuations d'énergie quantique, il devient possible d'accroître grandement le potentiel des coques à énergie.
 
 SHP_ENRG_BOUND_MAN
 Modulation d'Énergie
 
-#SHP_ENRG_BOUND_MAN_DESC
-#'''Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility. Pure energy however, has no such restrictions. This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
-#'''
+SHP_ENRG_BOUND_MAN_DESC
+'''Qu'il soit construit, organique, ou issu d'une structure pré-existente, un astronef composé de matière doit posséder une architecture logique et en adéquation avec les utilisations les plus basiques. L'énergie pure cependant, ne présente pas de telles restrictions, ce qui permet à une coque d'énergie pure de revêtir n'importe quelle forme à tout moment, alors que cela serait tout simplement impossible pour une coque matérielle classique.
+'''
 
 SHP_SOLAR_CONT
 Confinement Solaire
 
-#SHP_SOLAR_CONT_DESC
-#A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects. If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
+SHP_SOLAR_CONT_DESC
+Une coque constituée d'énergie pure, bien que plus efficiente que n'importe quelle coque solide, présente cependant l'inconvénient de ne pas pouvoir exploiter l'énergie potentielle inhérente à tout objet matériel. Toutefois, s'il était possible de concevoir une coque composée non pas d'énergie pure, mais de gaz surchauffés en constante et autonome réaction de fusion, les limitations à la fois de l'énergie pure et de la matière solide deviendraient obsolètes.
 
 SHP_KRILL_SPAWN
-Enfanteur de Krill
-#SHP_KRILL_SPAWN_DESC
-#Unlocks the Krill Spawner ship part, which causes wild space krill to appear in systems with asteroid belts.
+Génération de Krill
+SHP_KRILL_SPAWN_DESC
+Débloque le Générateur de Krill pour les astronefs, qui provoque l'apparition de krill sauvage dans les systèmes abritant des ceintures d'astéroïdes.
 
 SPY_ROOT_DECEPTION
 Tromperie
 SPY_ROOT_DECEPTION_DESC
-L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de cacher la vérité peut être bien utile.
+L'art de la tromperie n’est pas naturel à toutes les espèces, mais la possibilité de dissimuler la vérité peut s'avérer bien utile.
 
 #############################################################
 ####          T E C H   A P P L I C A T I O N S          ####
@@ -7785,7 +7787,7 @@ STRUCTURE_SHORT_DESC
 Améliore la Résistance
 
 FLEET_RANGE_DESC
-Améliore l'Approvisionnement de la flotte
+Améliore l'Approvisionnement des flottes
 
 SHIP_REPAIR_DESC
 Répare les astronefs
@@ -7806,7 +7808,7 @@ VARIOUS_SHORT_DESC
 Améliore diverses caractéristiques
 
 PENALTY_ELIMINATE_SHORT_DESC
-Élimine les sanctions
+Supprime les pénalités
 
 GAME_MAKE_WORK_SHORT_DESC
 Permet le fonctionnement du jeu
@@ -7824,49 +7826,49 @@ CON_ORBITAL_CON
 Construction Orbitale
 
 CON_ORBITAL_CON_DESC
-'''Accroît de 1 la portée d'[[encyclopedia SUPPLY_TITLE]] de tous les avant-postes et colonies de l'empire.
+'''Augmente de 1 la portée de l'[[encyclopedia SUPPLY_TITLE]] de tous les avant-postes et colonies de l'empire.
 
-On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
+Sur une planète, il existe toujours une direction de référence: "haut". La microgravité est quant à elle isotrope. Cette différence essentielle entraîne de nombreuses conséquences quant aux types de structures pouvant être construits en orbite, et quels sont ceux utilisant de manière optimale l'espace, les matériaux et l'énergie dans chaque environnement de construction. Par ailleurs, en orbite, la configuration intérieure des espaces doit être entièrement repensée. Cependant, même s'il est très tentant de révolutionner complètement le design intérieur via un paradigme totalement indépendant de ceux utilisés à la surface planétaire, la fonctionnalité de ces espaces de vie en orbite doit être essentiellement ajustée en fonction des individus étant justement adaptés et acclimatés aux surfaces planétaires. Plutôt qu'une rupture totale avec les anciens agencements, une transition progressive peut s'avérer bien plus efficace.'''
 
 CON_CONC_CAMP
 Camps de Concentration
 
-#CON_CONC_CAMP_DESC
-#Typically, when forced to work to death, citizens will put up some resistance and have the sympathy and support of outside observers. However, by carefully creating buildings designed to quench the fire of justice within outsiders, and to promote feelings of worthlessness and subservience in those on the inside, concentration camps can be effectively utilized without fear of revolt.
+CON_CONC_CAMP_DESC
+Généralement, des citoyens réduits en esclavage et tués à la tâche, opposeront une certaine résistance et s'attireront la sympathie et le secours d'observateurs extérieurs. Cependant, en concevant d'une manière minitieuse et méthodique des structures destinées à étouffer toute velléité de révolte et de justice de la part des opprimés, et répandant une atmosphère de résignation et de soumission au sein de la population, les camps de concentration deviennent alors extrêmement efficaces, sans crainte aucune d'une éventuelle rébellion.
 
 CON_FRC_ENRG_CAMO
 Camouflage Synergique
 
 CON_FRC_ENRG_CAMO_DESC
-'''Accroît de 20 la [[encyclopedia STEALTH_TITLE]] de toutes les structures de l'empire.
+'''Augmente de 20 la [[encyclopedia STEALTH_TITLE]] de toutes les structures de l'empire.
 
-Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible far away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
+Les structures physiques ordinaires sont généralement rigides et opaques, construites à partir de matériaux naturels également rigides et opaques. Un champ d'énergie, par essence, ne présente pas ces particularités de manière définitive, dans la mesure où il peut être activer ou désactiver, changer de forme ou de couleur, et ce, à volonté. Tandis que la plupart des structures sont facilement repérables à grande distance via un appareil puissant de détection, une structure synergique - ou une structure classique entourée d'une série de champs de force de camouflage - serait fondamentalement invisible à grande distance.'''
 
 CON_PLANET_DRIVE
 Déplacement Planétaire
 
-#CON_PLANET_DRIVE_DESC
-#Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials. By equipping an entire planet with the means to open and navigate a starlane, it would be possible to move such planets to a safer location in times of necessity.
+CON_PLANET_DRIVE_DESC
+Les planètes situées dans les systèmes les plus reculés d'un empire sont souvent exposées aux éventuelles attaques des flottes ennemies, ces planètes abritant la plupart du temps des ressources de grande valeur et des particularités planétaires avantageuses. En équipant une planète entière d'un système lui permettant d'ouvrir et de naviguer sur une voie spatiale, il deviendrait alors possible de déplacer de telles planètes vers une région plus sûre si nécessaire.
 
-#CON_STARGATE
-#Stargate
+CON_STARGATE  # translated
+Stargate
 
 CON_STARGATE_DESC
-Pour les empires les plus étendus en particulier, le déplacement d'astronefs en toute hâte vers un noeud de défense donné se révèle souvent hors de portée. En créant un raccourci entre deux ou plusieurs points de l'espace-temps, on rend possible un tel déplacement, d'un bout à l'autre de l'empire si besoin, et on peut mettre en œuvre de nouvelles stratégies, tant offensives que défensives.
+Concernant les empires les plus vastes, la nécessité de déplacer en toute hâte des astronefs vers un lieu spécifique relève souvent de l'impossible. En créant un raccourci entre deux ou plusieurs points de l'espace-temps, déplacer instantanément et à volonté des astronefs d'un bout à l'autre de l'empire devient une réalité, permettant par ailleurs la mise en œuvre de nouvelles stratégies, tant offensives que défensives.
 
 CON_ART_PLANET
 Planète Artificielle
 
-#CON_ART_PLANET_DESC
-#'''Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centers for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
-#
-#On its own, the tech allows for construction of the basic [[buildingtype BLD_ART_PLANET]]. If the empire also has [[tech GRO_GAIA_TRANS]], then [[buildingtype BLD_ART_PARADISE_PLANET]] may be built. If the empire has [[tech PRO_EXOBOTS]] then [[buildingtype BLD_ART_FACTORY_PLANET]] can be built.'''
+CON_ART_PLANET_DESC
+'''Les géantes gazeuses et les ceintures d'astéroïdes offrent des opportunités et des ressources uniques, non seulement comme sites d'exploitation de précieuses ressources - et parfois extrêmement rares -, mais également comme sources intrinsèques de matériaux bruts pour la fabrication de planètes artificielles. De telles planètes permettraient d'établir de nouveaux centres de production dans des systèmes en surcharge ou auparavant inoccupés. De plus, diverses caractéristiques peuvent être modifiées ou ajoutées durant tout le processus de fabrication, permettant ainsi de spécifier la taille et l'environnement des planètes, ou encore de sélectionner certaines particularités planétaires considérées comme avantageuses.
+
+De base, cette technologie permet la construction d'une [[buildingtype BLD_ART_PLANET]] basique. Si l'empire maîtrise également la [[tech GRO_GAIA_TRANS]], alors une [[buildingtype BLD_ART_PARADISE_PLANET]] peut être construite. Si l'empire a recours à des [[tech PRO_EXOBOTS]], une [[buildingtype BLD_ART_FACTORY_PLANET]] peut être produite.'''
 
 CON_PALACE_EXCLUDE
 Palais Unique
 
-#CON_PALACE_EXCLUDE_DESC
-#Ensures that only one imperial palace will be present in an empire at a time. Make sure you scrap your old imperial palace before your new one is built.
+CON_PALACE_EXCLUDE_DESC
+Assure que l'empire abrite un seul Palais Impérial, et garantit que tout ancien Palais Impérial est détruit avant qu'un nouveau ne soit construit.
 
 GRO_SUBTER_HAB
 Habitat Souterrain
@@ -8946,7 +8948,7 @@ Réplicateurs
 #Only one replication focus can take effect in the empire at one time.'''
 
 BLD_PLANET_DRIVE
-Conducteur de Planète
+Navigateur de Planète
 
 #BLD_PLANET_DRIVE_DESC
 #'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
@@ -9207,7 +9209,7 @@ PART_DESC_STRENGTH
 Résistance : %1%
 
 PART_DESC_SHIELD_STRENGTH
-Résistance Bouclier : %1%
+Solidité Bouclier : %1%
 
 PART_DESC_DETECTION
 Puissance Détection : %1%
@@ -9571,7 +9573,7 @@ Blindage Xentronium
 #Extremely strong and durable armor plating.
 
 AR_ROCK_PLATE
-Blindage Régolite
+Blindage Carbone
 
 #AR_ROCK_PLATE_DESC
 #A strong, cheap alternative to alloys. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
@@ -9635,7 +9637,7 @@ Bouclier Multi-Spectral
 #There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_ROBOTIC_INTERFACE_SHIELDS
-Boucliers à Interface Robotisée
+Boucliers à Interface Robotique
 
 #SH_ROBOTIC_INTERFACE_SHIELDS_DESC
 #'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in one of [[shiphull SH_ROBOTIC]], [[shiphull SH_SELF_GRAVITATING]], [[shiphull SH_NANOROBOTIC]], [[shiphull SH_LOGISTICS_FACILITATOR]], [[shiphull SH_TITANIC]].
@@ -9718,7 +9720,7 @@ SP_NOVA_BOMB_DESC
 A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one starlane jump away.
 
 SP_KRILL_SPAWNER
-Enfanteur de Krill
+Générateur de Krill
 
 #SP_KRILL_SPAWNER_DESC
 #Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.
@@ -9789,7 +9791,7 @@ SH_TITANIC
 Coque Titanesque
 
 SH_TITANIC_DESC
-'''Cette coque, extraordinairement grande, est un véritable exploit d'ingénierie et qui est également requis pour se déplacer. Elle dispose de seize niches externes, trois niches internes et une niche en son coeur; sa structure max est extrêmement élevée. Son immense taille la rend presque impossible à cacher, même avec la technique furtive avancée.
+'''Cette coque, extraordinairement grande, est un véritable exploit d'ingénierie et qui est également requis pour se déplacer. Elle dispose de seize niches externes, trois niches internes et une niche en son cœur; sa structure max est extrêmement élevée. Son immense taille la rend presque impossible à cacher, même avec la technique furtive avancée.
 
 La [[encyclopedia STEALTH_TITLE]] est très faible, le [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que la vitesse sur les voies spatiales.
 
@@ -9799,7 +9801,7 @@ SH_TRANSSPATIAL
 Coque Trans-Spatiale
 
 SH_TRANSSPATIAL_DESC
-'''Cette coque expérimentale sert principalement à tester de nouvelles technologies. Elle dispose d'une niche externe et d'une niche en son coeur, sa structure max est extrêmement basse. Elle a été concue autour de la [[shippart FU_TRANSPATIAL_DRIVE]] et ainsi équipé en fait un éclaireur d'infiltration très efficace.
+'''Cette coque expérimentale sert principalement à tester de nouvelles technologies. Elle dispose d'une niche externe et d'une niche en son cœur, sa structure max est extrêmement basse. Elle a été concue autour de la [[shippart FU_TRANSPATIAL_DRIVE]] et ainsi équipé en fait un éclaireur d'infiltration très efficace.
 
 La [[encyclopedia STEALTH_TITLE]] est modérée, le [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que la vitesse sur les voies spatiales.
 
@@ -10684,6 +10686,52 @@ Télépathique
 #Invincible'''
 
 ### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name List
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
+### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+#AI_SHIPDESIGN_NAME_INVALID
+#Invalid Design
+
+#AI_SHIPDESIGN_NAME_MILITARY
+#'''Harpy
+#Gorgon
+#Centaur
+#Cerberus
+#Griffin
+#Manticore
+#Hydra
+#Python
+#Pegasus
+#Phoenix
+#Atlas
+#Helios
+#Prometheus
+#Poseidon
+#Hades
+#Nemesis'''
+
+#AI_SHIPDESIGN_NAME_TROOPER_ORBITAL
+#SpaceInvaders
+
+#AI_SHIPDESIGN_NAME_TROOPER_STANDARD
+#StormTroopers
+
+#AI_SHIPDESIGN_NAME_COLONISATION_ORBITAL
+#Orbital Seeder
+
+#AI_SHIPDESIGN_NAME_COLONISATION_STANDARD
+#Seeder
+
+#AI_SHIPDESIGN_NAME_OUTPOSTER_ORBITAL
+#Orbital Outposter
+
+#AI_SHIPDESIGN_NAME_OUTPOSTER_STANDARD
+#Outposter
+
+#AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
+#'''Decoy
+#Starbase'''
 
 #############################################################
 ####           HOTKEYS NAMES AND DESCRIPTIONS            ####
