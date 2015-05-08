@@ -235,50 +235,42 @@ bool CUIWnd::InResizeTab(const GG::Pt& pt) const {
 }
 
 void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
-    if ( !m_pinned ) {
-        if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) { // resize-dragging
-            GG::Pt new_lr = pt - m_drag_offset;
+    if (m_pinned)
+        return;
 
-            // constrain to within parent
-            if (GG::Wnd* parent = Parent()) {
-                GG::Pt max_lr = parent->ClientLowerRight();
-                new_lr.x = std::min(new_lr.x, max_lr.x);
-                new_lr.y = std::min(new_lr.y, max_lr.y);
-            }
+    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) { // resize-dragging
+        GG::Pt new_lr = pt - m_drag_offset;
 
-            Resize(new_lr - UpperLeft());
-        } else { // normal-dragging
-            if (GG::Wnd* parent = Parent()) {
-                GG::Pt ul = UpperLeft();
-                GG::Pt new_ul = ul + move;
-                //GG::Pt new_lr = lr + move;
-
-                GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
-                GG::Pt max_lr = parent->ClientLowerRight();
-                GG::Pt max_ul = max_lr - Size();
-
-                new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
-                new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
-
-                GG::Pt final_move = new_ul - ul;
-                GG::Wnd::LDrag(pt, final_move, mod_keys);
-            } else {
-                GG::Pt ul = UpperLeft();
-                GG::Pt requested_ul = ul + move;
-
-                GG::Pt min_ul = GG::Pt(GG::X1, GG::Y1);
-                GG::Pt max_ul = GG::Pt(GG::GUI::GetGUI()->AppWidth() - this->Width(),
-                                       GG::GUI::GetGUI()->AppHeight() - this->Height());
-
-                GG::X new_x = std::min(max_ul.x, std::max(min_ul.x, requested_ul.x));
-                GG::Y new_y = std::min(max_ul.y, std::max(min_ul.y, requested_ul.y));
-                GG::Pt new_ul(new_x, new_y);
-
-                GG::Pt final_move = new_ul - ul;
-
-                GG::Wnd::LDrag(pt, final_move, mod_keys);
-            }
+        // constrain to within parent
+        if (GG::Wnd* parent = Parent()) {
+            GG::Pt max_lr = parent->ClientLowerRight();
+            new_lr.x = std::min(new_lr.x, max_lr.x);
+            new_lr.y = std::min(new_lr.y, max_lr.y);
         }
+
+        Resize(new_lr - UpperLeft());
+
+    } else { // normal-dragging
+        GG::Pt ul = UpperLeft();
+        GG::Pt requested_ul = ul + move;
+
+        GG::Pt max_ul, min_ul;
+        if (GG::Wnd* parent = Parent()) {
+            min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
+            GG::Pt max_lr = parent->ClientLowerRight();
+            max_ul = max_lr - Size();
+        } else {
+            min_ul = GG::Pt(GG::X1, GG::Y1);
+            max_ul = GG::Pt(GG::GUI::GetGUI()->AppWidth() - this->Width(),
+                            GG::GUI::GetGUI()->AppHeight() - this->Height());
+        }
+
+        GG::X new_x = std::min(max_ul.x, std::max(min_ul.x, requested_ul.x));
+        GG::Y new_y = std::min(max_ul.y, std::max(min_ul.y, requested_ul.y));
+        GG::Pt new_ul(new_x, new_y);
+
+        GG::Pt final_move = new_ul - ul;
+        GG::Wnd::LDrag(pt, final_move, mod_keys);
     }
 }
 
