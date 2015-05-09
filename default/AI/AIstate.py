@@ -104,7 +104,8 @@ class AIstate(object):
         self.qualifyingOutpostBaseTargets = {}
         self.qualifyingTroopBaseTargets = {}
         self.empire_standard_fighter = (4, ((4, 1),), 0.0, 10.0)
-        self.empire_standard_enemy = (4, ((4, 1),), 0.0, 10.0)
+        self.empire_standard_enemy = (4, ((4, 1),), 0.0, 10.0)  # TODO: track on a per-empire basis
+        self.empire_standard_enemy_rating = 40  # TODO: track on a per-empire basis
         
     def __setstate__(self, state_dict):
         self.__dict__.update(state_dict)  # update attributes
@@ -117,8 +118,11 @@ class AIstate(object):
         for std_attrib in ['empire_standard_fighter', 'empire_standard_enemy']:
             if std_attrib not in state_dict:
                 self.__dict__[std_attrib] = (4, ((4, 1),), 0.0, 10.0)
-        self.colonisablePlanetIDs = odict()
-        self.colonisableOutpostIDs = odict()                
+        for odict_attrib in ['colonisablePlanetIDs',
+                            'colonisableOutpostIDs']:
+            if dict_attrib not in state_dict:
+                self.__dict__[odict_attrib] = odict()
+        self.__dict__.setdefault('empire_standard_enemy_rating', 40)
 
     def __del__(self):  # TODO: confirm if anything about boost interface really requires this
         """destructor"""
@@ -357,6 +361,7 @@ class AIstate(object):
         e_f_dict = [cur_e_fighters, old_e_fighters][len(cur_e_fighters) == 1]
         std_fighter = sorted([(v, k) for k, v in e_f_dict.items()])[-1][1]
         self.empire_standard_enemy = std_fighter
+        self.empire_standard_enemy_rating = std_fighter[0] * std_fighter[-1]  # using a very simple rating method here
 
         #assess fleet and planet threats & my local fleets
         for sys_id in sysIDList:
