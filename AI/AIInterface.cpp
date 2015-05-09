@@ -510,14 +510,13 @@ namespace AIInterface {
         bool visible = GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
         bool vulnerable = planet->CurrentMeterValue(METER_SHIELD) <= 0.;
         float shields = planet->CurrentMeterValue(METER_SHIELD);
-        std::string thisSpecies = planet->SpeciesName();
+        std::string this_species = planet->SpeciesName();
         //bool being_invaded = planet->IsAboutToBeInvaded();
         bool invadable = !owned_by_invader && vulnerable && (populated || !unowned) && visible ;// && !being_invaded; a 'being_invaded' check prevents AI from invading with multiple ships at once, which is important
         if (!invadable) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : planet with passed planet_id "<< planet_id <<" and species "<<thisSpecies<<" is  "
-                                   << "not invadable due to one or more of: owned by invader empire, "
-                                   << "not visible to invader empire, has shields above zero, "
-                                   << "or is already being invaded.";
+            ErrorLogger() << "AIInterface::IssueInvadeOrder : planet with passed planet_id " << planet_id
+                          << " and species " << this_species << " is not invadable due to one or more of: owned by invader empire, "
+                          << "not visible to invader empire, has shields above zero, or is already being invaded.";
             if (!unowned) 
                 ErrorLogger() << "AIInterface::IssueInvadeOrder : planet (id " << planet_id << ") is not unowned";
             if (!visible)

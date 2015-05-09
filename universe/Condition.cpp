@@ -19,6 +19,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/bind.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/st_connected.hpp>
@@ -2279,7 +2280,7 @@ void Condition::HasTag::Eval(const ScriptingContext& parent_context,
         ScriptingContext local_context(parent_context, no_object);
         if (!m_name)
             EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch());
-        std::string name = m_name->Eval(local_context);
+        std::string name = boost::to_upper_copy<std::string>(m_name->Eval(local_context));
         EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch(name));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -2326,7 +2327,7 @@ bool Condition::HasTag::Match(const ScriptingContext& local_context) const {
     if (!m_name)
         return HasTagSimpleMatch()(candidate);
 
-    std::string name = m_name->Eval(local_context);
+    std::string name = boost::to_upper_copy<std::string>(m_name->Eval(local_context));
     return HasTagSimpleMatch(name)(candidate);
 }
 

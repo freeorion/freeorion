@@ -163,3 +163,16 @@ COLONY_UPKEEP_MULTIPLICATOR
 
 FLEET_UPKEEP_MULTIPLICATOR
 '''(1 + 0.01 * ShipDesignsOwned empire = Source.Owner)'''
+
+/*   E F F E C T S   P R I O R I T I E S   */
+
+// Default = 100
+
+EARLY_PRIORITY
+'''90'''
+
+DEFAULT_PRIORITY
+'''100'''
+
+LATE_PRIORITY
+'''110'''

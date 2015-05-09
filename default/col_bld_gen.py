@@ -99,7 +99,7 @@ t_main = string.Template('''BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/building/generic_building.png"''')
+    icon = "${graphic}"''')
 
 t_species_condition = string.Template('''ResourceSupplyConnected empire = Source.Owner condition = And [
             Planet
@@ -109,8 +109,8 @@ t_species_condition = string.Template('''ResourceSupplyConnected empire = Source
             Happiness low = 5
         ]''')
 
-t_buildtime = string.Template('''max(5, 1 +
-        min value = JumpsBetween object = Target.SystemID object = LocalCandidate.SystemID
+t_buildtime = string.Template('''max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
                 OwnedBy empire = Source.Owner
@@ -119,6 +119,13 @@ t_buildtime = string.Template('''max(5, 1 +
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
+        ) / max(60, (max
+                      value = LocalCandidate.speed
+                      condition = And [
+                          Ship
+                          OwnedBy empire = Source.Owner
+                      ]
+               ))
     )''')
 
 

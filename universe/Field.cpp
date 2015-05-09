@@ -13,6 +13,7 @@
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/fstream.hpp>
 
 namespace {
@@ -168,10 +169,13 @@ FieldType::FieldType(const std::string& name, const std::string& description,
     m_name(name),
     m_description(description),
     m_stealth(stealth),
-    m_tags(tags),
+    m_tags(),
     m_effects(effects),
     m_graphic(graphic)
 {
+    for ( std::set< std::string >::iterator tag_it = tags.begin(); tag_it != tags.end(); tag_it++)
+        m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+
     if (m_stealth != 0.0f)
         m_effects.push_back(IncreaseMeter(METER_STEALTH,    m_stealth));
 

@@ -1223,8 +1223,8 @@ void SetSpeciesSpeciesOpinion::Execute(const ScriptingContext& context) const {
     if (rated_species_name.empty())
         return;
 
-    double initial_opinion = GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
-    double opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
+    float initial_opinion = GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+    float opinion = m_opinion->Eval(ScriptingContext(context, initial_opinion));
 
     GetSpeciesManager().SetSpeciesSpeciesOpinion(opinionated_species_name, rated_species_name, opinion);
 }
@@ -1953,14 +1953,16 @@ void AddSpecial::Execute(const ScriptingContext& context) const {
     }
 
     std::string name = (m_name ? m_name->Eval(context) : "");
-    float capacity = (m_capacity ? m_capacity->Eval(context) : 0.0f);
+
+    float initial_capacity = context.effect_target->SpecialCapacity(name);  // returns 0.0f if no such special yet present
+    float capacity = (m_capacity ? m_capacity->Eval(ScriptingContext(context, initial_capacity)) : initial_capacity);
 
     context.effect_target->AddSpecial(name, capacity);
 }
 
 std::string AddSpecial::Description() const {
     std::string name = (m_name ? m_name->Description() : "");
-    std::string capacity = (m_capacity ? m_capacity->Description() : "1.0");
+    std::string capacity = (m_capacity ? m_capacity->Description() : "0.0");
 
     return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % UserString(name) % capacity);
 }

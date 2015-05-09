@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/variant.hpp>
 #include <boost/serialization/access.hpp>
@@ -48,11 +49,14 @@ struct PartHullCommonParams {
         production_cost(production_cost_),
         production_time(production_time_),
         producible(producible_),
-        tags(tags_),
+        tags(),
         location(location_),
         effects(effects_),
         icon(icon_)
-    {}
+    {
+        for ( std::set< std::string >::iterator tag_it = tags_.begin(); tag_it != tags_.end(); tag_it++)
+            tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+    }
 
     ValueRef::ValueRefBase<double>*                         production_cost;
     ValueRef::ValueRefBase<int>*                            production_time;
@@ -92,11 +96,15 @@ public:
         m_production_time(common_params.production_time),
         m_producible(common_params.producible),
         m_mountable_slot_types(mountable_slot_types),
-        m_tags(common_params.tags),
+        m_tags(),
         m_location(common_params.location),
         m_effects(),
         m_icon(common_params.icon)
-    { Init(common_params.effects); }
+    {
+        Init(common_params.effects);
+        for ( std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
+            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+    }
 
     ~PartType();
     //@}
@@ -264,12 +272,16 @@ public:
         m_production_time(common_params.production_time),
         m_producible(common_params.producible),
         m_slots(slots),
-        m_tags(common_params.tags),
+        m_tags(),
         m_location(common_params.location),
         m_effects(),
         m_graphic(graphic),
         m_icon(common_params.icon)
-    { Init(common_params.effects); }
+    {
+        Init(common_params.effects);
+        for ( std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
+            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+    }
 
     HullType(const std::string& name, const std::string& description,
              const HullTypeStats& stats,
@@ -286,12 +298,16 @@ public:
         m_production_time(common_params.production_time),
         m_producible(common_params.producible),
         m_slots(slots),
-        m_tags(common_params.tags),
+        m_tags(),
         m_location(common_params.location),
         m_effects(),
         m_graphic(graphic),
         m_icon(common_params.icon)
-    { Init(common_params.effects); }
+    {
+        Init(common_params.effects);
+        for ( std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
+            m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
+    }
 
     ~HullType();
     //@}

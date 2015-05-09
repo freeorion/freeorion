@@ -75,12 +75,13 @@ class FO_COMMON_API Effect::EffectsGroup {
 public:
     EffectsGroup(Condition::ConditionBase* scope, Condition::ConditionBase* activation,
                  const std::vector<EffectBase*>& effects, const std::string& accounting_label = "",
-                 const std::string& stacking_group = "") :
+                 const std::string& stacking_group = "", int priority = 0) :
         m_scope(scope),
         m_activation(activation),
         m_stacking_group(stacking_group),
         m_effects(effects),
-        m_accounting_label(accounting_label)
+        m_accounting_label(accounting_label),
+        m_priority(priority)
     {}
     virtual ~EffectsGroup();
 
@@ -105,6 +106,7 @@ public:
     const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
     std::string                     DescriptionString() const;
     const std::string&              AccountingLabel() const     { return m_accounting_label; }
+    int                             Priority() const      { return m_priority; }
     std::string                     Dump() const;
 
     void                            SetTopLevelContent(const std::string& content_name);
@@ -115,6 +117,7 @@ protected:
     std::string                 m_stacking_group;
     std::vector<EffectBase*>    m_effects;
     std::string                 m_accounting_label;
+    int                         m_priority;
 
 private:
     friend class boost::serialization::access;

@@ -660,9 +660,11 @@ SM_ACIREMA_GUARD_DESC
 An unmanned armed ship, built by the Acirema, guards the system.
 
 SM_EXP_OUTPOST
-Experimentor Outpost Ship
+Experiment Zero
 SM_EXP_OUTPOST_DESC
-An outpost ship constructed by the Experimentors to transport experimental equipment between galaxies.
+'''An ancient creation of the Experimentors that reduces shields and damage. 
+
+Experiment Zero was sent to this galaxy to guard the outpost of the Experimentors with its unique abilities. While it does not attack directly it consists of quadrillions of diminutive units that fill the whole space of the system and hamper enemy shields and weapons to the point that all but the very best equipment will be ineffective.'''
 
 SM_COSMIC_DRAGON
 Cosmic Dragon
@@ -9050,125 +9052,134 @@ Nova Bomb Activator
 BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all Nova Bombs within one starlane jump.
 
+BLD_COL_PART_1
+This building can only build at an outpost, and will upgrade that outpost to a new
+
+BLD_COL_PART_2
+Minimum build time depends on the total starlane distance to the nearest
+
+BLD_COL_PART_3
+owned by the empire, and will increase the farther away it is; the time will also be reduced if the empire owns fast ships
+
 BLD_COL_ABADDONI
 Abaddoni Colony
 
 BLD_COL_ABADDONI_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Abaddoni colony. Minimum build time depends on the jump distance to the nearest Abaddoni colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Abaddoni colony. [[BLD_COL_PART_2]] Abaddoni colony [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
 Chato Colony
 
 BLD_COL_CHATO_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Chato colony. Minimum build time depends on the jump distance to the nearest Chato colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Chato colony. [[BLD_COL_PART_2]] Chato colony [[BLD_COL_PART_3]].
 
 BLD_COL_CRAY
 Cray Colony
 
 BLD_COL_CRAY_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Cray colony. Minimum build time depends on the jump distance to the nearest Cray colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Cray colony. [[BLD_COL_PART_2]] Cray colony [[BLD_COL_PART_3]].
 
 BLD_COL_DERTHREAN
 Derthrean Colony
 
 BLD_COL_DERTHREAN_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Derthrean colony. Minimum build time depends on the jump distance to the nearest Derthrean colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Derthrean colony. [[BLD_COL_PART_2]] Derthrean colony [[BLD_COL_PART_3]].
 
 BLD_COL_EAXAW
 Eaxaw Colony
 
 BLD_COL_EAXAW_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Eaxaw colony. Minimum build time depends on the jump distance to the nearest Eaxaw colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Eaxaw colony. [[BLD_COL_PART_2]] Eaxaw colony [[BLD_COL_PART_3]].
 
 BLD_COL_EGASSEM
 Egassem Colony
 
 BLD_COL_EGASSEM_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Egassem colony. Minimum build time depends on the jump distance to the nearest Egassem colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Egassem colony. [[BLD_COL_PART_2]] Egassem colony [[BLD_COL_PART_3]].
 
 BLD_COL_ETTY
 Etty Colony
 
 BLD_COL_ETTY_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Etty colony. Minimum build time depends on the jump distance to the nearest Etty colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Etty colony. [[BLD_COL_PART_2]] Etty colony [[BLD_COL_PART_3]].
 
 BLD_COL_GEORGE
 George Colony
 
 BLD_COL_GEORGE_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new George colony. Minimum build time depends on the jump distance to the nearest George colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] George colony. [[BLD_COL_PART_2]] George colony [[BLD_COL_PART_3]].
 
 BLD_COL_GYSACHE
 Gysache Colony
 
 BLD_COL_GYSACHE_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Gysache colony. Minimum build time depends on the jump distance to the nearest Gysache colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Gysache colony. [[BLD_COL_PART_2]] Gysache colony [[BLD_COL_PART_3]].
 
 BLD_COL_HHHOH
 Hhhoh Colony
 
 BLD_COL_HHHOH_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Hhhoh colony. Minimum build time depends on the jump distance to the nearest Hhhoh colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Hhhoh colony. [[BLD_COL_PART_2]] Hhhoh colony [[BLD_COL_PART_3]].
 
 BLD_COL_HUMAN
 Human Colony
 
 BLD_COL_HUMAN_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Human colony. Minimum build time depends on the jump distance to the nearest Human colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Human colony. [[BLD_COL_PART_2]] Human colony [[BLD_COL_PART_3]].
 
 BLD_COL_KOBUNTURA
 Kobuntura Colony
 
 BLD_COL_KOBUNTURA_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Kobuntura colony. Minimum build time depends on the jump distance to the nearest Kobuntura colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Kobuntura colony. [[BLD_COL_PART_2]] Kobuntura colony [[BLD_COL_PART_3]].
 
 BLD_COL_LAENFA
 Laenfa Colony
 
 BLD_COL_LAENFA_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Laenfa colony. Minimum build time depends on the jump distance to the nearest Laenfa colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Laenfa colony. [[BLD_COL_PART_2]] Laenfa colony [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
 Mu Ursh Colony
 
 BLD_COL_MUURSH_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Mu Ursh colony. Minimum build time depends on the jump distance to the nearest Mu Ursh colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Mu Ursh colony. [[BLD_COL_PART_2]] Mu Ursh colony [[BLD_COL_PART_3]].
 
 BLD_COL_SCYLIOR
 Scylior Colony
 
 BLD_COL_SCYLIOR_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Scylior colony. Minimum build time depends on the jump distance to the nearest Scylior colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Scylior colony. [[BLD_COL_PART_2]] Scylior colony [[BLD_COL_PART_3]].
 
 BLD_COL_SETINON
 Setinon Colony
 
 BLD_COL_SETINON_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Setinon colony. Minimum build time depends on the jump distance to the nearest Setinon colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Setinon colony. [[BLD_COL_PART_2]] Setinon colony [[BLD_COL_PART_3]].
 
 BLD_COL_SSLITH
 Sslith Colony
 
 BLD_COL_SSLITH_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Sslith colony. Minimum build time depends on the jump distance to the nearest Sslith colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Sslith colony. [[BLD_COL_PART_2]] Sslith colony [[BLD_COL_PART_3]].
 
 BLD_COL_TAEGHIRUS
 Tae Ghirus Colony
 
 BLD_COL_TAEGHIRUS_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Tae Ghirus colony. Minimum build time depends on the jump distance to the nearest Tae Ghirus colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Tae Ghirus colony. [[BLD_COL_PART_2]] Tae Ghirus colony [[BLD_COL_PART_3]].
 
 BLD_COL_TRITH
 Trith Colony
 
 BLD_COL_TRITH_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Trith colony. Minimum build time depends on the jump distance to the nearest Trith colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Trith colony. [[BLD_COL_PART_2]] Trith colony [[BLD_COL_PART_3]].
 
 BLD_COL_UGMORS
 Ugmors Colony
 
 BLD_COL_UGMORS_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Ugmors colony. Minimum build time depends on the jump distance to the nearest Ugmors colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Ugmors colony. [[BLD_COL_PART_2]] Ugmors colony [[BLD_COL_PART_3]].
 
 BLD_COL_EXOBOT
 Exobot Colony
@@ -9180,7 +9191,7 @@ BLD_COL_SUPER_TEST
 Super Tester Colony
 
 BLD_COL_SUPER_TEST_DESC
-This building can only build at an outpost, and will upgrade that outpost to a new Super Tester colony. Minimum build time depends on the jump distance to the nearest Super Tester colony, and will increase the farther away it is.
+[[BLD_COL_PART_1]] Super Tester colony. [[BLD_COL_PART_2]] Super Tester colony [[BLD_COL_PART_3]].
 
 #############################################################
 ####           Hull/Part Description Templates           ####
@@ -10675,6 +10686,52 @@ Eternal
 Invincible'''
 
 ### End of Capital Names Lists
+
+### Beginning of AI Shipdesign Name List
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
+### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+AI_SHIPDESIGN_NAME_INVALID
+Invalid Design
+
+AI_SHIPDESIGN_NAME_MILITARY
+'''Harpy
+Gorgon
+Centaur
+Cerberus
+Griffin
+Manticore
+Hydra
+Python
+Pegasus
+Phoenix
+Atlas
+Helios
+Prometheus
+Poseidon
+Hades
+Nemesis'''
+
+AI_SHIPDESIGN_NAME_TROOPER_ORBITAL
+SpaceInvaders
+
+AI_SHIPDESIGN_NAME_TROOPER_STANDARD
+StormTroopers
+
+AI_SHIPDESIGN_NAME_COLONISATION_ORBITAL
+Orbital Seeder
+
+AI_SHIPDESIGN_NAME_COLONISATION_STANDARD
+Seeder
+
+AI_SHIPDESIGN_NAME_OUTPOSTER_ORBITAL
+Orbital Outposter
+
+AI_SHIPDESIGN_NAME_OUTPOSTER_STANDARD
+Outposter
+
+AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
+'''Decoy
+Starbase'''
 
 #############################################################
 ####           HOTKEYS NAMES AND DESCRIPTIONS            ####

@@ -274,6 +274,7 @@
     (PreferredFocus)                            \
     (Prerequisites)                             \
     (PreviousSystemID)                          \
+    (Priority)                                  \
     (Probability)                               \
     (ProducedByEmpire)                          \
     (ProducedByEmpireID)                        \
@@ -347,6 +348,7 @@
     (SetResearch)                               \
     (SetShield)                                 \
     (SetSize)                                   \
+    (SetSpecialCapacity)                        \
     (SetSpecies)                                \
     (SetSpeciesOpinion)                         \
     (SetSpeed)                                  \
