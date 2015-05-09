@@ -239,14 +239,21 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
         return;
 
     if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) { // resize-dragging
-        GG::Pt new_lr = pt - m_drag_offset;
+        // drag offset: position of cursor relative to lower-right of window when left button was pressed
+        // pt: position of cursor relative to upper-left of screen
+        GG::Pt requested_lr = pt - m_drag_offset;
 
-        // constrain to within parent
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt max_lr = parent->ClientLowerRight();
-            new_lr.x = std::min(new_lr.x, max_lr.x);
-            new_lr.y = std::min(new_lr.y, max_lr.y);
+        GG::Pt max_lr;
+        if (const GG::Wnd* parent = Parent()) {
+            max_lr = parent->ClientLowerRight();
+        } else {
+            max_lr.x = GG::GUI::GetGUI()->AppWidth();
+            max_lr.y = GG::GUI::GetGUI()->AppHeight();
         }
+
+        GG::X new_x = std::min(max_lr.x, requested_lr.x);
+        GG::Y new_y = std::min(max_lr.y, requested_lr.y);
+        GG::Pt new_lr(new_x, new_y);
 
         Resize(new_lr - UpperLeft());
 
@@ -255,10 +262,11 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
         GG::Pt requested_ul = ul + move;
 
         GG::Pt max_ul, min_ul;
-        if (GG::Wnd* parent = Parent()) {
+        if (const GG::Wnd* parent = Parent()) {
             min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
             GG::Pt max_lr = parent->ClientLowerRight();
             max_ul = max_lr - Size();
+
         } else {
             min_ul = GG::Pt(GG::X1, GG::Y1);
             max_ul = GG::Pt(GG::GUI::GetGUI()->AppWidth() - this->Width(),
