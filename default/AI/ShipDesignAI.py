@@ -64,8 +64,8 @@ TESTDESIGN_NAME_BASE = "AI_TESTDESIGN"
 TESTDESIGN_NAME_HULL = TESTDESIGN_NAME_BASE+"_HULL"
 TESTDESIGN_NAME_PART = TESTDESIGN_NAME_BASE+"_PART"
 
-# Hardcoded prefered hullname for testdesigns - should be a hull without conditions but with maximum different slottypes
-TESTDESIGN_PREFERED_HULL = "SH_BASIC_MEDIUM"
+# Hardcoded preferred hullname for testdesigns - should be a hull without conditions but with maximum different slottypes
+TESTDESIGN_PREFERRED_HULL = "SH_BASIC_MEDIUM"
 
 
 class ShipDesignCache(object):
@@ -339,10 +339,10 @@ class ShipDesignCache(object):
         # To reduce the number of lookups, move the hardcoded TESTDESIGN_PREFERED_HULL to the front of the list.
         # This hull should be buildable on each planet and also cover the most common slottypes.
         try:
-            idx = available_hulls.index(TESTDESIGN_PREFERED_HULL)
+            idx = available_hulls.index(TESTDESIGN_PREFERRED_HULL)
             available_hulls[0], available_hulls[idx] = available_hulls[idx], available_hulls[0]
         except ValueError:
-            print "WARNING: Tried to use '%s' as testhull but it is not in available_hulls." % TESTDESIGN_PREFERED_HULL,
+            print "WARNING: Tried to use '%s' as testhull but it is not in available_hulls." % TESTDESIGN_PREFERRED_HULL,
             print "Please update ShipDesignAI.py according to the new content."
             traceback.print_exc()
         testdesign_names = [get_shipdesign(design_id).name(False) for design_id in empire.allShipDesigns
