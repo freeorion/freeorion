@@ -100,10 +100,9 @@ def update_best_mil_ship_rating():
 def cur_best_mil_ship_rating():
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     if priority in design_cache:  # use new framework
-        try:
+        if design_cache[priority] and design_cache[priority][0]:
             return design_cache[priority][0][0]
-        except IndexError:
-            traceback.print_exc()
+        else:
             return 0.0001
     else:
         if fo.currentTurn() not in bestMilRatingsHistory:
