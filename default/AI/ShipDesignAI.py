@@ -260,8 +260,8 @@ class ShipDesignCache(object):
             design = fo.getShipDesign(design_id)
             if TESTDESIGN_NAME_BASE in design.name(False):
                 continue
-            reference_name = _build_reference_name(design.hull, design.parts)
-            self.map_reference_design_name[reference_name] = design.name(False)
+            design_hash = _get_design_hash(design.hull, design.parts)
+            self.map_reference_design_name[design_hash] = design.name(False)
             self.design_id_by_name[design.name(False)] = design_id
 
     def _check_cache_for_consistency(self):
@@ -782,16 +782,16 @@ class ShipDesigner(object):
         # For now, abbreviating the Empire name to uppercase first and last initials
 
         design_name = self._build_design_name()
-        reference_name = _build_reference_name(self.hull.name, self.partnames)  # "Hull-Part1-Part2-Part3-Part4"
+        design_hash = _get_design_hash(self.hull.name, self.partnames)  # "Hull-Part1-Part2-Part3-Part4"
 
-        if reference_name in Cache.map_reference_design_name:
+        if design_hash in Cache.map_reference_design_name:
             if verbose:
                 print "Design already exists"
             try:
-                return _get_design_by_name(Cache.map_reference_design_name[reference_name]).id
+                return _get_design_by_name(Cache.map_reference_design_name[design_hash]).id
             except AttributeError:
-                cached_name = Cache.map_reference_design_name[reference_name]
-                print "ERROR: %s maps to %s in Cache.map_reference_design_name." % (reference_name, cached_name),
+                cached_name = Cache.map_reference_design_name[design_hash]
+                print "ERROR: %s maps to %s in Cache.map_reference_design_name." % (design_hash, cached_name),
                 print "But the design seems not to exist..."
                 traceback.print_exc()
                 return None
@@ -808,7 +808,7 @@ class ShipDesigner(object):
             return None
         new_id = _get_design_by_name(design_name).id
         if new_id:
-            Cache.map_reference_design_name[reference_name] = design_name
+            Cache.map_reference_design_name[design_hash] = design_name
             return new_id
 
     def _class_specific_filter(self, partname_dict):
@@ -1586,17 +1586,17 @@ def _get_part_type(partname):
             return None
 
 
-def _build_reference_name(hullname, partlist):
-    """Build a reference name for the design based on the hull and the partlist.
+def _get_design_hash(hullname, partlist):
+    """Build a hash for the design based on the hull and the partlist.
+    Order of parts are ignored.
 
-    This reference name is used to identify existing designs and is mapped by
-    Cache.map_reference_design_name to the ingame design name.
+    This hash is used in Cache.map_reference_design_name to the ingame design name.
 
     :param hullname: string
     :param partlist: list of partnames
     :return: string
     """
-    return "%s-%s" % (hullname, "-".join(partlist))  # "Hull-Part1-Part2-Part3-Part4"
+    return "%s-%s" % (hullname, "-".join(sorted(partlist)))  # "Hull-Part1-Part2-Part3-Part4"
 
 
 def _can_build(design, empire_id, pid):
