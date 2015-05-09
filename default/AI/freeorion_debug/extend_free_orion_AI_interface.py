@@ -55,6 +55,7 @@ PLANET = 'P'
 SYSTEM = 'S'
 FLEET = 'F'
 SHIP_DESIGN = 'D'
+EMPIRE = 'E'
 
 
 def to_map(method):
@@ -76,15 +77,17 @@ fo.shipDesign.__repr__ = design_to_string
 
 def planet_to_string(planet):
     return to_str(PLANET, planet.id, planet.name)
-
 fo.planet.__repr__ = planet_to_string
 
 
 def fleet_to_string(fleet):
     return to_str(FLEET, fleet.id, fleet.name)
-
-
 fo.fleet.__repr__ = fleet_to_string
+
+
+def empire_to_string(empire):
+    return to_str(EMPIRE, empire.empireID, empire.name)
+fo.empire.__repr__ = empire_to_string
 
 
 def set_to_string(val):
