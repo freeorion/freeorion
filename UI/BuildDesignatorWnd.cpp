@@ -531,8 +531,7 @@ void BuildDesignatorWnd::BuildSelector::DoLayout() {
 void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
-    // maybe later do something interesting with docking
-    GG::Wnd::SizeMove(ul, lr);
+    CUIWnd::SizeMove(ul, lr);
 
     if (Visible() && old_size != GG::Wnd::Size())
         DoLayout();
