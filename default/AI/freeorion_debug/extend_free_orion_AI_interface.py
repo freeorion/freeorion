@@ -43,14 +43,6 @@ import freeOrionAIInterface as fo
 from freeorion_tools import dict_from_map
 
 
-def system_to_string(system):
-    name = system.name or 'unknown'
-    return 'S{0}<{1}>'.format(system.systemID, name)
-
-
-fo.system.__repr__ = system_to_string
-
-
 PLANET = 'P'
 SYSTEM = 'S'
 FLEET = 'F'
@@ -66,8 +58,14 @@ fo.universe.getVisibilityTurnsMap = to_map(fo.universe.getVisibilityTurnsMap)
 
 
 def to_str(prefix, id, name):
-    return '{}{}<{}>'.format(prefix, id, name)
+    return '{}_{}<{}>'.format(prefix, id, name)
 
+fo.to_str = to_str
+
+def system_to_string(system):
+    return to_str(SYSTEM, system.systemID, system.name)
+
+fo.system.__repr__ = system_to_string
 
 def design_to_string(design):
     return to_str(SHIP_DESIGN, design.id, design.name(True))
