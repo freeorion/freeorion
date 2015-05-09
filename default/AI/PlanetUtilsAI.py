@@ -4,6 +4,9 @@ import ColonisationAI
 from freeorion_tools import print_error
 
 
+def safe_name(univ_object):
+    return (univ_object and univ_object.name) or "?"
+
 def sys_name_ids(sys_ids):
     """
     Get list of text representing pairs system name and system id.
@@ -11,12 +14,7 @@ def sys_name_ids(sys_ids):
     :return: list of string <name>:<id>
     """
     universe = fo.getUniverse()
-    res = []
-    for sys_id in sys_ids:
-        sys = universe.getSystem(sys_id)
-        if sys:
-            res.append(str(sys))
-    return res
+    return [fo.to_str('S', sys_id, safe_name(universe.getSystem(sys_id))) for sys_id in sys_ids]
 
 
 def planet_name_ids(planet_ids):
@@ -26,13 +24,7 @@ def planet_name_ids(planet_ids):
     :return: list of string <name>:<id>
     """
     universe = fo.getUniverse()
-    res = []
-    for pid in planet_ids:
-        planet = universe.getPlanet(pid)
-        if planet:
-            res.append(str(planet))
-    return res
-
+    return [fo.to_str('P', planet_id, safe_name(universe.getPlanet(planet_id))) for planet_id in planet_ids]
 
 def get_capital():
     """
