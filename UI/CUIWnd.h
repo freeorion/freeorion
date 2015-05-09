@@ -142,7 +142,7 @@ protected:
     bool                    m_minimized;      //!< true if the window is currently minimized
     bool                    m_pinable;        //!< true if the window is able to be pinned
     bool                    m_pinned;         //!< true if the window is currently pinned
-    
+
     GG::Pt                  m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
     GG::Pt                  m_original_size;  //!< keeps track of the size of the window before resizing
 
