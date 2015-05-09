@@ -19,7 +19,7 @@ import PriorityAI
 import ProductionAI
 import ResearchAI
 import ResourcesAI
-from freeorion_tools import UserString, chat_on_error, print_error
+from freeorion_tools import UserString, UserStringList, chat_on_error, print_error
 from freeorion_debug import Timer
 
 main_timer = Timer('timer', write_log=True)
@@ -34,12 +34,12 @@ except:
     pass
 
 
-_capitols = {fo.aggression.beginner: UserString("AI_CAPITOL_NAMES_BEGINNER", ""),
-             fo.aggression.turtle: UserString("AI_CAPITOL_NAMES_TURTLE", ""),
-             fo.aggression.cautious: UserString("AI_CAPITOL_NAMES_CAUTIOUS", ""),
-             fo.aggression.typical: UserString("AI_CAPITOL_NAMES_TYPICAL", ""),
-             fo.aggression.aggressive: UserString("AI_CAPITOL_NAMES_AGGRESSIVE", ""),
-             fo.aggression.maniacal: UserString("AI_CAPITOL_NAMES_MANIACAL", "")}
+_capitals = {fo.aggression.beginner: UserStringList("AI_CAPITOL_NAMES_BEGINNER"),
+             fo.aggression.turtle: UserStringList("AI_CAPITOL_NAMES_TURTLE"),
+             fo.aggression.cautious: UserStringList("AI_CAPITOL_NAMES_CAUTIOUS"),
+             fo.aggression.typical: UserStringList("AI_CAPITOL_NAMES_TYPICAL"),
+             fo.aggression.aggressive: UserStringList("AI_CAPITOL_NAMES_AGGRESSIVE"),
+             fo.aggression.maniacal: UserStringList("AI_CAPITOL_NAMES_MANIACAL")}
 
 # AIstate
 foAIstate = None
@@ -68,8 +68,8 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != -1:
         planet = universe.getPlanet(planet_id)
-        new_name = random.choice(_capitols.get(aggression, "").split('\n')).strip() + " " + planet.name
-        print "Capitol City Names are: ", _capitols
+        new_name = " ".join([random.choice(_capitals.get(aggression, []) or [" "]).strip(), planet.name])
+        print "Capitol City Names are: ", _capitals
         print "This Capitol New name is ", new_name
         res = fo.issueRenameOrder(planet_id, new_name)
         print "Capitol Rename attempt result: %d; planet now named %s" % (res, planet.name)
