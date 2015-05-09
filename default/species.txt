@@ -570,7 +570,7 @@ Species
     gameplay_description = "SP_FURTHEST_GAMEPLAY_DESC"
     Native
     
-    CanColonize
+    //CanColonize
 
     tags = [ "ORGANIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_BAD_SUPPLY" ]
     
@@ -996,7 +996,7 @@ Species
     gameplay_description = "SP_PHINNERT_GAMEPLAY_DESC"
     Native
     
-    CanColonize
+    //CanColonize
 
     tags = [ "ORGANIC" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" ]
     
@@ -1148,7 +1148,7 @@ Species
     gameplay_description = "SP_SILEXIAN_GAMEPLAY_DESC"
     Native
     
-    CanColonize
+    //CanColonize
     
     Tags = [ "ROBOTIC" "AI_TAG_NO_INDUSTRY" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" "AI_TAG_GREAT_SUPPLY" ]
     
