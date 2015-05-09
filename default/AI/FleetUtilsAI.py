@@ -8,6 +8,22 @@ __AIShipRoleTypeNames = AIShipRoleType()
 __AIFleetMissionTypeNames = AIFleetMissionType()
 
 
+def combine_ratings(rating1, rating2):
+    return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
+
+def combine_ratings_list(ratings_list):
+    tally = 0
+    for rating in ratings_list:
+        tally = combine_ratings(tally, rating)
+    return tally
+
+def rating_needed(target, current=0):
+    if current >= target:
+        return 0
+    else:
+        return target - current - (current * (target-current))**0.5
+
+
 def stats_meet_reqs(stats, reqs):
     try:
         for key in reqs:
