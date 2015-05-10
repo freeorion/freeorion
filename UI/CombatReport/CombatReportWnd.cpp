@@ -40,7 +40,6 @@ public:
         m_tabs->AddWnd(m_graphical, UserString("COMBAT_SUMMARY"));
         m_tabs->AddWnd(m_log, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
-        m_wnd.GridLayout();
 
         GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
         GG::Connect(m_log->LinkDoubleClickedSignal, &CombatReportPrivate::HandleLinkDoubleClick,    this);
@@ -66,10 +65,6 @@ public:
                              "HumanClientApp not available, cannot connect "
                              "WindowResizedSignal to this window.";
         }
-
-        // Allow m_wnd to catch mouse events over the portion of the resize tab
-        // that is covered by m_graphical.
-        m_graphical->InstallEventFilter(&m_wnd);
     }
 
     void SetLog(int log_id) {
@@ -78,6 +73,12 @@ public:
     }
 
     void DoLayout() {
+        // Leave space for the resize tab.
+        m_tabs->SizeMove(GG::Pt(GG::X0, GG::Y0),
+                         GG::Pt(m_wnd.ClientWidth(),
+                                m_wnd.ClientHeight() -
+                                    GG::Y(INNER_BORDER_ANGLE_OFFSET)) );
+
         // Only update the selected window.
         if (GraphicalSummaryWnd* graphical_wnd =
                dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd()) ) {
@@ -194,6 +195,9 @@ private:
             m_min_size.y += tab_min_size.y + GG::Y(14);
         }
 
+        // Leave space for the resize tab.
+        m_min_size.y += GG::Y(INNER_BORDER_ANGLE_OFFSET);
+
         // If the window is currently too small, re-validate its size.
         if (m_wnd.Width() < m_min_size.x || m_wnd.Height() < m_min_size.y) {
             m_wnd.Resize(m_wnd.Size());
@@ -232,33 +236,4 @@ void CombatReportWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     // checks here.
     CUIWnd::SizeMove(ul, ul + m_impl->ValidateSize(lr - ul));
     m_impl->DoLayout();
-}
-
-bool CombatReportWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& wnd_event) {
-    switch (wnd_event.Type()) {
-        case GG::WndEvent::LDrag:
-            LDrag(wnd_event.Point(), wnd_event.DragMove(), wnd_event.ModKeys());
-            break;
-        case GG::WndEvent::LButtonUp:
-            LButtonUp(wnd_event.Point(), wnd_event.ModKeys());
-            break;
-        case GG::WndEvent::LButtonDown:
-            // HACK: CUIWnd uses m_drag_offset to determine whether LDrag messages
-            //       should move or resize the wnd, but this event filtering doesn't
-            //       seem to reset it properly on LButtonUp events so it is instead
-            //       reset here.
-            if(!InResizeTab(wnd_event.Point())) {
-                m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
-            }
-            LButtonDown(wnd_event.Point(), wnd_event.ModKeys());
-            break;
-        case GG::WndEvent::MouseEnter:
-            MouseEnter(wnd_event.Point(), wnd_event.ModKeys());
-            break;
-        case GG::WndEvent::MouseHere:
-            MouseHere(wnd_event.Point(), wnd_event.ModKeys());
-            break;
-    }
-
-    return false;
 }

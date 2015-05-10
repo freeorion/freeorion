@@ -29,10 +29,10 @@ public:
     virtual void Render();
 
 private:
-    std::vector<SideBar*> m_side_boxes;
-    std::map<int, CombatSummary> m_summaries;
-    boost::scoped_ptr<BarSizer> m_sizer;
-    OptionsBar* m_options_bar; // Is a child window->GG handles memory
+    std::vector<SideBar*>           m_side_boxes;
+    std::map<int, CombatSummary>    m_summaries;
+    boost::scoped_ptr<BarSizer>     m_sizer;
+    OptionsBar*                     m_options_bar; // Is a child window->GG handles memory
 
     void HandleButtonChanged();
 
