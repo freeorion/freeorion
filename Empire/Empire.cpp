@@ -1903,6 +1903,12 @@ void Empire::UpdateSupply(const std::map<int, std::set<int> >& starlanes) {
 
         // add system to list of systems to popegate supply from
         propegating_systems_list.push_back(it->first);
+
+        // Currently, only supply sources whose meter is above zero provide any fleet supply, and this
+        // is handled by the propegating_systems_list loop below. If it becomes intended that a supply 
+        // source with supply meter at zero could still provide fleet supply at its own system, 
+        // then uncomment the following line
+        //m_fleet_supplyable_system_ids.insert(it->first);
     }
 
 
