@@ -10733,6 +10733,61 @@ AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
 '''Decoy
 Starbase'''
 
+### AI Diplomacy Strings and Lists 
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
+'''Nice to hear from you again.
+Receipt of transmission acknowledged.
+'''
+
+AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
+'''What? Aren't you dead yet?
+Oh, not another pathetic sob story, please!
+'''
+
+AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST
+'''We will be happy to trust your good intentions.
+Whatever you say, Boss.  Everyone says you are very trustworthy.
+'''
+
+AI_PEACE_PROPOSAL_RESPONSES_NO_MILD_LIST
+'''Unfortunately, that would be very inconvenient at this time.
+We regret to inform you that we are unable to comply with that request.
+'''
+
+AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST
+'''Out of pity, we will agree to not attack you.  For now.
+Feeble Beings!  There would be little honor in vanquishing you.
+'''
+
+AI_PEACE_PROPOSAL_RESPONSES_NO_HARSH_LIST
+'''We will see you dead first!
+You will not have peace until all your base r belong to us!
+'''
+
+AI_WAR_REDECLARATION_MILD_LIST
+'''Oh dear! Apparently there were irregularities in our previous negotiations and the Peace Treaty was not ratified at all!  We regret to inform you that our empires are still at war.
+Today was the day that you said the other day that we would go to war together again, right?
+'''
+
+AI_WAR_REDECLARATION_HARSH_LIST
+'''Our Younglings thirst for you blood!  Prepare for War!
+You fools did not believe this peace would last, did you?
+'''
+
+AI_PREGAME_ACKNOWLEDGEMENTS__LIST
+'''I am meditating, awaiting instructions from God.  Call again later.
+Whispers from the Void?  How can that be?
+'''
+
+AI_MIDGAME_ACKNOWLEDGEMENTS__LIST
+'''Hang on, please. I am still trying to figure out how to do a proper Turing test on you.
+'''
+
+### End of AI Diplomacy Message Lists
+
 #############################################################
 ####           HOTKEYS NAMES AND DESCRIPTIONS            ####
 #############################################################

@@ -62,6 +62,7 @@ class AIstate(object):
         self.__fleetRoleByID = {}
         self.designStats = {}
         self.design_rating_adjustments = {}
+        self.diplomatic_logs = {}
         self.__priorityByType = {}
 
         #self.__explorableSystemByType = {}
@@ -110,7 +111,8 @@ class AIstate(object):
         for dict_attrib in ['qualifyingColonyBaseTargets',
                             'qualifyingOutpostBaseTargets',
                             'qualifyingTroopBaseTargets',
-                            'planet_status']:
+                            'planet_status',
+                            'diplomatic_logs']:
             if dict_attrib not in state_dict:
                 self.__dict__[dict_attrib] = {}
         for std_attrib in ['empire_standard_fighter', 'empire_standard_enemy']:
@@ -1091,3 +1093,20 @@ class AIstate(object):
                 print "\t from splitting fleet ID %4d with %d ships, got %d new fleets:" % (fleet_id, fleet_len, len(new_fleets))
                 # old fleet may have different role after split, later will be again identified
                 #self.remove_fleet_role(fleet_id)  # in current system, orig new fleet will not yet have been assigned a role
+
+    def log_peace_request(self, initiating_empire_id, recipient_empire_id):
+        """Keep a record of peace requests made or received by this empire."""
+
+        peace_requests = self.diplomatic_logs.setdefault('peace_requests', {})
+        log_index = (initiating_empire_id, recipient_empire_id)
+        peace_requests.setdefault(log_index, []).append(fo.currentTurn())
+
+    def log_war_declaration(self, initiating_empire_id, recipient_empire_id):
+        """Keep a record of war declarations made or received by this empire."""
+
+        # if war declaration is made on turn 1, don't hold it against them
+        if fo.currentTurn() == 1:
+            return
+        war_declarations = self.diplomatic_logs.setdefault('war_declarations', {})
+        log_index = (initiating_empire_id, recipient_empire_id)
+        war_declarations.setdefault(log_index, []).append(fo.currentTurn())
