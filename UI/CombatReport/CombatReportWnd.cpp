@@ -17,22 +17,22 @@ namespace {
     GG::X COMBAT_LOG_WIDTH(400);
     GG::Y COMBAT_LOG_HEIGHT(300);
 
-    // Duplicated from MapWnd.cpp - used here to find maximum size of the
-    // combat report window.
-    GG::X AppWidth() {
-        if(HumanClientApp* app = HumanClientApp::GetApp())
-            return app->AppWidth();
-        return GG::X0;
-    }
+    //// Duplicated from MapWnd.cpp - used here to find maximum size of the
+    //// combat report window.
+    //GG::X AppWidth() {
+    //    if(HumanClientApp* app = HumanClientApp::GetApp())
+    //        return app->AppWidth();
+    //    return GG::X0;
+    //}
 
-    GG::Y AppHeight() {
-        if(HumanClientApp* app = HumanClientApp::GetApp())
-            return app->AppHeight();
-        return GG::Y0;
-    }
+    //GG::Y AppHeight() {
+    //    if(HumanClientApp* app = HumanClientApp::GetApp())
+    //        return app->AppHeight();
+    //    return GG::Y0;
+    //}
 
     GG::Pt LimitToAppSize(const GG::Pt& sz_in) {
-        if(HumanClientApp* app = HumanClientApp::GetApp()) {
+        if (HumanClientApp* app = HumanClientApp::GetApp()) {
             return GG::Pt(std::min(sz_in.x, app->AppWidth()),
                           std::min(sz_in.y, app->AppHeight()) );
         } else {
@@ -72,7 +72,7 @@ public:
         GG::Connect(m_graphical->MinSizeChangedSignal,
                     boost::bind(&CombatReportPrivate::UpdateMinSize, this));
 
-        if(HumanClientApp* app = HumanClientApp::GetApp()) {
+        if (HumanClientApp* app = HumanClientApp::GetApp()) {
             GG::Connect(HumanClientApp::GetApp()->WindowResizedSignal,
                         boost::bind(&CombatReportPrivate::UpdateMinSize, this));
         } else {
@@ -93,7 +93,7 @@ public:
 
     void DoLayout() {
         // Only update the selected window.
-        if(GraphicalSummaryWnd* graphical_wnd =
+        if (GraphicalSummaryWnd* graphical_wnd =
                dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd()) ) {
             graphical_wnd->DoLayout();
         }
@@ -200,7 +200,7 @@ private:
         std::list<GG::Wnd*>::const_iterator layout_begin =
             m_tabs->GetLayout()->Children().begin();
         // First object in the layout should be the tab bar.
-        if(layout_begin != m_tabs->GetLayout()->Children().end()) {
+        if (layout_begin != m_tabs->GetLayout()->Children().end()) {
             GG::Pt tab_min_size = (*layout_begin)->MinUsableSize();
             m_min_size.x = std::max(tab_min_size.x, m_min_size.x);
             // TabBar::MinUsableSize does not seem to return the correct
@@ -209,7 +209,7 @@ private:
         }
 
         // If the window is currently too small, re-validate its size.
-        if(m_wnd.Width() < m_min_size.x || m_wnd.Height() < m_min_size.y) {
+        if (m_wnd.Width() < m_min_size.x || m_wnd.Height() < m_min_size.y) {
             m_wnd.Resize(m_wnd.Size());
         }
     }
@@ -249,7 +249,7 @@ void CombatReportWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 bool CombatReportWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& wnd_event) {
-    switch(wnd_event.Type()) {
+    switch (wnd_event.Type()) {
         case GG::WndEvent::LDrag:
             LDrag(wnd_event.Point(), wnd_event.DragMove(), wnd_event.ModKeys());
             break;
