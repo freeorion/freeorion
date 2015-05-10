@@ -670,9 +670,8 @@ private:
     };
 };
 
-
 GraphicalSummaryWnd::GraphicalSummaryWnd() :
-    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_sizer(0),
     m_options_bar(0)
 { }
@@ -730,9 +729,11 @@ void GraphicalSummaryWnd::DoLayout() {
 
 void GraphicalSummaryWnd::Render()
 {
-    GG::Pt one(GG::X(2), GG::Y1);
-    AngledCornerRectangle(UpperLeft(), LowerRight() - one, ClientUI::CtrlColor(), GG::CLR_ZERO,
-                          8, 1, false, true);
+    GG::FlatRectangle(UpperLeft() + GG::Pt(GG::X1, GG::Y0),
+                      LowerRight(),
+                      ClientUI::CtrlColor(),
+                      ClientUI::CtrlBorderColor(),
+                      1);
 }
 
 void GraphicalSummaryWnd::HandleButtonChanged() {

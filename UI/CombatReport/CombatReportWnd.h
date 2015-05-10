@@ -17,10 +17,6 @@ public:
     virtual void    CloseClicked();
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-protected:
-    /// Filter LMB events over the resize tab that are sent to the GraphicalSummaryWnd instead of this wnd.
-    virtual bool EventFilter(GG::Wnd* w, const GG::WndEvent& wnd_event);
-
 private:
     class CombatReportPrivate;
 
