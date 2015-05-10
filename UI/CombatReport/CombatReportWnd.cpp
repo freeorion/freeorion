@@ -17,20 +17,6 @@ namespace {
     GG::X COMBAT_LOG_WIDTH(400);
     GG::Y COMBAT_LOG_HEIGHT(300);
 
-    //// Duplicated from MapWnd.cpp - used here to find maximum size of the
-    //// combat report window.
-    //GG::X AppWidth() {
-    //    if(HumanClientApp* app = HumanClientApp::GetApp())
-    //        return app->AppWidth();
-    //    return GG::X0;
-    //}
-
-    //GG::Y AppHeight() {
-    //    if(HumanClientApp* app = HumanClientApp::GetApp())
-    //        return app->AppHeight();
-    //    return GG::Y0;
-    //}
-
     GG::Pt LimitToAppSize(const GG::Pt& sz_in) {
         if (HumanClientApp* app = HumanClientApp::GetApp()) {
             return GG::Pt(std::min(sz_in.x, app->AppWidth()),
