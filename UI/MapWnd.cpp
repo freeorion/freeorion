@@ -4556,16 +4556,28 @@ bool MapWnd::EndTurn() {
 }
 
 void MapWnd::ToggleAutoEndTurn() {
+    if (!m_btn_auto_turn)
+        return;
+
     if (m_auto_end_turn) {
         m_auto_end_turn = false;
         m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn.png")));
         m_btn_auto_turn->SetPressedGraphic(     GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
         m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn_mouseover.png")));
+
+        m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_btn_auto_turn->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("MAP_BTN_MANUAL_TURN_ADVANCE"), UserString("MAP_BTN_MANUAL_TURN_ADVANCE"))));
+
     } else {
         m_auto_end_turn = true;
         m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
         m_btn_auto_turn->SetPressedGraphic(     GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn.png")));
         m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn_mouseover.png")));
+
+        m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_btn_auto_turn->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("MAP_BTN_AUTO_ADVANCE_ENABLED"), UserString("MAP_BTN_AUTO_ADVANCE_ENABLED"))));
     }
 }
 
