@@ -166,7 +166,6 @@ def assess_protection_focus(pid):
     max_shield = this_planet.currentMeterValue(fo.meterType.maxShield)
     cur_troops = this_planet.currentMeterValue(fo.meterType.troops)
     max_troops = this_planet.currentMeterValue(fo.meterType.maxTroops)
-    max_shield = this_planet.currentMeterValue(fo.meterType.maxShield)
     cur_defense = this_planet.currentMeterValue(fo.meterType.defense)
     max_defense = this_planet.currentMeterValue(fo.meterType.maxDefense)
     def_meter_pairs = [(cur_troops, max_troops), (cur_shield, max_shield), (cur_defense, max_defense)]
