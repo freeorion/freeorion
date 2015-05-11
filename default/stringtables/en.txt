@@ -9112,6 +9112,12 @@ Etty Colony
 BLD_COL_ETTY_DESC
 [[BLD_COL_PART_1]] Etty colony. [[BLD_COL_PART_2]] Etty colony [[BLD_COL_PART_3]].
 
+BLD_COL_FURTHEST
+Furthest Colony
+
+BLD_COL_FURTHEST_DESC
+[[BLD_COL_PART_1]] Furthest colony. [[BLD_COL_PART_2]] Furthest colony [[BLD_COL_PART_3]].
+
 BLD_COL_GEORGE
 George Colony
 
@@ -9154,6 +9160,12 @@ Mu Ursh Colony
 BLD_COL_MUURSH_DESC
 [[BLD_COL_PART_1]] Mu Ursh colony. [[BLD_COL_PART_2]] Mu Ursh colony [[BLD_COL_PART_3]].
 
+BLD_COL_PHINNERT
+Phinnert Colony
+
+BLD_COL_PHINNERT_DESC
+[[BLD_COL_PART_1]] Phinnert colony. [[BLD_COL_PART_2]] Phinnert colony [[BLD_COL_PART_3]].
+
 BLD_COL_SCYLIOR
 Scylior Colony
 
@@ -9165,6 +9177,12 @@ Setinon Colony
 
 BLD_COL_SETINON_DESC
 [[BLD_COL_PART_1]] Setinon colony. [[BLD_COL_PART_2]] Setinon colony [[BLD_COL_PART_3]].
+
+BLD_COL_SILEXIAN
+Silexian Colony
+
+BLD_COL_SILEXIAN_DESC
+[[BLD_COL_PART_1]] Silexian colony. [[BLD_COL_PART_2]] Silexian colony [[BLD_COL_PART_3]].
 
 BLD_COL_SSLITH
 Sslith Colony
