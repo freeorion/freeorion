@@ -3642,7 +3642,7 @@ A planet focused on Growth increases the max Population only of other planets co
 
 A Homeworld focused on Growth only helps other planets of the same species.
 
-Growth Special planets focused on growth, only help a single classification of species. Some specials function for organic species only, some for lithic species only, and some for robotic species only.'''
+[[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
 MINING_FOCUS_TITLE
 Mining Focus
@@ -3780,14 +3780,18 @@ Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 FUEL_TITLE
 Fuel
 FUEL_TEXT
-Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel. Fuel is not used up at any other time. [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship. If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.
+Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel unless that lane is within supply of the empire, fuel is not used up at any other time. Stopping within[[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship. If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.
 
 SUPPLY_TITLE
 Supply
 SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures. A set of systems with supply connections between them are called a 'Resource Group'.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.  A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes.  If PP is currently being wasted within the Resource Group the outer bands of the core starlanes will be a contrasting color.
+'''The supply meter on a planet represents the number of star-lanes supply can extend through. Smaller planets can supply greater distances, large planets reduced distances.
 
-The supply meter on a planet represents the number of star-lanes supply can reach.'''
+Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines form a 'Resource Group' and can share physical resources. Production Points created on one planet can be used on any connected planet to build ships or structures. 
+
+A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes.  If PP is currently being wasted within a Resource Group the outer bands of the core starlanes will be a contrasting color.
+
+Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.'''
 
 FLEET_UPKEEP_TITLE
 Fleet Upkeep
@@ -5818,86 +5822,77 @@ An Experimentor outpost exists in this system, and defeating them is necessary t
 PROBIOTIC_SPECIAL
 Probiotic Soup
 PROBIOTIC_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Probiotic Soup is focused on Growth, all connected planets with Organic species receive the same bonus.
+'''The great diversity of unique single-celled organisms have applications to the health and maintenance of all types of organic life.
 
-The great diversity of unique single-celled organisms have applications to the health and maintenance of all types of organic life.'''
+[[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]]'''
 
 FRUIT_SPECIAL
 Caretaker's Fruit
 FRUIT_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Caretaker's Fruit is focused on Growth, all connected planets with Organic species receive the same bonus.
+'''What appears to be a forest is actually part of a continent-spanning symbiotic organism. The fruit of these trees contains marvelously complex organic chemicals beneficial to all sorts of organic life.
 
-What appears to be a forest is actually part of a continent-spanning symbiotic organism. The fruit of these trees contains marvelously complex organic chemicals beneficial to all sorts of organic life.'''
+[[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]]'''
 
 SPICE_SPECIAL
 Ki Spice
 SPICE_SPECIAL_DESC
-'''Increases max Population if inhabited by Organic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Ki Spice is focused on Growth, all connected planets with Organic species receive the same bonus.
+'''A unique substance produced by this planet's ecology, Ki Spice has the capacity to lengthen the lives, clarify the thoughts, or sharpen the senses of organic beings.
 
-A unique substance produced by this planet's ecology, Ki Spice has the capacity to lengthen the lives, clarify the thoughts, or sharpen the senses of organic beings.'''
+[[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]]'''
 
 MONOPOLE_SPECIAL
 Monopole Magnets
 MONOPOLE_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Monopole Magnets is focused on Growth, all connected planets with Robotic species receive the same bonus.
+'''Monopole Magnets make stronger robots!
 
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]]
 
-Monopole Magnets make better robots!'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]] '''
 
 SUPERCONDUCTOR_SPECIAL
 Ambient Superconductors
 SUPERCONDUCTOR_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Ambient Superconductors is focused on Growth, all connected planets with Robotic species receive the same bonus.
+'''Ambient Superconductors make faster robots!
 
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]]
 
-Ambient Superconductors make better robots!'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 POSITRONIUM_SPECIAL
 Positronium Ash
 POSITRONIUM_SPECIAL_DESC
-'''Increases max Population if inhabited by Robotic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Positronium Ash is focused on Growth, all connected planets with Robotic species receive the same bonus. 
+'''Positronium Ash makes better robots brains!
 
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]]
 
-Positronium Ash make better robots brains!'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 MINERALS_SPECIAL
 Ferric Minerals
 MINERALS_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Ferric Minerals is focused on Growth, all connected planets with Lithic species receive the same bonus.
+'''This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.
 
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
+[[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]]
 
-This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 CRYSTALS_SPECIAL
 Silmaline Crystals
 CRYSTALS_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Silmaline Crystals is focused on Growth, all connected planets with Lithic species receive the same bonus.
+'''This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.
 
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
+[[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]]
 
-This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 ELERIUM_SPECIAL
 Native Elerium
 ELERIUM_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Native Elerium is focused on Growth, all connected planets with Lithic species receive the same bonus.
+'''This planet has a rich natural deposit of pure elerium, boosting production or Lithic growth significantly.
 
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
+[[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]]
 
-This planet has a rich natural deposit of pure elerium, boosting production or Lithic growth significantly.'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 STARSPAWN_NEBULA_SPECIAL
 Starspawn Nebula
@@ -8871,7 +8866,7 @@ Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population when built in systems with Blue/White, Yellow/Orange, or Red stars, respectively.
-[[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus apllies.
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an outpost.'''
 
@@ -10283,7 +10278,31 @@ A cosmic cloud of high energetic particles.
 #############################################################
 
 NO_STACK_SUPPLY_CONNECTION_TEXT
-Multiple copies in the same supply connection do not stack.
+More than one in the same [[encyclopedia SUPPLY_TITLE]] connected Resource Group do not stack and add no extra bonus.
+
+#############################################################
+####              Growth Macros                          ####
+#############################################################
+
+GROWTH_SPECIAL_POPULATION_INCREASE
+'''species inhabiting this planet will have the maximum population boosted by planet size (Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5) regardless of planetary environmment. 
+
+If this planet is set to the [[encyclopedia GROWTH_FOCUS_TITLE]], the bonus is applied to all [[encyclopedia SUPPLY_TITLE]] connected worlds inhabited by species with''' 
+
+GROWTH_SPECIAL_INDUSTRY_BOOST
+If this planet is set to the Industry Focus, target [[encyclopedia INDUSTRY_TITLE]] is increased by 0.2 per Population.
+
+GROWTH_SPECIALS_ENTRY_LIST
+'''Growth Special planets focused on growth only help a single classification of species. Some specials function for organic species only, some for lithic species only, and some for robotic species only.
+
+[[encyclopedia ORGANIC_SPECIES_TITLE]] specials:
+[[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
+
+[[encyclopedia ROBOTIC_SPECIES_TITLE]] specials:
+[[special MONOPOLE_SPECIAL]] | [[special SUPERCONDUCTOR_SPECIAL]] | [[special POSITRONIUM_SPECIAL]]
+
+[[encyclopedia LITHIC_SPECIES_TITLE]] specials:
+[[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]]'''
 
 #############################################################
 ####              S P E C I E S   P I C K S              ####
