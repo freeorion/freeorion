@@ -57,9 +57,13 @@ public:
         GG::Connect(m_graphical->MinSizeChangedSignal,
                     boost::bind(&CombatReportPrivate::UpdateMinSize, this));
 
+        // NB: This signal is not emitted when changing to fullscreen mode.
         if (HumanClientApp* app = HumanClientApp::GetApp()) {
             GG::Connect(HumanClientApp::GetApp()->WindowResizedSignal,
-                        boost::bind(&CombatReportPrivate::UpdateMinSize, this));
+                        boost::bind(&CombatReportPrivate::HandleAppSizeChanged,
+                                    this,
+                                    _1,
+                                    _2));
         } else {
             ErrorLogger() << "CombatReportWnd::CombatReportPrivate(): "
                              "HumanClientApp not available, cannot connect "
@@ -144,10 +148,7 @@ public:
         HandleLinkClick(link_type, data);
     }
 
-    // Apply minimum & maximum size constraints. Done here rather than calling
-    // CombatReportWnd::Set(Min|Max)Size because the max size check needs to be
-    // performed every time - the app size can change without sending a signal
-    // for us to bind to SetMaxSize.
+    // Apply minimum & maximum size constraints.
     GG::Pt ValidateSize(const GG::Pt& sz_in) {
         GG::Pt sz_out = LimitToAppSize(sz_in);
 
@@ -201,6 +202,9 @@ private:
         // If the window is currently too small, re-validate its size.
         if (m_wnd.Width() < m_min_size.x || m_wnd.Height() < m_min_size.y) {
             m_wnd.Resize(m_wnd.Size());
+            m_wnd.LDrag(GG::Pt(GG::X0, GG::Y0),
+                        GG::Pt(GG::X0, GG::Y0),
+                        GG::MOD_KEY_NONE);
         }
     }
 
@@ -210,6 +214,18 @@ private:
 
         // Make sure that the newly selected window gets an update.
         DoLayout();
+    }
+
+    void HandleAppSizeChanged(GG::X new_width, GG::Y new_height) {
+        // If m_wnd is too large, re-validate its size.
+        if (m_wnd.Width() > new_width || m_wnd.Height() > new_height) {
+            m_wnd.Resize(m_wnd.Size());
+        }
+
+        // This ensures that the window stays entirely within the app window.
+        m_wnd.LDrag(GG::Pt(GG::X0, GG::Y0),
+                    GG::Pt(GG::X0, GG::Y0),
+                    GG::MOD_KEY_NONE);
     }
 };
 
@@ -230,10 +246,10 @@ void CombatReportWnd::CloseClicked()
 
 void CombatReportWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     // Using Set(Min|Max)Size would be more elegant but that requires knowing
-    // when the app window changes size.  HumanClientApp (or its superclasses)
-    // don't send signals when switching to fullscreen mode, so we can't rely
-    // on calling SetMaxSize when that changes - we have to perform the size
-    // checks here.
+    // when the app window changes size and HumanClientApp (or its superclasses)
+    // don't send signals when switching to fullscreen mode.  This also
+    // prioritizes the max size over the min size which is the opposite of what
+    // happens when using CUIWnd::Set(Min|Max)Size).
     CUIWnd::SizeMove(ul, ul + m_impl->ValidateSize(lr - ul));
     m_impl->DoLayout();
 }
