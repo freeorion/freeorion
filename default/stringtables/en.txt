@@ -9234,8 +9234,8 @@ PART_DESC_SHIELD_STRENGTH
 Shield Strength: %1%
 
 PART_DESC_DETECTION
-Detection Strength: %1%
-# Detection Range: %2%
+Detection Range: %1%
+# Detection Strength: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
 Attack Damage: %1%
