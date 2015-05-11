@@ -74,7 +74,7 @@ private:
 class SettableInWindowCUIButton : public CUIButton {
 public:
     /** \name Structors */ //@{
-    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, boost::function<bool(const GG::Pt&)> in_window_function);
+    SettableInWindowCUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover, boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_function);
     //@}
 
     /** \name Accessors */ //@{
@@ -82,7 +82,7 @@ public:
     //@}
 
 private:
-    boost::function<bool(const GG::Pt&)>    m_in_window_func;
+    boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)>    m_in_window_func;
 };
 
 /** a FreeOrion triangular arrow button */

@@ -653,10 +653,10 @@ MapWnd::MapWnd() :
 
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
-    boost::function<bool(const GG::Pt&)> in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_menu), boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_toolbar), boost::bind(&WndBottom, m_btn_menu),
-                    _1);
+    boost::function<bool(const SettableInWindowCUIButton*, const GG::Pt&)> in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, _1), boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
+                    _2);
     // Menu button
     m_btn_menu = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu.png")),
@@ -671,9 +671,9 @@ MapWnd::MapWnd() :
 
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_pedia),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_pedia),  boost::bind(&WndBottom, m_btn_pedia),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+                    _2);
     // Encyclo"pedia" button
     m_btn_pedia = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia.png")),
@@ -687,9 +687,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_graphs),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_graphs),  boost::bind(&WndBottom, m_btn_graphs),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+                    _2);
     // Graphs button
     m_btn_graphs = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts.png")),
@@ -703,9 +703,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_design),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_design),  boost::bind(&WndBottom, m_btn_design),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+                    _2);
     // Design button
     m_btn_design = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design.png")),
@@ -719,9 +719,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_production),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_production),  boost::bind(&WndBottom, m_btn_production),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+                    _2);
     // Production button
     m_btn_production = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production.png")),
@@ -735,9 +735,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_research),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_research),  boost::bind(&WndBottom, m_btn_research),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+                    _2);
     // Research button
     m_btn_research = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research.png")),
@@ -751,9 +751,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_objects),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_objects),  boost::bind(&WndBottom, m_btn_objects),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+                    _2);
     // Objects button
     m_btn_objects = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects.png")),
@@ -767,9 +767,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_empires),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_empires),  boost::bind(&WndBottom, m_btn_empires),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1),  boost::bind(&WndBottom, _1),
+                    _2);
     // Empires button
     m_btn_empires = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires.png")),
@@ -783,9 +783,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_siterep),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_siterep),  boost::bind(&WndBottom, m_btn_siterep),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
+                    _2);
     // SitRep button
     m_btn_siterep = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep.png")),
@@ -799,9 +799,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_messages),   boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_messages),  boost::bind(&WndBottom, m_btn_messages),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
+                    _2);
     // Messages button
     m_btn_messages = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages.png")),
@@ -815,9 +815,9 @@ MapWnd::MapWnd() :
         new TextBrowseWnd(UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES"))));
 
     in_window_func =
-        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_moderator),    boost::bind(&WndTop, m_toolbar),
-                             boost::bind(&WndRight, m_btn_moderator),   boost::bind(&WndBottom, m_btn_moderator),
-                    _1);
+        boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, _1), boost::bind(&WndBottom, _1),
+                    _2);
     // Moderator button
     m_btn_moderator = new SettableInWindowCUIButton(
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator.png")),
