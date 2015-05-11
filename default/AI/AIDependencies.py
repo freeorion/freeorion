@@ -50,3 +50,7 @@ LRN_QUANT_NET = "LRN_QUANT_NET"
 TECH_EXCLUSION_MAP_1 = {"LRN_TRANSCEND": fo.aggression.typical}  # (k,v) exclude tech k if aggression is less than v
 TECH_EXCLUSION_MAP_2 = {}  # (k,v) exclude tech k if aggression is greater than v
 
+FIRST_PLANET_SHIELDS_TECH = "LRN_FORCE_FIELD"
+PLANET_BARRIER_I_TECH = "DEF_PLAN_BARRIER_SHLD_1"
+DEFENSE_REGEN_1_TECH = "DEF_DEFENSE_NET_REGEN_1"
+PROT_FOCUS_MULTIPLIER = 2.0

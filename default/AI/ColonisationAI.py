@@ -164,14 +164,13 @@ def check_supply():
     print "Third Ring of annexable systems:", PlanetUtilsAI.sys_name_ids(annexable_ring3)
     # print "standard supply calc took ", supp_timing[0][-1]-supp_timing[0][-2]
     print
-    new_supply_map = empire.supplyProjections(-3, False)
     print "New Supply Calc:"
     print "Known Systems:", list(universe.systemIDs)
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
-    for el in new_supply_map:
-        # print PlanetUtilsAI.sys_name_ids([el.key()]), ' -- ', el.data()
-        systems_by_supply_tier.setdefault(min(0, el.data()), []).append(el.key())
-        system_supply[el.key()] = el.data()
+    system_supply.update(empire.supplyProjections(-3, False))
+    for sys_id, supply_val in system_supply.items():
+        # print PlanetUtilsAI.sys_name_ids([sys_id]), ' -- ', supply_val
+        systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
     print "New Supply connected systems: ", PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, []))
     print "New First Ring of annexable systems: ", PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, []))
     print "New Second Ring of annexable systems: ", PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, []))
