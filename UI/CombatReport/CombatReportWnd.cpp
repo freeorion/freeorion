@@ -1,7 +1,6 @@
 #include "CombatReportWnd.h"
 #include "../ClientUI.h"
 #include "../CUIControls.h"
-#include "../client/human/HumanClientApp.h"
 #include "../../util/i18n.h"
 #include "../../util/Logger.h"
 #include "../../universe/ShipDesign.h"
@@ -16,15 +15,6 @@
 namespace {
     GG::X COMBAT_LOG_WIDTH(400);
     GG::Y COMBAT_LOG_HEIGHT(300);
-
-    GG::Pt LimitToAppSize(const GG::Pt& sz_in) {
-        if (HumanClientApp* app = HumanClientApp::GetApp()) {
-            return GG::Pt(std::min(sz_in.x, app->AppWidth()),
-                          std::min(sz_in.y, app->AppHeight()) );
-        } else {
-            return GG::Pt(GG::X0, GG::Y0);
-        }
-    }
 }
 
 // The implementation class for CombatReportWnd
@@ -56,19 +46,6 @@ public:
         // not, but it will still only use the min size of the selected window.
         GG::Connect(m_graphical->MinSizeChangedSignal,
                     boost::bind(&CombatReportPrivate::UpdateMinSize, this));
-
-        // NB: This signal is not emitted when changing to fullscreen mode.
-        if (HumanClientApp* app = HumanClientApp::GetApp()) {
-            GG::Connect(HumanClientApp::GetApp()->WindowResizedSignal,
-                        boost::bind(&CombatReportPrivate::HandleAppSizeChanged,
-                                    this,
-                                    _1,
-                                    _2));
-        } else {
-            ErrorLogger() << "CombatReportWnd::CombatReportPrivate(): "
-                             "HumanClientApp not available, cannot connect "
-                             "WindowResizedSignal to this window.";
-        }
     }
 
     void SetLog(int log_id) {
@@ -148,16 +125,8 @@ public:
         HandleLinkClick(link_type, data);
     }
 
-    // Apply minimum & maximum size constraints.
-    GG::Pt ValidateSize(const GG::Pt& sz_in) {
-        GG::Pt sz_out = LimitToAppSize(sz_in);
-
-        // The app size can change in between calls.
-        GG::Pt current_sz_min = LimitToAppSize(m_min_size);
-
-        return GG::Pt(std::max(sz_out.x, current_sz_min.x),
-                      std::max(sz_out.y, current_sz_min.y) );
-    }
+    GG::Pt GetMinSize() const
+    { return m_min_size; }
 
 private:
     CombatReportWnd&        m_wnd;
@@ -215,18 +184,6 @@ private:
         // Make sure that the newly selected window gets an update.
         DoLayout();
     }
-
-    void HandleAppSizeChanged(GG::X new_width, GG::Y new_height) {
-        // If m_wnd is too large, re-validate its size.
-        if (m_wnd.Width() > new_width || m_wnd.Height() > new_height) {
-            m_wnd.Resize(m_wnd.Size());
-        }
-
-        // This ensures that the window stays entirely within the app window.
-        m_wnd.LDrag(GG::Pt(GG::X0, GG::Y0),
-                    GG::Pt(GG::X0, GG::Y0),
-                    GG::MOD_KEY_NONE);
-    }
 };
 
 CombatReportWnd::CombatReportWnd() :
@@ -245,11 +202,9 @@ void CombatReportWnd::CloseClicked()
 { Hide(); }
 
 void CombatReportWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    // Using Set(Min|Max)Size would be more elegant but that requires knowing
-    // when the app window changes size and HumanClientApp (or its superclasses)
-    // don't send signals when switching to fullscreen mode.  This also
-    // prioritizes the max size over the min size which is the opposite of what
-    // happens when using CUIWnd::Set(Min|Max)Size).
-    CUIWnd::SizeMove(ul, ul + m_impl->ValidateSize(lr - ul));
+    GG::Pt new_size = GG::Pt(std::max(lr.x - ul.x, m_impl->GetMinSize().x),
+                             std::max(lr.y - ul.y, m_impl->GetMinSize().y) );
+
+    CUIWnd::SizeMove(ul, ul + new_size);
     m_impl->DoLayout();
 }
