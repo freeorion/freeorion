@@ -85,7 +85,9 @@ class DiplomaticCorp(object):
         acknowledgement = random.choice(possible_acknowledgments)
         print ("Acknowledging midgame chat with initial message (from %d choices): '%s'" %
               (len(possible_acknowledgments), acknowledgement))
-        fo.sendChatMessage(fo.empirePlayerID(sender_id), acknowledgement)
+        # disabled for now; caused nonstop AI to AI chatter
+        # TODO: choose a brake to prevent such non-stop feedback
+        #fo.sendChatMessage(fo.empirePlayerID(sender_id), acknowledgement)
 
 class BeginnerDiplomaticCorp(DiplomaticCorp):
     def evaluate_diplomatic_attitude(self, other_empire_id):
