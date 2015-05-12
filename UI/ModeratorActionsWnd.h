@@ -2,17 +2,13 @@
 #ifndef _ModeratorActionsWnd_h_
 #define _ModeratorActionsWnd_h_
 
-#include "CUIWnd.h"
-#include "CUIControls.h"
-#include "../universe/Enums.h"
-
-#include <boost/signals2/signal.hpp>
-
 #include <vector>
+#include <boost/signals2/signal.hpp>
+#include <GG/GGFwd.h>
+#include <GG/DropDownList.h>
 
-namespace GG {
-    class Button;
-}
+#include "CUIWnd.h"
+#include "../universe/Enums.h"
 
 
 class ModeratorActionsWnd : public CUIWnd {
@@ -69,13 +65,13 @@ private:
     ModeratorActionSetting  m_selected_action;
     GG::Button*             m_no_action_button;
     GG::Button*             m_create_system_button;
-    CUIDropDownList*        m_star_type_drop;
+    GG::DropDownList*       m_star_type_drop;
     GG::Button*             m_create_planet_button;
-    CUIDropDownList*        m_planet_type_drop;
-    CUIDropDownList*        m_planet_size_drop;
+    GG::DropDownList*       m_planet_type_drop;
+    GG::DropDownList*       m_planet_size_drop;
     GG::Button*             m_delete_object_button;
     GG::Button*             m_set_owner_button;
-    CUIDropDownList*        m_empire_drop;
+    GG::DropDownList*       m_empire_drop;
     GG::Button*             m_add_starlane_button;
     GG::Button*             m_remove_starlane_button;
 };

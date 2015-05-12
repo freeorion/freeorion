@@ -15,13 +15,7 @@
 
 #include <vector>
 
-class CUI_CloseButton;
 class CUIDropDownList;
-class CUIIconButton;
-class CUIScroll;
-class CUITextureButton;
-class RotatingPlanetControl;
-struct UniverseObjectVisitor;
 class MultiIconValueIndicator;
 
 class SidePanel : public CUIWnd {

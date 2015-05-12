@@ -8,12 +8,13 @@
 #  endif
 #endif
 
+#include <boost/filesystem/path.hpp>
+#include <boost/format.hpp>
+#include <GG/GGFwd.h>
+
 #include "../universe/Enums.h"
 #include "../util/Random.h"
 #include "../util/SitRepEntry.h"
-
-#include <boost/filesystem/path.hpp>
-#include <boost/format.hpp>
 
 class ClientNetworking;
 class Fleet;
@@ -28,12 +29,7 @@ class System;
 class Tech;
 class BuildingType;
 template <class T> class TemporaryPtr;
-namespace GG {
-    struct Clr;
-    class Font;
-    class SubTexture;
-    class Texture;
-}
+
 
 //! \brief ClientUI Main Module
 //!This is the main class of the ClientUI module.

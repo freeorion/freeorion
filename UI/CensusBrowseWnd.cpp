@@ -1,6 +1,7 @@
 #include "CensusBrowseWnd.h"
 
 #include "../util/i18n.h"
+#include "CUIControls.h"
 
 class CensusRowPanel;
 
@@ -76,8 +77,8 @@ private:
     }
 
     GG::StaticGraphic*  m_icon;
-    CUILabel*           m_name;
-    CUILabel*           m_census_val;
+    GG::Label*          m_name;
+    GG::Label*          m_census_val;
     bool                m_show_icon;
 };
 

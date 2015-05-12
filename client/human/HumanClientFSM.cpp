@@ -7,6 +7,7 @@
 #include "../../network/Networking.h"
 #include "../../util/i18n.h"
 #include "../../util/MultiplayerCommon.h"
+#include "../../util/OptionsDB.h"
 #include "../../UI/ChatWnd.h"
 #include "../../UI/PlayerListWnd.h"
 #include "../../UI/IntroScreen.h"

@@ -4,12 +4,11 @@
 
 #include "CUIWnd.h"
 
+#include <GG/GGFwd.h>
 #include <GG/ListBox.h>
-namespace GG {
-    class Button;
-}
 
 class ObjectListBox;
+
 
 class ObjectListWnd : public CUIWnd {
 public:

@@ -6,6 +6,7 @@
 #include "MapWnd.h"
 #include "Sound.h"
 #include "CUIControls.h"
+#include "CUIDrawUtil.h"
 #include "../universe/Fleet.h"
 #include "../universe/Predicates.h"
 #include "../universe/System.h"

@@ -2,11 +2,11 @@
 #ifndef _MeterBrowseWnd_h_
 #define _MeterBrowseWnd_h_
 
+#include <GG/GGFwd.h>
 #include <GG/BrowseInfoWnd.h>
 
 #include "../universe/Enums.h"
 
-class CUILabel;
 
 /** Gives details about what effects contribute to a meter's maximum value (Effect Accounting) and
   * shows the current turn's current meter value and the predicted current meter value for next turn. */
@@ -28,18 +28,18 @@ private:
     MeterType               m_secondary_meter_type;
     int                     m_object_id;
 
-    CUILabel*               m_summary_title;
+    GG::Label*              m_summary_title;
 
-    CUILabel*               m_current_label;
-    CUILabel*               m_current_value;
-    CUILabel*               m_next_turn_label;
-    CUILabel*               m_next_turn_value;
-    CUILabel*               m_change_label;
-    CUILabel*               m_change_value;
+    GG::Label*              m_current_label;
+    GG::Label*              m_current_value;
+    GG::Label*              m_next_turn_label;
+    GG::Label*              m_next_turn_value;
+    GG::Label*              m_change_label;
+    GG::Label*              m_change_value;
 
-    CUILabel*               m_meter_title;
+    GG::Label*              m_meter_title;
 
-    std::vector<std::pair<CUILabel*, CUILabel*> >
+    std::vector<std::pair<GG::Label*, GG::Label*> >
                             m_effect_labels_and_values;
 
     GG::Y                   m_row_height;

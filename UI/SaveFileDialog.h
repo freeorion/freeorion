@@ -3,19 +3,14 @@
 #ifndef _SaveFileDialog_h_
 #define _SaveFileDialog_h_
 
-#ifndef _CUIWnd_h_
-#include "CUIWnd.h"
-#endif
-
-#include "CUIControls.h"
-
+#include <set>
+#include <string>
+#include <GG/DropDownList.h>
 #include <GG/ListBox.h>
 #include <GG/Layout.h>
 
-#include <set>
-#include <string>
+#include "CUIWnd.h"
 
-class CUIButton;
 class SaveFileRow;
 class SaveFileListBox;
 struct PreviewInformation;
@@ -69,10 +64,10 @@ private:
     GG::Layout*         m_layout;           //!< The layout of the dialog
 
     SaveFileListBox*    m_file_list;        //!< The list of available saves
-    CUIEdit*            m_name_edit;        //!< The file name edit control
-    CUIEdit*            m_current_dir_edit; //!< The editor for the save directory
-    CUIDropDownList*    m_remote_dir_dropdown; //!< Dropdown to select remote dir
-    CUIButton*          m_confirm_btn;      //!< Button to confirm choice
+    GG::Edit*           m_name_edit;        //!< The file name edit control
+    GG::Edit*           m_current_dir_edit; //!< The editor for the save directory
+    GG::DropDownList*   m_remote_dir_dropdown; //!< Dropdown to select remote dir
+    GG::Button*         m_confirm_btn;      //!< Button to confirm choice
 
     std::string         m_loaded_dir;       //!< The directory whose contents are currently shown
     std::string         m_extension;        //!< The save game file name extension

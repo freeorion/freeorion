@@ -47,6 +47,8 @@
 #include <boost/format.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+class RotatingPlanetControl;
+
 namespace {
     const int       EDGE_PAD(3);
     const double    TWO_PI(2.0*3.1415926536);
@@ -510,16 +512,16 @@ private:
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     ShadowedTextControl*    m_planet_name;              ///< planet name
-    CUILabel*               m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
-    CUIButton*              m_colonize_button;          ///< btn which can be pressed to colonize this planet
-    CUIButton*              m_invade_button;            ///< btn which can be pressed to invade this planet
-    CUIButton*              m_bombard_button;           ///< btn which can be pressed to bombard this planet
+    GG::Label*              m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
+    GG::Button*             m_colonize_button;          ///< btn which can be pressed to colonize this planet
+    GG::Button*             m_invade_button;            ///< btn which can be pressed to invade this planet
+    GG::Button*             m_bombard_button;           ///< btn which can be pressed to bombard this planet
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
     bool                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
     GG::Clr                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
-    CUIDropDownList*        m_focus_drop;               ///< displays and allows selection of planetary focus
+    GG::DropDownList*       m_focus_drop;               ///< displays and allows selection of planetary focus
     PopulationPanel*        m_population_panel;         ///< contains info about population and health
     ResourcePanel*          m_resource_panel;           ///< contains info about resources production and focus selection UI
     MilitaryPanel*          m_military_panel;           ///< contains icons representing military-related meters
@@ -592,7 +594,7 @@ private:
     boost::shared_ptr<UniverseObjectVisitor>
                                 m_valid_selection_predicate;
 
-    CUIScroll*                  m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
+    GG::Scroll*                 m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
 };
 
 class RotatingPlanetControl : public GG::Control {

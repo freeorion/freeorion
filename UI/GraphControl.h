@@ -2,12 +2,10 @@
 #ifndef _GraphControl_h_
 #define _GraphControl_h_
 
-#include <GG/Control.h>
 #include <vector>
+#include <GG/GGFwd.h>
+#include <GG/Control.h>
 
-namespace GG {
-    struct Clr;
-}
 
 class GraphControl : public GG::Control {
 public:

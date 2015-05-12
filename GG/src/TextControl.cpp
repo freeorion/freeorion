@@ -182,12 +182,22 @@ void TextControl::SizeMove(const Pt& ul, const Pt& lr)
     bool resized = old_size != Size();
     bool redo_determine_lines = false;
     X client_width = ClientSize().x;
-    if (!(m_format & FORMAT_NOWRAP) && (m_format | FORMAT_WORDBREAK || m_format | FORMAT_LINEWRAP)) {
+
+    if (m_text.empty()) {
+        // don't redo lines
+    } else if (resized && m_format != FORMAT_LEFT && m_format != FORMAT_NONE) {
+        // for text with non-trivial alignment, be that centred, justified,
+        // right, or multi-line, or vertical alignments, need to redo for any
+        // resize
+        redo_determine_lines = true;
+    } else if (resized && !(m_format & FORMAT_NOWRAP) && (m_format | FORMAT_WORDBREAK || m_format | FORMAT_LINEWRAP)) {
+        // if breaking text across lines, need to redo layout when the available
+        // width is less than that needed to fit the text on one line
         X text_width = m_text_lr.x - m_text_ul.x;
-        redo_determine_lines =
-            (client_width < text_width ||
-            text_width < client_width && 1u < m_line_data.size()) && resized;
+        redo_determine_lines = client_width < text_width ||
+                              (text_width < client_width && 1u < m_line_data.size());
     }
+
     if (redo_determine_lines) {
         Pt text_sz;
         if (m_text_elements.empty()) {

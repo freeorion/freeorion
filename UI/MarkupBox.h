@@ -3,10 +3,9 @@
 #ifndef _MARKUP_BOX_H_
 #define _MARKUP_BOX_H_
 
+#include <GG/GGFwd.h>
 #include <GG/Control.h>
-namespace GG {
-    class Scroll;
-}
+
 namespace {
     struct MarkupTextBlock;
 }

@@ -464,9 +464,9 @@ public:
 private:
     const CombatSummary& m_side_summary;
     std::vector<ParticipantBar*> m_participant_bars;
-    CUILabel* m_x_axis_label;
-    CUILabel* m_y_axis_label;
-    CUILabel* m_dead_label;
+    GG::Label* m_x_axis_label;
+    GG::Label* m_y_axis_label;
+    GG::Label* m_dead_label;
     const BarSizer& m_sizer;
 
     float MaxMaxHealth() {
@@ -558,7 +558,7 @@ private:
         std::string option_key;
         boost::scoped_ptr<BarSizer>* sizer;
         OptionsBar* parent;
-        CUIButton* button;
+        GG::Button* button;
 
         void Toggle() {
             SetValue(!GetValue());

@@ -6,6 +6,7 @@
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
+#include "CUIControls.h"
 
 namespace {
     /** Returns how much of specified \a resource_type is being consumed by the
@@ -201,17 +202,17 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         std::string amount_text = DoubleToString(production, 3, false);
 
 
-        CUILabel* label = new CUILabel(name, GG::FORMAT_RIGHT);
+        GG::Label* label = new CUILabel(name, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
-        CUILabel* value = new CUILabel(amount_text);
+        GG::Label* value = new CUILabel(amount_text);
         value->MoveTo(GG::Pt(LABEL_WIDTH, top));
         value->Resize(GG::Pt(VALUE_WIDTH, row_height));
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
+        m_production_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
 
         top += row_height;
     }
@@ -219,17 +220,17 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
     if (m_production_labels_and_amounts.empty()) {
         // add "blank" line to indicate no production
-        CUILabel* label = new CUILabel(UserString("NOT_APPLICABLE"));
+        GG::Label* label = new CUILabel(UserString("NOT_APPLICABLE"));
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
-        CUILabel* value = new CUILabel("");
+        GG::Label* value = new CUILabel("");
         value->MoveTo(GG::Pt(LABEL_WIDTH, top));
         value->Resize(GG::Pt(VALUE_WIDTH, row_height));
         AttachChild(value);
 
-        m_production_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
+        m_production_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
 
         top += row_height;
     }
@@ -305,18 +306,18 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         std::string amount_text = DoubleToString(allocation, 3, false);
 
 
-        CUILabel* label = new CUILabel(name, GG::FORMAT_RIGHT);
+        GG::Label* label = new CUILabel(name, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
 
-        CUILabel* value = new CUILabel(amount_text);
+        GG::Label* value = new CUILabel(amount_text);
         value->MoveTo(GG::Pt(LABEL_WIDTH, top));
         value->Resize(GG::Pt(VALUE_WIDTH, row_height));
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
+        m_allocation_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
 
         top += row_height;
     }
@@ -324,17 +325,17 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
     if (m_allocation_labels_and_amounts.empty()) {
         // add "blank" line to indicate no allocation
-        CUILabel* label = new CUILabel(UserString("NOT_APPLICABLE"), GG::FORMAT_RIGHT);
+        GG::Label* label = new CUILabel(UserString("NOT_APPLICABLE"), GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
-        CUILabel* value = new CUILabel("");
+        GG::Label* value = new CUILabel("");
         value->MoveTo(GG::Pt(LABEL_WIDTH, top));
         value->Resize(GG::Pt(VALUE_WIDTH, row_height));
         AttachChild(value);
 
-        m_allocation_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
+        m_allocation_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
 
         top += row_height;
     }
@@ -424,17 +425,17 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
 
 
     // add label and amount.  may be "NOT APPLIABLE" and nothing if aborted above
-    CUILabel* label = new CUILabel(label_text, GG::FORMAT_RIGHT);
+    GG::Label* label = new CUILabel(label_text, GG::FORMAT_RIGHT);
     label->MoveTo(GG::Pt(GG::X0, top));
     label->Resize(GG::Pt(LABEL_WIDTH, row_height));
     AttachChild(label);
 
-    CUILabel* value = new CUILabel(amount_text);
+    GG::Label* value = new CUILabel(amount_text);
     value->MoveTo(GG::Pt(LABEL_WIDTH, top));
     value->Resize(GG::Pt(VALUE_WIDTH, row_height));
     AttachChild(value);
 
-    m_import_export_labels_and_amounts.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
+    m_import_export_labels_and_amounts.push_back(std::pair<GG::Label*, GG::Label*>(label, value));
 
     top += row_height;
 }
@@ -444,19 +445,19 @@ void SystemResourceSummaryBrowseWnd::Clear() {
     DeleteChild(m_allocation_label);
     DeleteChild(m_import_export_label);
 
-    for (std::vector<std::pair<CUILabel*, CUILabel*> >::iterator it = m_production_labels_and_amounts.begin(); it != m_production_labels_and_amounts.end(); ++it) {
+    for (std::vector<std::pair<GG::Label*, GG::Label*> >::iterator it = m_production_labels_and_amounts.begin(); it != m_production_labels_and_amounts.end(); ++it) {
         DeleteChild(it->first);
         DeleteChild(it->second);
     }
     m_production_labels_and_amounts.clear();
 
-    for (std::vector<std::pair<CUILabel*, CUILabel*> >::iterator it = m_allocation_labels_and_amounts.begin(); it != m_allocation_labels_and_amounts.end(); ++it) {
+    for (std::vector<std::pair<GG::Label*, GG::Label*> >::iterator it = m_allocation_labels_and_amounts.begin(); it != m_allocation_labels_and_amounts.end(); ++it) {
         DeleteChild(it->first);
         DeleteChild(it->second);
     }
     m_allocation_labels_and_amounts.clear();
 
-    for (std::vector<std::pair<CUILabel*, CUILabel*> >::iterator it = m_import_export_labels_and_amounts.begin(); it != m_import_export_labels_and_amounts.end(); ++it) {
+    for (std::vector<std::pair<GG::Label*, GG::Label*> >::iterator it = m_import_export_labels_and_amounts.begin(); it != m_import_export_labels_and_amounts.end(); ++it) {
         DeleteChild(it->first);
         DeleteChild(it->second);
     }

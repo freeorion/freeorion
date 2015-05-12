@@ -90,12 +90,12 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     /// Creates a text control that support resizing and word wrap.
-    CUILabel* CreateResizingText(const std::string& string)
+    GG::Label* CreateResizingText(const std::string& string)
     {
         // Calculate the extent manually to ensure the control stretches to full
         // width when possible.  Otherwise it would always word break.
         GG::Pt extent = ClientUI::GetFont()->TextExtent(string);
-        CUILabel* text = new CUILabel(string, GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
+        GG::Label* text = new CUILabel(string, GG::FORMAT_WORDBREAK | GG::FORMAT_LEFT);
         text->Resize(GG::Pt(extent.x, extent.y));
         text->ClipText(true);
         text->SetChildClippingMode(GG::Wnd::ClipToClient);
@@ -131,7 +131,7 @@ namespace {
             const GG::DropDownList::Row& row = list->GetRow(i);
             for (unsigned j = 0; j < row.size(); ++j) {
                 const GG::Control* control = row.at(j);
-                const CUILabel* text = dynamic_cast<const CUILabel*>(control);
+                const GG::Label* text = dynamic_cast<const GG::Label*>(control);
                 if (text) {
                     if (text->Text() == str || text->Text() + "/" == str) {
                         return true;
@@ -155,7 +155,7 @@ public:
 
     static GG::Control* TitleForColumn(const SaveFileColumn& column)
     {
-        CUILabel* retval = new CUILabel(column.Title(), GG::FORMAT_LEFT);
+        GG::Label* retval = new CUILabel(column.Title(), GG::FORMAT_LEFT);
         retval->Resize(GG::Pt(GG::X1, ClientUI::GetFont()->Height()));
         return retval;
     }
@@ -171,7 +171,7 @@ public:
         if (column.m_name == "turn")
             format_flags = GG::FORMAT_CENTER;
 
-        CUILabel* retval = 0;
+        GG::Label* retval = 0;
 
         if (column.m_fixed) {
             retval = new CUILabel(value, format_flags);
@@ -595,11 +595,11 @@ void SaveFileDialog::Init() {
     m_file_list->SetStyle(GG::LIST_SINGLESEL | GG::LIST_SORTDESCENDING);
 
     m_confirm_btn = new CUIButton(UserString("OK"));
-    CUIButton* cancel_btn = new CUIButton(UserString("CANCEL"));
+    GG::Button* cancel_btn = new CUIButton(UserString("CANCEL"));
 
     m_name_edit = new CUIEdit("");
-    CUILabel* filename_label = new CUILabel(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
-    CUILabel* directory_label = new CUILabel(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
+    GG::Label* filename_label = new CUILabel(UserString("SAVE_FILENAME"), GG::FORMAT_NOWRAP);
+    GG::Label* directory_label = new CUILabel(UserString("SAVE_DIRECTORY"), GG::FORMAT_NOWRAP);
     m_current_dir_edit = new CUIEdit(PathString(GetSaveDir()));
 
     m_layout->Add(directory_label, 0, 0);
@@ -608,7 +608,7 @@ void SaveFileDialog::Init() {
     if (!m_server_previews) {
         m_layout->Add(m_current_dir_edit, 0, 1, 1, 3);
 
-        CUIButton* delete_btn = new CUIButton(UserString("DELETE"));
+        GG::Button* delete_btn = new CUIButton(UserString("DELETE"));
         m_layout->Add(delete_btn, 2, 3);
         GG::Connect(delete_btn->LeftClickedSignal, &SaveFileDialog::AskDelete, this);
 
@@ -800,7 +800,7 @@ void SaveFileDialog::UpdateDirectory(const std::string& newdir) {
 void SaveFileDialog::DirectoryDropdownSelect(GG::DropDownList::iterator selection) {
     GG::DropDownList::Row& row = **selection;
     if (row.size() > 0) {
-        CUILabel* control = dynamic_cast<CUILabel*>(row[0]);
+        GG::Label* control = dynamic_cast<GG::Label*>(row[0]);
         if (control) {
             UpdateDirectory(control->Text());
         }
