@@ -8,11 +8,13 @@ import AIstate
 from freeorion_tools import UserString, UserStringList, chat_on_error, print_error, chat_human, ppstring
 
 def handle_pregame_chat(sender_id, message_txt):
+    if fo.playerIsAI(sender_id):
+        return
     possible_acknowledgments = UserStringList("AI_PREGAME_ACKNOWLEDGEMENTS__LIST")
     acknowledgement = random.choice(possible_acknowledgments)
     print ("Acknowledging pregame chat with initial message (from %d choices): '%s'" %
           (len(possible_acknowledgments), acknowledgement))
-    fo.sendChatMessage(fo.empirePlayerID(sender_id), acknowledgement)
+    fo.sendChatMessage(sender_id, acknowledgement)
 
 class DiplomaticCorp(object):
 
@@ -81,13 +83,14 @@ class DiplomaticCorp(object):
         return min(10, max(-10, attitude))
 
     def handle_midgame_chat(self, sender_id, message_txt):
+        print "Midgame chat received from player %d, message: %s" % (sender_id, message_txt)
+        if fo.playerIsAI(sender_id):
+            return
         possible_acknowledgments = UserStringList("AI_MIDGAME_ACKNOWLEDGEMENTS__LIST")
         acknowledgement = random.choice(possible_acknowledgments)
         print ("Acknowledging midgame chat with initial message (from %d choices): '%s'" %
               (len(possible_acknowledgments), acknowledgement))
-        # disabled for now; caused nonstop AI to AI chatter
-        # TODO: choose a brake to prevent such non-stop feedback
-        #fo.sendChatMessage(fo.empirePlayerID(sender_id), acknowledgement)
+        fo.sendChatMessage(fo.empirePlayerID(sender_id), acknowledgement)
 
 class BeginnerDiplomaticCorp(DiplomaticCorp):
     def evaluate_diplomatic_attitude(self, other_empire_id):
