@@ -998,7 +998,7 @@ Species
     
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" ]
+    tags = [ "ORGANIC" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" "PRIMITIVE"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1033,7 +1033,7 @@ Species
     gameplay_description = "SP_RAAAGH_GAMEPLAY_DESC"
     Native
 
-    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" ]
+    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_NO_RESEARCH" "AI_TAG_BAD_SUPPLY" "PRIMITIVE"]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
