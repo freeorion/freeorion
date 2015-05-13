@@ -275,16 +275,6 @@ class AIstate(object):
         infra = 0  # doesn't really contribute to combat since damage to shields & 'defense' done first
         return {'overall': defense*(defense + shields + infra), 'attack': defense, 'health': (defense + shields + infra)}
 
-    def log_immobile_fleet(self, fleet, system, rating):
-        if not fleet or not system:
-            return
-        universe = fo.getUniverse()
-        print "Immobile fleet %s at %s has rating %.1f and %d ships:" % (fleet, system, rating.get('overall', 0), len(fleet.shipIDs))
-        for ship_id in fleet.shipIDs:
-            this_ship = universe.getShip(ship_id)
-            this_design = fo.getShipDesign(this_ship.designID)
-            print "\t\t -- %s %d of design %s" % (["ship", "monster"][this_ship.isMonster], ship_id, this_design.name(False))
-
     def assess_enemy_supply(self):
         """
         Assesses where enemy empires have Supply
@@ -404,7 +394,6 @@ class AIstate(object):
                 oldstyle_rating = self.old_rate_fleet(fid)
                 newstyle_rating = self.rate_fleet(fid, self.fleet_sum_tups_to_estat_dicts([(1, self.empire_standard_fighter)]))
                 if fleet.speed == 0:
-                    # self.log_immobile_fleet(fleet, system, newstyle_rating)
                     monster_ratings.append(newstyle_rating)
                 else:
                     mobile_fleets.append(fid)
