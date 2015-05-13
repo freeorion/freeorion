@@ -4,29 +4,30 @@ import random
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-import AIstate
-from freeorion_tools import UserString, UserStringList, chat_on_error, print_error, chat_human, ppstring
+from freeorion_tools import UserStringList, chat_on_error
+
 
 def handle_pregame_chat(sender_player_id, message_txt):
     if fo.playerIsAI(sender_player_id):
         return
     possible_acknowledgments = UserStringList("AI_PREGAME_ACKNOWLEDGEMENTS__LIST")
     acknowledgement = random.choice(possible_acknowledgments)
-    print ("Acknowledging pregame chat with initial message (from %d choices): '%s'" %
-          (len(possible_acknowledgments), acknowledgement))
+    print "Acknowledging pregame chat with initial message (from %d choices): '%s'" % (
+        len(possible_acknowledgments), acknowledgement)
     fo.sendChatMessage(sender_player_id, acknowledgement)
 
-class DiplomaticCorp(object):
 
+class DiplomaticCorp(object):
     @chat_on_error
-    def handle_diplomatic_message(self, message):  # pylint: disable=invalid-name
+    def handle_diplomatic_message(self, message):
         """Handle a diplomatic message update from the server,
         such as if another player declares war, accepts peace, or cancels a proposed peace treaty.
         :param message: message.recipient and message.sender are respective empire IDs
         :return:
         """
-        print "Received diplomatic %s message from empire %s to empire %s" % (message.type, message.sender, message.recipient)
-        print "my empire id: %s" % fo.empireID()
+        print "Received diplomatic %s message from %s to %s." % (
+            message.type, fo.getEmpire(message.sender),
+            'me' if message.recipient == fo.empireID() else fo.getEmpire(message.recipient))
         # TODO: remove the following early return once proper support for third party diplomatic history is added
         if message.recipient != fo.empireID():
             return
@@ -36,8 +37,8 @@ class DiplomaticCorp(object):
             suffix = "MILD" if foAI.foAIstate.aggression <= fo.aggression.typical else "HARSH"
             possible_acknowledgments = UserStringList("AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_" + suffix + "_LIST")
             acknowledgement = random.choice(possible_acknowledgments)
-            print ("Acknowledging proposal with initial message (from %d choices): '%s'" %
-                  (len(possible_acknowledgments), acknowledgement))
+            print "Acknowledging proposal with initial message (from %d choices): '%s'" % (
+                len(possible_acknowledgments), acknowledgement)
             fo.sendChatMessage(proposal_sender_player, acknowledgement)
             attitude = self.evaluate_diplomatic_attitude(message.sender)
             if attitude > 0:
@@ -47,8 +48,8 @@ class DiplomaticCorp(object):
                 fo.sendDiplomaticMessage(diplo_reply)
             else:
                 reply_text = random.choice(UserStringList("AI_PEACE_PROPOSAL_RESPONSES_NO_" + suffix + "_LIST"))
-            print ("sending chat to player %d of empire %d, message body: '%s'" %
-                  (proposal_sender_player, message.sender, reply_text))
+            print "sending chat to player %d of empire %d, message body: '%s'" % (
+                proposal_sender_player, message.sender, reply_text)
             fo.sendChatMessage(proposal_sender_player, reply_text)
         elif message.type == fo.diplomaticMessageType.warDeclaration:
             # note: apparently this is currently (normally?) sent not as a warDeclaration,
@@ -56,12 +57,12 @@ class DiplomaticCorp(object):
             foAI.foAIstate.log_war_declaration(message.sender, message.recipient)
 
     @chat_on_error
-    def handle_diplomatic_status_update(self, status_update):  # pylint: disable=invalid-name
+    def handle_diplomatic_status_update(self, status_update):
         """Handle an update about the diplomatic status between players, which may
         or may not include this player."""
-        print ("Received diplomatic status update to %s about empire %s and empire %s" %
-              (status_update.status, status_update.empire1, status_update.empire2))
-        if (status_update.empire2 == fo.empireID() and status_update.status == fo.diplomaticStatus.war):
+        print "Received diplomatic status update to %s about empire %s and empire %s" % (
+            status_update.status, status_update.empire1, status_update.empire2)
+        if status_update.empire2 == fo.empireID() and status_update.status == fo.diplomaticStatus.war:
             foAI.foAIstate.log_war_declaration(status_update.empire1, status_update.empire2)
 
     @chat_on_error
@@ -87,13 +88,15 @@ class DiplomaticCorp(object):
             return
         possible_acknowledgments = UserStringList("AI_MIDGAME_ACKNOWLEDGEMENTS__LIST")
         acknowledgement = random.choice(possible_acknowledgments)
-        print ("Acknowledging midgame chat with initial message (from %d choices): '%s'" %
-              (len(possible_acknowledgments), acknowledgement))
+        print "Acknowledging midgame chat with initial message (from %d choices): '%s'" % (
+              len(possible_acknowledgments), acknowledgement)
         fo.sendChatMessage(sender_player_id, acknowledgement)
+
 
 class BeginnerDiplomaticCorp(DiplomaticCorp):
     def evaluate_diplomatic_attitude(self, other_empire_id):
         return 9
+
 
 class ManiacalDiplomaticCorp(DiplomaticCorp):
     def evaluate_diplomatic_attitude(self, other_empire_id):
