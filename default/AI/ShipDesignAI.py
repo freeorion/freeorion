@@ -1535,6 +1535,28 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
         return self._total_dmg()
 
 
+class ScoutShipDesigner(ShipDesigner):
+    """Scout ship class"""
+    basename = "Scout"
+    description = "For exploration and reconnaissance"
+    useful_part_classes = DETECTION | FUEL
+    NAMETABLE = "AI_SHIPDESIGN_NAME_SCOUT"
+    NAME_THRESHOLDS = sorted([0])
+    filter_useful_parts = True
+    filter_inefficient_parts = True
+
+    def __init__(self):
+        ShipDesigner.__init__(self)
+        self.additional_specifications.minimum_fuel = 3
+        self.additional_specifications.minimum_speed = 60
+
+    def _rating_function(self):
+        if not self.detection:
+            return -999
+        return self.detection**2 * self.fuel / self.production_cost
+
+
+
 def _get_planets_with_shipyard():
     """Get all planets with shipyards.
 
