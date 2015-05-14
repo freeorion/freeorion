@@ -6661,6 +6661,9 @@ Modifies the appearance of the object
 DESC_SET_TEXTURE
 Modifies the appearance of the object
 
+DESC_CONDITIONAL
+Applies various effects depending on whether or not the target is an object %1%
+
 # Object Creation
 
 DESC_CREATE_PLANET

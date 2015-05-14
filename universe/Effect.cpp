@@ -3498,11 +3498,48 @@ void Conditional::Execute(const ScriptingContext& context) const {
 }
 
 std::string Conditional::Description() const {
-    return "";
+    std::stringstream retval;
+    retval << str(FlexibleFormat(UserString("DESC_CONDITIONAL")) % m_target_condition->Description()) + "\n";
+    return retval.str();
 }
 
 std::string Conditional::Dump() const {
-    return "";
+    std::string retval = "If";
+    if (m_target_condition)
+        retval += " condition = " + m_target_condition->Dump();
+
+    if (m_true_effects.size() == 1) {
+        retval += DumpIndent() + "effects =\n";
+        ++g_indent;
+        retval += m_true_effects[0]->Dump();
+        --g_indent;
+    } else {
+        retval += DumpIndent() + "effects = [\n";
+        ++g_indent;
+        for (unsigned int i = 0; i < m_true_effects.size(); ++i) {
+            retval += m_true_effects[i]->Dump();
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
+
+    if (m_false_effects.empty()) {
+    } else if (m_false_effects.size() == 1) {
+        retval += DumpIndent() + "else =\n";
+        ++g_indent;
+        retval += m_false_effects[0]->Dump();
+        --g_indent;
+    } else {
+        retval += DumpIndent() + "else = [\n";
+        ++g_indent;
+        for (unsigned int i = 0; i < m_false_effects.size(); ++i) {
+            retval += m_false_effects[i]->Dump();
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
+
+    return retval;
 }
 
 void Conditional::SetTopLevelContent(const std::string& content_name) {
