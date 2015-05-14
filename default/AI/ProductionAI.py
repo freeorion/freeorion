@@ -107,53 +107,20 @@ def cur_best_military_design_rating():
         return 0.001
 
 
-def getBestShipInfo(priority, loc=None):
+def getBestShipInfo(priority):
     """ Returns 3 item tuple: designID, design, buildLocList."""
-    if loc is None:
-        planet_ids = set()
-        for yardlist in ColonisationAI.empire_ship_builders.values():
-            planet_ids.update(yardlist)
-    elif isinstance(loc, list):
-        planet_ids = loc
-    elif isinstance(loc, int):
-        planet_ids = [loc]
-    else:  # problem
-        return None, None, None
-
-    if priority in design_cache:  # use new framework
+    if priority in design_cache:
         best_designs = design_cache[priority]
         if not best_designs:
             return None, None, None
         top_rating, top_id = best_designs[0][0], best_designs[0][2]
         valid_locs = [item[1] for item in best_designs if item[0] == top_rating and item[2] == top_id]
         return top_id, fo.getShipDesign(top_id), valid_locs
-    else:  # use old framework
-        empire = fo.getEmpire()
-        empire_id = empire.empireID
-        these_design_ids = []
-        design_name_bases = shipTypeMap.get(priority, ["nomatch"])
-        for base_name in design_name_bases:
-            these_design_ids.extend([(design_name_bases[base_name] + fo.getShipDesign(design).name(False), design)
-                                     for design in empire.availableShipDesigns
-                                     if base_name in fo.getShipDesign(design).name(False)])
-        if not these_design_ids:
-            return None, None, None  # must be missing a Shipyard (or checking for outpost ship but missing tech)
-        # ships = [(fo.getShipDesign(design).name(False), design) for design in these_design_ids]
-
-        for _, design_id in sorted(these_design_ids, reverse=True):
-            design = fo.getShipDesign(design_id)
-            valid_locs = []
-            for pid in planet_ids:
-                if pid is None:
-                    continue
-                if design.productionLocationForEmpire(empire_id, pid):
-                    valid_locs.append(pid)
-            if valid_locs:
-                return design_id, design, valid_locs
+    else:
         return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
 
 
-def getBestShipRatings(loc=None, verbose=False):
+def getBestShipRatings(loc=None):
     """returns list of [partition, pid, designID, design] sublists, currently only for military ships"""
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     if loc is None:
@@ -171,7 +138,7 @@ def getBestShipRatings(loc=None, verbose=False):
     if priority in design_cache:  # use new framework
         build_choices = design_cache[priority]
         loc_choices = [[item[0], item[1], item[2], fo.getShipDesign(item[2])]
-                      for item in build_choices if item[1] in planet_ids]
+                       for item in build_choices if item[1] in planet_ids]
         if not loc_choices:
             return []
         best_rating = loc_choices[0][0]
@@ -186,96 +153,8 @@ def getBestShipRatings(loc=None, verbose=False):
         for item in ret_val:
             item[0] /= p_sum
         return ret_val
-    else:  # old framework
-        empire = fo.getEmpire()
-        empireID = empire.empireID
-        cur_turn = fo.currentTurn()
-        theseDesignIDs = []
-        designNameBases = shipTypeMap.get(priority, ["nomatch"])
-        for baseName in designNameBases:
-            theseDesignIDs.extend([(designNameBases[baseName]+fo.getShipDesign(shipDesignID).name(False), shipDesignID)
-                                   for shipDesignID in empire.availableShipDesigns
-                                   if baseName in fo.getShipDesign(shipDesignID).name(False)])
-        if not theseDesignIDs:
-            return []  # must be missing a Shipyard (or checking for outpost ship but missing tech)
-        # ships = [ ( fo.getShipDesign(shipDesign).name(False), shipDesign) for shipDesign in theseDesignIDs ]
-        locDetail = []
-        theseDesignIDs.sort(reverse=True)
-        bestCostRating = 0.0
-        style_index = fo.empireID() % 2
-        if verbose:
-            print "getBestShipRatings checking %d designs w/r/t enemy stats %s on planet_ids %s from loc set %s" % (
-                        len(theseDesignIDs), foAI.foAIstate.fleet_sum_tups_to_estat_dicts([(1, foAI.foAIstate.empire_standard_enemy)]), planet_ids, loc)
-        for pid in planet_ids:
-            localBestCostRating = 0.0
-            bestDesignID = -1
-            bestDesign = None
-            if pid is None:  # TODO: is this check still necessary?
-                continue
-            species_name = ColonisationAI.empire_species_by_planet.get(pid, '')
-            try_counter = 0  # tracks how many design tries since last improved design found here
-            for _ , shipDesignID in theseDesignIDs:
-                designStats = foAI.foAIstate.get_weighted_design_stats(shipDesignID, ColonisationAI.empire_species_by_planet.get(pid, ''))
-                shipDesign = fo.getShipDesign(shipDesignID)
-                if not shipDesign.productionLocationForEmpire(empireID, pid):
-                    continue
-                cost = get_design_cost(shipDesign, pid)
-                # nattacks = sum( designStats.get('attacks', {1:1}).keys() )
-                old_design_rating = foAI.foAIstate.rate_psuedo_fleet( [(-1, shipDesignID, species_name)] ).get('overall', 0)
-                # TODO: determine better tactical rating adjustment for speed
-                new_design_rating = old_design_rating * (1.0 + designStats.get('tact_adj', 0.0))
-                design_rating = [old_design_rating, new_design_rating][style_index]
-                costRating = design_rating/(max(0.1, cost))
-                if verbose and ( int(old_design_rating/10) != int(new_design_rating/10) ):
-                    print "design %s (for species %s) has cost %.1f, old rating %.1f and new rating %.1f"%(
-                                        shipDesign.name(False), species_name, cost, old_design_rating, new_design_rating)
-                if (try_counter > 200) and (costRating < 0.1 * bestCostRating):
-                    break
-                if costRating > localBestCostRating:
-                    try_counter = 0
-                    localBestCostRating = costRating
-                    bestDesignID = shipDesignID
-                    bestDesign = shipDesign
-                    if verbose:
-                        print "at planet %s, new local best design %s with rating %.1f, costRating %.1f, hull %s and partslist %s"%(
-                                    ppstring(PlanetUtilsAI.planet_name_ids([pid])), shipDesign.name(False), design_rating, costRating, shipDesign.hull, list(shipDesign.parts))
-                    if costRating > bestCostRating:
-                        bestCostRating = costRating
-                else:
-                    try_counter += 1
-            if localBestCostRating > 0.0:
-                if verbose:
-                    print "\t\t adding design id %d (%s) (species %s) with costRating %.4f at pid %d" % (
-                        bestDesignID, bestDesign.name(False), species_name, localBestCostRating, pid)
-                locDetail.append( [localBestCostRating, pid, bestDesignID, bestDesign] )
-        if not locDetail:
-            return []
-        locDetail.sort(reverse=True)
-
-        # Since we haven't yet implemented a way to target military ship construction at/near particular locations
-        # where they are most in need, and also because our rating system is presumably useful-but-not-perfect, we want to
-        # distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
-        # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
-        # we want some chance of choosing  those alternate designs/locations.
-
-        # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistic mechanics type
-        # partition function.  'tally' will compute the normalization constant.
-        # so first go through and calculate the tally as well as convert each individual contribution to
-        # the running total up to that point, to facilitate later sampling.  Then those running totals are
-        # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
-        # used to select the chosen design/loc
-        tally = 0
-        idx = 0
-        for detail in locDetail:
-            idx += 1
-            if detail[0] < 0.7 * bestCostRating:
-                break
-            weight = math.exp(10*detail[0]/bestCostRating - 10)
-            tally += weight
-            detail[0] = tally
-        for detail in locDetail:
-            detail[0] /= tally
-        return locDetail
+    else:
+        return []
 
 
 def addDesigns(shipType, newDesigns, shipProdPriority):
