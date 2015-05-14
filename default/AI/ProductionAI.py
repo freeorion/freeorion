@@ -62,7 +62,14 @@ def find_best_designs_this_turn():
         ShipDesignAI.Cache.print_best_designs()
 
 
-def get_design_cost(cur_turn, design, pid):
+def get_design_cost(design, pid):  # TODO: Use new framework
+    """Find and return the design_cost of the specified design on the specified planet.
+
+    :param design:
+    :param pid: int: planet id
+    :return: cost of the design
+    """
+    cur_turn = fo.currentTurn()
     if cur_turn in design_cost_cache:
         cost_cache = design_cost_cache[cur_turn]
     else:
@@ -212,7 +219,7 @@ def getBestShipRatings(loc=None, verbose=False):
                 shipDesign = fo.getShipDesign(shipDesignID)
                 if not shipDesign.productionLocationForEmpire(empireID, pid):
                     continue
-                cost = get_design_cost(cur_turn, shipDesign, pid)
+                cost = get_design_cost(shipDesign, pid)
                 # nattacks = sum( designStats.get('attacks', {1:1}).keys() )
                 old_design_rating = foAI.foAIstate.rate_psuedo_fleet( [(-1, shipDesignID, species_name)] ).get('overall', 0)
                 # TODO: determine better tactical rating adjustment for speed
