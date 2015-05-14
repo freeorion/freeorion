@@ -236,8 +236,8 @@ set (freeorioncommon_SOURCE
     util/SitRepEntry.cpp
     util/StringTable.cpp
     util/VarText.cpp
-    util/XMLDoc.cpp
     util/Version.cpp
+    util/XMLDoc.cpp
 )
 
 if (NOT WIN32)
