@@ -97,7 +97,7 @@ FieldType
                     Object id = Source.SystemID
                 ]
             activation = And [
-                Size high = 3
+                Size high = 5
                 Star type = NoStar
             ]
             effects = [
@@ -115,7 +115,7 @@ FieldType
 
         EffectsGroup    // dissipate when small
             scope = Source
-            activation = Size high = 3
+            activation = Size high = 5
             effects = Destroy
     ]
     graphic = "nebulae/nebula9.png"
@@ -149,7 +149,7 @@ FieldType
                 Object id = Source.SystemID
             ]
             activation = And [
-                Size high = 3
+                Size high = 5
                 Star type = NoStar
             ]
             effects = [
@@ -167,7 +167,7 @@ FieldType
 
         EffectsGroup    // dissipate when small
             scope = Source
-            activation = Size high = 3
+            activation = Size high = 5
             effects = Destroy
     ]
     graphic = "nebulae/nebula15.png"
@@ -179,37 +179,25 @@ CREATE_PLANETS
                 Object id = Source.SystemID
             ]
             activation = And [
-                Size high = 3
-                Random probability = 0.5
+                Size high = 5
             ]
             effects = [
-		CreatePlanet type = asteroids planetsize = asteroids name = "NEW_ASTEROIDS_NAME"
-            ]
-
-        EffectsGroup
-            scope = And [
-                System
-                Object id = Source.SystemID
-            ]
-            activation = And [
-                Size high = 3
-                Random probability = 0.5
-            ]
-            effects = [
-		CreatePlanet type = barren planetsize = small name = "NEW_PLANET_NAME"
-            ]
-
-        EffectsGroup
-            scope = And [
-                System
-                Object id = Source.SystemID
-            ]
-            activation = And [
-                Size high = 3
-                Random probability = 0.5
-            ]
-            effects = [
-		CreatePlanet type = asteroids planetsize = asteroids name = "NEW_ASTEROIDS_NAME"
+                If condition = Random probability = 0.5
+                    effects = CreatePlanet type = asteroids planetsize = asteroids name = "NEW_ASTEROIDS_NAME"
+                If condition = Random probability = 0.6
+                    effects = [
+                        If condition = Random probability = 0.8
+                            effects = If condition = Random probability = 0.6
+                                effects = CreatePlanet type = barren planetsize = small name = "NEW_PLANET_NAME"
+                            else = CreatePlanet type = barren planetsize = tiny name = "NEW_PLANET_NAME" 
+                        else = If condition = Random probability = 0.6
+                                effects = CreatePlanet type = inferno planetsize = small name = "NEW_PLANET_NAME"
+                            else = CreatePlanet type = inferno planetsize = tiny name = "NEW_PLANET_NAME"
+                    ]
+                else = If condition = Random probability = 0.4
+                    effects = CreatePlanet type = GasGiant planetsize = GasGiant name = "NEW_PLANET_NAME"
+                If condition = Random probability = 0.3
+                    effects = CreatePlanet type = asteroids planetsize = asteroids name = "NEW_ASTEROIDS_NAME"
             ]
 '''
 
