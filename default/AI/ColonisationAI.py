@@ -9,6 +9,7 @@ import FreeOrionAI as foAI
 import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
+import MilitaryAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType, AIFocusType
 import EnumsAI
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade
@@ -34,7 +35,6 @@ annexable_ring3 = set()
 annexable_planet_ids = set()
 systems_by_supply_tier = {}
 system_supply = {}
-cur_best_mil_ship_rating = 20
 all_colony_opportunities = {}
 gotRuins = False
 got_ast = False
@@ -406,10 +406,7 @@ def survey_universe():
 
 def get_colony_fleets():
     """examines known planets, collects various colonization data, to be later used to send colony fleets"""
-    global cur_best_mil_ship_rating
     colonization_timer.start("Getting best milship rating")
-
-    cur_best_mil_ship_rating = ProductionAI.cur_best_mil_ship_rating()
     colonization_timer.start('Getting avail colony fleets')
 
     all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
@@ -770,6 +767,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     planet_supply += foAI.foAIstate.misc.get('supply_tech', 0)
 
     myrating = sys_status.get('myFleetRating', 0)
+    cur_best_mil_ship_rating = MilitaryAI.cur_best_mil_ship_rating()
     fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
     monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(cur_best_mil_ship_rating)
     neighbor_threat_ratio = ((sys_status.get('neighborThreat', 0)) / float(cur_best_mil_ship_rating)) + \

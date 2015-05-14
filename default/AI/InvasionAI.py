@@ -306,7 +306,7 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
     system_monster_threat = system_status.get('monsterThreat', 0)
     sys_total_threat = system_fleet_treat + system_monster_threat + system_status.get('planetThreat', 0)
     max_path_threat = system_fleet_treat
-    mil_ship_rating = ProductionAI.cur_best_mil_ship_rating()
+    mil_ship_rating = MilitaryAI.cur_best_mil_ship_rating()
     for path_sys_id in least_jumps_path:
         path_leg_status = foAI.foAIstate.systemStatus.get(path_sys_id, {})
         path_leg_threat = path_leg_status.get('fleetThreat', 1000) + path_leg_status.get('monsterThreat', 0)

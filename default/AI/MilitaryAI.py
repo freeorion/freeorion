@@ -2,12 +2,13 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
 import AITarget
-from EnumsAI import AIFleetMissionType, TargetType
+from EnumsAI import AIFleetMissionType, TargetType, AIPriorityType
 import FleetUtilsAI
 from FleetUtilsAI import combine_ratings, combine_ratings_list, rating_needed
 import PlanetUtilsAI
 import PriorityAI
 import ColonisationAI
+import ProductionAI
 from freeorion_tools import ppstring
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
@@ -16,6 +17,29 @@ minMilAllocations = {}
 totMilRating = 0
 num_milships = 0
 verbose_mil_reporting = False
+best_ship_rating_cache = {}  # indexed by turn, value is rating of that turn
+
+
+def cur_best_mil_ship_rating(include_designs=False):
+    """Find the best military ship we have available in this turn and return its rating.
+
+    :param include_designs: toggles if available designs are considered or only existing ships
+    :return: float: rating of the best ship
+    """
+    current_turn = fo.currentTurn()
+    if current_turn in best_ship_rating_cache:
+        return best_ship_rating_cache[current_turn]
+    best_rating = 0
+    for fleet in FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY):
+        for ship in fleet:
+            ship_rating = foAI.AIstate.rate_psuedo_fleet((ship.id, ship.designID, ship.speciesName))
+            print "ship rating: ", ship_rating
+            best_rating = max(best_rating, ship_rating)
+    best_ship_rating_cache[current_turn] = best_rating
+    if include_designs:
+        best_design_rating = ProductionAI.cur_best_military_design_rating()
+        best_rating = max(best_rating, best_design_rating)
+    return best_rating
 
 
 def try_again(mil_fleet_ids, try_reset=False, thisround=""):

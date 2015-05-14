@@ -10,7 +10,7 @@ import FleetUtilsAI
 import ProductionAI
 import ResourcesAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType
-from MilitaryAI import MinThreat
+import MilitaryAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map, get_ai_tag_grade
 
@@ -328,7 +328,7 @@ class AIstate(object):
         myFleetsBySystem = {}
         fleetSpotPosition = {}
         sawEnemiesAtSystem = {}
-        my_milship_rating = ProductionAI.cur_best_mil_ship_rating()
+        my_milship_rating = MilitaryAI.cur_best_mil_ship_rating()
         current_turn = fo.currentTurn()
         for fleetID in universe.fleetIDs:
             #if ( fleetID in self.fleetStatus ): # only looking for enemies here
@@ -939,7 +939,7 @@ class AIstate(object):
                           AIFleetMissionType.FLEET_MISSION_INVASION
                           ]:
                 thisRating = self.get_rating(fleetID)
-                if float(thisRating.get('overall', 0))/thisRating.get('nships', 1) >= 0.5 * ProductionAI.cur_best_mil_ship_rating():
+                if float(thisRating.get('overall', 0))/thisRating.get('nships', 1) >= 0.5 * MilitaryAI.cur_best_mil_ship_rating():
                     makeAggressive = True
             else:
                 makeAggressive = True
@@ -1016,7 +1016,7 @@ class AIstate(object):
             print "-----------"
         #print "statusList %s"%[self.fleetStatus[fid] for fid in sorted( self.fleetStatus.keys() ) ]
         print "-----------"
-        minThreatRating = {'overall': MinThreat, 'attack': MinThreat ** 0.5, 'health': MinThreat ** 0.5}
+        minThreatRating = {'overall': MilitaryAI.MinThreat, 'attack': MilitaryAI.MinThreat ** 0.5, 'health': MilitaryAI.MinThreat ** 0.5}
         fighters = {(0, ((0, 0),), 0.0, 5.0): [0]}  # start with a dummy entry
         for fleetID in fleetList:
             status = self.fleetStatus.setdefault(fleetID, {})
@@ -1037,7 +1037,7 @@ class AIstate(object):
             if fleetID not in okFleets:  # or fleet.empty:
                 if not ( self.__fleetRoleByID.get(fleetID, -1) == -1):
                     if not justResumed:
-                        if rating.get('overall', 0) > MinThreat:
+                        if rating.get('overall', 0) > MilitaryAI.MinThreat:
                             fleetsLostBySystem.setdefault(oldSysID, []).append( rating )
                         else:
                             fleetsLostBySystem.setdefault(oldSysID, []).append( minThreatRating )
