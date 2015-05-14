@@ -194,15 +194,15 @@ public:
 
         m_available_side_bar_space =
             m_available_space -
-            GG::Pt(BEVEL_MARGIN_X,
-                   static_cast<int>(m_summaries.size() + 1) * SIDE_BOX_MARGIN);
+            GG::Pt( BEVEL_MARGIN_X,
+                    static_cast<int>(m_summaries.size() + 1) * SIDE_BOX_MARGIN );
 
         m_available_participant_bar_height =
-            std::max(GG::Y0,
-                     m_available_side_bar_space.y -
-                         (AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN) *
-                         static_cast<int>(m_summaries.size()) );
-}
+            std::max( GG::Y0,
+                      m_available_side_bar_space.y -
+                          (AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN) *
+                          static_cast<int>(m_summaries.size()) );
+    }
 
     bool Get(const std::string& option) const {
         return GetOptionsDB().Get<bool>(OPTIONS_ROOT + option);
