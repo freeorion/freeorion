@@ -67,6 +67,9 @@ TESTDESIGN_NAME_PART = TESTDESIGN_NAME_BASE+"_PART"
 # Hardcoded preferred hullname for testdesigns - should be a hull without conditions but with maximum different slottypes
 TESTDESIGN_PREFERRED_HULL = "SH_BASIC_MEDIUM"
 
+MISSING_REQUIREMENT_MULTIPLIER = -1000
+INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSING_REQUIREMENT_MULTIPLIER
+
 
 class ShipDesignCache(object):
     """This class handles the caching of information used to assess and build shipdesigns in this module.
@@ -633,11 +636,11 @@ class ShipDesigner(object):
         # However, we also need to make sure, that the closer we are to requirements,
         # the better our rating is so the optimizing heuristic finds "the right way".
         if self.fuel < self.additional_specifications.minimum_fuel:
-            rating += -1000 * (self.additional_specifications.minimum_fuel - self.fuel)
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_fuel - self.fuel)
         if self.speed < self.additional_specifications.minimum_speed:
-            rating += -1000 * (self.additional_specifications.minimum_speed - self.speed)
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_speed - self.speed)
         if self.structure < self.additional_specifications.minimum_structure:
-            rating += -1000 * (self.additional_specifications.minimum_structure - self.structure)
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_structure-self.structure)
         if rating < 0:
             return rating
         else:
@@ -1266,7 +1269,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
 
     def _rating_function(self):
         if self.troops == 0:
-            return -99999
+            return INVALID_DESIGN_RATING
         else:
             return self.troops/self.production_cost
 
@@ -1348,7 +1351,7 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
 
     def _rating_function(self):
         if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
-            return -9999
+            return INVALID_DESIGN_RATING
         return self.colonisation*(1+0.002*(self.speed-75))/self.production_cost
 
     def _starting_guess(self, available_parts, num_slots):
@@ -1412,7 +1415,7 @@ class OrbitalColonisationShipDesigner(ColonisationShipDesignerBaseClass):
 
     def _rating_function(self):
         if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
-            return -9999
+            return INVALID_DESIGN_RATING
         return self.colonisation/self.production_cost
 
 
@@ -1436,7 +1439,7 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
 
     def _rating_function(self):
         if self.colonisation != 0:
-            return -9999
+            return INVALID_DESIGN_RATING
         return (1+0.002*(self.speed-75))/self.production_cost
 
     def _class_specific_filter(self, partname_dict):
@@ -1485,7 +1488,7 @@ class OrbitalOutpostShipDesigner(OutpostShipDesignerBaseClass):
 
     def _rating_function(self):
         if self.colonisation != 0:
-            return -9999
+            return INVALID_DESIGN_RATING
         return 1/self.production_cost
 
 
@@ -1526,7 +1529,7 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
 
     def _rating_function(self):
         if self.speed > 10:
-            return -9999
+            return INVALID_DESIGN_RATING
         total_dmg = self._total_dmg_vs_shields()
         return (1+total_dmg*self.structure)/self.production_cost
 
@@ -1552,7 +1555,7 @@ class ScoutShipDesigner(ShipDesigner):
 
     def _rating_function(self):
         if not self.detection:
-            return -999
+            return INVALID_DESIGN_RATING
         return self.detection**2 * self.fuel / self.production_cost
 
 

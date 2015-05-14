@@ -28,8 +28,12 @@ def cur_best_mil_ship_rating(include_designs=False):
     """
     current_turn = fo.currentTurn()
     if current_turn in best_ship_rating_cache:
-        return best_ship_rating_cache[current_turn]
-    best_rating = 0
+        best_rating = best_ship_rating_cache[current_turn]
+        if include_designs:
+            best_design_rating = ProductionAI.cur_best_military_design_rating()
+            best_rating = max(best_rating, best_design_rating)
+        return best_rating
+    best_rating = 0.001
     universe = fo.getUniverse()
     for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY):
         fleet = universe.getFleet(fleet_id)
@@ -44,7 +48,7 @@ def cur_best_mil_ship_rating(include_designs=False):
     if include_designs:
         best_design_rating = ProductionAI.cur_best_military_design_rating()
         best_rating = max(best_rating, best_design_rating)
-    return best_rating
+    return max(best_rating, 0.001)
 
 
 def try_again(mil_fleet_ids, try_reset=False, thisround=""):

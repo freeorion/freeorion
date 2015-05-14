@@ -101,20 +101,35 @@ def cur_best_military_design_rating():
             ship_id = -1  # no existing ship
             design_rating = foAI.foAIstate.rate_psuedo_fleet(ship_info=[(ship_id, design_id, pilots)])['overall']
             best_military_design_rating_cache[current_turn] = design_rating
-            return design_rating
+            return max(design_rating, 0.001)
         else:
             return 0.001
     else:
         return 0.001
 
 
-def getBestShipInfo(priority):
+def getBestShipInfo(priority,loc=None):
     """ Returns 3 item tuple: designID, design, buildLocList."""
+    if loc is None:
+        planet_ids = ColonisationAI.empire_shipyards
+    elif isinstance(loc, list):
+        planet_ids = set(loc).intersection(ColonisationAI.empire_shipyards)
+    elif isinstance(loc, int):
+        if loc in ColonisationAI.empire_shipyards:
+            planet_ids = [loc]
+        else:
+            return None, None, None
+    else:  # problem
+        return None, None, None
     if priority in design_cache:
         best_designs = design_cache[priority]
         if not best_designs:
             return None, None, None
-        top_rating, top_id = best_designs[0][0], best_designs[0][2]
+
+        for design_stats in best_designs:
+            top_rating, pid, top_id, cost = design_stats
+            if pid in planet_ids:
+                break
         valid_locs = [item[1] for item in best_designs if item[0] == top_rating and item[2] == top_id]
         return top_id, fo.getShipDesign(top_id), valid_locs
     else:
@@ -123,6 +138,18 @@ def getBestShipInfo(priority):
 
 def getBestShipRatings(loc=None):
     """returns list of [partition, pid, designID, design] sublists, currently only for military ships"""
+    # Since we haven't yet implemented a way to target military ship construction at/near particular locations
+    # where they are most in need, and also because our rating system is presumably useful-but-not-perfect, we want to
+    # distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
+    # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
+    # we want some chance of choosing  those alternate designs/locations.
+
+    # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistic mechanics type
+    # partition function.  'tally' will compute the normalization constant.
+    # so first go through and calculate the tally as well as convert each individual contribution to
+    # the running total up to that point, to facilitate later sampling.  Then those running totals are
+    # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
+    # used to select the chosen design/loc
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     if loc is None:
         planet_ids = ColonisationAI.empire_shipyards
@@ -143,16 +170,16 @@ def getBestShipRatings(loc=None):
         if not loc_choices:
             return []
         best_rating = loc_choices[0][0]
-        p_sum = 0
+        tally = 0
         ret_val = []
         for choice in loc_choices:
             if choice[0] < 0.7*best_rating:
                 break
             p = math.exp(10*(choice[0]/best_rating - 1))
-            p_sum += p
-            ret_val.append([p_sum, choice[1], choice[2], choice[3]])
+            tally += p
+            ret_val.append([tally, choice[1], choice[2], choice[3]])
         for item in ret_val:
-            item[0] /= p_sum
+            item[0] /= tally
         return ret_val
     else:
         return []
@@ -1243,7 +1270,7 @@ def generateProductionOrders():
         localPriorities = {}
         localPriorities.update( filteredPriorities )
         bestShips={}
-        milBuildChoices = getBestShipRatings(list(pSet), verbose = False)
+        milBuildChoices = getBestShipRatings(list(pSet))
         for priority in list(localPriorities):
             if priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
                 if not milBuildChoices:

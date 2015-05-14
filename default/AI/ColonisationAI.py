@@ -767,7 +767,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     planet_supply += foAI.foAIstate.misc.get('supply_tech', 0)
 
     myrating = sys_status.get('myFleetRating', 0)
-    cur_best_mil_ship_rating = MilitaryAI.cur_best_mil_ship_rating()
+    cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
     fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
     monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(cur_best_mil_ship_rating)
     neighbor_threat_ratio = ((sys_status.get('neighborThreat', 0)) / float(cur_best_mil_ship_rating)) + \
