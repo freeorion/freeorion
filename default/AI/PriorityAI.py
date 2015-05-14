@@ -391,7 +391,7 @@ def calculateMilitaryPriority():
     mySystems = set( AIstate.popCtrSystemIDs ).union( AIstate.outpostSystemIDs )
     targetSystems = set( PlanetUtilsAI.get_systems(targetPlanetIDs) )
 
-    curShipRating = ProductionAI.cur_best_mil_ship_rating()
+    curShipRating = ProductionAI.cur_best_military_design_rating()
     cSRR = curShipRating**0.5
 
     defense_ships_needed = 0
@@ -427,19 +427,15 @@ def calculateMilitaryPriority():
         if sysID in mySystems:
             defense_ships_needed += ships_needed_here
 
-    scale = (75 + ProductionAI.curBestMilShipCost()) / 2.0
-    #militaryPriority = int( 40 + max(0, 75*unmetThreat / curShipRating) )
     part1 = min(1*fo.currentTurn(), 40)
     part2 = max(0, int(75*ships_needed) )
     militaryPriority = part1 + part2
-    #militaryPriority = min(1*fo.currentTurn(), 40) + max(0, int(scale*ships_needed))
     if not have_l1_weaps:
         militaryPriority /= 2.0
     elif not (have_l2_weaps and enemies_sighted):
         militaryPriority /= 1.5
-    #print "Calculating Military Priority:  40 + 75 * unmetThreat/curShipRating \n\t  Priority: %d    \t unmetThreat  %.0f        curShipRating: %.0f"%(militaryPriority,  unmetThreat,  curShipRating)
-    fmt_string = "Calculating Military Priority:  min(t,40) + %d * ships_needed \n\t  Priority: %d  \t ships_needed: %d \t defense_ships_needed: %d \t curShipRating: %.0f \t l1_weaps: %s \t enemies_sighted: %s"
-    print fmt_string%(scale, militaryPriority, ships_needed, defense_ships_needed,  curShipRating, have_l1_weaps, enemies_sighted)
+    fmt_string = "Calculating Military Priority:  min(t,40) + max(0,75 * ships_needed) \n\t  Priority: %d  \t ships_needed: %d \t defense_ships_needed: %d \t curShipRating: %.0f \t l1_weaps: %s \t enemies_sighted: %s"
+    print fmt_string%(militaryPriority, ships_needed, defense_ships_needed,  curShipRating, have_l1_weaps, enemies_sighted)
     print "Source of milship demand: ", ships_needed_allocation
     
     if foAI.foAIstate.aggression < fo.aggression.typical:

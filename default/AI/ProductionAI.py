@@ -17,7 +17,7 @@ from freeorion_tools import dict_from_map, ppstring
 from TechsListsAI import EXOBOT_TECH_NAME
 from freeorion_tools import print_error
 
-bestMilRatingsHistory = {}  # dict of (rating, cost) keyed by turn
+best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
 shipTypeMap = {EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.AIShipDesignTypes.explorationShip,
                EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST: EnumsAI.AIShipDesignTypes.outpostShip,
@@ -77,51 +77,27 @@ def get_design_cost(cur_turn, design, pid):
     return cost_cache.setdefault((design.id, loc), design.productionCost(fo.empireID(), pid))
 
 
-# get key routines declared for import by others before completing present imports, to avoid circularity problems
+def cur_best_military_design_rating():
+    """Find and return the default combat rating of our best military design.
 
-def update_best_mil_ship_rating():
-    mil_build_choices = getBestShipRatings()
-    if not mil_build_choices:
-        bestMilRatingsHistory[fo.currentTurn()] = (0.00001, 1)
-        return 0.00001
-    top = mil_build_choices[0]
-    best_design_id, best_design, build_choices = top[2], top[3], [top[1]]
-    # bestShip, best_design, build_choices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    if best_design is None:
-        bestMilRatingsHistory[fo.currentTurn()] = (0.00001, 1)
-        return 0.00001  # empire cannot currently produce any military ships, don't make zero though, to avoid divide-by-zero
-    # stats = foAI.foAIstate.get_design_id_stats(best_design.id)
-    ship_info = [(-1, best_design_id, ColonisationAI.empire_species_by_planet.get(build_choices[0], ''))]
-    stats = foAI.foAIstate.rate_psuedo_fleet(ship_info)
-    cost = best_design.productionCost(fo.empireID(), build_choices[0])
-    bestMilRatingsHistory[fo.currentTurn()] = (stats['overall'], cost)
-
-
-def cur_best_mil_ship_rating():
+    :return: float: rating of the best military design
+    """
+    current_turn = fo.currentTurn()
+    if current_turn in best_military_design_rating_cache:
+        return best_military_design_rating_cache[current_turn]
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
-    if priority in design_cache:  # use new framework
+    if priority in design_cache:
         if design_cache[priority] and design_cache[priority][0]:
-            return design_cache[priority][0][0]
+            rating, pid, design_id, cost = design_cache[priority][0][2]
+            pilots = fo.getUniverse().getPlanet(pid).species
+            ship_id = -1  # no existing ship
+            design_rating = fo.foAIstate.rate_psuedo_fleet(ship_info=(ship_id, design_id, pilots))
+            best_military_design_rating_cache[current_turn] = design_rating
+            return design_rating
         else:
-            return 0.0001
+            return 0.001
     else:
-        if fo.currentTurn() not in bestMilRatingsHistory:
-            update_best_mil_ship_rating()
-        return bestMilRatingsHistory[fo.currentTurn()][0]
-
-
-def curBestMilShipCost():
-    priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
-    if priority in design_cache:  # use new framework
-        try:
-            return design_cache[priority][0][3]
-        except Exception:
-            traceback.print_exc()
-            return 0.0001
-    else:
-        if fo.currentTurn() not in bestMilRatingsHistory:
-            update_best_mil_ship_rating()
-        return bestMilRatingsHistory[fo.currentTurn()][1]
+        return 0.001
 
 
 def getBestShipInfo(priority, loc=None):
@@ -333,46 +309,6 @@ def addDesigns(shipType, newDesigns, shipProdPriority):
         print "%s apparently unbuildable at present, ruh-roh" % shipType
 
 
-def addBaseTroopDesigns():
-    shipType, shipProdPriority = "BaseTroopers", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION
-    designNameBases = [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch": 0}).items(), key=lambda x:x[1])]
-
-    newTroopDesigns = []
-    desc, model = "StormTrooper Ship", "fighter"
-    tp = "GT_TROOP_POD"
-    nb, hull = designNameBases[0], "SH_COLONY_BASE"
-    newTroopDesigns += [ (nb, desc, hull, [tp], "", model) ]
-    addDesigns(shipType, newTroopDesigns, shipProdPriority)
-
-
-def addTroopDesigns():
-    addBaseTroopDesigns()
-    shipType, shipProdPriority ="Troopers", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
-    newTroopDesigns = []
-    desc, model = "Troop Ship", "fighter"
-    srb = "SR_WEAPON_1_%1d"
-    tp = "GT_TROOP_POD"
-    nb, hull = designNameBases[1]+"%1d", "SH_BASIC_MEDIUM"
-    newTroopDesigns += [ (nb% 1, desc, hull, 3*[tp], "", model) ]
-    nb, hull = designNameBases[1]+"%1d", "SH_ORGANIC"
-    newTroopDesigns += [ (nb% 2, desc, hull, 4*[tp], "", model) ]
-    #newTroopDesigns += [ (nb%(iw), desc, hull, [srb%iw]+ 3*[tp], "", model) for iw in [2, 3, 4] ]
-    nb, hull = designNameBases[1]+"%1d", "SH_STATIC_MULTICELLULAR"
-    #newTroopDesigns += [ (nb%(0) +"0", desc, hull, 5*[tp], "", model) for iw in [2, 3, 4] ]
-    #newTroopDesigns += [ (nb%(iw+3), desc, hull, [srb%iw]+ 4*[tp], "", model) for iw in [2, 3, 4] ]
-
-    ar1, ar2, ar3 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_NEUTRONIUM_PLATE"
-    arL=[ar1, ar2, ar3]
-    for ari in [1, 2]: #naming below only works because skipping Lead armor
-        nb, hull = designNameBases[ari+1]+"%1d-%1d", "SH_STATIC_MULTICELLULAR"
-        #newTroopDesigns += [ (nb%(ari, iw), desc, hull, [srb%iw, arL[ari]]+ 3*[tp], "", model) for iw in [2, 3, 4] ]
-        nb, hull = designNameBases[ari+1]+"%1d-%1d", "SH_ENDOMORPHIC"
-        newTroopDesigns += [ (nb%(ari, 0), desc, hull, [arL[ari]]+ 5*[tp], "", model) ]
-        #newTroopDesigns += [ (nb%(ari, iw+3), desc, hull, [srb%iw, arL[ari]]+ 3*[tp], "", model) for iw in [2, 3, 4] ]
-    addDesigns(shipType, newTroopDesigns, shipProdPriority)
-
-
 def addScoutDesigns():
     shipType, shipProdPriority ="Scout", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION
     designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
@@ -392,349 +328,6 @@ def addScoutDesigns():
     #for d_id in [3, 4]:
     # newScoutDesigns += [ (nb%(d_id, iw), desc, hull, [ db%d_id, srb%iw, "", "", "", ""], "", model) for iw in range(5, 9) ]
     addDesigns(shipType, newScoutDesigns, shipProdPriority)
-
-
-def addOrbitalDefenseDesigns():
-    shipType, shipProdPriority ="OrbitalDefense", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
-    newDesigns = []
-    desc, hull, model = "Orbital Defense Ship", "SH_COLONY_BASE", "fighter"
-    is1, is2, is3 = "SH_DEFENSE_GRID", "SH_DEFLECTOR", "SH_MULTISPEC"
-    newDesigns += [ (designNameBases[0], desc, hull, [""], "", model) ]
-    if False:
-        if foAI.foAIstate.aggression<=fo.aggression.cautious:
-            newDesigns += [ (designNameBases[1], desc, hull, [is1], "", model) ]
-        newDesigns += [ (designNameBases[2], desc, hull, [is2], "", model) ]
-        newDesigns += [ (designNameBases[3], desc, hull, [is3], "", model) ]
-
-    addDesigns(shipType, newDesigns, shipProdPriority)
-
-
-def addMarkDesigns():
-    addOrbitalDefenseDesigns()
-    shipType, shipProdPriority ="Attack Ships", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
-    designRankList = sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])
-    print "AttackShip DesignRankList: %s"%([x for x in enumerate(designRankList)])
-    # [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')),
-    #(5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
-    designNameBases= [key for key, val in designRankList]
-    design_name_dict = dict([(val, key) for key, val in designRankList])
-    newMarkDesigns = []
-    desc, model = "military ship", "fighter"
-    srb = "SR_WEAPON_1_%1d"
-    srb2 = "SR_WEAPON_2_%1d"
-    srb3 = "SR_WEAPON_3_%1d"
-    srb4 = "SR_WEAPON_4_%1d"
-    clk = "ST_CLOAK_%1d"
-    db = "DT_DETECTOR_%1d"
-    if1 = "FU_BASIC_TANK"
-    if2 = "FU_DEUTERIUM_TANK"
-    eng1 = "FU_IMPROVED_ENGINE_COUPLINGS"
-    eng2 = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
-    is1, is2, is3, is4, is5 = "SH_DEFENSE_GRID", "SH_DEFLECTOR", "SH_PLASMA", "SH_MULTISPEC", "SH_BLACK"
-    isList=["", is1, is2, is3, is4, is5]
-    ar1, ar2, ar3, ar4, ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE", "AR_NEUTRONIUM_PLATE"
-    arList = ["", ar1, ar2, ar3, ar4, ar5]
-    
-    empire = fo.getEmpire()
-    print "Available Hulls: %s" % ([hull for hull in empire.availableShipHulls])
-    print "Available Ship Parts: %s" % ([hull for hull in empire.availableShipParts])
-    testhull = fo.getHullType("SH_BASIC_MEDIUM")
-    print "testhull: %s, structure: %.1f ; stealth: %.1f ; slots: %s" % (testhull.name, testhull.structure, testhull.stealth, [slot.name for slot in testhull.slots])
-    testpart = fo.getPartType(srb2%4)
-    print "testpart: %s, class: %s ; capacity: %.1f ; slottypes: %s" % (testpart.name, testpart.partClass.name, testpart.capacity, [slot.name for slot in testpart.mountableSlotTypes])
-
-    if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]:
-        maxEM= 8
-    elif foAI.foAIstate.aggression ==fo.aggression.cautious:
-        maxEM= 12
-    else:
-        maxEM= 10
-
-    cur_base = design_name_dict["B"]
-    nb, hull = cur_base + "-a-%1d", "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-b-%1d", "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, ar2, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, ar2, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-c-%1d", "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, srb%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, srb2%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-d-%1d", "SH_STANDARD"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, ar1, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, ar1, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-e-%1d", "SH_STANDARD"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, ar2, ar2, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, ar2, ar2, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-f-%1d", "SH_STANDARD"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, srb%iw, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, srb2%iw, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    cur_base = design_name_dict["C"]
-    nb, hull = cur_base + "-1-%1d", "SH_ORGANIC" #11 = "Comet":"BA"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar1, ar1, srb%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, ar1, srb2%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-1z-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar2, ar2, srb%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar2, ar2, srb2%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-1G-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar1, srb%iw, srb%iw, is1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, srb2%iw, srb2%iw, is1], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-1Gz-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar2, srb%iw, srb%iw, is1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar2, srb2%iw, srb2%iw, is1], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-2-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar1, srb%iw, srb%iw, is2], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, srb2%iw, srb2%iw, is2], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-2z-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar2, srb%iw, srb%iw, is2], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar2, srb2%iw, srb2%iw, is2], "", model) for iw in [1, 2, 3, 4] ]
-    
-    nb, hull = cur_base + "-3ms-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, 3*[ srb%iw]+[is4], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[ srb2%iw]+[is4], "", model) for iw in [1, 2, 3, 4] ]
-
-    # Robotics
-    eng_packs = [[if1], [eng1]]
-    shield_packs = []
-    for isp in [0, 1, 3]:
-        shield_packs.extend([[isList[isp]], [isList[isp]]])
-    packs = eng_packs + shield_packs
-    cur_base = design_name_dict["CA"]
-    nb, hull = cur_base + "-%1x-%1x-%1x", "SH_ROBOTIC"  #11 = "Bolo":"CA"
-    newMarkDesigns += [ (nb%(1, iw, 1), desc, hull, 2*[srb%iw] + 2*[ar1] + [""], "", model) for iw in [3, 4] ]  # MD, SA, NoGrid
-    newMarkDesigns += [ (nb%(1, iw, 2), desc, hull, 2*[srb%iw] + 2*[ar2] + [""], "", model) for iw in [3, 4] ]  # MD, ZA, NoGrid
-    newMarkDesigns += [ (nb%(1, iw, 3), desc, hull, 2*[srb%iw] + 2*[ar2] + [is1], "", model) for iw in [3, 4] ]  # MD, grid
-    newMarkDesigns += [ (nb%(2, iw, 1), desc, hull, 2*[srb2%iw] + 2*[ar2] + [is1], "", model) for iw in [1, 2, 3, 4] ]  # laser, grid
-    newMarkDesigns += [ (nb%(2, iw, 2), desc, hull, 2*[srb2%iw] + 2*[ar2] + [is2], "", model) for iw in [1, 2, 3, 4] ]  # laser, DS
-    newMarkDesigns += [ (nb%(2, iw, 3), desc, hull, 2*[srb2%iw] + 2*[ar2] + [is4], "", model) for iw in [4] ]  # laser, MS
-    newMarkDesigns += [ (nb%(3, iw, 1), desc, hull, 2*[srb3%iw] + 2*[ar2] + [is2], "", model) for iw in [1, 2, 3, 4] ]  # plasma, DS
-    newMarkDesigns += [ (nb%(3, iw, 2), desc, hull, 2*[srb3%iw] + 2*[ar2] + [is3], "", model) for iw in [1, 2, 3, 4] ]  # plasma, plasma
-    newMarkDesigns += [ (nb%(3, iw, 3), desc, hull, 2*[srb3%iw] + 2*[ar2] + [is4], "", model) for iw in [3, 4] ]  # plasma, MS
-    newMarkDesigns += [ (nb%(4, iw, 1), desc, hull, 2*[srb4%iw] + 2*[ar2] + [is1], "", model) for iw in [1, 2] ]  # DR, Grid
-    newMarkDesigns += [ (nb%(4, iw, 2), desc, hull, 2*[srb4%iw] + 2*[ar2] + [is2], "", model) for iw in [1, 2] ]  # DR, DS
-    newMarkDesigns += [ (nb%(4, iw, 3), desc, hull, 2*[srb4%iw] + 2*[ar2] + [is3], "", model) for iw in [1, 2, 3, 4] ]  # DR, plasma
-    newMarkDesigns += [ (nb%(4, iw, 4), desc, hull, 2*[srb4%iw] + 2*[ar2] + [is4], "", model) for iw in [1, 2, 3, 4] ]  # DR, MS
-    
-    # Asteroids
-    eng_packs = [[if1, if1], [eng1, eng1]]
-    shield_packs = []
-    for isp in [0, 1, 3]:
-        shield_packs.extend([[isList[isp], if1], [isList[isp], eng1]])
-    packs = eng_packs + shield_packs
-    cur_base = design_name_dict["CB"]
-    nb, hull = cur_base + "-%1x-%1x-%1x", "SH_ASTEROID"  #11 = "Comet":"CB"
-    newMarkDesigns += [ (nb%(1, iw, 0), desc, hull, [srb%iw] + 3*[""] + packs[0], "", model) for iw in [2, 3, 4] ]
-    newMarkDesigns += [ (nb%(2, iw, 0), desc, hull, [srb2%iw] + 2*[""] + [ar2] + packs[0], "", model) for iw in [1, 2, 3, 4] ]
-    for ieng in range(4):
-        newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, 2*[srb2%iw] + 2*[ar2] + packs[ieng], "", model) for iw in [1, 2, 3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw, ieng), desc, hull, 3*[srb2%iw] + [ar2] + packs[ieng], "", model) for iw in [3, 4] ]
-    for ieng in [4, 5]:
-        newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 3*[srb2%iw] + [ar2] + packs[ieng], "", model) for iw in [4] ]
-
-    #nb, hull = designNameBases[2]+"-3-%1d", "SH_STATIC_MULTICELLULAR"
-    #newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, srb2%iw, srb2%iw, is2, if1], "", model) for iw in [2, 3, 4] ]
-    #nb, hull = designNameBases[2]+"-3z-%1d", "SH_STATIC_MULTICELLULAR"
-    #newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar2, srb2%iw, srb2%iw, is2, if1], "", model) for iw in [2, 3, 4] ]
-
-    nb_idx = 4
-    cur_base = design_name_dict["D"]
-    nb, hull = cur_base + "-1-%1x", "SH_ENDOMORPHIC"
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[srb2%iw] + [ar1, is2, if1], "", model) for iw in [ 4 ] ]
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw] + [ ar1, is2, if1], "", model) for iw in [ 2 ] ]
-    nb = cur_base + "-1b-%1x"
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[srb2%iw] + [ ar1, is4, if1], "", model) for iw in [ 4 ] ]
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw] + [ ar1, is4, if1], "", model) for iw in [ 2 ] ]
-
-    nb = cur_base + "-2-%1x"
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[srb2%iw]+[ar2] + [ is2, if1], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar2] + [ is2, if1], "", model) for iw in [2, 3, 4] ]
-    nb = cur_base + "2b-%1x"
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar2] + [ is3, if1], "", model) for iw in [3, 4] ]
-    nb = cur_base + "2c-%1x"
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[srb2%iw]+[ar2] + [ is4, if1], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar2] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-
-    nb = cur_base + "-3-%1x"
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar3] + [ is2, if1], "", model) for iw in [2, 3, 4] ]
-    nb = cur_base + "3b-%1x"
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar3] + [ is3, if1], "", model) for iw in [ 3, 4] ]
-    nb = cur_base + "3c-%1x"
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar3] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-
-    nb = cur_base + "-4b-%1x"
-    newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar3] + [ is3, if1], "", model) for iw in [ 2, 3, 4] ]
-    nb = cur_base + "4c-%1x"
-    newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar3] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-
-    if foAI.foAIstate.aggression < fo.aggression.typical:  #won't advance past EM hulls
-        nb = cur_base + "4d-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar4] + [ is3, if1], "", model) for iw in [2, 3, 4] ]
-        nb = cur_base + "4e-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar4] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-        nb = cur_base + "4f-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar5] + [ is3, if1], "", model) for iw in [2, 3, 4] ]
-        nb = cur_base + "4g-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar5] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-        nb = cur_base + "4h-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar5] + [ is5, if1], "", model) for iw in [2, 3, 4] ]
-    else:
-        cur_base = design_name_dict["E"]
-        #nb, hull = designNameBases[nb_idx]+"-%1x-%1x", "SH_ENDOSYMBIOTIC"
-        #newMarkDesigns += [ (nb%(1, iw), desc, hull, 4*[srb%iw] + 3*[ is2], "", model) for iw in range(7, 15) ]
-        #newMarkDesigns += [ (nb%(2, iw), desc, hull, 4*[srb%iw] + 3*[ is3], "", model) for iw in range(7, 15) ]
-
-        #newMarkDesigns += [ (nb%(3, iw), desc, hull, 3*[srb%iw]+[ar2] + 3*[ is2], "", model) for iw in range(7, 14) ]
-        #newMarkDesigns += [ (nb%(4, iw), desc, hull, 3*[srb%iw]+[ar3] + 3*[ is2], "", model) for iw in range(8, 14) ]
-        #newMarkDesigns += [ (nb%(5, iw), desc, hull, 3*[srb%iw]+[ar2] + 3*[ is3], "", model) for iw in range(7, 14) ]
-        #newMarkDesigns += [ (nb%(6, iw), desc, hull, 3*[srb%iw]+[ar3] + 3*[ is3], "", model) for iw in range(8, 14) ]
-
-        nb, hull = cur_base + "-%1x-%1x", "SH_RAVENOUS"
-        for ia in [1, 2, 3]:
-            newMarkDesigns += [ (nb%(1, ia), desc, hull, 2*[arList[ia]] +2*[if1] + 3*[srb2%iw], "", model) for iw in range(4, 5) ]
-        for ia in [1, 2, 3]:
-            newMarkDesigns += [ (nb%(ia+1, iw), desc, hull, 2*[arList[ia]] +2*[if1] + 3*[srb3%iw], "", model) for iw in range(2, 5) ]
-        for ia in [1, 2, 3]:
-            newMarkDesigns += [ (nb%(ia+4, iw), desc, hull, 2*[arList[ia]] +2*[if1] + 3*[srb4%iw], "", model) for iw in range(1, 5) ]
-        
-        nb, hull = cur_base + "-%1xb-%1x", "SH_BIOADAPTIVE"
-        newMarkDesigns += [ (nb%(1, iw) ,  desc, hull, 2*[srb3%iw]+[ar4] + [ is3, if1, if1], "", model) for iw in [4] ]
-        newMarkDesigns += [ (nb%(1, iw+4), desc, hull, 2*[srb4%iw]+[ar4] + [ is3, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw) ,  desc, hull, 2*[srb3%iw]+[ar4] + [ is4, if1, if1], "", model) for iw in [4] ]
-        newMarkDesigns += [ (nb%(2, iw+4), desc, hull, 2*[srb4%iw]+[ar4] + [ is4, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw+8), desc, hull, 2*[srb4%iw]+[ar4] + [ is5, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw) ,  desc, hull, 2*[srb3%iw]+[ar5] + [ is3, if1, if1], "", model) for iw in [4] ]
-        newMarkDesigns += [ (nb%(3, iw+4), desc, hull, 2*[srb4%iw]+[ar5] + [ is3, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw) ,  desc, hull, 2*[srb3%iw]+[ar5] + [ is4, if1, if1], "", model) for iw in [4] ]
-        newMarkDesigns += [ (nb%(4, iw+4), desc, hull, 2*[srb4%iw]+[ar5] + [ is4, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw+8), desc, hull, 2*[srb4%iw]+[ar5] + [ is5, if1, if1], "", model) for iw in [2, 3, 4] ]
-
-        cur_base = design_name_dict["EA"]
-        # Heavy Asteroids
-        eng_packs = [[if1, if1, if1], [if2, eng1, eng1], [if2, eng2, eng2]]
-        shield_packs = []
-        for isp in [0, 1, 2, 3]:
-            shield_packs.extend([[isList[isp], if1, if1], [isList[isp], eng1, eng1], [isList[isp], eng2, eng2]])
-        packs = eng_packs + shield_packs
-        black_packs = [[if2, if2, if2], [if2, eng1, eng1], [if2, eng2, eng2]]
-        
-        # MD and Laser weaps
-        nb, hull = cur_base + "-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        # - no armor
-        newMarkDesigns += [ (nb%(1, iw, 0), desc, hull, [srb%iw] + 5*[""] + eng_packs[0], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw, 0), desc, hull, [srb2%iw] + 5*[""] + eng_packs[0], "", model) for iw in [1, 2, 3, 4] ]
-        # - zort armor 
-        for ieng in [0, 1, 2]:
-            newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, [srb%iw] + 3*[""] + 2*[ar2] + eng_packs[ieng], "", model) for iw in [3, 4] ]
-            newMarkDesigns += [ (nb%(4, 4, ieng), desc, hull, 3*[srb%4] + 3*[ar2] + eng_packs[ieng], "", model) ]
-            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, [srb2%iw] + 3*[""] + 2*[ar2] + eng_packs[ieng], "", model) for iw in [1, 2, 3, 4] ]
-            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 3*[srb2%iw] + 3*[ar2] + eng_packs[ieng], "", model) for iw in [3, 4] ]
-        # - shields
-        newMarkDesigns += [ (nb%(7, 4, isp), desc, hull, 3*[srb2%4] + 3*[ar2] + shield_packs[isp], "", model) for isp in range(len(shield_packs)) ]
-        
-        #TODO: add support for ast reformation construction so AI can really have rock
-        
-        cur_base = design_name_dict["EB"]
-        # Heavy Asteroids
-        # DR1 (in case of early gift from Ruins)
-        nb, hull = cur_base + "-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, 1, 0), desc, hull, [srb4%1] + 4*[""] + [ar2] + packs[0], "", model) ]
-        newMarkDesigns += [ (nb%(1, 2, 0), desc, hull, [srb4%1] + 5*[ar2] + packs[0], "", model) ]
-        newMarkDesigns += [ (nb%(2, 1, ieng), desc, hull, 2*[srb4%1] + 4*[ar2] + packs[ieng], "", model) for ieng in range(1, 6) ]
-        newMarkDesigns += [ (nb%(3, 1, ieng), desc, hull, 2*[srb4%1] + 4*[ar3] + packs[ieng], "", model) for ieng in range(1, 6) ]
-        newMarkDesigns += [ (nb%(3, 2, ieng), desc, hull, 3*[srb4%1] + 3*[ar3] + packs[ieng], "", model) for ieng in range(1, 6) ]
-        newMarkDesigns += [ (nb%(4, 1, ieng), desc, hull, 3*[srb4%1] + 3*[ar2] + packs[ieng], "", model) for ieng in range(7, 12) ]
-        newMarkDesigns += [ (nb%(4, 2, ieng), desc, hull, 3*[srb4%1] + 3*[ar3] + packs[ieng], "", model) for ieng in range(7, 12) ]
-        # Plasma weaps
-        for iw in [3, 4]:
-            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar2] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar3] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(7, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar3] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
-        
-        cur_base = design_name_dict["EC"]
-        # Heavy Asteroids
-        # DR2-4 weaps
-        nb, hull = cur_base + "-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        for iw in [2, 3, 4]:
-            newMarkDesigns += [ (nb%(1, iw, ieng), desc, hull, 3*[srb4%iw] + 3*[ar2] + packs[ieng], "", model) for ieng in range(12) ]
-            newMarkDesigns += [ (nb%(2, iw, ieng), desc, hull, 3*[srb4%iw] + 3*[ar3] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar4] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(4, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar5] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar4] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
-            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar5] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
-
-        if False and foAI.foAIstate.aggression >fo.aggression.typical:
-            hull = "SH_SENTIENT"
-            cur_base = design_name_dict["F"]
-            for cld in [1, 2, 3]:
-                nb = cur_base + "-%%1xa%1d-%%1x"%cld
-                this_cloak = [ "if1", clk%cld ][ cld > 1 ] # fuel or a cloak
-                for isd in [3, 4, 5]:
-                    newMarkDesigns += [ (nb%(isd-2, 0), desc, hull, 4*[srb4%iw]+2*[ar4] + [ isList[isd], if1, this_cloak], "", model) for iw in [1] ]
-                    newMarkDesigns += [ (nb%(isd-2, 1), desc, hull, 4*[srb3%iw]+2*[ar4] + [ isList[isd], if1, this_cloak], "", model) for iw in [3, 4] ]
-                    newMarkDesigns += [ (nb%(isd-2, iw), desc, hull, 4*[srb4%iw]+2*[ar4] + [ isList[isd], if1, this_cloak], "", model) for iw in [2, 3, 4] ]
-
-                nb = cur_base + "-%%1xb%1d-%%1x"%cld
-                for isd in [3, 4, 5]:
-                    newMarkDesigns += [ (nb%(isd-2, 0), desc, hull, 4*[srb4%iw]+2*[ar5] + [ isList[isd], if1, this_cloak], "", model) for iw in [1] ]
-                    newMarkDesigns += [ (nb%(isd-2, 1), desc, hull, 4*[srb3%iw]+2*[ar5] + [ isList[isd], if1, this_cloak], "", model) for iw in [4] ]
-                    newMarkDesigns += [ (nb%(isd-2, iw), desc, hull, 4*[srb4%iw]+2*[ar5] + [ isList[isd], if1, this_cloak], "", model) for iw in [2, 3, 4] ]
-
-
-        if foAI.foAIstate.aggression >fo.aggression.typical:
-            cur_base = design_name_dict["G"]
-            nb, hull = cur_base + "-%1x-%02x", "SH_FRACTAL_ENERGY"
-            for ia in [3, 4, 5]:
-                newMarkDesigns += [ (nb%(ia-2, iw), desc, hull, 10*[srb3%iw] + 4*[arList[ia]] , "", model) for iw in range(2, 5) ]
-            for ia in [3, 4, 5]:
-                newMarkDesigns += [ (nb%(ia+1, iw), desc, hull, 10*[srb4%iw] + 4*[arList[ia]] , "", model) for iw in range(1, 5) ]
-            
-
-    addDesigns(shipType, newMarkDesigns, shipProdPriority)
-    #TODO: add more advanced designs
-
-
-def addOutpostDesigns():
-    shipType, shipProdPriority = "Outpost Ships", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST
-    designNameBases = [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x: x[1])]
-    newOutpostDesigns = []
-    desc = "Outpost Ship"
-    srb = "SR_WEAPON_1_%1d"
-    model = "seed"
-    nb, hull = designNameBases[1]+"%1d_%1d", "SH_ORGANIC"
-    op = "CO_OUTPOST_POD"
-    db = "DT_DETECTOR_%1d"
-    # is1, is2 = "FU_BASIC_TANK", "ST_CLOAK_1"
-    for p_id in [1, 2]:
-        newOutpostDesigns += [ (nb%(p_id, iw), desc, hull, [ srb%iw, db%p_id, "", op], "", model) for iw in [2, 3, 4] ]
-    addDesigns(shipType, newOutpostDesigns, shipProdPriority)
-
-
-def addColonyDesigns():
-    shipType, shipProdPriority = "Colony Ships", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
-    newColonyDesigns = []
-    desc, model = "Colony Ship", "seed"
-    srb = "SR_WEAPON_1_%1d"
-    nb, hull = designNameBases[1]+"%1d_%1d", "SH_ORGANIC"
-    cp, cp2 = "CO_COLONY_POD", "CO_SUSPEND_ANIM_POD"
-    db = "DT_DETECTOR_%1d"
-    # is1, is2 = "FU_BASIC_TANK", "ST_CLOAK_1"
-    ar1, ar2, ar3, ar4, ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE", "AR_NEUTRONIUM_PLATE"
-    for p_id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(p_id, iw)+"S", desc, hull, [ srb%iw, ar1, db%p_id, cp], "", model) for iw in [1, 2, 3, 4] ]
-        newColonyDesigns += [ (nb%(p_id, iw)+"Z", desc, hull, [ srb%iw, ar2, db%p_id, cp], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb = designNameBases[2]+"%1d_%1dZ"
-    for p_id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(p_id, iw), desc, hull, [ srb%iw, db%p_id, ar2, cp2], "", model) for iw in [3.4] ]
-    addDesigns(shipType, newColonyDesigns, shipProdPriority)
 
 
 def generateProductionOrders():
@@ -777,15 +370,7 @@ def generateProductionOrders():
             if not tSys: continue
             claimedStars.setdefault( tSys.starType, []).append(sysID)
 
-    if empire.empireID%2 == 0:  # let half of the AIs use the new framework
-        find_best_designs_this_turn()
-        addScoutDesigns()
-    else:
-        for add_function in (addScoutDesigns, addTroopDesigns, addMarkDesigns, addColonyDesigns, addOutpostDesigns):
-            try:
-                add_function()
-            except Exception as e:
-                print_error(e, trace=True)
+    addScoutDesigns()
 
     if (currentTurn in [1, 4]) and ((productionQueue.totalSpent < totalPP) or (len(productionQueue) <=3)):
         bestDesignID, bestDesign, buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
