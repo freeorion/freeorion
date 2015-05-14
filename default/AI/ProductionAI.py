@@ -101,20 +101,35 @@ def cur_best_military_design_rating():
             ship_id = -1  # no existing ship
             design_rating = foAI.foAIstate.rate_psuedo_fleet(ship_info=[(ship_id, design_id, pilots)])['overall']
             best_military_design_rating_cache[current_turn] = design_rating
-            return design_rating
+            return max(design_rating, 0.001)
         else:
             return 0.001
     else:
         return 0.001
 
 
-def getBestShipInfo(priority):
+def getBestShipInfo(priority,loc=None):
     """ Returns 3 item tuple: designID, design, buildLocList."""
+    if loc is None:
+        planet_ids = ColonisationAI.empire_shipyards
+    elif isinstance(loc, list):
+        planet_ids = set(loc).intersection(ColonisationAI.empire_shipyards)
+    elif isinstance(loc, int):
+        if loc in ColonisationAI.empire_shipyards:
+            planet_ids = [loc]
+        else:
+            return None, None, None
+    else:  # problem
+        return None, None, None
     if priority in design_cache:
         best_designs = design_cache[priority]
         if not best_designs:
             return None, None, None
-        top_rating, top_id = best_designs[0][0], best_designs[0][2]
+
+        for design_stats in best_designs:
+            top_rating, pid, top_id, cost = design_stats
+            if pid in planet_ids:
+                break
         valid_locs = [item[1] for item in best_designs if item[0] == top_rating and item[2] == top_id]
         return top_id, fo.getShipDesign(top_id), valid_locs
     else:
@@ -1243,7 +1258,7 @@ def generateProductionOrders():
         localPriorities = {}
         localPriorities.update( filteredPriorities )
         bestShips={}
-        milBuildChoices = getBestShipRatings(list(pSet), verbose = False)
+        milBuildChoices = getBestShipRatings(list(pSet))
         for priority in list(localPriorities):
             if priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
                 if not milBuildChoices:
