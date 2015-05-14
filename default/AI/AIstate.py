@@ -209,16 +209,15 @@ class AIstate(object):
         if fleet_id in self.__fleetRoleByID:
             del self.__fleetRoleByID[fleet_id]
 
-    def report_system_threats(self, sysIDList=None):
+    def report_system_threats(self):
         if fo.currentTurn() >= 100:
             return
         universe = fo.getUniverse()
-        if sysIDList is None:
-            sysIDList = sorted(universe.systemIDs)  # will normally look at this, the list of all known systems
+        sys_id_list = sorted(universe.systemIDs)  # will normally look at this, the list of all known systems
         # assess fleet and planet threats
         print "----------------------------------------------"
         print "System Threat Assessments"
-        for sys_id in sysIDList:
+        for sys_id in sys_id_list:
             sys_status = self.systemStatus.get(sys_id, {})
             system = universe.getSystem(sys_id)
             print "%-20s: %s\n" % (system, sys_status)
@@ -259,7 +258,7 @@ class AIstate(object):
                     near_supply.setdefault(sys_id, []).append(enemy_id)
         return actual_supply, near_supply
 
-    def update_system_status(self, sysIDList=None):
+    def update_system_status(self):
         print"-------\nUpdating System Threats\n---------"
         universe = fo.getUniverse()
         empire = fo.getEmpire()
@@ -268,8 +267,7 @@ class AIstate(object):
         supply_unobstructed_systems = set(empire.supplyUnobstructedSystems)
         min_hidden_attack = 4
         min_hidden_health = 8
-        if sysIDList is None:
-            sysIDList = universe.systemIDs  # will normally look at this, the list of all known systems
+        system_id_list = universe.systemIDs  # will normally look at this, the list of all known systems
 
         # assess enemy fleets that may have been momentarily visible
         cur_e_fighters = {(0, ((0, 0),), 0.0, 5.0): [0]}  # start with a dummy entry
@@ -316,7 +314,7 @@ class AIstate(object):
         self.empire_standard_enemy_rating = std_fighter[0] * std_fighter[-1]  # using a very simple rating method here
 
         # assess fleet and planet threats & my local fleets
-        for sys_id in sysIDList:
+        for sys_id in system_id_list:
             sys_status = self.systemStatus.setdefault(sys_id, {})
             system = universe.getSystem(sys_id)
             # update fleets
@@ -435,7 +433,7 @@ class AIstate(object):
 
         enemy_supply, enemy_near_supply = self.assess_enemy_supply()  # TODO: assess change in enemy supply over time
         # assess secondary threats (threats of surrounding systems) and update my fleet rating
-        for sys_id in sysIDList:
+        for sys_id in system_id_list:
             sys_status = self.systemStatus[sys_id]
             sys_status['enemies_supplied'] = enemy_supply.get(sys_id, [])
             sys_status['enemies_nearly_supplied'] = enemy_near_supply.get(sys_id, [])
@@ -449,7 +447,7 @@ class AIstate(object):
                 sys_status['all_local_defenses'] = FleetUtilsAI.combine_ratings(sys_status['myFleetRating'], sys_status['mydefenses']['overall'])
             sys_status['neighbors'] = set(dict_from_map(universe.getSystemNeighborsMap(sys_id, self.empireID)))
             
-        for sys_id in sysIDList:
+        for sys_id in system_id_list:
             sys_status = self.systemStatus[sys_id]
             neighbors = sys_status.get('neighbors', set())
             jumps2 = set()
