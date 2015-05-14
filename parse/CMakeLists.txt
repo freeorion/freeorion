@@ -44,6 +44,7 @@ set (freeorionparse_SOURCE
     EffectParser2.cpp
     EffectParser3.cpp
     EffectParser4.cpp
+    EffectParser5.cpp
     EffectParser.cpp
     EmpireStatsParser.cpp
     EncyclopediaParser.cpp

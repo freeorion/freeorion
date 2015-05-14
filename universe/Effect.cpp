@@ -3450,7 +3450,7 @@ void SetOverlayTexture::SetTopLevelContent(const std::string& content_name) {
 
 
 ///////////////////////////////////////////////////////////
-// SetTexture                                 //
+// SetTexture                                            //
 ///////////////////////////////////////////////////////////
 SetTexture::SetTexture(const std::string& texture) :
     m_texture(texture)
@@ -3468,3 +3468,51 @@ std::string SetTexture::Description() const
 
 std::string SetTexture::Dump() const
 { return DumpIndent() + "SetTexture texture = " + m_texture + "\n"; }
+
+
+///////////////////////////////////////////////////////////
+// Conditional                                           //
+///////////////////////////////////////////////////////////
+Conditional::Conditional(Condition::ConditionBase* target_condition,
+                         const std::vector<EffectBase*>& true_effects,
+                         const std::vector<EffectBase*>& false_effects) :
+    m_target_condition(target_condition),
+    m_true_effects(true_effects),
+    m_false_effects(false_effects)
+{}
+
+void Conditional::Execute(const ScriptingContext& context) const {
+    if (!context.effect_target)
+        return;
+    if (!m_target_condition || m_target_condition->Eval(context.effect_target)) {
+        for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
+            if (*it)
+                (*it)->Execute(context);
+        }
+    } else {
+        for (std::vector<EffectBase*>::const_iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it) {
+            if (*it)
+                (*it)->Execute(context);
+        }
+    }
+}
+
+std::string Conditional::Description() const {
+    return "";
+}
+
+std::string Conditional::Dump() const {
+    return "";
+}
+
+void Conditional::SetTopLevelContent(const std::string& content_name) {
+    if (m_target_condition)
+        m_target_condition->SetTopLevelContent(content_name);
+    for (std::vector<EffectBase*>::iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it)
+        if (*it)
+            (*it)->SetTopLevelContent(content_name);
+    for (std::vector<EffectBase*>::iterator it = m_false_effects.begin(); it != m_false_effects.end(); ++it)
+        if (*it)
+            (*it)->SetTopLevelContent(content_name);
+}
+
