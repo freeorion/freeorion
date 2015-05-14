@@ -3272,7 +3272,7 @@ ENC_SHIP
 [Game - Ships]
 
 ENC_MONSTER
-Monster
+[Game - Monster]
 
 ENC_MONSTER_TYPE
 Monster Types
