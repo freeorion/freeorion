@@ -201,10 +201,7 @@ class AIstate(object):
                 self.fleetStatus[fleet_id]['sysID'] = new_location
                 self.fleetStatus[fleet_id]['nships'] = len(fleet.shipIDs)
 
-    def delete_fleet_info(self, fleet_id, sysID=-1):
-        for systemID in [sid for sid in [sysID, self.fleetStatus.get(fleet_id, {}).get('sysID', -1)] if sid != -1]:
-            if fleet_id in self.systemStatus.get(sysID, {}).get('myfleets', []):
-                del self.systemStatus[sysID]['myfleets'][self.systemStatus[sysID]['myfleets'].index(fleet_id)]
+    def delete_fleet_info(self, fleet_id):
         if fleet_id in self.__aiMissionsByFleetID:
             del self.__aiMissionsByFleetID[fleet_id]
         if fleet_id in self.fleetStatus:
