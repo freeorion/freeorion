@@ -5646,7 +5646,7 @@ World Tree
 WORLDTREE_SPECIAL_DESC
 '''Increases [[encyclopedia SUPPLY_TITLE]] by +1, [[encyclopedia DETECTION_RANGE_TITLE]] by +10, max Population by +1, Happiness on the planet that has the special by +5 and Happiness on all other planets owned by the same empire by +1
 
-A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it has been plantet by the Curators in ancient times.'''
+A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it has been planted by the Curators in ancient times.'''
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins (Excavated)
