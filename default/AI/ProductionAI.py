@@ -48,6 +48,7 @@ def find_best_designs_this_turn():
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST] = ShipDesignAI.StandardOutpostShipDesigner().optimize_design()
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
     end = time.clock()
     print "DEBUG INFORMATION: The design evaluations took %f s" % (end-start)
     print "-----"
@@ -157,65 +158,6 @@ def getBestShipRatings(loc=None):
         return []
 
 
-def addDesigns(shipType, newDesigns, shipProdPriority):
-    designNameBases = [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch": 0}).items(), key=lambda x:x[1])]
-    empire = fo.getEmpire()
-    designIDs = []
-    for baseName in designNameBases:
-        designIDs.extend([shipDesignID for shipDesignID in empire.allShipDesigns
-                          if baseName in fo.getShipDesign(shipDesignID).name(False)])
-    shipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in designIDs]
-    # print "Current %s Designs: %s"%(shipType, shipNames)
-
-    needsAdding = [spec for spec in newDesigns if spec[0] not in shipNames]   # spec = ( name, desc, hull, partslist, icon, model)
-    if needsAdding:  # needsAdding = [ (name, desc, hull, partslist, icon, model), ... ]
-        print "--------------"
-        print "%s design names apparently needing to be added: %s"%(shipType, [spec[0] for spec in needsAdding] )
-        print "-------"
-        for name, desc, hull, partslist, icon, model in needsAdding:
-            try:
-                res = fo.issueCreateShipDesignOrder( name, desc, hull, partslist, icon, model, False)
-                print "added %s Design %s, with result %d"%(shipType, name, res)
-            except Exception:
-                print "Error: exception triggered and caught adding %s %s: " % (shipType, name), traceback.format_exc()
-        # the following loop is added since the above call into C++ code seems to be the garbage collector from
-        # automatically reclaiming these
-        while len(needsAdding) > 0:
-            design_tup = needsAdding.pop()
-            partslist = design_tup[3]
-            while len(partslist) > 0:
-                this_part = partslist.pop()
-                del this_part
-            del design_tup
-            
-    bestShip, bestDesign, buildChoices = getBestShipInfo( shipProdPriority)
-    if bestDesign:
-        print "Best %s buildable is %s"%(shipType, bestDesign.name(False))
-    else:
-        print "%s apparently unbuildable at present, ruh-roh" % shipType
-
-
-def addScoutDesigns():
-    shipType, shipProdPriority ="Scout", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
-    newScoutDesigns = []
-    desc, model = "Scout", "fighter"
-    srb = "SR_WEAPON_1_%1d"
-    db = "DT_DETECTOR_%1d"
-    is1, is2 = "FU_BASIC_TANK", "SH_DEFLECTOR"
-
-    nb, hull = designNameBases[1]+"-%1d", "SH_BASIC_SMALL"
-    for d_id in [1, 2, 3, 4]:
-        newScoutDesigns += [ (nb% d_id, desc, hull, [ db%d_id], "", model) ]
-    nb, hull = designNameBases[2]+"-%1d", "SH_SPATIAL_FLUX"
-    for d_id in [2, 3, 4]:
-        newScoutDesigns += [ (nb% d_id, desc, hull, [ db%d_id], "", model) ]
-    
-    #for d_id in [3, 4]:
-    # newScoutDesigns += [ (nb%(d_id, iw), desc, hull, [ db%d_id, srb%iw, "", "", "", ""], "", model) for iw in range(5, 9) ]
-    addDesigns(shipType, newScoutDesigns, shipProdPriority)
-
-
 def generateProductionOrders():
     """generate production orders"""
     # first check ship designs
@@ -255,8 +197,6 @@ def generateProductionOrders():
             tSys = universe.getSystem(sysID)
             if not tSys: continue
             claimedStars.setdefault( tSys.starType, []).append(sysID)
-
-    addScoutDesigns()
 
     if (currentTurn in [1, 4]) and ((productionQueue.totalSpent < totalPP) or (len(productionQueue) <=3)):
         bestDesignID, bestDesign, buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
@@ -1281,7 +1221,7 @@ def generateProductionOrders():
         print "\t%s\t%.2f"%( ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems( pSet)))), allocatedPP[pSet])
 
     if False: #log ship design assessment
-        getBestShipRatings( list(AIstate.popCtrIDs), verbose = True)
+        getBestShipRatings( list(AIstate.popCtrIDs))
     print "\n\nBuilding Ships in system groups with remaining PP:"
     for pSet in planetsWithWastedPP:
         totalPP = availablePP.get(pSet, 0)
