@@ -222,8 +222,8 @@ class AIstate(object):
             system = universe.getSystem(sys_id)
             print "%-20s: %s\n" % (system, sys_status)
 
-    def assess_planet_threat(self, pid, sightingAge=0):
-        sightingAge += 1  # play it safe
+    def assess_planet_threat(self, pid, sighting_age=0):
+        sighting_age += 1  # play it safe
         universe = fo.getUniverse()
         planet = universe.getPlanet(pid)
         if not planet:
@@ -232,8 +232,8 @@ class AIstate(object):
         max_shields = planet.currentMeterValue(fo.meterType.maxShield)
         current_defense = planet.currentMeterValue(fo.meterType.defense)
         max_defense = planet.currentMeterValue(fo.meterType.maxDefense)
-        shields = min(max_shields, current_shields + 2 * sightingAge)  # TODO: base off regen tech
-        defense = min(max_defense, current_defense + 2 * sightingAge)  # TODO: base off regen tech
+        shields = min(max_shields, current_shields + 2 * sighting_age)  # TODO: base off regen tech
+        defense = min(max_defense, current_defense + 2 * sighting_age)  # TODO: base off regen tech
         return {'overall': defense*(defense + shields), 'attack': defense, 'health': (defense + shields)}
 
     def assess_enemy_supply(self):
@@ -391,7 +391,7 @@ class AIstate(object):
             phealth = 0
             mypattack, myphealth = 0, 0
             for pid in system.planetIDs:
-                prating = self.assess_planet_threat(pid, sightingAge=current_turn-partial_vis_turn)
+                prating = self.assess_planet_threat(pid, sighting_age=current_turn-partial_vis_turn)
                 planet = universe.getPlanet(pid)
                 if not planet:
                     continue
@@ -563,9 +563,9 @@ class AIstate(object):
         for mission in self.get_all_fleet_missions():
             mission.clean_invalid_targets()
 
-    def has_target(self, aiFleetMissionType, aiTarget):
-        for mission in self.get_fleet_missions_with_any_mission_types([aiFleetMissionType]):
-            if mission.has_target(aiFleetMissionType, aiTarget):
+    def has_target(self, mission_type, target):
+        for mission in self.get_fleet_missions_with_any_mission_types([mission_type]):
+            if mission.has_target(mission_type, target):
                 return True
         return False
 
@@ -641,9 +641,9 @@ class AIstate(object):
             nships += 1
         return {'overall': attack*health, 'tally': rating, 'attack': attack, 'health': health, 'nships': nships}
 
-    def get_rating(self, fleet_id, forceNew=False, enemy_stats=None):
+    def get_rating(self, fleet_id, force_new=False, enemy_stats=None):
         """Returns a dict with various rating info."""
-        if fleet_id in self.fleetStatus and not forceNew and enemy_stats is None:
+        if fleet_id in self.fleetStatus and not force_new and enemy_stats is None:
             return self.fleetStatus[fleet_id].get('rating', {})
         else:
             fleet = fo.getUniverse().getFleet(fleet_id)
@@ -654,7 +654,7 @@ class AIstate(object):
             return status['rating']
 
     def update_fleet_rating(self, fleet_id):
-        return self.get_rating(fleet_id, forceNew=True)
+        return self.get_rating(fleet_id, force_new=True)
 
     def get_piloting_grades(self, species_name):
         if species_name not in piloting_grades:
@@ -812,15 +812,15 @@ class AIstate(object):
             self.__shipRoleByDesignID[ship_design_id] = role
             return role
 
-    def add_ship_role(self, ship_design_id, shipRole):
+    def add_ship_role(self, ship_design_id, ship_role):
         """Adds a ship designID/role pair."""
-        if not (shipRole in EnumsAI.get_ship_roles_types()):
-            print "Invalid shipRole: " + str(shipRole)
+        if not (ship_role in EnumsAI.get_ship_roles_types()):
+            print "Invalid shipRole: " + str(ship_role)
             return
         elif ship_design_id in self.__shipRoleByDesignID:
             return
         else:
-            self.__shipRoleByDesignID[ship_design_id] = shipRole
+            self.__shipRoleByDesignID[ship_design_id] = ship_role
 
     def remove_ship_role(self, ship_design_id):
         """Removes a ship designID/role pair."""
@@ -835,10 +835,10 @@ class AIstate(object):
     def get_fleet_roles_map(self):
         return self.__fleetRoleByID
 
-    def get_fleet_role(self, fleet_id, forceNew=False):
+    def get_fleet_role(self, fleet_id, force_new=False):
         """Returns fleet role by ID."""
 
-        if not forceNew and fleet_id in self.__fleetRoleByID and self.__fleetRoleByID[fleet_id] != AIFleetMissionType.FLEET_MISSION_INVALID:
+        if not force_new and fleet_id in self.__fleetRoleByID and self.__fleetRoleByID[fleet_id] != AIFleetMissionType.FLEET_MISSION_INVALID:
             return self.__fleetRoleByID[fleet_id]
         else:
             role = FleetUtilsAI.assess_fleet_role(fleet_id)
@@ -885,7 +885,7 @@ class AIstate(object):
             self.get_fleet_role(fleetID)
             self.get_rating(fleetID)
             self.ensure_have_fleet_missions([fleetID])
-        self.__clean_fleet_roles(justResumed=True)
+        self.__clean_fleet_roles(just_resumed=True)
         fleetsLostBySystem.clear()
         fleetsLostByID.clear()
         popCtrSystemIDs[:] = []  # resets without detroying existing references
@@ -907,7 +907,7 @@ class AIstate(object):
             mission.clear_fleet_orders()
             mission.clear_targets(([-1] + mission.get_mission_types()[:1])[-1])
 
-    def __clean_fleet_roles(self, justResumed=False):
+    def __clean_fleet_roles(self, just_resumed=False):
         """Removes fleetRoles if a fleet has been lost, and update fleet Ratings."""
         for sys_id in self.systemStatus:
             self.systemStatus[sys_id]['myFleetRating'] = 0
@@ -948,7 +948,7 @@ class AIstate(object):
                 sys_id = old_sys_id  # can still retrieve a fleet object even if fleet was just destroyed, so shouldn't get here
             if fleet_id not in ok_fleets:  # or fleet.empty:
                 if self.__fleetRoleByID.get(fleet_id, -1) != -1:
-                    if not justResumed:
+                    if not just_resumed:
                         if rating.get('overall', 0) > MinThreat:
                             fleetsLostBySystem.setdefault(old_sys_id, []).append(rating)
                         else:

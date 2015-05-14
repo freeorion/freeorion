@@ -185,7 +185,7 @@ def split_fleet(fleet_id):
                 print "Error - tried to split ship id (%d) from fleet %d when fleet is in starlane" % (ship_id, fleet_id)
             else:
                 print "Error - got no fleet ID back after trying to split ship id (%d) from fleet %d" % (ship_id, fleet_id)
-    foAI.foAIstate.get_fleet_role(fleet_id, forceNew=True)
+    foAI.foAIstate.get_fleet_role(fleet_id, force_new=True)
     foAI.foAIstate.update_fleet_rating(fleet_id)
     if newfleets:
         foAI.foAIstate.ensure_have_fleet_missions(newfleets)
