@@ -418,12 +418,6 @@ def get_colony_fleets():
     # get suppliable systems and planets
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    #
-    ## survey universe -----------------------------------------------------------
-    #
-    univ_stats = survey_universe()
-
-    fleet_supplyable_planet_ids = univ_stats['fleetSupplyablePlanetIDs']
     colonization_timer.start('Identify Existing colony/outpost targets')
 
     # export colony targeted systems for other AI modules
