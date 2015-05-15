@@ -1326,7 +1326,7 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenInvasionShips(int target_
 
     //Can't invade owned-by-self planets; early exit
     if (target_planet->OwnedBy(empire_id))
-        return retval; 
+        return retval;
 
 
     // get "just enough" ships that can invade and that are free to do so
@@ -1711,7 +1711,7 @@ void SidePanel::PlanetPanel::Refresh() {
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SCANNED");
             }
-            
+
             if (apparent_stealth > client_empire_detection_strength) {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_EXCEEDS_DETECTION")) %
                                                 boost::lexical_cast<std::string>(apparent_stealth)                  %
@@ -2210,7 +2210,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
 
 void SidePanel::PlanetPanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected) {
     // all this funciton needs to do is emit FocusChangedSignal.  The code
-    // preceeding that determines which focus was selected from the iterator 
+    // preceeding that determines which focus was selected from the iterator
     // parameter, does some safety checks, and disables UI sounds
     DebugLogger() << "SidePanel::PlanetPanel::FocusDropListSelectionChanged";
     if (m_focus_drop->CurrentItem() == m_focus_drop->end()) {
@@ -2643,7 +2643,7 @@ SidePanel::~SidePanel() {
 bool SidePanel::InWindow(const GG::Pt& pt) const {
     return (UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight())
            || (m_planet_panel_container && m_planet_panel_container->InWindow(pt))
-           || (m_system_resource_summary && m_system_resource_summary->InWindow(pt));
+           || (m_system_resource_summary && m_system_resource_summary->Parent() == this && m_system_resource_summary->InWindow(pt));
 }
 
 GG::Pt SidePanel::ClientUpperLeft() const
@@ -2788,7 +2788,7 @@ void SidePanel::RefreshImpl() {
         ScopedTimer droplist_population_timer("SidePanel::RefreshImpl droplist population", true);
         std::map<std::string, int> system_map; //alphabetize Systems here
         for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-             sys_it != Objects().const_end<System>(); ++sys_it) 
+             sys_it != Objects().const_end<System>(); ++sys_it)
         {
             if (!sys_it->Name().empty() || sys_it->ID() == s_system_id) // skip rows for systems that aren't known to this client, except the selected system
                 system_map.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
