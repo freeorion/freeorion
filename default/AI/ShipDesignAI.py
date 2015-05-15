@@ -24,16 +24,15 @@ Internal use only:
 Classes:
 - ShipDesignCache: caches information used in this module. Only use the defined instance (variable name "Cache")
 - ShipDesigner: base class for all designs. Provides basic and general functionalities
-- ColonisationShipDesignerBaseClass: base class for all (specialised) colonisation ships which provides common functionalities
+- ColonisationShipDesignerBaseClass: base class for all colonisation ships which provides common functionalities
 - OutpostShipDesignerBaseClass: same but for outposter ships
 - TroopShipDesignerBaseClass: same but for troop ships
-- AdditionalSpecifications:  Defines all requirements we have for our designs such as minimum fuel or minimum starlane speed.
+- AdditionalSpecifications:  Defines all requirements we have for our designs such as minimum fuel or minimum speed.
 
 global variables:
 - Cache: Instance of the ShipDesignCache class - all cached information is stored in here.
 """
 
-# TODO: Implement a nicer naming system for ships (based on rating? Hull?)
 # TODO: add hull.detection to interface, then add scout class
 
 import freeOrionAIInterface as fo
@@ -53,7 +52,7 @@ DETECTION = frozenset({fo.shipPartClass.detection})
 STEALTH = frozenset({fo.shipPartClass.stealth})
 FUEL = frozenset({fo.shipPartClass.fuel})
 COLONISATION = frozenset({fo.shipPartClass.colony})
-ENGINES = frozenset({fo.shipPartClass.starlaneSpeed})  # TODO: Update to "speed" after new test build is supplied
+ENGINES = frozenset({fo.shipPartClass.speed})
 TROOPS = frozenset({fo.shipPartClass.troops})
 WEAPONS = frozenset({fo.shipPartClass.shortRange, fo.shipPartClass.missiles,
                      fo.shipPartClass.fighters, fo.shipPartClass.pointDefense})
@@ -708,7 +707,7 @@ class ShipDesigner(object):
         # read out hull stats
         self.structure = self.hull.structure
         self.fuel = self.hull.fuel
-        self.speed = self.hull.starlaneSpeed
+        self.speed = self.hull.speed
         self.stealth = self.hull.stealth
         self.attacks.clear()
         self.detection = 0  # TODO: Add self.hull.detection once available in interface
