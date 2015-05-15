@@ -107,7 +107,8 @@ public:
         m_max_units_on_a_side(-1),
         m_sum_of_max_max_healths(0),
         m_summaries(combat_summaries),
-        m_available_space(available_size)
+        m_available_space(available_size),
+        m_min_of_max_max_healths(-1.f)
     {
         // We want to measure health on a single scale that shows as much as possible
         // while fitting the data of both sides.
@@ -116,6 +117,12 @@ public:
             m_max_total_max_health = std::max( it->second.total_max_health, m_max_total_max_health );
             m_max_units_on_a_side = std::max( static_cast<int>(it->second.unit_summaries.size()), m_max_units_on_a_side );
             m_sum_of_max_max_healths += it->second.max_max_health;
+
+            if (0.f > m_min_of_max_max_healths) {
+                m_min_of_max_max_healths = it->second.total_max_health;
+            } else {
+                m_min_of_max_max_healths = std::min(it->second.max_max_health, m_min_of_max_max_healths);
+            }
         }
 
         // More initialization
@@ -200,10 +207,27 @@ public:
         GetOptionsDB().Commit();
     }
 
+    GG::Pt GetMinSize() const {
+        GG::Y reqd_available_client_height(GG::Y0);
+
+        if (Get(TOGGLE_GRAPH_HEIGHT_PROPORTIONAL)) {
+            // Try to ensure that the smallest bar is at least
+            // MIN_SIDE_BAR_HEIGHT.
+            reqd_available_client_height = GG::Y(static_cast<int>(static_cast<float>(MIN_PARTICIPANT_BAR_HEIGHT) * m_sum_of_max_max_healths / m_min_of_max_max_healths));
+        } else {
+            reqd_available_client_height = GG::Y(static_cast<int>(m_summaries.size()) * MIN_PARTICIPANT_BAR_HEIGHT);
+        }
+
+        GG::Y reqd_available_total_height(reqd_available_client_height + (SIDE_BOX_MARGIN + AXIS_HEIGHT + X_AXIS_LABEL_MARGIN + PARTICIPANT_BAR_UP_MARGIN) * static_cast<int>(m_summaries.size()) + SIDE_BOX_MARGIN);
+
+        return GG::Pt(GG::X(MIN_SIDE_BAR_WIDTH), reqd_available_total_height);
+    }
+
 private:
     float  m_max_total_max_health;
     int    m_max_units_on_a_side;
     float  m_sum_of_max_max_healths;
+    float  m_min_of_max_max_healths;            //< Used to determine minimum size required for TOGGLE_GRAPH_HEIGHT_PROPORTIONAL mode.
     GG::Pt m_available_space;
     GG::Pt m_available_side_bar_space;          //< Caches some calculations
     GG::Y  m_available_participant_bar_height;  //< Caches some calculations
@@ -241,7 +265,7 @@ public:
         m_hovered(false)
     {
         TemporaryPtr<UniverseObject> object =  Objects().Object(participant.object_id);
-        if(object) {
+        if (object) {
             SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID()) + " " + boost::lexical_cast<std::string>(participant.current_health) + "/" +
                           boost::lexical_cast<std::string>(participant.max_health)
             );
@@ -554,6 +578,20 @@ public:
         m_toggles.clear();
     }
 
+    virtual GG::Pt MinUsableSize() const {
+        GG::Pt min_size(GG::X0, GG::Y0);
+
+        for (std::vector<ToggleData*>::const_iterator it = m_toggles.begin();
+             it != m_toggles.end();
+             ++it) {
+            min_size.x += (*it)->button->Width() + OPTION_BUTTON_PADDING;
+        }
+
+        min_size.y = OPTION_BAR_HEIGHT;
+
+        return min_size;
+    }
+
     void DoLayout() {
         boost::shared_ptr<GG::Font> cui_font = ClientUI::GetFont();
 
@@ -621,6 +659,26 @@ GraphicalSummaryWnd::GraphicalSummaryWnd() :
     m_options_bar(0)
 { }
 
+GG::Pt GraphicalSummaryWnd::MinUsableSize() const {
+    GG::Pt min_size(GG::X0, GG::Y0);
+
+    // Ask the bar sizer for the required size to display the side bars because
+    // it contains all of the useful sizing information in the first place,
+    // even though it does not derive from GG::Wnd and have a virtual
+    // MinUsableSize function.
+    if (m_sizer) {
+        min_size += m_sizer->GetMinSize();
+    }
+
+    if (m_options_bar) {
+        GG::Pt options_bar_min_size(m_options_bar->MinUsableSize());
+        min_size.x = std::max(min_size.x, options_bar_min_size.x);
+        min_size.y += options_bar_min_size.y;
+    }
+
+    return min_size;
+}
+
 void GraphicalSummaryWnd::SetLog(int log_id)
 { MakeSummaries(log_id); }
 
@@ -660,6 +718,10 @@ void GraphicalSummaryWnd::Render()
                       1);
 }
 
+void GraphicalSummaryWnd::HandleButtonChanged() {
+    MinSizeChangedSignal();
+    DoLayout();
+}
 
 void GraphicalSummaryWnd::MakeSummaries(int log_id) {
     m_summaries.clear();
@@ -672,7 +734,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             if (object) {
                 int owner_id = object->Owner();
                 int object_id = object->ID();
-                if( m_summaries.find(owner_id) == m_summaries.end() ) {
+                if ( m_summaries.find(owner_id) == m_summaries.end() ) {
                     m_summaries.insert( std::map<int, CombatSummary>::value_type(owner_id,CombatSummary(owner_id)) );
                 }
                 std::map<int, CombatParticipantState>::const_iterator map_it = log.participant_states.find(object_id);
@@ -727,8 +789,9 @@ void GraphicalSummaryWnd::GenerateGraph() {
     m_options_bar = new OptionsBar(m_sizer);
     AttachChild(m_options_bar);
     GG::Connect(m_options_bar->ChangedSignal,
-                &GraphicalSummaryWnd::DoLayout,
+                &GraphicalSummaryWnd::HandleButtonChanged,
                 this);
 
+    MinSizeChangedSignal();
     DoLayout();
 }
