@@ -125,7 +125,7 @@ CombatReportWnd::CombatReportWnd() :
 { }
 
 CombatReportWnd::~CombatReportWnd()
-{}
+{ }
 
 void CombatReportWnd::SetLog(int log_id)
 { m_impl->SetLog(log_id); }

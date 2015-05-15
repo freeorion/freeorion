@@ -20,6 +20,7 @@ public:
 
 private:
     class CombatReportPrivate;
+
     boost::scoped_ptr<CombatReportPrivate> m_impl;
 };
 
