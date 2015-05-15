@@ -14,8 +14,6 @@
 namespace {
     GG::X COMBAT_LOG_WIDTH(400);
     GG::Y COMBAT_LOG_HEIGHT(300);
-    GG::X RESIZE_MARGIN_X(4);
-    GG::Y RESIZE_MARGIN_Y(4);
 }
 
 // The implementation class for CombatReportWnd
@@ -30,7 +28,6 @@ public:
         m_tabs->AddWnd(m_graphical, UserString("COMBAT_SUMMARY"));
         m_tabs->AddWnd(m_log, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
-        m_wnd.GridLayout();
 
         GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
         GG::Connect(m_log->LinkDoubleClickedSignal, &CombatReportPrivate::HandleLinkDoubleClick,    this);
@@ -48,6 +45,11 @@ public:
     }
 
     void DoLayout() {
+        // Leave space for the resize tab.
+        m_tabs->SizeMove(GG::Pt(GG::X0, GG::Y0),
+                         GG::Pt(m_wnd.ClientWidth(),
+                                m_wnd.ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)) );
+
         // Only update the selected window.
         if(GraphicalSummaryWnd* graphical_wnd =
                dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
@@ -144,13 +146,6 @@ CombatReportWnd::~CombatReportWnd()
 
 void CombatReportWnd::SetLog(int log_id)
 { m_impl->SetLog(log_id); }
-
-GG::Pt CombatReportWnd::ClientLowerRight() const {
-    GG::Pt lr = CUIWnd::ClientLowerRight();
-    lr.x -= RESIZE_MARGIN_X;
-    lr.y -= RESIZE_MARGIN_Y;
-    return lr;
-}
 
 void CombatReportWnd::CloseClicked()
 { Hide(); }

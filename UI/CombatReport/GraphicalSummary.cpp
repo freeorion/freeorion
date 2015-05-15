@@ -633,9 +633,11 @@ void GraphicalSummaryWnd::DoLayout() {
 
 void GraphicalSummaryWnd::Render()
 {
-    GG::Pt one(GG::X(2), GG::Y1);
-    AngledCornerRectangle(UpperLeft(), LowerRight() - one, ClientUI::CtrlColor(), GG::CLR_ZERO,
-                          8, 1, false, true);
+    GG::FlatRectangle(UpperLeft() + GG::Pt(GG::X1, GG::Y0),
+                      LowerRight(),
+                      ClientUI::CtrlColor(),
+                      ClientUI::CtrlBorderColor(),
+                      1);
 }
 
 
