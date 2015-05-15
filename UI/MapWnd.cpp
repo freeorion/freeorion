@@ -509,7 +509,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
         // 3) Add points for line segment to list of Vertices
         bool b_flag = node.post_blockade;
-        s_flag = s_flag || (calc_s_flag && 
+        s_flag = s_flag || (calc_s_flag &&
             ((node.object_id != INVALID_OBJECT_ID) && unobstructed.find(node.object_id)==unobstructed.end()));
         vertices.push_back(Vertex(start_xy.first,   start_xy.second,    prev_eta,   false,          b_flag, s_flag));
         vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta,   node.turn_end,  b_flag, s_flag));
@@ -1049,7 +1049,7 @@ MapWnd::MapWnd() :
     GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
     GG::GUI::GetGUI()->Register(m_moderator_wnd);
     m_moderator_wnd->Hide();
-    
+
     // Combat report
     m_combat_report_wnd = new CombatReportWnd();
     GG::GUI::GetGUI()->Register(m_combat_report_wnd);
@@ -2595,7 +2595,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         std::set<std::pair<int, int> > resource_supply_lanes (this_client_empire->SupplyStarlaneTraversals()) ;
         for (std::map<std::set<int>, std::set<int> >::iterator resPoolSysIt = resPoolSystems.begin(); resPoolSysIt != resPoolSystems.end(); resPoolSysIt++){
             std::string thisPoolCtrs = "( ";
-            for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != resPoolSysIt->second.end(); startSys++) 
+            for (std::set<int>::iterator startSys=resPoolSysIt->second.begin(); startSys != resPoolSysIt->second.end(); startSys++)
                 thisPoolCtrs += boost::lexical_cast<std::string>(*startSys) +", ";
             thisPoolCtrs += ")";
             //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  getting resGrpCore for ResPool Ctrs  (" << thisPoolCtrs << ")";
@@ -3146,7 +3146,7 @@ void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
     manager.SetActiveFleetWnd(fleet_wnd);
 
 
-    // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.  
+    // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.
     // this->m_selected_fleet_ids will be updated by ActiveFleetWndSelectedFleetsChanged or ActiveFleetWndChanged
     // signals being emitted and connected to MapWnd::SelectedFleetsChanged
     fleet_wnd->SelectFleet(fleet->ID());
@@ -3183,13 +3183,13 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     std::list<MovePathNode> path = fleet->MovePath(route, true);
     std::list<int>::iterator route_it = route.begin();
     if (!route.empty() && (++route_it) != route.end()) {
-        //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" checking for blockade at system "<< route.front() << 
+        //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" checking for blockade at system "<< route.front() <<
         //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
         if (fleet->SystemID() == route.front() && fleet->BlockadedAtSystem(route.front(), *route_it)) { //adjust ETAs if necessary
             //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
+            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() <<
             //    " with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
-            if (route_it != route.end() && !( (*route_it == fleet->ArrivalStarlane())  || 
+            if (route_it != route.end() && !( (*route_it == fleet->ArrivalStarlane())  ||
                 (empire && empire->UnrestrictedLaneTravel(fleet->SystemID(), *route_it)) ) )
             {
                 for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
@@ -3221,9 +3221,9 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
 
     // get move path to show.  if there isn't one, show nothing
     std::list<MovePathNode> path = fleet->MovePath(travel_route, true);
-    
-    
-    
+
+
+
     // We need the route to contain the current system
     // even when it is empty to switch between non appending
     // and appending projections on shift changes
@@ -3235,9 +3235,9 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
     if (!travel_route.empty() && (++route_it) != travel_route.end()) {
         if (fleet->SystemID() == travel_route.front() && fleet->BlockadedAtSystem(travel_route.front(), *route_it)) { //adjust ETAs if necessary
             //if (!route.empty() && fleet->SystemID()==route.front() && (++(path.begin()))->post_blockade) {
-            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() << 
+            //DebugLogger() << "MapWnd::SetFleetMovementLine fleet id " << fleet_id<<" blockaded at system "<< route.front() <<
             //" with m_arrival_lane "<< fleet->ArrivalStarlane()<<" and next destination "<<*route_it;
-            if (route_it != travel_route.end() && !((*route_it == fleet->ArrivalStarlane()) || 
+            if (route_it != travel_route.end() && !((*route_it == fleet->ArrivalStarlane()) ||
                 (empire && empire->UnrestrictedLaneTravel(fleet->SystemID(), *route_it))))
             {
                 for (std::list<MovePathNode>::iterator it = path.begin(); it != path.end(); ++it) {
@@ -3276,7 +3276,7 @@ void MapWnd::ClearProjectedFleetMovementLines()
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (event.Type() == GG::WndEvent::RClick && FleetUIManager::GetFleetUIManager().empty()) {
-        // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.  
+        // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.
         // Note that this enforces a one-close-per-click policy.
 
         if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
@@ -3821,7 +3821,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
 
     // keeps position the same after zooming
     // used to keep the mouse at the same position when doing mouse wheel zoom
-    const GG::Pt position_center_delta = GG::Pt(position.x - center_x, position.y - center_y); 
+    const GG::Pt position_center_delta = GG::Pt(position.x - center_x, position.y - center_y);
     ul_offset_x -= position_center_delta.x;
     ul_offset_y -= position_center_delta.y;
 
@@ -4073,7 +4073,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
         return;
 
     DebugLogger() << "PlotFleetMovement " << (execute_move?" execute":"") << (append?" append":"");
-    
+
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     std::set<int> fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
@@ -4114,7 +4114,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             old_route.erase(--old_route.end()); //end of old is begin of new
             route.splice(route.begin(), old_route);
         }
-        
+
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
@@ -4134,7 +4134,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_system, system_id, append)));
             StopFleetExploring(fleet_id);
         }
-        
+
         // show route on map
         SetProjectedFleetMovementLine(fleet_id, route);
     }
@@ -4426,6 +4426,7 @@ void MapWnd::Cleanup() {
     m_FPS->Hide();
     m_scale_line->Hide();
     m_zoom_slider->Hide();
+    m_combat_report_wnd->Hide();
     m_sitrep_panel->ShowSitRepsForTurn(INVALID_GAME_TURN);
     if (m_auto_end_turn)
         ToggleAutoEndTurn();
@@ -5039,7 +5040,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double totalProduction = empire->ResourceProduction(RE_RESEARCH);
     double totalWastedRP = totalProduction - totalRPSpent;
     if (totalWastedRP > 0.05) {
-        DebugLogger()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: " 
+        DebugLogger()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: "
                                 << totalRPSpent << " and RP Production: " << totalProduction << ", wasting " << totalWastedRP;
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
@@ -5082,7 +5083,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double totalProduction = empire->ResourceProduction(RE_INDUSTRY);
     double totalWastedPP = totalProduction - totalPPSpent;
     if (totalWastedPP > 0.05) {
-        DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: " 
+        DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
                                 << totalPPSpent << " and Industry Production: " << totalProduction << ", wasting " << totalWastedPP;
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
@@ -5090,7 +5091,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
                               boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
-                                % DoubleToString(totalProduction, 3, false) 
+                                % DoubleToString(totalProduction, 3, false)
                                 % DoubleToString(totalWastedPP, 3, false)))));
     } else {
         m_industry_wasted->Hide();

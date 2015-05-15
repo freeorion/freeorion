@@ -35,6 +35,11 @@ public:
         GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
         GG::Connect(m_log->LinkDoubleClickedSignal, &CombatReportPrivate::HandleLinkDoubleClick,    this);
         GG::Connect(m_log->LinkRightClickedSignal,  &CombatReportPrivate::HandleLinkDoubleClick,    this);
+
+        // Catch the window-changed signal from the tab bar so that layout
+        // updates can be performed for the newly-selected window.
+        GG::Connect(m_tabs->WndChangedSignal,
+                    boost::bind(&CombatReportPrivate::HandleTabChanged, this));
     }
 
     void SetLog(int log_id) {
@@ -42,8 +47,13 @@ public:
         m_log->SetLog(log_id);
     }
 
-    void DoLayout()
-    { m_graphical->DoLayout(); }
+    void DoLayout() {
+        // Only update the selected window.
+        if(GraphicalSummaryWnd* graphical_wnd =
+               dynamic_cast<GraphicalSummaryWnd*>(m_tabs->CurrentWnd())) {
+            graphical_wnd->DoLayout();
+        }
+    }
 
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
@@ -116,13 +126,18 @@ private:
         DebugLogger() << "RectangleHover " << data;
         SetFocus(data);
     }
+
+    void HandleTabChanged() {
+        // Make sure that the newly selected window gets an update.
+        DoLayout();
+     }
 };
 
 CombatReportWnd::CombatReportWnd() :
     CUIWnd(UserString("COMBAT_REPORT_TITLE"), GG::X(150), GG::Y(50), COMBAT_LOG_WIDTH, COMBAT_LOG_HEIGHT,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE),
-    m_impl(new CombatReportPrivate(*this))
-{ }
+    m_impl(0)
+{ m_impl.reset(new CombatReportPrivate(*this)); }
 
 CombatReportWnd::~CombatReportWnd()
 { }

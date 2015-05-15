@@ -595,7 +595,7 @@ private:
 
 
 GraphicalSummaryWnd::GraphicalSummaryWnd() :
-    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_sizer(0),
     m_options_bar(0)
 { }
@@ -605,13 +605,13 @@ void GraphicalSummaryWnd::SetLog(int log_id) {
 }
 
 void GraphicalSummaryWnd::DoLayout() {
-    GG::Pt ul(GG::X0, SIDE_BOX_MARGIN);
-
-    if (!m_options_bar) {
-        m_options_bar = new OptionsBar(m_sizer);
-        AttachChild(m_options_bar);
-        GG::Connect( m_options_bar->ChangedSignal, &GraphicalSummaryWnd::DoLayout, this );
+    if (!m_sizer) {
+        ErrorLogger() << "GraphicalSummaryWnd::DoLayout() called before "
+                         "creating m_sizer.";
+        return;
     }
+
+    GG::Pt ul(GG::X0, SIDE_BOX_MARGIN);
 
     m_options_bar->Resize( GG::Pt( ClientWidth(), OPTION_BAR_HEIGHT ) );
 
@@ -695,5 +695,16 @@ void GraphicalSummaryWnd::GenerateGraph() {
             AttachChild(box);
         }
     }
+
+    if (m_options_bar) {
+        DebugLogger() << "GraphicalSummaryWnd::GenerateGraph(): m_options_bar "
+                         "already exists, calling DeleteChild(m_options_bar) "
+                         "before creating a new one.";
+        DeleteChild(m_options_bar);
+    }
+    m_options_bar = new OptionsBar(m_sizer);
+    AttachChild(m_options_bar);
+    GG::Connect(m_options_bar->ChangedSignal, &GraphicalSummaryWnd::DoLayout, this);
+
     DoLayout();
 }

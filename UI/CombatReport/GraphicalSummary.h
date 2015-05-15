@@ -21,6 +21,7 @@ public:
     void DoLayout();
 
     virtual void Render();
+
 private:
     std::vector<SideBar*>        m_side_boxes;
     std::map<int, CombatSummary> m_summaries;
