@@ -321,7 +321,7 @@ class AIstate(object):
             sys_status['myfleets'] = my_fleets_by_system.get(sys_id, [])
             sys_status['myFleetsAccessible'] = fleet_spot_position.get(sys_id, [])
             local_enemy_fleet_ids = enemies_by_system.get(sys_id, [])
-            sys_status['local_enemy_fleet_ids'] = local_enemy_fleet_ids
+            sys_status['localEnemyFleetIDs'] = local_enemy_fleet_ids
             if system:
                 sys_status['name'] = system.name
                 for fid in system.fleetIDs:
