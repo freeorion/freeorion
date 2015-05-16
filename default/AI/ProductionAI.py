@@ -77,7 +77,7 @@ def get_design_cost(design, pid):  # TODO: Use new framework
         design_cost_cache.clear()
         cost_cache = {}
         design_cost_cache[cur_turn] = cost_cache
-    loc_invariant = True  # TODO: check actual loc invariance of design cost
+    loc_invariant = design.costTimeLocationInvariant
     if loc_invariant:
         loc = -1
     else:
