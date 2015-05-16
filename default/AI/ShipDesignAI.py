@@ -356,14 +356,19 @@ class ShipDesignCache(object):
                                 for slottype in slotlist}
         new_parts = [_get_part_type(part) for part in empire.availableShipParts
                      if part not in self.strictly_worse_parts]
-        # TODO: Check for location invariance and if not, use different caching system
-        pid = self.production_cost.keys()[0]
+        pid = self.production_cost.keys()[0]  # as only location invariant parts are considered, use arbitrary planet.
         for new_part in new_parts:
             self.strictly_worse_parts[new_part.name] = []
+            if not new_part.costTimeLocationInvariant:
+                print "new part %s not location invariant!" % new_part.name
+                continue
             for part_class in ALL_META_CLASSES:
                 if new_part.partClass in part_class:
                     for old_part in [_get_part_type(part) for part in self.strictly_worse_parts
                                      if part != new_part.name]:
+                        if not old_part.costTimeLocationInvariant:
+                            print "old part %s not location invariant!" % old_part.name
+                            continue
                         if old_part.partClass in part_class:
                             if new_part.capacity >= old_part.capacity:
                                 a = new_part
@@ -372,9 +377,10 @@ class ShipDesignCache(object):
                                 a = old_part
                                 b = new_part
                             if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name]
-                                    and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}):
-                                # TODO: add production_time as additional condition?
+                                    and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}
+                                    and self.production_time[pid][a.name] <= self.production_time[pid][b.name]):
                                 self.strictly_worse_parts[a.name].append(b.name)
+                                print "Part %s is strictly worse than part %s" % (b.name, a.name)
                     break
         available_parts = sorted(self.strictly_worse_parts.keys(),
                                  key=lambda item: _get_part_type(item).capacity, reverse=True)
