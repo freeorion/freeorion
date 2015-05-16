@@ -138,6 +138,18 @@ def getBestShipInfo(priority,loc=None):
 
 def getBestShipRatings(loc=None):
     """returns list of [partition, pid, designID, design] sublists, currently only for military ships"""
+    # Since we haven't yet implemented a way to target military ship construction at/near particular locations
+    # where they are most in need, and also because our rating system is presumably useful-but-not-perfect, we want to
+    # distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
+    # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
+    # we want some chance of choosing  those alternate designs/locations.
+
+    # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistic mechanics type
+    # partition function.  'tally' will compute the normalization constant.
+    # so first go through and calculate the tally as well as convert each individual contribution to
+    # the running total up to that point, to facilitate later sampling.  Then those running totals are
+    # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
+    # used to select the chosen design/loc
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     if loc is None:
         planet_ids = ColonisationAI.empire_shipyards
@@ -158,16 +170,16 @@ def getBestShipRatings(loc=None):
         if not loc_choices:
             return []
         best_rating = loc_choices[0][0]
-        p_sum = 0
+        tally = 0
         ret_val = []
         for choice in loc_choices:
             if choice[0] < 0.7*best_rating:
                 break
             p = math.exp(10*(choice[0]/best_rating - 1))
-            p_sum += p
-            ret_val.append([p_sum, choice[1], choice[2], choice[3]])
+            tally += p
+            ret_val.append([tally, choice[1], choice[2], choice[3]])
         for item in ret_val:
-            item[0] /= p_sum
+            item[0] /= tally
         return ret_val
     else:
         return []
