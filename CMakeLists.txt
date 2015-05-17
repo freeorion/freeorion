@@ -3,6 +3,12 @@ cmake_policy(VERSION 2.6.4)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
+IF(NOT CMAKE_BUILD_TYPE)
+  MESSAGE(STATUS "Setting build type to 'Release' as none was specified.")
+  SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  SET_PROPERTY(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+ENDIF(NOT CMAKE_BUILD_TYPE)
 
 ########################################
 # Configuration                        #
