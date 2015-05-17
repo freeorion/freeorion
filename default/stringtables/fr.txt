@@ -137,8 +137,11 @@ Flotte
 # used to generate name for effect-created planets, when no name = (string) is specified.
 # For this, and any other effect-created object, with specified or default strings for the name,
 # and when each exists: %1% is the system name, %2% is the target object name, and %3% is the source object name
-NEW_PLANET_NAME
+NEW_ASTEROIDS_NAME
 Rémanent %3% dans %1%
+
+#NEW_PLANET_NAME
+#%1% I
 
 EMPTY_SPACE
 Espace Interstellaire
@@ -594,7 +597,7 @@ Flocon de Neige Psionique
 SM_PSIONIC_SNOWFLAKE_DESC
 '''Un monstre capable de neutraliser l'esprit des êtres organiques.
 
-Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs ayant un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Ils chassent et attaquent les vaisseaux spatiaux, forçant les équipages vulnérables à leurs attaques psychiques à abandonner leur empire.'''
+Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs avec un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Ils chassent et attaquent les vaisseaux spatiaux, forçant les équipages vulnérables à leurs attaques psychiques à abandonner leur empire.'''
 
 SM_JUGGERNAUT_1
 Mastodonte Juvénile
@@ -2243,6 +2246,12 @@ MAP_INDICATOR_FPS
 MAP_BTN_MENU  # translated
 Menu
 
+MAP_BTN_AUTO_ADVANCE_ENABLED
+Avance Tour Automatique
+
+MAP_BTN_MANUAL_TURN_ADVANCE
+Avance Tour Manuelle
+
 MAP_BTN_MODERATOR
 Modérateur
 
@@ -3164,7 +3173,7 @@ ENC_SPECIAL
 Particularité planétaire et spatiale
 
 OBJECTS_WITH_SPECIAL
-'''Objets à Particularité : '''
+'''Objets avec Particularité : '''
 
 ENC_BUILDING_TYPE
 Type de structures
@@ -3263,7 +3272,7 @@ ENC_SHIP
 [Partie - Astronefs]
 
 ENC_MONSTER
-Monstre
+[Partie - Monstres]
 
 ENC_MONSTER_TYPE
 Type de monstres
@@ -3629,11 +3638,11 @@ Focus Croissance
 GROWTH_FOCUS_TEXT
 '''Privilégier la Croissance signifie exporter des matériaux et substances rares afin de favoriser l'accroissement démographique sur une planète. Cela n'est possible que dans certains cas : sur quelques Mondes natals et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
 
-Une colonie privilégiant la Croissance augmente le plafond de population des seules colonies qui lui sont reliées par lignes d'[[encyclopedia SUPPLY_TITLE]].
+Une planète privilégiant la Croissance augmente le plafond de population des seules autres planètes lui étant reliées par lignes d'[[encyclopedia SUPPLY_TITLE]].
 
-Un Monde Natal privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci sont peuplées par la même espèce.
+Un Monde Natal privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci abritent la même classification d'espèces.
 
-Lorsqu'elles privilégient la Croissance, les colonies installées sur des planètes présentant une Particularité de Croissance favorable à leur espèce (organique, lithique, robotique), n'aident à croître que les colonies peuplées par des espèces du même genre.'''
+[[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
 MINING_FOCUS_TITLE
 Focus Extraction minière
@@ -3727,17 +3736,17 @@ L'indicateur 'Infanterie' d'une planète représente la puissance des troupes te
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
 ORGANIC_SPECIES_TEXT
-Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
+Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
 
 LITHIC_SPECIES_TITLE
 Métabolisme Lithique
 LITHIC_SPECIES_TEXT
-Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
+Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
 
 ROBOTIC_SPECIES_TITLE
 Métabolisme Robotique
 ROBOTIC_SPECIES_TEXT
-Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur un [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
+Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Métabolisme Phototropique
@@ -3771,14 +3780,18 @@ Les espèces xénophobes commencent avec les [[tech CON_CONC_CAMP]] disponibles.
 FUEL_TITLE
 Carburant
 FUEL_TEXT
-Le carburant permet aux astronefs de parcourir les Voies spatiales. C'est seulement lors de son entrée sur une Voie spatiale qu'un astronef brûle du carburant (une unité). À aucun autre moment de son trajet sur la Voie spatiale parcourue, il n'est consommé de carburant. Les lignes d'[[encyclopedia SUPPLY_TITLE]] permettent de refaire le plein en carburant des astronefs. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant si et seulement si cet astronef se trouve en dehors des Voies spatiales (stationné dans un système stellaire ou dans l'espace intersidéral).
+Le carburant permet aux astronefs de parcourir les Voies spatiales. C'est seulement lors de son entrée sur une Voie spatiale qu'un astronef brûle du carburant (une unité), excepté si celle-ci se situe dans une zone d'approvisionnement de l'empire. Il n'est consommé de carburant à aucun autre moment du trajet sur une Voie spatiale. Un arrêt sur les lignes d'[[encyclopedia SUPPLY_TITLE]] permet de refaire le plein en carburant des astronefs. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant uniquement s'il se trouve en dehors des Voies spatiales (stationné dans un système stellaire ou dans l'espace intersidéral).
 
 SUPPLY_TITLE
 Approvisionnement
 SUPPLY_TEXT
-'''Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes peuvent échanger des ressources matérielles de sorte que la capacité de Production d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures. Un ensemble de systèmes reliés par des lignes d'approvisionnement est appelé un 'Groupe Ressource'. Les lignes d'approvisionnement peuvent également servir à ravitailler les astronefs en [[encyclopedia FUEL_TITLE]]. Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les plus directes reliant les systèmes producteurs de ressources de chaque Groupe Ressource) auront une épaisseur plus importante que les Voies spatiales non-essentielles. Si les PP sont gaspillés au sein d'un Groupe Ressource, les bandes extérieures des Voies Spatiales auront une couleur spécifique.
+'''L'indicateur d'approvisionnement d'une planète représente le nombre de Voies spatiales sur lesquelles l'approvisionnement peut être distribué. Les petites planètes peuvent déployer l'approvisionnement sur de grandes distances mais peu de lignes, tandis que les grandes planètes peuvent approvisionner davantage de lignes mais sur de moins grandes distances.
 
-L'indicateur 'Approvisionnement' d'une planète représente le nombre de Voies spatiales que l'approvisionnement peut emprunter.'''
+Les lignes d'approvisionnement sont représentées par les Voies spatiales aux couleurs de l'empire. Les planètes reliées par ces lignes forment un "Groupe Ressource" et peuvent échanger des ressources matérielles. La capacité de Production (ou points de production) d'une planète peut être utilisée par toute autre planète de l'empire qui lui est reliée, afin de construire astronefs ou structures.
+
+Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les plus directes reliant les systèmes producteurs de ressources de chaque Groupe Ressource) auront une épaisseur plus importante que les Voies spatiales non-essentielles. Si les PP sont gaspillés au sein d'un Groupe Ressource, les bandes extérieures des Voies Spatiales auront une couleur spécifique.
+
+Les lignes d'approvisionnement peuvent également servir à ravitailler en [[encyclopedia FUEL_TITLE]] les astronefs.'''
 
 FLEET_UPKEEP_TITLE
 Entretien des flottes
@@ -5639,7 +5652,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruines Ancestrales (Exhumées)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Accroît d'1 point par habitant la [[encyclopedia RESEARCH_TITLE]] sur cette planète, si le Focus Recherche est sélectionné.
+'''Accroît la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Mais une découverte de grande valeur y a déjà eu lieu.'''
 
@@ -5647,7 +5660,7 @@ ANCIENT_RUINS_SPECIAL
 Ruines Ancestrales
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Accroît d'1 point par habitant la [[encyclopedia RESEARCH_TITLE]] sur cette planète, si le Focus Recherche est sélectionné.
+'''Accroît la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Le premier empire prenant pied sur la planète et maîtrisant la [[tech LRN_XENOARCH]], acquiert gratuitement la maîtrise d'une technologie avancée, ou bien découvre une structure ou un astronef aux puissantes caractéristiques.'''
 
@@ -5677,7 +5690,7 @@ La planète possède un satellite naturel dont la période de révolution est sy
 COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
 COMPUTRONIUM_SPECIAL_DESC
-'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[encyclopedia RESEARCH_TITLE]], toutes les planètes de l'empire réglées sur le même Focus, améliorent leur [[encyclopedia RESEARCH_TITLE]] d'une valeur égale au cinquième de leur population (soit 0.2 points par habitant).
+'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[encyclopedia RESEARCH_TITLE]], toutes les planètes de l'empire réglées sur le même Focus, améliorent leur [[encyclopedia RESEARCH_TITLE]] de 0.2 par Population.
 
 Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, cette lune est en réalité un ordinateur d'une puissance de calcul inouïe. Elle peut effectuer des simulations et résoudre les équations les plus complexes en moins de temps qu'il ne faut pour les lui proposer.'''
 
@@ -5809,86 +5822,77 @@ Un avant-poste des Expérimentateurs est implanté dans ce système et doit êtr
 PROBIOTIC_SPECIAL
 Soupe Probiotique
 PROBIOTIC_SPECIAL_DESC
-'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète abritant une Soupe Probiotique privilégie la Croissance, toutes les planètes à population organique qui lui sont reliées reçoivent le même bonus.
+'''La grande diversité d'organismes unicellulaires qu'offre la planète contribue à améliorer la santé et la préservation de tous types de vie organique.
 
-La grande diversité d'organismes unicellulaires qu'offre la planète, contribue à améliorer la santé et la préservation de tous types de vie organique.'''
+Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].'''
 
 FRUIT_SPECIAL
 Fruits d'Eden
 FRUIT_SPECIAL_DESC
-'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète hébergeant des Fruits d'Eden privilégie la Croissance, toutes les planètes à population organique qui lui sont reliées reçoivent le même bonus.
+'''Ce qui revêt l'apparence d'une forêt ordinaire s'avère être en réalité un organisme symbiotique de la taille d'un continent. Les fruits de ces arbres contiennent des substances organiques étonnamment complexes mais également bénéfiques à tous types de vie organique.
 
-Ce qui revêt l'apparence d'une forêt ordinaire s'avère être en réalité un organisme symbiotique de la taille d'un continent. Les fruits de ces arbres contiennent des substances organiques étonnamment complexes ainsi que bénéfiques à tous types de vie organique.'''
+Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].'''
 
 SPICE_SPECIAL
 Épice Ki
 SPICE_SPECIAL_DESC
-'''Accroît le plafond de population organique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète disposant de champs d'Épice Ki privilégie la Croissance, toutes les planètes à population organique qui lui sont reliées reçoivent le même bonus.
+'''Produite uniquement par l'écosystème de cette planète, l'Épice Ki a la propriété de prolonger la vie, d'éclairer l'esprit, ou encore d'aiguiser les capacités sensorielles des êtres organiques.
 
-Produite uniquement par l'écosystème de cette planète, l'Épice Ki a la propriété de prolonger la vie, d'éclairer l'esprit, ou encore d'aiguiser les capacités sensorielles des êtres organiques.'''
+Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].'''
 
 MONOPOLE_SPECIAL
 Aimants Monopolaires
 MONOPOLE_SPECIAL_DESC
-'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète dotée d'Aimants Monopolaires privilégie la Croissance, toutes les planètes à population robotique qui lui sont reliées reçoivent le même bonus. 
+'''Les Aimants Monopolaires rendent les robots plus résistants!
 
-Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
+Les espèces à [[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
 
-Les Aimants Monopolaires rendent les robots plus forts !'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 SUPERCONDUCTOR_SPECIAL
 Supraconducteurs Ambiants
 SUPERCONDUCTOR_SPECIAL_DESC
-'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète dotée de Supraconducteurs Ambiants privilégie la Croissance, toutes les planètes à population robotique qui lui sont reliées reçoivent le même bonus. 
+'''Les Supraconducteurs Ambiants rendent les robots plus efficaces!
 
-Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
+Les espèces à [[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
 
-Les Supraconducteurs Ambiants rendent les robots meilleurs !'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 POSITRONIUM_SPECIAL
 Cendres Positroniques
 POSITRONIUM_SPECIAL_DESC
-'''Accroît le plafond de population robotique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète recouverte de Cendres Positroniques privilégie la Croissance, toutes les planètes à population robotique qui lui sont reliées reçoivent le même bonus. 
+'''Les Cendres Positroniques rendent les robots plus intelligents!
 
-Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
+Les espèces à [[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
 
-Les Cendres Positroniques rendent les robots plus intelligents !'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 MINERALS_SPECIAL
 Profusion Minière
 MINERALS_SPECIAL_DESC
-'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète bénéficiant d'une Profusion Minière privilégie la Croissance, toutes les planètes à population lithique qui lui sont reliées reçoivent le même bonus.
+'''Cette planète abrite de riches gisements de minerai, augmentant significativement la production ou la croissance des espèces lithiques.
 
-Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
+Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
-Cette planète abrite de riches gisements de minerai qui accélèrent significativement la croissance des espèces lithiques.'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 CRYSTALS_SPECIAL
 Cristaux Silmalins
 CRYSTALS_SPECIAL_DESC
-'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète disposant de Cristaux Silmalins privilégie la Croissance, toutes les planètes à population lithique qui lui sont reliées reçoivent le même bonus.
+'''Cette planète abrite de riches gisements de minerai, augmentant significativement la production ou la croissance des espèces lithiques.
 
-Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
+Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
-Cette planète abrite de riches gisements de minerai qui accélèrent significativement la croissance des espèces lithiques.'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 ELERIUM_SPECIAL
 Elerium Originel
 ELERIUM_SPECIAL_DESC
-'''Accroît le plafond de population lithique de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
-Lorsqu'une planète disposant d'Elerium Originel privilégie la Croissance, toutes les planètes à population lithique qui lui sont reliées reçoivent le même bonus.
+'''Cette planète abrite de riches gisements d'Elerium pur, augmentant significativement la production ou la croissance des espèces lithiques.
 
-Si la colonie établie sur la planète privilégie l'[[encyclopedia INDUSTRY_TITLE]], cette dernière est accrue d'une valeur égale au cinquième de la population (soit 0.2 points par habitant).
+Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
-Cette planète abrite de riches gisements de minerai qui accélèrent significativement la croissance des espèces lithiques.'''
+[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
 
 STARSPAWN_NEBULA_SPECIAL
 Nébuleuse Mère
@@ -6657,6 +6661,9 @@ Modifie l'apparence de l'objet
 DESC_SET_TEXTURE
 Modifie l'apparence de l'objet
 
+DESC_CONDITIONAL
+Applique divers effets selon si la cible est ou n'est pas un objet %1%
+
 # Object Creation
 
 DESC_CREATE_PLANET
@@ -7146,7 +7153,7 @@ LRN_ALGO_ELEGANCE
 Élégance Algorithmique
 
 LRN_ALGO_ELEGANCE_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.1 par population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.1 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Avec une difficulté grandissante des problèmes d'analyse de données, les démarches traditionnelles des performances algorithmiques deviennent moins efficaces, en raison des limitations de la complexité irréductible. À ce stade, de nouvelles formes et fonctions algorithmiques deviennent significatives: esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisée.'''
 
@@ -7193,7 +7200,7 @@ LRN_GRAVITONICS
 Gravitonique
 
 LRN_GRAVITONICS_DESC
-Analogue à la "charge de couleur" de la chromodynamique quantique, il existe plusieurs types de graviton. Avec la force attractive du graviton, les "anti-graviton", "graviton-droit" et "graviton-gauche" peuvent être combinés pour courber et tordre arbitrairement la surface de l'espace-temps. Cette manipulation autorise le contrôle de la force de gravité, permettant ainsi de bâtir de nouvelles structures, d'inventer de nouveaux équipements,  d'entreprendre de nouvelles recherches, l'ensemble s'avérant impossible par le passé, même théoriquement.
+Analogue à la "charge de couleur" de la chromodynamique quantique, il existe plusieurs types de graviton. Avec la force attractive du graviton, les "anti-graviton", "graviton-droit" et "graviton-gauche" peuvent être combinés pour courber ou plier arbitrairement la surface de l'espace-temps. Cette manipulation autorise le contrôle de la force de gravité, permettant ainsi de bâtir de nouvelles structures, d'inventer de nouveaux équipements,  d'entreprendre de nouvelles recherches, l'ensemble s'avérant impossible par le passé, même théoriquement.
 
 LRN_EVERYTHING
 Théorie du Tout
@@ -7239,7 +7246,7 @@ LRN_QUANT_NET
 Réseau Quantique
 
 LRN_QUANT_NET_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.5 par population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer instantanément des informations entre deux lieux, plutôt que par le système lent et indirect des voies spatiales. Ce progrès facilite grandement la Recherche dans tout l'empire.
 
@@ -7352,7 +7359,7 @@ GRO_ENERGY_META
 Métabolisme d'Énergie Pure
 
 GRO_ENERGY_META_DESC
-'''Augmente le [[encyclopedia FUEL_TITLE]] max de 2 sur tous les astronefs, la [[encyclopedia DEFENSE_TITLE]] max de 5 sur toutes les planètes, les [[encyclopedia SHIELDS_TITLE]] max de 5 sur toutes les planètes, l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.2 par population sur toutes les planètes réglées sur le Focus Industrie, et l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.5 par population sur toutes les planètes réglées sur le Focus Recherche.
+'''Augmente le [[encyclopedia FUEL_TITLE]] max de 2 sur tous les astronefs, la [[encyclopedia DEFENSE_TITLE]] max de 5 sur toutes les planètes, les [[encyclopedia SHIELDS_TITLE]] max de 5 sur toutes les planètes, l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie, et l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche.
 
 Tandis que la transformation d'une population entière en êtres de pure énergie s'avérerait peu pertinente, certaines tâches conviennent mieux à des individus dénués de corporalité. L'équipage d'un astronef par exemple, n'aurait plus besoin d'optimiser l'espace disponible pour les quartiers d'équipage ou le stockage des rations. Des êtres dotés d'une capacité de canalisation de l'énergie seraient en mesure d'améliorer les défenses et boucliers planétaires, ainsi que la production de ressources.
 
@@ -7382,7 +7389,7 @@ PRO_ROBOTIC_PROD
 Production Robotisée
 
 PRO_ROBOTIC_PROD_DESC
-'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.1 par population sur toutes les planètes réglées sur le Focus Industrie.
+'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.1 par Population sur toutes les planètes réglées sur le Focus Industrie.
 
 Les Exobots, désignation sous laquelle ils sont communément connus, constituent l'aboutissement du design allié à la fonctionnalité. Robots conçus pour effectuer n'importe quelle tâche de production, de l'électronique microscopique à la construction à grande échelle, leur production de masse est aisée, tandis que leur utilisation reste la plus avantageuse dans les colonies assignant une haute priorité à l'industrie. Chaque monde privilégiant l'industrie se voit gratifiée d'une équipe d'Exobots, améliorant ainsi considérablement sa production industrielle.
 
@@ -7403,7 +7410,7 @@ PRO_FUSION_GEN
 Génération par Fusion
 
 PRO_FUSION_GEN_DESC
-'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.2 par population sur toutes les planètes réglées sur le Focus Industrie.
+'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.2 par Population sur toutes les planètes réglées sur le Focus Industrie.
 
 Les réacteurs de fusion nucléaire, bien que coûteux à produire et à entretenir, s'avèrent rentables pour les mondes industrialisés à forte consommation énergétique. La dépendance aux réacteurs basés sur la fission nucléaire deviendra peu à peu une relique du passé.
 
@@ -7551,7 +7558,7 @@ CON_NDIM_STRC
 Structures Multidimensionnelles
 
 CON_NDIM_STRC_DESC
-'''Accroît le plafond de population des planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
+'''Accroît le plafond de population de toutes les planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
 
 Les facteurs principaux limitant la capacité de population d'une planète ne sont autres que les milieux environnementaux et l'espace disponible. En répartissant le développement des infrastructures de base sur de multiples dimensions, les limitations spatiales disparaissent, et dans des conditions environnementales idéales, le maximum de population d'une planète peut être considérablement accru.
 
@@ -7880,125 +7887,125 @@ GRO_GENOME_BANK
 Banque du Génome
 
 GRO_GENOME_BANK_DESC
-Les variables inconnues dans les calculs de génomes pour une espèce donnée restent difficiles pour toutes mais pas pour des réparations génétiques simples, sans mentionner les changements que les modifications génétiquess peuvent avoir sur de nombreuses espèces de la biosphère. Pour réaliser réellement les profits de la thérapie génique, il est nécessaire de collecter une base de donnée génétique massive pour toutes les espèces des mondes connus.
+Les variables inconnues lors des opérations génomiques pour une espèce donnée sont importantes, exceptées pour les réparations génétiques les plus simples, sans compter les répercussions que les modifications génétiques peuvent potentiellement entraîner sur une biosphère et les nombreuses espèces qu'elle abrite. Pour évaluer réellement les profits de la thérapie génique, il est nécessaire de bâtir une base de donnée génétique massive pour toutes les espèces de tous les mondes connus.
 
 GRO_INDUSTRY_CLONE
 Clonage Industrialisé
 
-#GRO_INDUSTRY_CLONE_DESC
-#Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms. By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint. Populations may be made to order, tailored to meet the specific needs of society.
+GRO_INDUSTRY_CLONE_DESC
+Les techniques élémentaires de clonage par transfert nucléaire manuel sont une nouveauté pour les organismes complexes. En utilisant des procédés similaires à la production industrielle de masse ou issus de l'ingénierie biochimique, il devient possible de créer des douzaines à des millions de copies déjà matures d'un organisme complexe, et ce à partir d'une unique empreinte génétique. Les populations pourraient ainsi être crées et réparties selon chaque besoin spécifique de la société.
 
 GRO_TERRAFORM
 Terraformation
 
-#GRO_TERRAFORM_DESC
-#Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical. The precise method depends greatly on the type of planet to be changed and the desired result. However, in all cases much of the surface of the entire planet and its atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust. As such, this process requires most of the planet to be accessible to the terraformers, and cannot be performed on a world with max population less than one.
+GRO_TERRAFORM_DESC
+Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si le plafond de population est inférieur à un.
 
 GRO_TERRAFORM_SHORT_DESC
 Permet la terraformation
 
 GRO_REMOTE_TERRAFORM
-Terraformation Prédéfinie
+Terraformation à Distance
 
-#GRO_REMOTE_TERRAFORM_DESC
-#Traditional terraforming methods treat the planet as a structure and attempt to alter its environment through physical and chemical means. This necessitates that the majority of the planet be accessible to the terraforming species, which generally limits its usefulness. By treating the planet as an organism and altering its physiology indirectly, it is possible to make use of less labour intensive, though more time consuming terraforming methods, allowing outposts on poor and hostile worlds to make use of terraforming.
+GRO_REMOTE_TERRAFORM_DESC
+Les méthodes traditionnelles de terraformation considèrent la planète comme une structure et modifient son environnement à l'aide de processus physiques et chimiques. Cela nécessite que la majorité de la planète soit accessible à l'espèce opérant la terraformation, ce qui généralement limite l'efficacité de l'entreprise. En envisageant la planète comme un organisme et en modifiant en quelque sorte sa physiologie, il est alors possible d'avoir recours à moins de main-d'œuvre, bien que la terraformation prenne alors plus de temps, mais permettant ainsi aux avant-postes se trouvant sur des planètes à l'environnement pauvre ou hostile, d'enclencher un processus de terraformation.
 
 GRO_BIOTERROR
 Complexe Bioterroriste
 
-#GRO_BIOTERROR_DESC
-#A research center created to safely develop the most dangerous of biological weaponry while keeping prying eyes out. Biological weaponry takes effect too slowly to be of much use in a direct military conflict, but as a weapon of terror it is unsurpassed; a slowly growing contamination will spread panic before it, images of a desperate people quarantined by their own government sowing despair beyond the affected area. However, care must be taken when developing such organisms to ensure they are not accidentally released. Furthermore, utter secrecy is required to dispel the risk of damaging relations with civilians and other empires.
+GRO_BIOTERROR_DESC
+Un centre de recherche créé pour développer le plus terrifiant des armements biologiques, et ce, à l'abri des regards indiscrets. L'arme biologique agit cependant trop lentement pour être utilisée directement en cas de conflit militaire de grande ampleur, mais reste inégalable en terme de terreur: la promesse d'une contamination rampante et inévitable engendrerait une profonde panique, les images d'un peuple à l'agonie confiné par son propre gouvernement propageraient la peur et le désespoir au delà de la zone touchée. Toutefois, de grandes précautions doivent être prises lors du développement de tels organismes pathogènes afin d'éviter toute libération accidentelle. De plus, le secret le plus absolu est nécessaire pour dissiper le risque de détérioration des relations avec la population civile et les autres empires.
 
 GRO_REMOTE_TERRAFORM_SHORT_DESC
 Permet la terraformation à distance
 
-#GRO_CYBORG
-#Cyborgs
+GRO_CYBORG  # translated
+Cyborgs
 
 GRO_CYBORG_DESC
-'''Accroît le plafond de population des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5. Accroît l'[[encyclopedia TROOP_TITLE]] max de 0.2 par population sur toutes les planètes.
+'''Accroît le plafond de population des planètes hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10. Accroît l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes.
 
-A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
+Une fusion hautement fonctionnelle d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
 
 GRO_GAIA_TRANS
 Transformation Gaia
 
-#GRO_GAIA_TRANS_DESC
-#Theoretically, it is possible to completely predict the ecology of a single planet by mapping out its entire web of biological interdependence, both sentient and non-sentient, in fractal algorithms. In practice however, this could only be realized by constructing a vast planet-spanning network running a computer program dedicated to regulating the planet's entire biosphere. This computer would become, in effect, the brain of a new type of life - a single planetary organism, with intelligent citizens as part of its fabric, subject to the greater will.
+GRO_GAIA_TRANS_DESC
+En théorie, il est possible de prédire en totalité l'évolution écologique d'une planète via l'étude du réseau complet des interdépendances biologiques, à la fois sensibles et non-sensibles, au moyen de fractales et d'algorithmes. Mais en pratique, ceci ne peut être réalisé qu'à condition d'édifier un vaste réseau planétaire, exécutant un programme informatique analysant la biosphère entière d'une planète. Cet ordinateur deviendrait par la force des choses le système cérébral d'un nouveau type de vie - un organisme planétaire unique, constitué d'êtres intelligents œuvrant dans l'intérêt de cette entité supérieure, celle-ci agissant d'une manière réciproque.
 
-#GRO_GAIA_TRANS_SHORT_DESC
-#Allows Gaia Transformation
+GRO_GAIA_TRANS_SHORT_DESC
+Permet la Transformation Gaia
 
 LRN_OBSERVATORY_I
 Observatoire
 
-#LRN_OBSERVATORY_I_DESC
-#Studying and understanding the nature of stars and their internal and external attributes provides powerful insight into the nature of stellar phenomena and planetary bodies. Furthermore, fractal algorithms can be employed to decipher the dispersal of starlanes throughout the galaxy, allowing any stars which are in some way connected, however indirectly, to the known network of starlanes to be identified an monitored.
+LRN_OBSERVATORY_I_DESC
+Étudier et comprendre la nature des étoiles ainsi que leurs propriétés internes et externes, permet d'avoir un aperçu formidable de l'essence des phénomènes stellaires et des corps planétaires. De plus, les fractales et algorithmes peuvent être utilisées pour déchiffrer et cartographier la distribution des voies spatiales à travers toute la galaxie, permettant ainsi d'identifier et d'étudier toute étoile étant connectée, même indirectement, au réseau connu des voies spatiales.
 
 LRN_SOLAR_MAN
 Manipulation Solaire
 
-#LRN_SOLAR_MAN_DESC
-#Different star types not only have their own distinct attributes and opportunities for exploitation, but also tend to give rise to a particular planet type. Often, a star of a particular type will give a desired bonus, but will almost certainly be devoid of any desirable planets, or will not be present in an opportune location in the galaxy. By manipulating the high-energy reactions within a star's core, it would be possible to either reverse or accelerate the natural processes within the star, allowing it to be changed to an entirely different type at need.
+LRN_SOLAR_MAN_DESC
+Les différents types d'étoiles ne présentent pas seulement des caractéristiques spécifiques et des opportunités d'exploitation, mais tendent également à donner naissance à des types particuliers de planètes. En général, une étoile d'un type donné présente la caractéristique désirée, mais il est fortement probable qu'aucune planète accueillante ne soit en orbite autour d'elle, et que l'étoile en question ne situe pas dans une région aisément accessible de la galaxie. La manipulation des réactions de haute énergie à l'intérieur du noyau stellaire rendrait possible l'inversion ou l'accélération des processus naturels au sein de l'étoile, permettant ainsi de transformer cette dernière en un type stellaire totalement différent si nécessaire.
 
 LRN_DISTRIB_THOUGHT
 Centralisation Cérébrale
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.1 par population sur toutes les planètes, quel que soit le Focus choisi.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.1 par Population sur toutes les planètes, quel que soit le Focus choisi.
 
-Le citoyen moyen gaspille litteralement son esprit, de loin l'un des plus fins esprits informatiques de l'univers. En puisant dans les cycles inactifs du cerveau d'une population suffisament large, par le biais d'un réseau de simple émetteurs-récepteurs cybernetics, les centres de recherche d'un monde peuvent accéder à une puissance de calcul abondante et à bas prix.'''
+Le citoyen moyen gaspille littéralement ses capacités cérébrales, pourtant issues d'un des outils de calcul les plus fins de l'univers. En intégrant les cycles cérébraux inactifs d'une population suffisament importante au sein d'un réseau de simples émetteurs-récepteurs cybernétiques, la totalité des centres de recherche d'un empire peuvent accéder à une puissance de calcul considérable et peu coûteuse.'''
 
 LRN_STELLAR_TOMOGRAPHY
 Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Accroît, selon le type de système stellaire, la [[encyclopedia RESEARCH_TITLE]] des colonies privilégiant la Recherche de : Trou noir +1 ; Étoile à neutrons +0,75 ; Étoile bleue ou blanche +0,5 ; Étoile jaune, orange ou rouge +0,2 point par habitant.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] des planètes réglées sur le Focus Recherche, de 1, 0.75, 0.5 ou 0.2 par Population, selon le type d'étoile du système, à savoir respectivement Trou noir, Étoile à neutrons, Étoile bleue ou blanche, Étoile jaune, orange ou rouge.
 
-Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour reconstruire des activités qui se produisent dans les profondeurs d'une étoile. Ces conditions couteuses à produire sont idéales pour une multitude de projets de recherche, avec les plus grands avantages pour les types d'étoiles les plus exotiques.'''
+Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour cartographier et reconstituer les différentes activités se produisant dans les profondeurs d'une étoile. Ces conditions expérimentales, habituellement coûteuses à mettre en place, sont ici idéales pour une multitude de projets de recherche, les plus grands bénéfices scientifiques découlant de l'étude des types d'étoiles les plus exotiques.'''
 
 LRN_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
-#LRN_SPATIAL_DISTORT_GEN_DESC
-#'''By manipulating the dimensional properties of a starlane, it would be possible to selectively bend it so that an incoming ship of sufficiently low speed would inadvertently arrive back where it began, having wasted its time and fuel.
-#
-#Alternatively, such a ship may be sent randomly along a completely different starlane adjacent to the building.'''
+LRN_SPATIAL_DISTORT_GEN_DESC
+'''En manipulant les propriétés dimensionnelles d'une voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière de manière à ce qu'un astronef l'empruntant à une vitesse suffisamment faible, aboutisse par inavertance à un point antérieur à son lieu de départ, lui faisant ainsi gaspiller un temps et un carburant précieux.
+
+Par ailleurs, le même astronef pourrait être envoyé aléatoirement sur une toute autre voie spatiale, adjacente au générateur de distortion.'''
 
 LRN_GATEWAY_VOID
 Portail du Vide
 
-#LRN_GATEWAY_VOID_DESC
-#The power of the Void Mind is almost imperceptible in a mere four-dimensional space-time. By creating a permanent gateway accessing an immense number of dimensions, a dangerous, non-discriminating force can be unleashed in a localized area.
+LRN_GATEWAY_VOID_DESC
+La puissance de l'Esprit du Vide est quasiment imperceptible dans un simple espace-temps à quatre dimensions. En créant une passerelle permanente donnant accès à un nombre infini de dimensions, une force redoutable et aveugle peut être libérée dans une région spécifique et s'y déchaîner.
 
 LRN_ENCLAVE_VOID
 Enclave du Vide
 
 LRN_ENCLAVE_VOID_DESC
-L'étude de l'esprit du Vide pourrait etre accélérée par génie génétique sur la population d'un monde entier pour devenir au diapason avec le Vide. Cette nouvelle classe de prétrise pourrait transformer la structure sociale entière de leur monde pour mieux comprendre et analyser la sagesse de l'esprit du Vide pour l'empire entier.
+L'étude de l'Esprit du Vide pourrait être optimisée en modifiant génétiquement la population entière d'un monde afin de l'harmoniser avec le Vide. Cette nouvelle classe religieuse pourrait transformer intégralement la structure sociale de son monde, dans l'optique de mieux appréhender la sagesse de l'Esprit du Vide, et ainsi la diffuser dans l'empire tout entier.
 
 LRN_ART_BLACK_HOLE
 Trou Noir Artificiel
 
-#LRN_ART_BLACK_HOLE_DESC
-#By carefully collapsing a red star, a Black Hole can be formed. This is an expensive and dangerous task, but with great potential benefits for [[encyclopedia RESEARCH_TITLE]] and [[encyclopedia INDUSTRY_TITLE]].
+LRN_ART_BLACK_HOLE_DESC
+En effondrant artificiellement et avec précaution une étoile rouge, un Trou Noir peut être créé. Il s'agit d'une entreprise à la fois périlleuse et coûteuse, mais aux bénéfices potentiels considérables pour la [[encyclopedia RESEARCH_TITLE]] et l'[[encyclopedia INDUSTRY_TITLE]].
 
 LRN_PSY_DOM
 Domination Psychique
 
-#LRN_PSY_DOM_DESC
-#'''Has a 10% chance of taking control of enemy ships with non-telepathic crews in the same system as a planet with domination focus, unless the enemy empire also knows the [[tech LRN_PSY_DOM]].
-#
-#It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
+LRN_PSY_DOM_DESC
+'''A 10% de chance de prendre le contrôle des astronefs ennemis avec équipages non-télépathiques, et se trouvant dans le même système qu'une planète en Focus Domination, à moins que l'empire ennemi ne maîtrise également la [[tech LRN_PSY_DOM]].
 
-#MIND_CONTROL_SHORT_DESC
-#Allows Mind Control
+Il est difficile de soumettre un individu conscient à un contrôle mental total par une entité étrangère, et ce contre son gré. En manipulant cependant les durées de soumission, la force mentale accumulée par une population sur plusieurs heures peut être canalisée sur un unique individu durant quelques secondes, engendrant ainsi une compulsion quasi-irrésistible de se joindre à l'esprit unifié.'''
+
+MIND_CONTROL_SHORT_DESC
+Permet le Contrôle de l'Esprit
 
 PRO_HEAVY_MINING_I
 Processeur d'Extraction Intensive
 
 PRO_HEAVY_MINING_I_DESC
-Quand l'augmentation de production minière est la seule priorité, aucune considération n'existe pour les impacts sur l'environnement, et l'environnement lui-même est propice, les activités partiellement automatisées d'extraction en vrac peuvent être optimisées. Une capacité de traitement significative est exigée, cependant, elle nécessite l'utilisation d'usines centralisées de traitement du minerai.
+Lorsque l'augmentation de production minière devient la seule priorité, plus aucune considération n'existe concernant les impacts sur l'environnement, et  si l'environnement lui-même est propice à une telle exploitation, les activités d'extraction intensive partiellement automatisées peuvent être optimisées. Les processeurs d'extraction intensive sont cependant coûteux et s'avèrent totalement exploitables seulement dans les mondes privilégiant l'extraction minière.
 
 PRO_SOL_ORB_GEN
 Génération Orbitale Solaire
@@ -8113,7 +8120,7 @@ DEF_ROOT_DEFENSE
 Défense
 
 DEF_ROOT_DEFENSE_DESC
-'''Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.2 par population sur toutes les planètes de l'empire.
+'''Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes de l'empire.
 
 Le concept de 'Défense' est à la racine de maints développements technologiques.'''
 
@@ -8831,7 +8838,7 @@ BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.75 par population sur toutes les planètes réglées sur le Focus Recherche. 
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.75 par Population sur toutes les planètes réglées sur le Focus Recherche. 
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
 The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
@@ -9103,6 +9110,12 @@ Colonie Etty
 BLD_COL_ETTY_DESC
 [[BLD_COL_PART_1]] colonie Etty. [[BLD_COL_PART_2]] colonie Etty [[BLD_COL_PART_3]].
 
+BLD_COL_FURTHEST
+Colonie Furthest
+
+BLD_COL_FURTHEST_DESC
+[[BLD_COL_PART_1]] colonie Furthest. [[BLD_COL_PART_2]] colonie Furthest [[BLD_COL_PART_3]].
+
 BLD_COL_GEORGE
 Colonie George
 
@@ -9145,6 +9158,12 @@ Colonie Mu Ursh
 BLD_COL_MUURSH_DESC
 [[BLD_COL_PART_1]] colonie Mu Ursh. [[BLD_COL_PART_2]] colonie Mu Ursh [[BLD_COL_PART_3]].
 
+BLD_COL_PHINNERT
+Colonie Phinnert
+
+BLD_COL_PHINNERT_DESC
+[[BLD_COL_PART_1]] colonie Phinnert. [[BLD_COL_PART_2]] colonie Phinnert [[BLD_COL_PART_3]].
+
 BLD_COL_SCYLIOR
 Colonie Scylior
 
@@ -9156,6 +9175,12 @@ Colonie Setinon
 
 BLD_COL_SETINON_DESC
 [[BLD_COL_PART_1]] colonie Setinon. [[BLD_COL_PART_2]] colonie Setinon [[BLD_COL_PART_3]].
+
+BLD_COL_SILEXIAN
+Colonie Silexian
+
+BLD_COL_SILEXIAN_DESC
+[[BLD_COL_PART_1]] colonie Silexian. [[BLD_COL_PART_2]] colonie Silexian [[BLD_COL_PART_3]].
 
 BLD_COL_SSLITH
 Colonie Sslith
@@ -9206,14 +9231,14 @@ PART_DESC_CAPACITY
 Capacité : %1%
 
 PART_DESC_STRENGTH
-Résistance : %1%
+Puissance : %1%
 
 PART_DESC_SHIELD_STRENGTH
 Solidité Bouclier : %1%
 
 PART_DESC_DETECTION
-Puissance Détection : %1%
-# Detection Range: %2%
+Portée Détection : %1%
+# Detection Strength: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
 Dommages à l'attaque : %1%
@@ -10256,7 +10281,31 @@ Un nuage cosmique de particules à haute énergie.
 #############################################################
 
 NO_STACK_SUPPLY_CONNECTION_TEXT
-Les bonus de plusieurs exemplaires connectés par ligne d'approvisionnement ne s'additionnent pas.
+Les bonus de plusieurs exemplaires connectés par ligne d'[[encyclopedia SUPPLY_TITLE]] au sein d'un même Groupe Ressource ne s'additionnent pas.
+
+#############################################################
+####              Growth Macros                          ####
+#############################################################
+
+GROWTH_SPECIAL_POPULATION_INCREASE
+'''habitant cette planète verront leur plafond de population augmenter selon la taille de la planète (Minuscule : +1, Petite : +2, Moyenne : +3, Grande : +4, Immense : +5), quel que soit l'environnement planétaire. 
+
+Si cette planète est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]], le bonus s'applique également à tous les autres mondes connectés par lignes d'[[encyclopedia SUPPLY_TITLE]] et peuplés d'espèces à''' 
+
+GROWTH_SPECIAL_INDUSTRY_BOOST
+Si cette planète est réglée sur le Focus Industrie, son indicateur [[encyclopedia INDUSTRY_TITLE]] augmente de 0.2 par Population.
+
+GROWTH_SPECIALS_ENTRY_LIST
+'''Les planètes présentant une Particularité de Croissance et réglées sur le Focus Croissance ne favorisent seulement qu'une classification d'espèces. Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques.
+
+Particularités pour [[encyclopedia ORGANIC_SPECIES_TITLE]] :
+[[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
+
+Particularités pour [[encyclopedia ROBOTIC_SPECIES_TITLE]] :
+[[special MONOPOLE_SPECIAL]] | [[special SUPERCONDUCTOR_SPECIAL]] | [[special POSITRONIUM_SPECIAL]]
+
+Particularités pour [[encyclopedia LITHIC_SPECIES_TITLE]] :
+[[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
 
 #############################################################
 ####              S P E C I E S   P I C K S              ####
@@ -10732,6 +10781,61 @@ Télépathique
 #AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
 #'''Decoy
 #Starbase'''
+
+### AI Diplomacy Strings and Lists 
+### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
+### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
+
+AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
+'''Heureux d'avoir de vos nouvelles.
+Réception de transmission acceptée.
+'''
+
+AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
+'''Comment? N'êtes-vous pas déjà mort?
+Oh, pas une autre pleurnicherie pathétique, de grâce!
+'''
+
+AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST
+'''Nous serons enchanté de croire en vos bonnes intentions.
+Quoi que vous puissiez dire, Maître.  Tout le monde s'accorde à dire que vous êtes digne de confiance.
+'''
+
+AI_PEACE_PROPOSAL_RESPONSES_NO_MILD_LIST
+'''Malheureusement, cela serait pour l'heure peu opportun.
+Nous sommes dans le regret de vous informer que nous ne pouvons accéder à votre requête.
+'''
+
+AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST
+'''Par grande miséricorde, nous acceptons de pas vous attaquer.  Pour le moment.
+Insignifiantes créatures!  Il n'y aurait que peu d'honneur à vous terrasser.
+'''
+
+AI_PEACE_PROPOSAL_RESPONSES_NO_HARSH_LIST
+'''Nous préferons vous voir manger les pissenlits par la racine!
+Nous vous harcèlerons jusqu'au Veni, Vidi, Vici!
+'''
+
+AI_WAR_REDECLARATION_MILD_LIST
+'''Cher ami! Apparemment, il semble qu'il y ait eu un malentendu lors de nos précédentes négociations et le Traité de Paix ne semble pas avoir été ratifié! Nous sommes dans le regret de vous informer que nos empires sont toujours en guerre.
+La date d'aujourd'hui est bien le jour où vous aviez dit l'autre jour que nous allions guerroyer à nouveau côte à côte, n'est-ce-pas?
+'''
+
+AI_WAR_REDECLARATION_HARSH_LIST
+'''Nos Petiots ont soif de votre sang!  Préparez-vous à la Guerre!
+Sombres idiots, vous ne pensiez pas que cette paix allait durer, n'est-ce pas?
+'''
+
+AI_PREGAME_ACKNOWLEDGEMENTS__LIST
+'''Je médite, en attente des directives suprêmes de Dieu.  Veuillez rappeler plus tard.
+Des murmures émanant du Vide?  Cela se peut-il?
+'''
+
+AI_MIDGAME_ACKNOWLEDGEMENTS__LIST
+'''Un instant, s'il vous plaît. J'essaie de déterminer si je peux réaliser un test de Turing valable sur votre personne.
+'''
+
+### End of AI Diplomacy Message Lists
 
 #############################################################
 ####           HOTKEYS NAMES AND DESCRIPTIONS            ####
