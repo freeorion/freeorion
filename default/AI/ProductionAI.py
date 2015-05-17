@@ -17,7 +17,7 @@ from freeorion_tools import dict_from_map, ppstring
 from TechsListsAI import EXOBOT_TECH_NAME
 from freeorion_tools import print_error
 
-bestMilRatingsHistory = {}  # dict of (rating, cost) keyed by turn
+best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
 shipTypeMap = {EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION: EnumsAI.AIShipDesignTypes.explorationShip,
                EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST: EnumsAI.AIShipDesignTypes.outpostShip,
@@ -48,6 +48,7 @@ def find_best_designs_this_turn():
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST] = ShipDesignAI.StandardOutpostShipDesigner().optimize_design()
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
+    design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
     end = time.clock()
     print "DEBUG INFORMATION: The design evaluations took %f s" % (end-start)
     print "-----"
@@ -62,14 +63,21 @@ def find_best_designs_this_turn():
         ShipDesignAI.Cache.print_best_designs()
 
 
-def get_design_cost(cur_turn, design, pid):
+def get_design_cost(design, pid):  # TODO: Use new framework
+    """Find and return the design_cost of the specified design on the specified planet.
+
+    :param design:
+    :param pid: int: planet id
+    :return: cost of the design
+    """
+    cur_turn = fo.currentTurn()
     if cur_turn in design_cost_cache:
         cost_cache = design_cost_cache[cur_turn]
     else:
         design_cost_cache.clear()
         cost_cache = {}
         design_cost_cache[cur_turn] = cost_cache
-    loc_invariant = True  # TODO: check actual loc invariance of design cost
+    loc_invariant = design.costTimeLocationInvariant
     if loc_invariant:
         loc = -1
     else:
@@ -77,101 +85,71 @@ def get_design_cost(cur_turn, design, pid):
     return cost_cache.setdefault((design.id, loc), design.productionCost(fo.empireID(), pid))
 
 
-# get key routines declared for import by others before completing present imports, to avoid circularity problems
+def cur_best_military_design_rating():
+    """Find and return the default combat rating of our best military design.
 
-def update_best_mil_ship_rating():
-    mil_build_choices = getBestShipRatings()
-    if not mil_build_choices:
-        bestMilRatingsHistory[fo.currentTurn()] = (0.00001, 1)
-        return 0.00001
-    top = mil_build_choices[0]
-    best_design_id, best_design, build_choices = top[2], top[3], [top[1]]
-    # bestShip, best_design, build_choices = getBestShipInfo( EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    if best_design is None:
-        bestMilRatingsHistory[fo.currentTurn()] = (0.00001, 1)
-        return 0.00001  # empire cannot currently produce any military ships, don't make zero though, to avoid divide-by-zero
-    # stats = foAI.foAIstate.get_design_id_stats(best_design.id)
-    ship_info = [(-1, best_design_id, ColonisationAI.empire_species_by_planet.get(build_choices[0], ''))]
-    stats = foAI.foAIstate.rate_psuedo_fleet(ship_info)
-    cost = best_design.productionCost(fo.empireID(), build_choices[0])
-    bestMilRatingsHistory[fo.currentTurn()] = (stats['overall'], cost)
-
-
-def cur_best_mil_ship_rating():
+    :return: float: rating of the best military design
+    """
+    current_turn = fo.currentTurn()
+    if current_turn in best_military_design_rating_cache:
+        return best_military_design_rating_cache[current_turn]
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
-    if priority in design_cache:  # use new framework
+    if priority in design_cache:
         if design_cache[priority] and design_cache[priority][0]:
-            return design_cache[priority][0][0]
+            rating, pid, design_id, cost = design_cache[priority][0]
+            pilots = fo.getUniverse().getPlanet(pid).speciesName
+            ship_id = -1  # no existing ship
+            design_rating = foAI.foAIstate.rate_psuedo_fleet(ship_info=[(ship_id, design_id, pilots)])['overall']
+            best_military_design_rating_cache[current_turn] = design_rating
+            return max(design_rating, 0.001)
         else:
-            return 0.0001
+            return 0.001
     else:
-        if fo.currentTurn() not in bestMilRatingsHistory:
-            update_best_mil_ship_rating()
-        return bestMilRatingsHistory[fo.currentTurn()][0]
+        return 0.001
 
 
-def curBestMilShipCost():
-    priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
-    if priority in design_cache:  # use new framework
-        try:
-            return design_cache[priority][0][3]
-        except Exception:
-            traceback.print_exc()
-            return 0.0001
-    else:
-        if fo.currentTurn() not in bestMilRatingsHistory:
-            update_best_mil_ship_rating()
-        return bestMilRatingsHistory[fo.currentTurn()][1]
-
-
-def getBestShipInfo(priority, loc=None):
+def getBestShipInfo(priority,loc=None):
     """ Returns 3 item tuple: designID, design, buildLocList."""
     if loc is None:
-        planet_ids = set()
-        for yardlist in ColonisationAI.empire_ship_builders.values():
-            planet_ids.update(yardlist)
+        planet_ids = ColonisationAI.empire_shipyards
     elif isinstance(loc, list):
-        planet_ids = loc
+        planet_ids = set(loc).intersection(ColonisationAI.empire_shipyards)
     elif isinstance(loc, int):
-        planet_ids = [loc]
+        if loc in ColonisationAI.empire_shipyards:
+            planet_ids = [loc]
+        else:
+            return None, None, None
     else:  # problem
         return None, None, None
-
-    if priority in design_cache:  # use new framework
+    if priority in design_cache:
         best_designs = design_cache[priority]
         if not best_designs:
             return None, None, None
-        top_rating, top_id = best_designs[0][0], best_designs[0][2]
+
+        for design_stats in best_designs:
+            top_rating, pid, top_id, cost = design_stats
+            if pid in planet_ids:
+                break
         valid_locs = [item[1] for item in best_designs if item[0] == top_rating and item[2] == top_id]
         return top_id, fo.getShipDesign(top_id), valid_locs
-    else:  # use old framework
-        empire = fo.getEmpire()
-        empire_id = empire.empireID
-        these_design_ids = []
-        design_name_bases = shipTypeMap.get(priority, ["nomatch"])
-        for base_name in design_name_bases:
-            these_design_ids.extend([(design_name_bases[base_name] + fo.getShipDesign(design).name(False), design)
-                                     for design in empire.availableShipDesigns
-                                     if base_name in fo.getShipDesign(design).name(False)])
-        if not these_design_ids:
-            return None, None, None  # must be missing a Shipyard (or checking for outpost ship but missing tech)
-        # ships = [(fo.getShipDesign(design).name(False), design) for design in these_design_ids]
-
-        for _, design_id in sorted(these_design_ids, reverse=True):
-            design = fo.getShipDesign(design_id)
-            valid_locs = []
-            for pid in planet_ids:
-                if pid is None:
-                    continue
-                if design.productionLocationForEmpire(empire_id, pid):
-                    valid_locs.append(pid)
-            if valid_locs:
-                return design_id, design, valid_locs
+    else:
         return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
 
 
-def getBestShipRatings(loc=None, verbose=False):
+def getBestShipRatings(loc=None):
     """returns list of [partition, pid, designID, design] sublists, currently only for military ships"""
+    # Since we haven't yet implemented a way to target military ship construction at/near particular locations
+    # where they are most in need, and also because our rating system is presumably useful-but-not-perfect, we want to
+    # distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
+    # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
+    # we want some chance of choosing  those alternate designs/locations.
+
+    # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistic mechanics type
+    # partition function.  'tally' will compute the normalization constant.
+    # so first go through and calculate the tally as well as convert each individual contribution to
+    # the running total up to that point, to facilitate later sampling.  Then those running totals are
+    # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
+    # used to select the chosen design/loc
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     if loc is None:
         planet_ids = ColonisationAI.empire_shipyards
@@ -188,553 +166,23 @@ def getBestShipRatings(loc=None, verbose=False):
     if priority in design_cache:  # use new framework
         build_choices = design_cache[priority]
         loc_choices = [[item[0], item[1], item[2], fo.getShipDesign(item[2])]
-                      for item in build_choices if item[1] in planet_ids]
+                       for item in build_choices if item[1] in planet_ids]
         if not loc_choices:
             return []
         best_rating = loc_choices[0][0]
-        p_sum = 0
+        tally = 0
         ret_val = []
         for choice in loc_choices:
             if choice[0] < 0.7*best_rating:
                 break
             p = math.exp(10*(choice[0]/best_rating - 1))
-            p_sum += p
-            ret_val.append([p_sum, choice[1], choice[2], choice[3]])
+            tally += p
+            ret_val.append([tally, choice[1], choice[2], choice[3]])
         for item in ret_val:
-            item[0] /= p_sum
+            item[0] /= tally
         return ret_val
-    else:  # old framework
-        empire = fo.getEmpire()
-        empireID = empire.empireID
-        cur_turn = fo.currentTurn()
-        theseDesignIDs = []
-        designNameBases = shipTypeMap.get(priority, ["nomatch"])
-        for baseName in designNameBases:
-            theseDesignIDs.extend([(designNameBases[baseName]+fo.getShipDesign(shipDesignID).name(False), shipDesignID)
-                                   for shipDesignID in empire.availableShipDesigns
-                                   if baseName in fo.getShipDesign(shipDesignID).name(False)])
-        if not theseDesignIDs:
-            return []  # must be missing a Shipyard (or checking for outpost ship but missing tech)
-        # ships = [ ( fo.getShipDesign(shipDesign).name(False), shipDesign) for shipDesign in theseDesignIDs ]
-        locDetail = []
-        theseDesignIDs.sort(reverse=True)
-        bestCostRating = 0.0
-        style_index = fo.empireID() % 2
-        if verbose:
-            print "getBestShipRatings checking %d designs w/r/t enemy stats %s on planet_ids %s from loc set %s" % (
-                        len(theseDesignIDs), foAI.foAIstate.fleet_sum_tups_to_estat_dicts([(1, foAI.foAIstate.empire_standard_enemy)]), planet_ids, loc)
-        for pid in planet_ids:
-            localBestCostRating = 0.0
-            bestDesignID = -1
-            bestDesign = None
-            if pid is None:  # TODO: is this check still necessary?
-                continue
-            species_name = ColonisationAI.empire_species_by_planet.get(pid, '')
-            try_counter = 0  # tracks how many design tries since last improved design found here
-            for _ , shipDesignID in theseDesignIDs:
-                designStats = foAI.foAIstate.get_weighted_design_stats(shipDesignID, ColonisationAI.empire_species_by_planet.get(pid, ''))
-                shipDesign = fo.getShipDesign(shipDesignID)
-                if not shipDesign.productionLocationForEmpire(empireID, pid):
-                    continue
-                cost = get_design_cost(cur_turn, shipDesign, pid)
-                # nattacks = sum( designStats.get('attacks', {1:1}).keys() )
-                old_design_rating = foAI.foAIstate.rate_psuedo_fleet( [(-1, shipDesignID, species_name)] ).get('overall', 0)
-                # TODO: determine better tactical rating adjustment for speed
-                new_design_rating = old_design_rating * (1.0 + designStats.get('tact_adj', 0.0))
-                design_rating = [old_design_rating, new_design_rating][style_index]
-                costRating = design_rating/(max(0.1, cost))
-                if verbose and ( int(old_design_rating/10) != int(new_design_rating/10) ):
-                    print "design %s (for species %s) has cost %.1f, old rating %.1f and new rating %.1f"%(
-                                        shipDesign.name(False), species_name, cost, old_design_rating, new_design_rating)
-                if (try_counter > 200) and (costRating < 0.1 * bestCostRating):
-                    break
-                if costRating > localBestCostRating:
-                    try_counter = 0
-                    localBestCostRating = costRating
-                    bestDesignID = shipDesignID
-                    bestDesign = shipDesign
-                    if verbose:
-                        print "at planet %s, new local best design %s with rating %.1f, costRating %.1f, hull %s and partslist %s"%(
-                                    ppstring(PlanetUtilsAI.planet_name_ids([pid])), shipDesign.name(False), design_rating, costRating, shipDesign.hull, list(shipDesign.parts))
-                    if costRating > bestCostRating:
-                        bestCostRating = costRating
-                else:
-                    try_counter += 1
-            if localBestCostRating > 0.0:
-                if verbose:
-                    print "\t\t adding design id %d (%s) (species %s) with costRating %.4f at pid %d" % (
-                        bestDesignID, bestDesign.name(False), species_name, localBestCostRating, pid)
-                locDetail.append( [localBestCostRating, pid, bestDesignID, bestDesign] )
-        if not locDetail:
-            return []
-        locDetail.sort(reverse=True)
-
-        # Since we haven't yet implemented a way to target military ship construction at/near particular locations
-        # where they are most in need, and also because our rating system is presumably useful-but-not-perfect, we want to
-        # distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
-        # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
-        # we want some chance of choosing  those alternate designs/locations.
-
-        # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistic mechanics type
-        # partition function.  'tally' will compute the normalization constant.
-        # so first go through and calculate the tally as well as convert each individual contribution to
-        # the running total up to that point, to facilitate later sampling.  Then those running totals are
-        # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
-        # used to select the chosen design/loc
-        tally = 0
-        idx = 0
-        for detail in locDetail:
-            idx += 1
-            if detail[0] < 0.7 * bestCostRating:
-                break
-            weight = math.exp(10*detail[0]/bestCostRating - 10)
-            tally += weight
-            detail[0] = tally
-        for detail in locDetail:
-            detail[0] /= tally
-        return locDetail
-
-
-def addDesigns(shipType, newDesigns, shipProdPriority):
-    designNameBases = [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch": 0}).items(), key=lambda x:x[1])]
-    empire = fo.getEmpire()
-    designIDs = []
-    for baseName in designNameBases:
-        designIDs.extend([shipDesignID for shipDesignID in empire.allShipDesigns
-                          if baseName in fo.getShipDesign(shipDesignID).name(False)])
-    shipNames = [fo.getShipDesign(shipDesignID).name(False) for shipDesignID in designIDs]
-    # print "Current %s Designs: %s"%(shipType, shipNames)
-
-    needsAdding = [spec for spec in newDesigns if spec[0] not in shipNames]   # spec = ( name, desc, hull, partslist, icon, model)
-    if needsAdding:  # needsAdding = [ (name, desc, hull, partslist, icon, model), ... ]
-        print "--------------"
-        print "%s design names apparently needing to be added: %s"%(shipType, [spec[0] for spec in needsAdding] )
-        print "-------"
-        for name, desc, hull, partslist, icon, model in needsAdding:
-            try:
-                res = fo.issueCreateShipDesignOrder( name, desc, hull, partslist, icon, model, False)
-                print "added %s Design %s, with result %d"%(shipType, name, res)
-            except Exception:
-                print "Error: exception triggered and caught adding %s %s: " % (shipType, name), traceback.format_exc()
-        # the following loop is added since the above call into C++ code seems to be the garbage collector from
-        # automatically reclaiming these
-        while len(needsAdding) > 0:
-            design_tup = needsAdding.pop()
-            partslist = design_tup[3]
-            while len(partslist) > 0:
-                this_part = partslist.pop()
-                del this_part
-            del design_tup
-            
-    bestShip, bestDesign, buildChoices = getBestShipInfo( shipProdPriority)
-    if bestDesign:
-        print "Best %s buildable is %s"%(shipType, bestDesign.name(False))
     else:
-        print "%s apparently unbuildable at present, ruh-roh" % shipType
-
-
-def addBaseTroopDesigns():
-    shipType, shipProdPriority = "BaseTroopers", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_INVASION
-    designNameBases = [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch": 0}).items(), key=lambda x:x[1])]
-
-    newTroopDesigns = []
-    desc, model = "StormTrooper Ship", "fighter"
-    tp = "GT_TROOP_POD"
-    nb, hull = designNameBases[0], "SH_COLONY_BASE"
-    newTroopDesigns += [ (nb, desc, hull, [tp], "", model) ]
-    addDesigns(shipType, newTroopDesigns, shipProdPriority)
-
-
-def addTroopDesigns():
-    addBaseTroopDesigns()
-    shipType, shipProdPriority ="Troopers", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_INVASION
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
-    newTroopDesigns = []
-    desc, model = "Troop Ship", "fighter"
-    srb = "SR_WEAPON_1_%1d"
-    tp = "GT_TROOP_POD"
-    nb, hull = designNameBases[1]+"%1d", "SH_BASIC_MEDIUM"
-    newTroopDesigns += [ (nb% 1, desc, hull, 3*[tp], "", model) ]
-    nb, hull = designNameBases[1]+"%1d", "SH_ORGANIC"
-    newTroopDesigns += [ (nb% 2, desc, hull, 4*[tp], "", model) ]
-    #newTroopDesigns += [ (nb%(iw), desc, hull, [srb%iw]+ 3*[tp], "", model) for iw in [2, 3, 4] ]
-    nb, hull = designNameBases[1]+"%1d", "SH_STATIC_MULTICELLULAR"
-    #newTroopDesigns += [ (nb%(0) +"0", desc, hull, 5*[tp], "", model) for iw in [2, 3, 4] ]
-    #newTroopDesigns += [ (nb%(iw+3), desc, hull, [srb%iw]+ 4*[tp], "", model) for iw in [2, 3, 4] ]
-
-    ar1, ar2, ar3 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_NEUTRONIUM_PLATE"
-    arL=[ar1, ar2, ar3]
-    for ari in [1, 2]: #naming below only works because skipping Lead armor
-        nb, hull = designNameBases[ari+1]+"%1d-%1d", "SH_STATIC_MULTICELLULAR"
-        #newTroopDesigns += [ (nb%(ari, iw), desc, hull, [srb%iw, arL[ari]]+ 3*[tp], "", model) for iw in [2, 3, 4] ]
-        nb, hull = designNameBases[ari+1]+"%1d-%1d", "SH_ENDOMORPHIC"
-        newTroopDesigns += [ (nb%(ari, 0), desc, hull, [arL[ari]]+ 5*[tp], "", model) ]
-        #newTroopDesigns += [ (nb%(ari, iw+3), desc, hull, [srb%iw, arL[ari]]+ 3*[tp], "", model) for iw in [2, 3, 4] ]
-    addDesigns(shipType, newTroopDesigns, shipProdPriority)
-
-
-def addScoutDesigns():
-    shipType, shipProdPriority ="Scout", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
-    newScoutDesigns = []
-    desc, model = "Scout", "fighter"
-    srb = "SR_WEAPON_1_%1d"
-    db = "DT_DETECTOR_%1d"
-    is1, is2 = "FU_BASIC_TANK", "SH_DEFLECTOR"
-
-    nb, hull = designNameBases[1]+"-%1d", "SH_BASIC_SMALL"
-    for d_id in [1, 2, 3, 4]:
-        newScoutDesigns += [ (nb% d_id, desc, hull, [ db%d_id], "", model) ]
-    nb, hull = designNameBases[2]+"-%1d", "SH_SPATIAL_FLUX"
-    for d_id in [2, 3, 4]:
-        newScoutDesigns += [ (nb% d_id, desc, hull, [ db%d_id], "", model) ]
-    
-    #for d_id in [3, 4]:
-    # newScoutDesigns += [ (nb%(d_id, iw), desc, hull, [ db%d_id, srb%iw, "", "", "", ""], "", model) for iw in range(5, 9) ]
-    addDesigns(shipType, newScoutDesigns, shipProdPriority)
-
-
-def addOrbitalDefenseDesigns():
-    shipType, shipProdPriority ="OrbitalDefense", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
-    newDesigns = []
-    desc, hull, model = "Orbital Defense Ship", "SH_COLONY_BASE", "fighter"
-    is1, is2, is3 = "SH_DEFENSE_GRID", "SH_DEFLECTOR", "SH_MULTISPEC"
-    newDesigns += [ (designNameBases[0], desc, hull, [""], "", model) ]
-    if False:
-        if foAI.foAIstate.aggression<=fo.aggression.cautious:
-            newDesigns += [ (designNameBases[1], desc, hull, [is1], "", model) ]
-        newDesigns += [ (designNameBases[2], desc, hull, [is2], "", model) ]
-        newDesigns += [ (designNameBases[3], desc, hull, [is3], "", model) ]
-
-    addDesigns(shipType, newDesigns, shipProdPriority)
-
-
-def addMarkDesigns():
-    addOrbitalDefenseDesigns()
-    shipType, shipProdPriority ="Attack Ships", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
-    designRankList = sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])
-    print "AttackShip DesignRankList: %s"%([x for x in enumerate(designRankList)])
-    # [(0, ('SD_MARK', 'A')), (1, ('Lynx', 'B')), (2, ('Griffon', 'C')), (3, ('Wyvern', 'D')), (4, ('Manticore', 'E')),
-    #(5, ('Atlas', 'EA')), (6, ('Pele', 'EB')), (7, ('Xena', 'EC')), (8, ('Devil', 'F')), (9, ('Reaver', 'G')), (10, ('Obliterator', 'H'))]
-    designNameBases= [key for key, val in designRankList]
-    design_name_dict = dict([(val, key) for key, val in designRankList])
-    newMarkDesigns = []
-    desc, model = "military ship", "fighter"
-    srb = "SR_WEAPON_1_%1d"
-    srb2 = "SR_WEAPON_2_%1d"
-    srb3 = "SR_WEAPON_3_%1d"
-    srb4 = "SR_WEAPON_4_%1d"
-    clk = "ST_CLOAK_%1d"
-    db = "DT_DETECTOR_%1d"
-    if1 = "FU_BASIC_TANK"
-    if2 = "FU_DEUTERIUM_TANK"
-    eng1 = "FU_IMPROVED_ENGINE_COUPLINGS"
-    eng2 = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
-    is1, is2, is3, is4, is5 = "SH_DEFENSE_GRID", "SH_DEFLECTOR", "SH_PLASMA", "SH_MULTISPEC", "SH_BLACK"
-    isList=["", is1, is2, is3, is4, is5]
-    ar1, ar2, ar3, ar4, ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE", "AR_NEUTRONIUM_PLATE"
-    arList = ["", ar1, ar2, ar3, ar4, ar5]
-    
-    empire = fo.getEmpire()
-    print "Available Hulls: %s" % ([hull for hull in empire.availableShipHulls])
-    print "Available Ship Parts: %s" % ([hull for hull in empire.availableShipParts])
-    testhull = fo.getHullType("SH_BASIC_MEDIUM")
-    print "testhull: %s, structure: %.1f ; stealth: %.1f ; slots: %s" % (testhull.name, testhull.structure, testhull.stealth, [slot.name for slot in testhull.slots])
-    testpart = fo.getPartType(srb2%4)
-    print "testpart: %s, class: %s ; capacity: %.1f ; slottypes: %s" % (testpart.name, testpart.partClass.name, testpart.capacity, [slot.name for slot in testpart.mountableSlotTypes])
-
-    if foAI.foAIstate.aggression in [fo.aggression.beginner, fo.aggression.turtle]:
-        maxEM= 8
-    elif foAI.foAIstate.aggression ==fo.aggression.cautious:
-        maxEM= 12
-    else:
-        maxEM= 10
-
-    cur_base = design_name_dict["B"]
-    nb, hull = cur_base + "-a-%1d", "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-b-%1d", "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, ar2, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, ar2, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-c-%1d", "SH_BASIC_MEDIUM"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, srb%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, srb2%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-d-%1d", "SH_STANDARD"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, ar1, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, ar1, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-e-%1d", "SH_STANDARD"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, ar2, ar2, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, ar2, ar2, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb, hull = cur_base + "-f-%1d", "SH_STANDARD"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ srb%iw, srb%iw, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ srb2%iw, srb2%iw, ar1, if1], "", model) for iw in [1, 2, 3, 4] ]
-
-    cur_base = design_name_dict["C"]
-    nb, hull = cur_base + "-1-%1d", "SH_ORGANIC" #11 = "Comet":"BA"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar1, ar1, srb%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, ar1, srb2%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-1z-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar2, ar2, srb%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar2, ar2, srb2%iw, if1], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-1G-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar1, srb%iw, srb%iw, is1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, srb2%iw, srb2%iw, is1], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-1Gz-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar2, srb%iw, srb%iw, is1], "", model) for iw in [1, 2, 3, 4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar2, srb2%iw, srb2%iw, is1], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-2-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar1, srb%iw, srb%iw, is2], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, srb2%iw, srb2%iw, is2], "", model) for iw in [1, 2, 3, 4] ]
-    nb, hull = cur_base + "-2z-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, [ ar2, srb%iw, srb%iw, is2], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar2, srb2%iw, srb2%iw, is2], "", model) for iw in [1, 2, 3, 4] ]
-    
-    nb, hull = cur_base + "-3ms-%1d", "SH_ORGANIC"
-    newMarkDesigns += [ (nb%iw, desc, hull, 3*[ srb%iw]+[is4], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[ srb2%iw]+[is4], "", model) for iw in [1, 2, 3, 4] ]
-
-    # Robotics
-    eng_packs = [[if1], [eng1]]
-    shield_packs = []
-    for isp in [0, 1, 3]:
-        shield_packs.extend([[isList[isp]], [isList[isp]]])
-    packs = eng_packs + shield_packs
-    cur_base = design_name_dict["CA"]
-    nb, hull = cur_base + "-%1x-%1x-%1x", "SH_ROBOTIC"  #11 = "Bolo":"CA"
-    newMarkDesigns += [ (nb%(1, iw, 1), desc, hull, 2*[srb%iw] + 2*[ar1] + [""], "", model) for iw in [3, 4] ]  # MD, SA, NoGrid
-    newMarkDesigns += [ (nb%(1, iw, 2), desc, hull, 2*[srb%iw] + 2*[ar2] + [""], "", model) for iw in [3, 4] ]  # MD, ZA, NoGrid
-    newMarkDesigns += [ (nb%(1, iw, 3), desc, hull, 2*[srb%iw] + 2*[ar2] + [is1], "", model) for iw in [3, 4] ]  # MD, grid
-    newMarkDesigns += [ (nb%(2, iw, 1), desc, hull, 2*[srb2%iw] + 2*[ar2] + [is1], "", model) for iw in [1, 2, 3, 4] ]  # laser, grid
-    newMarkDesigns += [ (nb%(2, iw, 2), desc, hull, 2*[srb2%iw] + 2*[ar2] + [is2], "", model) for iw in [1, 2, 3, 4] ]  # laser, DS
-    newMarkDesigns += [ (nb%(2, iw, 3), desc, hull, 2*[srb2%iw] + 2*[ar2] + [is4], "", model) for iw in [4] ]  # laser, MS
-    newMarkDesigns += [ (nb%(3, iw, 1), desc, hull, 2*[srb3%iw] + 2*[ar2] + [is2], "", model) for iw in [1, 2, 3, 4] ]  # plasma, DS
-    newMarkDesigns += [ (nb%(3, iw, 2), desc, hull, 2*[srb3%iw] + 2*[ar2] + [is3], "", model) for iw in [1, 2, 3, 4] ]  # plasma, plasma
-    newMarkDesigns += [ (nb%(3, iw, 3), desc, hull, 2*[srb3%iw] + 2*[ar2] + [is4], "", model) for iw in [3, 4] ]  # plasma, MS
-    newMarkDesigns += [ (nb%(4, iw, 1), desc, hull, 2*[srb4%iw] + 2*[ar2] + [is1], "", model) for iw in [1, 2] ]  # DR, Grid
-    newMarkDesigns += [ (nb%(4, iw, 2), desc, hull, 2*[srb4%iw] + 2*[ar2] + [is2], "", model) for iw in [1, 2] ]  # DR, DS
-    newMarkDesigns += [ (nb%(4, iw, 3), desc, hull, 2*[srb4%iw] + 2*[ar2] + [is3], "", model) for iw in [1, 2, 3, 4] ]  # DR, plasma
-    newMarkDesigns += [ (nb%(4, iw, 4), desc, hull, 2*[srb4%iw] + 2*[ar2] + [is4], "", model) for iw in [1, 2, 3, 4] ]  # DR, MS
-    
-    # Asteroids
-    eng_packs = [[if1, if1], [eng1, eng1]]
-    shield_packs = []
-    for isp in [0, 1, 3]:
-        shield_packs.extend([[isList[isp], if1], [isList[isp], eng1]])
-    packs = eng_packs + shield_packs
-    cur_base = design_name_dict["CB"]
-    nb, hull = cur_base + "-%1x-%1x-%1x", "SH_ASTEROID"  #11 = "Comet":"CB"
-    newMarkDesigns += [ (nb%(1, iw, 0), desc, hull, [srb%iw] + 3*[""] + packs[0], "", model) for iw in [2, 3, 4] ]
-    newMarkDesigns += [ (nb%(2, iw, 0), desc, hull, [srb2%iw] + 2*[""] + [ar2] + packs[0], "", model) for iw in [1, 2, 3, 4] ]
-    for ieng in range(4):
-        newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, 2*[srb2%iw] + 2*[ar2] + packs[ieng], "", model) for iw in [1, 2, 3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw, ieng), desc, hull, 3*[srb2%iw] + [ar2] + packs[ieng], "", model) for iw in [3, 4] ]
-    for ieng in [4, 5]:
-        newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 3*[srb2%iw] + [ar2] + packs[ieng], "", model) for iw in [4] ]
-
-    #nb, hull = designNameBases[2]+"-3-%1d", "SH_STATIC_MULTICELLULAR"
-    #newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar1, srb2%iw, srb2%iw, is2, if1], "", model) for iw in [2, 3, 4] ]
-    #nb, hull = designNameBases[2]+"-3z-%1d", "SH_STATIC_MULTICELLULAR"
-    #newMarkDesigns += [ (nb%(iw+4), desc, hull, [ ar2, srb2%iw, srb2%iw, is2, if1], "", model) for iw in [2, 3, 4] ]
-
-    nb_idx = 4
-    cur_base = design_name_dict["D"]
-    nb, hull = cur_base + "-1-%1x", "SH_ENDOMORPHIC"
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[srb2%iw] + [ar1, is2, if1], "", model) for iw in [ 4 ] ]
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw] + [ ar1, is2, if1], "", model) for iw in [ 2 ] ]
-    nb = cur_base + "-1b-%1x"
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[srb2%iw] + [ ar1, is4, if1], "", model) for iw in [ 4 ] ]
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw] + [ ar1, is4, if1], "", model) for iw in [ 2 ] ]
-
-    nb = cur_base + "-2-%1x"
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[srb2%iw]+[ar2] + [ is2, if1], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar2] + [ is2, if1], "", model) for iw in [2, 3, 4] ]
-    nb = cur_base + "2b-%1x"
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar2] + [ is3, if1], "", model) for iw in [3, 4] ]
-    nb = cur_base + "2c-%1x"
-    newMarkDesigns += [ (nb%(iw+4), desc, hull, 3*[srb2%iw]+[ar2] + [ is4, if1], "", model) for iw in [4] ]
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar2] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-
-    nb = cur_base + "-3-%1x"
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar3] + [ is2, if1], "", model) for iw in [2, 3, 4] ]
-    nb = cur_base + "3b-%1x"
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar3] + [ is3, if1], "", model) for iw in [ 3, 4] ]
-    nb = cur_base + "3c-%1x"
-    newMarkDesigns += [ (nb%(iw+8), desc, hull, 3*[srb3%iw]+[ar3] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-
-    nb = cur_base + "-4b-%1x"
-    newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar3] + [ is3, if1], "", model) for iw in [ 2, 3, 4] ]
-    nb = cur_base + "4c-%1x"
-    newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar3] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-
-    if foAI.foAIstate.aggression < fo.aggression.typical:  #won't advance past EM hulls
-        nb = cur_base + "4d-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar4] + [ is3, if1], "", model) for iw in [2, 3, 4] ]
-        nb = cur_base + "4e-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar4] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-        nb = cur_base + "4f-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar5] + [ is3, if1], "", model) for iw in [2, 3, 4] ]
-        nb = cur_base + "4g-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar5] + [ is4, if1], "", model) for iw in [2, 3, 4] ]
-        nb = cur_base + "4h-%1x"
-        newMarkDesigns += [ (nb%(iw+12), desc, hull, 3*[srb4%iw]+[ar5] + [ is5, if1], "", model) for iw in [2, 3, 4] ]
-    else:
-        cur_base = design_name_dict["E"]
-        #nb, hull = designNameBases[nb_idx]+"-%1x-%1x", "SH_ENDOSYMBIOTIC"
-        #newMarkDesigns += [ (nb%(1, iw), desc, hull, 4*[srb%iw] + 3*[ is2], "", model) for iw in range(7, 15) ]
-        #newMarkDesigns += [ (nb%(2, iw), desc, hull, 4*[srb%iw] + 3*[ is3], "", model) for iw in range(7, 15) ]
-
-        #newMarkDesigns += [ (nb%(3, iw), desc, hull, 3*[srb%iw]+[ar2] + 3*[ is2], "", model) for iw in range(7, 14) ]
-        #newMarkDesigns += [ (nb%(4, iw), desc, hull, 3*[srb%iw]+[ar3] + 3*[ is2], "", model) for iw in range(8, 14) ]
-        #newMarkDesigns += [ (nb%(5, iw), desc, hull, 3*[srb%iw]+[ar2] + 3*[ is3], "", model) for iw in range(7, 14) ]
-        #newMarkDesigns += [ (nb%(6, iw), desc, hull, 3*[srb%iw]+[ar3] + 3*[ is3], "", model) for iw in range(8, 14) ]
-
-        nb, hull = cur_base + "-%1x-%1x", "SH_RAVENOUS"
-        for ia in [1, 2, 3]:
-            newMarkDesigns += [ (nb%(1, ia), desc, hull, 2*[arList[ia]] +2*[if1] + 3*[srb2%iw], "", model) for iw in range(4, 5) ]
-        for ia in [1, 2, 3]:
-            newMarkDesigns += [ (nb%(ia+1, iw), desc, hull, 2*[arList[ia]] +2*[if1] + 3*[srb3%iw], "", model) for iw in range(2, 5) ]
-        for ia in [1, 2, 3]:
-            newMarkDesigns += [ (nb%(ia+4, iw), desc, hull, 2*[arList[ia]] +2*[if1] + 3*[srb4%iw], "", model) for iw in range(1, 5) ]
-        
-        nb, hull = cur_base + "-%1xb-%1x", "SH_BIOADAPTIVE"
-        newMarkDesigns += [ (nb%(1, iw) ,  desc, hull, 2*[srb3%iw]+[ar4] + [ is3, if1, if1], "", model) for iw in [4] ]
-        newMarkDesigns += [ (nb%(1, iw+4), desc, hull, 2*[srb4%iw]+[ar4] + [ is3, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw) ,  desc, hull, 2*[srb3%iw]+[ar4] + [ is4, if1, if1], "", model) for iw in [4] ]
-        newMarkDesigns += [ (nb%(2, iw+4), desc, hull, 2*[srb4%iw]+[ar4] + [ is4, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw+8), desc, hull, 2*[srb4%iw]+[ar4] + [ is5, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(3, iw) ,  desc, hull, 2*[srb3%iw]+[ar5] + [ is3, if1, if1], "", model) for iw in [4] ]
-        newMarkDesigns += [ (nb%(3, iw+4), desc, hull, 2*[srb4%iw]+[ar5] + [ is3, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw) ,  desc, hull, 2*[srb3%iw]+[ar5] + [ is4, if1, if1], "", model) for iw in [4] ]
-        newMarkDesigns += [ (nb%(4, iw+4), desc, hull, 2*[srb4%iw]+[ar5] + [ is4, if1, if1], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(4, iw+8), desc, hull, 2*[srb4%iw]+[ar5] + [ is5, if1, if1], "", model) for iw in [2, 3, 4] ]
-
-        cur_base = design_name_dict["EA"]
-        # Heavy Asteroids
-        eng_packs = [[if1, if1, if1], [if2, eng1, eng1], [if2, eng2, eng2]]
-        shield_packs = []
-        for isp in [0, 1, 2, 3]:
-            shield_packs.extend([[isList[isp], if1, if1], [isList[isp], eng1, eng1], [isList[isp], eng2, eng2]])
-        packs = eng_packs + shield_packs
-        black_packs = [[if2, if2, if2], [if2, eng1, eng1], [if2, eng2, eng2]]
-        
-        # MD and Laser weaps
-        nb, hull = cur_base + "-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        # - no armor
-        newMarkDesigns += [ (nb%(1, iw, 0), desc, hull, [srb%iw] + 5*[""] + eng_packs[0], "", model) for iw in [2, 3, 4] ]
-        newMarkDesigns += [ (nb%(2, iw, 0), desc, hull, [srb2%iw] + 5*[""] + eng_packs[0], "", model) for iw in [1, 2, 3, 4] ]
-        # - zort armor 
-        for ieng in [0, 1, 2]:
-            newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, [srb%iw] + 3*[""] + 2*[ar2] + eng_packs[ieng], "", model) for iw in [3, 4] ]
-            newMarkDesigns += [ (nb%(4, 4, ieng), desc, hull, 3*[srb%4] + 3*[ar2] + eng_packs[ieng], "", model) ]
-            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, [srb2%iw] + 3*[""] + 2*[ar2] + eng_packs[ieng], "", model) for iw in [1, 2, 3, 4] ]
-            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 3*[srb2%iw] + 3*[ar2] + eng_packs[ieng], "", model) for iw in [3, 4] ]
-        # - shields
-        newMarkDesigns += [ (nb%(7, 4, isp), desc, hull, 3*[srb2%4] + 3*[ar2] + shield_packs[isp], "", model) for isp in range(len(shield_packs)) ]
-        
-        #TODO: add support for ast reformation construction so AI can really have rock
-        
-        cur_base = design_name_dict["EB"]
-        # Heavy Asteroids
-        # DR1 (in case of early gift from Ruins)
-        nb, hull = cur_base + "-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        newMarkDesigns += [ (nb%(1, 1, 0), desc, hull, [srb4%1] + 4*[""] + [ar2] + packs[0], "", model) ]
-        newMarkDesigns += [ (nb%(1, 2, 0), desc, hull, [srb4%1] + 5*[ar2] + packs[0], "", model) ]
-        newMarkDesigns += [ (nb%(2, 1, ieng), desc, hull, 2*[srb4%1] + 4*[ar2] + packs[ieng], "", model) for ieng in range(1, 6) ]
-        newMarkDesigns += [ (nb%(3, 1, ieng), desc, hull, 2*[srb4%1] + 4*[ar3] + packs[ieng], "", model) for ieng in range(1, 6) ]
-        newMarkDesigns += [ (nb%(3, 2, ieng), desc, hull, 3*[srb4%1] + 3*[ar3] + packs[ieng], "", model) for ieng in range(1, 6) ]
-        newMarkDesigns += [ (nb%(4, 1, ieng), desc, hull, 3*[srb4%1] + 3*[ar2] + packs[ieng], "", model) for ieng in range(7, 12) ]
-        newMarkDesigns += [ (nb%(4, 2, ieng), desc, hull, 3*[srb4%1] + 3*[ar3] + packs[ieng], "", model) for ieng in range(7, 12) ]
-        # Plasma weaps
-        for iw in [3, 4]:
-            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar2] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar3] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(7, iw, ieng), desc, hull, 3*[srb3%iw] + 3*[ar3] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
-        
-        cur_base = design_name_dict["EC"]
-        # Heavy Asteroids
-        # DR2-4 weaps
-        nb, hull = cur_base + "-%1x-%1x-%1x", "SH_HEAVY_ASTEROID"  #5, 6, 7 = "Atlas":"FA", "Pele":"FB", "Xena":"FC"
-        for iw in [2, 3, 4]:
-            newMarkDesigns += [ (nb%(1, iw, ieng), desc, hull, 3*[srb4%iw] + 3*[ar2] + packs[ieng], "", model) for ieng in range(12) ]
-            newMarkDesigns += [ (nb%(2, iw, ieng), desc, hull, 3*[srb4%iw] + 3*[ar3] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(3, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar4] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(4, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar5] + packs[ieng], "", model) for ieng in range(len(packs)) ]
-            newMarkDesigns += [ (nb%(5, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar4] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
-            newMarkDesigns += [ (nb%(6, iw, ieng), desc, hull, 4*[srb4%iw] + 2*[ar5] + black_packs[ieng], "", model) for ieng in [0, 1, 2] ]
-
-        if False and foAI.foAIstate.aggression >fo.aggression.typical:
-            hull = "SH_SENTIENT"
-            cur_base = design_name_dict["F"]
-            for cld in [1, 2, 3]:
-                nb = cur_base + "-%%1xa%1d-%%1x"%cld
-                this_cloak = [ "if1", clk%cld ][ cld > 1 ] # fuel or a cloak
-                for isd in [3, 4, 5]:
-                    newMarkDesigns += [ (nb%(isd-2, 0), desc, hull, 4*[srb4%iw]+2*[ar4] + [ isList[isd], if1, this_cloak], "", model) for iw in [1] ]
-                    newMarkDesigns += [ (nb%(isd-2, 1), desc, hull, 4*[srb3%iw]+2*[ar4] + [ isList[isd], if1, this_cloak], "", model) for iw in [3, 4] ]
-                    newMarkDesigns += [ (nb%(isd-2, iw), desc, hull, 4*[srb4%iw]+2*[ar4] + [ isList[isd], if1, this_cloak], "", model) for iw in [2, 3, 4] ]
-
-                nb = cur_base + "-%%1xb%1d-%%1x"%cld
-                for isd in [3, 4, 5]:
-                    newMarkDesigns += [ (nb%(isd-2, 0), desc, hull, 4*[srb4%iw]+2*[ar5] + [ isList[isd], if1, this_cloak], "", model) for iw in [1] ]
-                    newMarkDesigns += [ (nb%(isd-2, 1), desc, hull, 4*[srb3%iw]+2*[ar5] + [ isList[isd], if1, this_cloak], "", model) for iw in [4] ]
-                    newMarkDesigns += [ (nb%(isd-2, iw), desc, hull, 4*[srb4%iw]+2*[ar5] + [ isList[isd], if1, this_cloak], "", model) for iw in [2, 3, 4] ]
-
-
-        if foAI.foAIstate.aggression >fo.aggression.typical:
-            cur_base = design_name_dict["G"]
-            nb, hull = cur_base + "-%1x-%02x", "SH_FRACTAL_ENERGY"
-            for ia in [3, 4, 5]:
-                newMarkDesigns += [ (nb%(ia-2, iw), desc, hull, 10*[srb3%iw] + 4*[arList[ia]] , "", model) for iw in range(2, 5) ]
-            for ia in [3, 4, 5]:
-                newMarkDesigns += [ (nb%(ia+1, iw), desc, hull, 10*[srb4%iw] + 4*[arList[ia]] , "", model) for iw in range(1, 5) ]
-            
-
-    addDesigns(shipType, newMarkDesigns, shipProdPriority)
-    #TODO: add more advanced designs
-
-
-def addOutpostDesigns():
-    shipType, shipProdPriority = "Outpost Ships", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST
-    designNameBases = [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x: x[1])]
-    newOutpostDesigns = []
-    desc = "Outpost Ship"
-    srb = "SR_WEAPON_1_%1d"
-    model = "seed"
-    nb, hull = designNameBases[1]+"%1d_%1d", "SH_ORGANIC"
-    op = "CO_OUTPOST_POD"
-    db = "DT_DETECTOR_%1d"
-    # is1, is2 = "FU_BASIC_TANK", "ST_CLOAK_1"
-    for p_id in [1, 2]:
-        newOutpostDesigns += [ (nb%(p_id, iw), desc, hull, [ srb%iw, db%p_id, "", op], "", model) for iw in [2, 3, 4] ]
-    addDesigns(shipType, newOutpostDesigns, shipProdPriority)
-
-
-def addColonyDesigns():
-    shipType, shipProdPriority = "Colony Ships", EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION
-    designNameBases= [key for key, val in sorted( shipTypeMap.get(shipProdPriority, {"nomatch":0}).items(), key=lambda x:x[1])]
-    newColonyDesigns = []
-    desc, model = "Colony Ship", "seed"
-    srb = "SR_WEAPON_1_%1d"
-    nb, hull = designNameBases[1]+"%1d_%1d", "SH_ORGANIC"
-    cp, cp2 = "CO_COLONY_POD", "CO_SUSPEND_ANIM_POD"
-    db = "DT_DETECTOR_%1d"
-    # is1, is2 = "FU_BASIC_TANK", "ST_CLOAK_1"
-    ar1, ar2, ar3, ar4, ar5 = "AR_STD_PLATE", "AR_ZORTRIUM_PLATE", "AR_DIAMOND_PLATE", "AR_XENTRONIUM_PLATE", "AR_NEUTRONIUM_PLATE"
-    for p_id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(p_id, iw)+"S", desc, hull, [ srb%iw, ar1, db%p_id, cp], "", model) for iw in [1, 2, 3, 4] ]
-        newColonyDesigns += [ (nb%(p_id, iw)+"Z", desc, hull, [ srb%iw, ar2, db%p_id, cp], "", model) for iw in [1, 2, 3, 4] ]
-
-    nb = designNameBases[2]+"%1d_%1dZ"
-    for p_id in [1, 2, 3]:
-        newColonyDesigns += [ (nb%(p_id, iw), desc, hull, [ srb%iw, db%p_id, ar2, cp2], "", model) for iw in [3.4] ]
-    addDesigns(shipType, newColonyDesigns, shipProdPriority)
+        return []
 
 
 def generateProductionOrders():
@@ -776,16 +224,6 @@ def generateProductionOrders():
             tSys = universe.getSystem(sysID)
             if not tSys: continue
             claimedStars.setdefault( tSys.starType, []).append(sysID)
-
-    if empire.empireID%2 == 0:  # let half of the AIs use the new framework
-        find_best_designs_this_turn()
-        addScoutDesigns()
-    else:
-        for add_function in (addScoutDesigns, addTroopDesigns, addMarkDesigns, addColonyDesigns, addOutpostDesigns):
-            try:
-                add_function()
-            except Exception as e:
-                print_error(e, trace=True)
 
     if (currentTurn in [1, 4]) and ((productionQueue.totalSpent < totalPP) or (len(productionQueue) <=3)):
         bestDesignID, bestDesign, buildChoices = getBestShipInfo(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION)
@@ -1810,7 +1248,7 @@ def generateProductionOrders():
         print "\t%s\t%.2f"%( ppstring(PlanetUtilsAI.sys_name_ids(set(PlanetUtilsAI.get_systems( pSet)))), allocatedPP[pSet])
 
     if False: #log ship design assessment
-        getBestShipRatings( list(AIstate.popCtrIDs), verbose = True)
+        getBestShipRatings( list(AIstate.popCtrIDs))
     print "\n\nBuilding Ships in system groups with remaining PP:"
     for pSet in planetsWithWastedPP:
         totalPP = availablePP.get(pSet, 0)
@@ -1832,7 +1270,7 @@ def generateProductionOrders():
         localPriorities = {}
         localPriorities.update( filteredPriorities )
         bestShips={}
-        milBuildChoices = getBestShipRatings(list(pSet), verbose = False)
+        milBuildChoices = getBestShipRatings(list(pSet))
         for priority in list(localPriorities):
             if priority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
                 if not milBuildChoices:
