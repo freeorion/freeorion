@@ -67,7 +67,9 @@ def get_design_cost(design, pid):  # TODO: Use new framework
     """Find and return the design_cost of the specified design on the specified planet.
 
     :param design:
-    :param pid: int: planet id
+    :type design: fo.shipDesign
+    :param pid: planet id
+    :type pid: int
     :return: cost of the design
     """
     cur_turn = fo.currentTurn()
@@ -108,7 +110,7 @@ def cur_best_military_design_rating():
         return 0.001
 
 
-def getBestShipInfo(priority,loc=None):
+def getBestShipInfo(priority, loc=None):
     """ Returns 3 item tuple: designID, design, buildLocList."""
     if loc is None:
         planet_ids = ColonisationAI.empire_shipyards
@@ -143,13 +145,13 @@ def getBestShipRatings(loc=None):
     # distribute the construction across the Resource Group and across similarly rated designs, preferentially choosing
     # the best rated design/loc combo, but if there are multiple design/loc combos with the same or similar ratings then
     # we want some chance of choosing  those alternate designs/locations.
-
-    # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistic mechanics type
-    # partition function.  'tally' will compute the normalization constant.
-    # so first go through and calculate the tally as well as convert each individual contribution to
+    #
+    # The approach to this taken below is to treat the ratings akin to an energy to be used in a statistical mechanics
+    # type partition function. 'tally' will compute the normalization constant.
+    # So first go through and calculate the tally as well as convert each individual contribution to
     # the running total up to that point, to facilitate later sampling.  Then those running totals are
     # renormalized by the final tally, so that a later random number selector in the range [0,1) can be
-    # used to select the chosen design/loc
+    # used to select the chosen design/loc.
     priority = EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY
     if loc is None:
         planet_ids = ColonisationAI.empire_shipyards
