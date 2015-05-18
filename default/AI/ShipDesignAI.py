@@ -377,7 +377,7 @@ class ShipDesignCache(object):
                                 b = new_part
                             if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name]
                                     and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}
-                                    and self.production_time[pid][a.name] <= self.production_cost[pid][b.name]):
+                                    and self.production_time[pid][a.name] <= self.production_time[pid][b.name]):
                                 self.strictly_worse_parts[a.name].append(b.name)
                                 print "Part %s is strictly worse than part %s" % (b.name, a.name)
                     break
