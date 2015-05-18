@@ -170,38 +170,53 @@ def assess_protection_focus(pid):
     max_defense = this_planet.currentMeterValue(fo.meterType.maxDefense)
     def_meter_pairs = [(cur_troops, max_troops), (cur_shield, max_shield), (cur_defense, max_defense)]
     use_protection = True
+    reason = ""
     if (fleet_threat and  # i.e., an enemy is sitting on us
               (currentFocus[pid] != PFocus or  # too late to start protection TODO: but maybe regen worth it
               # protection forcus only useful here if it maintains an elevated level
-              all([AIDependencies.PROT_FOCUS_MULTIPLIER * a < b for a,b in def_meter_pairs]))):
+              all([AIDependencies.PROT_FOCUS_MULTIPLIER * a <= b for a,b in def_meter_pairs]))):
         use_protection = False
-    elif ((cur_shield < max_shield - 2 and not tech_is_complete(AIDependencies.PLANET_BARRIER_I_TECH)) and
-            (cur_defense < max_defense - 2 and not tech_is_complete(AIDependencies.DEFENSE_REGEN_1_TECH)) and
-            (cur_troops < max_troops - 2)):
+        reason = "A"
+    elif ((currentFocus[pid] != PFocus and cur_shield < max_shield - 2 and
+               not tech_is_complete(AIDependencies.PLANET_BARRIER_I_TECH)) and
+              (cur_defense < max_defense - 2 and not tech_is_complete(AIDependencies.DEFENSE_REGEN_1_TECH)) and
+              (cur_troops < max_troops - 2)):
         use_protection = False
+        reason = "B1"
+    elif ((currentFocus[pid] == PFocus and cur_shield*AIDependencies.PROT_FOCUS_MULTIPLIER < max_shield-2 and
+               not tech_is_complete(AIDependencies.PLANET_BARRIER_I_TECH)) and
+              (cur_defense*AIDependencies.PROT_FOCUS_MULTIPLIER < max_defense-2 and
+                   not tech_is_complete(AIDependencies.DEFENSE_REGEN_1_TECH)) and
+              (cur_troops*AIDependencies.PROT_FOCUS_MULTIPLIER < max_troops-2)):
+        use_protection = False
+        reason = "B2"
     elif max(max_shield, max_troops, max_defense) < 3:  # joke defenses, don't bother with protection focus
         use_protection = False
+        reason = "C"
     elif regional_threat and local_production_diff <= 2.0:
+        reason = "D"
         pass  # i.e., use_protection = True
     elif safety_factor * regional_threat <= local_fleet_rating:
         use_protection = False
+        reason = "E"
     elif (safety_factor * regional_threat <= combined_local_defenses and
               (currentFocus[pid] != PFocus or
               (0.5 * safety_factor * regional_threat <= local_fleet_rating and
                    fleet_threat == 0 and neighbor_threat < combined_local_defenses and
                    local_production_diff > 5))):
         use_protection = False
+        reason = "F"
     elif (regional_threat <= FleetUtilsAI.combine_ratings(local_fleet_rating, adjusted_p_defenses) and
               safety_factor * regional_threat <=
               FleetUtilsAI.combine_ratings_list([my_neighbor_rating, local_fleet_rating, adjusted_p_defenses])  and
               local_production_diff > 5):
         use_protection = False
+        reason = "G"
     if use_protection or currentFocus[pid] == PFocus:
-        advisory_str = "Advising %sProtection Focus" % ["dropping ", ""][use_protection]
-        advisory_str += (" for planet %s, with local_prod_diff of %.1f, comb. local defenses %.1f"
-                         + ", local fleet rating %.1f and regional threat %.1f, threat sources: %s")
-        print advisory_str % (this_planet, local_production_diff, combined_local_defenses,
-                              local_fleet_rating, regional_threat, sys_status['regional_fleet_threats'])
+        print ("Advising %sProtection Focus (reason %s) for planet %s, with local_prod_diff of %.1f, comb. local"
+               " defenses %.1f, local fleet rating %.1f and regional threat %.1f, threat sources: %s") % (
+            ["dropping ", ""][use_protection], reason, this_planet, local_production_diff, combined_local_defenses,
+            local_fleet_rating, regional_threat, sys_status['regional_fleet_threats'])
     return use_protection
 
 def set_planet_resource_foci():
@@ -309,8 +324,12 @@ def set_planet_resource_foci():
                     if pid in empirePlanetIDs:
                         del empirePlanetIDs[empirePlanetIDs.index(pid)]
                     continue
-            # TODO: Was getting a key error mid-game without the below check for "pid in currentOutput" -- needs further investigation
-            if pid in currentOutput and PFocus in planet.availableFoci and assess_protection_focus(pid):
+        # pp, rp = get_resource_target_totals(empirePlanetIDs, planetMap)
+        pp, rp = get_resource_target_totals(planetMap.keys())
+
+        for pid in empirePlanetIDs:
+            planet = planetMap[pid]
+            if PFocus in planet.availableFoci and assess_protection_focus(pid):
                 curFocus = planet.focus
                 newFoci[pid] = PFocus
                 result = 0
@@ -318,21 +337,18 @@ def set_planet_resource_foci():
                     result = fo.issueChangeFocusOrder(pid, PFocus)
                     if result == 1:
                         print ("Tried setting %s for planet %s (%d) with species %s and current focus %s, got result %d and focus %s" %
-                               (newFoci[pid], planet.name, pid, planet.speciesName, curFocus, result, planetMap[pid].focus))
+                               (newFoci[pid], planet.name, pid, planet.speciesName, curFocus, result, planet.focus))
                         universe.updateMeterEstimates(empirePlanetIDs)
-                    if (result != 1) or planetMap[pid].focus != PFocus:
+                    if (result != 1) or planet.focus != PFocus:
                         newplanet = universe.getPlanet(pid)
                         print ("Error: Failed setting %s for planet %s (%d) with species %s and current focus %s, but new planet copy shows %s" %
-                               (newFoci[pid], planetMap[pid].name, pid, planetMap[pid].speciesName, planetMap[pid].focus, newplanet.focus))
+                               (newFoci[pid], planet.name, pid, planet.speciesName, planet.focus, newplanet.focus))
                 if curFocus == PFocus or result == 1:
-                    print "%s focus of planet %s (%d) at Protection(Defense) Focus" % (["set", "left"][curFocus == PFocus], planetMap[pid].name, pid)
+                    print "%s focus of planet %s (%d) at Protection(Defense) Focus" % (["set", "left"][curFocus == PFocus], planet.name, pid)
                     if pid in empirePlanetIDs:
                         del empirePlanetIDs[empirePlanetIDs.index(pid)]
                     continue
 
-
-        # pp, rp = get_resource_target_totals(empirePlanetIDs, planetMap)
-        pp, rp = get_resource_target_totals(planetMap.keys())
         print "\n-----------------------------------------"
         print "Making Planet Focus Change Determinations\n"
 
