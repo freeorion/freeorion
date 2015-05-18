@@ -313,8 +313,10 @@ class ShipDesignCache(object):
     def _update_buildable_items_this_turn(self, verbose=False):
         """Calculate which parts and hulls can be built on each planet this turn.
 
-        :param verbose: bool - toggles detailed debugging output.
+        :param verbose: toggles detailed debugging output.
+        :type verbose: bool
         """
+        # TODO: Refactor this function
         # The AI currently has no way of checking building requirements of individual parts and hulls directly.
         # It can only check if we can build a design. Therefore, we use specific testdesigns to check if we can
         # build a hull or part.
@@ -646,7 +648,7 @@ class ShipDesigner(object):
         if self.speed < self.additional_specifications.minimum_speed:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_speed - self.speed)
         if self.structure < self.additional_specifications.minimum_structure:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_structure-self.structure)
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_structure - self.structure)
         if rating < 0:
             return rating
         else:
@@ -679,20 +681,24 @@ class ShipDesigner(object):
     def update_hull(self, hullname):
         """Set hull of the design.
 
-        :param hullname: string - name of hull"""
+        :param hullname:
+        :type hullname: str
+        """
         self.hull = fo.getHullType(hullname)
 
     def update_parts(self, partname_list):
         """Set both partnames and parts attributes.
 
-        :param partname_list: list of strings (partnames)"""
+        :param partname_list: contains partnames as strings
+        :type partname_list: list"""
         self.partnames = partname_list
         self.parts = [_get_part_type(part) for part in partname_list if part]
 
     def update_species(self, speciesname):
         """Set the piloting species.
 
-        :param speciesname: string - name of species
+        :param speciesname:
+        :type speciesname: str
         """
         self.species = speciesname
 
@@ -701,7 +707,8 @@ class ShipDesigner(object):
 
         Default stats if no hull in design.
 
-        :param ignore_species: bool, toggles whether species piloting grades are considered in the stats.
+        :param ignore_species: toggles whether species piloting grades are considered in the stats.
+        :type ignore_species: bool
         """
         if not self.hull:
             print "WARNING: Tried to update stats of design without hull. Reset values to default."
@@ -780,7 +787,8 @@ class ShipDesigner(object):
     def add_design(self, verbose=False):
         """Add a real (i.e. gameobject) ship design of the current configuration.
 
-        :param verbose: bool - toggles detailed debugging output
+        :param verbose: toggles detailed debugging output
+        :type verbose: bool
         """
         # First build a name. We want to have a safe way to reference the design
         # And to find out whether it is a duplicate of an existing one.
@@ -834,7 +842,8 @@ class ShipDesigner(object):
 
         :return: list of (rating,planet_id,design_id,cost) tuples, i.e. best available design for each planet
         :param loc: int or list of ints (optional) - planet ids where the designs are to be built. Default: All planets.
-        :param verbose: bool - Toggles detailed logging for debugging.
+        :param verbose: Toggles detailed logging for debugging.
+        :type verbose: bool
         """
         if loc is None:
             planets = _get_planets_with_shipyard()
@@ -934,6 +943,8 @@ class ShipDesigner(object):
         WARNING: The dict passed as parameter is modified inside this function and entries are removed!
 
         :param partname_dict: keys: slottype, values: list of partnames. MODIFIED INSIDE THIS FUNCTION!
+        :param verbose: toggles verbose logging
+        :type verbose: bool
         """
         if verbose:
             print "Available parts:"
