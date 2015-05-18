@@ -252,6 +252,7 @@ def get_demand_types():
 
 
 class AIFocusType(object):
+    FOCUS_PROTECTION = "FOCUS_PROTECTION"
     FOCUS_GROWTH = "FOCUS_GROWTH"
     FOCUS_INDUSTRY = "FOCUS_INDUSTRY"
     FOCUS_RESEARCH = "FOCUS_RESEARCH"

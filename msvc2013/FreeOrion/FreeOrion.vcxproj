@@ -177,7 +177,6 @@
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\util\blocking_combiner.h" />
     <ClInclude Include="..\..\universe\Meter.h" />
-    <ClInclude Include="..\..\universe\Names.h" />
     <ClInclude Include="..\..\universe\ObjectMap.h" />
     <ClInclude Include="..\..\universe\Planet.h" />
     <ClInclude Include="..\..\universe\PopCenter.h" />

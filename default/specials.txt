@@ -10,6 +10,7 @@ Special
         Planet
         Unowned
         Species
+        Not HasTag name = "PRIMITIVE"
         Not HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [
@@ -40,6 +41,7 @@ Special
         Planet
         Unowned
         Species
+        Not HasTag name = "PRIMITIVE"
         Not HasSpecial name = "MODERATE_TECH_NATIVES_SPECIAL"
     ]
     effectsgroups = [

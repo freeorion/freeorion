@@ -112,12 +112,12 @@ namespace {
             initialize_numeric_statistic_parser<int>(statistic, statistic_1, statistic_2,
                                                      statistic_sub_value_ref);
 
-            initialize_expression_parsers<int>(function_expr,
-                                               exponential_expr,
-                                               multiplicative_expr,
-                                               additive_expr,
-                                               expr,
-                                               primary_expr);
+            initialize_numeric_expression_parsers<int>(function_expr,
+                                                       exponential_expr,
+                                                       multiplicative_expr,
+                                                       additive_expr,
+                                                       expr,
+                                                       primary_expr);
 
             primary_expr
                 =   '(' >> expr >> ')'

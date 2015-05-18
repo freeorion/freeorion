@@ -50,7 +50,7 @@ namespace {
             else
                 nameText = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_REPETITIONS")) % quantity);
             //nameText += GetShipDesign(designID)->Name();
-            CUILabel* text = new CUILabel(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
+            GG::Label* text = new CUILabel(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
             text->SetTextColor(txtClr);
             text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3))); //
             AttachChild(text);
@@ -223,10 +223,10 @@ namespace {
         void Draw(GG::Clr clr, bool fill);
 
         const ProductionQueue::Element  m_build;
-        CUILabel*                       m_name_text;
+        GG::Label*                      m_name_text;
         GG::Control*                    m_location_text;
-        CUILabel*                       m_PPs_and_turns_text;
-        CUILabel*                       m_turns_remaining_until_next_complete_text;
+        GG::Label*                      m_PPs_and_turns_text;
+        GG::Label*                      m_turns_remaining_until_next_complete_text;
         GG::StaticGraphic*              m_icon;
         MultiTurnProgressBar*           m_progress_bar;
         QuantitySelector*               m_quantity_selector;
@@ -475,7 +475,7 @@ namespace {
         if (this_client_empire && system_selected) {
             m_location_text = new ShadowedTextControl(location_text, ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
-            CUILabel* l_location_text = new CUILabel(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            GG::Label* l_location_text = new CUILabel(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
             l_location_text->SetTextColor(location_clr);
             m_location_text = l_location_text;
         }

@@ -95,6 +95,7 @@
     (Effects)                                   \
     (EffectsGroup)                              \
     (EffectsGroups)                             \
+    (Else)                                      \
     (Empire)                                    \
     (EmpireMeter)                               \
     (EmpireShipsDestroyed)                      \

@@ -2,7 +2,6 @@
 
 #include "CUIControls.h"
 #include "ClientUI.h"
-#include "CUISpin.h"
 #include "CUIWnd.h"
 #include "SidePanel.h"
 #include "TechTreeWnd.h"
@@ -11,6 +10,7 @@
 #include "IconTextBrowseWnd.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/OptionsDB.h"
 #include "../util/ScopedTimer.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
@@ -155,10 +155,10 @@ namespace {
         int                                     m_location_id;
 
         GG::StaticGraphic* m_icon;
-        CUILabel*          m_name;
-        CUILabel*          m_cost;
-        CUILabel*          m_time;
-        CUILabel*          m_desc;
+        GG::Label*         m_name;
+        GG::Label*         m_cost;
+        GG::Label*         m_time;
+        GG::Label*         m_desc;
     };
 
     TemporaryPtr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
@@ -531,8 +531,7 @@ void BuildDesignatorWnd::BuildSelector::DoLayout() {
 void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
-    // maybe later do something interesting with docking
-    GG::Wnd::SizeMove(ul, lr);
+    CUIWnd::SizeMove(ul, lr);
 
     if (Visible() && old_size != GG::Wnd::Size())
         DoLayout();

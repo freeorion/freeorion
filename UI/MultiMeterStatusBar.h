@@ -2,13 +2,11 @@
 #ifndef _MultiMeterStatusBar_h_
 #define _MultiMeterStatusBar_h_
 
+#include <GG/GGFwd.h>
 #include <GG/Wnd.h>
 
 #include "../universe/Enums.h"
 
-namespace GG {
-    class Texture;
-}
 
 /** Graphically represets current value and projected changes to single meters
   * or pairs of meters, using horizontal indicators. */

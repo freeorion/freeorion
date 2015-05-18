@@ -38,6 +38,7 @@ using boost::python::import;
 using boost::python::error_already_set;
 using boost::python::exec;
 using boost::python::dict;
+using boost::python::list;
 using boost::python::extract;
 
 
@@ -76,6 +77,15 @@ namespace {
             parts.push_back(boost::python::extract<std::string>(partsList[i]));
         int result = AIInterface::IssueCreateShipDesignOrder(name, description, hull, parts, icon, model, nameDescInStringTable);
         return result;
+    }
+
+    boost::python::list GetUserStringList(const std::string& list_key) {
+        std::list<std::string> retval;
+        UserStringList(list_key, retval);
+        boost::python::list ret_list;
+        for (std::list< std::string >::iterator it = retval.begin(); it != retval.end(); it++)
+            ret_list.append(*it);
+        return ret_list;
     }
 }
 
@@ -162,7 +172,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("getSaveStateString",       GetStaticSaveStateString,       return_value_policy<copy_const_reference>());
 
     def("doneTurn",                 AIInterface::DoneTurn);
-    def("userString",               make_function(&UserString,      return_value_policy<copy_const_reference>()));
+    def("userString",               make_function(&UserString,          return_value_policy<copy_const_reference>()));
+    def("userStringExists",         make_function(&UserStringExists,    return_value_policy<return_by_value>()));
+    def("userStringList",           &GetUserStringList);
 
     def("getGalaxySetupData",       AIInterface::GetGalaxySetupData,    return_value_policy<copy_const_reference>());
 

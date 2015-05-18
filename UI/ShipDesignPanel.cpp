@@ -1,6 +1,10 @@
 #include "ShipDesignPanel.h"
 
+#include <GG/StaticGraphic.h>
+
 #include "../universe/ShipDesign.h"
+#include "ClientUI.h"
+#include "CUIControls.h"
 
 ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),

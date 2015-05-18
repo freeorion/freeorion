@@ -54,6 +54,7 @@ namespace Effect {
     class SetAggression;
     class SetOverlayTexture;
     class SetTexture;
+    class Conditional;
 }
 namespace ValueRef {
     template <class T>
@@ -981,6 +982,31 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Executes a set of effects if an execution-time condition is met, or an
+  * alterative set of effects if the condition is not met. */
+class FO_COMMON_API Effect::Conditional : public Effect::EffectBase {
+public:
+    Conditional(Condition::ConditionBase* target_condition,
+                const std::vector<EffectBase*>& true_effects,
+                const std::vector<EffectBase*>& false_effects);
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+    virtual void        SetTopLevelContent(const std::string& content_name);
+
+private:
+    Condition::ConditionBase*   m_target_condition; // condition to apply to each target object to determine which effects to execute
+    std::vector<EffectBase*>    m_true_effects;     // effects to execute if m_target_condition matches target object
+    std::vector<EffectBase*>    m_false_effects;    // effects to execute if m_target_condition does not match target object
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
 // template implementations
 template <class Archive>
 void Effect::EffectsGroup::serialize(Archive& ar, const unsigned int version)
@@ -1248,5 +1274,13 @@ void Effect::SetTexture::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_texture);
 }
 
+template <class Archive>
+void Effect::Conditional::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_target_condition)
+        & BOOST_SERIALIZATION_NVP(m_true_effects)
+        & BOOST_SERIALIZATION_NVP(m_false_effects);
+}
 
 #endif // _Effect_h_

@@ -375,16 +375,16 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         }
         }
 
-        CUILabel* label = new CUILabel(text, GG::FORMAT_RIGHT);
+        GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
         AttachChild(label);
 
-        CUILabel* value = new CUILabel(ColouredNumber(info_it->meter_change));
+        GG::Label* value = new CUILabel(ColouredNumber(info_it->meter_change));
         value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
         value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
         AttachChild(value);
-        m_effect_labels_and_values.push_back(std::pair<CUILabel*, CUILabel*>(label, value));
+        m_effect_labels_and_values.push_back(std::make_pair(label, value));
 
         top += m_row_height;
     }

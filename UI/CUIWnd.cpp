@@ -160,7 +160,6 @@ CUIWnd::~CUIWnd()
 
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
-    // Call to position the buttons
     PositionButtons();
 }
 

@@ -320,6 +320,7 @@
 		82E5716115F63D8000BD29C8 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
 		82E68F63190ECB8400BB1AD9 /* EnumText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E68F5F190ECB8400BB1AD9 /* EnumText.cpp */; };
 		82E68F64190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */; };
+		82E944E91B04C726004F3343 /* EffectParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E944E81B04C726004F3343 /* EffectParser5.cpp */; };
 		82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		82E9DDF119530E5D007E681B /* CombatEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E9DDED19530E5D007E681B /* CombatEvent.cpp */; };
 		82E9DDF219530E5D007E681B /* CombatEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E9DDEF19530E5D007E681B /* CombatEvents.cpp */; };
@@ -1069,6 +1070,7 @@
 		82E68F60190ECB8400BB1AD9 /* EnumText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumText.h; sourceTree = "<group>"; };
 		82E68F61190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SaveGamePreviewUtils.cpp; sourceTree = "<group>"; };
 		82E68F62190ECB8400BB1AD9 /* SaveGamePreviewUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaveGamePreviewUtils.h; sourceTree = "<group>"; };
+		82E944E81B04C726004F3343 /* EffectParser5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser5.cpp; sourceTree = "<group>"; };
 		82E9DDED19530E5D007E681B /* CombatEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatEvent.cpp; sourceTree = "<group>"; };
 		82E9DDEE19530E5D007E681B /* CombatEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEvent.h; sourceTree = "<group>"; };
 		82E9DDEF19530E5D007E681B /* CombatEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatEvents.cpp; sourceTree = "<group>"; };
@@ -1957,6 +1959,7 @@
 				8201E5F315E2C0770037D453 /* EffectParser2.cpp */,
 				822B16B51642A6F8000ADE58 /* EffectParser3.cpp */,
 				822B16B61642A6F8000ADE58 /* EffectParser4.cpp */,
+				82E944E81B04C726004F3343 /* EffectParser5.cpp */,
 				8201E5F415E2C0770037D453 /* EffectParserImpl.h */,
 				829E16B01811181F00F7F52D /* EmpireStatsParser.cpp */,
 				82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */,
@@ -2547,6 +2550,7 @@
 				3A7604B11749A15500363653 /* ConditionParser2.cpp in Sources */,
 				3A7604B21749A15500363653 /* ConditionParser3.cpp in Sources */,
 				3A7604B31749A15500363653 /* ConditionParser4.cpp in Sources */,
+				82E944E91B04C726004F3343 /* EffectParser5.cpp in Sources */,
 				3A76044E17499F1500363653 /* Double.cpp in Sources */,
 				3A7604AE1749A14600363653 /* DoubleValueRefParser.cpp in Sources */,
 				3A7604A91749A13400363653 /* EffectParser.cpp in Sources */,

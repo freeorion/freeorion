@@ -93,7 +93,9 @@ def compile_home_system_list(num_home_systems, systems):
 
     # calculate an initial minimal number of jumps that the home systems should be apart,
     # based on the total number of systems to choose from and the requested number of home systems
-    min_jumps = max(int(float(len(systems)) / float(num_home_systems * 2)), 5)
+    # Don't let min_jumps be larger than 10, because a larger number is really not at all needed and with large
+    # galaxies an excessive amount of time can be used in failed attempts
+    min_jumps = min(10, max(int(float(len(systems)) / float(num_home_systems * 2)), 5))
     # try to find the home systems, decrease the min jumps until enough systems can be found, or the min jump distance
     # gets reduced to 0 (meaning we don't have enough systems to choose from at all)
     while min_jumps > 0:

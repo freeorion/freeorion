@@ -2,13 +2,15 @@
 <XMLDoc>
   <CREDITS>
     <GROUP name="LEAD">
-      <PERSON name="Geoff Topping"            nick="Geoff the Medio"  task="Programming, Game Design"/>
-      <PERSON name="J. W. Bjerk"              nick="eleazar"          task="Game Design, Graphics"/>
+      <PERSON name="Geoff Topping"            nick="Geoff the Medio"  task="Programming, Design"/>
+      <PERSON name=""                         nick="Dilvish"          task="Programming, Design"/>
+      <PERSON name=""                         nick="Vezzra"           task="Programming, Release Management"/>
     </GROUP>
     <GROUP name="LEAD EMPERITUS">
       <PERSON name="Mark Saward"              nick="Tyreth"           task="Programming, Game Design, Graphics"/>
       <PERSON name="Zach Laine"               nick="Tzlaine"          task="Programming, Game Design"/>
       <PERSON name="Samuel Knowlton"          nick="Aquitaine"        task="Game Design"/>
+      <PERSON name="J. W. Bjerk"              nick="eleazar"          task="Game Design, Graphics"/>
       <PERSON name="Mathias Köhler"           nick="pd"               task="Graphics"/>
       <PERSON name="Anton Ruonala"            nick="Miu"              task="Graphics"/>
       <PERSON name="Jonathan Hill"            nick="Obiwan"           task="Graphics"/>
@@ -46,10 +48,8 @@
       <PERSON name="Carsten Milkau"           nick="cami"             task="Programming"/>
       <PERSON name="Greg Mojonnier"           nick="fixIt"            task="Programming"/>
       <PERSON name=""                         nick="Spike"            task="Programming"/>
-      <PERSON name=""                         nick="Dilvish"          task="Programming"/>
       <PERSON name=""                         nick="aineko"           task="Programming"/>
       <PERSON name="Patrick B."               nick="Rogor"            task="Programming"/>
-      <PERSON name=""                         nick="Vezzra"           task="Programming"/>
       <PERSON name="Landon Manning"           nick="yandonman"        task="Programming"/>
       <PERSON name="Marcel Metz"              nick="adrian_broher"    task="Programming, German Translation"/>
       <PERSON name="Vincent Fourmond"         nick="yanub"            task="Programming"/>
@@ -57,6 +57,8 @@
       <PERSON name=""                         nick="Mitten.O"         task="Programming"/>
       <PERSON name="Mark de Ruijter"          nick="Eloque"           task="Programming"/>
       <PERSON name="Vincent Legoll"           nick="vincele"          task="Programming"/>
+      <PERSON name="Fabian Wendt"             nick="Morlic"           task="Programming"/>
+      <PERSON name=""                         nick="mel-odious"       task="Programming"/>
     </GROUP>
     <GROUP name="GAMEDESIGN and CONTENT">
       <PERSON name="Krum Stanoev"             nick=""                 task="Game Design"/>

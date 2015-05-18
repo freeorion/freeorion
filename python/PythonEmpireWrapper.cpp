@@ -178,26 +178,22 @@ void CalculateSupplyUpdate(const std::map<int, std::set<int> >& starlanes,
 
     std::map<int,int> supplyProjectionsP(const Empire& empire, int min_tracked_supply, bool obstructed) {
         std::map< int, std::set< int > >    starlanes = empire.KnownStarlanes();
-        const std::map<int, int>&           supply_system_ranges = empire.SystemSupplyRanges();
+        std::map<int, int>                  supply_system_ranges(empire.SystemSupplyRanges());
         std::map<int, int>                  propegating_supply_ranges;
-
-        if (obstructed) {
-            const std::set<int>&                supply_unobstructed_systems = empire.SupplyUnobstructedSystems();
-            CalculateSupplyUpdate(              starlanes, 
-                                                supply_system_ranges, 
-                                                supply_unobstructed_systems,
-                                                propegating_supply_ranges,
-                                                min_tracked_supply,
-                                                true ); // Note: must be called with min_tracked_supply = 0 to give the standard result
-        } else {
-            std::set<int> known_systems;
-            CalculateSupplyUpdate(              starlanes, 
-                                                supply_system_ranges, 
-                                                known_systems,
-                                                propegating_supply_ranges,
-                                                min_tracked_supply,
-                                                false); // Note: must be called with min_tracked_supply = 0 to give the standard result
+        const std::set<int>&                supply_unobstructed_systems = empire.SupplyUnobstructedSystems();
+        // taking the following sleet_supplyable info into account is necessary to reliably make negative
+        // supply projections for an enemy empire into the client empire's territory
+        if (min_tracked_supply < 0) {
+            std::set<int> supplyable_systems = empire.FleetSupplyableSystemIDs();
+            for (std::set<int>::iterator sys_it = supplyable_systems.begin(); sys_it != supplyable_systems.end(); sys_it++)
+                supply_system_ranges[*sys_it];  // simply ensures  that at least the default value of zero is entered
         }
+        CalculateSupplyUpdate(              starlanes, 
+                                            supply_system_ranges, 
+                                            supply_unobstructed_systems,
+                                            propegating_supply_ranges,
+                                            min_tracked_supply,
+                                            obstructed ); // Note: must be called with min_tracked_supply = 0 to give the standard result
         return propegating_supply_ranges;
     }
     boost::function<std::map<int,int>(const Empire&, int min_tracked_supply, bool obstructed)> supplyProjectionsFunc =      &supplyProjectionsP;

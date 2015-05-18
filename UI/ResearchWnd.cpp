@@ -41,9 +41,9 @@ namespace {
         void Draw(GG::Clr clr, bool fill);
 
         const std::string&      m_tech_name;
-        CUILabel*               m_name_text;
-        CUILabel*               m_RPs_and_turns_text;
-        CUILabel*               m_turns_remaining_text;
+        GG::Label*              m_name_text;
+        GG::Label*              m_RPs_and_turns_text;
+        GG::Label*              m_turns_remaining_text;
         GG::StaticGraphic*      m_icon;
         MultiTurnProgressBar*   m_progress_bar;
         bool                    m_in_progress;

@@ -82,12 +82,12 @@ namespace {
             initialize_numeric_statistic_parser<double>(statistic, statistic_1, statistic_2,
                                                         statistic_sub_value_ref);
 
-            initialize_expression_parsers<double>(function_expr,
-                                                  exponential_expr,
-                                                  multiplicative_expr,
-                                                  additive_expr,
-                                                  expr,
-                                                  primary_expr);
+            initialize_numeric_expression_parsers<double>(function_expr,
+                                                          exponential_expr,
+                                                          multiplicative_expr,
+                                                          additive_expr,
+                                                          expr,
+                                                          primary_expr);
 
             int_bound_variable_cast
                 =   int_bound_variable() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]

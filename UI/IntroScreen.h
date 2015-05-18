@@ -4,19 +4,13 @@
 #ifndef _IntroScreen_h_
 #define _IntroScreen_h_
 
-#ifndef _GG_GUI_h_
+#include <GG/GGFwd.h>
 #include <GG/GUI.h>
-#endif
+#include <GG/Wnd.h>
 
-#ifndef _CUIWnd_h_
-#include "CUIWnd.h"
-#endif
-
+class CUIWnd;
 class CreditsWnd;
 
-class CUIButton;
-class CUILabel;
-namespace GG {class StaticGraphic;}
 
 /** This is the first screen the user sees in FreeOrion.  It will always be the
   * size of the Application main window.  It will display a splash screen with
@@ -45,21 +39,21 @@ public:
     //!@}
 
 private:
-    CUIButton*          m_single_player; //!< opens up the single player game dialog
-    CUIButton*          m_quick_start;   //!< starts a single-player game with the default options (no dialog)
-    CUIButton*          m_multi_player;  //!< opens up the multi player game dialog
-    CUIButton*          m_load_game;     //!< loads a saved single player game
-    CUIButton*          m_options;       //!< opens the options dialog
-    CUIButton*          m_about;         //!< opens a dialog to choose to see credits or license
-    CUIButton*          m_credits;       //!< displays credits
-    CUIButton*          m_exit_game;     //!< button that exits the program
+    GG::Button*         m_single_player; //!< opens up the single player game dialog
+    GG::Button*         m_quick_start;   //!< starts a single-player game with the default options (no dialog)
+    GG::Button*         m_multi_player;  //!< opens up the multi player game dialog
+    GG::Button*         m_load_game;     //!< loads a saved single player game
+    GG::Button*         m_options;       //!< opens the options dialog
+    GG::Button*         m_about;         //!< opens a dialog to choose to see credits or license
+    GG::Button*         m_credits;       //!< displays credits
+    GG::Button*         m_exit_game;     //!< button that exits the program
 
     CreditsWnd*         m_credits_wnd;
 
     CUIWnd*             m_menu;
     GG::StaticGraphic*  m_splash;
     GG::StaticGraphic*  m_logo;
-    CUILabel*           m_version;
+    GG::Label*          m_version;
 };
 
 #endif // _IntroScreen_h_

@@ -100,7 +100,7 @@ struct expression_rule
 };
 
 template <typename T>
-void initialize_expression_parsers(
+void initialize_numeric_expression_parsers(
     typename expression_rule<T>::type&              function_expr,
     typename expression_rule<T>::type&              exponential_expr,
     typename expression_rule<T>::type&              multiplicative_expr,

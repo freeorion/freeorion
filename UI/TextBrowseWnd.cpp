@@ -1,5 +1,7 @@
 #include "TextBrowseWnd.h"
 
+#include "CUIControls.h"
+
 namespace {
     /** Returns height of rows of text in InfoTextBrowseWnd. */
     int IconTextBrowseWndRowHeight() {

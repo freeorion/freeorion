@@ -3,12 +3,10 @@
 #ifndef _CUIWnd_h_
 #define _CUIWnd_h_
 
+#include <GG/GGFwd.h>
 #include <GG/Button.h>
 #include <GG/Wnd.h>
 #include <GG/WndEvent.h>
-
-class CUIEdit;
-class CUIButton;
 
 
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
@@ -142,7 +140,7 @@ protected:
     bool                    m_minimized;      //!< true if the window is currently minimized
     bool                    m_pinable;        //!< true if the window is able to be pinned
     bool                    m_pinned;         //!< true if the window is currently pinned
-    
+
     GG::Pt                  m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
     GG::Pt                  m_original_size;  //!< keeps track of the size of the window before resizing
 
@@ -183,9 +181,9 @@ private:
 
     std::string m_result;
 
-    CUIEdit*    m_edit;
-    CUIButton*  m_ok_bn;
-    CUIButton*  m_cancel_bn;
+    GG::Edit*   m_edit;
+    GG::Button* m_ok_bn;
+    GG::Button* m_cancel_bn;
 
     static const GG::X BUTTON_WIDTH;
     static const int CONTROL_MARGIN;

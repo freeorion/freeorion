@@ -1126,7 +1126,7 @@ public:
         virtual void                    Render() {}
     private:
         GG::StaticGraphic*              m_graphic;
-        CUILabel*                       m_name;
+        GG::Label*                      m_name;
     };
 
     class SavedDesignPanel : public GG::Control {
@@ -1136,7 +1136,7 @@ public:
         virtual void                    Render() {}
     private:
         GG::StaticGraphic*              m_graphic;
-        CUILabel*                       m_name;
+        GG::Label*                      m_name;
     };
 
     class BasesListBoxRow : public CUIListBox::Row {
@@ -2435,9 +2435,9 @@ private:
     std::set<std::string>                   m_completed_design_dump_strings;
 
     GG::StaticGraphic*  m_background_image;
-    CUILabel*           m_design_name_label;
+    GG::Label*          m_design_name_label;
     GG::Edit*           m_design_name;
-    CUILabel*           m_design_description_label;
+    GG::Label*          m_design_description_label;
     GG::Edit*           m_design_description;
     GG::Button*         m_confirm_button;
     GG::Button*         m_clear_button;

@@ -4,6 +4,7 @@ import AIstate
 import universe_object
 from EnumsAI import AIFleetMissionType
 import FleetUtilsAI
+from FleetUtilsAI import combine_ratings, combine_ratings_list, rating_needed
 import PlanetUtilsAI
 import PriorityAI
 import ColonisationAI
@@ -24,14 +25,6 @@ def try_again(mil_fleet_ids, try_reset=False, thisround=""):
         mission.clear_targets(-1)
     get_military_fleets(tryReset=try_reset, thisround=thisround)
     return
-
-
-def rating_needed(target, current=0):
-    if current >= target:
-        return 0
-    else:
-        return target + current - (4*target*current)**0.5
-
 
 def get_safety_factor():
     return [4.0, 3.0, 2.0, 1.5, 1.2, 1.0][foAI.foAIstate.aggression]
@@ -58,7 +51,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False)
         this_sys_id = (fleet.nextSystemID != -1 and fleet.nextSystemID) or fleet.systemID
         fleet_ok = (sum(ships_cur_health) >= cutoff * sum(ships_max_health))
         local_status = foAI.foAIstate.systemStatus.get(this_sys_id, {})
-        my_local_rating = local_status.get('mydefenses', {}).get('overall', 0) + local_status.get('myFleetRating', 0)
+        my_local_rating = combine_ratings(local_status.get('mydefenses', {}).get('overall', 0), local_status.get('myFleetRating', 0))
         needed_here = local_status.get('totalThreat', 0) > 0  # TODO: assess if remaining other forces are sufficient
         safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0)  # TODO: improve both assessment prongs
         if not fleet_ok:
@@ -109,6 +102,8 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
         print "---------------------------------"
         foAI.foAIstate.militaryRating = totMilRating
 
+    enemy_rating = foAI.foAIstate.empire_standard_enemy_rating
+
     milFleetIDs = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
     mil_needing_repair_ids, milFleetIDs = avail_mil_needing_repair(milFleetIDs, split_ships=True)
     avail_mil_rating = sum(map(lambda x: foAI.foAIstate.get_rating(x).get('overall', 0), milFleetIDs))
@@ -129,9 +124,11 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     already_assigned_rating = {}
     assigned_attack = {}
     assigned_hp = {}
+    enemy_sup_factor = {}  # enemy supply
     for sys_id in universe.systemIDs:
         assigned_attack[sys_id] = 0
         assigned_hp[sys_id] = 0
+        enemy_sup_factor[sys_id] = min(2, len(foAI.foAIstate.systemStatus.get(sys_id, {}).get('enemies_nearly_supplied', [])))
     for fleet_id in [fid for fid in all_military_fleet_ids if fid not in milFleetIDs]:
         ai_fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
         sys_targets = []
@@ -204,22 +201,26 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     # allocation format: ( sysID, newAllocation, takeAny, maxMultiplier )
     # ================================
     # --------Capital Threat ----------
-    capital_threat = safety_factor*(2 * threat_bias + sum([foAI.foAIstate.systemStatus[capital_sys_id][thrt_key] for thrt_key in ['totalThreat', 'neighborThreat']]))
-    needed_rating = rating_needed(1.4*capital_threat, already_assigned_rating[capital_sys_id])
-    new_alloc = 0
-    if tryReset:
-        if needed_rating > 0.5*avail_mil_rating:
-            try_again(all_military_fleet_ids)
-            return
-    if needed_rating > 0:
-        new_alloc = min(remaining_mil_rating, needed_rating)
-        allocations.append((capital_sys_id, new_alloc, True, 1.6*capital_threat))
-        allocation_groups.setdefault('capitol', []).append((capital_sys_id, new_alloc, True, 2*capital_threat))
-        remaining_mil_rating -= new_alloc
-    if "Main" in thisround or new_alloc > 0:
-        if verbose_mil_reporting:
-            print "Empire Capital System: (%d) %s -- threat : %d, military allocation: existing: %d ; new: %d" % (capital_sys_id, universe.getSystem(capital_sys_id).name, capital_threat, already_assigned_rating[capital_sys_id], new_alloc)
-            print "-----------------"
+    if capital_sys_id is not None:
+        capital_sys_status = foAI.foAIstate.systemStatus[capital_sys_id]
+        capital_threat = safety_factor*(2 * threat_bias + combine_ratings_list([capital_sys_status[thrt_key] for thrt_key in ['totalThreat', 'neighborThreat']]))
+        capital_threat += enemy_sup_factor[sys_id] * 1.0 * enemy_rating
+        base_needed_rating = rating_needed(1.4*capital_sys_status['regional_threat'], combine_ratings(already_assigned_rating[capital_sys_id], capital_sys_status['my_neighbor_rating']))
+        needed_rating = max(base_needed_rating, rating_needed(1.4*capital_threat, already_assigned_rating[capital_sys_id]))
+        new_alloc = 0
+        if tryReset:
+            if needed_rating > 0.5*avail_mil_rating:
+                try_again(all_military_fleet_ids)
+                return
+        if needed_rating > 0:
+            new_alloc = min(remaining_mil_rating, needed_rating)
+            allocations.append((capital_sys_id, new_alloc, True, 1.6*capital_threat))
+            allocation_groups.setdefault('capitol', []).append((capital_sys_id, new_alloc, True, 2*capital_threat))
+            remaining_mil_rating -= new_alloc
+        if "Main" in thisround or new_alloc > 0:
+            if verbose_mil_reporting:
+                print "Empire Capital System: (%d) %s -- threat : %d, military allocation: existing: %d ; new: %d" % (capital_sys_id, universe.getSystem(capital_sys_id).name, capital_threat, already_assigned_rating[capital_sys_id], new_alloc)
+                print "-----------------"
 
     # ================================
     # --------Empire Occupied Systems ----------
@@ -231,10 +232,14 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
             print "-----------------"
     new_alloc = 0
     if empire_occupied_system_ids:
-        oc_sys_tot_threat = [(o_s_id, threat_bias + safety_factor*sum([foAI.foAIstate.systemStatus.get(o_s_id, {}).get(thrt_key, 0) for thrt_key in ['totalThreat', 'neighborThreat']]))
-                                                                                                                            for o_s_id in empire_occupied_system_ids]
-        totoc_sys_threat = sum([thrt for sid, thrt in oc_sys_tot_threat])
-        tot_cur_alloc = sum([already_assigned_rating[sid] for sid, thrt in oc_sys_tot_threat])
+        oc_sys_tot_threat = [(o_s_id, threat_bias + safety_factor*combine_ratings_list(
+                              [foAI.foAIstate.systemStatus.get(o_s_id, {}).get(thrt_key, 0) for thrt_key in ['totalThreat', 'neighborThreat']]))
+                                                                                            for o_s_id in empire_occupied_system_ids]
+        tot_oc_sys_threat = sum([thrt for _, thrt in oc_sys_tot_threat])
+        tot_cur_alloc = sum([already_assigned_rating[sid] for sid, _ in oc_sys_tot_threat])
+        # intentionally after tallies, but perhaps should be before
+        oc_sys_tot_threat = [(sys_id, sys_threat + enemy_sup_factor[sys_id] * 0.5 * enemy_rating) for sys_id, sys_threat in oc_sys_tot_threat]
+
         oc_sys_alloc = 0
         for sid, thrt in oc_sys_tot_threat:
             cur_alloc = already_assigned_rating[sid]
@@ -255,7 +260,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
                     print "Provincial Occupied system %4d ( %10s ) has local threat %8d ; existing military allocation %d and new allocation %8d" % (sid, universe.getSystem(sid).name, thrt, cur_alloc, this_alloc)
         if "Main" in thisround or new_alloc > 0:
             if verbose_mil_reporting:
-                print "Provincial Empire-Occupied Sytems under total threat: %d -- total mil allocation: existing %d ; new: %d" % (totoc_sys_threat, tot_cur_alloc, oc_sys_alloc)
+                print "Provincial Empire-Occupied Sytems under total threat: %d -- total mil allocation: existing %d ; new: %d" % (tot_oc_sys_threat, tot_cur_alloc, oc_sys_alloc)
                 print "-----------------"
 
     # ================================
@@ -270,9 +275,11 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     new_alloc = 0
     if other_targeted_system_ids:
         ot_sys_alloc = 0
-        ot_sys_threat = [(o_s_id, threat_bias + safety_factor*(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0)+0.5*foAI.foAIstate.systemStatus.get(o_s_id, {}).get('neightborThreat', 0))) for o_s_id in other_targeted_system_ids]
+        ot_sys_threat = [(o_s_id, threat_bias + safety_factor*combine_ratings(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0), 0.5*foAI.foAIstate.systemStatus.get(o_s_id, {}).get('neightborThreat', 0))) for o_s_id in other_targeted_system_ids]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
         tot_cur_alloc = sum([already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
+        # intentionally after tallies, but perhaps should be before
+        ot_sys_threat = [(sys_id, sys_threat + enemy_sup_factor[sys_id] * 0.5 * enemy_rating) for sys_id, sys_threat in ot_sys_threat]
         for sid, thrt in ot_sys_threat:
             cur_alloc = already_assigned_rating[sid]
             needed_rating = rating_needed(1.4*thrt, cur_alloc)
@@ -308,9 +315,11 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     new_alloc = 0
     if other_targeted_system_ids:
         ot_sys_alloc = 0
-        ot_sys_threat = [(o_s_id, threat_bias + safety_factor*(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0)+0.5*foAI.foAIstate.systemStatus.get(o_s_id, {}).get('neighborThreat', 0))) for o_s_id in other_targeted_system_ids]
+        ot_sys_threat = [(o_s_id, threat_bias + safety_factor*combine_ratings(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0), 0.5*foAI.foAIstate.systemStatus.get(o_s_id, {}).get('neighborThreat', 0))) for o_s_id in other_targeted_system_ids]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
         tot_cur_alloc = sum([already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
+        # intentionally after tallies, but perhaps should be before
+        ot_sys_threat = [(sys_id, sys_threat + enemy_sup_factor[sys_id] * 0.5 * enemy_rating) for sys_id, sys_threat in ot_sys_threat]
         for sid, thrt in ot_sys_threat:
             cur_alloc = already_assigned_rating[sid]
             needed_rating = rating_needed(1.4*thrt, cur_alloc)
@@ -341,8 +350,10 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
             print "-----------------"
     if other_targeted_system_ids:
         ot_sys_alloc = 0
-        ot_sys_threat = [(o_s_id, safety_factor*(threat_bias +foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0)+0.5*foAI.foAIstate.systemStatus.get(o_s_id, {}).get('neighborThreat', 0))) for o_s_id in other_targeted_system_ids]
+        ot_sys_threat = [(o_s_id, safety_factor*combine_ratings(threat_bias +foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0), 0.5*foAI.foAIstate.systemStatus.get(o_s_id, {}).get('neighborThreat', 0))) for o_s_id in other_targeted_system_ids]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
+        # intentionally after tallies, but perhaps should be before
+        ot_sys_threat = [(sys_id, sys_threat + enemy_sup_factor[sys_id] * 0.5 * enemy_rating) for sys_id, sys_threat in ot_sys_threat]
         tot_cur_alloc = sum([already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
         new_alloc = 0
         for sid, thrt in ot_sys_threat:
@@ -386,9 +397,12 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
             print "-----------------"
     if other_targeted_system_ids:
         ot_sys_alloc = 0
-        ot_sys_threat = [(o_s_id, threat_bias + safety_factor*(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0) + 0.5*foAI.foAIstate.systemStatus.get(o_s_id, {}).get('neighborThreat', 0))) for o_s_id in other_targeted_system_ids]
+        ot_sys_threat = [(o_s_id, threat_bias + safety_factor*combine_ratings(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0), 0.5*foAI.foAIstate.systemStatus.get(o_s_id, {}).get('neighborThreat', 0))) for o_s_id in other_targeted_system_ids]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
         tot_cur_alloc = sum([already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
+        # intentionally after tallies, but perhaps should be before
+        # this supply threat calc intentionally uses a lower multiplier 0.25
+        ot_sys_threat = [(sys_id, sys_threat + enemy_sup_factor[sys_id] * 0.25 * enemy_rating) for sys_id, sys_threat in ot_sys_threat]
         new_alloc = 0
         for sid, thrt in ot_sys_threat:
             cur_alloc = already_assigned_rating[sid]
@@ -430,6 +444,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
         ot_sys_threat = [(o_s_id, threat_bias +safety_factor*(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('totalThreat', 0))) for o_s_id in interior_targets]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
         tot_cur_alloc = sum([already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
+        # do not add enemy supply threat here
         for sid, thrt in ot_sys_threat:
             cur_alloc = already_assigned_rating[sid]
             needed_rating = rating_needed(1.2*thrt, cur_alloc)
@@ -471,9 +486,12 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     new_alloc = 0
     if explo_target_ids:
         ot_sys_alloc = 0
-        ot_sys_threat = [(o_s_id, safety_factor*(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(o_s_id, {}).get('monsterThreat', 0) + foAI.foAIstate.systemStatus.get(o_s_id, {}).get('planetThreat', 0))) for o_s_id in explo_target_ids]
+        ot_sys_threat = [(o_s_id, safety_factor*combine_ratings(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('fleetThreat', 0),  foAI.foAIstate.systemStatus.get(o_s_id, {}).get('monsterThreat', 0) + foAI.foAIstate.systemStatus.get(o_s_id, {}).get('planetThreat', 0))) for o_s_id in explo_target_ids]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
         tot_cur_alloc = sum([0.8*already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
+        # intentionally after tallies, but perhaps should be before
+        # this supply threat calc intentionally uses a lower multiplier 0.25
+        ot_sys_threat = [(sys_id, sys_threat + enemy_sup_factor[sys_id] * 0.25 * enemy_rating) for sys_id, sys_threat in ot_sys_threat]
         for sid, thrt in ot_sys_threat:
             cur_alloc = already_assigned_rating[sid]
             needed_rating = rating_needed(1.2*thrt, cur_alloc)
@@ -511,9 +529,10 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     new_alloc = 0
     if border_targets:
         ot_sys_alloc = 0
-        ot_sys_threat = [(o_s_id, threat_bias + safety_factor*(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('fleetThreat', 0) + foAI.foAIstate.systemStatus.get(o_s_id, {}).get('monsterThreat', 0) + foAI.foAIstate.systemStatus.get(o_s_id, {}).get('planetThreat', 0))) for o_s_id in border_targets]
+        ot_sys_threat = [(o_s_id, threat_bias + safety_factor*combine_ratings(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('fleetThreat', 0), foAI.foAIstate.systemStatus.get(o_s_id, {}).get('monsterThreat', 0) + foAI.foAIstate.systemStatus.get(o_s_id, {}).get('planetThreat', 0))) for o_s_id in border_targets]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
         tot_cur_alloc = sum([0.8*already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
+        # do not add enemy supply threat here
         for sid, thrt in ot_sys_threat:
             cur_alloc = already_assigned_rating[sid]
             needed_rating = rating_needed(1.2*thrt, cur_alloc)
@@ -552,7 +571,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     new_alloc = 0
     if monster_dens:
         ot_sys_alloc = 0
-        ot_sys_threat = [(o_s_id, safety_factor*(foAI.foAIstate.systemStatus.get(o_s_id, {}).get('fleetThreat', 0)+foAI.foAIstate.systemStatus.get(o_s_id, {}).get('monsterThreat', 0) + foAI.foAIstate.systemStatus.get(o_s_id, {}).get('planetThreat', 0))) for o_s_id in monster_dens]
+        ot_sys_threat = [(o_s_id, safety_factor*combine_ratings_list([foAI.foAIstate.systemStatus.get(o_s_id, {}).get('fleetThreat', 0), foAI.foAIstate.systemStatus.get(o_s_id, {}).get('monsterThreat', 0), foAI.foAIstate.systemStatus.get(o_s_id, {}).get('planetThreat', 0)])) for o_s_id in monster_dens]
         for sid, thrt in ot_sys_threat:
             cur_alloc = 0.8*already_assigned_rating[sid]
             this_alloc = 0

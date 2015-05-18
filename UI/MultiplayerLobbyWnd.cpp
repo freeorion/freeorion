@@ -1,14 +1,18 @@
 #include "MultiplayerLobbyWnd.h"
 
-#include "CUIControls.h"
-#include "Hotkeys.h"
-#include "../client/human/HumanClientApp.h"
-#include "../network/Message.h"
+#include <GG/Button.h>
+#include <GG/DrawUtil.h>
+#include <GG/Layout.h>
+#include <GG/StaticGraphic.h>
+
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/Serialize.h"
-
-#include <GG/Layout.h>
+#include "../network/Message.h"
+#include "../client/human/HumanClientApp.h"
+#include "CUIControls.h"
+#include "Hotkeys.h"
+#include "Sound.h"
 
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
@@ -24,11 +28,6 @@
 
 #include <boost/cast.hpp>
 #include <boost/serialization/vector.hpp>
-
-#include <GG/Button.h>
-#include <GG/DrawUtil.h>
-#include <GG/StaticGraphic.h>
-
 
 namespace {
     const GG::Y PLAYER_ROW_HEIGHT(22);
@@ -203,7 +202,7 @@ namespace {
             }
 
             // empire name editable text
-            CUIEdit* edit = new CUIEdit(m_player_data.m_empire_name);
+            GG::Edit* edit = new CUIEdit(m_player_data.m_empire_name);
             edit->SetColor(GG::CLR_ZERO);
             edit->SetInteriorColor(GG::CLR_ZERO);
             edit->Resize(GG::Pt(EMPIRE_NAME_WIDTH, edit->MinUsableSize().y));
@@ -329,13 +328,13 @@ namespace {
             m_color_selector->SelectColor(m_player_data.m_empire_color);
 
             // set previous player name indication
-            boost::polymorphic_downcast<CUILabel*>(operator[](4))->SetText(it->second.m_player_name);
+            boost::polymorphic_downcast<GG::Label*>(operator[](4))->SetText(it->second.m_player_name);
 
             DataChangedSignal();
         }
 
         EmpireColorSelector*                     m_color_selector;
-        CUIDropDownList*                         m_empire_list;
+        GG::DropDownList*                        m_empire_list;
         const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
     };
 

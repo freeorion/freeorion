@@ -97,7 +97,6 @@
     <ClInclude Include="..\..\client\AI\AIClientApp.h" />
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
-    <ClInclude Include="..\..\combat\CombatOrder.h" />
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
@@ -117,7 +116,6 @@
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\util\blocking_combiner.h" />
     <ClInclude Include="..\..\universe\Meter.h" />
-    <ClInclude Include="..\..\universe\Names.h" />
     <ClInclude Include="..\..\universe\ObjectMap.h" />
     <ClInclude Include="..\..\universe\Planet.h" />
     <ClInclude Include="..\..\universe\PopCenter.h" />

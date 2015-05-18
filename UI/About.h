@@ -2,8 +2,7 @@
 #ifndef _About_h_
 #define _About_h_
 
-#include <GG/Button.h>
-#include <GG/MultiEdit.h>
+#include <GG/GGFwd.h>
 #include "CUIWnd.h"
 
 //! This is a screen showing license and vision

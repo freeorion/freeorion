@@ -2,15 +2,15 @@
 #ifndef _ChatWnd_h_
 #define _ChatWnd_h_
 
+#include <deque>
+#include <string>
+#include <GG/GGFwd.h>
+
 #include "CUIWnd.h"
 #include "CUIControls.h"
 #include "../network/Message.h"
 
-#include <deque>
-#include <string>
 
-
-namespace GG { class MultiEdit; }
 class MessageWndEdit;
 
 class MessageWnd : public CUIWnd {

@@ -3,16 +3,11 @@
 #ifndef _SystemIcon_h_
 #define _SystemIcon_h_
 
-#include "CUIDrawUtil.h"
+#include <GG/GGFwd.h>
 #include <GG/Control.h>
 
-class CUILabel;
 class FleetButton;
-namespace GG {
-    class StaticGraphic;
-    class DynamicGraphic;
-    class Texture;
-}
+
 
 /** A label like GG::Control that displays the name of a system in the
   * color(s) of the owning empire(s).  This class is derived from GG::Control

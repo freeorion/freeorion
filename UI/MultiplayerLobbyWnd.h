@@ -2,22 +2,15 @@
 #ifndef _MultiPlayerLobbyWnd_h_
 #define _MultiPlayerLobbyWnd_h_
 
+#include <vector>
+#include <GG/GGFwd.h>
+
 #include "CUIWnd.h"
 #include "GalaxySetupWnd.h"
 #include "../util/MultiplayerCommon.h"
 
-#include <vector>
-
-class CUIButton;
-class CUIDropDownList;
-class CUIEdit;
-class CUILabel;
-class CUIListBox;
-class CUIMultiEdit;
 class Message;
-namespace GG {
-    class StaticGraphic;
-}
+
 
 /** multiplayer lobby window */
 class MultiPlayerLobbyWnd : public CUIWnd {
@@ -57,22 +50,22 @@ private:
 
     MultiplayerLobbyData    m_lobby_data;   ///< a copy of the most recently received lobby update
 
-    CUIMultiEdit*           m_chat_box;
-    CUIEdit*                m_chat_input_edit;
+    GG::MultiEdit*          m_chat_box;
+    GG::Edit*               m_chat_input_edit;
     GG::RadioButtonGroup*   m_new_load_game_buttons;
     GalaxySetupPanel*       m_galaxy_setup_panel;
-    CUILabel*               m_save_file_text;
-    CUIButton*              m_browse_saves_btn;
+    GG::Label*              m_save_file_text;
+    GG::Button*             m_browse_saves_btn;
     GG::StaticGraphic*      m_preview_image;
-    CUILabel*               m_players_lb_player_type_label;
-    CUILabel*               m_players_lb_player_name_column_label;
-    CUILabel*               m_players_lb_empire_name_column_label;
-    CUILabel*               m_players_lb_empire_colour_column_label;
-    CUILabel*               m_players_lb_species_or_original_player_label;
-    CUIListBox*             m_players_lb;
-    CUIButton*              m_start_game_bn;
-    CUIButton*              m_cancel_bn;
-    CUILabel*               m_start_conditions_text;
+    GG::Label*              m_players_lb_player_type_label;
+    GG::Label*              m_players_lb_player_name_column_label;
+    GG::Label*              m_players_lb_empire_name_column_label;
+    GG::Label*              m_players_lb_empire_colour_column_label;
+    GG::Label*              m_players_lb_species_or_original_player_label;
+    GG::ListBox*            m_players_lb;
+    GG::Button*             m_start_game_bn;
+    GG::Button*             m_cancel_bn;
+    GG::Label*              m_start_conditions_text;
 };
 
 #endif // _MultiPlayerLobbyWnd_h_

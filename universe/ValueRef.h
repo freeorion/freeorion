@@ -1645,11 +1645,6 @@ std::string ValueRef::Operation<T>::Description() const
     return retval;
 }
 
-namespace ValueRef {
-    template <>
-    std::string Operation<double>::Description() const;
-}
-
 template <class T>
 std::string ValueRef::Operation<T>::Dump() const
 {

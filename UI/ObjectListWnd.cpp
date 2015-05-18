@@ -25,6 +25,8 @@
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 
+#include <boost/lexical_cast.hpp>
+
 #include <sstream>
 
 std::vector<std::string> SpecialNames();
@@ -905,10 +907,10 @@ private:
         Resize(GG::Pt(Width(), param_widget_top));
     }
 
-    CUIDropDownList*    m_class_drop;
-    CUIDropDownList*    m_string_drop;
-    CUISpin<int>*       m_param_spin1;
-    CUISpin<int>*       m_param_spin2;
+    GG::DropDownList*   m_class_drop;
+    GG::DropDownList*   m_string_drop;
+    GG::Spin<int>*      m_param_spin1;
+    GG::Spin<int>*      m_param_spin2;
 };
 
 ////////////////////////////////////////////////
@@ -989,7 +991,7 @@ private:
             GG::Connect(label->LeftClickedSignal,
                         boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
 
-            CUIStateButton* button = new CUIStateButton(" ", GG::FORMAT_CENTER);
+            GG::StateButton* button = new CUIStateButton(" ", GG::FORMAT_CENTER);
             button->SetCheck(vis_display.find(SHOW_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
@@ -1390,7 +1392,7 @@ private:
 
         for (unsigned int i = 0; i < NUM_COLUMNS; ++i) {
             std::string col_val = m_column_val_cache[i];
-            CUILabel* control = new CUILabel(col_val, GG::FORMAT_LEFT);
+            GG::Label* control = new CUILabel(col_val, GG::FORMAT_LEFT);
             control->Resize(GG::Pt(GG::X(GetColumnWidth(i)), ClientHeight()));
             retval.push_back(control);
         }
@@ -1657,6 +1659,24 @@ private:
      ObjectHeaderPanel* m_panel;
 };
 
+namespace {
+    struct CustomRowCmp {
+        bool operator()(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) {
+            const std::string& lhs_key = lhs.SortKey(column);
+            const std::string& rhs_key = rhs.SortKey(column);
+            try {
+                // attempt to cast sort keys to floats, so that number-aware
+                // sorting can be done for columns that contain numbers
+                float lhs_val = lhs_key.empty() ? 0.0f : boost::lexical_cast<float>(lhs_key);
+                float rhs_val = rhs_key.empty() ? 0.0f : boost::lexical_cast<float>(rhs_key);
+                return lhs_val < rhs_val;
+            } catch (...) {
+                return static_cast<const ObjectRow&>(lhs).SortKey(column) < static_cast<const ObjectRow&>(rhs).SortKey(column);
+            }
+        }
+    };
+}
+
 ////////////////////////////////////////////////
 // ObjectListBox
 ////////////////////////////////////////////////
@@ -1675,6 +1695,7 @@ public:
         SetNumCols(1);
         SetColWidth(0, GG::X0);
         LockColWidths();
+        SetSortCmp(CustomRowCmp());
 
         SetVScrollWheelIncrement(Value(ListRowHeight())*4);
 

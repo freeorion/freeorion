@@ -2,11 +2,9 @@
 #ifndef _ShipDesignPanel_h_
 #define _ShipDesignPanel_h_
 
-#include "CUIControls.h"
+#include <GG/GGFwd.h>
+#include <GG/Control.h>
 
-namespace GG {
-    class StaticGraphic;
-}
 
 /** Represents a ShipDesign */
 class ShipDesignPanel : public GG::Control {
@@ -31,7 +29,7 @@ private:
 
 protected:
     GG::StaticGraphic*      m_graphic;
-    CUILabel*               m_name;
+    GG::Label*              m_name;
 };
 
 #endif

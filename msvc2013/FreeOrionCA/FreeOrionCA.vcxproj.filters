@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
@@ -14,9 +14,6 @@
     </Filter>
     <Filter Include="Header Files\client">
       <UniqueIdentifier>{0e8f8032-78e0-4fb0-8880-386704b27db3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\combat">
-      <UniqueIdentifier>{81f1348b-c1c9-45eb-a354-6fa382235169}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Empire">
       <UniqueIdentifier>{5803563c-6e51-45f6-a92c-6c92b4c8d7dd}</UniqueIdentifier>
@@ -73,9 +70,6 @@
     </ClInclude>
     <ClInclude Include="..\..\client\AI\AIClientApp.h">
       <Filter>Header Files\client\AI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\combat\CombatOrder.h">
-      <Filter>Header Files\combat</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Empire\Empire.h">
       <Filter>Header Files\Empire</Filter>
@@ -234,9 +228,6 @@
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\EffectAccounting.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\universe\Names.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
   </ItemGroup>

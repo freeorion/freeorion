@@ -43,31 +43,30 @@ import freeOrionAIInterface as fo
 from freeorion_tools import dict_from_map
 
 
-def system_to_string(system):
-    name = system.name or 'unknown'
-    return 'S{0}<{1}>'.format(system.systemID, name)
-
-
-fo.system.__repr__ = system_to_string
-
-
 PLANET = 'P'
 SYSTEM = 'S'
 FLEET = 'F'
 SHIP_DESIGN = 'D'
+EMPIRE = 'E'
 
 
-def to_map(method):
+def to_dict(method):
     def wrapper(*args):
         return dict_from_map(method(*args))
     return wrapper
 
-fo.universe.getVisibilityTurnsMap = to_map(fo.universe.getVisibilityTurnsMap)
-
+fo.universe.getVisibilityTurnsMap = to_dict(fo.universe.getVisibilityTurnsMap)
+fo.empire.supplyProjections = to_dict(fo.empire.supplyProjections)
 
 def to_str(prefix, id, name):
-    return '{}{}<{}>'.format(prefix, id, name)
+    return '{}_{}<{}>'.format(prefix, id, name)
 
+fo.to_str = to_str
+
+def system_to_string(system):
+    return to_str(SYSTEM, system.systemID, system.name)
+
+fo.system.__repr__ = system_to_string
 
 def design_to_string(design):
     return to_str(SHIP_DESIGN, design.id, design.name(True))
@@ -76,15 +75,17 @@ fo.shipDesign.__repr__ = design_to_string
 
 def planet_to_string(planet):
     return to_str(PLANET, planet.id, planet.name)
-
 fo.planet.__repr__ = planet_to_string
 
 
 def fleet_to_string(fleet):
     return to_str(FLEET, fleet.id, fleet.name)
-
-
 fo.fleet.__repr__ = fleet_to_string
+
+
+def empire_to_string(empire):
+    return to_str(EMPIRE, empire.empireID, empire.name)
+fo.empire.__repr__ = empire_to_string
 
 
 def set_to_string(val):
