@@ -10,10 +10,11 @@ import ExplorationAI
 import FleetUtilsAI
 import ProductionAI
 import ResourcesAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType
 from MilitaryAI import MinThreat
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map, get_ai_tag_grade
+from universe_object import System
 
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -847,7 +848,6 @@ class AIstate(object):
             if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  
                         AIFleetMissionType.FLEET_MISSION_OUTPOST,
                         AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION,
-                        AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION,
                         AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST
                         ]:
                 pass
@@ -989,8 +989,8 @@ class AIstate(object):
                     if main_mission_type != -1:
                         targets = main_missin.getAITargets(main_mission_type)
                         if targets:
-                            mMT0 = targets[0]
-                            if mMT0.target_type == TargetType.TARGET_SYSTEM:
+                            mMT0=targets[0]
+                            if isinstance(mMT0.target_type, System):
                                 status['sysID'] = mMT0.target_id  # hmm, but might still be a fair ways from here
         self.shipCount = ship_count
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])

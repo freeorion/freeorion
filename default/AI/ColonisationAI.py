@@ -2,14 +2,14 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIDependencies
-import AITarget
+import universe_object
 import AIstate
 import FleetUtilsAI
 import FreeOrionAI as foAI
 import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType, AIFocusType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AIFocusType
 import EnumsAI
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade
 from freeorion_debug import Timer
@@ -619,7 +619,7 @@ def get_colony_targeted_planet_ids(planet_ids, mission_type):
     for planet_id in planet_ids:
         # add planets that are target of a mission
         for colony_fleet_mission in colony_fleet_missions:
-            ai_target = AITarget.AITarget(TargetType.TARGET_PLANET, planet_id)
+            ai_target = universe_object.Planet(planet_id)
             if colony_fleet_mission.has_target(mission_type, ai_target):
                 colony_targeted_planets.append(planet_id)
     return colony_targeted_planets
@@ -632,7 +632,7 @@ def get_outpost_targeted_planet_ids(planet_ids, mission_type):
     for planetID in planet_ids:
         # add planets that are target of a mission
         for outpost_fleet_mission in outpost_fleet_missions:
-            ai_target = AITarget.AITarget(TargetType.TARGET_PLANET, planetID)
+            ai_target = universe_object.Planet(planetID)
             if outpost_fleet_mission.has_target(mission_type, ai_target):
                 outpost_targeted_planets.append(planetID)
     return outpost_targeted_planets
@@ -1267,7 +1267,7 @@ def assign_colony_fleets_to_colonise():
                 target_id = pid
         if target_id != -1:
             foAI.foAIstate.qualifyingOutpostBaseTargets[target_id][1] = -1  # TODO: should probably delete
-            ai_target = AITarget.AITarget(TargetType.TARGET_PLANET, target_id)
+            ai_target = universe_object.Planet(target_id)
             ai_fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
             ai_fleet_mission.add_target(AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST, ai_target)
 
@@ -1359,5 +1359,5 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             continue  # must have no compatible colony/outpost ships
         fleet_id = this_fleet_list[0]
         already_targeted.append(planet_id)
-        ai_target = AITarget.AITarget(TargetType.TARGET_PLANET, planet_id)
+        ai_target = universe_object.Planet(planet_id)
         foAI.foAIstate.get_fleet_mission(fleet_id).add_target(mission_type, ai_target)

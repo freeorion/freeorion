@@ -1,8 +1,3 @@
-def check_validity(value):
-    """checks if value is valid"""
-    return value is not None and value >= 0
-
-
 class EnumsType(object):
     names = ()
 
@@ -109,53 +104,18 @@ class AIFleetMissionType(EnumsType):
     FLEET_MISSION_COLONISATION = 2
     FLEET_MISSION_SPLIT_FLEET = 3
     FLEET_MISSION_MERGE_FLEET = 4  # not really supported yet
-    FLEET_MISSION_HIT_AND_RUN = 5  # currently same as MILITARY
-    FLEET_MISSION_ATTACK = 6  # currently same as MILITARY
-    FLEET_MISSION_DEFEND = 7  # currently same as MILITARY
-    FLEET_MISSION_LAST_STAND = 8  # currently same as MILITARY
     FLEET_MISSION_INVASION = 9
     FLEET_MISSION_MILITARY = 10
     FLEET_MISSION_SECURE = 11  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
     FLEET_MISSION_ORBITAL_DEFENSE = 12
     FLEET_MISSION_ORBITAL_INVASION = 13
     FLEET_MISSION_ORBITAL_OUTPOST = 14
-    FLEET_MISSION_ORBITAL_COLONISATION = 15
-    FLEET_MISSION_REPAIR = 16  # though currently, repair will be handled w/o mission, like resupply
 
     names = ['explore', 'outpost', 'colonize', 'split_fleet', 'mergeFleet', 'hit&Run', 'attack', 'defend', 'last_stand', 'invasion', 'military', 'secure',
                                                     'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'repair', 'invalid']
 
 
 FLEET_MISSION_TYPES = range(0, 17)
-
-
-class AIFleetOrderType(object):
-    ORDER_INVALID = -1
-    ORDER_SCRAP = 0
-    ORDER_MOVE = 1
-    ORDER_RESUPPLY = 2
-    ORDER_SPLIT_FLEET = 3
-    ORDER_MERGE_FLEET = 4
-    ORDER_OUTPOST = 5
-    ORDER_COLONISE = 6
-    ORDER_ATTACK = 7
-    ORDER_DEFEND = 8
-    ORDER_INVADE = 9
-    ORDER_MILITARY = 10
-    ORDER_STAGING = 11
-    ORDER_REPAIR = 12
-    FleetOrderTypeNames = [ "scrap", "move", "resupply", "split_fleet", "mergeFleet", "outpost", "colonize", "attack",
-                                          "defend", "invade", "military", "staging", "repair", "invalid"]
-
-    def name(self, otype):
-        try:
-            return self.FleetOrderTypeNames[otype]
-        except IndexError:
-            return "invalidFleetOrderType"
-
-
-def get_fleet_order_types():
-    return range(0, 13)
 
 
 class AIShipDesignTypes(object):
@@ -208,29 +168,6 @@ class AIShipRoleType(EnumsType):  # this is also used in determining fleetRoles
 
 def get_ship_roles_types():
     return range(0, 9)
-
-
-class TargetType(object):
-    TARGET_INVALID = -1
-    TARGET_BUILDING = 0
-    TARGET_TECHNOLOGY = 1
-    TARGET_PLANET = 2
-    TARGET_SYSTEM = 3
-    TARGET_SHIP = 4
-    TARGET_FLEET = 5
-    TARGET_EMPIRE = 6
-    TARGET_ALL_OTHER_EMPIRES = 7
-    TargetTypeNames = ["building", "technology", "planet", "system", "ship", "fleet", "empire", "Opponents", "invalid"]
-
-    def name(self, targettype):
-        try:
-            return self.TargetTypeNames[targettype]
-        except IndexError:
-            return "invalidTargetType"
-
-
-def get_target_types():
-    return range(0, 8)
 
 
 class AIEmpireProductionTypes(object):

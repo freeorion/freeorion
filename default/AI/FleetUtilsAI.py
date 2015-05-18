@@ -331,7 +331,7 @@ def assess_fleet_role(fleet_id):
     if AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION in ship_roles:
         selected_role = AIFleetMissionType.FLEET_MISSION_COLONISATION
     elif AIShipRoleType.SHIP_ROLE_BASE_COLONISATION in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION
+        selected_role = AIFleetMissionType.FLEET_MISSION_COLONISATION
     elif AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST in ship_roles:
         selected_role = AIFleetMissionType.FLEET_MISSION_OUTPOST
     elif AIShipRoleType.SHIP_ROLE_BASE_OUTPOST in ship_roles:
@@ -346,7 +346,7 @@ def assess_fleet_role(fleet_id):
     elif favourite_role == AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION:
         selected_role = AIFleetMissionType.FLEET_MISSION_EXPLORATION
     elif favourite_role == AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK:
-        selected_role = AIFleetMissionType.FLEET_MISSION_ATTACK
+        selected_role = AIFleetMissionType.FLEET_MISSION_MILITARY
     elif favourite_role == AIShipRoleType.SHIP_ROLE_MILITARY:
         selected_role = AIFleetMissionType.FLEET_MISSION_MILITARY
     else:
@@ -400,8 +400,6 @@ def generate_fleet_orders_for_fleet_missions():
     print "Exploration Fleets : %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     print "Colonization Fleets:%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     print "Outpost Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
-    print "Attack Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ATTACK)
-    print "Defend Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_DEFEND)
     print "Invasion Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_INVASION)
     print "Military Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
     print "Orbital Defense Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
@@ -507,7 +505,7 @@ def issue_fleet_orders_for_fleet_missions():
         print "issuing fleet orders Round %d:" % thisround
         for mission in fleet_missions:
             fleet_id = mission.target_id
-            fleet = mission.target.target_obj
+            fleet = mission.target.get_object()
             if not fleet or not fleet.shipIDs or fleet_id in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
                 continue
             mission.issue_fleet_orders()
