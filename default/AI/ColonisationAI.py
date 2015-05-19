@@ -427,8 +427,8 @@ def get_colony_fleets():
     colonization_timer.start('Identify Existing colony/outpost targets')
 
     # export colony targeted systems for other AI modules
-    colony_targeted_planet_ids = get_colony_targeted_planet_ids(universe.planetIDs,
-                                                                AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    colony_targeted_planet_ids = FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs,
+                                                                      AIFleetMissionType.FLEET_MISSION_COLONISATION)
     all_colony_targeted_system_ids = PlanetUtilsAI.get_systems(colony_targeted_planet_ids)
     AIstate.colonyTargetedSystemIDs = all_colony_targeted_system_ids
     print
@@ -444,10 +444,10 @@ def get_colony_fleets():
 
     num_colony_fleets = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(colony_fleet_ids))
     print "Colony Fleets Without Missions: %s" % num_colony_fleets
-    outpost_targeted_planet_ids = get_outpost_targeted_planet_ids(universe.planetIDs,
+    outpost_targeted_planet_ids = FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs,
                                                                   AIFleetMissionType.FLEET_MISSION_OUTPOST)
     outpost_targeted_planet_ids.extend(
-        get_outpost_targeted_planet_ids(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST))
+        FleetUtilsAI.get_targeted_planet_ids(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST))
     all_outpost_targeted_system_ids = PlanetUtilsAI.get_systems(outpost_targeted_planet_ids)
 
     # export outpost targeted systems for other AI modules
@@ -610,32 +610,6 @@ def get_colony_fleets():
     foAI.foAIstate.colonisableOutpostIDs.clear()
     foAI.foAIstate.colonisableOutpostIDs.update(sorted_outposts)
     colonization_timer.end()
-
-
-def get_colony_targeted_planet_ids(planet_ids, mission_type):
-    """return list being settled with colony planets"""
-    colony_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([mission_type])
-    colony_targeted_planets = []
-    for planet_id in planet_ids:
-        # add planets that are target of a mission
-        for colony_fleet_mission in colony_fleet_missions:
-            ai_target = AITarget.AITarget(TargetType.TARGET_PLANET, planet_id)
-            if colony_fleet_mission.has_target(mission_type, ai_target):
-                colony_targeted_planets.append(planet_id)
-    return colony_targeted_planets
-
-
-def get_outpost_targeted_planet_ids(planet_ids, mission_type):
-    """return list being settled with outposts planets"""
-    outpost_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([mission_type])
-    outpost_targeted_planets = []
-    for planetID in planet_ids:
-        # add planets that are target of a mission
-        for outpost_fleet_mission in outpost_fleet_missions:
-            ai_target = AITarget.AITarget(TargetType.TARGET_PLANET, planetID)
-            if outpost_fleet_mission.has_target(mission_type, ai_target):
-                outpost_targeted_planets.append(planetID)
-    return outpost_targeted_planets
 
 
 def assign_colonisation_values(planet_ids, mission_type, species, empire, detail=None,
