@@ -602,6 +602,12 @@ def get_colony_fleets():
 
     evaluated_outpost_planets = assign_colonisation_values(evaluated_outpost_planet_ids,
                                                            AIFleetMissionType.FLEET_MISSION_OUTPOST, None, empire)
+    # if outposted planet would be in supply range, let outpost value be best of outpost value or colonization value
+    for pid in set(evaluated_outpost_planets).intersection(evaluated_colony_planets):
+        if planet_supply_cache.get(pid, -99) >=0:
+            evaluated_outpost_planets[pid] = (
+                max(evaluated_colony_planets[pid][0], evaluated_outpost_planets[pid][0]), '')
+
     colonization_timer.stop()
 
     sorted_outposts = evaluated_outpost_planets.items()

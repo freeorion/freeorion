@@ -1640,6 +1640,29 @@ def generateProductionOrders():
                 else:
                     print "Error failed enqueueing %s at planet %d (%s) , with result %d"%(bldName, pid, planet.name, res)
 
+
+    queued_clny_bld_locs = [element.locationID for element in productionQueue if element.name.startswith('BLD_COL_')]
+    colony_bldg_entries = ([entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if entry[1][0] > 60 and
+                           entry[0] not in queued_clny_bld_locs and entry[0] in ColonisationAI.empire_outpost_ids]
+                           [:PriorityAI.allottedColonyTargets+2])
+    for entry in colony_bldg_entries:
+        pid = entry[0]
+        bldName = "BLD_COL_"+entry[1][1][3:]
+        planet = universe.getPlanet(pid)
+        # print "Checking %s at %s" % (bldName, planet)
+        bldType = fo.getBuildingType(bldName)
+        if not (bldType and bldType.canBeEnqueued(empire.empireID, pid)):
+            continue
+        res = fo.issueEnqueueBuildingProductionOrder(bldName, pid)
+        print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName, pid, planet.name, res)
+        if res:
+            res=fo.issueRequeueProductionOrder(productionQueue.size -1, 2)  # move to near front
+            print "Requeueing %s to front of build queue, with result %d"%(bldName, res)
+            break
+        else:
+            print "Error failed enqueueing %s at planet %d (%s) , with result %d"%(bldName, pid, planet.name, res)
+
+
     bldName = "BLD_EVACUATION"
     bldType = fo.getBuildingType(bldName)
     for pid in AIstate.popCtrIDs:
