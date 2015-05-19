@@ -7,8 +7,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <cmath>
 #include <string>
-#include <vector>
-#include <algorithm>
+#include <set>
 
 // these are needed by the StepValidator
 namespace details {
@@ -23,27 +22,6 @@ namespace details {
 
     template <> inline long double mod<long double>(long double dividend, long double divisor)
     { return std::fmod(dividend, divisor); }
-
-    /** Helper function for DiscreteValidator. */
-    template <class T> std::vector<T> UniqueSortAndReturn(const std::vector<T>& in) {
-        std::vector<T> temp(in); // copy data into non-const vector
-        UniqueSortImpl(temp);
-        return temp; // RVO
-    }
-
-    /** Helper function for DiscreteValidator. */
-    template <class T> std::vector<T> UniqueSortAndReturn(const T* start, const T* finish) {
-        std::vector<T> temp(start, finish); // copy data into non-const vector
-        UniqueSortImpl(temp);
-        return temp; // RVO
-    }
-
-    /** Helper function for DiscreteValidator. Sorts a vector in place (using
-     *  default comparison) then removes duplicate elements. */
-    template <class T> void UniqueSortImpl(std::vector<T>& vec) {
-        std::sort(vec.begin(), vec.end()); // sort in place
-        vec.erase(std::unique(vec.begin(), vec.end()), vec.end()); // remove dupes
-    }
 }
 
 /** base class for all OptionsDB validators. Simply provides the basic interface. */
@@ -141,34 +119,32 @@ public:
 };
 
 /// a Validator that specifies a finite number of valid values.
-/** Construct with a single value of type T, a std::vector<T>, an
- *  aggregate-initialized C-style array or a pointer + the number of elements.
- *  Probably won't work well with floating point types. */
+/** Probably won't work well with floating point types. */
 template <class T>
 struct DiscreteValidator : public Validator<T>
 {
     DiscreteValidator(const T& single_value) :
-        m_values(1, single_value)
+        m_values(&single_value, &single_value + 1)
     { }
 
-    DiscreteValidator(const std::vector<T>& values) :
-        m_values(details::UniqueSortAndReturn<T>(values))
+    DiscreteValidator(const std::set<T>& values) :
+        m_values(values)
     { }
 
-    DiscreteValidator(const T* start, const size_t count) :
-        m_values(details::UniqueSortAndReturn<T>(start, start + count))
+    template <class iter>
+    DiscreteValidator(iter start, iter finish) :
+        m_values(start, finish)
     { }
 
-    /** Constructs from an aggregate-initialized C array, i.e. int a[2] = {3,6}; DiscreteValidator<int>(a); */
     template <size_t N>
     DiscreteValidator(const T (&in)[N]) :
-        m_values(details::UniqueSortAndReturn<T>(in, in + N))
+        m_values(in, in + N)
     { }
 
     virtual boost::any Validate(const std::string& str) const {
         T val = boost::lexical_cast<T>(str);
 
-        if (!std::binary_search(m_values.begin(), m_values.end(), val))
+        if (m_values.find(val) == m_values.end())
             throw boost::bad_lexical_cast();
 
         return boost::any(val);
@@ -178,10 +154,7 @@ struct DiscreteValidator : public Validator<T>
     { return new DiscreteValidator<T>(m_values); }
 
     /// Stores the list of vaild values.
-    /** Use std::vector rather than std::set because we don't need the log time
-     *  insertion and we can get log time search by sorting it on initialization
-     *  then using std::binary_search, without the space overhead of std::set. */
-    const std::vector<T> m_values;
+    const std::set<T> m_values;
 };
 
 /// a Validator that performs a logical OR of two validators.
@@ -191,11 +164,6 @@ struct DiscreteValidator : public Validator<T>
 template <class T>
 struct OrValidator : public Validator<T>
 {
-    OrValidator(const OrValidator<T>& copy) :
-        m_validator_a(copy.m_validator_a->Clone()),
-        m_validator_b(copy.m_validator_b->Clone())
-    { }
-
     OrValidator(const ValidatorBase& validator_a,
                 const ValidatorBase& validator_b) :
         m_validator_a(validator_a.Clone()),
@@ -215,7 +183,7 @@ struct OrValidator : public Validator<T>
     }
 
     virtual OrValidator* Clone() const
-    { return new OrValidator<T>(*m_validator_a.get(), *m_validator_b.get()); } // use copy constructor instead?
+    { return new OrValidator<T>(*m_validator_a.get(), *m_validator_b.get()); }
 
     const boost::scoped_ptr<ValidatorBase> m_validator_a;
     const boost::scoped_ptr<ValidatorBase> m_validator_b;
