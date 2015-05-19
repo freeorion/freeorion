@@ -34,6 +34,8 @@ annexable_ring3 = set()
 annexable_planet_ids = set()
 systems_by_supply_tier = {}
 system_supply = {}
+planet_supply_cache = {}  # includes system supply
+supply_tech_range = {}
 cur_best_mil_ship_rating = 20
 all_colony_opportunities = {}
 gotRuins = False
@@ -103,6 +105,16 @@ def rate_planetary_piloting(pid):
         return 0.0
     return rate_piloting_tag(this_spec.tags)
 
+def calc_supply_tech_range():
+    supply_range = 0
+    for tech in AIDependencies.supply_range_techs:
+        if tech_is_complete(tech):
+            supply_distance += AIDependencies.supply_range_techs[tech]
+
+
+def get_supply_tech_range():
+    return supply_tech_range.setdefault(fo.currentTurn(),
+        sum([(tech_is_complete(_tech) and _range) for _tech, _range in AIDependencies.supply_range_techs.items()]))
 
 def check_supply():
     # get suppliable systems and planets
@@ -128,12 +140,9 @@ def check_supply():
     annexable_planet_ids.clear()
     systems_by_supply_tier.clear()
     system_supply.clear()
-    supply_distance = 0
-    for tech in AIDependencies.supply_range_techs:
-        if tech_is_complete(tech):
-            supply_distance += AIDependencies.supply_range_techs[tech]
+    supply_distance = get_supply_tech_range()
     foAI.foAIstate.misc['supply_tech'] = supply_distance
-    supply_distance += 4  # 2 for up to great supply species, and 2 for possible tiny planets
+    supply_distance += 5  # 3 for up to great supply species, and 2 for possible tiny planets
     # if foAI.foAIstate.aggression >= fo.aggression.aggressive:
     # supply_distance += 1
     for sys_id in empire.fleetSupplyableSystemIDs:
@@ -167,7 +176,7 @@ def check_supply():
     print "New Supply Calc:"
     print "Known Systems:", list(universe.systemIDs)
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
-    system_supply.update(empire.supplyProjections(-3, False))
+    system_supply.update(empire.supplyProjections(-1-supply_distance, False))
     for sys_id, supply_val in system_supply.items():
         # print PlanetUtilsAI.sys_name_ids([sys_id]), ' -- ', supply_val
         systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
@@ -325,7 +334,7 @@ def survey_universe():
                             empire_ship_builders.setdefault(spec_name, []).append(pid)
                             empire_shipyards[pid] = pilot_val
                             yard_here = [pid]
-                        if this_spec.canColonize:
+                        if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
                 if planet.focus == EnumsAI.AIFocusType.FOCUS_INDUSTRY:
                     empire_status['industrialists'] += planet_population
@@ -562,7 +571,7 @@ def get_colony_fleets():
 
     evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids,
                                                           AIFleetMissionType.FLEET_MISSION_COLONISATION, None, empire)
-    colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluated_outpost_planet_ids)))
+    colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluated_colony_planet_ids)))
     colonization_timer.start('Evaluate All Colony Opportunities')
     all_colony_opportunities.clear()
     all_colony_opportunities.update(
@@ -683,6 +692,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     retval = 0
     discount_multiplier = [30.0, 40.0][fo.empireID() % 2]
     species = fo.getSpecies(spec_name or "")  # in case None is passed as specName
+    tag_list = list(species.tags) if species else []
     pilot_val = 0
     if species and species.canProduceShips:
         pilot_val = rate_piloting_tag(species.tags)
@@ -747,7 +757,33 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     for bld_type in set(planet_build_names).intersection(AIDependencies.building_supply):
         planet_supply += sum(
             [AIDependencies.building_supply.get(bld_type, {}).get(int(psize), 0) for psize in [-1, planet.size]])
-    planet_supply += foAI.foAIstate.misc.get('supply_tech', 0)
+    for _special in set(planet.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS):
+        planet_supply += sum(
+            [AIDependencies.SUPPLY_MOD_SPECIALS.get(_special, {}).get(int(psize), 0) for psize in [-1, planet.size]])
+    planet_supply += get_supply_tech_range()
+
+    pop_tag_mod = 1.0
+    ind_tag_mod = 1.0
+    res_tag_mod = 1.0
+    supply_tag_mod = 0.0
+    ai_tags = ""
+    for tag in [tag1 for tag1 in tag_list if "AI_TAG" in tag1]:
+        tag_parts = tag.split('_')
+        tag_type = tag_parts[3]
+        ai_tags += " AI_TAG: %s " % tag
+        grade = {'NO': 0.0, 'BAD': 0.5, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 4.0}.get(tag_parts[2], 1.0)
+        if tag_type == "POPULATION":
+            pop_tag_mod = {'BAD': 0.75, 'GOOD': 1.25}.get(tag_parts[2], 1.0)
+        elif tag_type == "INDUSTRY":
+            ind_tag_mod = grade
+        elif tag_type == "RESEARCH":
+            res_tag_mod = grade
+        elif tag_type == "SUPPLY":
+            supply_tag_mod = {'BAD': 0, 'AVERAGE': 1, 'GOOD': 1, 'GREAT': 2, 'ULTIMATE': 3}.get(tag_parts[2], 0)
+
+    planet_supply += supply_tag_mod
+    if planet.speciesName == (spec_name or ""):  # adding or "" in case None was passed as spec_name
+        planet_supply_cache[planet_id] = planet_supply + sys_supply
 
     myrating = sys_status.get('myFleetRating', 0)
     fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
@@ -782,15 +818,12 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         print "Colonization AI couldn't get current info on planet id %d (was stealthed at last sighting)" % planet_id
         return 0  # TODO: track detection strength, order new scouting when it goes up
 
-    tag_list = []
     star_bonus = 0
     colony_star_bonus = 0
     research_bonus = 0
     growth_val = 0
     fixed_ind = 0
     fixed_res = 0
-    if species:
-        tag_list = list(species.tags)
     star_pop_mod = 0
     if system:
         already_got_this_one = this_sysid in (AIstate.popCtrSystemIDs + AIstate.outpostSystemIDs)
@@ -954,13 +987,16 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if have_existing_presence:
             detail.append("preexisting system colony")
             retval *= 1.5
+        supplyval = 0
         if sys_supply < 0:
             if sys_supply + planet_supply >= 0:
-                retval += 30 * (planet_supply - max(-3, sys_supply))
+                supplyval += 30 * (planet_supply - max(-3, sys_supply))
             else:
                 retval += 30 * (planet_supply + sys_supply)  # a penalty
         elif planet_supply > sys_supply and (sys_supply < 2):  # TODO: check min neighbor supply
-            retval += 25 * (planet_supply - sys_supply)
+            supplyval += 25 * (planet_supply - sys_supply)
+        detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supplyval))
+        retval += supplyval
         return int(retval)
     else:  # colonization mission
         if not species:
@@ -969,26 +1005,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if "ANCIENT_RUINS_SPECIAL" in planet.specials:
             retval += discount_multiplier * 50
             detail.append("Undepleted Ruins %.1f" % discount_multiplier * 50)
-        pop_tag_mod = 1.0
-        ind_tag_mod = 1.0
-        res_tag_mod = 1.0
-        supply_tag_mod = 0.0
-        ai_tags = ""
-        for tag in [tag1 for tag1 in tag_list if "AI_TAG" in tag1]:
-            tag_parts = tag.split('_')
-            tag_type = tag_parts[3]
-            ai_tags += " AI_TAG: %s " % tag
-            grade = {'NO': 0.0, 'BAD': 0.5, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 4.0}.get(tag_parts[2], 1.0)
-            if tag_type == "POPULATION":
-                pop_tag_mod = {'BAD': 0.75, 'GOOD': 1.25}.get(tag_parts[2], 1.0)
-            elif tag_type == "INDUSTRY":
-                ind_tag_mod = grade
-            elif tag_type == "RESEARCH":
-                res_tag_mod = grade
-            elif tag_type == "SUPPLY":
-                supply_tag_mod = {'BAD': 0, 'AVERAGE': 1, 'GOOD': 1, 'GREAT': 2, 'ULTIMATE': 3}.get(tag_parts[2], 0)
 
-        planet_supply += supply_tag_mod
         if sys_supply <= 0:
             if sys_supply + planet_supply >= 0:
                 supplyval = 100 * (planet_supply - max(-3, sys_supply))
@@ -996,6 +1013,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 supplyval = 200 * (planet_supply + sys_supply)  # a penalty
         elif planet_supply > sys_supply == 1:  # TODO: check min neighbor supply
             supplyval = 50 * (planet_supply - sys_supply)
+        detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supplyval))
 
         # if AITags != "":
         # print "Species %s has AITags %s"%(specName, AITags)
