@@ -209,6 +209,10 @@ namespace {
     bool                    (Field::*LocationInField)(double x, double y) const =               &Field::InField;
 
     float                   (Special::*SpecialInitialCapacityOnObject)(int) const =             &Special::InitialCapacity;
+
+    bool EnqueueLocationTest(const BuildingType& building_type, int empire_id, int loc_id)
+    { return building_type.EnqueueLocation(empire_id, loc_id);}
+
 }
 
 namespace FreeOrionPython {
@@ -537,6 +541,7 @@ namespace FreeOrionPython {
             .def("perTurnCost",                 &BuildingType::PerTurnCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
             .def("canBeProduced",               &BuildingType::ProductionLocation)  //(int empire_id, int location_id)
+            .def("canBeEnqueued",               &EnqueueLocationTest)  //(int empire_id, int location_id)
             .add_property("costTimeLocationInvariant",
                                                 &BuildingType::ProductionCostTimeLocationInvariant)
             .add_property("dump",               &BuildingType::Dump)
