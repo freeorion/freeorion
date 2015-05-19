@@ -89,7 +89,8 @@ def find_systems_with_min_jumps_between(num_systems, systems_pool, min_jumps, ad
 def system_vicinity_survey(main_system, jump_range):
     """
     Accept a system id and an integer number of jumps to specify the size of the vicinity to check.
-    Return a tuple having list of vicinity systems (including the main system) and a list of all planets in them
+    Return a tuple having list of vicinity systems (including the main system) and a list of all planets in them,
+    excluding GasGiants
     """
     vicinity_systems = [main_system]
     next_ring = [main_system]
@@ -103,10 +104,11 @@ def system_vicinity_survey(main_system, jump_range):
                 if neighbor not in vicinity_systems:
                     vicinity_systems.append(neighbor)
                     next_ring.append(neighbor)
-                    vicinity_planets.extend(fo.sys_get_planets(neighbor))
+                    vicinity_planets.extend([p2 for p2 in fo.sys_get_planets(neighbor)
+                                             if fo.planet_get_size(p2) != fo.planetSize.gasGiant])
     return vicinity_systems, vicinity_planets
 
-def homesystem_vicinity_filter(home_system, jump_range = _ASSESSED_JUMP_RANGE):
+def homesystem_vicinity_filter(home_system, jump_range=_ASSESSED_JUMP_RANGE):
     vicinity_systems, vicinity_planets = system_vicinity_survey(home_system, jump_range)
     # don't force a higher average than one planet per system
     return len(vicinity_planets) >= min(len(vicinity_systems), _TARGET_MIN_PLANETS)
@@ -181,7 +183,7 @@ def compile_home_system_list(num_home_systems, systems):
         num_planets = len(vicinity_planets)
         # don't force a higher average than one planet per system
         target_planets = min(_TARGET_MIN_PLANETS, len(vicinity_systems))
-        # will make (target_planets - numm_planets) attempts to add new planets; may not always succeed
+        # will make (target_planets - num_planets) attempts to add new planets; may not always succeed
         for attempt in range(num_planets, target_planets):
             chosen_sys = random.choice(vicinity_systems[1:])  # don't add new planets to the home system itself
             for _ in range(3):  # make up to three tries in this system
