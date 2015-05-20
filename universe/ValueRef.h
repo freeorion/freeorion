@@ -371,14 +371,17 @@ template <class T>
 struct FO_COMMON_API ValueRef::Operation : public ValueRef::ValueRefBase<T>
 {
     Operation(OpType op_type, ValueRefBase<T>* operand1,
-              ValueRefBase<T>* operand2);               ///< binary operation ctor
-    Operation(OpType op_type, ValueRefBase<T>* operand);///< unary operation ctor
+              ValueRefBase<T>* operand2);                                       ///< binary operation ctor
+    Operation(OpType op_type, ValueRefBase<T>* operand);                        ///< unary operation ctor
+    Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& operands);   ///< nary operation ctor
     ~Operation();
 
-    virtual bool            operator==(const ValueRef::ValueRefBase<T>& rhs) const;
-    OpType                  GetOpType() const;
-    const ValueRefBase<T>*  LHS() const;
-    const ValueRefBase<T>*  RHS() const;
+    virtual bool                            operator==(const ValueRef::ValueRefBase<T>& rhs) const;
+    OpType                                  GetOpType() const;
+    const ValueRefBase<T>*                  LHS() const;        // 1st operand (or 0 if none exists)
+    const ValueRefBase<T>*                  RHS() const;        // 2nd operand (or 0 if only one exists)
+    const std::vector<ValueRefBase<T>*>&    Operands() const;   // all operands
+
     virtual T               Eval(const ScriptingContext& context) const;
     virtual bool            RootCandidateInvariant() const;
     virtual bool            LocalCandidateInvariant() const;
@@ -390,9 +393,8 @@ struct FO_COMMON_API ValueRef::Operation : public ValueRef::ValueRefBase<T>
     virtual void            SetTopLevelContent(const std::string& content_name);
 
 private:
-    OpType              m_op_type;
-    ValueRefBase<T>*    m_operand1;
-    ValueRefBase<T>*    m_operand2;
+    OpType                          m_op_type;
+    std::vector<ValueRefBase<T>*>   m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1426,22 +1428,36 @@ void ValueRef::UserStringLookup::serialize(Archive& ar, const unsigned int versi
 template <class T>
 ValueRef::Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand1, ValueRefBase<T>* operand2) :
     m_op_type(op_type),
-    m_operand1(operand1),
-    m_operand2(operand2)
-{}
+    m_operands()
+{
+    if (operand1)
+        m_operands.push_back(operand1);
+    if (operand2)
+        m_operands.push_back(operand2);
+}
 
 template <class T>
 ValueRef::Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand) :
     m_op_type(op_type),
-    m_operand1(operand),
-    m_operand2(0)
+    m_operands()
+{
+    if (operand)
+        m_operands.push_back(operand);
+}
+
+template <class T>
+ValueRef::Operation<T>::Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& operands) :
+    m_op_type(op_type),
+    m_operands(operands)
 {}
 
 template <class T>
 ValueRef::Operation<T>::~Operation()
 {
-    delete m_operand1;
-    delete m_operand2;
+    for (std::vector<ValueRefBase<T>*>::iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    { delete *it; }
+    m_operands.clear();
 }
 
 template <class T>
@@ -1453,21 +1469,16 @@ bool ValueRef::Operation<T>::operator==(const ValueRef::ValueRefBase<T>& rhs) co
         return false;
     const ValueRef::Operation<T>& rhs_ = static_cast<const ValueRef::Operation<T>&>(rhs);
 
-    if (m_operand1 == rhs_.m_operand1) {
-        // check next member
-    } else if (!m_operand1 || !rhs_.m_operand1) {
-        return false;
-    } else {
-        if (*m_operand1 != *(rhs_.m_operand1))
-            return false;
-    }
+    if (m_operands == rhs_.m_operands)
+        return true;
 
-    if (m_operand2 == rhs_.m_operand2) {
-        // check next member
-    } else if (!m_operand2 || !rhs_.m_operand2) {
+    if (m_operands.size() != rhs_.m_operands.size())
         return false;
-    } else {
-        if (*m_operand2 != *(rhs_.m_operand2))
+
+    for (unsigned int i = 0; i < m_operands.size(); ++i) {
+        if (m_operands[i] != rhs_.m_operands[i])
+            return false;
+        if (m_operands[i] && *(m_operands[i]) != *(rhs_.m_operands[i]))
             return false;
     }
 
@@ -1480,24 +1491,61 @@ ValueRef::OpType ValueRef::Operation<T>::GetOpType() const
 
 template <class T>
 const ValueRef::ValueRefBase<T>* ValueRef::Operation<T>::LHS() const
-{ return m_operand1; }
+{
+    if (m_operands.empty())
+        return 0;
+    return m_operands[0];
+}
 
 template <class T>
 const ValueRef::ValueRefBase<T>* ValueRef::Operation<T>::RHS() const
-{ return m_operand2; }
+{
+    if (m_operands.size() < 2)
+        return 0;
+    return m_operands[1];
+}
+
+template <class T>
+const std::vector<ValueRef::ValueRefBase<T>*>& ValueRef::Operation<T>::Operands() const
+{ return m_operands; }
 
 template <class T>
 T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
 {
     switch (m_op_type) {
-        case PLUS:
-            return T(m_operand1->Eval(context) +
-                     m_operand2->Eval(context));
+        if (m_operands.empty())
+            return T(-1);   // should be INVALID_T of enum types
+
+        case MAXIMUM:
+        case MINIMUM: {
+            // evaluate all operands, return smallest
+            std::set<T> vals;
+            for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+                 it != m_operands.end(); ++it)
+            {
+                ValueRefBase<T>* vr = *it;
+                if (vr)
+                    vals.insert(vr->Eval(context));
+            }
+            if (m_op_type == MINIMUM)
+                return vals.empty() ? T(-1) : *vals.begin();
+            else
+                return vals.empty() ? T(-1) : *vals.rbegin();
             break;
-        case MINUS:
-            return T(m_operand1->Eval(context) -
-                     m_operand2->Eval(context));
+        }
+
+        case RANDOM_PICK: {
+            // select one operand, evaluate it, return result
+            unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
+            std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+            std::advance(it, idx);
+            ValueRefBase<T>* vr = *it;
+            if (!vr)
+                return T(-1);   // should be INVALID_T of enum types
+            return vr->Eval(context);
             break;
+        }
+
         default:
             throw std::runtime_error("ValueRef evaluated with an unknown or invalid OpType.");
             break;
@@ -1518,48 +1566,56 @@ namespace ValueRef {
 template <class T>
 bool ValueRef::Operation<T>::RootCandidateInvariant() const
 {
-    if (m_op_type == RANDOM_UNIFORM)
+    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    if (m_operand1 && !m_operand1->RootCandidateInvariant())
-        return false;
-    if (m_operand2 && !m_operand2->RootCandidateInvariant())
-        return false;
+    for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (*it && !(*it)->RootCandidateInvariant())
+            return false;
+    }
     return true;
 }
 
 template <class T>
 bool ValueRef::Operation<T>::LocalCandidateInvariant() const
 {
-    if (m_op_type == RANDOM_UNIFORM)
+    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    if (m_operand1 && !m_operand1->LocalCandidateInvariant())
-        return false;
-    if (m_operand2 && !m_operand2->LocalCandidateInvariant())
-        return false;
+    for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (*it && !(*it)->LocalCandidateInvariant())
+            return false;
+    }
     return true;
 }
 
 template <class T>
 bool ValueRef::Operation<T>::TargetInvariant() const
 {
-    if (m_op_type == RANDOM_UNIFORM)
+    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    if (m_operand1 && !m_operand1->TargetInvariant())
-        return false;
-    if (m_operand2 && !m_operand2->TargetInvariant())
-        return false;
+    for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (*it && !(*it)->TargetInvariant())
+            return false;
+    }
     return true;
 }
 
 template <class T>
 bool ValueRef::Operation<T>::SourceInvariant() const
 {
-    if (m_op_type == RANDOM_UNIFORM)
+    if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    if (m_operand1 && !m_operand1->SourceInvariant())
-        return false;
-    if (m_operand2 && !m_operand2->SourceInvariant())
-        return false;
+    for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (*it && !(*it)->SourceInvariant())
+            return false;
+    }
     return true;
 }
 
@@ -1567,37 +1623,70 @@ template <class T>
 std::string ValueRef::Operation<T>::Description() const
 {
     if (m_op_type == NEGATE) {
-        //DebugLogger() << "Operation is negation";
-        if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+        if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(LHS())) {
             OpType op_type = rhs->GetOpType();
             if (op_type == PLUS     || op_type == MINUS ||
                 op_type == TIMES    || op_type == DIVIDE ||
                 op_type == NEGATE   || op_type == EXPONENTIATE)
-            return "-(" + m_operand1->Description() + ")";
+            return "-(" + LHS()->Description() + ")";
         } else {
-            return "-" + m_operand1->Description();
+            return "-" + LHS()->Description();
         }
     }
 
     if (m_op_type == ABS)
-        return "abs(" + m_operand1->Description() + ")";
+        return "abs(" + LHS()->Description() + ")";
     if (m_op_type == LOGARITHM)
-        return "log(" + m_operand1->Description() + ")";
+        return "log(" + LHS()->Description() + ")";
     if (m_op_type == SINE)
-        return "sin(" + m_operand1->Description() + ")";
+        return "sin(" + LHS()->Description() + ")";
     if (m_op_type == COSINE)
-        return "cos(" + m_operand1->Description() + ")";
-    if (m_op_type == MINIMUM)
-        return "min(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
-    if (m_op_type == MAXIMUM)
-        return "max(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
-    if (m_op_type == RANDOM_UNIFORM)
-        return "randomnumber(" + m_operand1->Description() + ", " + m_operand2->Description() + ")";
+        return "cos(" + LHS()->Description() + ")";
 
+    if (m_op_type == MINIMUM) {
+        std::string retval = "min(";
+        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+             it != m_operands.end(); ++it)
+        {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Description();
+        }
+        retval += ")";
+        return retval;
+    }
+    if (m_op_type == MAXIMUM) {
+        std::string retval = "max(";
+        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+             it != m_operands.end(); ++it)
+        {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Description();
+        }
+        retval += ")";
+        return retval;
+    }
+
+    if (m_op_type == RANDOM_UNIFORM)
+        return "randomnumber(" + LHS()->Description() + ", " + RHS()->Description() + ")";
+
+    if (m_op_type == RANDOM_PICK) {
+        std::string retval = "randompick(";
+        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+             it != m_operands.end(); ++it)
+        {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Description();
+        }
+        retval += ")";
+        return retval;
+    }
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
-    if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+    if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(LHS())) {
         OpType op_type = lhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -1609,7 +1698,7 @@ std::string ValueRef::Operation<T>::Description() const
            )
             parenthesize_lhs = true;
     }
-    if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
+    if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(RHS())) {
         OpType op_type = rhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -1624,9 +1713,9 @@ std::string ValueRef::Operation<T>::Description() const
 
     std::string retval;
     if (parenthesize_lhs)
-        retval += '(' + m_operand1->Description() + ')';
+        retval += '(' + LHS()->Description() + ')';
     else
-        retval += m_operand1->Description();
+        retval += LHS()->Description();
 
     switch (m_op_type) {
     case PLUS:          retval += " + "; break;
@@ -1638,9 +1727,9 @@ std::string ValueRef::Operation<T>::Description() const
     }
 
     if (parenthesize_rhs)
-        retval += '(' + m_operand2->Description() + ')';
+        retval += '(' + RHS()->Description() + ')';
     else
-        retval += m_operand2->Description();
+        retval += RHS()->Description();
 
     return retval;
 }
@@ -1649,36 +1738,71 @@ template <class T>
 std::string ValueRef::Operation<T>::Dump() const
 {
     if (m_op_type == NEGATE) {
-        if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+        if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(LHS())) {
             OpType op_type = rhs->GetOpType();
             if (op_type == PLUS     || op_type == MINUS ||
                 op_type == TIMES    || op_type == DIVIDE ||
                 op_type == NEGATE   || op_type == EXPONENTIATE)
-            return "-(" + m_operand1->Dump() + ")";
+            return "-(" + LHS()->Dump() + ")";
         } else {
-            return "-" + m_operand1->Dump();
+            return "-" + LHS()->Dump();
         }
     }
 
     if (m_op_type == ABS)
-        return "abs(" + m_operand1->Dump() + ")";
+        return "abs(" + LHS()->Dump() + ")";
     if (m_op_type == LOGARITHM)
-        return "log(" + m_operand1->Dump() + ")";
+        return "log(" + LHS()->Dump() + ")";
     if (m_op_type == SINE)
-        return "sin(" + m_operand1->Dump() + ")";
+        return "sin(" + LHS()->Dump() + ")";
     if (m_op_type == COSINE)
-        return "cos(" + m_operand1->Dump() + ")";
-    if (m_op_type == MINIMUM)
-        return "min(" + m_operand1->Dump() + ", " + m_operand1->Dump() + ")";
-    if (m_op_type == MAXIMUM)
-        return "max(" + m_operand1->Dump() + ", " + m_operand1->Dump() + ")";
+        return "cos(" + LHS()->Dump() + ")";
+
+    if (m_op_type == MINIMUM) {
+        std::string retval = "min(";
+        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+             it != m_operands.end(); ++it)
+        {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Dump();
+        }
+        retval += ")";
+        return retval;
+    }
+    if (m_op_type == MAXIMUM) {
+        std::string retval = "max(";
+        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+             it != m_operands.end(); ++it)
+        {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Dump();
+        }
+        retval += ")";
+        return retval;
+    }
+
     if (m_op_type == RANDOM_UNIFORM)
-        return "random(" + m_operand1->Dump() + ", " + m_operand1->Dump() + ")";
+        return "random(" + LHS()->Dump() + ", " + LHS()->Dump() + ")";
+
+    if (m_op_type == RANDOM_PICK) {
+        std::string retval = "randompick(";
+        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+             it != m_operands.end(); ++it)
+        {
+            if (it != m_operands.begin())
+                retval += ", ";
+            retval += (*it)->Dump();
+        }
+        retval += ")";
+        return retval;
+    }
 
 
     bool parenthesize_lhs = false;
     bool parenthesize_rhs = false;
-    if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand1)) {
+    if (const ValueRef::Operation<T>* lhs = dynamic_cast<const ValueRef::Operation<T>*>(LHS())) {
         OpType op_type = lhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -1690,7 +1814,7 @@ std::string ValueRef::Operation<T>::Dump() const
            )
             parenthesize_lhs = true;
     }
-    if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(m_operand2)) {
+    if (const ValueRef::Operation<T>* rhs = dynamic_cast<const ValueRef::Operation<T>*>(RHS())) {
         OpType op_type = rhs->GetOpType();
         if (
             (m_op_type == EXPONENTIATE &&
@@ -1705,9 +1829,9 @@ std::string ValueRef::Operation<T>::Dump() const
 
     std::string retval;
     if (parenthesize_lhs)
-        retval += '(' + m_operand1->Dump() + ')';
+        retval += '(' + LHS()->Dump() + ')';
     else
-        retval += m_operand1->Dump();
+        retval += LHS()->Dump();
 
     switch (m_op_type) {
     case PLUS:          retval += " + "; break;
@@ -1719,19 +1843,21 @@ std::string ValueRef::Operation<T>::Dump() const
     }
 
     if (parenthesize_rhs)
-        retval += '(' + m_operand2->Dump() + ')';
+        retval += '(' + RHS()->Dump() + ')';
     else
-        retval += m_operand2->Dump();
+        retval += RHS()->Dump();
 
     return retval;
 }
 
 template <class T>
 void ValueRef::Operation<T>::SetTopLevelContent(const std::string& content_name) {
-    if (m_operand1)
-        m_operand1->SetTopLevelContent(content_name);
-    if (m_operand2)
-        m_operand2->SetTopLevelContent(content_name);
+    for (std::vector<ValueRefBase<T>*>::iterator it = m_operands.begin();
+         it != m_operands.end(); ++it)
+    {
+        if (*it)
+            (*it)->SetTopLevelContent(content_name);
+    }
 }
 
 template <class T>
@@ -1740,20 +1866,27 @@ void ValueRef::Operation<T>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
         & BOOST_SERIALIZATION_NVP(m_op_type)
-        & BOOST_SERIALIZATION_NVP(m_operand1)
-        & BOOST_SERIALIZATION_NVP(m_operand2);
+        & BOOST_SERIALIZATION_NVP(m_operands);
 }
 
 template <class T>
 bool ValueRef::ConstantExpr(const ValueRefBase<T>* expr)
 {
     assert(expr);
-    if (dynamic_cast<const Constant<T>*>(expr))
+    if (dynamic_cast<const Constant<T>*>(expr)) {
         return true;
-    else if (dynamic_cast<const Variable<T>*>(expr))
+    } else if (dynamic_cast<const Variable<T>*>(expr)) {
         return false;
-    else if (const Operation<T>* op = dynamic_cast<const Operation<T>*>(expr))
-        return ConstantExpr(op->LHS()) && ConstantExpr(op->RHS());
+    } else if (const Operation<T>* op = dynamic_cast<const Operation<T>*>(expr)) {
+        const std::vector<ValueRefBase<T>*>& operands = op->Operands();
+        for (std::vector<ValueRefBase<T>*>::const_iterator it = operands.begin();
+             it != operands.end(); ++it)
+        {
+            if (*it && !ConstantExpr(*it))
+                return false;
+        }
+        return true;
+    }
     return false;
 }
 
