@@ -2024,7 +2024,7 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
                 m_caret = it;
             }
         } else if (mod_keys & MOD_KEY_SHIFT) { // shift key depressed
-            bool erase = m_selections.find(m_caret) == m_selections.end();
+            bool erase = m_caret != m_rows.end() && m_selections.find(m_caret) == m_selections.end();
             if (!(m_style & LIST_QUICKSEL))
                 m_selections.clear();
             if (m_caret == m_rows.end()) {
