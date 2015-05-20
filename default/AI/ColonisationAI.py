@@ -57,15 +57,14 @@ PHOTO_MAP = {fo.starType.blue: 3, fo.starType.white: 1.5, fo.starType.red: -1, f
              fo.starType.blackHole: -10, fo.starType.noStar: -10}
 # mods per environ uninhab hostile poor adequate good
 POP_SIZE_MOD_MAP = {
-    "env": [0, -4, -2, 0, 3],
-    "subHab": [0, 1, 1, 1, 1],
-    "symBio": [0, 0, 1, 1, 1],
-    "xenoGen": [0, 1, 2, 2, 0],
-    "xenoHyb": [0, 2, 1, 0, 0],
-    "cyborg": [0, 2, 0, 0, 0],
-    "ndim": [0, 2, 2, 2, 2],
-    "orbit": [0, 1, 1, 1, 1],
-    "gaia": [0, 3, 3, 3, 3],
+    "environment_bonus": [0, -4, -2, 0, 3],
+    "GRO_SUBTER_HAB": [0, 1, 1, 1, 1],
+    "GRO_SYMBIOTIC_BIO": [0, 0, 1, 1, 1],
+    "GRO_XENO_GENETICS": [0, 1, 2, 2, 0],
+    "GRO_XENO_HYBRID": [0, 2, 1, 0, 0],
+    "GRO_CYBORG": [0, 2, 0, 0, 0],
+    "CON_NDIM_STRUC": [0, 2, 2, 2, 2],
+    "CON_ORBITAL_HAB": [0, 1, 1, 1, 1],
 }
 
 NEST_VAL_MAP = {
@@ -1090,7 +1089,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         pop_size_mod = 0
         conditional_pop_size_mod = 0
         post_pop_size_mod = 0
-        pop_size_mod += POP_SIZE_MOD_MAP["env"][planet_env]
+        pop_size_mod += POP_SIZE_MOD_MAP["environment_bonus"][planet_env]
         detail.append("EnvironPopSizeMod(%d)" % pop_size_mod)
         if "SELF_SUSTAINING" in tag_list:
             pop_size_mod *= 2
@@ -1099,19 +1098,19 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             pop_size_mod += star_pop_mod
             detail.append("Phototropic Star Bonus_PSM(%0.1f)" % star_pop_mod)
         if tech_is_complete("GRO_SUBTER_HAB"):
-            conditional_pop_size_mod += POP_SIZE_MOD_MAP["subHab"][planet_env]
-            detail.append("Sub_Hab_PSM(%d)" % POP_SIZE_MOD_MAP["subHab"][planet_env])
-        for gTech, gKey in [("GRO_SYMBIOTIC_BIO", "symBio"),
-                            ("GRO_XENO_GENETICS", "xenoGen"),
-                            ("GRO_XENO_HYBRID", "xenoHyb"),
-                            ("GRO_CYBORG", "cyborg")]:
-            if tech_is_complete(gTech):
-                pop_size_mod += POP_SIZE_MOD_MAP[gKey][planet_env]
-                detail.append("%s_PSM(%d)" % (gKey, POP_SIZE_MOD_MAP[gKey][planet_env]))
-        for gTech, gKey in [("CON_NDIM_STRUC", "ndim"), ("CON_ORBITAL_HAB", "orbit")]:
-            if tech_is_complete(gTech):
-                conditional_pop_size_mod += POP_SIZE_MOD_MAP[gKey][planet_env]
-                detail.append("%s_PSM(%d)" % (gKey, POP_SIZE_MOD_MAP[gKey][planet_env]))
+            conditional_pop_size_mod += POP_SIZE_MOD_MAP["GRO_SUBTER_HAB"][planet_env]
+            detail.append("Sub_Hab_PSM(%d)" % POP_SIZE_MOD_MAP["GRO_SUBTER_HAB"][planet_env])
+        for tech in ["GRO_SYMBIOTIC_BIO",
+                     "GRO_XENO_GENETICS",
+                     "GRO_XENO_HYBRID",
+                     "GRO_CYBORG"]:
+            if tech_is_complete(tech):
+                pop_size_mod += POP_SIZE_MOD_MAP[tech][planet_env]
+                detail.append("%s_PSM(%d)" % (tech, POP_SIZE_MOD_MAP[tech][planet_env]))
+        for tech in ["CON_NDIM_STRUC", "CON_ORBITAL_HAB"]:
+            if tech_is_complete(tech):
+                conditional_pop_size_mod += POP_SIZE_MOD_MAP[tech][planet_env]
+                detail.append("%s_PSM(%d)" % (tech, POP_SIZE_MOD_MAP[tech][planet_env]))
 
         # exobots can't ever get to good environ so no gaiai bonus, for others we'll assume they'll get there
         if "GAIA_SPECIAL" in planet.specials and species.name != "SP_EXOBOT":
