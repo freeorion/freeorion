@@ -265,6 +265,7 @@ BuildingType
         Not Contains Building name = "BLD_SHIPYARD_BASE"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups =
         EffectsGroup
             scope = And [ 
@@ -289,6 +290,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -340,6 +342,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-2.png"
 
 BuildingType
@@ -361,6 +364,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-3.png"
 
 BuildingType
@@ -382,6 +386,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-4.png"
 
 BuildingType
@@ -394,11 +399,14 @@ BuildingType
         Not Contains Building name = "BLD_SHIPYARD_AST"
         Planet type = Asteroids
         OwnedBy empire = Source.Owner
+        
+        /* TODO: Check that one, seems to be weird */
         Not Contains And [
             Building name = "BLD_SHIPYARD_AST"
             OwnedBy empire = Source.Owner
         ]
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-5.png"
 
 BuildingType
@@ -420,6 +428,7 @@ BuildingType
             OwnedBy empire = Source.Owner
         ]
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-6.png"
 
 BuildingType
@@ -437,6 +446,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-7.png"
 
 BuildingType
@@ -458,6 +468,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-8.png"
 
 BuildingType
@@ -479,6 +490,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-9.png"
 
 BuildingType
@@ -496,6 +508,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-10.png"
 
 BuildingType
@@ -517,6 +530,7 @@ BuildingType
         ]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-16.png"
 
 BuildingType
@@ -534,6 +548,7 @@ BuildingType
             Building name = "BLD_BIOTERROR_PROJECTOR"
         ]
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/bioterror_projector.png"
 
 BuildingType
@@ -546,6 +561,7 @@ BuildingType
         Not Contains Building name = "BLD_LIGHTHOUSE"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = WithinDistance distance = 0.00001 condition = Source
@@ -574,6 +590,7 @@ BuildingType
         Not Contains Building name = "BLD_SCANNING_FACILITY"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -595,6 +612,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/heavy_mining_processor.png"
 
 BuildingType
@@ -608,6 +626,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -661,6 +680,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -700,6 +720,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -740,6 +761,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/genome_bank.png"
 
 BuildingType
@@ -754,6 +776,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -818,6 +841,7 @@ BuildingType
         Not Planet type = [Asteroids GasGiant]
         Not HasSpecial name = "GAIA_SPECIAL"
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -845,6 +869,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Star type = Red
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -880,6 +905,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -915,6 +941,7 @@ BuildingType
         Not Contains Building name = "BLD_SOL_ORB_GEN"
         OwnedBy empire = Source.Owner
         ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -999,6 +1026,7 @@ BuildingType
             Planet environment = Adequate
         ]
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1033,6 +1061,7 @@ BuildingType
         Not Planet type = [Asteroids GasGiant]
         Not Planet type = LocalCandidate.OriginalType
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1093,6 +1122,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Star type = Neutron
         ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/neutronium-forge.png"
 
 BuildingType
@@ -1107,6 +1137,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/neutronium-forge.png"
 
 BuildingType
@@ -1131,6 +1162,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Population low = 3
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1229,6 +1261,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Star type = BlackHole
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1252,6 +1285,7 @@ BuildingType
         Not Contains Building name = "BLD_REPLICATORS"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = ""
 
 BuildingType
@@ -1265,6 +1299,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Not Planet type = Asteroids
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/shipyard-11.png"
 
 BuildingType
@@ -1276,6 +1311,7 @@ BuildingType
         Not Contains Building name = "BLD_PLANET_BEACON"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -1297,6 +1333,7 @@ BuildingType
         Planet type = [Asteroids GasGiant]
         Population high = 0
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1335,6 +1372,7 @@ BuildingType
         OwnerHasTech name = "PRO_EXOBOTS"
         Population high = 0
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1375,6 +1413,7 @@ BuildingType
         OwnerHasTech name = "GRO_GAIA_TRANS"
         Population high = 0
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1410,6 +1449,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Not Planet type = [Asteroids GasGiant]
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1429,6 +1469,7 @@ BuildingType
         Not Contains Building name = "BLD_TRANSFORMER"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/transformer.png"
 
 BuildingType
@@ -1440,6 +1481,7 @@ BuildingType
         Not Contains Building name = "BLD_GATEWAY_VOID"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1482,6 +1524,7 @@ BuildingType
         Not Contains Building name = "BLD_ENCLAVE_VOID"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1504,6 +1547,7 @@ BuildingType
         Not Contains Building name = "BLD_PLANET_CLOAK"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = ""
 
 BuildingType
@@ -1515,6 +1559,7 @@ BuildingType
         Not Contains Building name = "BLD_SPATIAL_DISTORT_GEN"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = ""
 
 BuildingType
@@ -1532,6 +1577,7 @@ BuildingType
         Not Contains Building name = "BLD_STARGATE"
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/stargate.png"
 
 BuildingType
@@ -1546,6 +1592,7 @@ BuildingType
         OwnedBy empire = Source.Owner
         Planet type = GasGiant
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1575,6 +1622,8 @@ BuildingType
         Population low = [[MIN_RECOLONIZING_SIZE]]
         OwnedBy empire = Source.Owner
     ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    /* TODO: Disable colony base if there is no possibility in the current system */
     effectsgroups = [
         EffectsGroup
             scope = Source
