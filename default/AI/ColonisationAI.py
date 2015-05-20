@@ -1128,11 +1128,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             conditional_pop_size_mod += 3
             detail.append("Gaia_PSM(3)")
 
-        for special in ["SLOW_ROTATION_SPECIAL", "SOLID_CORE_SPECIAL"]:
-            if special in planet_specials:
-                post_pop_size_mod -= 1
-                detail.append("%s_PSM(-1)" % special)
-
         applicable_boosts = set()
         for thisTag in [tag for tag in tag_list if tag in AIDependencies.metabolismBoostMap]:
             metab_boosts = AIDependencies.metabolismBoostMap.get(thisTag, [])
@@ -1170,7 +1165,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
 
         detail.append("maxPop %.1f" % max_pop_size)
 
-        for special in ["MINERALS_SPECIAL", "CRYSTALS_SPECIAL", "METALOIDS_SPECIAL"]:
+        for special in ["MINERALS_SPECIAL", "CRYSTALS_SPECIAL"]:
             if special in planet_specials:
                 mining_bonus += 1
 
