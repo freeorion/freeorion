@@ -351,7 +351,7 @@ namespace {
         if (shield_damage >= target_shield->Current())
             defense_damage = std::min(target_defense->Current(), damage - shield_damage);
 
-        if (shield_damage > 0 || defense_damage > 0 || construction_damage > 0)
+        if (damage > 0)
             damaged_object_ids.insert(target->ID());
 
         if (defense_damage >= target_defense->Current())
@@ -675,6 +675,16 @@ namespace {
                     target->CurrentMeterValue(METER_DEFENSE) <= 0.0 &&
                     target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0)
                 {
+                    // An outpost can enter combat in essentially an incapacitated state, but if it is removed from combat before it has
+                    // been attacked then it can wrongly get regen on the next turn, so check that it has been attacked before excluding
+                    // it from any remaining battle
+                    if (combat_info.damaged_object_ids.find(target_id) == combat_info.damaged_object_ids.end()) {
+                        if (verbose_logging) {
+                            DebugLogger() << "!! Planet " << target_id << "has not yet been attacked, "
+                                        << "so will not yet be removed from battle, despite being essentially incapacitated";
+                        }
+                        return false;
+                    }
                     if (verbose_logging) {
                         DebugLogger() << "!! Target Planet " << target_id << " is entirely knocked out of battle";
                     }
