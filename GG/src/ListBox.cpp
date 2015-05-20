@@ -2028,20 +2028,19 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
             if (!(m_style & LIST_QUICKSEL))
                 m_selections.clear();
             if (m_caret == m_rows.end()) {
-                // No previous caret exists; select this row, mark it as the caret.
-                m_selections.insert(it);
-                m_caret = it;
-            } else { // select all rows between the caret and this row (inclusive), don't move the caret
-                iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
-                iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
-                if (high != m_rows.end())
-                    ++high;
-                for (iterator it2 = low; it2 != high; ++it2) {
-                    if (erase)
-                        m_selections.erase(it2);
-                    else
-                        m_selections.insert(it2);
-                }
+                // No previous caret exists; mark the first row as the caret.
+                m_caret = m_rows.begin();
+            } 
+            // select all rows between the caret and this row (inclusive), don't move the caret
+            iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
+            iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
+            if (high != m_rows.end())
+                ++high;
+            for (iterator it2 = low; it2 != high; ++it2) {
+                if (erase)
+                    m_selections.erase(it2);
+                else
+                    m_selections.insert(it2);
             }
         } else { // unless LIST_QUICKSEL is used, this is treated just like LIST_SINGLESEL above
             if (m_style & LIST_QUICKSEL) {
