@@ -525,7 +525,7 @@ const ListBox::SelectionSet& ListBox::Selections() const
 { return m_selections; }
 
 bool ListBox::Selected(iterator it) const
-{ return m_selections.find(it) != m_selections.end(); }
+{ return it != m_rows.end() && m_selections.find(it) != m_selections.end(); }
 
 Clr ListBox::InteriorColor() const
 { return m_int_color; }
@@ -854,6 +854,8 @@ void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
 {
     SelectionSet previous_selections = m_selections;
 
+    if (it == m_rows.end())  // always check that an iterator is valid before attempting a search for it
+        return;
     if (m_selections.find(it) != m_selections.end())
         m_selections.erase(it);
 
@@ -928,7 +930,7 @@ void ListBox::SetCaret(iterator it)
 void ListBox::BringRowIntoView(iterator it)
 {
     if (it != m_rows.end()) {
-        if (RowPtrIteratorLess()(it, m_first_row_shown)) {
+        if (m_first_row_shown == m_rows.end() || RowPtrIteratorLess()(it, m_first_row_shown)) {
             m_first_row_shown = it;
         } else if (LessThanEqual(LastVisibleRow(), it, m_rows.end())) {
             // Find the row that preceeds the target row by about ClientSize().y
