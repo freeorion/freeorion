@@ -254,7 +254,7 @@ def calculateColonisationPriority():
     if num_colonies > colony_growth_barrier:
         return 0.0
     numColonisablePlanetIDs = len([pid for (pid, (score, _)) in foAI.foAIstate.colonisablePlanetIDs.items()
-                                   if score > 60 ][:allottedColonyTargets+2] )
+                                   if score > 60][:allottedColonyTargets+2])
     if numColonisablePlanetIDs == 0: return 1
 
     colonyshipIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION)
@@ -282,8 +282,14 @@ def calculateOutpostPriority():
     if num_colonies > colony_growth_barrier:
         return 0.0
     mil_prio = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    allotted_portion = ([[[0.6, 0.8],[0.3, 0.4]],[[0.8, 0.9],[0.3, 0.4]]][galaxy_is_sparse]
-                       [any(enemies_sighted)][fo.empireID() % 2])
+
+    NOT_SPARCE, ENEMY_UNSEEN = 0, 0
+    IS_SPARCE, ENEMY_SEEN = 1, 1
+    allotted_portion = {(NOT_SPARCE, ENEMY_UNSEEN): (0.6, 0.8),
+                        (NOT_SPARCE, ENEMY_SEEN): (0.3, 0.4),
+                        (IS_SPARCE, ENEMY_UNSEEN): (0.8, 0.9),
+                        (IS_SPARCE, ENEMY_SEEN): (0.3, 0.4), }[
+        (galaxy_is_sparse, any(enemies_sighted))][fo.empireID()%2]
     if mil_prio < 100:
         allotted_portion *= 2
     elif mil_prio < 200:
