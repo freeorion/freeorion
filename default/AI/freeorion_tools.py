@@ -3,6 +3,7 @@ import re
 import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+import FreeOrionAI as foAI
 from functools import wraps
 from traceback import format_exc
 
@@ -26,9 +27,9 @@ def get_ai_tag_grade(tag_list, tag_type):
     X is most commonly (but not necessarily) one of [NO, BAD, AVERAGE, GOOD, GREAT, ULTIMATE]
     If no matching tags, returns empty string (which for most types should be considered equivalent to AVERAGE)
     '''
-    for tag in tag_list:
+    for tag in filter(lambda tag: tag.startswith("AI_TAG_"), tag_list):
         parts = tag.split("_")
-        if parts[:2] == ["AI","TAG"] and [x.upper() for x in parts[3:4]] == [tag_type.upper()]:
+        if parts[3:4] == [tag_type.upper()]:
             return parts[2]
     return ""
 
