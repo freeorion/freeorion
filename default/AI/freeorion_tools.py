@@ -28,7 +28,7 @@ def get_ai_tag_grade(tag_list, tag_type):
     '''
     for tag in tag_list:
         parts = tag.split("_")
-        if parts[:2] == ["AI","TAG"] and [x.upper() for x in parts[3:4]] == [tag_type.upper()]:
+        if parts[:2] == ["AI", "TAG"] and parts[3:4] == [tag_type]:
             return parts[2]
     return ""
 
