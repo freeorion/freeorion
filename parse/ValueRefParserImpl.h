@@ -102,10 +102,10 @@ struct expression_rule
 
 template <typename T>
 void initialize_nonnumeric_expression_parsers(
-    typename expression_rule<std::string>::type&                function_expr,
-    typename expression_rule<std::string>::type&                operated_expr,
-    typename parse::value_ref_parser_rule<std::string>::type&   expr,
-    typename parse::value_ref_parser_rule<std::string>::type&   primary_expr)
+    typename expression_rule<T>::type&              function_expr,
+    typename expression_rule<T>::type&              operated_expr,
+    typename parse::value_ref_parser_rule<T>::type& expr,
+    typename parse::value_ref_parser_rule<T>::type& primary_expr)
 {
     qi::_1_type _1;
     qi::_c_type _c;
@@ -125,9 +125,9 @@ void initialize_nonnumeric_expression_parsers(
                     |   tok.Min_        [ _c = ValueRef::MINIMUM ]
                     |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
                     )
-                    >   '(' >   expr [ push_back(_d, _1) ]
-                    > *(',' >   expr [ push_back(_d, _1) ] )
-                    >   ')' [ _val = new_<ValueRef::Operation<T> >(_c, _d) ]
+                    >  '('  >   expr [ push_back(_d, _1) ]
+                    >*(','  >   expr [ push_back(_d, _1) ] )
+                    [ _val = new_<ValueRef::Operation<T> >(_c, _d) ] >   ')'
                 )
             |   (
                     primary_expr [ _val = _1 ]
