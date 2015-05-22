@@ -1026,7 +1026,6 @@ BuildingType
             Planet environment = Adequate
         ]
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1061,7 +1060,6 @@ BuildingType
         Not Planet type = [Asteroids GasGiant]
         Not Planet type = LocalCandidate.OriginalType
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1622,8 +1620,8 @@ BuildingType
         Population low = [[MIN_RECOLONIZING_SIZE]]
         OwnedBy empire = Source.Owner
     ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     /* TODO: Disable colony base if there is no possibility in the current system */
+    // EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = Source
