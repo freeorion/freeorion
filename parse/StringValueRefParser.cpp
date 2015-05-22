@@ -29,9 +29,9 @@ void initialize_nonnumeric_expression_parsers<std::string>(
                     |   tok.Min_        [ _c = ValueRef::MINIMUM ]
                     |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
                     )
-                    >>  '(' >>  expr [ push_back(_d, _1) ]
-                    >>*(',' >>  expr [ push_back(_d, _1) ] )
-                    [ _val = new_<ValueRef::Operation<std::string> >(_c, _d) ]  >   ')'
+                    >  '('  >   expr [ push_back(_d, _1) ]
+                    >*(','  >   expr [ push_back(_d, _1) ] )
+                    [ _val = new_<ValueRef::Operation<std::string> >(_c, _d) ] >   ')'
                 )
             |   (
                     primary_expr [ _val = _1 ]
