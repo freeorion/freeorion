@@ -17,6 +17,7 @@ class UniverseObject;
 
 const std::string& UserString(const std::string& str);
 boost::format FlexibleFormat(const std::string& string_to_format);
+int RandSmallInt(int min, int max);
 
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
@@ -1536,6 +1537,8 @@ T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
 
         case RANDOM_PICK: {
             // select one operand, evaluate it, return result
+            if (m_operands.empty())
+                return T(-1);   // should be INVALID_T of enum types
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
             std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
             std::advance(it, idx);

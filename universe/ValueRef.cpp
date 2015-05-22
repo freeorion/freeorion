@@ -2055,6 +2055,8 @@ namespace ValueRef {
 
             case RANDOM_PICK: {
                 // select one operand, evaluate it, return result
+                if (m_operands.empty())
+                    return 0.0;
                 unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
                 std::vector<ValueRefBase<double>*>::const_iterator it = m_operands.begin();
                 std::advance(it, idx);
@@ -2148,6 +2150,8 @@ namespace ValueRef {
 
             case RANDOM_PICK: {
                 // select one operand, evaluate it, return result
+                if (m_operands.empty())
+                    return 0;
                 unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
                 std::vector<ValueRefBase<int>*>::const_iterator it = m_operands.begin();
                 std::advance(it, idx);
