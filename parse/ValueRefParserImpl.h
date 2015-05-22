@@ -93,11 +93,64 @@ struct expression_rule
         qi::locals<
             ValueRef::ValueRefBase<T>*,
             ValueRef::ValueRefBase<T>*,
-            ValueRef::OpType
+            ValueRef::OpType,
+            std::vector<ValueRef::ValueRefBase<T>*>
         >,
         parse::skipper_type
     > type;
 };
+
+template <typename T>
+void initialize_nonnumeric_expression_parsers(
+    typename expression_rule<std::string>::type&                function_expr,
+    typename expression_rule<std::string>::type&                operated_expr,
+    typename parse::value_ref_parser_rule<std::string>::type&   expr,
+    typename parse::value_ref_parser_rule<std::string>::type&   primary_expr)
+{
+    qi::_1_type _1;
+    qi::_c_type _c;
+    qi::_d_type _d;
+    qi::_val_type _val;
+    qi::lit_type lit;
+    using phoenix::new_;
+    using phoenix::push_back;
+
+    const parse::lexer& tok = parse::lexer::instance();
+
+    function_expr
+        =   (
+                (
+                    (
+                        tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
+                    |   tok.Min_        [ _c = ValueRef::MINIMUM ]
+                    |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
+                    )
+                    >   '(' >   expr [ push_back(_d, _1) ]
+                    > *(',' >   expr [ push_back(_d, _1) ] )
+                    >   ')' [ _val = new_<ValueRef::Operation<T> >(_c, _d) ]
+                )
+            |   (
+                    primary_expr [ _val = _1 ]
+                )
+            )
+        ;
+
+    operated_expr
+        =   function_expr   // no operators supported for generic non-numeric types. specialized implementation (eg. std::string) may support some operators, though
+        ;
+
+    expr
+        =   operated_expr
+        ;
+}
+
+template <>
+void initialize_nonnumeric_expression_parsers<std::string>(
+    typename expression_rule<std::string>::type&                function_expr,
+    typename expression_rule<std::string>::type&                operated_expr,
+    typename parse::value_ref_parser_rule<std::string>::type&   expr,
+    typename parse::value_ref_parser_rule<std::string>::type&   primary_expr);
+
 
 template <typename T>
 void initialize_numeric_expression_parsers(
@@ -112,6 +165,7 @@ void initialize_numeric_expression_parsers(
     qi::_a_type _a;
     qi::_b_type _b;
     qi::_c_type _c;
+    qi::_d_type _d;
     qi::_val_type _val;
     qi::lit_type lit;
     using phoenix::new_;
@@ -123,7 +177,7 @@ void initialize_numeric_expression_parsers(
         =   (
                 (
                     (
-                        tok.Sin_    [ _c = ValueRef::SINE ]
+                        tok.Sin_    [ _c = ValueRef::SINE ]                     // single-parameter math functions
                     |   tok.Cos_    [ _c = ValueRef::COSINE ]
                     |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                     |   tok.Abs_    [ _c = ValueRef::ABS ]
@@ -131,16 +185,22 @@ void initialize_numeric_expression_parsers(
                     >> '(' >> expr [ _val = new_<ValueRef::Operation<T> >(_c, _1) ] >> ')'
                 )
             |   (
-                    (
-                        tok.Min_            [ _c = ValueRef::MINIMUM ]
-                    |   tok.Max_            [ _c = ValueRef::MAXIMUM ]
-                    |   tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]
-                    )
-                    >> '(' >> expr [ _a = _1 ] >> ','
-                    >> expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] >> ')'
+                        tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]   // random number requires a min and max value
+                    >  '(' >    expr [ _a = _1 ]
+                    >  ',' >    expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] >> ')'
                 )
             |   (
-                    lit('-') >> function_expr
+                    (
+                        tok.OneOf_  [ _c = ValueRef::RANDOM_PICK ]              // oneof, min, or max can take any number or operands
+                    |   tok.Min_    [ _c = ValueRef::MINIMUM ]
+                    |   tok.Max_    [ _c = ValueRef::MAXIMUM ]
+                    )
+                    >>  '(' >>  expr [ push_back(_d, _1) ]
+                    >>(*(',' >   expr [ push_back(_d, _1) ] ))
+                    [ _val = new_<ValueRef::Operation<T> >(_c, _d) ] >> ')'
+                )
+            |   (
+                    lit('-') >> function_expr                                   // single parameter math function with a function expression rather than any arbitrary expression as parameter, because negating more general expressions can be ambiguous
                     [ _val = new_<ValueRef::Operation<T> >(ValueRef::NEGATE, _1) ]
                 )
             |   (
@@ -182,8 +242,8 @@ void initialize_numeric_expression_parsers(
                 (
                     (
                         multiplicative_expr [ _a = _1 ]
-                    >>   (
-                        *(
+                    >>  (
+                           *(
                                 (
                                     (
                                         lit('+') [ _c = ValueRef::PLUS ]

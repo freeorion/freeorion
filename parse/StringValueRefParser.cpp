@@ -2,6 +2,72 @@
 
 #include "EnumParser.h"
 
+template <>
+void initialize_nonnumeric_expression_parsers<std::string>(
+    typename expression_rule<std::string>::type&                function_expr,
+    typename expression_rule<std::string>::type&                operated_expr,
+    typename parse::value_ref_parser_rule<std::string>::type&   expr,
+    typename parse::value_ref_parser_rule<std::string>::type&   primary_expr)
+{
+    qi::_1_type _1;
+    qi::_a_type _a;
+    qi::_b_type _b;
+    qi::_c_type _c;
+    qi::_d_type _d;
+    qi::_val_type _val;
+    qi::lit_type lit;
+    using phoenix::new_;
+    using phoenix::push_back;
+
+    const parse::lexer& tok = parse::lexer::instance();
+
+    function_expr
+        =   (
+                (
+                    (
+                        tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
+                    |   tok.Min_        [ _c = ValueRef::MINIMUM ]
+                    |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
+                    )
+                    >>  '(' >>  expr [ push_back(_d, _1) ]
+                    >>*(',' >>  expr [ push_back(_d, _1) ] )
+                    [ _val = new_<ValueRef::Operation<std::string> >(_c, _d) ]  >   ')'
+                )
+            |   (
+                    primary_expr [ _val = _1 ]
+                )
+            )
+        ;
+
+    operated_expr
+        =
+            (
+                (
+                    (
+                        function_expr [ _a = _1 ]
+                    >>  (
+                            (
+                                (
+                                    lit('+') [ _c = ValueRef::PLUS ]
+                                    // intentionally left blank
+                                )
+                            >>   function_expr [ _b = new_<ValueRef::Operation<std::string> >(_c, _a, _1) ]
+                            ) [ _a = _b ]
+                        )
+                    )
+                    [ _val = _a ]
+                )
+            |   (
+                    function_expr [ _val = _1 ]
+                )
+            )
+        ;
+
+    expr
+        =   operated_expr
+        ;
+}
+
 namespace { struct string_parser_rules {
         string_parser_rules() {
             qi::_1_type _1;
@@ -45,9 +111,11 @@ namespace { struct string_parser_rules {
                 |   string_var_complex()
                 ;
 
+            initialize_nonnumeric_expression_parsers<std::string>(function_expr, operated_expr, expr, primary_expr);
+
             initialize_nonnumeric_statistic_parser<std::string>(statistic, statistic_sub_value_ref);
 
-            expr
+            primary_expr
                 =   constant
                 |   free_variable
                 |   bound_variable
@@ -75,6 +143,7 @@ namespace { struct string_parser_rules {
         typedef parse::value_ref_parser_rule<std::string>::type rule;
         typedef variable_rule<std::string>::type                variable_rule;
         typedef statistic_rule<std::string>::type               statistic_rule;
+        typedef expression_rule<std::string>::type              expression_rule;
 
         name_token_rule bound_variable_name;
         rule            constant;
@@ -82,6 +151,8 @@ namespace { struct string_parser_rules {
         variable_rule   bound_variable;
         rule            statistic_sub_value_ref;
         statistic_rule  statistic;
+        expression_rule function_expr;
+        expression_rule operated_expr;
         rule            expr;
         rule            primary_expr;
     };
