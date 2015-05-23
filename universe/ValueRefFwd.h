@@ -53,7 +53,8 @@ namespace ValueRef {
         MINIMUM,
         MAXIMUM,
         RANDOM_UNIFORM,
-        RANDOM_PICK
+        RANDOM_PICK,
+        SUBSTITUTION
     };
     template <class T> bool ConstantExpr(const ValueRefBase<T>* expr);
 }

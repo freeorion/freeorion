@@ -1972,6 +1972,8 @@ namespace ValueRef {
 
         } else if (m_op_type == RANDOM_PICK) {
             // select one operand, evaluate it, return result
+            if (m_operands.empty())
+                return "";
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
             std::vector<ValueRefBase<std::string>*>::const_iterator it = m_operands.begin();
             std::advance(it, idx);
@@ -1979,6 +1981,27 @@ namespace ValueRef {
             if (!vr)
                 return "";
             return vr->Eval(context);
+
+        } else if (m_op_type == SUBSTITUTION) {
+            // insert string into other string in place of %1% or similar placeholder
+            if (m_operands.empty())
+                return "";
+            ValueRefBase<std::string>* template_op = *(m_operands.begin());
+            if (!template_op)
+                return "";
+            std::string template_str = template_op->Eval(context);
+
+            boost::format formatter = FlexibleFormat(template_str);
+
+            for (unsigned int idx = 1; idx < m_operands.size(); ++idx) {
+                ValueRefBase<std::string>* op = m_operands[idx];
+                if (!op) {
+                    formatter % "";
+                    continue;
+                }
+                formatter % op->Eval(context);
+            }
+            return formatter.str();
         }
 
         throw std::runtime_error("std::string ValueRef evaluated with an unknown or invalid OpType.");
