@@ -128,3 +128,17 @@ def chat_human(message):
     human_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
     fo.sendChatMessage(human_id, message)
     print "\nChat Message to human: %s\n" % remove_tags(message)
+
+def cache_by_turn(function):
+    """
+    Cache a function value by turn, stored in foAIstate so also provides a history that may be analysed. The cache
+    is keyed by the original function name.  Wraps only functions without arguments.
+    """
+    @wraps(function)
+    def wrapper():
+        if foAI.foAIstate is None:
+            return function()
+        else:
+            cache = foAI.foAIstate.misc.setdefault('caches', {}).setdefault(function.__name__, {})
+            return cache.setdefault(fo.currentTurn(), function())
+    return wrapper
