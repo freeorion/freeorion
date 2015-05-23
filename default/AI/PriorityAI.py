@@ -20,7 +20,7 @@ prioritiees_timer = Timer('calculate_priorities()')
 
 allottedInvasionTargets=0
 allottedColonyTargets=0
-colonyGrowthBarrier = 2
+colony_growth_barrier = 2
 scoutsNeeded = 0
 unmetThreat = 0
 
@@ -223,18 +223,18 @@ def calculateExplorationPriority():
 
 def calculateColonisationPriority():
     """calculates the demand for colony ships by colonisable planets"""
-    global allottedColonyTargets, colonyGrowthBarrier
+    global allottedColonyTargets, colony_growth_barrier
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
     galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
-    totalPP=fo.getEmpire().productionPoints
+    total_pp = fo.getEmpire().productionPoints
     num_colonies = len( list(AIstate.popCtrIDs) )
-    colonyGrowthBarrier = 2 + ((0.5+foAI.foAIstate.aggression)**2)*fo.currentTurn()/50.0 #significant for low aggression, negligible for high aggression
-    if num_colonies > colonyGrowthBarrier:
-        return 0.0
+    # significant growth barrier for low aggression, negligible for high aggression
+    colony_growth_barrier = 2 + ((0.5+foAI.foAIstate.aggression)**2)*fo.currentTurn()/50.0
     colonyCost =  AIDependencies.COLONY_POD_COST * (1 + AIDependencies.COLONY_POD_UPKEEP * num_colonies)
-    turnsToBuild=8#TODO: check for susp anim pods, build time 10
+    turnsToBuild=8  # TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
-    allottedPortion = [[[0.6, 0.8],[0.3, 0.4]],[[0.8, 0.9],[0.3, 0.4]]][galaxy_is_sparse][any(enemies_sighted)][fo.empireID() % 2]  #
+    allottedPortion = ([[[0.6, 0.8],[0.3, 0.4]],[[0.8, 0.9],[0.3, 0.4]]][galaxy_is_sparse]
+                       [any(enemies_sighted)][fo.empireID() % 2])
     #if ( foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
     # > 2 * foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
     # allottedPortion *= 1.5
@@ -245,9 +245,16 @@ def calculateColonisationPriority():
     elif fo.currentTurn() > 100:
         allottedPortion *= 0.75**(num_colonies/10.0)
     #allottedColonyTargets = 1+ int(fo.currentTurn()/50)
-    allottedColonyTargets = 1 + int( totalPP*turnsToBuild*allottedPortion/colonyCost)
+    allottedColonyTargets = 1 + int( total_pp*turnsToBuild*allottedPortion/colonyCost)
+    outpost_prio = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_OUTPOST)
+    # if have any outposts to build, don't build colony ships TODO: make more complex assessment
+    if outpost_prio > 0 or num_colonies > colony_growth_barrier:
+        return 0.0
 
-    numColonisablePlanetIDs = len( [  pid for (pid, (score, specName) ) in foAI.foAIstate.colonisablePlanetIDs.items() if score > 60 ][:allottedColonyTargets+2] )
+    if num_colonies > colony_growth_barrier:
+        return 0.0
+    numColonisablePlanetIDs = len([pid for (pid, (score, _)) in foAI.foAIstate.colonisablePlanetIDs.items()
+                                   if score > 60][:allottedColonyTargets+2])
     if numColonisablePlanetIDs == 0: return 1
 
     colonyshipIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_COLONISATION)
@@ -259,32 +266,53 @@ def calculateColonisationPriority():
     # print "Number of Colonisable planets : " + str(numColonisablePlanetIDs)
     # print "Priority for colony ships : " + str(colonisationPriority)
 
-    if colonisationPriority < 1: return 1
+    if colonisationPriority < 1: return 0
     return colonisationPriority
 
 
 def calculateOutpostPriority():
     """calculates the demand for outpost ships by colonisable planets"""
-    baseOutpostCost = AIDependencies.OUTPOST_POD_COST
+    base_outpost_cost = AIDependencies.OUTPOST_POD_COST
 
-    numOutpostPlanetIDs = len(foAI.foAIstate.colonisableOutpostIDs)
-    numOutpostPlanetIDs = len( [  pid for (pid, (score, specName) ) in foAI.foAIstate.colonisableOutpostIDs.items() if score > 1.0*baseOutpostCost/3.0 ][:allottedColonyTargets] )
-    completedTechs = ResearchAI.get_completed_techs()
-    if numOutpostPlanetIDs == 0 or not AIDependencies.OUTPOSTING_TECH in completedTechs:
+    enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
+    galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
+    total_pp = fo.getEmpire().productionPoints
+    num_colonies = len( list(AIstate.popCtrIDs) )
+    # significant growth barrier for low aggression, negligible for high aggression
+    if num_colonies > colony_growth_barrier:
+        return 0.0
+    mil_prio = foAI.foAIstate.get_priority(EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY)
+
+    NOT_SPARCE, ENEMY_UNSEEN = 0, 0
+    IS_SPARCE, ENEMY_SEEN = 1, 1
+    allotted_portion = {(NOT_SPARCE, ENEMY_UNSEEN): (0.6, 0.8),
+                        (NOT_SPARCE, ENEMY_SEEN): (0.3, 0.4),
+                        (IS_SPARCE, ENEMY_UNSEEN): (0.8, 0.9),
+                        (IS_SPARCE, ENEMY_SEEN): (0.3, 0.4), }[
+        (galaxy_is_sparse, any(enemies_sighted))][fo.empireID()%2]
+    if mil_prio < 100:
+        allotted_portion *= 2
+    elif mil_prio < 200:
+        allotted_portion *= 1.5
+    max_allotted_targets = 1 + int(total_pp*3*allotted_portion/base_outpost_cost)
+
+    num_outpost_targets = len([pid for (pid, (score, specName) ) in foAI.foAIstate.colonisableOutpostIDs.items()
+                               if score > 1.0*base_outpost_cost/3.0 ][:max_allotted_targets])
+    if num_outpost_targets == 0 or not tech_is_complete(AIDependencies.OUTPOSTING_TECH):
         return 0
 
     outpostShipIDs = FleetUtilsAI.get_empire_fleet_ids_by_role(EnumsAI.AIFleetMissionType.FLEET_MISSION_OUTPOST)
-    numOutpostShips = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpostShipIDs))
-    outpostPriority = 50 * (numOutpostPlanetIDs - numOutpostShips) / numOutpostPlanetIDs
+    num_outpost_ships = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpostShipIDs))
+    outpost_priority = 50 * (num_outpost_targets - num_outpost_ships) / num_outpost_targets
 
     # print
-    # print "Number of Outpost Ships : " + str(numOutpostShips)
-    # print "Number of Colonisable outposts: " + str(numOutpostPlanetIDs)
-    print "Priority for outpost ships : " + str(outpostPriority)
+    # print "Number of Outpost Ships : " + str(num_outpost_ships)
+    # print "Number of Colonisable outposts: " + str(num_outpost_planet_ids)
+    print "Priority for outpost ships : " + str(outpost_priority)
 
-    if outpostPriority < 1: return 1
+    if outpost_priority < 1: return 0
 
-    return outpostPriority
+    return outpost_priority
 
 
 def calculateInvasionPriority():
@@ -298,7 +326,7 @@ def calculateInvasionPriority():
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
     multiplier = 1
     num_colonies = len(list(AIstate.popCtrIDs))
-    if num_colonies > colonyGrowthBarrier:
+    if num_colonies > colony_growth_barrier:
         return 0.0
     
     if len(foAI.foAIstate.colonisablePlanetIDs) > 0:

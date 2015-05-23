@@ -3,6 +3,7 @@ import re
 import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
+import FreeOrionAI as foAI
 from functools import wraps
 from traceback import format_exc
 
@@ -26,9 +27,9 @@ def get_ai_tag_grade(tag_list, tag_type):
     X is most commonly (but not necessarily) one of [NO, BAD, AVERAGE, GOOD, GREAT, ULTIMATE]
     If no matching tags, returns empty string (which for most types should be considered equivalent to AVERAGE)
     '''
-    for tag in tag_list:
+    for tag in filter(lambda tag: tag.startswith("AI_TAG_"), tag_list):
         parts = tag.split("_")
-        if parts[:2] == ["AI","TAG"] and [x.upper() for x in parts[3:4]] == [tag_type.upper()]:
+        if parts[3:4] == [tag_type.upper()]:
             return parts[2]
     return ""
 
@@ -127,3 +128,18 @@ def chat_human(message):
     human_id = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)][0]
     fo.sendChatMessage(human_id, message)
     print "\nChat Message to human: %s\n" % remove_tags(message)
+
+def cache_by_turn(function):
+    """
+    Cache a function value by turn, stored in foAIstate so also provides a history that may be analysed. The cache
+    is keyed by the original function name.  Wraps only functions without arguments.
+    """
+    @wraps(function)
+    def wrapper():
+        if foAI.foAIstate is None:
+            return function()
+        else:
+            cache = foAI.foAIstate.misc.setdefault('caches', {}).setdefault(function.__name__, {})
+            this_turn = fo.currentTurn()
+            return cache[this_turn] if this_turn in cache else cache.setdefault(this_turn, function())
+    return wrapper
