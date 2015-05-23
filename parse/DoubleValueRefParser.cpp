@@ -94,11 +94,11 @@ namespace {
                 ;
 
             int_statistic_cast
-                =    int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                =   int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
             int_complex_variable_cast
-                =    int_var_complex() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                =   int_var_complex() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
             primary_expr
