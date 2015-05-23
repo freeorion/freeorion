@@ -33,12 +33,14 @@ namespace {
                 |   bound_variable
                 ;
 
+            initialize_nonnumeric_expression_parsers<PlanetType>(function_expr, operated_expr, expr, primary_expr);
+
             initialize_nonnumeric_statistic_parser<PlanetType>(statistic, statistic_sub_value_ref);
 
             primary_expr
-                %=   constant
-                |    bound_variable
-                |    statistic
+                =   constant
+                |   bound_variable
+                |   statistic
                 ;
 
             variable_name.name("PlanetType variable name (e.g., PlanetType)");
@@ -59,12 +61,16 @@ namespace {
         typedef parse::value_ref_parser_rule<PlanetType>::type  rule;
         typedef variable_rule<PlanetType>::type                 variable_rule;
         typedef statistic_rule<PlanetType>::type                statistic_rule;
+        typedef expression_rule<PlanetType>::type               expression_rule;
 
         name_token_rule variable_name;
         rule            constant;
         variable_rule   bound_variable;
         rule            statistic_sub_value_ref;
         statistic_rule  statistic;
+        expression_rule function_expr;
+        expression_rule operated_expr;
+        rule            expr;
         rule            primary_expr;
     };
 }
@@ -74,6 +80,6 @@ namespace parse {
     value_ref_parser_rule<PlanetType>::type& value_ref_parser<PlanetType>()
     {
         static planet_type_parser_rules retval;
-        return retval.primary_expr;
+        return retval.expr;
     }
 }

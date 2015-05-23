@@ -238,6 +238,7 @@
     (Object)                                    \
     (ObjectType)                                \
     (Ocean)                                     \
+    (OneOf)                                     \
     (Opinion)                                   \
     (Or)                                        \
     (Orange)                                    \

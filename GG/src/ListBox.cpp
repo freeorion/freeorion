@@ -525,7 +525,7 @@ const ListBox::SelectionSet& ListBox::Selections() const
 { return m_selections; }
 
 bool ListBox::Selected(iterator it) const
-{ return m_selections.find(it) != m_selections.end(); }
+{ return it != m_rows.end() && m_selections.find(it) != m_selections.end(); }
 
 Clr ListBox::InteriorColor() const
 { return m_int_color; }
@@ -854,6 +854,8 @@ void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
 {
     SelectionSet previous_selections = m_selections;
 
+    if (it == m_rows.end())  // always check that an iterator is valid before attempting a search for it
+        return;
     if (m_selections.find(it) != m_selections.end())
         m_selections.erase(it);
 
@@ -928,7 +930,7 @@ void ListBox::SetCaret(iterator it)
 void ListBox::BringRowIntoView(iterator it)
 {
     if (it != m_rows.end()) {
-        if (RowPtrIteratorLess()(it, m_first_row_shown)) {
+        if (m_first_row_shown == m_rows.end() || RowPtrIteratorLess()(it, m_first_row_shown)) {
             m_first_row_shown = it;
         } else if (LessThanEqual(LastVisibleRow(), it, m_rows.end())) {
             // Find the row that preceeds the target row by about ClientSize().y
@@ -2024,24 +2026,23 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
                 m_caret = it;
             }
         } else if (mod_keys & MOD_KEY_SHIFT) { // shift key depressed
-            bool erase = m_selections.find(m_caret) == m_selections.end();
+            bool erase = m_caret != m_rows.end() && m_selections.find(m_caret) == m_selections.end();
             if (!(m_style & LIST_QUICKSEL))
                 m_selections.clear();
             if (m_caret == m_rows.end()) {
-                // No previous caret exists; select this row, mark it as the caret.
-                m_selections.insert(it);
-                m_caret = it;
-            } else { // select all rows between the caret and this row (inclusive), don't move the caret
-                iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
-                iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
-                if (high != m_rows.end())
-                    ++high;
-                for (iterator it2 = low; it2 != high; ++it2) {
-                    if (erase)
-                        m_selections.erase(it2);
-                    else
-                        m_selections.insert(it2);
-                }
+                // No previous caret exists; mark the first row as the caret.
+                m_caret = m_rows.begin();
+            } 
+            // select all rows between the caret and this row (inclusive), don't move the caret
+            iterator low  = RowPtrIteratorLess()(m_caret, it) ? m_caret : it;
+            iterator high = RowPtrIteratorLess()(m_caret, it) ? it : m_caret;
+            if (high != m_rows.end())
+                ++high;
+            for (iterator it2 = low; it2 != high; ++it2) {
+                if (erase)
+                    m_selections.erase(it2);
+                else
+                    m_selections.insert(it2);
             }
         } else { // unless LIST_QUICKSEL is used, this is treated just like LIST_SINGLESEL above
             if (m_style & LIST_QUICKSEL) {

@@ -27,13 +27,12 @@ Classes:
 - ColonisationShipDesignerBaseClass: base class for all (specialised) colonisation ships which provides common functionalities
 - OutpostShipDesignerBaseClass: same but for outposter ships
 - TroopShipDesignerBaseClass: same but for troop ships
-- AdditionalSpecifications:  Defines all requirements we have for our designs such as minimum fuel or minimum starlane speed.
+- AdditionalSpecifications:  Defines all requirements we have for our designs such as minimum fuel or minimum speed.
 
 global variables:
 - Cache: Instance of the ShipDesignCache class - all cached information is stored in here.
 """
 
-# TODO: Implement a nicer naming system for ships (based on rating? Hull?)
 # TODO: add hull.detection to interface, then add scout class
 
 import freeOrionAIInterface as fo
@@ -53,7 +52,7 @@ DETECTION = frozenset({fo.shipPartClass.detection})
 STEALTH = frozenset({fo.shipPartClass.stealth})
 FUEL = frozenset({fo.shipPartClass.fuel})
 COLONISATION = frozenset({fo.shipPartClass.colony})
-ENGINES = frozenset({fo.shipPartClass.starlaneSpeed})  # TODO: Update to "speed" after new test build is supplied
+ENGINES = frozenset({fo.shipPartClass.speed})
 TROOPS = frozenset({fo.shipPartClass.troops})
 WEAPONS = frozenset({fo.shipPartClass.shortRange, fo.shipPartClass.missiles,
                      fo.shipPartClass.fighters, fo.shipPartClass.pointDefense})
@@ -64,8 +63,11 @@ TESTDESIGN_NAME_BASE = "AI_TESTDESIGN"
 TESTDESIGN_NAME_HULL = TESTDESIGN_NAME_BASE+"_HULL"
 TESTDESIGN_NAME_PART = TESTDESIGN_NAME_BASE+"_PART"
 
-# Hardcoded prefered hullname for testdesigns - should be a hull without conditions but with maximum different slottypes
-TESTDESIGN_PREFERED_HULL = "SH_BASIC_MEDIUM"
+# Hardcoded preferred hullname for testdesigns - should be a hull without conditions but with maximum different slottypes
+TESTDESIGN_PREFERRED_HULL = "SH_BASIC_MEDIUM"
+
+MISSING_REQUIREMENT_MULTIPLIER = -1000
+INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSING_REQUIREMENT_MULTIPLIER
 
 
 class ShipDesignCache(object):
@@ -310,8 +312,10 @@ class ShipDesignCache(object):
     def _update_buildable_items_this_turn(self, verbose=False):
         """Calculate which parts and hulls can be built on each planet this turn.
 
-        :param verbose: bool - toggles detailed debugging output.
+        :param verbose: toggles detailed debugging output.
+        :type verbose: bool
         """
+        # TODO: Refactor this function
         # The AI currently has no way of checking building requirements of individual parts and hulls directly.
         # It can only check if we can build a design. Therefore, we use specific testdesigns to check if we can
         # build a hull or part.
@@ -339,10 +343,10 @@ class ShipDesignCache(object):
         # To reduce the number of lookups, move the hardcoded TESTDESIGN_PREFERED_HULL to the front of the list.
         # This hull should be buildable on each planet and also cover the most common slottypes.
         try:
-            idx = available_hulls.index(TESTDESIGN_PREFERED_HULL)
+            idx = available_hulls.index(TESTDESIGN_PREFERRED_HULL)
             available_hulls[0], available_hulls[idx] = available_hulls[idx], available_hulls[0]
         except ValueError:
-            print "WARNING: Tried to use '%s' as testhull but it is not in available_hulls." % TESTDESIGN_PREFERED_HULL,
+            print "WARNING: Tried to use '%s' as testhull but it is not in available_hulls." % TESTDESIGN_PREFERRED_HULL,
             print "Please update ShipDesignAI.py according to the new content."
             traceback.print_exc()
         testdesign_names = [get_shipdesign(design_id).name(False) for design_id in empire.allShipDesigns
@@ -353,14 +357,19 @@ class ShipDesignCache(object):
                                 for slottype in slotlist}
         new_parts = [_get_part_type(part) for part in empire.availableShipParts
                      if part not in self.strictly_worse_parts]
-        # TODO: Check for location invariance and if not, use different caching system
-        pid = self.production_cost.keys()[0]
+        pid = self.production_cost.keys()[0]  # as only location invariant parts are considered, use arbitrary planet.
         for new_part in new_parts:
             self.strictly_worse_parts[new_part.name] = []
+            if not new_part.costTimeLocationInvariant:
+                print "new part %s not location invariant!" % new_part.name
+                continue
             for part_class in ALL_META_CLASSES:
                 if new_part.partClass in part_class:
                     for old_part in [_get_part_type(part) for part in self.strictly_worse_parts
                                      if part != new_part.name]:
+                        if not old_part.costTimeLocationInvariant:
+                            print "old part %s not location invariant!" % old_part.name
+                            continue
                         if old_part.partClass in part_class:
                             if new_part.capacity >= old_part.capacity:
                                 a = new_part
@@ -369,9 +378,10 @@ class ShipDesignCache(object):
                                 a = old_part
                                 b = new_part
                             if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name]
-                                    and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}):
-                                # TODO: add production_time as additional condition?
+                                    and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}
+                                    and self.production_time[pid][a.name] <= self.production_time[pid][b.name]):
                                 self.strictly_worse_parts[a.name].append(b.name)
+                                print "Part %s is strictly worse than part %s" % (b.name, a.name)
                     break
         available_parts = sorted(self.strictly_worse_parts.keys(),
                                  key=lambda item: _get_part_type(item).capacity, reverse=True)
@@ -633,11 +643,11 @@ class ShipDesigner(object):
         # However, we also need to make sure, that the closer we are to requirements,
         # the better our rating is so the optimizing heuristic finds "the right way".
         if self.fuel < self.additional_specifications.minimum_fuel:
-            rating += -1000 * (self.additional_specifications.minimum_fuel - self.fuel)
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_fuel - self.fuel)
         if self.speed < self.additional_specifications.minimum_speed:
-            rating += -1000 * (self.additional_specifications.minimum_speed - self.speed)
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_speed - self.speed)
         if self.structure < self.additional_specifications.minimum_structure:
-            rating += -1000 * (self.additional_specifications.minimum_structure - self.structure)
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (self.additional_specifications.minimum_structure - self.structure)
         if rating < 0:
             return rating
         else:
@@ -670,20 +680,24 @@ class ShipDesigner(object):
     def update_hull(self, hullname):
         """Set hull of the design.
 
-        :param hullname: string - name of hull"""
+        :param hullname:
+        :type hullname: str
+        """
         self.hull = fo.getHullType(hullname)
 
     def update_parts(self, partname_list):
         """Set both partnames and parts attributes.
 
-        :param partname_list: list of strings (partnames)"""
+        :param partname_list: contains partnames as strings
+        :type partname_list: list"""
         self.partnames = partname_list
         self.parts = [_get_part_type(part) for part in partname_list if part]
 
     def update_species(self, speciesname):
         """Set the piloting species.
 
-        :param speciesname: string - name of species
+        :param speciesname:
+        :type speciesname: str
         """
         self.species = speciesname
 
@@ -692,7 +706,8 @@ class ShipDesigner(object):
 
         Default stats if no hull in design.
 
-        :param ignore_species: bool, toggles whether species piloting grades are considered in the stats.
+        :param ignore_species: toggles whether species piloting grades are considered in the stats.
+        :type ignore_species: bool
         """
         if not self.hull:
             print "WARNING: Tried to update stats of design without hull. Reset values to default."
@@ -705,7 +720,7 @@ class ShipDesigner(object):
         # read out hull stats
         self.structure = self.hull.structure
         self.fuel = self.hull.fuel
-        self.speed = self.hull.starlaneSpeed
+        self.speed = self.hull.speed
         self.stealth = self.hull.stealth
         self.attacks.clear()
         self.detection = 0  # TODO: Add self.hull.detection once available in interface
@@ -771,7 +786,8 @@ class ShipDesigner(object):
     def add_design(self, verbose=False):
         """Add a real (i.e. gameobject) ship design of the current configuration.
 
-        :param verbose: bool - toggles detailed debugging output
+        :param verbose: toggles detailed debugging output
+        :type verbose: bool
         """
         # First build a name. We want to have a safe way to reference the design
         # And to find out whether it is a duplicate of an existing one.
@@ -825,7 +841,8 @@ class ShipDesigner(object):
 
         :return: list of (rating,planet_id,design_id,cost) tuples, i.e. best available design for each planet
         :param loc: int or list of ints (optional) - planet ids where the designs are to be built. Default: All planets.
-        :param verbose: bool - Toggles detailed logging for debugging.
+        :param verbose: Toggles detailed logging for debugging.
+        :type verbose: bool
         """
         if loc is None:
             planets = _get_planets_with_shipyard()
@@ -925,6 +942,8 @@ class ShipDesigner(object):
         WARNING: The dict passed as parameter is modified inside this function and entries are removed!
 
         :param partname_dict: keys: slottype, values: list of partnames. MODIFIED INSIDE THIS FUNCTION!
+        :param verbose: toggles verbose logging
+        :type verbose: bool
         """
         if verbose:
             print "Available parts:"
@@ -1266,7 +1285,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
 
     def _rating_function(self):
         if self.troops == 0:
-            return -99999
+            return INVALID_DESIGN_RATING
         else:
             return self.troops/self.production_cost
 
@@ -1348,7 +1367,7 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
 
     def _rating_function(self):
         if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
-            return -9999
+            return INVALID_DESIGN_RATING
         return self.colonisation*(1+0.002*(self.speed-75))/self.production_cost
 
     def _starting_guess(self, available_parts, num_slots):
@@ -1412,7 +1431,7 @@ class OrbitalColonisationShipDesigner(ColonisationShipDesignerBaseClass):
 
     def _rating_function(self):
         if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
-            return -9999
+            return INVALID_DESIGN_RATING
         return self.colonisation/self.production_cost
 
 
@@ -1436,7 +1455,7 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
 
     def _rating_function(self):
         if self.colonisation != 0:
-            return -9999
+            return INVALID_DESIGN_RATING
         return (1+0.002*(self.speed-75))/self.production_cost
 
     def _class_specific_filter(self, partname_dict):
@@ -1485,7 +1504,7 @@ class OrbitalOutpostShipDesigner(OutpostShipDesignerBaseClass):
 
     def _rating_function(self):
         if self.colonisation != 0:
-            return -9999
+            return INVALID_DESIGN_RATING
         return 1/self.production_cost
 
 
@@ -1526,13 +1545,34 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
 
     def _rating_function(self):
         if self.speed > 10:
-            return -9999
+            return INVALID_DESIGN_RATING
         total_dmg = self._total_dmg_vs_shields()
         return (1+total_dmg*self.structure)/self.production_cost
 
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
         return self._total_dmg()
+
+
+class ScoutShipDesigner(ShipDesigner):
+    """Scout ship class"""
+    basename = "Scout"
+    description = "For exploration and reconnaissance"
+    useful_part_classes = DETECTION | FUEL
+    NAMETABLE = "AI_SHIPDESIGN_NAME_SCOUT"
+    NAME_THRESHOLDS = sorted([0])
+    filter_useful_parts = True
+    filter_inefficient_parts = True
+
+    def __init__(self):
+        ShipDesigner.__init__(self)
+        self.additional_specifications.minimum_fuel = 3
+        self.additional_specifications.minimum_speed = 60
+
+    def _rating_function(self):
+        if not self.detection:
+            return INVALID_DESIGN_RATING
+        return self.detection**2 * self.fuel / self.production_cost
 
 
 def _get_planets_with_shipyard():
@@ -1587,16 +1627,18 @@ def _get_part_type(partname):
 
 
 def _build_reference_name(hullname, partlist):
-    """Build a reference name for the design based on the hull and the partlist.
-
-    This reference name is used to identify existing designs and is mapped by
-    Cache.map_reference_design_name to the ingame design name.
-
-    :param hullname: string
-    :param partlist: list of partnames
-    :return: string
     """
-    return "%s-%s" % (hullname, "-".join(partlist))  # "Hull-Part1-Part2-Part3-Part4"
+    This reference name is used to identify existing designs and is mapped
+    by Cache.map_reference_design_name to the ingame design name. Order of components are ignored.
+
+    :param hullname: hull name
+    :type hullname: str
+    :param partlist: list of part names
+    :type partlist: list
+    :return: reference name
+    :rtype: str
+    """
+    return "%s-%s" % (hullname, "-".join(sorted(partlist)))  # "Hull-Part1-Part2-Part3-Part4"
 
 
 def _can_build(design, empire_id, pid):

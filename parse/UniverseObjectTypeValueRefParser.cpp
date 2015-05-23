@@ -28,12 +28,14 @@ namespace {
                 |   bound_variable
                 ;
 
+            initialize_nonnumeric_expression_parsers<UniverseObjectType>(function_expr, operated_expr, expr, primary_expr);
+
             initialize_nonnumeric_statistic_parser<UniverseObjectType>(statistic, statistic_sub_value_ref);
 
             primary_expr
-                %=   constant
-                |    bound_variable
-                |    statistic
+                =   constant
+                |   bound_variable
+                |   statistic
                 ;
 
             variable_name.name("ObjectType variable name (e.g., ObjectType)");
@@ -54,12 +56,16 @@ namespace {
         typedef parse::value_ref_parser_rule<UniverseObjectType>::type  rule;
         typedef variable_rule<UniverseObjectType>::type                 variable_rule;
         typedef statistic_rule<UniverseObjectType>::type                statistic_rule;
+        typedef expression_rule<UniverseObjectType>::type               expression_rule;
 
         name_token_rule variable_name;
         rule            constant;
         variable_rule   bound_variable;
         rule            statistic_sub_value_ref;
         statistic_rule  statistic;
+        expression_rule function_expr;
+        expression_rule operated_expr;
+        rule            expr;
         rule            primary_expr;
     };
 }
@@ -69,6 +75,6 @@ namespace parse {
     value_ref_parser_rule<UniverseObjectType>::type& value_ref_parser<UniverseObjectType>()
     {
         static universe_object_type_parser_rules retval;
-        return retval.primary_expr;
+        return retval.expr;
     }
 }

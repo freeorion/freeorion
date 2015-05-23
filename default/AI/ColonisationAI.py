@@ -9,6 +9,7 @@ import FreeOrionAI as foAI
 import PlanetUtilsAI
 import ProductionAI
 import TechsListsAI
+import MilitaryAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType, AIFocusType
 import EnumsAI
 from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, ppstring, cache_by_turn
@@ -35,7 +36,6 @@ annexable_planet_ids = set()
 systems_by_supply_tier = {}
 system_supply = {}
 planet_supply_cache = {}  # includes system supply
-cur_best_mil_ship_rating = 20
 all_colony_opportunities = {}
 gotRuins = False
 got_ast = False
@@ -170,8 +170,8 @@ def check_supply():
     # print "standard supply calc took ", supp_timing[0][-1]-supp_timing[0][-2]
     print
     print "New Supply Calc:"
-    print "Known Systems:", ppstring(list(universe.systemIDs))
-    print "Base Supply:", ppstring(dict_from_map(empire.systemSupplyRanges))
+    print "Known Systems:", list(universe.systemIDs)
+    print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
     # Note: empire.supplyProjections supply projection has one major difference from standard supply calculations-- if
     # the final parameter (obstructed) is False then it intentionally ignores existing obstructions/blockades, so
     # a Sentinel or somesuch might throw it off, That is an area for future improvement
@@ -179,10 +179,10 @@ def check_supply():
     for sys_id, supply_val in system_supply.items():
         # print PlanetUtilsAI.sys_name_ids([sys_id]), ' -- ', supply_val
         systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
-    print "New Supply connected systems: ",  ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
-    print "New 1st Ring of annexable sys's: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
-    print "New 2nd Ring of annexable sys's: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
-    print "New 3rd Ring of annexable sys's: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
+    print "New Supply connected systems: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
+    print "New First Ring of annexable systems: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-1, [])))
+    print "New Second Ring of annexable systems: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-2, [])))
+    print "New Third Ring of annexable systems: ", ppstring(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(-3, [])))
     # print "new supply calc took ", new_time-supp_timing[0][-1]
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
     annexable_ring1.clear()
@@ -213,8 +213,7 @@ def survey_universe():
     explored_system_ids = foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
     un_ex_sys_ids = list(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     un_ex_systems = map(universe.getSystem, un_ex_sys_ids)
-    print "Unexplored Systems: %s " % ppstring([(sysID, (sys and sys.name) or "name unknown") for sysID, sys in
-                                       zip(un_ex_sys_ids, un_ex_systems)])
+    print "Unexplored Systems: %s " % un_ex_systems
     print "Explored SystemIDs: " + str(list(explored_system_ids))
 
     explored_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(explored_system_ids)
@@ -414,10 +413,7 @@ def survey_universe():
 
 def get_colony_fleets():
     """examines known planets, collects various colonization data, to be later used to send colony fleets"""
-    global cur_best_mil_ship_rating
     colonization_timer.start("Getting best milship rating")
-
-    cur_best_mil_ship_rating = ProductionAI.cur_best_mil_ship_rating()
     colonization_timer.start('Getting avail colony fleets')
 
     all_colony_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
@@ -426,12 +422,6 @@ def get_colony_fleets():
     # get suppliable systems and planets
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    #
-    ## survey universe -----------------------------------------------------------
-    #
-    univ_stats = survey_universe()
-
-    fleet_supplyable_planet_ids = univ_stats['fleetSupplyablePlanetIDs']
     colonization_timer.start('Identify Existing colony/outpost targets')
 
     # export colony targeted systems for other AI modules
@@ -793,6 +783,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         planet_supply_cache[planet_id] = planet_supply + sys_supply
 
     myrating = sys_status.get('myFleetRating', 0)
+    cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
     fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
     monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(cur_best_mil_ship_rating)
     neighbor_threat_ratio = ((sys_status.get('neighborThreat', 0)) / float(cur_best_mil_ship_rating)) + \

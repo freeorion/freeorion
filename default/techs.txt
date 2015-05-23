@@ -816,6 +816,7 @@ Tech
         "LRN_NDIM_SUBSPACE"
     ]
     unlock = Item type = Building name = "BLD_GATEWAY_VOID"
+    graphic = "icons/tech/monument_to_exodus.png"
 
 Tech
     name = "LRN_ENCLAVE_VOID"
