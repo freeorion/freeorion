@@ -43,19 +43,15 @@ void initialize_nonnumeric_expression_parsers<std::string>(
         =
             (
                 (
-                    (
                         function_expr [ _a = _1 ]
-                    >>  (
-                            (
-                                (
-                                    lit('+') [ _c = ValueRef::PLUS ]
-                                    // intentionally left blank
-                                )
-                            >>   function_expr [ _b = new_<ValueRef::Operation<std::string> >(_c, _a, _1) ]
-                            ) [ _a = _b ]
-                        )
-                    )
-                    [ _val = _a ]
+                    >>  lit('+') [ _c = ValueRef::PLUS ]
+                    >>  function_expr [ _b = new_<ValueRef::Operation<std::string> >(_c, _a, _1) ]
+                    [ _val = _b ]
+                )
+            |   (
+                                function_expr [ push_back(_d, _1) ]     // template string
+                    >>+('%' >   function_expr [ push_back(_d, _1) ] )   // must have at least one sub-string
+                    [ _val = new_<ValueRef::Operation<std::string> >(ValueRef::SUBSTITUTION, _d) ]
                 )
             |   (
                     function_expr [ _val = _1 ]
