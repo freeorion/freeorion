@@ -140,5 +140,6 @@ def cache_by_turn(function):
             return function()
         else:
             cache = foAI.foAIstate.misc.setdefault('caches', {}).setdefault(function.__name__, {})
-            return cache.setdefault(fo.currentTurn(), function())
+            this_turn = fo.currentTurn()
+            return cache[this_turn] if this_turn in cache else cache.setdefault(this_turn, function())
     return wrapper
