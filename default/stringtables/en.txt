@@ -10782,6 +10782,9 @@ AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
 '''Decoy
 Starbase'''
 
+AI_SHIPDESIGN_NAME_SCOUT
+Scout
+
 ### AI Diplomacy Strings and Lists 
 ### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
 ### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key

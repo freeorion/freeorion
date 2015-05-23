@@ -196,7 +196,9 @@ def generateOrders():  # pylint: disable=invalid-name
     # ...demands/priorities
     print("Calling AI Modules")
     # call AI modules
-    action_list = [PriorityAI.calculate_priorities,
+    action_list = [ColonisationAI.survey_universe,
+                   ProductionAI.find_best_designs_this_turn,
+                   PriorityAI.calculate_priorities,
                    ExplorationAI.assign_scouts_to_explore_systems,
                    ColonisationAI.assign_colony_fleets_to_colonise,
                    InvasionAI.assign_invasion_fleets_to_invade,
