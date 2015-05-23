@@ -1455,7 +1455,7 @@ ValueRef::Operation<T>::Operation(OpType op_type, const std::vector<ValueRefBase
 template <class T>
 ValueRef::Operation<T>::~Operation()
 {
-    for (std::vector<ValueRefBase<T>*>::iterator it = m_operands.begin();
+    for (typename std::vector<ValueRefBase<T>*>::iterator it = m_operands.begin();
          it != m_operands.end(); ++it)
     { delete *it; }
     m_operands.clear();
@@ -1521,7 +1521,7 @@ T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
         case MINIMUM: {
             // evaluate all operands, return smallest
             std::set<T> vals;
-            for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+            for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
                  it != m_operands.end(); ++it)
             {
                 ValueRefBase<T>* vr = *it;
@@ -1540,7 +1540,7 @@ T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
             if (m_operands.empty())
                 return T(-1);   // should be INVALID_T of enum types
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+            typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
             std::advance(it, idx);
             ValueRefBase<T>* vr = *it;
             if (!vr)
@@ -1571,7 +1571,7 @@ bool ValueRef::Operation<T>::RootCandidateInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
          it != m_operands.end(); ++it)
     {
         if (*it && !(*it)->RootCandidateInvariant())
@@ -1585,7 +1585,7 @@ bool ValueRef::Operation<T>::LocalCandidateInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
          it != m_operands.end(); ++it)
     {
         if (*it && !(*it)->LocalCandidateInvariant())
@@ -1599,7 +1599,7 @@ bool ValueRef::Operation<T>::TargetInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
          it != m_operands.end(); ++it)
     {
         if (*it && !(*it)->TargetInvariant())
@@ -1613,7 +1613,7 @@ bool ValueRef::Operation<T>::SourceInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+    for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
          it != m_operands.end(); ++it)
     {
         if (*it && !(*it)->SourceInvariant())
@@ -1648,7 +1648,7 @@ std::string ValueRef::Operation<T>::Description() const
 
     if (m_op_type == MINIMUM) {
         std::string retval = "min(";
-        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
              it != m_operands.end(); ++it)
         {
             if (it != m_operands.begin())
@@ -1660,7 +1660,7 @@ std::string ValueRef::Operation<T>::Description() const
     }
     if (m_op_type == MAXIMUM) {
         std::string retval = "max(";
-        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
              it != m_operands.end(); ++it)
         {
             if (it != m_operands.begin())
@@ -1676,7 +1676,7 @@ std::string ValueRef::Operation<T>::Description() const
 
     if (m_op_type == RANDOM_PICK) {
         std::string retval = "randompick(";
-        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
              it != m_operands.end(); ++it)
         {
             if (it != m_operands.begin())
@@ -1763,7 +1763,7 @@ std::string ValueRef::Operation<T>::Dump() const
 
     if (m_op_type == MINIMUM) {
         std::string retval = "min(";
-        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
              it != m_operands.end(); ++it)
         {
             if (it != m_operands.begin())
@@ -1775,7 +1775,7 @@ std::string ValueRef::Operation<T>::Dump() const
     }
     if (m_op_type == MAXIMUM) {
         std::string retval = "max(";
-        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
              it != m_operands.end(); ++it)
         {
             if (it != m_operands.begin())
@@ -1791,7 +1791,7 @@ std::string ValueRef::Operation<T>::Dump() const
 
     if (m_op_type == RANDOM_PICK) {
         std::string retval = "randompick(";
-        for (std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
+        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
              it != m_operands.end(); ++it)
         {
             if (it != m_operands.begin())
@@ -1855,7 +1855,7 @@ std::string ValueRef::Operation<T>::Dump() const
 
 template <class T>
 void ValueRef::Operation<T>::SetTopLevelContent(const std::string& content_name) {
-    for (std::vector<ValueRefBase<T>*>::iterator it = m_operands.begin();
+    for (typename std::vector<ValueRefBase<T>*>::iterator it = m_operands.begin();
          it != m_operands.end(); ++it)
     {
         if (*it)
@@ -1882,7 +1882,7 @@ bool ValueRef::ConstantExpr(const ValueRefBase<T>* expr)
         return false;
     } else if (const Operation<T>* op = dynamic_cast<const Operation<T>*>(expr)) {
         const std::vector<ValueRefBase<T>*>& operands = op->Operands();
-        for (std::vector<ValueRefBase<T>*>::const_iterator it = operands.begin();
+        for (typename std::vector<ValueRefBase<T>*>::const_iterator it = operands.begin();
              it != operands.end(); ++it)
         {
             if (*it && !ConstantExpr(*it))
