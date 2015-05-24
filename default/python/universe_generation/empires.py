@@ -128,7 +128,7 @@ def find_home_systems_for_min_jump_distance(num_systems, systems_pool, min_jumps
     return max(accepted_list, key=len)
 
 
-def find_home_systems(num_systems, complete_pool, preferred_pool, min_jumps):
+def find_home_systems(num_home_systems, complete_pool, preferred_pool, min_jumps):
     """
     Tries to find a specified number of home systems which are as far apart from each other as possible.
     Starts with the specified minimum jump distance and reduces that limit until enough systems can be found.
@@ -139,36 +139,39 @@ def find_home_systems(num_systems, complete_pool, preferred_pool, min_jumps):
     # try to find home systems, decrease the min jumps until enough systems can be found, or the min jump distance
     # gets reduced to 0 (meaning we don't have enough systems to choose from at all)
     while min_jumps > 0:
-        print "Trying to find", num_systems, "home systems that are at least", min_jumps, "jumps apart..."
+        print "Trying to find", num_home_systems, "home systems that are at least", min_jumps, "jumps apart..."
 
-        # if the preferred pool has at least as many systems as the number of home systems that have been requested,
-        # try to find home systems with the pool of preferred systems first
-        if num_systems <= len(preferred_pool):
-            print "...first, try to find systems using the pool of preferred systems"
-            home_systems = find_home_systems_for_min_jump_distance(num_systems, preferred_pool, min_jumps)
+        # try to pick our home systems by iterating over the two pools we got
+        # try the preferred pool first, and if that does not yield sufficient systems, try the complete pool
+        pool_list = [
+            # from the preferred pool try to pick the requested number of home systems
+            (preferred_pool, num_home_systems, "pool of preferred systems"),
+            # from the complete pool, try to pick as much systems as possible (by using 0 instead of num_home_systems)
+            (complete_pool, 0, "complete pool")
+        ]
+
+        for pool, num_systems, pool_label in pool_list:
+            print "...try to find systems using the", pool_label
+
+            # check if the pool has enough systems to pick from
+            if len(pool) <= num_home_systems:
+                # no, the pool has less systems than home systems requested, so just skip trying using that pool
+                print "...pool only has", len(pool), "systems, skip trying to use it"
+                continue
+
+            # try to pick home systems
+            home_systems = find_home_systems_for_min_jump_distance(num_systems, pool, min_jumps)
             # check if we got enough
-            if len(home_systems) >= num_systems:
+            if len(home_systems) >= num_home_systems:
                 # yes, we got what we need, return the home systems we found
                 print "...", len(home_systems), "systems found"
                 return home_systems
             else:
+                # no, try next pool
                 print "...only", len(home_systems), "systems found"
-        else:
-            print "...the preferred pool only has", len(preferred_pool), "systems, skip trying to use it"
 
-        # the preferred pool either hasn't enough systems, or we couldn't find enough systems using that pool
-        # now try with the complete pool
-        print "...try using the complete pool"
-        home_systems = find_home_systems_for_min_jump_distance(0, complete_pool, min_jumps)
-
-        # check again if we got enough
-        if len(home_systems) >= num_systems:
-            # yes, we got what we need, return the home systems we found
-            print "...", len(home_systems), "systems found"
-            return home_systems
-
-        # still no, decrease the min jump distance and try again
-        print "...only", len(home_systems), "systems found, try again"
+        # we did not find enough home systems with the current min jump requirement,
+        # so decrease the min jumps and try again
         min_jumps -= 1
 
     # all attempts came up with too few systems, return empty list to indicate failure
