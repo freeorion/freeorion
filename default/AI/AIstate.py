@@ -768,31 +768,16 @@ class AIstate(object):
         elif design_id in self.designStats:
             return self.designStats[design_id]
         design = fo.getShipDesign(design_id)
-        detect_bonus = 0
         if design:
             attacks = {}
             for attack in list(design.attackStats):
                 attacks[attack] = attacks.get(attack, 0) + 1
             parts = design.parts
-            shields = 0
-            if "SH_BLACK" in parts:
-                shields = 20
-            elif "SH_MULTISPEC" in parts:
-                shields = 15
-            elif "SH_PLASMA" in parts:
-                shields = 12
-            elif "SH_DEFLECTOR" in parts:
-                shields = 7
-            elif "SH_DEFENSE_GRID" in parts:
-                shields = 4
-            if "DT_DETECTOR_4" in parts:
-                detect_bonus = 4
-            elif "DT_DETECTOR_3" in parts:
-                detect_bonus = 3
-            elif "DT_DETECTOR_2" in parts:
-                detect_bonus = 2
-            elif "DT_DETECTOR_1" in parts:
-                detect_bonus = 1
+            part_types = [fo.getPartType(part) for part in parts if part]
+            shield_parts = [part for part in part_types if part.partClass == fo.shipPartClass.shields]
+            shields = max([part.capacity for part in shield_parts]) if shield_parts else 0
+            detector_parts = [part for part in part_types if part.partClass == fo.shipPartClass.detection]
+            detect_bonus = max([part.capacity for part in detector_parts]) if detector_parts else 0
             # stats = {'attack':design.attack, 'structure':(design.structure + detect_bonus), 'shields':shields, 'attacks':attacks}
             stats = {'attack': design.attack, 'structure': design.structure, 'shields': shields, 
                      'attacks': attacks, 'tact_adj': self.calc_tactical_rating_adjustment(parts)}
