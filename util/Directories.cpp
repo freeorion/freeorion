@@ -267,6 +267,9 @@ const fs::path GetBinDir() {
     return bin_dir;
 }
 
+const fs::path GetPythonHome()
+{ return GetBinDir(); }
+
 void InitBinDir(const std::string& argv0) {
     try {
         fs::path binary_file = fs::system_complete(FilenameToPath(argv0));
@@ -296,9 +299,6 @@ const fs::path GetConfigPath() {
     static const fs::path p = GetUserDir() / "config.xml";
     return p;
 }
-
-const fs::path GetPythonHome()
-{ return GetBinDir(); }
 
 const fs::path GetSaveDir() {
     // if save dir option has been set, use specified location.  otherwise,
