@@ -303,8 +303,7 @@ def compile_home_system_list(num_home_systems, systems):
                                       for s in home_systems}
         # sort the home systems by the number of planets in their near vicinity using the map
         # now only pick the number of home systems we need, taking those with the highest number of planets
-        home_systems =\
-            sorted(home_systems, key=lambda s: hs_planets_in_vicinity_map[s], reverse=True)[:num_home_systems]
+        home_systems = sorted(home_systems, key=hs_planets_in_vicinity_map.get, reverse=True)[:num_home_systems]
 
     # make sure all our home systems have a "real" star (that is, a star that is not a neutron star, black hole,
     # or even no star at all) and at least one planet in it
