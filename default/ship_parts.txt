@@ -319,9 +319,9 @@ Part
     name = "SH_DEFENSE_GRID"
     description = "SH_DEFENSE_GRID_DESC"
     class = Shield
-    capacity = 4
+    capacity = 3
     mountableSlotTypes = Internal
-    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy empire = Source.Owner
     effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
@@ -331,9 +331,9 @@ Part
     name = "SH_DEFLECTOR"
     description = "SH_DEFLECTOR_DESC"
     class = Shield
-    capacity = 7
+    capacity = 5
     mountableSlotTypes = Internal
-    buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
     effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
@@ -343,10 +343,10 @@ Part
     name = "SH_PLASMA"
     description = "SH_PLASMA_DESC"
     class = Shield
-    capacity = 12
+    capacity = 9
     mountableSlotTypes = Internal
-    buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 6
+    buildcost = 90 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
     location = OwnedBy empire = Source.Owner
     effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/plasma_shield.png"
@@ -355,10 +355,10 @@ Part
     name = "SH_BLACK"
     description = "SH_BLACK_DESC"
     class = Shield
-    capacity = 20
+    capacity = 15
     mountableSlotTypes = Internal
-    buildcost = 200 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 8
+    buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 6
     location = OwnedBy empire = Source.Owner
     effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/blackshield.png"
@@ -367,10 +367,10 @@ Part
     name = "SH_MULTISPEC"
     description = "SH_MULTISPEC_DESC"
     class = Shield
-    capacity = 15
+    capacity = 10
     mountableSlotTypes = Internal
-    buildcost = 120 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 10
+    buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 8
     location = OwnedBy empire = Source.Owner
     effectsgroups = [
         [[SHIELD_STACKING]]     //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
