@@ -15,10 +15,6 @@
 #include <boost/python/extract.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 
-#ifdef FREEORION_MACOSX
-#include <sys/param.h>
-#endif
-
 using boost::python::object;
 using boost::python::import;
 using boost::python::error_already_set;
@@ -46,9 +42,9 @@ BOOST_PYTHON_MODULE(freeorion) {
 namespace {
     // Some helper objects needed to initialize and run the
     // Python interface
-#ifdef FREEORION_MACOSX
-    static char     s_python_home[MAXPATHLEN];
-    static char     s_python_program_name[MAXPATHLEN];
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+    static char     s_python_home[1024];
+    static char     s_python_program_name[1024];
 #endif
     static dict     s_python_namespace = dict();
 
@@ -75,12 +71,12 @@ bool PythonInit() {
     DebugLogger() << "Initializing server Python interface";
 
     try {
-#ifdef FREEORION_MACOSX
-        // There have been recurring issues on OSX to get FO to use the
-        // Python framework shipped with the app (instead of falling back
-        // on the ones provided by the system). These API calls have been
-        // added in an attempt to solve the problems. Not sure if they
-        // are really required, but better save than sorry.. ;)
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+        // There have been recurring issues on Windows and OSX to get FO to use the
+		// Python framework shipped with the app (instead of falling back on the ones
+		// provided by the system). These API calls have been added in an attempt to
+		// solve the problems. Not sure if they are really required, but better save
+		// than sorry.. ;)
         strcpy(s_python_home, GetPythonHome().string().c_str());
         Py_SetPythonHome(s_python_home);
         DebugLogger() << "Python home set to " << Py_GetPythonHome();
@@ -88,7 +84,7 @@ bool PythonInit() {
         Py_SetProgramName(s_python_program_name);
         DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
 #endif
-        // initializes Python interpreter, allowing Python functions to be called from C++
+		// initializes Python interpreter, allowing Python functions to be called from C++
         Py_Initialize();
         DebugLogger() << "Python initialized";
         DebugLogger() << "Python version: " << Py_GetVersion();

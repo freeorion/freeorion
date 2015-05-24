@@ -224,10 +224,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 static dict         s_main_namespace = dict();
 static object       s_ai_module = object();
 static PythonAI*    s_ai = 0;
-#ifdef FREEORION_MACOSX
-#include <sys/param.h>
-static char         s_python_home[MAXPATHLEN];
-static char         s_python_program_name[MAXPATHLEN];
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+static char         s_python_home[1024];
+static char         s_python_program_name[1024];
 #endif
 PythonAI::PythonAI() {
     DebugLogger() << "PythonAI::PythonAI()";
@@ -240,11 +239,15 @@ PythonAI::PythonAI() {
     s_ai = this;
 
     try {
-#ifdef FREEORION_MACOSX
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+        // There have been recurring issues on Windows and OSX to get FO to use the
+		// Python framework shipped with the app (instead of falling back on the ones
+		// provided by the system). These API calls have been added in an attempt to
+		// solve the problems. Not sure if they are really required, but better save
+		// than sorry.. ;)
         strcpy(s_python_home, GetPythonHome().string().c_str());
         Py_SetPythonHome(s_python_home);
         DebugLogger() << "Python home set to " << Py_GetPythonHome();
-
         strcpy(s_python_program_name, (GetPythonHome() / "Python").string().c_str());
         Py_SetProgramName(s_python_program_name);
         DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
