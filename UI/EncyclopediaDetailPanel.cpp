@@ -2129,16 +2129,12 @@ namespace {
             if (!species)
                 continue;
 
-            // Exclude species that can't colonize this planet (either by virtue
-            // of "can't produce ships" or "cannot colonize" traits) UNLESS they
+            // Exclude species that can't colonize UNLESS they
             // are already here (aka: it's their home planet). Showing them on
             // their own planet allows comparison vs other races, which might
             // be better suited to this planet. 
-            if (!species->CanProduceShips() || !species->CanColonize()) {
-                if (species_name != planet->SpeciesName())
-                    continue;
-            }
-            species_names.insert(species_name);
+            if (species->CanColonize() || species_name == planet->SpeciesName())
+                species_names.insert(species_name);
         }
 
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
