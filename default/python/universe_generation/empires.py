@@ -197,9 +197,9 @@ def add_planets_to_vicinity(vicinity, num_planets):
     # this way we can prioritize the systems we want to add planets to by star type
     acceptable_star_types_list = [
         star_types_real,
+        (fo.starType.noStar,),
         (fo.starType.neutron,),
-        (fo.starType.blackHole,),
-        (fo.starType.noStar,)
+        (fo.starType.blackHole,)
     ]
 
     # store the free orbits as a list of tuples of (system, orbit)
@@ -234,8 +234,8 @@ def add_planets_to_vicinity(vicinity, num_planets):
 
         # check the star type of the system containing the orbit we got
         star_type = fo.sys_get_star_type(system)
-        if star_type == fo.starType.noStar:
-            # if it has no star, change the star type
+        if star_type in [fo.starType.noStar, fo.starType.blackHole]:
+            # if it is a black hole or has no star, change the star type
             # pick a star type, continue until we get a real star
             # don't accept neutron, black hole or no star
             while star_type not in star_types_real:
