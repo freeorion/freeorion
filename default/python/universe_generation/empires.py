@@ -192,7 +192,7 @@ def add_planets_to_vicinity(vicinity, num_planets):
     # so we can iterate over this list and only add the free orbits of systems that match the respective star types
     # each step
     # this way we can prioritize the systems we want to add planets to by star type
-    acceptable_star_types_lists = [
+    acceptable_star_types_list = [
         star_types_real,
         (fo.starType.neutron,),
         (fo.starType.blackHole,),
@@ -203,7 +203,7 @@ def add_planets_to_vicinity(vicinity, num_planets):
     free_orbits_map = []
 
     # now, iterate over the list of acceptable star types
-    for acceptable_star_types in acceptable_star_types_lists:
+    for acceptable_star_types in acceptable_star_types_list:
         # check all systems in the list of systems we got passed into this function
         for system in vicinity:
             # if this system has a star type we want to accept in this step, add its free orbits to our list
