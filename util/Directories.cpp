@@ -297,6 +297,9 @@ const fs::path GetConfigPath() {
     return p;
 }
 
+const fs::path GetPythonHome()
+{ return GetBinDir(); }
+
 const fs::path GetSaveDir() {
     // if save dir option has been set, use specified location.  otherwise,
     // use default location
