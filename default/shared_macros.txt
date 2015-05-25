@@ -176,3 +176,13 @@ DEFAULT_PRIORITY
 
 LATE_PRIORITY
 '''110'''
+
+
+/*   E N Q U E U E   C O N D I T I O N S   */
+
+ENQUEUE_BUILD_ONE_PER_PLANET
+'''And [
+        Not Contains Building name = CurrentContent
+        Not Enqueued type = Building name = CurrentContent
+        OwnedBy empire = Source.Owner
+    ]'''
