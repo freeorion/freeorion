@@ -84,7 +84,7 @@ bool PythonInit() {
         Py_SetProgramName(s_python_program_name);
         DebugLogger() << "Python program name set to " << Py_GetProgramFullPath();
 #endif
-		// initializes Python interpreter, allowing Python functions to be called from C++
+        // initializes Python interpreter, allowing Python functions to be called from C++
         Py_Initialize();
         DebugLogger() << "Python initialized";
         DebugLogger() << "Python version: " << Py_GetVersion();
