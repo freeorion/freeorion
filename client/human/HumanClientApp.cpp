@@ -102,7 +102,8 @@ namespace {
         db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   768,    RangedValidator<int>(600, 1600));
 
         const int CENTRE = static_cast<int>(SDL_WINDOWPOS_CENTERED);
-        db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     CENTRE, RangedValidator<int>(-10240, 10240));
+        db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     CENTRE, OrValidator<int>( RangedValidator<int>(-10240, 10240),
+                                                                                                                     DiscreteValidator<int>(CENTRE) ));
         db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      50,     RangedValidator<int>(-10240, 10240));
     }
     bool temp_bool = RegisterOptions(&AddOptions);

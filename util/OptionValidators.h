@@ -4,8 +4,10 @@
 
 #include <boost/any.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <cmath>
 #include <string>
+#include <set>
 
 // these are needed by the StepValidator
 namespace details {
@@ -36,7 +38,7 @@ struct ValidatorBase {
 };
 
 /** determines if a string is a valid value for an OptionsDB option */
-template <class T> 
+template <class T>
 struct Validator : public ValidatorBase
 {
     virtual boost::any Validate(const std::string& str) const
@@ -114,6 +116,77 @@ public:
     const T m_origin;
     const T m_min;
     const T m_max;
+};
+
+/// a Validator that specifies a finite number of valid values.
+/** Probably won't work well with floating point types. */
+template <class T>
+struct DiscreteValidator : public Validator<T>
+{
+    DiscreteValidator(const T& single_value) :
+        m_values(&single_value, &single_value + 1)
+    { }
+
+    DiscreteValidator(const std::set<T>& values) :
+        m_values(values)
+    { }
+
+    template <class iter>
+    DiscreteValidator(iter start, iter finish) :
+        m_values(start, finish)
+    { }
+
+    template <size_t N>
+    DiscreteValidator(const T (&in)[N]) :
+        m_values(in, in + N)
+    { }
+
+    virtual boost::any Validate(const std::string& str) const {
+        T val = boost::lexical_cast<T>(str);
+
+        if (m_values.find(val) == m_values.end())
+            throw boost::bad_lexical_cast();
+
+        return boost::any(val);
+    }
+
+    virtual DiscreteValidator* Clone() const
+    { return new DiscreteValidator<T>(m_values); }
+
+    /// Stores the list of vaild values.
+    const std::set<T> m_values;
+};
+
+/// a Validator that performs a logical OR of two validators.
+/** Stores and owns clones of the provided validators in boost::scoped_ptrs.
+ *  Always calls m_validator_a->Validate(). Only calls m_validator_b->Validate()
+ *  if the first one throws. */
+template <class T>
+struct OrValidator : public Validator<T>
+{
+    OrValidator(const Validator<T>& validator_a,
+                const Validator<T>& validator_b) :
+        m_validator_a(validator_a.Clone()),
+        m_validator_b(validator_b.Clone())
+    { }
+
+    virtual boost::any Validate(const std::string& str) const {
+        boost::any result;
+
+        try {
+            result = m_validator_a->Validate(str);
+        } catch (boost::bad_lexical_cast&) {
+            result = m_validator_b->Validate(str);
+        }
+
+        return result;
+    }
+
+    virtual OrValidator* Clone() const
+    { return new OrValidator<T>(*m_validator_a.get(), *m_validator_b.get()); }
+
+    const boost::scoped_ptr<Validator<T> > m_validator_a;
+    const boost::scoped_ptr<Validator<T> > m_validator_b;
 };
 
 #endif // _OptionValidators_h_
