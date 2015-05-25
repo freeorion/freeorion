@@ -164,8 +164,8 @@ struct DiscreteValidator : public Validator<T>
 template <class T>
 struct OrValidator : public Validator<T>
 {
-    OrValidator(const ValidatorBase& validator_a,
-                const ValidatorBase& validator_b) :
+    OrValidator(const Validator<T>& validator_a,
+                const Validator<T>& validator_b) :
         m_validator_a(validator_a.Clone()),
         m_validator_b(validator_b.Clone())
     { }
@@ -185,8 +185,8 @@ struct OrValidator : public Validator<T>
     virtual OrValidator* Clone() const
     { return new OrValidator<T>(*m_validator_a.get(), *m_validator_b.get()); }
 
-    const boost::scoped_ptr<ValidatorBase> m_validator_a;
-    const boost::scoped_ptr<ValidatorBase> m_validator_b;
+    const boost::scoped_ptr<Validator<T> > m_validator_a;
+    const boost::scoped_ptr<Validator<T> > m_validator_b;
 };
 
 #endif // _OptionValidators_h_
