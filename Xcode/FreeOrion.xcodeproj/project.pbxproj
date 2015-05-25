@@ -2366,7 +2366,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode ${XCODE_VERSION_ACTUAL}\"\nfi";
+			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"python\" \"${SRCROOT}/../cmake/make_versioncpp.py\" \"${SRCROOT}/..\" \"Xcode ${XCODE_VERSION_ACTUAL}\"\nfi";
 		};
 		82EC621B18C6109D000237C2 /* make_dmg */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2380,7 +2380,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"${SRCROOT}/make_dmg.py\" \"${SRCROOT}/..\" $BUILT_PRODUCTS_DIR\nfi";
+			shellScript = "if [ \"${ACTION}\" == \"build\" ]; then\n    \"python\" \"${SRCROOT}/make_dmg.py\" \"${SRCROOT}/..\" $BUILT_PRODUCTS_DIR\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 
