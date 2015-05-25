@@ -909,6 +909,38 @@ namespace {
         return system->Orbits();
     }
 
+    list SystemFreeOrbits(int system_id) {
+        list py_orbits;
+        TemporaryPtr<System> system = GetSystem(system_id);
+        if (!system) {
+            ErrorLogger() << "PythonUniverseGenerator::SystemFreeOrbits : Couldn't get system with ID " << system_id;
+            return py_orbits;
+        }
+        const std::set<int>& orbits = system->FreeOrbits();
+        for (std::set<int>::const_iterator it = orbits.begin();
+             it != orbits.end(); ++it)
+        { py_orbits.append(*it); }
+        return py_orbits;
+    }
+
+    bool SystemOrbitOccupied(int system_id, int orbit) {
+        TemporaryPtr<System> system = GetSystem(system_id);
+        if (!system) {
+            ErrorLogger() << "PythonUniverseGenerator::SystemOrbitOccupied : Couldn't get system with ID " << system_id;
+            return 0;
+        }
+        return system->OrbitOccupied(orbit);
+    }
+
+    int SystemOrbitOfPlanet(int system_id, int planet_id) {
+        TemporaryPtr<System> system = GetSystem(system_id);
+        if (!system) {
+            ErrorLogger() << "PythonUniverseGenerator::SystemOrbitOfPlanet : Couldn't get system with ID " << system_id;
+            return 0;
+        }
+        return system->OrbitOfPlanet(planet_id);
+    }
+
     list SystemGetPlanets(int system_id) {
         list py_planets;
         TemporaryPtr<System> system = GetSystem(system_id);
@@ -1241,6 +1273,10 @@ void WrapServerAPI() {
     def("sys_get_star_type",                    SystemGetStarType);
     def("sys_set_star_type",                    SystemSetStarType);
     def("sys_get_num_orbits",                   SystemGetNumOrbits);
+    def("sys_get_num_orbits",                   SystemGetNumOrbits);
+    def("sys_free_orbits",                      SystemFreeOrbits);
+    def("sys_orbit_occupied",                   SystemOrbitOccupied);
+    def("sys_orbit_of_planet",                  SystemOrbitOfPlanet);
     def("sys_get_planets",                      SystemGetPlanets);
     def("sys_get_starlanes",                    SystemGetStarlanes);
     def("sys_add_starlane",                     SystemAddStarlane);

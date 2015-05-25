@@ -3,29 +3,28 @@ import random
 
 import freeorion as fo
 
-import names
-import starsystems
-import planets
-import util
+from galaxy import get_systems_within_jumps
+from starsystems import star_types_real, pick_star_type
+from planets import planet_sizes_real, planet_types_real, calc_planet_size, calc_planet_type
+from names import get_name_list, random_name
+from util import load_string_list, report_error
+from options import HS_MIN_PLANETS_IN_VICINITY_TOTAL, HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM, HS_VICINITY_RANGE
+from options import HS_ACCEPTABLE_PLANET_TYPES, HS_ACCEPTABLE_PLANET_SIZES
 import statistics
 
-# the following are used in constraining the empire home systems; see compile_home_system_list() for more info
-_ASSESSED_JUMP_RANGE = 3  # the size of the vicinity that will be checked
-_TARGET_MIN_PLANETS = 10  # the (provisional) minimum acceptable number of planets in the vicinity
-_FILTER_HOMESYSTEMS_BY_VICINITY = True  # if False, attempt to add sufficient planets to homesystem vicinity
 
 def get_empire_name_generator():
     """
     String generator, return random empire name from string list,
     if string list is empty generate random name.
     """
-    empire_names = names.get_name_list("EMPIRE_NAMES")
+    empire_names = get_name_list("EMPIRE_NAMES")
     random.shuffle(empire_names)
     while True:
         if empire_names:
             yield empire_names.pop()
         else:
-            yield names.random_name(5)
+            yield random_name(5)
 
 
 # generate names for empires, use next(empire_name_generator) to get next name.
@@ -59,68 +58,215 @@ def get_starting_species_pool():
 starting_species_pool = get_starting_species_pool()
 
 
-def find_systems_with_min_jumps_between(num_systems, systems_pool, min_jumps, additional_reqs = None):
+def count_planets_in_systems(systems, planet_types_filter=HS_ACCEPTABLE_PLANET_TYPES):
     """
-    Find requested number of systems out of a pool that are at least a specified number of jumps apart.
-    additional_reqs is either None or a filter function which accepts a system and returns True or False
+    Return the total number of planets in the specified group of systems,
+    only count the planet types specified in planet_types_filter.
     """
-    # make several tries to get the requested number of systems
+    num_planets = 0
+    for system in systems:
+        num_planets += len([p for p in fo.sys_get_planets(system) if fo.planet_get_type(p) in planet_types_filter])
+    return num_planets
+
+
+def systems_min_jumps_away_from(systems_pool, min_jumps, chosen_systems):
+    """
+    Generator that returns systems randomly picked from a pool that are at least a certain jump distance away
+    from the group systems listed in chosen_systems.
+    """
+    # on generator initialization shuffle our pool of systems to randomize the order in which the systems are returned
+    random.shuffle(systems_pool)
+    # return systems that meet our condition until we have exhausted our pool
+    for candidate in systems_pool:
+        # check if our candidate is at least the specified min jump distance away from the systems in chosen_systems
+        # if yes, return candidate, otherwise continue with next candidate
+        if all(fo.jump_distance(candidate, system) >= min_jumps for system in chosen_systems):
+            yield candidate
+
+
+def min_planets_in_vicinity_limit(num_systems):
+    """
+    Calculates the minimum planet limit for the specified number of systems.
+    This limit is the lower of HS_MIN_PLANETS_IN_VICINITY_TOTAL or HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM
+    planets per system.
+    """
+    return min(HS_MIN_PLANETS_IN_VICINITY_TOTAL, num_systems * HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM)
+
+
+def has_min_planets_in_vicinity(system):
+    """
+    Checks if the specified system has a certain minimum of planets in the near vicinity.
+    The near vicinity are all systems within HS_VICINITY_RANGE jumps of the system.
+    """
+    systems_in_vicinity = get_systems_within_jumps(system, HS_VICINITY_RANGE)
+    return count_planets_in_systems(systems_in_vicinity) > min_planets_in_vicinity_limit(len(systems_in_vicinity))
+
+
+def find_home_systems_for_min_jump_distance(num_systems, systems_pool, min_jumps):
+    """
+    Returns a list with the specified number of home systems which are at least the specified minimum number of jumps
+    apart, picked randomly from the specified pool. If the specified number is 0, returns as much systems as possible.
+    """
+    # make several attempts to find systems that match the condition of being at least min_jumps apart
+    # set the number of attempt to the number of systems in the pool, or 100 at max
     attempts = min(100, len(systems_pool))
-    while attempts > 0:
-        attempts -= 1
-        # shuffle our pool of systems so each try the candidates are tried in different order
-        # (otherwise each try would yield the same result, which would make trying several times kind of pointless...)
-        random.shuffle(systems_pool)
-        # try to find systems that meet our condition until we either have the requested number
-        # or we have tried all systems in our pool
+    # store the result of all attempts in a list, so we can pick the attempt that yielded the largest set of systems
+    accepted_list = []
+    while attempts:
         accepted = []
-        for candidate in systems_pool:
-            # check if our candidate is at least min_jumps away from all other systems we already found
-            if (all(fo.jump_distance(candidate, system) >= min_jumps for system in accepted) and
-                    ((additional_reqs is None) or additional_reqs(candidate))):
-                # if yes, add the candidate to the list of accepted systems
-                accepted.append(candidate)
-                # if we have the requested number of systems, we can stop and return the systems we found
-                if len(accepted) >= num_systems:
-                    return accepted
-    # all tries failed, return an empty list to indicate failure
+        # get candidates that are at least min_jumps away from the systems we already accepted
+        for candidate in systems_min_jumps_away_from(systems_pool, min_jumps, accepted):
+            accepted.append(candidate)  # add the candidate to our list of accepted systems
+            # if the number of home systems has been specified and we met that number, we got what we need
+            # we can stop and return the result of the current attempt immediately
+            if (num_systems > 0) and (len(accepted) >= num_systems):
+                return accepted
+        # add the result of the current attempt to our list and continue with next attempt
+        accepted_list.append(accepted)
+        attempts -= 1
+    # return the result of the attempt that yielded the most systems
+    return max(accepted_list, key=len)
+
+
+def find_home_systems(num_home_systems, complete_pool, preferred_pool, min_jumps):
+    """
+    Tries to find a specified number of home systems which are as far apart from each other as possible.
+    Starts with the specified minimum jump distance and reduces that limit until enough systems can be found.
+    For each minimum jump distance two attempts are made: the first attempt uses a pool of preferred systems,
+    if that fails, a second attempt is made with a complete pool that should contain more systems (and therefore
+    has a greater chance of success).
+    """
+    # try to find home systems, decrease the min jumps until enough systems can be found, or the min jump distance
+    # gets reduced to 0 (meaning we don't have enough systems to choose from at all)
+    while min_jumps > 0:
+        print "Trying to find", num_home_systems, "home systems that are at least", min_jumps, "jumps apart..."
+
+        # try to pick our home systems by iterating over the two pools we got
+        # try the preferred pool first, and if that does not yield sufficient systems, try the complete pool
+        pool_list = [
+            # from the preferred pool try to pick the requested number of home systems
+            (preferred_pool, num_home_systems, "pool of preferred systems"),
+            # from the complete pool, try to pick as much systems as possible (by using 0 instead of num_home_systems)
+            (complete_pool, 0, "complete pool")
+        ]
+
+        for pool, num_systems, pool_label in pool_list:
+            print "...try to find systems using the", pool_label
+
+            # check if the pool has enough systems to pick from
+            if len(pool) <= num_home_systems:
+                # no, the pool has less systems than home systems requested, so just skip trying using that pool
+                print "...pool only has", len(pool), "systems, skip trying to use it"
+                continue
+
+            # try to pick home systems
+            home_systems = find_home_systems_for_min_jump_distance(num_systems, pool, min_jumps)
+            # check if we got enough
+            if len(home_systems) >= num_home_systems:
+                # yes, we got what we need, return the home systems we found
+                print "...", len(home_systems), "systems found"
+                return home_systems
+            else:
+                # no, try next pool
+                print "...only", len(home_systems), "systems found"
+
+        # we did not find enough home systems with the current min jump requirement,
+        # so decrease the min jumps and try again
+        min_jumps -= 1
+
+    # all attempts came up with too few systems, return empty list to indicate failure
     return []
 
-def system_vicinity_survey(main_system, jump_range):
-    """
-    Accept a system id and an integer number of jumps to specify the size of the vicinity to check.
-    Return a tuple having list of vicinity systems (including the main system) and a list of all planets in them,
-    excluding GasGiants
-    """
-    vicinity_systems = [main_system]
-    next_ring = [main_system]
-    vicinity_planets = fo.sys_get_planets(main_system)
-    for jump in range(jump_range):
-        prev_ring = next_ring
-        next_ring = []
-        for sys in prev_ring:
-            starlanes = fo.sys_get_starlanes(sys)
-            for neighbor in starlanes:
-                if neighbor not in vicinity_systems:
-                    vicinity_systems.append(neighbor)
-                    next_ring.append(neighbor)
-                    vicinity_planets.extend([p2 for p2 in fo.sys_get_planets(neighbor)
-                                             if fo.planet_get_size(p2) != fo.planetSize.gasGiant])
-    return vicinity_systems, vicinity_planets
 
-def homesystem_vicinity_filter(home_system, jump_range=_ASSESSED_JUMP_RANGE):
-    vicinity_systems, vicinity_planets = system_vicinity_survey(home_system, jump_range)
-    # don't force a higher average than one planet per system
-    return len(vicinity_planets) >= min(len(vicinity_systems), _TARGET_MIN_PLANETS)
+def add_planets_to_vicinity(vicinity, num_planets):
+    """
+    Adds the specified number of planets to the specified systems.
+    """
+    print "Adding", num_planets, "planets to the following systems:", vicinity
+    gsd = fo.get_galaxy_setup_data()  # get galaxy setup data, we will need that later
+
+    # first, compile a list containing all the free orbits in the specified systems
+    # begin with adding the free orbits of all systems that have a real star (that is, no neutron star, black hole,
+    # and not no star), if that isn't enough, also one, by one, add the free orbits of neutron star, black hole and
+    # no star systems (in that order) until we have enough free orbits
+
+    # for that, we use this list of tuples
+    # the first tuple contains all real star types, the following tuples the neutron, black hole and no star types,
+    # so we can iterate over this list and only add the free orbits of systems that match the respective star types
+    # each step
+    # this way we can prioritize the systems we want to add planets to by star type
+    acceptable_star_types_list = [
+        star_types_real,
+        (fo.starType.noStar,),
+        (fo.starType.neutron,),
+        (fo.starType.blackHole,)
+    ]
+
+    # store the free orbits as a list of tuples of (system, orbit)
+    free_orbits_map = []
+
+    # now, iterate over the list of acceptable star types
+    for acceptable_star_types in acceptable_star_types_list:
+        # check all systems in the list of systems we got passed into this function
+        for system in vicinity:
+            # if this system has a star type we want to accept in this step, add its free orbits to our list
+            if fo.sys_get_star_type(system) in acceptable_star_types:
+                free_orbits_map.extend([(system, orbit) for orbit in fo.sys_free_orbits(system)])
+        # check if we got enough free orbits after completing this step
+        # we want 4 times as much free orbits as planets we want to add, that means each system shouldn't get more
+        # than 2-3 additional planets on average
+        if len(free_orbits_map) > (num_planets * 4):
+            break
+
+    # if we got less free orbits than planets that should be added, something is wrong
+    # in that case abort and log an error
+    if len(free_orbits_map) < num_planets:
+        report_error("Python add_planets_to_vicinity: less free orbits than planets to add - cancelled")
+
+    print "...free orbits available:", free_orbits_map
+    # as we will pop the free orbits from this list afterwards, shuffle it to randomize the order of the orbits
+    random.shuffle(free_orbits_map)
+
+    # add the requested number of planets
+    while num_planets > 0:
+        # get the next free orbit from the list we just compiled
+        system, orbit = free_orbits_map.pop()
+
+        # check the star type of the system containing the orbit we got
+        star_type = fo.sys_get_star_type(system)
+        if star_type in [fo.starType.noStar, fo.starType.blackHole]:
+            # if it is a black hole or has no star, change the star type
+            # pick a star type, continue until we get a real star
+            # don't accept neutron, black hole or no star
+            while star_type not in star_types_real:
+                star_type = pick_star_type(gsd.age)
+
+        # pick a planet size, continue until we get a size that matches the HS_ACCEPTABLE_PLANET_SIZES option
+        planet_size = fo.planetSize.unknown
+        while planet_size not in HS_ACCEPTABLE_PLANET_SIZES:
+            planet_size = calc_planet_size(star_type, orbit, fo.galaxySetupOption.high, gsd.shape)
+
+        # pick an according planet type
+        planet_type = calc_planet_type(star_type, orbit, planet_size)
+
+        # finally, create the planet in the system and orbit we got
+        print "...adding", planet_size, planet_type, "planet to system", system
+        if fo.create_planet(planet_size, planet_type, system, orbit, "") == fo.invalid_object():
+            report_error("Python add_planets_to_vicinity: create planet in system %d failed" % system)
+
+        # continue with next planet
+        num_planets -= 1
+
 
 def compile_home_system_list(num_home_systems, systems):
     """
     Compiles a list with a requested number of home systems.
     """
+    print "Compile home system list:", num_home_systems, "systems requested"
 
     # if the list of systems to choose home systems from is empty, report an error and return empty list
     if not systems:
-        util.report_error("Python generate_home_system_list: no systems to choose from")
+        report_error("Python generate_home_system_list: no systems to choose from")
         return []
 
     # calculate an initial minimal number of jumps that the home systems should be apart,
@@ -128,36 +274,46 @@ def compile_home_system_list(num_home_systems, systems):
     # Don't let min_jumps be larger than 10, because a larger number is really not at all needed and with large
     # galaxies an excessive amount of time can be used in failed attempts
     min_jumps = min(10, max(int(float(len(systems)) / float(num_home_systems * 2)), 5))
-    # try to find the home systems, decrease the min jumps until enough systems can be found, or the min jump distance
-    # gets reduced to 0 (meaning we don't have enough systems to choose from at all)
-    additional_reqs = homesystem_vicinity_filter if _FILTER_HOMESYSTEMS_BY_VICINITY else None
-    while min_jumps > 0:
-        print "Trying to find", num_home_systems, "home systems that are at least", min_jumps, "jumps apart"
-        # try to find home systems...
-        home_systems = find_systems_with_min_jumps_between(num_home_systems, systems, min_jumps, additional_reqs)
-        # ...check if we got enough...
-        if len(home_systems) >= num_home_systems:
-            # ...yes, we got what we need, so let's break out of the loop
-            break
-        print "Home system min jump conflict: %d systems and %d empires, tried %d min jump and failed"\
-              % (len(systems), num_home_systems, min_jumps)
-        # ...no, decrease the min jump distance and try again
-        min_jumps -= 1
 
-    # check if the loop above delivered a list with enough home systems, or if it exited because the min jump distance
-    # has been decreased to 0 without finding enough systems
-    # in that case, our galaxy obviously is too crowded, report an error and return an empty list
+    # home systems must have a certain minimum of systems in their near vicinity
+    # we will try to select our home systems from systems that match this criteria, if that fails, we will select our
+    # home systems from all systems and add the missing number planets to the systems in their vicinity afterwards
+    # the minimum planet limit and the jump range that defines the "near vicinity" are controlled by the
+    # HS_* option constants in options.py (see there)
+
+    # lets start by filtering out all systems from the pool we got passed into this function that match the criteria
+    filtered_pool = [s for s in systems if has_min_planets_in_vicinity(s)]
+    print "Filtering out systems that meet the minimum planets in the near vicinity condition yielded",\
+        len(filtered_pool), "systems"
+    print "Using this as the preferred pool for home system selection"
+    # now try to pick the requested number of home systems by calling find_home_systems
+    # this function takes two pools, a "complete" pool and one with preferred systems
+    # it will try to pick the home systems from the preferred pool first, so pass our filtered pool as preferred pool
+    home_systems = find_home_systems(num_home_systems, systems, filtered_pool, min_jumps)
+
+    # check if the selection process delivered a list with enough home systems
+    # if not, our galaxy obviously is too crowded, report an error and return an empty list
     if len(home_systems) < num_home_systems:
-        util.report_error("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
-                          % (num_home_systems, len(systems)))
+        report_error("Python generate_home_system_list: requested %d homeworlds in a galaxy with %d systems"
+                     % (num_home_systems, len(systems)))
         return []
+
+    # check if we got more home systems than we requested
+    if len(home_systems) > num_home_systems:
+        # yes: calculate the number of planets in the near vicinity of each system
+        # and store that value with each system in a map
+        hs_planets_in_vicinity_map = {s: count_planets_in_systems(get_systems_within_jumps(s, HS_VICINITY_RANGE))
+                                      for s in home_systems}
+        # sort the home systems by the number of planets in their near vicinity using the map
+        # now only pick the number of home systems we need, taking those with the highest number of planets
+        home_systems = sorted(home_systems, key=hs_planets_in_vicinity_map.get, reverse=True)[:num_home_systems]
 
     # make sure all our home systems have a "real" star (that is, a star that is not a neutron star, black hole,
     # or even no star at all) and at least one planet in it
     for home_system in home_systems:
         # if this home system has no "real" star, change star type to a randomly selected "real" star
-        if fo.sys_get_star_type(home_system) not in starsystems.star_types_real:
-            star_type = random.choice(starsystems.star_types_real)
+        if fo.sys_get_star_type(home_system) not in star_types_real:
+            star_type = random.choice(star_types_real)
             print "Home system", home_system, "has star type", fo.sys_get_star_type(home_system),\
                   ", changing that to", star_type
             fo.sys_set_star_type(home_system, star_type)
@@ -166,35 +322,31 @@ def compile_home_system_list(num_home_systems, systems):
         # we take random values for type and size, as these will be set to suitable values later
         if not fo.sys_get_planets(home_system):
             print "Home system", home_system, "has no planets, adding one"
-            planet = fo.create_planet(random.choice(planets.planet_sizes_real),
-                                      random.choice(planets.planet_types_real),
+            planet = fo.create_planet(random.choice(planet_sizes_real),
+                                      random.choice(planet_types_real),
                                       home_system, random.randint(0, fo.sys_get_num_orbits(home_system) - 1), "")
             # if we couldn't create the planet, report an error and return an empty list
             if planet == fo.invalid_object():
-                util.report_error("Python generate_home_system_list: couldn't create planet in home system")
+                report_error("Python generate_home_system_list: couldn't create planet in home system")
                 return []
 
-    # If we already filtered home_systems by vicinity, then we are done. Otherwise, ensure compliance now by adding
-    # some planets if the surrounding area is excessively empty.
-    if _FILTER_HOMESYSTEMS_BY_VICINITY:
-        return home_systems
+    # finally, check again if all home systems meet the criteria of having the required minimum number of planets
+    # within their near vicinity, if not, add the missing number of planets
+    print "Checking if home systems have the required minimum of planets within the near vicinity..."
     for home_system in home_systems:
-        vicinity_systems, vicinity_planets = system_vicinity_survey(home_system, _ASSESSED_JUMP_RANGE)
-        num_planets = len(vicinity_planets)
-        # don't force a higher average than one planet per system
-        target_planets = min(_TARGET_MIN_PLANETS, len(vicinity_systems))
-        # will make (target_planets - num_planets) attempts to add new planets; may not always succeed
-        for attempt in range(num_planets, target_planets):
-            chosen_sys = random.choice(vicinity_systems[1:])  # don't add new planets to the home system itself
-            for _ in range(3):  # make up to three tries in this system
-                # will fail if chosen orbit is already taken
-                # TODO: expose and use existing orbit information
-                planet = fo.create_planet(random.choice(planets.planet_sizes_real),
-                                          random.choice(planets.planet_types_real),
-                                          chosen_sys, random.randint(0, fo.sys_get_num_orbits(chosen_sys) - 1), "")
-                if planet != fo.invalid_object():
-                    break
+        # calculate the number of missing planets, and add them if this number is > 0
+        systems_in_vicinity = get_systems_within_jumps(home_system, HS_VICINITY_RANGE)
+        num_systems_in_vicinity = len(systems_in_vicinity)
+        num_planets_in_vicinity = count_planets_in_systems(systems_in_vicinity)
+        num_planets_to_add = min_planets_in_vicinity_limit(num_systems_in_vicinity) - num_planets_in_vicinity
+        print "Home system", home_system, "has", num_systems_in_vicinity, "systems and", num_planets_in_vicinity,\
+            "planets in the near vicinity, required minimum:", min_planets_in_vicinity_limit(num_systems_in_vicinity)
+        if num_planets_to_add > 0:
+            systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
+            add_planets_to_vicinity(systems_in_vicinity, num_planets_to_add)
 
+    # as we've sorted the home system list before, lets shuffle it to ensure random order and return
+    random.shuffle(home_systems)
     return home_systems
 
 
@@ -221,7 +373,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     planet_list = fo.sys_get_planets(home_system)
     # if the system is empty, report an error and return false, indicating failure
     if not planet_list:
-        util.report_error("Python setup_empire: got home system with no planets")
+        report_error("Python setup_empire: got home system with no planets")
         return False
     homeworld = random.choice(planet_list)
 
@@ -254,7 +406,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     # give homeworld starting buildings
     # use the list provided in starting_buildings.txt
     print "Player", player_name, ": add starting buildings to homeworld"
-    for building in util.load_string_list(os.path.join(fo.get_resource_dir(), "starting_buildings.txt")):
+    for building in load_string_list(os.path.join(fo.get_resource_dir(), "starting_buildings.txt")):
         fo.create_building(building, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.
@@ -277,13 +429,13 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         fleet = fo.create_fleet(fleet_plan.name(), home_system, empire)
         # if the fleet couldn't be created, report an error and try to continue with the next fleet plan
         if fleet == fo.invalid_object():
-            util.report_error("Python setup empire: couldn't create fleet %s" % fleet_plan.name())
+            report_error("Python setup empire: couldn't create fleet %s" % fleet_plan.name())
             continue
         # second, iterate over the list of ship design names in the fleet plan
         for ship_design in fleet_plan.ship_designs():
             # create a ship in the fleet
             # if the ship couldn't be created, report an error and try to continue with the next ship design
             if fo.create_ship("", ship_design, starting_species, fleet) == fo.invalid_object():
-                util.report_error("Python setup empire: couldn't create ship %s for fleet %s"
-                                  % (ship_design, fleet_plan.name()))
+                report_error("Python setup empire: couldn't create ship %s for fleet %s"
+                             % (ship_design, fleet_plan.name()))
     return True
