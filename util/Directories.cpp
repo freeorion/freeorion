@@ -267,6 +267,9 @@ const fs::path GetBinDir() {
     return bin_dir;
 }
 
+const fs::path GetPythonHome()
+{ return GetBinDir(); }
+
 void InitBinDir(const std::string& argv0) {
     try {
         fs::path binary_file = fs::system_complete(FilenameToPath(argv0));

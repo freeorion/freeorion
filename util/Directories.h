@@ -42,6 +42,13 @@ FO_COMMON_API const boost::filesystem::path GetRootDataDir();
   * directory and everything in it should be assumed read-only! */
 FO_COMMON_API const boost::filesystem::path GetBinDir();
 
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+/** This function returns the Python home directory from where it is embedded
+  * On OSX: within the application bundle 
+  * On Windows: same directory where the binaries are located */
+FO_COMMON_API const boost::filesystem::path GetPythonHome();
+#endif
+
 /** Returns the full path to the configfile. */
 FO_COMMON_API const boost::filesystem::path GetConfigPath();
 
@@ -54,12 +61,6 @@ FO_COMMON_API std::string PathString(const boost::filesystem::path& path);
 
 /** Returns current timestamp in a form that can be used in file names */
 FO_COMMON_API std::string FilenameTimestamp();
-
-#ifdef FREEORION_MACOSX
-/** This function returns the Python home directory from where it is embedded
-  * within the Mac OS X application bundle */
-FO_COMMON_API const boost::filesystem::path GetPythonHome();
-#endif
 
 /** Returns the path to \a to, as it appears from \a from. */
 FO_COMMON_API boost::filesystem::path RelativePath(const boost::filesystem::path& from, const boost::filesystem::path& to);
