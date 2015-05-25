@@ -241,10 +241,10 @@ PythonAI::PythonAI() {
     try {
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
         // There have been recurring issues on Windows and OSX to get FO to use the
-		// Python framework shipped with the app (instead of falling back on the ones
-		// provided by the system). These API calls have been added in an attempt to
-		// solve the problems. Not sure if they are really required, but better save
-		// than sorry.. ;)
+        // Python framework shipped with the app (instead of falling back on the ones
+        // provided by the system). These API calls have been added in an attempt to
+        // solve the problems. Not sure if they are really required, but better save
+        // than sorry... ;)
         strcpy(s_python_home, GetPythonHome().string().c_str());
         Py_SetPythonHome(s_python_home);
         DebugLogger() << "Python home set to " << Py_GetPythonHome();

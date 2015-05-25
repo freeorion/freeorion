@@ -73,10 +73,10 @@ bool PythonInit() {
     try {
 #if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
         // There have been recurring issues on Windows and OSX to get FO to use the
-		// Python framework shipped with the app (instead of falling back on the ones
-		// provided by the system). These API calls have been added in an attempt to
-		// solve the problems. Not sure if they are really required, but better save
-		// than sorry.. ;)
+        // Python framework shipped with the app (instead of falling back on the ones
+        // provided by the system). These API calls have been added in an attempt to
+        // solve the problems. Not sure if they are really required, but better save
+        // than sorry... ;)
         strcpy(s_python_home, GetPythonHome().string().c_str());
         Py_SetPythonHome(s_python_home);
         DebugLogger() << "Python home set to " << Py_GetPythonHome();
@@ -91,7 +91,7 @@ bool PythonInit() {
         DebugLogger() << "Python prefix: " << Py_GetPrefix();
         DebugLogger() << "Python module search path: " << Py_GetPath();
         DebugLogger() << "Initializing C++ interfaces for Python";
-        initfo_logger();              // allows the "fo_logger" C++ module to be imported within Python code
+        initfo_logger();  // allows the "fo_logger" C++ module to be imported within Python code
     }
     catch (...) {
         ErrorLogger() << "Unable to initialize Python interpreter";
