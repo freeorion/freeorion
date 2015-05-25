@@ -1100,6 +1100,12 @@ void GUI::RegisterModal(Wnd* wnd)
     }
 }
 
+GUI::const_modal_iterator GUI::modal_begin() const
+{ return s_impl->m_modal_wnds.begin(); }
+
+GUI::const_modal_iterator GUI::modal_end() const
+{ return s_impl->m_modal_wnds.end(); }
+
 void GUI::Remove(Wnd* wnd)
 {
     if (wnd) {

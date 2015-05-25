@@ -83,7 +83,7 @@ CUI_CloseButton::CUI_CloseButton() :
 // CUI_PinButton
 ////////////////////////////////////////////////
 CUI_PinButton::CUI_PinButton() :
-GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
+    GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
 {
     GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
     SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"   )));
@@ -91,8 +91,7 @@ GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
     SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin_mouseover.png")));
 }
 
-void CUI_PinButton::Toggle(bool pinned)
-{
+void CUI_PinButton::Toggle(bool pinned) {
     if (!pinned) {
         SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
         SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));

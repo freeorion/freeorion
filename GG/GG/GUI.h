@@ -154,6 +154,10 @@ public:
         accel_end(). */
     typedef std::set<std::pair<Key, Flags<ModKey> > >::const_iterator const_accel_iterator;
 
+    /** The type of iterator returned by const modal_begin() and
+        modal_end(). */
+    typedef std::list<std::pair<Wnd*, Wnd*> >::const_iterator const_modal_iterator;
+
     /** \name Structors */ ///@{
     virtual ~GUI(); ///< virtual dtor
     //@}
@@ -207,6 +211,9 @@ public:
 
     /** Returns an iterator to one past the last defined keyboard accelerator. */
     const_accel_iterator accel_end() const;
+
+    const_modal_iterator modal_begin() const;   ///< returns an iterator to the first registered modal wnd
+    const_modal_iterator modal_end() const;     ///< returns an iterator to one past the last registered modal wnd
 
     /** Returns the signal that is emitted when the requested keyboard accelerator is invoked. */
     AcceleratorSignalType& AcceleratorSignal(Key key, Flags<ModKey> mod_keys = MOD_KEY_NONE) const;

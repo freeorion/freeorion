@@ -1253,9 +1253,14 @@ void MapWnd::DoLayout() {
             plr_wnd->ValidatePosition();
     }
 
-    FleetUIManager& fui_mgr = FleetUIManager::GetFleetUIManager();
-    if (FleetWnd* f_wnd = fui_mgr.ActiveFleetWnd()) {
-        f_wnd->ValidatePosition();
+    for (FleetUIManager::iterator fwnd_it = FleetUIManager::GetFleetUIManager().begin();
+         fwnd_it != FleetUIManager::GetFleetUIManager().end();
+         ++fwnd_it) {
+        if (*fwnd_it) {
+            (*fwnd_it)->ValidatePosition();
+        } else {
+            ErrorLogger() << "MapWnd::DoLayout(): null FleetWnd* found in the FleetUIManager::iterator.";
+        }
     }
 }
 
