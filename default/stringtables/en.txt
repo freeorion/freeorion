@@ -528,20 +528,25 @@ Drone Factory
 SM_DRONE_FACTORY_DESC
 Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory still functions, slowly producing new Drone Fighters.
 
+SM_GUARD_0
+Maintenance Ship
+SM_GUARD_0_DESC
+'''An unmanned ship programmed by the Precursers to maintain the starlane entries of the system. It's only lightly armed, but will attack all intruders.'''
+
 SM_GUARD_1
 Sentry
 SM_GUARD_1_DESC
-Sentries guard minor cool stuff.
+A small unmanned guard ship programmed by the Precursers to defend the system against intruders.
 
 SM_GUARD_2
 Sentinel
 SM_GUARD_2_DESC
-Sentinels guard cool stuff.
+An unmanned guard ship programmed by the Precursers to defend the system against intruders.
 
 SM_GUARD_3
 Warden
 SM_GUARD_3_DESC
-Wardens guard major cool stuff.
+A powerful unmanned guard ship programmed by the Precursers to defend the system against intruders.
 
 SM_KRAKEN_1
 Larval Kraken
