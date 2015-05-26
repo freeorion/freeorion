@@ -1621,7 +1621,6 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     /* TODO: Disable colony base if there is no possibility in the current system */
-    // EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
             scope = Source
