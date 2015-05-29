@@ -22,8 +22,10 @@ namespace {
     GG::Y ITEM_VERTICAL_PADDING(2);
 
     /** Adds options related to SitRepPanel to Options DB. */
-    void AddOptions(OptionsDB& db)
-    { db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>()); }
+    void AddOptions(OptionsDB& db) {
+        db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>());
+        db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
+    }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
@@ -125,6 +127,32 @@ namespace {
                 retval.push_back(*it);
 
         return retval;
+    }
+
+    std::set<std::string> HiddenSitRepTemplateStringsFromOptions() {
+        std::set<std::string> result;
+        std::string saved_template_string = GetOptionsDB().Get<std::string>("hidden-sitrep-templates");
+
+        std::copy(
+            std::istream_iterator<std::string>(std::istringstream(saved_template_string)),
+            std::istream_iterator<std::string>(),
+            std::inserter(result, result.begin())
+        );
+
+        return result;
+    }
+
+    void SetHiddenSitRepTemplateStringsInOptions(const std::set<std::string>& set) {
+        std::stringstream ss;
+
+        std::copy(
+            set.begin(),
+            set.end(),
+            std::ostream_iterator<std::string>(ss, " ")
+        );
+
+        GetOptionsDB().Set<std::string>("hidden-sitrep-templates", ss.str());
+        GetOptionsDB().Commit();
     }
 
     class ColorEmpire : public LinkDecorator {
@@ -269,7 +297,8 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_prev_turn_button(0),
     m_next_turn_button(0),
     m_last_turn_button(0),
-    m_showing_turn(INVALID_GAME_TURN)
+    m_showing_turn(INVALID_GAME_TURN),
+    m_hidden_sitrep_templates(HiddenSitRepTemplateStringsFromOptions())
 {
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(DontClip);
@@ -485,6 +514,8 @@ void SitRepPanel::FilterClicked() {
             m_hidden_sitrep_templates.erase(selected_template_string);
         }
     }
+    SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
+
     Update();
 }
 
