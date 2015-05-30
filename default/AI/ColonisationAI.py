@@ -92,7 +92,7 @@ def get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, sta
             if tech_is_complete(tech):
                 pop_size_mod += POP_SIZE_MOD_MAP[tech][planet_env]
                 detail.append("%s_PSM(%d)" % (tech, POP_SIZE_MOD_MAP[tech][planet_env]))
-        # exobots can't ever get to good environ so no gaiai bonus, for others we'll assume they'll get there
+        #  exobots can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
         if "GAIA_SPECIAL" in planet.specials and species.name != "SP_EXOBOT":
             pop_size_mod += 3
             detail.append("Gaia_PSM(3)")
@@ -114,7 +114,6 @@ def get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, sta
         if n_boosts:
             pop_size_mod += n_boosts
             detail.append("boosts_PSM(%d from %s)" % (n_boosts, applicable_boosts))
-
     return pop_size_mod, detail
 
 
