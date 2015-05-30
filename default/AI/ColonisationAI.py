@@ -1157,7 +1157,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
 
         detail.append("maxPop %.1f" % max_pop_size)
 
-        for special in ["MINERALS_SPECIAL", "CRYSTALS_SPECIAL", "METALOIDS_SPECIAL"]:
+        for special in ["MINERALS_SPECIAL", "CRYSTALS_SPECIAL", "ELERIUM_SPECIAL"]:
             if special in planet_specials:
                 mining_bonus += 1
 
