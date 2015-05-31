@@ -133,6 +133,7 @@ namespace {
         std::set<std::string> result;
         std::string saved_template_string = GetOptionsDB().Get<std::string>("hidden-sitrep-templates");
 
+        // Split a space-delimited sequence of strings.
         std::copy(
             std::istream_iterator<std::string>(std::istringstream(saved_template_string)),
             std::istream_iterator<std::string>(),
@@ -145,6 +146,7 @@ namespace {
     void SetHiddenSitRepTemplateStringsInOptions(const std::set<std::string>& set) {
         std::stringstream ss;
 
+        // Join a set of strings into a space-delimited sequence of strings.
         std::copy(
             set.begin(),
             set.end(),
