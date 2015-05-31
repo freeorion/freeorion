@@ -224,7 +224,7 @@ Petit éclaireur économique mais non-armé, equipé d'un [[encyclopedia DETECTI
 #SD_ENG_SCOUT
 #Energy Scout
 SD_ENG_SCOUT_DESC
-Astronef petit et rapide, conçu pour la reconnaissance et l'exploration. Des recherches basées sur le [[encyclopedia DETECTION_RANGE_TITLE]] débloqueront de nouveaux équipements. Ce vaisseau ne peut être construit dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou un trou noir.
+Astronef petit et rapide, conçu pour la reconnaissance et l'exploration. Des recherches basées sur le [[encyclopedia DETECTION_RANGE_TITLE]] débloqueront de nouveaux équipements. Ce vaisseau ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
 #SD_SMALL_MARK_1
 #Corvette I
@@ -454,17 +454,17 @@ Transporte 8 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant êt
 SD_ENG_TROOP_SHIP
 Vaisseau d'Infanterie Energy
 SD_ENG_TROOP_SHIP_DESC
-Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ce vaisseau ne peut être construit que dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
+Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ce vaisseau ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
 SD_ENG1
 Energy I
 SD_ENG1_DESC
-Astronef de combat compact et rapide. Ce vaisseau ne peut être construit que dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
+Astronef de combat compact et rapide. Ce vaisseau ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
 SD_ENG2
 Energy II
 SD_ENG2_DESC
-Astronef de combat compact et rapide, avec armement amélioré. Ce vaisseau ne peut être construit que dans une colonie possédant un Compresseur d'Énergie, orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
+Astronef de combat compact et rapide, avec armement amélioré. Ce vaisseau ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
 #SD_DRAGON_TOOTH
 #Dragon Tooth
@@ -3687,7 +3687,7 @@ Le Bonheur est pour le moment sans effet.
 INFRASTRUCTURE_TITLE  # translated
 Infrastructure
 INFRASTRUCTURE_TEXT
-L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc.
+L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc. Chaque planète présente un indicateur 'Infrastructure'.
 
 DEFENSE_TITLE
 Défense
@@ -3724,7 +3724,7 @@ Rayon de Détection
 DETECTION_RANGE_TEXT
 '''L'indicateur 'Rayon de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Rayon de Détection d'un astronef ou d'une planète qu'il contrôle.
 
-Les astronefs et les planètes ont un indicateur 'Rayon de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Rayons de Détection. Le réglage 'Indicateur d'échelle des distances" permet d'afficher l'échelle des cercles de détection (en uu également). '''
+Les astronefs et les planètes ont un indicateur 'Rayon de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Rayons de Détection. Le réglage 'Indicateur d'échelle des distances" permet d'afficher l'échelle des cercles de détection (en uu également).'''
 
 TROOP_TITLE
 Infanterie
@@ -7206,7 +7206,7 @@ LRN_EVERYTHING
 Théorie du Tout
 
 LRN_EVERYTHING_DESC
-Au commencement, les théories primordiales décrivaient les sous-ensembles des quatre forces fondamentales de la nature: l'électromagnétisme, les forces nucléaires forte et faible, et la gravité. Une théorie globale exprimant toutes les forces comme des cas particuliers d'une seule interaction représente le Saint-Graal de la science. Cette théorie décrit les premiers instants de l'univers, les profondeurs les plus déformées d'une singularité, la plus exigüe des dimensions cachées et le destin final du cosmos. Pourtant, il peut encore "exister" des couches de réalité au-delà de ce qui peut être observé et décrit par la science...
+Au commencement, les théories primordiales décrivaient les sous-ensembles des quatre forces fondamentales de la nature: l'électromagnétisme, les forces nucléaires forte et faible, et la gravité. Une théorie globale exprimant toutes les forces comme des cas particuliers d'une seule interaction représente le Saint-Graal de la science. Cette théorie décrit les premiers instants de l'univers, les profondeurs les plus déformées d'une singularité, la plus exiguë des dimensions cachées et le destin final du cosmos. Pourtant, il peut encore "exister" des couches de réalité au-delà de ce qui peut être observé et décrit par la science...
 
 LRN_FORCE_FIELD
 Harmonique des Champs de Force
@@ -7635,7 +7635,7 @@ SHP_ASTEROID_HULLS_DESC
 Plutôt que de concevoir une coque à partir de zéro, il est bien plus facile d'utiliser un objet provenant de l'espace et de l'adapter afin de tenir lieu de coque d'astronef. Non seulement de tels astronefs seraient peu coûteux à produire, mais seraient également en mesure de tromper la détection des astronefs ennemis en se dissimulant parmi les autres astéroïdes.
 
 SHP_HEAVY_AST_HULL
-Coques Astéroïdales Massives
+Coque Astéroïdale Massive
 
 SHP_HEAVY_AST_HULL_DESC
 Permet l'élaboration de coques astéroïdales de grande envergure.
@@ -7728,7 +7728,7 @@ Une coque constituée d'énergie pure, bien que plus efficiente que n'importe qu
 SHP_KRILL_SPAWN
 Génération de Krill
 SHP_KRILL_SPAWN_DESC
-Débloque le Générateur de Krill pour les astronefs, qui provoque l'apparition de krill sauvage dans les systèmes abritant des ceintures d'astéroïdes.
+Débloque l'équipement [[shippart SP_KRILL_SPAWNER]] pour les astronefs, qui provoque l'apparition de krill sauvage dans les systèmes abritant des ceintures d'astéroïdes.
 
 SPY_ROOT_DECEPTION
 Tromperie
@@ -8005,21 +8005,21 @@ PRO_HEAVY_MINING_I
 Processeur d'Extraction Intensive
 
 PRO_HEAVY_MINING_I_DESC
-Lorsque l'augmentation de production minière devient la seule priorité, plus aucune considération n'existe concernant les impacts sur l'environnement, et  si l'environnement lui-même est propice à une telle exploitation, les activités d'extraction intensive partiellement automatisées peuvent être optimisées. Les processeurs d'extraction intensive sont cependant coûteux et s'avèrent totalement exploitables seulement dans les mondes privilégiant l'extraction minière.
+Lorsque l'augmentation de production minière devient la seule priorité, plus aucune considération n'existe concernant les impacts sur l'environnement, et  si l'environnement lui-même est propice à une telle exploitation, les activités d'extraction intensive partiellement automatisées peuvent être optimisées. Les processeurs d'extraction intensive sont cependant coûteux et s'avèrent pleinement exploitables uniquement dans les mondes privilégiant l'extraction minière.
 
 PRO_SOL_ORB_GEN
 Génération Orbitale Solaire
 
-#PRO_SOL_ORB_GEN_DESC
-#Traditional solar generation methods rely solely on radiating solar energy. By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizable and far-reaching benefit to [[encyclopedia INDUSTRY_TITLE]] can be obtained.
+PRO_SOL_ORB_GEN_DESC
+Les méthodes traditionnelles de génération solaire reposent uniquement sur l'énergie radiative d'une étoile. En disposant des générateurs en orbite basse autour de l'étoile elle-même, collecter directement l'énergie des phénomènes émanant des étoiles supermassives devient possible, entraînant ainsi un bénéfice considérable et à long terme pour l'[[encyclopedia INDUSTRY_TITLE]].
 
 PRO_INDUSTRY_CENTER_I
 Centres Industriels
 
-#PRO_INDUSTRY_CENTER_I_DESC
-#'''Coordinating industrial activity between planets and star systems can be effectively accomplished at large centralized complexes.
-#
-#Facility's large cost and build time, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility. Industrial Centers come with large up-front cost, in both production resources and time, but with great opportunity for possible expansion. This makes them ideal for long-term strategies, but unattractive for empires planning on a quick victory.'''
+PRO_INDUSTRY_CENTER_I_DESC
+'''Coordonner l'activité industrielle entre des planètes ainsi que différents systèmes stellaires peut être efficacement mis en œuvre grâce à une distribution pertinente de grands complexes industriels.
+
+Les coûts considérables et les délais importants de construction des infrastructures de production, ainsi que le potentiel de croissance leur étant associé, nécessitent une planification minutieuse concernant le choix du meilleur emplacement et la recherche d'un rendement optimal. Les Centres Industriels requièrent un coût initial conséquent, à la fois en temps et en ressources, mais présentent des fonctionnalités et des possibilités d'évolution sans équivalent. Ce choix d'infrastructure est idéal pour les stratégies à long terme, mais s'avère peu avantageux pour les empires souhaitant une victoire rapide.'''
 
 PRO_INDUSTRY_MOD
 Modificateur Industriel
@@ -8027,160 +8027,160 @@ Modificateur Industriel
 SPY_LIGHTHOUSE
 Phare Interstellaire
 
-#SPY_LIGHTHOUSE_DESC
-#By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
+SPY_LIGHTHOUSE_DESC
+En ayant recours à un système complexe d'impulsions électromagnétiques et de jets de particules permettant de déceler l'emplacement d'objets dans un système, il devient alors possible de détecter des objets extrêmement furtifs, et ce même à l'aide d'un équipement classique de détection.
 
 DEF_DEFENSE_NET_1
-Réseau de Défense Planétaire 1
+Réseau Défense Planétaire 1
 
 DEF_DEFENSE_NET_1_DESC
-'''Augmente max [[encyclopedia DEFENSE_TITLE]] sur toutes les planètes de 5.
+'''Augmente la [[encyclopedia DEFENSE_TITLE]] max de 5 sur toutes les planètes.
 
-Avec l'exploration galactique vient la possibilité de rencontrer de nouvelles races - et de nouveaux ennemis. En plaçant plusieurs bases de défense armés en orbite autour d'une planète, il est possible de donner à cette planète une capacités défensives sans qu'il soit nécessité d'utiliser des navires.'''
+Avec l'exploration galactique vient la possibilité de rencontrer de nouvelles races - mais aussi de nouveaux ennemis. En disposant plusieurs bases de défense armées en orbite autour d'une planète, il est possible de conférer à cette planète une capacité défensive importante sans qu'il soit nécessaire de de recourir à des astronefs.'''
 
 DEF_DEFENSE_NET_2
-Réseau de Défense Planétaire 2
+Réseau Défense Planétaire 2
 
-#DEF_DEFENSE_NET_2_DESC
-#Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 15, cumulative with [[tech DEF_DEFENSE_NET_1]].
+DEF_DEFENSE_NET_2_DESC
+Augmente la [[encyclopedia DEFENSE_TITLE]] max de 15 sur toutes les planètes, et s'ajoute au bonus du [[tech DEF_DEFENSE_NET_1]].
 
 DEF_DEFENSE_NET_3
-Réseau de Défense Planétaire 3
+Réseau Défense Planétaire 3
 
-#DEF_DEFENSE_NET_3_DESC
-#Increases max [[encyclopedia DEFENSE_TITLE]] on all planets by 25, cumulative with prerequisite defense network techs.
+DEF_DEFENSE_NET_3_DESC
+Augmente la [[encyclopedia DEFENSE_TITLE]] max de 25 sur toutes les planètes, et s'ajoute aux bonus des précédentes technologies de réseau de défense planétaire.
 
 DEF_DEFENSE_NET_REGEN_1
 Régénération Défense Planétaire 1
 
-#DEF_DEFENSE_NET_REGEN_1_DESC
-#'''Increases planets' [[encyclopedia DEFENSE_TITLE]] by 10% of its max value each turn, up to the max value.
-#
-#Defense regeneration allows a planet's defenses to function on turns after they have been destroyed by orbital bombardment; regeneration would otherwise not occur until a turn passed without bombardment.'''
+DEF_DEFENSE_NET_REGEN_1_DESC
+'''Accroît à chaque tour la [[encyclopedia DEFENSE_TITLE]] de toutes les planètes de 10% de leur valeur max, mais sans pouvoir dépasser chaque valeur max respective.
+
+La régénération des défenses permet à une planète de récupérer ses capacités défensives si ces dernières ont été altérées suite à un bombardement orbital; le processus de régénération s'enclenche à la fin d'un tour seulement si la planète a été bombardée.'''
 
 DEF_DEFENSE_NET_REGEN_2
 Régénération Défense Planétaire 2
 
-#DEF_DEFENSE_NET_REGEN_2_DESC
-#Increases planets' [[encyclopedia DEFENSE_TITLE]] by 0.25 times the planets' infrastructure, each turn, up to the max defense value, cumulative with regeneration from [[tech DEF_DEFENSE_NET_REGEN_1]].
+DEF_DEFENSE_NET_REGEN_2_DESC
+Accroît à chaque tour la [[encyclopedia DEFENSE_TITLE]] de toutes les planètes de 0.25x leur valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]], mais sans pouvoir dépasser leurs valeurs max de défense respectives, et s'ajoute au bonus de [[tech DEF_DEFENSE_NET_REGEN_1]].
 
 DEF_PLAN_BARRIER_SHLD_1
 Bouclier Planétaire 1
 
-#DEF_PLAN_BARRIER_SHLD_1_DESC
-#Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]], and regenerates each turn by one plus 25% of the value of the planets' infrastructure.
+DEF_PLAN_BARRIER_SHLD_1_DESC
+Augmente les [[encyclopedia SHIELDS_TITLE]] max de 30 sur toutes les planètes, cumulables avec le bonus de la technologie [[tech LRN_FORCE_FIELD]], et se régénère chaque tour de 1 plus 25% de la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
 
 DEF_PLAN_BARRIER_SHLD_2
 Bouclier Planétaire 2
 
-#DEF_PLAN_BARRIER_SHLD_2_DESC
-#Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60, cumulative with other shield boosts, and regenerates each turn by one plus the value of the planets' infrastructure.
+DEF_PLAN_BARRIER_SHLD_2_DESC
+Augmente les [[encyclopedia SHIELDS_TITLE]] max de 60 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et se régénère chaque tour de 1 plus la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
 
 DEF_PLAN_BARRIER_SHLD_3
 Bouclier Planétaire 3
 
-#DEF_PLAN_BARRIER_SHLD_3_DESC
-#Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90, cumulative with other shield boosts, and regenerates each turn by one plus twice the value of the planets' infrastructure.
+DEF_PLAN_BARRIER_SHLD_3_DESC
+Augmente les [[encyclopedia SHIELDS_TITLE]] max de 90 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et se régénère chaque tour de 1 plus deux fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
 
 DEF_PLAN_BARRIER_SHLD_4
 Bouclier Planétaire 4
 
-#DEF_PLAN_BARRIER_SHLD_4_DESC
-#Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150, cumulative with other shield boosts, and regenerates each turn by one plus 2.5 times the value of the planets' infrastructure.
+DEF_PLAN_BARRIER_SHLD_4_DESC
+Augmente les [[encyclopedia SHIELDS_TITLE]] max de 150 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et se régénère chaque tour de 1 plus 2.5 fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
 
 DEF_PLAN_BARRIER_SHLD_5
 Bouclier Planétaire 5
 
-#DEF_PLAN_BARRIER_SHLD_5_DESC
-#Increases max [[encyclopedia SHIELDS_TITLE]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plus 5 times the value of the planets' infrastructure.
+DEF_PLAN_BARRIER_SHLD_5_DESC
+Augmente les [[encyclopedia SHIELDS_TITLE]] max d'un bonus de 150 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et se régénère chaque tour de 1 plus cinq fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
 
 DEF_SYST_DEF_MINE_1
 Mines Défensives 1
 
 DEF_SYST_DEF_MINE_1_DESC
-'''Lorsqu'aucun astronef impérial n'est présent dans un système stellaire, les astronefs ennemis ont tout loisir de le bloquer, interrompant ainsi les transferts de ressources de l'empire sans devoir affronter les défenses de la (ou des) colonie(s) impériale(s) du systéme, donc sans risque de subir des dégâts. Un réseau stellaire de mines défensives, en endommageant à chaque tour les astronefs ennemis, peut les dissuader d'adopter cette tactique.
+'''Lorsqu'aucun astronef allié n'est présent dans un système stellaire, les astronefs ennemis ont tout loisir de procéder à un blocus, interrompant ainsi l'acheminement de ressources, et ce en évitant de se mettre à portée des défenses planétaires, et donc sans subir de dégâts. Un réseau spatial de mines défensives, endommageant à chaque tour les astronefs ennemis se trouvant dans le système, peut les dissuader d'adopter cette tactique.
 
-La résistance de tous les astronefs ennemis présents dans le système stellaire accueillant une planète de l'empire maîtrisant cette technologie sera réduite au rythme de 2 points par tour.
+La [[encyclopedia STRUCTURE_TITLE]] de tous les astronefs ennemis présents dans un système stellaire abritant une planète de l'empire maîtrisant cette technologie, sera réduite au rythme de 2 par tour.
 
-Les mines sont remplacées à chaque tour : leur effet n'est pas affaibli par leur usage.'''
+Les mines sont renouvelées à chaque tour et leur utilisation n'entraîne pas un épuisement des stocks de munitions, ces derniers étant constamment approvisionnés.'''
 
 DEF_SYST_DEF_MINE_2
 Mines Défensives 2
 
-#DEF_SYST_DEF_MINE_2_DESC
-#Reduces the structure of enemy ships by an additional 4 per turn, cumulative with [[tech DEF_SYST_DEF_MINE_1]].
+DEF_SYST_DEF_MINE_2_DESC
+Réduit la [[encyclopedia STRUCTURE_TITLE]] des astronefs ennemis de 4 par tour, cumulables avec les dommages des [[tech DEF_SYST_DEF_MINE_1]].
 
 DEF_SYST_DEF_MINE_3
 Mines Défensives 3
 
-#DEF_SYST_DEF_MINE_3_DESC
-#Reduces the structure of enemy ships by an additional 8 per turn, cumulative with prerequisite defense mine techs.
+DEF_SYST_DEF_MINE_3_DESC
+Réduit la [[encyclopedia STRUCTURE_TITLE]] des astronefs ennemis de 8 par tour, cumulables avec les précédentes technologies de mines défensives.
 
 DEF_ROOT_DEFENSE
-Défense
+Auto-défense
 
 DEF_ROOT_DEFENSE_DESC
 '''Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes de l'empire.
 
-Le concept de 'Défense' est à la racine de maints développements technologiques.'''
+Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
 DEF_GARRISON_1
 Bataillon Planétaire
 
 DEF_GARRISON_1_DESC
-Augmente de 5 le max [[encyclopedia TROOP_TITLE]] sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 5 sur toutes les planètes de l'empire.
 
 DEF_GARRISON_2
 Régiment Planétaire
 
 DEF_GARRISON_2_DESC
-Augmente de 10 le max [[encyclopedia TROOP_TITLE]] sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 10 sur toutes les planètes de l'empire.
 
 DEF_GARRISON_3
 Brigade Planétaire
 
 DEF_GARRISON_3_DESC
-Augmente de 15 le max [[encyclopedia TROOP_TITLE]] sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 15 sur toutes les planètes de l'empire.
 
 DEF_GARRISON_4
 Armée Planétaire
 
 DEF_GARRISON_4_DESC
-Augmente de 20 le max [[encyclopedia TROOP_TITLE]] sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 20 sur toutes les planètes de l'empire.
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
 
-#DEF_PLANET_CLOAK_DESC
-#By phasing parts a planet in and out of space-time, its [[encyclopedia STEALTH_TITLE]] can be increased massively.
+DEF_PLANET_CLOAK_DESC
+En synchronisant les différentes parties d'une planète dans différentes dimensions de l'espace-temps, sa [[encyclopedia STEALTH_TITLE]] peut être considérablement accrue.
 
 SHP_FLEET_REPAIR
 Réparation Spatiale
 
-#SHP_FLEET_REPAIR_DESC
-#Repairs damaged ships by 10% of structure per turn if they are within [[encyclopedia SUPPLY_TITLE]], stationary and have not been in combat that turn. This is cumulative with [[tech SHP_BASIC_DAM_CONT]].
+SHP_FLEET_REPAIR_DESC
+Répare les astronefs endommagés d'une valeur de 10% de leur [[encyclopedia STRUCTURE_TITLE]] à chaque tour, s'ils se trouvent dans une zone d'[[encyclopedia SUPPLY_TITLE]], sont stationnaires et n'ont pas engagé de combat durant ce tour. Cumulable avec le [[tech SHP_BASIC_DAM_CONT]].
 
 SHP_REINFORCED_HULL
 Coques Renforcées
 
 SHP_REINFORCED_HULL_DESC
-'''Accroît de 5 points la résistance de tous les astronefs.
+'''Augmente de 5 la [[encyclopedia STRUCTURE_TITLE]] max de tous les astronefs.
 
-Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials. However, the limitations of physical matter impose a severe limitation on the strength of hulls. By enhancing the hull with structural integrity fields, a sizable increase in strength can be obtained.'''
+Les coques standards d'astronef sont conçues à l'aide de techniques avancées d'architecture en microgravité et fabriquées à partir de matériaux hautement résistants. Cependant, les contraintes inhérentes de la matière physique limitent la résistance maximale des coques. En modifiant l'intégrité structurelle d'une coque à l'aide de champs moléculaires améliorés, une augmentation considérable de sa résistance peut être obtenue.'''
 
 SHP_BASIC_DAM_CONT
-Contrôle des Dégâts Superficiels
+Contrôle Basique des Dégâts
 
 SHP_BASIC_DAM_CONT_DESC
-Répare progressivement les dégâts subis par les astronefs au rythme d'un point de résistance par tour.
+Répare progressivement les astronefs endommagés au rythme d'1 point de [[encyclopedia STRUCTURE_TITLE]] par tour.
 
 SHP_ADV_DAM_CONT
-Contrôle des Dégâts Avancés
+Contrôle Avancé des Dégâts
 
-#SHP_ADV_DAM_CONT_DESC
-#Repairs damaged ships by 10% of structure per turn if they are stationary and have not been in combat that turn. This is cumulative with [[tech SHP_BASIC_DAM_CONT]] and [[tech SHP_FLEET_REPAIR]].
+SHP_ADV_DAM_CONT_DESC
+Répare les astronefs endommagés d'une valeur de 10% de leur [[encyclopedia STRUCTURE_TITLE]] à chaque tour, s'ils sont stationnaires et n'ont pas engagé de combat durant ce tour. Cumulable avec le [[tech SHP_BASIC_DAM_CONT]] ainsi que la [[tech SHP_FLEET_REPAIR]].
 
-SHP_ROOT_AGGRESSION
+SHP_ROOT_AGGRESSION  # translated
 Agression
 
 SHP_ROOT_AGGRESSION_DESC
@@ -8204,7 +8204,7 @@ Perfectionne le Canon Mitrailleur au niveau 4.
 SHP_WEAPON_2_1
 Canon Laser 1
 SHP_WEAPON_2_1_DESC
-Débloque le Canon Laser, un armement d'astronefs plus puissant que le Canon Mitrailleur.
+Débloque le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
 
 SHP_WEAPON_2_2
 Canon Laser 2
@@ -8224,7 +8224,7 @@ Perfectionne le Canon Laser au niveau 4.
 SHP_WEAPON_3_1
 Canon Plasma 1
 SHP_WEAPON_3_1_DESC
-Débloque le Canon Plasma, un armement pour astronefs plus puissant que le Canon Laser.
+Débloque le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
 
 SHP_WEAPON_3_2
 Canon Plasma 2
@@ -8265,309 +8265,309 @@ SHP_ION_CANNON
 Canon Ionique
 
 SHP_ION_CANNON_DESC
-Débloque les Canons Ioniques pour astronef.
+Débloque l'équipement Canons Ioniques pour les astronefs.
 
 SHP_WEAPON_1
 Canon Mitrailleur
 
-#SHP_WEAPON_1_DESC
-#With the advent of space age weaponry, a paradigm shift tends to occur away from projectile weapons and towards energy or particle weapons. However, as the ability to manipulate matter continuously increases, it becomes possible to fire massive projectiles at relativistic speeds, more deadly than most energy weapons.
+SHP_WEAPON_1_DESC
+L'avènement de l'armement spatial s'accompagne d'un changement de paragdime tendant à abandonner les armes classiques à projectiles au profit d'armes à énergie ou particules. Cependant, tandis que les techniques de manipulation de la matière ne cessent de progresser, il devient possible de lancer des projectiles massifs à des vitesses relativistes, causant autant si ce n'est plus de dommages que la plupart des armements à énergie.
 
 SHP_WEAPON_4
 Rayon Gamma
 
-#SHP_WEAPON_4_DESC
-#A devastating beam of ultra-massive high-energy particles, tearing open deadly rifts in space-time as well as delivering an incredibly high-energy impact.
+SHP_WEAPON_4_DESC
+Un rayon dévastateur de particules hyper-massives de haute énargie, déchirant l'espace-temps de failles mortelles et produisant un incroyable impact de haute énergie.
 
 SHP_PULSE_LASER
-Canon laser à impulsions
+Canon Laser Magnétique
 
 SHP_PULSE_LASER_DESC
-Débloque l'équipement laser à impulsions.
+Débloque l'équipement Canon Laser Magnétique pour les astronefs.
 
-#SHP_PHASOR
-#Phasor
+SHP_PHASOR
+Phaseur
 
-#SHP_PHASOR_DESC
-#Unlocks Phasor ship part.
+SHP_PHASOR_DESC
+Débloque l'équipement Phaseur pour les astronefs.
 
 SHP_INTERCEPTOR
 Intercepteur
 
 SHP_INTERCEPTOR_DESC
-Débloque l'équipement intercepteur.
+Débloque l'équipement Intercepteur pour les astronefs.
 
 SHP_BOMBER
 Bombardier
 
 SHP_BOMBER_DESC
-Débloque l'équipement bombardier.
+Débloque l'équipement Bombardier pour les astronefs.
 
 SHP_RECON_FIGHT
-Chasseur de reconnaissance
+Chasseur Reconnaissance
 
 SHP_RECON_FIGHT_DESC
-Débloque l'équipement chasseur de reconnaissance.
+Débloque l'équipement Chasseur Reconnaissance pour les astronefs.
 
 SHP_NUCLEAR_MISSILE
-Missile nucléaire
+Missile Nucléaire
 
 SHP_NUCLEAR_MISSILE_DESC
-Débloque les missiles nucléaires pour astronef.
+Débloque l'équipement Missile Nucléaire pour les astronefs.
 
-#SHP_NEUTRONIUM_PLATE_NUC_MIS
-#Neutronium Plated Nuclear Missile
+SHP_NEUTRONIUM_PLATE_NUC_MIS
+Missile Nucléaire Neutronium
 
-#SHP_NEUTRONIUM_PLATE_NUC_MIS_DESC
-#Unlocks Neutronium Plated Nuclear Missile ship part.
+SHP_NEUTRONIUM_PLATE_NUC_MIS_DESC
+Débloque l'équipement Missile Nucléaire Neutronium pour les astronefs.
 
-#SHP_SPECTRAL_MISSILE
-#Spectral Missile
+SHP_SPECTRAL_MISSILE
+Missile Spectral
 
-#SHP_SPECTRAL_MISSILE_DESC
-#Unlocks Spectral Missile ship part.
+SHP_SPECTRAL_MISSILE_DESC
+Débloque l'équipement Missile Spectral pour les astronefs.
 
-#SHP_NEUTRONIUM_PLATE_SPEC_MIS
-#Neutronium Plated Spectral Missile
+SHP_NEUTRONIUM_PLATE_SPEC_MIS
+Missile Spectral Neutronium
 
-#SHP_NEUTRONIUM_PLATE_SPEC_MIS_DESC
-#Unlocks Neutronium Plated Spectral Missile ship part.
+SHP_NEUTRONIUM_PLATE_SPEC_MIS_DESC
+Débloque l'équipement Missile Spectral Neutronium pour les astronefs.
 
 SHP_MULTISPEC_SHIELD
-Protection Multi-Spectrale
+Bouclier Multi-Spectral
 
-#SHP_MULTISPEC_SHIELD_DESC
-#Provides adequate shielding to allow a ship to enter into the heart of a star. Ships in a system with a star type other than Black Hole and Neutron receive a mighty [[encyclopedia STEALTH_TITLE]] bonus.
+SHP_MULTISPEC_SHIELD_DESC
+Fournit une protection adéquate permettant à un astronef de pénétrer au cœur d'une étoile. Les astronefs situés dans un système avec une étoile autre qu'un Trou Noir ou qu'une Étoile à neutrons bénéficient d'un important bonus de [[encyclopedia STEALTH_TITLE]].
 
 SPY_DETECT_1
 Scanner Optique
 
 SPY_DETECT_1_DESC
-Toutes les colonies débutent la partie avec un [[encyclopedia DETECTION_RANGE_TITLE]] de 50, et une [[encyclopedia DETECTION_TITLE]] impériale de 10, et the ship part Optical Scanner permet aux astronefs d'atteindre le même niveau de détection.
+Toutes les colonies débutent la partie avec un [[encyclopedia DETECTION_RANGE_TITLE]] de 50 et une [[encyclopedia DETECTION_TITLE]] impériale de 10. Le [[shippart DT_DETECTOR_1]] permet à tous les astronefs d'atteindre un niveau de détection similaire.
 
 SPY_DETECT_2
 Radar Actif
 
 SPY_DETECT_2_DESC
-'''Débloque le Radar Actif pour astronef et le Pylone de Détection, porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 75 et la [[encyclopedia DETECTION_TITLE]] impériale à 30.
+'''Débloque l'équipement [[shippart DT_DETECTOR_2]] pour les astronefs et la structure [[buildingtype BLD_SCANNING_FACILITY]], porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 75 et la [[encyclopedia DETECTION_TITLE]] impériale à 30.
 
-Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
+Se baser uniquement sur les rayonnements électromagnétiques pour obtenir des informations sur tout objet à proximité s'avère imprécis et peu pratique, dans la mesure où ces radiations peuvent être masquées ou atténuées. Par contre, en émettant un rayonnement électromagnétique puis en détectant son écho, il devient alors possible de déterminer l'emplacement et la vitesse de maints objets.'''
 
 SPY_DETECT_3
 Scanner Neutronique
 
 SPY_DETECT_3_DESC
-'''Débloque le Scanner Neutronique pour astronef, porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 150 et la [[encyclopedia DETECTION_TITLE]] impériale à 50.
+'''Débloque l'équipement [[shippart DT_DETECTOR_3]] pour les astronefs, porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 150 et la [[encyclopedia DETECTION_TITLE]] impériale à 50.
 
-Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
+Le rayonnement électromagnétique ne possède pas de masse et s'avère facilement manipulable. En courbant simplement des ondes lumineuses autour d'un objet, les technologies à base de radars classiques deviennent obsolètes. L'émission d'ondes constituées de neutrons plutôt qu'un rayonnement électromagnétique permet une détection par scanner encore plus efficace.'''
 
 SPY_DETECT_4
 Capteurs
 
 SPY_DETECT_4_DESC
-Unlocks the Sensors ship part, porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 200 et la [[encyclopedia DETECTION_TITLE]] impériale à 70.
+Débloque l'équipement [[shippart DT_DETECTOR_4]] pour les astronefs, porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 200 et la [[encyclopedia DETECTION_TITLE]] impériale à 70.
 
 SPY_DETECT_5
 Omni-Scanner
 
 SPY_DETECT_5_DESC
-Le nec plus ultra de la détection. Porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 300 et la [[encyclopedia DETECTION_TITLE]] impériale à 200.
+Le dispositif ultime en matière de détection. Porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 300 et la [[encyclopedia DETECTION_TITLE]] impériale à 200.
 
 SPY_STEALTH_1
 Affaiblisseur Électromagnétique
 
-#SPY_STEALTH_1_DESC
-#'''Unlocks the [[shippart ST_CLOAK_1]] ship part and gives all planets and outposts in the empire the [[special CLOUD_COVER_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20. '''
+SPY_STEALTH_1_DESC
+Débloque l'équipement [[shippart ST_CLOAK_1]] pour les astronefs et confère la Particularité [[special CLOUD_COVER_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 20 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
 
 SPY_STEALTH_2
 Champ d'Absorption
 
-#SPY_STEALTH_2_DESC
-#'''Unlocks the [[shippart ST_CLOAK_2]] ship part and gives all planets and outposts in the empire the [[special VOLCANIC_ASH_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. 
-#
-#Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
+SPY_STEALTH_2_DESC
+'''Débloque l'équipement [[shippart ST_CLOAK_2]] pour les astronefs et confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent. 
+
+Un simple affaiblissement des ondes électromagnétiques émises par un objet peut rendre ce dernier totalement invisible pour les dispositifs passifs de détection. Cependant, cette technique de dissimulation d'un objet est quasiment inutile face à des radars actifs. En absorbant plutôt qu'en réfléchissant les ondes émises par les dispositifs actifs de détection, la [[encyclopedia STEALTH_TITLE]] d'un astronef peut être considérablement accrue.'''
 
 SPY_STEALTH_3
 Camouflage Dimensionnel
 
 SPY_STEALTH_3_DESC
-Unlocks the [[shippart ST_CLOAK_3]] ship part and gives all planets and outposts in the empire the [[special DIM_RIFT_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60.
+Débloque l'équipement [[shippart ST_CLOAK_3]] pour les astronefs et confère la Particularité [[special DIM_RIFT_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 60 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
 
 SPY_STEALTH_4
 Camouflage de Phase
 
-#SPY_STEALTH_4_DESC
-#'''Unlocks the [[shippart ST_CLOAK_4]] ship part and gives all planets and outposts in the empire the [[special VOID_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. 
-#
-#Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
+SPY_STEALTH_4_DESC
+'''Débloque l'équipement [[shippart ST_CLOAK_4]] pour les astronefs et confère la Particularité [[special VOID_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 80 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent. 
+
+Même les astronefs les plus furtifs émettent un rayonnement composé de particules quantiques. En modulant le front d'onde de ces particules, il est possible de le synchroniser avec le rayonnement environnant, neutralisant ainsi les dispositifs de détection les plus avancés.'''
 
 SHP_IMPROVED_ENGINE_COUPLINGS
 Couplage de Motorisation Améliorée
 
-#SHP_IMPROVED_ENGINE_COUPLINGS_DESC
-#Better engine parts equate to better engines. Increases Starlane speed by 10. May be added more than once to a hull.
+SHP_IMPROVED_ENGINE_COUPLINGS_DESC
+De meilleurs éléments de motorisation donnent de meilleurs moteurs. Augmente de 10 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 Matrice de Motorisation Multidimensionnelle
 
-#SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-#N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 20. May be added more than once to a hull.
+SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
+La recherche concernant les espaces multidimensionnels a permis le développement de meilleures matrices de motorisation. Augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.
 
 SHP_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. May be added more than once to a hull.
+Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et adapté en taille pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie. Augmente de 30 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.
 
 SHP_DEUTERIUM_TANK
 Réservoir de Deutérium
 
 SHP_DEUTERIUM_TANK_DESC
-Débloque le Réservoir de Deutérium pour les astronefs.
+Débloque l'équipement [[shippart FU_DEUTERIUM_TANK]] pour les astronefs.
 
 SHP_ANTIMATTER_TANK
 Réservoir d'Anti-Matière
 
 SHP_ANTIMATTER_TANK_DESC
-Débloque le Réservoir d'Anti-Matière pour les astronefs.
+Débloque l'équipement [[shippart FU_ANTIMATTER_TANK]] pour les astronefs.
 
 SHP_ZERO_POINT
 Générateur Zero-Point de Carburant
 
-#SHP_ZERO_POINT_DESC
-#A powerful zero point fuel module that refuels the ship automatically.
+SHP_ZERO_POINT_DESC
+Un module performant exploitant l'énergie Zero-Point, approvisionnant ainsi automatiquement un astronef en carburant.
 
 SHP_ROOT_ARMOR
 Blindage
 
 SHP_ROOT_ARMOR_DESC
-La recherche d'alliages spéciaux permet d'équiper les coques des astronefs d'un blindage, améliorant considérablement leur durabilité, en particulier dans les batailles.
+La recherche d'alliages spéciaux permet d'équiper les coques des astronefs d'un blindage, améliorant substantiellement leur [[encyclopedia STRUCTURE_TITLE]], en particulier dans les batailles.
 
 SHP_ZORTRIUM_PLATE
 Blindage Zortrium
 
-#SHP_ZORTRIUM_PLATE_DESC
-#By refining the methods to construct armor plating, better, more durable special materials can be employed, giving stronger armor parts.
+SHP_ZORTRIUM_PLATE_DESC
+En affinant les techniques de fabrication des blindages, des matériaux de meilleure qualité et donc plus résistants peuvent être utilisés, permettant la production de blindages plus efficaces.
 
 SHP_DIAMOND_PLATE
 Blindage Diamanté
 
-#SHP_DIAMOND_PLATE_DESC
-#Advanced processing techniques allow the construction of armor plating cut out of single huge synthetic diamonds. Provides very durable armor parts.
+SHP_DIAMOND_PLATE_DESC
+Des techniques avancées de fabrication permettent la conception d'un blindage très résistant à partir d'un unique et massif diamant synthétique.
 
 SHP_XENTRONIUM_PLATE
 Blindage Xentronium
 
-#SHP_XENTRONIUM_PLATE_DESC
-#Xentronium is one of the most durable materials known, but also very difficult to process. Mastering the art of constructing armor plating made of xentronium  allows to build extremely durable armor parts.
+SHP_XENTRONIUM_PLATE_DESC
+Le Xentronium est l'un des matériaux connus les plus résistants, mais également l'un des plus complexes à manipuler. Maîtriser le processus de fabrication d'un blindage à partir de Xentronium permet d'atteindre une capacité de résistance sans égale.
 
 SHP_DEFLECTOR_SHIELD
 Bouclier Déflecteur
 
-#SHP_DEFLECTOR_SHIELD_DESC
-#'''Advanced ship shielding technology.
-#
-#By refining and perfecting basic shield technology more effective shield generators can be build.'''
+SHP_DEFLECTOR_SHIELD_DESC
+'''Technologie avancée de [[encyclopedia SHIELDS_TITLE]] d'astronefs.
+
+En affinant et perfectionnant la technologie de base des boucliers, il est possible de fabriquer des prototypes bien plus solides.'''
 
 SHP_PLASMA_SHIELD
 Bouclier Plasma
 
-#SHP_PLASMA_SHIELD_DESC
-#'''Very advanced ship shielding technology.
-#
-#By combining the techniques for controlled plasma containment and advanced force field projection it becomes possible to create what can be best described as a plasma bubble around a space ship. This plasma bubble is capable of absorbing high amounts of energy, particles and projectiles.'''
+SHP_PLASMA_SHIELD_DESC
+'''Technologie très avancée de [[encyclopedia SHIELDS_TITLE]] d'astronefs.
+
+En combinant les techniques de confinement du plasma et la manipulation des champs de force, il devient possible de créer un objet pouvant être décrit comme une bulle de plasma entourant un astronef. Cette bulle de plasma est capable d'absorber de grandes quantités d'énergie, de particules ou de projectiles.'''
 
 SHP_BLACKSHIELD
 Bouclier Obscur
 
 SHP_BLACKSHIELD_DESC
-'''Most advanced ship shielding technology.
+'''Technologie la plus avancée de [[encyclopedia SHIELDS_TITLE]] d'astronefs.
 
-Blackshields got their name because they create what looks like an almost inpenetrable black sphere around the object they protect. A blackshield is in essence some kind of dimensional rift projected around a space ship that completely swallows up almost anything thrown at it. It requires tremendous amounts of energy to penetrate a blackshield.'''
+Les Boucliers Obscurs tiennent leur nom du fait qu'une sphère sombre et impénétrable se crée autour de l'objet qu'ils protègent. Un Bouclier Obscur est par essence une sorte de faille dimensionnelle entourant un astronef, engloutissant quasiment tout ce qui tente de passer au travers. Une quantité colossale d'énergie est nécessaire pour pénétrer la défense d'un Bouclier Obscur.'''
 
 SPY_DIST_MOD
 Modulateur de Distortion
 
-#SPY_DIST_MOD_DESC
-#All objects with mass cause a curvature in space-time due to gravitational effects. Other forces such as the electromagnetic force have similar geometric effects. By indiscriminately amplifying these effects in a localized area, space-time distortion caused by ships can easily be distinguished from background electromagnetic and gravitational radiation.
+SPY_DIST_MOD_DESC
+Tout objet possédant une masse crée une courbure de l'espace-temps en raison des effets gravitationnels. D'autres forces telles que la force électromagnétique, induisent des effets géométriques similaires. En amplifiant d'une manière distincte ces effets dans une région donnée, la distorsion de l'espace-temps causée par des astronefs peut être facilement distinguée et différenciée du champ gravitationnel et du rayonnement électromagnétique environnant.
 
-#SHP_ANTIMAT_TORP
-#Antimatter Torpedo
+SHP_ANTIMAT_TORP
+Torpille Anti-Matière
 
-#SHP_ANTIMAT_TORP_DESC
-#A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead.
+SHP_ANTIMAT_TORP_DESC
+Un missile rapide et à longue portée, basé sur la technologie de [[tech SHP_SPACE_FLUX_DRIVE]] et armé d'une puissante charge d'anti-matière.
 
-#SHP_PLASMA_TORP
-#Plasma Torpedo
+SHP_PLASMA_TORP
+Torpille Plasma
 
-#SHP_PLASMA_TORP_DESC
-#A fast, long-range missile with excellent stealth, powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead.
+SHP_PLASMA_TORP_DESC
+Un missile rapide et à longue portée, doté d'une excellente [[encyclopedia STEALTH_TITLE]], basé sur la technologie de [[tech SHP_TRANSSPACE_DRIVE]] et armé d'une puissante et dévastatrice charge de plasma.
 
 SHP_CAMO_AST_HULL
 Coques Astéroïdales de Camouflage
 
-#SHP_CAMO_AST_HULL_DESC
-#This hull is designed to look exactly like a real asteroid. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+SHP_CAMO_AST_HULL_DESC
+Ces coques sont conçues pour ressembler en tout point à un astéroïde, procurant ainsi un bonus conséquent de [[encyclopedia STEALTH_TITLE]] sur la carte galactique lorsque l'astronef se trouve dans un système abritant une ceinture d'astéroïdes, ou en combat lorsque l'astronef se trouve dans une ceinture d'astéroïdes.
 
 SHP_MINIAST_SWARM
 Essaim Mini-Astéroïdal
 
-#SHP_MINIAST_SWARM_DESC
-#'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. '''
+SHP_MINIAST_SWARM_DESC
+Cette coque est fabriquée à partir d'un petit astéroïde, ce dernier ayant été fragmenté en plusieurs astéroïdes de plus petite taille, lesquels sont contrôlés par la coque astéroïdale principale.
 
 SHP_SCAT_AST_HULL
 Coque Astéroïdale Multiple
 
-#SHP_SCAT_AST_HULL_DESC
-#This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity.
+SHP_SCAT_AST_HULL_DESC
+Cet astronef de pointe est composé de plusieurs grands astéroïdes, certains composant le corps principal du vaisseau, et d'autres gravitant autour sous forme de plus petits astéroïdes contrôlés par la coque principale. Ces astéroïdes ne protègent pas seulement l'astronef, mais également tous les bâtiments alliés, conférant un bonus aux [[encyclopedia SHIELDS_TITLE]] de tous les astronefs impériaux et alliés se trouvant à proximité.
 
 SHP_ORG_HULL
 Coque Organique
 
-#SHP_ORG_HULL_DESC
-#'''This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. '''
+SHP_ORG_HULL_DESC
+La plus basique des coques de type organique: une coque vivante cultivé à partir des constituants les plus basiques de la vie et formée pour le combat.
 
 SHP_ENDOSYMB_HULL
 Coque Endosymbiotique
 
-#SHP_ENDOSYMB_HULL_DESC
-#'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. '''
+SHP_ENDOSYMB_HULL_DESC
+Cette coque monocellulaire développe une relation symbiotique avec les membres de son équipage, hébergeant ces derniers dans son cytoplasme et les utilisant comme organites.
 
 SHP_SENT_HULL
 Coque Sensitive
 
-#SHP_SENT_HULL_DESC
-#This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat.
+SHP_SENT_HULL_DESC
+Cet astronef conscient dispose de capacités analytiques et mémorielles poussées, lui permettant d'intéragir avec les astronefs alliés, en leur fournissant des informations utiles ainsi que d'habiles orientations tactiques en situation de combat.
 
 SHP_BIOINTERCEPTOR
-Bio-intercepteurs
+Bio-Intercepteurs
 
-#SHP_BIOINTERCEPTOR_DESC
-#Living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. This part can only be built if there is a Xenocoordination Facility and a Cellular Growth Chamber somewhere in the empire or an ally's empire.
+SHP_BIOINTERCEPTOR_DESC
+Des intercepteurs vivants conçus pour détruire les missiles et chasseurs ennemis. Bien plus efficace qu'un intercepteur classique, cet équipement peut être fabriqué seulement si l'empire ou un empire allié hébergent une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] et une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
 SHP_BIOBOMBER
-Bio-bombardiers
+Bio-Bombardiers
 
-#SHP_BIOBOMBER_DESC
-#Living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+SHP_BIOBOMBER_DESC
+Des bombardiers vivants conçus pour attaquer les astronefs et les planètes. Bien plus efficace qu'un bombardier classique, cet équipement peut être fabriqué seulement si l'empire ou un empire allié hébergent une Unité de Modification Bioneurale.
 
 SHP_NOVA_BOMB
 Bombe Nova
 
-#SHP_NOVA_BOMB_DESC
-#The most powerful weapon ever devised, capable of destroying an entire star system.
+SHP_NOVA_BOMB_DESC
+L'arme la plus puissante jamais créée, capable de détruire un système stellaire entier.
 
 SHP_DEATH_SPORE
 Spores Mortelles
 
 SHP_DEATH_SPORE_DESC
-Débloque l'équipement [[shippart SP_DEATH_SPORE]], permettant aux astronefs de réduire la population planétaire des espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]].
+Débloque l'équipement [[shippart SP_DEATH_SPORE]], permettant aux astronefs de réduire la population des planètes ennemies.
 
 SHP_BIOTERM
 Bio-Terminateurs
 
-#SHP_BIOTERM_DESC
-#Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the population of planets with [[encyclopedia ORGANIC_SPECIES_TITLE]].
+SHP_BIOTERM_DESC
+Débloque l'équipement [[shippart SP_BIOTERM]], permettant aux astronefs de réduire considérablement la population des planètes ennemies.
 
 SPY_PLANET_STEALTH_MOD
 Modificateur de Furtivité Planétaire
@@ -8580,30 +8580,30 @@ Accroît la [[encyclopedia STEALTH_TITLE]] naturelle des planètes à 4.99, afin
 #############################################################
 
 BUILDING_REFINE_SHORT_DESC
-Structure de Raffinage
+Améliore une structure
 
 TECH_REFINE_SHORT_DESC
-Technologie de Raffinage
+Améliore une technologie
 
 PRO_INDUSTRY_CENTER_II
 Centre Industriel Supérieur
 
-#PRO_INDUSTRY_CENTER_II_DESC
-#Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be double that provided by basic Industrial Centers.
+PRO_INDUSTRY_CENTER_II_DESC
+Une gestion centralisée et améliorée des diverses activités industrielles accroît la production tant en qualité qu'en quantité. Le bonus pour l'[[encyclopedia INDUSTRY_TITLE]] sera le double de celui fourni par un [[buildingtype BLD_INDUSTRY_CENTER]] de base.
 
 PRO_INDUSTRY_CENTER_III
 Centre Industriel Suprême
 
 PRO_INDUSTRY_CENTER_III_DESC
-Additional experience and facilities improvements further extend the size of industrial output improvement. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic Centres industriels.
+Des expérimentations ingénieuses conjuguées au perfectionnement des infrastructures augmentent le rendement d'une production de qualité. Le bonus pour l'[[encyclopedia INDUSTRY_TITLE]] sera le triple de celui fourni par un [[buildingtype BLD_INDUSTRY_CENTER]] de base.
 
 PRO_ENVIRO_MINING
 Extraction Minière Éco-Responsable
 
-#PRO_ENVIRO_MINING_DESC
-#'''Many mining methods are incompatible with highly populous planets, due to environmental damage. Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.
-#
-#Halves the population penalties on planets with the Heavy Mining focus.'''
+PRO_ENVIRO_MINING_DESC
+'''De nombreuses méthodes d'extraction minière sont incompatibles avec les planètes à forte population, en raison des dommages environnementaux. Porter une attention permanente sur l'[[tech GRO_PLANET_ECOL]] est nécessaire pour permettre l'utilisation de méthodes risquées sans en subir les inconvénients.
+
+Réduit de moitié les pénalités de Population sur les planètes avec un focus Extraction Minière Intensive.'''
 
 #############################################################
 ####                  B U I L D I N G S                  ####
@@ -8778,12 +8778,12 @@ BLD_INDUSTRY_CENTER
 Centre Industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Accroît l'[[encyclopedia INDUSTRY_TITLE]] de toutes les colonies privilégiant l'Industrie qui lui sont reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] du cinquième de leur population.
+'''Accroît l'[[encyclopedia INDUSTRY_TITLE]] de toutes les planètes réglées sur le Focus Industrie et reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] de 0.2 par Population.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-Un [[tech PRO_INDUSTRY_CENTER_II]] double ce bonus de base.
+L'amélioration [[tech PRO_INDUSTRY_CENTER_II]] double le bonus de base.
 
-Un [[tech PRO_INDUSTRY_CENTER_III]] accroît encore le bonus, qui passe au triple du bonus de base.'''
+L'amélioration [[tech PRO_INDUSTRY_CENTER_III]] triple le bonus de base.'''
 
 BLD_MEGALITH
 Mégalithe
@@ -9730,13 +9730,13 @@ SP_DEATH_SPORE
 Spores Mortelles
 
 SP_DEATH_SPORE_DESC
-Une arme biologique réduisant la population planétaire des espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]].
+Une arme biologique réduisant la population des planètes ennemies.
 
 SP_BIOTERM
 Bio-Terminateurs
 
 SP_BIOTERM_DESC
-Une puissante arme biologique réduisant rapidement la population planétaire des espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]].
+Une puissante arme biologique réduisant rapidement la population des planètes ennemies.
 
 SP_NOVA_BOMB
 Bombe Nova
@@ -10781,6 +10781,9 @@ Télépathique
 #AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
 #'''Decoy
 #Starbase'''
+
+#AI_SHIPDESIGN_NAME_SCOUT
+#Scout
 
 ### AI Diplomacy Strings and Lists 
 ### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
