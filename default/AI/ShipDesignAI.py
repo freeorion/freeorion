@@ -569,8 +569,8 @@ class AdditionalSpecifications(object):
         :returns: tuple (minFuel,minSpeed,enemyDmg,enemyShield,enemyMineDmg)
         """
         return ("minFuel: %s" % self.minimum_fuel, "minSpeed: %s" % self.minimum_speed,
-               "enemyDmg: %s" % self.enemy_weapon_strength, "enemyShields: %s" % self.enemy_shields,
-               "enemyMineDmg: %s" % self.enemy_mine_dmg)
+                "enemyDmg: %s" % self.enemy_weapon_strength, "enemyShields: %s" % self.enemy_shields,
+                "enemyMineDmg: %s" % self.enemy_mine_dmg)
 
 
 class ShipDesigner(object):
@@ -1203,13 +1203,19 @@ class MilitaryShipDesigner(ShipDesigner):
 
     def _rating_function(self):
         # TODO: Find a better way to determine the value of speed and fuel
+        # Generally, the only relevant damage is that which gets through the enemy shields.
+        # However, even if we do not get through the enemy shields at all, we want to make sure we have ships with
+        # fighting capability to deal with weaker enemy ships, troopers and so on. But this is only meant as last resort
+        # and any design that actually deals damage through shields is to be prefered, i.e. should get a better rating.
+        total_dmg = max(self._total_dmg_vs_shields(), self._total_dmg() / 1000)
+        if total_dmg <= 0:
+            return INVALID_DESIGN_RATING
         enemy_dmg = self.additional_specifications.enemy_weapon_strength
-        total_dmg = max(self._total_dmg_vs_shields(), 0.1)
         shield_factor = max(enemy_dmg / max(0.01, enemy_dmg - self.shields), 1)
         effective_structure = self.structure * shield_factor
         speed_factor = 1 + 0.003*(self.speed - 85)
         fuel_factor = 1 + 0.03 * (self.fuel - self.additional_specifications.minimum_fuel) ** 0.5
-        return max(total_dmg, 0.1) * effective_structure * speed_factor * fuel_factor / self.production_cost
+        return total_dmg * effective_structure * speed_factor * fuel_factor / self.production_cost
 
     def _starting_guess(self, available_parts, num_slots):
         # for military ships, our primary rating function is given by
