@@ -199,6 +199,20 @@ namespace {
         return ConditionDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
     }
 
+    std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
+                                             int empire_id)
+    {
+        std::vector<Condition::ConditionBase*> enqueue_conditions;
+        Condition::OwnerHasBuildingTypeAvailable bld_avail_cond(building_name);
+        enqueue_conditions.push_back(&bld_avail_cond);
+        if (const BuildingType* building_type = GetBuildingType(building_name)) {
+            enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->EnqueueLocation()));
+            enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->Location()));
+        }
+        TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
+        return ConditionDescription(enqueue_conditions, GetUniverseObject(candidate_object_id), source);
+    }
+
     std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
                                              int empire_id)
     {
@@ -234,7 +248,7 @@ namespace {
         if (item.build_type == BT_BUILDING) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 ClientUI::BuildingIcon(item.name), UserString(item.name),
-                LocationConditionDescription(item.name, candidate_object_id, empire_id)));
+                EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id)));
             return browse_wnd;
         } else if (item.build_type == BT_SHIP) {
             const ShipDesign* ship_design = GetShipDesign(item.design_id);
@@ -660,9 +674,12 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (!empire)
         return true;
 
-    bool producible_here = empire->ProducibleItem(BT_BUILDING, name, m_production_location);
+    // check that item is both enqueuable and producible, since most buildings currently have 
+    // nonselective EnqueueLocation conditions
+    bool enqueuable_here = empire->EnqueuableItem(BT_BUILDING, name, m_production_location) &&
+                           empire->ProducibleItem(BT_BUILDING, name, m_production_location);
 
-    if (producible_here)
+    if (enqueuable_here)
         return m_availabilities_shown.first;
     else
         return m_availabilities_shown.second;
