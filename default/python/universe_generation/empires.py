@@ -238,8 +238,11 @@ def add_planets_to_vicinity(vicinity, num_planets):
             # if it is a black hole or has no star, change the star type
             # pick a star type, continue until we get a real star
             # don't accept neutron, black hole or no star
+            print "...system picked to add a planet has star type", star_type
             while star_type not in star_types_real:
                 star_type = pick_star_type(gsd.age)
+            print "...change that to", star_type
+            fo.sys_set_star_type(system, star_type)
 
         # pick a planet size, continue until we get a size that matches the HS_ACCEPTABLE_PLANET_SIZES option
         planet_size = fo.planetSize.unknown
