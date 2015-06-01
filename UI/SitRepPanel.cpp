@@ -134,12 +134,12 @@ namespace {
         std::string saved_template_string = GetOptionsDB().Get<std::string>("hidden-sitrep-templates");
 
         // Split a space-delimited sequence of strings.
+        std::istringstream ss(saved_template_string);
         std::copy(
-            std::istream_iterator<std::string>(std::istringstream(saved_template_string)),
+            std::istream_iterator<std::string>(ss),
             std::istream_iterator<std::string>(),
             std::inserter(result, result.begin())
         );
-
         return result;
     }
 
