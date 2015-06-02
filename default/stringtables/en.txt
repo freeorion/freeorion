@@ -224,7 +224,7 @@ Small and cheap unarmed vessel equipped with improved [[encyclopedia DETECTION_R
 SD_ENG_SCOUT
 Energy Scout
 SD_ENG_SCOUT_DESC
-Small and fast unarmed vessel designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
+Small and fast unarmed vessel designed for recon and exploration. Further research aimed at improving [[encyclopedia DETECTION_RANGE_TITLE]] would allow for better designs. This vessel can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] in systems with blue, white or black hole star types.
 
 SD_SMALL_MARK_1
 Corvette I
@@ -309,17 +309,17 @@ Organic fighter with heavy lasers and armor.
 SD_SHIELD_BUG_1
 Shield Bug I
 SD_SHIELD_BUG_1_DESC
-Organic fighter with shields. Effective against enemies with poor weapons.
+Organic fighter with [[encyclopedia SHIELDS_TITLE]]. Effective against enemies with poor weapons.
 
 SD_SHIELD_BUG_2
 Shield Bug II
 SD_SHIELD_BUG_2_DESC
-Organic fighter with shields. Effective against enemies with poor weapons.
+Organic fighter with [[encyclopedia SHIELDS_TITLE]]. Effective against enemies with poor weapons.
 
 SD_SHIELD_BUG_3
 Shield Bug III
 SD_SHIELD_BUG_3_DESC
-Organic fighter with shields. Effective against enemies with poor weapons.
+Organic fighter with [[encyclopedia SHIELDS_TITLE]]. Effective against enemies with poor weapons.
 
 SD_AST_1
 Rock I
@@ -454,17 +454,17 @@ Carries eight units of ground [[encyclopedia TROOP_TITLE]] and equipment that ca
 SD_ENG_TROOP_SHIP
 Small Troop Ship
 SD_ENG_TROOP_SHIP_DESC
-Carries two units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
+Carries two units of ground [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet. This vessel can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] in systems with blue, white or black hole star types.
 
 SD_ENG1
 Energy 1
 SD_ENG1_DESC
-Small fast combat vessel. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
+Small fast combat vessel. This vessel can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] in systems with blue, white or black hole star types.
 
 SD_ENG2
 Energy 2
 SD_ENG2_DESC
-Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with an energy compressor in systems with blue, white or black hole star types.
+Small fast combat vessel, with improved weaponry. This vessel can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] in systems with blue, white or black hole star types.
 
 SD_DRAGON_TOOTH
 Dragon Tooth
@@ -655,7 +655,7 @@ Feeding upon minerals, the shell of a space snail strongly resembles a normal as
 SM_DAMPENING_CLOUD
 Dampening Cloud
 SM_DAMPENING_CLOUD_DESC
-A cosmic cloud of high energetic particles that has gained some form of sentience. It's highly attracted to and will discharge any greater reserves of potential energy, which will lead to entire space ship fleets being bereft of fuel in a matter of seconds.
+A cosmic cloud of high energetic particles that has gained some form of sentience. It's highly attracted to and will discharge any greater reserves of potential energy, which will lead to entire space ship fleets being bereft of [[encyclopedia FUEL_TITLE]] in a matter of seconds.
 
 SM_ACIREMA_GUARD
 Acirema Guard Ship
@@ -665,7 +665,7 @@ An unmanned armed ship, built by the Acirema, guards the system.
 SM_EXP_OUTPOST
 Experiment Zero
 SM_EXP_OUTPOST_DESC
-'''An ancient creation of the Experimentors that reduces shields and damage. 
+'''An ancient creation of the Experimentors that reduces [[encyclopedia SHIELDS_TITLE]] and damage. 
 
 Experiment Zero was sent to this galaxy to guard the outpost of the Experimentors with its unique abilities. While it does not attack directly it consists of quadrillions of diminutive units that fill the whole space of the system and hamper enemy shields and weapons to the point that all but the very best equipment will be ineffective.'''
 
@@ -2431,9 +2431,9 @@ This planet has never been thoroughly scanned by your empire.
 PL_NOT_IN_RANGE
 This planet is out of range of your empire's scanners.
 PL_APPARENT_STEALTH_EXCEEDS_DETECTION
-Latest known stealth (%1%) exceeds [[DETECTION_TITLE]] (%2%).
+Latest known [[encyclopedia STEALTH_TITLE]] (%1%) exceeds [[DETECTION_TITLE]] (%2%).
 PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
-Latest known stealth is out of date. Actual stealth exceeds [[DETECTION_TITLE]] or local [[DETECTION_RANGE_TITLE]] is excessively impaired.
+Latest known [[encyclopedia STEALTH_TITLE]] is out of date. Actual stealth exceeds [[DETECTION_TITLE]] or local [[DETECTION_RANGE_TITLE]] is excessively impaired.
 
 MENUITEM_SET_FOCUS
 Set focus
@@ -3391,10 +3391,10 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Hull: %2%
 Parts: %3%
 
-Total Attack: %17%    Structure: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
-Starlane Speed: %13%    Fuel Capacity: %14%
+Total Attack: %17%    [[encyclopedia STRUCTURE_TITLE]]: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+[[encyclopedia STARLANE_SPEED_TITLE]]: %13%    [[encyclopedia FUEL_TITLE]] Capacity: %14%
 [[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
-Colonization Capacity: %15%    Troops: %16%
+Colonization Capacity: %15%    [[encyclopedia TROOP_TITLE]]: %16%
 
 Estimated combat strength (ignoring shields): %19$.f (%20$.2f per PP)
 Against likely enemy weapons and shields: %21$.f (%22$.2f per PP)
@@ -3419,10 +3419,10 @@ Parts: %3%
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 For species: %18%
-Total Attack: %17%    Structure: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
-Starlane Speed: %13%    Fuel Capacity: %14%
+Total Attack: %17%    [[encyclopedia STRUCTURE_TITLE]]: %8%    [[encyclopedia SHIELDS_TITLE]]: %9%
+[[encyclopedia STARLANE_SPEED_TITLE]]: %13%    [[encyclopedia FUEL_TITLE]] Capacity: %14%
 [[encyclopedia DETECTION_RANGE_TITLE]]: %10%    [[encyclopedia STEALTH_TITLE]]: %11%
-Colonization Capacity: %15%    Troops: %16%
+Colonization Capacity: %15%    [[encyclopedia TROOP_TITLE]]: %16%
 Estimated combat strength (ignoring shields):  %19$.f   (%20$.2f per PP)
 Against enemy attack %21$.1f and shields %22$.1f:       %23$.f   (%24$.2f per PP)
 '''
@@ -5455,7 +5455,7 @@ As the Acirema found the anomaly that allowed them to enter into this universe, 
 The massive amount of energy they can release as individuals and across the connection from Portal to their home universe, gives them the ability to produce large amounts of Industry, and also allows them to act as weapons. This makes Portal a very dangerous world to approach, as the Acirema are very wary of outsiders, and are sensitive to the vulnerability of their position. Trade with another universe is definitely beneficial, especially since they cannot obtain minerals from other planets. The Acirema on Portal seem to have a government that is similar to a military and/or research outpost (tightly controlled core with a majority loosely controlled) They are very secretive of the nature of their society back home.
 
 Living Weapons:
-Ships crewed by Acirema will gain a +1 bonus to their shields, even if the ship itself has no shield.
+Ships crewed by Acirema will gain a +1 bonus to their [[encyclopedia SHIELDS_TITLE]], even if the ship itself has no shield.
 
 "Homeworld"
 Portal is a Radiated world close to an unusually bright Blue Giant Star, with a connection to another universe. It is thought that Precursor testing may have opened the connection, and caused the star to change. There is suspicion that there may have been intelligent life on Portal, and they were destroyed by the Acirema when the connection opened (either due to research or advanced weapons use).
@@ -5598,7 +5598,7 @@ The Experimentors are an ancient precursor race, whose existence is devoted to t
 SP_SUPER_TEST
 Super Testers
 SP_SUPER_TEST_GAMEPLAY_DESC
-'''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. (Stealth-busting power only works when they are in a Capital)
+'''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. ([[encyclopedia STEALTH_TITLE]]-busting power only works when they are in a Capital)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 
@@ -5726,7 +5726,7 @@ Head on a Spike
 HEAD_ON_A_SPIKE_SPECIAL_DESC
 '''The head of the former emperor rests on a spike for all to see, striking fear in the hearts of the current empire's foes.
 
-Non-empire ships, both enemies and allies, within 100uu will have slightly reduced shields, structure and weapons.
+Non-empire ships, both enemies and allies, within 100uu will have slightly reduced [[encyclopedia SHIELDS_TITLE]], [[encyclopedia STRUCTURE_TITLE]] and weapons.
 '''
 
 HEAD_ON_A_SPIKE_SPECIAL_EFFECT
@@ -7582,7 +7582,7 @@ Interstellar Logistics
 SHP_INTSTEL_LOG_DESC
 '''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] of planets by 3.
 
-Increases Starlane Speed of your ships by 20 when they are within 50 uu of a controlled planet.
+Increases [[encyclopedia STARLANE_SPEED_TITLE]] of your ships by 20 when they are within 50 uu of a controlled planet.
 
 Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 
@@ -7728,7 +7728,7 @@ A hull constructed from pure energy, while far more versatile than a solid hull,
 SHP_KRILL_SPAWN
 Krill Spawner
 SHP_KRILL_SPAWN_DESC
-Unlocks the Krill Spawner ship part, which causes wild space krill to appear in systems with asteroid belts.
+Unlocks the [[shippart SP_KRILL_SPAWNER]] ship part, which causes wild space krill to appear in systems with asteroid belts.
 
 SPY_ROOT_DECEPTION
 Deception
@@ -8062,37 +8062,37 @@ DEF_DEFENSE_NET_REGEN_2
 Defense Network Regeneration 2
 
 DEF_DEFENSE_NET_REGEN_2_DESC
-Increases planets' [[encyclopedia DEFENSE_TITLE]] by 0.25 times the planets' infrastructure, each turn, up to the max defense value, cumulative with regeneration from [[tech DEF_DEFENSE_NET_REGEN_1]].
+Increases planets' [[encyclopedia DEFENSE_TITLE]] by 0.25 times the planets' [[encyclopedia INFRASTRUCTURE_TITLE]], each turn, up to the max defense value, cumulative with regeneration from [[tech DEF_DEFENSE_NET_REGEN_1]].
 
 DEF_PLAN_BARRIER_SHLD_1
 Planetary Barrier Shield 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]], and regenerates each turn by one plus 25% of the value of the planets' infrastructure.
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]], and regenerates each turn by one plus 25% of the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_2
 Planetary Barrier Shield 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60, cumulative with other shield boosts, and regenerates each turn by one plus the value of the planets' infrastructure.
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60, cumulative with other shield boosts, and regenerates each turn by one plus the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_3
 Planetary Barrier Shield 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90, cumulative with other shield boosts, and regenerates each turn by one plus twice the value of the planets' infrastructure.
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90, cumulative with other shield boosts, and regenerates each turn by one plus twice the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_4
 Planetary Barrier Shield 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150, cumulative with other shield boosts, and regenerates each turn by one plus 2.5 times the value of the planets' infrastructure.
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150, cumulative with other shield boosts, and regenerates each turn by one plus 2.5 times the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_PLAN_BARRIER_SHLD_5
 Planetary Barrier Shield 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plus 5 times the value of the planets' infrastructure.
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plus 5 times the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 DEF_SYST_DEF_MINE_1
 System Defense Mines 1
@@ -8100,7 +8100,7 @@ System Defense Mines 1
 DEF_SYST_DEF_MINE_1_DESC
 '''When friendly ships are not present in a system, enemy ships are free to blockade the system, stopping the transfer of resources without directly engaging the planet's defenses, thus with no risk of damage to themselves. A network of system defense mines can deter these tactics by damaging enemy ships each turn they are in the system.
 
-The structure of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of 2 per turn.
+The [[encyclopedia STRUCTURE_TITLE]] of all ships belonging to an enemy empire which are present in a system containing a planet owned by the empire that possesses this technology will be reduced at a rate of 2 per turn.
 
 Mines regenerate each turn, so are not depleted by use.'''
 
@@ -8108,13 +8108,13 @@ DEF_SYST_DEF_MINE_2
 System Defense Mines 2
 
 DEF_SYST_DEF_MINE_2_DESC
-Reduces the structure of enemy ships by an additional 4 per turn, cumulative with [[tech DEF_SYST_DEF_MINE_1]].
+Reduces the [[encyclopedia STRUCTURE_TITLE]] of enemy ships by an additional 4 per turn, cumulative with [[tech DEF_SYST_DEF_MINE_1]].
 
 DEF_SYST_DEF_MINE_3
 System Defense Mines 3
 
 DEF_SYST_DEF_MINE_3_DESC
-Reduces the structure of enemy ships by an additional 8 per turn, cumulative with prerequisite defense mine techs.
+Reduces the [[encyclopedia STRUCTURE_TITLE]] of enemy ships by an additional 8 per turn, cumulative with prerequisite defense mine techs.
 
 DEF_ROOT_DEFENSE
 Self Defense
@@ -8158,13 +8158,13 @@ SHP_FLEET_REPAIR
 Fleet Field Repair
 
 SHP_FLEET_REPAIR_DESC
-Repairs damaged ships by 10% of structure per turn if they are within [[encyclopedia SUPPLY_TITLE]], stationary and have not been in combat that turn. This is cumulative with [[tech SHP_BASIC_DAM_CONT]].
+Repairs damaged ships by 10% of [[encyclopedia STRUCTURE_TITLE]] per turn if they are within [[encyclopedia SUPPLY_TITLE]], stationary and have not been in combat that turn. This is cumulative with [[tech SHP_BASIC_DAM_CONT]].
 
 SHP_REINFORCED_HULL
 Reinforced Hull
 
 SHP_REINFORCED_HULL_DESC
-'''Increases max structure of all ships by 5.
+'''Increases max [[encyclopedia STRUCTURE_TITLE]] of all ships by 5.
 
 Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials. However, the limitations of physical matter impose a severe limitation on the strength of hulls. By enhancing the hull with structural integrity fields, a sizable increase in strength can be obtained.'''
 
@@ -8172,13 +8172,13 @@ SHP_BASIC_DAM_CONT
 Basic Damage Control
 
 SHP_BASIC_DAM_CONT_DESC
-Gradually repairs damaged ships. Current structure of all ships is replenished at a rate of 1 per turn.
+Gradually repairs damaged ships. Current [[encyclopedia STRUCTURE_TITLE]] of all ships is replenished at a rate of 1 per turn.
 
 SHP_ADV_DAM_CONT
 Advanced Damage Control
 
 SHP_ADV_DAM_CONT_DESC
-Repairs damaged ships by 10% of structure per turn if they are stationary and have not been in combat that turn. This is cumulative with [[tech SHP_BASIC_DAM_CONT]] and [[tech SHP_FLEET_REPAIR]].
+Repairs damaged ships by 10% of [[encyclopedia STRUCTURE_TITLE]] per turn if they are stationary and have not been in combat that turn. This is cumulative with [[tech SHP_BASIC_DAM_CONT]] and [[tech SHP_FLEET_REPAIR]].
 
 SHP_ROOT_AGGRESSION
 Aggression
@@ -8343,13 +8343,13 @@ SPY_DETECT_1
 Optical Scanner
 
 SPY_DETECT_1_DESC
-All colonies start the game with a [[encyclopedia DETECTION_RANGE_TITLE]] of 50, and the imperial [[encyclopedia DETECTION_TITLE]] to 10, and the ship part Optical Scanner permits ships to reach the same level of detection.
+All colonies start the game with a [[encyclopedia DETECTION_RANGE_TITLE]] of 50, and the imperial [[encyclopedia DETECTION_TITLE]] to 10, and the ship part [[shippart DT_DETECTOR_1]] permits ships to reach the same level of detection.
 
 SPY_DETECT_2
 Active Radar
 
 SPY_DETECT_2_DESC
-'''Unlocks the Active Radar ship part and the Scanning Facility building, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 75, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 30.
+'''Unlocks the [[shippart DT_DETECTOR_2]] ship part and the [[buildingtype BLD_SCANNING_FACILITY]] building, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 75, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 30.
 
 Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened. By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
@@ -8357,7 +8357,7 @@ SPY_DETECT_3
 Neutron Scanner
 
 SPY_DETECT_3_DESC
-'''Unlocks the Neutron Scanner ship part, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 150, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 50.
+'''Unlocks the [[shippart DT_DETECTOR_3]] ship part, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 150, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 50.
 
 Electromagnetic radiation has no rest mass and is easily manipulable. Simply by bending waves of light around an object, it is possible to render radar devices virtually useless. By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
@@ -8365,7 +8365,7 @@ SPY_DETECT_4
 Sensors
 
 SPY_DETECT_4_DESC
-Unlocks the Sensors ship part, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 200, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 70.
+Unlocks the [[shippart DT_DETECTOR_4]] ship part, increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 200, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 70.
 
 SPY_DETECT_5
 Omni-scanner
@@ -8405,31 +8405,31 @@ SHP_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
-Better engine parts equate to better engines. Increases Starlane speed by 10. May be added more than once to a hull.
+Better engine parts equate to better engines. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 10. May be added more than once to a hull.
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 20. May be added more than once to a hull.
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 20. May be added more than once to a hull.
 
 SHP_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 30. May be added more than once to a hull.
+A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 30. May be added more than once to a hull.
 
 SHP_DEUTERIUM_TANK
 Deuterium Tank
 
 SHP_DEUTERIUM_TANK_DESC
-Unlocks Deuterium Tank ship part.
+Unlocks [[shippart FU_DEUTERIUM_TANK]] ship part.
 
 SHP_ANTIMATTER_TANK
 Antimatter Tank
 
 SHP_ANTIMATTER_TANK_DESC
-Unlocks Antimatter Tank ship part.
+Unlocks [[shippart FU_ANTIMATTER_TANK]] ship part.
 
 SHP_ZERO_POINT
 Zero-Point Fuel Generator
@@ -8441,7 +8441,7 @@ SHP_ROOT_ARMOR
 Armor Plating
 
 SHP_ROOT_ARMOR_DESC
-Researching special alloys that allow to equip ship hulls with armor plating greatly enhances their durability, especially in battle.
+Researching special alloys that allow to equip ship hulls with armor plating greatly enhances their [[encyclopedia STRUCTURE_TITLE]], especially in battle.
 
 SHP_ZORTRIUM_PLATE
 Zortrium Armor Plating
@@ -8465,7 +8465,7 @@ SHP_DEFLECTOR_SHIELD
 Deflector Shield
 
 SHP_DEFLECTOR_SHIELD_DESC
-'''Advanced ship shielding technology.
+'''Advanced technology of ship [[encyclopedia SHIELDS_TITLE]].
 
 By refining and perfecting basic shield technology more effective shield generators can be build.'''
 
@@ -8473,7 +8473,7 @@ SHP_PLASMA_SHIELD
 Plasma Shield
 
 SHP_PLASMA_SHIELD_DESC
-'''Very advanced ship shielding technology.
+'''Very advanced technology of ship [[encyclopedia SHIELDS_TITLE]].
 
 By combining the techniques for controlled plasma containment and advanced force field projection it becomes possible to create what can be best described as a plasma bubble around a space ship. This plasma bubble is capable of absorbing high amounts of energy, particles and projectiles.'''
 
@@ -8481,7 +8481,7 @@ SHP_BLACKSHIELD
 Blackshield
 
 SHP_BLACKSHIELD_DESC
-'''Most advanced ship shielding technology.
+'''Most advanced technology of ship [[encyclopedia SHIELDS_TITLE]].
 
 Blackshields got their name because they create what looks like an almost impenetrable black sphere around the object they protect. A blackshield is in essence some kind of dimensional rift projected around a space ship that completely swallows up almost anything thrown at it. It requires tremendous amounts of energy to penetrate a blackshield.'''
 
@@ -8495,13 +8495,13 @@ SHP_ANTIMAT_TORP
 Antimatter Torpedo
 
 SHP_ANTIMAT_TORP_DESC
-A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead.
+A fast, long-range missile powered by the [[tech SHP_SPACE_FLUX_DRIVE]] and armed with a powerful anti-matter warhead.
 
 SHP_PLASMA_TORP
 Plasma Torpedo
 
 SHP_PLASMA_TORP_DESC
-A fast, long-range missile with excellent stealth, powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead.
+A fast, long-range missile with excellent [[encyclopedia STEALTH_TITLE]], powered by the [[tech SHP_TRANSSPACE_DRIVE]] and armed with a devastatingly powerful plasma warhead.
 
 SHP_CAMO_AST_HULL
 Camouflage Asteroid Hull
@@ -8543,7 +8543,7 @@ SHP_BIOINTERCEPTOR
 Biointerceptors
 
 SHP_BIOINTERCEPTOR_DESC
-Living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. This part can only be built if there is a Xenocoordination Facility and a Cellular Growth Chamber somewhere in the empire or an ally's empire.
+Living interceptors designed to destroy missiles and enemy fighters. Far more effective than regular interceptors. This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
 
 SHP_BIOBOMBER
 Biobombers
@@ -8589,19 +8589,19 @@ PRO_INDUSTRY_CENTER_II
 Greater Industrial Center
 
 PRO_INDUSTRY_CENTER_II_DESC
-Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be double that provided by basic Industrial Centers.
+Improved centralized management of dispersed industrial activities increases the size of increased industrial output provided. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be double that provided by basic [[buildingtype BLD_INDUSTRY_CENTER]]s.
 
 PRO_INDUSTRY_CENTER_III
 Supreme Industrial Center
 
 PRO_INDUSTRY_CENTER_III_DESC
-Additional experience and facilities improvements further extend the size of industrial output improvement. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic Industrial Centers.
+Additional experience and facilities improvements further extend the size of industrial output improvement. The bonus to [[encyclopedia INDUSTRY_TITLE]] will be triple that provided by basic [[buildingtype BLD_INDUSTRY_CENTER]]s.
 
 PRO_ENVIRO_MINING
 Environmentally Conscious Mining
 
 PRO_ENVIRO_MINING_DESC
-'''Many mining methods are incompatible with highly populous planets, due to environmental damage. Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.
+'''Many mining methods are incompatible with highly populous planets, due to environmental damage. Careful consideration of [[tech GRO_PLANET_ECOL]] is required to permit limited mining techniques to be employed without such downsides.
 
 Halves the population penalties on planets with the Heavy Mining focus.'''
 
