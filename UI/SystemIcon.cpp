@@ -82,7 +82,7 @@ namespace {
                 utf8::utf32to8(name.begin() + start, name.begin() + start + current_length, std::back_inserter(piece));
 
                 GG::Clr empire_clr = ClientUI::TextColor();
-                const Empire* empire = GetEmpire(*owner_empire_ids.begin());
+                const Empire* empire = GetEmpire(*it);
                 if (empire)
                     empire_clr = empire->Color();
 
