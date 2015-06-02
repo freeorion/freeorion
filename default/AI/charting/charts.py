@@ -199,7 +199,7 @@ for plotType in doPlotTypes:
     title(caption+' Progression ')
     x1,x2,y1,y2 = axis()
     newY2=y2
-    if plotType in ["PP", "RP", "ShipCount"]:
+    if plotType in ["PP + 2RP", "PP", "RP", "ShipCount"]:
         for yi in range(1, 10):
             if 1.05*ymax < yi*y2/10:
                 newY2= yi*y2/10
