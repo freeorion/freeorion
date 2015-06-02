@@ -6,6 +6,7 @@
 #include "FleetWnd.h"
 #include "GraphControl.h"
 #include "Hotkeys.h"
+#include "LinkText.h"
 #include "MapWnd.h"
 #include "../universe/Condition.h"
 #include "../universe/Universe.h"
@@ -445,6 +446,8 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG:
     GG::Connect(m_index_button->LeftClickedSignal,  &EncyclopediaDetailPanel::OnIndex,                  this);
     GG::Connect(m_back_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnBack,                   this);
     GG::Connect(m_next_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnNext,                   this);
+    desc_box->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
+    desc_box->SetDecorator(VarText::PLANET_ID_TAG, new ColorByOwner());
     m_description_box = desc_box;
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());

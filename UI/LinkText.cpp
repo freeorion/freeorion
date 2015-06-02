@@ -1,6 +1,9 @@
 #include "LinkText.h"
 
 #include "ClientUI.h"
+#include "../Empire/Empire.h"
+#include "../universe/UniverseObject.h"
+#include "../util/AppInterface.h"
 #include "../util/Logger.h"
 #include "../util/VarText.h"
 #include "../util/i18n.h"
@@ -145,6 +148,19 @@ int LinkDecorator::CastStringToInt(const std::string& str) {
         return retval;
 
     return -1;
+}
+
+std::string ColorByOwner::Decorate(const std::string& object_id_str, const std::string& content) const {
+    GG::Clr color = ClientUI::DefaultLinkColor();
+    const Empire* empire = 0;
+    // get object indicated by object_id, and then get object's owner, if any
+    int object_id = CastStringToInt(object_id_str);
+    TemporaryPtr<const UniverseObject> object = Objects().Object(object_id);
+    if (object && !object->Unowned())
+        empire = GetEmpire(object->Owner());
+    if (empire)
+        color = empire->Color();
+    return GG::RgbaTag(color) + content + "</rgba>";
 }
 
 

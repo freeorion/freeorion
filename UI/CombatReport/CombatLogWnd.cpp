@@ -1,5 +1,7 @@
 #include "CombatLogWnd.h"
 
+#include "../LinkText.h"
+
 #include "../../client/human/HumanClientApp.h"
 #include "../../combat/CombatLogManager.h"
 #include "../../combat/CombatEvents.h"
@@ -82,24 +84,6 @@ std::string PublicNameLink(int client_empire_id, int object_id, std::string not_
         return not_found;
     }
 }
-
-class ColorByOwner: public LinkDecorator {
-public:
-    virtual std::string Decorate(const std::string& object_id_str, const std::string& content) const {
-        GG::Clr color = ClientUI::DefaultLinkColor();
-        const Empire* empire = 0;
-
-        // get object indicated by object_id, and then get object's owner, if any
-        int object_id = CastStringToInt(object_id_str);
-        TemporaryPtr<const UniverseObject> object = Objects().Object(object_id);
-        if (object && !object->Unowned())
-            empire = GetEmpire(object->Owner());
-        if (empire)
-            color = empire->Color();
-
-        return GG::RgbaTag(color) + content + "</rgba>";
-    }
-};
 
 }
 

@@ -39,6 +39,11 @@ protected:
 // Should be unique_ptr, but we don't have c++11
 typedef boost::shared_ptr<LinkDecorator> LinkDecoratorPtr;
 
+class ColorByOwner: public LinkDecorator {
+public:
+    virtual std::string Decorate(const std::string& object_id_str, const std::string& content) const;
+};
+
 class TextLinker {
 public:
     /** \name Structors */ //@{
