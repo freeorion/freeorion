@@ -10736,7 +10736,7 @@ Invincible'''
 
 ### End of Capital Names Lists
 
-### Beginning of AI Shipdesign Name List
+### Beginning of AI Shipdesign Name Lists
 ### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
 ### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 AI_SHIPDESIGN_NAME_INVALID
@@ -10764,7 +10764,9 @@ AI_SHIPDESIGN_NAME_TROOPER_ORBITAL
 SpaceInvaders
 
 AI_SHIPDESIGN_NAME_TROOPER_STANDARD
-StormTroopers
+'''Assault Ship
+Storm Troopers
+Heavy Troopers'''
 
 AI_SHIPDESIGN_NAME_COLONISATION_ORBITAL
 Orbital Seeder
@@ -10784,6 +10786,8 @@ Starbase'''
 
 AI_SHIPDESIGN_NAME_SCOUT
 Scout
+
+### End of AI Shipdesign Name Lists
 
 ### AI Diplomacy Strings and Lists 
 ### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
