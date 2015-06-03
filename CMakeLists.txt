@@ -19,6 +19,7 @@ set(FreeOrion_VERSION 0.4.4+)
 set(FREEORION_RELEASE false)
 
 set(MINIMUM_BOOST_VERSION 1.54.0)
+set(PYTHON_VERSION 2.7)
 
 option(BUILD_TESTS "Controls generation of unit tests." OFF)
 
@@ -76,7 +77,7 @@ else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
 
-find_package(PythonInterp REQUIRED)
+find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
 
 # To run the version generation every compile we need to deferr the
 # execution to a separate target and the existing python command
