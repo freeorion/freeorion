@@ -83,6 +83,7 @@ find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
 # execution to a separate target and the existing python command
 add_custom_target(freeorionversion
     COMMAND
+    "${PYTHON_EXECUTABLE}"
     "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
     "${CMAKE_SOURCE_DIR}"
     "CMake"
