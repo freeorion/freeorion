@@ -45,12 +45,6 @@ option(USE_DEVIL
 option(BUILD_SDL_DRIVER
        "Builds GG SDL support (the GiGiSDL library)."
        ON)
-option(BUILD_OGRE_DRIVER
-       "Builds GG Ogre support (the GiGiOgre library)."
-       OFF)
-option(BUILD_OGRE_OIS_PLUGIN
-       "Builds OIS input plugin for the GiGiOgre library."
-       OFF)
 option(BUILD_DOCUMENTATION
        "Builds HTML documentation (requires Doxygen)."
        OFF)
@@ -210,10 +204,6 @@ if (BUILD_SDL_DRIVER)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL>=1.2)
 endif ()
 
-if (BUILD_OGRE_OIS_PLUGIN)
-    list(APPEND CPACK_RPM_PACKAGE_REQUIRES ogre>=1.6 libois1>=1.2)
-endif ()
-
 if (BUILD_DEVEL_PACKAGE)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES boost-devel>=1.44.0 Mesa-devel freetype2-devel)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi-devel=${GIGI_VERSION})
@@ -221,10 +211,6 @@ endif ()
 
 if (BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL-devel>=1.2)
-endif ()
-
-if (BUILD_DEVEL_PACKAGE AND BUILD_OGRE_OIS_PLUGIN)
-    list(APPEND CPACK_RPM_PACKAGE_REQUIRES ogre-devel>=1.6 libois-devel>=1.2)
 endif ()
 
 # Deb-specific settings
@@ -237,10 +223,6 @@ if (BUILD_SDL_DRIVER)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2debian (>= 1.2)")
 endif ()
 
-if (BUILD_OGRE_OIS_PLUGIN)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS},  libogremain-1.4.9 (>= 1.4.9), libois1")
-endif ()
-
 if (BUILD_DEVEL_PACKAGE)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost-devel (>= 1.44.0), libgl1-mesa-dev | libgl-dev, libglu1-mesa-dev | libglu-dev, libfreetype6-dev")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi-dev (= ${GIGI_VERSION})")
@@ -248,9 +230,6 @@ endif ()
 
 if (BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2-dev (>= 1.2)")
-endif ()
-if (BUILD_DEVEL_PACKAGE AND BUILD_OGRE_OIS_PLUGIN)
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS},  libogre-dev (>= 1.4.9), libois-dev")
 endif ()
 
 if (UNIX)
@@ -289,22 +268,6 @@ cpack_add_component(
     DEPENDS COMPONENT_GIGI
 )
 
-# cpack_add_component(
-#     COMPONENT_GIGIOGRE
-#     DISPLAY_NAME GiGiOgre
-#     DESCRIPTION "An Ogre input driver (http://www.ogre3d.org).  Note that Ogre itself does not include proper input support.  The OIS input plugin is recommended."
-#     GROUP COMPONENT_GROUP_RUNTIME
-#     DEPENDS COMPONENT_GIGI
-# )
-
-# cpack_add_component(
-#     COMPONENT_GIGIOGREPLUGIN_OIS
-#     DISPLAY_NAME "GiGiOgre OIS Plugin"
-#     DESCRIPTION "An Ogre plugin using OIS (http://sourceforge.net/projects/wgois)."
-#     GROUP COMPONENT_GROUP_RUNTIME
-#     DEPENDS COMPONENT_GIGIOGRE
-# )
-
 cpack_add_component(
     COMPONENT_GIGI_DEVEL
     DISPLAY_NAME "GiGi"
@@ -320,22 +283,6 @@ cpack_add_component(
     GROUP COMPONENT_GROUP_DEVEL
     DEPENDS COMPONENT_GIGI_DEVEL COMPONENT_GIGISDL
 )
-
-# cpack_add_component(
-#     COMPONENT_GIGIOGRE_DEVEL
-#     DISPLAY_NAME "GiGiOgre"
-#     DESCRIPTION "The files necessary to do development with GiGiOgre."
-#     GROUP COMPONENT_GROUP_DEVEL
-#     DEPENDS COMPONENT_GIGI_DEVEL COMPONENT_GIGIOGRE
-# )
-
-# cpack_add_component(
-#     COMPONENT_GIGIOGREPLUGIN_OIS_DEVEL
-#     DISPLAY_NAME "GiGiOgre OIS Plugin"
-#     DESCRIPTION "The files necessary to do development with GiGiOgre's OIS Plugin.  Only required for users who are statically linking against Ogre, and want to link to the OIS plugin at link-time."
-#     GROUP COMPONENT_GROUP_DEVEL
-#     DEPENDS COMPONENT_GIGIOGRE_DEVEL COMPONENT_GIGIOGREPLUGIN_OIS
-# )
 
 cpack_add_component_group(
     COMPONENT_GROUP_RUNTIME

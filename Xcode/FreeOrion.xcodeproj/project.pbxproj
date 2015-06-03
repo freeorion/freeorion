@@ -537,8 +537,6 @@
 		34972BE70F49CBE80015C864 /* ChatWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatWnd.h; sourceTree = "<group>"; };
 		34972BEC0F49CBF90015C864 /* Sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sound.cpp; sourceTree = "<group>"; };
 		34972BED0F49CBF90015C864 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
-		34A97FE50FC978C600620707 /* OgreGUIInputPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGUIInputPlugin.h; sourceTree = "<group>"; };
-		34A97FE60FC978C600620707 /* OISInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OISInput.h; sourceTree = "<group>"; };
 		34ACA40C0FFFABE600500F40 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
 		34ACA4BE0FFFD2DB00500F40 /* chmain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chmain.mm; sourceTree = "<group>"; };
 		34ACA4C50FFFD50100500F40 /* chmain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chmain.h; sourceTree = "<group>"; };
@@ -592,7 +590,6 @@
 		471023570CEF3AAB00A7DF2B /* ListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListBox.h; sourceTree = "<group>"; };
 		471023580CEF3AAB00A7DF2B /* Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Menu.h; sourceTree = "<group>"; };
 		471023590CEF3AAB00A7DF2B /* MultiEdit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiEdit.h; sourceTree = "<group>"; };
-		4710235B0CEF3AAB00A7DF2B /* OgreGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGUI.h; sourceTree = "<group>"; };
 		4710235D0CEF3AAB00A7DF2B /* PtRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtRect.h; sourceTree = "<group>"; };
 		4710235E0CEF3AAB00A7DF2B /* Scroll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scroll.h; sourceTree = "<group>"; };
 		471023600CEF3AAB00A7DF2B /* SDLGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLGUI.h; sourceTree = "<group>"; };
@@ -638,10 +635,6 @@
 		471023A60CEF3AAC00A7DF2B /* ListBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ListBox.cpp; sourceTree = "<group>"; };
 		471023A70CEF3AAC00A7DF2B /* Menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Menu.cpp; sourceTree = "<group>"; };
 		471023A80CEF3AAC00A7DF2B /* MultiEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiEdit.cpp; sourceTree = "<group>"; };
-		471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OgreGUI.cpp; sourceTree = "<group>"; };
-		471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OgreGUIInputPlugin.cpp; sourceTree = "<group>"; };
-		471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OISInput.cfg; sourceTree = "<group>"; };
-		471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OISInput.cpp; sourceTree = "<group>"; };
 		471023B30CEF3AAC00A7DF2B /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
 		471023B50CEF3AAC00A7DF2B /* PtRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PtRect.cpp; sourceTree = "<group>"; };
 		471023B70CEF3AAC00A7DF2B /* Scroll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scroll.cpp; sourceTree = "<group>"; };
@@ -1236,15 +1229,6 @@
 			path = python;
 			sourceTree = "<group>";
 		};
-		34A97FE40FC978C600620707 /* Plugins */ = {
-			isa = PBXGroup;
-			children = (
-				34A97FE50FC978C600620707 /* OgreGUIInputPlugin.h */,
-				34A97FE60FC978C600620707 /* OISInput.h */,
-			);
-			path = Plugins;
-			sourceTree = "<group>";
-		};
 		34B9EBEF0F5E208F005BF6A4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1307,7 +1291,6 @@
 				471023580CEF3AAB00A7DF2B /* Menu.h */,
 				471023590CEF3AAB00A7DF2B /* MultiEdit.h */,
 				34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */,
-				4710235A0CEF3AAB00A7DF2B /* Ogre */,
 				4710235D0CEF3AAB00A7DF2B /* PtRect.h */,
 				4710235E0CEF3AAB00A7DF2B /* Scroll.h */,
 				4710235F0CEF3AAB00A7DF2B /* SDL */,
@@ -1350,15 +1333,6 @@
 			path = dialogs;
 			sourceTree = "<group>";
 		};
-		4710235A0CEF3AAB00A7DF2B /* Ogre */ = {
-			isa = PBXGroup;
-			children = (
-				34A97FE40FC978C600620707 /* Plugins */,
-				4710235B0CEF3AAB00A7DF2B /* OgreGUI.h */,
-			);
-			path = Ogre;
-			sourceTree = "<group>";
-		};
 		4710235F0CEF3AAB00A7DF2B /* SDL */ = {
 			isa = PBXGroup;
 			children = (
@@ -1392,7 +1366,6 @@
 				471023A60CEF3AAC00A7DF2B /* ListBox.cpp */,
 				471023A70CEF3AAC00A7DF2B /* Menu.cpp */,
 				471023A80CEF3AAC00A7DF2B /* MultiEdit.cpp */,
-				471023A90CEF3AAC00A7DF2B /* Ogre */,
 				471023B30CEF3AAC00A7DF2B /* Plugin.cpp */,
 				471023B50CEF3AAC00A7DF2B /* PtRect.cpp */,
 				471023B70CEF3AAC00A7DF2B /* Scroll.cpp */,
@@ -1419,25 +1392,6 @@
 				4710239D0CEF3AAC00A7DF2B /* ThreeButtonDlg.cpp */,
 			);
 			path = dialogs;
-			sourceTree = "<group>";
-		};
-		471023A90CEF3AAC00A7DF2B /* Ogre */ = {
-			isa = PBXGroup;
-			children = (
-				471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */,
-				471023AB0CEF3AAC00A7DF2B /* Plugins */,
-			);
-			path = Ogre;
-			sourceTree = "<group>";
-		};
-		471023AB0CEF3AAC00A7DF2B /* Plugins */ = {
-			isa = PBXGroup;
-			children = (
-				471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */,
-				471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */,
-				471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */,
-			);
-			path = Plugins;
 			sourceTree = "<group>";
 		};
 		471023B80CEF3AAC00A7DF2B /* SDL */ = {

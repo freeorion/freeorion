@@ -591,12 +591,8 @@ EXCLUDE_SYMBOLS        = GG::detail \
                          GG::ListBox::Row::DeferAdjustLayout \
                          boost \
                          boost::archive \
-                         Ogre \
-                         OIS \
                          GG_API \
                          GG_SDL_API \
-                         GG_OGRE_API \
-                         GG_OGRE_PLUGIN_API \
                          FT_ULong \
                          FT_Face
 

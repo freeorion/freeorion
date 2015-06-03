@@ -73,8 +73,8 @@ struct GUIImpl;
     HandleEvent() must be driven from PollAndRender().  The code driving
     HandleEvent() must interact with the hardware and/or operating system, and
     supply the appropriate EventType's, key presses, and mouse position info
-    to HandleEvent().  It is the author's recommendation that the user use one
-    of the provided SDL and Ogre drivers to do this.
+    to HandleEvent().  It is the author's recommendation that the user use the
+    provided SDL driver to do this.
 
     <p>Keyboard accelerators may be defined, as mentioned above.  Each defined
     accelerator has its own signal which is emitted each time the accelerator

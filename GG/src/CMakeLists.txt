@@ -105,7 +105,3 @@ endif ()
 if (BUILD_SDL_DRIVER)
     add_subdirectory(SDL)
 endif ()
-
-if (BUILD_OGRE_DRIVER)
-    add_subdirectory(Ogre)
-endif ()

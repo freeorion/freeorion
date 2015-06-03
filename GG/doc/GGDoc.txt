@@ -7,7 +7,7 @@
     GG is designed to achieve several goals:
     - Platform-independence: GG should be buildable on any platform that supports OpenGL
     - Driver-independence: GG should be a standalone GUI framework that does not require any particular application framework;
-    though SDL and Ogre drivers are supplied, GG should be usable with any driver code the user wishes to supply
+    though a SDL driver are supplied, GG should be usable with any driver code the user wishes to supply
     - Easy extensibility: new controls and GUI behavior should be easy to incorporate
     - Complete graphical control for the user/designer: the user should not be limited by the author's lack of artistic skill!
     - Independence of UI elements from the source code: GG UI elements should be configurable as text files, so that UI design 
@@ -101,8 +101,8 @@
     (position and button depression), setting mouse delay repeat (see GG::GUI
     for a description of this), entering and exiting from an orthographic
     projection (2D) rendering mode.  Most of these services must be provided
-    by the user when subclassing from GG::GUI; if either of SDLGUI or OgreGUI
-    is used, these services are already implemented.
+    by the user when subclassing from GG::GUI; if SDLGUI is used, these
+    services are already implemented.
 
     <p>
 
@@ -233,10 +233,9 @@
     \section text_handling_user_input User Input
 
     Unicode characters can be input by the user, as long as the input driver
-    handles Unicode input.  The SDL reference driver does.  The Ogre OIS input
-    plugin does not.  GG will convert any Unicode input to a multibyte UTF-8
-    sequence before adding it to a user-editable string (e.g. as in a
-    GG::Edit).
+    handles Unicode input.  The SDL reference driver does.  GG will convert
+    any Unicode input to a multibyte UTF-8 sequence before adding it to a
+    user-editable string (e.g. as in a GG::Edit).
 
 */
 
@@ -297,7 +296,6 @@
 
     Optional libraries for input drivers:
     - SDL >= 1.2 - http://www.libsdl.org
-    - Ogre >= 1.4 - http://ogre3d.org
 
     GG's documentation relies on Doxygen
     (http://www.stack.nl/~dimitri/doxygen). If you have Doxygen installed in a
@@ -483,13 +481,8 @@
 
     \section tour_user_input_drivers User Input Drivers
 
-    Two input drivers are currently available for use with GG -- one for <a
-    href="http://libsdl.org">SDL</a> and one for <a
-    href="http://ogre3d.org">Ogre</a>.  Note that Ogre does not have built-in
-    support for user input.  As of this writing, it uses another library
-    called <a href="http://sourceforge.net/projects/wgois">OIS</a>.  An Ogre
-    plugin that provides OIS support is also provided in src/Ogre/Plugins.
-    \see GG::SDLGUI, GG::OgreGUI, GG::OgreGUIInputPlugin, and OISInput.
+    A <a href="http://libsdl.org">SDL</a> input driver is currently available
+    for use with GG.
 
     \section tour_timers Timers
 

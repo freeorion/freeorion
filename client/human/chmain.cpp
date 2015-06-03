@@ -80,7 +80,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 
     // set up rendering and run game
     if (mainSetupAndRun() != 0) {
-        std::cerr << "main() failed to setup or run ogre." << std::endl;
+        std::cerr << "main() failed to setup or run SDL." << std::endl;
         return 1;
     }
     return 0;

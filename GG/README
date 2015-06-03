@@ -1,5 +1,5 @@
-GiGi (aka GG) is a C++ OpenGL GUI library.  It has drivers that work with SDL
-(http://www.libsdl.org) and Ogre (http://www.ogre3d.org).
+GiGi (aka GG) is a C++ OpenGL GUI library.  It has a driver that work with SDL
+(http://www.libsdl.org).
 
 For documentation of building GG, you can check out:
 

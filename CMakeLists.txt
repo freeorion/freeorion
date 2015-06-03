@@ -51,7 +51,6 @@ if (WIN32)
         set (CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/../")
         set (BOOST_ROOT "${CMAKE_SOURCE_DIR}/../Boost/")
         set (BOOST_INCLUDEDIR "${CMAKE_SOURCE_DIR}/../Boost/include/boost_1_51/")
-        set (OIS_INC_SEARCH_PATH "${CMAKE_SOURCE_DIR}/OIS/")
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4099 /wd4101 /wd4146 /wd4244 /wd4251 /wd4258 /wd4267 /wd4275 /wd4351 /wd4800 /wd4996")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
@@ -438,11 +437,7 @@ else ()
     if (WIN32)
         install(
             FILES
-            OIS.dll
             OpenAL32.dll
-            Plugin_OctreeSceneManager.dll
-            Plugin_ParticleFX.dll
-            RenderSystem_GL.dll
             boost_date_time-vc90-mt-1_44.dll
             boost_filesystem-vc90-mt-1_44.dll
             boost_iostreams-vc90-mt-1_44.dll
