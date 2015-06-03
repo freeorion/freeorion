@@ -14,8 +14,8 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Core     position = (0.40, 0.75)
     ]
-    buildCost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildTime = 10
+    buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 5
     tags = [ "SHINY" "EXOTIC" ]
     location = Contains And [
         Building name = "BLD_SHIPYARD_BASE"
@@ -223,7 +223,7 @@ Hull
         Slot type = Internal position = (0.20, 0.85)
         Slot type = Internal position = (0.40, 0.85)
     ]
-    buildCost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
     location = And [
         Contains And [
@@ -325,7 +325,7 @@ Hull
         Slot type = Internal position = (0.30, 0.85)
         Slot type = Core     position = (0.50, 0.85)
     ]
-    buildCost = 180 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 160 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
     location = And [
         Contains And [
@@ -408,7 +408,7 @@ Hull
         Slot type = Core     position = (0.50, 0.50)
     ]
     buildCost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildTime = 15
+    buildTime = 8
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -462,7 +462,7 @@ Hull
     name = "SH_ASTEROID"
     description = "SH_ASTEROID_DESC"
     speed = 60
-    fuel = 4
+    fuel = 2
     stealth = 5
     structure = 30
     slots = [
@@ -510,7 +510,7 @@ Hull
     name = "SH_SMALL_ASTEROID"
     description = "SH_SMALL_ASTEROID_DESC"
     speed = 60
-    fuel = 4
+    fuel = 2
     stealth = 5
     structure = 15
     slots = [
@@ -553,7 +553,7 @@ Hull
     name = "SH_HEAVY_ASTEROID"
     description = "SH_HEAVY_ASTEROID_DESC"
     speed = 60
-    fuel = 4
+    fuel = 2
     stealth = 5
     structure = 50
     slots = [
@@ -567,7 +567,7 @@ Hull
         Slot type = Internal position = (0.24, 0.75)
         Slot type = Internal position = (0.36, 0.75)
     ]
-    buildCost = 30.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 40.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -692,7 +692,7 @@ Hull
     name = "SH_AGREGATE_ASTEROID"
     description = "SH_AGREGATE_ASTEROID_DESC"
     speed = 60
-    fuel = 4
+    fuel = 2
     stealth = -20
     structure = 140
     slots = [
@@ -767,7 +767,7 @@ Hull
         Slot type = External position = (0.20, 0.40)
         Slot type = External position = (0.40, 0.40)
     ]
-    buildCost = 15.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
         Contains And [
@@ -815,9 +815,9 @@ Hull
     name = "SH_SCATTERED_ASTEROID"
     description = "SH_SCATTERED_ASTEROID_DESC"
     speed = 60
-    fuel = 4
+    fuel = 2
     stealth = 5
-    structure = 160
+    structure = 140
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.20, 0.15)
@@ -840,8 +840,8 @@ Hull
         Slot type = Internal position = (0.10, 0.85)
         Slot type = Core     position = (0.90, 0.50)
     ]
-    buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildTime = 15
+    buildCost = 120.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 8
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -896,7 +896,7 @@ Hull
     name = "SH_CRYSTALLIZED_ASTEROID"
     description = "SH_CRYSTALLIZED_ASTEROID_DESC"
     speed = 60
-    fuel = 4
+    fuel = 2
     stealth = 5
     structure = 55
     slots = [
@@ -1344,9 +1344,13 @@ Hull
             effects = [
                 SetStructure value = Target.MaxStructure
                 SetFuel value = Value + 0.2
-                SetDetection value = Value + 75
             ]
             
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection value = Value + 75
+                        
         EffectsGroup
             scope = Source
             activation = Source
@@ -1379,8 +1383,8 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
         Slot type = Core     position = (0.50, 0.50)
     ]
-    buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildTime = 15
+    buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 8
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1594,8 +1598,8 @@ Hull
         Slot type = Internal position = (0.80, 0.85)
         Slot type = Core     position = (0.90, 0.85)
     ]
-    buildCost = 80.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildTime = 20
+    buildCost = 120.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildTime = 10
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
