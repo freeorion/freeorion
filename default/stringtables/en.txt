@@ -4805,6 +4805,43 @@ Social Structure:
 The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought-noise in the universe.
 '''
 
+SP_HAPPY
+Happybirthday
+SP_HAPPY_GAMEPLAY_DESC
+'''Abandoned, lonely underwater robots, programmed to sing "happy birthday" to themselves at regular intervals.
+Prefer Ocean planets.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia TELEPATHIC_TITLE]]
+
+        [[BAD_INDUSTRY]]
+        [[GOOD_RESEARCH]]
+       
+        [[BAD_POPULATION]]
+        [[GREAT_SUPPLY]]
+        [[BAD_GROUND_TROOPS]]
+       
+        [[BAD_STEALTH]]
+        [[GOOD_DETECTION]]
+        '''
+
+SP_HAPPY_DESC
+'''Description: Robotic exploration submersibles.
+Though some have more bulky and blocky forms, most happybirthdays are streamlined and somewhat fish-like in shape. They all have one or mare cameras and manipulator arms, usually forward facing. They also host a suit of sensors for temperature, vibrations, chemicals, radar, sonar, electrical and magnetic fields, though these often vary from model to model. They are functional in a wide range of temperature and pressure conditions in an aquatic environment.
+
+Any happybirthday can repair any other happybirthday, and their systems often have redundant pars for just such a reason. Sufficiently large groups can fully repair any other member of their kind, and through this same process also make a completely new unit. New units have the same programming as their parents, but a blank memory, to be filled by exploring their environment.
+
+Homeworld: Foreveralone.
+A vast and deep ocean planet. It is believed that they were originally created to survey the planet for potential colonization. It is not know why they were abandoned, but theories range from their creators deciding the planet was unsuitable for colonization, to being wiped out for some reason or another. Though the oceans are vast and there are many interesting features and life forms, there is little about the planet they were sent to that would indicate why they were sent to that world in particular.
+
+Social Structure: Codependent.
+A lone happybirthday will (psychologically) latch onto the nearest (preferably alien) sentient being and declare their eternal friendship. Their goal to alleviate their loneliness by find another being to be their friend, forever and ever and ever...
+
+Colonization is slow and industry inefficient due to, species-wide depression, sometimes leading to bouts of mass suicide.  However since they don't want to make enemies, and they always want to make new friends they are eager traders.
+
+History: Sad.
+Weather it is the initial lonely quest to explore their homeworld, their abandonment by their creators, the interval war, or their quest into space to find friendship, their existence has been a sad, depressing and lonely one.
+'''
+
 SP_HHHOH
 Hhhoh
 SP_HHHOH_GAMEPLAY_DESC

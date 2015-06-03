@@ -715,6 +715,46 @@ Species
     
     graphic = "icons/species/gysache.png"
 
+Species
+    name = "SP_HAPPY"
+    description = "SP_HAPPY_DESC"
+    gameplay_description = "SP_HAPPY_GAMEPLAY_DESC"
+    Native
+    CanProduceShips
+    CanColonize
+
+    tags = [ "ROBOTIC" "TELEPATHIC" "AI_TAG_GOOD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_GREAT_SUPPLY" ]
+
+    foci = [
+        [[HAS_INDUSTRY_FOCUS]]
+        [[HAS_RESEARCH_FOCUS]]
+        [[HAS_GROWTH_FOCUS]]
+        [[HAS_MINING_FOCUS]]
+        [[HAS_ADVANCED_FOCI]]
+    ]
+   
+    preferredfocus = "FOCUS_RESEARCH"
+   
+    effectsgroups = [
+        [[BAD_INDUSTRY]]
+        [[GOOD_RESEARCH]]
+       
+        [[BAD_POPULATION]]
+        [[AVERAGE_HAPPINESS]]
+        [[GREAT_SUPPLY]]
+        [[BAD_GROUND_TROOPS]]
+       
+        [[BAD_STEALTH]]
+        [[GOOD_DETECTION]]
+
+        // not for description
+        [[AVERAGE_PLANETARY_SHIELDS]]
+        [[AVERAGE_PLANETARY_DEFENSE]]
+    ]
+   
+    [[OCEAN_NARROW_EP]]
+   
+    graphic = "icons/species/ichthyoid-06.png"
 
 Species
     name = "SP_HHHOH"
