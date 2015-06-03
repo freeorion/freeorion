@@ -4813,16 +4813,16 @@ Prefer Ocean planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 
-        [[BAD_INDUSTRY]]
-        [[GOOD_RESEARCH]]
+[[BAD_INDUSTRY]]
+[[GOOD_RESEARCH]]
        
-        [[BAD_POPULATION]]
-        [[GREAT_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+[[BAD_POPULATION]]
+[[GREAT_SUPPLY]]
+[[BAD_GROUND_TROOPS]]
        
-        [[BAD_STEALTH]]
-        [[GOOD_DETECTION]]
-        '''
+[[BAD_STEALTH]]
+[[GOOD_DETECTION]]
+'''
 
 SP_HAPPY_DESC
 '''Description: Robotic exploration submersibles.
@@ -10430,7 +10430,7 @@ ULTIMATE_STEALTH
 +++	Ultimate [[encyclopedia STEALTH_TITLE]]: +60 bonus.
 
 BAD_WEAPONS
--	Bad Pilots: 25% less damage.
+−	Bad Pilots: 25% less damage.
 
 GOOD_WEAPONS
 +	Good Pilots: 25% more damage.
@@ -10451,7 +10451,7 @@ GOOD_POPULATION
 +	Good Population 125%
 
 BAD_SUPPLY
--	Bad [[encyclopedia SUPPLY_TITLE]]: no bonus
+−	Bad [[encyclopedia SUPPLY_TITLE]]: no bonus
 
 AVERAGE_SUPPLY
 '''	Average [[encyclopedia SUPPLY_TITLE]]: +1'''
