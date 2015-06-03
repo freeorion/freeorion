@@ -1,7 +1,7 @@
 #include "Serialize.h"
 
-#include "../util/Order.h"
-#include "../util/OrderSet.h"
+#include "Order.h"
+#include "OrderSet.h"
 
 #include "Serialize.ipp"
 #include <boost/serialization/version.hpp>

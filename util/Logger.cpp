@@ -1,7 +1,7 @@
 #include "Logger.h"
 
-#include "../util/Version.h"
-#include "../util/OptionsDB.h"
+#include "OptionsDB.h"
+#include "Version.h"
 
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>

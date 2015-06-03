@@ -3,12 +3,12 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "QueueListBox.h"
+#include "TechTreeWnd.h"
 #include "../Empire/Empire.h"
 #include "../universe/Tech.h"
 #include "../util/i18n.h"
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"
-#include "../UI/TechTreeWnd.h"
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>

@@ -1,8 +1,8 @@
 #include "Order.h"
 
+#include "Logger.h"
+#include "OrderSet.h"
 #include "../universe/Fleet.h"
-#include "../util/Logger.h"
-#include "../util/OrderSet.h"
 #include "../universe/Predicates.h"
 #include "../universe/Species.h"
 #include "../universe/Building.h"

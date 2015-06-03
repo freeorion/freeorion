@@ -1,9 +1,9 @@
 #include "Tech.h"
 
 #include "Effect.h"
+#include "UniverseObject.h"
+#include "ObjectMap.h"
 #include "../parse/Parse.h"
-#include "../universe/UniverseObject.h"
-#include "../universe/ObjectMap.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"

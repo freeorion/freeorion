@@ -1,7 +1,7 @@
 #ifndef COMBATREPORTDLG_H
 #define COMBATREPORTDLG_H
 
-#include "../UI/CUIWnd.h"
+#include "../CUIWnd.h"
 
 #include <boost/scoped_ptr.hpp>
 

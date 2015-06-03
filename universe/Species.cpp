@@ -1,7 +1,10 @@
 #include "Species.h"
 
-#include "Effect.h"
 #include "Condition.h"
+#include "Effect.h"
+#include "PopCenter.h"
+#include "Ship.h"
+#include "UniverseObject.h"
 #include "ValueRef.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
@@ -9,9 +12,6 @@
 #include "../util/Logger.h"
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
-#include "../universe/UniverseObject.h"
-#include "../universe/PopCenter.h"
-#include "../universe/Ship.h"
 
 #include <boost/filesystem/fstream.hpp>
 

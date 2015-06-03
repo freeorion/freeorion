@@ -1,6 +1,6 @@
 #include "Serialize.h"
 
-#include "../util/ModeratorAction.h"
+#include "ModeratorAction.h"
 
 #include "Serialize.ipp"
 

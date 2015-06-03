@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "../util/Export.h"
+#include "Export.h"
 #include "../universe/Enums.h"
 
 /// Returns a user readable string for a GalaxySetupOption

@@ -1,6 +1,7 @@
 #include "SitRepEntry.h"
 
 #include "i18n.h"
+#include "Logger.h"
 #include "../universe/Predicates.h"
 #include "../universe/Building.h"
 #include "../universe/Planet.h"
@@ -8,7 +9,6 @@
 #include "../universe/Ship.h"
 #include "../universe/Fleet.h"
 #include "../universe/Universe.h"
-#include "../util/Logger.h"
 
 SitRepEntry::SitRepEntry() :
     VarText(),

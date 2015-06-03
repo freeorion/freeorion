@@ -1,11 +1,11 @@
 #include "Serialize.h"
 
+#include "AppInterface.h"
+#include "SitRepEntry.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Diplomacy.h"
 #include "../universe/Universe.h"
-#include "../util/AppInterface.h"
-#include "../util/SitRepEntry.h"
 
 #include "Serialize.ipp"
 

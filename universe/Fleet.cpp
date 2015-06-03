@@ -1,15 +1,15 @@
 #include "Fleet.h"
 
-#include "Universe.h"
+#include "Predicates.h"
+#include "ShipDesign.h"
 #include "Ship.h"
 #include "System.h"
-#include "Predicates.h"
+#include "Universe.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "../universe/ShipDesign.h"
 
 #include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>

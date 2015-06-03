@@ -4,9 +4,9 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
-#include "../util/Directories.h"
-#include "../util/Logger.h"
-#include "../util/i18n.h"
+#include "Directories.h"
+#include "Logger.h"
+#include "i18n.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/serialization/export.hpp>
