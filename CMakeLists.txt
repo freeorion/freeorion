@@ -376,6 +376,7 @@ else ()
     install(
         TARGETS freeorioncommon
         LIBRARY DESTINATION lib${LIB_SUFFIX}/freeorion
+        RUNTIME DESTINATION .
         COMPONENT COMPONENT_FREEORION
     )
 

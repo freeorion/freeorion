@@ -96,6 +96,7 @@ endif ()
 install(
     TARGETS freeorionparse
     LIBRARY DESTINATION lib${LIB_SUFFIX}/freeorion
+    RUNTIME DESTINATION .
     COMPONENT COMPONENT_FREEORION
 )
 
