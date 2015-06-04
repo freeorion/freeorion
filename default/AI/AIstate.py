@@ -1,6 +1,7 @@
 import copy
 from collections import OrderedDict as odict
 import sys
+from uuid import uuid4
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
@@ -49,6 +50,12 @@ piloting_grades = {}
 class AIstate(object):
     """Stores AI game state."""
     def __init__(self, aggression=fo.aggression.typical):
+        # Debug info
+        # unique id for game
+        self.uuid = uuid4()
+        # unique ids for turns.  {turn: uuid}
+        self.turn_uuids = {}
+
         # 'global' (?) variables
         # self.foodStockpileSize = 1    # food stored per population
         self.minimalColoniseValue = 3  # minimal value for a planet to be colonised
@@ -120,7 +127,27 @@ class AIstate(object):
         for odict_attrib in ['colonisablePlanetIDs', 'colonisableOutpostIDs']:
             if dict_attrib not in state_dict:
                 self.__dict__[odict_attrib] = odict()
+        if 'uuid' not in state_dict:
+            self.uuid = uuid4()
+        if 'turn_hashes' not in state_dict:
+            self.turn_uuids = {}
         self.__dict__.setdefault('empire_standard_enemy_rating', 40)
+
+    def set_turn_uuid(self):
+        """
+        Set turn uuid. Should be called once per generateOrders
+        New uuid set for each generate orders.
+        In case of load it can be executed multiple time during turn.
+        """
+        uuid = uuid4()
+        self.turn_uuids[fo.currentTurn()] = uuid
+        return uuid
+
+    def get_prev_turn_uuid(self):
+        """
+        Return hash of previous turn. In case of old save games return None
+        """
+        return self.turn_uuids.get(fo.currentTurn() - 1, 'None')
 
     def refresh(self):
         """Turn start AIstate cleanup/refresh."""
