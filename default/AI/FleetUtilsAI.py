@@ -186,12 +186,12 @@ def split_fleet(fleet_id):
         return []
     ship_ids = list(fleet.shipIDs)
     for ship_id in ship_ids[1:]:
-        new_fleet_id = fo.issueNewFleetOrder("Fleet %d" % ship_id, ship_id)
+        new_fleet_id = fo.issueNewFleetOrder("Fleet %4d" % ship_id, ship_id)
         if new_fleet_id:
             new_fleet = universe.getFleet(new_fleet_id)
             if not new_fleet:
                 print "Error: newly split fleet %d not available from universe" % new_fleet_id
-            fo.issueRenameOrder(new_fleet_id, "Fleet %5d" % new_fleet_id)  # to ease review of debugging logs
+            fo.issueRenameOrder(new_fleet_id, "Fleet %4d" % new_fleet_id)  # to ease review of debugging logs
             fo.issueAggressionOrder(new_fleet_id, True)
             foAI.foAIstate.get_rating(new_fleet_id)
             newfleets.append(new_fleet_id)

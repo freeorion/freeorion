@@ -1028,7 +1028,7 @@ class AIstate(object):
         print "--------------------"
         print "Map of Missions keyed by ID:"
         for item in self.get_fleet_missions_map().items():
-            print " %4d : %s " % item
+            print "    %-4d: %s" % item
         print "--------------------"
         # TODO: check length of fleets for losses or do in AIstat.__cleanRoles
         known_fleets = self.get_fleet_roles_map()
