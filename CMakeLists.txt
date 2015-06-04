@@ -48,9 +48,8 @@ if (WIN32)
         -D_WIN32_WINNT=0x0501
     )
     if (MSVC)
-        set (CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/../")
-        set (BOOST_ROOT "${CMAKE_SOURCE_DIR}/../Boost/")
-        set (BOOST_INCLUDEDIR "${CMAKE_SOURCE_DIR}/../Boost/include/boost_1_51/")
+        set (CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/../")
+        set (BOOST_ROOT "${CMAKE_BINARY_DIR}/../Boost")
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
         set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4099 /wd4101 /wd4146 /wd4244 /wd4251 /wd4258 /wd4267 /wd4275 /wd4351 /wd4800 /wd4996")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
@@ -115,6 +114,10 @@ include_directories(
     ${ZLIB_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}
     GG
+)
+
+link_directories(
+    ${Boost_LIBRARY_DIRS}
 )
 
 if (FREEORION_RELEASE)
