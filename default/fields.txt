@@ -185,15 +185,7 @@ CREATE_PLANETS
                 If condition = Random probability = 0.5
                     effects = CreatePlanet type = asteroids planetsize = asteroids name = "NEW_ASTEROIDS_NAME"
                 If condition = Random probability = 0.6
-                    effects = [
-                        If condition = Random probability = 0.8
-                            effects = If condition = Random probability = 0.6
-                                effects = CreatePlanet type = barren planetsize = small name = "NEW_PLANET_NAME"
-                            else = CreatePlanet type = barren planetsize = tiny name = "NEW_PLANET_NAME" 
-                        else = If condition = Random probability = 0.6
-                                effects = CreatePlanet type = inferno planetsize = small name = "NEW_PLANET_NAME"
-                            else = CreatePlanet type = inferno planetsize = tiny name = "NEW_PLANET_NAME"
-                    ]
+                    effects = CreatePlanet type = OneOf(Barren, Desert, Inferno, Ocean, Radiated, Swamp, Terran, Toxic, Tundra) planetsize = OneOf(tiny, small, medium, large) name = "NEW_PLANET_NAME"
                 else = If condition = Random probability = 0.4
                     effects = CreatePlanet type = GasGiant planetsize = GasGiant name = "NEW_PLANET_NAME"
                 If condition = Random probability = 0.3
