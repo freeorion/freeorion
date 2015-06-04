@@ -260,7 +260,7 @@ add_library(freeorioncommon
 
 add_dependencies(freeorioncommon freeorionversion)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
     set_property(
         SOURCE
         util/SerializePathingEngine.cpp

@@ -83,7 +83,7 @@ add_library(freeorionparse
     ${freeorionparse_SOURCE}
 )
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
     set_property(
         SOURCE
         ConditionParser1.cpp
