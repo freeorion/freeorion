@@ -41,8 +41,7 @@ import ColonisationAI
 import copy
 import traceback
 import math
-from collections import Counter
-from collections import defaultdict
+from collections import Counter, defaultdict
 from freeorion_tools import print_error, UserString
 
 # Define meta classes for the ship parts
@@ -548,7 +547,15 @@ class AdditionalSpecifications(object):
         self.minimum_structure = 1
         self.enemy_shields = 0
         self.enemy_weapon_strength = 0
-        self.enemy_mine_dmg = 0  # TODO: Implement the detection of enemy mine damage
+        current_turn = fo.currentTurn()
+        if current_turn < 50:
+            self.enemy_mine_dmg = 0  # TODO: Implement the detection of actual enemy mine damage
+        elif current_turn < 150:
+            self.enemy_mine_dmg = 2
+        elif current_turn < 230:
+            self.enemy_mine_dmg = 6
+        else:
+            self.enemy_mine_dmg = 14
         self.update_enemy(foAI.foAIstate.empire_standard_enemy)
 
     def update_enemy(self, enemy):
@@ -626,7 +633,7 @@ class ShipDesigner(object):
         self.pid = -1               # planetID for checks on production cost if not LocationInvariant.
         self.additional_specifications = AdditionalSpecifications()
         self.design_name_dict = {k: v for k, v in zip(self.NAME_THRESHOLDS,
-                                                      UserString(self.NAMETABLE, self.basename).split())}
+                                                      UserString(self.NAMETABLE, self.basename).splitlines())}
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -1156,7 +1163,7 @@ class ShipDesigner(object):
         empire_initials = empire_name[:1] + empire_name[-1:]
         rating = self._calc_rating_for_name()
         basename = next((name for (maxRating, name) in sorted(self.design_name_dict.items(), reverse=True)
-                        if rating > maxRating), self.__class__.basename)
+                        if rating >= maxRating), self.__class__.basename)
 
         def design_name():
             """return the design name based on the name_template"""
@@ -1287,7 +1294,6 @@ class TroopShipDesignerBaseClass(ShipDesigner):
 
     def __init__(self):
         ShipDesigner.__init__(self)
-        self.additional_specifications.minimum_structure = self.additional_specifications.enemy_mine_dmg * 2
 
     def _rating_function(self):
         if self.troops == 0:
@@ -1343,14 +1349,15 @@ class StandardTroopShipDesigner(TroopShipDesignerBaseClass):
     """
     basename = "StormTroopers"
     description = "Ship designed for the invasion of enemy planets"
-    useful_part_classes = TROOPS
+    useful_part_classes = TROOPS | ARMOUR
     NAMETABLE = "AI_SHIPDESIGN_NAME_TROOPER_STANDARD"
-    NAME_THRESHOLDS = sorted([0])
+    NAME_THRESHOLDS = sorted([0, 6, 14])
 
     def __init__(self):
         TroopShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_speed = 30
         self.additional_specifications.minimum_fuel = 2
+        self.additional_specifications.minimum_structure = self.additional_specifications.enemy_mine_dmg + 1
 
 
 class ColonisationShipDesignerBaseClass(ShipDesigner):
