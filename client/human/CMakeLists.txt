@@ -12,11 +12,8 @@ if (NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL GLU library not found.")
 endif ()
 
+find_package(SDL2 REQUIRED)
 find_package(OpenAL REQUIRED)
-# Use pkg config to find sdl2 details,
-# since there is no official FindSDL2.cmake
-INCLUDE(FindPkgConfig)
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
@@ -193,7 +190,7 @@ set(freeorion_LINK_LIBS
     ${GLEW_LIBRARIES}
     ${OPENAL_LIBRARY}
     ${Boost_LIBRARIES}
-    ${SDL2_LIBRARIES}
+    ${SDL2_LIBRARY}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARY}
