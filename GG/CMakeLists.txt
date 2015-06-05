@@ -6,8 +6,6 @@ include(CMakeDependentOption)
 
 project(GiGi)
 
-set(CMAKE_VERBOSE_MAKEFILE false)
-
 ########################################
 # Configuration                        #
 ########################################
