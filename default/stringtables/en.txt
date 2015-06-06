@@ -9662,7 +9662,7 @@ SH_DEFENSE_GRID
 Defense Grid
 
 SH_DEFENSE_GRID_DESC
-'''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons. Reduces damage sustained from a hit by 4.
+'''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons. Reduces damage sustained from a hit by 2.
 
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
@@ -9670,7 +9670,7 @@ SH_DEFLECTOR
 Deflector Shield
 
 SH_DEFLECTOR_DESC
-'''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons. Reduces damage sustained from a hit by 7.
+'''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons. Reduces damage sustained from a hit by 5.
 
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
@@ -9678,7 +9678,7 @@ SH_PLASMA
 Plasma Shield
 
 SH_PLASMA_DESC
-'''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less. Reduces damage sustained from a hit by 12.
+'''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less. Reduces damage sustained from a hit by 9.
 
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
@@ -9686,7 +9686,7 @@ SH_BLACK
 Blackshield
 
 SH_BLACK_DESC
-'''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build. Reduces damage sustained from a hit by 20.
+'''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build. Reduces damage sustained from a hit by 15.
 
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
@@ -9694,7 +9694,7 @@ SH_MULTISPEC
 Multi-Spectral Shield
 
 SH_MULTISPEC_DESC
-'''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat. Reduces damage sustained from a hit by 15.
+'''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat. Reduces damage sustained from a hit by 10.
 
 There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
