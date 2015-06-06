@@ -7,6 +7,8 @@
 
 #include <GG/utf8/checked.h>
 
+#include <boost/filesystem/fstream.hpp>
+
 #ifndef FREEORION_WIN32
 int main(int argc, char* argv[]) {
     InitDirs(argv[0]);
@@ -28,6 +30,14 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #endif
 
     try {
+        XMLDoc doc;
+        {
+            boost::filesystem::ifstream ifs(GetConfigPath());
+            if (ifs) {
+                doc.ReadDoc(ifs);
+                GetOptionsDB().SetFromXML(doc);
+            }
+        }
         GetOptionsDB().SetFromCommandLine(args);
 
         parse::init();
