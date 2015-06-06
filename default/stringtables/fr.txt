@@ -528,20 +528,25 @@ Mère Drone
 SM_DRONE_FACTORY_DESC
 Conçue, lors d'une guerre oubliée depuis longtemps, pour défendre ses constructeurs désormais disparus, la Mère Drone, étonnamment, fonctionne encore aujourd'hui, produisant lentement mais de manière continue, de nouveaux Drones.
 
+SM_GUARD_0
+Vaisseau de Maintenance
+SM_GUARD_0_DESC
+Un astronef sans équipage conçu par les Précurseurs pour entretenir les voies spatiales d'un système. Bien que peu armé, il attaquera tout intrus à proximité.
+
 SM_GUARD_1
 Factionnaire
 SM_GUARD_1_DESC
-Les factionnaires veillent nonchalamment sur des choses de peu de valeur.
+Un petit astronef de défense sans équipage conçu par les Précurseurs pour protéger un système contre tout intrus potentiel.
 
 SM_GUARD_2
 Sentinelle
 SM_GUARD_2_DESC
-Les Sentinelles protègent farouchement leur environnement.
+Un astronef de défense sans équipage conçu par les Précurseurs pour protéger un système contre tout intrus potentiel.
 
 SM_GUARD_3
 Gardien
 SM_GUARD_3_DESC
-Les Gardiens protègent férocement des choses de valeur.
+Un puissant astronef de défense sans équipage conçu par les Précurseurs pour protéger un système contre tout intrus potentiel.
 
 SM_KRAKEN_1
 Kraken Larvaire
@@ -3687,7 +3692,7 @@ Le Bonheur est pour le moment sans effet.
 INFRASTRUCTURE_TITLE  # translated
 Infrastructure
 INFRASTRUCTURE_TEXT
-L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc. Chaque planète présente un indicateur 'Infrastructure'.
+L'Infrastructure englobe toutes les structures et organisations qui assurent la pérennité et la production des populations de l'empire : l'énergie, les transports, les télécommunications, les services sociaux, etc. Chaque planète colonisée présente un indicateur 'Infrastructure'.
 
 DEFENSE_TITLE
 Défense
@@ -4026,7 +4031,7 @@ AGE
 Âge
 
 TURNS_SINCE_FOCUS_CHANGE
-Tours depuis Focus Modif.
+Tours depuis Modif. Focus
 
 PRODUCED_BY
 Produit par Empire ID
@@ -4803,6 +4808,43 @@ Les Trith sont un mélange de matière et d'énergie psychique. Leur physionomie
 
 Structure sociale:
 La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers.
+'''
+
+#SP_HAPPY
+#Happybirthday
+SP_HAPPY_GAMEPLAY_DESC
+'''Robots submersibles abandonnés et solitaires, programmés pour chanter "happy birthday" à intervalles réguliers.
+Préfèrent les Planètes océaniques.
+[[encyclopedia ROBOTIC_SPECIES_TITLE]]
+[[encyclopedia TELEPATHIC_TITLE]]
+
+[[BAD_INDUSTRY]]
+[[GOOD_RESEARCH]]
+       
+[[BAD_POPULATION]]
+[[GREAT_SUPPLY]]
+[[BAD_GROUND_TROOPS]]
+       
+[[BAD_STEALTH]]
+[[GOOD_DETECTION]]
+'''
+
+SP_HAPPY_DESC
+'''Description: Submersibles robotiques d'exploration.
+Bien que certains arborent une forme plus complexe et imposante, la plupart des Happybirthdays ont une apparence effilée, semblable à celle d'un poisson. Ils sont munis d'une ou plusieurs caméras, ainsi que de bras manipulateurs, le tout situé habituellement à l'avant du corps. Ils sont également équipés d'un ensemble de capteurs pour la température, les vibrations, les éléments chimiques, le fonctionnement d'un radar et d'un sonar, les champs magnétiques et électriques, ces équipements pouvant varier d'un modèle à l'autre. Ces robots peuvent fonctionner sous des conditions de température et de pression très hétérogènes au sein d'un environnement aquatique.
+
+Tout Happybirthday peut réparer un autre Happybirthday, leurs systèmes présentant souvent des spécificités redondantes pour parer à toute éventualité de réparation. Les groupes ayant une taille suffisante peuvent réparer complètement tout autre membre du groupe, et par la même occasion concevoir une unité totalement nouvelle. Les nouvelles unités sont dotées du même programme que leurs parents, mais ont une mémoire vierge, qui s'enrichira via l'exploration de leur environnement.
+
+Monte natal: Foreveralone.
+Une planète abritant et un vaste et profond océan. La rumeur veut que la création des Happybirthdays eut pour but originel de sonder la planète en vue d'une colonisation potentielle. La raison pour laquelle ils furent abandonnés reste un mystère, les théories divergeant au plus haut point: leurs créateurs auraient décidé que la planète n'était pas propice à la colonisation, ou bien ces derniers auraient été exterminés par une cause inconnue. Bien que ce vaste océan présente des particularités intéressantes ainsi que des formes de vie, rien de vraiment spécial n'indique ce qui aurait pu susciter un intérêt pour cette planète chez les créateurs de ces robots.
+
+Structure sociale: Codépendance.
+Un Happybirthday isolé a pour principal but de s'attacher psychologiquement au plus proche être sensible (de préférence étranger) et de déclarer leur amitié comme éternelle. Un seul objectif: soulager leur solitude en trouvant un autre être qui devienne leur ami, pour toujours...
+
+Le processus de colonisation est lent et l'industrie peu efficace, en raison du caractère dépressif de cet espèce, menant parfois à des auto-destructions de masse. Cependant, leur propension à ne pas avoir d'ennemis et la recherche obsessionnelle de toute forme d'amitié, font des Happybirthdays des êtres très ouverts aux échanges et au commerce.
+
+Histoire: Triste.
+Que ce soit leur exploration solitaire de leur monde natal, leur abandon par leurs créateurs, ou leur quête incessante d'amitié, l'existence des Happybirthdays est triste et solitaire.
 '''
 
 #SP_HHHOH
@@ -5644,9 +5686,9 @@ WORLDTREE_SPECIAL
 Arbre Planétaire
 
 WORLDTREE_SPECIAL_DESC
-'''Accroît l'[[encyclopedia SUPPLY_TITLE]] de +1, le [[encyclopedia DETECTION_RANGE_TITLE]] de +10, la Population max de +1, le Bonheur de +5 sur la planète présentant cette Particularité et de +1 sur toutes les autres planètes appartenant au même empire.
+'''Accroît l'[[encyclopedia SUPPLY_TITLE]] de +1, le [[encyclopedia DETECTION_RANGE_TITLE]] de +10, la Population max de +1, le [[encyclopedia HAPPINESS_TITLE]] de +5 sur la planète présentant cette Particularité et de +1 sur toutes les autres planètes appartenant au même empire.
 
-Un arbre gigantesque s'est développé à un tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre a été planté par les Curateurs dans les temps ancestraux.'''
+Un arbre gigantesque s'est développé à tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre fut planté par les Caretakers dans les temps ancestraux.'''
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruines Ancestrales (Exhumées)
@@ -10393,7 +10435,7 @@ ULTIMATE_STEALTH
 +++	Parfait en [[encyclopedia STEALTH_TITLE]] : +60 bonus
 
 BAD_WEAPONS
--	Mauvais Pilotes : -25% de dommages.
+−	Mauvais Pilotes : -25% de dommages.
 
 GOOD_WEAPONS
 +	Bons Pilotes : +25% de dommages.
@@ -10414,7 +10456,7 @@ GOOD_POPULATION
 +	Grande Population : 125%
 
 BAD_SUPPLY
--	Mauvais en [[encyclopedia SUPPLY_TITLE]] : aucun bonus
+−	Mauvais en [[encyclopedia SUPPLY_TITLE]] : aucun bonus
 
 AVERAGE_SUPPLY
 '''	Normal en [[encyclopedia SUPPLY_TITLE]] : +1'''
@@ -10736,7 +10778,7 @@ Télépathique
 
 ### End of Capital Names Lists
 
-### Beginning of AI Shipdesign Name List
+### Beginning of AI Shipdesign Name Lists
 ### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
 ### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 #AI_SHIPDESIGN_NAME_INVALID
@@ -10764,7 +10806,9 @@ Télépathique
 #SpaceInvaders
 
 #AI_SHIPDESIGN_NAME_TROOPER_STANDARD
-#StormTroopers
+#'''Assault Ship
+#Storm Troopers
+#Heavy Troopers'''
 
 #AI_SHIPDESIGN_NAME_COLONISATION_ORBITAL
 #Orbital Seeder
@@ -10785,6 +10829,8 @@ Télépathique
 #AI_SHIPDESIGN_NAME_SCOUT
 #Scout
 
+### End of AI Shipdesign Name Lists
+
 ### AI Diplomacy Strings and Lists 
 ### Translator Note: for AI Keys ending with "LIST", each line of the provided value should be an independent entry; each entry must be a single line.
 ### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
@@ -10796,12 +10842,12 @@ Réception de transmission acceptée.
 
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_HARSH_LIST
 '''Comment? N'êtes-vous pas déjà mort?
-Oh, pas une autre pleurnicherie pathétique, de grâce!
+Oh, pas une nouvelle pleurnicherie pathétique, de grâce!
 '''
 
 AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST
 '''Nous serons enchanté de croire en vos bonnes intentions.
-Quoi que vous puissiez dire, Maître.  Tout le monde s'accorde à dire que vous êtes digne de confiance.
+Tout le plaisir est pour nous, mon seigneur.  Tout le monde s'accorde à dire que vous êtes digne de confiance.
 '''
 
 AI_PEACE_PROPOSAL_RESPONSES_NO_MILD_LIST
@@ -10810,18 +10856,18 @@ Nous sommes dans le regret de vous informer que nous ne pouvons accéder à votr
 '''
 
 AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST
-'''Par grande miséricorde, nous acceptons de pas vous attaquer.  Pour le moment.
+'''Par grande miséricorde, nous acceptons de ne pas vous attaquer.  Pour le moment.
 Insignifiantes créatures!  Il n'y aurait que peu d'honneur à vous terrasser.
 '''
 
 AI_PEACE_PROPOSAL_RESPONSES_NO_HARSH_LIST
-'''Nous préferons vous voir manger les pissenlits par la racine!
+'''Nous préférons vous voir manger les pissenlits par la racine!
 Nous vous harcèlerons jusqu'au Veni, Vidi, Vici!
 '''
 
 AI_WAR_REDECLARATION_MILD_LIST
 '''Cher ami! Apparemment, il semble qu'il y ait eu un malentendu lors de nos précédentes négociations et le Traité de Paix ne semble pas avoir été ratifié! Nous sommes dans le regret de vous informer que nos empires sont toujours en guerre.
-La date d'aujourd'hui est bien le jour où vous aviez dit l'autre jour que nous allions guerroyer à nouveau côte à côte, n'est-ce-pas?
+La date d'aujourd'hui est bien le jour où vous aviez dit l'autre jour que nous allions à nouveau guerroyer l'un contre l'autre, n'est-ce-pas?
 '''
 
 AI_WAR_REDECLARATION_HARSH_LIST
