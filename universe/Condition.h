@@ -645,7 +645,7 @@ private:
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API Condition::HasSpecial : public Condition::ConditionBase {
     explicit HasSpecial(const std::string& name);
-    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name) :
+    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name = 0) :
         ConditionBase(),
         m_name(name),
         m_capacity_low(0),
