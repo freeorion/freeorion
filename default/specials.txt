@@ -1807,5 +1807,5 @@ CHANCE_OF_GUARD_1
                                     And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
                                     ]
             ]
-            effects = CreateShip designname = "SM_GUARD_1"
+            effects = CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
 '''

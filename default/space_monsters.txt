@@ -83,8 +83,21 @@ ShipDesign
     model = "seed"
 
 ShipDesign
+    name = "SM_GUARD_0"
+    description = "SM_GUARD_0_DESC"
+    hull = "SH_GUARD_MONSTER_BODY"
+    parts = [
+        "SR_WEAPON_1_1"
+        ""
+        "AR_PRECURSOR_PLATE"
+        "SH_DEFLECTOR"
+    ]
+    icon = "icons/monsters/maintenance_ship.png"
+    model = "seed"
+
+ShipDesign
     name = "SM_GUARD_1"
-    description = "SM_GUARD_1"
+    description = "SM_GUARD_1_DESC"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
         "SR_WEAPON_2_4"
@@ -97,7 +110,7 @@ ShipDesign
 
 ShipDesign
     name = "SM_GUARD_2"
-    description = "SM_GUARD_2"
+    description = "SM_GUARD_2_DESC"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
         "SR_WEAPON_3_4"
@@ -111,7 +124,7 @@ ShipDesign
 
 ShipDesign
     name = "SM_GUARD_3"
-    description = "SM_GUARD_3"
+    description = "SM_GUARD_3_DESC"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
         "SR_WEAPON_4_4"
