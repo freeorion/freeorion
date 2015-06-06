@@ -1,8 +1,7 @@
 import copy
 from collections import OrderedDict as odict
+from datetime import datetime
 import sys
-from uuid import uuid4
-
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 import AIFleetMission
@@ -46,15 +45,22 @@ outpostSystemIDs = []
 piloting_grades = {}
 
 
+def generate_uid():
+    """
+    Generates unique identifier.
+    """
+    return datetime.now().strftime('%y-%m-%d_%H-%M-%S%f')
+
+
 # AIstate class
 class AIstate(object):
     """Stores AI game state."""
     def __init__(self, aggression=fo.aggression.typical):
         # Debug info
         # unique id for game
-        self.uuid = uuid4()
-        # unique ids for turns.  {turn: uuid}
-        self.turn_uuids = {}
+        self.uid = generate_uid()
+        # unique ids for turns.  {turn: uid}
+        self.turn_uids = {}
 
         # 'global' (?) variables
         # self.foodStockpileSize = 1    # food stored per population
@@ -111,7 +117,7 @@ class AIstate(object):
         self.empire_standard_fighter = (4, ((4, 1),), 0.0, 10.0)
         self.empire_standard_enemy = (4, ((4, 1),), 0.0, 10.0)  # TODO: track on a per-empire basis
         self.empire_standard_enemy_rating = 40  # TODO: track on a per-empire basis
-        
+
     def __setstate__(self, state_dict):
         self.__dict__.update(state_dict)  # update attributes
         for dict_attrib in ['qualifyingColonyBaseTargets',
@@ -127,27 +133,34 @@ class AIstate(object):
         for odict_attrib in ['colonisablePlanetIDs', 'colonisableOutpostIDs']:
             if dict_attrib not in state_dict:
                 self.__dict__[odict_attrib] = odict()
-        if 'uuid' not in state_dict:
-            self.uuid = uuid4()
-        if 'turn_hashes' not in state_dict:
-            self.turn_uuids = {}
+        if 'uid' not in state_dict:
+            self.uid = generate_uid()
+        if 'turn_uids' not in state_dict:
+            self.turn_uids = {}
         self.__dict__.setdefault('empire_standard_enemy_rating', 40)
 
-    def set_turn_uuid(self):
+    def set_turn_uid(self):
         """
-        Set turn uuid. Should be called once per generateOrders
-        New uuid set for each generate orders.
-        In case of load it can be executed multiple time during turn.
+        Set turn uid. Should be called once per generateOrders.
+        When game loaded same turn can be evaluated once again. We force change id for it.
         """
-        uuid = uuid4()
-        self.turn_uuids[fo.currentTurn()] = uuid
-        return uuid
+        uid = generate_uid()
+        self.turn_uids[fo.currentTurn()] = uid
+        return uid
 
-    def get_prev_turn_uuid(self):
+    def get_current_turn_uid(self):
         """
-        Return hash of previous turn. In case of old save games return None
+        Return uid of current turn.
         """
-        return self.turn_uuids.get(fo.currentTurn() - 1, 'None')
+        return self.turn_uids.setdefault(fo.currentTurn())
+
+    def get_prev_turn_uid(self):
+        """
+        Return uid of previous turn.
+        If called during the first turn after loading a saved game that had an AI version not yet using uids
+        will return Unix Epoch.
+        """
+        return self.turn_uids.get(fo.currentTurn() - 1, '1970-01-01 02:00:00')
 
     def refresh(self):
         """Turn start AIstate cleanup/refresh."""

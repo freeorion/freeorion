@@ -155,8 +155,8 @@ def generateOrders():  # pylint: disable=invalid-name
     at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
     and can be sent to the server for processing."""
     turn = fo.currentTurn()
-    turn_uuid = foAIstate.set_turn_uuid()
-    print "Start turn %s (%s) of game: %s" % (turn, turn_uuid, foAIstate.uuid)
+    turn_uid = foAIstate.set_turn_uid()
+    print "Start turn %s (%s) of game: %s" % (turn, turn_uid, foAIstate.uid)
 
     turn_timer.start("AI planning")
     universe = fo.getUniverse()
