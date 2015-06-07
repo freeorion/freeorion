@@ -4,6 +4,8 @@
 
 #include "Condition.h"
 #include "../util/Export.h"
+#include "../util/i18n.h"
+#include "../util/Random.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/lexical_cast.hpp>
@@ -14,10 +16,6 @@
 #include <set>
 
 class UniverseObject;
-
-const std::string& UserString(const std::string& str);
-boost::format FlexibleFormat(const std::string& string_to_format);
-int RandSmallInt(int min, int max);
 
 struct ScriptingContext {
     /** Empty context.  Useful for evaluating ValueRef::Constant that don't
