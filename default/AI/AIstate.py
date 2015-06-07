@@ -152,7 +152,7 @@ class AIstate(object):
         """
         Return uid of current turn.
         """
-        return self.turn_uids.setdefault(fo.currentTurn())
+        return self.turn_uids.setdefault(fo.currentTurn(), generate_uid())
 
     def get_prev_turn_uid(self):
         """
