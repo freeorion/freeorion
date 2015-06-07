@@ -14,6 +14,9 @@
 
 
 // static(s)
+const int INVALID_OBJECT_ID      = -1;
+const int TEMPORARY_OBJECT_ID    = -2;
+
 const double    UniverseObject::INVALID_POSITION  = -100000.0;
 const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using big negative number to allow for potential negative object ages, which might be useful in the event of time travel.
 const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;

@@ -5,6 +5,7 @@
 #include "Enums.h"
 #include "ObjectMap.h"
 #include "TemporaryPtr.h"
+#include "UniverseObject.h"
 
 #include <boost/signals2/signal.hpp>
 #include <boost/unordered_map.hpp>
@@ -30,7 +31,6 @@ class Empire;
 struct UniverseObjectVisitor;
 class XMLElement;
 class ShipDesign;
-class UniverseObject;
 class System;
 namespace Condition {
     struct ConditionBase;

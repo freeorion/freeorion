@@ -27,8 +27,6 @@ class Building;
 class Field;
 
 FO_COMMON_API extern const int ALL_EMPIRES;
-FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
 
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class FO_COMMON_API ObjectMap {
