@@ -882,7 +882,7 @@ Hull
             ]
             activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SCATTERED_ASTEROID"
-            effects = SetMaxShield value = Value + 5
+            effects = SetMaxShield value = Value + 3
 
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]

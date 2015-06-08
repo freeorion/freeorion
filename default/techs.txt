@@ -2171,6 +2171,8 @@ Tech
     prerequisites = [
         "SHP_MINIAST_SWARM"
         "SHP_HEAVY_AST_HULL"
+        "SHP_CAMO_AST_HULL"
+        "SHP_MONOMOLEC_LATTICE"
     ]
     unlock = [
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
