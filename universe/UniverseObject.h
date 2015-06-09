@@ -23,11 +23,11 @@ class System;
 class SitRepEntry;
 struct UniverseObjectVisitor;
 
-// The ID number assigned to temporary universe objects
-FO_COMMON_API extern const int INVALID_OBJECT_ID;
-
 // The ID number assigned to a UniverseObject upon construction;
 // It is assigned an ID later when it is placed in the universe
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
+
+// The ID number assigned to temporary universe objects
 FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
 
 /** The abstract base class for all objects in the universe
