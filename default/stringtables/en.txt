@@ -10802,12 +10802,14 @@ Hydra
 Python
 Pegasus
 Phoenix
+Hercules
 Atlas
 Helios
 Prometheus
 Poseidon
 Hades
-Nemesis'''
+Nemesis
+Zeus'''
 
 AI_SHIPDESIGN_NAME_TROOPER_ORBITAL
 SpaceInvaders

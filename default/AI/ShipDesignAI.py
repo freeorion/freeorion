@@ -1202,7 +1202,7 @@ class MilitaryShipDesigner(ShipDesigner):
 
     NAMETABLE = "AI_SHIPDESIGN_NAME_MILITARY"
     NAME_THRESHOLDS = sorted([0, 100, 250, 500, 1000, 2500, 5000, 7500, 10000,
-                              15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 60000])
+                              15000, 20000, 25000, 30000, 35000, 40000, 50000, 70000, 1000000])
 
     def __init__(self):
         ShipDesigner.__init__(self)
