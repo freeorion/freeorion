@@ -38,6 +38,7 @@ global variables:
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import ColonisationAI
+import AIDependencies
 import copy
 import traceback
 import math
@@ -1222,7 +1223,8 @@ class MilitaryShipDesigner(ShipDesigner):
         effective_structure = self.structure * shield_factor
         speed_factor = 1 + 0.003*(self.speed - 85)
         fuel_factor = 1 + 0.03 * (self.fuel - self.additional_specifications.minimum_fuel) ** 0.5
-        return total_dmg * effective_structure * speed_factor * fuel_factor / self.production_cost
+        return total_dmg * effective_structure * speed_factor * fuel_factor / (
+            self.production_cost**((1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)**-1))
 
     def _starting_guess(self, available_parts, num_slots):
         # for military ships, our primary rating function is given by
@@ -1299,7 +1301,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
         if self.troops == 0:
             return INVALID_DESIGN_RATING
         else:
-            return self.troops/self.production_cost
+            return self.troops/(self.production_cost**((1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)**-1))
 
     def _starting_guess(self, available_parts, num_slots):
         # fill completely with biggest troop pods. If none are available for this slot type, leave empty.
@@ -1560,7 +1562,8 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
         if self.speed > 10:
             return INVALID_DESIGN_RATING
         total_dmg = self._total_dmg_vs_shields()
-        return (1+total_dmg*self.structure)/self.production_cost
+        return (1+total_dmg*self.structure)/(
+            self.production_cost**((1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)**-1))
 
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
