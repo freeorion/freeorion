@@ -307,18 +307,16 @@ def tech_group_4a():  # later plasma weaps
             "SHP_WEAPON_3_1",
             "SHP_WEAPON_3_2",
             "SHP_WEAPON_3_3",
-            "SHP_WEAPON_3_4",
             "SHP_FRC_ENRG_COMP",
-            "SHP_ENRG_BOUND_MAN",
+            "SHP_WEAPON_3_4",
     ]
     return result
 
 
 def tech_group_4b():
     result = [
-            "SHP_WEAPON_3_4",
             "SHP_FRC_ENRG_COMP",
-            "SHP_ENRG_BOUND_MAN",
+            "SHP_WEAPON_3_4",
             ]
     return result
 
@@ -346,25 +344,27 @@ def tech_group_5():
             "SHP_WEAPON_4_2",
             "SHP_WEAPON_4_3",
             "LRN_DISTRIB_THOUGHT",
-            "PRO_SINGULAR_GEN",
-            "SHP_PLASMA_SHIELD",
-            "PRO_NEUTRONIUM_EXTRACTION",
-            "CON_CONC_CAMP",
             "PRO_INDUSTRY_CENTER_III",
+            "PRO_SINGULAR_GEN",
+            "SHP_QUANT_ENRG_MAG"
+            "SHP_PLASMA_SHIELD",
+            "SHP_ENRG_BOUND_MAN",
+            "PRO_NEUTRONIUM_EXTRACTION",
+            "SHP_SOLAR_CONT",
+            "CON_CONC_CAMP",
+            "LRN_ART_BLACK_HOLE",
             "SPY_STEALTH_2",
             "DEF_SYST_DEF_MINE_2",
             "DEF_SYST_DEF_MINE_3",
             "LRN_PSY_DOM",
             "SPY_STEALTH_3",
             "SHP_WEAPON_4_4",
-            "LRN_ART_BLACK_HOLE",
             "SHP_BLACKSHIELD",
             "SPY_STEALTH_4",
             "DEF_PLAN_BARRIER_SHLD_5",
             "SPY_DETECT_5",
             "GRO_GAIA_TRANS",
             "CON_ART_PLANET",
-            "SHP_SOLAR_CONT",
     ]
     return result
 

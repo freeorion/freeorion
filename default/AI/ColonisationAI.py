@@ -749,9 +749,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     discount_multiplier = [30.0, 40.0][fo.empireID() % 2]
     species = fo.getSpecies(spec_name or "")  # in case None is passed as specName
     tag_list = list(species.tags) if species else []
-    pilot_val = 0
+    pilot_val = pilot_rating = 0
     if species and species.canProduceShips:
-        pilot_val = rate_piloting_tag(species.tags)
+        pilot_val = pilot_rating = rate_piloting_tag(species.tags)
         if pilot_val > cur_best_pilot_rating:
             pilot_val *= 2
         if pilot_val > 2:
@@ -877,6 +877,14 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if "PHOTOTROPHIC" in tag_list:
             star_pop_mod = PHOTO_MAP.get(system.starType, 0)
             detail.append("PHOTOTROPHIC popMod %.1f" % star_pop_mod)
+        elif pilot_rating >= cur_best_pilot_rating:
+            if system.starType == fo.starType.red and tech_is_complete("LRN_STELLAR_TOMOGRAPHY"):
+                star_bonus += 40 * discount_multiplier # can be used for artif'l black hole and solar hull
+                detail.append("Red Star for Art Black Hole for solar hull %.1f" % (40 * discount_multiplier))
+            elif system.starType == fo.starType.blackHole and tech_is_complete("SHP_FRC_ENRG_COMP"):
+                star_bonus += 100 * discount_multiplier # can be used for solar hull
+                detail.append("Black Hole for solar hull %.1f" % (100 * discount_multiplier))
+
         if tech_is_complete("PRO_SOL_ORB_GEN") or "PRO_SOL_ORB_GEN" in empire_research_list[:5]:
             if system.starType in [fo.starType.blue, fo.starType.white]:
                 if not claimed_stars.get(fo.starType.blue, []) + claimed_stars.get(fo.starType.white, []):
@@ -921,7 +929,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             elif system.starType in [fo.starType.red] and not claimed_stars.get(fo.starType.blackHole, []):
                 rfactor = (1.0 + len(claimed_stars.get(fo.starType.red, []))) ** -2
                 star_bonus += 40 * discount_multiplier * backup_factor * rfactor  # can be used for artif'l black hole
-                detail.append("Red Star for Art Black Hole %.1f" % (20 * discount_multiplier * backup_factor * rfactor))
+                detail.append("Red Star for Art Black Hole %.1f" % (40 * discount_multiplier * backup_factor * rfactor))
         if tech_is_complete("PRO_NEUTRONIUM_EXTRACTION") or "PRO_NEUTRONIUM_EXTRACTION" in empire_research_list[:8]:
             if system.starType in [fo.starType.neutron]:
                 if not claimed_stars.get(fo.starType.neutron, []):
