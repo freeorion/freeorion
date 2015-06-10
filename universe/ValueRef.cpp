@@ -1467,6 +1467,38 @@ namespace ValueRef {
             if (retval == INT_MAX)
                 return -1;
             return retval;
+
+        } else if (variable_name == "SlotsInHull") {
+            const HullType* hull_type = 0;
+            if (m_string_ref1) {
+                std::string hull_name = m_string_ref1->Eval(context);
+                hull_type = GetHullType(hull_name);
+                if (!hull_type)
+                    return 0;
+            } else {
+                return 0;
+            }
+
+            return hull_type->Slots().size();
+
+        } else if (variable_name == "SlotsInShipDesign") {
+            int design_id = ShipDesign::INVALID_DESIGN_ID;
+            if (m_int_ref1) {
+                design_id = m_int_ref1->Eval(context);
+                if (design_id == ShipDesign::INVALID_DESIGN_ID)
+                    return 0;
+            } else {
+                return 0;
+            }
+
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design)
+                return 0;
+
+            const HullType* hull_type = GetHullType(design->Hull());
+            if (!hull_type)
+                return 0;
+            return hull_type->Slots().size();
         }
 
         return 0;
