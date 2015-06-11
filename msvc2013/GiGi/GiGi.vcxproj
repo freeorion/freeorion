@@ -19,6 +19,9 @@
     <ClInclude Include="..\..\GG\GG\Base.h" />
     <ClInclude Include="..\..\GG\GG\BrowseInfoWnd.h" />
     <ClInclude Include="..\..\GG\GG\Button.h" />
+    <ClInclude Include="..\..\GG\GG\Clipboard.h" />
+    <ClInclude Include="..\..\GG\GG\Clipboard_Generic.h" />
+    <ClInclude Include="..\..\GG\GG\Clipboard_Windows.h" />
     <ClInclude Include="..\..\GG\GG\Clr.h" />
     <ClInclude Include="..\..\GG\GG\ClrConstants.h" />
     <ClInclude Include="..\..\GG\GG\Control.h" />
@@ -81,6 +84,8 @@
     <ClCompile Include="..\..\GG\src\Base.cpp" />
     <ClCompile Include="..\..\GG\src\BrowseInfoWnd.cpp" />
     <ClCompile Include="..\..\GG\src\Button.cpp" />
+    <ClCompile Include="..\..\GG\src\Clipboard_Generic.cpp" />
+    <ClCompile Include="..\..\GG\src\Clipboard_Windows.cpp" />
     <ClCompile Include="..\..\GG\src\ClrConstants.cpp" />
     <ClCompile Include="..\..\GG\src\Control.cpp" />
     <ClCompile Include="..\..\GG\src\Cursor.cpp" />

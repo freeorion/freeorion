@@ -30,6 +30,8 @@ add_library(GiGi
     Base.cpp
     BrowseInfoWnd.cpp
     Button.cpp
+    Clipboard_Generic.cpp
+    Clipboard_Windows.cpp
     ClrConstants.cpp
     Control.cpp
     Cursor.cpp

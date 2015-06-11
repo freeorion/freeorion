@@ -35,6 +35,7 @@
 #include <GG/Timer.h>
 #include <GG/ZList.h>
 #include <GG/utf8/checked.h>
+#include <GG/Clipboard.h>
 
 #if GG_HAVE_LIBPNG
 # if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
@@ -240,8 +241,6 @@ struct GG::GUIImpl
 
     const Wnd* m_save_as_png_wnd;
     std::string m_save_as_png_filename;
-
-    std::string m_clipboard_text;
 };
 
 GUIImpl::GUIImpl() :
@@ -283,8 +282,7 @@ GUIImpl::GUIImpl() :
     m_style_factory(new StyleFactory()),
     m_render_cursor(false),
     m_cursor(),
-    m_save_as_png_wnd(0),
-    m_clipboard_text()
+    m_save_as_png_wnd(0)
 {
     m_mouse_button_state[0] = m_mouse_button_state[1] = m_mouse_button_state[2] = false;
     m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = 0;
@@ -1319,12 +1317,11 @@ void GUI::SetCursor(const boost::shared_ptr<Cursor>& cursor)
 { s_impl->m_cursor = cursor; }
 
 const std::string& GUI::ClipboardText() const
-{ return s_impl->m_clipboard_text; }
+{ return GetClipboard().Text(); }
 
 bool GUI::SetClipboardText(const std::string& text)
 {
-    s_impl->m_clipboard_text = text;
-    return true;
+    return GetClipboard().SetText(text);
 }
 
 bool GUI::CopyFocusWndText()
@@ -1376,7 +1373,7 @@ bool GUI::PasteWndText(Wnd* wnd, const std::string& text)
 
 bool GUI::PasteFocusWndClipboardText()
 {
-    return PasteFocusWndText(s_impl->m_clipboard_text);
+    return PasteFocusWndText(GetClipboard().Text());
 }
 
 bool GUI::CutFocusWndText()
