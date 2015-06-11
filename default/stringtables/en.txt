@@ -9177,6 +9177,12 @@ Gysache Colony
 BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] Gysache colony. [[BLD_COL_PART_2]] Gysache colony [[BLD_COL_PART_3]].
 
+BLD_COL_HAPPY
+Happybirthday Colony
+
+BLD_COL_HAPPY_DESC
+[[BLD_COL_PART_1]] Happybirthday colony. [[BLD_COL_PART_2]] Happybirthday colony [[BLD_COL_PART_3]].
+
 BLD_COL_HHHOH
 Hhhoh Colony
 

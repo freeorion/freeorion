@@ -15,6 +15,7 @@ species_list = [
     ("SP_FURTHEST", "Furthest", "icons/species/furthest.png"),
     ("SP_GEORGE", "George", "icons/species/george.png"),
     ("SP_GYSACHE", "Gysache", "icons/species/gysache.png"),
+    ("SP_HAPPY", "Happybirthday", "icons/species/ichthyoid-06.png"),
     ("SP_HHHOH", "Hhhoh", "icons/species/hhhoh.png"),
     ("SP_HUMAN", "Human", "icons/species/human.png"),
     ("SP_KOBUNTURA", "Kobuntura", "icons/species/intangible-04.png"),
@@ -30,6 +31,8 @@ species_list = [
     ("SP_UGMORS", "Ugmors", "icons/species/amorphous-06.png"),
     ("SP_EXOBOT", "Exobot", "icons/species/robotic-01.png")
 ]
+
+time_factor = {"SP_HAPPY": "1.2"}
 
 
 t_main = string.Template('''BuildingType
@@ -112,7 +115,7 @@ t_species_condition = string.Template('''ResourceSupplyConnected empire = Source
             Happiness low = 5
         ]''')
 
-t_buildtime = string.Template('''max(5.0, 1.0 +
+t_buildtime = string.Template('''${t_factor} * max(5.0, 1.0 +
         (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
                 Planet
@@ -145,6 +148,7 @@ with open(os.path.join(outpath, "col_buildings.txt"), "w") as f:
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=70, time=5,
                     species_condition=r"// no existing Exobot colony required!") + "\n\n")
         else:
+	    this_time_factor = time_factor.get(sp_id, "1.0")
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=50,
-                                      time=t_buildtime.substitute(id=sp_id),
+                                      time=t_buildtime.substitute(id=sp_id, t_factor=this_time_factor),
                                       species_condition=t_species_condition.substitute(id=sp_id)) + "\n\n")
