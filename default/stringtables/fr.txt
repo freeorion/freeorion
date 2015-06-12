@@ -5688,7 +5688,7 @@ Arbre Planétaire
 WORLDTREE_SPECIAL_DESC
 '''Accroît l'[[encyclopedia SUPPLY_TITLE]] de +1, le [[encyclopedia DETECTION_RANGE_TITLE]] de +10, la Population max de +1, le [[encyclopedia HAPPINESS_TITLE]] de +5 sur la planète présentant cette Particularité et de +1 sur toutes les autres planètes appartenant au même empire.
 
-Un arbre gigantesque s'est développé à tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre fut planté par les Caretakers dans les temps ancestraux.'''
+Un arbre gigantesque s'est développé à tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre fut planté par les Soigneurs dans les temps ancestraux.'''
 
 ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruines Ancestrales (Exhumées)
@@ -5732,9 +5732,16 @@ La planète possède un satellite naturel dont la période de révolution est sy
 COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
 COMPUTRONIUM_SPECIAL_DESC
-'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[encyclopedia RESEARCH_TITLE]], toutes les planètes de l'empire réglées sur le même Focus, améliorent leur [[encyclopedia RESEARCH_TITLE]] de 0.2 par Population.
+'''Lorsqu'une Lune Ordinatrice orbite autour d'une planète privilégiant la [[encyclopedia RESEARCH_TITLE]], toutes les planètes de l'empire réglées sur le même Focus améliorent leur [[encyclopedia RESEARCH_TITLE]] de 0.2 par Population.
 
 Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, cette lune est en réalité un ordinateur d'une puissance de calcul inouïe. Elle peut effectuer des simulations et résoudre les équations les plus complexes en moins de temps qu'il ne faut pour les lui proposer.'''
+
+HONEYCOMB_SPECIAL
+Réserve Alvéolaire
+HONEYCOMB_SPECIAL_DESC
+'''Lorsqu'une planète dotée d'une Réserve Alvéolaire est réglée sur le focus [[encyclopedia INDUSTRY_TITLE]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]], améliorent leur [[encyclopedia INDUSTRY_TITLE]] de 0.5 par Population.
+
+La Réserve Alvéolaire est une planète qui fut utilisée comme telle par les Constructeurs dans les temps ancestraux. Quasiment la totalité des planètes aux alentours furent dépouillées de l'ensemble de leurs ressources puis détruites. Les matériaux récupérés furent triés et stockés séparément dans de gigantesques tubes creusés dans la croûte terrestre. Ces réserves abritent des éléments rares et de grande valeur, des molécules difficiles à synthétiser, et une vaste gamme de sources d'énergie. Ce que les Constructeurs désiraient créer à partir de ce trésor et la raison pour laquelle ils ne l'ont finalement pas utilisé, restent à ce jour un mystère.'''
 
 PHILOSOPHER_SPECIAL
 Planète Métaphysique
@@ -9170,6 +9177,12 @@ Colonie Gysache
 BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] colonie Gysache. [[BLD_COL_PART_2]] colonie Gysache [[BLD_COL_PART_3]].
 
+BLD_COL_HAPPY
+Colonie Happybirthday 
+
+BLD_COL_HAPPY_DESC
+[[BLD_COL_PART_1]] colonie Happybirthday. [[BLD_COL_PART_2]] colonie Happybirthday [[BLD_COL_PART_3]].
+
 BLD_COL_HHHOH
 Colonie Hhhoh
 
@@ -9667,41 +9680,41 @@ SH_DEFENSE_GRID
 Grillage Défensif
 
 #SH_DEFENSE_GRID_DESC
-#'''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons. Reduces damage sustained from a hit by 4.
+#'''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons.
 #
-#There can only be one active shield generator on a ship, so shield parts do not stack.'''
+#Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_DEFLECTOR
 Bouclier Déflecteur
 
 #SH_DEFLECTOR_DESC
-#'''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons. Reduces damage sustained from a hit by 7.
+#'''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons.
 #
-#There can only be one active shield generator on a ship, so shield parts do not stack.'''
+#Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_PLASMA
 Bouclier Plasma
 
 #SH_PLASMA_DESC
-#'''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less. Reduces damage sustained from a hit by 12.
+#'''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less.
 #
-#There can only be one active shield generator on a ship, so shield parts do not stack.'''
+#Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_BLACK
 Bouclier Obscur
 
 #SH_BLACK_DESC
-#'''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build. Reduces damage sustained from a hit by 20.
+#'''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build.
 #
-#There can only be one active shield generator on a ship, so shield parts do not stack.'''
+#Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_MULTISPEC
 Bouclier Multi-Spectral
 
 #SH_MULTISPEC_DESC
-#'''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat. Reduces damage sustained from a hit by 15.
+#'''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
 #
-#There can only be one active shield generator on a ship, so shield parts do not stack.'''
+#Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_ROBOTIC_INTERFACE_SHIELDS
 Boucliers à Interface Robotique
@@ -9958,7 +9971,7 @@ SH_SCATTERED_ASTEROID
 Coque Astéroïdale Multiple
 
 #SH_SCATTERED_ASTEROID_DESC
-#'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Structure is high. 
+#'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. This hull has fifteen external slots and four internal slots. Structure is high. 
 #
 #[[encyclopedia STEALTH_TITLE]] is low but the hull gets a large bonus on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt. [[encyclopedia DETECTION_RANGE_TITLE]] is average and starlane speed is low. 
 #
@@ -10795,12 +10808,14 @@ Télépathique
 #Python
 #Pegasus
 #Phoenix
+#Hercules
 #Atlas
 #Helios
 #Prometheus
 #Poseidon
 #Hades
-#Nemesis'''
+#Nemesis
+#Zeus'''
 
 #AI_SHIPDESIGN_NAME_TROOPER_ORBITAL
 #SpaceInvaders
