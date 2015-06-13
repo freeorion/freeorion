@@ -1318,7 +1318,7 @@ void GUI::RenderCursor(bool render)
 void GUI::SetCursor(const boost::shared_ptr<Cursor>& cursor)
 { s_impl->m_cursor = cursor; }
 
-const std::string& GUI::ClipboardText() const
+std::string GUI::ClipboardText() const
 { return s_impl->m_clipboard_text; }
 
 bool GUI::SetClipboardText(const std::string& text)
@@ -1376,7 +1376,7 @@ bool GUI::PasteWndText(Wnd* wnd, const std::string& text)
 
 bool GUI::PasteFocusWndClipboardText()
 {
-    return PasteFocusWndText(s_impl->m_clipboard_text);
+    return PasteFocusWndText(ClipboardText());
 }
 
 bool GUI::CutFocusWndText()

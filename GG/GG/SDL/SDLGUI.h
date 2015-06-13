@@ -98,6 +98,7 @@ public:
     virtual unsigned int Ticks() const;
     virtual bool Fullscreen() const;
     virtual bool FakeModeChange() const;
+    virtual std::string ClipboardText() const;
     //@}
 
     /** \name Mutators */ ///@{
@@ -106,6 +107,7 @@ public:
 
     void SetWindowTitle(const std::string& title);
     void SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change);
+    virtual bool SetClipboardText(const std::string& text);
     //@}
 
     static SDLGUI* GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
