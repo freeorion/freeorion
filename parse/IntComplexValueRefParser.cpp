@@ -137,8 +137,22 @@ namespace parse {
             ship_designs_scrapped
                 =   (
                             tok.ShipDesignsScrapped_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   int_value_ref [ _b = _1 ] )
-                        >-( parse::label(Design_token) >   string_value_ref [ _d = _1 ] )
+                        >-( parse::label(Empire_token) >    int_value_ref [ _b = _1 ] )
+                        >-( parse::label(Design_token) >    string_value_ref [ _d = _1 ] )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
+                ;
+
+            slots_in_hull
+                =   (
+                            tok.SlotsInHull_ [ _a = construct<std::string>(_1) ]
+                        >   parse::label(Name_token) >      string_value_ref [ _d = _1 ]
+                    ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
+                ;
+
+            slots_in_ship_design
+                =   (
+                            tok.SlotsInShipDesign_ [ _a = construct<std::string>(_1) ]
+                        >   parse::label(Design_token) >    int_value_ref [ _b = _1 ]
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
@@ -215,29 +229,31 @@ namespace parse {
                 ;
 
             start
-                %=   building_types_owned
-                |    building_types_produced
-                |    building_types_scrapped
-                |    empire_ships_destroyed
-                |    jumps_between
-                //|    jumps_between_by_empire_supply
-                |    outposts_owned
-                |    parts_in_ship_design
-                |    part_class_in_ship_design
-                |    ship_designs_destroyed
-                |    ship_designs_lost
-                |    ship_designs_owned
-                |    ship_designs_produced
-                |    ship_designs_scrapped
-                |    species_colonies_owned
-                |    species_planets_bombed
-                |    species_planets_depoped
-                |    species_planets_invaded
-                |    species_ships_destroyed
-                |    species_ships_lost
-                |    species_ships_owned
-                |    species_ships_produced
-                |    species_ships_scrapped
+                %=  building_types_owned
+                |   building_types_produced
+                |   building_types_scrapped
+                |   empire_ships_destroyed
+                |   jumps_between
+                //|   jumps_between_by_empire_supply
+                |   outposts_owned
+                |   parts_in_ship_design
+                |   part_class_in_ship_design
+                |   ship_designs_destroyed
+                |   ship_designs_lost
+                |   ship_designs_owned
+                |   ship_designs_produced
+                |   ship_designs_scrapped
+                |   slots_in_hull
+                |   slots_in_ship_design
+                |   species_colonies_owned
+                |   species_planets_bombed
+                |   species_planets_depoped
+                |   species_planets_invaded
+                |   species_ships_destroyed
+                |   species_ships_lost
+                |   species_ships_owned
+                |   species_ships_produced
+                |   species_ships_scrapped
                 ;
 
             building_types_owned.name("BuildingTypesOwned");
@@ -254,6 +270,8 @@ namespace parse {
             ship_designs_owned.name("ShipDesignsOwned");
             ship_designs_produced.name("ShipDesignsProduced");
             ship_designs_scrapped.name("ShipDesignsScrapped");
+            slots_in_hull.name("SlotsInHull");
+            slots_in_ship_design.name("SlotsInShipDesign");
             species_colonies_owned.name("SpeciesColoniesOwned");
             species_planets_bombed.name("SpeciesPlanetsBombed");
             species_planets_depoped.name("SpeciesPlanetsDepoped");
@@ -279,6 +297,8 @@ namespace parse {
             debug(ship_designs_owned);
             debug(ship_designs_produced);
             debug(ship_designs_scrapped);
+            debug(slots_in_hull);
+            debug(slots_in_ship_design);
             debug(species_colonies_owned);
             debug(species_planets_bombed);
             debug(species_planets_depoped);
@@ -306,6 +326,8 @@ namespace parse {
         complex_variable_rule<int>::type    ship_designs_owned;
         complex_variable_rule<int>::type    ship_designs_produced;
         complex_variable_rule<int>::type    ship_designs_scrapped;
+        complex_variable_rule<int>::type    slots_in_hull;
+        complex_variable_rule<int>::type    slots_in_ship_design;
         complex_variable_rule<int>::type    species_colonies_owned;
         complex_variable_rule<int>::type    species_planets_bombed;
         complex_variable_rule<int>::type    species_planets_depoped;

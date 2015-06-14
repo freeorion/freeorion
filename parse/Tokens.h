@@ -389,6 +389,8 @@
 #define TOKEN_SEQ_13                            \
     (Slot)                                      \
     (Slots)                                     \
+    (SlotsInHull)                               \
+    (SlotsInShipDesign)                         \
     (SlotType)                                  \
     (Small)                                     \
     (SortBy)                                    \
