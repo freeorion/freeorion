@@ -2233,6 +2233,14 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
+        EffectsGroup    // remove self and recreate on first turn, so that it starts with age 0
+            scope = Source
+            activation = Turn high = 1
+            effects = [
+                CreateShip designname = "SM_KRAKEN_1"
+                Destroy
+            ]
+
         EffectsGroup     
             scope = NumberOf number = 2 condition = And [
                 Planet
@@ -2259,7 +2267,10 @@ Hull
                     Contains Planet type = GasGiant
                 ]
             ]
-            activation = Random probability = 0.025
+            activation = And [
+                Turn low = 20
+                Random probability = Source.Age*0.01 - 0.1
+            ]
             effects = [
                 CreateShip designname = "SM_KRAKEN_2" empire = Source.Owner
                 Destroy
@@ -2306,7 +2317,7 @@ Hull
                     Contains Planet type = GasGiant
                 ]
             ]
-            activation = Random probability = 0.025
+            activation = Random probability = Source.Age*0.01 - 0.1
             effects = [
                 CreateShip designname = "SM_KRAKEN_3" empire = Source.Owner
                 Destroy
@@ -2370,6 +2381,14 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
+        EffectsGroup    // remove self and recreate on first turn, so that it starts with age 0
+            scope = Source
+            activation = Turn high = 1
+            effects = [
+                CreateShip designname = "SM_SNOWFLAKE_1"
+                Destroy
+            ]
+
         EffectsGroup
             scope = NumberOf number = 2 condition = And [
                 Planet
@@ -2397,7 +2416,10 @@ Hull
                     Contains Planet size = Small
                 ]
             ]
-            activation = Random probability = 0.03
+            activation = And [
+                Turn low = 20
+                Random probability = Source.Age*0.015 - 0.1
+            ]
             accountinglabel = "SNOWFLAKE_GROWTH_LABEL"
             effects = [
                 CreateShip designname = "SM_SNOWFLAKE_2" empire = Source.Owner
@@ -2445,7 +2467,7 @@ Hull
                     Contains Planet size = Small
                 ]
             ]
-            activation = Random probability = 0.03
+            activation = Random probability = Source.Age*0.015 - 0.1
             effects = [
                 CreateShip designname = "SM_SNOWFLAKE_3" empire = Source.Owner
                 Destroy
@@ -2508,6 +2530,14 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
+       EffectsGroup    // remove self and recreate on first turn, so that it starts with age 0
+            scope = Source
+            activation = Turn high = 1
+            effects = [
+                CreateShip designname = "SM_JUGGERNAUT_1"
+                Destroy
+            ]
+
         EffectsGroup
             scope = NumberOf number = 2 condition = And [
                 Planet
@@ -2534,7 +2564,10 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = 0.03
+            activation = And [
+                Turn low = 20
+                Random probability = Source.Age*0.015 - 0.1
+            ]
             effects = [
                 CreateShip designname = "SM_JUGGERNAUT_2" empire = Source.Owner
                 Destroy
@@ -2581,7 +2614,7 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = 0.02
+            activation = Random probability = Source.Age*0.01 - 0.1
             effects = [
                 CreateShip designname = "SM_JUGGERNAUT_3" empire = Source.Owner
                 Destroy
