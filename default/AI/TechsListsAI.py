@@ -346,7 +346,7 @@ def tech_group_5():
             "LRN_DISTRIB_THOUGHT",
             "PRO_INDUSTRY_CENTER_III",
             "PRO_SINGULAR_GEN",
-            "SHP_QUANT_ENRG_MAG"
+            "SHP_QUANT_ENRG_MAG",
             "SHP_PLASMA_SHIELD",
             "SHP_ENRG_BOUND_MAN",
             "PRO_NEUTRONIUM_EXTRACTION",
