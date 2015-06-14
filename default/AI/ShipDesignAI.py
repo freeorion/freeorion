@@ -1351,6 +1351,22 @@ class MilitaryShipDesigner(ShipDesigner):
         speed_factor = 1 + 0.003*(self.speed - 85)
         effective_fuel = min(self.fuel / max(1-self.fuel_per_turn, 0.001), 10)  # number of turns without refueling
         fuel_factor = 1 + 0.03*(effective_fuel - self.additional_specifications.minimum_fuel) ** 0.5
+        # The below calc uses an adjusted cost meant to roughly account for the fleet upkeep cost efficiencies of larger
+        # warships -- building one warship of rating 2R and cost 2C is more efficient from that perspective than
+        # building 2 warships of rating R and cost C, even though they have the same raw rating/cost ratio.  (There may
+        # also be a counterbalancing factor that with current combat mechanics larger numbers of smaller warships
+        # may often have a tactical advantage, but attempts at quantifying that tactical consideration should be applied
+        # to the rating itself.)   The significance of this fleet maintenance efficiency increases with the raw fleet
+        # upkeep rate, with the expected lifetime of the ship under consideration (i.e., with a longer expected lifespan
+        # it will affect the future construction of a greater number of ships), and it also increases with the number of
+        # ships of this design expected to be created.  In the calculation below the empire's current total shipcount is
+        # taken as a rough proxy for both of the duration and extent factors.  An alternate proxy might also consider
+        # the empire's current total production points, etc.  The overall adjustment could be applied either to increase
+        # the numerator for more massive ships or to decrease the denominator (the latter approach is taken below,
+        # Note: this same sort of adjustment would be valid for troop ships, could theoretically have some applicability
+        # to scout ships since there could conceivably be a tradeoff for more scout ships of lower rating/range, but
+        # would really not be applicable to colony ships since in that case there is really not a potential tradeoff
+        # between number of ships and capacity.
         return total_dmg * effective_structure * speed_factor * fuel_factor / (
             self.production_cost**((1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)**-1))
 
