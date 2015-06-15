@@ -217,6 +217,7 @@ def tech_group_3a(): # no plasma weaps yet
             "SHP_HEAVY_AST_HULL",
             "SHP_DEFLECTOR_SHIELD",
             "LRN_QUANT_NET",
+            "SHP_CONTGRAV_MAINT",
             "GRO_XENO_HYBRIDS",
             "SHP_DEUTERIUM_TANK",
             "SPY_DETECT_3",
@@ -270,14 +271,15 @@ def tech_group_3_sparse(): # no plasma weaps yet
             "PRO_MICROGRAV_MAN",
             "SHP_ASTEROID_HULLS",
             "SHP_IMPROVED_ENGINE_COUPLINGS",
+            "LRN_QUANT_NET",
             "SHP_ASTEROID_REFORM",
             "SHP_HEAVY_AST_HULL",
+            "SHP_CONTGRAV_MAINT",
             "SHP_DEFLECTOR_SHIELD",
             "SHP_WEAPON_3_1",
             "SHP_WEAPON_3_2",
             "SHP_WEAPON_3_3",
             "SHP_WEAPON_3_4",
-            "LRN_QUANT_NET",
             "GRO_XENO_HYBRIDS",
             "SHP_DEUTERIUM_TANK",
             "SPY_DETECT_3",
@@ -309,6 +311,7 @@ def tech_group_4a():  # later plasma weaps
             "SHP_WEAPON_3_3",
             "SHP_FRC_ENRG_COMP",
             "SHP_WEAPON_3_4",
+            "SHP_MASSPROP_SPEC",
     ]
     return result
 
@@ -317,6 +320,7 @@ def tech_group_4b():
     result = [
             "SHP_FRC_ENRG_COMP",
             "SHP_WEAPON_3_4",
+            "SHP_MASSPROP_SPEC",
             ]
     return result
 
@@ -328,6 +332,8 @@ def tech_group_5():
             "LRN_XENOARCH",
             "LRN_GRAVITONICS",
             "LRN_ENCLAVE_VOID",
+            "SHP_MONOMOLEC_LATTICE",
+            "SHP_SCAT_AST_HULL",
             "SHP_ADV_DAM_CONT",
             "LRN_STELLAR_TOMOGRAPHY",
             "LRN_TIME_MECH",

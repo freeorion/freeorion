@@ -50,6 +50,8 @@ unowned_empty_planet_ids = set()
 empire_outpost_ids = set()
 empire_ast_outpost_ids = set()
 claimed_stars = {}
+facilities_by_species_grade = {}
+system_facilities = {}
 
 ENVIRONS = {str(fo.planetEnvironment.uninhabitable): 0, str(fo.planetEnvironment.hostile): 1,
             str(fo.planetEnvironment.poor): 2, str(fo.planetEnvironment.adequate): 3, str(fo.planetEnvironment.good): 4}
@@ -324,6 +326,8 @@ def survey_universe():
         AIstate.colonizedSystems.clear()
         pilot_ratings.clear()
         unowned_empty_planet_ids.clear()
+        facilities_by_species_grade.clear()
+        system_facilities.clear()
     # var setup done
 
     for sys_id in universe.systemIDs:
@@ -335,6 +339,8 @@ def survey_universe():
         local_ast = False
         local_gg = False
         empire_has_qualifying_planet = False
+        this_system_facilities = set()
+        best_local_pilot_val = 0
         for pid in sys.planetIDs:
             planet = universe.getPlanet(pid)
             if not planet:
@@ -350,6 +356,8 @@ def survey_universe():
             owner_id = planet.owner
             planet_population = planet.currentMeterValue(fo.meterType.population)
             buildings_here = [universe.getObject(bldg).buildingTypeName for bldg in planet.buildingIDs]
+            ship_facilities = set(AIDependencies.SHIP_FACILITIES).intersection(buildings_here)
+            weapons_grade = "WEAPONS_0.0"
             if owner_id == empire_id:
                 empire_has_colony_in_sys = True
                 empire_owned_planet_ids.append(pid)
@@ -375,7 +383,9 @@ def survey_universe():
                         pilot_val = rate_piloting_tag(list(this_spec.tags))
                         if spec_name == "SP_ACIREMA":
                             pilot_val += 1
+                        weapons_grade = "WEAPONS_%.1f"%pilot_val
                         pilot_ratings[pid] = pilot_val
+                        best_local_pilot_val = max(best_local_pilot_val, pilot_val)
                         yard_here = []
                         if "BLD_SHIPYARD_BASE" in buildings_here:
                             empire_ship_builders.setdefault(spec_name, []).append(pid)
@@ -383,6 +393,14 @@ def survey_universe():
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
+                this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
+                for facility in ship_facilities:
+                    this_grade_facilities.setdefault(facility, []).append(pid)
+                    if facility in AIDependencies.SYSTEM_SHIP_FACILITIES:
+                        this_facility_dict = system_facilities.setdefault(facility, {})
+                        this_facility_dict.setdefault("systems", set()).add(sys_id)
+                        this_facility_dict.setdefault("planets", set()).add(pid)
+
                 if planet.focus == EnumsAI.AIFocusType.FOCUS_INDUSTRY:
                     empire_status['industrialists'] += planet_population
                 elif planet.focus == EnumsAI.AIFocusType.FOCUS_RESEARCH:
@@ -423,6 +441,8 @@ def survey_universe():
             if sys_status.get('neighborThreat', 0) > 0:
                 colony_status['colonies_under_threat'].append(sys_id)
 
+    #system_facilities[''] = {'systems': set().union(sys_id for key, val in system_facilities.items()
+    #                                                for sys_id in val.get('systems', {}))}
     if empire_species != old_emp_spec:
         print "Old empire species: %s ; new empire species: %s" % (old_emp_spec, empire_species)
     if empire_colonizers != old_emp_col:

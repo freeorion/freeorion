@@ -56,3 +56,31 @@ FIRST_PLANET_SHIELDS_TECH = "LRN_FORCE_FIELD"
 PLANET_BARRIER_I_TECH = "DEF_PLAN_BARRIER_SHLD_1"
 DEFENSE_REGEN_1_TECH = "DEF_DEFENSE_NET_REGEN_1"
 PROT_FOCUS_MULTIPLIER = 2.0
+
+
+# ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time, system)
+# not currently determined dynamically because it is initially used in a location-independent fashion
+# note that BLD_SHIPYARD_BASE is not an absolute prereq for BLD_NEUTRONIUM_FORGE, but is a practical one
+SHIP_FACILITIES = {
+    "BLD_SHIPYARD_BASE": (0, "", 10, 4),
+    "BLD_SHIPYARD_ORBITAL_DRYDOCK": (0, "BLD_SHIPYARD_BASE", 20, 5),
+    "BLD_SHIPYARD_CON_NANOROBO": (fo.aggression.aggressive, "BLD_SHIPYARD_ORBITAL_DRYDOCK", 250, 5),
+    "BLD_SHIPYARD_CON_GEOINT": (fo.aggression.aggressive, "BLD_SHIPYARD_ORBITAL_DRYDOCK", 750, 5),
+    "BLD_SHIPYARD_CON_ADV_ENGINE": (0, "BLD_SHIPYARD_ORBITAL_DRYDOCK", 500, 5),
+    "BLD_SHIPYARD_AST": (fo.aggression.typical, "", 75, 5),
+    "BLD_SHIPYARD_AST_REF": (fo.aggression.maniacal, "BLD_SHIPYARD_AST", 500, 5),
+    "BLD_SHIPYARD_ORG_ORB_INC": (0, "BLD_SHIPYARD_BASE", 40, 8),
+    "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB": (fo.aggression.aggressive, "BLD_SHIPYARD_ORG_ORB_INC", 64, 8),
+    "BLD_SHIPYARD_ORG_XENO_FAC": (fo.aggression.aggressive, "BLD_SHIPYARD_ORG_ORB_INC", 120, 8),
+    "BLD_SHIPYARD_ENRG_COMP": (fo.aggression.aggressive, "BLD_SHIPYARD_BASE", 200, 5),
+    "BLD_SHIPYARD_ENRG_SOLAR": (fo.aggression.maniacal, "BLD_SHIPYARD_ENRG_COMP", 1200, 5),
+    "BLD_NEUTRONIUM_FORGE": (fo.aggression.cautious, "BLD_SHIPYARD_BASE", 100, 3),
+}
+
+# those facilities that need merely be in-system
+SYSTEM_SHIP_FACILITIES = {
+    "BLD_SHIPYARD_AST",
+    "BLD_SHIPYARD_AST_REF",
+}
+
+
