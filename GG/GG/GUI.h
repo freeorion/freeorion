@@ -188,7 +188,7 @@ public:
     Flags<ModKey>               ModKeys() const;                    ///< returns the set of modifier keys that are currently depressed, based on the last event
     bool                        MouseLRSwapped() const;             ///< returns true if the left and right mouse button press events are set to be swapped before event handling. This is to facilitate left-handed mouse users semi-automatically.
     const std::map<Key, Key>&   KeyMap() const;                     ///< returns the the key remappings set, which causes the GUI to respond to one Key press as though a different Key were pressed.
-    virtual const std::string&  ClipboardText() const;              ///< returns text stored in a clipboard
+    virtual std::string         ClipboardText() const;              ///< returns text stored in a clipboard
 
     /** Returns the (begin, end) indices of the code points of all the
         word-tokens in the given string.  This is perhaps an odd place for
@@ -329,7 +329,7 @@ public:
     void RenderCursor(bool render); ///< set this to true iff the GUI should render the cursor
     void SetCursor(const boost::shared_ptr<Cursor>& cursor); ///< sets the currently-installed cursor
 
-    bool SetClipboardText(const std::string& text);         ///< sets text stored in clipboard
+    virtual bool SetClipboardText(const std::string& text); ///< sets text stored in clipboard
     bool CopyFocusWndText();                                ///< copies current focus Wnd as text to clipboard
     bool CopyWndText(const Wnd* wnd);                       ///< copies \a wnd as text to clipboard
     bool PasteFocusWndText(const std::string& text);        ///< attempts to paste \a text into the current focus Wnd
