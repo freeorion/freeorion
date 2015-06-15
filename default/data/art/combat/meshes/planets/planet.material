@@ -22,12 +22,6 @@ vertex_program gas_giant_vert glsl
 fragment_program gas_giant_frag glsl
 { source gas_giant.frag }
 
-vertex_program asteroid_vert glsl
-{ source asteroid.vert }
-
-fragment_program asteroid_frag glsl
-{ source asteroid.frag }
-
 material planet {
     technique {
         pass {
@@ -129,27 +123,6 @@ material gas_giant {
         }
     }
 }
-
-material asteroid {
-    technique {
-        pass {
-            vertex_program_ref asteroid_vert
-            { param_named_auto light_pos light_position_object_space 0 }
-
-            fragment_program_ref asteroid_frag {
-                param_named color_texture int 0
-                param_named normal_texture int 1
-            }
-
-            texture_unit
-            { texture Asteroid01Color.png }
-
-            texture_unit
-            { texture Asteroid01Normal.png }
-        }
-    }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // planet materials
