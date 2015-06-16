@@ -824,94 +824,42 @@ class ShipDesigner(object):
         to make sure we can easily adjust the values for future balance changes or after implementing a
         method to read out all stats.
         """
-        REGULAR_HULL_DETECTION = 25
+        def parse_tokens(tokendict):
+            """Adjust design stats according to the token dict key-value pairs.
 
-        def _irregular_detection(detection):
-            self.detection -= REGULAR_HULL_DETECTION
-            self.detection += detection
+            :param tokendict: tokens and values
+            :type tokendict: dict
+            """
+            for token, value in tokendict.items():
+                print token, value
+                if token == "REPAIR_PER_TURN":
+                    self.repair_per_turn += min(value, self.structure)
+                elif token == "FUEL_PER_TURN":
+                    self.fuel_per_turn += value
+                elif token == "STEALTH_MODIFIER":
+                    self.stealth += value
+                elif token == "ASTEROID_STEALTH":
+                    self.asteroid_stealth += value
+                elif token == "SHIELDS":
+                    self.shields += value
+                elif token == "DETECTION":
+                    self.detection += value
+                elif token == "ORGANIC_GROWTH":
+                    self.organic_growth += value[0]
+                    self.maximum_organic_growth += value[1]
+                elif token == "SOLAR_STEALTH":
+                    self.solar_stealth = max(self.solar_stealth, value)
 
-        def _organic_growth(growth_per_turn, maximum):
-            self.organic_growth = growth_per_turn
-            self.maximum_organic_growth = maximum
+        if self.hull.name not in AIDependencies.HULL_EFFECTS:
+            print self.hull.name, "does not have known effects"
+            self.detection += AIDependencies.BASE_DETECTION
+        else:
+            print self.hull.name
+            parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name])
 
-        hullname = self.hull.name
-        self.detection += REGULAR_HULL_DETECTION  # overwrite if special hull
-        if hullname == "SH_ROBOTIC":
-            self.repair_per_turn += 2
-        elif hullname == "SH_SPATIAL_FLUX":
-            self.stealth = max(0, self.stealth-30)
-        elif hullname == "SH_NANOROBOTIC":
-            self.repair_per_turn = self.structure
-        elif hullname == "SH_LOGISTICS_FACILITATOR":
-            self.repair_per_turn = self.structure  # TODO: Add modifier for fleet repair
-        elif hullname in ["SH_ASTEROID", "SH_SMALL_ASTEROID", "SH_SMALL_CAMOUFLAGE_ASTEROID",
-                          "SH_SMALL_CAMOUFLAGE_ASTEROID", "SH_CRYSTALLIZED_ASTEROID"]:
-            self.asteroid_stealth += 20
-        elif hullname == "SH_CAMOUFLAGE_ASTEROID":
-            self.asteroid_stealth += 40
-        elif hullname == "SH_MINIASTEROID_SWARM":
-            self.asteroid_stealth += 20
-            self.shields += 5
-        elif hullname == "SH_SCATTERED_ASTEROID":
-            self.asteroid_stealth += 40
-            self.shields += 3  # TODO: Add modifier for fleet shields
-        elif hullname == "SH_ORGANIC":
-            self.repair_per_turn += 2
-            self.fuel_per_turn += 0.2
-            _irregular_detection(10)
-            _organic_growth(0.2, 5)
-        elif hullname == "SH_ENDOMORPHIC":
-            _irregular_detection(50)
-            _organic_growth(0.5, 15)
-        elif hullname == "SH_SYMBIOTIC":
-            self.repair_per_turn += 2
-            self.fuel_per_turn += 0.2
-            _irregular_detection(50)
-            _organic_growth(0.2, 10)
-        elif hullname == "SH_PROTOPLASMIC":
-            self.repair_per_turn += 2
-            self.fuel_per_turn += 0.2
-            _irregular_detection(50)
-            _organic_growth(0.5, 25)
-        elif hullname == "SH_ENDOSYMBIOTIC":
-            self.repair_per_turn += 2
-            self.fuel_per_turn += 0.2
-            _irregular_detection(50)
-            _organic_growth(0.5, 15)
-        elif hullname == "SH_RAVENOUS":
-            _irregular_detection(75)
-            _organic_growth(0.5, 20)
-        elif hullname == "SH_BIOADAPTIVE":
-            self.repair_per_turn += self.structure
-            self.fuel_per_turn += 0.2
-            _irregular_detection(75)
-            _organic_growth(0.5, 25)
-        elif hullname == "SH_SENTIENT":
-            self.fuel_per_turn += 0.2
-            self.repair_per_turn += 2
-            _irregular_detection(50)
-            _organic_growth(1, 45)
-            self.stealth += 20      # TODO: Handle as flagship effect
-            self.detection += 20    # TODO: Handle as flagship effect
-        elif hullname == "SH_SOLAR":
-            self.solar_stealth = max(self.solar_stealth, 120)
-            self.fuel_per_turn += self.fuel  # TODO: Handle as flagship effect
-            #  TODO: Handle destealth of enemy ships (100)
-
-        if "SH_MULTISPEC" in self.partnames:
-            self.solar_stealth = max(self.solar_stealth, 60)
-        if "FU_TRANSPATIAL_DRIVE" in self.partnames:
-            pass  # TODO: Consider stealth stacking method here
-        if "FU_RAMSCOOP" in self.partnames:
-            self.fuel_per_turn += 0.1
-        if "FU_ZERO_FUEL" in self.partnames:
-            self.fuel_per_turn = self.fuel
-        if "SP_DISTORTION_MODULATOR" in self.partnames:
-            pass  # TODO: Handle destealth of enemy ships (20)
-        if "SP_DEATH_SPORE" in self.partnames or "SP_BIOTERM" in self.partnames or "SP_NOVA_BOMB" in self.partnames:
-            pass  # TODO: Handle bombardment parts
-        if "SH_ROBOTIC_INTERFACE_SHIELDS" in self.partnames:
-            pass  # TODO: Handle fleet-effects
+        for partname in set(self.partnames):
+            if partname in AIDependencies.PART_EFFECTS:
+                parse_tokens(AIDependencies.PART_EFFECTS[partname])
 
     def add_design(self, verbose=False):
         """Add a real (i.e. gameobject) ship design of the current configuration.
