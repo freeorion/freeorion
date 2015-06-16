@@ -3089,8 +3089,12 @@ HUNT_BUILDINGS
                         Building
                         OwnedBy affiliation = AnyEmpire
                         Stealth high = Source.Detection
-                        WithinDistance distance = Source.Detection condition = Source
                     ]
+                    Contains And [
+                        Planet
+                        Species
+                    ]
+                    WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
             activation = Unowned
@@ -3101,8 +3105,12 @@ HUNT_BUILDINGS
                     Building
                     OwnedBy affiliation = AnyEmpire
                     Stealth high = Source.Detection
-                    WithinDistance distance = Source.Detection condition = Source
                 ]
+                Contains And [
+                    Planet
+                    Species
+                ]
+                WithinDistance distance = Source.Detection condition = Source
             ]
 '''
 
