@@ -1,10 +1,10 @@
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
 metabolismBoostMap = {"ORGANIC": ["FRUIT_SPECIAL", "PROBIOTIC_SPECIAL", "SPICE_SPECIAL"],
-                     "LITHIC": ["CRYSTALS_SPECIAL", "ELERIUM_SPECIAL", "MINERALS_SPECIAL"],
-                     "ROBOTIC": ["MONOPOLE_SPECIAL", "POSITRONIUM_SPECIAL", "SUPERCONDUCTOR_SPECIAL"],
-                     "SELF_SUSTAINING": []
-                     }
+                      "LITHIC": ["CRYSTALS_SPECIAL", "ELERIUM_SPECIAL", "MINERALS_SPECIAL"],
+                      "ROBOTIC": ["MONOPOLE_SPECIAL", "POSITRONIUM_SPECIAL", "SUPERCONDUCTOR_SPECIAL"],
+                      "SELF_SUSTAINING": []
+                      }
 
 metabolismBoosts = {}
 for metab, boosts in metabolismBoostMap.items():
@@ -26,7 +26,7 @@ supply_by_size = {fo.planetSize.tiny: 2,
                   fo.planetSize.gasGiant: -1
                   }
 
-SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL':{-1:1}}
+SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL': {-1: 1}}
 
 # building supply bonuses are keyed by planet size; key -1 stands for any planet size
 building_supply = {"BLD_IMPERIAL_PALACE": {-1: 2},
@@ -58,7 +58,7 @@ DEFENSE_REGEN_1_TECH = "DEF_DEFENSE_NET_REGEN_1"
 PROT_FOCUS_MULTIPLIER = 2.0
 
 
-# ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time, system)
+# ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
 # not currently determined dynamically because it is initially used in a location-independent fashion
 # note that BLD_SHIPYARD_BASE is not an absolute prereq for BLD_NEUTRONIUM_FORGE, but is a practical one
 SHIP_FACILITIES = {
