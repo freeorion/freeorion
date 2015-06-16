@@ -574,7 +574,7 @@ Black Kraken
 SM_BLACK_KRAKEN_DESC
 '''A powerful, unnatural-seeming space monster.
 
-Black Kraken are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack populated planets, [[encyclopedia ORGANIC_SPECIES_TITLE]] inhabitants are particularly vulnerable to their attacks.'''
+Black Kraken are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their population.'''
 
 SM_SNOWFLAKE_1
 Small Snowflake
@@ -602,7 +602,7 @@ Psionic Snowflake
 SM_PSIONIC_SNOWFLAKE_DESC
 '''A monster with the power to neutralize the minds of organic beings.
 
-Psionic Snowflakes are bioengineered space monsters with dangerous weapons and the ability to take control of ships with [[encyclopedia ORGANIC_SPECIES_TITLE]] crews. A powerful fleet will be needed to fight them. They seek out and attack enemy space ships, forcing crews vulnerable to psychic attack to abandon their empire.'''
+Psionic Snowflakes are bioengineered space monsters with dangerous weapons and the ability to take control of ships with [[encyclopedia ORGANIC_SPECIES_TITLE]] crews. A powerful fleet will be needed to fight them. They seek out and attack enemy space ships, forcing crews vulnerable to psychic attack to abandon their empire. They are also able to directly attack the population of planets.'''
 
 SM_JUGGERNAUT_1
 Small Juggernaut
@@ -630,7 +630,7 @@ Bloated Juggernaut
 SM_BLOATED_JUGGERNAUT_DESC
 '''A massive, sickly-looking space monster.
 
-Bloated Juggernauts are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out and attack planetary buildings, [[encyclopedia ORGANIC_SPECIES_TITLE]] inhabitants are particularly vulnerable to their attacks.'''
+Bloated Juggernauts are bioengineered space monsters, incredibly tough, with dangerous weapons and high [[encyclopedia STEALTH_TITLE]]. A powerful fleet and good [[encyclopedia DETECTION_TITLE]] will be needed to track them down. They seek out planets with visible buildings and attack their population.'''
 
 SM_CLOUD
 Space Cloud
