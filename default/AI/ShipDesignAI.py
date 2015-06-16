@@ -1308,6 +1308,28 @@ class ShipDesigner(object):
         self.update_stats(ignore_species=True)
         return self.structure
 
+    def _adjusted_production_cost(self):
+        """Return a production cost adjusted by the number of ships we have.
+
+        Building one warship of rating 2R and cost 2C is effectively cheaper than building 2 warships of rating R and
+        cost C due to fleet upkeep considerations even if they have the same raw rating/cost ratio.
+        The significance of this fleet upkeep efficiency increases with the raw fleet upkeep rate, with the expected
+        lifetime of the ship under consideration (i.e., with a longer expected lifespan it will affect the future
+        construction of a greater number of ships), and it also increases with the number of ships of this design
+        expected to be created. In the calculation below, the empire's current total shipcount is taken as a rough proxy
+        for both of the duration and extent factors.
+        Note: This same sort of adjustment would be valid for troop ships, could theoretically have some applicability
+        to scout ships since there could conceivably be a tradeoff for more scout ships of lower rating/range, but
+        would really not be applicable to colony ships since in that case there is really not a potential tradeoff
+        between number of ships and capacity.
+
+        :return: adjusted production cost
+        :rtype: float
+        """
+        # TODO: Consider total pp production output as additional factor
+        # TODO: Rethink about math and maybe work out a more accurate formula
+        return self.production_cost**(1/(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
+
 
 class MilitaryShipDesigner(ShipDesigner):
     """Class that implements military designs.
@@ -1317,6 +1339,11 @@ class MilitaryShipDesigner(ShipDesigner):
     Overrides _starting_guess()
     Overrides _calc_rating_for_name()
     """
+    # TODO: Consider subclassing into small/big ships.
+    # While big flagships are good in one-on-one situations, we may want to consider building many small ships to support
+    # them efficiently and act as decoys and anti-decoy-weapon in the fleet. Before doing so, changes need to be done
+    # to how the AI assemmbles its military fleets.
+
     basename = "Warship"
     description = "Military Ship"
     useful_part_classes = ARMOUR | WEAPONS | SHIELDS | FUEL | ENGINES
@@ -1351,24 +1378,8 @@ class MilitaryShipDesigner(ShipDesigner):
         speed_factor = 1 + 0.003*(self.speed - 85)
         effective_fuel = min(self.fuel / max(1-self.fuel_per_turn, 0.001), 10)  # number of turns without refueling
         fuel_factor = 1 + 0.03*(effective_fuel - self.additional_specifications.minimum_fuel) ** 0.5
-        # The below calc uses an adjusted cost meant to roughly account for the fleet upkeep cost efficiencies of larger
-        # warships -- building one warship of rating 2R and cost 2C is more efficient from that perspective than
-        # building 2 warships of rating R and cost C, even though they have the same raw rating/cost ratio.  (There may
-        # also be a counterbalancing factor that with current combat mechanics larger numbers of smaller warships
-        # may often have a tactical advantage, but attempts at quantifying that tactical consideration should be applied
-        # to the rating itself.)   The significance of this fleet maintenance efficiency increases with the raw fleet
-        # upkeep rate, with the expected lifetime of the ship under consideration (i.e., with a longer expected lifespan
-        # it will affect the future construction of a greater number of ships), and it also increases with the number of
-        # ships of this design expected to be created.  In the calculation below the empire's current total shipcount is
-        # taken as a rough proxy for both of the duration and extent factors.  An alternate proxy might also consider
-        # the empire's current total production points, etc.  The overall adjustment could be applied either to increase
-        # the numerator for more massive ships or to decrease the denominator (the latter approach is taken below,
-        # Note: this same sort of adjustment would be valid for troop ships, could theoretically have some applicability
-        # to scout ships since there could conceivably be a tradeoff for more scout ships of lower rating/range, but
-        # would really not be applicable to colony ships since in that case there is really not a potential tradeoff
-        # between number of ships and capacity.
-        return total_dmg * effective_structure * speed_factor * fuel_factor / (
-            self.production_cost**((1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)**-1))
+
+        return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
         # for military ships, our primary rating function is given by
@@ -1445,7 +1456,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
         if self.troops == 0:
             return INVALID_DESIGN_RATING
         else:
-            return self.troops/(self.production_cost**((1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)**-1))
+            return self.troops/self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
         # fill completely with biggest troop pods. If none are available for this slot type, leave empty.
@@ -1706,8 +1717,7 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
         if self.speed > 10:
             return INVALID_DESIGN_RATING
         total_dmg = self._total_dmg_vs_shields()
-        return (1+total_dmg*self.structure)/(
-            self.production_cost**((1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)**-1))
+        return (1+total_dmg*self.structure)/self._adjusted_production_cost()
 
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
