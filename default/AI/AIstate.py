@@ -541,7 +541,8 @@ class AIstate(object):
             if fthreat > max_threat:
                 max_threat = fthreat
             threat = FleetUtilsAI.combine_ratings(threat, fthreat)
-            myrating = FleetUtilsAI.combine_ratings(myrating, sys_status.get('all_local_defenses', 0))
+            myrating = FleetUtilsAI.combine_ratings(myrating, sys_status.get('myFleetRating', 0))
+            # myrating = FleetUtilsAI.combine_ratings(myrating, sys_status.get('all_local_defenses', 0))
             threat_fleets.update(sys_status.get('local_fleet_threats', []))
         return threat, max_threat, myrating, threat_fleets
 

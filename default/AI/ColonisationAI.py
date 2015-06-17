@@ -858,8 +858,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     neighbor_threat_ratio = ((sys_status.get('neighborThreat', 0)) / float(cur_best_mil_ship_rating)) + \
                             min(0, fleet_threat_ratio)  # last portion gives credit for inner extra defenses
     myrating = sys_status.get('my_neighbor_rating', 0)
-    jump2_threat_ratio = ((sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating)) + \
-                         min(0, neighbor_threat_ratio)  # last portion gives credit for inner extra defenses
+    jump2_threat_ratio = ((max(0, sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating)) +
+                         min(0, neighbor_threat_ratio))  # last portion gives credit for inner extra defenses
 
     thrt_factor = 1.0
     ship_limit = 2 * (2 ** (fo.currentTurn() / 40.0))
