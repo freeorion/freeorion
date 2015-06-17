@@ -1041,7 +1041,7 @@ Part
                             Not DesignHasPartClass Low=1 High=999 Class=Stealth
                             Not Armed
                         ]
-            effects = SetStealth value = Value + 60
+            effects = SetStealth value = Value + 40
     ]
             
     icon = ""
