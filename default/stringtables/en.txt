@@ -5486,6 +5486,10 @@ Prefers Radiated planets.
 [[AVERAGE_POPULATION]]
 [[GREAT_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
+
++	Good ship [[encyclopedia SHIELDS_TITLE]]: +1
++	Good planetary [[encyclopedia SHIELDS_TITLE]]: +5
++	Good planetary [[encyclopedia DEFENSE_TITLE]]: +5
 '''
 
 SP_ACIREMA_DESC
@@ -5496,14 +5500,12 @@ As the Acirema found the anomaly that allowed them to enter into this universe, 
 
 The massive amount of energy they can release as individuals and across the connection from Portal to their home universe, gives them the ability to produce large amounts of Industry, and also allows them to act as weapons. This makes Portal a very dangerous world to approach, as the Acirema are very wary of outsiders, and are sensitive to the vulnerability of their position. Trade with another universe is definitely beneficial, especially since they cannot obtain minerals from other planets. The Acirema on Portal seem to have a government that is similar to a military and/or research outpost (tightly controlled core with a majority loosely controlled) They are very secretive of the nature of their society back home.
 
-Living Weapons:
-Ships crewed by Acirema will gain a +1 bonus to their [[encyclopedia SHIELDS_TITLE]], even if the ship itself has no shield.
-
 "Homeworld"
 Portal is a Radiated world close to an unusually bright Blue Giant Star, with a connection to another universe. It is thought that Precursor testing may have opened the connection, and caused the star to change. There is suspicion that there may have been intelligent life on Portal, and they were destroyed by the Acirema when the connection opened (either due to research or advanced weapons use).
 
 Reason for staying
-They can't stay here long enough to actually move to another planet and still survive.'''
+They can't stay here long enough to actually move to another planet and still survive.
+'''
 
 SP_OURBOOLS
 Ourbools
