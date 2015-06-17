@@ -1920,7 +1920,7 @@ BuildingType
         Not Contains Building name = "BLD_CONC_CAMP"
         Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
         Not Enqueued type = Building name = "BLD_CONC_CAMP"
-        TargetPopulation low = 1
+        Species
     ]
     EnqueueLocation = And [
         Planet
@@ -1930,7 +1930,7 @@ BuildingType
         Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
         Not Enqueued type = Building name = "BLD_EVACUATION"
         Not Enqueued type = Building name = "BLD_CONC_CAMP"
-        TargetPopulation low = 1        
+        Species
     ]
     effectsgroups = [
         EffectsGroup            // add population to connected plants with room and suitable species

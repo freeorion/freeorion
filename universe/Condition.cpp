@@ -3741,6 +3741,8 @@ bool Condition::Species::SourceInvariant() const {
 
 std::string Condition::Species::Description(bool negated/* = false*/) const {
     std::string values_str;
+    if (m_names.empty())
+        values_str = "(" + UserString("CONDITION_ANY") +")";
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
                         UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
