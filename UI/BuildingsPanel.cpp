@@ -406,10 +406,6 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         return;
     }
 
-    if (!building->OwnedBy(empire_id) || !m_order_issuing_enabled) {
-        return;
-    }
-
     GG::MenuItem menu_contents;
 
     if (!building->OrderedScrapped()) {
@@ -419,6 +415,14 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         // create popup menu with "Cancel Scrap" option
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), 4, false, false));
     }
+
+    const std::string& building_type = building->BuildingTypeName();
+    const BuildingType* bt = GetBuildingType(building_type);
+    if (bt) {
+        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
+        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
+    }
+
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -442,6 +446,11 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
                 HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
             break;
             }
+        }
+
+        case 5: { // pedia lookup building type
+            ClientUI::GetClientUI()->ZoomToBuildingType(building_type);
+            break;
         }
 
         default:
