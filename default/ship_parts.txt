@@ -1007,7 +1007,7 @@ Part
     buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 9
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
@@ -1034,6 +1034,15 @@ Part
             ]
             stackinggroup = "SP_KRILL_SPAWN_STACK"
             effects = CreateShip designname = "SM_KRILL_1"
+        
+        EffectsGroup
+            scope = Source
+            activation = And [
+                            Not DesignHasPartClass Low=1 High=999 Class=Stealth
+                            Not Armed
+                        ]
+            effects = SetStealth value = Value + 60
+    ]
             
     icon = ""
 
