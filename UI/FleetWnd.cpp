@@ -2370,9 +2370,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
     }
 
-    if (ship->OwnedBy(client_empire_id)
-        || ClientPlayerIsModerator())
-    {
+    if (ship->OwnedBy(client_empire_id) || ClientPlayerIsModerator()) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
     }
 
