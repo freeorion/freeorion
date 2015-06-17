@@ -90,6 +90,8 @@ ShipDesign
         "SR_WEAPON_1_1"
         ""
         "AR_PRECURSOR_PLATE"
+        ""
+        ""
         "SH_DEFLECTOR"
     ]
     icon = "icons/monsters/maintenance_ship.png"
