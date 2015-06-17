@@ -857,6 +857,7 @@ Part
         EffectsGroup    // players can order death spores used on enemies
             scope = And [
                 Planet
+                Species
                 InSystem id = Source.SystemID
                 OrderedBombardedBy condition = Source
                 Or [
@@ -878,6 +879,7 @@ Part
         EffectsGroup    // monsters use death spores on player planets
             scope = And [
                 Planet
+                Species
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
@@ -910,6 +912,7 @@ Part
         EffectsGroup    // players can order terminators used on enemies
             scope = And [
                 Planet
+                Species
                 InSystem id = Source.SystemID
                 OrderedBombardedBy condition = Source
                 Or [
@@ -931,6 +934,7 @@ Part
         EffectsGroup    // monsters use terminators on player planets
             scope = And [
                 Planet
+                Species
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
