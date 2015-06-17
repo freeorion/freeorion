@@ -96,7 +96,7 @@ Species
                     ]
                 ]
             ]
-            effects = CreateShip designname = "SM_ACIREMA_GUARD"
+            effects = CreateShip designname = "SM_ACIREMA_GUARD" species = "SP_ACIREMA"
 
         EffectsGroup
             scope = And [
