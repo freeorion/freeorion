@@ -832,23 +832,25 @@ class ShipDesigner(object):
             """
             for token, value in tokendict.items():
                 print token, value
-                if token == "REPAIR_PER_TURN":
+                if token == AIDependencies.REPAIR_PER_TURN:
                     self.repair_per_turn += min(value, self.structure)
-                elif token == "FUEL_PER_TURN":
-                    self.fuel_per_turn += value
-                elif token == "STEALTH_MODIFIER":
+                elif token == AIDependencies.FUEL_PER_TURN:
+                    self.fuel_per_turn = max(self.fuel_per_turn+value, self.fuel)
+                elif token == AIDependencies.STEALTH_MODIFIER:
                     self.stealth += value
-                elif token == "ASTEROID_STEALTH":
+                elif token == AIDependencies.ASTEROID_STEALTH:
                     self.asteroid_stealth += value
-                elif token == "SHIELDS":
+                elif token == AIDependencies.SHIELDS:
                     self.shields += value
-                elif token == "DETECTION":
+                elif token == AIDependencies.DETECTION:
                     self.detection += value
-                elif token == "ORGANIC_GROWTH":
+                elif token == AIDependencies.ORGANIC_GROWTH:
                     self.organic_growth += value[0]
                     self.maximum_organic_growth += value[1]
-                elif token == "SOLAR_STEALTH":
+                elif token == AIDependencies.SOLAR_STEALTH:
                     self.solar_stealth = max(self.solar_stealth, value)
+            if AIDependencies.DETECTION not in tokendict:
+                self.detection += AIDependencies.BASE_DETECTION
 
         if self.hull.name not in AIDependencies.HULL_EFFECTS:
             print self.hull.name, "does not have known effects"
