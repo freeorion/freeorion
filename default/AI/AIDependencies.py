@@ -1,10 +1,10 @@
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
 metabolismBoostMap = {"ORGANIC": ["FRUIT_SPECIAL", "PROBIOTIC_SPECIAL", "SPICE_SPECIAL"],
-                     "LITHIC": ["CRYSTALS_SPECIAL", "ELERIUM_SPECIAL", "MINERALS_SPECIAL"],
-                     "ROBOTIC": ["MONOPOLE_SPECIAL", "POSITRONIUM_SPECIAL", "SUPERCONDUCTOR_SPECIAL"],
-                     "SELF_SUSTAINING": []
-                     }
+                      "LITHIC": ["CRYSTALS_SPECIAL", "ELERIUM_SPECIAL", "MINERALS_SPECIAL"],
+                      "ROBOTIC": ["MONOPOLE_SPECIAL", "POSITRONIUM_SPECIAL", "SUPERCONDUCTOR_SPECIAL"],
+                      "SELF_SUSTAINING": []
+                      }
 
 metabolismBoosts = {}
 for metab, boosts in metabolismBoostMap.items():
@@ -26,7 +26,7 @@ supply_by_size = {fo.planetSize.tiny: 2,
                   fo.planetSize.gasGiant: -1
                   }
 
-SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL':{-1:1}}
+SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL': {-1: 1}}
 
 # building supply bonuses are keyed by planet size; key -1 stands for any planet size
 building_supply = {"BLD_IMPERIAL_PALACE": {-1: 2},
@@ -58,7 +58,7 @@ DEFENSE_REGEN_1_TECH = "DEF_DEFENSE_NET_REGEN_1"
 PROT_FOCUS_MULTIPLIER = 2.0
 
 
-# ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time, system)
+# ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
 # not currently determined dynamically because it is initially used in a location-independent fashion
 # note that BLD_SHIPYARD_BASE is not an absolute prereq for BLD_NEUTRONIUM_FORGE, but is a practical one
 SHIP_FACILITIES = {
@@ -83,4 +83,55 @@ SYSTEM_SHIP_FACILITIES = {
     "BLD_SHIPYARD_AST_REF",
 }
 
+FULL_REPAIR = 1e6  # arbitrary large number higher than any structure.
+FULL_FUEL = 1e6
+BASE_DETECTION = 25
 
+# known tokens the AI can handle
+REPAIR_PER_TURN = "REPAIR_PER_TURN"
+FUEL_PER_TURN = "FUEL_PER_TURN"
+STEALTH_MODIFIER = "STEALTH_MODIFIER"
+ASTEROID_STEALTH = "ASTEROID_STEALTH"
+SOLAR_STEALTH = "SOLAR_STEALTH"
+SHIELDS = "SHIELDS"
+DETECTION = "DETECTION"                 # do only specify if irregular detection
+ORGANIC_GROWTH = "ORGANIC_GROWTH"       # structure for value is (per_turn, maximum)
+
+HULL_EFFECTS = {
+    # Robotic line
+    "SH_ROBOTIC": {REPAIR_PER_TURN: 2},
+    "SH_SPATIAL_FLUX": {STEALTH_MODIFIER: -30},
+    "SH_NANOROBOTIC": {REPAIR_PER_TURN: FULL_REPAIR},
+    "SH_LOGISTICS_FACILITATOR": {REPAIR_PER_TURN: FULL_REPAIR},
+    # Asteroid line
+    "SH_SMALL_ASTEROID": {ASTEROID_STEALTH: 20},
+    "SH_ASTEROID": {ASTEROID_STEALTH: 20},
+    "SH_HEAVY_ASTEROID": {ASTEROID_STEALTH: 20},
+    "SH_SMALL_CAMOUFLAGE_ASTEROID": {ASTEROID_STEALTH: 20},
+    "SH_CAMOUFLAGE_ASTEROID": {ASTEROID_STEALTH: 40},
+    "SH_CRYSTALLIZED_ASTEROID": {ASTEROID_STEALTH: 20},
+    "SH_MINIASTEROID_SWARM": {ASTEROID_STEALTH: 20, SHIELDS: 5},
+    "SH_SCATTERED_ASTEROID": {ASTEROID_STEALTH: 40, SHIELDS: 3},
+    # Organic line
+    "SH_ORGANIC": {REPAIR_PER_TURN: 2, FUEL_PER_TURN: 0.2, DETECTION: 10, ORGANIC_GROWTH: (0.2, 5)},
+    "SH_ENDOMORPHIC": {DETECTION: 50, ORGANIC_GROWTH: (0.5, 15)},
+    "SH_SYMBIOTIC": {REPAIR_PER_TURN: 2, FUEL_PER_TURN: 0.2, DETECTION: 50, ORGANIC_GROWTH: (0.2, 10)},
+    "SH_PROTOPLASMIC": {REPAIR_PER_TURN: 2, FUEL_PER_TURN: 0.2, DETECTION: 50, ORGANIC_GROWTH: (0.5, 25)},
+    "SH_ENDOSYMBIOTIC": {REPAIR_PER_TURN: 2, FUEL_PER_TURN: 0.2, DETECTION: 50, ORGANIC_GROWTH: (0.5, 15)},
+    "SH_RAVENOUS": {DETECTION: 75, ORGANIC_GROWTH: (0.5, 20)},
+    "SH_BIOADAPTIVE": {REPAIR_PER_TURN: FULL_REPAIR, FUEL_PER_TURN: 0.2,
+                       DETECTION: 75, ORGANIC_GROWTH: (0.5, 25)},
+    "SH_SENTIENT": {REPAIR_PER_TURN: 2, FUEL_PER_TURN: 0.2, DETECTION: 70,
+                    ORGANIC_GROWTH: (1, 45), STEALTH_MODIFIER: 20},
+    # Energy Line
+    "SH_SOLAR": {SOLAR_STEALTH: 120, FUEL_PER_TURN: FULL_FUEL}
+}
+
+PART_EFFECTS = {
+    "SH_MULTISPEC": {SOLAR_STEALTH: 60},
+    "FU_TRANSPATIAL_DRIVE": {},  # not supported yet
+    "FU_RAMSCOOP": {FUEL_PER_TURN: 0.1},
+    "FU_ZERO_FUEL": {FUEL_PER_TURN: FULL_FUEL},
+    "SP_DISTORTION_MODULATOR": {},  # not supported yet
+    "SH_ROBOTIC_INTERFACE_SHIELDS": {},  # not supported yet
+}
