@@ -6367,8 +6367,14 @@ planet size
 DESC_VAR_PLANETTYPE
 planet type
 
+DESC_VAR_ORIGINALTYPE
+original planet type
+
 DESC_VAR_NEXTBETTERPLANETTYPE
 next better planet type for planet's species
+
+DESC_VAR_DISTANCEFROMORIGINALTYPE
+distance from original planet type
 
 DESC_VAR_PLANETENVIRONMENT
 planet environment
