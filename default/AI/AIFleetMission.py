@@ -76,7 +76,13 @@ class AIFleetMission(object):
 
     def add_target(self, mission_type, target):
         targets = self.get_targets(mission_type)
-        if not target in targets:
+        if target not in targets:
+            fo.issueRenameOrder(self.target_id,
+                                'Fleet %4d (%s: %s %s)' % (
+                                self.target_id,
+                                EnumsAI.AIFleetMissionType.name(mission_type).capitalize(),
+                                EnumsAI.TargetType().name(target.target_type), target.target_id,
+                                ))
             targets.append(target)
 
     def _remove_target(self, mission_type, target):
