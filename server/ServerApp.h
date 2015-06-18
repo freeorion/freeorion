@@ -182,6 +182,9 @@ private:
 
     void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
+    /** Called when server process receive termination signal */
+    void    SignalHandler(const boost::system::error_code& error, int signal_number);
+
 
     /** Clears any old game stored orders, victors or eliminated players, ads
       * empires to turn processing list, does start-of-turn empire supply and
@@ -233,6 +236,7 @@ private:
     void    HandleDiplomaticMessageChange(int empire1_id, int empire2_id);
 
     boost::asio::io_service m_io_service;
+    boost::asio::signal_set m_signals;
 
     Universe                m_universe;
     EmpireManager           m_empires;
