@@ -12,11 +12,11 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 
 #include "../util/Logger.h"
 #include "../util/Random.h"
 
-#include "../server/ServerApp.h"
 #include "../network/Message.h"
 
 #include <boost/make_shared.hpp>
