@@ -86,7 +86,8 @@ private:
     GG::StaticGraphic*              m_tiny_graphic;             //!< non-scaled texture shown when zoomed far enough out
     GG::DynamicGraphic*             m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
     GG::DynamicGraphic*             m_tiny_selection_indicator; //!< non-scaled indicator shown when showing tiny graphic
-    GG::StaticGraphic*              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system
+    GG::StaticGraphic*              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system and the system has been explored by the client empire
+    GG::StaticGraphic*              m_mouseover_unexplored_indicator; //!< shown when the mouse cursor is over the system and teh system is unexplored by the client empire
     GG::StaticGraphic*              m_tiny_mouseover_indicator; //!< non-scaled indicator shown when showing tiny graphic
     bool                            m_selected;                 //!< is this icon presently selected / should it show m_selected_indicator
     OwnerColoredSystemName*         m_colored_name;             //!< the control that holds the name of the system

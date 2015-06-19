@@ -244,6 +244,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_selection_indicator(0),
     m_tiny_selection_indicator(0),
     m_mouseover_indicator(0),
+    m_mouseover_unexplored_indicator(0),
     m_tiny_mouseover_indicator(0),
     m_selected(false),
     m_colored_name(0),
@@ -302,6 +303,13 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     texture_height = mouseover_texture->DefaultHeight();
     m_mouseover_indicator = new GG::StaticGraphic(mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
+
+    // unexplored mouseover indicator graphic
+    boost::shared_ptr<GG::Texture> unexplored_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_unexplored.png");
+    texture_width = unexplored_mouseover_texture->DefaultWidth();
+    texture_height = unexplored_mouseover_texture->DefaultHeight();
+    m_mouseover_unexplored_indicator = new GG::StaticGraphic(unexplored_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_mouseover_unexplored_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // tiny mouseover indicator graphic
     boost::shared_ptr<GG::Texture> tiny_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
@@ -493,9 +501,17 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
         GG::Pt mouse_ind_ul(static_cast<GG::X>(middle.x - SEL_IND_SIZE.x / 2.0),
                             static_cast<GG::Y>(middle.y - SEL_IND_SIZE.y / 2.0));
-        m_mouseover_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
-    } else if (m_mouseover_indicator) {
-        DetachChild(m_mouseover_indicator);
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        Empire* this_empire = GetEmpire(client_empire_id);
+        if (!this_empire || this_empire->HasExploredSystem(m_system_id))
+            m_mouseover_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
+        else
+            m_mouseover_unexplored_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
+    } else {
+        if (m_mouseover_indicator)
+            DetachChild(m_mouseover_indicator);
+        if (m_mouseover_unexplored_indicator)
+            DetachChild(m_mouseover_unexplored_indicator);
     }
 
     // tiny mouseover indicator - attach / detach / show / hide done by MouseEnter and MouseLeave
@@ -570,10 +586,20 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
                                               (Value(Width()) < m_tiny_mouseover_indicator->Width());
     // indicate mouseover
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
-        AttachChild(m_mouseover_indicator);
-        MoveChildUp(m_mouseover_indicator);
-    } else if (m_mouseover_indicator) {
-        DetachChild(m_mouseover_indicator);
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        Empire* this_empire = GetEmpire(client_empire_id);
+        if (!this_empire ||  this_empire->HasExploredSystem(m_system_id)) {
+            AttachChild(m_mouseover_indicator);
+            MoveChildUp(m_mouseover_indicator);
+        } else {
+            AttachChild(m_mouseover_unexplored_indicator);
+            MoveChildUp(m_mouseover_unexplored_indicator);
+        }
+    } else {
+        if (m_mouseover_indicator)
+            DetachChild(m_mouseover_indicator);
+        if (m_mouseover_unexplored_indicator)
+            DetachChild(m_mouseover_unexplored_indicator);
     }
     if (m_tiny_mouseover_indicator && USE_TINY_MOUSEOVER_INDICATOR) {
         AttachChild(m_tiny_mouseover_indicator);
@@ -595,6 +621,8 @@ void SystemIcon::MouseLeave() {
     // un-indicate mouseover
     if (m_mouseover_indicator)
         DetachChild(m_mouseover_indicator);
+    if (m_mouseover_unexplored_indicator)
+        DetachChild(m_mouseover_unexplored_indicator);
     if (m_tiny_mouseover_indicator)
         DetachChild(m_tiny_mouseover_indicator);
 
