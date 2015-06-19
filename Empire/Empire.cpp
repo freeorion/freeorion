@@ -2833,7 +2833,7 @@ void Empire::CheckProductionProgress() {
         // completions on the same turn from going through
         if (!this->ProducibleItem(elem.item, elem.location)) {
             DebugLogger() << "Location test failed for " << build_description << " at location " << build_location->Name();
-            break;
+            continue;
         }
 
 
