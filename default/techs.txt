@@ -1663,7 +1663,10 @@ Tech
     ]
     effectsgroups = 
         EffectsGroup
-            scope = OwnedBy empire = Source.Owner
+            scope = And [
+                        Species
+                        OwnedBy empire = Source.Owner
+                    ]
             effects = SetTargetConstruction value = Value + 10
     graphic = "icons/tech/n-dimensional_structures.png"
 
