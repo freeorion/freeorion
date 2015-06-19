@@ -117,6 +117,7 @@ ServerSaveGameData::ServerSaveGameData(int current_turn, const std::map<int, std
 ////////////////////////////////////////////////
 ServerApp::ServerApp() :
     IApp(),
+    m_signals(m_io_service, SIGINT, SIGTERM),
     m_networking(m_io_service,
                  boost::bind(&ServerApp::HandleNonPlayerMessage, this, _1, _2),
                  boost::bind(&ServerApp::HandleMessage, this, _1, _2),
@@ -135,6 +136,8 @@ ServerApp::ServerApp() :
     GG::Connect(Empires().DiplomaticMessageChangedSignal, &ServerApp::HandleDiplomaticMessageChange,this);
 
     PythonInit();
+
+    m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
 }
 
 ServerApp::~ServerApp() {
@@ -146,6 +149,14 @@ ServerApp::~ServerApp() {
 
 void ServerApp::operator()()
 { Run(); }
+
+void ServerApp::SignalHandler(const boost::system::error_code& error, int signal_number)
+{
+    if(! error)
+    {
+        Exit(1);
+    }
+}
 
 void ServerApp::Exit(int code) {
     DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
