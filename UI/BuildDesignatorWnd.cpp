@@ -99,12 +99,12 @@ namespace {
 
             const Empire* empire = GetEmpire(m_empire_id);
 
-            boost::shared_ptr<GG::Texture>                  texture;
-            std::string                                     name_text;
-            std::string                                     cost_text;
-            std::string                                     time_text;
-            std::string                                     desc_text;
-            std::vector<Condition::ConditionBase*>    location_conditions;
+            boost::shared_ptr<GG::Texture>          texture;
+            std::string                             name_text;
+            std::string                             cost_text;
+            std::string                             time_text;
+            std::string                             desc_text;
+            std::vector<Condition::ConditionBase*>  location_conditions;
 
             switch (m_item.build_type) {
             case BT_BUILDING: {
@@ -148,17 +148,16 @@ namespace {
             DoLayout();
         }
 
-        bool                            m_initialized;
-
+        bool                                    m_initialized;
         const ProductionQueue::ProductionItem   m_item;
         int                                     m_empire_id;
         int                                     m_location_id;
 
-        GG::StaticGraphic* m_icon;
-        GG::Label*         m_name;
-        GG::Label*         m_cost;
-        GG::Label*         m_time;
-        GG::Label*         m_desc;
+        GG::StaticGraphic*  m_icon;
+        GG::Label*          m_name;
+        GG::Label*          m_cost;
+        GG::Label*          m_time;
+        GG::Label*          m_desc;
     };
 
     TemporaryPtr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
@@ -200,7 +199,7 @@ namespace {
     }
 
     std::string EnqueueAndLocationConditionDescription(const std::string& building_name, int candidate_object_id,
-                                             int empire_id)
+                                                       int empire_id)
     {
         std::vector<Condition::ConditionBase*> enqueue_conditions;
         Condition::OwnerHasBuildingTypeAvailable bld_avail_cond(building_name);
@@ -242,8 +241,7 @@ namespace {
     }
 
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
-                                                                    int candidate_object_id,
-                                                                    int empire_id)
+                                                                    int candidate_object_id, int empire_id)
     {
         if (item.build_type == BT_BUILDING) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
