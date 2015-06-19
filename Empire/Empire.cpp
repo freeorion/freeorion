@@ -2800,6 +2800,42 @@ void Empire::CheckProductionProgress() {
         elem.progress += elem.allocated_pp;   // add allocated PP to queue item
         elem.progress_memory = elem.progress;
         elem.blocksize_memory = elem.blocksize;
+        
+        std::string build_description;
+        switch (elem.item.build_type) {
+            case BT_BUILDING: {
+                build_description = "BuildingType " + elem.item.name;
+                break;
+            }
+            case BT_SHIP: {
+                build_description = "Ships(s) with design id " + boost::lexical_cast<std::string>(elem.item.design_id);
+                break;
+            }
+            default: 
+                build_description = "unknown build type";
+        }
+
+        TemporaryPtr<UniverseObject> build_location = GetUniverseObject(elem.location);
+        if (!build_location || (elem.item.build_type == BT_BUILDING && build_location->ObjectType() != OBJ_PLANET)) {
+            ErrorLogger() << "Couldn't get valid build location for completed " << build_description;
+            continue;
+        }
+        TemporaryPtr<System> system = GetSystem(build_location->SystemID());
+        // TODO: account for shipyards and/or other ship production
+        // sites that are in interstellar space, if needed
+        if (!system) {
+            ErrorLogger() << "Empire::CheckProductionProgress couldn't get system for producing new " << build_description;
+            continue;
+        }
+
+        // check location condition before each item is created, so
+        // that items being produced can prevent subsequent
+        // completions on the same turn from going through
+        if (!this->ProducibleItem(elem.item, elem.location)) {
+            DebugLogger() << "Location test failed for " << build_description << " at location " << build_location->Name();
+            continue;
+        }
+
 
         // if accumulated PP is sufficient, the item is complete
         if (item_cost - EPSILON <= elem.progress) {
@@ -2815,24 +2851,6 @@ void Empire::CheckProductionProgress() {
             switch (elem.item.build_type) {
             case BT_BUILDING: {
                 TemporaryPtr<Planet> planet = GetPlanet(elem.location);
-                if (!planet) {
-                    ErrorLogger() << "Couldn't get planet with id  " << elem.location << " on which to create building";
-                    break;
-                }
-
-                TemporaryPtr<System> system = GetSystem(planet->SystemID());
-                if (!system) {
-                    ErrorLogger() << "Empire::CheckProductionProgress couldn't get system for producing new building";
-                    break;
-                }
-
-                // check location condition before each building is created, so
-                // that buildings being produced can prevent subsequent
-                // buildings completions on the same turn from going through
-                if (!this->ProducibleItem(elem.item, elem.location)) {
-                    DebugLogger() << "Location test failed for building " << elem.item.name << " on planet " << planet->Name();
-                    break;
-                }
 
                 // create new building
                 TemporaryPtr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
@@ -2854,25 +2872,6 @@ void Empire::CheckProductionProgress() {
             case BT_SHIP: {
                 if (elem.blocksize < 1)
                     break;   // nothing to do!
-
-                TemporaryPtr<UniverseObject> build_location = GetUniverseObject(elem.location);
-                if (!build_location) {
-                    ErrorLogger() << "Couldn't get build location for completed ship";
-                    break;
-                }
-                TemporaryPtr<System> system = GetSystem(build_location->SystemID());
-                // TODO: account for shipyards and/or other ship production
-                // sites that are in interstellar space, if needed
-                if (!system) {
-                    ErrorLogger() << "Empire::CheckProductionProgress couldn't get system for producing new ship";
-                    break;
-                }
-
-                // check location condition before each ship is created, so
-                // that ships being produced can prevent subsequent
-                // ship completions on the same turn from going through
-                if (!this->ProducibleItem(elem.item, elem.location))
-                    break;
 
                 // get species for this ship.  use popcenter species if build
                 // location is a popcenter, or use ship species if build
