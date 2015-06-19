@@ -330,6 +330,14 @@ public:
     }
 
     void Update(double zoom_factor, std::set<int>& fleet_ids, int sel_system_id) {
+        // The uu length of the map scale line is generally adjusted in this routine up or down by factors of two or five as
+        // the zoom_factor changes, so that it's pixel length on the screen is kept to a reasonable distance.  We also add
+        // additional stopping points for the map scale to augment the usefulness of the linked map scale circle (whose
+        // radius is the same as the map scale length).  These additional stopping points include the speeds and detection
+        // ranges of any selected fleets, and the detection ranges of all planets in the currently selected system, 
+        // provided such values are at least 20 uu.
+        
+        // get selected fleet speeds and detection ranges
         std::set<double> fixed_distances;
         for (std::set<int>::iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
             if (TemporaryPtr<const Fleet> fleet = GetFleet(*it)) {
@@ -347,6 +355,7 @@ public:
                 }
             }
         }
+        // get detection ranges for planets in the selected system (if any)
         if (const TemporaryPtr<const System> system = GetSystem(sel_system_id)) {
             for (std::set< int >::iterator pid_it = system->PlanetIDs().begin(); pid_it != system->PlanetIDs().end(); pid_it++) {
                 if (const TemporaryPtr< Planet > planet = GetPlanet(*pid_it)) {
@@ -368,26 +377,39 @@ public:
 
         // select an actual shown length in universe units by reducing max_shown_length to a nice round number,
         // where nice round numbers are numbers beginning with 1, 2 or 5
+        // We start by getting the highest power of 10 that is less than the max_shown_length,
+        // and then we step that initial value up, either by a factor of 2 or 5 if that
+        // will still fit, or to one of the values taken from fleets and planets
+        // if they are at least as reat as the standard value but not larger than the max_shown_length
 
         // get appropriate power of 10
         double pow10 = floor(log10(max_shown_length));
         double init_length = std::pow(10.0, pow10);
         double shown_length = init_length;
 
+        // determin a preliminary shown length
         // see if next higher multiples of 5 or 2 can be used
         if (shown_length * 5.0 <= max_shown_length)
             shown_length *= 5.0;
         else if (shown_length * 2.0 <= max_shown_length)
             shown_length *= 2.0;
         
-        DebugLogger()  << "MapScaleLine::Update maxLen: " << max_shown_length
-                                << "; init_length: " << init_length
-                                << "; shown_length: " << shown_length;
+        // DebugLogger()  << "MapScaleLine::Update maxLen: " << max_shown_length
+        //                        << "; init_length: " << init_length
+        //                        << "; shown_length: " << shown_length;
 
-        for (std::set<double>::iterator it = fixed_distances.begin(); it != fixed_distances.end(); ++it) {
-            DebugLogger()  << " MapScaleLine::Update fleet speed: " << *it;
-        }
+        // for (std::set<double>::iterator it = fixed_distances.begin(); it != fixed_distances.end(); ++it) {
+        //     DebugLogger()  << " MapScaleLine::Update fleet speed: " << *it;
+        // }
+        
+        // if there are additional scale steps to check (from fleets & planets)
         if (!fixed_distances.empty()) {
+            // check if the set of fixed distances includes a value that is in between the max_shown_length
+            // and one zoom step smaller than the max shown length.  If so, use that for the shown_length;
+            // otherwise, check if the set of fixed distances includes a value that is greater than the
+            // shown_length determined above but still less than the max_shown_length, and if so then use that value.
+            // Note: if the ZOOM_STEP_SIZE is too large, then potential values in the set of fixed distances
+            // might get skipped over.
             std::set<double>::iterator distance_ub = fixed_distances.upper_bound(max_shown_length/ZOOM_STEP_SIZE);
             if (distance_ub != fixed_distances.end() && *distance_ub <= max_shown_length) {
                 DebugLogger()  << " MapScaleLine::Update distance_ub: " << *distance_ub;
