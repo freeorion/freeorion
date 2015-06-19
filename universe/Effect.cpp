@@ -1961,10 +1961,16 @@ void AddSpecial::Execute(const ScriptingContext& context) const {
 }
 
 std::string AddSpecial::Description() const {
-    std::string name = (m_name ? m_name->Description() : "");
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
+
     std::string capacity = (m_capacity ? m_capacity->Description() : "0.0");
 
-    return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % UserString(name) % capacity);
+    return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % name_str % capacity);
 }
 
 std::string AddSpecial::Dump() const {
@@ -2005,8 +2011,13 @@ void RemoveSpecial::Execute(const ScriptingContext& context) const {
 }
 
 std::string RemoveSpecial::Description() const {
-    std::string name = (m_name ? m_name->Description() : "");
-    return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % UserString(name));
+    std::string name_str;
+    if (m_name) {
+        name_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
+    return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % name_str);
 }
 
 std::string RemoveSpecial::Dump() const {

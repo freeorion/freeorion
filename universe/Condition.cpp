@@ -2126,8 +2126,11 @@ bool Condition::HasSpecial::SourceInvariant() const
 
 std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
     std::string name_str;
-    if (m_name)
+    if (m_name) {
         name_str = m_name->Description();
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    }
 
     if (m_since_turn_low || m_since_turn_high) {
         // turn range has been specified; must indicate in description
@@ -2142,7 +2145,7 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_SPECIAL_TURN_RANGE")
             : UserString("DESC_SPECIAL_TURN_RANGE_NOT"))
-                % UserString(name_str)
+                % name_str
                 % low_str
                 % high_str);
     }
@@ -2160,7 +2163,7 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_SPECIAL_CAPACITY_RANGE")
             : UserString("DESC_SPECIAL_CAPACITY_RANGE_NOT"))
-                % UserString(name_str)
+                % name_str
                 % low_str
                 % high_str);
     }
@@ -2168,7 +2171,7 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_SPECIAL")
         : UserString("DESC_SPECIAL_NOT"))
-                % UserString(name_str));
+                % name_str);
 }
 
 std::string Condition::HasSpecial::Dump() const {
@@ -2307,7 +2310,7 @@ std::string Condition::HasTag::Description(bool negated/* = false*/) const {
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_HAS_TAG")
         : UserString("DESC_HAS_TAG_NOT"))
-        % UserString(name_str));
+        % name_str);
 }
 
 std::string Condition::HasTag::Dump() const {
@@ -4952,7 +4955,7 @@ std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_PREDEFINED_SHIP_DESIGN")
         : UserString("DESC_PREDEFINED_SHIP_DESIGN_NOT"))
-        % UserString(name_str));
+        % name_str);
 }
 
 std::string Condition::PredefinedShipDesign::Dump() const {
@@ -5956,7 +5959,7 @@ std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_OWNER_HAS_TECH")
         : UserString("DESC_OWNER_HAS_TECH"))
-        % UserString(name_str));
+        % name_str);
 }
 
 std::string Condition::OwnerHasTech::Dump() const {
