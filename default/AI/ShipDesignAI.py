@@ -1678,7 +1678,7 @@ class ScoutShipDesigner(ShipDesigner):
     """Scout ship class"""
     basename = "Scout"
     description = "For exploration and reconnaissance"
-    useful_part_classes = DETECTION | FUEL
+    useful_part_classes = DETECTION | FUEL | ENGINES
     NAMETABLE = "AI_SHIPDESIGN_NAME_SCOUT"
     NAME_THRESHOLDS = sorted([0])
     filter_useful_parts = True
