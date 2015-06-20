@@ -420,7 +420,7 @@ Special
                 SetDetection value = Value + 30
 
                 //Regeneration
-                SetShield value = Value + 0.25*Target.Construction
+                SetShield value = Value + min(5.0, max(Value, 0.25*Target.Construction))
                 SetDefense value = Value + 1
             ]
 
