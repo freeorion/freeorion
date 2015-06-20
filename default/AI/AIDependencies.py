@@ -96,7 +96,7 @@ SOLAR_STEALTH = "SOLAR_STEALTH"
 SHIELDS = "SHIELDS"
 DETECTION = "DETECTION"                 # do only specify if irregular detection
 ORGANIC_GROWTH = "ORGANIC_GROWTH"       # structure for value is (per_turn, maximum)
-
+PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
 HULL_EFFECTS = {
     # Robotic line
     "SH_ROBOTIC": {REPAIR_PER_TURN: 2},
@@ -134,4 +134,6 @@ PART_EFFECTS = {
     "FU_ZERO_FUEL": {FUEL_PER_TURN: FULL_FUEL},
     "SP_DISTORTION_MODULATOR": {},  # not supported yet
     "SH_ROBOTIC_INTERFACE_SHIELDS": {},  # not supported yet
+    PART_KRILL_SPAWNER: {STEALTH_MODIFIER: 60}
 }
+

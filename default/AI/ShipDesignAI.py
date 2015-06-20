@@ -59,7 +59,9 @@ ENGINES = frozenset({fo.shipPartClass.speed})
 TROOPS = frozenset({fo.shipPartClass.troops})
 WEAPONS = frozenset({fo.shipPartClass.shortRange, fo.shipPartClass.missiles,
                      fo.shipPartClass.fighters, fo.shipPartClass.pointDefense})
-ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS, COLONISATION, ENGINES, TROOPS})
+GENERAL = frozenset({fo.shipPartClass.general})
+ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS,
+                              COLONISATION, ENGINES, TROOPS, GENERAL})
 
 # Prefixes for the test ship designs
 TESTDESIGN_NAME_BASE = "AI_TESTDESIGN"
