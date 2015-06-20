@@ -517,7 +517,7 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg) {
     for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_lobby_data.m_players.begin();
          it != m_lobby_data.m_players.end(); ++it)
     {
-        if (it->first == HumanClientApp::GetApp()->PlayerID() && it->first != Networking::INVALID_PLAYER_ID) {
+        if (it->first == player_id && it->first != Networking::INVALID_PLAYER_ID) {
             player_name = it->second.m_player_name;
             break;
         }
