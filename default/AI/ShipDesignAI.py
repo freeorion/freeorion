@@ -1719,6 +1719,49 @@ class ScoutShipDesigner(ShipDesigner):
         return detection_factor * fuel_factor * speed_factor / self.production_cost
 
 
+class KrillSpawnerShipDesigner(ShipDesigner):
+    """Stealthy ship used for harassing the enemy using the Krill Spawner part."""
+    basename = "Krill Spawner"
+    description = "Stealthy ship that unleashes chaos in the enemy backlines."
+    useful_part_classes = DETECTION | FUEL | ENGINES | GENERAL | ARMOUR  # no cloak parts as non-stacking with Krillspawner
+    NAMETABLE = "AI_SHIPDESIGN_NAME_KRILLSPAWNER"
+    NAME_THRESHOLDS = sorted([0])
+    filter_useful_parts = True
+    filter_inefficient_parts = True
+
+    def __init__(self):
+        ShipDesigner.__init__(self)
+        self.additional_specifications.minimum_speed = 30
+        self.additional_specifications.minimum_fuel = 2
+
+    def _rating_function(self):
+        if AIDependencies.PART_KRILL_SPAWNER not in self.partnames:
+            return INVALID_DESIGN_RATING
+        structure_factor = (1 + self.structure - self._minimum_structure())**0.03  # nice to have but not too important
+        fuel_factor = self._effective_fuel()
+        speed_factor = 1 + (self.speed - self._minimum_speed())**0.1
+        stealth_factor = 1 + (self.stealth + self.asteroid_stealth / 2)  # TODO: Adjust for enemy detection strength
+        detection_factor = self.detection**1.5
+        return (structure_factor * fuel_factor * speed_factor *
+                stealth_factor * detection_factor / self.production_cost)
+
+    def _minimum_structure(self):
+        return 2 * self._effective_mine_damage() + 1
+
+    def _starting_guess(self, available_parts, num_slots):
+        # starting guess is a design completely empty except for the krill spawner part.
+        ret_val = (len(available_parts)+1)*[0]
+        if num_slots == 0:
+            return ret_val
+        if AIDependencies.PART_KRILL_SPAWNER not in available_parts:
+            ret_val[-1] = num_slots
+        else:
+            idx = available_parts.index(AIDependencies.PART_KRILL_SPAWNER)
+            ret_val[idx] = 1
+            ret_val[-1] = num_slots - 1
+        return ret_val
+
+
 def _get_planets_with_shipyard():
     """Get all planets with shipyards.
 

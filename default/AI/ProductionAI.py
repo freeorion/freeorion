@@ -35,6 +35,7 @@ design_cache = {}  # dict of tuples (rating,pid,designID,cost) sorted by rating 
 
 _CHAT_DEBUG = False
 
+
 def find_best_designs_this_turn():
     """Calculate the best designs for each ship class available at this turn."""
     pr = cProfile.Profile()
@@ -51,6 +52,7 @@ def find_best_designs_this_turn():
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST] = ShipDesignAI.OrbitalOutpostShipDesigner().optimize_design()
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_DEFENSE] = ShipDesignAI.OrbitalDefenseShipDesigner().optimize_design()
     design_cache[EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION] = ShipDesignAI.ScoutShipDesigner().optimize_design()
+    ShipDesignAI.KrillSpawnerShipDesigner().optimize_design()  # just designing it, building+mission not supported yet
     end = time.clock()
     print "DEBUG INFORMATION: The design evaluations took %f s" % (end-start)
     print "-----"
