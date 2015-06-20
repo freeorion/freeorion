@@ -93,6 +93,9 @@ namespace {
             sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIES"),
                 std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n",
                                "ENC_SPECIES")));
+            sorted_entries_list.insert(std::make_pair(UserString("ENC_HOMEWORLDS"),
+                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_HOMEWORLDS") + "\n",
+                               "ENC_HOMEWORLDS")));
             sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD_TYPE"),
                 std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD_TYPE") + "\n",
                                "ENC_FIELD_TYPE")));
@@ -208,6 +211,80 @@ namespace {
                     std::make_pair(LinkTaggedText(VarText::SPECIES_TAG, it->first) + "\n",
                                    it->first)));
             }
+
+        } else if (dir_name == "ENC_HOMEWORLDS") {
+            int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+            const SpeciesManager& species_manager = GetSpeciesManager();
+            for (SpeciesManager::iterator it = species_manager.begin();
+                 it != species_manager.end(); ++it)
+            {
+                Species* species = it->second;
+                std::set<int> known_homeworlds;
+                //std::string species_entry = UserString(it->first) + ":  ";
+                std::string species_entry;
+                std::string homeworld_info;
+                species_entry += LinkTaggedText(VarText::SPECIES_TAG, it->first) + " ";
+                // homeworld
+                if (species->Homeworlds().empty()) {
+                    continue;
+                } else {
+                    species_entry += "(" + boost::lexical_cast<std::string>(species->Homeworlds().size()) + "):  ";
+                    for (std::set<int>::const_iterator hw_it = species->Homeworlds().begin();
+                        hw_it != species->Homeworlds().end(); ++hw_it)
+                    {
+                        if (TemporaryPtr<const Planet> homeworld = GetPlanet(*hw_it)) {
+                            known_homeworlds.insert(*hw_it);
+                            // if known, add to beginning
+                            homeworld_info = LinkTaggedIDText(VarText::PLANET_ID_TAG, *hw_it, homeworld->PublicName(client_empire_id)) + "   " + homeworld_info;
+                        } else { 
+                            // add to end
+                            homeworld_info += UserString("UNKNOWN_PLANET") + "   ";
+                        }
+                    }
+                    species_entry += homeworld_info;
+                }
+
+                // occupied planets
+                std::vector<TemporaryPtr<Planet> > planets = Objects().FindObjects<Planet>();
+                std::vector<TemporaryPtr<const Planet> > species_occupied_planets;
+                for (std::vector<TemporaryPtr<Planet> >::const_iterator planet_it = planets.begin();
+                    planet_it != planets.end(); ++planet_it)
+                {
+                    TemporaryPtr<const Planet> planet = *planet_it;
+                    if ((planet->SpeciesName() == it->first) && (known_homeworlds.find(planet->ID()) == known_homeworlds.end()))
+                        species_occupied_planets.push_back(planet);
+                }
+                if (!species_occupied_planets.empty()) {
+                    if (species_occupied_planets.size() >= 5) {
+                        species_entry += "  |   " + boost::lexical_cast<std::string>(species_occupied_planets.size()) + UserString("OCCUPIED_PLANETS");
+                        continue;
+                    }
+                    species_entry += "  |   " + UserString("OCCUPIED_PLANETS") + ":  ";
+                    for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it =
+                            species_occupied_planets.begin();
+                        planet_it != species_occupied_planets.end(); ++planet_it)
+                    {
+                        TemporaryPtr<const Planet> planet = *planet_it;
+                        species_entry += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "   ";
+                    }
+                    species_entry += "";
+                }
+                sorted_entries_list.insert(std::make_pair(UserString(it->first),
+                    std::make_pair(species_entry + "\n", it->first)));
+            }
+            sorted_entries_list.insert(std::make_pair("⃠ ",
+                std::make_pair("\n\n", "  ")));
+            for (SpeciesManager::iterator it = species_manager.begin();
+                 it != species_manager.end(); ++it)
+            {
+                Species* species = it->second;
+                if (species->Homeworlds().empty()) {
+                    std::string species_entry = LinkTaggedText(VarText::SPECIES_TAG, it->first) + ":  ";
+                    species_entry += UserString("NO_HOMEWORLD");
+                    sorted_entries_list.insert(std::make_pair( "⃠⃠" + std::string( "⃠ ") + UserString(it->first),
+                        std::make_pair(species_entry + "\n", it->first)));
+                }
+            } 
 
         } else if (dir_name == "ENC_FIELD_TYPE") {
             const FieldTypeManager& fields_manager = GetFieldTypeManager();
@@ -729,7 +806,7 @@ namespace {
             dir_names.push_back("ENC_FLEET");           dir_names.push_back("ENC_PLANET");
             dir_names.push_back("ENC_BUILDING");        dir_names.push_back("ENC_SYSTEM");
             dir_names.push_back("ENC_FIELD");           dir_names.push_back("ENC_GRAPH");
-            dir_names.push_back("ENC_GALAXY_SETUP");
+            dir_names.push_back("ENC_GALAXY_SETUP");    dir_names.push_back("ENC_HOMEWORLDS");
         }
         return dir_names;
     }

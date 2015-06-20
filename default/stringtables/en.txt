@@ -3306,6 +3306,9 @@ ENC_SYSTEM
 ENC_FIELD
 [Game - Fields]
 
+ENC_HOMEWORLDS
+Species' Homeworlds
+
 ENC_INDEX
 Encyclopedia Index
 
@@ -4645,7 +4648,7 @@ HOMEWORLD
 Homeworld:
 
 NO_HOMEWORLD
-No Known Homeworld
+No Homeworld
 
 UNKNOWN_PLANET
 Unknown Planet
@@ -4663,7 +4666,7 @@ CAN_COLONIZE
 Can Colonize Planets
 
 OCCUPIED_PLANETS
-Occupied Planets:
+Occupied Planets
 
 ENVIRONMENTAL_PREFERENCES
 Environmental Preferences:
