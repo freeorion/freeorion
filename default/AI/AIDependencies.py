@@ -87,6 +87,9 @@ FULL_REPAIR = 1e6  # arbitrary large number higher than any structure.
 FULL_FUEL = 1e6
 BASE_DETECTION = 25
 
+
+PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
+
 # known tokens the AI can handle
 REPAIR_PER_TURN = "REPAIR_PER_TURN"
 FUEL_PER_TURN = "FUEL_PER_TURN"
@@ -96,7 +99,10 @@ SOLAR_STEALTH = "SOLAR_STEALTH"
 SHIELDS = "SHIELDS"
 DETECTION = "DETECTION"                 # do only specify if irregular detection
 ORGANIC_GROWTH = "ORGANIC_GROWTH"       # structure for value is (per_turn, maximum)
-PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
+STACKING_RULES = "STACKING_RULES"       # expects a list of stacking rules
+# stacking rules
+NO_EFFECT_WITH_CLOAKS = "NO_EFFECT_WITH_CLOAKS"
+
 HULL_EFFECTS = {
     # Robotic line
     "SH_ROBOTIC": {REPAIR_PER_TURN: 2},
@@ -134,6 +140,6 @@ PART_EFFECTS = {
     "FU_ZERO_FUEL": {FUEL_PER_TURN: FULL_FUEL},
     "SP_DISTORTION_MODULATOR": {},  # not supported yet
     "SH_ROBOTIC_INTERFACE_SHIELDS": {},  # not supported yet
-    PART_KRILL_SPAWNER: {STEALTH_MODIFIER: 60}
+    PART_KRILL_SPAWNER: {STEALTH_MODIFIER: 40, STACKING_RULES: [NO_EFFECT_WITH_CLOAKS]}
 }
 

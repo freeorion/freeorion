@@ -845,13 +845,14 @@ class ShipDesigner(object):
             :type tokendict: dict
             """
             for token, value in tokendict.items():
-                print token, value
                 if token == AIDependencies.REPAIR_PER_TURN:
                     self.repair_per_turn += min(value, self.structure)
                 elif token == AIDependencies.FUEL_PER_TURN:
                     self.fuel_per_turn = max(self.fuel_per_turn+value, self.fuel)
                 elif token == AIDependencies.STEALTH_MODIFIER:
-                    self.stealth += value
+                    if not (AIDependencies.NO_EFFECT_WITH_CLOAKS in tokendict.get(AIDependencies.STACKING_RULES, [])
+                            and self._partclass_in_design(STEALTH)):
+                        self.stealth += value
                 elif token == AIDependencies.ASTEROID_STEALTH:
                     self.asteroid_stealth += value
                 elif token == AIDependencies.SHIELDS:
@@ -867,10 +868,8 @@ class ShipDesigner(object):
                 self.detection += AIDependencies.BASE_DETECTION
 
         if self.hull.name not in AIDependencies.HULL_EFFECTS:
-            print self.hull.name, "does not have known effects"
             self.detection += AIDependencies.BASE_DETECTION
         else:
-            print self.hull.name
             parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name])
 
         for partname in set(self.partnames):
@@ -1300,6 +1299,15 @@ class ShipDesigner(object):
 
     def _effective_mine_damage(self):
         return self.additional_specifications.enemy_mine_dmg -self.repair_per_turn
+
+    def _partclass_in_design(self, partclass):
+        """Check if partclass is used in current design.
+
+        :param partclass: One of the meta partclasses
+        :type partclass: frozenset
+        :rtype: bool
+        """
+        return any(part.partClass in partclass for part in self.parts)
 
 
 class MilitaryShipDesigner(ShipDesigner):
