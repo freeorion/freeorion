@@ -661,18 +661,30 @@ class ShipDesigner(object):
         # If we do not meet the requirements, we want to return a negative rating.
         # However, we also need to make sure, that the closer we are to requirements,
         # the better our rating is so the optimizing heuristic finds "the right way".
-        requested_specs = self.additional_specifications
-        if self.fuel < requested_specs.minimum_fuel:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (requested_specs.minimum_fuel - self.fuel)
-        if self.speed < requested_specs.minimum_speed:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (requested_specs.minimum_speed - self.speed)
-        estimated_structure = self.structure + self.organic_growth * requested_specs.expected_turns_till_fight
-        if estimated_structure < requested_specs.minimum_structure:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (requested_specs.minimum_structure - estimated_structure)
+        min_fuel = self._minimum_fuel()
+        min_speed = self._minimum_speed()
+        min_structure = self._minimum_structure()
+        if self.fuel < min_fuel:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fuel - self.fuel)
+        if self.speed < min_speed:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_speed - self.speed)
+        estimated_structure = (self.structure +
+                               self.organic_growth * self.additional_specifications.expected_turns_till_fight)
+        if estimated_structure < self._minimum_structure():
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_structure - estimated_structure)
         if rating < 0:
             return rating
         else:
             return self._rating_function()
+
+    def _minimum_fuel(self):
+        return self.additional_specifications.minimum_fuel
+
+    def _minimum_speed(self):
+        return self.additional_specifications.minimum_speed
+
+    def _minimum_structure(self):
+        return self.additional_specifications.minimum_structure
 
     def _rating_function(self):
         """Rate the design according to current hull/part combo.
@@ -1280,6 +1292,13 @@ class ShipDesigner(object):
         # TODO: Rethink about math and maybe work out a more accurate formula
         return self.production_cost**(1/(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
 
+    def _effective_fuel(self):
+        """Return the number of turns the ship can move without refueling."""
+        return min(self.fuel / max(1-self.fuel_per_turn, 0.001), 10)
+
+    def _effective_mine_damage(self):
+        return self.additional_specifications.enemy_mine_dmg -self.repair_per_turn
+
 
 class MilitaryShipDesigner(ShipDesigner):
     """Class that implements military designs.
@@ -1326,9 +1345,7 @@ class MilitaryShipDesigner(ShipDesigner):
         remaining_growth = self.maximum_organic_growth - expected_growth
         effective_structure = (self.structure + expected_growth + remaining_growth/5) * shield_factor
         speed_factor = 1 + 0.003*(self.speed - 85)
-        effective_fuel = min(self.fuel / max(1-self.fuel_per_turn, 0.001), 10)  # number of turns without refueling
-        fuel_factor = 1 + 0.03*(effective_fuel - self.additional_specifications.minimum_fuel) ** 0.5
-
+        fuel_factor = 1 + 0.03*(self._effective_fuel() - self._minimum_fuel())**0.5
         return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
@@ -1464,7 +1481,9 @@ class StandardTroopShipDesigner(TroopShipDesignerBaseClass):
         TroopShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_speed = 30
         self.additional_specifications.minimum_fuel = 2
-        self.additional_specifications.minimum_structure = self.additional_specifications.enemy_mine_dmg + 1
+
+    def _minimum_structure(self):
+        return self._effective_mine_damage() + 1
 
 
 class ColonisationShipDesignerBaseClass(ShipDesigner):
@@ -1693,7 +1712,7 @@ class ScoutShipDesigner(ShipDesigner):
         if not self.detection:
             return INVALID_DESIGN_RATING
         detection_factor = self.detection ** 2
-        fuel_factor = min(self.fuel/max(1-self.fuel_per_turn, 0.001), 10)  # rounds the ship can be used without refuel
+        fuel_factor = self._effective_fuel()
         speed_factor = self.speed ** 0.5
         return detection_factor * fuel_factor * speed_factor / self.production_cost
 
