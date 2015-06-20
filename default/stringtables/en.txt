@@ -4648,7 +4648,7 @@ HOMEWORLD
 Homeworld:
 
 NO_HOMEWORLD
-No Known Homeworld
+No Homeworld
 
 UNKNOWN_PLANET
 Unknown Planet
