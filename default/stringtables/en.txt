@@ -1119,6 +1119,9 @@ Toggles whether to draw circles around systems.
 OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
 Sets size of circles around systems on map, relative to system icon size.
 
+OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY
+Show a different MapWindow mouseover overlay for systems that the player's empire has not yet explored.
+
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Sets color of unowned system names on the galaxy map.
 
@@ -1966,6 +1969,9 @@ Galaxy distance scale circle
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Galaxy map zoom slider
+
+OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY
+Unexplored System distinctive mouseover overlay
 
 OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
 Galaxy map detection range displayed stealth threshold
