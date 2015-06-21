@@ -2268,8 +2268,14 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 20
-                Random probability = Source.Age*0.01 - 0.1
+                Turn low = 30
+                //triple the chance of maturing when in a system with Krill
+                Random probability = (Source.Age*0.01 - 0.1) * 3^(If condition = ContainedBy Contains OR [
+                    Design name = "SM_KRILL_1"
+                    Design name = "SM_KRILL_2" 
+                    Design name = "SM_KRILL_3"  
+                    Design name = "SM_KRILL_4"
+                ])
             ]
             effects = [
                 CreateShip designname = "SM_KRAKEN_2" empire = Source.Owner
@@ -2317,7 +2323,16 @@ Hull
                     Contains Planet type = GasGiant
                 ]
             ]
-            activation = Random probability = Source.Age*0.01 - 0.1
+            activation = And [
+                Turn low = 60
+                //triple the chance of maturing when in a system with Krill
+                Random probability = (Source.Age*0.01 - 0.1) * 3^(If condition = ContainedBy Contains OR [
+                    Design name = "SM_KRILL_1"
+                    Design name = "SM_KRILL_2" 
+                    Design name = "SM_KRILL_3"  
+                    Design name = "SM_KRILL_4"
+                ])
+            ]
             effects = [
                 CreateShip designname = "SM_KRAKEN_3" empire = Source.Owner
                 Destroy
@@ -2417,8 +2432,8 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 20
-                Random probability = Source.Age*0.015 - 0.1
+                Turn low = 30
+                Random probability = Source.Age*0.01 - 0.1
             ]
             accountinglabel = "SNOWFLAKE_GROWTH_LABEL"
             effects = [
@@ -2467,7 +2482,10 @@ Hull
                     Contains Planet size = Small
                 ]
             ]
-            activation = Random probability = Source.Age*0.015 - 0.1
+            activation = And [
+                Turn low = 60
+                Random probability = Source.Age*0.01 - 0.1
+            ]
             effects = [
                 CreateShip designname = "SM_SNOWFLAKE_3" empire = Source.Owner
                 Destroy
@@ -2565,8 +2583,8 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 20
-                Random probability = Source.Age*0.015 - 0.1
+                Turn low = 30
+                Random probability = Source.Age*0.01 - 0.1
             ]
             effects = [
                 CreateShip designname = "SM_JUGGERNAUT_2" empire = Source.Owner
@@ -2614,7 +2632,10 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = Source.Age*0.01 - 0.1
+            activation = And [
+                Turn low = 60
+                Random probability = Source.Age*0.01 - 0.1
+            ]
             effects = [
                 CreateShip designname = "SM_JUGGERNAUT_3" empire = Source.Owner
                 Destroy
