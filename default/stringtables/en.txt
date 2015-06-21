@@ -8153,37 +8153,37 @@ DEF_DEFENSE_NET_REGEN_2
 Defense Network Regeneration 2
 
 DEF_DEFENSE_NET_REGEN_2_DESC
-Increases planets' [[encyclopedia DEFENSE_TITLE]] by 0.25 times the planets' [[encyclopedia INFRASTRUCTURE_TITLE]], each turn, up to the max defense value, cumulative with regeneration from [[tech DEF_DEFENSE_NET_REGEN_1]].
+Increases planets' [[encyclopedia DEFENSE_TITLE]] by the greater of (i) 0.25 times the planets' [[encyclopedia INFRASTRUCTURE_TITLE]] or (ii) 0.1 times the planets' maximum [[encyclopedia DEFENSE_TITLE]], each turn, up to the max defense value, cumulative with regeneration from [[tech DEF_DEFENSE_NET_REGEN_1]].
 
 DEF_PLAN_BARRIER_SHLD_1
 Planetary Barrier Shield 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]], and regenerates each turn by one plus 25% of the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 30, cumulative with [[tech LRN_FORCE_FIELD]], and regenerates each turn by one plus the greater of (i) 25% of the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]] or (ii) 1 (so long as the shields are not already knocked to zero).
 
 DEF_PLAN_BARRIER_SHLD_2
 Planetary Barrier Shield 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60, cumulative with other shield boosts, and regenerates each turn by one plus the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 60, cumulative with other shield boosts, and regenerates each turn by one plus the greater of (i) the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]] or (ii) 4 (so long as the shields are not already knocked below 3).
 
 DEF_PLAN_BARRIER_SHLD_3
 Planetary Barrier Shield 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90, cumulative with other shield boosts, and regenerates each turn by one plus twice the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 90, cumulative with other shield boosts, and regenerates each turn by one plus the greater of (i) twice the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]] or (ii) 9 (so long as the shields are not already knocked below 5).
 
 DEF_PLAN_BARRIER_SHLD_4
 Planetary Barrier Shield 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150, cumulative with other shield boosts, and regenerates each turn by one plus 2.5 times the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by 150, cumulative with other shield boosts, and regenerates each turn by one plus the greater of (i) 2.5 times the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]] or (ii) 18 (so long as the shields are not already knocked below 9).
 
 DEF_PLAN_BARRIER_SHLD_5
 Planetary Barrier Shield 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-Increases max [[encyclopedia SHIELDS_TITLE]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plus 5 times the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]].
+Increases max [[encyclopedia SHIELDS_TITLE]] on planets by an additional 150, cumulative with other shield boosts and regenerates each turn by one plusthe greater of (i)  5 times the value of the planets' [[encyclopedia INFRASTRUCTURE_TITLE]] or (ii) 32 (so long as the shields are not already knocked below 14).
 
 DEF_SYST_DEF_MINE_1
 System Defense Mines 1
@@ -8219,25 +8219,25 @@ DEF_GARRISON_1
 Planetary Garrison 1
 
 DEF_GARRISON_1_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 5.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 6.
 
 DEF_GARRISON_2
 Planetary Garrison 2
 
 DEF_GARRISON_2_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 10.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 12, and causes troops to regenerate by an additional one per turn.
 
 DEF_GARRISON_3
 Planetary Garrison 3
 
 DEF_GARRISON_3_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 15.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 20, and causes troops to regenerate by an additional two per turn in addition to that from [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
 Planetary Garrison 4
 
 DEF_GARRISON_4_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 20.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 30, and causes troops to regenerate by an additional three per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device

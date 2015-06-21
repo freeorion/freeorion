@@ -2993,7 +2993,7 @@ BASIC_GROUND_TROOPS
             activation = OwnerHasTech name = "DEF_GARRISON_4"
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_4"
-            effects = SetMaxTroops value = Value + 20  
+            effects = SetMaxTroops value = Value + 30  
 
 EffectsGroup
             scope = And [
@@ -3006,7 +3006,7 @@ EffectsGroup
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_3"
-            effects = SetMaxTroops value = Value + 15
+            effects = SetMaxTroops value = Value + 20
             
 EffectsGroup
             scope = And [
@@ -3019,7 +3019,7 @@ EffectsGroup
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_2"
-            effects = SetMaxTroops value = Value + 10
+            effects = SetMaxTroops value = Value + 12
 
 EffectsGroup
             scope = And [
@@ -3032,7 +3032,7 @@ EffectsGroup
             ]
             stackinggroup = "BASIC_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_1"
-            effects = SetMaxTroops value = Value + 5        
+            effects = SetMaxTroops value = Value + 6        
 
 EffectsGroup
             scope = And [
