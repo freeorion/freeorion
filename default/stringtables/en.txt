@@ -873,6 +873,9 @@ Render star fields around systems. May slow rendering on older systems.
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Show scale line for universe distance on galaxy map.
 
+OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE
+Show the map scale also as a circle centered on the currently selected System (only if the map scale line is also shown).
+
 OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Toggles whether to show the zoom slider on galaxy map.
 
@@ -1957,6 +1960,9 @@ Galaxy map star fields rendering
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
 Galaxy distance scale line
+
+OPTIONS_GALAXY_MAP_SCALE_CIRCLE
+Galaxy distance scale circle
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Galaxy map zoom slider
