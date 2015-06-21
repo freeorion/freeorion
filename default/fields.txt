@@ -181,13 +181,13 @@ CREATE_PLANETS
             activation = Size high = 5
             effects = [
                 If condition = Random probability = 0.5
-                    effects = CreatePlanet type = asteroids planetsize = asteroids name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % "" % Source.Name
+                    effects = CreatePlanet type = asteroids planetsize = asteroids name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % Source.Name
                 If condition = Random probability = 0.6
                     effects = CreatePlanet type = OneOf(Barren, Desert, Inferno, Ocean, Radiated, Swamp, Terran, Toxic, Tundra) planetsize = OneOf(tiny, small, medium, large) name = UserString("NEW_PLANET_NAME") % Target.Name
                 else = If condition = Random probability = 0.4
                     effects = CreatePlanet type = GasGiant planetsize = GasGiant name = UserString("NEW_PLANET_NAME") % Target.Name
                 If condition = Random probability = 0.3
-                    effects = CreatePlanet type = asteroids planetsize = asteroids name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % "" % Source.Name
+                    effects = CreatePlanet type = asteroids planetsize = asteroids name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % Source.Name
             ]
 '''
 

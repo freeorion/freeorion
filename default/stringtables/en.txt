@@ -134,14 +134,21 @@ Fleet %1%
 NEW_FLEET_NAME_NO_NUMBER
 Fleet
 
+# new asteroids or new planet names...
 # used to generate name for effect-created planets, when no name = (string) is specified.
-# For this, and any other effect-created object, with specified or default strings for the name,
-# and when each exists: %1% is the system name, %2% is the target object name, and %3% is the source object name
+# When specifying an object name for these effects, if the specified string matches a
+# stringtable key, it will be looked up and used directly. Alternatively, the
+# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
+# to specify substitutions using string gamestate references, such as Source.Name
+# these are applied to the %1% style placeholders according the order in which the
+# parameters are specified in the effect
 NEW_ASTEROIDS_NAME
-%1% %3% remnants
+%1% %2% remnants
 
+# assumes no previous planets present, so the created planet will be the Systemname I planet...
 NEW_PLANET_NAME
 %1% I
+
 
 EMPTY_SPACE
 Deep Space
