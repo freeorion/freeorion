@@ -1,7 +1,7 @@
 Français
 
 #This is the French String Table file for FreeOrion.
-#Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction et amélioration en cours (04/2015). Version FR complète prévue pour release 0.4.5.
+#Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction et amélioration en cours (06/2015). Version FR complète prévue pour release 0.4.5.
 
 #################
 #    Common     #
@@ -409,12 +409,12 @@ Astronef astéroïdal non-armé pouvant transporter plusieurs millions de citoye
 SD_OUTPOST_SHIP
 Pionnier Galactique
 SD_OUTPOST_SHIP_DESC
-Astronef pionnier non-armé pouvant créer un avant-poste dans un monde inhabitable.
+Astronef pionnier non-armé pouvant créer un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable.
 
 SD_ORG_OUTPOST_SHIP
 Pionnier Galactique Organic
 SD_ORG_OUTPOST_SHIP_DESC
-Astronef organique pionnier pouvant créer un avant-poste dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Astronef organique pionnier pouvant créer un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_COLONY_BASE
 Colon Stellaire
@@ -429,7 +429,7 @@ Astronef non-armé pouvant créer une large colonie sur une planète habitable, 
 SD_OUTPOST_BASE
 Pionnier Stellaire
 SD_OUTPOST_BASE_DESC
-Astronef pionnier non-armé pouvant créer un avant-poste dans un monde inhabitable. dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
+Astronef pionnier non-armé pouvant créer un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable. dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
 
 SD_TROOP_DROP
 Parachutage d'Infanterie
@@ -574,7 +574,7 @@ Kraken Noir
 SM_BLACK_KRAKEN_DESC
 '''Un puissant monstre de l'espace d'apparence surnaturelle.
 
-Les Kraken Noirs sont des monstres spatiaux issus de la bio-ingénierie, incroyablement redoutables, d'une grande [[encyclopedia STEALTH_TITLE]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes. Ils recherchent et attaquent les planètes habitées, et les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] étant particulièrement vulnérables à leurs attaques.'''
+Les Kraken Noirs sont des monstres spatiaux issus de la bio-ingénierie, incroyablement redoutables, d'une grande [[encyclopedia STEALTH_TITLE]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes, ces derniers attaquant les populations des planètes où les structures et bâtiments sont facilement détectables.'''
 
 SM_SNOWFLAKE_1
 Flocon de Neige Juvénile
@@ -602,7 +602,7 @@ Flocon de Neige Psionique
 SM_PSIONIC_SNOWFLAKE_DESC
 '''Un monstre capable de neutraliser l'esprit des êtres organiques.
 
-Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs avec un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Ils chassent et attaquent les vaisseaux spatiaux, forçant les équipages vulnérables à leurs attaques psychiques à abandonner leur empire.'''
+Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs avec un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Ils chassent et attaquent les vaisseaux spatiaux, forçant les équipages vulnérables à leurs attaques psychiques à abandonner leur empire, mais peuvent également attaquer les populations planétaires.'''
 
 SM_JUGGERNAUT_1
 Mastodonte Juvénile
@@ -630,7 +630,7 @@ Mastodonte Déformé
 SM_BLOATED_JUGGERNAUT_DESC
 '''Un monstre de l'espace massif et d'allure repoussante.
 
-Les Mastodontes Déformés sont des monstres spatiaux issus de la bio-ingénierie, incroyablement résistants, d'une grande [[encyclopedia STEALTH_TITLE]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes. Ils recherchent et attaquent les infrastructures planétaires, et les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] sont particulièrement vulnérables à leurs attaques.'''
+Les Mastodontes Déformés sont des monstres spatiaux issus de la bio-ingénierie, incroyablement résistants, d'une grande [[encyclopedia STEALTH_TITLE]], et munis d'armes dangereuses. Une flotte puissante et une bonne [[encyclopedia DETECTION_TITLE]] seront nécessaires pour en découdre avec ces organismes, ces derniers attaquant les populations des planètes où les structures et bâtiments sont facilement détectables.'''
 
 SM_CLOUD
 Nuage Spatial
@@ -703,11 +703,11 @@ Nébuleuse
 FLD_NEBULA_1_DESC
 Nuage de gaz d'hydrogène qui, en s'effondrant sur lui-même, peut donner naissance à une nouvelle étoile.
 
-#FLD_NEBULA_2
-#[[FLD_NEBULA_1]]
+FLD_NEBULA_2  # translated
+[[FLD_NEBULA_1]]
 
-#FLD_NEBULA_2_DESC
-#[[FLD_NEBULA_1_DESC]]
+FLD_NEBULA_2_DESC  # translated
+[[FLD_NEBULA_1_DESC]]
 
 ##############################
 # Predefined Starting Fleets #
@@ -3306,6 +3306,9 @@ ENC_SYSTEM
 ENC_FIELD
 [Partie - Champs]
 
+ENC_HOMEWORLDS
+Espèces: Planètes Natales
+
 ENC_INDEX
 Index de l'Encyclopédie
 
@@ -3604,7 +3607,7 @@ GROWTH_ARTICLE_SHORT_DESC
 Croissance
 
 OUTPOSTS_ARTICLE_SHORT_DESC
-Avant-postes
+Avant-Poste
 
 PRODUCTION_ARTICLE_SHORT_DESC  # translated
 Production
@@ -3634,18 +3637,18 @@ PEACE_TEXT
 La paix est le rapport diplomatique entre empires ayant convenu de ne pas attaquer planètes et astronefs, de ne pas bloquer les lignes d'[[encyclopedia SUPPLY_TITLE]] et de ne pas faire obstacle à l'essor des colonies de chacun d'entre eux.
 
 OUTPOSTS_TITLE
-Avant-postes
+Avant-Poste
 OUTPOSTS_TEXT
-Les Avant-postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-poste. Pour construire un Avant-poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.
+Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.
 
 GROWTH_FOCUS_TITLE
 Focus Croissance
 GROWTH_FOCUS_TEXT
-'''Privilégier la Croissance signifie exporter des matériaux et substances rares afin de favoriser l'accroissement démographique sur une planète. Cela n'est possible que dans certains cas : sur quelques Mondes natals et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
+'''Privilégier la Croissance signifie exporter des matériaux et substances rares afin de favoriser l'accroissement démographique sur une planète. Cela n'est possible que dans certains cas : sur quelques Planètes Natales et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
 
 Une planète privilégiant la Croissance augmente le plafond de population des seules autres planètes lui étant reliées par lignes d'[[encyclopedia SUPPLY_TITLE]].
 
-Un Monde Natal privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci abritent la même classification d'espèces.
+Une Planète Natale privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci abritent la même classification d'espèces.
 
 [[GROWTH_SPECIALS_ENTRY_LIST]]'''
 
@@ -3704,7 +3707,7 @@ Boucliers
 SHIELDS_TEXT
 '''L'indicateur 'Boucliers' désigne toutes sortes de champs d'énergie de protection. Ils constituent en général la première barrière défensive contre toute attaque. Il existe deux types distincts de boucliers, fonctionnant de manière très différente: les Boucliers d'astronefs et les Boucliers planétaires.
 
-Boucliers d'astronefs: les Dommages infligés par chaque tir sont réduits de la valeur de solidité du Bouclier. Une arme ne peut pénétrer un Bouclier seulement si les Dommages qu'elle inflige sont supérieurs à la solidité du Bouclier.
+Boucliers d'astronefs: les Dommages infligés par chaque tir sont réduits de la valeur de solidité du Bouclier. Une arme peut pénétrer un Bouclier seulement si les Dommages qu'elle inflige sont supérieurs à la solidité du Bouclier.
 
 Boucliers planétaires: Agit comme une sorte d'armure. Leur solidité s'amenuise après chaque tir, et une fois détruit, les tirs suivants passeront à travers et endommageront les structures planétaires. Les Boucliers planétaires se regénèrent après chaque tour, à un certain taux.
 
@@ -3741,17 +3744,17 @@ L'indicateur 'Infanterie' d'une planète représente la puissance des troupes te
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
 ORGANIC_SPECIES_TEXT
-Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
+Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
 
 LITHIC_SPECIES_TITLE
 Métabolisme Lithique
 LITHIC_SPECIES_TEXT
-Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
+Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
 
 ROBOTIC_SPECIES_TITLE
 Métabolisme Robotique
 ROBOTIC_SPECIES_TEXT
-Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Monde Natal est réglé sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connecté par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
+Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[encyclopedia SUPPLY_TITLE]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Métabolisme Phototropique
@@ -4122,7 +4125,7 @@ CONDITION_CANPRODUCESHIPS
 Espèce produisant astronefs
 
 CONDITION_HOMEWORLD
-Monde Natal
+Planète Natale
 
 CONDITION_HASSPECIAL
 Ayant une Particularité
@@ -4468,7 +4471,7 @@ SITREP_POP_THRESHOLD_LABEL
 Seuil de Colonisation
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés sur la planète %planet%, rôdant près de l'Avant-poste %species%!
+ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés sur la planète %planet%, rôdant près de l'Avant-Poste %species%!
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Apparition de monstre Expérimentateur
 
@@ -4642,10 +4645,10 @@ a remporté une victoire comme dernier survivant.
 #############################################################
 
 HOMEWORLD
-Monde Natal :
+Planète Natale
 
 NO_HOMEWORLD
-Pas de Monde Natal connu
+Pas de Planète Natale
 
 UNKNOWN_PLANET
 Planète inconnue
@@ -4663,7 +4666,7 @@ CAN_COLONIZE
 Peuvent coloniser d'autres mondes.
 
 OCCUPIED_PLANETS
-Planètes habitées :
+Planètes habitées
 
 ENVIRONMENTAL_PREFERENCES
 Adaptabilité environnementale :
@@ -4697,8 +4700,8 @@ Préfèrent les Planètes de type terrestre.
 #SP_HUMAN_DESC
 #''''''
 
-#SP_SCYLIOR
-#Scylior
+SP_SCYLIOR  # translated
+Scylior
 SP_SCYLIOR_GAMEPLAY_DESC
 '''Possèdent trois tentacules, nautiloïdes aquatiques.
 Préfèrent les Planètes océaniques.
@@ -4727,8 +4730,8 @@ Histoire :
 Voici quelques millénaires, une expédition des Précurseurs découvrit une planète que L'Esprit contrôlait en totalité grâce à ses pouvoirs télépathiques. L'Esprit surgit sans tarder et commença à aspirer les connaissances des savants et de l'équipage présents à bord de l'astronef. Mais les savants parvinrent à prélever la majeure partie du cerveau de L'Esprit, et l'emportèrent comme spécimen. Ce qui demeura de L'Esprit survécut, cherchant inlassablement à récupérer les souvenirs qui lui avaient été enlevés. L'Esprit restait cependant une entité immobile, et n'avait rencontré jusqu'alors aucun organisme intelligent susceptible de lui prêter 'main forte'. Alors survinrent les Scyliori.
 '''
 
-#SP_GYSACHE
-#Gysache
+SP_GYSACHE  # translated
+Gysache
 SP_GYSACHE_GAMEPLAY_DESC
 '''Herbivores craintifs insolites, organisation en troupeau.
 Préfèrent les Planètes marécageuses.
@@ -4757,8 +4760,8 @@ Monde d'origine:
 Leur Monde d'origine possède une épaisse atmosphère d'azote, d'ammoniaque et de dioxyde de carbone. Bien que très humide, leur environnement d'origine ne dispose pas d'étendues océaniques, seulement 5% de la surface planétaire étant recouverte d'eau. Ses principales caractéristiques topographiques sont des hauts plateaux balafrés de canyons abyssaux, dont les fonds contiennent le peu d'eau stagnante de la planète.
 '''
 
-#SP_CHATO
-#Chato
+SP_CHATO  # translated
+Chato
 SP_CHATO_GAMEPLAY_DESC
 '''Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
 Préfèrent les Planètes toxiques.
@@ -4782,8 +4785,8 @@ Structure sociale:
 Dans la société Chato'matou, l'âge est le paramètre primordial, étant donné leur quasi-immortalité. Chaque commandement des anciens est respecté à la lettre et désobéir à un ancien est le plus grand des crimes au sein de la société Chato'matou. Ces organismes ont développé un système rendant possible la transmission instantanée de signaux à travers une colonie entière, leur permettant ainsi de communiquer entre eux à une vitesse proche de celle de la lumière. Cela améliore grandement les capacités mentales de l'espèce, puisque toutes nouvelles idées et théories peuvent être propagées instantanément à toute la colonie. Les Gormoshk sont considérés comme des montures de choix et sont la plupart du temps bien traités, mais restent toutefois de simples animaux pour leurs maîtres.
 '''
 
-#SP_TRITH
-#Trith
+SP_TRITH  # translated
+Trith
 SP_TRITH_GAMEPLAY_DESC
 '''Télépathes xénophobes tourmentés.
 Préfèrent les Planètes désertiques.
@@ -4810,10 +4813,10 @@ Structure sociale:
 La société Trith est une théocratie dominée par les prêtres de Quaran-Dor (le Dieu de l'Esprit). Ils ont prêté le serment solennel de réduire au silence toutes les autres espèces pensantes, afin d'atténuer le fracas spirituel incessant qui parcourt l'Univers.
 '''
 
-#SP_HAPPY
-#Happybirthday
+SP_HAPPY  # translated
+Happybirthday
 SP_HAPPY_GAMEPLAY_DESC
-'''Robots submersibles abandonnés et solitaires, programmés pour chanter "happy birthday" à intervalles réguliers.
+'''Robots submersibles abandonnés et solitaires, programmés pour chanter "Happy Birthday" à intervalles réguliers.
 Préfèrent les Planètes océaniques.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
@@ -4831,24 +4834,24 @@ Préfèrent les Planètes océaniques.
 
 SP_HAPPY_DESC
 '''Description: Submersibles robotiques d'exploration.
-Bien que certains arborent une forme plus complexe et imposante, la plupart des Happybirthdays ont une apparence effilée, semblable à celle d'un poisson. Ils sont munis d'une ou plusieurs caméras, ainsi que de bras manipulateurs, le tout situé habituellement à l'avant du corps. Ils sont également équipés d'un ensemble de capteurs pour la température, les vibrations, les éléments chimiques, le fonctionnement d'un radar et d'un sonar, les champs magnétiques et électriques, ces équipements pouvant varier d'un modèle à l'autre. Ces robots peuvent fonctionner sous des conditions de température et de pression très hétérogènes au sein d'un environnement aquatique.
+Bien que certains spécimens arborent une forme plus complexe et imposante, la plupart des Happybirthdays ont une apparence effilée, semblable à celle d'un poisson. Ils sont munis d'une ou plusieurs caméras, ainsi que de bras manipulateurs, le tout situé généralement à l'avant du corps. Ils sont également équipés d'un ensemble de capteurs pour la température, les vibrations, les éléments chimiques, le fonctionnement d'un radar et d'un sonar, les champs magnétiques et électriques, ces équipements pouvant varier d'un modèle à l'autre. Ces robots peuvent fonctionner sous des conditions de température et de pression très hétérogènes au sein d'un environnement aquatique.
 
-Tout Happybirthday peut réparer un autre Happybirthday, leurs systèmes présentant souvent des spécificités redondantes pour parer à toute éventualité de réparation. Les groupes ayant une taille suffisante peuvent réparer complètement tout autre membre du groupe, et par la même occasion concevoir une unité totalement nouvelle. Les nouvelles unités sont dotées du même programme que leurs parents, mais ont une mémoire vierge, qui s'enrichira via l'exploration de leur environnement.
+Tout Happybirthday peut réparer un autre Happybirthday, leurs systèmes présentant souvent des spécificités redondantes pour parer à toute éventualité de réparation. Les groupes ayant une taille suffisante peuvent réparer complètement un autre membre de la communauté, et par le même procédé, concevoir une unité totalement nouvelle. Les nouvelles unités sont dotées d'un programme identique à celui de leurs parents, mais ont une mémoire vierge, qui s'enrichira via l'exploration de leur environnement.
 
-Monte natal: Foreveralone.
-Une planète abritant et un vaste et profond océan. La rumeur veut que la création des Happybirthdays eut pour but originel de sonder la planète en vue d'une colonisation potentielle. La raison pour laquelle ils furent abandonnés reste un mystère, les théories divergeant au plus haut point: leurs créateurs auraient décidé que la planète n'était pas propice à la colonisation, ou bien ces derniers auraient été exterminés par une cause inconnue. Bien que ce vaste océan présente des particularités intéressantes ainsi que des formes de vie, rien de vraiment spécial n'indique ce qui aurait pu susciter un intérêt pour cette planète chez les créateurs de ces robots.
+Planète Natale: Foreveralone.
+Une planète abritant un vaste et profond océan. La rumeur veut que la création des Happybirthdays eût pour but originel de sonder la planète en vue d'une colonisation potentielle. La raison pour laquelle ils furent abandonnés reste un mystère, les théories à ce sujet divergeant grandement: leurs créateurs auraient décidé que la planète ne fût pas propice à la colonisation, ou bien ces derniers auraient été exterminés par une cause inconnue. Bien que ce vaste océan présente des particularités intéressantes ainsi que des formes de vie, rien de vraiment spécial n'indique ce qui aurait pu susciter un intérêt potentiel envers cette planète.
 
 Structure sociale: Codépendance.
 Un Happybirthday isolé a pour principal but de s'attacher psychologiquement au plus proche être sensible (de préférence étranger) et de déclarer leur amitié comme éternelle. Un seul objectif: soulager leur solitude en trouvant un autre être qui devienne leur ami, pour toujours...
 
-Le processus de colonisation est lent et l'industrie peu efficace, en raison du caractère dépressif de cet espèce, menant parfois à des auto-destructions de masse. Cependant, leur propension à ne pas avoir d'ennemis et la recherche obsessionnelle de toute forme d'amitié, font des Happybirthdays des êtres très ouverts aux échanges et au commerce.
+Le processus de colonisation est lent et l'industrie peu efficace, en raison du caractère dépressif de cette espèce, menant parfois à des auto-destructions de masse. Cependant, leur propension à ne pas avoir d'ennemis et la recherche obsessionnelle de toute forme d'amitié, font des Happybirthdays des êtres très ouverts aux échanges et au commerce.
 
 Histoire: Triste.
-Que ce soit leur exploration solitaire de leur monde natal, leur abandon par leurs créateurs, ou leur quête incessante d'amitié, l'existence des Happybirthdays est triste et solitaire.
+Que ce soit leur exploration solitaire de leur planète natale, leur abandon par leurs créateurs, ou leur quête incessante d'amitié, l'existence des Happybirthdays est triste et solitaire.
 '''
 
-#SP_HHHOH
-#Hhhoh
+SP_HHHOH  # translated
+Hhhoh
 SP_HHHOH_GAMEPLAY_DESC
 '''Mammouths gigantesques et lents, dotés d'une multi-trompe.
 Préfèrent les Planètes avec toundra.
@@ -4873,8 +4876,8 @@ Comportement:
 Les Hhhoh se considèrent comme des pragmatiques sociables. Les anciens sont vénérés et respectés, et peuvent atteindre un âge de 230 ans. Leur particularité physique et leur physiologie font que cette espèce a une aversion pour les comportements hâtifs et les décisions précipitées.
 '''
 
-#SP_EAXAW
-#Eaxaw
+SP_EAXAW  # translated
+Eaxaw
 SP_EAXAW_GAMEPLAY_DESC
 '''Vers amazones agressifs et xénophobes.
 Préfèrent les Planètes de type terrestre.
@@ -4900,8 +4903,8 @@ Histoire:
 Il y a bien longtemps, un vaisseau abandonné des Précurseurs s'écrasa sur la planète d'origine des Eaxaw. Alors qu'ils découvraient certains de ses secrets, ils devinrent conscients que d'autres espèces intelligentes peuplaient l'Univers. La Grande Chambre Matriarcal édicta alors sa plus fameuse proclamation : "Tous doivent périr!".
 '''
 
-#SP_DERTHREAN
-#Derthrean
+SP_DERTHREAN  # translated
+Derthrean
 SP_DERTHREAN_GAMEPLAY_DESC
 '''Virus végétaux flottants, pacifiques, bio-ingénieurs, souffrant continuellement.
 Préfèrent les Planètes toxiques.
@@ -4925,8 +4928,8 @@ Structure sociale:
 Les Derthrean ont une organisation sociale très segmentée, se divisant en castes créées par leurs ancêtres. Ils naissent dans une caste, ils se reproduisent dans leur caste, et meurent comme membre de cette caste. Du fait du faible brassage ethnique sur des millénaires, les traits physiques ont fini par être propres à chaque caste. Celles-ci sont divisées comme suit : la plus respectée de toutes, la caste des Prêtres, la caste des Ouvriers, la caste des Agriculteurs, la caste des Pourvoyeurs, la caste des Savants, et la plus méprisée de toutes, la caste des Guerriers. La religion joue un rôle fondamental dans leur société. Chaque Derthrean est profondément pacifiste, et vit pour satisfaire leur Déesse, dans l'espoir d'être libéré de ce fardeau de douleur et d'être pardonné pour la brutalité et la fourberie de leurs ancêtres.
 '''
 
-#SP_LAENFA
-#Laenfa
+SP_LAENFA  # translated
+Laenfa
 SP_LAENFA_GAMEPLAY_DESC
 '''Vignes sensibles, télépathes, et insidieuses.
 Préfèrent les Planètes océaniques.
@@ -4951,8 +4954,8 @@ Structure sociale:
 Les Laenfa jouissent d'une culture unifiée due à la télépathie, mais comme leur capacité télépathique s'affaiblit avec la distance, le tronc central de la vigne est en charge des décisions importantes. Cette vigne centrale gère seule les arbitrages, mais prend en compte les voix des Laenfa qu'elle est en mesure de détecter. Les Laenfa évoluent donc à la manière d'un super-organisme, chaque individu œuvrant pour le collectif, dont le but est d'acquérir le savoir des autres espèces et de protéger le leur.
 '''
 
-#SP_TAEGHIRUS
-#Tae Ghirus
+SP_TAEGHIRUS  # translated
+Tae Ghirus
 SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Oiseaux fragiles et incapables de voler, unis par une coopération totale.
 Préfèrent les Planètes marécageuses.
@@ -4975,8 +4978,8 @@ Structure sociale:
 Les Tae Ghirus sont très sociaux et coopératifs, afin de compenser la faiblesse de leur constitution. Leur système politique et social, nommé "L'Allégeance", est un mélange de démocratie participative et de fraternité fonctionnant particulièrement bien.
 '''
 
-#SP_MUURSH
-#Mu Ursh
+SP_MUURSH  # translated
+Mu Ursh
 SP_MUURSH_GAMEPLAY_DESC
 '''Herbivores pacifiques et activistes.
 Préfèrent les Planètes désertiques.
@@ -4995,8 +4998,8 @@ SP_MUURSH_DESC
 
 Mais à leur grand regret, ces compétences naturelles font d'eux des pilotes extrêmement talentueux, et certains parmi les Mu Ursh ont décrété que le meilleur moyen d'assurer la paix galactique, est d'attaquer et de soumettre toutes les espèces intelligentes et agressives, afin de rendre la galaxie aussi paisible que leur planète.'''
 
-#SP_GEORGE
-#George
+SP_GEORGE  # translated
+George
 SP_GEORGE_GAMEPLAY_DESC
 '''Entité unique élémentaire, télépathique, constituée de millions de centipèdes.
 Préfèrent les Planètes avec toundra.
@@ -5019,8 +5022,8 @@ Description:
 Les organismes constituant George sont des centipèdes de 2.5m de long et 0.5m de hauteur, à la peau très lisse et dotés d'un groupe de 6 tentacules/antennes à l'avant du corps, afin de manipuler des objets. Ces organismes ne peuvent ni penser ni agir de leur propre chef, l'esprit de George résultant de la focalisation de toutes les communications télépathiques (sur toute distance) des unités qui le composent.
 '''
 
-#SP_CRAY
-#Cray
+SP_CRAY  # translated
+Cray
 SP_CRAY_GAMEPLAY_DESC
 '''Robots dévoués et enthousiastes.
 Préfèrent les Planètes stériles.
@@ -5045,8 +5048,8 @@ Les Cray sont organisés en société tribale. Chaque tribu se structure autour 
 Les décisions quotidiennes fonctionnant selon un système complexe de faveurs, tous Cray aidera avec enthousiasme son semblable si nécessaire et tous deux garderont exactement en mémoire la dette qui les unit. Bien que ce ne soit pas le moyen le plus efficace de gérer une économie, ce système induit qu'à l'intérieur d'une tribu, les Cray sont redevables ou obligés en faveurs par une grande proportion de la communauté. Cela cimente ainsi d'exceptionnels et indéfectibles liens sociaux, tout en contentant l'ensemble des Cray.
 '''
 
-#SP_ETTY
-#Etty
+SP_ETTY  # translated
+Etty
 SP_ETTY_GAMEPLAY_DESC
 '''Plantes cybernétiques.
 Préfèrent les Planètes désertiques.
@@ -5094,17 +5097,17 @@ SP_CYNOS_DESC
 '''Description:
 Les Cynos sont les constituants d'une plante mère semblable à une agave de 90 mètres de haut. Ses énormes feuilles arborent une couleur bleu marine brillante, rayonnant le long d'un bulbe central formant le cœur de la plante. Le sytème racinaire étendu mais peu profond, développe des bourgeons qui grandissent à côté de la plante principale. Une seule de ces plantes peut vivre près de 5000 ans. De nombreuses "chambres d'élevage" se trouvent à l'intérieur des feuilles, dans lesquelles les Cynos "naissent" et se régénèrent.
 
-Un Cyno naît comme un petit bulbe à l'intérieur d'une chambre d'élevage, atteint sa taille adulte en quelques jours, puis se détache. Il mesure alors 3.5 mètres de long, et prend sa forme définitive rectangulaire, légèrement arrondie, avec une sorte de vigne effilée à chaque coin. Ces membres sont utilisés pour la locomotion, l'alimentation tout comme le combat. Un Cyno est capable d'évoluer indépendamment durant environ 30 heures, avant de devoir se nourrir auprès de la plante-mère qui l'a vu naître. Les substituts artificiels à la nourriture de la plante-mère sont possibles, mais entraîne l'infertilité d'un Cyno. Par conséquent, tout Cyno quittant son monde natal devient stérile.
+Un Cyno naît comme un petit bulbe à l'intérieur d'une chambre d'élevage, atteint sa taille adulte en quelques jours, puis se détache. Il mesure alors 3.5 mètres de long, et prend sa forme définitive rectangulaire, légèrement arrondie, avec une sorte de vigne effilée à chaque coin. Ces membres sont utilisés pour la locomotion, l'alimentation tout comme le combat. Un Cyno est capable d'évoluer indépendamment durant environ 30 heures, avant de devoir se nourrir auprès de la plante-mère qui l'a vu naître. Les substituts artificiels à la nourriture de la plante-mère sont possibles, mais entraîne l'infertilité d'un Cyno. Par conséquent, tout Cyno quittant sa planète natale devient stérile.
 
 Structure sociale:
 Les Cynos sont hautement coopératifs et altruistes quand il s'agit de protéger les plantes-mères. Ils s'organisent autour d'un consensus gouvernemental,  fortement influencé par les plantes-mères, qui même si elles sont dénuées de raison, communiquent avec les Cynos à un niveau chimique, conditionnant ainsi leur comportement.
 
 Raison de la sédentarité:
-Les Cynos ne peuvent ni se reproduire sans leur plante-mère d'origine, ni planter une graine de plante-mère ailleurs que dans leur monde natal.
+Les Cynos ne peuvent ni se reproduire sans leur plante-mère d'origine, ni planter une graine de plante-mère ailleurs que sur leur planète natale.
 '''
 
-#SP_PHINNERT
-#Phinnert
+SP_PHINNERT  # translated
+Phinnert
 SP_PHINNERT_GAMEPLAY_DESC
 '''Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
@@ -5124,12 +5127,12 @@ Les Phinnerts sont des mammifères arboricoles d'une taille variant entre 1 et 2
 Structure sociale:
 La vie est bien plus courte pour les Phinnerts que pour la majorité des espèces sensibles, en raison des nombreux dangers d'un marais. Tous les Phinnerts sont considérés comme les membres d'une grande famille et les différends ne durent jamais très longtemps. Il n'y aucune autorité centrale, seulement une vague hiérarchie. Du fait de leur mortalité élevée, l'équilibre des forces chez les Phinnerts peut varier très rapidement. En compensation, leur société est très peu individualiste, et bien plus centrée sur le groupe.
 
-Monde natal: 
+Planète Natale: 
 Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
 '''
 
-#SP_EGASSEM
-#Egassem
+SP_EGASSEM  # translated
+Egassem
 SP_EGASSEM_GAMEPLAY_DESC
 '''Amibes cristallines massives, radioactives et magmatiques.
 Préfèrent les Planètes infernales.
@@ -5151,12 +5154,12 @@ Les Egassem sont des super-organismes d'une taille de plusieurs kilomètres, san
 Structure sociale:
 La société Egassem est essentiellement féodale, chaque Egassem s'apparentant à un "fief". Du fait de leur durée de vie colossale (quasiment éternelle), les Egassem sont très conservateurs et accordent la plus haute importance à leur bien-être.
 
-Monde natal:
+Planète Natale:
 Un environnement soumis à la chaleur générée par les forces de marée et l'activité tectonique, ainsi que par les radiations solaires. De gigantesques océans de roche en fusion recouvrent la majeure partie de la surface planétaire.
 '''
 
-#SP_SSLITH
-#Sslith
+SP_SSLITH  # translated
+Sslith
 SP_SSLITH_GAMEPLAY_DESC
 '''Créatures aquatiques plates et souples.
 Préfèrent les Planètes avec toundra.
@@ -5201,15 +5204,15 @@ Les Fifty-Seven adultes mesurent entre 10 et 20 mètres de long. La principale c
 Comportement:
 Les Fifty-Seven ne montrent que peu d'intérêt pour le reste de la galaxie, ainsi que pour les régions non-peuplées de leur planète. Étrangement, ils sont fascinés individuellement et culturellement par les mathématiques. En effet, les énigmes arithmétiques semblent attirer toute leur attention. Par conséquent, si des problèmes scientifiques peuvent leur être formulés correctement...
 
-Monde natal:
+Planète Natale:
 Un environnement marécageux à forte gravité et atmosphère dense.
 
 Raison de la sédentarité:
 Les Fifty-Seven sont en contact constant avec tous les autres individus de l'espèce, prenant ainsi part à un "chant" fractal complexe, qui semble être un moyen de tester des hypothèses mathématiques sophistiquées ou bien une sorte d'expression artistique et sociale. Quitter ce chant fractal semble apparamment très peu avantageux.
 '''
 
-#SP_SETINON
-#Setinon
+SP_SETINON  # translated
+Setinon
 SP_SETINON_GAMEPLAY_DESC
 '''Cellules microscopiques sensibles et individualistes.
 Préfèrent les Planètes marécageuses.
@@ -5227,12 +5230,12 @@ Préfèrent les Planètes marécageuses.
 
 SP_SETINON_DESC
 '''Description:
-Les Setinon sont l'évolution génétique de cellules immunitaires protégeant les plus grands organismes des parasites et autres virus. Mesurant 1mm, ils sont constitués de multiples compartiments nucléiques. Les protéines et les acides aminés s'organisent en réseau neuronal semblable au système rachidien des organismes sensibles communément répandus. Les Setinon utilisent des constructions biologiques (nécessitant des milliers de spécimen Setinon) pour exécuter les tâches que leur taille microscopique devrait normalement rendre impossibles.
+Les Setinon sont l'évolution génétique de cellules immunitaires protégeant les plus grands organismes des parasites et autres virus. Mesurant 1mm, ils sont constitués de multiples compartiments nucléiques. Les protéines et les acides aminés s'organisent en réseau neuronal semblable au système rachidien des organismes sensibles communément répandus. Les Setinon utilisent des constructions biologiques (nécessitant des milliers de spécimens Setinon) pour exécuter les tâches que leur taille microscopique devrait normalement rendre impossibles.
 
 Structure sociale:
 La société Setinon est fondée sur deux facteurs opposés: leur nature fortement individualiste et défensive, contrastant avec leur besoin vital de coopérer afin d'interagir avec le monde extérieur. Par conséquent, la société Setinon apparaît hautement complexe, basée sur plusieurs niveaux de pouvoir et de décision, en constante recherche d'équilibre.
 
-Monde natal:
+Planète Natale:
 Un environnement marécageux doté d'une biosphère très dense.
 '''
 
@@ -5296,8 +5299,8 @@ SP_RAAAGH_DESC
 Comportement:
 La territorialité extrême est le trait comportemental le plus distinctif chez les Raaagh- régissant leur vie quotidienne et imprégnant toute leur culture. Ce caractère marqué dénote leur préférence pour ce qui est familier et connu. Leur curiosité est très peu développée, ce qui explique leur technologie très peu avancée.
 
-Monde natal:
-Le monde natal des Raaagh est de type terrestre. Les surfaces terrestres et océaniques sont réparties d'une manière plus ou moins égale, mais le plus grand des continents ne recouvre que 4% de la surface planétaire. Cette profusion de petits continents et de grandes îles renforcent d'autant plus leur attitude territoriale.
+Planète Natale:
+La planète natale des Raaagh est de type terrestre. Les surfaces terrestres et océaniques sont réparties d'une manière plus ou moins égale, mais le plus grand des continents ne recouvre que 4% de la surface planétaire. Cette profusion de petits continents et de grandes îles renforcent d'autant plus leur attitude territoriale.
 
 Raison de la sédentarité:
 Il ne reste aucun bout de terre assez grand pour y subsister que les Raaagh n'aient pas découvert. L'instinct génétique d'un Raaagh le pousse à protéger son territoire de sa vie, et lorsque l'occasion se présente, d'occuper une terre adjacente. Abandonner un territoire leur est inconcevable, et un Raaagh contraint à le quitter est instantanément atteint d'une violente démence.
@@ -5322,8 +5325,8 @@ SP_BEIGEGOO_DESC
 '''La planète entière est recouverte d'un voile beige de nanorobots ou Nanites. Nul ne sait s'ils ont été déployés en tant qu'arme, s'ils sont le résultat d'une expérience ayant mal tourné, ou bien un système défaillant d'extraction de ressources, mais ils se sont appropriés toute la planète. Il n'en reste d'ailleurs rien d'autre qu'un cœur radioactif. Ces Nanites sont des assembleurs très efficaces, et s'exécutent dès que des matériaux viables sont à leur disposition. Cependant, ces Nanites protègent farouchement le secret de leur conception-- ils s'autodétruisent dès qu'ils sont capturés ou éloignés de leur planète.
 '''
 
-#SP_SILEXIAN
-#Silexian
+SP_SILEXIAN  # translated
+Silexian
 SP_SILEXIAN_GAMEPLAY_DESC
 '''Robots écologistes brillants, abandonnés à leur sort.
 Préfèrent les Planètes de type terrestre.
@@ -5352,8 +5355,8 @@ Histoire:
 Les Silexians furent créés par les Caretakers dans le but d'augmenter l'efficacité et l'automatisation de leurs projets de maintenance écologique. Au cours du temps, tous les mondes habités par les Caretakers furent désertés, mais les Silexians, pacifiques et loyaux, continuèrent inlassablement leur ouvrage. Quand finalement les Caretakers quittèrent la galaxie, les Silexians furent abandonnés.
 '''
 
-#SP_KOBUNTURA
-#Kobuntura
+SP_KOBUNTURA  # translated
+Kobuntura
 SP_KOBUNTURA_GAMEPLAY_DESC
 '''Formes sensibles de poussière magnétique, fascinées par la construction et l'infrastructure.
 Préfèrent les Planètes stériles.
@@ -5375,8 +5378,8 @@ Structure sociale:
 Les Kobuntura s'organisent en guilde depuis les temps ancestraux, mais l'une de ces guildes, l'Enclave des Ténèbres, spécialisée dans les arts martiaux, a pris le contrôle sur toutes les autres factions et a instauré une dictature militaire. Malgré cela, il ne peut y avoir aucun secret chez les Kobuntura, dans la mesure où ils ne peuvent communiquer sans que tous les Kobuntura soient au courant. Les échanges et la sociabilité sont très limités, étant donné que le seul but de l'Enclave des Ténèbres, et par là même de toute la société Kobuntura, est de retrouver une espèce précise de Précurseurs, les Constructeurs, afin de découvrir leurs plus grands secrets d'ingénierie. Cet unique objectif cimente la civilisation Kobuntura depuis sa naissance.
 '''
 
-#SP_UGMORS
-#Ugmors
+SP_UGMORS  # translated
+Ugmors
 SP_UGMORS_GAMEPLAY_DESC
 '''Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
 Préfèrent les Planètes infernales.
@@ -5402,7 +5405,7 @@ Les Ugmors ont une forme de gouvernement très centralisé, ressemblant à une r
 Description:
 Un Ugmor peut revêtir plusieurs formes, mais ils sont tous constitués de roches et de métaux, connectés par une substance fibreuse collante. Ils sont extrêmement résistants et peuvent même survivre quelques heures dans le vide spatial. Dans leur environnement naturel, ils peuvent vivre jusqu'à cinq ans avant de refroidir et mourir de “vieillesse”. Les Ugmors ne sont pas particulièrement intelligents. Tandis que les Trappes de Larar font preuve d'une intelligence dite "mémorielle", cette faculté semble empêcher chez les Ugmors l'éclosion d'une intelligence basée sur la raison.
 
-Monde natal:
+Planète Natale:
 Le monde d'origine des Ugmors est une planète rocheuse à la période de rotation extrêmement rapide (une rotation complète toutes les 3 heures et demie). 30% de sa surface est recouverte de mers de lave et de métaux liquides.
 '''
 
@@ -5445,12 +5448,12 @@ SP_HIDDENGARDENER_DESC
 
 Les formes de vie fongique n'ont que très rarement un système cérébral, mais celui du Gardener s'est développé en symbiose avec le sol qui l'abrite: l'entretien du sol par le Gardener procure assez d'énergie pour que le cerveau de ce dernier fonctionne.
 
-Leur monde natal de type terrestre est une biosphère végétale hétéroclite mais plutôt instable, n'abritant aucune autre forme de vie.
+Leur planète natale de type terrestre est une biosphère végétale hétéroclite mais plutôt instable, n'abritant aucune autre forme de vie.
 
-La toile fongique recouvrant le sous-sol est bien trop grande pour quitter la planète, et bien que les Hidden Gardeners puissent se reproduire par 'duplication' en deux spécimen partageant la même conscience, leur grande taille provoque invariablement une latence de la pensée. Par conséquent, on ne trouve aucun spécimen de petite taille, qui pourrait éventuellement quitter sa planète natale.'''
+La toile fongique recouvrant le sous-sol est bien trop grande pour quitter la planète, et bien que les Hidden Gardeners puissent se reproduire par 'duplication' en deux spécimens partageant la même conscience, leur grande taille provoque invariablement une latence de la pensée. Par conséquent, on ne trouve aucun spécimen de petite taille, qui pourrait éventuellement quitter sa planète natale.'''
 
-#SP_ABADDONI
-#Abaddoni
+SP_ABADDONI  # translated
+Abaddoni
 SP_ABADDONI_GAMEPLAY_DESC
 '''Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers. 
 Préfèrent les Planètes infernales.
@@ -5486,6 +5489,10 @@ Préfèrent les Planètes irradiées.
 [[AVERAGE_POPULATION]]
 [[GREAT_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
+
++	Bons [[encyclopedia SHIELDS_TITLE]] d'astronefs: +1
++	Bons [[encyclopedia SHIELDS_TITLE]] planétaires: +5
++	Bonne [[encyclopedia DEFENSE_TITLE]] planétaire: +5
 '''
 
 SP_ACIREMA_DESC
@@ -5496,14 +5503,12 @@ Tout comme les Acirema ont trouvé l'anomalie qui leur permet de voyager entre l
 
 La quantité gigantesque d'énergie que les Acirema peuvent transférer dans leur univers via le Portail, leur confère une production excellente en Industrie, tandis que le fait qu'il puisse manipuler eux-mêmes cette énergie, leur permet d'utiliser leur propre corps comme armement. Cela rend le Portail très dangereux à approcher, sans compter que les Acirema se méfient des étrangers, et sont conscients de la vulnérabilité de leur position. Faire commerce de l'énergie du Portail dans cet univers leur est cependant devenu bénéfique, puisque qu'ils ne sont pas en mesure d'exploiter les planètes qui s'y trouvent. Les Acirema du Portail semble avoir un gouvernement de type militaire et/ou d'avant-poste scientifique (un cœur décisionnel resserré donnant les grandes orientations à une population quasiment autonome). Les Acirema restent très discrets sur la nature de leur société dans leur propre univers.
 
-Armes vivantes:
-Les astronefs avec un équipage Acirema gagneront 1 point bonus en Bouclier, même si l'astronef n'est pas équipé de [[encyclopedia SHIELDS_TITLE]].
-
 "Monde Natal":
 Le Portail est est un environnement irradié, situé à proximité d'une Géante bleue anormalement plus brillante que la moyenne, et dispose d'une connection à un autre univers. La rumeur veut que des expériences menées par les Précurseurs aient donné naissance à cette connection, ce qui a eu une influence sur l'étoile géante toute proche. On suppose même qu'une vie intelligente s'est développée au sein du Portail, mais qu'elle fut détruite lorsque les Acirema furent les premiers à ouvrir cette connection (par la recherche ou par l'utilisation d'armes avancées).
 
 Raison de la sédentarité:
-Les Acirema ne peuvent pas demeurer assez longtemps dans cet univers pour coloniser d'autres planètes et y survivre.'''
+Les Acirema ne peuvent pas demeurer assez longtemps dans cet univers pour coloniser d'autres planètes et y survivre.
+'''
 
 #SP_OURBOOLS
 #Ourbools
@@ -5530,7 +5535,7 @@ Comportement:
 Les Ourbools ont une vie nomade, chassant ou élevant leurs proies ichthyoïdes. Les rapports sociaux entre deux groupes se rencontrant par hasard sont généralement bienveillants.
 Une petite minorité a cependant adopté une vie sédentaire, reposant sur la pratique d'un artisanat balbutiant.
 
-Monde natal:
+Planète Natale:
 Leur planète natale, Oolur, possède 23 lunes.
 
 Raison de la sédentarité:
@@ -5554,20 +5559,20 @@ Préfèrent les Planètes stériles.
 
 SP_VOLP_DESC
 '''Description:
-Les Volp-Uglush sont une espèce asexuée mesurant environ 300 mètres de long et vivant dans des tunnels au sein de leur monde natal. Ils se nourrissent de silicates et possèdent un grand nombre de bras/bouches le long de leur corps fin et cylindrique, servant à la fois comme membres manipulateurs, pour creuser des galeries, pour se nourrir et pour communiquer à travers le réseau de tunnels. Dans l'ancien temps, il existait plusieurs souches de Volp-Uglush mais ces dernières étaient constamment en conflit. Les groupes qui jouissaient de la meilleure organisation étaient les mieux placés dans la compétition aux ressources. Tandis que l'espèce passait de l'ère industrielle à l'ère de l'information, une souche devint dominante, et les autres s'éteignirent lentement. La souche survivante commença alors à optimiser son environnement pour une utilisation plus efficace des ressources disponibles. Elle devint particulièrement performante dans l'exploitation des ressources, renforçant par la même les structures sociales en unifiant les comportements individuels.
+Les Volp-Uglush sont une espèce asexuée mesurant environ 300 mètres de long et vivant dans des tunnels au sein de leur planète natale. Ils se nourrissent de silicates et possèdent un grand nombre de bras/bouches le long de leur corps fin et cylindrique, servant à la fois comme membres manipulateurs, pour creuser des galeries, pour se nourrir et pour communiquer à travers le réseau de tunnels. Dans l'ancien temps, il existait plusieurs souches de Volp-Uglush mais ces dernières étaient constamment en conflit. Les groupes qui jouissaient de la meilleure organisation étaient les mieux placés dans la compétition aux ressources. Tandis que l'espèce passait de l'ère industrielle à l'ère de l'information, une souche devint dominante, et les autres s'éteignirent lentement. La souche survivante commença alors à optimiser son environnement pour une utilisation plus efficace des ressources disponibles. Elle devint particulièrement performante dans l'exploitation des ressources, renforçant par la même les structures sociales en unifiant les comportements individuels.
 La société Volp-Uglush agit quasiment comme un organisme unique, car son organisation est optimisée à un niveau rarement atteint par d'autres espèces. Cependant, ceci a entraîné une perte critique d'initiative indépendante. Bien que la société Volp-Uglush soit incroyablement efficace, il faudrait des centaines, voire des milliers d'années à un groupe de Volp-Uglush pour être capable de créer et de développer une société nouvelle et indépendante.
 
 Les Volp-Uglush sont très efficaces dans la gestion des flottes marchandes et sont d'excellents bureaucrates. Alors qu'ils possèdent une machine de guerre performante étant capable de prendre part aux plus grandes batailles, le chaos du combat est loin d'être un environnement qui leur convient.
 
-Monde natal:
+Planète Natale:
 Hive est une vaste planète stérile dont la taille est 2 fois plus importante que la masse. Cela suggère que toute sa matière, excepté un petit cœur de métal, a été utilisée pour créer les galeries et construire les infrastructures au sein du vaste réseau de tunnels de la bureaucratie Volp-Uglush.
 
 Raison de la sédentarité:
 Les Volp-Uglush ayant à présent une société hautement complexe et intriquée, il leur est impossible de quitter Hive pour fonder ailleurs une nouvelle colonie, cela nécessitant un esprit d'indépendance et d'innovation leur faisant désormais défaut.
 '''
 
-#SP_FURTHEST
-#Furthest
+SP_FURTHEST  # translated
+Furthest
 SP_FURTHEST_GAMEPLAY_DESC
 '''Herbivores paranoïaques, à trois têtes et trois pattes.
 Préfèrent les Planètes avec toundra.
@@ -5592,14 +5597,14 @@ Nom:
 Les Furthest pensent que l'intelligence se mesure à la distance qu'un organisme est capable de mettre en lui-même et une menace potentielle. Si bien que le nom "Furthest" est censé décrire leur espèce comme la plus avancée de toutes.
 
 Comportement: 
-Les Furthest affirment que leur monde natal est peuplé depuis toujours des prédateurs les plus mortels et féroces. Ils sont parvenus à survivre en développant la prudence au plus haut point. Rester constamment en alerte vis-à-vis de tout danger potentiel et être capable de s'y soustraire quelle que soit la situation, représente le leitmotiv de leur psychologie et culture. Le monde natal des Furthest n'abrite en effet aucun carnivore contre lequel ils soient en mesure de lutter.
+Les Furthest affirment que leur planète natale est peuplée depuis toujours des prédateurs les plus mortels et féroces. Ils sont parvenus à survivre en développant la prudence au plus haut point. Rester constamment en alerte vis-à-vis de tout danger potentiel et être capable de s'y soustraire quelle que soit la situation, représente le leitmotiv de leur psychologie et culture. La planète natale des Furthest n'abrite en effet aucun carnivore contre lequel ils soient en mesure de lutter.
 
 Raison de la sédentarité:
-Les Furthest considèrent le voyage spatial comme bien trop dangereux pour un être sensé, mais certains d'entre eux considérant leur monde natal comme tout aussi dangereux pourraient bien envisager de coloniser un autre monde.
+Les Furthest considèrent le voyage spatial comme bien trop dangereux pour un être sensé, mais certains d'entre eux considérant leur planète natale comme tout aussi dangereuse, pourraient bien envisager de coloniser un autre monde.
 '''
 
-#SP_EXOBOT
-#Exobot
+SP_EXOBOT  # translated
+Exobot
 SP_EXOBOT_GAMEPLAY_DESC
 '''Robots semi-autonomes, conçus pour la production industrielle sur les planètes stériles, irradiées et infernales.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
@@ -5638,9 +5643,9 @@ SP_EXPERIMENTOR_DESC
 Les Expérimentateurs appartiennent à une ancienne race précurseur, dont l'existence est dévouée à la recherche du savoir. Leur désir de découverte est sans égal, et ils n'ont aucun scrupule à considérer une galaxie entière comme un laboratoire pour leurs expériences.
 
 SP_SUPER_TEST
-Super Testeurs
+Super-Testeurs
 SP_SUPER_TEST_GAMEPLAY_DESC
-'''Les Super Testeurs, performants dans chaque domaine, sont quasiment omniscients. Ils prospèrent sur tous types de planètes. (Leur pouvoir de neutralisation de [[encyclopedia STEALTH_TITLE]] ne fonctionne que lorsqu'ils se trouvent dans leur Capitale)
+'''Les Super-Testeurs, performants dans chaque domaine, sont quasiment omniscients. Ils prospèrent sur tous types de planètes. (Leur pouvoir de neutralisation de [[encyclopedia STEALTH_TITLE]] ne fonctionne que lorsqu'ils se trouvent dans leur Capitale)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
 
@@ -5686,7 +5691,7 @@ WORLDTREE_SPECIAL
 Arbre Planétaire
 
 WORLDTREE_SPECIAL_DESC
-'''Accroît l'[[encyclopedia SUPPLY_TITLE]] de +1, le [[encyclopedia DETECTION_RANGE_TITLE]] de +10, la Population max de +1, le [[encyclopedia HAPPINESS_TITLE]] de +5 sur la planète présentant cette Particularité et de +1 sur toutes les autres planètes appartenant au même empire.
+'''Augmente l'[[encyclopedia SUPPLY_TITLE]] de +1, le [[encyclopedia DETECTION_RANGE_TITLE]] de +10, la Population max de +1, le [[encyclopedia HAPPINESS_TITLE]] de +5 sur la planète présentant cette Particularité et de +1 sur toutes les autres planètes appartenant au même empire.
 
 Un arbre gigantesque s'est développé à tel point que sa cime surplombe l'atmosphère de la planète. Les scientifiques pensent que cet arbre fut planté par les Soigneurs dans les temps ancestraux.'''
 
@@ -5694,7 +5699,7 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ruines Ancestrales (Exhumées)
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-'''Accroît la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Mais une découverte de grande valeur y a déjà eu lieu.'''
 
@@ -5702,14 +5707,14 @@ ANCIENT_RUINS_SPECIAL
 Ruines Ancestrales
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-'''Accroît la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
 
 Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Le premier empire prenant pied sur la planète et maîtrisant la [[tech LRN_XENOARCH]], acquiert gratuitement la maîtrise d'une technologie avancée, ou bien découvre une structure ou un astronef aux puissantes caractéristiques.'''
 
 PANOPTICON_SPECIAL
 Complexe Panoptique
 PANOPTICON_SPECIAL_DESC
-'''Accroît de 10 la [[encyclopedia DETECTION_TITLE]] de l'empire et de 75 le [[encyclopedia DETECTION_RANGE_TITLE]] de la planète.
+'''Augmente de 10 la [[encyclopedia DETECTION_TITLE]] de l'empire et de 75 le [[encyclopedia DETECTION_RANGE_TITLE]] de la planète.
 
 Profondément enfoui dans la croûte planétaire, le Panoptique est la puissante relique d'une civilisation mystérieuse, ayant peuplée autrefois la planète. Lorsqu'il est nourri des données stockées par les équipements de détection de l'empire, il possède le pouvoir d'extraire des informations extrêmement fiables de l'enchevêtrement chaotique d'ondes électromagnétiques.'''
 
@@ -5717,7 +5722,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Orbite Excentrissime
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Réduit de 3 la population de la planète, mais accroît de 3 sa [[encyclopedia RESEARCH_TITLE]].
+'''Réduit de 3 la population de la planète, mais augmente de 3 sa [[encyclopedia RESEARCH_TITLE]].
 
 L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Cette variation conséquente ralentit la croissance de la population, mais ces répercussions sont un terrain exaltant pour la recherche scientifique.'''
 
@@ -5725,7 +5730,7 @@ RESONANT_MOON_SPECIAL
 Lune Synchrone
 
 RESONANT_MOON_SPECIAL_DESC
-'''Accroît de 10 la [[encyclopedia STEALTH_TITLE]] des structures de la planète, ainsi que celle des astronefs de l'empire stationnés dans le même système stellaire.
+'''Augmente de 10 la [[encyclopedia STEALTH_TITLE]] des structures de la planète, ainsi que celle des astronefs de l'empire stationnés dans le même système stellaire.
 
 La planète possède un satellite naturel dont la période de révolution est synchrone avec sa période de rotation, ce qui signifie que le satellite, vu de l'extérieur, a toujours une "face cachée" faisant face à la planète. Cette "face cachée" est le lieu idéal pour les aménagements clandestins, tandis que l'espace entre la planète et sa lune peut servir à dissimuler structures et flottes à la vue des autres empires.'''
 
@@ -5739,7 +5744,7 @@ Abandonnée par une civilisation dont le souvenir s'est effacé avec le temps, c
 HONEYCOMB_SPECIAL
 Réserve Alvéolaire
 HONEYCOMB_SPECIAL_DESC
-'''Lorsqu'une planète dotée d'une Réserve Alvéolaire est réglée sur le focus [[encyclopedia INDUSTRY_TITLE]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]], améliorent leur [[encyclopedia INDUSTRY_TITLE]] de 0.5 par Population.
+'''Lorsqu'une planète dotée d'une Réserve Alvéolaire privilégie l'[[encyclopedia INDUSTRY_TITLE]], toutes les planètes de l'empire réglées sur le même Focus et lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]], améliorent leur [[encyclopedia INDUSTRY_TITLE]] de 0.5 par Population.
 
 La Réserve Alvéolaire est une planète qui fut utilisée comme telle par les Constructeurs dans les temps ancestraux. Quasiment la totalité des planètes aux alentours furent dépouillées de l'ensemble de leurs ressources puis détruites. Les matériaux récupérés furent triés et stockés séparément dans de gigantesques tubes creusés dans la croûte terrestre. Ces réserves abritent des éléments rares et de grande valeur, des molécules difficiles à synthétiser, et une vaste gamme de sources d'énergie. Ce que les Constructeurs désiraient créer à partir de ce trésor et la raison pour laquelle ils ne l'ont finalement pas utilisé, restent à ce jour un mystère.'''
 
@@ -6173,8 +6178,8 @@ Capacité
 METER_SIZE
 Taille
 
-#METER_DETECTION_STRENGTH
-#[[encyclopedia DETECTION_TITLE]]
+METER_DETECTION_STRENGTH  # translated
+[[encyclopedia DETECTION_TITLE]]
 
 ALIGN_MILITARISM
 Militarisme
@@ -6365,8 +6370,14 @@ taille de la planète
 DESC_VAR_PLANETTYPE
 type de planète
 
+DESC_VAR_ORIGINALTYPE
+Type de planète d'origine
+
 DESC_VAR_NEXTBETTERPLANETTYPE
 meilleur type de planète suivant pour l'espèce
+
+DESC_VAR_DISTANCEFROMORIGINALTYPE
+Distance du type de planète d'origine
 
 DESC_VAR_PLANETENVIRONMENT
 environnement de la planète
@@ -6784,10 +6795,10 @@ DESC_TARGET_NOT
 ''' qui n'est pas l'objet cible'''
 
 DESC_HOMEWORLD
-''' qui est le Monde natal de l'espèce %1%'''
+''' qui est la Planète Natale de l'espèce %1%'''
 
 DESC_HOMEWORLD_NOT
-''' qui n'est pas le Monde natal de l'espèce %1%'''
+''' qui n'est pas la Planète Natale de l'espèce %1%'''
 
 DESC_CAPITAL
 ''' qui est capitale d'empire'''
@@ -7447,7 +7458,7 @@ Bien qu'un haut niveau en conception et en configuration d'usine requiert toujou
 PRO_EXOBOTS  # translated
 Exobots
 PRO_EXOBOTS_DESC
-Permet la construction de colonies d'Exobots optimisés pour l'industrie sur les planètes hostiles.
+Permet la construction de colonies d'[[species SP_EXOBOT]]s optimisés pour l'industrie sur les planètes hostiles.
 
 PRO_RAPID_EXO_PROD
 Production Accélérée d'Exobots
@@ -7557,7 +7568,7 @@ CON_FRC_ENRG_STRC
 Structures Synergiques
 
 CON_FRC_ENRG_STRC_DESC
-'''Accroît le développement des indicateurs de ressources inférieurs à ceux de la planète référence de 3 par tour, et la diminution des indicateurs de ressources supérieurs à ceux de la planète référence de 5 par tour.
+'''Accroît la progression des indicateurs de ressources inférieurs à ceux de la planète référence de 3 par tour, et la diminution des indicateurs de ressources supérieurs à ceux de la planète référence de 5 par tour.
 
 La flexibilité et la versatilité des structures synergiques permettent de redéfinir plus facilement le rôle des infrastructures des colonies en vue de nouvelles applications, augmentant ainsi la rapidité et le taux d'une modification de focus.
 
@@ -7711,7 +7722,7 @@ SHP_DOMESTIC_MONSTER
 Domestication Méga-Faune
 
 SHP_DOMESTIC_MONSTER_DESC
-La pratique ancestrale de la domestication des autres espèces peut également s'appliquer aux monstres de l'espace peuplant les voies spatiales. Construire des Colonies et des Avant-postes à proximité de leurs lieux de nidification rendrait possible la domestication de tels monstres.
+La pratique ancestrale de la domestication des autres espèces peut également s'appliquer aux monstres de l'espace peuplant les voies spatiales. Construire des Colonies et des Avant-Postes à proximité de leurs lieux de nidification rendrait possible la domestication de tels monstres.
 
 SHP_ENDOCRINE_SYSTEMS
 Endocrinologie Méga-Faune
@@ -7876,7 +7887,7 @@ EXOBOT_SHORT_DESC
 Crée des citoyens exobots
 
 STARLANE_SPEED_SHORT_DESC
-Accroît la Vitesse sur Voies spatiales
+Augmente la Vitesse sur Voies spatiales
 
 CON_ORBITAL_CON
 Construction Orbitale
@@ -8574,7 +8585,7 @@ SHP_ORG_HULL
 Coque Organique
 
 SHP_ORG_HULL_DESC
-La plus basique des coques de type organique: une coque vivante cultivé à partir des constituants les plus basiques de la vie et formée pour le combat.
+La plus basique des coques de type organique: une coque vivante cultivée à partir des constituants les plus basiques de la vie et conçue pour le combat.
 
 SHP_ENDOSYMB_HULL
 Coque Endosymbiotique
@@ -8622,7 +8633,7 @@ SPY_PLANET_STEALTH_MOD
 Modificateur de Furtivité Planétaire
 
 SPY_PLANET_STEALTH_MOD_DESC
-Accroît la [[encyclopedia STEALTH_TITLE]] naturelle des planètes à 4.99, afin que les systèmes soient visibles pour les empires avant les planètes qui s'y trouvent.
+Augmente la [[encyclopedia STEALTH_TITLE]] naturelle des planètes à 4.99, afin que les systèmes soient visibles pour les empires avant les planètes qui s'y trouvent.
 
 #############################################################
 ####            T E C H   R E F I N E M E N T            ####
@@ -8662,160 +8673,160 @@ BLD_EVACUATION
 Évacuation
 
 BLD_EVACUATION_DESC
-Ôte la population de cette planète sur plusieurs tours. Si une planète de remplacement appropriée, est disponible, avec déjà la même espèce et suffisamment de place libre, la population y sera transférée.
+Extrait la population de cette planète sur plusieurs tours. Si une planète de remplacement à l'environnement approprié est disponible, déjà peuplée par la même espèce, et disposant de suffisamment de place libre, la population y sera transférée.
 
 BLD_OBSERVATORY
 Observatoire
 
-#BLD_OBSERVATORY_DESC
-#'''One random star will be revealed each turn to the entire galaxy. Sometimes, a star which is already visible/explored may be revealed, resulting in no new star actually being made known to the empires in the galaxy.
-#
-#An observational facility dedicated to locating and mapping the stars in the know galaxy, particularly those which are determined to be reachable via the network of starlanes.'''
+BLD_OBSERVATORY_DESC
+'''À chaque tour, une nouvelle étoile sera révélée à la galaxie entière, quel que soit son emplacement. Dans certains cas, une étoile déjà visible/explorée peut être révélée, seuls les empires qui ne la détectaient pas auparavant apprendront donc son existence.
+
+Une structure d'observation dédiée à la localisation astronomique et la cartographie stellaire de la galaxie connue, en particulier les astres susceptibles d'être atteignables via le réseau de voies spatiales.'''
 
 BLD_CULTURE_ARCHIVES
 Archives Culturelles
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Augmente l'objectif de [[encyclopedia RESEARCH_TITLE]] de 5, l'objectif [[encyclopedia INDUSTRY_TITLE]] par la population de la planète.
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 5, ainsi que l'indicateur [[encyclopedia INDUSTRY_TITLE]] de la moitié de la Population planétaire.
 
-Conserve le savoir accumulé par des millier d'années de vie sur cette planète, donnant des bonus à bien des aspects de la productivité planétaire.'''
+Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus dans différents domaines de la productivité planétaire.'''
 
 BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
 
-#BLD_CULTURE_LIBRARY_DESC
-#'''Increases target [[encyclopedia RESEARCH_TITLE]] by 5.
-#
-#Stores the accumulated knowledge from thousands of years of life on this planet, giving a bonuses to research. This building will be destroyed when the population of the high tech natives reaches zero.'''
+BLD_CULTURE_LIBRARY_DESC
+'''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 5.
+
+Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus à la Recherche. Cette structure sera détruite si la population planétaire est réduite à zéro.'''
 
 BLD_IMPERIAL_PALACE
 Palais Impérial
 
 BLD_IMPERIAL_PALACE_DESC
-'''Augmente la porté des lignes d'[[encyclopedia SUPPLY_TITLE]] de 1, l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5 et l'[[encyclopedia TROOP_TITLE]] de 3. Sa place définit également la capitale de l'empire.
+'''Augmente de 1 la portée de l'[[encyclopedia SUPPLY_TITLE]], l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5, et l'[[encyclopedia TROOP_TITLE]] de 3. Son emplacement définit également la Capitale de l'empire.
 
-Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire.'''
+Représente le pouvoir et le prestige impérial et remplit la fonction de centre de contrôle pour toutes les possessions de l'empire.'''
 
-#BLD_SUPER_TEST
-#Super-Tester Takeover
-#BLD_SUPER_TEST_DESC
-#Switches the species of the planet to Super-Testers. For Official Testing Purposes, or for cheating.
+BLD_SUPER_TEST
+Invasion Super-Testeurs
+BLD_SUPER_TEST_DESC
+Remplace l'espèce de la planète par des Super-Testeurs, à des fins de tests logiciels ou tout simplement pour tricher.
 
 BLD_SHIPYARD_BASE
 Chantier Spatial
 
 BLD_SHIPYARD_BASE_DESC
-Installation orbitale pour l'assemblage d'engins spatiaux de qualité militaire. Permet la production d'astronefs dans le système où il se trouve. Peut être amélioré par la production de structures supplémentaires dans le même système.
+Structure orbitale dédiée à l'assemblage d'engins spatiaux de qualité militaire. Un Chantier Spatial se situe en orbite autour d'une planète afin d'y produire des astronefs, et peut être amélioré via la production de structures additionnelles dans le même système, ces dernières ne pouvant être construites que si le système en question abrite déjà un Chantier Spatial.
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
 Cale Sèche Orbitale
 
-#BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-#'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for some further shipyard upgrades to be built. This upgrade also provides repair abilities for damaged ships, fully repairing all structural damage each turn, as long as no combat has taken place in system that turn.
-#
-#When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
+BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
+'''Amélioration du [[buildingtype BLD_SHIPYARD_BASE]] requise avant toute autre construction de structures additionnelles supplémentaires. Cette amélioration permet également la réparation des astronefs endommagés, restaurant à chaque tour la totalité de la [[encyclopedia STRUCTURE_TITLE]] d'un astronef, si aucun combat n'a lieu dans ce système durant le tour en question.
+
+Lors de la construction d'un imposant vaisseau interstellaire, il est peu pratique de déplacer chaque composant via des ascenseurs spatiaux en vue de l'assemblage orbital. De ce fait, il s'avère bien plus judicieux de fabriquer chaque élément et de les assembler au sein de la même structure orbitale, supprimant ainsi le problème du transport des éléments volumineux à partir de la surface planétaire.'''
 
 BLD_SHIPYARD_CON_NANOROBO
 Unité de Production Nano-Robotisée
 
-#BLD_SHIPYARD_CON_NANOROBO_DESC
-#'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_NANOROBOTIC]]s and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
-#
-#The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull. This building is able to facilitate the construction of more advanced robotic hulls.'''
+BLD_SHIPYARD_CON_NANOROBO_DESC
+'''Amélioration de la [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] permettant la production de la [[shiphull SH_NANOROBOTIC]], et à l'aide d'autres structures additionnelles, de la [[shiphull SH_LOGISTICS_FACILITATOR]].
+
+La production de millions de nanorobots de maintenance et leur connexion à une unique IA dirigeante nécessitent des infrastructures robotiques bien plus conséquentes que celles utilisées pour la production d'une coque robotique basique. Cette structure permet donc de faciliter la construction de coques robotiques avancées.'''
 
 BLD_SHIPYARD_CON_GEOINT
 Manufacture Géo-Intégrée
 
-#BLD_SHIPYARD_CON_GEOINT_DESC
-#'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_TITANIC]]s, [[shiphull SH_SELF_GRAVITATING]]s and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
-#
-#When the needs of a shipyard become sufficiently great, it is no longer practical for the shipyard and the planet on which it is built to remain separate entities. Rather, it is more useful to integrate the two into a harmonious unit, with the shipyard extending from below the surface to beyond geosynchronous orbit, making full use of all the geological aspects of the planet.'''
+BLD_SHIPYARD_CON_GEOINT_DESC
+'''Amélioration de la [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] permettant la production de la [[shiphull SH_TITANIC]], la [[shiphull SH_SELF_GRAVITATING]], et à l'aide d'autres structures additionnelles, de la [[shiphull SH_LOGISTICS_FACILITATOR]].
+
+Lorsque les besoins en ressources d'un [[buildingtype BLD_SHIPYARD_BASE]] deviennent suffisamment importants, le fait que le chantier et la planète soient deux entités différentes s'avère problématique. Il devient alors plus pratique de les organiser harmonieusement en une même unité, le chantier s'étendant de l'intérieur de la surface planétaire à une orbite géosynchrone, utilisant ainsi de manière optimale toutes les ressources géologiques de la planète.'''
 
 BLD_SHIPYARD_CON_ADV_ENGINE
 Dock d'Ingénierie Avancée
 
-#BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-#'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of [[shiphull SH_TRANSSPATIAL]] and [[shippart FU_TRANSPATIAL_DRIVE]], and with other buildings the [[shiphull SH_LOGISTICS_FACILITATOR]].
-#
-#An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive.'''
+BLD_SHIPYARD_CON_ADV_ENGINE_DESC
+'''Amélioration de la [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] permettant la production de la [[shiphull SH_TRANSSPATIAL]] et de l'équipement [[shippart FU_TRANSPATIAL_DRIVE]], et à l'aide d'autres structures additionnelles, de la [[shiphull SH_LOGISTICS_FACILITATOR]].
+
+Une structure de haute technicité spécialisée dans toute production ayant trait à la technologie de Propulsion Trans-Spatiale.'''
 
 BLD_SHIPYARD_AST
 Processeur Astéroïdal
 
-#BLD_SHIPYARD_AST_DESC
-#'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. It may be built at an outpost.
-#
-#A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a shipyard in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
+BLD_SHIPYARD_AST_DESC
+'''Cette structure est requise pour la production de toutes les coques astéroïdales et avant toute construction de structures additionnelles pour Processeur Astéroïdal. Il peut être construit sur un [[encyclopedia OUTPOSTS_TITLE]].
+
+Une immense usine dédiée à la manipulation et à la transformation d'astéroïdes afin de les utiliser comme coques d'astronefs. Les astéroïdes ainsi modifiés sont envoyés au [[buildingtype BLD_SHIPYARD_BASE]] situé dans le même système, où ils sont assemblés en tant que coque finale pour un astronef. Cette structure ne peut être construite qu'au sein des ceintures d'astéroïdes.'''
 
 BLD_SHIPYARD_AST_REF
 Processeur de Recombination Astéroïdale
 
-#BLD_SHIPYARD_AST_REF_DESC
-#'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_AST]] and allows production of [[shiphull SH_MINIASTEROID_SWARM]]s, [[shiphull SH_SCATTERED_ASTEROID]]s, and [[shiphull SH_CRYSTALLIZED_ASTEROID]]s. In addition, this processor upgrade allows any shipyard in the empire or an ally's empire to produce ships with the [[shippart AR_ROCK_PLATE]] and [[shippart AR_CRYSTAL_PLATE]] ship parts.
-#
-#An extensive facility dedicated to fusing, shattering, deconstructing and rebuilding preexisting asteroids to form ship's parts and prepare them to be used as hulls.'''
+BLD_SHIPYARD_AST_REF_DESC
+'''Amélioration du [[buildingtype BLD_SHIPYARD_AST]] permettant la production de la [[shiphull SH_MINIASTEROID_SWARM]], la [[shiphull SH_SCATTERED_ASTEROID]], ainsi que la [[shiphull SH_CRYSTALLIZED_ASTEROID]]. Par ailleurs, cette structure permet à tout [[buildingtype BLD_SHIPYARD_BASE]] de l'empire ou d'un allié de l'empire de produire des astronefs dotés des équipements [[shippart AR_ROCK_PLATE]] et [[shippart AR_CRYSTAL_PLATE]].
+
+Une usine colossale dédiée à la fusion, au concassage, à la séparation et à la recombination d'astéroïdes préexistants afin de les utiliser comme coques d'astronefs.'''
 
 BLD_SHIPYARD_ORG_ORB_INC
 Incubateur Orbital
 
-#BLD_SHIPYARD_ORG_ORB_INC_DESC
-#'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the development of all organic hulls and for the production of all further organic hull shipyard upgrades. On its own it can build [[shiphull SH_ORGANIC]]s, [[shiphull SH_SYMBIOTIC]]s and [[shiphull SH_STATIC_MULTICELLULAR]]s.
-#
-#A shipyard designed to meet the needs of maturing space-creatures. Conditions within the shipyard must meet exacting specifications in order for the ships within to continue living and developing. As such, any unfinished living ships within are liable to be destroyed if the shipyard is sufficiently damaged.'''
+BLD_SHIPYARD_ORG_ORB_INC_DESC
+'''Amélioration du [[buildingtype BLD_SHIPYARD_BASE]] requise pour la production de toutes les coques organiques et avant toute construction de structures additionnelles pour Incubateur Orbital. De base, ce dernier permet la production de la [[shiphull SH_ORGANIC]], la [[shiphull SH_SYMBIOTIC]], ainsi que la [[shiphull SH_STATIC_MULTICELLULAR]].
+
+Une structure conçue pour fournir les conditions de maturation des créatures de l'espace. Les conditions à l'intérieur de la structure doivent respecter scrupuleusement certaines spécifications afin que les astronefs puissent s'y développer. Par conséquent, tout astronef vivant situé dans l'incubateur et n'étant pas arrivé à maturité, risquent d'être détruits si la structure est suffisamment endommagée.'''
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB
 Chambre de Croissance Cellulaire
 
 BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-'''Amélioration de l'[[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] permettant le développement de la [[shiphull SH_PROTOPLASMIC]], la [[shiphull SH_SYMBIOTIC]] et la [[shiphull SH_BIOADAPTIVE]]. La présence de cette amélioration et du [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] sur la même planète est nécessaire au développement de la [[shiphull SH_ENDOSYMBIOTIC]] et de la [[shiphull SH_SENTIENT]].
+'''Amélioration de l'[[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] permettant la production de la [[shiphull SH_PROTOPLASMIC]], la [[shiphull SH_SYMBIOTIC]] et la [[shiphull SH_BIOADAPTIVE]]. La présence de cette amélioration et d'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] sur la même planète rend possible la production de la [[shiphull SH_ENDOSYMBIOTIC]] et de la [[shiphull SH_SENTIENT]].
 
-Une amélioration du chantier naval spécialement conçue pour augmenter la taille des organismes monocellulaires dans des proportions colossales.'''
+Une structure spécialement conçue pour augmenter la taille des organismes monocellulaires dans des proportions colossales.'''
 
 BLD_SHIPYARD_ORG_XENO_FAC
 Centrale de Xénocoordination
 
-#BLD_SHIPYARD_ORG_XENO_FAC_DESC
-#'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_ENDOMORPHIC]]s and [[shiphull SH_RAVENOUS]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
-#
-#A facility dedicated to creating a fully symbiotic relationship between a ship and its crew.'''
+BLD_SHIPYARD_ORG_XENO_FAC_DESC
+'''Amélioration de l'[[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] permettant la production de la [[shiphull SH_ENDOMORPHIC]] et de la [[shiphull SH_RAVENOUS]]. La présence de cette amélioration et d'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] sur la même planète rend possible la production de la [[shiphull SH_ENDOSYMBIOTIC]] et de la [[shiphull SH_SENTIENT]].
+
+Uns structure dédiée au développement d'une relation totalement symbiotique entre un astronef et son équipage.'''
 
 BLD_SHIPYARD_ENRG_COMP
 Compresseur d'Énergie
 
-#BLD_SHIPYARD_ENRG_COMP_DESC
-#'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the formation of all energy hulls and all further energy hull shipyard upgrades.
-#
-#A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy. This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of damage.'''
+BLD_SHIPYARD_ENRG_COMP_DESC
+'''Amélioration du [[buildingtype BLD_SHIPYARD_BASE]] requise pour la production de toutes les coques à énergie et avant toute construction de structures additionnelles pour Compresseur d'Énergie.
+
+Une structure hautement spécialisée conçue pour créer et assembler des coques constituées de grandes quantités d'énergie fortement compressées. S'agissant d'un processus délicat, le compresseur serait détruit dans une puissante explosion s'il venait à encaisser davantage qu'une infime quantité de dommages.'''
 
 BLD_SHIPYARD_ENRG_SOLAR
 Unité de Confinement Solaire
 
-#BLD_SHIPYARD_ENRG_SOLAR_DESC
-#'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and allows formation of [[shiphull SH_SOLAR]]s.
-#
-#The task of creating a miniature sun is a gargantuan task in and of itself. The production of such a body on which ship parts can be safely mounted is even more so.'''
+BLD_SHIPYARD_ENRG_SOLAR_DESC
+'''Amélioration du [[buildingtype BLD_SHIPYARD_ENRG_COMP]] permettant la production de la [[shiphull SH_SOLAR]].
+
+Créer un soleil miniature est en soi une entreprise gargantuesque. Mais produire une coque intégrant ce soleil miniature, et sur laquelle des équipements d'astronefs pourraient être montés en toute sécurité, dépasse encore plus l'entendement.'''
 
 BLD_BIOTERROR_PROJECTOR
 Base Bioterroriste
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''La planète sur laquelle est installée la Base Bioterroriste privilégie le Bioterrorisme. Cela a pour effet de réduire la population des planètes ennemies de 2 habitants par tour, seulement si ces dernières sont installées à moins de quatre sauts sur Voies spatiales et dont l'empire ne dispose pas de la Banque du Génome.
+'''Donne accès au Focus Bioterrorisme à la planète sur laquelle est construite la Base Bioterroriste. Cela a pour effet de réduire de 2 par tour la Population des planètes ennemies, seulement si ces dernières sont distantes de quatre sauts sur Voies spatiales ou moins et si l'empire ennemi ne dispose pas d'une [[buildingtype BLD_GENOME_BANK]].
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four starlane jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a lune synchrone. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an outpost, provided it has a lune synchrone.'''
+Cette base clandestine d'armements biologiques provoque des ravages sur les planètes ennemies à proximité, en réduisant progressivement la Population de ces dernières jusqu'à extermination totale. Cependant, de telles activités n'étant pas approuvées par les lois galactiques, cette structure ne peut être construite que sur une planète autour de laquelle orbite une [[special RESONANT_MOON_SPECIAL]], et s'avère sans effets si l'empire ennemi dispose d'une Banque du Génome. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], si une Lune Synchrone orbite également autour de ce dernier.'''
 
 BLD_LIGHTHOUSE
 Phare Interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Augmente la vitesse des astronefs quittant ce système et diminue la [[encyclopedia STEALTH_TITLE]] de tous les objets dans ce même système de 30. Cette construction peut également être placée sur un avant-poste. Friendly ships within 50 uu gain a starlane speed bonus of 20.
+Augmente la vitesse des astronefs quittant ce système et diminue de 30 la [[encyclopedia STEALTH_TITLE]] de tous les objets dans ce même système. Cette structure peut également être construite sur un [[encyclopedia OUTPOSTS_TITLE]]. Les astronefs alliés se trouvant dans un rayon de 50 uu bénéficient d'un bonus de [[encyclopedia STARLANE_SPEED_TITLE]] de 20.
 
 BLD_SCANNING_FACILITY
 Complexe de Détection
 
 BLD_SCANNING_FACILITY_DESC
-'''Accroît le [[encyclopedia DETECTION_RANGE_TITLE]] de la planète de 75.
+'''Augmente de 75 le [[encyclopedia DETECTION_RANGE_TITLE]] de la planète.
 
-La combinaison d'appareils de détection à longue portée et d'une énorme capacité de calcul permet le balayage d'un plus grande région de l'espace à la recherche de tout objet.'''
+La combinaison d'appareils de détection à longue portée et d'une énorme capacité de calcul permet le balayage d'un plus grande région de l'espace à la recherche de n'importe quel objet.'''
 
 BLD_HEAVY_MINE_PROCESSOR
 Extraction Minière Intensive
@@ -8827,7 +8838,7 @@ BLD_INDUSTRY_CENTER
 Centre Industriel
 
 BLD_INDUSTRY_CENTER_DESC
-'''Accroît l'[[encyclopedia INDUSTRY_TITLE]] de toutes les planètes réglées sur le Focus Industrie et reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] de 0.2 par Population.
+'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.2 par Population sur toutes les planètes lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] et étant réglées sur le Focus Industrie.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 L'amélioration [[tech PRO_INDUSTRY_CENTER_II]] double le bonus de base.
@@ -8837,24 +8848,24 @@ L'amélioration [[tech PRO_INDUSTRY_CENTER_III]] triple le bonus de base.'''
 BLD_MEGALITH
 Mégalithe
 
-#BLD_MEGALITH_DESC
-#'''Sets the owner empire's capital, overriding any existing Imperial Palace. All resource meters for the planet on which it is built are able to reach target in a single turn and receives an increase of 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. In addition, all planets in the owning empire receive an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range.
-#
-#The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
+BLD_MEGALITH_DESC
+'''Définit la Capitale de l'empire, outrepassant tout [[buildingtype BLD_IMPERIAL_PALACE]] déjà existant. Tous les indicateurs de ressources de la planète sur laquelle il est construit peuvent atteindre leur plafond en un seul tour, tandis que l'indicateur [[encyclopedia INFRASTRUCTURE_TITLE]] augmente de 30. De plus, la portée de l'[[encyclopedia SUPPLY_TITLE]] augmente de 2 pour toutes les planètes appartenant à l'empire.
+
+Le Mégalithe est une structure si resplendissante et massive qu'elle tutoie littéralement les étoiles, procurant une inspiration illimitée à tous les architectes de l'empire.'''
 
 BLD_SPACE_ELEVATOR
 Ascenseur Spatial
 
-#BLD_SPACE_ELEVATOR_DESC
-#'''Replaces the [[encyclopedia SUPPLY_TITLE]] malus/bonus caused by the planet size with a bonus of +3.
-#
-#Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity. An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
+BLD_SPACE_ELEVATOR_DESC
+'''Remplace le malus/bonus d'[[encyclopedia SUPPLY_TITLE]] induit par la taille de la planète par un bonus de +3.
+
+La nano-construction rend possible la production de câbles extensibles suffisamment solides pour atteindre des orbites géostationnaires. Des navettes s'élevant magnétiquement le long du câble sont de très loin supérieures aux lancements coûteux, peu efficaces, et hautement périlleux de fusées afin de se libérer de la gravité planétaire. Un câble gigantesque et pratiquement incassable est relié d'un côté à un satellite en orbite géostationnaire, et de l'autre à une platforme de lancement se trouvant à la surface de la planète.'''
 
 BLD_GENOME_BANK
 Banque du Génome
 
 BLD_GENOME_BANK_DESC
-'''Immunise l'empire contre le bioterrorisme.
+'''Immunise l'empire contre le Bioterrorisme.
 
 La plus grande base de données jamais conçue. La Banque du Génome comprend les cartographies des génomes de tous les organismes connus de l'empire. Cette base de données est d'une valeur inestimable dans le traitement des maladies.'''
 
@@ -8864,7 +8875,7 @@ Transformateur Gaia
 BLD_GAIA_TRANS_DESC
 '''Accroît le plafond de population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
-Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
+Transforme une planète en Monde Gaia à l'aide d'un programme informatique cellulaire et conscient, quasiment d'essence divine. Cette planète, dont la contemplation procure un ravissement de tous les instants, est connue à travers toute la galaxie comme une célébration de la vie et de l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un organisme planétaire unique, dans l'intérêt de ce dernier, celui-ci agissant en retour dans l'intérêt de ses habitants.'''
 
 BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
@@ -9029,13 +9040,13 @@ BLD_ART_FACTORY_PLANET
 Planète Usine Artificielle
 
 #BLD_ART_FACTORY_PLANET_DESC
-#Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with Exobots. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+#Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
 
 BLD_ART_PARADISE_PLANET
 Planète Paradisiaque Artificielle
 
 #BLD_ART_PARADISE_PLANET_DESC
-#Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets—the planet will have the Gaia special which will terraform it to suit its inhabitants. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+#Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. the planet will have the [[special GAIA_SPECIAL]] special which will terraform it to suit its inhabitants. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
 
 BLD_ART_MOON
 Lune Artificielle
@@ -9109,7 +9120,7 @@ Détonateur de Bombe Nova
 #Activates all Nova Bombs within one starlane jump.
 
 BLD_COL_PART_1
-Cette structure ne peut être construite que sur un avant-poste, et transformera ce dernier en nouvelle
+Cette structure ne peut être construite que sur un [[encyclopedia OUTPOSTS_TITLE]], et transformera ce dernier en nouvelle
 
 BLD_COL_PART_2
 Le délai minimum nécessaire à la construction dépend de la distance de la plus proche
@@ -9121,157 +9132,157 @@ BLD_COL_ABADDONI
 Colonie Abaddoni
 
 BLD_COL_ABADDONI_DESC
-[[BLD_COL_PART_1]] colonie Abaddoni. [[BLD_COL_PART_2]] colonie Abaddoni [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_ABADDONI]]. [[BLD_COL_PART_2]] colonie Abaddoni [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
 Colonie Chato
 
 BLD_COL_CHATO_DESC
-[[BLD_COL_PART_1]] colonie Chato. [[BLD_COL_PART_2]] colonie Chato [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_CHATO]]. [[BLD_COL_PART_2]] colonie Chato [[BLD_COL_PART_3]].
 
 BLD_COL_CRAY
 Colonie Cray
 
 BLD_COL_CRAY_DESC
-[[BLD_COL_PART_1]] colonie Cray. [[BLD_COL_PART_2]] colonie Cray [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_CRAY]]. [[BLD_COL_PART_2]] colonie Cray [[BLD_COL_PART_3]].
 
 BLD_COL_DERTHREAN
 Colonie Derthrean
 
 BLD_COL_DERTHREAN_DESC
-[[BLD_COL_PART_1]] colonie Derthrean. [[BLD_COL_PART_2]] colonie Derthrean [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_DERTHREAN]]. [[BLD_COL_PART_2]] colonie Derthrean [[BLD_COL_PART_3]].
 
 BLD_COL_EAXAW
 Colonie Eaxaw
 
 BLD_COL_EAXAW_DESC
-[[BLD_COL_PART_1]] colonie Eaxaw. [[BLD_COL_PART_2]] colonie Eaxaw [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_EAXAW]]. [[BLD_COL_PART_2]] colonie Eaxaw [[BLD_COL_PART_3]].
 
 BLD_COL_EGASSEM
 Colonie Egassem
 
 BLD_COL_EGASSEM_DESC
-[[BLD_COL_PART_1]] colonie Egassem. [[BLD_COL_PART_2]] colonie Egassem [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_EGASSEM]]. [[BLD_COL_PART_2]] colonie Egassem [[BLD_COL_PART_3]].
 
 BLD_COL_ETTY
 Colonie Etty
 
 BLD_COL_ETTY_DESC
-[[BLD_COL_PART_1]] colonie Etty. [[BLD_COL_PART_2]] colonie Etty [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_ETTY]]. [[BLD_COL_PART_2]] colonie Etty [[BLD_COL_PART_3]].
 
 BLD_COL_FURTHEST
 Colonie Furthest
 
 BLD_COL_FURTHEST_DESC
-[[BLD_COL_PART_1]] colonie Furthest. [[BLD_COL_PART_2]] colonie Furthest [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_FURTHEST]]. [[BLD_COL_PART_2]] colonie Furthest [[BLD_COL_PART_3]].
 
 BLD_COL_GEORGE
 Colonie George
 
 BLD_COL_GEORGE_DESC
-[[BLD_COL_PART_1]] colonie George. [[BLD_COL_PART_2]] colonie George [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_GEORGE]]. [[BLD_COL_PART_2]] colonie George [[BLD_COL_PART_3]].
 
 BLD_COL_GYSACHE
 Colonie Gysache
 
 BLD_COL_GYSACHE_DESC
-[[BLD_COL_PART_1]] colonie Gysache. [[BLD_COL_PART_2]] colonie Gysache [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_GYSACHE]]. [[BLD_COL_PART_2]] colonie Gysache [[BLD_COL_PART_3]].
 
 BLD_COL_HAPPY
 Colonie Happybirthday 
 
 BLD_COL_HAPPY_DESC
-[[BLD_COL_PART_1]] colonie Happybirthday. [[BLD_COL_PART_2]] colonie Happybirthday [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_HAPPY]]. [[BLD_COL_PART_2]] colonie Happybirthday [[BLD_COL_PART_3]].
 
 BLD_COL_HHHOH
 Colonie Hhhoh
 
 BLD_COL_HHHOH_DESC
-[[BLD_COL_PART_1]] colonie Hhhoh. [[BLD_COL_PART_2]] colonie Hhhoh [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_HHHOH]]. [[BLD_COL_PART_2]] colonie Hhhoh [[BLD_COL_PART_3]].
 
 BLD_COL_HUMAN
 Colonie Humaine
 
 BLD_COL_HUMAN_DESC
-[[BLD_COL_PART_1]] colonie Humaine. [[BLD_COL_PART_2]] colonie Humaine [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_HUMAN]]e. [[BLD_COL_PART_2]] colonie Humaine [[BLD_COL_PART_3]].
 
 BLD_COL_KOBUNTURA
 Colonie Kobuntura
 
 BLD_COL_KOBUNTURA_DESC
-[[BLD_COL_PART_1]] colonie Kobuntura. [[BLD_COL_PART_2]] colonie Kobuntura [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_KOBUNTURA]]. [[BLD_COL_PART_2]] colonie Kobuntura [[BLD_COL_PART_3]].
 
 BLD_COL_LAENFA
 Colonie Laenfa
 
 BLD_COL_LAENFA_DESC
-[[BLD_COL_PART_1]] colonie Laenfa. [[BLD_COL_PART_2]] colonie Laenfa [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_LAENFA]]. [[BLD_COL_PART_2]] colonie Laenfa [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
 Colonie Mu Ursh
 
 BLD_COL_MUURSH_DESC
-[[BLD_COL_PART_1]] colonie Mu Ursh. [[BLD_COL_PART_2]] colonie Mu Ursh [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_MUURSH]]. [[BLD_COL_PART_2]] colonie Mu Ursh [[BLD_COL_PART_3]].
 
 BLD_COL_PHINNERT
 Colonie Phinnert
 
 BLD_COL_PHINNERT_DESC
-[[BLD_COL_PART_1]] colonie Phinnert. [[BLD_COL_PART_2]] colonie Phinnert [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_PHINNERT]]. [[BLD_COL_PART_2]] colonie Phinnert [[BLD_COL_PART_3]].
 
 BLD_COL_SCYLIOR
 Colonie Scylior
 
 BLD_COL_SCYLIOR_DESC
-[[BLD_COL_PART_1]] colonie Scylior. [[BLD_COL_PART_2]] colonie Scylior [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_SCYLIOR]]. [[BLD_COL_PART_2]] colonie Scylior [[BLD_COL_PART_3]].
 
 BLD_COL_SETINON
 Colonie Setinon
 
 BLD_COL_SETINON_DESC
-[[BLD_COL_PART_1]] colonie Setinon. [[BLD_COL_PART_2]] colonie Setinon [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_SETINON]]. [[BLD_COL_PART_2]] colonie Setinon [[BLD_COL_PART_3]].
 
 BLD_COL_SILEXIAN
 Colonie Silexian
 
 BLD_COL_SILEXIAN_DESC
-[[BLD_COL_PART_1]] colonie Silexian. [[BLD_COL_PART_2]] colonie Silexian [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_SILEXIAN]]. [[BLD_COL_PART_2]] colonie Silexian [[BLD_COL_PART_3]].
 
 BLD_COL_SSLITH
 Colonie Sslith
 
 BLD_COL_SSLITH_DESC
-[[BLD_COL_PART_1]] colonie Sslith. [[BLD_COL_PART_2]] colonie Sslith [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_SSLITH]]. [[BLD_COL_PART_2]] colonie Sslith [[BLD_COL_PART_3]].
 
 BLD_COL_TAEGHIRUS
 Colonie Tae Ghirus
 
 BLD_COL_TAEGHIRUS_DESC
-[[BLD_COL_PART_1]] colonie Tae Ghirus. [[BLD_COL_PART_2]] colonie Tae Ghirus [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_TAEGHIRUS]]. [[BLD_COL_PART_2]] colonie Tae Ghirus [[BLD_COL_PART_3]].
 
 BLD_COL_TRITH
 Colonie Trith
 
 BLD_COL_TRITH_DESC
-[[BLD_COL_PART_1]] colonie Trith. [[BLD_COL_PART_2]] colonie Trith [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_TRITH]]. [[BLD_COL_PART_2]] colonie Trith [[BLD_COL_PART_3]].
 
 BLD_COL_UGMORS
 Colonie Ugmors
 
 BLD_COL_UGMORS_DESC
-[[BLD_COL_PART_1]] colonie Ugmors. [[BLD_COL_PART_2]] colonie Ugmors [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie [[species SP_UGMORS]]. [[BLD_COL_PART_2]] colonie Ugmors [[BLD_COL_PART_3]].
 
 BLD_COL_EXOBOT
 Colonie Exobot
 
 BLD_COL_EXOBOT_DESC
-Cette structure créera une colonie Exobot sur un avant-poste. Contrairement aux structures coloniales des autres espèces, une colonie Exobot ne requiert pas une autre colonie Exobot déjà existante dans la zone d'approvisionnement, étant donné que les Exobots sont directement construits sur la planète colonisée. Cependant, leur prix de fabrication étant élevé, les Exobots ont besoin d'une planète appartenant à l'empire dans la zone d'approvisionnement.
+Cette structure créera une colonie [[species SP_EXOBOT]] sur un [[encyclopedia OUTPOSTS_TITLE]]. Contrairement aux structures coloniales des autres espèces, une colonie Exobot ne requiert pas une autre colonie Exobot déjà existante dans la zone d'approvisionnement, étant donné que les Exobots sont directement construits sur la planète colonisée. Cependant, leur prix de fabrication étant élevé, les Exobots ont besoin d'une planète appartenant à l'empire dans la zone d'approvisionnement.
 
 BLD_COL_SUPER_TEST
-Colonie Super Testeurs
+Colonie Super-Testeurs
 
 BLD_COL_SUPER_TEST_DESC
-[[BLD_COL_PART_1]] colonie Super Testeurs. [[BLD_COL_PART_2]] colonie Super Testeurs [[BLD_COL_PART_3]].
+[[BLD_COL_PART_1]] colonie Super-Testeurs. [[BLD_COL_PART_2]] colonie Super-Testeurs [[BLD_COL_PART_3]].
 
 #############################################################
 ####           Hull/Part Description Templates           ####
@@ -9745,7 +9756,7 @@ CO_OUTPOST_POD
 Module d'Avant-Poste
 
 CO_OUTPOST_POD_DESC
-Les modules d'avant-poste vous permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune population et ne produisent normalement pas de ressources, mais offrent une extension des lignes d'[[encyclopedia SUPPLY_TITLE]] quand la bonne technologie est exploitée. Les modules d'avant-poste peuvent évoluer en colonies. Le coût de cet équipement augmente à mesure que l'empire s'étend, compte tenu de la complexité logistique inhérente à tout grand empire.
+Les Modules d'[[encyclopedia OUTPOSTS_TITLE]] vous permettent d'établir des stations non-habitées et peuvent être installés sur des planètes inhabitables. Ces modules n'ont aucune population et ne produisent normalement pas de ressources, mais offrent une extension des lignes d'[[encyclopedia SUPPLY_TITLE]] quand la bonne technologie est exploitée. Les Modules d'Avant-Poste peuvent évoluer en colonies. Le coût de cet équipement augmente à mesure que l'empire s'étend, compte tenu de la complexité logistique inhérente à tout grand empire.
 
 GT_TROOP_POD
 Module d'Infanterie
@@ -9803,7 +9814,7 @@ SP_KRILL_SPAWNER
 Générateur de Krill
 
 #SP_KRILL_SPAWNER_DESC
-#Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.
+#Spawns [[predefinedshipdesign SM_KRILL_1]] in systems with unowned asteroids which do not already contain a krill monster.  When carried on an unarmed ship, the [[SP_KRILL_SPAWNER]] also provides substantial [[encyclopedia STEALTH_TITLE]] (but will not stack with any other [[encyclopedia STEALTH_TITLE]] - causing  parts).
 
 #RS_AUTOLAB
 #Autolab
@@ -10524,7 +10535,7 @@ WORLDTREE_LABEL
 Bonus Arbre Planétaire
 
 HOMEWORLD_LABEL
-Monde natal
+Planète Natale
 
 BAD_POPULATION_LABEL
 %2% Faible population 75%%
@@ -10608,10 +10619,10 @@ ULTIMATE_TROOPS_LABEL
 %2% Parfait en Infanterie
 
 INDEPENDENT_TROOP_LABEL
-Monde natal indépendant
+Planète Natale indépendante
 
 OUTPOST_TROOP_LABEL
-Avant-poste
+Avant-Poste
 
 NATIVE_PLANETARY_DEFENSE_LABEL
 %2% Défense planétaire
@@ -10647,10 +10658,10 @@ GAS_GIANT_LABEL
 Géante gazeuse
 
 HOMEWORLD_SUPPLY
-Approvisionnement Monde natal
+Approvisionnement Planète Natale
 
 HOMEWORLD_BONUS
-Monde natal
+Planète Natale
 
 ORBITAL_HAB_LABEL
 Habitation orbitale
@@ -10760,34 +10771,34 @@ Télépathique
 ### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
 
 ### Beginning of AI Aggression Level Capital Name Lists
-#AI_CAPITOL_NAMES_BEGINNER
-#'''Ivory Tower
-#Nunnery
-#Monastery
-#Orphanage'''
+AI_CAPITOL_NAMES_BEGINNER  # translated
+'''Ivory Tower
+Nunnery
+Monastery
+Orphanage'''
 
-#AI_CAPITOL_NAMES_TURTLE
-#'''Citadel
-#Prison'''
+AI_CAPITOL_NAMES_TURTLE  # translated
+'''Citadel
+Prison'''
 
-#AI_CAPITOL_NAMES_CAUTIOUS
-#'''Bastion
-#Stronghold'''
+AI_CAPITOL_NAMES_CAUTIOUS  # translated
+'''Bastion
+Stronghold'''
 
-#AI_CAPITOL_NAMES_TYPICAL
-#'''Haven
-#Free Trade Zone
-#Homeworld'''
+AI_CAPITOL_NAMES_TYPICAL  # translated
+'''Haven
+Free Trade Zone
+Homeworld'''
 
-#AI_CAPITOL_NAMES_AGGRESSIVE
-#'''Royal
-#Imperial'''
+AI_CAPITOL_NAMES_AGGRESSIVE  # translated
+'''Royal
+Imperial'''
 
-#AI_CAPITOL_NAMES_MANIACAL
-#'''Glorious
-#Supreme
-#Eternal
-#Invincible'''
+AI_CAPITOL_NAMES_MANIACAL  # translated
+'''Glorious
+Supreme
+Eternal
+Invincible'''
 
 ### End of Capital Names Lists
 
@@ -10851,7 +10862,7 @@ Télépathique
 ### For such lists, you may provide more or fewer entries than are provided in en.txt, unless otherwise indicated in a comment for that key
 
 AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST
-'''Heureux d'avoir de vos nouvelles.
+'''Heureux de recevoir de vos nouvelles.
 Réception de transmission acceptée.
 '''
 
@@ -10861,8 +10872,8 @@ Oh, pas une nouvelle pleurnicherie pathétique, de grâce!
 '''
 
 AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST
-'''Nous serons enchanté de croire en vos bonnes intentions.
-Tout le plaisir est pour nous, mon seigneur.  Tout le monde s'accorde à dire que vous êtes digne de confiance.
+'''Nous serons ravis de croire en vos bonnes intentions.
+Tout le plaisir est pour nous, Sire.  Chacun s'accorde à dire que vous êtes digne de confiance.
 '''
 
 AI_PEACE_PROPOSAL_RESPONSES_NO_MILD_LIST
@@ -10872,7 +10883,7 @@ Nous sommes dans le regret de vous informer que nous ne pouvons accéder à votr
 
 AI_PEACE_PROPOSAL_RESPONSES_YES_HARSH_LIST
 '''Par grande miséricorde, nous acceptons de ne pas vous attaquer.  Pour le moment.
-Insignifiantes créatures!  Il n'y aurait que peu d'honneur à vous terrasser.
+Insignifiantes créatures!  Il n'y aurait que bien peu d'honneur à vous terrasser.
 '''
 
 AI_PEACE_PROPOSAL_RESPONSES_NO_HARSH_LIST
