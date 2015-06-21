@@ -501,11 +501,8 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
         GG::Pt mouse_ind_ul(static_cast<GG::X>(middle.x - SEL_IND_SIZE.x / 2.0),
                             static_cast<GG::Y>(middle.y - SEL_IND_SIZE.y / 2.0));
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        Empire* this_empire = GetEmpire(client_empire_id);
-        if (!this_empire || this_empire->HasExploredSystem(m_system_id))
-            m_mouseover_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
-        else
+        m_mouseover_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
+        if (m_mouseover_unexplored_indicator)
             m_mouseover_unexplored_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
     } else {
         if (m_mouseover_indicator)
@@ -588,7 +585,9 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         Empire* this_empire = GetEmpire(client_empire_id);
-        if (!this_empire ||  this_empire->HasExploredSystem(m_system_id)) {
+        bool explored = !this_empire || (this_empire && this_empire->HasExploredSystem(m_system_id)) ||
+                !m_mouseover_unexplored_indicator;
+        if (explored || !GetOptionsDB().Get<bool>("UI.show-unexplored_system_overlay")){
             AttachChild(m_mouseover_indicator);
             MoveChildUp(m_mouseover_indicator);
         } else {
