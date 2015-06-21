@@ -34,6 +34,9 @@ void initialize_nonnumeric_expression_parsers<std::string>(
                     [ _val = new_<ValueRef::Operation<std::string> >(_c, _d) ] >   ')'
                 )
             |   (
+                    tok.UserString_ >   '(' >   expr[ _val = new_<ValueRef::UserStringLookup>(_1) ] >   ')'
+                )
+            |   (
                     primary_expr [ _val = _1 ]
                 )
             )

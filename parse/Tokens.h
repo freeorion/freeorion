@@ -469,6 +469,7 @@
     (Unowned)                                   \
     (Unproducible)                              \
     (Unresearchable)                            \
+    (UserString)                                \
     (Value)                                     \
     (ValueTest)                                 \
     (Victory)                                   \
