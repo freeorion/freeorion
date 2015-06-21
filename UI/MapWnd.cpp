@@ -94,6 +94,7 @@ namespace {
         db.Add("UI.galaxy-gas-background",          UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                     true,       Validator<bool>());
         db.Add("UI.galaxy-starfields",              UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),              true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
+        db.Add("UI.show-galaxy-map-scale-circle",   UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
         db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
         db.Add("UI.optimized-system-rendering",     UserStringNop("OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING"),         true,       Validator<bool>());
         db.Add("UI.starlane-thickness",             UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
@@ -1540,7 +1541,9 @@ void MapWnd::RenderSystems() {
     }
 
     const double TWO_PI = 2.0*3.14159;
-    if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale") && SidePanel::SystemID() != INVALID_OBJECT_ID) {
+    if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale") && GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle") 
+            && SidePanel::SystemID() != INVALID_OBJECT_ID) 
+    {
         glPushMatrix();
         glLoadIdentity();
         glDisable(GL_TEXTURE_2D);
