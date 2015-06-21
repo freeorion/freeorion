@@ -1313,15 +1313,15 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
 
     system->Insert(planet);   // let system chose an orbit for planet
 
-    std::string name;
+    std::string name_str;
     if (m_name) {
-        name = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = str(FlexibleFormat(UserString(name)) % system->Name() % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
+        name_str = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
     } else {
-        name = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name());
+        name_str = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name());
     }
-    planet->Rename(name);
+    planet->Rename(name_str);
 }
 
 std::string CreatePlanet::Description() const {
@@ -1414,10 +1414,10 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         system->Insert(building);
 
     if (m_name) {
-        std::string name = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = str(FlexibleFormat(UserString(name)) % system->Name() % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
-        building->Rename(name);
+        std::string name_str = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+        building->Rename(name_str);
     }
 }
 
@@ -1548,10 +1548,10 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     system->Insert(ship);
 
     if (m_name) {
-        std::string name = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = str(FlexibleFormat(UserString(name)) % system->Name() % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
-        ship->Rename(name);
+        std::string name_str = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+        ship->Rename(name_str);
     } else if (ship->IsMonster()) {
         ship->Rename(NewMonsterName());
     } else if (empire) {
@@ -1734,12 +1734,15 @@ void CreateField::Execute(const ScriptingContext& context) const {
     if (system && (!m_y || y == system->Y()) && (!m_x || x == system->X()))
         system->Insert(field);
 
+    std::string name_str;
     if (m_name) {
-        std::string name = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = str(FlexibleFormat(UserString(name)) % (system ? system->Name() : "") % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
-        field->Rename(name);
+        name_str = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
+    } else {
+        name_str = UserString(field_type->Name());
     }
+    field->Rename(name_str);
 }
 
 std::string CreateField::Description() const {
@@ -1846,16 +1849,16 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     if (m_y)
         y = m_y->Eval(context);
 
-    std::string name;
+    std::string name_str;
     if (m_name) {
-        name = m_name->Eval(context);
-        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name))
-            name = str(FlexibleFormat(UserString(name)) % "" % (context.effect_target ? context.effect_target->Name() : "") % (context.source ? context.source->Name() : ""));
+        name_str = m_name->Eval(context);
+        if (ValueRef::ConstantExpr(m_name) && UserStringExists(name_str))
+            name_str = UserString(name_str);
     } else {
-        name = GenerateSystemName();
+        name_str = GenerateSystemName();
     }
 
-    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, name, x, y);
+    TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, name_str, x, y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
