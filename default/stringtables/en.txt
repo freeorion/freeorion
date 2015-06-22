@@ -416,12 +416,12 @@ Unarmed asteroid vessel capable of delivering many millions of citizens safely t
 SD_OUTPOST_SHIP
 Outpost Ship
 SD_OUTPOST_SHIP_DESC
-Unarmed vessel capable of creating an outpost on an uninhabitable world.
+Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabitable world.
 
 SD_ORG_OUTPOST_SHIP
 Organic Outpost Ship
 SD_ORG_OUTPOST_SHIP_DESC
-Unarmed organic vessel capable of creating an outpost on an uninhabitable world. This vessel can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Unarmed organic vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabitable world. This vessel can only be built at a colony with an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_COLONY_BASE
 Colony Base
@@ -436,7 +436,7 @@ Unarmed vessel capable of creating a large colony on a habitable planet in the s
 SD_OUTPOST_BASE
 Outpost Base
 SD_OUTPOST_BASE_DESC
-Unarmed vessel capable of creating an outpost on an uninhabited world in the system where it is produced. This vessel cannot travel through star lanes.
+Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an uninhabited world in the system where it is produced. This vessel cannot travel through star lanes.
 
 SD_TROOP_DROP
 Troop Drop
@@ -3626,7 +3626,7 @@ GROWTH_ARTICLE_SHORT_DESC
 Growth
 
 OUTPOSTS_ARTICLE_SHORT_DESC
-Outposts
+Outpost
 
 PRODUCTION_ARTICLE_SHORT_DESC
 Production
@@ -3656,7 +3656,7 @@ PEACE_TEXT
 Peace is the diplomatic state between empires in which they mutually agree not to attack each other's ships or planets, not to obstruct each other's [[encyclopedia SUPPLY_TITLE]] lines, and not to impede colonization.
 
 OUTPOSTS_TITLE
-Outposts
+Outpost
 OUTPOSTS_TEXT
 Outposts are unmanned stations, which can be founded in places too hostile for a colony to survive. They have no population, and normally produce no resources. But they create [[encyclopedia SUPPLY_TITLE]] (with the right tech) and provide vision. Colonies can be founded on planets that already have an Outpost. To build an Outpost, you need to put an [[shippart CO_OUTPOST_POD]] on a ship. Outposts are also formed when the population of a colony drops to zero for any reason.
 
@@ -8785,7 +8785,7 @@ BLD_SHIPYARD_AST
 Asteroid Processor
 
 BLD_SHIPYARD_AST_DESC
-'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. It may be built at an outpost.
+'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades. It may be built at an [[encyclopedia OUTPOSTS_TITLE]].
 
 A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a shipyard in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
 
@@ -8843,13 +8843,13 @@ Bioterror Projection Base
 BLD_BIOTERROR_PROJECTOR_DESC
 '''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four starlane jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an outpost, provided it has a resonant moon.'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four starlane jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a Genome Bank building in the enemy empire. This building can also be built at an [[encyclopedia OUTPOSTS_TITLE]], provided it has a resonant moon.'''
 
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. This building can be built at an outpost. Friendly ships within 50 uus gain a starlane speed bonus of 20.
+Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]]. Friendly ships within 50 uus gain a starlane speed bonus of 20.
 
 BLD_SCANNING_FACILITY
 Scanning Facility
@@ -8921,7 +8921,7 @@ BLD_GATEWAY_VOID
 Gateway to the Void
 
 BLD_GATEWAY_VOID_DESC
-'''Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are reduced to outpost status, with a max population of one tenth. Furthermore, it is impossible for anyone outside a system containing this building to see into it.
+'''Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are reduced to [[encyclopedia OUTPOSTS_TITLE]] status, with a max population of one tenth. Furthermore, it is impossible for anyone outside a system containing this building to see into it.
 
 A dimensional tear capable of magnifying the destructive potential of the Void Mind in a localized region.'''
 
@@ -8938,7 +8938,7 @@ BLD_ART_BLACK_HOLE
 Artificial Black Hole
 
 BLD_ART_BLACK_HOLE_DESC
-By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an outpost.
+By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_HYPER_DAM
 Hyperspatial Dam
@@ -8953,7 +8953,7 @@ BLD_SOL_ACCEL
 Solar Accelerator
 
 BLD_SOL_ACCEL_DESC
-A Solar Accelerator artificially ages a star by speeding up its natural processes. The star becomes one type older, according to the following order: Blue, White, Yellow, Orange, Red. This process can be enacted at an outpost.
+A Solar Accelerator artificially ages a star by speeding up its natural processes. The star becomes one type older, according to the following order: Blue, White, Yellow, Orange, Red. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_SOL_ORB_GEN
 Solar Orbital Generator
@@ -8962,7 +8962,7 @@ BLD_SOL_ORB_GEN_DESC
 '''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population when built in systems with Blue/White, Yellow/Orange, or Red stars, respectively.
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
-A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an outpost.'''
+A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_CLONING_CENTER
 Cloning Center
@@ -8988,7 +8988,7 @@ BLD_REMOTE_TERRAFORM
 Remote Terraforming
 
 BLD_REMOTE_TERRAFORM_DESC
-Terraforms a world one step closer to the environmental preference of the inhabiting species. This process can be enacted at an outpost.
+Terraforms a world one step closer to the environmental preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
@@ -8996,7 +8996,7 @@ Neutronium Extractor
 BLD_NEUTRONIUM_EXTRACTOR_DESC
 '''Permits construction of ships with Neutronium ship parts.
 
-Before parts can be built using Neutronium, it must be extracted from a neutron star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. This building can be built at an outpost.'''
+Before parts can be built using Neutronium, it must be extracted from a neutron star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_NEUTRONIUM_FORGE
 Neutronium Forge
@@ -9004,7 +9004,7 @@ Neutronium Forge
 BLD_NEUTRONIUM_FORGE_DESC
 '''This building is required at the same location as a shipyard to enable building ships with neutronium parts.
 
-The industrial processing of neutronium requires an extensive specialized facility. Unlike most shipyards and shipyard upgrades, this building cannot be built at an outpost.'''
+The industrial processing of neutronium requires an extensive specialized facility. Unlike most shipyards and shipyard upgrades, this building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_NEUTRONIUM_SYNTH
 Neutronium Synthesizer
@@ -9020,7 +9020,7 @@ Concentration Camps
 BLD_CONC_CAMP_DESC
 '''Decreases the planet's population at a rate of 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population.
 
-Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
+Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_CONC_CAMP_REMNANT
 Concentration Camp Remnants
@@ -9035,7 +9035,7 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 '''Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population. 
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-This building can be built at an outpost, but must be in a black hole system.'''
+This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but must be in a black hole system.'''
 
 BLD_REPLICATORS
 Replicators
@@ -9049,7 +9049,7 @@ BLD_PLANET_DRIVE
 Planetary Starlane Drive
 
 BLD_PLANET_DRIVE_DESC
-'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
+'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but not on an asteroid belt.
 
 Due to a lack of UI targeting, a second building is currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
 
@@ -9059,25 +9059,25 @@ BLD_PLANET_BEACON
 Planetary Beacon
 
 BLD_PLANET_BEACON_DESC
-Designates the target for the planetary starlane drive. This building can be built at an outpost.
+Designates the target for the planetary starlane drive. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_ART_PLANET
 Artificial Planet
 
 BLD_ART_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+Forms an artificial planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
 
 BLD_ART_FACTORY_PLANET
 Artificial Factory World
 
 BLD_ART_FACTORY_PLANET_DESC
-Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
 
 BLD_ART_PARADISE_PLANET
 Artificial Paradise World
 
 BLD_ART_PARADISE_PLANET_DESC
-Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it to suit its inhabitants. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. The planet will have the [[special GAIA_SPECIAL]] special which will terraform it to suit its inhabitants. This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
 
 BLD_ART_MOON
 Artificial Moon
@@ -9093,7 +9093,7 @@ BLD_SOL_REJUV
 Solar Rejuvenator
 
 BLD_SOL_REJUV_DESC
-A Solar Rejuvenator artificially rejuvenates a star by increasing its fuel supply. The star becomes one type younger, according to the following order: Red, Orange, Yellow, White, Blue. This process can be enacted at an outpost.
+A Solar Rejuvenator artificially rejuvenates a star by increasing its fuel supply. The star becomes one type younger, according to the following order: Red, Orange, Yellow, White, Blue. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_TRANSFORMER
 Transformer
@@ -9151,7 +9151,7 @@ BLD_NOVA_BOMB_ACTIVATOR_DESC
 Activates all Nova Bombs within one starlane jump.
 
 BLD_COL_PART_1
-This building can only build at an outpost, and will upgrade that outpost to a new
+This building can only build at an [[encyclopedia OUTPOSTS_TITLE]], and will upgrade that outpost to a new
 
 BLD_COL_PART_2
 Minimum build time depends on the total starlane distance to the nearest
@@ -9307,7 +9307,7 @@ BLD_COL_EXOBOT
 Exobot Colony
 
 BLD_COL_EXOBOT_DESC
-This building will construct an [[species SP_EXOBOT]] colony at an outpost. Contrary to the colony buildings of other species, an Exobot colony does not need an already existing Exobot colony within supply range, as the Exobots are constructed as part of the colony directly planetside. However, because of that they are more expensive to build, and they still need an empire owned planet within supply range.
+This building will construct an [[species SP_EXOBOT]] colony at an [[encyclopedia OUTPOSTS_TITLE]]. Contrary to the colony buildings of other species, an Exobot colony does not need an already existing Exobot colony within supply range, as the Exobots are constructed as part of the colony directly planetside. However, because of that they are more expensive to build, and they still need an empire owned planet within supply range.
 
 BLD_COL_SUPER_TEST
 Super Tester Colony
@@ -9787,7 +9787,7 @@ CO_OUTPOST_POD
 Outpost Module
 
 CO_OUTPOST_POD_DESC
-Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Outposts can be upgraded to colonies. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.
+[[encyclopedia OUTPOSTS_TITLE]] modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the right tech is researched. Outposts can be upgraded to colonies. The cost of this part increases as the empire expands to reflect the upkeep costs of a large empire.
 
 GT_TROOP_POD
 Ground Troop Pod
