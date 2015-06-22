@@ -98,6 +98,8 @@ def calc_star_system_positions(shape, size):
     width = fo.calc_typical_universe_width(size)
     if shape == fo.galaxyShape.irregular2:
         width *= 1.4
+    if shape == fo.galaxyShape.elliptical:
+        width *= 1.4
     fo.set_universe_width(width)
     print "Set universe width to", width
 
