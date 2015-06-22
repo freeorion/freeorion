@@ -936,16 +936,17 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             else:
                 star_bonus += 5 * discount_multiplier * backup_factor
                 detail.append("Black Hole Backup %.1f" % (5 * discount_multiplier * backup_factor))
-        if tech_is_complete(AIDependencies.PRO_SINGULAR_GEN) or \
-                            AIDependencies.PRO_SINGULAR_GEN in empire_research_list[:8]:
+        if tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN):  # start valuing as soon as PRO_SOL_ORB_GEN done
             if system.starType in [fo.starType.blackHole]:
+                this_val = 0.5 * max(empire_status.get('industrialists', 0),
+                                     20)  * discount_multiplier  # pretty rare planets, good for generator
                 if not claimed_stars.get(fo.starType.blackHole, []):
-                    star_bonus += 200 * discount_multiplier  # pretty rare planets, good for generator
-                    detail.append("PRO_SINGULAR_GEN %.1f" % (200 * discount_multiplier))
+                    star_bonus += this_val
+                    detail.append("PRO_SINGULAR_GEN %.1f" % (this_val))
                 elif this_sysid not in claimed_stars.get(fo.starType.blackHole, []):
                     # still has extra value as an alternate location for generators & for blocking enemies generators
-                    star_bonus += 100 * discount_multiplier * backup_factor
-                    detail.append("PRO_SINGULAR_GEN Backup %.1f" % (100 * discount_multiplier * backup_factor))
+                    star_bonus += this_val * backup_factor
+                    detail.append("PRO_SINGULAR_GEN Backup %.1f" % (this_val * backup_factor))
             elif system.starType in [fo.starType.red] and not claimed_stars.get(fo.starType.blackHole, []):
                 rfactor = (1.0 + len(claimed_stars.get(fo.starType.red, []))) ** -2
                 star_bonus += 40 * discount_multiplier * backup_factor * rfactor  # can be used for artif'l black hole
@@ -960,6 +961,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                     star_bonus += 20 * discount_multiplier * backup_factor
                     detail.append("PRO_NEUTRONIUM_EXTRACTION Backup %.1f" % (20 * discount_multiplier * backup_factor))
         if tech_is_complete("SHP_ENRG_BOUND_MAN") or "SHP_ENRG_BOUND_MAN" in empire_research_list[:6]:
+            # TODO: base this on pilot val, and also consider red stars
             if system.starType in [fo.starType.blackHole, fo.starType.blue]:
                 init_val = 100 * discount_multiplier * (pilot_val or 1)
                 if not claimed_stars.get(fo.starType.blackHole, []) + claimed_stars.get(fo.starType.blue, []):
