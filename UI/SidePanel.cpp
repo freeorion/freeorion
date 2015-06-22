@@ -2772,6 +2772,7 @@ void SidePanel::RefreshImpl() {
     // clear out current contents
     m_planet_panel_container->Clear();
     m_system_name->Clear();
+    m_star_type_text->SetText("");
     delete m_star_graphic;              m_star_graphic = 0;
     delete m_system_resource_summary;   m_system_resource_summary = 0;
 
