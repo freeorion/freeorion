@@ -446,6 +446,8 @@ class AIstate(object):
                     mypattack += prating['attack']
                     myphealth += prating['health']
                 else:
+                    if [special for special in planet_specials if "_NEST_" in special]:
+                        sys_status['nest_threat'] = 100;
                     pattack += prating['attack']
                     phealth += prating['health']
             sys_status['planetThreat'] = pattack*phealth
@@ -473,6 +475,8 @@ class AIstate(object):
                 sys_status['monsterThreat'] = monster_rating
                 sys_status['totalThreat'] = FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth])
             sys_status['regional_fleet_threats'] = sys_status['local_fleet_threats'].copy()
+            sys_status['fleetThreat'] = max(sys_status['fleetThreat'], sys_status.get('nest_threat', 0))
+            sys_status['totalThreat'] = max(sys_status['totalThreat'], sys_status.get('nest_threat', 0))
 
             if partial_vis_turn > 0 and sys_id not in supply_unobstructed_systems:  # has been seen with Partial Vis, but is currently supply-blocked
                 sys_status['fleetThreat'] = max(sys_status['fleetThreat'], min_hidden_attack * min_hidden_health)

@@ -987,7 +987,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         for special in planet_specials:
             if "_NEST_" in special:
                 nest_val = NEST_VAL_MAP.get(special,
-                                            5) * discount_multiplier * backup_factor  # get an outpost on the nest quick
+                                            5) * discount_multiplier  # get an outpost on the nest quick
                 retval += nest_val
                 detail.append("%s %.1f" % (special, nest_val))
         if planet.size == fo.planetSize.asteroids:
