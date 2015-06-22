@@ -3158,6 +3158,19 @@ BASIC_PLANETARY_SHIELDS
             ]
             activation = And [
                 Planet
+                OwnerHasTech name = "DEF_ROOT_DEFENSE"
+            ]
+            stackinggroup = "PLANET_SHIELDS_STACK_FF"
+            accountinglabel = "DEF_ROOT_DEFENSE"
+            effects = SetMaxShield value = Value + 1
+
+EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            ]
+            activation = And [
+                Planet
                 OwnerHasTech name = "LRN_FORCE_FIELD"
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_FF"
