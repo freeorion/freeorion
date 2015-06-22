@@ -906,18 +906,6 @@ namespace {
             // do actual attacks
             Attack(attacker, *weapon_it, target, combat_state.combat_info, bout, round);
 
-            // mark attacker as valid target for attacked object's owner, so that regardless
-            // of visibility the attacker can be counter-attacked in subsequent rounds if it
-            // was not already attackable
-            combat_state.empire_infos[target->Owner()].target_ids.insert(attacker->ID());
-            // Also ensure that attacker (and their fleet if attacker was a ship) are
-            // revealed with at least BASIC_VISIBILITY to the taget empire
-            combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()] = 
-                    std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
-            if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
-                combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] = 
-                        std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
-            }
         } // end for over weapons
     }
 
@@ -959,6 +947,7 @@ namespace {
         combat_state.GiveAttackersShuffled(shuffled_attackers);
 
         int round = 1;
+        int init_event_index = combat_info.combat_events.size();
 
         // Planets are processed first so that they still have full power as intended,
         // despite their attack power depending on a thing (defence meter)
@@ -1013,6 +1002,28 @@ namespace {
             // randomly selected target object
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker);
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++);
+        }
+
+        // Stealthed attackers have now revealed themselves to their targets.
+        // Process this for each new combat event.
+        for (int event_index = init_event_index; event_index < combat_info.combat_events.size(); event_index++) {
+            // mark attacker as valid target for attacked object's owner, so that regardless
+            // of visibility the attacker can be counter-attacked in subsequent rounds if it
+            // was not already attackable
+            CombatEventPtr this_event = combat_info.combat_events[event_index];
+            if (boost::shared_ptr<AttackEvent> this_attack = boost::dynamic_pointer_cast<AttackEvent>(this_event)) {
+                TemporaryPtr<UniverseObject> attacker = combat_info.objects.Object(this_attack->attacker_id);
+                TemporaryPtr<UniverseObject> target = combat_info.objects.Object(this_attack->target_id);
+                combat_state.empire_infos[target->Owner()].target_ids.insert(attacker->ID());
+                // Also ensure that attacker (and their fleet if attacker was a ship) are
+                // revealed with at least BASIC_VISIBILITY to the taget empire
+                combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()] = 
+                        std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ID()], VIS_BASIC_VISIBILITY);
+                if (attacker->ObjectType() == OBJ_SHIP && attacker->ContainerObjectID() != INVALID_OBJECT_ID) {
+                    combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()] = 
+                            std::max(combat_state.combat_info.empire_object_visibility[target->Owner()][attacker->ContainerObjectID()], VIS_BASIC_VISIBILITY);
+                }
+            }
         }
 
         /// Remove all who died in the bout
