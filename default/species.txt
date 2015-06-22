@@ -3160,7 +3160,7 @@ BASIC_PLANETARY_SHIELDS
                 Planet
                 OwnerHasTech name = "DEF_ROOT_DEFENSE"
             ]
-            stackinggroup = "PLANET_SHIELDS_STACK_FF"
+            stackinggroup = "PLANET_SHIELDS_STACK_ROOT"
             accountinglabel = "DEF_ROOT_DEFENSE"
             effects = SetMaxShield value = Value + 1
 
