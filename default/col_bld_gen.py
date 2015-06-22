@@ -136,7 +136,7 @@ t_buildtime = string.Template('''${t_factor} * max(5.0, 1.0 +
 
 
 outpath = os.getcwd()
-print "Output folder:", outpath
+print ("Output folder: %s" % outpath)
 
 with open(os.path.join(outpath, "col_buildings.txt"), "w") as f:
     for species in species_list:
