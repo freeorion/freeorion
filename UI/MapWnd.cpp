@@ -270,6 +270,12 @@ namespace {
 
     void PlayTurnButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
+
+    void ToggleMapScaleLine() {
+    }
+
+    void ToggleMapScaleCircle() {
+    }
 }
 
 
@@ -1197,18 +1203,13 @@ MapWnd::MapWnd() :
     //////////////////
     // General Gamestate response signals
     //////////////////
-    Connect(ClientApp::GetApp()->EmpireEliminatedSignal,
-            &MapWnd::HandleEmpireElimination,   this);
-    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndChangedSignal,
-            &MapWnd::SelectedFleetsChanged,     this);
-    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedFleetsChangedSignal,
-            &MapWnd::SelectedFleetsChanged,     this);
-    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedShipsChangedSignal,
-            &MapWnd::SelectedShipsChanged,      this);
-    Connect(FleetUIManager::GetFleetUIManager().FleetRightClickedSignal,
-            &MapWnd::FleetRightClicked,         this);
-    Connect(FleetUIManager::GetFleetUIManager().ShipRightClickedSignal,
-            &MapWnd::ShipRightClicked,          this);
+    FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
+    Connect(ClientApp::GetApp()->EmpireEliminatedSignal,    &MapWnd::HandleEmpireElimination,   this);
+    Connect(fm.ActiveFleetWndChangedSignal,                 &MapWnd::SelectedFleetsChanged,     this);
+    Connect(fm.ActiveFleetWndSelectedFleetsChangedSignal,   &MapWnd::SelectedFleetsChanged,     this);
+    Connect(fm.ActiveFleetWndSelectedShipsChangedSignal,    &MapWnd::SelectedShipsChanged,      this);
+    Connect(fm.FleetRightClickedSignal,                     &MapWnd::FleetRightClicked,         this);
+    Connect(fm.ShipRightClickedSignal,                      &MapWnd::ShipRightClicked,          this);
 
     DoLayout();
 
@@ -4627,17 +4628,39 @@ void MapWnd::Sanitize() {
 }
 
 bool MapWnd::ReturnToMap() {
-    if (m_sitrep_panel->Visible())
+    bool some_subscreen_was_visible = false;
+
+    if (m_sitrep_panel->Visible()) {
         ToggleSitRep();
+        some_subscreen_was_visible = true;
+    }
 
-    if (m_research_wnd->Visible())
+    if (m_research_wnd->Visible()) {
         ToggleResearch();
+        some_subscreen_was_visible = true;
+    }
 
-    if (m_design_wnd->Visible())
+    if (m_design_wnd->Visible()) {
         ToggleDesign();
+        some_subscreen_was_visible = true;
+    }
 
-    if (m_production_wnd->Visible())
+    if (m_production_wnd->Visible()) {
         ToggleProduction();
+        some_subscreen_was_visible = true;
+    }
+
+    if (!some_subscreen_was_visible) {
+        // close fleets window if open
+        FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
+        GG::Wnd* active_fleet_wnd = fm.ActiveFleetWnd();
+        if (active_fleet_wnd) {
+            fm.CloseAll();
+        } else {
+            // else close sidepanel if open
+            SelectSystem(INVALID_OBJECT_ID);
+        }
+    }
 
     return true;
 }
