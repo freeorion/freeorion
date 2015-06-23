@@ -3107,11 +3107,15 @@ HUNT_BUILDINGS
                 Number low = 1 condition = And [
                     System
                     Contains And [
-                        Building
+                        Planet
+                        Species
                         OwnedBy affiliation = AnyEmpire
-                        Stealth high = Source.Detection
-                        WithinDistance distance = Source.Detection condition = Source
+                        Contains And [
+                            Building
+                            Stealth high = Source.Detection
+                        ]
                     ]
+                    WithinDistance distance = Source.Detection condition = Source
                 ]
             ]
             activation = Unowned
@@ -3119,11 +3123,15 @@ HUNT_BUILDINGS
             effects = SetDestination destination = And [
                 System
                 Contains And [
-                    Building
+                    Planet
+                    Species
                     OwnedBy affiliation = AnyEmpire
-                    Stealth high = Source.Detection
-                    WithinDistance distance = Source.Detection condition = Source
+                    Contains And [
+                        Building
+                        Stealth high = Source.Detection
+                    ]
                 ]
+                WithinDistance distance = Source.Detection condition = Source
             ]
 '''
 
