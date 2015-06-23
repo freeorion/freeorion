@@ -242,7 +242,7 @@ namespace {
             AttachChild(m_icon);
 
             m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1,
-                                       m_sitrep_entry.GetText() + " ", ClientUI::GetFont(GetOptionsDB().Get<int>("UI.sitrep-icon-size")),
+                                       m_sitrep_entry.GetText() + " ", ClientUI::GetFont(0.75*GetOptionsDB().Get<int>("UI.sitrep-icon-size")),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
