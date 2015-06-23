@@ -153,6 +153,9 @@ namespace {
         Hotkey::AddHotkey("map.zoom_prev_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"), GG::GGK_UNKNOWN);
         Hotkey::AddHotkey("map.zoom_next_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"), GG::GGK_UNKNOWN);
 
+        Hotkey::AddHotkey("map.toggle_scale_line",    UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_LINE"),    GG::GGK_UNKNOWN);
+        Hotkey::AddHotkey("map.toggle_scale_circle",  UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_CIRCLE"),  GG::GGK_UNKNOWN);
+
         Hotkey::AddHotkey("cut",                      UserStringNop("HOTKEY_CUT"),            GG::GGK_x,  GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("copy",                     UserStringNop("HOTKEY_COPY"),           GG::GGK_c,  GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("paste",                    UserStringNop("HOTKEY_PASTE"),          GG::GGK_v,  GG::MOD_KEY_CTRL);
@@ -271,10 +274,10 @@ namespace {
     void PlayTurnButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
 
-    void ToggleMapScaleLine() {
-    }
-
-    void ToggleMapScaleCircle() {
+    bool ToggleBoolOption(const std::string& option_name) {
+        bool initially_enabled = GetOptionsDB().Get<bool>(option_name);
+        GetOptionsDB().Set(option_name, !initially_enabled);
+        return !initially_enabled;
     }
 }
 
@@ -5483,6 +5486,15 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
                                                                                                     new VisibleWindowCondition(this)));
     hkm->Connect(this, &MapWnd::ZoomToNextIdleFleet,    "map.zoom_next_idle_fleet", new OrCondition(new InvisibleWindowCondition(bl),
                                                                                                     new VisibleWindowCondition(this)));
+
+    boost::function<bool()> toggle_scale_line = boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale");
+    hkm->Connect(toggle_scale_line,                     "map.toggle_scale_line",    new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+
+    boost::function<bool()> toggle_scale_circle = boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale-circle");
+    hkm->Connect(toggle_scale_circle,                   "map.toggle_scale_circle",  new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+
 
     // these are general-use hotkeys, only connected here as a convenient location to do so once.
     hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CutFocusWndText,              "cut");

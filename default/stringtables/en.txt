@@ -11016,6 +11016,12 @@ Switch to previous idle fleet
 HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET
 Switch to next idle fleet
 
+HOTKEY_MAP_TOGGLE_SCALE_LINE
+Toggle Map Scale Line
+
+HOTKEY_MAP_TOGGLE_SCALE_CIRCLE
+Toggle Map Scale Circle
+
 HOTKEY_CUT
 Cut
 
