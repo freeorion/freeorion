@@ -125,13 +125,23 @@ t_buildtime = string.Template('''${t_factor} * max(5.0, 1.0 +
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )''')
 
 
@@ -148,7 +158,7 @@ with open(os.path.join(outpath, "col_buildings.txt"), "w") as f:
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=70, time=5,
                     species_condition=r"// no existing Exobot colony required!") + "\n\n")
         else:
-	    this_time_factor = time_factor.get(sp_id, "1.0")
+            this_time_factor = time_factor.get(sp_id, "1.0")
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=50,
                                       time=t_buildtime.substitute(id=sp_id, t_factor=this_time_factor),
                                       species_condition=t_species_condition.substitute(id=sp_id)) + "\n\n")
