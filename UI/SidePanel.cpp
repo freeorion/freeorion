@@ -1443,6 +1443,9 @@ void SidePanel::PlanetPanel::Refresh() {
     bool habitable =        planet_env_for_colony_species >= PE_HOSTILE && planet_env_for_colony_species <= PE_GOOD;
     bool visible =          GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
     bool shielded =         planet->CurrentMeterValue(METER_SHIELD) > 0.0;
+    bool has_defenses =     planet->CurrentMeterValue(METER_MAX_SHIELD) > 0.0 || 
+                                    planet->CurrentMeterValue(METER_MAX_DEFENSE) > 0.0 ||
+                                    planet->CurrentMeterValue(METER_MAX_TROOPS) > 0.0;
     bool being_colonized =  planet->IsAboutToBeColonized();
     bool outpostable =                   !populated && (  !has_owner /*&& !shielded*/         ) && visible && !being_colonized;
     bool colonizable =      habitable && !populated && ( (!has_owner /*&& !shielded*/) || mine) && visible && !being_colonized;
@@ -1468,11 +1471,15 @@ void SidePanel::PlanetPanel::Refresh() {
         AttachChild(m_resource_panel);
         if (m_resource_panel)
             m_resource_panel->Refresh();
+    } else {
+        DetachChild(m_resource_panel);
+    }
+
+    if (populated || has_owner || has_defenses || SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_military_panel);
         if (m_military_panel)
             m_military_panel->Refresh();
     } else {
-        DetachChild(m_resource_panel);
         DetachChild(m_military_panel);
     }
 
