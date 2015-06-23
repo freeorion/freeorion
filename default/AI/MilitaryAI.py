@@ -682,6 +682,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     minMilAllocations.update([(sid, alloc) for sid, alloc, take_any, mm in allocations])
     if verbose_mil_reporting or "Main" in thisround:
         print "------------------------------\nFinal %s Round Military Allocations: %s \n-----------------------" % (thisround, dict([(sid, alloc) for sid, alloc, minalloc, take_any in new_allocations]))
+        print "(Apparently) remaining military rating: %.1f" % remaining_mil_rating
 
     # export military systems for other AI modules
     if "Main" in thisround:
@@ -691,7 +692,7 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
     return new_allocations
 
 
-def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None):
+def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, round = 1):
     # assign military fleets to military theater systems
     global military_allocations
     universe = fo.getUniverse()
@@ -700,6 +701,7 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None):
 
     doing_main = (useFleetIDList is None)
     if doing_main:
+        foAI.foAIstate.misc['ReassignedFleetMissions'] = []
         base_defense_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
         unassigned_base_defense_ids = FleetUtilsAI.extract_fleet_ids_without_mission_types(base_defense_ids)
         for fleet_id in unassigned_base_defense_ids:
@@ -781,3 +783,13 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None):
 
     if doing_main:
         print "---------------------------------"
+    if round <= 2:
+        # check if any fleets remain unassigned
+        all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
+        avail_mil_fleet_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
+        allocations = []
+        if avail_mil_fleet_ids:
+            allocations = get_military_fleets(milFleetIDs=avail_mil_fleet_ids, tryReset=False, thisround="Extras Remaining Round %d"%round)
+        if allocations:
+            assign_military_fleets_to_systems(useFleetIDList=avail_mil_fleet_ids, allocations=allocations, round = round+1)
+
