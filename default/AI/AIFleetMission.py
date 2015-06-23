@@ -364,7 +364,8 @@ class AIFleetMission(object):
         # TODO: priority
         order_completed = True
         print "--------------"
-        print "Checking orders for fleet %d (on turn %d), with mission types %s" % (self.target_id, fo.currentTurn(), [AIFleetMissionType.name(mt) for mt in self.get_mission_types()])
+        loc = self.get_location_target()
+        print "Checking orders for fleet %d (on turn %d) at %s, with mission types %s" % (self.target_id, fo.currentTurn(), loc, [AIFleetMissionType.name(mt) for mt in self.get_mission_types()])
         print "\t Full Orders are:"
         for this_order in self.orders:
             print "\t\t| %s" % this_order
@@ -394,6 +395,11 @@ class AIFleetMission(object):
                 if not fleet_order.execution_completed:
                     order_completed = False
             else:  # check that we're not held up by a Big Monster
+                if fleet_order.execution_completed:
+                    # It's unclear why we'd really get to this spot, but it has been observed to happen, perhaps due to
+                    # game being reloaded after code changes.
+                    # Go on to the next order.
+                    continue
                 print "\t\t| CAN'T issue fleet order %s" % fleet_order
                 if order_type == AIFleetOrderType.ORDER_MOVE:
                     this_system_id = fleet_order.target.target_id
@@ -584,7 +590,7 @@ class AIFleetMission(object):
         fleet_id = self.target_id
         # if combat fleet, use military repair check
         if foAI.foAIstate.get_fleet_role(fleet_id) in COMBAT_MISSION_TYPES:
-            return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], False, True)[0]
+            return fleet_id in MilitaryAI.avail_mil_needing_repair([fleet_id], False, bool(self.orders))[0]
         fleet = universe.getFleet(fleet_id)
         ships_cur_health = 0
         ships_max_health = 0
@@ -593,7 +599,7 @@ class AIFleetMission(object):
             this_ship = universe.getShip(ship_id)
             ships_cur_health += this_ship.currentMeterValue(fo.meterType.structure)
             ships_max_health += this_ship.currentMeterValue(fo.meterType.maxStructure)
-        return ships_cur_health >= repair_limit * ships_max_health
+        return ships_cur_health < repair_limit * ships_max_health
 
     def get_location_target(self):
         """system AITarget where fleet is or will be"""
