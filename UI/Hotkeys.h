@@ -225,10 +225,12 @@ public:
 
     /// Connects a named shortcut to the target slot in the target instance.
     template <class T, class R>
-    void Connect(T* instance, R (T::*member)(), const std::string& name,
-                 HotkeyCondition* cond = NULL) {
-        AddConditionalConnection(name, GG::Connect(NamedSignal(name), member, instance), cond);
-    };
+    void Connect(T* instance, R (T::*member)(), const std::string& name, HotkeyCondition* cond = NULL)
+    { AddConditionalConnection(name, GG::Connect(NamedSignal(name), member, instance), cond); };
+
+    void Connect(boost::function<bool()> func, const std::string& name, HotkeyCondition* cond = NULL)
+    { AddConditionalConnection(name, GG::Connect(NamedSignal(name), func), cond); };
+
 
 private:
     HotkeyManager();
