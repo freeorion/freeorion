@@ -332,6 +332,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     double          cur_y =                 this->Y();
     double          next_x =                next_system->X();
     double          next_y =                next_system->Y();
+    bool            stopped_at_system = bool(cur_system);
 
     // simulate fleet movement given known speed, starting position, fuel limit and systems on route
     // need to populate retval with MovePathNodes that indicate the correct position, whether this
@@ -375,8 +376,10 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
         if (cur_system) {
             // check if current system has fuel supply available
             if (fleet_supplied_systems.find(cur_system->ID()) != fleet_supplied_systems.end()) {
-                // current system has fuel supply.  replenish fleet's supply and don't restrict movement
-                fuel = max_fuel;
+                // current system has fuel supply.  don't restrict movement
+                // if had just stopped here, then replenish fleet's supply
+                if (stopped_at_system)
+                    fuel = max_fuel;
                 //DebugLogger() << " ... at system with fuel supply.  replenishing and continuing movement";
 
             } else {
@@ -393,7 +396,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             }
         }
 
-
+        stopped_at_system = false;
         // find distance to next system along path from current position
         double dist_to_next_system = std::sqrt((next_x - cur_x)*(next_x - cur_x) + (next_y - cur_y)*(next_y - cur_y));
         //DebugLogger() << " ... dist to next system: " << dist_to_next_system;
@@ -444,6 +447,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
             //DebugLogger() << " ... arrived at system: " << cur_system->Name();
 
+            if (end_turn_at_cur_position)
+                stopped_at_system = true;
 
             bool clear_exit = cur_system->ID() == m_arrival_starlane; //just part of the test for the moment
             // attempt to get next system on route, to update next system.  if new current
