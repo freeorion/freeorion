@@ -2555,6 +2555,10 @@ PHOTOTROPHIC_BONUS
             scope = Contains Source
             activation = AND [
                 Planet
+                OR [
+                    OwnedBy affiliation = AnyEmpire
+                    Star type = [BlackHole NoStar] // Natives are allowed to have bright or dim stars
+                ]
                 HasTag name = "PHOTOTROPHIC"
                 Turn high = 0
                 NOT Star type = [Orange]
