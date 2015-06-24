@@ -4669,20 +4669,6 @@ bool MapWnd::ReturnToMap() {
 }
 
 bool MapWnd::EndTurn() {
-    DebugLogger() << "MapWnd::EndTurn";
-    const Empire *empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
-    if (empire) {
-        double RP = empire->ResourceProduction(RE_RESEARCH);
-        double PP = empire->ResourceProduction(RE_INDUSTRY);
-        int turn_number = CurrentTurn();
-        float ratio = (RP/(PP+0.0001));
-        const GG::Clr color = empire->Color();
-        DebugLogger() << "Current Output (turn " << turn_number << ") RP/PP: " << ratio << " (" << RP << "/" << PP << ")";
-        DebugLogger() << "EmpireColors: " << static_cast<int>(color.r)
-                                            << " " << static_cast<int>(color.g)
-                                            << " " << static_cast<int>(color.b)
-                                            << " " << static_cast<int>(color.a);
-    }
     HumanClientApp::GetApp()->StartTurn();
     return true;
 }
