@@ -138,10 +138,7 @@ Special
     location = And [
         Or [
             ValueTest low = 1 testvalue = GalaxyMonsterFrequency
-            And [
-                ValueTest low = 0 high = 0 testvalue = GalaxyMonsterFrequency
-                Random probability = 0.2
-            ]
+            Random probability = 0.2
         ]
         Planet
         Not Planet type = [Asteroids GasGiant]
@@ -676,23 +673,19 @@ Special
         Planet
         Planet size = tiny
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not Species
-        Not WithinStarlaneJumps jumps = 2 condition = And [
-            System
-            Contains And [
-                Planet
-                OwnedBy affiliation = AnyEmpire
-            ]
-        ]
         ContainedBy And [
             System 
             Contains And [
                 Planet
                 Not Planet size = tiny
+            ]
+        ]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
             ]
         ]
     ]
@@ -710,7 +703,8 @@ Special
             ]
             activation = Unowned
             stackinggroup = "PHILOSOPHER_STACK"
-            effects = SetTargetResearch value = Value + 5    
+            effects = SetTargetResearch value = Value + 5
+  
         EffectsGroup
             scope = Source
             activation = Source
@@ -828,10 +822,6 @@ Special
         Planet
         Not Planet type = [Asteroids GasGiant]
         Not Planet size = [tiny huge]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 2 condition = And [
             System
             Contains And [
@@ -1520,10 +1510,6 @@ Special
     location = And [
         Planet
         Planet type = [Ocean Swamp Toxic]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1538,7 +1524,7 @@ Special
                 Planet
                 OwnedBy empire = Source.Owner
                 HasTag name = "ORGANIC"
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation =  Focus type = "FOCUS_GROWTH"
@@ -1567,10 +1553,6 @@ Special
     location = And [
         Planet
         Planet type = [Desert Terran Ocean Swamp]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1586,7 +1568,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ORGANIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
@@ -1613,10 +1595,6 @@ Special
     location = And [
         Planet
         Planet type = [Tundra Desert Terran]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1632,7 +1610,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ORGANIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
@@ -1659,10 +1637,6 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1680,7 +1654,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
@@ -1707,10 +1681,6 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1728,7 +1698,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
@@ -1756,10 +1726,6 @@ Special
     location = And [
         Planet
         Planet type = [Radiated Barren Inferno]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1777,7 +1743,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "POSITRONIUM_STACK"
@@ -1802,14 +1768,9 @@ Special
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
-
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1827,7 +1788,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MINERALS_STACK"
@@ -1851,14 +1812,9 @@ Special
     stealth = 0
     spawnrate = 1.0
     spawnlimit = 8
-
     location = And [
         Planet
         Not Planet type = [GasGiant]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-            ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1876,7 +1832,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "CRYSTALS_STACK"
@@ -1904,10 +1860,6 @@ Special
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
-        Not ContainedBy And [
-            System 
-            Contains Capital
-        ]
         Not WithinStarlaneJumps jumps = 1 condition = And [
             System
             Contains And [
@@ -1925,7 +1877,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "ELERIUM_STACK"
