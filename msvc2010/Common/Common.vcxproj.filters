@@ -85,6 +85,9 @@
     <ClInclude Include="..\..\universe\EffectAccounting.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\Encyclopedia.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\universe\Enums.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -313,6 +316,9 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\EffectAccounting.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Encyclopedia.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Enums.cpp">

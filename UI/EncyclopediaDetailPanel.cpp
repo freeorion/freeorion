@@ -2,13 +2,13 @@
 
 #include "CUIControls.h"
 #include "DesignWnd.h"
-#include "Encyclopedia.h"
 #include "FleetWnd.h"
 #include "GraphControl.h"
 #include "Hotkeys.h"
 #include "LinkText.h"
 #include "MapWnd.h"
 #include "../universe/Condition.h"
+#include "../universe/Encyclopedia.h"
 #include "../universe/Universe.h"
 #include "../universe/Tech.h"
 #include "../universe/ShipDesign.h"
@@ -59,11 +59,6 @@ namespace {
 }
 
 namespace {
-    const Encyclopedia& GetEncyclopedia() {
-        static Encyclopedia encyclopedia;
-        return encyclopedia;
-    }
-
     void GetSortedPediaDirEntires(const std::string& dir_name,
                                   std::multimap<std::string,
                                                 std::pair<std::string,
@@ -2743,21 +2738,3 @@ void EncyclopediaDetailPanel::OnNext() {
 
 void EncyclopediaDetailPanel::CloseClicked()
 { ClosingSignal(); }
-
-Encyclopedia::Encyclopedia() :
-    articles()
-{
-    parse::encyclopedia_articles(GetResourceDir() / "encyclopedia.txt", *this);
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "(Category) Encyclopedia Articles:";
-        for (std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator
-             category_it = articles.begin(); category_it != articles.end(); ++category_it)
-        {
-            const std::string& category = category_it->first;
-            const std::vector<EncyclopediaArticle>& article_vec = category_it->second;
-            for (std::vector<EncyclopediaArticle>::const_iterator article_it = article_vec.begin();
-                 article_it != article_vec.end(); ++article_it)
-            { DebugLogger() << "(" << UserString(category) << ") : " << UserString(article_it->name); }
-        }
-    }
-}

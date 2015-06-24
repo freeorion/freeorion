@@ -181,7 +181,6 @@
     <ClInclude Include="..\..\UI\CUIStyle.h" />
     <ClInclude Include="..\..\UI\CUIWnd.h" />
     <ClInclude Include="..\..\UI\DesignWnd.h" />
-    <ClInclude Include="..\..\UI\Encyclopedia.h" />
     <ClInclude Include="..\..\UI\EncyclopediaDetailPanel.h" />
     <ClInclude Include="..\..\UI\FieldIcon.h" />
     <ClInclude Include="..\..\UI\FleetButton.h" />

@@ -2,7 +2,7 @@
 #include "Parse.h"
 #include "ParseImpl.h"
 
-#include "../UI/Encyclopedia.h"
+#include "../universe/Encyclopedia.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
