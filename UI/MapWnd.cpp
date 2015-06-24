@@ -5345,11 +5345,14 @@ bool MapWnd::ZoomToNextOwnedSystem() {
 bool MapWnd::ZoomToPrevIdleFleet() {
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
-    if (it == vec.end()) {
-        m_current_fleet_id = vec.empty() ? INVALID_OBJECT_ID : vec.back();
-    } else {
-        m_current_fleet_id = it == vec.begin() ? vec.back() : *--it;
-    }
+    const std::set<int>&    destroyed_object_ids = GetUniverse().DestroyedObjectIds();
+    if (it != vec.begin())
+        --it;
+    else
+        it = vec.end();
+    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.find(*it) != destroyed_object_ids.end()))
+        --it;
+    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.back();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -5362,13 +5365,12 @@ bool MapWnd::ZoomToPrevIdleFleet() {
 bool MapWnd::ZoomToNextIdleFleet() {
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
-    if (it == vec.end()) {
-        m_current_fleet_id = vec.empty() ? INVALID_OBJECT_ID : vec.front();
-    } else {
-        std::vector<int>::iterator next_it = it;
-        ++next_it;
-        m_current_fleet_id = next_it == vec.end() ? vec.front() : *next_it;
-    }
+    const std::set<int>&    destroyed_object_ids = GetUniverse().DestroyedObjectIds();
+    if (it != vec.end())
+        ++it;
+    while (it != vec.end() && destroyed_object_ids.find(*it) != destroyed_object_ids.end())
+        ++it;
+    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.front();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -5381,11 +5383,14 @@ bool MapWnd::ZoomToNextIdleFleet() {
 bool MapWnd::ZoomToPrevFleet() {
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
-    if (it == vec.end()) {
-        m_current_fleet_id = vec.empty() ? INVALID_OBJECT_ID : vec.back();
-    } else {
-        m_current_fleet_id = it == vec.begin() ? vec.back() : *--it;
-    }
+    const std::set<int>&    destroyed_object_ids = GetUniverse().DestroyedObjectIds();
+    if (it != vec.begin())
+        --it;
+    else
+        it = vec.end();
+    while (it != vec.begin() && (it == vec.end() || destroyed_object_ids.find(*it) != destroyed_object_ids.end()))
+        --it;
+    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.back();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
@@ -5398,16 +5403,12 @@ bool MapWnd::ZoomToPrevFleet() {
 bool MapWnd::ZoomToNextFleet() {
     std::vector<int> vec = GetUniverse().Objects().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
     std::vector<int>::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
-    if (it == vec.end()) {
-        m_current_fleet_id = vec.empty() ? INVALID_OBJECT_ID : vec.front();
-    } else {
-        std::vector<int>::iterator next_it = it;
-        ++next_it;
-        if (next_it == vec.end())
-            m_current_fleet_id = vec.front();
-        else
-            m_current_fleet_id = *next_it;
-    }
+    const std::set<int>&    destroyed_object_ids = GetUniverse().DestroyedObjectIds();
+    if (it != vec.end())
+        ++it;
+    while (it != vec.end() && destroyed_object_ids.find(*it) != destroyed_object_ids.end())
+        ++it;
+    m_current_fleet_id = it != vec.end() ? *it : vec.empty() ? INVALID_OBJECT_ID : vec.front();
 
     if (m_current_fleet_id != INVALID_OBJECT_ID) {
         CenterOnObject(m_current_fleet_id);
