@@ -83,7 +83,7 @@ def generate_systems(pos_list, gsd):
                               % (position.x, position.y))
             continue
         sys_list.append(system)
-        for orbit in range(0, fo.sys_get_num_orbits(system) - 1):
+        for orbit in range(fo.sys_get_num_orbits(system)):
             # check for each orbit if a planet shall be created by determining planet size
             planet_size = planets.calc_planet_size(star_type, orbit, gsd.planetDensity, gsd.shape)
             if planet_size in planets.planet_sizes:
