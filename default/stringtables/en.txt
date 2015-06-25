@@ -4727,7 +4727,7 @@ Prefer Terran planets.
 
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
 '''
 
 SP_HUMAN_DESC
@@ -4745,7 +4745,7 @@ Prefer Ocean planets.
 
 [[GOOD_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
 '''
 
 SP_SCYLIOR_DESC
@@ -4775,7 +4775,8 @@ Prefer Swamp planets.
 
 [[GOOD_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
 [[BAD_WEAPONS]]
 '''
 
@@ -4805,7 +4806,8 @@ Prefer Toxic planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
         
 [[BROAD_EP]]
 '''
@@ -4830,7 +4832,7 @@ Prefer Desert planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
         
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -4859,7 +4861,8 @@ Prefer Ocean planets.
        
 [[BAD_POPULATION]]
 [[GREAT_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
        
 [[BAD_STEALTH]]
 [[GOOD_DETECTION]]
@@ -4895,7 +4898,7 @@ Prefer Tundra planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
+[[GREAT_DEFENSE_TROOPS]]
         
 [[GOOD_WEAPONS]]
 '''
@@ -4921,7 +4924,7 @@ Prefer Terran planets.
 
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
 [[GREAT_WEAPONS]]
 '''
 
@@ -4948,7 +4951,8 @@ Prefer Toxic planets.
 
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
+[[NO_OFFENSE_TROOPS]]
 
 [[BAD_WEAPONS]]
 '''
@@ -4973,7 +4977,8 @@ Prefer Ocean Planets.
         
 [[GOOD_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
 
 [[GREAT_DETECTION]]
 [[GREAT_STEALTH]]
@@ -4999,7 +5004,8 @@ Prefer Swamp planets.
         
 [[GOOD_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
 [[BAD_WEAPONS]]
 '''
 
@@ -5023,7 +5029,7 @@ Prefer Desert planets.
 
 [[GREAT_WEAPONS]]
 [[BAD_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
+[[GREAT_DEFENSE_TROOPS]]
 '''
 
 SP_MUURSH_DESC
@@ -5043,7 +5049,7 @@ Prefers Tundra planets.
         
 [[AVERAGE_POPULATION]]
 [[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
 
 [[BROAD_EP]]
 '''
@@ -5067,7 +5073,7 @@ Prefer Barren planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
+[[GOOD_DEFENSE_TROOPS]]
         
 [[BROAD_EP]]
 '''
@@ -5093,7 +5099,7 @@ Prefer Desert planets.
         
 [[AVERAGE_POPULATION]]
 [[GREAT_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
+[[GOOD_DEFENSE_TROOPS]]
                 
 [[GOOD_WEAPONS]]
         
@@ -5122,7 +5128,7 @@ SP_CYNOS_GAMEPLAY_DESC
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
+[[GOOD_DEFENSE_TROOPS]]
         
 '''
 
@@ -5150,7 +5156,7 @@ SP_PHINNERT_GAMEPLAY_DESC
                 
 [[AVERAGE_POPULATION]]
 [[BAD_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
 '''
 
 SP_PHINNERT_DESC
@@ -5176,7 +5182,8 @@ Prefer Inferno planets.
 
 [[BAD_POPULATION]]
 [[GREAT_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
+[[GREAT_DEFENSE_TROOPS]]
+[[GREAT_OFFENSE_TROOPS]]
 [[NARROW_EP]]
 '''
 
@@ -5203,7 +5210,8 @@ Prefer Tundra planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
         
 [[NARROW_EP]]
 '''
@@ -5227,7 +5235,7 @@ SP_FIFTYSEVEN_GAMEPLAY_DESC
         
 [[BAD_POPULATION]]
 [[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
 '''
 
 SP_FIFTYSEVEN_DESC
@@ -5256,7 +5264,8 @@ Prefer Swamp planets.
         
 [[GOOD_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[NO_GROUND_TROOPS]]  
+[[NO_DEFENSE_TROOPS]]
+[[NO_OFFENSE_TROOPS]] 
         
 [[GREAT_STEALTH]]
 '''
@@ -5284,7 +5293,7 @@ Prefer Desert planets.
 
 [[BAD_POPULATION]]
 [[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
 
 [[GREAT_DETECTION]]
 [[GOOD_STEALTH]]
@@ -5305,7 +5314,7 @@ Prefers Barren planets.
         
 [[AVERAGE_POPULATION]]
 [[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
 '''
 
 SP_TRENCHERS_DESC
@@ -5323,7 +5332,7 @@ Prefer Terran planets.
                 
 [[AVERAGE_POPULATION]]
 [[BAD_SUPPLY]]
-[[ULTIMATE_GROUND_TROOPS]]
+[[ULTIMATE_DEFENSE_TROOPS]]
 '''
 
 SP_RAAAGH_DESC
@@ -5351,7 +5360,7 @@ Prefers Radiated planets.
         
 [[GOOD_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
+[[GREAT_DEFENSE_TROOPS]]
 '''
 
 SP_BEIGEGOO_DESC
@@ -5370,7 +5379,7 @@ Prefer Terran planets.
         
 [[AVERAGE_POPULATION]]
 [[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
 [[BAD_WEAPONS]]
 '''
 
@@ -5400,7 +5409,8 @@ Prefer Barren planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
 '''
 
 SP_KOBUNTURA_DESC
@@ -5423,7 +5433,8 @@ Prefer Inferno planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
+[[GOOD_DEFENSE_TROOPS]]
+[[GOOD_OFFENSE_TROOPS]]
 [[NARROW_EP]]
 '''
 
@@ -5454,7 +5465,8 @@ Prefer Toxic planets.
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
 '''
 
 SP_GISGUFGTHRIM_DESC
@@ -5473,7 +5485,7 @@ Prefers Terran planets
 [[NO_INDUSTRY]]
 [[NO_RESEARCH]]
 
-[[NO_GROUND_TROOPS]]
+[[NO_DEFENSE_TROOPS]]
 '''
 
 SP_HIDDENGARDENER_DESC
@@ -5497,7 +5509,8 @@ Prefers Inferno planets.
                 
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
 '''
 
 SP_ABADDONI_DESC
@@ -5521,7 +5534,7 @@ Prefers Radiated planets.
         
 [[AVERAGE_POPULATION]]
 [[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
 
 +	Good ship [[encyclopedia SHIELDS_TITLE]]: +1
 +	Good planetary [[encyclopedia SHIELDS_TITLE]]: +5
@@ -5555,7 +5568,7 @@ Prefer Ocean planets.
                 
 [[AVERAGE_POPULATION]]
 [[BAD_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
         
 [[ULTIMATE_DETECTION]]
 '''
@@ -5587,7 +5600,7 @@ Prefer Barren planets.
         
 [[GOOD_POPULATION]]
 [[ULTIMATE_SUPPLY]]        
-[[AVERAGE_GROUND_TROOPS]]
+[[AVERAGE_DEFENSE_TROOPS]]
 '''
 
 SP_VOLP_DESC
@@ -5616,7 +5629,7 @@ Prefer Tundra planets.
                 
 [[BAD_POPULATION]]
 [[BAD_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
+[[GOOD_DEFENSE_TROOPS]]
         
 [[GOOD_DETECTION]]
 [[GREAT_STEALTH]]
@@ -5647,7 +5660,8 @@ SP_EXOBOT_GAMEPLAY_DESC
         
 [[AVERAGE_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
+[[BAD_DEFENSE_TROOPS]]
+[[BAD_OFFENSE_TROOPS]]
 [[BAD_WEAPONS]]
 '''
 
@@ -5666,7 +5680,7 @@ SP_EXPERIMENTOR_GAMEPLAY_DESC
 
 [[GOOD_POPULATION]]
 [[AVERAGE_SUPPLY]]
-[[ULTIMATE_GROUND_TROOPS]]
+[[ULTIMATE_DEFENSE_TROOPS]]
         
 [[ULTIMATE_STEALTH]]
 [[ULTIMATE_DETECTION]]
@@ -5688,7 +5702,8 @@ SP_SUPER_TEST_GAMEPLAY_DESC
         
 [[GOOD_POPULATION]]
 [[ULTIMATE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
+[[GREAT_DEFENSE_TROOPS]]
+[[GREAT_OFFENSE_TROOPS]]
         
 [[ULTIMATE_WEAPONS]]
 '''
@@ -10453,23 +10468,41 @@ GREAT_RESEARCH
 ULTIMATE_RESEARCH
 +++	Ultimate [[encyclopedia RESEARCH_TITLE]]: 400%
 
-NO_GROUND_TROOPS
-−−−	No Ground [[encyclopedia TROOP_TITLE]]
+NO_DEFENSE_TROOPS
+−−−	No Defensive [[encyclopedia TROOP_TITLE]]
 
-BAD_GROUND_TROOPS
-−	Bad Ground [[encyclopedia TROOP_TITLE]]: -50%
+BAD_DEFENSE_TROOPS
+−	Bad Defensive [[encyclopedia TROOP_TITLE]]: -50%
 
-AVERAGE_GROUND_TROOPS
-'''	Average Ground [[encyclopedia TROOP_TITLE]]: 100%'''
+AVERAGE_DEFENSE_TROOPS
+'''	Average Defensive [[encyclopedia TROOP_TITLE]]: 100%'''
 
-GOOD_GROUND_TROOPS
-+	Good Ground [[encyclopedia TROOP_TITLE]]: 150%.
+GOOD_DEFENSE_TROOPS
++	Good Defensive [[encyclopedia TROOP_TITLE]]: 150%.
 
-GREAT_GROUND_TROOPS
-++	Great Ground [[encyclopedia TROOP_TITLE]]: 200%.
+GREAT_DEFENSE_TROOPS
+++	Great Defensive [[encyclopedia TROOP_TITLE]]: 200%.
 
-ULTIMATE_GROUND_TROOPS
-+++	Ultimate Ground [[encyclopedia TROOP_TITLE]]: 300%.
+ULTIMATE_DEFENSE_TROOPS
++++	Ultimate Defensive [[encyclopedia TROOP_TITLE]]: 300%.
+
+NO_OFFENSE_TROOPS
+−−−	No Offensive [[encyclopedia TROOP_TITLE]]
+
+BAD_OFFENSE_TROOPS
+−	Bad Offensive [[encyclopedia TROOP_TITLE]]: -50%
+
+AVERAGE_OFFENSE_TROOPS
+'''	Average Offensive [[encyclopedia TROOP_TITLE]]: 100%'''
+
+GOOD_OFFENSE_TROOPS
++	Good Offensive [[encyclopedia TROOP_TITLE]]: 150%.
+
+GREAT_OFFENSE_TROOPS
+++	Great Offensive [[encyclopedia TROOP_TITLE]]: 200%.
+
+ULTIMATE_OFFENSE_TROOPS
++++	Ultimate Offensive [[encyclopedia TROOP_TITLE]]: 300%.
 
 BAD_DETECTION
 −	Bad [[encyclopedia DETECTION_RANGE_TITLE]]: −20 malus.
@@ -10643,20 +10676,35 @@ GREAT_SUPPLY_LABEL
 ULTIMATE_SUPPLY_LABEL
 %2% Ultimate Supply
 
-BAD_TROOPS_LABEL
-%2% Bad Ground Troops
+BAD_DEFENSE_TROOPS_LABEL
+%2% Bad Defensive Troops
 
-AVERAGE_TROOPS_LABEL
-%2% Average Ground Troops
+AVERAGE_DEFENSE_TROOPS_LABEL
+%2% Average Defensive Troops
 
-GOOD_TROOPS_LABEL
-%2% Good Ground Troops
+GOOD_DEFENSE_TROOPS_LABEL
+%2% Good Defensive Troops
 
-GREAT_TROOPS_LABEL
-%2% Great Ground Troops
+GREAT_DEFENSE_TROOPS_LABEL
+%2% Great Defensive Troops
 
-ULTIMATE_TROOPS_LABEL
-%2% Ultimate Ground Troops
+ULTIMATE_DEFENSE_TROOPS_LABEL
+%2% Ultimate Defensive Troops
+
+NO_OFFENSE_TROOPS_LABEL
+%2% No Offensive Troops
+
+BAD_OFFENSE_TROOPS_LABEL
+%2% Bad Offensive Troops
+
+GOOD_OFFENSE_TROOPS_LABEL
+%2% Good Offensive Troops
+
+GREAT_OFFENSE_TROOPS_LABEL
+%2% Great Offensive Troops
+
+ULTIMATE_OFFENSE_TROOPS_LABEL
+%2% Ultimate Offensive Troops
 
 INDEPENDENT_TROOP_LABEL
 Independent Homeworld
