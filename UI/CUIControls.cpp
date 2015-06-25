@@ -1343,12 +1343,6 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_projects_in_progress_label->SetTextColor(TEXT_COLOR);
     m_projects_in_progress = new CUILabel("", GG::FORMAT_LEFT);
     m_projects_in_progress->SetTextColor(TEXT_COLOR);
-    m_points_to_underfunded_projects_label = new CUILabel(UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), GG::FORMAT_RIGHT);
-    m_points_to_underfunded_projects_label->SetTextColor(TEXT_COLOR);
-    m_points_to_underfunded_projects = new CUILabel("", GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects->SetTextColor(TEXT_COLOR);
-    m_points_to_underfunded_projects_P_label = new CUILabel(points_str, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_P_label->SetTextColor(TEXT_COLOR);
     m_projects_in_queue_label = new CUILabel(UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), GG::FORMAT_RIGHT);
     m_projects_in_queue_label->SetTextColor(TEXT_COLOR);
     m_projects_in_queue = new CUILabel("", GG::FORMAT_LEFT);
@@ -1363,9 +1357,6 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     AttachChild(m_wasted_points_P_label);
     AttachChild(m_projects_in_progress_label);
     AttachChild(m_projects_in_progress);
-    AttachChild(m_points_to_underfunded_projects_label);
-    AttachChild(m_points_to_underfunded_projects);
-    AttachChild(m_points_to_underfunded_projects_P_label);
     AttachChild(m_projects_in_queue_label);
     AttachChild(m_projects_in_queue);
 
@@ -1397,14 +1388,12 @@ void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, int projects_in_progress,
-                                double points_to_underfunded_projects, int queue_size)
+void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, int projects_in_progress, int queue_size)
 {
     double wasted_points = total_queue_cost < total_points ? total_points - total_queue_cost : 0.0;
     *m_total_points << DoubleToString(total_points, 3, false);
     *m_wasted_points << DoubleToString(wasted_points, 3, false);
     *m_projects_in_progress << projects_in_progress;
-    *m_points_to_underfunded_projects << DoubleToString(points_to_underfunded_projects, 3, false);
     *m_projects_in_queue << queue_size;
 }
 
@@ -1448,14 +1437,6 @@ void ProductionInfoPanel::DoLayout() {
     m_projects_in_progress->Resize(VALUE_TEXT_SIZE);
 
     row_offset += m_projects_in_progress_label->Height();
-    m_points_to_underfunded_projects_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-    m_points_to_underfunded_projects_label->Resize(LABEL_TEXT_SIZE);
-    m_points_to_underfunded_projects->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-    m_points_to_underfunded_projects->Resize(VALUE_TEXT_SIZE);
-    m_points_to_underfunded_projects_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-    m_points_to_underfunded_projects_P_label->Resize(P_LABEL_SIZE);
-
-    row_offset += m_points_to_underfunded_projects_label->Height();
     m_projects_in_queue_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
     m_projects_in_queue_label->Resize(LABEL_TEXT_SIZE);
     m_projects_in_queue->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));

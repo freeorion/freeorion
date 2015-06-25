@@ -449,7 +449,7 @@ public:
 
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    void Reset(double total_points, double total_queue_cost, int projects_in_progress, double points_to_underfunded_projects, int queue_size);
+    void Reset(double total_points, double total_queue_cost, int projects_in_progress, int queue_size);
     //@}
 
 private:
@@ -466,9 +466,6 @@ private:
     GG::Label* m_wasted_points_P_label;
     GG::Label* m_projects_in_progress_label;
     GG::Label* m_projects_in_progress;
-    GG::Label* m_points_to_underfunded_projects_label;
-    GG::Label* m_points_to_underfunded_projects;
-    GG::Label* m_points_to_underfunded_projects_P_label;
     GG::Label* m_projects_in_queue_label;
     GG::Label* m_projects_in_queue;
 

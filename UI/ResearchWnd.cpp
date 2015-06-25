@@ -336,9 +336,7 @@ void ResearchWnd::UpdateInfoPanel() {
     const ResearchQueue& queue = empire->GetResearchQueue();
     double RPs = empire->ResourceProduction(RE_RESEARCH);
     double total_queue_cost = queue.TotalRPsSpent();
-    ResearchQueue::const_iterator underfunded_it = queue.UnderfundedProject();
-    double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->allocated_rp;
-    m_research_info_panel->Reset(RPs, total_queue_cost, queue.ProjectsInProgress(), RPs_to_underfunded_projects, queue.size());
+    m_research_info_panel->Reset(RPs, total_queue_cost, queue.ProjectsInProgress(), queue.size());
     /* Altering research queue may have freed up or required more RP.  Signalling that the
        ResearchResPool has changed causes the MapWnd to be signalled that that pool has changed,
        which causes the resource indicator to be updated (which polls the ResearchQueue to

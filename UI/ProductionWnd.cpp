@@ -753,9 +753,7 @@ void ProductionWnd::UpdateInfoPanel() {
     const ProductionQueue& queue = empire->GetProductionQueue();
     double PPs = empire->ProductionPoints();
     double total_queue_cost = queue.TotalPPsSpent();
-    ProductionQueue::const_iterator underfunded_it = queue.UnderfundedProject();
-    double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->allocated_pp;
-    m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), PPs_to_underfunded_projects, queue.size());
+    m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), queue.size());
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location) {
