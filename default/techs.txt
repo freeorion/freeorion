@@ -1920,7 +1920,7 @@ Tech
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_POP_THRESHOLD"
-                    icon = "icons/specials_huge/ancient_ruins.png"
+                    icon = "icons/sitrep/colony_growth.png"
                     parameters = [
                         tag = "planet" data = Target.ID
                     ]

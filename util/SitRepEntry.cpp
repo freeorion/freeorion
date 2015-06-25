@@ -169,9 +169,9 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
 
     } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
-            sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM"), "icons/sitrep/combat_damage.png");
+            sitrep = SitRepEntry(UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM"), "icons/sitrep/colony_bombarded.png");
         else
-            sitrep = SitRepEntry(UserStringNop("SITREP_PLANET_BOMBARDED_AT_SYSTEM"), "icons/sitrep/combat_damage.png");
+            sitrep = SitRepEntry(UserStringNop("SITREP_PLANET_BOMBARDED_AT_SYSTEM"), "icons/sitrep/colony_bombarded_own.png");
         sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(object_id));
 
     } else {
