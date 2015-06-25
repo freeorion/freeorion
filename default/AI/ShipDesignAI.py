@@ -59,7 +59,9 @@ ENGINES = frozenset({fo.shipPartClass.speed})
 TROOPS = frozenset({fo.shipPartClass.troops})
 WEAPONS = frozenset({fo.shipPartClass.shortRange, fo.shipPartClass.missiles,
                      fo.shipPartClass.fighters, fo.shipPartClass.pointDefense})
-ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS, COLONISATION, ENGINES, TROOPS})
+GENERAL = frozenset({fo.shipPartClass.general})
+ALL_META_CLASSES = frozenset({WEAPONS, ARMOUR, DETECTION, FUEL, STEALTH, SHIELDS,
+                              COLONISATION, ENGINES, TROOPS, GENERAL})
 
 # Prefixes for the test ship designs
 TESTDESIGN_NAME_BASE = "AI_TESTDESIGN"
@@ -661,18 +663,30 @@ class ShipDesigner(object):
         # If we do not meet the requirements, we want to return a negative rating.
         # However, we also need to make sure, that the closer we are to requirements,
         # the better our rating is so the optimizing heuristic finds "the right way".
-        requested_specs = self.additional_specifications
-        if self.fuel < requested_specs.minimum_fuel:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (requested_specs.minimum_fuel - self.fuel)
-        if self.speed < requested_specs.minimum_speed:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (requested_specs.minimum_speed - self.speed)
-        estimated_structure = self.structure + self.organic_growth * requested_specs.expected_turns_till_fight
-        if estimated_structure < requested_specs.minimum_structure:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (requested_specs.minimum_structure - estimated_structure)
+        min_fuel = self._minimum_fuel()
+        min_speed = self._minimum_speed()
+        min_structure = self._minimum_structure()
+        if self.fuel < min_fuel:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fuel - self.fuel)
+        if self.speed < min_speed:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_speed - self.speed)
+        estimated_structure = (self.structure +
+                               self.organic_growth * self.additional_specifications.expected_turns_till_fight)
+        if estimated_structure < self._minimum_structure():
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_structure - estimated_structure)
         if rating < 0:
             return rating
         else:
             return self._rating_function()
+
+    def _minimum_fuel(self):
+        return self.additional_specifications.minimum_fuel
+
+    def _minimum_speed(self):
+        return self.additional_specifications.minimum_speed
+
+    def _minimum_structure(self):
+        return self.additional_specifications.minimum_structure
 
     def _rating_function(self):
         """Rate the design according to current hull/part combo.
@@ -831,13 +845,14 @@ class ShipDesigner(object):
             :type tokendict: dict
             """
             for token, value in tokendict.items():
-                print token, value
                 if token == AIDependencies.REPAIR_PER_TURN:
                     self.repair_per_turn += min(value, self.structure)
                 elif token == AIDependencies.FUEL_PER_TURN:
                     self.fuel_per_turn = max(self.fuel_per_turn+value, self.fuel)
                 elif token == AIDependencies.STEALTH_MODIFIER:
-                    self.stealth += value
+                    if not (AIDependencies.NO_EFFECT_WITH_CLOAKS in tokendict.get(AIDependencies.STACKING_RULES, [])
+                            and self._partclass_in_design(STEALTH)):
+                        self.stealth += value
                 elif token == AIDependencies.ASTEROID_STEALTH:
                     self.asteroid_stealth += value
                 elif token == AIDependencies.SHIELDS:
@@ -853,10 +868,8 @@ class ShipDesigner(object):
                 self.detection += AIDependencies.BASE_DETECTION
 
         if self.hull.name not in AIDependencies.HULL_EFFECTS:
-            print self.hull.name, "does not have known effects"
             self.detection += AIDependencies.BASE_DETECTION
         else:
-            print self.hull.name
             parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name])
 
         for partname in set(self.partnames):
@@ -1280,6 +1293,22 @@ class ShipDesigner(object):
         # TODO: Rethink about math and maybe work out a more accurate formula
         return self.production_cost**(1/(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
 
+    def _effective_fuel(self):
+        """Return the number of turns the ship can move without refueling."""
+        return min(self.fuel / max(1-self.fuel_per_turn, 0.001), 10)
+
+    def _effective_mine_damage(self):
+        return self.additional_specifications.enemy_mine_dmg -self.repair_per_turn
+
+    def _partclass_in_design(self, partclass):
+        """Check if partclass is used in current design.
+
+        :param partclass: One of the meta partclasses
+        :type partclass: frozenset
+        :rtype: bool
+        """
+        return any(part.partClass in partclass for part in self.parts)
+
 
 class MilitaryShipDesigner(ShipDesigner):
     """Class that implements military designs.
@@ -1326,9 +1355,7 @@ class MilitaryShipDesigner(ShipDesigner):
         remaining_growth = self.maximum_organic_growth - expected_growth
         effective_structure = (self.structure + expected_growth + remaining_growth/5) * shield_factor
         speed_factor = 1 + 0.003*(self.speed - 85)
-        effective_fuel = min(self.fuel / max(1-self.fuel_per_turn, 0.001), 10)  # number of turns without refueling
-        fuel_factor = 1 + 0.03*(effective_fuel - self.additional_specifications.minimum_fuel) ** 0.5
-
+        fuel_factor = 1 + 0.03*(self._effective_fuel() - self._minimum_fuel())**0.5
         return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
@@ -1464,7 +1491,9 @@ class StandardTroopShipDesigner(TroopShipDesignerBaseClass):
         TroopShipDesignerBaseClass.__init__(self)
         self.additional_specifications.minimum_speed = 30
         self.additional_specifications.minimum_fuel = 2
-        self.additional_specifications.minimum_structure = self.additional_specifications.enemy_mine_dmg + 1
+
+    def _minimum_structure(self):
+        return self._effective_mine_damage() + 1
 
 
 class ColonisationShipDesignerBaseClass(ShipDesigner):
@@ -1693,9 +1722,52 @@ class ScoutShipDesigner(ShipDesigner):
         if not self.detection:
             return INVALID_DESIGN_RATING
         detection_factor = self.detection ** 2
-        fuel_factor = min(self.fuel/max(1-self.fuel_per_turn, 0.001), 10)  # rounds the ship can be used without refuel
+        fuel_factor = self._effective_fuel()
         speed_factor = self.speed ** 0.5
         return detection_factor * fuel_factor * speed_factor / self.production_cost
+
+
+class KrillSpawnerShipDesigner(ShipDesigner):
+    """Stealthy ship used for harassing the enemy using the Krill Spawner part."""
+    basename = "Krill Spawner"
+    description = "Stealthy ship that unleashes chaos in the enemy backlines."
+    useful_part_classes = DETECTION | FUEL | ENGINES | GENERAL | ARMOUR  # no cloak parts as non-stacking with Krillspawner
+    NAMETABLE = "AI_SHIPDESIGN_NAME_KRILLSPAWNER"
+    NAME_THRESHOLDS = sorted([0])
+    filter_useful_parts = True
+    filter_inefficient_parts = True
+
+    def __init__(self):
+        ShipDesigner.__init__(self)
+        self.additional_specifications.minimum_speed = 30
+        self.additional_specifications.minimum_fuel = 2
+
+    def _rating_function(self):
+        if AIDependencies.PART_KRILL_SPAWNER not in self.partnames:
+            return INVALID_DESIGN_RATING
+        structure_factor = (1 + self.structure - self._minimum_structure())**0.03  # nice to have but not too important
+        fuel_factor = self._effective_fuel()
+        speed_factor = 1 + (self.speed - self._minimum_speed())**0.1
+        stealth_factor = 1 + (self.stealth + self.asteroid_stealth / 2)  # TODO: Adjust for enemy detection strength
+        detection_factor = self.detection**1.5
+        return (structure_factor * fuel_factor * speed_factor *
+                stealth_factor * detection_factor / self.production_cost)
+
+    def _minimum_structure(self):
+        return 2 * self._effective_mine_damage() + 1
+
+    def _starting_guess(self, available_parts, num_slots):
+        # starting guess is a design completely empty except for the krill spawner part.
+        ret_val = (len(available_parts)+1)*[0]
+        if num_slots == 0:
+            return ret_val
+        if AIDependencies.PART_KRILL_SPAWNER not in available_parts:
+            ret_val[-1] = num_slots
+        else:
+            idx = available_parts.index(AIDependencies.PART_KRILL_SPAWNER)
+            ret_val[idx] = 1
+            ret_val[-1] = num_slots - 1
+        return ret_val
 
 
 def _get_planets_with_shipyard():

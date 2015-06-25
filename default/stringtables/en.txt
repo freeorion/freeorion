@@ -10895,6 +10895,9 @@ Starbase'''
 AI_SHIPDESIGN_NAME_SCOUT
 Scout
 
+AI_SHIPDESIGN_NAME_KRILLSPAWNER
+Krill Spawner
+
 ### End of AI Shipdesign Name Lists
 
 ### AI Diplomacy Strings and Lists 
