@@ -65,6 +65,9 @@ namespace {
     boost::shared_ptr<GG::Texture> DamageIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "damage.png", true); }
 
+    boost::shared_ptr<GG::Texture> TroopIcon()
+    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "troops.png", true); }
+
     boost::shared_ptr<GG::Texture> FleetCountIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
 
@@ -934,6 +937,11 @@ void ShipDataPanel::Refresh() {
                 DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
                 UserString("SHIP_DAMAGE_STAT_MAIN")));
             it->second->SetBrowseInfoWnd(browse_wnd);
+        } else if (it->first == METER_TROOPS) {
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+                TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
+                UserString("SHIP_TROOPS_STAT")));
+            it->second->SetBrowseInfoWnd(browse_wnd);
         } else {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(
                 m_ship_id, it->first, AssociatedMeterType(it->first)));
@@ -948,6 +956,8 @@ double ShipDataPanel::StatValue(MeterType stat_name) const {
     if (TemporaryPtr<const Ship> ship = GetShip(m_ship_id)) {
         if (stat_name == METER_DAMAGE)
             return ship->TotalWeaponsDamage();
+        else if (stat_name == METER_TROOPS)
+            return ship->TroopCapacity();
 
         if (ship->UniverseObject::GetMeter(stat_name)) {
             return ship->InitialMeterValue(stat_name);
@@ -1021,12 +1031,20 @@ void ShipDataPanel::Init() {
 
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-
-    // damage stat icon
-    StatisticIcon* icon = new StatisticIcon(DamageIcon(), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
-    AttachChild(icon);
-    icon->SetBrowseModeTime(tooltip_delay);
+    bool show_troops = !ship->IsArmed() && ship->HasTroops();
+    if (!show_troops) {
+        // damage stat icon
+        StatisticIcon* icon = new StatisticIcon(DamageIcon(), 0, 0, false);
+        m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
+        AttachChild(icon);
+        icon->SetBrowseModeTime(tooltip_delay);
+    } else {
+        // troops stat icon
+        StatisticIcon* icon = new StatisticIcon(TroopIcon(), 0, 0, false);
+        m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
+        AttachChild(icon);
+        icon->SetBrowseModeTime(tooltip_delay);
+    }
 
     // meter stat icons
     std::vector<MeterType> meters;
@@ -1133,12 +1151,21 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
         AttachChild(icon);
 
-        // stat icon for fleet damage
-        icon = new StatisticIcon(DamageIcon(), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
-        icon->SetBrowseModeTime(tooltip_delay);
-        icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
-        AttachChild(icon);
+        if (fleet->HasArmedShips() || !fleet->HasTroopShips()) {
+            // stat icon for fleet damage
+            icon = new StatisticIcon(DamageIcon(), 0, 0, false);
+            m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
+            AttachChild(icon);
+        } else {
+            // stat icon for fleet troops
+            icon = new StatisticIcon(TroopIcon(), 0, 0, false);
+            m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
+            AttachChild(icon);
+        }
 
         // stat icon for fleet structure
         icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false);
@@ -1463,6 +1490,7 @@ void FleetDataPanel::SetStatIconValues() {
     float shield_tally =    0.0f;
     float min_fuel =        0.0f;
     float min_speed =       0.0f;
+    float troops_tally =    0.0f;
     std::vector<float> fuels;
     std::vector<float> speeds;
 
@@ -1485,6 +1513,7 @@ void FleetDataPanel::SetStatIconValues() {
         if (ship->Design()) {
             ship_count++;
             damage_tally += ship->TotalWeaponsDamage();
+            troops_tally += ship->TroopCapacity();
             structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
             shield_tally += ship->InitialMeterValue(METER_SHIELD);
             fuels.push_back(ship->InitialMeterValue(METER_FUEL));
@@ -1511,6 +1540,8 @@ void FleetDataPanel::SetStatIconValues() {
             it->second->SetValue(damage_tally);
         else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);
+        else if (stat_name == METER_TROOPS)
+            it->second->SetValue(troops_tally);
     }
 }
 
@@ -2616,6 +2647,13 @@ void FleetWnd::Init(int selected_fleet_id) {
     icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
     AttachChild(icon);
 
+    // stat icon for fleet troops
+    icon = new StatisticIcon(TroopIcon(), 0, 0, false);
+    m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
+    icon->SetBrowseModeTime(tooltip_delay);
+    icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
+    AttachChild(icon);
+
     // create fleet list box
     m_fleets_lb = new FleetsListBox(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
@@ -2667,6 +2705,7 @@ void FleetWnd::SetStatIconValues() {
     float damage_tally =    0.0;
     float structure_tally = 0.0;
     float shield_tally =    0.0;
+    float troop_tally =     0.0;
 
     std::vector<TemporaryPtr<const Fleet> > fleets = Objects().FindObjects<const Fleet>(m_fleet_ids);
     for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin();
@@ -2695,6 +2734,7 @@ void FleetWnd::SetStatIconValues() {
                 damage_tally += ship->TotalWeaponsDamage();
                 structure_tally += ship->InitialMeterValue(METER_STRUCTURE);
                 shield_tally += ship->InitialMeterValue(METER_SHIELD);
+                troop_tally += ship->TroopCapacity();
             }
         }
     }
@@ -2711,6 +2751,8 @@ void FleetWnd::SetStatIconValues() {
             it->second->SetValue(damage_tally);
         else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);
+        else if (stat_name == METER_TROOPS)
+            it->second->SetValue(troop_tally);
     }
 }
 

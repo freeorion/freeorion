@@ -2660,6 +2660,12 @@ Damage
 SHIP_DAMAGE_STAT_MAIN
 Total damage done by ship weapons per combat round.
 
+SHIP_TROOPS_TITLE
+Troops
+
+SHIP_TROOPS_STAT
+Total troop capacity of this ship.
+
 SHIP_SPEED_STAT_TITLE
 Speed
 
@@ -2683,6 +2689,9 @@ Fleet Damage - Equal to the total damage of ships in the fleet.
 
 FW_FLEET_COUNT_SUMMARY
 Fleet Count - Equal to the total number of ships in the fleet.
+
+FW_FLEET_TROOP_SUMMARY
+Fleet Troops - Equal to the total number of troops in the fleet.
 
 FW_MERGE_SYSTEM_FLEETS
 Merge System Ships Into Fleet
