@@ -396,8 +396,8 @@ Special
     name = "FORTRESS_SPECIAL"
     description = "FORTRESS_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 0.5
-    spawnlimit = 5
+    spawnrate = 0.2
+    spawnlimit = 3
     location = And [
         Planet
         Not Planet type = [Asteroids GasGiant]
@@ -413,6 +413,10 @@ Special
     effectsgroups = [
         EffectsGroup
             scope = Source
+            activation = Or [
+                OwnedBy affiliation = AnyEmpire
+                Species
+            ]
             effects = [
                 SetMaxShield value = Value + 100
                 SetMaxDefense value = Value + 30
