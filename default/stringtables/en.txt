@@ -10410,7 +10410,7 @@ More than one in the same [[encyclopedia SUPPLY_TITLE]] connected Resource Group
 #############################################################
 
 COLONY_BUILDING_TIME_DECREASE
-Decreases the time to build a colony building far away from the corresponding species in the empire.
+Among other things, this technology decreases the time to build a colony building far away from the corresponding species in the empire.
 
 #############################################################
 ####              Growth Macros                          ####
