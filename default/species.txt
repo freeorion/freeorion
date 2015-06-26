@@ -37,7 +37,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -73,7 +74,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
 
         // not for description
         
@@ -148,7 +149,7 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -187,7 +188,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -225,7 +227,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -262,7 +264,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -299,7 +301,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+        [[NO_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
         
         // not for description
@@ -337,7 +340,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         [[GREAT_WEAPONS]]
         
@@ -384,7 +387,8 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
+        [[GREAT_OFFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -425,7 +429,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
 
                 
         [[GOOD_WEAPONS]]
@@ -467,6 +471,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
         
         
@@ -514,7 +520,7 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[ULTIMATE_GROUND_TROOPS]]
+        [[ULTIMATE_DEFENSE_TROOPS]]
         
         [[ULTIMATE_STEALTH]]
         [[ULTIMATE_DETECTION]]
@@ -552,7 +558,7 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -589,7 +595,7 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
         
         [[GOOD_DETECTION]]
         [[GREAT_STEALTH]]
@@ -629,7 +635,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
      
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -665,7 +671,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -702,7 +709,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
         
         // not for description
@@ -742,7 +750,8 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
        
         [[BAD_STEALTH]]
         [[GOOD_DETECTION]]
@@ -782,7 +791,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
         
         [[GOOD_WEAPONS]]
        
@@ -824,7 +833,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -862,7 +871,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
 
         // not for description
         [[NATIVE_PLANETARY_DEFENSE]]
@@ -899,7 +909,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
 
         [[GREAT_DETECTION]]
         [[GREAT_STEALTH]]
@@ -940,7 +951,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
 
         [[GREAT_WEAPONS]]
         
@@ -978,7 +989,7 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
    
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
@@ -1016,7 +1027,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         [[ULTIMATE_DETECTION]]
         
@@ -1055,7 +1066,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1090,7 +1101,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[ULTIMATE_GROUND_TROOPS]]
+        [[ULTIMATE_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1130,7 +1141,7 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1168,7 +1179,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[NO_GROUND_TROOPS]]  
+        [[NO_DEFENSE_TROOPS]]
+        [[NO_OFFENSE_TROOPS]]
         
         [[GREAT_STEALTH]]
         
@@ -1207,7 +1219,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         [[BAD_WEAPONS]]
 
         // not for description
@@ -1245,7 +1257,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1282,7 +1295,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[ULTIMATE_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
+        [[GREAT_OFFENSE_TROOPS]]
         
         [[ULTIMATE_WEAPONS]]
 
@@ -1333,7 +1347,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
 
         // not for description
@@ -1369,7 +1384,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1406,7 +1421,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
@@ -1454,7 +1469,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
+        [[GOOD_OFFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1489,7 +1505,7 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[ULTIMATE_SUPPLY]]        
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1522,7 +1538,7 @@ Species
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
         
-        [[NO_GROUND_TROOPS]]
+        [[NO_DEFENSE_TROOPS]]
 
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
@@ -2925,70 +2941,70 @@ ULTIMATE_RESEARCH
 
 //#####      T R O O P S     #####//
 
-NO_GROUND_TROOPS
+NO_DEFENSE_TROOPS
 ''' '''
 
-BAD_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+BAD_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
             scope = Source
             activation = Planet
-            accountinglabel = "BAD_TROOPS_LABEL"
+            accountinglabel = "BAD_DEFENSE_TROOPS_LABEL"
             effects = SetMaxTroops value = Value * 0.5
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
 
-AVERAGE_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+AVERAGE_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
             scope = Source
             activation = Planet
-            accountinglabel = "AVERAGE_TROOPS_LABEL"
+            accountinglabel = "AVERAGE_DEFENSE_TROOPS_LABEL"
             effects = SetMaxTroops value = Value * 1
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
 
-GOOD_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+GOOD_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
             scope = Source
             activation = Planet
-            accountinglabel = "GOOD_TROOPS_LABEL"
+            accountinglabel = "GOOD_DEFENSE_TROOPS_LABEL"
             effects = SetMaxTroops value = Value * 1.5
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
 
-GREAT_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+GREAT_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
             scope = Source
             activation = Planet
-            accountinglabel = "GREAT_TROOPS_LABEL"
+            accountinglabel = "GREAT_DEFENSE_TROOPS_LABEL"
             effects = SetMaxTroops value = Value * 2
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
 
-ULTIMATE_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+ULTIMATE_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
             scope = Source
             activation = Planet
-            accountinglabel = "ULTIMATE_TROOPS_LABEL"
+            accountinglabel = "ULTIMATE_DEFENSE_TROOPS_LABEL"
             effects = SetMaxTroops value = Value * 3
             
     [[PROTECTION_FOCUS_TROOPS]]
 '''
 
-BASIC_GROUND_TROOPS
+BASIC_DEFENSE_TROOPS
 '''EffectsGroup
             scope = And [
                 Planet
@@ -3108,6 +3124,69 @@ EffectsGroup
             accountinglabel = "INDEPENDENT_TROOP_LABEL"
             effects = SetMaxTroops value = Value + 10 + Target.Population * [[TROOPS_PER_POP]]
 
+'''
+
+NO_OFFENSE_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = Ship
+            stackinggroup = "NO_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "NO_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = 0
+                SetCapacity partname = "GT_TROOP_POD_2" value = 0
+            ]
+'''
+
+BAD_OFFENSE_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = Ship
+            stackinggroup = "BAD_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "BAD_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 0.5
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 0.5
+            ]
+'''
+
+AVERAGE_OFFENSE_TROOPS
+''' '''
+
+GOOD_OFFENSE_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = Ship
+            stackinggroup = "GOOD_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "GOOD_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 1.5
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 1.5
+            ]
+'''
+
+GREAT_OFFENSE_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = Ship
+            stackinggroup = "GREAT_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "GREAT_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 2
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 2
+            ]
+'''
+
+ULTIMATE_OFFENSE_TROOPS
+'''EffectsGroup
+            scope = Source
+            activation = Ship
+            stackinggroup = "ULTIMATE_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "ULTIMATE_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 3
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 3
+            ]
 '''
 
 PROTECTION_FOCUS_TROOPS
