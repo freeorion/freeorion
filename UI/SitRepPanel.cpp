@@ -17,7 +17,6 @@
 
 
 namespace {
-    GG::X ICON_WIDTH(16);
     GG::X ICON_RIGHT_MARGIN(3);
     GG::Y ITEM_VERTICAL_PADDING(2);
 
@@ -25,8 +24,12 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>());
         db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
+        db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_HEIGHT"), 16, RangedValidator<int>(12, 32));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+    
+    GG::X GetIconWidth()
+    { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-icon-size")); }
 
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
@@ -215,13 +218,13 @@ namespace {
         void            DoLayout() {
             if (!m_initialized)
                 return;
-            const GG::Y ICON_HEIGHT(Value(ICON_WIDTH));
+            GG::Y ICON_HEIGHT(Value(GetIconWidth()));
 
             GG::X left(GG::X0);
             GG::Y bottom(ClientHeight());
 
-            m_icon->SizeMove(GG::Pt(left, bottom/2 - ICON_HEIGHT/2), GG::Pt(left + ICON_WIDTH, bottom/2 + ICON_HEIGHT/2));
-            left += ICON_WIDTH + ICON_RIGHT_MARGIN;
+            m_icon->SizeMove(GG::Pt(left, bottom/2 - ICON_HEIGHT/2), GG::Pt(left + GetIconWidth(), bottom/2 + ICON_HEIGHT/2));
+            left += GetIconWidth() + ICON_RIGHT_MARGIN;
 
             m_link_text->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(ClientWidth(), bottom));
         }
@@ -238,8 +241,8 @@ namespace {
             m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
 
-            m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1,
-                                       m_sitrep_entry.GetText() + " ", ClientUI::GetFont(),
+            m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
+                                       ClientUI::GetFont(std::max(1.0*ClientUI::Pts(), 0.75*GetOptionsDB().Get<int>("UI.sitrep-icon-size"))),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
