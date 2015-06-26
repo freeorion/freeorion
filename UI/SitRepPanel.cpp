@@ -241,8 +241,8 @@ namespace {
             m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);
 
-            m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1,
-                                       m_sitrep_entry.GetText() + " ", ClientUI::GetFont(0.75*GetOptionsDB().Get<int>("UI.sitrep-icon-size")),
+            m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
+                                       ClientUI::GetFont(std::max(1.0*ClientUI::Pts(), 0.75*GetOptionsDB().Get<int>("UI.sitrep-icon-size"))),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
