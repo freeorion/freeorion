@@ -7684,13 +7684,17 @@ SHP_INTSTEL_LOG_DESC
 
 Increases [[encyclopedia STARLANE_SPEED_TITLE]] of your ships by 20 when they are within 50 uu of a controlled planet.
 
+[[COLONY_BUILDING_TIME_DECREASE]]
+
 Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
 
 SHP_MIL_ROBO_CONT
 Military Robotic Control
 
 SHP_MIL_ROBO_CONT_DESC
-Robotic control can be used effectively for tasks such as mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.
+'''Unless faster ship hulls have already been researched, this tech decreases the time to build a colony building far away from the corresponding species in the empire.
+
+Robotic control can be used effectively for tasks such as mining and industry; the natural extension of this concept is to develop military robotic equipment capable of independently operating a starship. This would allow greater versatility in design, as the necessity for bulky life-support systems would be removed. Hulls produced with such technology could also perform dangerous repairs without thought for the safety and biological limitations of living engineers.'''
 
 SHP_SPACE_FLUX_DRIVE
 Spatial Flux Drive
@@ -7720,7 +7724,9 @@ SHP_TRANSSPACE_DRIVE
 Trans-Spatial Drive
 
 SHP_TRANSSPACE_DRIVE_DESC
-'''Even when spatial dimensions are skewed by relativistic effects, an object generally has constant space-time characteristics. By creating a device which alters the characteristics of space-time itself using quasi-relativistic effects, it would be possible to create a fast, stealthy method of propulsion. '''
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+Even when spatial dimensions are skewed by relativistic effects, an object generally has constant space-time characteristics. By creating a device which alters the characteristics of space-time itself using quasi-relativistic effects, it would be possible to create a fast, stealthy method of propulsion. '''
 
 SHP_MIDCOMB_LOG
 Mid-Combat Logistics
@@ -7810,7 +7816,9 @@ SHP_QUANT_ENRG_MAG
 Quantum Energy Magnification
 
 SHP_QUANT_ENRG_MAG_DESC
-Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.'''
 
 SHP_ENRG_BOUND_MAN
 Energy Boundary Manipulation
@@ -8505,19 +8513,25 @@ SHP_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
-Better engine parts equate to better engines. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 10. May be added more than once to a hull.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+Better engine parts equate to better engines. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 10. May be added more than once to a hull.'''
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 20. May be added more than once to a hull.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+N-Dimensional subspace research resulted in a more efficient engine matrix. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 20. May be added more than once to a hull.'''
 
 SHP_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 30. May be added more than once to a hull.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 30. May be added more than once to a hull.'''
 
 SHP_DEUTERIUM_TANK
 Deuterium Tank
@@ -8625,7 +8639,9 @@ SHP_ORG_HULL
 Organic Hull
 
 SHP_ORG_HULL_DESC
-'''This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. '''
+'''Unless faster ship hulls have already been researched, this tech decreases the time to build a colony building far away from the corresponding species in the empire.
+
+This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle.'''
 
 SHP_ENDOSYMB_HULL
 Endosymbiotic Hull
@@ -9166,7 +9182,7 @@ BLD_COL_PART_2
 Minimum build time depends on the total starlane distance to the nearest
 
 BLD_COL_PART_3
-owned by the empire, and will increase the farther away it is; the time will also be reduced if the empire owns fast ships
+owned by the empire, and will increase the farther away it is; the increase will be reduced by researching techs that enable faster colony ships such as engine parts and faster hulls
 
 BLD_COL_ABADDONI
 Abaddoni Colony
@@ -10388,6 +10404,13 @@ A cosmic cloud of high energetic particles.
 
 NO_STACK_SUPPLY_CONNECTION_TEXT
 More than one in the same [[encyclopedia SUPPLY_TITLE]] connected Resource Group do not stack and add no extra bonus.
+
+#############################################################
+####                 T E C H   M A C R O S               ####
+#############################################################
+
+COLONY_BUILDING_TIME_DECREASE
+Decreases the time to build a colony building far away from the corresponding species in the empire.
 
 #############################################################
 ####              Growth Macros                          ####

@@ -12,13 +12,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -113,13 +123,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -214,13 +234,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -315,13 +345,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -416,13 +456,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -517,13 +567,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -618,13 +678,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -719,13 +789,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -820,13 +900,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -921,13 +1011,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1022,13 +1122,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1123,13 +1233,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1224,13 +1344,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1325,13 +1455,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1426,13 +1566,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1527,13 +1677,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1628,13 +1788,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1729,13 +1899,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1830,13 +2010,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -1931,13 +2121,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -2032,13 +2232,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -2133,13 +2343,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -2234,13 +2454,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -2335,13 +2565,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
@@ -2436,13 +2676,23 @@ BuildingType
                 Happiness low = 5
                 ResourceSupplyConnected empire = Source.Owner condition = Target
             ]
-        ) / max(60, (max
-                      value = LocalCandidate.speed
-                      condition = And [
-                          Ship
-                          OwnedBy empire = Source.Owner
-                      ]
-               ))
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
     )
     location = And [
         Planet
