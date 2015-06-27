@@ -20,6 +20,7 @@ prioritiees_timer = Timer('calculate_priorities()')
 
 allottedInvasionTargets=0
 allottedColonyTargets=0
+allotted_outpost_targets = 0
 colony_growth_barrier = 2
 scoutsNeeded = 0
 unmetThreat = 0
@@ -272,6 +273,7 @@ def calculateColonisationPriority():
 
 def calculateOutpostPriority():
     """calculates the demand for outpost ships by colonisable planets"""
+    global allotted_outpost_targets
     base_outpost_cost = AIDependencies.OUTPOST_POD_COST
 
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted',{})
@@ -294,10 +296,10 @@ def calculateOutpostPriority():
         allotted_portion *= 2
     elif mil_prio < 200:
         allotted_portion *= 1.5
-    max_allotted_targets = 1 + int(total_pp*3*allotted_portion/base_outpost_cost)
+    allotted_outpost_targets = 1 + int(total_pp*3*allotted_portion/base_outpost_cost)
 
     num_outpost_targets = len([pid for (pid, (score, specName) ) in foAI.foAIstate.colonisableOutpostIDs.items()
-                               if score > 1.0*base_outpost_cost/3.0 ][:max_allotted_targets])
+                               if score > 1.0*base_outpost_cost/3.0 ][:allotted_outpost_targets])
     if num_outpost_targets == 0 or not tech_is_complete(AIDependencies.OUTPOSTING_TECH):
         return 0
 

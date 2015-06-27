@@ -225,11 +225,17 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
 
     safety_factor = get_safety_factor()
 
-    top_target_planets = [pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets] if pscore > 20] + [pid for pid, (pscore, spec) in foAI.foAIstate.colonisablePlanetIDs.items()[:10] if pscore > 20]
+    num_targets = max(10, PriorityAI.allotted_outpost_targets)
+    top_target_planets = ([pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets] if pscore > 20] +
+                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisableOutpostIDs.items()[:num_targets] if pscore > 20] +
+                          [pid for pid, (pscore, spec) in foAI.foAIstate.colonisablePlanetIDs.items()[:num_targets] if pscore > 20])
     top_target_planets.extend(foAI.foAIstate.qualifyingTroopBaseTargets.keys())
+    base_col_target_systems  = PlanetUtilsAI.get_systems(top_target_planets)
     top_target_systems = []
-    for sys_id in AIstate.invasionTargetedSystemIDs + PlanetUtilsAI.get_systems(top_target_planets):
+    for sys_id in AIstate.invasionTargetedSystemIDs + base_col_target_systems:
         if sys_id not in top_target_systems:
+            if foAI.foAIstate.systemStatus[sys_id]['totalThreat']  > totMilRating:
+                continue
             top_target_systems.append(sys_id)  # doing this rather than set, to preserve order
 
     # allocation format: ( sysID, newAllocation, takeAny, maxMultiplier )
@@ -783,13 +789,18 @@ def assign_military_fleets_to_systems(useFleetIDList=None, allocations=None, rou
 
     if doing_main:
         print "---------------------------------"
-    if round <= 2:
+    LAST_ROUND = 3
+    LAST_ROUND_NAME = "LastRound"
+    if round <= LAST_ROUND:
         # check if any fleets remain unassigned
         all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
         avail_mil_fleet_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
         allocations = []
+        round += 1
+        thisround="Extras Remaining Round %d"%round if round < LAST_ROUND else LAST_ROUND_NAME
         if avail_mil_fleet_ids:
-            allocations = get_military_fleets(milFleetIDs=avail_mil_fleet_ids, tryReset=False, thisround="Extras Remaining Round %d"%round)
+            print "Still have available military fleets: %s" % avail_mil_fleet_ids
+            allocations = get_military_fleets(milFleetIDs=avail_mil_fleet_ids, tryReset=False, thisround=thisround)
         if allocations:
-            assign_military_fleets_to_systems(useFleetIDList=avail_mil_fleet_ids, allocations=allocations, round = round+1)
+            assign_military_fleets_to_systems(useFleetIDList=avail_mil_fleet_ids, allocations=allocations, round = round)
 
