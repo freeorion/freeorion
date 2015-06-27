@@ -275,7 +275,7 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
     ALsizei ogg_freq;
     FILE *file = 0;
     int m_i;
-    bool found_buffer = true;
+    bool found_buffer = false;
     bool found_source = false;
 
 #ifdef FREEORION_WIN32
@@ -296,9 +296,10 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
     {
         /* First check if the sound data of the file we want to play is already buffered somewhere */
         std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
-        if (it != m_buffers.end())
+        if (it != m_buffers.end()) {
             current_buffer = it->second;
-        else {
+            found_buffer = true;
+        } else {
             if ((file = fopen(filename.c_str(), "rb")) != 0) // make sure we CAN open it
             {
                 OggVorbis_File ogg_file;
@@ -329,6 +330,7 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
                         RefillBuffer(&ogg_file, ogg_format, ogg_freq, sound_handle, byte_size, loop);
 
                         current_buffer = sound_handle;
+                        found_buffer = true;
                         m_buffers.insert(std::make_pair(filename, sound_handle));
                     }
                     else
