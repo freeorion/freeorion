@@ -1,5 +1,22 @@
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
+#
+#  Miscellaneous
+#
+
+# TODO look into (enabling) simply retrieving the below values via UserString
+INDUSTRY_PER_POP = 0.2
+
+RESEARCH_PER_POP = 0.2
+
+TROOPS_PER_POP = 0.2
+
+TECH_COST_MULTIPLIER = 2.0
+
+
+#
+# Specials details (some specials are instead covered in the section they most directly affect
+#
 metabolismBoostMap = {"ORGANIC": ["FRUIT_SPECIAL", "PROBIOTIC_SPECIAL", "SPICE_SPECIAL"],
                       "LITHIC": ["CRYSTALS_SPECIAL", "ELERIUM_SPECIAL", "MINERALS_SPECIAL"],
                       "ROBOTIC": ["MONOPOLE_SPECIAL", "POSITRONIUM_SPECIAL", "SUPERCONDUCTOR_SPECIAL"],
@@ -11,6 +28,12 @@ for metab, boosts in metabolismBoostMap.items():
     for boost in boosts:
         metabolismBoosts[boost] = metab
 
+HONEYCOMB_IND_MULTIPLIER = 2.5
+COMPUTRONIUM_RES_MULTIPLIER = 1.0
+
+#
+# Colonization details
+#
 COLONY_POD_COST = 120
 COLONY_POD_UPKEEP = 0.06
 OUTPOST_POD_COST = 50
@@ -18,6 +41,9 @@ SHIP_UPKEEP = 0.01
 
 OUTPOSTING_TECH = "SHP_GAL_EXPLO"
 
+#
+#  Supply details
+#
 supply_range_techs = {"CON_ORBITAL_CON": 1, "CON_CONTGRAV_ARCH": 1, "CON_GAL_INFRA": 1}
 supply_by_size = {fo.planetSize.tiny: 2,
                   fo.planetSize.small: 1,
@@ -40,6 +66,8 @@ building_supply = {"BLD_IMPERIAL_PALACE": {-1: 2},
                                           },
                    }
 
+#
+# tech names etc.
 PRO_ORBITAL_GEN = "PRO_ORBITAL_GEN"
 PRO_SOL_ORB_GEN = "PRO_SOL_ORB_GEN"
 PRO_MICROGRAV_MAN = "PRO_MICROGRAV_MAN"
@@ -57,6 +85,7 @@ TECH_EXCLUSION_MAP_2 = {}  # (k,v) exclude tech k if aggression is greater than 
 FIRST_PLANET_SHIELDS_TECH = "LRN_FORCE_FIELD"
 PLANET_BARRIER_I_TECH = "DEF_PLAN_BARRIER_SHLD_1"
 DEFENSE_REGEN_1_TECH = "DEF_DEFENSE_NET_REGEN_1"
+
 PROT_FOCUS_MULTIPLIER = 2.0
 
 

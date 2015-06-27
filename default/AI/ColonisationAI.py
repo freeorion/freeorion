@@ -40,6 +40,7 @@ all_colony_opportunities = {}
 gotRuins = False
 got_ast = False
 got_gg = False
+got_computronium = False
 got_nest = False
 cur_best_pilot_rating = 1e-8
 curMidPilotRating = 1e-8
@@ -251,7 +252,7 @@ def check_supply():
 
 
 def survey_universe():
-    global gotRuins, got_ast, got_gg, got_nest, cur_best_pilot_rating, curMidPilotRating
+    global gotRuins, got_ast, got_gg, got_computronium, got_nest, cur_best_pilot_rating, curMidPilotRating
     univ_stats = {}
     fleet_suppliable_planet_ids = check_supply()
     colonization_timer.start("Categorizing Visible Planets")
@@ -329,6 +330,12 @@ def survey_universe():
         unowned_empty_planet_ids.clear()
         facilities_by_species_grade.clear()
         system_facilities.clear()
+        got_computronium = False
+        got_nest = False
+        got_ast = False
+        got_gg = False
+        gotRuins = False
+
     # var setup done
 
     for sys_id in universe.systemIDs:
@@ -394,6 +401,9 @@ def survey_universe():
                             yard_here = [pid]
                         if this_spec.canColonize and planet.currentMeterValue(fo.meterType.targetPopulation) >= 3:
                             empire_colonizers.setdefault(spec_name, []).extend(yard_here)
+                    if "COMPUTRONIUM_SPECIAL" in planet.specials:  # only counting it if planet is populated
+                        got_computronium = True
+
                 this_grade_facilities = facilities_by_species_grade.setdefault(weapons_grade, {})
                 for facility in ship_facilities:
                     this_grade_facilities.setdefault(facility, []).append(pid)
@@ -995,10 +1005,15 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                                             5) * discount_multiplier  # get an outpost on the nest quick
                 retval += nest_val
                 detail.append("%s %.1f" % (special, nest_val))
-            if special == "FORTRESS_SPECIAL":
+            elif special == "FORTRESS_SPECIAL":
                 fort_val = 10 * discount_multiplier
                 retval += fort_val
                 detail.append("%s %.1f" % (special, fort_val))
+            elif special == "HONEYCOMB_SPECIAL":
+                honey_val = (0.5 * AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
+                             empire_status['industrialists'] * discount_multiplier)
+                retval += honey_val
+                detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
             ast_val = 0
             if tech_is_complete("PRO_MICROGRAV_MAN"):
@@ -1244,7 +1259,12 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 5
                 detail.append("Ruins Research")
             if "COMPUTRONIUM_SPECIAL" in planet.specials:
-                research_bonus += discount_multiplier * 2 * 10  # TODO: do actual calc
+                comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
+                              AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * empire_status['researchers'] *
+                              discount_multiplier)
+                if got_computronium:
+                    comp_bonus *= backup_factor
+                research_bonus += comp_bonus
                 detail.append("COMPUTRONIUM_SPECIAL")
 
         if max_pop_size <= 0:
