@@ -3338,7 +3338,7 @@ ENC_FIELD
 [Game - Fields]
 
 ENC_HOMEWORLDS
-Species' Homeworlds
+[Game - Homeworlds]
 
 ENC_INDEX
 Encyclopedia Index
@@ -4215,6 +4215,7 @@ Filters
 ## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.
 ## Sitreps not specified below will appear in the SitrepPanel following those below.
+## Sitreps should be placed with similar existing Sitreps as appropriate.
 
 ## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
 SITREP_PRIORITY_ORDER
@@ -4244,8 +4245,6 @@ SITREP_PLANET_CAPTURED
 SITREP_PLANET_COLONIZED
 SITREP_NEW_COLONY_ESTABLISHED
 SITREP_POP_THRESHOLD
-SITREP_PLANET_BOMBARDED_AT_SYSTEM
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 EFFECT_CONC_CAMP_COMLETE
 EFFECT_GAIAN_TERRAFORM
 EFFECT_TERRAFORM
@@ -4268,8 +4267,12 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
 SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
-SITREP_FLEET_ARRIVED_AT_DESTINATION'''
+SITREP_FLEET_ARRIVED_AT_DESTINATION
+SITREP_PLANET_BOMBARDED_AT_SYSTEM
+SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM'''
 ## END OF SITREP_PRIORITY_ORDER
+
+## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_SHIP_BUILT
 At %system%: a new %shipdesign%, the '%ship%', has been produced.
@@ -4547,7 +4550,7 @@ EFFECT_CONC_CAMP_COMLETE_LABEL
 Ethnic Cleansing
 
 EFFECT_DRYDOCK_SHIP_REPAIR
-On %planet%: %ship% was repaired by %building%.
+On %planet%: the %building% repaired the %ship%.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
 Drydock Repair
 
@@ -10437,7 +10440,7 @@ GROWTH_SPECIALS_ENTRY_LIST
 [[special MONOPOLE_SPECIAL]] | [[special SUPERCONDUCTOR_SPECIAL]] | [[special POSITRONIUM_SPECIAL]]
 
 [[encyclopedia LITHIC_SPECIES_TITLE]] specials:
-[[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]]'''
+[[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
 
 #############################################################
 ####              S P E C I E S   P I C K S              ####
@@ -12772,6 +12775,7 @@ Finch
 Flamingo
 Goose
 Heron
+Kestrel
 Kiwi
 Lark
 Osprey
@@ -14030,6 +14034,7 @@ Alexander
 Anderson
 Anthony
 Asimov
+Banks
 Baum
 Beagle
 Bear
@@ -14088,8 +14093,8 @@ Lafferty
 Landis
 Langford
 Larson
-Le
-Guin
+Le Guin
+Leckie
 Leiber
 Leinster
 Lem
@@ -14106,6 +14111,7 @@ Miller
 Niven
 Orwell
 Perry
+Pratchett
 Pohl
 Resnick
 Riley
