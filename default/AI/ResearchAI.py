@@ -161,6 +161,22 @@ def generate_research_orders():
     # pro sing gen
     # death ray 1 cleanup
 
+    nest_tech = AIDependencies.NEST_DOMESTICATION_TECH
+    artif_minds = AIDependencies.ART_MINDS
+    if ColonisationAI.got_nest and not tech_is_complete(nest_tech):
+        if artif_minds in research_queue_list:
+            insert_idx = 1 + research_queue_list.index(artif_minds)
+        else:
+            insert_idx = 1
+        res = fo.issueEnqueueTechOrder(nest_tech, insert_idx)
+        num_techs_accelerated += 1
+        msg = "Have a monster nest, so attempted to fast-track %s, got result %d" % (nest_tech, res)
+        if report_adjustments:
+            chat_human(msg)
+        else:
+            print msg
+        research_queue_list = get_research_queue_techs()
+
     #
     # Supply range and detection range
     if False:  # disabled for now, otherwise just to help with cold-folding / organization
@@ -231,8 +247,8 @@ def generate_research_orders():
     if True:  # just to help with cold-folding /  organization
         if (ColonisationAI.gotRuins and not tech_is_complete("LRN_XENOARCH") and
                 foAI.foAIstate.aggression >= fo.aggression.typical):
-            if "LRN_ARTIF_MINDS" in research_queue_list:
-                insert_idx = 7 + research_queue_list.index("LRN_ARTIF_MINDS")
+            if artif_minds in research_queue_list:
+                insert_idx = 7 + research_queue_list.index(artif_minds)
             elif "GRO_SYMBIOTIC_BIO" in research_queue_list:
                 insert_idx = research_queue_list.index("GRO_SYMBIOTIC_BIO") + 1
             else:

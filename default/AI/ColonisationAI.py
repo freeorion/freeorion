@@ -40,6 +40,7 @@ all_colony_opportunities = {}
 gotRuins = False
 got_ast = False
 got_gg = False
+got_nest = False
 cur_best_pilot_rating = 1e-8
 curMidPilotRating = 1e-8
 pilot_ratings = {}
@@ -250,7 +251,7 @@ def check_supply():
 
 
 def survey_universe():
-    global gotRuins, got_ast, got_gg, cur_best_pilot_rating, curMidPilotRating
+    global gotRuins, got_ast, got_gg, got_nest, cur_best_pilot_rating, curMidPilotRating
     univ_stats = {}
     fleet_suppliable_planet_ids = check_supply()
     colonization_timer.start("Categorizing Visible Planets")
@@ -408,6 +409,8 @@ def survey_universe():
                 if "ANCIENT_RUINS_SPECIAL" in planet.specials:
                     gotRuins = True
                 for special in planet.specials:
+                    if special in NEST_VAL_MAP:
+                        got_nest = True
                     if special in AIDependencies.metabolismBoosts:
                         empire_planets_with_growth_specials.setdefault(pid, []).append(special)
                         available_growth_specials.setdefault(special, []).append(pid)
@@ -992,6 +995,10 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                                             5) * discount_multiplier  # get an outpost on the nest quick
                 retval += nest_val
                 detail.append("%s %.1f" % (special, nest_val))
+            if special == "FORTRESS_SPECIAL":
+                fort_val = 10 * discount_multiplier
+                retval += fort_val
+                detail.append("%s %.1f" % (special, fort_val))
         if planet.size == fo.planetSize.asteroids:
             ast_val = 0
             if tech_is_complete("PRO_MICROGRAV_MAN"):
