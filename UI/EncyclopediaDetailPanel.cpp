@@ -256,18 +256,17 @@ namespace {
                 }
                 if (!species_occupied_planets.empty()) {
                     if (species_occupied_planets.size() >= 5) {
-                        species_entry += "  |   " + boost::lexical_cast<std::string>(species_occupied_planets.size()) + UserString("OCCUPIED_PLANETS");
-                        continue;
+                        species_entry += "  |   " + boost::lexical_cast<std::string>(species_occupied_planets.size()) + " " + UserString("OCCUPIED_PLANETS");
+                    } else {
+                        species_entry += "  |   " + UserString("OCCUPIED_PLANETS") + ":  ";
+                        for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it =
+                                species_occupied_planets.begin();
+                            planet_it != species_occupied_planets.end(); ++planet_it)
+                        {
+                            TemporaryPtr<const Planet> planet = *planet_it;
+                            species_entry += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "   ";
+                        }
                     }
-                    species_entry += "  |   " + UserString("OCCUPIED_PLANETS") + ":  ";
-                    for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it =
-                            species_occupied_planets.begin();
-                        planet_it != species_occupied_planets.end(); ++planet_it)
-                    {
-                        TemporaryPtr<const Planet> planet = *planet_it;
-                        species_entry += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->PublicName(client_empire_id)) + "   ";
-                    }
-                    species_entry += "";
                 }
                 sorted_entries_list.insert(std::make_pair(UserString(it->first),
                     std::make_pair(species_entry + "\n", it->first)));
