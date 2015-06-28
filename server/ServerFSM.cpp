@@ -1128,6 +1128,33 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     return discard_event();
 }
 
+sc::result PlayingGame::react(const JoinGame& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.JoinGame";
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+
+    std::string player_name;
+    Networking::ClientType client_type;
+    ExtractMessageData(message, player_name, client_type);
+
+    client_type = Networking::CLIENT_TYPE_HUMAN_OBSERVER;
+
+    // assign unique player ID to newly connected player
+    int player_id = server.m_networking.NewPlayerID();
+    if (TRACE_EXECUTION) DebugLogger() << "PlayingGame.JoinGame Assign new player id " << player_id;
+
+    // establish player with requested client type and acknowldge via connection
+    player_connection->EstablishPlayer(player_id, player_name, client_type);
+    player_connection->SendMessage(JoinAckMessage(player_id));
+
+    server.AddObserverPlayerIntoGame(player_id);
+
+    //server.m_networking.Disconnect(player_connection);
+
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEnd

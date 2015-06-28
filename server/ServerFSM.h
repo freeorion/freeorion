@@ -233,7 +233,8 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<PlayerChat>,
         sc::custom_reaction<Diplomacy>,
-        sc::custom_reaction<ModeratorAct>
+        sc::custom_reaction<ModeratorAct>,
+        sc::custom_reaction<JoinGame>
     > reactions;
 
     PlayingGame(my_context c);
@@ -242,6 +243,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const PlayerChat& msg);
     sc::result react(const Diplomacy& msg);
     sc::result react(const ModeratorAct& msg);
+    sc::result react(const JoinGame& msg);
 
     SERVER_ACCESSOR
 };
