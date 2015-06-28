@@ -31,12 +31,6 @@ private:
    Mode m_mode;
 };
 
-/** a basic X-shaped close button. */
-class CUI_CloseButton : public GG::Button {
-public:
-   CUI_CloseButton();
-};
-
 /** a basic Pin-shaped pin button. */
 class CUI_PinButton : public GG::Button {
 public:
@@ -198,7 +192,7 @@ protected:
     bool                    m_config_save;          //!< true if SaveOptions() is currently allowed to write to the OptionsDB
     const std::string       m_config_name;          //!< the name that this window will use to save its properties to the OptionsDB, the default empty string means "do not save"
 
-    CUI_CloseButton*        m_close_button;         //!< the close button
+    GG::Button*             m_close_button;         //!< the close button
     CUI_MinRestoreButton*   m_minimize_button;      //!< the minimize/restore button
     CUI_PinButton*          m_pin_button;           //!< the pin button
 

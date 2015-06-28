@@ -75,18 +75,6 @@ void CUI_MinRestoreButton::Toggle() {
 
 
 ////////////////////////////////////////////////
-// CUI_CloseButton
-////////////////////////////////////////////////
-CUI_CloseButton::CUI_CloseButton() :
-    GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
-{
-    GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
-    SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "close.png"   )));
-    SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "close_clicked.png"  )));
-    SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "close_mouseover.png")));
-}
-
-////////////////////////////////////////////////
 // CUI_PinButton
 ////////////////////////////////////////////////
 CUI_PinButton::CUI_PinButton() :
@@ -440,9 +428,16 @@ void CUIWnd::PositionButtons() {
 }
 
 void CUIWnd::InitButtons() {
+    boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
+
     // create the close button
     if (m_closable) {
-        m_close_button = new CUI_CloseButton();
+        m_close_button = new CUIButton(
+            GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close.png")),
+            GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_clicked.png")),
+            GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_mouseover.png")));
+        m_close_button->SetColor(ClientUI::WndInnerBorderColor());
+        GG::Connect(m_close_button->LeftClickedSignal, &PlayCloseSound, -1);
         m_close_button->Resize(GG::Pt(GG::X(12), GG::Y(12)));
         GG::Connect(m_close_button->LeftClickedSignal, &CUIWnd::CloseClicked, this);
         AttachChild(m_close_button);
