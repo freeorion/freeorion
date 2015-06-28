@@ -2229,23 +2229,23 @@ XENOPHOBIC_SELF
             scope = Source
             activation = And [
                 PopulationCenter
-                Number low = 1 high = 999 condition = And [
+                Number low = 1 condition = And [
                     PopulationCenter
                     OwnedBy empire = Source.Owner
-                    WithinStarlaneJumps jumps = 5 condition = Source
-                    Not Contains Building name = "BLD_CONC_CAMP"
                     Not OR [ 
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0
+                    Not Contains Building name = "BLD_CONC_CAMP"
+                    WithinStarlaneJumps jumps = 5 condition = Source
                 ]
             ]
             stackinggroup = "XENOPHOBIC_LABEL_SELF"
             accountinglabel = "XENOPHOBIC_LABEL_SELF"
             effects = [ 
-                SetTargetIndustry value = Value*0.2 - 1
-                SetTargetResearch value = Value*0.9
+                SetTargetIndustry value = Value * 0.2 - 1
+                SetTargetResearch value = Value * 0.9
                 SetTargetHappiness value = Value - (
                     Count condition = And [
                     PopulationCenter
@@ -2271,13 +2271,13 @@ XENOPHOBIC_SELF
             effects = SetTargetPopulation value = Value * (0.6 + (0.4 * (0.8 ^ 
                 Count condition = And [
                     PopulationCenter
-                    WithinStarlaneJumps jumps = 5 condition = Source
-                    VisibleToEmpire empire = Source.Owner
                     Not OR [ 
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0
+                    VisibleToEmpire empire = Source.Owner
+                    WithinStarlaneJumps jumps = 5 condition = Source
                 ]
                 ) ) )
 
@@ -2288,13 +2288,13 @@ XENOPHOBIC_OTHER_BEGIN
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
-                WithinStarlaneJumps jumps = 5 condition = Source  
-                Not Contains Building name = "BLD_CONC_CAMP"
                 Not OR [ 
                     Species name = Source.Species
                     Species name = "SP_EXOBOT"
                 ]
                 Not Population high = 0
+                Not Contains Building name = "BLD_CONC_CAMP"
+                WithinStarlaneJumps jumps = 5 condition = Source
             ]
             activation = PopulationCenter
 '''
@@ -2432,7 +2432,7 @@ HOMEWORLD_GROWTH_FOCUS_BOOST
                 OwnedBy empire = Source.Owner
                 Species name = Source.Species
                 Not Homeworld name = Source.Species
-                //TargetPopulation low = 0 high = 9999
+                //TargetPopulation low = 0
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation = And [
@@ -2451,7 +2451,7 @@ GRO_HAB_MODIFIER
             activation = And [
                 Planet
                 OwnerHasTech name = "GRO_SUBTER_HAB"
-                //TargetPopulation low = 0 high = 9999
+                //TargetPopulation low = 0
             ]
             accountinglabel = "SUBTERRANEAN_LABEL"
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
@@ -2464,7 +2464,7 @@ GAIA_POP_MODIFIER
                 Planet
                 HasSpecial name = "GAIA_SPECIAL"
                 Planet environment = Good
-                //TargetPopulation low = 0 high = 9999
+                //TargetPopulation low = 0
             ]
             accountinglabel = "GAIA_LABEL"
             effects = SetTargetPopulation value = Value + 3 * Target.SizeAsDouble
@@ -2476,7 +2476,7 @@ WORLDTREE_POP_MODIFIER
             activation = AND [
                 Planet
                 HasSpecial name = "WORLDTREE_SPECIAL"
-                //TargetPopulation low = 0 high = 9999
+                //TargetPopulation low = 0
             ]
             accountinglabel = "WORLDTREE_LABEL"
             effects = SetTargetPopulation value = Value + 1
@@ -2488,7 +2488,7 @@ POPULATION_TECHS
             activation = AND [
                 Planet
                 OwnerHasTech name = "CON_NDIM_STRC"
-                //TargetPopulation low = 0 high = 9999
+                //TargetPopulation low = 0
             ]
             accountinglabel = "NDIM_STRC_LABEL"
             effects = SetTargetPopulation value = Value + 2 * Target.SizeAsDouble
@@ -2498,7 +2498,7 @@ POPULATION_TECHS
             activation = AND [
                 Planet
                 OwnerHasTech name = "CON_ORBITAL_HAB"
-                //TargetPopulation low = 0 high = 9999
+                //TargetPopulation low = 0
             ]
             accountinglabel = "ORBITAL_HAB_LABEL"
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
@@ -2514,10 +2514,11 @@ SELF_SUSTAINING_BONUS
             activation = And [
                 Planet
                 HasTag name = "SELF_SUSTAINING"
-                //TargetPopulation low = 0 high = 9999
+                //TargetPopulation low = 0
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
             effects = SetTargetPopulation value = Value * 2    // Gets double the population based on environment and environment techs
+
         EffectsGroup
             scope = AND [
                 Source
@@ -2526,7 +2527,7 @@ SELF_SUSTAINING_BONUS
             activation = And [
                 Planet
                 HasTag name = "SELF_SUSTAINING"
-                //TargetPopulation low = 0 high = 9999
+                //TargetPopulation low = 0
             ]
             accountinglabel = "SELF_SUSTAINING_LABEL"
             effects = SetTargetPopulation value = Value * 2 - (2 * Target.SizeAsDouble)    // prevents doubled homeworld bonus
@@ -2553,7 +2554,7 @@ PHOTOTROPHIC_BONUS
                 Planet
                 HasTag name = "PHOTOTROPHIC"
                 Star type = [Blue]
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             accountinglabel = "VERY_BRIGHT_STAR"
             effects = SetTargetPopulation value = Value + 3 * Source.SizeAsDouble
@@ -2564,7 +2565,7 @@ PHOTOTROPHIC_BONUS
                 Planet
                 HasTag name = "PHOTOTROPHIC"
                 Star type = [White]
-                TargetPopulation low = 0 high = 9999
+                TargetPopulation low = 0
             ]
             accountinglabel = "BRIGHT_STAR"
             effects = SetTargetPopulation value = Value + 1.5 * Source.SizeAsDouble
@@ -2773,7 +2774,7 @@ AVERAGE_INDUSTRY
             scope = Source
             activation = And [
                 Planet
-                TargetPopulation low = 0 high = 0
+                TargetPopulation high = 0
             ]
             effects = SetIndustry value = 0
 '''
@@ -2858,7 +2859,7 @@ AVERAGE_RESEARCH
             scope = Source
             activation = And [
                 Planet
-                TargetPopulation low = 0 high = 0
+                TargetPopulation high = 0
             ]
             effects = SetResearch value = 0
 '''
@@ -3093,13 +3094,12 @@ EffectsGroup
 '''
 
 PROTECTION_FOCUS_TROOPS
-'''            EffectsGroup
-            scope = And [
+'''EffectsGroup
+            scope = Source
+            activation = And [
                 Planet
-                OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_PROTECTION"
             ]
-            activation = Planet
             stackinggroup = "FOCUS_PROTECTION_TROOPS_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
             effects = SetMaxTroops value = Value * 2
@@ -3229,14 +3229,11 @@ EffectsGroup
             effects = SetMaxShield value = Value + 150
 
 EffectsGroup
-            scope = And [
-                Planet
-                OwnedBy empire = Source.Owner
-                Population low = 0.000001
-            ]
+            scope = Source
             activation = And [
                 Planet
                 OwnerHasTech name = "GRO_ENERGY_META"
+                Population low = 0.000001
             ]
             stackinggroup = "PLANET_SHIELDS_STACK_GEM"
             accountinglabel = "GRO_ENERGY_META"
@@ -3244,13 +3241,12 @@ EffectsGroup
 '''
 
 PROTECTION_FOCUS_SHIELDS
-'''            EffectsGroup
-            scope = And [
+'''EffectsGroup
+            scope = Source
+            activation = And [
                 Planet
-                OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_PROTECTION"
             ]
-            activation = Planet
             stackinggroup = "FOCUS_PROTECTION_SHIELDS_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
             effects = SetMaxShield value = Value * 2
@@ -3350,13 +3346,12 @@ EffectsGroup
 '''
 
 PROTECTION_FOCUS_DEFENSE
-'''            EffectsGroup
-            scope = And [
+'''EffectsGroup
+            scope = Source
+            activation = And [
                 Planet
-                OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_PROTECTION"
             ]
-            activation = Planet
             stackinggroup = "FOCUS_PROTECTION_DEFENSE_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
             effects = SetMaxDefense value = Value * 2
@@ -3455,7 +3450,7 @@ ULTIMATE_STEALTH
 //#####      W E A P O N S     #####//
 
 BAD_WEAPONS
-'''        EffectsGroup
+'''EffectsGroup
             scope = Source
             effects = [
                 SetDamage partname = "SR_WEAPON_1_1" value = Value - 1
@@ -3478,7 +3473,7 @@ BAD_WEAPONS
 '''
 
 GOOD_WEAPONS
-'''        EffectsGroup
+'''EffectsGroup
             scope = Source
             effects = [
                 SetDamage partname = "SR_WEAPON_1_1" value = Value + 1
@@ -3501,7 +3496,7 @@ GOOD_WEAPONS
 '''
 
 GREAT_WEAPONS
-'''        EffectsGroup
+'''EffectsGroup
             scope = Source
             effects = [
                 SetDamage partname = "SR_WEAPON_1_1" value = Value + 2
@@ -3524,8 +3519,7 @@ GREAT_WEAPONS
 '''
 
 ULTIMATE_WEAPONS
-'''
-        EffectsGroup
+'''EffectsGroup
             scope = Source
             effects = [
                 SetDamage partname = "SR_WEAPON_1_1" value = Value + 3
