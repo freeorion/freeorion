@@ -134,14 +134,21 @@ Flotte %1%
 NEW_FLEET_NAME_NO_NUMBER
 Flotte
 
+# new asteroids or new planet names...
 # used to generate name for effect-created planets, when no name = (string) is specified.
-# For this, and any other effect-created object, with specified or default strings for the name,
-# and when each exists: %1% is the system name, %2% is the target object name, and %3% is the source object name
+# When specifying an object name for these effects, if the specified string matches a
+# stringtable key, it will be looked up and used directly. Alternatively, the
+# UserString("STRING_KEY") function can be used. In this case, the % operator can be used
+# to specify substitutions using string gamestate references, such as Source.Name
+# these are applied to the %1% style placeholders according the order in which the
+# parameters are specified in the effect
 NEW_ASTEROIDS_NAME
-Rémanent %3% dans %1%
+Rémanent %1% %2%
 
+# assumes no previous planets present, so the created planet will be the Systemname I planet...
 #NEW_PLANET_NAME
 #%1% I
+
 
 EMPTY_SPACE
 Espace Interstellaire
@@ -382,54 +389,54 @@ SD_FRACTAL_1_DESC
 Un bâtiment de guerre exotique, basé sur l'énergie fractale.
 
 SD_COLONY_SHIP
-Colon Galactique
+Colonisateur Galactique
 SD_COLONY_SHIP_DESC
-Astronef non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Astronef non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie dont la Population est égale à 3 ou plus, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_COLONY_SHIP
-Colon Galactique Organic
+Colonisateur Galactique Organic
 SD_ORG_COLONY_SHIP_DESC
-Astronef organique non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Astronef organique non-armé pouvant transporter des millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie dont la Population est égale à 3 ou plus, et possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_CRYONIC_COLONY_SHIP
-Colon Galactique Cryogenic
+Colonisateur Galactique Cryogenic
 SD_CRYONIC_COLONY_SHIP_DESC
-Astronef non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Astronef non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie dont la Population est égale à 3 ou plus, et possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_CRYOCOL_SHIP
-Colon Galactique Cryo-Organic
+Colonisateur Galactique Cryo-Organic
 SD_ORG_CRYOCOL_SHIP_DESC
-Astronef organique non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, et possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Astronef organique non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie dont la Population est égale à 3 ou plus, et possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_AST_CRYOCOL_SHIP
-Colon Galactique Cryo-Astéroïdal
+Colonisateur Galactique Cryo-Astéroïdal
 SD_AST_CRYOCOL_SHIP_DESC
-Astronef astéroïdal non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie peuplée d'au moins 3 unités, possédant un [[buildingtype BLD_SHIPYARD_BASE]], et dans un système avec un [[buildingtype BLD_SHIPYARD_AST]].
+Astronef astéroïdal non-armé pouvant transporter plusieurs millions de citoyens en toute sécurité vers de nouvelles colonies. Ce vaisseau ne peut être construit que dans une colonie dont la Population est égale à 3 ou plus, possédant un [[buildingtype BLD_SHIPYARD_BASE]], et dans un système avec un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_OUTPOST_SHIP
-Pionnier Galactique
+Bâtisseur Galactique
 SD_OUTPOST_SHIP_DESC
-Astronef pionnier non-armé pouvant créer un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable.
+Astronef non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable.
 
 SD_ORG_OUTPOST_SHIP
-Pionnier Galactique Organic
+Bâtisseur Galactique Organic
 SD_ORG_OUTPOST_SHIP_DESC
-Astronef organique pionnier pouvant créer un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Astronef organique non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_COLONY_BASE
-Colon Stellaire
+Colonisateur Stellaire
 SD_COLONY_BASE_DESC
-Astronef non-armé pouvant créer une colonie sur une planète habitable, dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie peuplée d'au moins 3 unités.
+Astronef non-armé pouvant créer une colonie sur une planète habitable, seulement dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie dont la Population est égale à 3 ou plus.
 
 SD_CRYONIC_COLONY_BASE
-Colon Stellaire Cryogenic
+Colonisateur Stellaire Cryogenic
 SD_CRYONIC_COLONY_BASE_DESC
-Astronef non-armé pouvant créer une large colonie sur une planète habitable, dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie peuplée d'au moins 3 unités.
+Astronef non-armé pouvant créer une large colonie sur une planète habitable, dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales et ne peut être construit que dans une colonie dont la Population est égale à 3 ou plus.
 
 SD_OUTPOST_BASE
-Pionnier Stellaire
+Bâtisseur Stellaire
 SD_OUTPOST_BASE_DESC
-Astronef pionnier non-armé pouvant créer un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable. dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
+Astronef stellaire non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable, seulement dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
 
 SD_TROOP_DROP
 Parachutage d'Infanterie
@@ -714,19 +721,19 @@ FLD_NEBULA_2_DESC  # translated
 ##############################
 
 FN_HOME_FLEET
-Flotte première
+Flotte Territoriale
 
 FN_BATTLE_FLEET
-Flotte de guerre
+Flotte de Guerre
 
 FN_SCOUT_FLEET
-Flotte de reconnaissance
+Flotte de Reconnaissance
 
 FN_COLONY_FLEET
-Flotte colonisatrice
+Flotte Colonisatrice
 
 FN_INVASION_FLEET
-Flotte d'invasion
+Flotte d'Invasion
 
 MONSTERS
 Monstres
@@ -872,6 +879,9 @@ Rendu du champ d'étoiles sur lequel se détachent les systèmes. Peut ralentir 
 
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Affiche la barre d'échelle des distances sur la carte galactique.
+
+OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE
+Affiche l'échelle de la carte sous la forme d'un cercle centré sur le système sélectionné (seulement si la barre d'échelle des distances est également affichée).
 
 OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
 Affiche/Cache le curseur de zoom de la carte galactique.
@@ -1116,6 +1126,9 @@ Affiche/Cache sur la carte galactique les cercles entourant les icônes de syst�
 OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de systèmes stellaires, relativement à celle de ces dernières.
 
+OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY
+Affiche un calque différent de survol de souris MapWindow pour les systèmes encore non-explorés par l'empire du joueur.
+
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Fixe la couleur sur la carte galactique des noms des systèmes stellaires qu'aucun empire ne contrôle.
 
@@ -1320,6 +1333,9 @@ Active/Désactive les journaux détaillés de l'information des résolutions de 
 
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Active/Désactive l'affichage des rapports d'erreurs (pour développeurs).
+
+OPTIONS_DB_UI_SITREP_SIZE
+Définit la largeur et la hauteur des icônes du Rapport de situation, tandis que la taille du texte sera égale à 75% des valeurs définies; par défaut 16 (min 10, max 28)
 
 OPTIONS_DB_TECH_DEMO
 Active/Désactive la démonstration de combat tactique en trois dimensions.
@@ -1581,10 +1597,10 @@ GSETUP_CLUSTER
 Amas
 GSETUP_ELLIPTICAL
 Elliptique
-GSETUP_IRREGULAR1
-Irrégulière 1
+GSETUP_IRREGULAR1  # translated
+Box
 GSETUP_IRREGULAR2
-Irrégulière 2
+Irrégulière
 GSETUP_RING
 Annulaire
 GSETUP_RANDOM
@@ -1956,10 +1972,16 @@ OPTIONS_GALAXY_MAP_STARFIELDS
 Rendu du fond étoilé de la galaxie
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
-Indicateur d'échelle des distances
+Barre d'échelle des distances galactiques
+
+OPTIONS_GALAXY_MAP_SCALE_CIRCLE
+Cercle d'échelle des distances galactiques
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Curseur de zoom sur la carte galactique
+
+OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY
+Calque distinctif de survol de souris pour les systèmes inexplorés
 
 OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
 Carte de la galaxie montrant la plage de détection selon le seuil de furtivité
@@ -2441,7 +2463,7 @@ PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION
 La dernière [[encyclopedia STEALTH_TITLE]] connue est obsolète.  La furtivité réelle dépasse votre [[DETECTION_TITLE]] ou le [[DETECTION_RANGE_TITLE]] local est fortement perturbé.
 
 MENUITEM_SET_FOCUS
-Régler focus
+Régler Focus
 
 ## Resources Panel ##########
 
@@ -2571,13 +2593,13 @@ FW_AGGRESSIVE
 Contrôle
 
 FW_AGGRESSIVE_DESC
-La flotte assure le blocus du système stellaire atteint et engage le combat contre toute flotte ennemie tentant d'y entrer.
+La Flotte assure le blocus du système stellaire atteint et engage le combat contre tout ennemi tentant d'y entrer.
 
 FW_PASSIVE
 Prudence
 
 FW_PASSIVE_DESC
-La flotte tente de passer inaperçue dans le système stellaire atteint et n'engage aucun combat.
+La Flotte tente de passer inaperçue dans le système stellaire atteint et n'engage aucun combat.
 
 FW_AUTO
 Stratégie d'attaque automatique
@@ -2596,7 +2618,7 @@ Conception inconnue
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
-<i>Nouvelle flotte</i>
+<i>Nouvelle Flotte</i>
 
 FW_EMPIRE_FLEETS_AT_SYSTEM
 %1% Flottes dans %2%
@@ -2614,32 +2636,38 @@ FW_GENERIC_FLEETS
 Flottes
 
 FW_HOME_FLEET
-Flotte impériale
+Flotte Territoriale
 
 FW_BATTLE_FLEET
-Flotte de guerre
+Flotte de Guerre
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
-Flotte étrangère
+Flotte Étrangère
 
 # the name that is used for fleets that no player controls
 FW_ROGUE_FLEET
-Flotte pirate
+Flotte Pirate
 
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
-Astronef étranger
+Astronef Étranger
 
 # the name that is used for ships that no player controls
 FW_ROGUE_SHIP
-Astronef pirate
+Astronef Pirate
 
 SHIP_DAMAGE_STAT_TITLE
 Dommage
 
 SHIP_DAMAGE_STAT_MAIN
 Dégâts infligés par l'armement de l'astronef à chaque passe de combat.
+
+SHIP_TROOPS_TITLE
+Infanterie
+
+SHIP_TROOPS_STAT
+Total des troupes d'Infanterie à bord de cet astronef.
 
 SHIP_SPEED_STAT_TITLE
 Vitesse
@@ -2648,46 +2676,49 @@ SHIP_SPEED_STAT_MAIN
 Distance maximale parcourue par tour sur les Voies spatiales.
 
 FW_FLEET_FUEL_SUMMARY
-Quantité globale de carburant dont dispose actuellement la flotte (celle dont dispose le moins bien fourni des astronefs qui la composent)
+Quantité globale de carburant dont dispose actuellement la Flotte (égale au moins bien fourni des astronefs composant la Flotte)
 
 FW_FLEET_SPEED_SUMMARY
-Vitesse globale de la flotte (celle du plus lent des astronefs qui la composent)
+Vitesse globale de la Flotte (égale au plus lent des astronefs composant la Flotte)
 
 FW_FLEET_SHIELD_SUMMARY
-Bouclier global de la flotte (moyenne des boucliers des astronefs qui la composent)
+Bouclier global de la Flotte (moyenne des boucliers des astronefs composant la Flotte)
 
 FW_FLEET_STRUCTURE_SUMMARY
-Résistance globale de la flotte (somme des résistances des astronefs qui la composent)
+Résistance globale de la Flotte (somme des résistances des astronefs composant la Flotte)
 
 FW_FLEET_DAMAGE_SUMMARY
-Dommage global de la flotte (somme des dommages des astronefs qui la composent)
+Dommage global de la Flotte (somme des dommages des astronefs composant la Flotte)
 
 FW_FLEET_COUNT_SUMMARY
-Effectif de la flotte (nombre des astronefs qui la composent)
+Effectif de la Flotte (nombre des astronefs composant la Flotte)
+
+FW_FLEET_TROOP_SUMMARY
+Infanterie globale de la Flotte (somme des troupes d'Infanterie à bord des astronefs composant la Flotte)
 
 FW_MERGE_SYSTEM_FLEETS
-Regrouper les astronefs du système en flotte
+Regrouper les astronefs du système en Flotte
 
 FW_SPLIT_DAMAGED_FLEET
-Retirer de la flotte les astronefs endommagés
+Retirer de la Flotte les astronefs endommagés
 
 FW_SPLIT_UNFUELED_FLEET
-Retirer de la flotte les astronefs en panne de carburant
+Retirer de la Flotte les astronefs en panne de carburant
 
 FW_SPLIT_FLEET
-Disperser la flotte
+Disperser la Flotte
 
 FW_SPLIT_SHIPS_THIS_DESIGN
-Retirer ce type d'astronef de la flotte
+Retirer ce type d'astronef de la Flotte
 
 FW_SPLIT_SHIPS_ALL_DESIGNS
-Créer une flotte pour chaque type d'astronef
+Créer une Flotte pour chaque type d'astronef
 
 ORDER_SHIP_SCRAP
 Envoyer l'astronef à la casse
 
 ORDER_FLEET_SCRAP
-Envoyer tous les astronefs de la flotte à la casse
+Envoyer tous les astronefs de la Flotte à la casse
 
 ORDER_CANCEL_SHIP_SCRAP
 Annuler l'envoi de l'astronef à la casse
@@ -2702,10 +2733,10 @@ ORDER_CANCEL_FLEET_EXPLORE
 Cesser l'exploration
 
 ORDER_GIVE_FLEET_TO_EMPIRE
-Offrir la flotte à...
+Offrir la Flotte à...
 
 ORDER_CANCEL_GIVE_FLEET
-Annuler l'offre de la flotte
+Annuler l'offre de la Flotte
 
 ORDER_GIVE_PLANET_TO_EMPIRE
 Offrir la planète à...
@@ -2736,7 +2767,7 @@ MOD_ADD_STARLANE
 Ajouter une Voie spatiale
 
 MOD_REMOVE_STARLANE
-Supprimer une voie spatiale
+Supprimer une Voie spatiale
 
 ###############
 #  Diplomacy  #
@@ -3018,7 +3049,7 @@ DESIGN_WND_MONSTERS
 Monstres
 
 DESIGN_WND_PART_PALETTE_TITLE
-Équipements d'astronef
+Équipements d'astronefs
 
 DESIGN_WND_MAIN_PANEL_TITLE
 Détails du modèle
@@ -3307,7 +3338,7 @@ ENC_FIELD
 [Partie - Champs]
 
 ENC_HOMEWORLDS
-Espèces: Planètes Natales
+[Partie - Espèces: Planètes Natales]
 
 ENC_INDEX
 Index de l'Encyclopédie
@@ -3646,7 +3677,7 @@ Focus Croissance
 GROWTH_FOCUS_TEXT
 '''Privilégier la Croissance signifie exporter des matériaux et substances rares afin de favoriser l'accroissement démographique sur une planète. Cela n'est possible que dans certains cas : sur quelques Planètes Natales et sur des planètes présentant une Particularité de Croissance pouvant être exportée.
 
-Une planète privilégiant la Croissance augmente le plafond de population des seules autres planètes lui étant reliées par lignes d'[[encyclopedia SUPPLY_TITLE]].
+Une planète privilégiant la Croissance augmente le plafond de Population des seules autres planètes lui étant reliées par lignes d'[[encyclopedia SUPPLY_TITLE]].
 
 Une Planète Natale privilégiant la Croissance n'aide d'autres colonies à croître que si celles-ci abritent la même classification d'espèces.
 
@@ -3732,7 +3763,7 @@ Rayon de Détection
 DETECTION_RANGE_TEXT
 '''L'indicateur 'Rayon de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Rayon de Détection d'un astronef ou d'une planète qu'il contrôle.
 
-Les astronefs et les planètes ont un indicateur 'Rayon de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Rayons de Détection. Le réglage 'Indicateur d'échelle des distances" permet d'afficher l'échelle des cercles de détection (en uu également).'''
+Les astronefs et les planètes ont un indicateur 'Rayon de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Rayons de Détection.  Le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire, un astronef, ou une flotte sont sélectionnés.  Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.'''
 
 TROOP_TITLE
 Infanterie
@@ -4559,6 +4590,11 @@ EFFECT_TAME_MONSTER_MATURED
 Un %predefinedshipdesign% apprivoisé a évolué vers une forme plus puissante dans le système %system%.
 EFFECT_TAME_MONSTER_MATURED_LABEL
 Mutation de monstre
+
+EFFECT_SENTRY_CREATED
+Sur %planet%: a %predefinedshipdesign% est prêt pour le service.
+EFFECT_SENTRY_CREATED_LABEL
+Création Factionnaire
 
 EFFECT_GATEWAY_VOID_DESTROY
 La structure %buildingtype% a détruit la flotte %fleet% sur la planète %planet%.
@@ -5683,7 +5719,7 @@ GAIA_SPECIAL  # translated
 Gaia
 
 GAIA_SPECIAL_DESC
-'''Accroît le plafond de population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+'''Accroît le plafond de Population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
 Cette planète s'est muée en organisme vivant, ce qui la rend capable de se modifier et de s'adapter afin de satisfaire les besoins de sa population.'''
 
@@ -5718,11 +5754,18 @@ PANOPTICON_SPECIAL_DESC
 
 Profondément enfoui dans la croûte planétaire, le Panoptique est la puissante relique d'une civilisation mystérieuse, ayant peuplée autrefois la planète. Lorsqu'il est nourri des données stockées par les équipements de détection de l'empire, il possède le pouvoir d'extraire des informations extrêmement fiables de l'enchevêtrement chaotique d'ondes électromagnétiques.'''
 
+FORTRESS_SPECIAL
+Forteresse
+FORTRESS_SPECIAL_DESC
+'''Augmente les [[encyclopedia SHIELDS_TITLE]] de +100, la [[encyclopedia DEFENSE_TITLE]] de +30, l'[[encyclopedia TROOP_TITLE]] de +30 et le [[encyclopedia DETECTION_RANGE_TITLE]] de +30. Les Boucliers se régénèrent de 5 par tour et la Défense de 1 par tour. Les Mines réduisent la [[encyclopedia STRUCTURE_TITLE]] des astronefs ennemis situés dans le système de 3 par tour. À chaque tour, il y a 5% de chance qu'un Factionnaire apparaisse pour protéger le système, à moins qu'un spécimen soit déjà présent.
+
+La défense de cette planète fut conçue par l'une des anciennes civilisations de Précurseurs. Elle comprend des boucliers planétaires solides, des armements redoutables et des équipements de détection performants, l'ensemble permettant de faire face à tout type de siège. Les installations sont encore totalement fonctionnelles et étonnamment très simples d'utilisation.'''
+
 ECCENTRIC_ORBIT_SPECIAL
 Orbite Excentrissime
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Réduit de 3 la population de la planète, mais augmente de 3 sa [[encyclopedia RESEARCH_TITLE]].
+'''Réduit de 3 la Population de la planète, mais augmente de 3 sa [[encyclopedia RESEARCH_TITLE]].
 
 L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Cette variation conséquente ralentit la croissance de la population, mais ces répercussions sont un terrain exaltant pour la recherche scientifique.'''
 
@@ -6258,7 +6301,7 @@ astronef
 ST_FOOD
 nourriture
 ST_MINERAL
-minéral
+minéraux
 ST_TRADE
 commerce
 
@@ -6267,7 +6310,7 @@ commerce
 RE_FOOD
 nourriture
 RE_MINERALS
-minéral
+minéraux
 RE_TRADE
 commerce
 RE_INDUSTRY
@@ -6906,10 +6949,10 @@ DESC_ENQUEUED_DESIGN_NOT
 ''' où l'empire %1% n'a pas entre %2% et %3% %4% astronefs dans la file d'attente de production'''
 
 DESC_FOCUS_TYPE
-''' qui a un focus sur %1%'''
+''' qui a un Focus sur %1%'''
 
 DESC_FOCUS_TYPE_NOT
-''' qui n'a pas un focus sur %1%'''
+''' qui n'a pas un Focus sur %1%'''
 
 DESC_STAR_TYPE
 ''' qui est un système avec un astre de type %1% '''
@@ -7002,10 +7045,10 @@ DESC_WITHIN_DISTANCE_NOT
 ''' qui n'est pas à moins de %1% de tout objet%2%'''
 
 DESC_WITHIN_STARLANE_JUMPS
-''' qui est à moins de %1% sauts hyperspatiaux de tout objet%2%'''
+''' qui est à moins de %1% voies spatiales de tout objet%2%'''
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
-''' qui est à plus de %1% sauts hyperspatiaux de tout objet%2%'''
+''' qui est à plus de %1% voies spatiales de tout objet%2%'''
 
 DESC_CAN_ADD_STARLANE_CONNECTION
 ''' auquel on peut ajouter des voies spatiales vers tous les systèmes contenant des objets%1%'''
@@ -7347,7 +7390,7 @@ GRO_SYMBIOTIC_BIO
 Biologie Symbiotique
 
 GRO_SYMBIOTIC_BIO_DESC
-Accroît le plafond de population des planètes parfaites, convenables et pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
+Accroît le plafond de Population des planètes parfaites, convenables et pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 GRO_GENETIC_MED
 Médecine Génétique
@@ -7373,7 +7416,7 @@ GRO_XENO_GENETICS
 Génétique Xénobiologique
 
 GRO_XENO_GENETICS_DESC
-'''Accroît le plafond de population des planètes convenables et pauvres selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10 et celui des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
+'''Accroît le plafond de Population des planètes convenables et pauvres selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10 et celui des planètes hostiles selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 L'étude d'autres formes de vie révèle souvent les faiblesses inhérentes de sa propre espèce. Analyser les caractéristiques d'autres formes de vie et utiliser les connaissances acquises afin d'améliorer son propre code génétique, permet le développement de nouvelles capacités d'adaptation, qui autrement relèveraient de l'impossible.
 
@@ -7397,7 +7440,7 @@ GRO_XENO_HYBRIDS
 Hybridation Xénobiologique
 
 GRO_XENO_HYBRIDS_DESC
-'''Accroît le plafond de population des planètes pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5 et celui des planètes hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
+'''Accroît le plafond de Population des planètes pauvres selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5 et celui des planètes hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
 
 La plupart du temps, la faune native d'une planète est beaucoup mieux adaptée à l'environnement d'une planète que tout colons qui tenteraient de la peupler. Pour une espèce exogène, l'hostilité d'un environnement regroupe de nombreuses causes, des cycles météorologiques en passant par la taille de la planète. Grâce à l'hybridation xénobiologique, il est possible de créer une espèce colonisatrice adaptée génétiquement car disposant des caractéritiques avantageuses de la faune native, rendant ainsi plus facile et efficace la colonisation d'une planète peu accueillante.
 
@@ -7496,7 +7539,7 @@ Automates Adaptatifs
 PRO_SENTIENT_AUTOMATION_DESC
 '''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 5 sur toutes les planètes.
 
-En concevant des usines automatisées ne nécessitant aucune supervision directe, il devient alors possible d'accroître la production industrielle via un processus totalement autonome. Ces usines peuvent être construites et entretenues sur n'importe quelle planète, quel que soit son focus, engendrant un bonus industriel dans tout l'empire.
+En concevant des usines automatisées ne nécessitant aucune supervision directe, il devient alors possible d'accroître la production industrielle via un processus totalement autonome. Ces usines peuvent être construites et entretenues sur n'importe quelle planète, quel que soit son Focus, engendrant un bonus industriel dans tout l'empire.
 
 Alors que les équipements deviennent de plus en plus autonomes, ces derniers développent également la capacité de se répliquer et de se réparer sans aucune intervention externe, si ce n'est l'apport de matériaux bruts et, si exigées ou suggerées, les spécifications du produit final. Lorsqu'un esprit artificiel est aux commandes, le système entier peut apprendre, planifier, réagir et s'adapter de manière autonome, sans l'intervention généralement lente et peu efficace des ouvriers traditionnels.'''
 
@@ -7533,7 +7576,7 @@ PRO_ZERO_GEN_DESC
 Les précédentes techniques de production avaient pour but essentiel d'éviter ou d'occulter les problèmes complexes liés à la manipulation de la matière. Aucune de ces techniques n'avaient modifié fondamentalement la méthode de base, à savoir assembler les objets à partir de différents matériaux constituants, qu'ils se présentent sous forme de modules préfabriqués, ou bien de minéraux bruts. En convertissant l'énergie pure directement en objet matériel désiré, le besoin en matériaux de base tels que les minéraux ou la nourriture peut être grandement minimisé si nécessaire.'''
 
 PRO_NEUTRONIUM_EXTRACTION
-Extraction Neutronique
+Extraction Neutronium
 
 PRO_NEUTRONIUM_EXTRACTION_DESC
 Le cœur d'une étoile à neutrons est constitué de matière dégénérée, comprimée par la gravité et d'une densité infiniment plus importante que la matière normale la plus lourde. Ce matériau exotique présente de nombreuses applications une fois extrait de l'étoile, permettant ainsi la production de structures et d'équipements d'astronefs inédits et performants.
@@ -7570,7 +7613,7 @@ Structures Synergiques
 CON_FRC_ENRG_STRC_DESC
 '''Accroît la progression des indicateurs de ressources inférieurs à ceux de la planète référence de 3 par tour, et la diminution des indicateurs de ressources supérieurs à ceux de la planète référence de 5 par tour.
 
-La flexibilité et la versatilité des structures synergiques permettent de redéfinir plus facilement le rôle des infrastructures des colonies en vue de nouvelles applications, augmentant ainsi la rapidité et le taux d'une modification de focus.
+La flexibilité et la versatilité des structures synergiques permettent de redéfinir plus facilement le rôle des infrastructures des colonies en vue de nouvelles applications, augmentant ainsi la rapidité et le taux d'une modification de Focus.
 
 Quand les forces et les énergies peuvent être manipulées à volonté afin de remplir les mêmes fonctions que des objets solides, les matériaux physiques ne sont plus nécessaires dans la conception infrastructurelle. Des structures composées entièrement d'énergie présentent de nombreux avantages, tels que la reconfiguration simplifiée, l'adaptation et la résistance, la mobilité ainsi que de nouvelles possibilités de design.'''
 
@@ -7612,13 +7655,13 @@ CON_ORBITAL_HAB
 Habitation Orbitale
 
 CON_ORBITAL_HAB_DESC
-Accroît le plafond de population de toutes les planètes habitables selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
+Accroît le plafond de Population de toutes les planètes habitables selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 CON_NDIM_STRC
 Structures Multidimensionnelles
 
 CON_NDIM_STRC_DESC
-'''Accroît le plafond de population de toutes les planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
+'''Accroît le plafond de Population de toutes les planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
 
 Les facteurs principaux limitant la capacité de population d'une planète ne sont autres que les milieux environnementaux et l'espace disponible. En répartissant le développement des infrastructures de base sur de multiples dimensions, les limitations spatiales disparaissent, et dans des conditions environnementales idéales, le maximum de population d'une planète peut être considérablement accru.
 
@@ -7640,9 +7683,11 @@ SHP_INTSTEL_LOG
 Logistique Interstellaire
 
 SHP_INTSTEL_LOG_DESC
-'''Débloque le focus Logistique, augmentant l'[[encyclopedia SUPPLY_TITLE]] de 3 sur toutes les planètes.
+'''Débloque le Focus Logistique, augmentant l'[[encyclopedia SUPPLY_TITLE]] de 3 sur toutes les planètes.
 
 Augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]] de tous les astronefs lorsque ces derniers se trouvent à moins de 50 uu d'une planète appartenant à l'empire.
+
+[[COLONY_BUILDING_TIME_DECREASE]]
 
 Approvisionner efficacement les astronefs, gérer les déplacements des flottes et planifier le mouvement de bâtiments spécifiques lors des batailles, requièrent une maîtrise complète de la navigation et de la détection, ainsi que des méthodes d'acquisition de l'information.'''
 
@@ -7650,7 +7695,9 @@ SHP_MIL_ROBO_CONT
 Contrôle Militaire Robotisé
 
 SHP_MIL_ROBO_CONT_DESC
-Le contrôle robotisé s'avère efficace dans les domaines de l'industrie et de l'extraction minière. L'extension naturelle de ce concept est de développer un équipement militaire robotisé capable de gérer de manière autonome un astronef. Cela permettrait une plus grande souplesse en matière de conception et de design, tous les systèmes encombrants de support vital devenant inutiles. Les coques dotées d'une telle technologie pourraient s'auto-réparer, tandis que la gestion de la sécurité et des limitations physiques des ingénieurs appartiendrait dès lors au passé.
+'''À moins que la Recherche ait déjà rendu possible la production de coques d'astronefs plus rapides, cette technologie permet de réduire le délai nécessaire à la construction d'une colonie très éloignée de l'espèce correspondante dans l'empire.
+
+Le contrôle robotisé s'avère efficace dans les domaines de l'industrie et de l'extraction minière. L'extension naturelle de ce concept est de développer un équipement militaire robotisé capable de gérer de manière autonome un astronef. Cela permettrait une plus grande souplesse en matière de conception et de design, tous les systèmes encombrants de support vital devenant inutiles. Les coques dotées d'une telle technologie pourraient s'auto-réparer, tandis que la gestion de la sécurité et des limitations physiques des ingénieurs appartiendrait dès lors au passé.'''
 
 SHP_SPACE_FLUX_DRIVE
 Propulsion Flux Spatial
@@ -7680,7 +7727,9 @@ SHP_TRANSSPACE_DRIVE
 Propulsion Trans-Spatiale
 
 SHP_TRANSSPACE_DRIVE_DESC
-Même lorsque les dimensions spatiales sont déformées par les effets relativistes, un objet conserve généralement des caractéristiques spatio-temporelles constantes. En créant un dispositif capable de modifier les caractéristiques de l'espace-temps lui-même à l'aide d'effets quasi-relativistes, il deviendrait alors possible de concevoir une nouvelle méthode rapide et furtive de propulsion.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+Même lorsque les dimensions spatiales sont déformées par les effets relativistes, un objet conserve généralement des caractéristiques spatio-temporelles constantes. En créant un dispositif capable de modifier les caractéristiques de l'espace-temps lui-même à l'aide d'effets quasi-relativistes, il deviendrait alors possible de concevoir une nouvelle méthode rapide et furtive de propulsion.'''
 
 SHP_MIDCOMB_LOG
 Logistique de Combat
@@ -7770,7 +7819,9 @@ SHP_QUANT_ENRG_MAG
 Amplification d'Énergie Quantique
 
 SHP_QUANT_ENRG_MAG_DESC
-En raison du principe d'incertitude quantique, il est possible pour une particule d'acquérir arbitrairement une petite quantité d'énergie supplémentaire ou bien de nouvelles particules peuvent exister de manière très éphémère. En détectant et en amplifiant ces fluctuations d'énergie quantique, il devient possible d'accroître grandement le potentiel des coques à énergie.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+En raison du principe d'incertitude quantique, il est possible pour une particule d'acquérir arbitrairement une petite quantité d'énergie supplémentaire ou bien de nouvelles particules peuvent exister de manière très éphémère. En détectant et en amplifiant ces fluctuations d'énergie quantique, il devient possible d'accroître grandement le potentiel des coques à énergie.'''
 
 SHP_ENRG_BOUND_MAN
 Modulation d'Énergie
@@ -7915,7 +7966,7 @@ CON_PLANET_DRIVE
 Déplacement Planétaire
 
 CON_PLANET_DRIVE_DESC
-Les planètes situées dans les systèmes les plus reculés d'un empire sont souvent exposées aux éventuelles attaques des flottes ennemies, ces planètes abritant la plupart du temps des ressources de grande valeur et des particularités planétaires avantageuses. En équipant une planète entière d'un système lui permettant d'ouvrir et de naviguer sur une voie spatiale, il deviendrait alors possible de déplacer de telles planètes vers une région plus sûre si nécessaire.
+Les planètes situées dans les systèmes les plus reculés d'un empire sont souvent exposées aux éventuelles attaques des flottes ennemies, ces planètes abritant la plupart du temps des ressources de grande valeur et des particularités planétaires avantageuses. En équipant une planète entière d'un dispositif lui permettant d'ouvrir et de naviguer sur une Voie spatiale, il deviendrait alors possible de déplacer de telles planètes vers une région plus sûre si nécessaire.
 
 CON_STARGATE  # translated
 Stargate
@@ -7929,7 +7980,7 @@ Planète Artificielle
 CON_ART_PLANET_DESC
 '''Les géantes gazeuses et les ceintures d'astéroïdes offrent des opportunités et des ressources uniques, non seulement comme sites d'exploitation de précieuses ressources - et parfois extrêmement rares -, mais également comme sources intrinsèques de matériaux bruts pour la fabrication de planètes artificielles. De telles planètes permettraient d'établir de nouveaux centres de production dans des systèmes en surcharge ou auparavant inoccupés. De plus, diverses caractéristiques peuvent être modifiées ou ajoutées durant tout le processus de fabrication, permettant ainsi de spécifier la taille et l'environnement des planètes, ou encore de sélectionner certaines particularités planétaires considérées comme avantageuses.
 
-De base, cette technologie permet la construction d'une [[buildingtype BLD_ART_PLANET]] basique. Si l'empire maîtrise également la [[tech GRO_GAIA_TRANS]], alors une [[buildingtype BLD_ART_PARADISE_PLANET]] peut être construite. Si l'empire a recours à des [[tech PRO_EXOBOTS]], une [[buildingtype BLD_ART_FACTORY_PLANET]] peut être produite.'''
+De base, cette technologie permet la formation d'une [[buildingtype BLD_ART_PLANET]] basique. Si l'empire maîtrise également la [[tech GRO_GAIA_TRANS]], alors une [[buildingtype BLD_ART_PARADISE_PLANET]] peut être conçue. Si l'empire a recours à des [[tech PRO_EXOBOTS]], une [[buildingtype BLD_ART_FACTORY_PLANET]] peut être produite.'''
 
 CON_PALACE_EXCLUDE
 Palais Unique
@@ -7941,7 +7992,7 @@ GRO_SUBTER_HAB
 Habitat Souterrain
 
 GRO_SUBTER_HAB_DESC
-Accroît le plafond de population de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
+Accroît le plafond de Population de la planète selon sa taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
 GRO_GENOME_BANK
 Banque du Génome
@@ -7959,7 +8010,7 @@ GRO_TERRAFORM
 Terraformation
 
 GRO_TERRAFORM_DESC
-Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si le plafond de population est inférieur à un.
+Modifier le type d'environnement d'une planète est une entreprise titanesque, le challenge de ce processus résidant principalement dans l'immense logistique nécessaire. La méthode en question dépend quant à elle de l'environnement d'origine de la planète et du résultat désiré. Cependant, dans tous les cas, la quasi-totalité de la surface planétaire et de l'atmosphère nécessite d'être convertie en d'autres types de molécules, diffusées dans l'espace à modifier ou injectées sous la croûte terrestre. Par conséquent, le processus requiert que la majeure partie de la planète soit accessible aux terraformeurs, et ne peut être enclencher si le plafond de Population est inférieur à un.
 
 GRO_TERRAFORM_SHORT_DESC
 Permet la terraformation
@@ -7983,7 +8034,7 @@ GRO_CYBORG  # translated
 Cyborgs
 
 GRO_CYBORG_DESC
-'''Accroît le plafond de population des planètes hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10. Accroît l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes.
+'''Accroît le plafond de Population des planètes hostiles selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10. Accroît l'[[encyclopedia TROOP_TITLE]] max de 0.2 par Population sur toutes les planètes.
 
 Une fusion hautement fonctionnelle d'un organisme vivant et d'une machine, capable de s'adapter à un nombre considérable de situations. La génération spontanée d'organes spécialisés ainsi qu'une force bio-mécanique fortement accrue permettent aux cyborgs d'évoluer avec aisance dans quasiment tous les types d'environnement.'''
 
@@ -8028,9 +8079,9 @@ LRN_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-'''En manipulant les propriétés dimensionnelles d'une voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière de manière à ce qu'un astronef l'empruntant à une vitesse suffisamment faible, aboutisse par inavertance à un point antérieur à son lieu de départ, lui faisant ainsi gaspiller un temps et un carburant précieux.
+'''En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière de manière à ce qu'un astronef l'empruntant à une vitesse suffisamment faible, aboutisse par inavertance à un point antérieur à son lieu de départ, lui faisant ainsi gaspiller un temps et un carburant précieux.
 
-Par ailleurs, le même astronef pourrait être envoyé aléatoirement sur une toute autre voie spatiale, adjacente au générateur de distortion.'''
+Par ailleurs, le même astronef pourrait être envoyé aléatoirement sur une toute autre Voie spatiale, adjacente au Générateur de Distortion.'''
 
 LRN_GATEWAY_VOID
 Portail du Vide
@@ -8122,37 +8173,37 @@ DEF_DEFENSE_NET_REGEN_2
 Régénération Défense Planétaire 2
 
 DEF_DEFENSE_NET_REGEN_2_DESC
-Accroît à chaque tour la [[encyclopedia DEFENSE_TITLE]] de toutes les planètes de 0.25x leur valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]], mais sans pouvoir dépasser leurs valeurs max de défense respectives, et s'ajoute au bonus de [[tech DEF_DEFENSE_NET_REGEN_1]].
+Accroît à chaque tour la [[encyclopedia DEFENSE_TITLE]] de toutes les planètes du meilleur de (i) 0.25 fois leur valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]], ou (ii) 0.1 fois leur valeur maximum de [[encyclopedia DEFENSE_TITLE]], mais sans pouvoir dépasser leurs valeurs max respectives de Défense, et s'ajoute au bonus de [[tech DEF_DEFENSE_NET_REGEN_1]].
 
 DEF_PLAN_BARRIER_SHLD_1
 Bouclier Planétaire 1
 
 DEF_PLAN_BARRIER_SHLD_1_DESC
-Augmente les [[encyclopedia SHIELDS_TITLE]] max de 30 sur toutes les planètes, cumulables avec le bonus de la technologie [[tech LRN_FORCE_FIELD]], et se régénère chaque tour de 1 plus 25% de la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
+Augmente les [[encyclopedia SHIELDS_TITLE]] max de 30 sur toutes les planètes, cumulables avec le bonus de la technologie [[tech LRN_FORCE_FIELD]], et les régénère chaque tour de 1 plus le meilleur de (i) 25% de la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète ou (ii) 1 (tant que la valeur des Boucliers n'a pas été réduite à zéro).
 
 DEF_PLAN_BARRIER_SHLD_2
 Bouclier Planétaire 2
 
 DEF_PLAN_BARRIER_SHLD_2_DESC
-Augmente les [[encyclopedia SHIELDS_TITLE]] max de 60 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et se régénère chaque tour de 1 plus la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
+Augmente les [[encyclopedia SHIELDS_TITLE]] max de 60 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 1 plus le meilleur de (i) la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète ou (ii) 4 (tant que la valeur des Boucliers n'a pas été réduite à moins de 3).
 
 DEF_PLAN_BARRIER_SHLD_3
 Bouclier Planétaire 3
 
 DEF_PLAN_BARRIER_SHLD_3_DESC
-Augmente les [[encyclopedia SHIELDS_TITLE]] max de 90 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et se régénère chaque tour de 1 plus deux fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
+Augmente les [[encyclopedia SHIELDS_TITLE]] max de 90 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 1 plus le meilleur de (i) deux fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète ou (ii) 9 (tant que la valeur des Boucliers n'a pas été réduite à moins de 5).
 
 DEF_PLAN_BARRIER_SHLD_4
 Bouclier Planétaire 4
 
 DEF_PLAN_BARRIER_SHLD_4_DESC
-Augmente les [[encyclopedia SHIELDS_TITLE]] max de 150 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et se régénère chaque tour de 1 plus 2.5 fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
+Augmente les [[encyclopedia SHIELDS_TITLE]] max de 150 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 1 plus le meilleur de (i) 2.5 fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète ou (ii) 18 (tant que la valeur des Boucliers n'a pas été réduite à moins de 9).
 
 DEF_PLAN_BARRIER_SHLD_5
 Bouclier Planétaire 5
 
 DEF_PLAN_BARRIER_SHLD_5_DESC
-Augmente les [[encyclopedia SHIELDS_TITLE]] max d'un bonus de 150 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et se régénère chaque tour de 1 plus cinq fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète.
+Augmente les [[encyclopedia SHIELDS_TITLE]] max d'un bonus de 150 sur toutes les planètes, cumulables avec les autres améliorations de bouclier planétaire, et les régénère chaque tour de 1 plus le meilleur de (i) cinq fois la valeur d'[[encyclopedia INFRASTRUCTURE_TITLE]] respective de chaque planète ou (ii) 32 (tant que la valeur des Boucliers n'a pas été réduite à moins de 14).
 
 DEF_SYST_DEF_MINE_1
 Mines Défensives 1
@@ -8185,28 +8236,28 @@ DEF_ROOT_DEFENSE_DESC
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
 DEF_GARRISON_1
-Bataillon Planétaire
+Garnison 1 (Bataillon Planétaire)
 
 DEF_GARRISON_1_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 5 sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 6 sur toutes les planètes de l'empire.
 
 DEF_GARRISON_2
-Régiment Planétaire
+Garnison 2 (Régiment Planétaire)
 
 DEF_GARRISON_2_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 10 sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 12 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 1 par tour.
 
 DEF_GARRISON_3
-Brigade Planétaire
+Garnison 3 (Brigade Planétaire)
 
 DEF_GARRISON_3_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 15 sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 20 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 2 par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
-Armée Planétaire
+Garnison 4 (Armée Planétaire)
 
 DEF_GARRISON_4_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 20 sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 30 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus de la [[DEF_GARRISON_3]] et [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
@@ -8465,19 +8516,25 @@ SHP_IMPROVED_ENGINE_COUPLINGS
 Couplage de Motorisation Améliorée
 
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
-De meilleurs éléments de motorisation donnent de meilleurs moteurs. Augmente de 10 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+De meilleurs éléments de motorisation donnent de meilleurs moteurs. Augmente de 10 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 Matrice de Motorisation Multidimensionnelle
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-La recherche concernant les espaces multidimensionnels a permis le développement de meilleures matrices de motorisation. Augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+La recherche concernant les espaces multidimensionnels a permis le développement de meilleures matrices de motorisation. Augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
 
 SHP_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
 
 SHP_SINGULARITY_ENGINE_CORE_DESC
-Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et adapté en taille pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie. Augmente de 30 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.
+'''[[COLONY_BUILDING_TIME_DECREASE]]
+
+Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et adapté en taille pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie. Augmente de 30 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
 
 SHP_DEUTERIUM_TANK
 Réservoir de Deutérium
@@ -8585,7 +8642,9 @@ SHP_ORG_HULL
 Coque Organique
 
 SHP_ORG_HULL_DESC
-La plus basique des coques de type organique: une coque vivante cultivée à partir des constituants les plus basiques de la vie et conçue pour le combat.
+'''À moins que la Recherche ait déjà rendu possible la production de coques d'astronefs plus rapides, cette technologie permet de réduire le délai nécessaire à la construction d'une colonie très éloignée de l'espèce correspondante dans l'empire.
+
+La plus basique des coques de type organique: une coque vivante cultivée à partir des constituants les plus basiques de la vie et conçue pour le combat.'''
 
 SHP_ENDOSYMB_HULL
 Coque Endosymbiotique
@@ -8663,7 +8722,7 @@ Extraction Minière Éco-Responsable
 PRO_ENVIRO_MINING_DESC
 '''De nombreuses méthodes d'extraction minière sont incompatibles avec les planètes à forte population, en raison des dommages environnementaux. Porter une attention permanente sur l'[[tech GRO_PLANET_ECOL]] est nécessaire pour permettre l'utilisation de méthodes risquées sans en subir les inconvénients.
 
-Réduit de moitié les pénalités de Population sur les planètes avec un focus Extraction Minière Intensive.'''
+Réduit de moitié les pénalités de Population sur les planètes avec un Focus Extraction Minière Intensive.'''
 
 #############################################################
 ####                  B U I L D I N G S                  ####
@@ -8810,7 +8869,7 @@ BLD_BIOTERROR_PROJECTOR
 Base Bioterroriste
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Donne accès au Focus Bioterrorisme à la planète sur laquelle est construite la Base Bioterroriste. Cela a pour effet de réduire de 2 par tour la Population des planètes ennemies, seulement si ces dernières sont distantes de quatre sauts sur Voies spatiales ou moins et si l'empire ennemi ne dispose pas d'une [[buildingtype BLD_GENOME_BANK]].
+'''Donne accès au Focus Bioterrorisme à la planète sur laquelle est construite la Base Bioterroriste. Cela a pour effet de réduire de 2 par tour la Population des planètes ennemies, seulement si ces dernières sont distantes de quatre Voies spatiales ou moins et si l'empire ennemi ne dispose pas d'une [[buildingtype BLD_GENOME_BANK]].
 
 Cette base clandestine d'armements biologiques provoque des ravages sur les planètes ennemies à proximité, en réduisant progressivement la Population de ces dernières jusqu'à extermination totale. Cependant, de telles activités n'étant pas approuvées par les lois galactiques, cette structure ne peut être construite que sur une planète autour de laquelle orbite une [[special RESONANT_MOON_SPECIAL]], et s'avère sans effets si l'empire ennemi dispose d'une Banque du Génome. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], si une Lune Synchrone orbite également autour de ce dernier.'''
 
@@ -8818,7 +8877,7 @@ BLD_LIGHTHOUSE
 Phare Interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Augmente la vitesse des astronefs quittant ce système et diminue de 30 la [[encyclopedia STEALTH_TITLE]] de tous les objets dans ce même système. Cette structure peut également être construite sur un [[encyclopedia OUTPOSTS_TITLE]]. Les astronefs alliés se trouvant dans un rayon de 50 uu bénéficient d'un bonus de [[encyclopedia STARLANE_SPEED_TITLE]] de 20.
+Augmente la vitesse des astronefs quittant ce système et diminue de 30 la [[encyclopedia STEALTH_TITLE]] de tous les objets dans ce même système. Les astronefs alliés se trouvant dans un rayon de 50 uu bénéficient d'un bonus de [[encyclopedia STARLANE_SPEED_TITLE]] de 20. Cette structure peut également être construite sur un [[encyclopedia OUTPOSTS_TITLE]] et peut optimiser l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
 
 BLD_SCANNING_FACILITY
 Complexe de Détection
@@ -8873,26 +8932,26 @@ BLD_GAIA_TRANS
 Transformateur Gaia
 
 BLD_GAIA_TRANS_DESC
-'''Accroît le plafond de population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
+'''Accroît le plafond de Population de la planète selon sa taille : Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
 
 Transforme une planète en Monde Gaia à l'aide d'un programme informatique cellulaire et conscient, quasiment d'essence divine. Cette planète, dont la contemplation procure un ravissement de tous les instants, est connue à travers toute la galaxie comme une célébration de la vie et de l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un organisme planétaire unique, dans l'intérêt de ce dernier, celui-ci agissant en retour dans l'intérêt de ses habitants.'''
 
 BLD_COLLECTIVE_NET
 Réseau de Pensée Collective
 
-#BLD_COLLECTIVE_NET_DESC
-#'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Starlane travel within 200 uu will disrupt this building's effectiveness and eliminate these bonuses.
-#[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
-#
-#By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
+BLD_COLLECTIVE_NET_DESC
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Industrie, et la [[encyclopedia RESEARCH_TITLE]] de 0.5 par Population sur toutes les planètes réglées sur le Focus Recherche. Tout trajet sur Voies spatiales dans un rayon de 200 uu affaiblira l'efficacité de cette structure et supprimera tout bonus.
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
+
+En transférant l'esprit dans le cyberespace, des milliers d'esprits peuvent agir comme un seul, résolvant des problèmes et faisant des découvertes qui s'avéreraient hors de portée pour un unique esprit, aussi brillant soit-il.'''
 
 BLD_GATEWAY_VOID
 Portail du Vide
 
-#BLD_GATEWAY_VOID_DESC
-#'''Any ships who enter this system without passing through on the same turn are destroyed, and all colonies within are reduced to outpost status, with a max population of one tenth. Furthermore, it is impossible for anyone outside a system containing this building to see into it.
-#
-#A dimensional tear capable of magnifying the destructive potential of the Void Mind in a localized region.'''
+BLD_GATEWAY_VOID_DESC
+'''Tout astronef sera détruit s'il entre dans ce système sans passer à travers le Portail durant le même tour, tandis que toutes les colonies se trouvant dans ce système retournent à l'état d'[[encyclopedia OUTPOSTS_TITLE]], avec un plafond de Population égal à 10% de sa précédente valeur. D'autre part, il est impossible pour quiconque situé à l'extérieur d'un système contenant cette structure de voir à l'intérieur de ce même système.
+
+Une faille dimensionnelle libérant la force destructrice de l'Esprit du Vide dans une région spécifique.'''
 
 BLD_ENCLAVE_VOID
 Enclave Du Vide
@@ -8901,223 +8960,223 @@ BLD_ENCLAVE_VOID_DESC
 '''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 0.75 par Population sur toutes les planètes réglées sur le Focus Recherche. 
 Les bonus de plusieurs exemplaires ne s'additionnent pas.
 
-The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects.'''
+La population entière d'une planète est modifiée génétiquement afin de l'harmoniser avec l'Esprit du Vide, et ainsi diffuser sa sagesse dans tout l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, prophètes d'une pensée supérieure et d'un savoir suprême. Dans tous les domaines de grande importance pour la bonne marche de l'empire, leurs conseils et avis s'avèrent d'une grande valeur. Des émissaires de l'Enclave peuvent donc prendre part à tout projet impérial de Recherche et apporter ainsi une aide précieuse.'''
 
 BLD_ART_BLACK_HOLE
 Trou Noir Artificiel
 
-#BLD_ART_BLACK_HOLE_DESC
-#By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an outpost.
+BLD_ART_BLACK_HOLE_DESC
+En augmentant artificiellement la gravité à l'intérieur d'une étoile, mais sans accroître son énergie, il est possible de faire s'effondrer l'étoile sur elle-même et ainsi former un Trou Noir. Cette technique est cependant limitée aux étoiles rouges, car dépasser la pression interne d'une étoile plus chaude nécessiterait un générateur de gravité d'une puissance inimaginable. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_HYPER_DAM
 Barrage Hyperspatial
 
-#BLD_HYPER_DAM_DESC
-#'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 0.4 per Population, but decreases Population on such planets by 5.
-#[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
-#
-#A tear in the fabric of the universe, safely controlled and harnessed. Each planet may construct its own hyperspatial dams, but a single control center is required to ensure that the space-time continuum is not torn apart by the stresses. Additionally, all planets who use hyperspatial dams experience health problems, unless they are orbiting a Black Hole.'''
+BLD_HYPER_DAM_DESC
+'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 0.4 par Population sur toutes les planètes lui étant reliées par lignes d'[[encyclopedia SUPPLY_TITLE]] et étant réglées sur le Focus Industrie, mais diminue de 5 la Population de ces planètes.
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
+
+Une déchirure dans le tissu de l'univers, contrôlée et manipulée en toute sécurité. Chaque planète peut construire son propre barrage hyperspatial, mais un seul centre de contrôle est requis pour s'assurer que le continuum de l'espace-temps n'est pas endommagé. Par contre, toutes les planètes ayant recours à un barrage hyperspatial voient leur population souffrir de différents problèmes de santé, à moins que les planètes en question n'orbitent autour d'un Trou Noir.'''
 
 BLD_SOL_ACCEL
 Accélérateur Solaire
 
-#BLD_SOL_ACCEL_DESC
-#A Solar Accelerator artificially ages a star by speeding up its natural processes. The star becomes one type older, according to the following order: Blue, White, Yellow, Orange, Red. This process can be enacted at an outpost.
+BLD_SOL_ACCEL_DESC
+Un Accélérateur Solaire vieillit artificiellement une étoile en augmentant la rapidité des processus physiques en son coeur. L'étoile évolue alors en un type plus âgé, suivant cet ordre: Bleue, Blanche, Jaune, Orange, Rouge. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
 
-#BLD_SOL_ORB_GEN_DESC
-#'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population for Blue and White, Yellow and Orange, or Red stars, respectively.
-#[[NO_STACK_SUPPLY_CONNECTION_TEXT]] Le meilleur bonus s'applique.
-#
-#A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an outpost.'''
+BLD_SOL_ORB_GEN_DESC
+'''Augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] sur toutes les planètes lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] de 0.4, 0.2 ou 0.1 par Population selon que l'étoile du système soit respectivement Bleue/Blanche, Jaune/Orange, ou Rouge.
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]] Le meilleur bonus s'applique.
+
+Un puissant générateur situé en orbite stellaire basse, conçu pour puiser directement l'énergie d'une étoile. Étant donné que différents types d'étoiles produisent différentes quantités d'énergie, le bonus industriel à l'échelle du système est tributaire du type d'étoile. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_CLONING_CENTER
 Centre de Clonage
 
 BLD_CLONING_CENTER_DESC
-'''Accroît le plafond de population de toutes les planètes selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
+'''Accroît le plafond de Population de toutes les planètes selon leur taille : Minuscule +1 ; Petite +2 ; Moyenne +3 ; Grande +4 ; Immense +5.
 
-Industrial Cloning allows made-to-order populations to be produced industrially, significantly improving population.'''
+Le [[tech GRO_INDUSTRY_CLONE]] permet de produire industriellement des populations sur-mesure, améliorant considérablement leur croissance.'''
 
 BLD_TERRAFORM
 Terraformeur
 
-#BLD_TERRAFORM_DESC
-#Terraforms a world one step closer to the environmental preference of the inhabiting species.
+BLD_TERRAFORM_DESC
+Terraforme une planète en un type d'environnement un palier plus proche de l'environnement favori de l'espèce.
 
 BLD_TERRAFORM_REVERT
 Terraformeur Inversé
 
-#BLD_TERRAFORM_REVERT_DESC
-#Terraforms a world one step back towards its original type.
+BLD_TERRAFORM_REVERT_DESC
+Terraforme une planète en un type d'environnement un palier plus proche de l'environnement planétaire d'origine.
 
 BLD_REMOTE_TERRAFORM
-Terraformeur Prédéfini
+Terraformeur à Distance
 
-#BLD_REMOTE_TERRAFORM_DESC
-#Terraforms a world one step closer to the environmental preference of the inhabiting species. This process can be enacted at an outpost.
+BLD_REMOTE_TERRAFORM_DESC
+Terraforme une planète en un type d'environnement un palier plus proche de l'environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_NEUTRONIUM_EXTRACTOR
-Extracteur Neutronique
+Extracteur Neutronium
 
-#BLD_NEUTRONIUM_EXTRACTOR_DESC
-#'''Permits construction of ships with Neutronium ship parts.
-#
-#Before parts can be built using Neutronium, it must be extracted from a neutron star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. This building can be built at an outpost.'''
+BLD_NEUTRONIUM_EXTRACTOR_DESC
+'''Cette structure permet l'exploitation du Neutronium par l'empire. Le Neutronium peut être travaillé dans une [[buildingtype BLD_NEUTRONIUM_FORGE]] afin de permettre la fabrication d'équipements d'astronefs en Neutronium, tel le [[shippart AR_NEUTRONIUM_PLATE]].
+
+Avant qu'un équipement d'astronef puisse être fabriqué à partir de Neutronium, ce dernier doit être extrait d'une étoile à neutrons. Le Neutronium récolté à l'aide de cette structure est transféré vers toutes les Forges Neutronium se trouvant dans l'empire. L'Extracteur Neutronium peut être construit sur un [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_NEUTRONIUM_FORGE
-Forge Neutronique
+Forge Neutronium
 
-#BLD_NEUTRONIUM_FORGE_DESC
-#'''This building is required at the same location as a shipyard to enable building ships with neutronium parts.
-#
-#The industrial processing of neutronium requires an extensive specialized facility. Unlike most shipyards and shipyard upgrades, this building cannot be built at an outpost.'''
+BLD_NEUTRONIUM_FORGE_DESC
+'''Cette structure est requise au même emplacement qu'un [[buildingtype BLD_SHIPYARD_BASE]] afin de permettre la production d'astronefs dotés d'équipements en Neutronium.
+
+Le travail industriel du Neutronium nécessite une installation spécialisée. Cette structure ne peut pas être construite sur un [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_NEUTRONIUM_SYNTH
-Synthétiseur Neutronique
+Synthétiseur Neutronium
 
-#BLD_NEUTRONIUM_SYNTH_DESC
-#'''An empire with this building does not need a Neutronium Extractor to build neutronium ship parts.
-#
-#An ancient building designed long ago to synthesize neutronium.'''
+BLD_NEUTRONIUM_SYNTH_DESC
+'''Un empire abritant cette structure n'a pas besoin d'un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] pour récolter le Neutronium nécessaire à la fabrication d'équipements d'astronefs en Neutronium.
+
+Une structure issu des temps ancestraux, conçue pour synthétiser le Neutronium.'''
 
 BLD_CONC_CAMP
 Camps de Concentration
 
-#BLD_CONC_CAMP_DESC
-#'''Decreases the planet's population at a rate of 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population.
-#
-#Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an outpost.'''
+BLD_CONC_CAMP_DESC
+'''Réduit la Population d'une planète de 3 par tour, et augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 5 fois la population planétaire.
+
+Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_CONC_CAMP_REMNANT
 Vestiges de Camps de Concentration
 
-#BLD_CONC_CAMP_REMNANT_DESC
-#Though the local authorities may try to hide these remnants of old [[buildingtype BLD_CONC_CAMP]], the populace is still aware of their presence.
+BLD_CONC_CAMP_REMNANT_DESC
+Bien que les autorités locales tentent de dissimuler les traces d'anciens [[buildingtype BLD_CONC_CAMP]], le peuple n'a pas effacé de sa mémoire leur existence.
 
 BLD_BLACK_HOLE_POW_GEN
-Générateur Hawking
+Générateur de Singularité
 
-#BLD_BLACK_HOLE_POW_GEN_DESC
-#'''Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population.
-#[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
-#
-#This building can be built at an outpost, but must be in a black hole system.'''
+BLD_BLACK_HOLE_POW_GEN_DESC
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de 1.2 par Population sur toutes les planètes lui étant reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] et étant réglées sur le Focus Industrie.
+[[NO_STACK_SUPPLY_CONNECTION_TEXT]]
+
+Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais doit se trouver dans un système abritant un Trou Noir.'''
 
 BLD_REPLICATORS
 Réplicateurs
 
-#BLD_REPLICATORS_DESC
-#'''When activated, half of all industrial production in the empire goes towards replicating extra food or minerals at a 2:1 ratio. If the planet on which it is built has focus set to Food Replication, food will be produced at the expense of industry. When the focus is set to Mineral Replication, minerals will be produced at the expense of industry.
-#
-#Only one replication focus can take effect in the empire at one time.'''
+BLD_REPLICATORS_DESC
+'''Une fois activés, la moitié de toute la production industrielle de l'empire est utilisée pour la réplication de nourriture ou de minéraux supplémentaires à un taux de conversion de 2 pour 1. Si la planète sur laquelle est construite la structure est réglée sur le Focus Réplication Nourriture, la nourriture sera produite aux dépens de l'industrie. Lorsque le Focus est réglé sur Réplication Minéraux, des minéraux supplémentaires seront produits aux dépens de l'industrie.
+
+Un seul type de Focus de Réplication peut être activé simultanément à travers tout l'empire.'''
 
 BLD_PLANET_DRIVE
-Navigateur de Planète
+Navigateur Planétaire
 
-#BLD_PLANET_DRIVE_DESC
-#'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uu of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
-#
-#Due to a lack of UI targeting, a second building is currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
-#
-#To use this building, set the planet to Planet Drive focus, and construct a Planetary Beacon in an adjacent system. The planet will then be moved to that system.'''
+BLD_PLANET_DRIVE_DESC
+'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais pas sur une ceinture d'astéroïdes.
+
+En raison d'un manque de précision du dispostif de navigation, une seconde structure est requise et doit se trouver à l'arrivée de la Voie spatiale empruntée. Cette structure s'auto-détruira une fois utilisée, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
+
+Pour utiliser le Navigateur Planétaire, la planète doit être réglée sur le Focus Navigation Planétaire, et une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système d'arrivée, afin que la planète s'y dirige.'''
 
 BLD_PLANET_BEACON
 Balise Planétaire
 
-#BLD_PLANET_BEACON_DESC
-#Designates the target for the planetary starlane drive. This building can be built at an outpost.
+BLD_PLANET_BEACON_DESC
+Indique le système cible pour le [[buildingtype BLD_PLANET_DRIVE]]. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_ART_PLANET
 Planète Artificielle
 
-#BLD_ART_PLANET_DESC
-#Forms an artificial planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+BLD_ART_PLANET_DESC
+Forme une planète artificielle à partir d'une ceinture d'astéroïdes ou d'une géante gazeuse. Les astéroïdes donnent naissance à des minuscules planètes stériles tandis que les géantes gazeuses deviennent d'immenses planètes stériles. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]], une géante gazeuse ou une ceinture d'astéroïdes.
 
 BLD_ART_FACTORY_PLANET
 Planète Usine Artificielle
 
-#BLD_ART_FACTORY_PLANET_DESC
-#Forms an artificial planet from an asteroid belt or a gas giant, and then populates it with [[species SP_EXOBOT]]s. Asteroids become tiny barren planets and gas giants become huge barren planets. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+BLD_ART_FACTORY_PLANET_DESC
+Forme une planète artificielle à partir d'une ceinture d'astéroïdes ou d'une géante gazeuse, puis la peuple d'[[species SP_EXOBOT]]s. Les astéroides donnent naissance à des minuscules planètes stériles et les géantes gazeuses deviennent d'immenses planètes stériles. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]], une géante gazeuse ou une ceinture d'astéroïdes.
 
 BLD_ART_PARADISE_PLANET
 Planète Paradisiaque Artificielle
 
-#BLD_ART_PARADISE_PLANET_DESC
-#Forms an artificial paradise planet from an asteroid belt or a gas giant. Asteroids become tiny barren planets and gas giants become huge barren planets. the planet will have the [[special GAIA_SPECIAL]] special which will terraform it to suit its inhabitants. This process must be enacted at an outpost on either a gas giant or an asteroid belt.
+BLD_ART_PARADISE_PLANET_DESC
+Forme une planète paradisiaque artificielle à partir d'une ceinture d'astéroïdes ou d'une géante gazeuse. Les astéroïdes donnent naissance à des minuscules planètes stériles tandis que les géantes gazeuses deviennent d'immenses planètes stériles. La planète ainsi formée sera doté de la Particularité [[special GAIA_SPECIAL]], laquelle permettra de terraformer de la planète afin de mieux l'adapter à ses habitants. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]], une géante gazeuse ou une ceinture d'astéroïdes.
 
 BLD_ART_MOON
 Lune Artificielle
 
-#BLD_ART_MOON_DESC
-#'''Forms an artificial moon with 1:1 orbital period - rotational period resonance. Adds the [[special RESONANT_MOON_SPECIAL]] special to the planet.
-#
-#This cannot be constructed at a Gas Giant or Asteroid Belt.
-#
-#Though natural satellites are relatively commonplace occurrences amongst planetary bodies, it is truly rare to find a moon with an orbital period equal to that of its rotational period. Such a satellite would have one side constantly facing away from the planet, allowing the construction of massive installations - which under normal circumstances would be easily visible from the planet's surface - to be constructed with total secrecy, completely invisible to the unsuspecting populace on the planet below.'''
+BLD_ART_MOON_DESC
+'''Forme une lune artificielle pourvue d'une période de rotation égale à sa période de révolution. Dote la planète parent de la Particularité [[special RESONANT_MOON_SPECIAL]].
+
+Cette structure ne peut pas être construite en orbite autour d'une géante gazeuse ou dans une ceinture d'astéroïdes.
+
+Bien que les satellites naturels soient relativement communs parmi les corps planétaires, les lunes dont la période de rotation équivaut à la période de révolution sont plutôt rares, car cela nécessite l'absence de toute perturbation externe. Ces satellites ont une face constamment à l'opposé de celle de la planète, permettant la construction d'installations massives - lesquelles, dans des circonstances normales, seraient facilement visibles depuis la surface de la planète - en toute discrétion et dans le secret le plus total, car toute structure s'avère alors totalement invisible pour la population planétaire peu suspicieuse.'''
 
 BLD_SOL_REJUV
 Fontaine de Jouvence Solaire
 
-#BLD_SOL_REJUV_DESC
-#A Solar Rejuvenator artificially rejuvenates a star by increasing its fuel supply. The star becomes one type younger, according to the following order: Red, Orange, Yellow, White, Blue. This process can be enacted at an outpost.
+BLD_SOL_REJUV_DESC
+Une Fontaine de Jouvence Solaire rajeunit artificiellement une étoile en augmentant sa quantité de "carburant" interne. L'étoile évolue alors en un type moins âgé, suivant cet ordre: Rouge, Orange, Jaune, Blanche, Bleue. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_TRANSFORMER
 Transformeur
 
-#BLD_TRANSFORMER_DESC
-#'''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
-#
-#This building can be given the effects of a [[buildingtype BLD_PLANET_CLOAK]], a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
+BLD_TRANSFORMER_DESC
+'''Une structure très coûteuse mais d'une adaptabilité à toute épreuve permettant d'obtenir les mêmes effets qu'un bon nombre d'autres structures. Le Transformeur s'active en réglant sur le Focus approprié la planète sur laquelle il est construite, et à condition que l'empire ait déjà débloqué la structure que le Transformeur doit imiter.
+
+Cette structure peut reproduire les effets d'un [[buildingtype BLD_PLANET_CLOAK]], d'une [[buildingtype BLD_BIOTERROR_PROJECTOR]], d'un [[buildingtype BLD_STARGATE]], d'un [[buildingtype BLD_PLANET_DRIVE]], ou d'un [[buildingtype BLD_SPATIAL_DISTORT_GEN]], à condition que l'empire ait déjà assimilé la technologie appropriée.'''
 
 BLD_PLANET_CLOAK
 Dispositif de Camouflage Planétaire
 
-#BLD_PLANET_CLOAK_DESC
-#'''Gives the planet it is built on a huge bonus to [[encyclopedia STEALTH_TITLE]].
-#
-#A powerful cloaking device able to shroud an entire world.'''
+BLD_PLANET_CLOAK_DESC
+'''Octroie à la planète sur laquelle il est construit un bonus conséquent de [[encyclopedia STEALTH_TITLE]].
+
+Un puissant dispositif de camouflage capable d'envelopper un monde entier.'''
 
 BLD_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
-#BLD_SPATIAL_DISTORT_GEN_DESC
-#Manipulates the dimensional properties of adjacent starlanes. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the starlane in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
+BLD_SPATIAL_DISTORT_GEN_DESC
+Manipule les propriétés dimensionnelles des Voies spatiales attenantes. Tout astronef ennemi tentant d'atteindre le système abritant cette structure sera renvoyé à son point de départ, ou aléatoirement vers une autre étoile proche. Seuls les astronefs assez rapides pour parcourir la Voie spatiale en un seul tour seront insensibles à ces effets de distortion. Le Générateur s'active si la planète sur laquelle il est construit est réglée sur le Focus Distortion Spatiale.
 
-#BLD_STARGATE
-#Stargate
+BLD_STARGATE  # translated
+Stargate
 
 BLD_STARGATE_DESC
-'''Crée un raccourci spatio-temporel vers tout autre Stargate du même empire. La consommation en énergie d'un tel appareil peut, lorsqu'il est activé, annuler la production d'une planète entière, mais il n'a, au repos, aucun effet négatif. Hélas, vu les fluctuations quantiques, il est impossible de prévoir où un astronef envoyé arrivera lorsque plusieurs Stargates sont ouverts pour le recevoir.
+'''Crée un raccourci spatio-temporel vers tout autre Stargate appartenant au même empire. Une fois activé, la consommation énergétique d'un tel dispositif peut paralyser l'activité d'une planète entière, mais n'a au repos, aucun effet négatif. Malheureusement, compte tenu du phénomène de fluctuation quantique, il est impossible de prévoir à quel endroit un astronef émergera si plus d'un Stargate est ouvert pour le recevoir.
 
-Pour activer le Stargate, focaliser la planète l'Envoi Stargate et une planète à Stargate d'un autre système de l'empire sur la Réception Stargate.'''
+Afin d'activer le Stargate, la planète de départ doit être réglée sur le Focus Envoi Stargate et la planète d'arrivée située dans un autre système sur le Focus Réception Stargate.'''
 
 BLD_GAS_GIANT_GEN
 Convertisseur de Géante Gazeuse
 
-#BLD_GAS_GIANT_GEN_DESC
-#'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system.
-#Multiple copies in the same system do not stack.
-#
-#A power generator designed to harvest the energy of a Gas Giant.'''
+BLD_GAS_GIANT_GEN_DESC
+'''Cette structure ne peut être construite que sur une géante gazeuse et augmente de 10 l'indicateur [[encyclopedia INDUSTRY_TITLE]] sur les planètes du même système réglées sur le Focus Industrie.
+Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
+
+Un puissant générateur conçu pour puiser l'énergie des Géantes Gazeuses.'''
 
 BLD_COLONY_BASE
-Colon Stellaire
+Colonisateur Stellaire
 
 BLD_COLONY_BASE_DESC
-Crée un astronef permettant de coloniser une autre planète du même système stellaire. Ne peut être construit que sur une planète dont la population dépasse 3.
+Crée un astronef [[predefinedshipdesign SD_COLONY_BASE]] permettant de coloniser une autre planète du même système stellaire. Ne peut être construit que dans une colonie dont la Population est égale à 3 ou plus.
 
 BLD_EXPERIMENTOR_OUTPOST
 Avant-Poste Expérimentateur
-#BLD_EXPERIMENTOR_OUTPOST_DESC
-#The outpost of the Experimentors, used for carrying out highly advanced experiments. This structure also acts as a cloak to prevent anyone from interfering with their work.
+BLD_EXPERIMENTOR_OUTPOST_DESC
+Un Avant-Poste des Expérimentateurs, utilisé pour la mise en oeuvre d'expériences scientifiques très avancées. Cette structure agit également comme un camouflage afin d'empêcher quiconque d'interférer avec leurs travaux.
 
 BLD_NOVA_BOMB_ACTIVATOR
 Détonateur de Bombe Nova
-#BLD_NOVA_BOMB_ACTIVATOR_DESC
-#Activates all Nova Bombs within one starlane jump.
+BLD_NOVA_BOMB_ACTIVATOR_DESC
+Active tous les exemplaires de [[shippart SP_NOVA_BOMB]] dans un rayon maximum d'une Voie spatiale.
 
 BLD_COL_PART_1
 Cette structure ne peut être construite que sur un [[encyclopedia OUTPOSTS_TITLE]], et transformera ce dernier en nouvelle
@@ -9126,7 +9185,7 @@ BLD_COL_PART_2
 Le délai minimum nécessaire à la construction dépend de la distance de la plus proche
 
 BLD_COL_PART_3
-appartenant à l'empire, et augmentera proportionnellement à son éloignement; ce délai sera réduit si l'empire possède des astronefs rapides
+appartenant à l'empire, et augmentera proportionnellement à son éloignement; ce délai sera réduit si l'empire recherche des technologies permettant la production d'astronefs colonisateurs plus rapides, grâce à des équipements de motorisation plus performants et des coques d'astronefs de qualité supérieure
 
 BLD_COL_ABADDONI
 Colonie Abaddoni
@@ -9742,7 +9801,7 @@ Module de Colonisation
 CO_COLONY_POD_DESC
 '''Installation de base pour colons afin de survivre les premiers jours sur une nouvelle planète. Permet aux astronefs de coloniser de nouveaux mondes.
 
-Toutes les classes d'astronefs colons requièrent de leur planète d'origine une population supérieure à trois.'''
+Toutes les classes d'astronefs colonisateurs requièrent de leur planète d'origine une population supérieure à trois.'''
 
 CO_SUSPEND_ANIM_POD
 Module de Colonisation Cryogenic
@@ -9750,7 +9809,7 @@ Module de Colonisation Cryogenic
 CO_SUSPEND_ANIM_POD_DESC
 '''Les colons sont maintenus en animation suspendue pendant le voyage, en éliminant nécessité de fournir les besoins vitaux, et en augmentant considérablement le nombre de colons qui peuvent être transportées sur un astronef.
 
-Toutes les classes d'astronefs colons requièrent de leur planète d'origine une population supérieure à trois.'''
+Toutes les classes d'astronefs colonisateurs requièrent de leur planète d'origine une population supérieure à trois.'''
 
 CO_OUTPOST_POD
 Module d'Avant-Poste
@@ -10206,7 +10265,7 @@ SH_XENTRONIUM_DESC
 Une coque construite principalement à partir de xentronium. Bien que petite, elle a une structure max extrêmement élevée.
 
 SH_COLONY_BASE
-Coque Colon Stellaire
+Coque Colonisateur Stellaire
 
 SH_COLONY_BASE_DESC
 Une coque destinée au tranport de colons vers une planète du système stellaire où elle a été construite. Elle ne peut pas naviguer entre les systèmes, pas plus qu'elle n'est rapide dans son système.
@@ -10350,11 +10409,18 @@ NO_STACK_SUPPLY_CONNECTION_TEXT
 Les bonus de plusieurs exemplaires connectés par ligne d'[[encyclopedia SUPPLY_TITLE]] au sein d'un même Groupe Ressource ne s'additionnent pas.
 
 #############################################################
+####                 T E C H   M A C R O S               ####
+#############################################################
+
+COLONY_BUILDING_TIME_DECREASE
+Entre autres applications, cette technologie permet de réduire le délai nécessaire à la construction d'une colonie très éloignée de l'espèce correspondante dans l'empire.
+
+#############################################################
 ####              Growth Macros                          ####
 #############################################################
 
 GROWTH_SPECIAL_POPULATION_INCREASE
-'''habitant cette planète verront leur plafond de population augmenter selon la taille de la planète (Minuscule : +1, Petite : +2, Moyenne : +3, Grande : +4, Immense : +5), quel que soit l'environnement planétaire. 
+'''habitant cette planète verront leur plafond de Population augmenter selon la taille de la planète (Minuscule : +1, Petite : +2, Moyenne : +3, Grande : +4, Immense : +5), quel que soit l'environnement planétaire. 
 
 Si cette planète est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]], le bonus s'applique également à tous les autres mondes connectés par lignes d'[[encyclopedia SUPPLY_TITLE]] et peuplés d'espèces à''' 
 
@@ -10855,6 +10921,9 @@ Invincible'''
 #AI_SHIPDESIGN_NAME_SCOUT
 #Scout
 
+#AI_SHIPDESIGN_NAME_KRILLSPAWNER
+#Krill Spawner
+
 ### End of AI Shipdesign Name Lists
 
 ### AI Diplomacy Strings and Lists 
@@ -10935,16 +11004,16 @@ HOTKEY_MAP_END_TURN
 Fin de tour
 
 HOTKEY_MAP_RESEARCH
-Menu de Recherche
+Menu de Recherche [on/off]
 
 HOTKEY_MAP_DESIGN
-Menu de Conception
+Menu de Conception [on/off]
 
 HOTKEY_MAP_PRODUCTION
-Menu de Production
+Menu de Production [on/off]
 
 HOTKEY_MAP_SIT_REP
-Rapport de situation
+Rapport de situation [on/off]
 
 HOTKEY_MAP_MENU
 Menu général
@@ -10956,13 +11025,13 @@ HOTKEY_MAP_ZOOM_IN
 Zoom avant
 
 HOTKEY_MAP_ZOOM_IN_ALT
-Zoom avant (autre raccourci)
+Zoom avant [autre raccourci]
 
 HOTKEY_MAP_ZOOM_OUT
 Zoom arrière
 
 HOTKEY_MAP_ZOOM_OUT_ALT
-Zoom arrière (autre raccourci)
+Zoom arrière [autre raccourci]
 
 HOTKEY_MAP_ZOOM_HOME_SYSTEM
 Centrer sur système natal
@@ -10984,6 +11053,12 @@ Flotte stationnaire précédente
 
 HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET
 Flotte stationnaire suivante
+
+HOTKEY_MAP_TOGGLE_SCALE_LINE
+Barre d'échelle [on/off]
+
+HOTKEY_MAP_TOGGLE_SCALE_CIRCLE
+Cercle d'échelle [on/off]
 
 HOTKEY_CUT
 Couper
