@@ -1355,6 +1355,9 @@ Automatically quits once any turns specified by --auto-advance-n-turns are compl
 OPTIONS_DB_BINARY_SERIALIZATION
 Use Binary serialization for savegames and client-server communications (which is compact/fast but may have cross-platform compatibility issues); if unchecked text xml serialization is used. Restart after changing is recommended.
 
+OPTIONS_DB_ALLOW_JOIN_OBSERVER
+Allow clients to join during the playing game.
+
 #################
 # File Dialog   #
 #################

@@ -40,6 +40,8 @@ namespace {
         // they are intended to be changed via the command line and are not currently storable in the configuration file.
         db.Add<std::string>("ai-path",              UserStringNop("OPTIONS_DB_AI_FOLDER_PATH"),        "AI",     Validator<std::string>(), false);
         db.Add<std::string>("ai-config",            UserStringNop("OPTIONS_DB_AI_CONFIG"),             "",       Validator<std::string>(), false);
+
+        db.AddFlag("allow-join-observer",           UserStringNop("OPTIONS_DB_ALLOW_JOIN_OBSERVER"),   false); // Allow clients to join during the playing game.
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

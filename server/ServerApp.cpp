@@ -1177,7 +1177,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 }
 
 void ServerApp::AddObserverPlayerIntoGame(int joined_player_id) {
-    std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
+    const bool join_observer_allowed = GetOptionsDB().Get<bool>("allow-join-observer");
 
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
@@ -1187,16 +1187,15 @@ void ServerApp::AddObserverPlayerIntoGame(int joined_player_id) {
         Networking::ClientType client_type = player_connection->GetClientType();
 
         if(joined_player_id == player_id) {
-            if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                   client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER && join_observer_allowed)
             {
-
+                std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
                 player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, ALL_EMPIRES,
                                                                 m_current_turn, m_empires, m_universe,
                                                                 GetSpeciesManager(), GetCombatLogManager(),
                                                                 player_info_map, m_galaxy_setup_data));
             } else {
-                ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
+                m_networking.Disconnect(player_connection);
             }
         } else {
             // TODO: notify other players.

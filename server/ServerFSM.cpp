@@ -13,7 +13,6 @@
 #include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
-#include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/ModeratorAction.h"
 #include "../util/MultiplayerCommon.h"
@@ -21,6 +20,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/lexical_cast.hpp>
 
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
@@ -1149,8 +1149,6 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     player_connection->SendMessage(JoinAckMessage(player_id));
 
     server.AddObserverPlayerIntoGame(player_id);
-
-    //server.m_networking.Disconnect(player_connection);
 
     return discard_event();
 }
