@@ -165,6 +165,11 @@ public:
     /** Returns the visual style of the button \see StateButtonStyle */
     StateButtonStyle Style() const;
 
+    TextControl* GetLabel() const;
+    Pt  ButtonUpperLeft() const;  ///< Returns the upper-left of the button part of the control
+    Pt  ButtonLowerRight() const; ///< Returns the lower-right of the button part of the control
+    Pt  TextUpperLeft() const;    ///< Returns the upper-left of the text part of the control
+
     mutable CheckedSignalType CheckedSignal; ///< The checked signal object for this StaticButton
     //@}
 
@@ -186,13 +191,6 @@ public:
     //@}
 
 protected:
-    /** \name Accessors */ ///@{
-    TextControl* GetLabel() const;
-    Pt  ButtonUpperLeft() const;  ///< Returns the upper-left of the button part of the control
-    Pt  ButtonLowerRight() const; ///< Returns the lower-right of the button part of the control
-    Pt  TextUpperLeft() const;    ///< Returns the upper-left of the text part of the control
-    //@}
-
     /** \name Mutators */ ///@{
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);

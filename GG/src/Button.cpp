@@ -297,43 +297,70 @@ Clr StateButton::InteriorColor() const
 StateButtonStyle StateButton::Style() const
 { return m_style; }
 
-void StateButton::Render()
-{
-    const int BEVEL = 2;
+namespace {
+    void RenderCheckBox(const GG::StateButton& button)
+    {
+        const int BEVEL = 2;
 
-    // draw button
-    Pt cl_ul = ClientUpperLeft();
-    Pt cl_lr = ClientLowerRight();
-    Pt bn_ul = cl_ul + m_button_ul;
-    Pt bn_lr = cl_ul + m_button_lr;
+        // draw button
+        Pt cl_ul = button.ClientUpperLeft();
+        Pt bn_ul = cl_ul + button.ButtonUpperLeft();
+        Pt bn_lr = cl_ul + button.ButtonLowerRight();
 
-    Pt additional_text_offset;
+        const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
 
-    const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
-
-    switch (m_style) {
-    case SBSTYLE_3D_CHECKBOX:
         BeveledRectangle(bn_ul, bn_lr,
-                         Disabled() ? DisabledColor(m_int_color) : m_int_color,
-                         Disabled() ? DisabledColor(m_color) : m_color,
+                         button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor(),
+                         button.Disabled() ? DisabledColor(button.Color()) : button.Color(),
                          false, BEVEL);
-        if (m_checked)
+        if (button.Checked())
             BeveledCheck(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
-                         Disabled() ? DisabledColor(m_color) : m_color);
-        break;
-    case SBSTYLE_3D_RADIO:
+                         button.Disabled() ? DisabledColor(button.Color()) : button.Color());
+
+        button.GetLabel()->OffsetMove(button.TextUpperLeft());
+        button.GetLabel()->Render();
+        button.GetLabel()->OffsetMove(-button.TextUpperLeft());
+    }
+
+    void RenderRadioBox(const GG::StateButton& button)
+    {
+        const int BEVEL = 2;
+
+        // draw button
+        Pt cl_ul = button.ClientUpperLeft();
+        Pt bn_ul = cl_ul + button.ButtonUpperLeft();
+        Pt bn_lr = cl_ul + button.ButtonLowerRight();
+
+        Pt additional_text_offset;
+
+        const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
+
         BeveledCircle(bn_ul, bn_lr,
-                      Disabled() ? DisabledColor(m_int_color) : m_int_color,
-                      Disabled() ? DisabledColor(m_color) : m_color,
+                      button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor(),
+                      button.Disabled() ? DisabledColor(button.Color()) : button.Color(),
                       false, BEVEL);
-        if (m_checked)
+        if (button.Checked())
             Bubble(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
-                   Disabled() ? DisabledColor(m_color) : m_color);
-        break;
-    case SBSTYLE_3D_TOP_ATTACHED_TAB: {
-        Clr color_to_use = m_checked ? m_color : DarkColor(m_color);
-        color_to_use = Disabled() ? DisabledColor(color_to_use) : color_to_use;
-        if (!m_checked) {
+                   button.Disabled() ? DisabledColor(button.Color()) : button.Color());
+
+        button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+        button.GetLabel()->Render();
+        button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
+    }
+
+    void RenderAttachedTab(const StateButton& button)
+    {
+        const int BEVEL = 2;
+
+        // draw button
+        Pt cl_ul = button.ClientUpperLeft();
+        Pt cl_lr = button.ClientLowerRight();
+
+        Pt additional_text_offset;
+
+        Clr color_to_use = button.Checked() ? button.Color() : DarkColor(button.Color());
+        color_to_use = button.Disabled() ? DisabledColor(color_to_use) : color_to_use;
+        if (!button.Checked()) {
             cl_ul.y += BEVEL;
             additional_text_offset.y = Y(BEVEL / 2);
         }
@@ -341,25 +368,53 @@ void StateButton::Render()
                          color_to_use, color_to_use,
                          true, BEVEL,
                          true, true, true, false);
-        break;
+
+        button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+        button.GetLabel()->Render();
+        button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
     }
-    case SBSTYLE_3D_TOP_DETACHED_TAB: {
-        Clr color_to_use = m_checked ? m_color : DarkColor(m_color);
-        color_to_use = Disabled() ? DisabledColor(color_to_use) : color_to_use;
-        if (!m_checked) {
+
+    void RenderDetachedTab(const StateButton& button)
+    {
+        const int BEVEL = 2;
+
+        // draw button
+        Pt cl_ul = button.ClientUpperLeft();
+        Pt cl_lr = button.ClientLowerRight();
+
+        Pt additional_text_offset;
+
+        Clr color_to_use = button.Checked() ? button.Color() : DarkColor(button.Color());
+        color_to_use = button.Disabled() ? DisabledColor(color_to_use) : color_to_use;
+        if (!button.Checked()) {
             cl_ul.y += BEVEL;
             additional_text_offset.y = Y(BEVEL / 2);
         }
         BeveledRectangle(cl_ul, cl_lr,
                          color_to_use, color_to_use,
                          true, BEVEL);
-        break;
-    }
-    }
 
-    m_label->OffsetMove(m_text_ul + additional_text_offset);
-    m_label->Render();
-    m_label->OffsetMove(-(m_text_ul + additional_text_offset));
+        button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+        button.GetLabel()->Render();
+        button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
+    }
+}
+
+void StateButton::Render()
+{
+    switch (m_style) {
+    case SBSTYLE_3D_CHECKBOX:
+        RenderCheckBox(*this);
+        break;
+    case SBSTYLE_3D_RADIO:
+        RenderRadioBox(*this);
+        break;
+    case SBSTYLE_3D_TOP_ATTACHED_TAB:
+        RenderAttachedTab(*this);
+        break;
+    case SBSTYLE_3D_TOP_DETACHED_TAB:
+        RenderDetachedTab(*this);
+    }
 }
 
 void StateButton::Show(bool children/* = true*/)

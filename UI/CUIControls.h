@@ -129,9 +129,6 @@ public:
     /** \name Mutators */ //@{
     virtual void   Render();
     //@}
-
-private:
-    GG::Clr m_border_color;
 };
 
 /** Tab bar with buttons for selecting tabbed windows. */
