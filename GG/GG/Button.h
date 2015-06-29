@@ -159,6 +159,7 @@ public:
     const std::string& Text() const;        ///< Returns the label to be used as the button label
 
     bool             Checked() const;       ///< Returns true if button is checked
+    bool             IsMouseover() const;   ///< Returns true if mouse pointer is over this button
     Clr              InteriorColor() const; ///< Returns the interior color of the box, circle, or other enclosing shape
 
     /** Returns the visual style of the button \see StateButtonStyle */
@@ -194,6 +195,8 @@ protected:
 
     /** \name Mutators */ ///@{
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
+    virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseLeave();
 
     void RepositionButton();      ///< Places the button at the appropriate position based on the style flags, without resizing it
     //@}
@@ -202,6 +205,7 @@ private:
     TextControl*      m_label;       ///< Label used to display text
 
     bool              m_checked;     ///< true when this button in a checked, active state
+    bool              m_mouseover;   ///< true if the pointer is currently over the control
     Clr               m_int_color;   ///< color inside border
     StateButtonStyle  m_style;       ///< style of appearance to use when rendering button
 

@@ -288,8 +288,7 @@ CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat>
     StateButton(str, ClientUI::GetFont(), format,
                 ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO,
                 style),
-    m_border_color(ClientUI::CtrlBorderColor()),
-    m_mouse_here(false)
+    m_border_color(ClientUI::CtrlBorderColor())
 {
     if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB) {
         SetColor(ClientUI::WndColor());
@@ -322,7 +321,7 @@ void CUIStateButton::Render() {
         GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
         GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
         GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
-        if (!Disabled() && !Checked() && m_mouse_here) {
+        if (!Disabled() && !Checked() && IsMouseover()) {
             AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
             AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
             AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
@@ -423,7 +422,7 @@ void CUIStateButton::Render() {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
         GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
-        if (Checked() || !Disabled() && m_mouse_here)
+        if (Checked() || !Disabled() && IsMouseover())
             AdjustBrightness(border_color_to_use, 100);
         const int UNCHECKED_OFFSET = 4;
         GG::Pt additional_text_offset;
@@ -440,11 +439,6 @@ void CUIStateButton::Render() {
     }
 }
 
-void CUIStateButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ m_mouse_here = true; }
-
-void CUIStateButton::MouseLeave()
-{ m_mouse_here = false; }
 
 
 ///////////////////////////////////////

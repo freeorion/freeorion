@@ -128,13 +128,10 @@ public:
 
     /** \name Mutators */ //@{
     virtual void   Render();
-    virtual void   MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   MouseLeave();
     //@}
 
 private:
     GG::Clr m_border_color;
-    bool    m_mouse_here;
 };
 
 /** Tab bar with buttons for selecting tabbed windows. */

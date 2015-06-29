@@ -262,6 +262,7 @@ StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& 
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
     m_checked(false),
+    m_mouseover(false),
     m_int_color(interior),
     m_style(style)
 {
@@ -286,6 +287,9 @@ const std::string& StateButton::Text() const
 
 bool StateButton::Checked() const
 { return m_checked; }
+
+bool StateButton::IsMouseover() const
+{ return m_mouseover; }
 
 Clr StateButton::InteriorColor() const
 { return m_int_color; }
@@ -368,6 +372,12 @@ void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
         CheckedSignal(m_checked);
     }
 }
+
+void StateButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ m_mouseover = true; }
+
+void StateButton::MouseLeave()
+{ m_mouseover = false; }
 
 void StateButton::SizeMove(const Pt& ul, const Pt& lr)
 {
