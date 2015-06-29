@@ -32,7 +32,7 @@ species_list = [
     ("SP_EXOBOT", "Exobot", "icons/species/robotic-01.png")
 ]
 
-time_factor = {"SP_HAPPY": "1.2"}
+time_factor = {"SP_HAPPY": "1.2", "SP_PHINNERT": "0.75"}
 
 
 t_main = string.Template('''BuildingType

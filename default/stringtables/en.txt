@@ -5162,6 +5162,8 @@ SP_PHINNERT_GAMEPLAY_DESC
 [[AVERAGE_POPULATION]]
 [[BAD_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
+
++	Fast Colonization: -25% time to build colonies
 '''
 
 SP_PHINNERT_DESC
