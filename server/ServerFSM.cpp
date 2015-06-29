@@ -234,7 +234,7 @@ sc::result Idle::react(const HostMPGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) Idle.HostMPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string host_player_name = message.Text();
     // validate host name (was found and wasn't empty)
@@ -263,7 +263,7 @@ sc::result Idle::react(const HostSPGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) Idle.HostSPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
     ExtractMessageData(message, *single_player_setup_data);
@@ -274,7 +274,7 @@ sc::result Idle::react(const HostSPGame& msg) {
     try {
         host_player_name = GetHostNameFromSinglePlayerSetupData(*single_player_setup_data);
     } catch (const std::exception& e) {
-        PlayerConnectionPtr& player_connection = msg.m_player_connection;
+        const PlayerConnectionPtr& player_connection = msg.m_player_connection;
         player_connection->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
         return discard_event();
     }
@@ -420,7 +420,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name;
     Networking::ClientType client_type;
@@ -641,7 +641,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                                    m_lobby_data->m_save_game_empire_data);
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem
-            PlayerConnectionPtr& player_connection = msg.m_player_connection;
+            const PlayerConnectionPtr& player_connection = msg.m_player_connection;
             player_connection->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), false));
             // revert to old save file
             m_lobby_data->m_save_game = old_file;
@@ -687,7 +687,7 @@ sc::result MPLobby::react(const StartMPGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.StartMPGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
         if (m_lobby_data->m_new_game) {
@@ -868,7 +868,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForSPGameJoiners.JoinGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
@@ -993,7 +993,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForMPGameJoiners.JoinGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
@@ -1149,6 +1149,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     OrderSet* order_set = new OrderSet;
     ExtractMessageData(message, *order_set);
 
+    assert(message.SendingPlayer() == msg.m_player_connection->PlayerID());
+
     int player_id = message.SendingPlayer();
     Networking::ClientType client_type = msg.m_player_connection->GetClientType();
 
@@ -1290,7 +1292,7 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (!server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
         return discard_event();
@@ -1333,7 +1335,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForSaveData.ClientSaveData";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     int player_id = player_connection->PlayerID();
 
