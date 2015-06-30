@@ -234,7 +234,7 @@ protected:
     friend class StateButton;
     //@}
 
-private:
+protected:
     void ValidateFormat();      ///< ensures that the format flags are consistent
     void AdjustMinimumSize();
     void RecomputeTextBounds(); ///< recalculates m_text_ul and m_text_lr
