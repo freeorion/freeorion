@@ -1132,7 +1132,7 @@ sc::result PlayingGame::react(const JoinGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.JoinGame";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name;
     Networking::ClientType client_type;
