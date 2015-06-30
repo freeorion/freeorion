@@ -122,10 +122,6 @@ public:
     CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX); ///< ctor
     //@}
 
-    /** \name Accessors */ //@{
-    virtual GG::Pt MinUsableSize() const;
-    //@}
-
     /** \name Mutators */ //@{
     virtual void   Render();
     //@}

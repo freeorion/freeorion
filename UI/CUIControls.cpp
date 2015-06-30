@@ -299,17 +299,6 @@ CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat>
     GG::Connect(CheckedSignal, PlayButtonCheckSound(style == GG::SBSTYLE_3D_RADIO), -1);
 }
 
-GG::Pt CUIStateButton::MinUsableSize() const {
-    // same as StateButton::MinUsableSize, but without the forced minimum 25 width
-    GG::Pt button_ul = this->ButtonUpperLeft();
-    GG::Pt button_lr = this->ButtonLowerRight();
-    GG::Pt text_ul = this->TextUpperLeft();
-    GG::Pt text_lr = text_ul + GetLabel()->MinUsableSize();
-    GG::Pt retval = GG::Pt(std::max(button_lr.x, text_lr.x) - std::min(button_ul.x, text_ul.x),
-                           std::max(button_lr.y, text_lr.y) - std::min(button_ul.y, text_ul.y));
-    return retval;
-}
-
 namespace {
     void RenderCheckBox(const GG::StateButton& button) {
         // draw button

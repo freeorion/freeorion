@@ -279,7 +279,7 @@ Pt StateButton::MinUsableSize() const
 {
     Pt text_lr = m_text_ul + m_label->MinUsableSize();
     return Pt(std::max(m_button_lr.x, text_lr.x) - std::min(m_button_ul.x, m_text_ul.x),
-              std::max(m_button_lr.y, text_lr.y) - std::min(m_button_ul.y, m_text_ul.y)) + GG::Pt(GG::X(25), GG::Y0);
+              std::max(m_button_lr.y, text_lr.y) - std::min(m_button_ul.y, m_text_ul.y));
 }
 
 const std::string& StateButton::Text() const
