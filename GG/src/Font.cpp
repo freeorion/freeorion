@@ -852,7 +852,7 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
 {
     double orig_color[4];
     glGetDoublev(GL_CURRENT_COLOR, orig_color);
-    glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
+    //glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
 
     Y y_origin = ul.y; // default value for FORMAT_TOP
     if (format & FORMAT_BOTTOM)
