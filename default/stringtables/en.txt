@@ -3802,7 +3802,7 @@ Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.''
 SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
 SELF_SUSTAINING_SPECIES_TEXT
-Self-Sustaining species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.
+Self-Sustaining species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
 
 TELEPATHIC_TITLE
 Telepathy
@@ -3819,7 +3819,7 @@ Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 FUEL_TITLE
 Fuel
 FUEL_TEXT
-Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel unless that lane is within supply of the empire, fuel is not used up at any other time. Stopping within[[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship. If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.
+Fuel allows ships to travel the starlanes outside of [[encyclopedia SUPPLY_TITLE]] of your empire. Fuel is consumed for each starlane traversed outside of supply and stopping within [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship. If a ship remains stationery beyond friendly supply lines, fuel will slowly regenerate.
 
 SUPPLY_TITLE
 Supply
@@ -3878,7 +3878,7 @@ Structure is amount of damage that ship can take until it is destroyed. Structur
 STARLANE_SPEED_TITLE
 Starlane Speed
 STARLANE_SPEED_TEXT
-Speed on galaxy map  (uu/turn)
+Speed on galaxy map  (uu/turn). The uu distance travelled by a ship in one turn is equal to its starlane speed value and is displayed on the map by a dotted line followed by a circle showing the number of turns required to travel the full starlane and reach the next system. If a ship starlane speed is less than the starlane length, it will require at least 2 turns to complete the journey. Each starlane traversed will consume only 1 unit of [[encyclopedia FUEL_TITLE]], regardless of the turns required.
 
 AI_ERROR_MSG
 AI_Error: AI script error
