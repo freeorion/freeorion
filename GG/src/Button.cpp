@@ -534,9 +534,6 @@ void StateButton::SetInteriorColor(Clr c)
 void StateButton::SetTextColor(Clr c)
 { m_label->SetTextColor(c); }
 
-void StateButton::SetStyle(StateButtonStyle bs)
-{ m_style = bs; }
-
 TextControl* StateButton::GetLabel() const
 { return m_label; }
 

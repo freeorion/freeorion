@@ -185,9 +185,6 @@ public:
     virtual void     SetColor(Clr c);         ///< Sets the color of the button; does not affect text color
     void             SetInteriorColor(Clr c); ///< Sets the interior color of the box, circle, or other enclosing shape
     void             SetTextColor(Clr c); ///< Sets the color of the box label text
-
-    /** Sets the visual style of the button \see StateButtonStyle */
-    void             SetStyle(StateButtonStyle bs);
     //@}
 
 protected:
