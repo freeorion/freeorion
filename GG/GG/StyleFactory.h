@@ -117,7 +117,7 @@ public:
 
     /** Returns a new GG TabBar. */
     virtual TabBar*            NewTabBar(const boost::shared_ptr<Font>& font, Clr color,
-                                         Clr text_color = CLR_BLACK, TabBarStyle style = TAB_BAR_ATTACHED) const;
+                                         Clr text_color = CLR_BLACK) const;
 
     /** Returns a new GG TextControl. */
     virtual TextControl*       NewTextControl(const std::string& str, const boost::shared_ptr<Font>& font,
@@ -176,8 +176,7 @@ public:
     /** Returns a new StateButton, to be used in a TabBar. */
     virtual StateButton*       NewTabBarTab(const std::string& str,
                                             const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
-                                            Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO,
-                                            StateButtonStyle style = SBSTYLE_3D_TOP_ATTACHED_TAB) const;
+                                            Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
     virtual Button*            NewTabBarLeftButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;

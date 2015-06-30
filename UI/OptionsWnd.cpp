@@ -378,7 +378,7 @@ OptionsWnd::OptionsWnd():
     // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
     // The placement of the tab register buttons assumes that the whole TabWnd is at least
     // wider than the first tab button.
-    m_tabs = new GG::TabWnd(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
+    m_tabs = new GG::TabWnd(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
 
     ResetDefaultPosition();
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));

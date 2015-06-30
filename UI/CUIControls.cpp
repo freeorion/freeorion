@@ -289,7 +289,7 @@ CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat>
                 ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO,
                 style)
 {
-    if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB) {
+    if (style == GG::SBSTYLE_3D_TOP_TAB) {
         SetColor(ClientUI::WndColor());
         GetLabel()->SetTextColor(DarkColor(ClientUI::TextColor()));
     }
@@ -421,7 +421,7 @@ namespace {
         button.GetLabel()->OffsetMove(-button.TextUpperLeft());
     }
 
-    void RenderDetachedTab(const GG::StateButton& button) {
+    void RenderTab(const GG::StateButton& button) {
         GG::Pt ul = button.UpperLeft(), lr = button.LowerRight();
         GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
         GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
@@ -448,8 +448,8 @@ void CUIStateButton::Render() {
     case GG::SBSTYLE_3D_RADIO:
         RenderRadioBox(*this);
         break;
-    case GG::SBSTYLE_3D_TOP_DETACHED_TAB:
-        RenderDetachedTab(*this);
+    case GG::SBSTYLE_3D_TOP_TAB:
+        RenderTab(*this);
         break;
     default:
         StateButton::Render();
@@ -460,9 +460,8 @@ void CUIStateButton::Render() {
 ///////////////////////////////////////
 // class CUITabBar
 ///////////////////////////////////////
-CUITabBar::CUITabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color,
-                     GG::TabBarStyle style) :
-    GG::TabBar(font, color, text_color, style)
+CUITabBar::CUITabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color) :
+    GG::TabBar(font, color, text_color)
 {}
 
 void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) {

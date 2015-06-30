@@ -150,9 +150,9 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 const std::size_t TabWnd::NO_WND = std::numeric_limits<std::size_t>::max();
 
 TabWnd::TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color,
-               Clr text_color/* = CLR_BLACK*/, TabBarStyle style/* = TAB_BAR_ATTACHED*/) :
+               Clr text_color/* = CLR_BLACK*/) :
     Wnd(x, y, w, h, INTERACTIVE),
-    m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color, style)),
+    m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color)),
     m_overlay(new OverlayWnd(X0, Y0, X1, Y1))
 {
     Layout* layout = new Layout(X0, Y0, w, h, 2, 1);
@@ -252,7 +252,7 @@ const std::size_t TabBar::NO_TAB = TabWnd::NO_WND;
 const X TabBar::BUTTON_WIDTH(10);
 
 TabBar::TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
-               TabBarStyle style/* = TAB_BAR_ATTACHED*/, Flags<WndFlag> flags/* = INTERACTIVE*/) :
+               Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
     m_tabs(0),
     m_font(font),
@@ -260,7 +260,6 @@ TabBar::TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* 
     m_right_button(0),
     m_left_right_button_layout(new Layout(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),
     m_text_color(text_color),
-    m_style(style),
     m_first_tab_shown(0)
 {
     SetColor(color);
@@ -366,10 +365,7 @@ void TabBar::InsertTab(std::size_t index, const std::string& name)
     boost::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
     StateButton* button = style_factory->NewTabBarTab(name,
                                                       m_font, FORMAT_CENTER, Color(),
-                                                      m_text_color, CLR_ZERO,
-                                                      m_style == TAB_BAR_ATTACHED ?
-                                                      SBSTYLE_3D_TOP_ATTACHED_TAB :
-                                                      SBSTYLE_3D_TOP_DETACHED_TAB);
+                                                      m_text_color);
     button->InstallEventFilter(this);
     m_tab_buttons.insert(m_tab_buttons.begin() + index, button);
     m_tabs->InsertButton(index, m_tab_buttons[index]);

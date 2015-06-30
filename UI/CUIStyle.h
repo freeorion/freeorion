@@ -23,7 +23,7 @@ public:
 
 
     virtual GG::TabBar*            NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
-                                             GG::Clr text_color = GG::CLR_BLACK, GG::TabBarStyle style = GG::TAB_BAR_ATTACHED) const;
+                                             GG::Clr text_color = GG::CLR_BLACK) const;
 
     virtual GG::Button*            NewScrollUpButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 
@@ -47,8 +47,7 @@ public:
 
     virtual GG::StateButton*       NewTabBarTab(const std::string& str,
                                                 const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
-                                                GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
-                                                GG::StateButtonStyle style = GG::SBSTYLE_3D_TOP_ATTACHED_TAB) const;
+                                                GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO) const;
 
     virtual GG::Button*            NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
 

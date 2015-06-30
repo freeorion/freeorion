@@ -125,8 +125,7 @@ public:
 
     /** \name Structors */ ///@{
     /** Basic ctor. */
-    TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
-           TabBarStyle style = TAB_BAR_ATTACHED);
+    TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK);
     //@}
 
     /** \name Accessors */ ///@{
@@ -215,7 +214,7 @@ public:
     /** \name Structors */ ///@{
     /** Basic ctor. */
     TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
-           TabBarStyle style = TAB_BAR_ATTACHED, Flags<WndFlag> flags = INTERACTIVE);
+           Flags<WndFlag> flags = INTERACTIVE);
     //@}
 
     /** \name Accessors */ ///@{
@@ -301,7 +300,6 @@ private:
     Layout*                   m_left_right_button_layout;
     Flags<TextFormat>         m_format;
     Clr                       m_text_color;
-    TabBarStyle               m_style;
     std::size_t               m_first_tab_shown;
 };
 

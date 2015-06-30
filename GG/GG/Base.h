@@ -98,25 +98,9 @@ GG_ENUM(StateButtonStyle,
     SBSTYLE_3D_RADIO,        ///< Draws a down-beveled circle with a 3D "dot" or "bubble" inside.
 
     /** Draws an up-beveled rectagular tab that is brighter and larger when
-        pressed; it's bottom is unbeveled. */
-    SBSTYLE_3D_TOP_ATTACHED_TAB,
-
-    /** Draws an up-beveled rectagular tab that is brighter and larger when
-        pressed; it's bottom is beveled. */
-    SBSTYLE_3D_TOP_DETACHED_TAB
+        pressed; it's bottom is unbeveled if checked and beveled if unchecked. */
+    SBSTYLE_3D_TOP_TAB
 )
-
-/** The styles of display for a TabBar. */
-GG_ENUM(TabBarStyle,
-    /** The currently active tab should appear to be connected to the area
-        below the bar. */
-    TAB_BAR_ATTACHED,
-
-    /** The currently active tab should appear to be unconnected to the area
-        below the bar. */
-    TAB_BAR_DETACHED
-)
-
 
 /** Adpated from SDLKey enum in SDL_keysym.h of the SDL library; capital
     letter keys added. */

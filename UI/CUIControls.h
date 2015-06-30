@@ -133,7 +133,7 @@ public:
     /** \name Structors */ ///@{
     /** Basic ctor. */
     CUITabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
-              GG::Clr text_color, GG::TabBarStyle style);
+              GG::Clr text_color);
     //@}
 
 private:

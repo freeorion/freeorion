@@ -110,9 +110,8 @@ TextControl* StyleFactory::NewTextControl(const std::string& str, const boost::s
                                           Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/) const
 { return new TextControl(X0, Y0, X1, Y1, str, font, color, format, NO_WND_FLAGS); }
 
-TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
-                                TabBarStyle style/* = TAB_BAR_ATTACHED*/) const
-{ return new TabBar(font, color, text_color, style, INTERACTIVE); }
+TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+{ return new TabBar(font, color, text_color, INTERACTIVE); }
 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
 {
@@ -172,10 +171,9 @@ Edit* StyleFactory::NewSpinEdit(const std::string& str, const boost::shared_ptr<
 
 StateButton* StyleFactory::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
-                                        Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
-                                        StateButtonStyle style/* = SBSTYLE_3D_TOP_ATTACHED_TAB*/) const
+                                        Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
 {
-    StateButton* retval = new StateButton(str, font, format, color, text_color, interior, style);
+    StateButton* retval = new StateButton(str, font, format, color, text_color, interior, SBSTYLE_3D_TOP_TAB);
     retval->Resize(retval->MinUsableSize() + Pt(X(12), Y0));
     return retval;
 }

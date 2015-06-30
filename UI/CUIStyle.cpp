@@ -67,9 +67,8 @@ GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orient
 { return new CUISlider<int>(min, max, orientation); }
 
 
-GG::TabBar* CUIStyle::NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
-                                GG::TabBarStyle style/* = GG::TAB_BAR_ATTACHED*/) const
-{ return new CUITabBar(font, color, text_color, style); }
+GG::TabBar* CUIStyle::NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+{ return new CUITabBar(font, color, text_color); }
 
 GG::Button* CUIStyle::NewScrollUpButton(GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 { return 0; }
@@ -103,10 +102,9 @@ GG::Button* CUIStyle::NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font,
 
 GG::StateButton* CUIStyle::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
-                                        GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                                        GG::StateButtonStyle style/* = GG::SBSTYLE_3D_TOP_ATTACHED_TAB*/) const
+                                        GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/) const
 {
-    GG::StateButton* retval = new CUIStateButton(str, format, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
+    GG::StateButton* retval = new CUIStateButton(str, format, GG::SBSTYLE_3D_TOP_TAB);
     retval->Resize(retval->MinUsableSize() + GG::Pt(GG::X(12), GG::Y0));
     return retval;
 }

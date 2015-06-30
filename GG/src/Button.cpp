@@ -348,7 +348,7 @@ namespace {
         button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
     }
 
-    void RenderAttachedTab(const StateButton& button)
+    void RenderTab(const StateButton& button)
     {
         const int BEVEL = 2;
 
@@ -367,32 +367,7 @@ namespace {
         BeveledRectangle(cl_ul, cl_lr,
                          color_to_use, color_to_use,
                          true, BEVEL,
-                         true, true, true, false);
-
-        button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
-        button.GetLabel()->Render();
-        button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
-    }
-
-    void RenderDetachedTab(const StateButton& button)
-    {
-        const int BEVEL = 2;
-
-        // draw button
-        Pt cl_ul = button.ClientUpperLeft();
-        Pt cl_lr = button.ClientLowerRight();
-
-        Pt additional_text_offset;
-
-        Clr color_to_use = button.Checked() ? button.Color() : DarkColor(button.Color());
-        color_to_use = button.Disabled() ? DisabledColor(color_to_use) : color_to_use;
-        if (!button.Checked()) {
-            cl_ul.y += BEVEL;
-            additional_text_offset.y = Y(BEVEL / 2);
-        }
-        BeveledRectangle(cl_ul, cl_lr,
-                         color_to_use, color_to_use,
-                         true, BEVEL);
+                         true, true, true, !button.Checked());
 
         button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
         button.GetLabel()->Render();
@@ -409,11 +384,8 @@ void StateButton::Render()
     case SBSTYLE_3D_RADIO:
         RenderRadioBox(*this);
         break;
-    case SBSTYLE_3D_TOP_ATTACHED_TAB:
-        RenderAttachedTab(*this);
-        break;
-    case SBSTYLE_3D_TOP_DETACHED_TAB:
-        RenderDetachedTab(*this);
+    case SBSTYLE_3D_TOP_TAB:
+        RenderTab(*this);
     }
 }
 
@@ -449,8 +421,7 @@ void StateButton::SetCheck(bool b/* = true*/)
 
 void StateButton::RepositionButton()
 {
-    if (m_style == SBSTYLE_3D_TOP_ATTACHED_TAB ||
-        m_style == SBSTYLE_3D_TOP_DETACHED_TAB) {
+    if (m_style == SBSTYLE_3D_TOP_TAB) {
         m_button_ul = Pt();
         m_button_lr = Pt();
         m_text_ul = Pt();
