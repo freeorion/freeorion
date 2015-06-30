@@ -9032,9 +9032,9 @@ BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
 
 BLD_NEUTRONIUM_EXTRACTOR_DESC
-'''Permits construction of ships with Neutronium ship parts.
+'''Makes Neutronium available to the owning empire.  Neutronium may be used at a [[buildingtype BLD_NEUTRONIUM_FORGE]] to enable construction of ships with Neutronium ship parts, like the [[shippart AR_NEUTRONIUM_PLATE]].
 
-Before parts can be built using Neutronium, it must be extracted from a neutron star. Neutronium extracted at this facility is transported to [[buildingtype BLD_NEUTRONIUM_FORGE]]s throughout the empire. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
+Before parts can be built using Neutronium, it must be extracted from a neutron star. Neutronium extracted at this facility is transported to Neutronium Forges throughout the empire. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_NEUTRONIUM_FORGE
 Neutronium Forge
@@ -9042,13 +9042,13 @@ Neutronium Forge
 BLD_NEUTRONIUM_FORGE_DESC
 '''This building is required at the same location as a [[buildingtype BLD_SHIPYARD_BASE]] to enable building ships with neutronium parts.
 
-The industrial processing of neutronium requires an extensive specialized facility. Unlike most shipyards and shipyard upgrades, this building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
+The industrial processing of neutronium requires an extensive specialized facility. This building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
 
 BLD_NEUTRONIUM_SYNTH
 Neutronium Synthesizer
 
 BLD_NEUTRONIUM_SYNTH_DESC
-'''An empire with this building does not need a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] to build neutronium ship parts.
+'''An empire with this building does not need a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] to harvest the neutronium required to enable construction of ships with Neutronium ship parts.
 
 An ancient building designed long ago to synthesize neutronium.'''
 
