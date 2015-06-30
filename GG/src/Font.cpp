@@ -817,9 +817,9 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
 }
 
 void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
-                     const std::vector<LineData>& line_data, RenderState& render_state,
-                     std::size_t begin_line, CPSize begin_char,
-                     std::size_t end_line, CPSize end_char) const
+                      const std::vector<LineData>& line_data, RenderState& render_state,
+                      std::size_t begin_line, CPSize begin_char,
+                      std::size_t end_line, CPSize end_char) const
  {
     RenderCache cache;
     PreRenderText(ul, lr, text, format, line_data, render_state, begin_line, begin_char, end_line, end_char, cache);
@@ -827,7 +827,7 @@ void Font::RenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags
 }
 
 void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format, RenderCache& cache,
-                      const std::vector<LineData>* line_data/* = 0*/, RenderState* render_state/* = 0*/) const
+                         const std::vector<LineData>* line_data/* = 0*/, RenderState* render_state/* = 0*/) const
  {
     RenderState state;
     if (!render_state)
@@ -845,10 +845,10 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
 }
 
 void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
-                      const std::vector<LineData>& line_data, RenderState& render_state,
-                      std::size_t begin_line, CPSize begin_char,
-                      std::size_t end_line, CPSize end_char,
-                      RenderCache& cache) const
+                         const std::vector<LineData>& line_data, RenderState& render_state,
+                         std::size_t begin_line, CPSize begin_char,
+                         std::size_t end_line, CPSize end_char,
+                         RenderCache& cache) const
 {
     double orig_color[4];
     glGetDoublev(GL_CURRENT_COLOR, orig_color);
