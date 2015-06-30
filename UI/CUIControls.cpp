@@ -12,6 +12,7 @@
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
+#include <GG/GLClientAndServerBuffer.h>
 #include <GG/dialogs/ColorDlg.h>
 
 #include <boost/lexical_cast.hpp>
@@ -1531,64 +1532,59 @@ void FPSIndicator::UpdateEnabled()
 //////////////////////////////////////////////////
 // ShadowedTextControl
 //////////////////////////////////////////////////
-
-// Create a regex that recognizes a tag
-boost::regex TagRegex(const std::string& tag){
-   return boost::regex(std::string("<")+tag+"[^<>]*>(.*)</"+tag+">");
-}
-
-
-std::string RemoveRGB(const std::string& text){
-    static boost::regex rx("<rgba[^<>]*>|</rgba>");// = TagRegex("rgba");
-    return boost::regex_replace(text, rx, "", boost::match_default | boost::format_all);
-}
-
 ShadowedTextControl::ShadowedTextControl(const std::string& str,
                                          const boost::shared_ptr<GG::Font>& font,
                                          GG::Clr color, GG::Flags<GG::TextFormat> format) :
-    GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    shadow_text(new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, RemoveRGB(str), font, GG::CLR_BLACK, format, GG::NO_WND_FLAGS)),
-    main_text(new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, format, GG::NO_WND_FLAGS))
-{
-    Resize(main_text->Size());
-    AttachChild(shadow_text);
-    AttachChild(main_text);
-}
-
-GG::Pt ShadowedTextControl::MinUsableSize() const
-{ return main_text->MinUsableSize(); }
-
-void ShadowedTextControl::SetText(const std::string& str) {
-    shadow_text->SetText(str);
-    main_text->SetText(str);
-}
-
-void ShadowedTextControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Control::SizeMove(ul, lr);
-    main_text->Resize(Size());
-    shadow_text->Resize(Size());
-}
-
-void ShadowedTextControl::SetColor(GG::Clr c)
-{ main_text->SetColor(c); }
-
-void ShadowedTextControl::SetTextColor ( GG::Clr c )
-{ main_text->SetTextColor(c); }
+    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, str, font, color, format, GG::NO_WND_FLAGS)
+{}
 
 void ShadowedTextControl::Render() {
-    shadow_text->OffsetMove(GG::Pt(-GG::X1, GG::Y(0)));      // shadow to left
-    shadow_text->Render();
+    if (!m_font)
+        return;
+    if (m_render_cache == 0) {
+        PurgeCache();
+        m_render_cache = new GG::Font::RenderCache();
+        if (m_font) {
+            GG::Clr clr_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
+            glColor(clr_to_use);
+            m_font->PreRenderText(GG::Pt(GG::X0, GG::Y0), Size(), m_text, m_format, *m_render_cache, &m_line_data);
+        }
+    }
 
-    shadow_text->OffsetMove(GG::Pt(GG::X1, GG::Y1));         // up
-    shadow_text->Render();
+    GG::Clr clr_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
 
-    shadow_text->OffsetMove(GG::Pt(GG::X1, -GG::Y1));        // right
-    shadow_text->Render();
+    if (m_clip_text)
+        BeginClipping();
+    glPushMatrix();
 
-    shadow_text->OffsetMove(GG::Pt(-GG::X1, -GG::Y1));       // down
-    shadow_text->Render();
+    GG::Pt ul = ClientUpperLeft();
 
-    shadow_text->OffsetMove(GG::Pt(GG::X0, GG::Y1));       // center
+    glTranslated(GG::Value(ul.x), GG::Value(ul.y), 0);
+
+    // render text shadow background
+    boost::scoped_ptr<GG::GLRGBAColorBuffer> colors_temp(new GG::GLRGBAColorBuffer());
+    for (unsigned int i = 0; i < m_render_cache->colors->size(); ++i)
+        colors_temp->store(GG::CLR_BLACK);
+    m_render_cache->colors.swap(colors_temp);
+
+    glTranslated( 1.0,  0.0,  0.0);
+    m_font->RenderCachedText(*m_render_cache);
+    glTranslated(-1.0,  0.0,  0.0);
+    m_font->RenderCachedText(*m_render_cache);
+    glTranslated( 0.0,  1.0,  0.0);
+    m_font->RenderCachedText(*m_render_cache);
+    glTranslated( 0.0, -1.0,  0.0);
+    m_font->RenderCachedText(*m_render_cache);
+
+    // restore original colours and render main text over shadows
+    m_render_cache->colors.swap(colors_temp);
+    m_font->RenderCachedText(*m_render_cache);
+    //RenderFontWithBlackBackground(m_font.get(), m_render_cache, m_font->GetTexture()->OpenGLId());
+
+    glPopMatrix();
+
+    if (m_clip_text)
+        EndClipping();
 }
 
 
