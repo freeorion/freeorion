@@ -584,6 +584,7 @@ bool Font::LineData::Empty() const
 ///////////////////////////////////////
 Font::RenderState::RenderState() :
     use_italics(0),
+    use_shadow(0),
     draw_underline(0)
 {
     // Initialize the color stack with the current color
@@ -594,6 +595,7 @@ Font::RenderState::RenderState() :
 
 Font::RenderState::RenderState (Clr color):
     use_italics(0),
+    use_shadow(0),
     draw_underline(0)
 {
     PushColor(color.r, color.g, color.b, color.a);
@@ -698,6 +700,7 @@ Font::Font() :
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
+    m_shadow_offset(0.0),
     m_space_width(0)
 {}
 
@@ -711,6 +714,7 @@ Font::Font(const std::string& font_filename, unsigned int pts) :
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
+    m_shadow_offset(0.0),
     m_space_width(0)
 {
     if (m_font_filename != "") {
@@ -732,6 +736,7 @@ Font::Font(const std::string& font_filename, unsigned int pts,
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
+    m_shadow_offset(0.0),
     m_space_width(0)
 {
     assert(!file_contents.empty());
@@ -1002,6 +1007,7 @@ void Font::ClearKnownTags()
 {
     s_action_tags.clear();
     s_action_tags.insert("i");
+    s_action_tags.insert("s");
     s_action_tags.insert("u");
     s_action_tags.insert("rgba");
     s_action_tags.insert(ALIGN_LEFT_TAG);
@@ -1459,6 +1465,8 @@ void Font::Init(FT_Face& face)
     }
     // italics info
     m_italics_offset = Value(ITALICS_FACTOR * m_height / 2.0);
+    // shadow info
+    m_shadow_offset = 1.0;
 
     // we always need these whitespace, number, and punctuation characters
     std::vector<std::pair<boost::uint32_t, boost::uint32_t> > range_vec(
@@ -1619,27 +1627,31 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
 X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* render_state,
                    Font::RenderCache& cache) const
 {
-    int offset = 0;
+    int italic_top_offset = 0;
+    int shadow_offset = 0;
 
     if (render_state && render_state->use_italics) {
         // Should we enable sub pixel italics offsets?
-        offset = static_cast<int>(m_italics_offset);
+        italic_top_offset = static_cast<int>(m_italics_offset);
+    }
+    if (render_state && render_state->use_shadow) {
+        shadow_offset = static_cast<int>(m_shadow_offset);
     }
     cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.left_bearing + offset, pt.y + glyph.y_offset);
+    cache.vertices->store(pt.x + glyph.left_bearing + italic_top_offset, pt.y + glyph.y_offset);
     cache.colors->store(render_state->CurrentColor());
 
     cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + offset, pt.y + glyph.y_offset);
+    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + italic_top_offset, pt.y + glyph.y_offset);
     cache.colors->store(render_state->CurrentColor());
 
     cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - offset,
+    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - italic_top_offset,
                                      pt.y + glyph.sub_texture.Height() + glyph.y_offset);
     cache.colors->store(render_state->CurrentColor());
 
     cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.left_bearing - offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+    cache.vertices->store(pt.x + glyph.left_bearing - italic_top_offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
     cache.colors->store(render_state->CurrentColor());
 
     if (render_state && render_state->draw_underline) {
@@ -1679,6 +1691,14 @@ void Font::HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_c
             }
         } else {
             ++render_state.draw_underline;
+        }
+    } else if (tag->tag_name == "s") {
+        if (tag->close_tag) {
+            if (render_state.use_shadow) {
+                --render_state.use_shadow;
+            }
+        } else {
+            ++render_state.use_shadow;
         }
     } else if (tag->tag_name == "rgba") {
         if (tag->close_tag) {
