@@ -269,7 +269,7 @@ StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& 
     m_color = color;
     AttachChild(m_label);
     m_label->Hide();
-    SetDefaultButtonPosition();
+    RepositionButton();
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(CheckedSignal, &CheckedEcho);
@@ -421,6 +421,12 @@ void StateButton::SetCheck(bool b/* = true*/)
 
 void StateButton::RepositionButton()
 {
+    X bn_w = X(m_label->GetFont()->PointSize()); // set button width and height to text height
+    Y bn_h = Y(m_label->GetFont()->PointSize());
+
+    m_button_ul = Pt();
+    m_button_lr = Pt(bn_w, bn_h);
+
     if (m_style == SBSTYLE_3D_TOP_TAB) {
         m_button_ul = Pt();
         m_button_lr = Pt();
@@ -470,31 +476,6 @@ void StateButton::RepositionButton()
         m_button_lr = m_button_ul + Pt(BN_W, BN_H);
     }
 }
-
-void StateButton::SetButtonPosition(const Pt& ul, const Pt& lr)
-{
-    X bn_x = ul.x;
-    Y bn_y = ul.y;
-    X bn_w = lr.x - ul.x;
-    Y bn_h = lr.y - ul.y;
-
-    if (bn_w <= 0 || bn_h <= 0) {              // if one of these is invalid,
-        bn_w = X(m_label->GetFont()->PointSize()); // set button width and height to text height
-        bn_h = Y(m_label->GetFont()->PointSize());
-    }
-
-    if (bn_x == -1 || bn_y == -1) {
-        m_button_ul = Pt(X0, Y0);
-        m_button_lr = Pt(bn_w, bn_h);
-        RepositionButton();
-    } else {
-        m_button_ul = Pt(bn_x, bn_y);
-        m_button_lr = m_button_ul + Pt(bn_w, bn_h);
-    }
-}
-
-void StateButton::SetDefaultButtonPosition()
-{ SetButtonPosition(Pt(-X1, -Y1), Pt(-X1, -Y1)); }
 
 void StateButton::SetColor(Clr c)
 { Control::SetColor(c); }

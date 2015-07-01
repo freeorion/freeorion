@@ -180,8 +180,6 @@ public:
 
     void             Reset();                 ///< Unchecks button
     void             SetCheck(bool b = true); ///< (Un)checks button
-    void             SetButtonPosition(const Pt& ul, const Pt& lr); ///< places the button within the control
-    void             SetDefaultButtonPosition(); ///< Places the button to its default positionwithin the control
     virtual void     SetColor(Clr c);         ///< Sets the color of the button; does not affect text color
     void             SetInteriorColor(Clr c); ///< Sets the interior color of the box, circle, or other enclosing shape
     void             SetTextColor(Clr c); ///< Sets the color of the box label text
