@@ -3763,7 +3763,7 @@ Detection Range
 DETECTION_RANGE_TEXT
 '''The Detection Range represents the distance in uu that sensors can reach. An empire can only see objects that have a [[encyclopedia STEALTH_TITLE]] value lower than or equal to its [[encyclopedia DETECTION_TITLE]] and are within Detection Range of a controlled space ship or planet.
 
-Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles in the Galaxy Map section of the Options menu.'''
+Space ships and planets have a Detection Range meter. There is the option to display Detection Range circles (in uu) in the Galaxy Map section of the Options menu.  To facilitate predictions of what would be within a Detection Range, there are also options to display a standard 'Map Scale Line' as well as a 'Map Scale Circle' centered on the currently selected system and indicating the same distance as the Map Scale Line.  They are both responsive to the the map zoom level and can be toggled via hotkeys.'''
 
 TROOP_TITLE
 Troops
@@ -8887,7 +8887,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]]. Friendly ships within 50 uus gain a [[encyclopedia STARLANE_SPEED_TITLE]] bonus of 20.
+Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. Friendly ships within 50 uus gain a starlane speed bonus of 20. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]] and may facilitate use of a [[buildingtype BLD_PLANET_DRIVE]].
 
 BLD_SCANNING_FACILITY
 Scanning Facility
