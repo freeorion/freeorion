@@ -208,3 +208,17 @@ Article
     description = "STARLANE_SPEED_TEXT"
     icon = "icons/meter/speed.png"
     
+Article
+    name = "MAP_WINDOW_ARTICLE_TITLE"
+    category = "CATEGORY_USER_INTERFACE"
+    short_description = "MAP_WINDOW_ARTICLE_TITLE"
+    description = "MAP_WINDOW_ARTICLE_TEXT"
+    icon = "icons/tech/galactic_exploration.png"
+    
+Article
+    name = "HIDDEN_SETTINGS_ARTICLE_TITLE"
+    category = "CATEGORY_USER_INTERFACE"
+    short_description = "HIDDEN_SETTINGS_ARTICLE_TITLE"
+    description = "HIDDEN_SETTINGS__ARTICLE_TEXT"
+    icon = "icons/tech/galactic_exploration.png"
+    

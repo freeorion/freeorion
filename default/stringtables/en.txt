@@ -3634,6 +3634,9 @@ Lost: %1%
 CATEGORY_GAME_CONCEPTS
 *Game Concepts*
 
+CATEGORY_USER_INTERFACE
+*Interface*
+
 GROWTH_ARTICLE_SHORT_DESC
 Growth
 
@@ -3879,6 +3882,24 @@ STARLANE_SPEED_TITLE
 Starlane Speed
 STARLANE_SPEED_TEXT
 Speed on galaxy map  (uu/turn). The uu distance travelled by a ship in one turn is equal to its starlane speed value and is displayed on the map by a dotted line followed by a circle showing the number of turns required to travel the full starlane and reach the next system. If a ship starlane speed is less than the starlane length, it will require at least 2 turns to complete the journey. Each starlane traversed will consume only 1 unit of [[encyclopedia FUEL_TITLE]], regardless of the turns required.
+
+MAP_WINDOW_ARTICLE_TITLE
+Map Window
+MAP_WINDOW_ARTICLE_TEXT
+The Map Window can be considered the 'main' game screen, which shows the galaxy and from which nearly all other windows can be accessed.  A number of control elements are displayed in upper bar.  In the upper left corner is the Turn Button, which reads as "Turn n" (where n is the current turn); left clicking the Turn Button causes the game to advance to the next turn. Immediately to its right is the Auto Advance Toggle; when showing as a fist the game will not auto-advance; if clicked to toggle to circular arcing arrows the game will autoadvance to the next turn once all other empires have submitted their orders for the turn.  Next are icons showing the player empire total [[encyclopedia INDUSTRY_TITLE]], total [[encyclopedia RESEARCH_TITLE]], number of existing ships, and Empire [[encyclopedia DETECTION_TITLE]].  On the right hand side of the control bar are a number of icons for toggling display of other significant UI windows.  Tooltps are available for these.
+
+HIDDEN_SETTINGS_ARTICLE_TITLE
+Hidden Settings
+HIDDEN_SETTINGS__ARTICLE_TEXT
+'''There are a number of User Interface (UI) settings and other game settings that can be changed by the user via the Options Menu; there are also a number of UI settings which do not appear in the Options pages, but which can be changed by the user by directly editing the config.xml file, located in the logging directory.  Directions for identifying the location of this file on the various different platforms is available at the FreeOrion Wiki.
+
+In addition to a great many entries for the size/location of various UI elements, these 'Hidden Settings' include:
+
+UI.design-pedia-dynamic : controls whether or not the design detail pedia page in the Design Window will be dynamically updated as the design name is edited (can cause lag)
+
+show-fleet-eta : controls whether a fleet's Estimated Time of Arrival (ETA), in number of turns from the current turn, is shown in its Fleet Panel in the Fleet Window
+
+'''
 
 AI_ERROR_MSG
 AI_Error: AI script error
