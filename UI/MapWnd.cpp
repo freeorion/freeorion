@@ -295,7 +295,7 @@ public:
         m_label(0),
         m_enabled(false)
     {
-        m_label = new ShadowedTextControl("", ClientUI::GetFont(), ClientUI::TextColor());
+        m_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
         AttachChild(m_label);
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);
@@ -454,7 +454,7 @@ private:
 
     double              m_scale_factor;
     GG::X               m_line_length;
-    ShadowedTextControl* m_label;
+    GG::TextControl*    m_label;
     bool                m_enabled;
 };
 

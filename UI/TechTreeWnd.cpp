@@ -588,8 +588,8 @@ private:
     std::string                     m_eta_text;
     const TechTreeWnd::LayoutPanel* m_layout_panel;
     GG::StaticGraphic*              m_icon;
-    ShadowedTextControl*            m_name_label;
-    ShadowedTextControl*            m_eta_label;
+    GG::TextControl*                m_name_label;
+    GG::TextControl*                m_eta_label;
     GG::Clr                         m_colour;
     TechStatus                      m_status;
     bool                            m_browse_highlight;
@@ -617,8 +617,8 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     const int GRAPHIC_SIZE = Value(TechPanelHeight());
     m_icon = new GG::StaticGraphic(ClientUI::TechIcon(m_tech_name), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
-    m_name_label = new ShadowedTextControl("", ClientUI::GetFont(FontSize()),ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
-    m_eta_label = new ShadowedTextControl("", ClientUI::GetFont(FontSize()),ClientUI::TextColor());
+    m_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()),ClientUI::TextColor(), GG::FORMAT_WORDBREAK | GG::FORMAT_VCENTER | GG::FORMAT_LEFT);
+    m_eta_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(FontSize()),ClientUI::TextColor());
 
     // intentionally not attaching as child; TechPanel::Render the child Render() function instead.
 
@@ -627,8 +627,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     Update();
 }
 
-TechTreeWnd::LayoutPanel::TechPanel::~TechPanel()
-{
+TechTreeWnd::LayoutPanel::TechPanel::~TechPanel() {
     delete m_icon;
     delete m_name_label;
     delete m_eta_label;
@@ -828,8 +827,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
     m_icon->SetColor(icon_colour);
 
     m_name_text = UserString(m_tech_name);
-    m_name_label->SetText(m_name_text);
-    m_eta_label->SetText(m_eta_text);
+    m_name_label->SetText("<s>" + m_name_text + "</s>");
+    m_eta_label->SetText("<s>" + m_eta_text + "</s>");
 
     ClearBrowseInfoWnd();
     SetBrowseInfoWnd(TechPanelRowBrowseWnd(m_tech_name, client_empire_id));
