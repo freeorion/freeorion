@@ -115,15 +115,39 @@ private:
     bool             m_fill_background_with_wnd_color;
 };
 
+
+/** \brief A FreeOrion styled check box state button. */
+class CUICheckBoxRepresenter : public GG::StateButtonRepresenter {
+public:
+    virtual void Render(const GG::StateButton& button) const;
+
+    virtual void OnChecked(bool checked) const;
+};
+
+
+/** \brief A FreeOrion styled radio state button. */
+class CUIRadioRepresenter : public GG::StateButtonRepresenter {
+public:
+    virtual void Render(const GG::StateButton& button) const;
+
+    virtual void OnChecked(bool checked) const;
+};
+
+
+/** \brief A FreeOrion styled TabBar tab. */
+class CUITabRepresenter : public GG::StateButtonRepresenter {
+public:
+    virtual void Render(const GG::StateButton& button) const;
+
+    virtual void OnChecked(bool checked) const;
+};
+
+
 /** a FreeOrion StateButton control */
 class CUIStateButton : public GG::StateButton {
 public:
     /** \name Structors */ //@{
     CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX); ///< ctor
-    //@}
-
-    /** \name Mutators */ //@{
-    virtual void   Render();
     //@}
 };
 

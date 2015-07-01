@@ -255,6 +255,104 @@ void Button::RenderDefault()
 
 
 ////////////////////////////////////////////////
+// GG::BeveledCheckBoxRepresenter
+////////////////////////////////////////////////
+void StateButtonRepresenter::Render(const GG::StateButton& button) const
+{}
+
+void StateButtonRepresenter::OnChecked(bool checked) const
+{}
+
+
+////////////////////////////////////////////////
+// GG::BeveledCheckBoxRepresenter
+////////////////////////////////////////////////
+void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
+{
+    const int BEVEL = 2;
+
+    // draw button
+    Pt cl_ul = button.ClientUpperLeft();
+    Pt bn_ul = cl_ul + button.ButtonUpperLeft();
+    Pt bn_lr = cl_ul + button.ButtonLowerRight();
+
+    const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
+
+    BeveledRectangle(bn_ul, bn_lr,
+                     button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor(),
+                     button.Disabled() ? DisabledColor(button.Color()) : button.Color(),
+                     false, BEVEL);
+    if (button.Checked())
+        BeveledCheck(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
+                     button.Disabled() ? DisabledColor(button.Color()) : button.Color());
+
+    button.GetLabel()->OffsetMove(button.TextUpperLeft());
+    button.GetLabel()->Render();
+    button.GetLabel()->OffsetMove(-button.TextUpperLeft());
+}
+
+
+////////////////////////////////////////////////
+// GG::BeveledRadioRepresenter
+////////////////////////////////////////////////
+void BeveledRadioRepresenter::Render(const GG::StateButton& button) const
+{
+    const int BEVEL = 2;
+
+    // draw button
+    Pt cl_ul = button.ClientUpperLeft();
+    Pt bn_ul = cl_ul + button.ButtonUpperLeft();
+    Pt bn_lr = cl_ul + button.ButtonLowerRight();
+
+    Pt additional_text_offset;
+
+    const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
+
+    BeveledCircle(bn_ul, bn_lr,
+                  button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor(),
+                  button.Disabled() ? DisabledColor(button.Color()) : button.Color(),
+                  false, BEVEL);
+    if (button.Checked())
+        Bubble(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
+               button.Disabled() ? DisabledColor(button.Color()) : button.Color());
+
+    button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+    button.GetLabel()->Render();
+    button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
+}
+
+
+////////////////////////////////////////////////
+// GG::BeveledTabRepresenter
+////////////////////////////////////////////////
+void BeveledTabRepresenter::Render(const StateButton& button) const
+{
+    const int BEVEL = 2;
+
+    // draw button
+    Pt cl_ul = button.ClientUpperLeft();
+    Pt cl_lr = button.ClientLowerRight();
+
+    Pt additional_text_offset;
+
+    Clr color_to_use = button.Checked() ? button.Color() : DarkColor(button.Color());
+    color_to_use = button.Disabled() ? DisabledColor(color_to_use) : color_to_use;
+    if (!button.Checked()) {
+        cl_ul.y += BEVEL;
+        additional_text_offset.y = Y(BEVEL / 2);
+    }
+    BeveledRectangle(cl_ul, cl_lr,
+                     color_to_use, color_to_use,
+                     true, BEVEL,
+                     true, true, true, !button.Checked());
+
+    button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+    button.GetLabel()->Render();
+    button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
+}
+
+
+////////////////////////////////////////////////
 // GG::StateButton
 ////////////////////////////////////////////////
 StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
@@ -266,6 +364,18 @@ StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& 
     m_int_color(interior),
     m_style(style)
 {
+    switch (m_style) {
+    case SBSTYLE_3D_CHECKBOX:
+        m_representer = boost::shared_ptr<StateButtonRepresenter>(new BeveledCheckBoxRepresenter());
+        break;
+    case SBSTYLE_3D_RADIO:
+        m_representer = boost::shared_ptr<StateButtonRepresenter>(new BeveledRadioRepresenter());
+        break;
+    case SBSTYLE_3D_TOP_TAB:
+        m_representer = boost::shared_ptr<StateButtonRepresenter>(new BeveledTabRepresenter());
+        break;
+    }
+
     m_color = color;
     AttachChild(m_label);
     m_label->Hide();
@@ -297,96 +407,10 @@ Clr StateButton::InteriorColor() const
 StateButtonStyle StateButton::Style() const
 { return m_style; }
 
-namespace {
-    void RenderCheckBox(const GG::StateButton& button)
-    {
-        const int BEVEL = 2;
-
-        // draw button
-        Pt cl_ul = button.ClientUpperLeft();
-        Pt bn_ul = cl_ul + button.ButtonUpperLeft();
-        Pt bn_lr = cl_ul + button.ButtonLowerRight();
-
-        const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
-
-        BeveledRectangle(bn_ul, bn_lr,
-                         button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor(),
-                         button.Disabled() ? DisabledColor(button.Color()) : button.Color(),
-                         false, BEVEL);
-        if (button.Checked())
-            BeveledCheck(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
-                         button.Disabled() ? DisabledColor(button.Color()) : button.Color());
-
-        button.GetLabel()->OffsetMove(button.TextUpperLeft());
-        button.GetLabel()->Render();
-        button.GetLabel()->OffsetMove(-button.TextUpperLeft());
-    }
-
-    void RenderRadioBox(const GG::StateButton& button)
-    {
-        const int BEVEL = 2;
-
-        // draw button
-        Pt cl_ul = button.ClientUpperLeft();
-        Pt bn_ul = cl_ul + button.ButtonUpperLeft();
-        Pt bn_lr = cl_ul + button.ButtonLowerRight();
-
-        Pt additional_text_offset;
-
-        const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
-
-        BeveledCircle(bn_ul, bn_lr,
-                      button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor(),
-                      button.Disabled() ? DisabledColor(button.Color()) : button.Color(),
-                      false, BEVEL);
-        if (button.Checked())
-            Bubble(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
-                   button.Disabled() ? DisabledColor(button.Color()) : button.Color());
-
-        button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
-        button.GetLabel()->Render();
-        button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
-    }
-
-    void RenderTab(const StateButton& button)
-    {
-        const int BEVEL = 2;
-
-        // draw button
-        Pt cl_ul = button.ClientUpperLeft();
-        Pt cl_lr = button.ClientLowerRight();
-
-        Pt additional_text_offset;
-
-        Clr color_to_use = button.Checked() ? button.Color() : DarkColor(button.Color());
-        color_to_use = button.Disabled() ? DisabledColor(color_to_use) : color_to_use;
-        if (!button.Checked()) {
-            cl_ul.y += BEVEL;
-            additional_text_offset.y = Y(BEVEL / 2);
-        }
-        BeveledRectangle(cl_ul, cl_lr,
-                         color_to_use, color_to_use,
-                         true, BEVEL,
-                         true, true, true, !button.Checked());
-
-        button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
-        button.GetLabel()->Render();
-        button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
-    }
-}
-
 void StateButton::Render()
 {
-    switch (m_style) {
-    case SBSTYLE_3D_CHECKBOX:
-        RenderCheckBox(*this);
-        break;
-    case SBSTYLE_3D_RADIO:
-        RenderRadioBox(*this);
-        break;
-    case SBSTYLE_3D_TOP_TAB:
-        RenderTab(*this);
-    }
+    if (m_representer)
+        m_representer->Render(*this);
 }
 
 void StateButton::Show(bool children/* = true*/)
@@ -396,6 +420,8 @@ void StateButton::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         SetCheck(!m_checked);
+        if (m_representer)
+            m_representer->OnChecked(m_checked);
         CheckedSignal(m_checked);
     }
 }

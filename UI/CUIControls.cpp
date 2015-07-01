@@ -26,14 +26,8 @@ namespace {
     void PlayButtonClickSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
 
-    struct PlayButtonCheckSound {
-        PlayButtonCheckSound(bool play_only_when_checked) : m_play_only_when_checked(play_only_when_checked) {}
-        void operator()(bool checked) const {
-            if (!m_play_only_when_checked || checked)
-                Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
-        }
-        const bool m_play_only_when_checked;
-    };
+    void PlayButtonCheckSound()
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
 
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
@@ -280,6 +274,159 @@ void CUIArrowButton::RenderUnpressed() {
 }
 
 
+void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
+    // draw button
+    GG::Pt bn_ul = button.ClientUpperLeft() + button.ButtonUpperLeft();
+    GG::Pt bn_lr = button.ClientUpperLeft() + button.ButtonLowerRight();
+    GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
+    GG::Clr int_color_to_use = button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor();
+    GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
+    if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
+        AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+    }
+
+    const int MARGIN = 3;
+    FlatRectangle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
+    if (button.Checked()) {
+        GG::Clr inside_color = color_to_use;
+        GG::Clr outside_color = color_to_use;
+        AdjustBrightness(outside_color, 50);
+        bn_ul += GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
+        bn_lr -= GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
+        const int OFFSET = Value(bn_lr.y - bn_ul.y) / 2;
+
+        GG::GL2DVertexBuffer verts;
+        verts.reserve(16);
+
+        verts.store(bn_lr.x, bn_ul.y);
+        verts.store(bn_ul.x + OFFSET, bn_ul.y);
+        verts.store(bn_ul.x, bn_ul.y + OFFSET);
+        verts.store(bn_ul.x, bn_lr.y);
+        verts.store(bn_ul.x, bn_lr.y);
+        verts.store(bn_lr.x - OFFSET, bn_lr.y);
+        verts.store(bn_lr.x, bn_lr.y - OFFSET);
+
+        verts.store(bn_lr.x, bn_ul.y);
+        verts.store(bn_ul.x + OFFSET, bn_ul.y);
+        verts.store(bn_ul.x, bn_ul.y + OFFSET);
+        verts.store(bn_ul.x, bn_lr.y);
+        verts.store(bn_ul.x, bn_lr.y);
+        verts.store(bn_lr.x - OFFSET, bn_lr.y);
+        verts.store(bn_lr.x, bn_lr.y - OFFSET);
+        verts.store(bn_lr.x, bn_ul.y);
+        verts.store(bn_lr.x, bn_ul.y);
+
+        verts.activate();
+
+        glDisable(GL_TEXTURE_2D);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        glColor(inside_color);
+        glDrawArrays(GL_QUADS, 0, 8);
+
+        glColor(outside_color);
+        glDrawArrays(GL_LINE_STRIP, 8, 8);
+
+        glPopClientAttrib();
+        glEnable(GL_TEXTURE_2D);
+    } else {
+        GG::Clr inside_color = border_color_to_use;
+        AdjustBrightness(inside_color, -75);
+        GG::Clr outside_color = inside_color;
+        AdjustBrightness(outside_color, 40);
+        glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
+        glScaled(-1.0, 1.0, 1.0);
+        glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
+        AngledCornerRectangle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
+                              GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
+                              inside_color, outside_color, Value(bn_lr.y - bn_ul.y - 2 * MARGIN) / 2, 1);
+        glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
+        glScaled(-1.0, 1.0, 1.0);
+        glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
+    }
+
+    // draw text
+    button.GetLabel()->OffsetMove(button.TextUpperLeft());
+    button.GetLabel()->TextControl::Render();
+    button.GetLabel()->OffsetMove(-button.TextUpperLeft());
+}
+
+void CUICheckBoxRepresenter::OnChecked(bool checked) const {
+    if (checked)
+        PlayButtonCheckSound();
+}
+
+
+void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
+    // draw button
+    GG::Pt bn_ul = button.ClientUpperLeft() + button.ButtonUpperLeft();
+    GG::Pt bn_lr = button.ClientUpperLeft() + button.ButtonLowerRight();
+    GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
+    GG::Clr int_color_to_use = button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor();
+    GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
+    if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
+        AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+        AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
+    }
+
+    const int MARGIN = 2;
+    FlatCircle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
+    if (button.Checked()) {
+        GG::Clr inside_color = color_to_use;
+        GG::Clr outside_color = color_to_use;
+        AdjustBrightness(outside_color, 50);
+        FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
+                   GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
+                   GG::CLR_ZERO, outside_color, 1);
+        FlatCircle(GG::Pt(bn_ul.x + MARGIN + 1, bn_ul.y + MARGIN + 1),
+                   GG::Pt(bn_lr.x - MARGIN - 1, bn_lr.y - MARGIN - 1), 
+                   inside_color, outside_color, 1);
+    } else {
+        GG::Clr inside_color = border_color_to_use;
+        AdjustBrightness(inside_color, -75);
+        GG::Clr outside_color = inside_color;
+        AdjustBrightness(outside_color, 40);
+        FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
+                   GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
+                   inside_color, outside_color, 1);
+    }
+
+    // draw text
+    button.GetLabel()->OffsetMove(button.TextUpperLeft());
+    button.GetLabel()->TextControl::Render();
+    button.GetLabel()->OffsetMove(-button.TextUpperLeft());
+}
+
+void CUIRadioRepresenter::OnChecked(bool checked) const
+{ PlayButtonCheckSound(); }
+
+
+void CUITabRepresenter::Render(const GG::StateButton& button) const {
+    GG::Pt ul = button.UpperLeft(), lr = button.LowerRight();
+    GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
+    GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
+    if (button.Checked() || !button.Disabled() && button.IsMouseover())
+        AdjustBrightness(border_color_to_use, 100);
+    const int UNCHECKED_OFFSET = 4;
+    GG::Pt additional_text_offset;
+    if (!button.Checked()) {
+        ul.y += UNCHECKED_OFFSET;
+        additional_text_offset.y = GG::Y(UNCHECKED_OFFSET / 2);
+    }
+    AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !button.Checked());
+    button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+    button.GetLabel()->Render();
+    button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
+}
+
+void CUITabRepresenter::OnChecked(bool checked) const
+{ PlayButtonCheckSound(); }
+
+
 ///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
@@ -289,170 +436,18 @@ CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat>
                 ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO,
                 style)
 {
-    if (style == GG::SBSTYLE_3D_TOP_TAB) {
-        SetColor(ClientUI::WndColor());
-        GetLabel()->SetTextColor(DarkColor(ClientUI::TextColor()));
-    }
-    // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
-    // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
-    // checking the redering style
-    GG::Connect(CheckedSignal, PlayButtonCheckSound(style == GG::SBSTYLE_3D_RADIO), -1);
-}
-
-namespace {
-    void RenderCheckBox(const GG::StateButton& button) {
-        // draw button
-        GG::Pt bn_ul = button.ClientUpperLeft() + button.ButtonUpperLeft();
-        GG::Pt bn_lr = button.ClientUpperLeft() + button.ButtonLowerRight();
-        GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
-        GG::Clr int_color_to_use = button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor();
-        GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-        if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
-            AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-            AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-            AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-        }
-
-        const int MARGIN = 3;
-        FlatRectangle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
-        if (button.Checked()) {
-            GG::Clr inside_color = color_to_use;
-            GG::Clr outside_color = color_to_use;
-            AdjustBrightness(outside_color, 50);
-            bn_ul += GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
-            bn_lr -= GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
-            const int OFFSET = Value(bn_lr.y - bn_ul.y) / 2;
-
-            GG::GL2DVertexBuffer verts;
-            verts.reserve(16);
-
-            verts.store(bn_lr.x, bn_ul.y);
-            verts.store(bn_ul.x + OFFSET, bn_ul.y);
-            verts.store(bn_ul.x, bn_ul.y + OFFSET);
-            verts.store(bn_ul.x, bn_lr.y);
-            verts.store(bn_ul.x, bn_lr.y);
-            verts.store(bn_lr.x - OFFSET, bn_lr.y);
-            verts.store(bn_lr.x, bn_lr.y - OFFSET);
-
-            verts.store(bn_lr.x, bn_ul.y);
-            verts.store(bn_ul.x + OFFSET, bn_ul.y);
-            verts.store(bn_ul.x, bn_ul.y + OFFSET);
-            verts.store(bn_ul.x, bn_lr.y);
-            verts.store(bn_ul.x, bn_lr.y);
-            verts.store(bn_lr.x - OFFSET, bn_lr.y);
-            verts.store(bn_lr.x, bn_lr.y - OFFSET);
-            verts.store(bn_lr.x, bn_ul.y);
-            verts.store(bn_lr.x, bn_ul.y);
-
-            verts.activate();
-
-            glDisable(GL_TEXTURE_2D);
-            glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-            glEnableClientState(GL_VERTEX_ARRAY);
-
-            glColor(inside_color);
-            glDrawArrays(GL_QUADS, 0, 8);
-
-            glColor(outside_color);
-            glDrawArrays(GL_LINE_STRIP, 8, 8);
-
-            glPopClientAttrib();
-            glEnable(GL_TEXTURE_2D);
-        } else {
-            GG::Clr inside_color = border_color_to_use;
-            AdjustBrightness(inside_color, -75);
-            GG::Clr outside_color = inside_color;
-            AdjustBrightness(outside_color, 40);
-            glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
-            glScaled(-1.0, 1.0, 1.0);
-            glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
-            AngledCornerRectangle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
-                                  GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
-                                  inside_color, outside_color, Value(bn_lr.y - bn_ul.y - 2 * MARGIN) / 2, 1);
-            glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
-            glScaled(-1.0, 1.0, 1.0);
-            glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
-        }
-
-        // draw text
-        button.GetLabel()->OffsetMove(button.TextUpperLeft());
-        button.GetLabel()->TextControl::Render();
-        button.GetLabel()->OffsetMove(-button.TextUpperLeft());
-    }
-
-    void RenderRadioBox(const GG::StateButton& button) {
-        // draw button
-        GG::Pt bn_ul = button.ClientUpperLeft() + button.ButtonUpperLeft();
-        GG::Pt bn_lr = button.ClientUpperLeft() + button.ButtonLowerRight();
-        GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
-        GG::Clr int_color_to_use = button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor();
-        GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-        if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
-            AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-            AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-            AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-        }
-
-        const int MARGIN = 2;
-        FlatCircle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
-        if (button.Checked()) {
-            GG::Clr inside_color = color_to_use;
-            GG::Clr outside_color = color_to_use;
-            AdjustBrightness(outside_color, 50);
-            FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
-                       GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
-                       GG::CLR_ZERO, outside_color, 1);
-            FlatCircle(GG::Pt(bn_ul.x + MARGIN + 1, bn_ul.y + MARGIN + 1),
-                       GG::Pt(bn_lr.x - MARGIN - 1, bn_lr.y - MARGIN - 1), 
-                       inside_color, outside_color, 1);
-        } else {
-            GG::Clr inside_color = border_color_to_use;
-            AdjustBrightness(inside_color, -75);
-            GG::Clr outside_color = inside_color;
-            AdjustBrightness(outside_color, 40);
-            FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
-                       GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
-                       inside_color, outside_color, 1);
-        }
-
-        // draw text
-        button.GetLabel()->OffsetMove(button.TextUpperLeft());
-        button.GetLabel()->TextControl::Render();
-        button.GetLabel()->OffsetMove(-button.TextUpperLeft());
-    }
-
-    void RenderTab(const GG::StateButton& button) {
-        GG::Pt ul = button.UpperLeft(), lr = button.LowerRight();
-        GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
-        GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-        if (button.Checked() || !button.Disabled() && button.IsMouseover())
-            AdjustBrightness(border_color_to_use, 100);
-        const int UNCHECKED_OFFSET = 4;
-        GG::Pt additional_text_offset;
-        if (!button.Checked()) {
-            ul.y += UNCHECKED_OFFSET;
-            additional_text_offset.y = GG::Y(UNCHECKED_OFFSET / 2);
-        }
-        AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !button.Checked());
-        button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
-        button.GetLabel()->Render();
-        button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
-    }
-}
-
-void CUIStateButton::Render() {
-    switch (Style()) {
+    switch (style) {
     case GG::SBSTYLE_3D_CHECKBOX:
-        RenderCheckBox(*this);
+        m_representer = boost::shared_ptr<GG::StateButtonRepresenter>(new CUICheckBoxRepresenter());
         break;
     case GG::SBSTYLE_3D_RADIO:
-        RenderRadioBox(*this);
+        m_representer = boost::shared_ptr<GG::StateButtonRepresenter>(new CUIRadioRepresenter());
         break;
     case GG::SBSTYLE_3D_TOP_TAB:
-        RenderTab(*this);
+        m_representer = boost::shared_ptr<GG::StateButtonRepresenter>(new CUITabRepresenter());
+        SetColor(ClientUI::WndColor());
+        GetLabel()->SetTextColor(DarkColor(ClientUI::TextColor()));
         break;
-    default:
-        StateButton::Render();
     }
 }
 

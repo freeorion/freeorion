@@ -128,6 +128,58 @@ private:
 };
 
 
+/** \brief Visual representation of a state button.
+
+    The StateButtonRepresenter is a stub interface to implement a visual
+    representation of a StateButton instance.  A representer can be shared
+    amongst multiple instances of a StateButton, so no subclass should
+    store instance specific attributes of a state button.
+ */
+class GG_API StateButtonRepresenter
+{
+public:
+    /** \brief Render the given state button according to its state.
+
+        \param button The StateButton instance to render.
+     */
+    virtual void Render(const StateButton& button) const;
+
+    /** \brief Respond to a state button change.
+
+        This method is called whenever a StateButton changes its
+        state.
+
+        \param checked True if the state button was checked, False
+                       if not.
+     */
+    virtual void OnChecked(bool checked) const;
+};
+
+
+/** \brief Builtin representation of a check box state button. */
+class GG_API BeveledCheckBoxRepresenter: public StateButtonRepresenter
+{
+public:
+    virtual void Render(const StateButton& button) const;
+};
+
+
+/** \brief Builtin representation of a radio state button. */
+class GG_API BeveledRadioRepresenter: public StateButtonRepresenter
+{
+public:
+    virtual void Render(const StateButton& button) const;
+};
+
+
+/** \brief Builtin representation of a tab state button (part of the TabWnd). */
+class GG_API BeveledTabRepresenter: public StateButtonRepresenter
+{
+public:
+    virtual void Render(const StateButton& button) const;
+};
+
+
 /** \brief This is a basic state button control.
 
     This class is for checkboxes and radio buttons, etc.  The button/checkbox
@@ -193,6 +245,8 @@ protected:
 
     void RepositionButton();      ///< Places the button at the appropriate position based on the style flags, without resizing it
     //@}
+
+    boost::shared_ptr<StateButtonRepresenter> m_representer;
 
 private:
     TextControl*      m_label;       ///< Label used to display text
