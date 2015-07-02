@@ -2356,11 +2356,31 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         return;
 
     const int MENUITEM_SET_FOCUS_BASE = 20;
-    int menuitem_id = MENUITEM_SET_FOCUS_BASE;
+    const int MENUITEM_CREATE_COLONY_BASE = 30;
+    int menuitem_id_focus = MENUITEM_SET_FOCUS_BASE;
+    int menuitem_id_colony = MENUITEM_CREATE_COLONY_BASE;
+
     std::map<std::string, int> all_foci;
     UniverseObjectType type = obj->ObjectType();
     if (type == OBJ_PLANET) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
+
+        // My planet is empty, we may now want to create a colony there...
+        if (GetPlanet(object_id)->OwnedBy(app->EmpireID()) && GetPlanet(object_id)->GetMeter(METER_POPULATION)->Current() == 0.0f) {
+                if (Empire* emp = GetEmpire(app->EmpireID())) {
+                    GG::MenuItem colonyMenuItem(UserString("MENUITEM_CREATE_COLONY"), 6, false, false);
+
+                    std::set<std::string> species = GetColonizerSpecies(emp, GetPlanet(object_id));
+
+                    for (std::set<std::string>::const_iterator it = species.begin(); it != species.end(); ++it) {
+                        menuitem_id_colony++;
+                        std::string species_name = *it;
+                        colonyMenuItem.next_level.push_back(GG::MenuItem(UserString(species_name), menuitem_id_colony, false, false));
+                    }
+                    if (menuitem_id_colony > MENUITEM_CREATE_COLONY_BASE)
+                        menu_contents.next_level.push_back(colonyMenuItem);
+                }
+        }
 
         const GG::ListBox::SelectionSet sel = m_list_box->Selections();
         for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
@@ -2376,12 +2396,12 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         }
         GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), 3, false, false);
         for (std::map<std::string, int>::iterator it = all_foci.begin(); it != all_foci.end(); ++it) {
-            menuitem_id++;
+            menuitem_id_focus++;
             std::stringstream out;
             out << UserString(it->first) << " (" << it->second << ")";
-            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), menuitem_id, false, false));
+            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), menuitem_id_focus, false, false));
         }
-        if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
+        if (menuitem_id_focus > MENUITEM_SET_FOCUS_BASE)
             menu_contents.next_level.push_back(focusMenuItem);
     }
     // moderator actions...
@@ -2407,6 +2427,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 // should never happen, Set Focus parent menu item is disabled
                 break;
         }
+        case 6: {
+                // should never happen, create colony parent menu item is disabled
+                break;
+        }
         case 10: {
             net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::DestroyUniverseObject(object_id)));
             break;
@@ -2417,7 +2441,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         }
         default: {
             int id = popup.MenuID();
-            if (id > MENUITEM_SET_FOCUS_BASE && id <= menuitem_id) {
+            if (id > MENUITEM_SET_FOCUS_BASE && id <= menuitem_id_focus) {
                 std::map<std::string, int>::iterator it = all_foci.begin();
                 std::advance(it, id - MENUITEM_SET_FOCUS_BASE - 1);
                 std::string focus = it->first;
@@ -2432,11 +2456,27 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                          }
                     }
                 }
+                std::set<int> sel_ids = SelectedObjectIDs();
+                Refresh();
+                SetSelectedObjects(sel_ids);
+                ObjectSelectionChanged(m_list_box->Selections());
+            } else if (id > MENUITEM_CREATE_COLONY_BASE && id <= menuitem_id_colony) {
+                Empire* empire = GetEmpire(app->EmpireID());
+                std::set<std::string> species = GetColonizerSpecies(empire, GetPlanet(object_id), false);
+
+                std::set<std::string>::const_iterator it = species.begin();
+                std::advance(it, id - MENUITEM_CREATE_COLONY_BASE - 1);
+
+                std::string species_name = *it; // SP_ABADDONI
+                std::string building_name = "BLD_COL_" + species_name.substr(3); // BLD_COL_ABADDONI
+
+                if (!empire->ProducibleItem(BT_BUILDING, building_name, object_id)) {
+                    ErrorLogger() << "Cannot produce building at that location";
+                } else {
+                app->Orders().IssueOrder(OrderPtr(
+                    new ProductionQueueOrder(app->EmpireID(), BT_BUILDING, building_name, 1, object_id)));
+                }
             }
-            std::set<int> sel_ids = SelectedObjectIDs();
-            Refresh();
-            SetSelectedObjects(sel_ids);
-            ObjectSelectionChanged(m_list_box->Selections());
             break;
         }
         }
