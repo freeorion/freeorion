@@ -330,6 +330,10 @@ Pt StateButtonRepresenter::MinUsableSize(const StateButton& button) const
 ////////////////////////////////////////////////
 // GG::BeveledCheckBoxRepresenter
 ////////////////////////////////////////////////
+BeveledCheckBoxRepresenter::BeveledCheckBoxRepresenter(Clr interior/* = CLR_ZERO*/):
+    m_int_color(interior)
+{}
+
 void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
 {
     const int BEVEL = 2;
@@ -346,7 +350,7 @@ void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
     const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
 
     BeveledRectangle(bn_ul, bn_lr,
-                     button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor(),
+                     button.Disabled() ? DisabledColor(m_int_color) : m_int_color,
                      button.Disabled() ? DisabledColor(button.Color()) : button.Color(),
                      false, BEVEL);
     if (button.Checked())
@@ -362,6 +366,10 @@ void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
 ////////////////////////////////////////////////
 // GG::BeveledRadioRepresenter
 ////////////////////////////////////////////////
+BeveledRadioRepresenter::BeveledRadioRepresenter(Clr interior/* = CLR_ZERO*/):
+    m_int_color(interior)
+{}
+
 void BeveledRadioRepresenter::Render(const GG::StateButton& button) const
 {
     const int BEVEL = 2;
@@ -378,7 +386,7 @@ void BeveledRadioRepresenter::Render(const GG::StateButton& button) const
     const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
 
     BeveledCircle(bn_ul, bn_lr,
-                  button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor(),
+                  button.Disabled() ? DisabledColor(m_int_color) : m_int_color,
                   button.Disabled() ? DisabledColor(button.Color()) : button.Color(),
                   false, BEVEL);
     if (button.Checked())
@@ -427,13 +435,12 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
 // GG::StateButton
 ////////////////////////////////////////////////
 StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                         Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
+                         Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color/* = CLR_BLACK*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_representer(representer),
     m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
     m_checked(false),
-    m_mouseover(false),
-    m_int_color(interior)
+    m_mouseover(false)
 {
     m_color = color;
     AttachChild(m_label);
@@ -459,9 +466,6 @@ bool StateButton::Checked() const
 
 bool StateButton::IsMouseover() const
 { return m_mouseover; }
-
-Clr StateButton::InteriorColor() const
-{ return m_int_color; }
 
 void StateButton::Render()
 {
@@ -502,9 +506,6 @@ void StateButton::SetCheck(bool b/* = true*/)
 
 void StateButton::SetColor(Clr c)
 { Control::SetColor(c); }
-
-void StateButton::SetInteriorColor(Clr c)
-{ m_int_color = c; }
 
 void StateButton::SetTextColor(Clr c)
 { m_label->SetTextColor(c); }

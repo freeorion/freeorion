@@ -181,7 +181,12 @@ protected:
 class GG_API BeveledCheckBoxRepresenter: public StateButtonRepresenter
 {
 public:
+    explicit BeveledCheckBoxRepresenter(Clr int_color = CLR_ZERO);
+
     virtual void Render(const StateButton& button) const;
+
+private:
+    Clr m_int_color;
 };
 
 
@@ -189,7 +194,12 @@ public:
 class GG_API BeveledRadioRepresenter: public StateButtonRepresenter
 {
 public:
+    explicit BeveledRadioRepresenter(Clr int_color = CLR_ZERO);
+
     virtual void Render(const StateButton& button) const;
+
+private:
+    Clr m_int_color;
 };
 
 
@@ -225,7 +235,7 @@ public:
 
     /** \name Structors */ ///@{
     StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO); ///< Ctor
+                Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
     //@}
 
     /** \name Accessors */ ///@{
@@ -235,7 +245,6 @@ public:
 
     bool             Checked() const;       ///< Returns true if button is checked
     bool             IsMouseover() const;   ///< Returns true if mouse pointer is over this button
-    Clr              InteriorColor() const; ///< Returns the interior color of the box, circle, or other enclosing shape
 
     TextControl* GetLabel() const;
 
@@ -250,7 +259,6 @@ public:
     void             Reset();                 ///< Unchecks button
     void             SetCheck(bool b = true); ///< (Un)checks button
     virtual void     SetColor(Clr c);         ///< Sets the color of the button; does not affect text color
-    void             SetInteriorColor(Clr c); ///< Sets the interior color of the box, circle, or other enclosing shape
     void             SetTextColor(Clr c); ///< Sets the color of the box label text
     //@}
 
@@ -267,7 +275,6 @@ private:
 
     bool              m_checked;     ///< true when this button in a checked, active state
     bool              m_mouseover;   ///< true if the pointer is currently over the control
-    Clr               m_int_color;   ///< color inside border
 };
 
 

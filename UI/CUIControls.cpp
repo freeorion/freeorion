@@ -285,16 +285,14 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
     bn_lr += cl_ul;
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
-    GG::Clr int_color_to_use = button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
     if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
         AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-        AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
 
     const int MARGIN = 3;
-    FlatRectangle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
+    FlatRectangle(bn_ul, bn_lr, GG::CLR_ZERO, border_color_to_use, 1);
     if (button.Checked()) {
         GG::Clr inside_color = color_to_use;
         GG::Clr outside_color = color_to_use;
@@ -377,16 +375,14 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
     bn_lr += cl_ul;
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
-    GG::Clr int_color_to_use = button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
     if (!button.Disabled() && !button.Checked() && button.IsMouseover()) {
         AdjustBrightness(color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
-        AdjustBrightness(int_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
         AdjustBrightness(border_color_to_use, STATE_BUTTON_BRIGHTENING_SCALE_FACTOR);
     }
 
     const int MARGIN = 2;
-    FlatCircle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
+    FlatCircle(bn_ul, bn_lr, GG::CLR_ZERO, border_color_to_use, 1);
     if (button.Checked()) {
         GG::Clr inside_color = color_to_use;
         GG::Clr outside_color = color_to_use;
@@ -456,7 +452,7 @@ GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
 CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format,
                                boost::shared_ptr<GG::StateButtonRepresenter> representer) :
     StateButton(str, ClientUI::GetFont(), format,
-                ClientUI::StateButtonColor(), representer, ClientUI::TextColor(), GG::CLR_ZERO)
+                ClientUI::StateButtonColor(), representer, ClientUI::TextColor())
 {}
 
 

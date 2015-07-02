@@ -176,7 +176,7 @@ public:
     /** Returns a new StateButton, to be used in a TabBar. */
     virtual StateButton*       NewTabBarTab(const std::string& str,
                                             const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
-                                            Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO) const;
+                                            Clr text_color = CLR_BLACK) const;
 
     /** Returns a new left Button, to be used in a TabBar. */
     virtual Button*            NewTabBarLeftButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;

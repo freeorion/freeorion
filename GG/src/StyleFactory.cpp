@@ -173,7 +173,7 @@ Edit* StyleFactory::NewSpinEdit(const std::string& str, const boost::shared_ptr<
 
 StateButton* StyleFactory::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
-                                        Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
+                                        Clr text_color/* = CLR_BLACK*/) const
 {
     StateButton* retval = new StateButton(str, font, format, color, boost::make_shared<BeveledTabRepresenter>(), text_color);
     retval->Resize(retval->MinUsableSize() + Pt(X(12), Y0));
