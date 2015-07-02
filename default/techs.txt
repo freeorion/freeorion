@@ -1926,6 +1926,16 @@ Tech
                     ]
                     empire = Source.Owner
                 ]
+
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_WELCOME"
+                    icon = "icons/specials_huge/ancient_ruins.png"
+                    empire = Source.Owner
+                ]
     ]
     graphic = "icons/tech/galactic_exploration.png"
 

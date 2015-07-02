@@ -2190,7 +2190,9 @@ void MapWnd::InitTurn() {
 
 
     // are there any sitreps to show?
-    if (m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
+    bool show_intro_sitreps = CurrentTurn() == 1 && GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression") <= TYPICAL;
+    DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
+    if ( show_intro_sitreps ||   m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
         m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
         if (!m_design_wnd->Visible() && !m_research_wnd->Visible() && !m_production_wnd->Visible())
             ShowSitRep();
@@ -3060,7 +3062,7 @@ void MapWnd::ShowEmpire(int empire_id) {
 void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
     if (!m_pedia_panel->Visible())
         TogglePedia();
-    m_pedia_panel->SetText(str);
+    m_pedia_panel->SetText(str, false);
 }
 
 void MapWnd::CenterOnObject(int id) {
