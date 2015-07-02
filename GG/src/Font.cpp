@@ -1624,6 +1624,43 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
         format &= ~FORMAT_LINEWRAP;
 }
 
+void Font::StoreGlyphImpl(Font::RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph, int x_top_offset) const {
+    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
+    cache.vertices->store(pt.x + glyph.left_bearing + x_top_offset, pt.y + glyph.y_offset);
+    cache.colors->store(color);
+
+    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
+    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + x_top_offset, pt.y + glyph.y_offset);
+    cache.colors->store(color);
+
+    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
+    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - x_top_offset,
+                                        pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+    cache.colors->store(color);
+
+    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
+    cache.vertices->store(pt.x + glyph.left_bearing - x_top_offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+    cache.colors->store(color);
+}
+
+void Font::StoreUnderlineImpl(Font::RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph,
+                        Y descent, Y height, Y underline_height, Y underline_offset) const
+{
+    X x1 = pt.x;
+    Y y1(pt.y + height + descent - underline_offset);
+    X x2 = x1 + glyph.advance;
+    Y y2(y1 + underline_height);
+
+    cache.underline_vertices->store(x1, y1);
+    cache.underline_colors->store(color);
+    cache.underline_vertices->store(x2, y1);
+    cache.underline_colors->store(color);
+    cache.underline_vertices->store(x2, y2);
+    cache.underline_colors->store(color);
+    cache.underline_vertices->store(x1, y2);
+    cache.underline_colors->store(color);
+}
+
 X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* render_state,
                    Font::RenderCache& cache) const
 {
@@ -1637,37 +1674,23 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
     if (render_state && render_state->use_shadow) {
         shadow_offset = static_cast<int>(m_shadow_offset);
     }
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.left_bearing + italic_top_offset, pt.y + glyph.y_offset);
-    cache.colors->store(render_state->CurrentColor());
 
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + italic_top_offset, pt.y + glyph.y_offset);
-    cache.colors->store(render_state->CurrentColor());
+    // render shadows?
+    if (shadow_offset > 0) {
+        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X1, Y0), glyph, italic_top_offset);
+        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, Y1), glyph, italic_top_offset);
+        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(-X1, Y0), glyph, italic_top_offset);
+        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, -Y1), glyph, italic_top_offset);
+        if (render_state && render_state->draw_underline) {
+            StoreUnderlineImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, Y1), glyph, m_descent, m_height, Y(m_underline_height), Y(m_underline_offset));
+            StoreUnderlineImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, -Y1), glyph, m_descent, m_height, Y(m_underline_height), Y(m_underline_offset));
+        }
+    }
 
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - italic_top_offset,
-                                     pt.y + glyph.sub_texture.Height() + glyph.y_offset);
-    cache.colors->store(render_state->CurrentColor());
-
-    cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.left_bearing - italic_top_offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
-    cache.colors->store(render_state->CurrentColor());
-
+    // render main text
+    StoreGlyphImpl(cache, render_state->CurrentColor(), pt, glyph, italic_top_offset);
     if (render_state && render_state->draw_underline) {
-        X x1 = pt.x;
-        Y y1(pt.y + m_height + m_descent - m_underline_offset);
-        X x2 = x1 + glyph.advance;
-        Y y2(y1 + m_underline_height);
-
-        cache.underline_vertices->store(x1, y1);
-        cache.underline_colors->store(render_state->CurrentColor());
-        cache.underline_vertices->store(x2, y1);
-        cache.underline_colors->store(render_state->CurrentColor());
-        cache.underline_vertices->store(x2, y2);
-        cache.underline_colors->store(render_state->CurrentColor());
-        cache.underline_vertices->store(x1, y2);
-        cache.underline_colors->store(render_state->CurrentColor());
+        StoreUnderlineImpl(cache, render_state->CurrentColor(), pt, glyph, m_descent, m_height, Y(m_underline_height), Y(m_underline_offset));
     }
 
     return glyph.advance;

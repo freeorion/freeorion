@@ -573,8 +573,12 @@ private:
     void              Init(FT_Face& font);
     bool              GenerateGlyph(FT_Face font, boost::uint32_t ch);
     void              ValidateFormat(Flags<TextFormat>& format) const;
-    X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state,
-                                 RenderCache& cache) const;
+
+    X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state, RenderCache& cache) const;
+    void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph, int x_top_offset) const;
+    void              StoreUnderlineImpl(RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph,
+                                         Y descent, Y height, Y underline_height, Y underline_offset) const;
+
     void              HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_color,
                                 RenderState& render_state) const;
     bool              IsDefaultFont();
