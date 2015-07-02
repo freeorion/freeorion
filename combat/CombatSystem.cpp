@@ -1006,7 +1006,7 @@ namespace {
 
         // Stealthed attackers have now revealed themselves to their targets.
         // Process this for each new combat event.
-        for (int event_index = init_event_index; event_index < combat_info.combat_events.size(); event_index++) {
+        for (unsigned int event_index = init_event_index; event_index < combat_info.combat_events.size(); event_index++) {
             // mark attacker as valid target for attacked object's owner, so that regardless
             // of visibility the attacker can be counter-attacked in subsequent rounds if it
             // was not already attackable
