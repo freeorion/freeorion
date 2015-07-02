@@ -276,8 +276,14 @@ void CUIArrowButton::RenderUnpressed() {
 
 void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
     // draw button
-    GG::Pt bn_ul = button.ClientUpperLeft() + button.ButtonUpperLeft();
-    GG::Pt bn_lr = button.ClientUpperLeft() + button.ButtonLowerRight();
+    GG::Pt cl_ul = button.ClientUpperLeft();
+    GG::Pt bn_ul, bn_lr, tx_ul;
+
+    DoLayout(button, bn_ul, bn_lr, tx_ul);
+
+    bn_ul += cl_ul;
+    bn_lr += cl_ul;
+
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr int_color_to_use = button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
@@ -349,9 +355,9 @@ void CUICheckBoxRepresenter::Render(const GG::StateButton& button) const {
     }
 
     // draw text
-    button.GetLabel()->OffsetMove(button.TextUpperLeft());
+    button.GetLabel()->OffsetMove(tx_ul);
     button.GetLabel()->TextControl::Render();
-    button.GetLabel()->OffsetMove(-button.TextUpperLeft());
+    button.GetLabel()->OffsetMove(-tx_ul);
 }
 
 void CUICheckBoxRepresenter::OnChecked(bool checked) const {
@@ -362,8 +368,14 @@ void CUICheckBoxRepresenter::OnChecked(bool checked) const {
 
 void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
     // draw button
-    GG::Pt bn_ul = button.ClientUpperLeft() + button.ButtonUpperLeft();
-    GG::Pt bn_lr = button.ClientUpperLeft() + button.ButtonLowerRight();
+    GG::Pt cl_ul = button.ClientUpperLeft();
+    GG::Pt bn_ul, bn_lr, tx_ul;
+
+    DoLayout(button, bn_ul, bn_lr, tx_ul);
+
+    bn_ul += cl_ul;
+    bn_lr += cl_ul;
+
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr int_color_to_use = button.Disabled() ? DisabledColor(button.InteriorColor()) : button.InteriorColor();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
@@ -396,9 +408,9 @@ void CUIRadioRepresenter::Render(const GG::StateButton& button) const {
     }
 
     // draw text
-    button.GetLabel()->OffsetMove(button.TextUpperLeft());
+    button.GetLabel()->OffsetMove(tx_ul);
     button.GetLabel()->TextControl::Render();
-    button.GetLabel()->OffsetMove(-button.TextUpperLeft());
+    button.GetLabel()->OffsetMove(-tx_ul);
 }
 
 void CUIRadioRepresenter::OnChecked(bool checked) const
@@ -406,7 +418,18 @@ void CUIRadioRepresenter::OnChecked(bool checked) const
 
 
 void CUITabRepresenter::Render(const GG::StateButton& button) const {
-    GG::Pt ul = button.UpperLeft(), lr = button.LowerRight();
+    // draw button
+    GG::Pt ul = button.UpperLeft();
+    GG::Pt lr = button.LowerRight();
+
+    GG::Pt cl_ul = button.ClientUpperLeft();
+    GG::Pt bn_ul, bn_lr, tx_ul;
+
+    DoLayout(button, bn_ul, bn_lr, tx_ul);
+
+    bn_ul += cl_ul;
+    bn_lr += cl_ul;
+
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
     if (button.Checked() || !button.Disabled() && button.IsMouseover())
@@ -418,9 +441,10 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
         additional_text_offset.y = GG::Y(UNCHECKED_OFFSET / 2);
     }
     AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !button.Checked());
-    button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+
+    button.GetLabel()->OffsetMove(tx_ul + additional_text_offset);
     button.GetLabel()->Render();
-    button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
+    button.GetLabel()->OffsetMove(-(tx_ul + additional_text_offset));
 }
 
 void CUITabRepresenter::OnChecked(bool checked) const

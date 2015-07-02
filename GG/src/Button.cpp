@@ -260,6 +260,64 @@ void Button::RenderDefault()
 void StateButtonRepresenter::Render(const GG::StateButton& button) const
 {}
 
+void StateButtonRepresenter::DoLayout(const GG::StateButton& button, Pt& button_ul, Pt& button_lr, Pt& text_ul) const
+{
+    X bn_w = X(button.GetLabel()->GetFont()->PointSize()); // set button width and height to text he
+    Y bn_h = Y(button.GetLabel()->GetFont()->PointSize());
+
+    button_ul = Pt();
+    button_lr = Pt(bn_w, bn_h);
+
+    if (button.Style() == SBSTYLE_3D_TOP_TAB) {
+        button_ul = Pt();
+        button_lr = Pt();
+        text_ul = Pt();
+    } else {
+        X w = button.Width();
+        Y h = button.Height();
+        const X BN_W = button_lr.x - button_ul.x;
+        const Y BN_H = button_lr.y - button_ul.y;
+        X bn_x = button_ul.x;
+        Y bn_y = button_ul.y;
+        Flags<TextFormat> format = button.GetLabel()->GetTextFormat();
+        Flags<TextFormat> original_format = format;
+        const double SPACING = 0.5; // the space to leave between the button and text, as a factor of the button's size (width or height)
+        if (format & FORMAT_VCENTER)       // center button vertically
+            bn_y = (h - BN_H) / 2.0 + 0.5;
+        if (format & FORMAT_TOP) {         // put button at top, text just below
+            bn_y = Y0;
+            text_ul.y = BN_H;
+        }
+        if (format & FORMAT_BOTTOM) {      // put button at bottom, text just above
+            bn_y = (h - BN_H);
+            text_ul.y = h - (BN_H * (1 + SPACING)) - (static_cast<int>(button.GetLabel()->GetLineData().size() - 1) * button.GetLabel()->GetFont()->Lineskip() + button.GetLabel()->GetFont()->Height()) + 0.5;
+        }
+
+        if (format & FORMAT_CENTER) {      // center button horizontally
+            if (format & FORMAT_VCENTER) { // if both the button and the text are to be centered, bad things happen
+                format |= FORMAT_LEFT;     // so go to the default (FORMAT_CENTER|FORMAT_LEFT)
+                format &= ~FORMAT_CENTER;
+            } else {
+                bn_x = (w - bn_x) / 2.0 - BN_W / 2.0 + 0.5;
+            }
+        }
+        if (format & FORMAT_LEFT) {        // put button at left, text just to the right
+            bn_x = X0;
+            if (format & FORMAT_VCENTER)
+                text_ul.x = BN_W * (1 + SPACING) + 0.5;
+        }
+        if (format & FORMAT_RIGHT) {       // put button at right, text just to the left
+            bn_x = (w - BN_W);
+            if (format & FORMAT_VCENTER)
+                text_ul.x = -BN_W * (1 + SPACING) + 0.5;
+        }
+        if (format != original_format)
+            button.GetLabel()->SetTextFormat(format);
+        button_ul = Pt(bn_x, bn_y);
+        button_lr = button_ul + Pt(BN_W, BN_H);
+    }
+}
+
 void StateButtonRepresenter::OnChecked(bool checked) const
 {}
 
@@ -273,8 +331,12 @@ void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
 
     // draw button
     Pt cl_ul = button.ClientUpperLeft();
-    Pt bn_ul = cl_ul + button.ButtonUpperLeft();
-    Pt bn_lr = cl_ul + button.ButtonLowerRight();
+    Pt bn_ul, bn_lr, tx_ul;
+
+    DoLayout(button, bn_ul, bn_lr, tx_ul);
+
+    bn_ul += cl_ul;
+    bn_lr += cl_ul;
 
     const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
 
@@ -286,9 +348,9 @@ void BeveledCheckBoxRepresenter::Render(const GG::StateButton& button) const
         BeveledCheck(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
                      button.Disabled() ? DisabledColor(button.Color()) : button.Color());
 
-    button.GetLabel()->OffsetMove(button.TextUpperLeft());
+    button.GetLabel()->OffsetMove(tx_ul);
     button.GetLabel()->Render();
-    button.GetLabel()->OffsetMove(-button.TextUpperLeft());
+    button.GetLabel()->OffsetMove(-tx_ul);
 }
 
 
@@ -301,10 +363,12 @@ void BeveledRadioRepresenter::Render(const GG::StateButton& button) const
 
     // draw button
     Pt cl_ul = button.ClientUpperLeft();
-    Pt bn_ul = cl_ul + button.ButtonUpperLeft();
-    Pt bn_lr = cl_ul + button.ButtonLowerRight();
+    Pt bn_ul, bn_lr, tx_ul;
 
-    Pt additional_text_offset;
+    DoLayout(button, bn_ul, bn_lr, tx_ul);
+
+    bn_ul += cl_ul;
+    bn_lr += cl_ul;
 
     const Pt DOUBLE_BEVEL(X(2 * BEVEL), Y(2 * BEVEL));
 
@@ -316,9 +380,9 @@ void BeveledRadioRepresenter::Render(const GG::StateButton& button) const
         Bubble(bn_ul + DOUBLE_BEVEL, bn_lr - DOUBLE_BEVEL,
                button.Disabled() ? DisabledColor(button.Color()) : button.Color());
 
-    button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+    button.GetLabel()->OffsetMove(tx_ul);
     button.GetLabel()->Render();
-    button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
+    button.GetLabel()->OffsetMove(-(tx_ul));
 }
 
 
@@ -332,6 +396,9 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
     // draw button
     Pt cl_ul = button.ClientUpperLeft();
     Pt cl_lr = button.ClientLowerRight();
+    Pt bn_ul, bn_lr, tx_ul;
+
+    DoLayout(button, bn_ul, bn_lr, tx_ul);
 
     Pt additional_text_offset;
 
@@ -346,9 +413,9 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
                      true, BEVEL,
                      true, true, true, !button.Checked());
 
-    button.GetLabel()->OffsetMove(button.TextUpperLeft() + additional_text_offset);
+    button.GetLabel()->OffsetMove(tx_ul + additional_text_offset);
     button.GetLabel()->Render();
-    button.GetLabel()->OffsetMove(-(button.TextUpperLeft() + additional_text_offset));
+    button.GetLabel()->OffsetMove(-(tx_ul + additional_text_offset));
 }
 
 
@@ -379,7 +446,6 @@ StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& 
     m_color = color;
     AttachChild(m_label);
     m_label->Hide();
-    RepositionButton();
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(CheckedSignal, &CheckedEcho);
@@ -387,9 +453,14 @@ StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& 
 
 Pt StateButton::MinUsableSize() const
 {
-    Pt text_lr = m_text_ul + m_label->MinUsableSize();
-    return Pt(std::max(m_button_lr.x, text_lr.x) - std::min(m_button_ul.x, m_text_ul.x),
-              std::max(m_button_lr.y, text_lr.y) - std::min(m_button_ul.y, m_text_ul.y));
+    Pt bn_ul, bn_lr, tx_ul;
+
+    if (m_representer)
+        m_representer->DoLayout(*this, bn_ul, bn_lr, tx_ul);
+
+    Pt text_lr = tx_ul + m_label->MinUsableSize();
+    return Pt(std::max(bn_lr.x, text_lr.x) - std::min(bn_ul.x, tx_ul.x),
+              std::max(bn_lr.y, text_lr.y) - std::min(bn_ul.y, tx_ul.y));
 }
 
 const std::string& StateButton::Text() const
@@ -436,7 +507,6 @@ void StateButton::SizeMove(const Pt& ul, const Pt& lr)
 {
     Control::SizeMove(ul, lr);
     m_label->Resize(Size());
-    RepositionButton();
 }
 
 void StateButton::Reset()
@@ -444,64 +514,6 @@ void StateButton::Reset()
 
 void StateButton::SetCheck(bool b/* = true*/)
 { m_checked = b; }
-
-void StateButton::RepositionButton()
-{
-    X bn_w = X(m_label->GetFont()->PointSize()); // set button width and height to text height
-    Y bn_h = Y(m_label->GetFont()->PointSize());
-
-    m_button_ul = Pt();
-    m_button_lr = Pt(bn_w, bn_h);
-
-    if (m_style == SBSTYLE_3D_TOP_TAB) {
-        m_button_ul = Pt();
-        m_button_lr = Pt();
-        m_text_ul = Pt();
-    } else {
-        X w = Width();
-        Y h = Height();
-        const X BN_W = m_button_lr.x - m_button_ul.x;
-        const Y BN_H = m_button_lr.y - m_button_ul.y;
-        X bn_x = m_button_ul.x;
-        Y bn_y = m_button_ul.y;
-        Flags<TextFormat> format = m_label->GetTextFormat();
-        Flags<TextFormat> original_format = format;
-        const double SPACING = 0.5; // the space to leave between the button and text, as a factor of the button's size (width or height)
-        if (format & FORMAT_VCENTER)       // center button vertically
-            bn_y = (h - BN_H) / 2.0 + 0.5;
-        if (format & FORMAT_TOP) {         // put button at top, text just below
-            bn_y = Y0;
-            m_text_ul.y = BN_H;
-        }
-        if (format & FORMAT_BOTTOM) {      // put button at bottom, text just above
-            bn_y = (h - BN_H);
-            m_text_ul.y = h - (BN_H * (1 + SPACING)) - (static_cast<int>(m_label->GetLineData().size() - 1) * m_label->GetFont()->Lineskip() + m_label->GetFont()->Height()) + 0.5;
-        }
-
-        if (format & FORMAT_CENTER) {      // center button horizontally
-            if (format & FORMAT_VCENTER) { // if both the button and the text are to be centered, bad things happen
-                format |= FORMAT_LEFT;     // so go to the default (FORMAT_CENTER|FORMAT_LEFT)
-                format &= ~FORMAT_CENTER;
-            } else {
-                bn_x = (w - bn_x) / 2.0 - BN_W / 2.0 + 0.5;
-            }
-        }
-        if (format & FORMAT_LEFT) {        // put button at left, text just to the right
-            bn_x = X0;
-            if (format & FORMAT_VCENTER)
-                m_text_ul.x = BN_W * (1 + SPACING) + 0.5;
-        }
-        if (format & FORMAT_RIGHT) {       // put button at right, text just to the left
-            bn_x = (w - BN_W);
-            if (format & FORMAT_VCENTER)
-                m_text_ul.x = -BN_W * (1 + SPACING) + 0.5;
-        }
-        if (format != original_format)
-            m_label->SetTextFormat(format);
-        m_button_ul = Pt(bn_x, bn_y);
-        m_button_lr = m_button_ul + Pt(BN_W, BN_H);
-    }
-}
 
 void StateButton::SetColor(Clr c)
 { Control::SetColor(c); }
@@ -514,15 +526,6 @@ void StateButton::SetTextColor(Clr c)
 
 TextControl* StateButton::GetLabel() const
 { return m_label; }
-
-Pt StateButton::ButtonUpperLeft() const
-{ return m_button_ul; }
-
-Pt StateButton::ButtonLowerRight() const
-{ return m_button_lr; }
-
-Pt StateButton::TextUpperLeft() const
-{ return m_text_ul; }
 
 
 ////////////////////////////////////////////////

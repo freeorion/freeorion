@@ -153,6 +153,18 @@ public:
                        if not.
      */
     virtual void OnChecked(bool checked) const;
+
+    /** \brief Calculate the layout of text and button component.
+
+        \param button The StateButton instance to layout.
+        \param button_ul[out] The upper left corner of the visual
+               button.
+        \param button_lr[out] The lower right corner of the visual
+               button.
+        \param text_ul[out] The upper left corner of the button
+               label.
+     */
+    virtual void DoLayout(const GG::StateButton& button, Pt& button_ul, Pt& button_lr, Pt& text_ul) const;
 };
 
 
@@ -218,9 +230,6 @@ public:
     StateButtonStyle Style() const;
 
     TextControl* GetLabel() const;
-    Pt  ButtonUpperLeft() const;  ///< Returns the upper-left of the button part of the control
-    Pt  ButtonLowerRight() const; ///< Returns the lower-right of the button part of the control
-    Pt  TextUpperLeft() const;    ///< Returns the upper-left of the text part of the control
 
     mutable CheckedSignalType CheckedSignal; ///< The checked signal object for this StaticButton
     //@}
@@ -242,8 +251,6 @@ protected:
     virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseLeave();
-
-    void RepositionButton();      ///< Places the button at the appropriate position based on the style flags, without resizing it
     //@}
 
     boost::shared_ptr<StateButtonRepresenter> m_representer;
@@ -255,10 +262,6 @@ private:
     bool              m_mouseover;   ///< true if the pointer is currently over the control
     Clr               m_int_color;   ///< color inside border
     StateButtonStyle  m_style;       ///< style of appearance to use when rendering button
-
-    Pt                m_button_ul;
-    Pt                m_button_lr;
-    Pt                m_text_ul;
 };
 
 
