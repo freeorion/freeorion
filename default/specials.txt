@@ -1528,7 +1528,7 @@ Special
                 Planet
                 OwnedBy empire = Source.Owner
                 HasTag name = "ORGANIC"
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
                 ResourceSupplyConnected empire = Source.Owner condition = Source
             ]
             activation =  Focus type = "FOCUS_GROWTH"
@@ -1572,7 +1572,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ORGANIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
@@ -1614,7 +1614,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ORGANIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
@@ -1658,7 +1658,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
@@ -1702,7 +1702,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
@@ -1747,7 +1747,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "ROBOTIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "POSITRONIUM_STACK"
@@ -1792,7 +1792,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MINERALS_STACK"
@@ -1836,7 +1836,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "CRYSTALS_STACK"
@@ -1881,7 +1881,7 @@ Special
                 OwnedBy empire = Source.Owner
                 HasTag name = "LITHIC"
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-                TargetPopulation low = 0
+                //TargetPopulation low = 0
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "ELERIUM_STACK"
