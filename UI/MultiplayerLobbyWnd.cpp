@@ -399,9 +399,9 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 
     m_new_load_game_buttons = new GG::RadioButtonGroup(GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, boost::make_shared<CUIRadioRepresenter>()));
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, boost::make_shared<CUIRadioRepresenter>()));
 
     m_browse_saves_btn = new CUIButton("...");
     m_save_file_text = new CUILabel("", GG::FORMAT_NOWRAP);

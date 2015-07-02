@@ -24,6 +24,8 @@
 
 #include <GG/StyleFactory.h>
 
+#include <boost/make_shared.hpp>
+
 #include <GG/Button.h>
 #include <GG/DropDownList.h>
 #include <GG/DynamicGraphic.h>
@@ -173,7 +175,7 @@ StateButton* StyleFactory::NewTabBarTab(const std::string& str,
                                         const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
                                         Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
 {
-    StateButton* retval = new StateButton(str, font, format, color, text_color, interior, SBSTYLE_3D_TOP_TAB);
+    StateButton* retval = new StateButton(str, font, format, color, boost::make_shared<BeveledTabRepresenter>(), text_color);
     retval->Resize(retval->MinUsableSize() + Pt(X(12), Y0));
     return retval;
 }

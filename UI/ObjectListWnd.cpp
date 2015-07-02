@@ -998,19 +998,19 @@ private:
             GG::Connect(label->LeftClickedSignal,
                         boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
 
-            GG::StateButton* button = new CUIStateButton(" ", GG::FORMAT_CENTER);
+            GG::StateButton* button = new CUIStateButton(" ", GG::FORMAT_CENTER, boost::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.find(SHOW_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
             m_filter_buttons[uot][SHOW_VISIBLE] = button;
 
-            button = new CUIStateButton(" ", GG::FORMAT_CENTER);
+            button = new CUIStateButton(" ", GG::FORMAT_CENTER, boost::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.find(SHOW_PREVIOUSLY_VISIBLE) != vis_display.end());
             m_filters_layout->Add(button, 2, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
             m_filter_buttons[uot][SHOW_PREVIOUSLY_VISIBLE] = button;
 
-            button = new CUIStateButton(" ", GG::FORMAT_CENTER);
+            button = new CUIStateButton(" ", GG::FORMAT_CENTER, boost::make_shared<CUICheckBoxRepresenter>());
             button->SetCheck(vis_display.find(SHOW_DESTROYED) != vis_display.end());
             m_filters_layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);

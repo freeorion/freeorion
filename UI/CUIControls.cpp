@@ -454,25 +454,10 @@ GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
 // class CUIStateButton
 ///////////////////////////////////////
 CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format,
-                               GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/) :
+                               boost::shared_ptr<GG::StateButtonRepresenter> representer) :
     StateButton(str, ClientUI::GetFont(), format,
-                ClientUI::StateButtonColor(), ClientUI::TextColor(), GG::CLR_ZERO,
-                style)
-{
-    switch (style) {
-    case GG::SBSTYLE_3D_CHECKBOX:
-        m_representer = boost::shared_ptr<GG::StateButtonRepresenter>(new CUICheckBoxRepresenter());
-        break;
-    case GG::SBSTYLE_3D_RADIO:
-        m_representer = boost::shared_ptr<GG::StateButtonRepresenter>(new CUIRadioRepresenter());
-        break;
-    case GG::SBSTYLE_3D_TOP_TAB:
-        m_representer = boost::shared_ptr<GG::StateButtonRepresenter>(new CUITabRepresenter());
-        SetColor(ClientUI::WndColor());
-        GetLabel()->SetTextColor(DarkColor(ClientUI::TextColor()));
-        break;
-    }
-}
+                ClientUI::StateButtonColor(), representer, ClientUI::TextColor(), GG::CLR_ZERO)
+{}
 
 
 ///////////////////////////////////////

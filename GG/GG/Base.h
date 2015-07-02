@@ -92,16 +92,6 @@ GG_ENUM(Orientation,
     HORIZONTAL ///< Horizontal orientation.
 )
 
-/** The built-in visual styles of state buttons. */
-GG_ENUM(StateButtonStyle,
-    SBSTYLE_3D_CHECKBOX,     ///< Draws a down-beveled box with a 3D check-mark inside.
-    SBSTYLE_3D_RADIO,        ///< Draws a down-beveled circle with a 3D "dot" or "bubble" inside.
-
-    /** Draws an up-beveled rectagular tab that is brighter and larger when
-        pressed; it's bottom is unbeveled if checked and beveled if unchecked. */
-    SBSTYLE_3D_TOP_TAB
-)
-
 /** Adpated from SDLKey enum in SDL_keysym.h of the SDL library; capital
     letter keys added. */
 GG_ENUM(Key,

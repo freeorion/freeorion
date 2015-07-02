@@ -667,7 +667,7 @@ void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level, c
 
 GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT);
+    GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), button, indentation_level));
@@ -804,7 +804,7 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
 
 void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::StateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT);
+    GG::StateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("UI.sound.music-volume"));
@@ -829,7 +829,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
                               VolumeSliderHandler volume_slider_handler, bool toggle_value)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT);
+    GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));

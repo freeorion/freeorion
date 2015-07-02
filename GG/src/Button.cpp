@@ -427,25 +427,14 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
 // GG::StateButton
 ////////////////////////////////////////////////
 StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                         Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/, StateButtonStyle style/* = SBSTYLE_3D_CHECKBOX*/) :
+                         Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
+    m_representer(representer),
     m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
     m_checked(false),
     m_mouseover(false),
     m_int_color(interior)
 {
-    switch (style) {
-    case SBSTYLE_3D_CHECKBOX:
-        m_representer = boost::shared_ptr<StateButtonRepresenter>(new BeveledCheckBoxRepresenter());
-        break;
-    case SBSTYLE_3D_RADIO:
-        m_representer = boost::shared_ptr<StateButtonRepresenter>(new BeveledRadioRepresenter());
-        break;
-    case SBSTYLE_3D_TOP_TAB:
-        m_representer = boost::shared_ptr<StateButtonRepresenter>(new BeveledTabRepresenter());
-        break;
-    }
-
     m_color = color;
     AttachChild(m_label);
     m_label->Hide();

@@ -225,7 +225,7 @@ public:
 
     /** \name Structors */ ///@{
     StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                Clr color, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, StateButtonStyle style = SBSTYLE_3D_CHECKBOX); ///< Ctor
+                Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO); ///< Ctor
     //@}
 
     /** \name Accessors */ ///@{
@@ -236,9 +236,6 @@ public:
     bool             Checked() const;       ///< Returns true if button is checked
     bool             IsMouseover() const;   ///< Returns true if mouse pointer is over this button
     Clr              InteriorColor() const; ///< Returns the interior color of the box, circle, or other enclosing shape
-
-    /** Returns the visual style of the button \see StateButtonStyle */
-    StateButtonStyle Style() const;
 
     TextControl* GetLabel() const;
 
@@ -264,9 +261,8 @@ protected:
     virtual void MouseLeave();
     //@}
 
-    boost::shared_ptr<StateButtonRepresenter> m_representer;
-
 private:
+    boost::shared_ptr<StateButtonRepresenter> m_representer;
     TextControl*      m_label;       ///< Label used to display text
 
     bool              m_checked;     ///< true when this button in a checked, active state

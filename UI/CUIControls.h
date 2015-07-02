@@ -149,7 +149,7 @@ public:
 class CUIStateButton : public GG::StateButton {
 public:
     /** \name Structors */ //@{
-    CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX); ///< ctor
+    CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, boost::shared_ptr<GG::StateButtonRepresenter> representer); ///< ctor
     //@}
 };
 
