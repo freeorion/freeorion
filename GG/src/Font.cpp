@@ -791,7 +791,7 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
         if (it == m_glyphs.end()) {
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
         } else {
-            pt.x += StoreGlyph (pt, it->second, &render_state, cache);
+            pt.x += StoreGlyph(pt, it->second, &render_state, cache);
         }
     }
 
