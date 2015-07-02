@@ -348,7 +348,7 @@ public:
 
     /** \brief Holds precomputed glyph position information for rendering.
      */
-    struct RenderCache
+    struct GG_API RenderCache
     {
         boost::scoped_ptr<GLPtBuffer> vertices;
         boost::scoped_ptr<GLTexCoordBuffer> coordinates;

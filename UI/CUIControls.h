@@ -511,20 +511,11 @@ private:
 
 /** Acts like a normal TextControl, but renders extra black copy / copies of text behind to create a
   * drop-shadow effect, impriving text readability. */
-class ShadowedTextControl : public GG::Control {
+class ShadowedTextControl : public GG::TextControl {
 public:
     ShadowedTextControl(const std::string& str, const boost::shared_ptr<GG::Font>& font,
                         GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE);
-
-    virtual GG::Pt MinUsableSize() const;
-    virtual void SetText(const std::string& str);
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void SetColor(GG::Clr c);
-    virtual void SetTextColor(GG::Clr c);
     virtual void Render();
-private:
-    GG::TextControl* shadow_text;
-    GG::TextControl* main_text;
 };
 
 /** Functions like a StaticGraphic, except can have multiple textures that are rendered bottom to top
