@@ -421,34 +421,33 @@ void CUITabRepresenter::Render(const GG::StateButton& button) const {
     // draw button
     GG::Pt ul = button.UpperLeft();
     GG::Pt lr = button.LowerRight();
-
-    GG::Pt cl_ul = button.ClientUpperLeft();
-    GG::Pt bn_ul, bn_lr, tx_ul;
-
-    DoLayout(button, bn_ul, bn_lr, tx_ul);
-
-    bn_ul += cl_ul;
-    bn_lr += cl_ul;
+    GG::Pt tx_ul;
 
     GG::Clr color_to_use = button.Disabled() ? DisabledColor(button.Color()) : button.Color();
     GG::Clr border_color_to_use = button.Disabled() ? DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
+
     if (button.Checked() || !button.Disabled() && button.IsMouseover())
         AdjustBrightness(border_color_to_use, 100);
+
     const int UNCHECKED_OFFSET = 4;
-    GG::Pt additional_text_offset;
+
     if (!button.Checked()) {
         ul.y += UNCHECKED_OFFSET;
-        additional_text_offset.y = GG::Y(UNCHECKED_OFFSET / 2);
+        tx_ul.y = GG::Y(UNCHECKED_OFFSET / 2);
     }
+
     AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !button.Checked());
 
-    button.GetLabel()->OffsetMove(tx_ul + additional_text_offset);
+    button.GetLabel()->OffsetMove(tx_ul);
     button.GetLabel()->Render();
-    button.GetLabel()->OffsetMove(-(tx_ul + additional_text_offset));
+    button.GetLabel()->OffsetMove(-(tx_ul));
 }
 
 void CUITabRepresenter::OnChecked(bool checked) const
 { PlayButtonCheckSound(); }
+
+GG::Pt CUITabRepresenter::MinUsableSize(const GG::StateButton& button) const
+{ return button.GetLabel()->MinUsableSize(); }
 
 
 ///////////////////////////////////////

@@ -140,6 +140,8 @@ public:
     virtual void Render(const GG::StateButton& button) const;
 
     virtual void OnChecked(bool checked) const;
+
+    virtual GG::Pt MinUsableSize(const GG::StateButton& button) const;
 };
 
 

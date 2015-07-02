@@ -154,6 +154,15 @@ public:
      */
     virtual void OnChecked(bool checked) const;
 
+    /** \brief Return the minimum size required for a usable representation
+
+        \param button The state button to calculate the minimum size of.
+        \return The minimum size to create a usable representation of the
+           given state button.
+     */
+    virtual Pt MinUsableSize(const StateButton& button) const;
+
+protected:
     /** \brief Calculate the layout of text and button component.
 
         \param button The StateButton instance to layout.
@@ -189,6 +198,8 @@ class GG_API BeveledTabRepresenter: public StateButtonRepresenter
 {
 public:
     virtual void Render(const StateButton& button) const;
+
+    virtual Pt MinUsableSize(const StateButton& button) const;
 };
 
 
