@@ -432,10 +432,9 @@ StateButton::StateButton(const std::string& str, const boost::shared_ptr<Font>& 
     m_label(new TextControl(X0, Y0, X1, Y1, str, font, text_color, format, NO_WND_FLAGS)),
     m_checked(false),
     m_mouseover(false),
-    m_int_color(interior),
-    m_style(style)
+    m_int_color(interior)
 {
-    switch (m_style) {
+    switch (style) {
     case SBSTYLE_3D_CHECKBOX:
         m_representer = boost::shared_ptr<StateButtonRepresenter>(new BeveledCheckBoxRepresenter());
         break;
@@ -474,9 +473,6 @@ bool StateButton::IsMouseover() const
 
 Clr StateButton::InteriorColor() const
 { return m_int_color; }
-
-StateButtonStyle StateButton::Style() const
-{ return m_style; }
 
 void StateButton::Render()
 {

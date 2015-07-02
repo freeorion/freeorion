@@ -272,7 +272,6 @@ private:
     bool              m_checked;     ///< true when this button in a checked, active state
     bool              m_mouseover;   ///< true if the pointer is currently over the control
     Clr               m_int_color;   ///< color inside border
-    StateButtonStyle  m_style;       ///< style of appearance to use when rendering button
 };
 
 
