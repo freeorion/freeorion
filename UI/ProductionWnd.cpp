@@ -224,7 +224,7 @@ namespace {
 
         const ProductionQueue::Element  m_build;
         GG::Label*                      m_name_text;
-        GG::Control*                    m_location_text;
+        GG::Label*                      m_location_text;
         GG::Label*                      m_PPs_and_turns_text;
         GG::Label*                      m_turns_remaining_until_next_complete_text;
         GG::StaticGraphic*              m_icon;
@@ -473,11 +473,11 @@ namespace {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         const Empire* this_client_empire = GetEmpire(client_empire_id);
         if (this_client_empire && system_selected) {
-            m_location_text = new ShadowedTextControl(location_text, ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            m_location_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + location_text + "</s>",
+                                                  ClientUI::GetBoldFont(), this_client_empire->Color(), GG::FORMAT_TOP | GG::FORMAT_RIGHT);
         } else {
-            GG::Label* l_location_text = new CUILabel(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
-            l_location_text->SetTextColor(location_clr);
-            m_location_text = l_location_text;
+            m_location_text = new CUILabel(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
+            m_location_text->SetTextColor(location_clr);
         }
         m_location_text->MoveTo(GG::Pt(left, top));
         m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));

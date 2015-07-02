@@ -511,7 +511,7 @@ private:
     void                    FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
-    ShadowedTextControl*    m_planet_name;              ///< planet name
+    GG::TextControl*        m_planet_name;              ///< planet name
     GG::Label*              m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     GG::Button*             m_colonize_button;          ///< btn which can be pressed to colonize this planet
     GG::Button*             m_invade_button;            ///< btn which can be pressed to invade this planet
@@ -838,6 +838,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         }
     }
 
+    // determine font based on whether planet is a capital...
     boost::shared_ptr<GG::Font> font;
     if (capital)
         font = ClientUI::GetBoldFont(ClientUI::Pts()*4/3);
@@ -847,7 +848,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
 
     // create planet name control
-    m_planet_name = new ShadowedTextControl(" ", font, ClientUI::TextColor());
+    m_planet_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, " ", font, ClientUI::TextColor());
     m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
     m_planet_name->Resize(m_planet_name->MinUsableSize());
     AttachChild(m_planet_name);
@@ -1404,7 +1405,7 @@ void SidePanel::PlanetPanel::Refresh() {
         wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
 
     // set name
-    m_planet_name->SetText(wrapped_planet_name);
+    m_planet_name->SetText("<s>" + wrapped_planet_name + "</s>");
     m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
     m_planet_name->Resize(m_planet_name->MinUsableSize());
 
@@ -2605,7 +2606,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_name = new CUIDropDownList(6);
     m_system_name->SetColor(GG::CLR_ZERO);
     m_system_name->SetInteriorColor(GG::FloatClr(0.0, 0.0, 0.0, 0.5));
-    m_star_type_text = new ShadowedTextControl("", ClientUI::GetFont(), ClientUI::TextColor());
+    m_star_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
 
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -2858,7 +2859,7 @@ void SidePanel::RefreshImpl() {
 
 
     // star type
-    m_star_type_text->SetText(GetStarTypeName(system));
+    m_star_type_text->SetText("<s>" + GetStarTypeName(system) + "</s>");
 
 
     // configure selection of planet panels in panel container

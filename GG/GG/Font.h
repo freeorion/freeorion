@@ -322,6 +322,9 @@ public:
         /** The count of open \<i> tags seen since the last \</i> seen. */
         std::size_t     use_italics;
 
+        /** The count of open \<s> tags seen since the last \</s> seen. */
+        std::size_t     use_shadow;
+
         /** The count of open \<u> tags seen since the last \</u> seen. */
         std::size_t     draw_underline;
 
@@ -570,8 +573,12 @@ private:
     void              Init(FT_Face& font);
     bool              GenerateGlyph(FT_Face font, boost::uint32_t ch);
     void              ValidateFormat(Flags<TextFormat>& format) const;
-    X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state,
-                                 RenderCache& cache) const;
+
+    X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state, RenderCache& cache) const;
+    void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph, int x_top_offset) const;
+    void              StoreUnderlineImpl(RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph,
+                                         Y descent, Y height, Y underline_height, Y underline_offset) const;
+
     void              HandleTag(const boost::shared_ptr<FormattingTag>& tag, double* orig_color,
                                 RenderState& render_state) const;
     bool              IsDefaultFont();
@@ -589,6 +596,7 @@ private:
     double               m_underline_offset; ///< Amount below the baseline that the underline sits
     double               m_underline_height; ///< Height (thickness) of underline
     double               m_italics_offset;   ///< Amount that the top of an italicized glyph is left of the bottom
+    double               m_shadow_offset;    ///< Amount that shadows rendered under texts are displaced from the text
     X                    m_space_width; ///< The width of the glyph for the space character
     GlyphMap             m_glyphs;      ///< The locations of the images of each glyph within the textures
     boost::shared_ptr<Texture> m_texture;    ///< The OpenGL texture object in which the glyphs can be found
@@ -761,6 +769,7 @@ GG::Font::Font(const std::string& font_filename, unsigned int pts,
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
+    m_shadow_offset(0.0),
     m_space_width(0)
 {
     if (m_font_filename != "") {
@@ -785,6 +794,7 @@ GG::Font::Font(const std::string& font_filename, unsigned int pts,
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
+    m_shadow_offset(0.0),
     m_space_width(0)
 {
     assert(!file_contents.empty());
