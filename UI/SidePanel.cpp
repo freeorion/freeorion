@@ -1405,7 +1405,7 @@ void SidePanel::PlanetPanel::Refresh() {
         wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
 
     // set name
-    m_planet_name->SetText(wrapped_planet_name);
+    m_planet_name->SetText("<s>" + wrapped_planet_name + "</s>");
     m_planet_name->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0));
     m_planet_name->Resize(m_planet_name->MinUsableSize());
 
