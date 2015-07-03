@@ -363,9 +363,6 @@
     <ClInclude Include="..\..\universe\ObjectMap.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\UI\Encyclopedia.h">
-      <Filter>Header Files\UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\UI\ObjectListWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>

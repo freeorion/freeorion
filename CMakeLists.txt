@@ -142,6 +142,7 @@ set (freeorioncommon_HEADER
     universe/Condition.h
     universe/EffectAccounting.h
     universe/Effect.h
+    universe/Encyclopedia.h
     universe/Enums.h
     universe/Field.h
     universe/Fleet.h
@@ -204,6 +205,7 @@ set (freeorioncommon_SOURCE
     universe/Condition.cpp
     universe/EffectAccounting.cpp
     universe/Effect.cpp
+    universe/Encyclopedia.cpp
     universe/Enums.cpp
     universe/Field.cpp
     universe/Fleet.cpp

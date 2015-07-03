@@ -68,7 +68,6 @@ set(freeorion_HEADER
     ../../UI/CUIWnd.h
     ../../UI/DesignWnd.h
     ../../UI/EncyclopediaDetailPanel.h
-    ../../UI/Encyclopedia.h
     ../../UI/FieldIcon.h
     ../../UI/FleetButton.h
     ../../UI/FleetWnd.h

@@ -324,6 +324,7 @@
 		82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		82E9DDF119530E5D007E681B /* CombatEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E9DDED19530E5D007E681B /* CombatEvent.cpp */; };
 		82E9DDF219530E5D007E681B /* CombatEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E9DDEF19530E5D007E681B /* CombatEvents.cpp */; };
+		82EC868B1B40504700D4584D /* Encyclopedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82EC86891B40504700D4584D /* Encyclopedia.cpp */; };
 		82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
@@ -1031,7 +1032,6 @@
 		82B9AEA01AA71CCC00486B2A /* GraphicalSummary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicalSummary.h; sourceTree = "<group>"; };
 		82B9D445180C53FE0032F86D /* GraphControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphControl.cpp; sourceTree = "<group>"; };
 		82B9D446180C53FE0032F86D /* GraphControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphControl.h; sourceTree = "<group>"; };
-		82BB838115AAD16C006F635F /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
 		82BB838215AAD20A006F635F /* EncyclopediaParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncyclopediaParser.cpp; sourceTree = "<group>"; };
 		82BEB657159853B300B024CB /* Diplomacy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Diplomacy.cpp; sourceTree = "<group>"; };
 		82BEB658159853B300B024CB /* Diplomacy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Diplomacy.h; sourceTree = "<group>"; };
@@ -1068,6 +1068,8 @@
 		82E9DDEE19530E5D007E681B /* CombatEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEvent.h; sourceTree = "<group>"; };
 		82E9DDEF19530E5D007E681B /* CombatEvents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatEvents.cpp; sourceTree = "<group>"; };
 		82E9DDF019530E5D007E681B /* CombatEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEvents.h; sourceTree = "<group>"; };
+		82EC86891B40504700D4584D /* Encyclopedia.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Encyclopedia.cpp; sourceTree = "<group>"; };
+		82EC868A1B40504700D4584D /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
 		82ED913E194F5C85002F0A4A /* make_dmg.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = make_dmg.py; sourceTree = "<group>"; };
 		82ED9141194F5CDD002F0A4A /* make_versioncpp.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = make_versioncpp.py; path = ../cmake/make_versioncpp.py; sourceTree = "<group>"; };
 		82F06B6417B7C3BD00982965 /* TemporaryPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryPtr.h; sourceTree = "<group>"; };
@@ -1601,7 +1603,6 @@
 				343EC6590F3F5B5300782AD3 /* DesignWnd.cpp */,
 				343EC65A0F3F5B5300782AD3 /* DesignWnd.h */,
 				471D5CB80A98A3F900DA9C21 /* doc */,
-				82BB838115AAD16C006F635F /* Encyclopedia.h */,
 				343EC65D0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp */,
 				343EC65E0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.h */,
 				828C793D160778AA0075F220 /* FieldIcon.cpp */,
@@ -1708,6 +1709,8 @@
 				82592EEF147E381B00B840A5 /* EffectAccounting.cpp */,
 				82592EEE147E37FB00B840A5 /* EffectAccounting.h */,
 				8258927D17BBD04400818596 /* EnableTemporaryFromThis.h */,
+				82EC86891B40504700D4584D /* Encyclopedia.cpp */,
+				82EC868A1B40504700D4584D /* Encyclopedia.h */,
 				471D5CF20A98A3F900DA9C21 /* Enums.cpp */,
 				471D5CF30A98A3F900DA9C21 /* Enums.h */,
 				8250FDE315FCEFDD00523C1C /* Field.cpp */,
@@ -2360,6 +2363,7 @@
 				47103BF80CF04E5900A7DF2B /* VarText.cpp in Sources */,
 				47103BF90CF04E5900A7DF2B /* XMLDoc.cpp in Sources */,
 				47103BFA0CF04E5900A7DF2B /* Building.cpp in Sources */,
+				82EC868B1B40504700D4584D /* Encyclopedia.cpp in Sources */,
 				47103BFB0CF04E5900A7DF2B /* Condition.cpp in Sources */,
 				47103BFF0CF04E5900A7DF2B /* Effect.cpp in Sources */,
 				47103C010CF04E5900A7DF2B /* Enums.cpp in Sources */,

@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\universe\Effect.h" />
     <ClInclude Include="..\..\universe\EffectAccounting.h" />
     <ClInclude Include="..\..\universe\EnableTemporaryFromThis.h" />
+    <ClInclude Include="..\..\universe\Encyclopedia.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
     <ClInclude Include="..\..\universe\Field.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
@@ -211,6 +212,7 @@
     <ClCompile Include="..\..\universe\Condition.cpp" />
     <ClCompile Include="..\..\universe\Effect.cpp" />
     <ClCompile Include="..\..\universe\EffectAccounting.cpp" />
+    <ClCompile Include="..\..\universe\Encyclopedia.cpp" />
     <ClCompile Include="..\..\universe\Enums.cpp" />
     <ClCompile Include="..\..\universe\Field.cpp" />
     <ClCompile Include="..\..\universe\Fleet.cpp" />
