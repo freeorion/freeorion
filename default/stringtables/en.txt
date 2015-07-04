@@ -10354,19 +10354,19 @@ SH_COLONY_BASE_DESC
 A hull designed to create a colony on another planet in system. It cannot move between systems or move quickly in-system.
 
 SH_FLOATER_BODY
-Weak Body
+Floater Body
 
 SH_FLOATER_BODY_DESC
 Small frail body that is unable to withstand significant damage.
 
 SH_TREE_BODY
-Immobile Body
+Tree Body
 
 SH_TREE_BODY_DESC
 Rigid tree-like body that is unable to move between systems.
 
 SH_STRONG_MONSTER_BODY
-Strong Body
+Dragon Body
 
 SH_STRONG_MONSTER_BODY_DESC
 Large strong body with fearsome natural weapons and strong natural armor.
@@ -10844,6 +10844,9 @@ Xenophobic Harassment: Eaxaw
 
 ORGANIC_GROWTH
 Organic Growth
+
+AGE_BONUS
+Age
 
 BASIC_CONTENTEDNESS_LABEL
 General Contentedness
