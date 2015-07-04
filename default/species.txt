@@ -154,8 +154,6 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
     ]
-
-
     
     [[RADIATED_STANDARD_EP]]
     
@@ -351,7 +349,6 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
-        
     ]
     
     [[TERRAN_STANDARD_EP]]
@@ -436,6 +433,7 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -789,7 +787,6 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
-        [[LARGE_PLANET]]
     ]
     
     [[TUNDRA_STANDARD_EP]]
@@ -946,8 +943,6 @@ Species
         
         [[NATIVE_PLANETARY_DEFENSE]]
         [[NATIVE_PLANETARY_SHIELDS]]
-
-        
     ]
     
     [[DESERT_STANDARD_EP]]
@@ -1135,7 +1130,6 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
-        [[LARGE_PLANET]]
     ]
     
     [[OCEAN_STANDARD_EP]]
