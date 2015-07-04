@@ -140,6 +140,7 @@ namespace {
         Hotkey::AddHotkey("map.research",             UserStringNop("HOTKEY_MAP_RESEARCH"),             GG::GGK_r,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.production",           UserStringNop("HOTKEY_MAP_PRODUCTION"),           GG::GGK_p,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.design",               UserStringNop("HOTKEY_MAP_DESIGN"),               GG::GGK_d,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.objects",              UserStringNop("HOTKEY_MAP_OBJECTS"),              GG::GGK_o,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.menu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
         Hotkey::AddHotkey("map.zoom_in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
         Hotkey::AddHotkey("map.zoom_in_alt",          UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),          GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
@@ -5452,6 +5453,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(this, &MapWnd::ToggleResearch,         "map.research",         new VisibleWindowCondition(this));
     hkm->Connect(this, &MapWnd::ToggleProduction,       "map.production",       new VisibleWindowCondition(this));
     hkm->Connect(this, &MapWnd::ToggleDesign,           "map.design",           new VisibleWindowCondition(this));
+    hkm->Connect(this, &MapWnd::ToggleObjects,          "map.objects",          new VisibleWindowCondition(this));
     hkm->Connect(this, &MapWnd::ShowMenu,               "map.menu",             new VisibleWindowCondition(this));
     hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in",          new VisibleWindowCondition(this));
     hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in_alt",      new VisibleWindowCondition(this));
