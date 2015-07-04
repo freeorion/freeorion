@@ -439,27 +439,27 @@ SD_OUTPOST_BASE_DESC
 Astronef stellaire non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable, seulement dans le système où il a été fabriqué. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
 
 SD_TROOP_DROP
-Parachutage d'Infanterie
+Largueur d'Infanterie
 SD_TROOP_DROP_DESC
 Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
 
 SD_SMALL_TROOP_SHIP
-Petit Vaisseau d'Infanterie
+Petit Transporteur d'Infanterie
 SD_SMALL_TROOP_SHIP_DESC
 Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète.
 
 SD_TROOP_SHIP
-Vaisseau d'Infanterie
+Transporteur d'Infanterie
 SD_TROOP_SHIP_DESC
 Transporte 6 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète.
 
 SD_ORG_TROOP_SHIP
-Vaisseau d'Infanterie Organic
+Transporteur d'Infanterie Organic
 SD_ORG_TROOP_SHIP_DESC
 Transporte 8 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Les vaisseaux organiques ne peuvent être construits que sur des planètes possédant un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ENG_TROOP_SHIP
-Vaisseau d'Infanterie Energy
+Transporteur d'Infanterie Energy
 SD_ENG_TROOP_SHIP_DESC
 Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ce vaisseau ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une étoile bleue, blanche ou d'un trou noir.
 
@@ -1127,7 +1127,7 @@ OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de systèmes stellaires, relativement à celle de ces dernières.
 
 OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY
-Affiche un calque différent de survol de souris MapWindow pour les systèmes encore non-explorés par l'empire du joueur.
+Affiche un calque différent de survol de souris pour les systèmes encore non-explorés par l'empire du joueur.
 
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Fixe la couleur sur la carte galactique des noms des systèmes stellaires qu'aucun empire ne contrôle.
@@ -1145,7 +1145,7 @@ OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de flottes sélectionnées, relativement à celle de ces dernières.
 
 OPTIONS_DB_SHOW_FLEET_ETA
-Afficher l'ETA d'une flotte (pour les flottes en mouvement) dans la Fenêtre des Flottes.
+Afficher l'ETA d'une flotte (pour les flottes en mouvement) dans la Fenêtre Flottes.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de système stellaire sélectionnées, relativement à celle de ces dernières.
@@ -1172,16 +1172,16 @@ OPTIONS_DB_MOUSE_REPEAT_INTERVAL
 Fixe le délai de répétition de clics quand un bouton de la souris est maintenu.
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
-Si activé, plusieurs boutons de flotte cliqués ouvrent plusieurs fenêtres de flotte en même temps. Si non, toute ouverture de fenêtre de flotte ferme celle précédemment affichée.
+Si activé, cliquer sur plusieurs boutons de flotte ouvrent plusieurs Fenêtres Flottes en même temps. Si désactivé, toute ouverture d'une Fenêtre Flottes ferme celle précédemment affichée.
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
-Active/Désactive l'effet du clic droit sur la carte galactique qui ferme d'abord les fenêtres de flotte puis, lorsque réitéré, le panneau latéral de système stellaire.
+Active/Désactive l'effet du clic droit sur la carte galactique qui ferme d'abord les Fenêtres Flottes puis, lorsque réitéré, le panneau latéral de système stellaire.
 
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
 Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef conçus par le joueur à la liste des modèles connus de l'Empire du joueur.
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
-Dans la fenêtre de Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
+Dans la Fenêtre de Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
 
 OPTIONS_DB_CHAT_PANEL_HEIGHT
 Fixe la hauteur du panneau de discussion du joueur, en pixels
@@ -1323,7 +1323,7 @@ OPTIONS_DB_RESET_FSSIZE
 Enregistre ou réinitialise la résolution en plein écran. Si non, la valeur enregistrée est utilisée. Si oui, la valeur est réinitialisée à la résolution maximale que le système peut afficher.
 
 OPTIONS_DB_AUTO_EFFECT_DESC
-Active/Désactive l'affichage de texte auto-généré dans les descriptions des technologies, des structures ou des équipements d'astronefs.
+Active/Désactive l'affichage de texte auto-généré dans les descriptions des technologies, des structures ou des équipements d'astronef.
 
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Active/Désactive les journaux détaillés des éléments de l'univers et l'évaluation des effets (pour développeurs).
@@ -1468,7 +1468,7 @@ ERR_VERSION_MISMATCH
 #Window title####
 
 SCONNECT_WINDOW_TITLE
-Connexion au serveur
+Connexion au Serveur
 
 #Static labels####
 
@@ -1539,7 +1539,7 @@ Lancer partie
 #Window title####
 
 GSETUP_WINDOW_TITLE
-Création de la galaxie
+Création de la Galaxie
 
 #Strings
 GSETUP_GRAPHICS_FILES
@@ -1659,7 +1659,7 @@ VISION  # translated
 Vision
 
 FREEORION_VISION
-FreeOrion, un jeu open-source s'inspirant de Master of Orion, est un jeu épique de stratégie spatiale au tour par tour, incorporant au modèle classique des "4X", des éléments de développement de nation présents dans des titres tels Europa Universalis 2, ainsi qu'un moteur souple de combat tactique. Bien que sa conception modulaire et ouverte autorise modifications et personnalisations significatives par la communauté, tant au niveau du moteur de jeu que des éléments de scénario, l'équipe de FreeOrion se consacre à la conception d'un univers vivant et cohérent sur le modèle d'une 'grande campagne'.
+FreeOrion, projet open-source s'inspirant de Master of Orion, est un jeu épique de stratégie spatiale au tour par tour, incorporant au modèle classique des "4X", des éléments de développement de nation présents dans des titres tels Europa Universalis 2, ainsi qu'un moteur souple de combat tactique. Bien que sa conception modulaire et ouverte autorise des modifications et personnalisations significatives par la communauté, tant au niveau du moteur de jeu que des éléments de scénario, l'équipe de FreeOrion se consacre à la conception d'un univers vivant et cohérent sur le modèle d'une 'grande campagne'.
 
 ###########################
 # Game Menu               #
@@ -1777,7 +1777,7 @@ OPTIONS_TITLE  # translated
 Options
 
 OPTIONS_MULTIPLE_FLEET_WNDS
-Fenêtres de flotte multiples
+Fenêtres Flottes multiples
 
 OPTIONS_QUICK_CLOSE_WNDS
 Fermeture rapide des fenêtres
@@ -1831,7 +1831,7 @@ OPTIONS_VERTICAL  # translated
 Vertical
 
 OPTIONS_TOOLTIP_DELAY
-Délai avant bulle d'info (ms)
+Délai avant infobulle (ms)
 
 OPTIONS_KEYPRESS_REPEAT_DELAY
 Délai avant répétition touche maintenue
@@ -2268,7 +2268,7 @@ MAP_INDICATOR_FPS
 %1% i/s
 
 #MAP_SCALE_INDICATOR
-#%1% uu
+#<s>%1% uu</s>
 
 MAP_BTN_MENU  # translated
 Menu
@@ -2605,7 +2605,7 @@ FW_AUTO
 Stratégie d'attaque automatique
 
 FW_AUTO_DESC
-Attribe automatiquement un comportement belliqueux à toute nouvelle flotte si celle-ci est équipée d'armes.
+Attribue automatiquement un comportement belliqueux à toute nouvelle flotte si celle-ci est équipée d'armes.
 
 FW_SHIP_CLASS
 Classe d'astronef
@@ -3049,7 +3049,7 @@ DESIGN_WND_MONSTERS
 Monstres
 
 DESIGN_WND_PART_PALETTE_TITLE
-Équipements d'astronefs
+Équipements d'astronef
 
 DESIGN_WND_MAIN_PANEL_TITLE
 Détails du modèle
@@ -3338,7 +3338,7 @@ ENC_FIELD
 [Partie - Champs]
 
 ENC_HOMEWORLDS
-[Partie - Espèces: Planètes Natales]
+[Partie - Planètes Natales]
 
 ENC_INDEX
 Index de l'Encyclopédie
@@ -3477,7 +3477,7 @@ ENC_UNLOCKS
 '''
 
 ENC_SHIP_PART_CAN_MOUNT_IN_SLOT_TYPES
-Se monte dans :
+'''Se monte dans : '''
 
 ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 '''%1% %2%
@@ -3631,8 +3631,14 @@ Perdues: %1%
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
 ###########################################
 
+CATEGORY_GUIDES  # translated
+**Guides**
+
 CATEGORY_GAME_CONCEPTS
 *Concepts de jeu*
+
+CATEGORY_USER_INTERFACE  # translated
+*Interface*
 
 GROWTH_ARTICLE_SHORT_DESC
 Croissance
@@ -3763,7 +3769,7 @@ Rayon de Détection
 DETECTION_RANGE_TEXT
 '''L'indicateur 'Rayon de Détection' indique, en nombre d'uus, la portée des capteurs. Un empire ne peut voir que les objets ayant une [[encyclopedia STEALTH_TITLE]] inférieure ou égale à sa [[encyclopedia DETECTION_TITLE]], et qui se trouvent dans le Rayon de Détection d'un astronef ou d'une planète qu'il contrôle.
 
-Les astronefs et les planètes ont un indicateur 'Rayon de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Rayons de Détection.  Le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire, un astronef, ou une flotte sont sélectionnés.  Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.'''
+Les astronefs et les planètes ont un indicateur 'Rayon de Détection'. Dans le Menu d'Options, le réglage 'Cercles de détection' permet d'afficher sur la carte galactique les zones circulaires (en uu) figurant les Rayons de Détection.  Afin de faciliter la mesure de ce qui se trouve à l'intérieur d'un Rayon de Détection, le réglage 'Barre d'échelle des distances' permet d'afficher l'échelle de la carte (en uu) tandis que le réglage 'Cercle d'échelle des distances' permet de figurer la même distance que la barre d'échelle lorsqu'un système stellaire est sélectionné.  Ces deux indicateurs d'échelle s'adaptent au niveau de zoom sur la carte et peuvent être activés/désactivés via des raccourcis claviers.'''
 
 TROOP_TITLE
 Infanterie
@@ -3790,7 +3796,7 @@ Les espèces robotiques sont des machines douées de conscience. La population m
 PHOTOTROPHIC_SPECIES_TITLE
 Métabolisme Phototropique
 PHOTOTROPHIC_SPECIES_TEXT
-'''Les espèces phototropiques vivent principalement, si ce n'est entièrement, de la lumière stellaire. La population maximale de ces espèces est fortement influencée par la luminosité de leur étoile -- plus elle est importante, plus elle est bénéfique. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
+'''Les espèces phototropiques vivent principalement, si ce n'est entièrement, de la lumière stellaire. La population maximale de ces espèces est fortement influencée par la luminosité de leur étoile - plus elle est importante, plus elle est bénéfique. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
 
 Influence sur la population / taille planète:
 *Étoile Bleue: Minuscule +3 ; Petite +6 ; Moyenne +9 ; Grande +12 ; Immense +15.
@@ -3802,7 +3808,7 @@ Influence sur la population / taille planète:
 SELF_SUSTAINING_SPECIES_TITLE
 Métabolisme Autosuffisant
 SELF_SUSTAINING_SPECIES_TEXT
-Les espèces autosuffisantes sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément des trois Particularités de Croissance.
+Les espèces autosuffisantes sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément de trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
 
 TELEPATHIC_TITLE
 Télépathie
@@ -3819,7 +3825,7 @@ Les espèces xénophobes commencent avec les [[tech CON_CONC_CAMP]] disponibles.
 FUEL_TITLE
 Carburant
 FUEL_TEXT
-Le carburant permet aux astronefs de parcourir les Voies spatiales. C'est seulement lors de son entrée sur une Voie spatiale qu'un astronef brûle du carburant (une unité), excepté si celle-ci se situe dans une zone d'approvisionnement de l'empire. Il n'est consommé de carburant à aucun autre moment du trajet sur une Voie spatiale. Un arrêt sur les lignes d'[[encyclopedia SUPPLY_TITLE]] permet de refaire le plein en carburant des astronefs. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant uniquement s'il se trouve en dehors des Voies spatiales (stationné dans un système stellaire ou dans l'espace intersidéral).
+Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[encyclopedia SUPPLY_TITLE]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale).
 
 SUPPLY_TITLE
 Approvisionnement
@@ -3833,9 +3839,9 @@ Les Voies spatiales d'approvisionnement essentielles d'un empire (les lignes les
 Les lignes d'approvisionnement peuvent également servir à ravitailler en [[encyclopedia FUEL_TITLE]] les astronefs.'''
 
 FLEET_UPKEEP_TITLE
-Entretien des flottes
+Entretien des Flottes
 FLEET_UPKEEP_TEXT
-Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts de [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et de toutes les structures de colonisation augmentent quant à eux de 6% pour chaque planète que l'empire possède.
+Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, dû au fait que les coûts opérationnels et de gestion de tous ces astronefs y sont inclus. Lorsque de nouveaux astronefs sont produits, le coût des astronefs augmente de 1% pour chaque astronef dont l'empire est déjà propriétaire. Les coûts du [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et de toutes les structures de colonisation augmentent quant à eux de 6% pour chaque planète que l'empire possède.
 
 EVACUATION_TITLE
 Évacuation
@@ -3876,9 +3882,67 @@ STRUCTURE_TEXT
 La Résistance indique la quantité de dommages qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation.
 
 STARLANE_SPEED_TITLE
-Vitesse sur Voies spatiales
+Vitesse sur Voie spatiale
 STARLANE_SPEED_TEXT
-Vitesse sur la carte galactique  (uu/tour)
+Vitesse sur la carte galactique  (uu/tour). La distance en uu parcourue par un astronef en un tour est égale à la valeur de sa Vitesse sur Voie spatiale, et est représentée sur la carte par une ligne en pointillé. Celle-ci indique également le nombre de tour requis pour parcourir la Voie spatiale dans sa totalité et ainsi atteindre le prochain système. Si la Vitesse sur Voie spatiale d'un astronef est inférieure à la longueur de la Voie spatiale, un minimum de 2 tours sera nécessaire à l'astronef pour parcourir cette dernière. Un voyage complet sur une Voie spatiale consommera seulement 1 unité de [[encyclopedia FUEL_TITLE]], quel que soit le nombre de tour requis.
+
+MAP_WINDOW_ARTICLE_TITLE
+Fenêtre Carte
+MAP_WINDOW_ARTICLE_TEXT
+La Fenêtre Carte peut être considérée comme l'écran de jeu 'principal' de FreeOrion. Ce dernier affiche la carte de la galaxie et permet d'accéder à toutes les autres fenêtres ou menus du jeu.  La barre supérieure réunit les éléments principaux de contrôle.  Dans le coin supérieur gauche se trouve le Bouton Tour, indiquant "Tour n" (n étant le numéro du tour en cours); un clic-gauche sur le Bouton Tour permet de faire avancer la partie d'un tour. Immédiatement à droite se trouve le bouton d'Avance Automatique; lorsque ce dernier affiche une icône poing, la partie n'avancera pas automatiquement; un clic modifie l'icône en flèches circulaires et la partie avancera automatiquement au tour suivant une fois que tous les empires auront donné leurs ordres pour le tour en cours.  Les icônes suivantes désignent pour l'empire du joueur le total de l'[[encyclopedia INDUSTRY_TITLE]], de la [[encyclopedia RESEARCH_TITLE]], le nombre d'astronefs existants, et la [[encyclopedia DETECTION_TITLE]] de l'empire.  Sur le côté droit de la barre de contrôle se trouvent les icônes permettant d'afficher/cacher les autres fenêtres importantes de l'interface.  Des infobulles sont disponibles pour ces dernières.
+
+HIDDEN_SETTINGS_ARTICLE_TITLE
+Réglages Cachés
+HIDDEN_SETTINGS__ARTICLE_TEXT
+'''Un certain nombre de réglages de l'Interface Utilisateur (User Interface soit UI) et de jeu peuvent être modifiés par le joueur via le Menu Options. Cependant, d'autres réglages de l'UI n'apparaissent pas dans le Menu Options mais peuvent être modifiés par l'utilisateur en éditant directement le fichier config.xml, situé dans les dossiers d'installation du jeu. L'emplacement de ce fichier selon la plateforme ou le système d'exploitation est disponible sur le Wiki FreeOrion.
+
+Parmi les nombreux réglages disponibles permettant de définir l'emplacement/taille des divers éléments de l'UI, ces 'Réglages Cachés' intègrent:
+
+UI.design-pedia-dynamic : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la Fenêtre de Conception (peut engendrer des ralentissements)
+
+show-fleet-eta : Active/Désactive l'Estimation du Temps d'Arrivée d'une flotte (Estimated Time of Arrival soit ETA), en nombre de tours à partir du tour actuel, dans le Panneau de la flotte se trouvant dans la Fenêtre Flottes.
+
+'''
+
+#
+# Guides
+#
+
+GENERAL_PEDIA_REFERENCE
+Tous les articles d'aide et d'information sont disponibles via l'[[encyclopedia ENC_INDEX]].
+DETAILED_PEDIA_REFERENCE
+[[GENERAL_PEDIA_REFERENCE]] L'Encyclopédie peut être affichée/cachée via l'icône violette surmontée d'un point d'interrogation, située dans la partie supérieure droite de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. Les hyperliens ainsi que les flèches dans le coin inférieur droit de la Fenêtre Encyclopédie permettent de naviguer dans cette dernière.
+
+GREETINGS_GUIDE_TITLE
+*Bienvenue!*
+
+GREETINGS_INTRO
+Salutations Noble Voyageur Cosmique, et Bienvenue dans l'Univers Freeorion!
+
+GREETINGS_GUIDE_REFERENCE
+Les nouveaux venus dans l'Univers Freeorion peuvent consulter le [[encyclopedia QUICK_START_GUIDE_TITLE]].
+
+
+GREETINGS_GUIDE_TEXT
+'''[[GREETINGS_INTRO]]
+
+[[DETAILED_PEDIA_REFERENCE]]
+[[GREETINGS_GUIDE_REFERENCE]]
+
+FreeOrion, projet open-source conçu et programmé par l'équipe Freeorion, est un jeu gratuit au tour par tour, permettant la gestion d'un empire reposant sur l'exploration spatiale et la conquête galactique (4X). FreeOrion s'inspire de jeux cultes tel Master of Orion, mais il n'est ni le clone ni le remake de cette série, ni d'aucun autre jeu du genre.
+
+Des informations complémentaires sont disponibles sur le site web freeorion.org
+'''
+
+QUICK_START_GUIDE_TITLE
+*Guide de Démarrage Rapide*
+QUICK_START_GUIDE_TEXT
+'''Voici une brève introduction au gameplay de Freeorion. Ce guide in-game, ajouté récemment, est pour le moment assez sommaire mais sera complété au fil des versions. Un guide plus conséquent est disponible sur le site freeorion.org, (URL actuelle: http://freeorion.org/index.php/V0.4_Quick_Play_Guide )
+
+[[DETAILED_PEDIA_REFERENCE]]
+Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_GAME_CONCEPTS]] et les sections [[encyclopedia CATEGORY_USER_INTERFACE]] et [[encyclopedia CATEGORY_GUIDES]] récemment ajoutées.
+
+'''
 
 AI_ERROR_MSG
 Erreur_IA : Erreur de script d'IA
@@ -4215,10 +4279,12 @@ Filtres
 ## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.
 ## Sitreps not specified below will appear in the SitrepPanel following those below.
+## Sitreps should be placed with similar existing Sitreps as appropriate.
 
 ## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
 #SITREP_PRIORITY_ORDER
-#'''SITREP_VICTORY
+#'''SITREP_WELCOME
+#SITREP_VICTORY
 #SITREP_VICTORY_DESTRUCTION
 #SITREP_VICTORY_CAPTURE
 #SITREP_VICTORY_TECH
@@ -4244,8 +4310,6 @@ Filtres
 #SITREP_PLANET_COLONIZED
 #SITREP_NEW_COLONY_ESTABLISHED
 #SITREP_POP_THRESHOLD
-#SITREP_PLANET_BOMBARDED_AT_SYSTEM
-#SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM
 #EFFECT_CONC_CAMP_COMLETE
 #EFFECT_GAIAN_TERRAFORM
 #EFFECT_TERRAFORM
@@ -4268,8 +4332,20 @@ Filtres
 #SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
 #SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
 #SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
-#SITREP_FLEET_ARRIVED_AT_DESTINATION'''
+#SITREP_FLEET_ARRIVED_AT_DESTINATION
+#SITREP_PLANET_BOMBARDED_AT_SYSTEM
+#SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM'''
 ## END OF SITREP_PRIORITY_ORDER
+
+## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
+
+SITREP_WELCOME  # translated
+'''
+[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]
+'''
+
+SITREP_WELCOME_LABEL
+Bienvenue
 
 SITREP_SHIP_BUILT
 Dans %system% : un astronef %shipdesign%, baptisé '%ship%', a été produit.
@@ -4547,7 +4623,7 @@ EFFECT_CONC_CAMP_COMLETE_LABEL
 Épuration ethnique
 
 EFFECT_DRYDOCK_SHIP_REPAIR
-Sur %planet% : l'astronef '%ship%' a été réparé par la structure %building%.
+Sur %planet% : la structure %building% a réparé l'astronef '%ship%'.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
 Réparation en Cale Sèche
 
@@ -4721,7 +4797,7 @@ Opinions des autres Espèces :
 SP_HUMAN
 Humain
 SP_HUMAN_GAMEPLAY_DESC
-'''En général paisibles. Toutes caractéristiques normales afin de permettre les tests.
+'''Opiniâtres et prédateurs (toutes caractéristiques normales afin de permettre les tests).
 Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 
@@ -4733,8 +4809,13 @@ Préfèrent les Planètes de type terrestre.
 [[AVERAGE_GROUND_TROOPS]]
 '''
 
-#SP_HUMAN_DESC
-#''''''
+SP_HUMAN_DESC
+'''Description:
+Les humains sont bipèdes, omnivores, organisés en clans ou tribus, et sont dotés d'une endurance supérieure à la moyenne. Ils développent des outils évolués afin de mieux chasser leurs proies, et peuvent poursuivre un gros gibier durant des jours si nécessaire, dans le but de l'abattre et de s'en nourrir. Les humains modernes possèdent toujours un sens du combat aiguisé et un instinct de préservation très développé. Lorsqu'une menace ne peut être gérée par un seul individu, les humains s'organisent en groupe pour neutraliser tout danger grâce à une force supérieure en nombre. Les humains sont connus pour consommer de la nourriture considérée pourtant comme indigeste, simplement pour prouver qu'ils en sont capables, et utilisent des substances toxiques pour agrémenter le goût de leur alimentation quotidienne.
+
+Société:
+Les humains modernes ont formé géographiquement des états-nations, chacun étant basé sur une histoire et culture communes. Ces états sont en compétition perpétuelle les uns avec les autres, parfois par le biais de guerres, mais peuvent également coopérer sur certains problèmes communs. Les différences concernant la religion, l'accès aux ressources et leur utilisation, et même la façon de préparer un plat, sont souvent la justification d'un comportement aggressif, ces guerres s'avérant généralement propices à de grandes avancées technologiques.
+'''
 
 SP_SCYLIOR  # translated
 Scylior
@@ -5154,6 +5235,8 @@ SP_PHINNERT_GAMEPLAY_DESC
 [[AVERAGE_POPULATION]]
 [[BAD_SUPPLY]]
 [[AVERAGE_GROUND_TROOPS]]
+
++	Colonisation rapide: -25% de délai pour la construction d'une colonie.
 '''
 
 SP_PHINNERT_DESC
@@ -5330,7 +5413,7 @@ Préfèrent les Planètes de type terrestre.
 '''
 
 SP_RAAAGH_DESC
-'''Les Raaagh sont des organismes bipèdes à fourrure mesurant 1.5 mètre de hauteur. Le corps est penché vers l'avant à 45 degrés, laissant libres leurs mâchoires acérées et leurs membres antérieurs munis de griffes, afin de combattre, capturer des proies ou construire. Leurs oreilles triangulaires et leur iris en forme de fente leur donnent une apparence féline. Ovipares, les Raaagh pondent une moyenne de douze œufs. Après l'éclosion, peu de soins et d'attention sont portés aux petits-- ils doivent survivre par leurs propres moyens, entrant en compétition avec leurs jeunes semblables pour trouver un abri ou dérober de la nourriture. Après trois années, seul un jeune Raaagh parvient généralement à survivre, ce dernier commençant alors à développer l'aptitude au langage. Cela active soudainement l'instinct parental des adultes, et le jeune rescapé est alors élevé avec attention comme membre de la Tribu.
+'''Les Raaagh sont des organismes bipèdes à fourrure mesurant 1.5 mètre de hauteur. Le corps est penché vers l'avant à 45 degrés, laissant libres leurs mâchoires acérées et leurs membres antérieurs munis de griffes, afin de combattre, capturer des proies ou construire. Leurs oreilles triangulaires et leur iris en forme de fente leur donnent une apparence féline. Ovipares, les Raaagh pondent une moyenne de douze œufs. Après l'éclosion, peu de soins et d'attention sont portés aux petits. Ces derniers doivent survivre par leurs propres moyens, entrant en compétition avec leurs jeunes semblables pour trouver un abri ou dérober de la nourriture. Après trois années, un seul jeune Raaagh parvient généralement à survivre, ce dernier commençant alors à développer l'aptitude au langage. Cela active soudainement l'instinct parental des adultes, et le jeune rescapé est alors élevé avec attention comme membre de la Tribu.
 
 Comportement:
 La territorialité extrême est le trait comportemental le plus distinctif chez les Raaagh- régissant leur vie quotidienne et imprégnant toute leur culture. Ce caractère marqué dénote leur préférence pour ce qui est familier et connu. Leur curiosité est très peu développée, ce qui explique leur technologie très peu avancée.
@@ -5358,7 +5441,7 @@ Préfèrent les Planètes irradiées.
 '''
 
 SP_BEIGEGOO_DESC
-'''La planète entière est recouverte d'un voile beige de nanorobots ou Nanites. Nul ne sait s'ils ont été déployés en tant qu'arme, s'ils sont le résultat d'une expérience ayant mal tourné, ou bien un système défaillant d'extraction de ressources, mais ils se sont appropriés toute la planète. Il n'en reste d'ailleurs rien d'autre qu'un cœur radioactif. Ces Nanites sont des assembleurs très efficaces, et s'exécutent dès que des matériaux viables sont à leur disposition. Cependant, ces Nanites protègent farouchement le secret de leur conception-- ils s'autodétruisent dès qu'ils sont capturés ou éloignés de leur planète.
+'''La planète entière est recouverte d'un voile beige de nanorobots ou Nanites. Nul ne sait s'ils ont été déployés en tant qu'arme, s'ils sont le résultat d'une expérience ayant mal tourné, ou bien un système défaillant d'extraction de ressources, mais ils se sont appropriés toute la planète. Il n'en reste d'ailleurs rien d'autre qu'un cœur radioactif. Ces Nanites sont des assembleurs très efficaces, et s'exécutent dès que des matériaux viables sont à leur disposition. Cependant, ces Nanites protègent farouchement le secret de leur conception: ils s'autodétruisent s'ils sont capturés ou éloignés de leur planète.
 '''
 
 SP_SILEXIAN  # translated
@@ -5565,7 +5648,7 @@ Préfèrent les Planètes océaniques.
 
 SP_OURBOOLS_DESC
 '''Biologie:
-Serpent aquatique géant, le trait morphologique le plus distinctif d'un Ourbools est cet arc massif situé de chaque côté de sa tête et qui abrite les organes sensibles à la gravité. Les trois tentacules à l'avant de la bouche permettent aux Ourbools d'agir avec son environnement. Les Ourbools ne s'accouplent qu'une fois au cours de leur vie, qu'ils consacrent durant 35 années à élever 5 à 7 jeunes -- généralement avec l'aide d'autres adultes.
+Serpent aquatique géant, le trait morphologique le plus distinctif d'un Ourbools est cet arc massif situé de chaque côté de sa tête et qui abrite les organes sensibles à la gravité. Les trois tentacules à l'avant de la bouche permettent aux Ourbools d'agir avec son environnement. Les Ourbools ne s'accouplent qu'une fois au cours de leur vie, qu'ils consacrent durant 35 années à élever 5 à 7 jeunes, généralement avec l'aide d'autres adultes. Les Ourbools ont une durée de vie exceptionnellement longue.
 
 Comportement:
 Les Ourbools ont une vie nomade, chassant ou élevant leurs proies ichthyoïdes. Les rapports sociaux entre deux groupes se rencontrant par hasard sont généralement bienveillants.
@@ -7579,7 +7662,7 @@ PRO_NEUTRONIUM_EXTRACTION
 Extraction Neutronium
 
 PRO_NEUTRONIUM_EXTRACTION_DESC
-Le cœur d'une étoile à neutrons est constitué de matière dégénérée, comprimée par la gravité et d'une densité infiniment plus importante que la matière normale la plus lourde. Ce matériau exotique présente de nombreuses applications une fois extrait de l'étoile, permettant ainsi la production de structures et d'équipements d'astronefs inédits et performants.
+Le cœur d'une étoile à neutrons est constitué de matière dégénérée, comprimée par la gravité et d'une densité infiniment plus importante que la matière normale la plus lourde. Ce matériau exotique présente de nombreuses applications une fois extrait de l'étoile, permettant ainsi la production de structures et d'équipements d'astronef inédits et performants.
 
 CON_ARCH_PSYCH
 Psychologie Architecturale
@@ -7938,7 +8021,7 @@ EXOBOT_SHORT_DESC
 Crée des citoyens exobots
 
 STARLANE_SPEED_SHORT_DESC
-Augmente la Vitesse sur Voies spatiales
+Augmente la Vitesse sur Voie spatiale
 
 CON_ORBITAL_CON
 Construction Orbitale
@@ -8518,7 +8601,7 @@ Couplage de Motorisation Améliorée
 SHP_IMPROVED_ENGINE_COUPLINGS_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-De meilleurs éléments de motorisation donnent de meilleurs moteurs. Augmente de 10 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
+De meilleurs éléments de motorisation fournissent de meilleurs moteurs. Augmente de 10 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
 
 SHP_N_DIMENSIONAL_ENGINE_MATRIX
 Matrice de Motorisation Multidimensionnelle
@@ -8526,7 +8609,7 @@ Matrice de Motorisation Multidimensionnelle
 SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
 '''[[COLONY_BUILDING_TIME_DECREASE]]
 
-La recherche concernant les espaces multidimensionnels a permis le développement de meilleures matrices de motorisation. Augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
+La recherche concernant les espaces multidimensionnels a rendu possible le développement de meilleures matrices de motorisation. Augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]]. Plusieurs exemplaires peuvent être intégrés dans une même coque d'astronef.'''
 
 SHP_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
@@ -8799,7 +8882,7 @@ Manufacture Géo-Intégrée
 BLD_SHIPYARD_CON_GEOINT_DESC
 '''Amélioration de la [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] permettant la production de la [[shiphull SH_TITANIC]], la [[shiphull SH_SELF_GRAVITATING]], et à l'aide d'autres structures additionnelles, de la [[shiphull SH_LOGISTICS_FACILITATOR]].
 
-Lorsque les besoins en ressources d'un [[buildingtype BLD_SHIPYARD_BASE]] deviennent suffisamment importants, le fait que le chantier et la planète soient deux entités différentes s'avère problématique. Il devient alors plus pratique de les organiser harmonieusement en une même unité, le chantier s'étendant de l'intérieur de la surface planétaire à une orbite géosynchrone, utilisant ainsi de manière optimale toutes les ressources géologiques de la planète.'''
+Lorsque les besoins en ressources d'un chantier spatial deviennent suffisamment importants, le fait que le chantier et la planète soient deux entités différentes s'avère problématique. Il devient alors plus pratique de les organiser harmonieusement en une même unité, le chantier s'étendant de l'intérieur de la surface planétaire à une orbite géosynchrone, utilisant ainsi de manière optimale toutes les ressources géologiques de la planète.'''
 
 BLD_SHIPYARD_CON_ADV_ENGINE
 Dock d'Ingénierie Avancée
@@ -8863,7 +8946,7 @@ Unité de Confinement Solaire
 BLD_SHIPYARD_ENRG_SOLAR_DESC
 '''Amélioration du [[buildingtype BLD_SHIPYARD_ENRG_COMP]] permettant la production de la [[shiphull SH_SOLAR]].
 
-Créer un soleil miniature est en soi une entreprise gargantuesque. Mais produire une coque intégrant ce soleil miniature, et sur laquelle des équipements d'astronefs pourraient être montés en toute sécurité, dépasse encore plus l'entendement.'''
+Créer un soleil miniature est en soi une entreprise gargantuesque. Mais produire une coque intégrant ce soleil miniature, et sur laquelle des équipements d'astronef pourraient être montés en toute sécurité, dépasse encore plus l'entendement.'''
 
 BLD_BIOTERROR_PROJECTOR
 Base Bioterroriste
@@ -8877,7 +8960,7 @@ BLD_LIGHTHOUSE
 Phare Interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Augmente la vitesse des astronefs quittant ce système et diminue de 30 la [[encyclopedia STEALTH_TITLE]] de tous les objets dans ce même système. Les astronefs alliés se trouvant dans un rayon de 50 uu bénéficient d'un bonus de [[encyclopedia STARLANE_SPEED_TITLE]] de 20. Cette structure peut également être construite sur un [[encyclopedia OUTPOSTS_TITLE]] et peut optimiser l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
+Diminue de 30 la [[encyclopedia STEALTH_TITLE]] de tous les objets situés dans le même système et augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]] des astronefs alliés se trouvant dans un rayon de 50 uu au début du tour. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]] et peut rendre optimale l'utilisation d'un [[buildingtype BLD_PLANET_DRIVE]].
 
 BLD_SCANNING_FACILITY
 Complexe de Détection
@@ -8981,7 +9064,7 @@ BLD_SOL_ACCEL
 Accélérateur Solaire
 
 BLD_SOL_ACCEL_DESC
-Un Accélérateur Solaire vieillit artificiellement une étoile en augmentant la rapidité des processus physiques en son coeur. L'étoile évolue alors en un type plus âgé, suivant cet ordre: Bleue, Blanche, Jaune, Orange, Rouge. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
+Un Accélérateur Solaire vieillit artificiellement une étoile en augmentant la rapidité des processus physiques en son cœur. L'étoile évolue alors en un type plus âgé, suivant cet ordre: Bleue, Blanche, Jaune, Orange, Rouge. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
 BLD_SOL_ORB_GEN
 Générateur Orbital Solaire
@@ -9022,7 +9105,7 @@ BLD_NEUTRONIUM_EXTRACTOR
 Extracteur Neutronium
 
 BLD_NEUTRONIUM_EXTRACTOR_DESC
-'''Cette structure permet l'exploitation du Neutronium par l'empire. Le Neutronium peut être travaillé dans une [[buildingtype BLD_NEUTRONIUM_FORGE]] afin de permettre la fabrication d'équipements d'astronefs en Neutronium, tel le [[shippart AR_NEUTRONIUM_PLATE]].
+'''Cette structure permet l'exploitation du Neutronium par l'empire. Le Neutronium peut être travaillé dans une [[buildingtype BLD_NEUTRONIUM_FORGE]] afin de permettre la fabrication d'équipements d'astronef en Neutronium, tel le [[shippart AR_NEUTRONIUM_PLATE]].
 
 Avant qu'un équipement d'astronef puisse être fabriqué à partir de Neutronium, ce dernier doit être extrait d'une étoile à neutrons. Le Neutronium récolté à l'aide de cette structure est transféré vers toutes les Forges Neutronium se trouvant dans l'empire. L'Extracteur Neutronium peut être construit sur un [[encyclopedia OUTPOSTS_TITLE]].'''
 
@@ -9038,7 +9121,7 @@ BLD_NEUTRONIUM_SYNTH
 Synthétiseur Neutronium
 
 BLD_NEUTRONIUM_SYNTH_DESC
-'''Un empire abritant cette structure n'a pas besoin d'un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] pour récolter le Neutronium nécessaire à la fabrication d'équipements d'astronefs en Neutronium.
+'''Un empire abritant cette structure n'a pas besoin d'un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] pour récolter le Neutronium nécessaire à la fabrication d'équipements d'astronef en Neutronium.
 
 Une structure issu des temps ancestraux, conçue pour synthétiser le Neutronium.'''
 
@@ -9171,7 +9254,7 @@ Crée un astronef [[predefinedshipdesign SD_COLONY_BASE]] permettant de colonise
 BLD_EXPERIMENTOR_OUTPOST
 Avant-Poste Expérimentateur
 BLD_EXPERIMENTOR_OUTPOST_DESC
-Un Avant-Poste des Expérimentateurs, utilisé pour la mise en oeuvre d'expériences scientifiques très avancées. Cette structure agit également comme un camouflage afin d'empêcher quiconque d'interférer avec leurs travaux.
+Un Avant-Poste des Expérimentateurs, utilisé pour la mise en œuvre d'expériences scientifiques très avancées. Cette structure agit également comme un camouflage afin d'empêcher quiconque d'interférer avec leurs travaux.
 
 BLD_NOVA_BOMB_ACTIVATOR
 Détonateur de Bombe Nova
@@ -9376,21 +9459,21 @@ PART_DESC_LR_STATS
 '''Dommages : %1%
 Cadence de tir : %2% missiles/tour
 Portée : %3%
-Missile vélocité : %4%
-Missile robustesse : %5%
+Missile Vélocité : %4%
+Missile Robustesse : %5%
 Missile [[encyclopedia STEALTH_TITLE]]: %6%
 Capacité : %7% missiles'''
 
 PART_DESC_FIGHTER_STATS
-'''Chasseur type: %1%
+'''Chasseur Type: %1%
 Chasseur Anti-Chasseur Dommages : %3%
 Chasseur Anti-Astronefs Dommages : %2%
-Chasseur cadence de lancement : %4% fighters/turn
-Chasseur vitesse : %5%
-Chasseur Structure : %6%
+Chasseur Cadence de lancement : %4% fighters/turn
+Chasseur Vitesse : %5%
+Chasseur [[encyclopedia STRUCTURE_TITLE]] : %6%
 Chasseur [[encyclopedia STEALTH_TITLE]] : %7%
-Chasseur détection : %8%
-Capacité: %9% fighters'''
+Chasseur Détection : %8%
+Capacité: %9% chasseurs'''
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
@@ -9419,7 +9502,7 @@ Canon Mitrailleur, perfectionné au niveau 4.
 SR_WEAPON_2_1
 Canon Laser 1
 SR_WEAPON_2_1_DESC
-Le Canon Laser, une armement d'astronefs plus puissant que le Canon Mitrailleur.
+Le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
 
 SR_WEAPON_2_2
 Canon Laser 2
@@ -9480,13 +9563,13 @@ SR_WEAPON_2
 Canon Laser
 
 SR_WEAPON_2_DESC
-Faible puissance et fabrication fragile
+Basse puissance et faible solidité
 
 SR_ION_CANNON
 Canon Ionique
 
 SR_ION_CANNON_DESC
-Puissance normale et fabrication solide
+Puissance normale et solidité accrue
 
 SR_WEAPON_1
 Canon Mitrailleur
@@ -9510,7 +9593,7 @@ PD_PHASOR
 Phaseur
 
 PD_PHASOR_DESC
-Puissante et rapide arme de défense
+Arme de défense puissante et rapide
 
 PD_PARTICLE_BEAM
 Rayon à Particules
@@ -9522,7 +9605,7 @@ FI_INTERCEPTOR
 Intercepteur
 
 FI_INTERCEPTOR_DESC
-Douze intercepteurs véloces conçus pour détruire les astronefs et missiles ennemis
+Douze intercepteurs rapides conçus pour détruire astronefs et missiles ennemis
 
 FI_BOMBER
 Bombardier
@@ -9531,28 +9614,28 @@ FI_BOMBER_DESC
 Six bombardiers conçus pour pilonner astronefs et planètes
 
 FI_RECON
-Fighter de Reconnaissance
+Chasseur de Reconnaissance
 
 FI_RECON_DESC
-Douze fighters rapides et non-armés conçus pour la reconnaissance
+Douze chasseurs rapides et non-armés conçus pour la reconnaissance
 
 FI_BIOINTERCEPTOR
 Bio-Intercepteur
 
 FI_BIOINTERCEPTOR_DESC
-Trente-six intercepteurs vivants conçus pour détruire les astronefs et les missiles ennemis. Far more effective than regular interceptors. This part can only be built if there is a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] somewhere in the empire or an ally's empire.
+Trente-six intercepteurs vivants conçus pour détruire astronefs et missiles ennemis. Bien plus efficaces que les intercepteurs de base. Cet équipement ne peut être produit que si l'empire ou un empire allié abrite une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]].
 
 FI_BIOBOMBER
 Bio-Bombardier
 
-#FI_BIOBOMBER_DESC
-#Eighteen living bombers designed to target ships and planets. Far more effective than regular bombers. This part can only be built if there is a Bioneural Modification Unit somewhere in the empire or an ally's empire.
+FI_BIOBOMBER_DESC
+Dix-huit bombardiers vivants conçus pour pilonner astronefs et planètes. Bien plus efficaces que les bombardiers de base. Cet équipement ne peut être produit que si l'empire ou un empire allié abrite une Unité de Modification Bioneurale.
 
 LR_NUCLEAR_MISSILE
 Missile Nucléaire
 
 LR_NUCLEAR_MISSILE_DESC
-Longue portée, puissance moyenne
+Longue portée, puissance normale
 
 LR_SPECTRAL_MISSILE
 Missile Spectral
@@ -9560,29 +9643,29 @@ Missile Spectral
 LR_SPECTRAL_MISSILE_DESC
 Un missile furtif rapide.
 
-#LR_NEUTRONIUM_PLATE_NUC_MIS
-#Neutronium Plated Nuclear Missile
+LR_NEUTRONIUM_PLATE_NUC_MIS
+Missile Nucléaire Neutronium
 
-#LR_NEUTRONIUM_PLATE_NUC_MIS_DESC
-#Heavily armored nuclear missile
+LR_NEUTRONIUM_PLATE_NUC_MIS_DESC
+Missile nucléaire blindé de Neutronium
 
-#LR_NEUTRONIUM_PLATE_SPEC_MIS
-#Neutronium Plated Spectral Missile
+LR_NEUTRONIUM_PLATE_SPEC_MIS
+Missile Spectral Neutronium
 
-#LR_NEUTRONIUM_PLATE_SPEC_MIS_DESC
-#Heavily armored spectral missile
+LR_NEUTRONIUM_PLATE_SPEC_MIS_DESC
+Missile Spectral blindé de Neutronium
 
-#LR_ANTIMATTER_TORPEDO
-#Antimatter Torpedo
+LR_ANTIMATTER_TORPEDO
+Torpille Anti-Matière
 
-#LR_ANTIMATTER_TORPEDO_DESC
-#A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
+LR_ANTIMATTER_TORPEDO_DESC
+Un missile rapide et à longue portée, basé sur la technologie de [[tech SHP_SPACE_FLUX_DRIVE]] et armé d'une puissante charge d'anti-matière. Cet équipement ne peut être produit que si l'empire ou un empire allié abrite un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].
 
-#LR_PLASMA_TORPEDO
-#Plasma Torpedo
+LR_PLASMA_TORPEDO
+Torpille Plasma
 
-#LR_PLASMA_TORPEDO_DESC
-#A fast, long-range missile with excellent [[encyclopedia STEALTH_TITLE]], powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
+LR_PLASMA_TORPEDO_DESC
+Un missile rapide et à longue portée, doté d'une excellente [[encyclopedia STEALTH_TITLE]], basé sur la technologie de [[tech SHP_TRANSSPACE_DRIVE]] et armé d'une puissante et dévastatrice charge de plasma. Cet équipement ne peut être produit que si l'empire ou un empire allié abrite un [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]].
 
 DT_DETECTOR_1
 Scanner Optique
@@ -9612,139 +9695,139 @@ FU_IMPROVED_ENGINE_COUPLINGS
 Couplage de Motorisation Améliorée
 
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
-'''Accroît de 10 la Vitesse sur Voies spatiales.
+'''Augmente de 10 la [[encyclopedia STARLANE_SPEED_TITLE]].
 
-De meilleurs équipements de motorisation équivalent à de meilleurs moteurs.'''
+De meilleurs éléments de motorisation fournissent de meilleurs moteurs.'''
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX
 Matrice de Motorisation Multidimensionnelle
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Accroît de 20 la Vitesse sur Voies spatiales.
+'''Augmente de 20 la [[encyclopedia STARLANE_SPEED_TITLE]].
 
-La recherche sur l'espace multidimensionnel initie le développement de matrice de motorisation plus efficace.'''
+La recherche concernant les espaces multidimensionnels a rendu possible le développement de meilleures matrices de motorisation.'''
 
 FU_SINGULARITY_ENGINE_CORE
 Noyau de Motorisation à Singularité
 
-#FU_SINGULARITY_ENGINE_CORE_DESC
-#'''A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 30. '''
+FU_SINGULARITY_ENGINE_CORE_DESC
+Augmente de 30 la [[encyclopedia STARLANE_SPEED_TITLE]]. Dispositif dérivé de la structure [[buildingtype BLD_HYPER_DAM]] et adapté en taille pour les astronefs, le Noyau de Motorisation à Singularité accroît considérablement la génération d'énergie.
 
 FU_TRANSPATIAL_DRIVE
 Propulsion Trans-Spatiale
 
-#FU_TRANSPATIAL_DRIVE_DESC
-#An incredibly powerful drive that bends spacetime itself, increasing both starlane speed and stealth by 40. Can only be mounted in a Core slot. Stealth boost does not stack with other part bonuses.
+FU_TRANSPATIAL_DRIVE_DESC
+Un dispositif de motorisation incroyablement puissant capable de courber l'espace-temps lui-même, augmentant à la fois la [[encyclopedia STARLANE_SPEED_TITLE]] et la [[encyclopedia STEALTH_TITLE]] d'un astronef de 40. Ne peut être monté que dans la Niche Centrale d'un astronef. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.
 
 FU_BASIC_TANK
 Réservoir Additionnel de Carburant
 
 FU_BASIC_TANK_DESC
-Permet un saut additionnel.
+Augmente la capacité en [[encyclopedia FUEL_TITLE]] d'un astronef, permettant un voyage supplémentaire sur une Voie spatiale.
 
 FU_DEUTERIUM_TANK
 Réservoir de Deutérium
 
 FU_DEUTERIUM_TANK_DESC
-Légère augmentation de l'autonomie en augmentant la capacité de stockage du carburant. Encombrant et vulnérable à toute puissance de feu.
+Augmente la capacité en [[encyclopedia FUEL_TITLE]] d'un astronef. Volumineux et vulnérable à toute puissance de feu.
 
 FU_ANTIMATTER_TANK
 Réservoir d'Anti-Matière
 
 FU_ANTIMATTER_TANK_DESC
-Augmentation moyenne de l'autonomie en augmentant la capacité de stockage de carburant. Compact et solide.
+Augmente la capacité en [[encyclopedia FUEL_TITLE]] d'un astronef. Compact et solide.
 
 FU_ZERO_FUEL
 Générateur Zero-Point de Carburant
 
 FU_ZERO_FUEL_DESC
-Produit de l'énergie grâce à la génération Zero-Point et la transforme en carburant selon des équations de conversion énergie-matière.
+Produit de l'énergie grâce à la génération Zero-Point et la transforme en carburant selon des équations de conversion énergie-matière, approvisionnant ainsi automatiquement un astronef en carburant.
 
 FU_RAMSCOOP
 Réservoir Collecteur
 
-#FU_RAMSCOOP_DESC
-#Slowly generates fuel while in systems by collecting hydrogen from the diffuse gas in space.
+FU_RAMSCOOP_DESC
+Génère lentement du [[encyclopedia FUEL_TITLE]] lorsque l'astronef se trouve dans un système stellaire, en collectant l'hydrogène diffus se trouvant dans l'espace.
 
 ST_CLOAK_1
 Affaiblisseur Électromagnétique
 
 ST_CLOAK_1_DESC
-'''Weak Cloaking (+20)
+'''Camouflage Limité (+20)
 
-Améliore la [[encyclopedia STEALTH_TITLE]] de l'astronef par l'affaiblissement des émissions électromagnétiques des systèmes embarqués. Ne peut compenser que des faibles émissions, et sera submergé par des éléments produisant de grandes émissions éléctromagnétiques'''
+Augmente de 20 la [[encyclopedia STEALTH_TITLE]] d'un astronef en affaiblissant les émissions électromagnétiques des systèmes embarqués. Ne peut compenser que de faibles émissions, et sera inefficace si des équipements produisant de fortes émissions électromagnétiques sont utilisés par l'astronef. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.'''
 
 ST_CLOAK_2
 Champ d'Absorption
 
-#ST_CLOAK_2_DESC
-#'''Moderate Cloaking (+40)
-#
-#Creates an absorption field around the ship, effectively transforming it into a perfect blackbody. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
+ST_CLOAK_2_DESC
+'''Camouflage Normal (+40)
+
+Augmente de 40 la [[encyclopedia STEALTH_TITLE]] d'un astronef en créant un champ d'absorption autour de ce dernier, le transformant en corps noir parfait. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.'''
 
 ST_CLOAK_3
 Camouflage Dimensionnel
 
-#ST_CLOAK_3_DESC
-#'''Strong Cloaking (+60)
-#
-#Hides this ship within a dimensional rift, greatly increasing [[encyclopedia STEALTH_TITLE]]. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
+ST_CLOAK_3_DESC
+'''Camouflage Puissant (+60)
+
+Augmente de 60 la [[encyclopedia STEALTH_TITLE]] d'un astronef en le dissimulant à l'intérieur d'une faille dimensionnelle. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.'''
 
 ST_CLOAK_4
 Camouflage de Phase
 
-#ST_CLOAK_4_DESC
-#'''Very Strong Cloaking (+80)
-#
-#Modulates the frequency of any matter waves emitted from the ship to match that of the background radiation. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
+ST_CLOAK_4_DESC
+'''Camouflage Très Puissant (+80)
+
+Augmente de 80 la [[encyclopedia STEALTH_TITLE]] d'un astronef en modulant la fréquence des émissions électromagnétiques émises par l'astronef, afin que celles-ci soit synchrones avec le rayonnement environnant. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.'''
 
 AR_STD_PLATE
 Blindage Standard
 
-#AR_STD_PLATE_DESC
-#Basic armor plating providing only moderate enhancement to a ship's hull durability.
+AR_STD_PLATE_DESC
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Un blindage standard fournissant à une coque d'astronef une amélioration limitée de sa résistance.
 
 AR_ZORTRIUM_PLATE
 Blindage Zortrium
 
-#AR_ZORTRIUM_PLATE_DESC
-#Stronger defense than standard plating.
+AR_ZORTRIUM_PLATE_DESC
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Offre une meilleure défense que le [[shippart AR_STD_PLATE]].
 
 AR_DIAMOND_PLATE
 Blindage Diamanté
 
-#AR_DIAMOND_PLATE_DESC
-#Stronger defense than zortrium plating.
+AR_DIAMOND_PLATE_DESC
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Offre une meilleure défense que le [[shippart AR_ZORTRIUM_PLATE]].
 
 AR_XENTRONIUM_PLATE
 Blindage Xentronium
 
-#AR_XENTRONIUM_PLATE_DESC
-#Extremely strong and durable armor plating.
+AR_XENTRONIUM_PLATE_DESC
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Un blindage extrêmement résistant et efficace.
 
 AR_ROCK_PLATE
 Blindage Carbone
 
-#AR_ROCK_PLATE_DESC
-#A strong, cheap alternative to alloys. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
+AR_ROCK_PLATE_DESC
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Une alternative efficace et bon marché aux alliages traditionnels. Cet équipement ne peut être produit que si l'empire ou un empire allié abrite dans une ceinture d'astéroïdes un [[buildingtype BLD_SHIPYARD_AST_REF]].
 
 AR_CRYSTAL_PLATE
 Blindage Cristallisé
 
-#AR_CRYSTAL_PLATE_DESC
-#An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
+AR_CRYSTAL_PLATE_DESC
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Un blindage incroyablement résistant conçu à l'aide de techniques avancées de cristallisation. Cet équipement ne peut être produit que si l'empire ou un empire allié abrite dans une ceinture d'astéroïdes un [[buildingtype BLD_SHIPYARD_AST_REF]].
 
 AR_NEUTRONIUM_PLATE
 Blindage Neutronium
 
-#AR_NEUTRONIUM_PLATE_DESC
-#Strongest, most durable armor plating. Admirable defense.
+AR_NEUTRONIUM_PLATE_DESC
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Le blindage le plus résistant et efficace qui puisse exister, offrant une excellent défense à l'astronef qui en est doté.
 
 AR_PRECURSOR_PLATE
 Blindage Précurseur
 
-#AR_PRECURSOR_PLATE_DESC
-#Marvelously effective armor of unknown composition
+AR_PRECURSOR_PLATE_DESC
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Un blindage d'une composition inconnue dont la résistance dépasse l'entendement.
 
 SH_DEFENSE_GRID
 Grillage Défensif
@@ -10271,19 +10354,19 @@ SH_COLONY_BASE_DESC
 Une coque destinée au tranport de colons vers une planète du système stellaire où elle a été construite. Elle ne peut pas naviguer entre les systèmes, pas plus qu'elle n'est rapide dans son système.
 
 SH_FLOATER_BODY
-Corps Fragile
+Corps Flotteur
 
 SH_FLOATER_BODY_DESC
 Petit corps frêle qui est incapable de résister à d'importants dégâts.
 
 SH_TREE_BODY
-Corps Immobile
+Corps Dyson
 
 SH_TREE_BODY_DESC
 Corps rigide en forme d'arbre qui est incapable de se déplacer entre les systèmes.
 
 SH_STRONG_MONSTER_BODY
-Corps Robuste
+Corps Dragon
 
 SH_STRONG_MONSTER_BODY_DESC
 Grand corps fort avec d'effroyables armes naturelles et une armure naturelle forte.
@@ -10428,7 +10511,7 @@ GROWTH_SPECIAL_INDUSTRY_BOOST
 Si cette planète est réglée sur le Focus Industrie, son indicateur [[encyclopedia INDUSTRY_TITLE]] augmente de 0.2 par Population.
 
 GROWTH_SPECIALS_ENTRY_LIST
-'''Les planètes présentant une Particularité de Croissance et réglées sur le Focus Croissance ne favorisent seulement qu'une classification d'espèces. Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques.
+'''Les planètes présentant une Particularité de Croissance et réglées sur le Focus Croissance favorisent seulement une classification d'espèces. Certaines Particularités ne fonctionnent que pour les espèces organiques, d'autres pour les espèces lithiques, et enfin d'autres pour les espèces robotiques.
 
 Particularités pour [[encyclopedia ORGANIC_SPECIES_TITLE]] :
 [[special FRUIT_SPECIAL]] | [[special SPICE_SPECIAL]] | [[special PROBIOTIC_SPECIAL]]
@@ -10762,6 +10845,9 @@ Harcèlement xénophobe: Eaxaw
 ORGANIC_GROWTH
 Croissance Organique
 
+AGE_BONUS
+Âge
+
 BASIC_CONTENTEDNESS_LABEL
 Satisfaction générale
 
@@ -10989,7 +11075,7 @@ OPTIONS_PAGE_HOTKEYS
 Raccourcis clavier
 
 HOTKEYS_Z_COMBAT
-Fenêtre de combat
+Fenêtre Combat
 
 HOTKEYS_MAP
 Carte galactique
@@ -11004,13 +11090,13 @@ HOTKEY_MAP_END_TURN
 Fin de tour
 
 HOTKEY_MAP_RESEARCH
-Menu de Recherche [on/off]
+Fenêtre Recherche [on/off]
 
 HOTKEY_MAP_DESIGN
-Menu de Conception [on/off]
+Fenêtre Conception [on/off]
 
 HOTKEY_MAP_PRODUCTION
-Menu de Production [on/off]
+Fenêtre Production [on/off]
 
 HOTKEY_MAP_SIT_REP
 Rapport de situation [on/off]
