@@ -3889,7 +3889,26 @@ Speed on galaxy map  (uu/turn). The uu distance travelled by a ship in one turn 
 MAP_WINDOW_ARTICLE_TITLE
 Map Window
 MAP_WINDOW_ARTICLE_TEXT
-The Map Window can be considered the 'main' game screen, which shows the galaxy and from which nearly all other windows can be accessed.  A number of control elements are displayed in upper bar.  In the upper left corner is the Turn Button, which reads as "Turn n" (where n is the current turn); left clicking the Turn Button causes the game to advance to the next turn. Immediately to its right is the Auto Advance Toggle; when showing as a fist the game will not auto-advance; if clicked to toggle to circular arcing arrows the game will autoadvance to the next turn once all other empires have submitted their orders for the turn.  Next are icons showing the player empire total [[encyclopedia INDUSTRY_TITLE]], total [[encyclopedia RESEARCH_TITLE]], number of existing ships, and Empire [[encyclopedia DETECTION_TITLE]].  On the right hand side of the control bar are a number of icons for toggling display of other significant UI windows.  Tooltps are available for these.
+'''The Map Window can be considered the 'main' game screen, which shows the galaxy and from which nearly all other windows can be accessed. A number of control elements are displayed in the upper bar.
+
+In the upper left corner is the Turn Button, which reads as "Turn n" (where n is the current turn); left clicking the Turn Button causes the game to advance to the next turn. Immediately to its right is the Auto Advance Toggle; when showing as a fist the game will not auto-advance; if clicked to toggle to circular arcing arrows the game will autoadvance to the next turn once all other empires have submitted their orders for the turn.
+
+Next are icons showing the player empire total [[encyclopedia INDUSTRY_TITLE]], total [[encyclopedia RESEARCH_TITLE]], number of existing ships, and Empire [[encyclopedia DETECTION_TITLE]].
+
+On the right hand side of the control bar are a number of icons for toggling display of other significant UI windows. Tooltips are available for these.'''
+
+FLEET_MOVEMENT_ARTICLE_TITLE
+Fleet Movement
+FLEET_MOVEMENT_ARTICLE_TEXT
+'''Fleets can be found on the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] as a stack of symbols in the upper right of star systems. They can be selected with a left-click, which opens a window with a list of all fleets in the stack.
+
+To order a selected fleet to move to another system, right-click on the destination. Fleets with a move order will be shown in left upper corner of the system. To cancel the order right-click on the system the fleet is in.
+
+Fleets can contain any number of ships and can be devided and merged with other fleets in the same system.
+
+Each fleet has the option to hide (Eye symbol) or be aggressive (Fist symbol).   
+
+Right-click on a fleet in the fleet window to access additional options like switching to auto-exploration, renaming or scrapping the fleet.'''
 
 HIDDEN_SETTINGS_ARTICLE_TITLE
 Hidden Settings
