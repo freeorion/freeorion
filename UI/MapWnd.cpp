@@ -70,8 +70,16 @@ namespace {
     const double    ZOOM_IN_MIN_STEPS = -7.0;   // negative zoom steps indicates zooming out
     const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
     const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
+
     const GG::X     SITREP_PANEL_WIDTH(400);
     const GG::Y     SITREP_PANEL_HEIGHT(200);
+
+    const std::string SITREP_WND_NAME = "sitrep";
+    const std::string MAP_PEDIA_WND_NAME = "map-pedia";
+    const std::string OBJECT_WND_NAME = "object-list";
+    const std::string MODERATOR_WND_NAME = "moderator";
+    const std::string COMBAT_REPORT_WND_NAME = "combat-report";
+
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
     const GG::Y     SCALE_LINE_HEIGHT(20);
     const GG::X     SCALE_LINE_MAX_WIDTH(240);
@@ -1117,33 +1125,37 @@ MapWnd::MapWnd() :
     GG::Connect(SidePanel::ResourceCenterChangedSignal,     &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);
 
     // situation report window
-    m_sitrep_panel = new SitRepPanel(GG::X0, GG::Y0, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    m_sitrep_panel = new SitRepPanel(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom(), SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT, SITREP_WND_NAME);
     GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::ToggleSitRep, this));   // Wnd is manually closed by user
     GG::GUI::GetGUI()->Register(m_sitrep_panel);
-    m_sitrep_panel->Hide();
+    m_sitrep_panel->Hide(); // TODO: remember visibility but only show these windows with the map screen active... possibly, register/unregister instead of show/hide? check for registration instead of Visible() in the CUIWnd code?
 
-    // encyclpedia panel
-    m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    // encyclopedia panel
+    m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT, MAP_PEDIA_WND_NAME);
     GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::TogglePedia, this));     // Wnd is manually closed by user
     GG::GUI::GetGUI()->Register(m_pedia_panel);
+    //m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->Left(), m_sitrep_panel->Bottom())); // this is where it goes in Sanitize(), specify x,y in constructor to add these values as defaults.
     m_pedia_panel->Hide();
 
     // objects list
-    m_object_list_wnd = new ObjectListWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    m_object_list_wnd = new ObjectListWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT, OBJECT_WND_NAME);
     GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::ToggleObjects, this));   // Wnd is manually closed by user
     GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
     GG::GUI::GetGUI()->Register(m_object_list_wnd);
+    //m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN))); // this is where it goes in Sanitize(), specify x,y in constructor to add these values as defaults.
     m_object_list_wnd->Hide();
 
     // moderator actions
-    m_moderator_wnd = new ModeratorActionsWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    m_moderator_wnd = new ModeratorActionsWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT, MODERATOR_WND_NAME);
     GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
     GG::GUI::GetGUI()->Register(m_moderator_wnd);
+    //m_moderator_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN))); // this is where it goes in Sanitize(), specify x,y in constructor to add these values as defaults.
     m_moderator_wnd->Hide();
 
     // Combat report
-    m_combat_report_wnd = new CombatReportWnd();
+    m_combat_report_wnd = new CombatReportWnd(COMBAT_REPORT_WND_NAME);
     GG::GUI::GetGUI()->Register(m_combat_report_wnd);
+    // TODO: specify x,y,w,h in constructor to be consistent with other wnds.
     m_combat_report_wnd->Hide();
 
     // research window
@@ -1167,6 +1179,8 @@ MapWnd::MapWnd() :
     m_design_wnd->Hide();
 
     // messages and empires windows
+    // TODO: specify x,y,w,h in constructors of these wnds (in their respective
+    //       files), add config names for them.
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         if (MessageWnd* msg_wnd = cui->GetMessageWnd())
             GG::Connect(msg_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleMessages, this));    // Wnd is manually closed by user
@@ -4607,13 +4621,6 @@ void MapWnd::Sanitize() {
     GG::Pt sp_ul = GG::Pt(AppWidth() - SidePanelWidth(), m_toolbar->Bottom());
     GG::Pt sp_lr = sp_ul + GG::Pt(SidePanelWidth(), AppHeight() - m_toolbar->Height());
     m_side_panel->SizeMove(sp_ul, sp_lr);
-
-    m_sitrep_panel->MoveTo(GG::Pt(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom()));
-    m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
-
-    m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
-    m_moderator_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
-    m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->Left(), m_sitrep_panel->Bottom()));
 
     MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
     m_zoom_steps_in = 0.0;

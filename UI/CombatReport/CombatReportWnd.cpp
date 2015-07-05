@@ -180,9 +180,11 @@ private:
     }
 };
 
-CombatReportWnd::CombatReportWnd() :
-    CUIWnd(UserString("COMBAT_REPORT_TITLE"), GG::X(150), GG::Y(50), COMBAT_LOG_WIDTH, COMBAT_LOG_HEIGHT,
-           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE),
+CombatReportWnd::CombatReportWnd(const std::string& config_name) :
+    CUIWnd(UserString("COMBAT_REPORT_TITLE"),
+           GG::X(150), GG::Y(50), COMBAT_LOG_WIDTH, COMBAT_LOG_HEIGHT,
+           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE,
+           config_name),
     m_impl(0)
 { m_impl.reset(new CombatReportPrivate(*this)); }
 

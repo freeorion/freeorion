@@ -39,6 +39,7 @@ namespace {
     const std::string   COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
     const std::string   SAVED_DESIGN_ROW_DROP_STRING = "Saved Design Row";
     const std::string   EMPTY_STRING = "";
+    const std::string   DES_PEDIA_WND_NAME = "design-pedia";
     const GG::Y         BASES_LIST_BOX_ROW_HEIGHT(100);
     const GG::X         PART_CONTROL_WIDTH(54);
     const GG::Y         PART_CONTROL_HEIGHT(54);
@@ -3079,7 +3080,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Y part_palette_top = detail_top;
     GG::Y main_height = ClientHeight() - main_top;
 
-    m_detail_panel = new EncyclopediaDetailPanel(detail_width, detail_height, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
+    m_detail_panel = new EncyclopediaDetailPanel(detail_width, detail_height, DES_PEDIA_WND_NAME, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
     AttachChild(m_detail_panel);
     m_detail_panel->MoveTo(GG::Pt(most_panels_left, detail_top));
 

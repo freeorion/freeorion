@@ -2208,9 +2208,11 @@ private:
 ////////////////////////////////////////////////
 // ObjectListWnd
 ////////////////////////////////////////////////
-ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
-    CUIWnd(UserString("MAP_BTN_OBJECTS"), GG::X1, GG::Y1, w - 1, h - 1,
-           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE ),
+ObjectListWnd::ObjectListWnd(GG::X default_w, GG::Y default_h, const std::string& config_name) :
+    CUIWnd(UserString("MAP_BTN_OBJECTS"),
+           GG::X1, GG::Y1, default_w - 1, default_h - 1,
+           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
+           config_name),
     m_list_box(0),
     m_filter_button(0),
     m_collapse_button(0)

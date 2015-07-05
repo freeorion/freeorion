@@ -468,8 +468,11 @@ namespace {
 std::list <std::pair<std::string, std::string> >            EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string> >(0);
 std::list <std::pair<std::string, std::string> >::iterator  EncyclopediaDetailPanel::m_items_it = m_items.begin();
 
-EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags) :
-    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, flags),
+EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X default_w, GG::Y default_h, const std::string& config_name, GG::Flags<GG::WndFlag> flags) :
+    CUIWnd("",
+           GG::X1, GG::Y1, default_w - 1, default_h - 1,
+           flags,
+           config_name),
     m_name_text(0),
     m_cost_text(0),
     m_summary_text(0),

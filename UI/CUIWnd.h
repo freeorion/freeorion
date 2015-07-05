@@ -86,7 +86,7 @@ extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
 class CUIWnd : public GG::Wnd {
 public:
     //! \name Structors //@{
-    CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); //!< Constructs the window to be a CUI window
+    CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE, const std::string& config_name = ""); //!< Constructs the window to be a CUI window. Specifying \a config_name causes the window to save its position and other properties to the OptionsDB under that name, provided that the name has been registered using CUIWnd::AddWindowOptions().
     virtual ~CUIWnd();  //!< Destructor
     //@}
 
@@ -107,6 +107,8 @@ public:
     virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
+    virtual void    Hide(bool children = true);
+    virtual void    Show(bool children = true);
 
     void            ToggleMinimized() { MinimizeClicked(); }
     void            Close()           { CloseClicked(); }
@@ -127,7 +129,7 @@ protected:
     GG::Y           BottomBorder() const;               //!< the distance at the bottom between the outer edge of the window and the inner border
     int             InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
     bool            InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
-
+    void            SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
     //@}
 
     //! \name Mutators //@{
@@ -136,6 +138,14 @@ protected:
     virtual void    PositionButtons();              //!< called to position the buttons
 
     virtual void    InitBuffers();
+    void            LoadOptions();                  //!< loads options for this window from the OptionsDB
+
+    void     AddWindowOptions(int left = 0, int top = 0,
+                              int width = 400, int height = 200,
+                              bool visible = false, bool pinned = false, bool minimized = false) const;    //!< Adds OptionsDB entries for a window under a given name along with default values.
+    void     AddWindowOptions(GG::X left = GG::X0, GG::Y top = GG::Y0,
+                              GG::X width = GG::X(400), GG::Y height = GG::Y(200),
+                              bool visible = false, bool pinned = false, bool minimized = false) const;    //!< overload that accepts GG::X and GG::Y instead of ints
     //@}
 
     bool                    m_resizable;            //!< true if the window is able to be resized
@@ -149,6 +159,8 @@ protected:
     GG::Pt                  m_original_size;        //!< keeps track of the size of the window before resizing
 
     bool                    m_mouse_in_resize_tab;
+
+    const std::string       m_config_name;          //!< the name that this window will use to save its properties to the OptionsDB, the default empty string means "do not save"
 
     CUI_CloseButton*        m_close_button;         //!< the close button
     CUI_MinRestoreButton*   m_minimize_button;      //!< the minimize/restore button

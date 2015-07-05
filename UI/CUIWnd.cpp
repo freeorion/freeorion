@@ -7,6 +7,7 @@
 #include "CUIControls.h"
 #include "Sound.h"
 #include "../util/i18n.h"
+#include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Logger.h"
@@ -133,7 +134,7 @@ const int CUIWnd::TITLE_OFFSET = 3;
 const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 7;
 const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 3;
 
-CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags) :
+CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
@@ -143,16 +144,23 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     m_pinned(false),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_mouse_in_resize_tab(false),
+    m_config_name(config_name),
     m_close_button(0),
     m_minimize_button(0),
     m_pin_button(0)
 {
     // set window name
     SetName(t);
-    // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
-    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
     InitButtons();
     SetChildClippingMode(ClipToClientAndWindowSeparately);
+    if (!m_config_name.empty()) {
+        // Register the options under this name and load any already in the DB.
+        AddWindowOptions(x, y, w, h, true, false, false);
+        // Call AFTER buttons are initialized but before SetMinSize().
+        LoadOptions();
+    }
+    // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
+    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
     ValidatePosition();
     InitBuffers();
 }
@@ -198,6 +206,8 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         PositionButtons();
         InitBuffers();
     }
+
+    SaveOptions();
 }
 
 void CUIWnd::Render() {
@@ -415,6 +425,7 @@ void CUIWnd::PinClicked() {
     m_resizable = !m_pinned;
     m_pin_button->Toggle(m_pinned); // Change the icon on the pin button
     InitBuffers();
+    SaveOptions();
 }
 
 void CUIWnd::MinimizeClicked() {
@@ -440,6 +451,7 @@ void CUIWnd::MinimizeClicked() {
         Resize(GG::Pt(m_original_size));
         Show();
     }
+    SaveOptions();
 }
 
 void CUIWnd::InitBuffers() {
@@ -490,6 +502,129 @@ void CUIWnd::InitBuffers() {
     m_resize_corner_lines_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK1_OFFSET,Value(cl_lr.y));
     m_resize_corner_lines_buffer.store(Value(cl_lr.x),                          Value(cl_lr.y) - RESIZE_HASHMARK2_OFFSET);
     m_resize_corner_lines_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK2_OFFSET,Value(cl_lr.y));
+}
+
+void CUIWnd::Hide(bool children) {
+    GG::Wnd::Hide(children);
+    SaveOptions();
+}
+
+void CUIWnd::Show(bool children) {
+    GG::Wnd::Show(children);
+    SaveOptions();
+}
+
+void CUIWnd::SaveOptions() const {
+    // The default empty string means 'do not save/load properties'
+    if (m_config_name.empty()) {
+        return;
+    }
+
+    OptionsDB& db = GetOptionsDB();
+
+    std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+    if (!db.Get<bool>("fullscreen"))
+        windowed = "-windowed";
+
+    GG::Pt size;
+    if (m_minimized)
+        size = m_original_size;
+    else
+        size = Size();
+
+    db.Set<int>("UI.windows."+m_config_name+".left"+windowed,   Value(RelativeUpperLeft().x));
+    db.Set<int>("UI.windows."+m_config_name+".top"+windowed,    Value(RelativeUpperLeft().y));
+    db.Set<int>("UI.windows."+m_config_name+".width"+windowed,  Value(size.x));
+    db.Set<int>("UI.windows."+m_config_name+".height"+windowed, Value(size.y));
+
+    if (!Modal()) {
+        db.Set<bool>("UI.windows."+m_config_name+".visible", Visible());
+        db.Set<bool>("UI.windows."+m_config_name+".pinned", m_pinned);
+        db.Set<bool>("UI.windows."+m_config_name+".minimized", m_minimized);
+    }
+
+    db.Commit();
+}
+
+void CUIWnd::LoadOptions() {
+    // The default empty string means 'do not save/load properties'
+    if (m_config_name.empty()) {
+        return;
+    }
+
+    OptionsDB& db = GetOptionsDB();
+
+    std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+    if (!db.Get<bool>("fullscreen"))
+        windowed = "-windowed";
+
+    GG::Pt ul   = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".left"+windowed)),
+                         GG::Y(db.Get<int>("UI.windows."+m_config_name+".top"+windowed)));
+    GG::Pt size = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".width"+windowed)),
+                         GG::Y(db.Get<int>("UI.windows."+m_config_name+".height"+windowed)));
+
+    if (m_minimized) {
+        MinimizeClicked();
+    }
+
+    // Applying the options like this causes them to be saved to the config file again... it works fine but isn't very elegant.
+    SizeMove(ul, ul + size);
+
+    if (!Modal()) {
+        if (db.Get<bool>("UI.windows."+m_config_name+".visible")) {
+            Show();
+        } else {
+            Hide();
+        }
+
+        if (db.Get<bool>("UI.windows."+m_config_name+".pinned") != m_pinned) {
+            PinClicked();
+        }
+
+        if (db.Get<bool>("UI.windows."+m_config_name+".minimized") != m_minimized) {
+            MinimizeClicked();
+        }
+    }
+}
+
+void CUIWnd::AddWindowOptions(int left, int top,
+                              int width, int height,
+                              bool visible, bool pinned, bool minimized) const
+{
+    OptionsDB& db = GetOptionsDB();
+
+    if (db.OptionExists("UI.windows."+m_config_name+".left") || m_config_name.empty()) {
+        // Not necessarily an error, if a window is destroyed and constructed
+        // again with the same name this will be called again, just ignore it...
+        // TODO: implement a way of making sure that only one window with a
+        //       given name exists at any one time, static map<string, bool>?
+        //       (that would also tell us if a name has been Add()ed to the DB)
+        return;
+    }
+
+    // TODO: add stringtable entries for the descriptions
+    db.Add<int>("UI.windows."+m_config_name+".left",            UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       RangedValidator<int>(0, 2560));
+    db.Add<int>("UI.windows."+m_config_name+".top",             UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        RangedValidator<int>(0, 1600));
+    db.Add<int>("UI.windows."+m_config_name+".left-windowed",   UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       RangedValidator<int>(0, 2560));
+    db.Add<int>("UI.windows."+m_config_name+".top-windowed",    UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        RangedValidator<int>(0, 1600));
+
+    db.Add<int>("UI.windows."+m_config_name+".width",           UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH"),           width,      RangedValidator<int>(0, 2560));
+    db.Add<int>("UI.windows."+m_config_name+".height",          UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT"),          height,     RangedValidator<int>(0, 1600));
+    db.Add<int>("UI.windows."+m_config_name+".width-windowed",  UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH_WINDOWED"),  width,      RangedValidator<int>(0, 2560));
+    db.Add<int>("UI.windows."+m_config_name+".height-windowed", UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED"), height,     RangedValidator<int>(0, 1600));
+
+    db.Add<bool>("UI.windows."+m_config_name+".visible",        UserStringNop("OPTIONS_DB_UI_WINDOWS_VISIBLE"),         visible,    Validator<bool>());
+    db.Add<bool>("UI.windows."+m_config_name+".pinned",         UserStringNop("OPTIONS_DB_UI_WINDOWS_PINNED"),          pinned,     Validator<bool>());
+    db.Add<bool>("UI.windows."+m_config_name+".minimized",      UserStringNop("OPTIONS_DB_UI_WINDOWS_MINIMIZED"),       minimized,  Validator<bool>());
+}
+
+void CUIWnd::AddWindowOptions(GG::X left, GG::Y top,
+                              GG::X width, GG::Y height,
+                              bool visible, bool pinned, bool minimized) const
+{
+    AddWindowOptions(Value(left), Value(top),
+                     Value(width), Value(height),
+                     visible, pinned, minimized);
 }
 
 ///////////////////////////////////////
