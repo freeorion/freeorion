@@ -8,8 +8,7 @@ from starsystems import star_types_real, pick_star_type
 from planets import planet_sizes_real, planet_types_real, calc_planet_size, calc_planet_type
 from names import get_name_list, random_name
 from util import load_string_list, report_error
-from options import HS_MIN_PLANETS_IN_VICINITY_TOTAL, HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM, HS_VICINITY_RANGE
-from options import HS_ACCEPTABLE_PLANET_TYPES, HS_ACCEPTABLE_PLANET_SIZES
+from options import *
 import statistics
 
 
@@ -93,22 +92,13 @@ def min_planets_in_vicinity_limit(num_systems):
     return min(HS_MIN_PLANETS_IN_VICINITY_TOTAL, num_systems * HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM)
 
 
-def has_min_planets_in_vicinity(system):
+def find_home_systems_for_min_jump_distance(systems_pool, min_jumps):
     """
-    Checks if the specified system has a certain minimum of planets in the near vicinity.
-    The near vicinity are all systems within HS_VICINITY_RANGE jumps of the system.
-    """
-    systems_in_vicinity = get_systems_within_jumps(system, HS_VICINITY_RANGE)
-    return count_planets_in_systems(systems_in_vicinity) > min_planets_in_vicinity_limit(len(systems_in_vicinity))
-
-
-def find_home_systems_for_min_jump_distance(num_systems, systems_pool, min_jumps):
-    """
-    Returns a list with the specified number of home systems which are at least the specified minimum number of jumps
-    apart, picked randomly from the specified pool. If the specified number is 0, returns as much systems as possible.
+    Returns a list of home systems which are at least the specified minimum number of jumps apart,
+    picked randomly from the specified pool.
     """
     # make several attempts to find systems that match the condition of being at least min_jumps apart
-    # set the number of attempt to the number of systems in the pool, or 100 at max
+    # set the number of attempts to the number of systems in the pool, or 100 at max
     attempts = min(100, len(systems_pool))
     # store the result of all attempts in a list, so we can pick the attempt that yielded the largest set of systems
     accepted_list = []
@@ -117,10 +107,6 @@ def find_home_systems_for_min_jump_distance(num_systems, systems_pool, min_jumps
         # get candidates that are at least min_jumps away from the systems we already accepted
         for candidate in systems_min_jumps_away_from(systems_pool, min_jumps, accepted):
             accepted.append(candidate)  # add the candidate to our list of accepted systems
-            # if the number of home systems has been specified and we met that number, we got what we need
-            # we can stop and return the result of the current attempt immediately
-            if (num_systems > 0) and (len(accepted) >= num_systems):
-                return accepted
         # add the result of the current attempt to our list and continue with next attempt
         accepted_list.append(accepted)
         attempts -= 1
@@ -128,30 +114,23 @@ def find_home_systems_for_min_jump_distance(num_systems, systems_pool, min_jumps
     return max(accepted_list, key=len)
 
 
-def find_home_systems(num_home_systems, complete_pool, preferred_pool, min_jumps):
+def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_distance):
     """
     Tries to find a specified number of home systems which are as far apart from each other as possible.
-    Starts with the specified minimum jump distance and reduces that limit until enough systems can be found.
-    For each minimum jump distance two attempts are made: the first attempt uses a pool of preferred systems,
-    if that fails, a second attempt is made with a complete pool that should contain more systems (and therefore
-    has a greater chance of success).
+    Starts with the specified jump distance and reduces that limit until enough systems can be found or the
+    jump distance drops below the specified minimum jump distance limit (in this case fail).
+    For each jump distance several attempts are made: one for each pool passed in pool_list.
+    This parameter contains a list of tuples, each tuple has a pool of systems as first element and a description
+    of the pool for logging purposes as second element.
     """
-    # try to find home systems, decrease the min jumps until enough systems can be found, or the min jump distance
-    # gets reduced to 0 (meaning we don't have enough systems to choose from at all)
-    while min_jumps > 0:
-        print "Trying to find", num_home_systems, "home systems that are at least", min_jumps, "jumps apart..."
+    # try to find home systems, decrease the min jumps until enough systems can be found, or the jump distance drops
+    # below the specified minimum jump distance (which means failure)
+    while jump_distance >= min_jump_distance:
+        print "Trying to find", num_home_systems, "home systems that are at least", jump_distance, "jumps apart..."
 
-        # try to pick our home systems by iterating over the two pools we got
-        # try the preferred pool first, and if that does not yield sufficient systems, try the complete pool
-        pool_list = [
-            # from the preferred pool try to pick the requested number of home systems
-            (preferred_pool, num_home_systems, "pool of preferred systems"),
-            # from the complete pool, try to pick as much systems as possible (by using 0 instead of num_home_systems)
-            (complete_pool, 0, "complete pool")
-        ]
-
-        for pool, num_systems, pool_label in pool_list:
-            print "...try to find systems using the", pool_label
+        # try to pick our home systems by iterating over the pools we got
+        for pool, pool_label in pool_list:
+            print "...use", pool_label
 
             # check if the pool has enough systems to pick from
             if len(pool) <= num_home_systems:
@@ -160,7 +139,7 @@ def find_home_systems(num_home_systems, complete_pool, preferred_pool, min_jumps
                 continue
 
             # try to pick home systems
-            home_systems = find_home_systems_for_min_jump_distance(num_systems, pool, min_jumps)
+            home_systems = find_home_systems_for_min_jump_distance(pool, jump_distance)
             # check if we got enough
             if len(home_systems) >= num_home_systems:
                 # yes, we got what we need, return the home systems we found
@@ -170,9 +149,9 @@ def find_home_systems(num_home_systems, complete_pool, preferred_pool, min_jumps
                 # no, try next pool
                 print "...only", len(home_systems), "systems found"
 
-        # we did not find enough home systems with the current min jump requirement,
-        # so decrease the min jumps and try again
-        min_jumps -= 1
+        # we did not find enough home systems with the current jump distance requirement,
+        # so decrease the jump distance and try again
+        jump_distance -= 1
 
     # all attempts came up with too few systems, return empty list to indicate failure
     return []
@@ -274,25 +253,59 @@ def compile_home_system_list(num_home_systems, systems):
 
     # calculate an initial minimal number of jumps that the home systems should be apart,
     # based on the total number of systems to choose from and the requested number of home systems
-    # Don't let min_jumps be larger than 10, because a larger number is really not at all needed and with large
-    # galaxies an excessive amount of time can be used in failed attempts
-    min_jumps = min(10, max(int(float(len(systems)) / float(num_home_systems * 2)), 5))
+    # don't let min_jumps be either:
+    # a.) larger than a defined limit, because an unreasonably large number is really not at all needed,
+    #     and with large galaxies an excessive amount of time can be used in failed attempts
+    # b.) lower than the minimum jump distance limit that should be considered high priority (see options.py),
+    #     otherwise no attempt at all would be made to enforce the other requirements for home systems (see below)
+    min_jumps = min(HS_MAX_JUMP_DISTANCE_LIMIT, max(int(float(len(systems)) / float(num_home_systems * 2)),
+                                                    HS_MIN_DISTANCE_PRIORITY_LIMIT))
 
-    # home systems must have a certain minimum of systems in their near vicinity
+    # home systems must have a certain minimum of systems and planets in their near vicinity
     # we will try to select our home systems from systems that match this criteria, if that fails, we will select our
     # home systems from all systems and add the missing number planets to the systems in their vicinity afterwards
-    # the minimum planet limit and the jump range that defines the "near vicinity" are controlled by the
+    # the minimum system and planet limit and the jump range that defines the "near vicinity" are controlled by the
     # HS_* option constants in options.py (see there)
 
-    # lets start by filtering out all systems from the pool we got passed into this function that match the criteria
-    filtered_pool = [s for s in systems if has_min_planets_in_vicinity(s)]
-    print "Filtering out systems that meet the minimum planets in the near vicinity condition yielded",\
-        len(filtered_pool), "systems"
-    print "Using this as the preferred pool for home system selection"
-    # now try to pick the requested number of home systems by calling find_home_systems
-    # this function takes two pools, a "complete" pool and one with preferred systems
-    # it will try to pick the home systems from the preferred pool first, so pass our filtered pool as preferred pool
-    home_systems = find_home_systems(num_home_systems, systems, filtered_pool, min_jumps)
+    # we start by building two additional pools of systems: one that contains all systems that match the criteria
+    # completely (meets the min systems and planets limit), and one that contains all systems that match the criteria
+    # at least partially (meets the min systems limit)
+    pool_matching_sys_and_planet_limit = []
+    pool_matching_sys_limit = []
+    for system in systems:
+        systems_in_vicinity = get_systems_within_jumps(system, HS_VICINITY_RANGE)
+        if len(systems_in_vicinity) >= HS_MIN_SYSTEMS_IN_VICINITY:
+            pool_matching_sys_limit.append(system)
+            if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
+                pool_matching_sys_and_planet_limit.append(system)
+    print len(pool_matching_sys_and_planet_limit), "systems meet the min systems and planets in the near vicinity limit"
+    print len(pool_matching_sys_limit), "systems meet the min systems in the near vicinity limit"
+
+    # now try to pick the requested number of home systems
+    # we will do this by calling find_home_systems, which takes a list of tuples defining the pools from which to pick
+    # the home systems; it will use the pools in the order in which they appear in the list, so put better pools first
+
+    # we will make two attempts: the first one with the filtered pools we just created, and tell find_home_systems
+    # to start with the min_jumps jumps distance we calculated above, but not to go lower than
+    # HS_MIN_DISTANCE_PRIORITY_LIMIT
+
+    print "First attempt: trying to pick home systems from the filtered pools of preferred systems"
+    pool_list = [
+        # the better pool is of course the one where all systems meet BOTH the min systems and planets limit
+        (pool_matching_sys_and_planet_limit, "pool of systems that meet both the min systems and planets limit"),
+        # next the less preferred pool where all systems at least meets the min systems limit
+        # specify 0 as number of requested home systems to pick as much systems as possible
+        (pool_matching_sys_limit, "pool of systems that meet at least the min systems limit"),
+    ]
+    home_systems = find_home_systems(num_home_systems, pool_list, min_jumps, HS_MIN_DISTANCE_PRIORITY_LIMIT)
+
+    # check if the first attempt delivered a list with enough home systems
+    # if not, we make our second attempt, this time disregarding the filtered pools and using all systems, starting
+    # again with the min_jumps jump distance limit and specifying 0 as number of required home systems to pick as much
+    # systems as possible
+    if len(home_systems) < num_home_systems:
+        print "Second attempt: trying to pick home systems from all systems"
+        home_systems = find_home_systems(num_home_systems, [(systems, "complete pool")], min_jumps, 1)
 
     # check if the selection process delivered a list with enough home systems
     # if not, our galaxy obviously is too crowded, report an error and return an empty list
