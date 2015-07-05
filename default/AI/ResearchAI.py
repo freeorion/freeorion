@@ -74,7 +74,12 @@ def generate_research_orders():
     #
     if (fo.currentTurn() == 1) or ((fo.currentTurn() < 5) and (len(research_queue_list) == 0)):
         research_index = get_research_index()
-        new_tech = TechsListsAI.sparse_galaxy_techs(research_index) if galaxy_is_sparse else TechsListsAI.primary_meta_techs(research_index)
+        if fo.currentTurn() == 1:
+            # do only this one on first turn, to facilitate use of a turn-1 savegame for testing of alternate
+            # research strategies
+            new_tech = ["LRN_ALGO_ELEGANCE"]
+        else:
+            new_tech = TechsListsAI.sparse_galaxy_techs(research_index) if galaxy_is_sparse else TechsListsAI.primary_meta_techs(research_index)
         print "Empire %s (%d) is selecting research index %d" % (empire.name, empire_id, research_index)
         # techs_to_enqueue = (set(new_tech)-(set(completed_techs)|set(research_queue_list)))
         techs_to_enqueue = new_tech[:]
@@ -106,6 +111,19 @@ def generate_research_orders():
             except:
                 print "    Error: failed attempt to enqueued Tech: " + name
                 print "    Error: exception triggered and caught: ", traceback.format_exc()
+
+
+        print "\n\nAll techs:"
+        alltechs = fo.techs()  # returns names of all techs
+        for tname in alltechs:
+            print tname
+        print "\n-------------------------------\nAll unqueued techs:"
+        # coveredTechs = new_tech+completed_techs
+        for tname in [tn for tn in alltechs if tn not in tech_base]:
+            print tname
+
+        if fo.currentTurn() == 1:
+            return
         if foAI.foAIstate.aggression <= fo.aggression.cautious:
             research_queue_list = get_research_queue_techs()
             def_techs = TechsListsAI.defense_techs_1()
@@ -129,18 +147,6 @@ def generate_research_orders():
                         chat_human(msg)
                     else:
                         print msg
-
-        print""
-
-        generate_default_research_order()
-        print "\n\nAll techs:"
-        alltechs = fo.techs()  # returns names of all techs
-        for tname in alltechs:
-            print tname
-        print "\n-------------------------------\nAll unqueued techs:"
-        # coveredTechs = new_tech+completed_techs
-        for tname in [tn for tn in alltechs if tn not in tech_base]:
-            print tname
 
     elif fo.currentTurn() > 100:
         generate_default_research_order()
