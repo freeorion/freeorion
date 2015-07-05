@@ -89,6 +89,11 @@ private:
     void            HandleWindowClose();
     void            HandleFocusChange();
 
+    void            ConnectKeyboardAcceleratorSignals();
+    bool            QuitGame();
+    bool            ExitGame();
+    bool            ToggleFullscreen();
+
     void            UpdateFPSLimit();                   ///< polls options database to find if FPS should be limited, and if so, to what rate
 
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
