@@ -174,9 +174,9 @@ def generateOrders():  # pylint: disable=invalid-name
     print "**********   String for chart. Do not modify.   ***************************"
     print ("Generating Orders")
     print ("EmpireID: {empire.empireID}"
-           " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
+           " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}_{aggression}"
            " Turn: {turn}").format(empire=empire,  p_id=fo.playerID(), p_name=fo.playerName(),
-                                   res_idx=ResearchAI.get_research_index(), turn=turn,
+                                   turn=turn,
                                    aggression=aggression_name.capitalize())
     print "EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire)
     if planet:
