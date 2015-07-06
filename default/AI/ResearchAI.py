@@ -367,6 +367,7 @@ def generate_research_orders():
                 print "    %25s allocated %6.2f RP -- unlockable items: %s " % (element.tech, element.allocation, unlocked_items)
             else:
                 print "    %25s allocated %6.2f RP -- missing preReqs: %s -- unlockable items: %s " % (element.tech, element.allocation, missing_prereqs, unlocked_items)
+        print
 
     #
     # calculate all research priorities, as in get_priority(tech) / total cost of tech (including prereqs)
@@ -387,6 +388,7 @@ def generate_research_orders():
     print "    %25s %8s %8s %s" % ("Name", "Priority", "Cost", "Missing Prerequisties")
     for tech_name in possible[-10:]:
         print "    %25s %8.6f %8.2f %s" % (tech_name, priorities[tech_name], research_reqs[tech_name][1], research_reqs[tech_name][0])
+    print
 
     total_rp = empire.resourceProduction(fo.resourceType.research)
     print "enqueuing techs. already spent RP: %s total RP: %s" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
@@ -405,6 +407,7 @@ def generate_research_orders():
                 print "    enqueued tech " + prereq + "  : cost: " + str(fo.getTech(prereq).researchCost(empire.empireID)) + "RP"
 
         fo.updateResearchQueue()
+    print
 
 
 def get_completed_techs():
