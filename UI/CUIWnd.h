@@ -7,6 +7,7 @@
 #include <GG/Button.h>
 #include <GG/Wnd.h>
 #include <GG/WndEvent.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
@@ -107,8 +108,8 @@ public:
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
 
-    void            ToggleMinimized() {MinimizeClicked();}
-    void            Close()           {CloseClicked();}
+    void            ToggleMinimized() { MinimizeClicked(); }
+    void            Close()           { CloseClicked(); }
     //@}
 
     //! \name Mutators //@{
@@ -118,7 +119,7 @@ public:
 
 protected:
     //! \name Accessors //@{
-    virtual GG::X   MinimizedWidth() const;             //!< the width of a minimized CUIWnd
+    virtual GG::Pt  MinimizedSize() const;              //!< the size of a minimized CUIWnd
     GG::X           LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
     GG::Y           TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
     GG::X           RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
@@ -132,6 +133,8 @@ protected:
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
     void            InitButtons();                  //!< called to create the buttons, withtout positioning them
     void            PositionButtons();              //!< called to position the buttons
+
+    void            InitBuffers();
     //@}
 
     bool                    m_resizable;      //!< true if the window is able to be resized
@@ -149,6 +152,11 @@ protected:
     CUI_CloseButton*        m_close_button;     //!< the close button
     CUI_MinRestoreButton*   m_minimize_button;  //!< the minimize/restore button
     CUI_PinButton*          m_pin_button;       //!< the pin button
+
+    GG::GL2DVertexBuffer    m_minimized_buffer;
+    GG::GL2DVertexBuffer    m_outer_border_buffer;
+    GG::GL2DVertexBuffer    m_inner_border_buffer;
+    GG::GL2DVertexBuffer    m_resize_corner_lines_buffer;
 
     static const GG::Y      BUTTON_TOP_OFFSET;
     static const GG::X      BUTTON_RIGHT_OFFSET;

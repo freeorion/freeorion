@@ -150,63 +150,64 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     // set window name
     SetName(t);
     // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
-    SetMinSize(GG::Pt(CUIWnd::MinimizedWidth(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
+    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
     InitButtons();
     SetChildClippingMode(ClipToClientAndWindowSeparately);
+    InitBuffers();
 }
 
 CUIWnd::~CUIWnd()
 {}
 
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Pt old_sz = Size();
     Wnd::SizeMove(ul, lr);
-    PositionButtons();
+    if (Size() != old_sz) {
+        PositionButtons();
+        InitBuffers();
+    }
 }
 
 void CUIWnd::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ClientUpperLeft();
-    GG::Pt cl_lr = ClientLowerRight();
 
-    if (!m_minimized) {
-        AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
-                              OUTER_EDGE_ANGLE_OFFSET, 1, false, !m_resizable); // show notched bottom-right corner if not resizable, pointed corner if resizable
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(1.0f);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-        // use GL to draw the lines
-        glDisable(GL_TEXTURE_2D);
+    if (m_minimized) {
+        m_minimized_buffer.activate();
+        glColor(ClientUI::WndColor());
+        glDrawArrays(GL_TRIANGLE_FAN,   0, m_minimized_buffer.size());
+        glColor(ClientUI::WndOuterBorderColor());
+        glDrawArrays(GL_LINE_STRIP,     0, m_minimized_buffer.size());
 
-        // draw inner border, including extra resize-tab lines
-        glBegin(GL_LINE_STRIP);
-            glColor(ClientUI::WndInnerBorderColor());
-            glVertex(cl_ul.x, cl_ul.y);
-            glVertex(cl_lr.x, cl_ul.y);
-            if (m_resizable) {
-                glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-                glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-            } else {
-                glVertex(cl_lr.x, cl_lr.y);
-            }
-            glVertex(cl_ul.x, cl_lr.y);
-            glVertex(cl_ul.x, cl_ul.y);
-        glEnd();
-        if (m_resizable) {
-            glBegin(GL_LINES);
-                // draw the extra lines of the resize tab
-                GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
-                glColor(tab_lines_colour);
-
-                glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-                glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-
-                glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-                glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-            glEnd();
-        }
-        glEnable(GL_TEXTURE_2D);
     } else {
-        GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+        m_outer_border_buffer.activate();
+        glColor(ClientUI::WndColor());
+        glDrawArrays(GL_TRIANGLE_FAN,   0, m_outer_border_buffer.size() - 1);   // don't need to include the repeated starting vertex in the fan
+        glColor(ClientUI::WndOuterBorderColor());
+        glDrawArrays(GL_LINE_STRIP,     0, m_outer_border_buffer.size());
+
+        m_inner_border_buffer.activate();
+        glColor(ClientUI::WndInnerBorderColor());
+        glDrawArrays(GL_LINE_STRIP,     0, m_inner_border_buffer.size());
+
+        if (m_resizable) {
+            m_resize_corner_lines_buffer.activate();
+            GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
+            glColor(tab_lines_colour);
+            glDrawArrays(GL_LINES,          0, m_resize_corner_lines_buffer.size());
+        }
     }
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
 
     GG::BeginScissorClipping(ul, lr);
     glColor(ClientUI::TextColor());
@@ -320,17 +321,18 @@ void CUIWnd::PositionButtons() {
     // The buttons are to be positioned based on the presence of other buttons
     GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
 
-    if (m_close_button)
+    if (m_close_button) {
         m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
-    if (m_minimize_button)
-        m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
-    if (m_pin_button) {
-        if (m_closable) {
-            m_pin_button->MoveTo(GG::Pt(button_ul.x - (m_pin_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
-        } else {
-            m_pin_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
-        }
+        button_ul -= GG::Pt(m_close_button->Width(), GG::Y0) + GG::Pt(GG::X(4), GG::Y0);
     }
+
+    if (m_minimize_button) {
+        m_minimize_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
+        button_ul -= GG::Pt(m_minimize_button->Width(), GG::Y0) + GG::Pt(GG::X(4), GG::Y0);
+    }
+
+    if (m_pin_button)
+        m_pin_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
 }
 
 void CUIWnd::InitButtons() {
@@ -365,8 +367,8 @@ void CUIWnd::InitButtons() {
     PositionButtons();
 }
 
-GG::X CUIWnd::MinimizedWidth() const
-{ return MINIMIZED_WND_WIDTH; }
+GG::Pt CUIWnd::MinimizedSize() const
+{ return GG::Pt(MINIMIZED_WND_WIDTH, BORDER_TOP); }
 
 GG::X CUIWnd::LeftBorder() const
 { return BORDER_LEFT; }
@@ -389,42 +391,93 @@ void CUIWnd::CloseClicked() {
         Parent()->DetachChild(this);
     else
         GG::GUI::GetGUI()->Remove(this);
+
+    //m_minimized_buffer.clear();
+    //m_outer_border_buffer.clear();
+    //m_inner_border_buffer.clear();
+    //m_resize_corner_lines_buffer.clear();
 }
 
 void CUIWnd::PinClicked() {
     m_pinned = !m_pinned;
     m_resizable = !m_pinned;
     m_pin_button->Toggle(m_pinned); // Change the icon on the pin button
+    InitBuffers();
 }
 
 void CUIWnd::MinimizeClicked() {
     if (!m_minimized) {
         m_minimized = true;
         m_original_size = Size();
-        SetMinSize(GG::Pt(MinimizedWidth(), BORDER_TOP));
-        Resize(GG::Pt(MINIMIZED_WND_WIDTH, BORDER_TOP));
-        GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET);
-        if (m_close_button)
-            m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
-        if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
+        SetMinSize(MinimizedSize());
+        Resize(MinimizedSize());
+
+        // hide all children, re-showing only position/size controls
         Hide();
         Show(false);
         if (m_close_button)
             m_close_button->Show();
         if (m_minimize_button)
             m_minimize_button->Show();
+        if (m_pin_button)
+            m_pin_button->Show();
+
     } else {
         m_minimized = false;
-        SetMinSize(GG::Pt(MinimizedWidth(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 10));
+        SetMinSize(GG::Pt(MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 10));
         Resize(GG::Pt(m_original_size));
-        GG::Pt button_ul = GG::Pt(Width() - BUTTON_RIGHT_OFFSET, BUTTON_TOP_OFFSET) + UpperLeft() - ClientUpperLeft();
-        if (m_close_button)
-            m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
-        if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
         Show();
     }
+}
+
+void CUIWnd::InitBuffers() {
+    // for when minimized... m_minimized_buffer
+    GG::Pt m_sz = MinimizedSize();
+
+    m_minimized_buffer.clear();
+    m_minimized_buffer.store(0.0f,          0.0f);
+    m_minimized_buffer.store(Value(m_sz.x), 0.0f);
+    m_minimized_buffer.store(Value(m_sz.x), Value(m_sz.y));
+    m_minimized_buffer.store(0.0f,          Value(m_sz.y));
+    m_minimized_buffer.store(0.0f,          0.0f);
+    m_minimized_buffer.createServerBuffer();
+
+    GG::Pt sz = Size();
+    GG::Pt cl_ul = ClientUpperLeft() - UpperLeft();
+    GG::Pt cl_lr = ClientLowerRight() - UpperLeft();
+
+    // outer border, with optional corner cutout
+    m_outer_border_buffer.clear();
+    m_outer_border_buffer.store(0.0f,           0.0f);
+    m_outer_border_buffer.store(Value(sz.x),    0.0f);
+    if (!m_resizable) {
+        m_outer_border_buffer.store(Value(sz.x),                            Value(sz.y) - OUTER_EDGE_ANGLE_OFFSET);
+        m_outer_border_buffer.store(Value(sz.x) - OUTER_EDGE_ANGLE_OFFSET,  Value(sz.y));
+    } else {
+        m_outer_border_buffer.store(Value(sz.x),Value(sz.y));
+    }
+    m_outer_border_buffer.store(0.0f,           Value(sz.y));
+    m_outer_border_buffer.store(0.0f,           0.0f);
+
+    // inner border, with optional corner cutout
+    m_inner_border_buffer.clear();
+    m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_ul.y));
+    m_inner_border_buffer.store(Value(cl_lr.x), Value(cl_ul.y));
+    if (m_resizable) {
+        m_inner_border_buffer.store(Value(cl_lr.x),                             Value(cl_lr.y) - INNER_BORDER_ANGLE_OFFSET);
+        m_inner_border_buffer.store(Value(cl_lr.x) - INNER_BORDER_ANGLE_OFFSET, Value(cl_lr.y));
+    } else {
+        m_inner_border_buffer.store(Value(cl_lr.x),Value(cl_lr.y));
+    }
+    m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_lr.y));
+    m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_ul.y));
+
+    // resize hash marks
+    m_resize_corner_lines_buffer.clear();
+    m_resize_corner_lines_buffer.store(Value(cl_lr.x),                          Value(cl_lr.y) - RESIZE_HASHMARK1_OFFSET);
+    m_resize_corner_lines_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK1_OFFSET,Value(cl_lr.y));
+    m_resize_corner_lines_buffer.store(Value(cl_lr.x),                          Value(cl_lr.y) - RESIZE_HASHMARK2_OFFSET);
+    m_resize_corner_lines_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK2_OFFSET,Value(cl_lr.y));
 }
 
 ///////////////////////////////////////

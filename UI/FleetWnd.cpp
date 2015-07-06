@@ -2602,8 +2602,8 @@ FleetWnd::~FleetWnd() {
 }
 
 void FleetWnd::Init(int selected_fleet_id) {
-    SetMinSize(GG::Pt(CUIWnd::MinimizedWidth(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
-                                                ListRowHeight() + 2*GG::Y(PAD)));
+    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
+                                                 ListRowHeight() + 2*GG::Y(PAD)));
 
     // ensure position is not off screen
     GG::Pt window_pos = UpperLeft();
