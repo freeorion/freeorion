@@ -389,6 +389,7 @@ def generate_research_orders():
     print "    %25s %8s %8s %s" % ("Name", "Priority", "Cost", "Missing Prerequisties")
     for tech_name in possible[-10:]:
         print "    %25s %8.6f %8.2f %s" % (tech_name, priorities[tech_name], research_reqs[tech_name][1], research_reqs[tech_name][0])
+    print
 
     # TODO: Remove the following example code
     # Example/Test code for the new ShipDesigner functionality
@@ -443,6 +444,7 @@ def generate_research_orders():
                 print "    enqueued tech " + prereq + "  : cost: " + str(fo.getTech(prereq).researchCost(empire.empireID)) + "RP"
 
         fo.updateResearchQueue()
+    print
 
 
 def get_completed_techs():
