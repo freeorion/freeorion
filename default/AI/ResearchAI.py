@@ -171,7 +171,7 @@ def get_priority(tech_name, empire):
             return growth
     if tech_name in ["GRO_GENETIC_MED"]:
         return DEFAULT # TODO boost this to get the genome bank if enemy is using bioterror?
-    if tech_name in ["GRO_LIFECYCLE_MAN", "GRO_NANO_CYBERNET"]:
+    if tech_name in ["GRO_LIFECYCLE_MAN", "GRO_NANO_CYBERNET"]: # TODO consider ship part simulation calculation
         return DEFAULT
     if tech_name in ["GRO_ENERGY_META"]:
         return production_boost + research_boost
@@ -195,7 +195,7 @@ def get_priority(tech_name, empire):
         return DEFAULT # TODO does AI use/value Hyperspatial Dam?
     if tech_name in ["PRO_SINGULAR_GEN"]:
         return production_boost if has_black_hole else USELESS
-    if tech_name in ["PRO_has_neutron_starIUM_EXTRACTION"]:
+    if tech_name in ["PRO_NEUTRONIUM_EXTRACTION"]:
         return armor if has_neutron_star else USELESS # application of neutronium extraction is armor only for now
 
     # Construction
