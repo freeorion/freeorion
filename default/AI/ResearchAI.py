@@ -5,27 +5,18 @@ import AIstate
 import traceback
 import ColonisationAI
 import ShipDesignAI
-from freeorion_tools import tech_is_complete, chat_human
+import random
 
-def get_empire_hash():
-    """
-	Get hash for empire name, so to create random tech choices in every game, 
-	yet deterministic across loading of same game
-    """
-    ename = fo.getEmpire().name
-    hash = 0
-    for char in ename:
-        hash += ord(char)
-    research_index = fo.getEmpire().empireID + hash
-    return research_index
+from freeorion_tools import tech_is_complete, chat_human
 
 def get_priority(tech_name, empire):
     """
-	Get tech priority. 1 is default. 0 if not useful (but doesn't hurt to research), 
-	< 0 to prevent AI to research it
+    Get tech priority. 1 is default. 0 if not useful (but doesn't hurt to research),
+    < 0 to prevent AI to research it
     """
 
-    index = get_empire_hash()
+    rng = random.Random()
+    rng.seed(fo.getEmpire().name)
 
     IMMEDIATE = 999 # i.e. research this tech NOW!
     USELESS = 0 # useless for AI, mostly because the AI doesn't know how to use them
@@ -51,19 +42,20 @@ def get_priority(tech_name, empire):
     offtrack_hull = 0.05
     offtrack_subhull = 0.25
     # select one hull and specialize it, but some AI may want to have more hulls, by random
-    org = hull if index & 1 == 0 or (index + 97) % 227 < 21 else offtrack_hull
-    robotic = hull if index & 1 == 1 or (index + 107) % 229 < 22 else offtrack_hull
+    chosen_hull = rng.randrange(4)
+    org = hull if chosen_hull % 2 == 0 or rng.random() < 0.05 else offtrack_hull
+    robotic = hull if chosen_hull % 2 == 1 or rng.random() < 0.05 else offtrack_hull
     if ColonisationAI.got_ast:
-        extra = (index + 113) % 223 < 11
-        asteroid = hull if index & 2 == 0 or extra else offtrack_hull
+        extra = rng.random() < 0.05
+        asteroid = hull if chosen_hull == 2 or extra else offtrack_hull
         if asteroid == hull and not extra:
             org = offtrack_hull
             robotic = offtrack_hull
     else:
         asteroid = offtrack_hull
     if has_blue_star or has_black_hole:
-        extra = (index + 103) % 211 < 10
-        energy = hull if index & 4 == 0 or extra else offtrack_hull
+        extra = rng.random() < 0.05
+        energy = hull if chosen_hull == 3 or extra else offtrack_hull
         if energy == hull and not extra:
             org = offtrack_hull
             robotic = offtrack_hull
@@ -72,37 +64,41 @@ def get_priority(tech_name, empire):
         energy = offtrack_hull
 
     # further specialization for robotic hulls
-    contgrav = hull if robotic == hull and index & 8 == 0 else offtrack_subhull
-    nanorobo = hull if robotic == hull and index & 8 == 1 else offtrack_subhull
-    flux = hull if robotic == hull and (index + 17) % 43 < 22 else offtrack_subhull
+    chosen_subhull = rng.randrange(2)
+    contgrav = hull if robotic == hull and chosen_subhull == 0 else offtrack_subhull
+    nanorobo = hull if robotic == hull and chosen_subhull == 1 else offtrack_subhull
+    flux = hull if robotic == hull and rng.random() < 0.5 else offtrack_subhull
     # further specialization for asteroid hulls
-    astheavy = hull if asteroid == hull and index % 3 == 0 else offtrack_subhull
-    astswarm = hull if asteroid == hull and index % 3 == 1 else offtrack_subhull
-    astcamo = hull if asteroid == hull and index % 3 == 2 else offtrack_subhull
+    chosen_subhull = rng.randrange(3)
+    astheavy = hull if asteroid == hull and chosen_subhull == 0 else offtrack_subhull
+    astswarm = hull if asteroid == hull and chosen_subhull == 1 else offtrack_subhull
+    astcamo = hull if asteroid == hull and chosen_subhull == 2 else offtrack_subhull
     # further specialization for organic hulls
-    orgneural = hull if org == hull and index & 8 == 0 else offtrack_subhull
-    orgraven = hull if org == hull and index & 8 == 1 else offtrack_subhull
-    orgendosym = hull if org == hull and (index + 17) % 43 < 22 else offtrack_subhull
+    chosen_subhull = rng.randrange(2)
+    orgneural = hull if org == hull and chosen_subhull == 0 else offtrack_subhull
+    orgraven = hull if org == hull and chosen_subhull == 1 else offtrack_subhull
+    orgendosym = hull if org == hull and rng.random() < 0.5 else offtrack_subhull
     # further specialization for energy hulls
-    energyfrac = hull if energy == hull and index & 8 == 0 else offtrack_subhull
-    energymag = hull if energy == hull and index & 8 == 1 else offtrack_subhull
+    chosen_subhull = rng.randrange(2)
+    energyfrac = hull if energy == hull and chosen_subhull == 0 else offtrack_subhull
+    energymag = hull if energy == hull and chosen_subhull == 1 else offtrack_subhull
     # repair techs may be skipped if AI decides to go for nanorobotic hull which full-repairs
-    repair = 1 if not nanorobo == hull or (index + 37) % 103 < 77 else 0.3
+    repair = 1 if not nanorobo == hull or rng.random() < 0.75 else 0.3
 
     # AI may skip weapon lines
     weapon = 1
-    massdriver = weapon if index % 47 < 36 else 0
-    laser = weapon if (index % 83 < 36 if massdriver == weapon else index % 47 < 41) else 0
-    plasmacannon = weapon if (index % 83 < 36 if laser == weapon else index % 47 < 41) else 0
+    massdriver = weapon if rng.random() < 0.75 else 0
+    laser = weapon if (rng.random() < 0.4 if massdriver == weapon else rng.random() < 0.75) else 0
+    plasmacannon = weapon if (rng.random() < 0.4 if laser == weapon else rng.random() < 0.75) else 0
     deathray = weapon
 
     armor = 1
 
-    engine = 1 if ((index + 13) % 31 < 26 if ColonisationAI.galaxy_is_sparse() else (index + 13) % 31 < 5) else 0
-    fuel = 1 if ((index + 17) % 37 < 31 if ColonisationAI.galaxy_is_sparse() else (index + 17) % 37 < 3) else 0
+    engine = 1 if (rng.random() < 0.8 if ColonisationAI.galaxy_is_sparse() else rng.random() < 0.1) else 0
+    fuel = 1 if (rng.random() < 0.8 if ColonisationAI.galaxy_is_sparse() else rng.random() < 0.1) else 0
 
     detection = 1
-    stealth = 2.2 if (index + 37) % 67 < 9 else 0.2 # TODO stealthy species probably want more stealthy techs
+    stealth = 2.2 if rng.random() < 0.1 else 0.2 # TODO stealthy species probably want more stealthy techs
 
     if tech_name in ["SHP_KRILL_SPAWN", "DEF_PLANET_CLOAK"]:
         return UNRESEARCHABLE
@@ -288,7 +284,7 @@ def get_priority(tech_name, empire):
     if tech_name in ["SHP_ROOT_ARMOR", "SHP_ZORTRIUM_PLATE"]:
         return armor
     if tech_name in ["SHP_DIAMOND_PLATE", "SHP_XENTRONIUM_PLATE"]:
-        return useless if asteroid or neutron else armor # asteroid hull line and neutronium extraction includes better armors
+        return USELESS if asteroid or neutron else armor # asteroid hull line and neutronium extraction includes better armors
 
     # weapons
     if tech_name in ["SHP_ROOT_AGGRESSION", "SHP_WEAPON_1_2", "SHP_WEAPON_1_3", "SHP_WEAPON_1_4"]:
