@@ -583,6 +583,12 @@ public:
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
 
 private:
+    void            InitBuffers();
+
+    GG::GL2DVertexBuffer            m_border_buffer;
+    GG::GL2DVertexBuffer            m_eta_border_buffer;
+    GG::GL2DVertexBuffer            m_enqueued_indicator_buffer;
+
     const std::string&              m_tech_name;
     std::string                     m_name_text;
     std::string                     m_eta_text;
