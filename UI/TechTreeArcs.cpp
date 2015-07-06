@@ -120,7 +120,7 @@ private:
                 const std::string& to   = (*edge)->GetTechTo();
                 // Do not show lines leading to techs
                 // we are not showing
-                if(techs.find(to) == techs.end()) {
+                if (techs.find(to) == techs.end()) {
                     continue;
                 }
                 // Remember what edges we are showing so
