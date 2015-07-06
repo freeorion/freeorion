@@ -76,7 +76,7 @@ OptionsDB::Option::Option()
 
 OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_,
                           const boost::any& default_value_, const std::string& description_,
-                          const ValidatorBase* validator_, bool storable_, bool flag_) :
+                          const ValidatorBase* validator_, bool storable_, bool flag_, bool recognized_) :
     name(name_),
     short_name(short_name_),
     value(value_),
@@ -85,6 +85,7 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
     validator(validator_),
     storable(storable_),
     flag(flag_),
+    recognized(recognized_),
     option_changed_sig_ptr(new boost::signals2::signal<void ()>())
 {
     if (short_name_)
@@ -141,7 +142,7 @@ void OptionsDB::Commit()
 
 void OptionsDB::Validate(const std::string& name, const std::string& value) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(name);
-    if (it == m_options.end())
+    if (!OptionExists(it))
         throw std::runtime_error("Attempted to validate unknown option \"" + name + "\".");
 
     if (it->second.validator)
@@ -152,28 +153,28 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
 
 std::string OptionsDB::GetValueString(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
-    if (it == m_options.end())
+    if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetValueString(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.ValueToString();
 }
 
 std::string OptionsDB::GetDefaultValueString(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
-    if (it == m_options.end())
+    if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetDefaultValueString(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.DefaultValueToString();
 }
 
 const std::string& OptionsDB::GetDescription(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
-    if (it == m_options.end())
+    if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetDescription(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.description;
 }
 
 boost::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
-    if (it == m_options.end())
+    if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetValidator(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.validator;
 }
@@ -194,6 +195,11 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
         throw std::runtime_error("The longest parameter name leaves no room for a description.");
 
     for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
+        // Ignore unrecognized options that have not been formally registered
+        // with Add().
+        if (!it->second.recognized)
+            continue;
+
         if (it->second.short_name)
             os << "-" << it->second.short_name << ", --" << it->second.name << "\n";
         else
@@ -320,7 +326,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                 try {
                     // ensure a parameter exists...
                     if (i + 1 >= static_cast<unsigned int>(args.size()))
-                        throw std::runtime_error("the option \"" + option.name + 
+                        throw std::runtime_error("the option \"" + option.name +
                                                  "\" was specified, at the end of the list, with no parameter value.");
                     // get parameter value
                     std::string value_str(args[++i]);
@@ -328,8 +334,8 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                     // ensure parameter is actually a parameter, and not the next option name (which would indicate
                     // that the option was specified without a parameter value, as if it was a flag)
                     if (value_str.at(0) == '-')
-                        throw std::runtime_error("the option \"" + option.name + 
-                                                 "\" was followed by the parameter \"" + value_str + 
+                        throw std::runtime_error("the option \"" + option.name +
+                                                 "\" was followed by the parameter \"" + value_str +
                                                  "\", which appears to be an option flag, not a parameter value, because it begins with a \"-\" character.");
                     option.SetFromString(value_str);
                 } catch (const std::exception& e) {
@@ -396,8 +402,11 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
 
         if (it == m_options.end()) {
+            // Store unrecognized option as its string to be parsed later if this options is added.
+            m_options[option_name] = Option(static_cast<char>(0), option_name, elem.Text(), elem.Text(),
+                                            "", new Validator<std::string>(), true, false, false);
             if (GetOptionsDB().Get<bool>("verbose-logging"))
-                ErrorLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  You may need to delete your config.xml if it is out of date";
+                DebugLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
             return;
         }
 
