@@ -7,6 +7,19 @@ import ColonisationAI
 import random
 from freeorion_tools import tech_is_complete, chat_human
 
+def has_only_bad_colonizers():
+    most_adequate = 0
+    for specName in ColonisationAI.empire_colonizers:
+        environs = {}
+        this_spec = fo.getSpecies(specName)
+        if not this_spec:
+            continue
+        for ptype in [fo.planetType.swamp, fo.planetType.radiated, fo.planetType.toxic, fo.planetType.inferno, fo.planetType.barren, fo.planetType.tundra, fo.planetType.desert, fo.planetType.terran, fo.planetType.ocean, fo.planetType.asteroids]:
+            environ = this_spec.getPlanetEnvironment(ptype)
+            environs.setdefault(environ, []).append(ptype)
+        most_adequate = max(most_adequate, len(environs.get(fo.planetEnvironment.adequate, [])))
+    return most_adequate == 0
+
 def get_priority(tech_name, empire):
     """
     Get tech priority. 1 is default. 0 if not useful (but doesn't hurt to research),
@@ -28,7 +41,9 @@ def get_priority(tech_name, empire):
     research_boost = 2 # research boosts have higher priority. This include buildings that boosts research
     meter_boost = 1
     shield = 1.25 # shields are more powerful than armors or weapons
+    # TODO reduce priority at very early stage for defense techs, until enemies seen
     defensive = 2 if foAI.foAIstate.aggression <= fo.aggression.cautious else (1 if fo.currentTurn() > 10 else 0.5)
+    # TODO consider starlane density and planet density instead
     supply = 2 if ColonisationAI.galaxy_is_sparse() else 0.5
 
     has_red_star = len(AIstate.empireStars.get(fo.starType.red, [])) != 0
@@ -61,6 +76,8 @@ def get_priority(tech_name, empire):
     else:
         energy = offtrack_hull
 
+    # TODO consider subhulls, weapons, armors, engines and fuels by estimating their strengths
+    # https://github.com/freeorion/freeorion/pull/178
     # further specialization for robotic hulls
     chosen_subhull = rng.randrange(2)
     contgrav = hull if robotic == hull and chosen_subhull == 0 else offtrack_subhull
@@ -83,20 +100,23 @@ def get_priority(tech_name, empire):
     # repair techs may be skipped if AI decides to go for nanorobotic hull which full-repairs
     repair = 1 if not nanorobo == hull or rng.random() < 0.75 else 0.3
 
-    # AI may skip weapon lines
+    # (Disabled) AI may skip weapon lines
     weapon = 1
-    massdriver = weapon if rng.random() < 0.75 else 0
-    laser = weapon if (rng.random() < 0.4 if massdriver == weapon else rng.random() < 0.75) else 0
-    plasmacannon = weapon if (rng.random() < 0.4 if laser == weapon else rng.random() < 0.75) else 0
+    # massdriver = weapon if rng.random() < 0.75 else 0
+    # laser = weapon if (rng.random() < 0.4 if massdriver == weapon else rng.random() < 0.75) else 0
+    # plasmacannon = weapon if (rng.random() < 0.4 if laser == weapon else rng.random() < 0.75) else 0
+    massdriver = weapon
+    laser = weapon
+    plasmacannon = weapon
     deathray = weapon
 
     armor = 1
 
-    engine = 1 if (rng.random() < 0.8 if ColonisationAI.galaxy_is_sparse() else rng.random() < 0.1) else 0
-    fuel = 1 if (rng.random() < 0.8 if ColonisationAI.galaxy_is_sparse() else rng.random() < 0.1) else 0
+    engine = 1 if (rng.random() < 0.8 if ColonisationAI.galaxy_is_sparse() else rng.random() < 0.4) else 0
+    fuel = 1 if (rng.random() < 0.8 if ColonisationAI.galaxy_is_sparse() else rng.random() < 0.4) else 0
 
-    detection = 1
-    stealth = 2.2 if rng.random() < 0.1 else 0.2 # TODO stealthy species probably want more stealthy techs
+    detection = 1 # TODO Consider stealth of enemies
+    stealth = 2.2 if rng.random() < 0.1 else 0.2 # TODO stealthy species probably want more stealthy techs, and base one enemies detection
 
     if tech_name in ["SHP_KRILL_SPAWN", "DEF_PLANET_CLOAK"]:
         return UNRESEARCHABLE
@@ -123,7 +143,7 @@ def get_priority(tech_name, empire):
     if tech_name in ["LRN_XENOARCH"]:
         if foAI.foAIstate.aggression < fo.aggression.typical:
             return DEFAULT
-        return IMMEDIATE if ColonisationAI.gotRuins else USELESS # get xenoarcheology ASAP when we have ruins, otherwise it is useless
+        return 5 if ColonisationAI.gotRuins else USELESS # get xenoarcheology when we have ruins, otherwise it is useless
     if tech_name in ["LRN_FORCE_FIELD"]:
         return shield
     if tech_name in ["LRN_SPATIAL_DISTORT_GEN", "LRN_GATEWAY_VOID", "LRN_PSY_DOM"]:
@@ -145,17 +165,7 @@ def get_priority(tech_name, empire):
     if tech_name in ["GRO_XENO_GENETICS"]:
         if foAI.foAIstate.aggression < fo.aggression.cautious:
             return DEFAULT
-        most_adequate = 0
-        for specName in ColonisationAI.empire_colonizers:
-            environs = {}
-            this_spec = fo.getSpecies(specName)
-            if not this_spec:
-                continue
-            for ptype in [fo.planetType.swamp, fo.planetType.radiated, fo.planetType.toxic, fo.planetType.inferno, fo.planetType.barren, fo.planetType.tundra, fo.planetType.desert, fo.planetType.terran, fo.planetType.ocean, fo.planetType.asteroids]:
-                environ = this_spec.getPlanetEnvironment(ptype)
-                environs.setdefault(environ, []).append(ptype)
-            most_adequate = max(most_adequate, len(environs.get(fo.planetEnvironment.adequate, [])))
-        if most_adequate == 0:
+        if has_only_bad_colonizers():
             return growth * 3 # Empire only have lousy colonisers, xeno-genetics are really important for them
         else:
             return growth
@@ -260,7 +270,7 @@ def get_priority(tech_name, empire):
 
     # damage control
     if tech_name in ["SHP_REINFORCED_HULL"]:
-        return DEFAULT
+        return armor
     if tech_name in ["SHP_BASIC_DAM_CONT", "SHP_FLEET_REPAIR", "SHP_ADV_DAM_CONT"]:
         return repair
 
@@ -276,21 +286,21 @@ def get_priority(tech_name, empire):
     if tech_name in ["SHP_DEFLECTOR_SHIELD", "SHP_PLASMA_SHIELD", "SHP_BLACKSHIELD"]:
         return shield
     if tech_name in ["SHP_MULTISPEC_SHIELD"]:
-        return stealth
+        return max(shield, stealth)
 
-    # ship armor
+    # ship armor TODO include these branches into ship-design calculation
     if tech_name in ["SHP_ROOT_ARMOR", "SHP_ZORTRIUM_PLATE"]:
         return armor
     if tech_name in ["SHP_DIAMOND_PLATE", "SHP_XENTRONIUM_PLATE"]:
-        return USELESS if asteroid or neutron else armor # asteroid hull line and neutronium extraction includes better armors
+        return USELESS if asteroid == hull or has_neutron_star else armor # asteroid hull line and neutronium extraction includes better armors
 
-    # weapons
+    # weapons TODO include these branches into ship-design calculation
     if tech_name in ["SHP_ROOT_AGGRESSION", "SHP_WEAPON_1_2", "SHP_WEAPON_1_3", "SHP_WEAPON_1_4"]:
-        return massdriver and not tech_is_complete("SHP_WEAPON_4_1") # don't research obsolete weapons if get deathray from ruins
+        return massdriver if not tech_is_complete("SHP_WEAPON_4_1") else useless # don't research obsolete weapons if get deathray from ruins
     if tech_name in ["SHP_WEAPON_2_1", "SHP_WEAPON_2_2", "SHP_WEAPON_2_3", "SHP_WEAPON_2_4"]:
-        return laser and not tech_is_complete("SHP_WEAPON_4_1")
+        return laser if not tech_is_complete("SHP_WEAPON_4_1") else useless
     if tech_name in ["SHP_WEAPON_3_1", "SHP_WEAPON_3_2", "SHP_WEAPON_3_3", "SHP_WEAPON_3_4"]:
-        return plasmacannon and not tech_is_complete("SHP_WEAPON_4_1")
+        return plasmacannon if not tech_is_complete("SHP_WEAPON_4_1") else useless
     if tech_name in ["SHP_WEAPON_4_1", "SHP_WEAPON_4_2", "SHP_WEAPON_4_3", "SHP_WEAPON_4_4"]:
         return deathray
 
