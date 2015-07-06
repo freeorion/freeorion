@@ -192,17 +192,19 @@ class ShipDesignCache(object):
         print "Currently cached best designs:"
         for classname in self.best_designs:
             print classname
-            for req_tuple in self.best_designs[classname]:
-                print "    ", req_tuple
-                for species_tuple in self.best_designs[classname][req_tuple]:
-                    print "        ", species_tuple, " # relevant species stats"
-                    for avParts in self.best_designs[classname][req_tuple][species_tuple]:
-                        print "            ", avParts
-                        for hullname in sorted(self.best_designs[classname][req_tuple][species_tuple][avParts].keys(),
-                                               reverse=True, key=lambda x: self.best_designs[classname][req_tuple]
-                                                                           [species_tuple][avParts][x][0]):
-                            print "                ", hullname, ":",
-                            print self.best_designs[classname][req_tuple][species_tuple][avParts][hullname]
+            for consider_fleet in self.best_designs[classname]:
+                print "    Consider fleet upkeep:", consider_fleet
+                for req_tuple in self.best_designs[classname][consider_fleet]:
+                    print "        ", req_tuple
+                    for species_tuple in self.best_designs[classname][consider_fleet][req_tuple]:
+                        print "            ", species_tuple, " # relevant species stats"
+                        for avParts in self.best_designs[classname][consider_fleet][req_tuple][species_tuple]:
+                            print "                ", avParts
+                            for hullname in sorted(self.best_designs[classname][consider_fleet][req_tuple][species_tuple][avParts].keys(),
+                                                   reverse=True, key=lambda x: self.best_designs[classname][consider_fleet][req_tuple]
+                                                                               [species_tuple][avParts][x][0]):
+                                print "                    ", hullname, ":",
+                                print self.best_designs[classname][consider_fleet][req_tuple][species_tuple][avParts][hullname]
 
     def print_production_cost(self):
         """Print production_cost cache."""
@@ -246,6 +248,7 @@ class ShipDesignCache(object):
         """
         empire = fo.getEmpire()
         empire_id = empire.empireID
+
         parts_to_update = set()
         hulls_to_update = set()
         if partnames is None and hullnames is None:
@@ -640,6 +643,8 @@ class ShipDesigner(object):
     filter_useful_parts = True              # removes any part not belonging to self.useful_part_classes
     filter_inefficient_parts = False        # removes cost-inefficient parts (less capacity and less capacity/cost)
 
+    consider_fleet_count = True             # defines if we consider fleet upkee cost
+
     NAMETABLE = "AI_SHIPDESIGN_NAME_INVALID"
     NAME_THRESHOLDS = []                    # list of rating thresholds to choose a different name
     design_name_dict = {}                   # {min_rating: basename}: based on rating, the highest unlocked name is used
@@ -951,7 +956,8 @@ class ShipDesigner(object):
         """
         pass
 
-    def optimize_design(self, additional_parts=[], additional_hulls=[], loc=None, verbose=False):
+    def optimize_design(self, additional_parts=[], additional_hulls=[],
+                        loc=None, verbose=False, consider_fleet_count=True):
         """Try to find the optimimum designs for the shipclass for each planet and add it as gameobject.
 
         Only designs with a positive rating (i.e. matching the minimum requirements) will be returned.
@@ -960,6 +966,12 @@ class ShipDesigner(object):
         :param loc: int or list of ints (optional) - planet ids where the designs are to be built. Default: All planets.
         :param verbose: Toggles detailed logging for debugging.
         :type verbose: bool
+        :param additional_hulls: additional unavailable hulls to consider in the design process
+        :type additional_hulls: list
+        :param additional_parts: additional unavailable parts to consider in the design process
+        :type additional_parts: list
+        :param consider_fleet_count: Toggles whether fleet upkeep should be reflected in the rating.
+        :type consider_fleet_count: bool
         """
         if loc is None:
             planets = _get_planets_with_shipyard()
@@ -971,6 +983,8 @@ class ShipDesigner(object):
             print "ERROR: Invalid loc parameter for optimize_design(). Expected int or list but got", loc
             return []
 
+        self.consider_fleet_count = consider_fleet_count
+
         Cache.update_cost_cache(partnames=additional_parts, hullnames=additional_hulls)
 
         additional_part_dict = {}
@@ -978,12 +992,16 @@ class ShipDesigner(object):
             for slot in _get_part_type(partname).mountableSlotTypes:
                 additional_part_dict.setdefault(slot, []).append(partname)
 
+        # TODO: Rework caching to only cache raw stats of designs, then evaluate them
         design_cache_class = Cache.best_designs.setdefault(self.__class__.__name__, {})
+        design_cache_fleet_upkeep = design_cache_class.setdefault(consider_fleet_count, {})
         req_tuple = self.additional_specifications.convert_to_tuple()
-        design_cache_reqs = design_cache_class.setdefault(req_tuple, {})
+        design_cache_reqs = design_cache_fleet_upkeep.setdefault(req_tuple, {})
         universe = fo.getUniverse()
         best_design_list = []
 
+        if verbose:
+            print "Trying to find optimum designs for shiptype class %s" % self.__class__.__name__
         for pid in planets:
             planet = universe.getPlanet(pid)
             self.pid = pid
@@ -1309,6 +1327,8 @@ class ShipDesigner(object):
     def _adjusted_production_cost(self):
         """Return a production cost adjusted by the number of ships we have.
 
+        If self.consider_fleet_count is False, then return the base cost without fleet upkeep modifier.
+
         Building one warship of rating 2R and cost 2C is effectively cheaper than building 2 warships of rating R and
         cost C due to fleet upkeep considerations even if they have the same raw rating/cost ratio.
         The significance of this fleet upkeep efficiency increases with the raw fleet upkeep rate, with the expected
@@ -1326,7 +1346,10 @@ class ShipDesigner(object):
         """
         # TODO: Consider total pp production output as additional factor
         # TODO: Rethink about math and maybe work out a more accurate formula
-        return self.production_cost**(1/(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
+        if self.consider_fleet_count:
+            return self.production_cost**(1/(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
+        else:
+            return self.production_cost/(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)  # base cost
 
     def _effective_fuel(self):
         """Return the number of turns the ship can move without refueling."""

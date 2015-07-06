@@ -465,17 +465,17 @@ def generate_research_orders():
         if not (unlocked_parts or unlocked_hulls):
             print "No new ship parts/hulls unlocked by tech %s" % tech
             continue
-        old_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design()
-        new_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(additional_hulls=unlocked_hulls, additional_parts=unlocked_parts)
+        old_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(consider_fleet_count=False)
+        new_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(additional_hulls=unlocked_hulls, additional_parts=unlocked_parts, consider_fleet_count=False)
         old_rating, old_pid, old_design_id, old_cost = old_designs[0]
         old_design = fo.getShipDesign(old_design_id)
         new_rating, new_pid, new_design_id, new_cost = new_designs[0]
         new_design = fo.getShipDesign(new_design_id)
-        if new_rating*old_cost > old_rating*old_cost:  # TODO: Check if cost-normalization is necessary / fix (as design cost probably is adjusted by fleet upkeep)
+        if new_rating > old_rating:
             print "Tech %s gives access to a better design!" % tech
-            print "old best design: Rating %.1f (at planet %d with cost %d)" % (old_rating, old_pid, old_cost)
+            print "old best design: Rating %.5f" % old_rating
             print "old design specs: %s - " % old_design.hull, list(old_design.parts)
-            print "new best design: Rating %.1f (at planet %d with cost %d)" % (new_rating, new_pid, new_cost)
+            print "new best design: Rating %.5f" % new_rating
             print "new design specs: %s - " % new_design.hull, list(new_design.parts)
         else:
             print "Tech %s gives access to new parts or hulls but there seems to be no military advantage." % tech
