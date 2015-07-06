@@ -106,9 +106,9 @@ public:
         m_max_total_max_health(-1.0f),
         m_max_units_on_a_side(-1),
         m_sum_of_max_max_healths(0),
-        m_summaries(combat_summaries),
+        m_min_of_max_max_healths(-1.f),
         m_available_space(available_size),
-        m_min_of_max_max_healths(-1.f)
+        m_summaries(combat_summaries)
     {
         // We want to measure health on a single scale that shows as much as possible
         // while fitting the data of both sides.

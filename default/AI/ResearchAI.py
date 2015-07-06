@@ -363,7 +363,6 @@ def generate_research_orders():
                 print "    %25s allocated %6.2f RP -- unlockable items: %s " % (element.tech, element.allocation, unlocked_items)
             else:
                 print "    %25s allocated %6.2f RP -- missing preReqs: %s -- unlockable items: %s " % (element.tech, element.allocation, missing_prereqs, unlocked_items)
-        print
 
     #
     # calculate all research priorities, as in get_priority(tech) / total cost of tech (including prereqs)
