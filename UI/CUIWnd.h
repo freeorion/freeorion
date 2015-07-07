@@ -113,8 +113,8 @@ public:
     //@}
 
     //! \name Mutators //@{
-    virtual void    CloseClicked();                 //!< called when window is closed via the close button
-    virtual void    PinClicked();                   //!< called when window is pinned or unpinned via the pin button
+    virtual void    CloseClicked();                     //!< called when window is closed via the close button
+    virtual void    PinClicked();                       //!< called when window is pinned or unpinned via the pin button
     //@}
 
 protected:
@@ -131,27 +131,27 @@ protected:
 
     //! \name Mutators //@{
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
-    void            InitButtons();                  //!< called to create the buttons, withtout positioning them
-    void            PositionButtons();              //!< called to position the buttons
+    virtual void    InitButtons();                  //!< called to create the buttons, withtout positioning them
+    virtual void    PositionButtons();              //!< called to position the buttons
 
-    void            InitBuffers();
+    virtual void    InitBuffers();
     //@}
 
-    bool                    m_resizable;      //!< true if the window is able to be resized
-    bool                    m_closable;       //!< true if the window is able to be closed with a button press
-    bool                    m_minimizable;    //!< true if the window is able to be minimized
-    bool                    m_minimized;      //!< true if the window is currently minimized
-    bool                    m_pinable;        //!< true if the window is able to be pinned
-    bool                    m_pinned;         //!< true if the window is currently pinned
+    bool                    m_resizable;            //!< true if the window is able to be resized
+    bool                    m_closable;             //!< true if the window is able to be closed with a button press
+    bool                    m_minimizable;          //!< true if the window is able to be minimized
+    bool                    m_minimized;            //!< true if the window is currently minimized
+    bool                    m_pinable;              //!< true if the window is able to be pinned
+    bool                    m_pinned;               //!< true if the window is currently pinned
 
-    GG::Pt                  m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
-    GG::Pt                  m_original_size;  //!< keeps track of the size of the window before resizing
+    GG::Pt                  m_drag_offset;          //!< offset from the lower-right corner of the point being used to drag-resize
+    GG::Pt                  m_original_size;        //!< keeps track of the size of the window before resizing
 
     bool                    m_mouse_in_resize_tab;
 
-    CUI_CloseButton*        m_close_button;     //!< the close button
-    CUI_MinRestoreButton*   m_minimize_button;  //!< the minimize/restore button
-    CUI_PinButton*          m_pin_button;       //!< the pin button
+    CUI_CloseButton*        m_close_button;         //!< the close button
+    CUI_MinRestoreButton*   m_minimize_button;      //!< the minimize/restore button
+    CUI_PinButton*          m_pin_button;           //!< the pin button
 
     GG::GL2DVertexBuffer    m_minimized_buffer;
     GG::GL2DVertexBuffer    m_outer_border_buffer;

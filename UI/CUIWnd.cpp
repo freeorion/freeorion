@@ -156,8 +156,12 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     InitBuffers();
 }
 
-CUIWnd::~CUIWnd()
-{}
+CUIWnd::~CUIWnd() {
+    m_minimized_buffer.clear();
+    m_outer_border_buffer.clear();
+    m_inner_border_buffer.clear();
+    m_resize_corner_lines_buffer.clear();
+}
 
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_sz = Size();
