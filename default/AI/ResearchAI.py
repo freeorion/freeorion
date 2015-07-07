@@ -397,25 +397,25 @@ def generate_research_orders():
 
     total_rp = empire.resourceProduction(fo.resourceType.research)
     print "enqueuing techs. already spent RP: %s total RP: %s" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
-	
-    if "LRN_ALGO_ELEGANCE" not in get_research_queue_techs():
+    
+    if fo.currentTurn() == 1:
         fo.issueEnqueueTechOrder("LRN_ALGO_ELEGANCE", -1)
+    else:
+        # some floating point issues can cause AI to enqueue every tech......
+        while empire.resourceProduction(fo.resourceType.research) - empire.researchQueue.totalSpent > 0.001 and possible:
+            queued_techs = get_research_queue_techs()
 
-    # some floating point issues can cause AI to enqueue every tech......
-    while empire.resourceProduction(fo.resourceType.research) - empire.researchQueue.totalSpent > 0.001 and possible:
-        queued_techs = get_research_queue_techs()
+            to_research = possible.pop()  # get tech with highest priority
+            prereqs, cost = research_reqs[to_research]
+            prereqs += [to_research]
 
-        to_research = possible.pop()  # get tech with highest priority
-        prereqs, cost = research_reqs[to_research]
-        prereqs += [to_research]
+            for prereq in prereqs:
+                if prereq not in queued_techs:
+                    fo.issueEnqueueTechOrder(prereq, -1)
+                    print "    enqueued tech " + prereq + "  : cost: " + str(fo.getTech(prereq).researchCost(empire.empireID)) + "RP"
 
-        for prereq in prereqs:
-            if prereq not in queued_techs:
-                fo.issueEnqueueTechOrder(prereq, -1)
-                print "    enqueued tech " + prereq + "  : cost: " + str(fo.getTech(prereq).researchCost(empire.empireID)) + "RP"
-
-        fo.updateResearchQueue()
-    print
+            fo.updateResearchQueue()
+        print
 
 
 def get_completed_techs():
