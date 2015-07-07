@@ -49,6 +49,7 @@ def generate_research_orders():
     #
     research_queue = empire.researchQueue
     research_queue_list = get_research_queue_techs()
+    total_rp = empire.resourceProduction(fo.resourceType.research)
     inProgressTechs.clear()
     tech_turns_left = {}
     if research_queue_list:
@@ -72,7 +73,7 @@ def generate_research_orders():
     #
     # set starting techs, or after turn 100 add any additional default techs
     #
-    if (fo.currentTurn() == 1) or ((fo.currentTurn() < 5) and (len(research_queue_list) == 0)):
+    if (fo.currentTurn() == 1) or ((total_rp - research_queue.totalSpent) > 0):
         research_index = get_research_index()
         if fo.currentTurn() == 1:
             # do only this one on first turn, to facilitate use of a turn-1 savegame for testing of alternate
