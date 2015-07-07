@@ -209,6 +209,13 @@ Article
     icon = "icons/meter/speed.png"
     
 Article
+    name = "FIELDS_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "FIELDS_TITLE"
+    description = "FIELDS_TEXT"
+    icon = "icons/tech/galactic_exploration.png"
+    
+Article
     name = "MAP_WINDOW_ARTICLE_TITLE"
     category = "CATEGORY_USER_INTERFACE"
     short_description = "MAP_WINDOW_ARTICLE_TITLE"

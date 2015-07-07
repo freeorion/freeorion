@@ -3742,13 +3742,14 @@ The Defense meter of a planet represents the power of the ground to space weapon
 SHIELDS_TITLE
 Shields
 SHIELDS_TEXT
-'''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two distinct types of shields that work very differently: ship shields and planetary barrier shields.
+'''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter.  The main difference between them is simply how they recharge-- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barier shields take more time to recharge.  The result of that seemingly small difference makes a very noticable difference in combat, however.
 
-Ship shields: Reduce the damage sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if it's damage value is higher than the shield's strength.
+Ship shields: Reduce the damage sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength.
 
-Planetary barrier shields: Act more like some kind of planetary armor. Their strength is reduced by each hit unless they are completely depleted, further hits will finally get through and damage planetary structures. Planetary barrier shields regenerate their strength each turn at a certain rate.
+Planetary barrier shields: Act more like some kind of planetary armor. Their strength is reduced by each hit until they are completely depleted, at which point further hits will finally get through and damage planetary structures (first [[encyclopedia DEFENSE_TITLE]] installations and then more general planetary [[encyclopedia INFRASTRUCTURE_TITLE]]). Planetary barrier shields regenerate their strength each turn at a certain rate which can be affected by various technologies.
 
-Both space ships and planets have a Shields meter.'''
+One further difference between the two types of shields is that a ship's shields may be partially or entirely suppressed by a type of interstellar field known as a [[fieldtype FLD_MOLECULAR_CLOUD]].
+'''
 
 STEALTH_TITLE
 Stealth
@@ -3922,6 +3923,11 @@ UI.design-pedia-dynamic : controls whether or not the design detail pedia page i
 show-fleet-eta : controls whether a fleet's Estimated Time of Arrival (ETA), in number of turns from the current turn, is shown in its Fleet Panel in the Fleet Window
 
 '''
+
+FIELDS_TITLE
+Interstellar Fields
+FIELDS_TEXT
+There are several [[encyclopedia ENC_FIELD_TYPE]]s.  They each have a distinctive, somewhat diffuse, appearance.  Right-clicking on them in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] brings up a small popup menu identifying their type and providing an option to look up their details.
 
 #
 # Guides
