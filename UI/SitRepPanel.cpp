@@ -210,10 +210,10 @@ namespace {
                 // DoLayout reflowed the text.
                 int text_size = Value((m_link_text->TextLowerRight() - m_link_text->TextUpperLeft()).y);
                 int icon_size = Value(GetIconSize());
-                int maxPanelSize = std::max(text_size, icon_size);
-                maxPanelSize += Value(ITEM_VERTICAL_PADDING);
+                int max_panel_size = std::max(text_size, icon_size);
+                max_panel_size += Value(ITEM_VERTICAL_PADDING);
 
-                GG::Pt panel_size = GG::Pt(GG::X(lr.x - ul.x), GG::Y(maxPanelSize));
+                GG::Pt panel_size = GG::Pt(GG::X(lr.x - ul.x), GG::Y(max_panel_size));
                 GG::Control::SizeMove(ul, ul + panel_size );
                 DoLayout();
             }
