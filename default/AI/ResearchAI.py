@@ -397,6 +397,9 @@ def generate_research_orders():
 
     total_rp = empire.resourceProduction(fo.resourceType.research)
     print "enqueuing techs. already spent RP: %s total RP: %s" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
+	
+    if "LRN_ALGO_ELEGANCE" not in get_research_queue_techs():
+        fo.issueEnqueueTechOrder("LRN_ALGO_ELEGANCE", -1)
 
     # some floating point issues can cause AI to enqueue every tech......
     while empire.resourceProduction(fo.resourceType.research) - empire.researchQueue.totalSpent > 0.001 and possible:
