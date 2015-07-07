@@ -77,9 +77,13 @@ endif ()
 
 find_package(PythonInterp ${PYTHON_VERSION} REQUIRED)
 
-# To run the version generation every compile we need to deferr the
-# execution to a separate target and the existing python command
-add_custom_target(freeorionversion
+# To update the version string every compile, we need to defer
+# execution of the existing python command to a separate target;
+# note the dummy "always built" output, which forces regeneration
+add_custom_command(
+    OUTPUT
+    "${CMAKE_SOURCE_DIR}/util/Version.cpp"
+    "always built"
     COMMAND
     "${PYTHON_EXECUTABLE}"
     "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
@@ -268,8 +272,6 @@ add_library(freeorioncommon
     ${freeorioncommon_HEADER}
     ${freeorioncommon_SOURCE}
 )
-
-add_dependencies(freeorioncommon freeorionversion)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL Clang)
     set_property(
