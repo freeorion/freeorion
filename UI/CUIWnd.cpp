@@ -186,14 +186,14 @@ void CUIWnd::Render() {
     if (m_minimized) {
         m_minimized_buffer.activate();
         glColor(ClientUI::WndColor());
-        glDrawArrays(GL_TRIANGLE_FAN,   0, m_minimized_buffer.size());
+        glDrawArrays(GL_TRIANGLE_FAN,   0, m_minimized_buffer.size() - 1);
         glColor(ClientUI::WndOuterBorderColor());
         glDrawArrays(GL_LINE_STRIP,     0, m_minimized_buffer.size());
 
     } else {
         m_outer_border_buffer.activate();
         glColor(ClientUI::WndColor());
-        glDrawArrays(GL_TRIANGLE_FAN,   0, m_outer_border_buffer.size() - 1);   // don't need to include the repeated starting vertex in the fan
+        glDrawArrays(GL_TRIANGLE_FAN,   0, m_outer_border_buffer.size() - 1);
         glColor(ClientUI::WndOuterBorderColor());
         glDrawArrays(GL_LINE_STRIP,     0, m_outer_border_buffer.size());
 
