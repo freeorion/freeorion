@@ -166,22 +166,6 @@ def generateOrders():  # pylint: disable=invalid-name
     random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d" % (fo.empireID(), turn)
     random.seed(random_seed)
     aggression_name = fo.aggression.values[foAIstate.aggression].name
-    print "***************************************************************************"
-    print "**********   String for chart. Do not modify.   ***************************"
-    print ("Generating Orders")
-    print ("EmpireID: {empire.empireID}"
-           " Name: {empire.name}_{empire.empireID}_pid:{p_id}_{p_name}RIdx_{res_idx}_{aggression}"
-           " Turn: {turn}").format(empire=empire,  p_id=fo.playerID(), p_name=fo.playerName(),
-                                   res_idx=ResearchAI.get_research_index(), turn=turn,
-                                   aggression=aggression_name.capitalize())
-    print "EmpireColors: {0.colour.r} {0.colour.g} {0.colour.b} {0.colour.a}".format(empire)
-    if planet:
-        print "CapitalID: " + str(planet_id) + " Name: " + planet.name + " Species: " + planet.speciesName
-    else:
-        print "CapitalID: None Currently Name: None Species: None "
-    print "***************************************************************************"
-    print "***************************************************************************"
-
     if turn == 1:
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
