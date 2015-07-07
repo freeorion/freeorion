@@ -3930,7 +3930,7 @@ show-fleet-eta : controls whether a fleet's Estimated Time of Arrival (ETA), in 
 GENERAL_PEDIA_REFERENCE
 Information such as this is accessible via the "Pedia" [[encyclopedia ENC_INDEX]].
 DETAILED_PEDIA_REFERENCE
-[[GENERAL_PEDIA_REFERENCE]]  The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main Map Window.  The Pedia can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window.
+[[GENERAL_PEDIA_REFERENCE]]  The Pedia can be opened and closed via the purple icon bearing a question mark, in the upper right portion of the main [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]].  The Pedia can be navigated via hotlinks and via the arrows in the lower right corner of the Pedia window.
 
 GREETINGS_GUIDE_TITLE
 *Greetings*
@@ -9489,7 +9489,7 @@ Fighter Anti-Fighter Damage: %3%
 Fighter Anti-Ship Damage: %2%
 Fighter Launch Rate: %4% fighters/turn
 Fighter Speed: %5%
-Fighter Structure: %6%
+Fighter [[encyclopedia STRUCTURE_TITLE]]: %6%
 Fighter [[encyclopedia STEALTH_TITLE]]: %7%
 Fighter Detection: %8%
 Capacity: %9% fighters'''
@@ -9678,13 +9678,13 @@ LR_ANTIMATTER_TORPEDO
 Antimatter Torpedo
 
 LR_ANTIMATTER_TORPEDO_DESC
-A fast, long-range missile powered by the Spatial Flux Drive and armed with a powerful anti-matter warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
+A fast, long-range missile powered by the [[tech SHP_SPACE_FLUX_DRIVE]] and armed with a powerful anti-matter warhead. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] somewhere in the empire or an ally's empire.
 
 LR_PLASMA_TORPEDO
 Plasma Torpedo
 
 LR_PLASMA_TORPEDO_DESC
-A fast, long-range missile with excellent [[encyclopedia STEALTH_TITLE]], powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an Advanced Engineering Bay somewhere in the empire or an ally's empire.
+A fast, long-range missile with excellent [[encyclopedia STEALTH_TITLE]], powered by the [[tech SHP_TRANSSPACE_DRIVE]] and armed with a devastatingly powerful plasma warhead. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] somewhere in the empire or an ally's empire.
 
 DT_DETECTOR_1
 Optical Scanner
@@ -9714,7 +9714,7 @@ FU_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
 
 FU_IMPROVED_ENGINE_COUPLINGS_DESC
-'''Increases Starlane speed by 10.
+'''Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 10.
 
 Better engine parts equate to better engines.'''
 
@@ -9722,7 +9722,7 @@ FU_N_DIMENSIONAL_ENGINE_MATRIX
 N-Dimensional Engine Matrix
 
 FU_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-'''Increases Starlane speed by 20. 
+'''Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 20. 
 
 N-Dimensional subspace research resulted in a more efficient engine matrix.'''
 
@@ -9730,43 +9730,43 @@ FU_SINGULARITY_ENGINE_CORE
 Singularity Engine Core
 
 FU_SINGULARITY_ENGINE_CORE_DESC
-'''A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 30. '''
+A smaller cousin of the [[buildingtype BLD_HYPER_DAM]] outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases [[encyclopedia STARLANE_SPEED_TITLE]] by 30.
 
 FU_TRANSPATIAL_DRIVE
 Trans-spatial Drive
 
 FU_TRANSPATIAL_DRIVE_DESC
-An incredibly powerful drive that bends spacetime itself, increasing both starlane speed and stealth by 40. Can only be mounted in a Core slot. Stealth boost does not stack with other part bonuses.
+An incredibly powerful drive that bends spacetime itself, increasing both [[encyclopedia STARLANE_SPEED_TITLE]] and [[encyclopedia STEALTH_TITLE]] by 40. Can only be mounted in a Core slot. Stealth boost does not stack with other part bonuses.
 
 FU_BASIC_TANK
 Extra Fuel Tank
 
 FU_BASIC_TANK_DESC
-Allows an additional jump.
+Increases [[encyclopedia FUEL_TITLE]] capacity, allowing an additional jump.
 
 FU_DEUTERIUM_TANK
 Deuterium Tank
 
 FU_DEUTERIUM_TANK_DESC
-Small increase to ship range by increasing fuel capacity. Bulky and vulnerable to weapons fire.
+Small increase to ship range by increasing [[encyclopedia FUEL_TITLE]] capacity. Bulky and vulnerable to weapons fire.
 
 FU_ANTIMATTER_TANK
 Antimatter Tank
 
 FU_ANTIMATTER_TANK_DESC
-Moderate increase to ship range by increasing fuel capacity. Compact and low mass.
+Moderate increase to ship range by increasing [[encyclopedia FUEL_TITLE]] capacity. Compact and low mass.
 
 FU_ZERO_FUEL
 Zero-Point Fuel Generator
 
 FU_ZERO_FUEL_DESC
-Generates energy using Zero-Point generation and converts it into fuel using matter-energy conversion techniques.
+Generates energy using Zero-Point generation and converts it into [[encyclopedia FUEL_TITLE]] using matter-energy conversion techniques.
 
 FU_RAMSCOOP
 Ramscoop
 
 FU_RAMSCOOP_DESC
-Slowly generates fuel while in systems by collecting hydrogen from the diffuse gas in space.
+Slowly generates [[encyclopedia FUEL_TITLE]] while in systems by collecting hydrogen from the diffuse gas in space.
 
 ST_CLOAK_1
 Electromagnetic Damper
@@ -9782,7 +9782,7 @@ Absorption Field
 ST_CLOAK_2_DESC
 '''Moderate Cloaking (+40)
 
-Creates an absorption field around the ship, effectively transforming it into a perfect blackbody. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
+Improves [[encyclopedia STEALTH_TITLE]] of ship on which it is mounted by creating an absorption field around the ship, effectively transforming it into a perfect blackbody. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
 ST_CLOAK_3
 Dimensional Cloak
@@ -9798,55 +9798,55 @@ Phasing Cloak
 ST_CLOAK_4_DESC
 '''Very Strong Cloaking (+80)
 
-Modulates the frequency of any matter waves emitted from the ship to match that of the background radiation. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
+Improves [[encyclopedia STEALTH_TITLE]] of ship on which it is mounted by modulating the frequency of any matter waves emitted from the ship to match that of the background radiation. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
 
 AR_STD_PLATE
 Standard Armor Plating
 
 AR_STD_PLATE_DESC
-Basic armor plating providing only moderate enhancement to a ship's hull durability.
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. Basic armor plating providing only moderate enhancement to a ship's hull durability.
 
 AR_ZORTRIUM_PLATE
 Zortrium Armor Plating
 
 AR_ZORTRIUM_PLATE_DESC
-Stronger defense than standard plating.
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. Stronger defense than [[shippart AR_STD_PLATE]].
 
 AR_DIAMOND_PLATE
 Diamond Armor Plating
 
 AR_DIAMOND_PLATE_DESC
-Stronger defense than zortrium plating.
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. Stronger defense than [[shippart AR_ZORTRIUM_PLATE]].
 
 AR_XENTRONIUM_PLATE
 Xentronium Armor Plating
 
 AR_XENTRONIUM_PLATE_DESC
-Extremely strong and durable armor plating.
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. Extremely strong and durable armor plating.
 
 AR_ROCK_PLATE
 Rock Armor Plating
 
 AR_ROCK_PLATE_DESC
-A strong, cheap alternative to alloys. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. A strong, cheap alternative to alloys. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
 
 AR_CRYSTAL_PLATE
 Crystal Armor Plating
 
 AR_CRYSTAL_PLATE_DESC
-An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. An incredibly strong armor produced with advanced crystallization techniques. This part can only be built if there is an [[buildingtype BLD_SHIPYARD_AST_REF]] at an asteroid belt somewhere in the empire or an ally's empire.
 
 AR_NEUTRONIUM_PLATE
 Neutronium Armor Plating
 
 AR_NEUTRONIUM_PLATE_DESC
-Strongest, most durable armor plating. Admirable defense.
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. Strongest, most durable armor plating. Admirable defense.
 
 AR_PRECURSOR_PLATE
 Precursor Armor Plating
 
 AR_PRECURSOR_PLATE_DESC
-Marvelously effective armor of unknown composition
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. Marvelously effective armor of unknown composition.
 
 SH_DEFENSE_GRID
 Defense Grid
@@ -9854,7 +9854,7 @@ Defense Grid
 SH_DEFENSE_GRID_DESC
 '''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons.
 
-Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[encyclopedia SHIELDS_TITLE]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_DEFLECTOR
 Deflector Shield
@@ -9862,7 +9862,7 @@ Deflector Shield
 SH_DEFLECTOR_DESC
 '''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons.
 
-Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[encyclopedia SHIELDS_TITLE]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_PLASMA
 Plasma Shield
@@ -9870,7 +9870,7 @@ Plasma Shield
 SH_PLASMA_DESC
 '''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less.
 
-Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[encyclopedia SHIELDS_TITLE]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_BLACK
 Blackshield
@@ -9878,7 +9878,7 @@ Blackshield
 SH_BLACK_DESC
 '''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build.
 
-Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[encyclopedia SHIELDS_TITLE]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_MULTISPEC
 Multi-Spectral Shield
@@ -9892,7 +9892,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by Robotic species and can only be placed in one of [[shiphull SH_ROBOTIC]], [[shiphull SH_SELF_GRAVITATING]], [[shiphull SH_NANOROBOTIC]], [[shiphull SH_LOGISTICS_FACILITATOR]], [[shiphull SH_TITANIC]].
+'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by [[encyclopedia ROBOTIC_SPECIES_TITLE]] species and can only be placed in one of [[shiphull SH_ROBOTIC]], [[shiphull SH_SELF_GRAVITATING]], [[shiphull SH_NANOROBOTIC]], [[shiphull SH_LOGISTICS_FACILITATOR]], [[shiphull SH_TITANIC]].
 
 Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to to calculate the trajectory of incoming fire and applying shield strength at the point of impact.
 '''
@@ -9969,7 +9969,7 @@ SP_NOVA_BOMB
 Nova Bomb
 
 SP_NOVA_BOMB_DESC
-A weapon of tremendous power capable of destroying an entire system. The weapon will activate when it receives the signal from a Nova Bomb Activator not more than one starlane jump away.
+A weapon of tremendous power capable of destroying an entire system. The weapon will activate when it receives the signal from a [[buildingtype BLD_NOVA_BOMB_ACTIVATOR]] not more than one starlane jump away.
 
 SP_KRILL_SPAWNER
 Krill Spawner
