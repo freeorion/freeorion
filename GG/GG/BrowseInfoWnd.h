@@ -32,6 +32,7 @@
 
 #include <GG/Wnd.h>
 #include <GG/Font.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 
 namespace GG {
@@ -128,6 +129,7 @@ public:
     /** \name Mutators */ ///@{
     void         SetText(const std::string& str);
     virtual void Render();
+    virtual void SizeMove(const Pt& ul, const Pt& lr);
 
     void SetTextFromTarget(bool b);                    ///< sets the text display mode to static (\a b == true) or dynamic (read from the target Wnd, \a b == false)
     void SetFont(const boost::shared_ptr<Font>& font); ///< sets the Font used to display text
@@ -140,8 +142,10 @@ public:
     //@}
 
 private:
+    virtual void InitBuffer();
     virtual void UpdateImpl(std::size_t mode, const Wnd* target);
 
+    GG::GL2DVertexBuffer    m_buffer;
     bool                    m_text_from_target;
     boost::shared_ptr<Font> m_font;
     Clr                     m_color;

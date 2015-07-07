@@ -81,6 +81,9 @@ struct GG_API Pt
     Y y; ///< The y component.
 };
 
+GG_API std::ostream& operator<<(std::ostream& os, const Pt& pt);
+
+
 /** \brief A GG rectangle class.
 
     This is essentially just two points that bound the rectangle. */

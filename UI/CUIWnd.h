@@ -7,6 +7,7 @@
 #include <GG/Button.h>
 #include <GG/Wnd.h>
 #include <GG/WndEvent.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/
@@ -107,18 +108,18 @@ public:
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
 
-    void            ToggleMinimized() {MinimizeClicked();}
-    void            Close()           {CloseClicked();}
+    void            ToggleMinimized() { MinimizeClicked(); }
+    void            Close()           { CloseClicked(); }
     //@}
 
     //! \name Mutators //@{
-    virtual void    CloseClicked();                 //!< called when window is closed via the close button
-    virtual void    PinClicked();                   //!< called when window is pinned or unpinned via the pin button
+    virtual void    CloseClicked();                     //!< called when window is closed via the close button
+    virtual void    PinClicked();                       //!< called when window is pinned or unpinned via the pin button
     //@}
 
 protected:
     //! \name Accessors //@{
-    virtual GG::X   MinimizedWidth() const;             //!< the width of a minimized CUIWnd
+    virtual GG::Pt  MinimizedSize() const;              //!< the size of a minimized CUIWnd
     GG::X           LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
     GG::Y           TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
     GG::X           RightBorder() const;                //!< the distance on the right side between the outer edge of the window and the inner border
@@ -130,25 +131,32 @@ protected:
 
     //! \name Mutators //@{
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
-    void            InitButtons();                  //!< called to create the buttons, withtout positioning them
-    void            PositionButtons();              //!< called to position the buttons
+    virtual void    InitButtons();                  //!< called to create the buttons, withtout positioning them
+    virtual void    PositionButtons();              //!< called to position the buttons
+
+    virtual void    InitBuffers();
     //@}
 
-    bool                    m_resizable;      //!< true if the window is able to be resized
-    bool                    m_closable;       //!< true if the window is able to be closed with a button press
-    bool                    m_minimizable;    //!< true if the window is able to be minimized
-    bool                    m_minimized;      //!< true if the window is currently minimized
-    bool                    m_pinable;        //!< true if the window is able to be pinned
-    bool                    m_pinned;         //!< true if the window is currently pinned
+    bool                    m_resizable;            //!< true if the window is able to be resized
+    bool                    m_closable;             //!< true if the window is able to be closed with a button press
+    bool                    m_minimizable;          //!< true if the window is able to be minimized
+    bool                    m_minimized;            //!< true if the window is currently minimized
+    bool                    m_pinable;              //!< true if the window is able to be pinned
+    bool                    m_pinned;               //!< true if the window is currently pinned
 
-    GG::Pt                  m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
-    GG::Pt                  m_original_size;  //!< keeps track of the size of the window before resizing
+    GG::Pt                  m_drag_offset;          //!< offset from the lower-right corner of the point being used to drag-resize
+    GG::Pt                  m_original_size;        //!< keeps track of the size of the window before resizing
 
     bool                    m_mouse_in_resize_tab;
 
-    CUI_CloseButton*        m_close_button;     //!< the close button
-    CUI_MinRestoreButton*   m_minimize_button;  //!< the minimize/restore button
-    CUI_PinButton*          m_pin_button;       //!< the pin button
+    CUI_CloseButton*        m_close_button;         //!< the close button
+    CUI_MinRestoreButton*   m_minimize_button;      //!< the minimize/restore button
+    CUI_PinButton*          m_pin_button;           //!< the pin button
+
+    GG::GL2DVertexBuffer    m_minimized_buffer;
+    GG::GL2DVertexBuffer    m_outer_border_buffer;
+    GG::GL2DVertexBuffer    m_inner_border_buffer;
+    GG::GL2DVertexBuffer    m_resize_corner_lines_buffer;
 
     static const GG::Y      BUTTON_TOP_OFFSET;
     static const GG::X      BUTTON_RIGHT_OFFSET;

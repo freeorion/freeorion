@@ -24,13 +24,17 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>());
         db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
-        db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_HEIGHT"), 16, RangedValidator<int>(12, 32));
+        db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 16, RangedValidator<int>(12, 64));
+        db.Add("UI.sitrep-font-size", UserStringNop("OPTIONS_DB_UI_SITREP_FONTSIZE"), 12, RangedValidator<int>(10, 48));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
     
-    GG::X GetIconWidth()
+    GG::X GetIconSize()
     { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-icon-size")); }
 
+    GG::X GetFontSize()
+    { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-font-size")); }
+ 
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
         try {
@@ -202,12 +206,15 @@ namespace {
                 DoLayout();
             }
             if (m_link_text) {
-                // Use the height of the text as our height.
+                // establish sitrep panel's size; use icon or text size for panel height, whichever is larger
                 // DoLayout reflowed the text.
-                GG::Pt text_size = m_link_text->TextLowerRight() - m_link_text->TextUpperLeft();
-                text_size.y += ITEM_VERTICAL_PADDING*2; // Text centers, so this puts padding on both above and below
-                text_size.x = lr.x - ul.x; // Ignore the width of the text, use whatever was requested.
-                GG::Control::SizeMove(ul, ul + text_size );
+                int text_size = Value((m_link_text->TextLowerRight() - m_link_text->TextUpperLeft()).y);
+                int icon_size = Value(GetIconSize());
+                int max_panel_size = std::max(text_size, icon_size);
+                max_panel_size += Value(ITEM_VERTICAL_PADDING);
+
+                GG::Pt panel_size = GG::Pt(GG::X(lr.x - ul.x), GG::Y(max_panel_size));
+                GG::Control::SizeMove(ul, ul + panel_size );
                 DoLayout();
             }
         }
@@ -218,13 +225,13 @@ namespace {
         void            DoLayout() {
             if (!m_initialized)
                 return;
-            GG::Y ICON_HEIGHT(Value(GetIconWidth()));
+            GG::Y ICON_HEIGHT(Value(GetIconSize()));
 
             GG::X left(GG::X0);
             GG::Y bottom(ClientHeight());
 
-            m_icon->SizeMove(GG::Pt(left, bottom/2 - ICON_HEIGHT/2), GG::Pt(left + GetIconWidth(), bottom/2 + ICON_HEIGHT/2));
-            left += GetIconWidth() + ICON_RIGHT_MARGIN;
+            m_icon->SizeMove(GG::Pt(left, bottom/2 - ICON_HEIGHT/2), GG::Pt(left + GetIconSize(), bottom/2 + ICON_HEIGHT/2));
+            left += GetIconSize() + ICON_RIGHT_MARGIN;
 
             m_link_text->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(ClientWidth(), bottom));
         }
@@ -242,7 +249,7 @@ namespace {
             AttachChild(m_icon);
 
             m_link_text = new LinkText(GG::X0, GG::Y0, GG::X1, m_sitrep_entry.GetText() + " ", 
-                                       ClientUI::GetFont(std::max(1.0*ClientUI::Pts(), 0.75*GetOptionsDB().Get<int>("UI.sitrep-icon-size"))),
+                                       ClientUI::GetFont(std::max(1.0*ClientUI::Pts(), 1.0*GetOptionsDB().Get<int>("UI.sitrep-font-size"))),
                                        GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);

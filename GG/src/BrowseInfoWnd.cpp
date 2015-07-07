@@ -92,6 +92,7 @@ TextBoxBrowseInfoWnd::TextBoxBrowseInfoWnd(X w, const boost::shared_ptr<Font>& f
     AttachChild(m_text_control);
     GridLayout();
     SetLayoutBorderMargin(text_margin);
+    InitBuffer();
 }
 
 bool TextBoxBrowseInfoWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const
@@ -140,10 +141,48 @@ void TextBoxBrowseInfoWnd::SetText(const std::string& str)
         Show();
 }
 
+void TextBoxBrowseInfoWnd::InitBuffer()
+{
+    GG::Pt sz = Size();
+    m_buffer.clear();
+    m_buffer.store(0.0f,        0.0f);
+    m_buffer.store(Value(sz.x), 0.0f);
+    m_buffer.store(Value(sz.x), Value(sz.y));
+    m_buffer.store(0.0f,        Value(sz.y));
+    m_buffer.store(0.0f,        0.0f);
+}
+
+void TextBoxBrowseInfoWnd::SizeMove(const Pt& ul, const Pt& lr)
+{
+    Pt sz = Size();
+    BrowseInfoWnd::SizeMove(ul, lr);
+    if (sz != Size())
+        InitBuffer();
+}
+
 void TextBoxBrowseInfoWnd::Render()
 {
-    Pt ul = UpperLeft(), lr = LowerRight();
-    FlatRectangle(ul, lr, m_color, m_border_color, m_border_width);
+    Pt ul = UpperLeft();
+
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(m_border_width);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    m_buffer.activate();
+    glColor(m_color);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, m_buffer.size() - 1);
+    glColor(m_border_color);
+    glDrawArrays(GL_LINE_STRIP,     0, m_buffer.size());
+
+
+    glLineWidth(1.0f);
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
+
 }
 
 void TextBoxBrowseInfoWnd::SetTextFromTarget(bool b)

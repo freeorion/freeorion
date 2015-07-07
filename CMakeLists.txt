@@ -87,6 +87,12 @@ add_custom_target(freeorionversion
     "CMake"
 )
 
+set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/util/Version.cpp
+    PROPERTIES
+    GENERATED TRUE
+)
+
 if (WIN32)
     # Add icon resource file to freeorion.exe
     if (NOT EXISTS ${CMAKE_BINARY_DIR}/win32_resources.rc)

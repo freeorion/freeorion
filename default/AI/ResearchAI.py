@@ -4,7 +4,11 @@ import AIDependencies
 import AIstate
 import traceback
 import ColonisationAI
+<<<<<<< HEAD
 import random
+=======
+import ShipDesignAI
+>>>>>>> 929061668e9d724fced2971de9415c6aa35d97eb
 from freeorion_tools import tech_is_complete, chat_human
 
 def has_only_bad_colonizers():
@@ -356,6 +360,11 @@ def generate_research_orders():
     #
     research_queue = empire.researchQueue
     research_queue_list = get_research_queue_techs()
+<<<<<<< HEAD
+=======
+    total_rp = empire.resourceProduction(fo.resourceType.research)
+    inProgressTechs.clear()
+>>>>>>> 929061668e9d724fced2971de9415c6aa35d97eb
     tech_turns_left = {}
     if research_queue_list:
         print "Techs currently at head of Research Queue:"
@@ -373,6 +382,90 @@ def generate_research_orders():
             else:
                 print "    %25s allocated %6.2f RP -- missing preReqs: %s -- unlockable items: %s " % (element.tech, element.allocation, missing_prereqs, unlocked_items)
         print
+<<<<<<< HEAD
+=======
+    #
+    # set starting techs, or after turn 100 add any additional default techs
+    #
+    if (fo.currentTurn() == 1) or ((total_rp - research_queue.totalSpent) > 0):
+        research_index = get_research_index()
+        if fo.currentTurn() == 1:
+            # do only this one on first turn, to facilitate use of a turn-1 savegame for testing of alternate
+            # research strategies
+            new_tech = ["LRN_ALGO_ELEGANCE"]
+        else:
+            new_tech = TechsListsAI.sparse_galaxy_techs(research_index) if galaxy_is_sparse else TechsListsAI.primary_meta_techs(research_index)
+        print "Empire %s (%d) is selecting research index %d" % (empire.name, empire_id, research_index)
+        # techs_to_enqueue = (set(new_tech)-(set(completed_techs)|set(research_queue_list)))
+        techs_to_enqueue = new_tech[:]
+        tech_base = set(completed_techs+research_queue_list)
+        techs_to_add = []
+        for tech in techs_to_enqueue:
+            if tech not in tech_base:
+                this_tech = fo.getTech(tech)
+                if this_tech is None:
+                    print "Error: desired tech '%s' appears to not exist" % tech
+                    continue
+                missing_prereqs = [preReq for preReq in this_tech.recursivePrerequisites(empire_id) if preReq not in tech_base]
+                techs_to_add.extend(missing_prereqs + [tech])
+                tech_base.update(missing_prereqs+[tech])
+        cum_cost = 0
+        print "  Enqueued Tech: %20s \t\t %8s \t %s" % ("Name", "Cost", "CumulativeCost")
+        for name in techs_to_add:
+            try:
+                enqueue_res = fo.issueEnqueueTechOrder(name, -1)
+                if enqueue_res == 1:
+                    this_tech = fo.getTech(name)
+                    this_cost = 0
+                    if this_tech:
+                        this_cost = this_tech.researchCost(empire_id)
+                        cum_cost += this_cost
+                    print "    Enqueued Tech: %20s \t\t %8.0f \t %8.0f" % (name, this_cost, cum_cost)
+                else:
+                    print "    Error: failed attempt to enqueued Tech: " + name
+            except:
+                print "    Error: failed attempt to enqueued Tech: " + name
+                print "    Error: exception triggered and caught: ", traceback.format_exc()
+
+
+        print "\n\nAll techs:"
+        alltechs = fo.techs()  # returns names of all techs
+        for tname in alltechs:
+            print tname
+        print "\n-------------------------------\nAll unqueued techs:"
+        # coveredTechs = new_tech+completed_techs
+        for tname in [tn for tn in alltechs if tn not in tech_base]:
+            print tname
+
+        if fo.currentTurn() == 1:
+            return
+        if foAI.foAIstate.aggression <= fo.aggression.cautious:
+            research_queue_list = get_research_queue_techs()
+            def_techs = TechsListsAI.defense_techs_1()
+            for def_tech in def_techs:
+                if def_tech not in research_queue_list[:5] and not tech_is_complete(def_tech):
+                    res = fo.issueEnqueueTechOrder(def_tech, min(3, len(research_queue_list)))
+                    print "Empire is very defensive, so attempted to fast-track %s, got result %d" % (def_tech, res)
+        if False and foAI.foAIstate.aggression >= fo.aggression.aggressive:  # with current stats of Conc Camps, disabling this fast-track
+            research_queue_list = get_research_queue_techs()
+            if "CON_CONC_CAMP" in research_queue_list:
+                insert_idx = min(40, research_queue_list.index("CON_CONC_CAMP"))
+            else:
+                insert_idx = max(0, min(40, len(research_queue_list)-10))
+            if "SHP_DEFLECTOR_SHIELD" in research_queue_list:
+                insert_idx = min(insert_idx, research_queue_list.index("SHP_DEFLECTOR_SHIELD"))
+            for cc_tech in ["CON_ARCH_PSYCH", "CON_CONC_CAMP"]:
+                if cc_tech not in research_queue_list[:insert_idx + 1] and not tech_is_complete(cc_tech):
+                    res = fo.issueEnqueueTechOrder(cc_tech, insert_idx)
+                    msg = "Empire is very aggressive, so attempted to fast-track %s, got result %d" % (cc_tech, res)
+                    if report_adjustments:
+                        chat_human(msg)
+                    else:
+                        print msg
+
+    elif fo.currentTurn() > 100:
+        generate_default_research_order()
+>>>>>>> 929061668e9d724fced2971de9415c6aa35d97eb
 
     #
     # calculate all research priorities, as in get_priority(tech) / total cost of tech (including prereqs)
@@ -387,6 +480,7 @@ def generate_research_orders():
     #
     # put in highest priority techs until all RP spent
     #
+
     possible = sorted(priorities.keys(), key=priorities.__getitem__)
 
     print "Research priorities"
