@@ -3,6 +3,7 @@
 #define _OptionsDB_h_
 
 #include "Export.h"
+#include "Logger.h"
 #include "OptionValidators.h"
 #include "XMLDoc.h"
 
@@ -179,6 +180,7 @@ public:
     {
         std::map<std::string, Option>::iterator it = m_options.find(name);
         boost::any value = default_value;
+        // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
             if (it->second.recognized)
                 throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
@@ -186,7 +188,7 @@ public:
                 // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
                 value = validator.Validate(it->second.ValueToString());
             } catch (boost::bad_lexical_cast&) {
-                // TODO: log error, don't need to throw because this is something that could be caused by the user messing with the config file, and we have a sensible default to fall back on (?)
+                ErrorLogger() << "OptionsDB::Add<>() : Option " + name + " was given the value \"" + it->second.ValueToString() + "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
             }
         }
         m_options[name] = Option(static_cast<char>(0), name, value, default_value, description, validator.Clone(), storable, false, true);
@@ -201,6 +203,7 @@ public:
     {
         std::map<std::string, Option>::iterator it = m_options.find(name);
         boost::any value = default_value;
+        // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
             if (it->second.recognized)
                 throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
@@ -208,7 +211,7 @@ public:
                 // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
                 value = validator.Validate(it->second.ValueToString());
             } catch (boost::bad_lexical_cast&) {
-                // TODO: log error, don't need to throw because this is something that could be caused by the user messing with the config file, and we have a sensible default to fall back on (?)
+                ErrorLogger() << "OptionsDB::Add<>() : Option " + name + " was given the value \"" + it->second.ValueToString() + "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
             }
         }
         m_options[name] = Option(short_name, name, value, default_value, description, validator.Clone(), storable, false, true);
@@ -223,6 +226,7 @@ public:
     {
         std::map<std::string, Option>::iterator it = m_options.find(name);
         bool value = false;
+        // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
             if (it->second.recognized)
                 throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
@@ -230,7 +234,7 @@ public:
                 // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
                 value = boost::lexical_cast<bool>(it->second.ValueToString());
             } catch (boost::bad_lexical_cast&) {
-                // TODO: log error, don't need to throw because this is something that could be caused by the user messing with the config file, and we have a sensible default to fall back on (?)
+                ErrorLogger() << "OptionsDB::AddFlag<>() : Option " + name + " was used on the command line or in a config file but its value wasn't recognised as a boolean, using default value instead.";
             }
         }
         m_options[name] = Option(static_cast<char>(0), name, value, boost::lexical_cast<std::string>(false),
@@ -246,6 +250,7 @@ public:
     {
         std::map<std::string, Option>::iterator it = m_options.find(name);
         bool value = false;
+        // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
         if (it != m_options.end()) {
             if (it->second.recognized)
                 throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
@@ -253,7 +258,7 @@ public:
                 // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
                 value = boost::lexical_cast<bool>(it->second.ValueToString());
             } catch (boost::bad_lexical_cast&) {
-                // TODO: log error, don't need to throw because this is something that could be caused by the user messing with the config file, and we have a sensible default to fall back on (?)
+                ErrorLogger() << "OptionsDB::AddFlag<>() : Option " + name + " was used on the command line or in a config file but its value wasn't recognised as a boolean, using default value instead.";
             }
         }
         m_options[name] = Option(short_name, name, value, boost::lexical_cast<std::string>(false),
