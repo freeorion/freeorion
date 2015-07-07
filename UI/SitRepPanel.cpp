@@ -208,8 +208,7 @@ namespace {
             if (m_link_text) {
                 // establish sitrep panel's size; use icon or text size for panel height, whichever is larger
                 // DoLayout reflowed the text.
-                GG::Pt panel_text = m_link_text->TextLowerRight() - m_link_text->TextUpperLeft();
-                int text_size = Value(panel_text.y);
+                int text_size = Value((m_link_text->TextLowerRight() - m_link_text->TextUpperLeft()).y);
                 int icon_size = Value(GetIconSize());
                 int maxPanelSize = std::max(text_size, icon_size);
                 maxPanelSize += Value(ITEM_VERTICAL_PADDING);
