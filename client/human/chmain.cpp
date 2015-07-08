@@ -131,6 +131,16 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
             } catch (const std::exception&) {
                 std::cerr << UserString("UNABLE_TO_READ_CONFIG_XML") << std::endl;
             }
+            try {
+                boost::filesystem::ifstream pifs(GetPersistentConfigPath());
+                if (pifs) {
+                    doc.ReadDoc(pifs);
+                    GetOptionsDB().SetFromXML(doc);
+                }
+            } catch (const std::exception&) {
+                std::cerr << UserString("UNABLE_TO_READ_PERSISTENT_CONFIG_XML")  << ": " 
+                          << GetPersistentConfigPath() << std::endl;
+            }
         }
 
 

@@ -300,6 +300,11 @@ const fs::path GetConfigPath() {
     return p;
 }
 
+const fs::path GetPersistentConfigPath() {
+    static const fs::path p = GetUserDir() / "persistent_config.xml";
+    return p;
+}
+
 const fs::path GetSaveDir() {
     // if save dir option has been set, use specified location.  otherwise,
     // use default location
