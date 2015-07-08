@@ -1245,6 +1245,7 @@ void MapWnd::DoLayout() {
     m_pedia_panel->ValidatePosition();
     m_side_panel->ValidatePosition();
     m_combat_report_wnd->ValidatePosition();
+    m_moderator_wnd->ValidatePosition();
 
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         if (MessageWnd* msg_wnd = cui->GetMessageWnd())
