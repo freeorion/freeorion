@@ -38,7 +38,7 @@ def get_priority(tech_name, empire):
     """
 
     rng = random.Random()
-    rng.seed(fo.getEmpire().name)
+    rng.seed(fo.getEmpire().name + fo.getGalaxySetupData().seed)
 
     IMMEDIATE = 999 # i.e. research this tech NOW!
     USELESS = 0 # useless for AI, mostly because the AI doesn't know how to use them
