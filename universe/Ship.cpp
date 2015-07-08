@@ -62,6 +62,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     AddMeter(METER_RESEARCH);
     AddMeter(METER_TARGET_TRADE);
     AddMeter(METER_TRADE);
+    AddMeter(METER_DAMAGE);
 
     const std::vector<std::string>& part_names = Design()->Parts();
     for (std::size_t i = 0; i < part_names.size(); ++i) {
@@ -531,6 +532,7 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
     UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
     UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
+    UniverseObject::GetMeter(METER_DAMAGE)->ResetCurrent();
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
     { it->second.ResetCurrent(); }
@@ -566,6 +568,7 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_DAMAGE)->ClampCurrentToRange();
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
         it->second.ClampCurrentToRange();
