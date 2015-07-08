@@ -2244,7 +2244,7 @@ XENOPHOBIC_SELF
                     Count condition = And [
                     PopulationCenter
                     WithinStarlaneJumps jumps = 5 condition = Source
-                    VisibleToEmpire empire = Source.Owner
+                    OwnedBy empire = Source.Owner
                     Not OR [ 
                         Species name = Source.Species
                         Species name = "SP_EXOBOT"
@@ -2270,8 +2270,11 @@ XENOPHOBIC_SELF
                         Species name = "SP_EXOBOT"
                     ]
                     Not Population high = 0
-                    VisibleToEmpire empire = Source.Owner
                     WithinStarlaneJumps jumps = 5 condition = Source
+                    WithinStarlaneJumps
+                                  jumps = 2
+                              condition = ExploredByEmpire
+                                          empire = Source.Owner
                 ]
                 ) ) )
 
