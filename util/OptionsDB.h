@@ -3,6 +3,7 @@
 #define _OptionsDB_h_
 
 #include "Export.h"
+#include "Logger.h"
 #include "OptionValidators.h"
 #include "XMLDoc.h"
 
@@ -111,7 +112,7 @@ public:
     /** indicates whether an option with name \a name has been added to this
         OptionsDB. */
     bool        OptionExists(const std::string& name) const
-    { return m_options.find(name) != m_options.end(); }
+    { return m_options.find(name) != m_options.end() && m_options.at(name).recognized; }
 
     /** write back the optionDB's state to the XML config file */
     void        Commit();
@@ -128,7 +129,7 @@ public:
     T           Get(const std::string& name) const
     {
         std::map<std::string, Option>::const_iterator it = m_options.find(name);
-        if (it == m_options.end())
+        if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::Get<>() : Attempted to get nonexistent option \"" + name + "\".");
         return boost::any_cast<T>(it->second.value);
     }
@@ -140,7 +141,7 @@ public:
     T           GetDefault(const std::string& name) const
     {
         std::map<std::string, Option>::const_iterator it = m_options.find(name);
-        if (it == m_options.end())
+        if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::GetDefault<>() : Attempted to get nonexistent option \"" + name + "\".");
         return boost::any_cast<T>(it->second.default_value);
     }
@@ -177,10 +178,24 @@ public:
     void        Add(const std::string& name, const std::string& description, T default_value,
                     const ValidatorBase& validator = Validator<T>(), bool storable = true)
     {
-        if (m_options.find(name) != m_options.end())
-            throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(static_cast<char>(0), name, default_value, default_value,
-                                 description, validator.Clone(), storable, false);
+        std::map<std::string, Option>::iterator it = m_options.find(name);
+        boost::any value = default_value;
+        // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
+        if (it != m_options.end()) {
+            if (it->second.recognized)
+                throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was registered twice.");
+            if (it->second.flag) { // SetFrom[...]() sets "flag" to true for unrecognised options if they look like flags (i.e. no parameter is found for the option)
+                ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was specified on the command line or in a config file with no value, using default value.";
+            } else {
+                try {
+                    // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
+                    value = validator.Validate(it->second.ValueToString());
+                } catch (boost::bad_lexical_cast&) {
+                    ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was given the value \"" << it->second.ValueToString() << "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
+                }
+            }
+        }
+        m_options[name] = Option(static_cast<char>(0), name, value, default_value, description, validator.Clone(), storable, false, true);
         OptionAddedSignal(name);
     }
 
@@ -190,9 +205,24 @@ public:
     void        Add(char short_name, const std::string& name, const std::string& description, T default_value,
                     const ValidatorBase& validator = Validator<T>(), bool storable = true)
     {
-        if (m_options.find(name) != m_options.end())
-            throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(short_name, name, default_value, default_value, description, validator.Clone(), storable, false);
+        std::map<std::string, Option>::iterator it = m_options.find(name);
+        boost::any value = default_value;
+        // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
+        if (it != m_options.end()) {
+            if (it->second.recognized)
+                throw std::runtime_error("OptionsDB::Add<>() : Option " + name + " was registered twice.");
+            if (it->second.flag) { // SetFrom[...]() sets "flag" to true for unrecognised options if they look like flags (i.e. no parameter is found for the option)
+                ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was specified on the command line or in a config file with no value, using default value.";
+            } else {
+                try {
+                    // This option was previously specified externally but was not recognized at the time, attempt to parse the value found there
+                    value = validator.Validate(it->second.ValueToString());
+                } catch (boost::bad_lexical_cast&) {
+                    ErrorLogger() << "OptionsDB::Add<>() : Option " << name << " was given the value \"" << it->second.ValueToString() << "\" from the command line or a config file but that value couldn't be converted to the correct type, using default value instead.";
+                }
+            }
+        }
+        m_options[name] = Option(short_name, name, value, default_value, description, validator.Clone(), storable, false, true);
         OptionAddedSignal(name);
     }
 
@@ -202,10 +232,18 @@ public:
     void        AddFlag(const std::string& name, const std::string& description,
                         bool storable = true)
     {
-        if (m_options.find(name) != m_options.end())
-            throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(static_cast<char>(0), name, false, boost::lexical_cast<std::string>(false),
-                                 description, 0, storable, true);
+        std::map<std::string, Option>::iterator it = m_options.find(name);
+        bool value = false;
+        // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
+        if (it != m_options.end()) {
+            if (it->second.recognized)
+                throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was registered twice.");
+            if (!it->second.flag) // SetFrom[...]() sets "flag" to false on unrecognised options if they don't look like flags (flags have no parameter on the command line or have an empty tag in XML)
+                ErrorLogger() << "OptionsDB::AddFlag<>() : Option " << name << " was specified with the value \"" << it->second.ValueToString() << "\", but flags should not have values assigned to them.";
+            value = true; // if the flag is present at all its value is true
+        }
+        m_options[name] = Option(static_cast<char>(0), name, value, boost::lexical_cast<std::string>(false),
+                                 description, 0, storable, true, true);
         OptionAddedSignal(name);
     }
 
@@ -215,10 +253,18 @@ public:
     void        AddFlag(char short_name, const std::string& name,
                         const std::string& description, bool storable = true)
     {
-        if (m_options.find(name) != m_options.end())
-            throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was specified twice.");
-        m_options[name] = Option(short_name, name, false, boost::lexical_cast<std::string>(false),
-                                 description, 0, storable, true);
+        std::map<std::string, Option>::iterator it = m_options.find(name);
+        bool value = false;
+        // Check that this option hasn't already been registered and apply any value that was specified on the command line or from a config file.
+        if (it != m_options.end()) {
+            if (it->second.recognized)
+                throw std::runtime_error("OptionsDB::AddFlag<>() : Option " + name + " was registered twice.");
+            if (!it->second.flag) // SetFrom[...]() sets "flag" to false on unrecognised options if they don't look like flags (flags have no parameter on the command line or have an empty tag in XML)
+                ErrorLogger() << "OptionsDB::AddFlag<>() : Option " << name << " was specified with the value \"" << it->second.ValueToString() << "\", but flags should not have values assigned to them.";
+            value = true; // if the flag is present at all its value is true
+        }
+        m_options[name] = Option(short_name, name, value, boost::lexical_cast<std::string>(false),
+                                 description, 0, storable, true, true);
         OptionAddedSignal(name);
     }
 
@@ -230,7 +276,7 @@ public:
     void        Set(const std::string& name, const T& value)
     {
         std::map<std::string, Option>::iterator it = m_options.find(name);
-        if (it == m_options.end())
+        if (!OptionExists(it))
             throw std::runtime_error("OptionsDB::Set<>() : Attempted to set nonexistent option \"" + name + "\".");
         if (it->second.value.type() != typeid(T))
             throw boost::bad_any_cast();
@@ -251,7 +297,7 @@ private:
         Option();
         Option(char short_name_, const std::string& name_, const boost::any& value_,
                const boost::any& default_value_, const std::string& description_,
-               const ValidatorBase *validator_, bool storable_, bool flag_);
+               const ValidatorBase *validator_, bool storable_, bool flag_, bool recognized_);
 
         void            SetFromString(const std::string& str);
         std::string     ValueToString() const;
@@ -266,11 +312,18 @@ private:
                         validator;      ///< a validator for the option. Flags have no validators; lexical_cast boolean conversions are done for them.
         bool            storable;       ///< whether this option can be stored in an XML config file for use across multiple runs
         bool            flag;
+        bool            recognized;     ///< whether this option has been registered before being specified via an XML input, unrecognized options can't be parsed (don't know their type) but are stored in case they are later registered with Add()
 
         mutable boost::shared_ptr<boost::signals2::signal<void ()> > option_changed_sig_ptr;
 
         static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };
+
+    /** indicates whether an option with name \a name has been added to this
+        OptionsDB.  Overloaded for convenient use within other OptionsDB
+        functions */
+    bool        OptionExists(std::map<std::string, Option>::const_iterator it) const
+    { return it != m_options.end() && it->second.recognized; }
 
     OptionsDB();
 
