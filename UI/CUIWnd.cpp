@@ -165,7 +165,7 @@ CUIWnd::~CUIWnd() {
 }
 
 void CUIWnd::ValidatePosition()
-{ SizeMove(UpperLeft(), LowerRight()); }
+{ SizeMove(RelativeUpperLeft(), RelativeLowerRight()); }
 
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_sz = Size();

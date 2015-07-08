@@ -943,6 +943,16 @@ bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
 int BuildDesignatorWnd::SelectedPlanetID() const
 { return m_side_panel->SelectedPlanetID(); }
 
+void BuildDesignatorWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    GG::Wnd::SizeMove(ul, lr);
+    if (old_size != Size()) {
+        m_enc_detail_panel->ValidatePosition();
+        m_build_selector->ValidatePosition();
+        m_side_panel->ValidatePosition();
+    }
+}
+
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
     SetBuild(queue_idx);
 

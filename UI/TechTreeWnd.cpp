@@ -1683,8 +1683,11 @@ TechTreeWnd::~TechTreeWnd() {
 void TechTreeWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
     GG::Wnd::SizeMove(ul, lr);
-    if (old_size != Size())
+    if (old_size != Size()) {
+        m_enc_detail_panel->ValidatePosition();
+        m_tech_tree_controls->ValidatePosition();
         m_layout_panel->Resize(this->Size());
+    }
 }
 
 double TechTreeWnd::Scale() const
