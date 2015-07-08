@@ -1732,10 +1732,12 @@ BuildingType
                     message = "SITREP_VICTORY_CAPTURE"
                     icon = "icons/sitrep/victory.png"
                     empire = Source.Owner
-                AddStarlanes endpoint = NumberOf number = 1 condition = And [
-                    WithinDistance distance = 100 condition = Source
-                    System
-                ]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                [[EXPERIMENTOR_ADD_STARLANE]]
+                Destroy
             ]
 
         EffectsGroup
