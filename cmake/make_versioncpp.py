@@ -29,14 +29,15 @@ class Generator(object):
         self.infile = infile
         self.outfile = outfile
 
-    def compile_output(self, template, version, branch, build_no, build_sys):
+    def compile_output(self, template, version, branch, branch_space, build_no, build_sys):
         return template.substitute(
             FreeOrion_VERSION=version,
             FreeOrion_BRANCH=branch,
+            FreeOrion_BRANCH_=branch_space,
             FreeOrion_BUILD_NO=build_no,
             FreeOrion_BUILDSYS=build_sys)
 
-    def execute(self, version, branch, build_no, build_sys):
+    def execute(self, version, branch, branch_space, build_no, build_sys):
         if build_no == INVALID_BUILD_NO:
             print "WARNING: Can't determine git commit, %s not updated!" % self.outfile
             return
@@ -55,7 +56,7 @@ class Generator(object):
 
         print "Writing file: %s" % self.outfile
         with open(self.outfile, "w") as generated_file:
-            generated_file.write(self.compile_output(template, version, branch, build_no, build_sys))
+            generated_file.write(self.compile_output(template, version, branch, branch_space, build_no, build_sys))
 
 
 class NsisInstScriptGenerator(Generator):
@@ -70,12 +71,13 @@ class NsisInstScriptGenerator(Generator):
                 accepted_dll_files.append(dll_file)
         return accepted_dll_files
 
-    def compile_output(self, template, version, branch, build_no, build_sys):
+    def compile_output(self, template, version, branch, branch_space, build_no, build_sys):
         dll_files = self.compile_dll_list()
         if dll_files:
             return template.substitute(
                 FreeOrion_VERSION=version,
                 FreeOrion_BRANCH=branch,
+                FreeOrion_BRANCH_=branch_space,
                 FreeOrion_BUILD_NO=build_no,
                 FreeOrion_BUILDSYS=build_sys,
                 FreeOrion_DLL_LIST_INSTALL="\n  ".join(['File "..\\' + fname + '"' for fname in dll_files]),
@@ -85,6 +87,7 @@ class NsisInstScriptGenerator(Generator):
             return template.substitute(
                 FreeOrion_VERSION=version,
                 FreeOrion_BRANCH=branch,
+                FreeOrion_BRANCH_=branch_space,
                 FreeOrion_BUILD_NO=build_no,
                 FreeOrion_BUILDSYS=build_sys,
                 FreeOrion_DLL_LIST_INSTALL="",
@@ -109,17 +112,21 @@ if system() == 'Darwin':
 
 version = "0.4.4+"
 branch = ""
+branch_space = ""
 build_no = INVALID_BUILD_NO
 
 try:
     branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
     if branch == "master":
         branch = ""
+        branch_space = ""
+    else:
+        branch_space = branch + " "
     build_no = check_output(['git', 'show', '-s', '--format=%cd.%h', '--date=short', 'HEAD']).strip()
 except:
     print "WARNING: git not installed"
 
 for generator in generators:
-    generator.execute(version, branch, build_no, build_sys)
+    generator.execute(version, branch, branch_space, build_no, build_sys)
 
-print "Building v%s %s build %s" % (version, branch, build_no)
+print "Building v%s %sbuild %s" % (version, branch_space, build_no)

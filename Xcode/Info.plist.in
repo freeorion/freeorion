@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleVersion</key>
-	<string>${FreeOrion_VERSION} ${FreeOrion_BRANCH} (build ${FreeOrion_BUILD_NO})</string>
+	<string>${FreeOrion_VERSION} ${FreeOrion_BRANCH_}(build ${FreeOrion_BUILD_NO})</string>
 	<key>CFBundleShortVersionString</key>
 	<string>${FreeOrion_VERSION} (build ${FreeOrion_BUILD_NO})</string>
 </dict>
