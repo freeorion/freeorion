@@ -1255,8 +1255,8 @@ void MapWnd::DoLayout() {
     }
 
     for (FleetUIManager::iterator fwnd_it = FleetUIManager::GetFleetUIManager().begin();
-         fwnd_it != FleetUIManager::GetFleetUIManager().end();
-         ++fwnd_it) {
+         fwnd_it != FleetUIManager::GetFleetUIManager().end(); ++fwnd_it)
+    {
         if (*fwnd_it) {
             (*fwnd_it)->ValidatePosition();
         } else {
