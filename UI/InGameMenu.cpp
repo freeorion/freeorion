@@ -74,7 +74,7 @@ void InGameMenu::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt new_lr(HumanClientApp::GetApp()->AppWidth()  * 0.5 + new_size.x/2,
                   HumanClientApp::GetApp()->AppHeight() * 0.5 + new_size.y/2);
 
-    GG::Wnd::SizeMove(new_ul, new_lr);
+    CUIWnd::SizeMove(new_ul, new_lr);
 }
 
 GG::Pt InGameMenu::MinUsableSize() const {
