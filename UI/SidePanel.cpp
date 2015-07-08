@@ -2980,7 +2980,7 @@ GG::Pt SidePanel::ListRowSize() const
 void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
-    GG::Wnd::SizeMove(ul, lr);
+    CUIWnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
         DoLayout();

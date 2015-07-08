@@ -110,6 +110,7 @@ public:
 
     void            ToggleMinimized() { MinimizeClicked(); }
     void            Close()           { CloseClicked(); }
+    void            ValidatePosition();                 //!< positions window entirely within the parent window/app window
     //@}
 
     //! \name Mutators //@{

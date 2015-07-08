@@ -9,6 +9,7 @@
 #include "../util/i18n.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/Logger.h"
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
@@ -82,7 +83,7 @@ CUI_CloseButton::CUI_CloseButton() :
 // CUI_PinButton
 ////////////////////////////////////////////////
 CUI_PinButton::CUI_PinButton() :
-GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
+    GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
 {
     GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
     SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"   )));
@@ -90,8 +91,7 @@ GG::Button("", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
     SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin_mouseover.png")));
 }
 
-void CUI_PinButton::Toggle(bool pinned)
-{
+void CUI_PinButton::Toggle(bool pinned) {
     if (!pinned) {
         SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
         SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png")));
@@ -153,6 +153,7 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
     InitButtons();
     SetChildClippingMode(ClipToClientAndWindowSeparately);
+    ValidatePosition();
     InitBuffers();
 }
 
@@ -163,9 +164,36 @@ CUIWnd::~CUIWnd() {
     m_resize_corner_lines_buffer.clear();
 }
 
+void CUIWnd::ValidatePosition()
+{ SizeMove(RelativeUpperLeft(), RelativeLowerRight()); }
+
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_sz = Size();
-    Wnd::SizeMove(ul, lr);
+    GG::Pt available_size;
+
+    if (const GG::Wnd* parent = Parent()) {
+        // Keep this CUIWnd entirely inside its parent.
+        available_size = parent->ClientSize();
+    } else if (const HumanClientApp* app = HumanClientApp::GetApp()) {
+        // Keep this CUIWnd entirely inside the application window.
+        available_size = GG::Pt( app->AppWidth(), app->AppHeight() );
+    } else {
+        ErrorLogger() << "CUIWnd::SizeMove() could not get app instance!";
+        return;
+    }
+
+    // Limit window size to be no larger than the containing window.
+    GG::Pt new_size( std::min(lr.x - ul.x, available_size.x),
+                     std::min(lr.y - ul.y, available_size.y) );
+
+    // Clamp position of this window to keep its entire area visible in the
+    // containing window.
+    GG::Pt new_ul( std::min( available_size.x - new_size.x,
+                             std::max(GG::X0, ul.x) ),
+                   std::min( available_size.y - new_size.y,
+                             std::max(GG::Y0, ul.y) ));
+
+    Wnd::SizeMove(new_ul, new_ul + new_size);
     if (Size() != old_sz) {
         PositionButtons();
         InitBuffers();
@@ -262,27 +290,7 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
         Resize(new_lr - UpperLeft());
 
     } else { // normal-dragging
-        GG::Pt ul = UpperLeft();
-        GG::Pt requested_ul = ul + move;
-
-        GG::Pt max_ul, min_ul;
-        if (const GG::Wnd* parent = Parent()) {
-            min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
-            GG::Pt max_lr = parent->ClientLowerRight();
-            max_ul = max_lr - Size();
-
-        } else {
-            min_ul = GG::Pt(GG::X1, GG::Y1);
-            max_ul = GG::Pt(GG::GUI::GetGUI()->AppWidth() - this->Width(),
-                            GG::GUI::GetGUI()->AppHeight() - this->Height());
-        }
-
-        GG::X new_x = std::min(max_ul.x, std::max(min_ul.x, requested_ul.x));
-        GG::Y new_y = std::min(max_ul.y, std::max(min_ul.y, requested_ul.y));
-        GG::Pt new_ul(new_x, new_y);
-
-        GG::Pt final_move = new_ul - ul;
-        GG::Wnd::LDrag(pt, final_move, mod_keys);
+        GG::Wnd::LDrag(pt, move, mod_keys);
     }
 }
 
@@ -490,7 +498,7 @@ void CUIWnd::InitBuffers() {
 const GG::X CUIEditWnd::BUTTON_WIDTH(75);
 const int CUIEditWnd::CONTROL_MARGIN = 5;
 
-CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags/* = Wnd::MODAL*/) : 
+CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags/* = Wnd::MODAL*/) :
     CUIWnd(prompt_text, GG::X0, GG::Y0, w, GG::Y1, flags)
 {
     m_edit = new CUIEdit(edit_text);
@@ -532,7 +540,7 @@ void CUIEditWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags
     }
 }
 
-const std::string& CUIEditWnd::Result() const 
+const std::string& CUIEditWnd::Result() const
 { return m_result; }
 
 void CUIEditWnd::OkClicked() {

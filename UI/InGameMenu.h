@@ -5,7 +5,6 @@
 
 #include "CUIWnd.h"
 
-
 class InGameMenu : public CUIWnd {
 public:
     /** \name Structors */ //@{
@@ -13,8 +12,13 @@ public:
     ~InGameMenu(); //!< dtor
     //@}
 
+    /** \name Accessors */ //@{
+    virtual GG::Pt MinUsableSize() const;
+    //@}
+
     /** \name Mutators */ //@{
     virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    virtual void SizeMove (const GG::Pt& ul, const GG::Pt& lr);
 
     void         DoLayout();
     //@}
@@ -25,6 +29,9 @@ private:
     void Options();     //!< when m_options_btn button is pressed
     void Exit();        //!< when m_quit_btn button is pressed
     void Done();        //!< when m_done_btn is pressed
+
+    GG::X ButtonWidth() const;      //!< Helper function
+    GG::Y ButtonCellHeight() const; //!< Helper function
 
     GG::Button* m_save_btn;         //!< Save game button
     GG::Button* m_load_btn;         //!< Load game button

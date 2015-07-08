@@ -24,7 +24,6 @@ namespace {
     const GG::Y IN_GAME_OPTIONS_HEIGHT(280);
 }
 
-
 InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"),
            (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
@@ -58,25 +57,43 @@ InGameMenu::InGameMenu():
         m_save_btn->Disable();
     }
 
+    ValidatePosition();
     DoLayout();
 }
 
 InGameMenu::~InGameMenu()
 {}
 
-void InGameMenu::DoLayout() {
-    //size calculation consts and variables
-    const GG::X MIN_BUTTON_WIDTH(160);
-    const GG::Y MIN_BUTTON_HEIGHT(40);
-    GG::X button_width(0);              //width of the buttons
-    GG::Y button_cell_height(0);        //height of the buttons
+void InGameMenu::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    // This wnd determines its own size.
+    GG::Pt new_size(MinUsableSize());
+
+    // This wnd determines its own position.
+    GG::Pt new_ul(HumanClientApp::GetApp()->AppWidth()  * 0.5 - new_size.x/2,
+                  HumanClientApp::GetApp()->AppHeight() * 0.5 - new_size.y/2);
+    GG::Pt new_lr(HumanClientApp::GetApp()->AppWidth()  * 0.5 + new_size.x/2,
+                  HumanClientApp::GetApp()->AppHeight() * 0.5 + new_size.y/2);
+
+    CUIWnd::SizeMove(new_ul, new_lr);
+}
+
+GG::Pt InGameMenu::MinUsableSize() const {
     const GG::X H_MAINMENU_MARGIN(40);  //horizontal empty space
     const GG::Y V_MAINMENU_MARGIN(40);  //vertical empty space
     GG::X mainmenu_width(0);            //width of the mainmenu
     GG::Y mainmenu_height(0);           //height of the mainmenu
 
-    //calculate necessary button width
-    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    // Calculate window width and height
+    mainmenu_width  =        ButtonWidth()  + H_MAINMENU_MARGIN;
+    mainmenu_height = 5.75 * ButtonCellHeight() + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+
+    return GG::Pt(mainmenu_width, mainmenu_height);
+}
+
+GG::X InGameMenu::ButtonWidth() const {
+    const GG::X MIN_BUTTON_WIDTH(160);
+    GG::X button_width(0);              //width of the buttons
+
     button_width = std::max(button_width, m_save_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_load_btn->MinUsableSize().x);
     button_width = std::max(button_width, m_options_btn->MinUsableSize().x);
@@ -84,17 +101,22 @@ void InGameMenu::DoLayout() {
     button_width = std::max(button_width, m_done_btn->MinUsableSize().x);
     button_width = std::max(MIN_BUTTON_WIDTH, button_width);
 
-    //calculate  necessary button height
-    button_cell_height = std::max(MIN_BUTTON_HEIGHT, m_done_btn->MinUsableSize().y);
-    //culate window width and height
-    mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 5.75 * button_cell_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+    return button_width;
+}
 
+GG::Y InGameMenu::ButtonCellHeight() const {
+    const GG::Y MIN_BUTTON_HEIGHT(40);
+    return std::max(MIN_BUTTON_HEIGHT, m_done_btn->MinUsableSize().y);
+}
+
+void InGameMenu::DoLayout() {
     // place buttons
     GG::Pt button_ul(GG::X(15), GG::Y(12));
-    GG::Pt button_lr(button_width, m_done_btn->MinUsableSize().y);
+    GG::Pt button_lr(ButtonWidth(), m_done_btn->MinUsableSize().y);
 
     button_lr += button_ul;
+
+    GG::Y button_cell_height = ButtonCellHeight();
 
     m_save_btn->SizeMove(button_ul, button_lr);
     button_ul.y += GG::Y(button_cell_height);
@@ -109,14 +131,6 @@ void InGameMenu::DoLayout() {
     button_ul.y += GG::Y(button_cell_height) * 1.75;
     button_lr.y += GG::Y(button_cell_height) * 1.75;
     m_done_btn->SizeMove(button_ul, button_lr);
-
-    // position menu window
-    GG::Pt ul(GG::GUI::GetGUI()->AppWidth()  * 0.5 - mainmenu_width/2,
-              GG::GUI::GetGUI()->AppHeight() * 0.5 - mainmenu_height/2);
-    GG::Pt lr(GG::GUI::GetGUI()->AppWidth()  * 0.5 + mainmenu_width/2,
-              GG::GUI::GetGUI()->AppHeight() * 0.5 + mainmenu_height/2);
-
-    this->SizeMove(ul, lr);
 }
 
 void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point,

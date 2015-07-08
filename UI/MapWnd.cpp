@@ -1240,6 +1240,29 @@ void MapWnd::DoLayout() {
     m_research_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_production_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
     m_design_wnd->Resize(GG::Pt(AppWidth(), AppHeight() - m_toolbar->Height()));
+    m_sitrep_panel->ValidatePosition();
+    m_object_list_wnd->ValidatePosition();
+    m_pedia_panel->ValidatePosition();
+    m_side_panel->ValidatePosition();
+    m_combat_report_wnd->ValidatePosition();
+    m_moderator_wnd->ValidatePosition();
+
+    if (ClientUI* cui = ClientUI::GetClientUI()) {
+        if (MessageWnd* msg_wnd = cui->GetMessageWnd())
+            msg_wnd->ValidatePosition();
+        if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
+            plr_wnd->ValidatePosition();
+    }
+
+    for (FleetUIManager::iterator fwnd_it = FleetUIManager::GetFleetUIManager().begin();
+         fwnd_it != FleetUIManager::GetFleetUIManager().end();
+         ++fwnd_it) {
+        if (*fwnd_it) {
+            (*fwnd_it)->ValidatePosition();
+        } else {
+            ErrorLogger() << "MapWnd::DoLayout(): null FleetWnd* found in the FleetUIManager::iterator.";
+        }
+    }
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
