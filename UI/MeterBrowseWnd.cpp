@@ -219,7 +219,7 @@ void MeterBrowseWnd::UpdateSummary() {
         breakdown_total = obj->InitialMeterValue(m_primary_meter_type);
         breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     } else {
-        ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
+        ErrorLogger() << "MeterBrowseWnd::UpdateSummary can't get primary meter for meter type " << m_primary_meter_type;
         return;
     }
 

@@ -932,7 +932,7 @@ void ShipDataPanel::Refresh() {
         it->second->SetValue(StatValue(it->first));
 
         it->second->ClearBrowseInfoWnd();
-        if (it->first == METER_DAMAGE) {
+        if (false && it->first == METER_DAMAGE) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
                 UserString("SHIP_DAMAGE_STAT_MAIN")));
