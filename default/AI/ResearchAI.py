@@ -298,11 +298,11 @@ def get_priority(tech_name, empire):
 
     # weapons TODO include these branches into ship-design calculation
     if tech_name in ["SHP_ROOT_AGGRESSION", "SHP_WEAPON_1_2", "SHP_WEAPON_1_3", "SHP_WEAPON_1_4"]:
-        return massdriver if not tech_is_complete("SHP_WEAPON_4_1") else useless # don't research obsolete weapons if get deathray from ruins
+        return massdriver if not tech_is_complete("SHP_WEAPON_4_1") else USELESS # don't research obsolete weapons if get deathray from ruins
     if tech_name in ["SHP_WEAPON_2_1", "SHP_WEAPON_2_2", "SHP_WEAPON_2_3", "SHP_WEAPON_2_4"]:
-        return laser if not tech_is_complete("SHP_WEAPON_4_1") else useless
+        return laser if not tech_is_complete("SHP_WEAPON_4_1") else USELESS
     if tech_name in ["SHP_WEAPON_3_1", "SHP_WEAPON_3_2", "SHP_WEAPON_3_3", "SHP_WEAPON_3_4"]:
-        return plasmacannon if not tech_is_complete("SHP_WEAPON_4_1") else useless
+        return plasmacannon if not tech_is_complete("SHP_WEAPON_4_1") else USELESS
     if tech_name in ["SHP_WEAPON_4_1", "SHP_WEAPON_4_2", "SHP_WEAPON_4_3", "SHP_WEAPON_4_4"]:
         return deathray
 
