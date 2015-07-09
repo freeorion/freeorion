@@ -160,6 +160,7 @@ protected:
 
     bool                    m_mouse_in_resize_tab;
 
+    bool                    m_config_save;          //!< true if SaveOptions() is currently allowed to write to the OptionsDB
     const std::string       m_config_name;          //!< the name that this window will use to save its properties to the OptionsDB, the default empty string means "do not save"
 
     CUI_CloseButton*        m_close_button;         //!< the close button

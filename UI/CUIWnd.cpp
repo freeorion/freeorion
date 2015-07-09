@@ -144,6 +144,7 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     m_pinned(false),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_mouse_in_resize_tab(false),
+    m_config_save(true),
     m_config_name(config_name),
     m_close_button(0),
     m_minimize_button(0),
@@ -304,8 +305,10 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> m
     }
 }
 
-void CUIWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{ m_drag_offset = GG::Pt(-GG::X1, -GG::Y1); }
+void CUIWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
+    SaveOptions();
+}
 
 void CUIWnd::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     m_mouse_in_resize_tab = InResizeTab(pt);
@@ -516,7 +519,8 @@ void CUIWnd::Show(bool children) {
 
 void CUIWnd::SaveOptions() const {
     // The default empty string means 'do not save/load properties'
-    if (m_config_name.empty()) {
+    // Also do not save while the window is being dragged.
+    if (m_config_name.empty() || !m_config_save || GG::GUI::GetGUI()->DragWnd(this, 0)) {
         return;
     }
 
@@ -563,11 +567,12 @@ void CUIWnd::LoadOptions() {
     GG::Pt size = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".width"+windowed)),
                          GG::Y(db.Get<int>("UI.windows."+m_config_name+".height"+windowed)));
 
+    m_config_save = false;
+
     if (m_minimized) {
         MinimizeClicked();
     }
 
-    // Applying the options like this causes them to be saved to the config file again... it works fine but isn't very elegant.
     SizeMove(ul, ul + size);
 
     if (!Modal()) {
@@ -585,6 +590,8 @@ void CUIWnd::LoadOptions() {
             MinimizeClicked();
         }
     }
+
+    m_config_save = true;
 }
 
 void CUIWnd::AddWindowOptions(int left, int top,

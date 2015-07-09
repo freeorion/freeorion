@@ -902,6 +902,9 @@ unsigned int GUI::MinDragTime() const
 unsigned int GUI::MinDragDistance() const
 { return s_impl->m_min_drag_distance; }
 
+bool GUI::DragWnd(const Wnd* wnd, unsigned int mouse_button) const
+{ return wnd == s_impl->m_drag_wnds[mouse_button < 3 ? mouse_button : 0]; }
+
 bool GUI::DragDropWnd(const Wnd* wnd) const
 { return s_impl->m_drag_drop_wnds.find(const_cast<Wnd*>(wnd)) != s_impl->m_drag_drop_wnds.end(); }
 
