@@ -162,6 +162,7 @@ set (freeorioncommon_HEADER
     universe/Ship.h
     universe/Special.h
     universe/Species.h
+    universe/Suitability.h
     universe/System.h
     universe/Tech.h
     universe/Universe.h
@@ -225,6 +226,7 @@ set (freeorioncommon_SOURCE
     universe/ShipDesign.cpp
     universe/Special.cpp
     universe/Species.cpp
+    universe/Suitability.cpp
     universe/System.cpp
     universe/Tech.cpp
     universe/Universe.cpp
