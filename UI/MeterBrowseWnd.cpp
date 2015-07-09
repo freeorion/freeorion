@@ -394,7 +394,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
 
 ShipDamageBrowseWnd::ShipDamageBrowseWnd(int object_id, MeterType primary_meter_type) :
-    MeterBrowseWnd::MeterBrowseWnd(object_id, primary_meter_type)
+    MeterBrowseWnd(object_id, primary_meter_type)
 {}
 
 void ShipDamageBrowseWnd::Initialize() {
