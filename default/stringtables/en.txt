@@ -8247,25 +8247,25 @@ DEF_GARRISON_1
 Planetary Garrison 1
 
 DEF_GARRISON_1_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 6.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 10.
 
 DEF_GARRISON_2
 Planetary Garrison 2
 
 DEF_GARRISON_2_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population, and causes troops to regenerate by an additional one per turn.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population, and causes troops to regenerate by an additional one per turn.
 
 DEF_GARRISON_3
 Planetary Garrison 3
 
 DEF_GARRISON_3_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 10, and causes troops to regenerate by an additional two per turn in addition to that from [[DEF_GARRISON_2]].
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 16, and causes troops to regenerate by an additional two per turn in addition to that from [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
 Planetary Garrison 4
 
 DEF_GARRISON_4_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population, and causes troops to regenerate by an additional three per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population, and causes troops to regenerate by an additional three per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
@@ -8770,7 +8770,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, [[encyclopedia INFRASTRUCTURE_TITLE]] by 20, [[encyclopedia DEFENSE_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 3. Also sets the owner's Capital for the empire.
+'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, [[encyclopedia INFRASTRUCTURE_TITLE]] by 20, [[encyclopedia DEFENSE_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 6. Also sets the owner's Capital for the empire.
 
 Represents imperial power and prestige and functions as a center of control for the empire's holdings.'''
 
@@ -8916,7 +8916,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. All resource meters for the planet on which it is built are able to reach target in a single turn and receives an increase of 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. In addition, all planets in the owning empire receive an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range.
+'''Sets the owner empire's capital, overriding any existing Imperial Palace. All resource meters for the planet on which it is built are able to reach target in a single turn. This planet also receives an increase of 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Populated planets in the owning empire receive an increase of 1 to [[encyclopedia SUPPLY_TITLE]] line range. Populated planets within two starlane jumps have their [[encyclopedia TROOP_TITLE]] increased by 10.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
@@ -10694,6 +10694,9 @@ ULTIMATE_TROOPS_LABEL
 
 INDEPENDENT_TROOP_LABEL
 Independent Homeworld
+
+MEGALITH_TROOP_LABEL
+Megalith
 
 OUTPOST_TROOP_LABEL
 Outpost

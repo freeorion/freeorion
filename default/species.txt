@@ -2975,7 +2975,7 @@ BASIC_GROUND_TROOPS
             ]
             stackinggroup = "PALACE_TROOPS_STACK"
             accountinglabel = "BLD_IMPERIAL_PALACE"
-            effects = SetMaxTroops value = Value + 3
+            effects = SetMaxTroops value = Value + 6
 
 EffectsGroup
             scope = Source
@@ -2985,7 +2985,7 @@ EffectsGroup
             ]
             stackinggroup = "HOMEWORLD_TROOPS_STACK"
             accountinglabel = "HOMEWORLD_LABEL"
-            effects = SetMaxTroops value = Value + 2
+            effects = SetMaxTroops value = Value + 4
 
 EffectsGroup
             scope = Source
@@ -3016,23 +3016,23 @@ EffectsGroup
             
 EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 OwnerHasTech name = "DEF_GARRISON_2"
             ]
             stackinggroup = "GARRISON_2_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_2"
-            effects = SetMaxTroops value = Value + Target.Population * [[TROOPS_PER_POP]]
+            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
 
 EffectsGroup
             scope = Source
-            activation = AND [
+            activation = And [
                 Planet
                 OwnerHasTech name = "DEF_GARRISON_4"
             ]
             stackinggroup = "GARRISON_4_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_4"
-            effects = SetMaxTroops value = Value + Target.Population * [[TROOPS_PER_POP]]
+            effects = SetMaxTroops value = Value + Target.Population * 2 * [[TROOPS_PER_POP]]
 '''
 
 AFTER_SPECIES_MULTIPLICATOR_TROOPS
@@ -3045,13 +3045,13 @@ AFTER_SPECIES_MULTIPLICATOR_TROOPS
                     Population high = 0
                 ]
             ]
-            activation = AND [
+            activation = And [
                 Planet
                 OwnerHasTech name = "DEF_GARRISON_1"
             ]
             stackinggroup = "GARRISON_1_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_1"
-            effects = SetMaxTroops value = Value + 6   
+            effects = SetMaxTroops value = Value + 10   
 
 EffectsGroup
             scope = Or [
@@ -3062,16 +3062,29 @@ EffectsGroup
                     Population high = 0
                 ]
             ]
-            activation = AND [
+            activation = And [
                 Planet
                 OwnerHasTech name = "DEF_GARRISON_3"
             ]
             stackinggroup = "GARRISON_3_TROOPS_STACK"
             accountinglabel = "DEF_GARRISON_3"
+            effects = SetMaxTroops value = Value + 16
+
+EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                WithinStarlaneJumps jumps = 2 condition = And [
+                    Planet
+                    OwnedBy empire = Source.Owner
+                    Contains Building name = "BLD_MEGALITH"
+                ]
+            ]
+            accountinglabel = "MEGALITH_TROOP_LABEL"
             effects = SetMaxTroops value = Value + 10
     
 EffectsGroup
-            scope = AND [
+            scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
                 Population high = 0
