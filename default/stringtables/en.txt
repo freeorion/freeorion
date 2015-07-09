@@ -3733,7 +3733,7 @@ Research does not require [[encyclopedia SUPPLY_TITLE]] line connections to be u
 HAPPINESS_TITLE
 Happiness
 HAPPINESS_TEXT
-Happiness doesn't do anything yet.
+The Happiness of a colony's population starts out low after initial colonization or after invasion, and may also be affected by other factors.  A minimum Happiness of 5 is necessary for a colony to act as a source of settlers for colonizing other planets.
 
 INFRASTRUCTURE_TITLE
 Infrastructure
@@ -4604,7 +4604,7 @@ SITREP_VICTORY_BIO_LABEL
 Victory Biological
 
 SITREP_POP_THRESHOLD
-On %planet%: The colony has reached recolonizing size.
+On %planet%: The colony has reached sufficient size and [[encyclopedia HAPPINESS_TITLE]] to be a settler source for colonizing other planets.
 SITREP_POP_THRESHOLD_LABEL
 Colonizing Threshold
 
