@@ -924,7 +924,6 @@ void ShipDataPanel::Refresh() {
         }
     }
 
-
     // update stat icon values and browse wnds
     for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin();
          it != m_stat_icons.end(); ++it)
@@ -933,9 +932,8 @@ void ShipDataPanel::Refresh() {
 
         it->second->ClearBrowseInfoWnd();
         if (it->first == METER_DAMAGE) {
-            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
-                UserString("SHIP_DAMAGE_STAT_MAIN")));
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new ShipDamageBrowseWnd(
+                m_ship_id, it->first));
             it->second->SetBrowseInfoWnd(browse_wnd);
         } else if (it->first == METER_TROOPS) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(

@@ -8,6 +8,8 @@
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"
 #include "../universe/PopCenter.h"
+#include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
@@ -387,5 +389,126 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         m_effect_labels_and_values.push_back(std::make_pair(label, value));
 
         top += m_row_height;
+    }
+}
+
+
+ShipDamageBrowseWnd::ShipDamageBrowseWnd(int object_id, MeterType primary_meter_type) :
+    MeterBrowseWnd::MeterBrowseWnd(object_id, primary_meter_type)
+{}
+
+void ShipDamageBrowseWnd::Initialize() {
+    m_row_height = GG::Y(ClientUI::Pts()*3/2);
+    const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
+
+    // get objects and meters to verify that they exist
+    TemporaryPtr<const UniverseObject> ship = GetShip(m_object_id);
+    if (!ship) {
+        ErrorLogger() << "ShipDamageBrowseWnd couldn't get ship with id " << m_object_id;
+        return;
+    }
+    GG::Y top = GG::Y0;
+
+    // create controls and do layout
+
+    // effect accounting meter breakdown total / summary.  Shows "Meter Name: Value"
+    // above a list of effects.  Actual text is set in UpdateSummary() but
+    // the control is created here.
+    m_meter_title = new CUILabel("", GG::FORMAT_RIGHT);
+    m_meter_title->MoveTo(GG::Pt(GG::X0, top));
+    m_meter_title->Resize(GG::Pt(TOTAL_WIDTH - EDGE_PAD, m_row_height));
+    m_meter_title->SetFont(ClientUI::GetBoldFont());
+    AttachChild(m_meter_title);
+    top += m_row_height;
+
+    UpdateSummary();
+
+    UpdateEffectLabelsAndValues(top);
+
+    Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, top));
+
+    m_initialized = true;
+}
+
+void ShipDamageBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
+    // because a ShipDamageBrowseWnd's contents depends only on the meters of a single object, if that object doesn't
+    // change between showings of the meter browse wnd, it's not necessary to fully recreate the ShipDamageBrowseWnd,
+    // and it can be just reshown.without being altered.  To refresh a ShipDamageBrowseWnd, recreate it by assigning
+    // a new one as the moused-over object's BrowseWnd in this Wnd's place
+    if (!m_initialized)
+        Initialize();
+}
+
+void ShipDamageBrowseWnd::UpdateSummary() {
+    TemporaryPtr<const Ship> ship = GetShip(m_object_id);
+    if (!ship)
+        return;
+
+    // unpaired meter total for breakdown summary
+    float breakdown_total = ship->TotalWeaponsDamage();
+    std::string breakdown_meter_name = UserString("SHIP_DAMAGE_STAT_TITLE");
+
+
+    // set accounting breakdown total / summary
+    if (m_meter_title)
+        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY")) %
+                                              breakdown_meter_name %
+                                              DoubleToString(breakdown_total, 3, false)));
+}
+
+void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
+    // clear existing labels
+    for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
+        DeleteChild(m_effect_labels_and_values[i].first);
+        DeleteChild(m_effect_labels_and_values[i].second);
+    }
+    m_effect_labels_and_values.clear();
+
+    // get object and meter, aborting if not valid
+    TemporaryPtr<const Ship> ship = GetShip(m_object_id);
+    if (!ship) {
+        ErrorLogger() << "ShipDamageBrowseWnd::UpdateEffectLabelsAndValues couldn't get ship with id " << m_object_id;
+        return;
+    }
+
+    const ShipDesign* design = GetShipDesign(ship->DesignID());
+    if (!design)
+        return;
+    const std::vector<std::string>& parts = design->Parts();
+
+    std::string     name = ship->Name();
+    const std::string& label_template = UserString("TT_SHIP_PART");
+    
+    // for each weapon part, get its damage meter value
+    for (std::vector<std::string>::const_iterator part_it = parts.begin();
+         part_it != parts.end(); ++part_it)
+    {
+        const std::string& part_name = *part_it;
+        const PartType* part = GetPartType(part_name);
+        if (!part)
+            continue;
+        ShipPartClass part_class = part->Class();
+        if (!(part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES || part_class == PC_FIGHTERS))
+            continue;
+
+        // get the attack power for each weapon part
+        float part_attack = ship->CurrentPartMeterValue(METER_DAMAGE, part_name);
+        std::string text = boost::io::str(FlexibleFormat(label_template)
+                                % name
+                                % UserString(part_name));
+        
+        GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
+        label->MoveTo(GG::Pt(GG::X0, top));
+        label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));
+        AttachChild(label);
+
+        GG::Label* value = new CUILabel(ColouredNumber(part_attack));
+        value->MoveTo(GG::Pt(METER_BROWSE_LABEL_WIDTH, top));
+        value->Resize(GG::Pt(METER_BROWSE_VALUE_WIDTH, m_row_height));
+        AttachChild(value);
+        m_effect_labels_and_values.push_back(std::make_pair(label, value));
+
+        top += m_row_height;
+
     }
 }

@@ -17,7 +17,7 @@ public:
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
     virtual void    Render();
 
-private:
+protected:
     void            Initialize();
 
     virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
@@ -44,6 +44,21 @@ private:
 
     GG::Y                   m_row_height;
     bool                    m_initialized;
+};
+
+/** Gives details about what effects contribute to a meter's maximum value (Effect Accounting) and
+  * shows the current turn's current meter value and the predicted current meter value for next turn. */
+class ShipDamageBrowseWnd : public MeterBrowseWnd {
+public:
+    ShipDamageBrowseWnd(int object_id, MeterType primary_meter_type);
+
+private:
+    void            Initialize();
+
+    virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
+    void            UpdateSummary();
+    void            UpdateEffectLabelsAndValues(GG::Y& top);
+
 };
 
 #endif
