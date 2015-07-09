@@ -1259,9 +1259,47 @@ ColorSelector::ColorSelector(GG::Clr color, GG::Clr default_color) :
     m_default_color(default_color)
 { SetColor(color); }
 
+ColorSelector::~ColorSelector()
+{ m_border_buffer.clear(); }
+
+void ColorSelector::InitBuffer() {
+    GG::Pt sz = Size();
+    m_border_buffer.clear();
+    m_border_buffer.store(0.0f,        0.0f);
+    m_border_buffer.store(Value(sz.x), 0.0f);
+    m_border_buffer.store(Value(sz.x), Value(sz.y));
+    m_border_buffer.store(0.0f,        Value(sz.y));
+    m_border_buffer.store(0.0f,        0.0f);
+}
+
 void ColorSelector::Render() {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::FlatRectangle(ul, lr, Color(), GG::CLR_WHITE, 1);
+    GG::Pt ul = UpperLeft();
+
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(1.0f);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    m_border_buffer.activate();
+    glColor(Color());
+    glDrawArrays(GL_TRIANGLE_FAN,   0, m_border_buffer.size() - 1);
+    glColor(GG::CLR_WHITE);
+    glDrawArrays(GL_LINE_STRIP,     0, m_border_buffer.size());
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void ColorSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Pt old_size = GG::Control::Size();
+
+    GG::Control::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        InitBuffer();
 }
 
 void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {

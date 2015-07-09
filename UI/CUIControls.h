@@ -15,6 +15,7 @@
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 #include <GG/dialogs/FileDlg.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 #include <boost/function.hpp>
 
@@ -409,18 +410,22 @@ class ColorSelector : public GG::Control {
 public:
     /** \name Structors */ //@{
     ColorSelector(GG::Clr color, GG::Clr default_color);
+    virtual ~ColorSelector();
     //@}
 
     /** \name Mutators */ //@{
     virtual void Render();
     virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
     mutable boost::signals2::signal<void (const GG::Clr&)> ColorChangedSignal;
 
 private:
-    GG::Clr m_default_color;
+    virtual void InitBuffer();
+    GG::GL2DVertexBuffer    m_border_buffer;
+    GG::Clr                 m_default_color;
 };
 
 /** A GG file dialog in the FreeOrion style. */
