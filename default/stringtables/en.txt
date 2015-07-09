@@ -2471,6 +2471,9 @@ Latest known [[encyclopedia STEALTH_TITLE]] is out of date. Actual stealth excee
 MENUITEM_SET_FOCUS
 Set focus
 
+MENUITEM_CREATE_COLONY
+Create colony
+
 ## Resources Panel ##########
 
 RP_FOCUS_TOOLTIP
