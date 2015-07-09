@@ -182,7 +182,6 @@ void TextBoxBrowseInfoWnd::Render()
     glEnable(GL_TEXTURE_2D);
     glPopMatrix();
     glDisableClientState(GL_VERTEX_ARRAY);
-
 }
 
 void TextBoxBrowseInfoWnd::SetTextFromTarget(bool b)
