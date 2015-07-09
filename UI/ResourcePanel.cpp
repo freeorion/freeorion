@@ -178,21 +178,19 @@ void ResourcePanel::DoLayout() {
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
         // attach and show meter bars and large resource indicators
-        GG::Y top = GG::Y0;
+        GG::Y top = Top();
 
         AttachChild(m_multi_icon_value_indicator);
-        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
+        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), GG::Y(EDGE_PAD)));
         m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
-        top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
 
         AttachChild(m_multi_meter_status_bar);
-        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
+        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_multi_icon_value_indicator->Bottom() + EDGE_PAD - top));
         m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
-        top += m_multi_icon_value_indicator->Height() + EDGE_PAD;
 
         MoveChildUp(m_expand_button);
 
-        Resize(GG::Pt(Width(), top));
+        Resize(GG::Pt(Width(), m_multi_meter_status_bar->Bottom() + EDGE_PAD - top));
     }
 
     m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
