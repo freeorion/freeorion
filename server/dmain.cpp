@@ -41,6 +41,17 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
                 doc.ReadDoc(ifs);
                 GetOptionsDB().SetFromXML(doc);
             }
+
+            try {
+                boost::filesystem::ifstream pifs(GetPersistentConfigPath());
+                if (pifs) {
+                    doc.ReadDoc(pifs);
+                    GetOptionsDB().SetFromXML(doc);
+                }
+            } catch (const std::exception&) {
+                ErrorLogger() << "main() unable to read persistent option config file: " 
+                              << GetPersistentConfigPath() << std::endl;
+            }
         }
 
         GetOptionsDB().SetFromCommandLine(args);

@@ -52,6 +52,9 @@ FO_COMMON_API const boost::filesystem::path GetPythonHome();
 /** Returns the full path to the configfile. */
 FO_COMMON_API const boost::filesystem::path GetConfigPath();
 
+/** Returns the full path to the configfile. */
+FO_COMMON_API const boost::filesystem::path GetPersistentConfigPath();
+
 /** Returns the directory where save files are located.  This is typically
   * the directory "save" within the user directory. */
 FO_COMMON_API const boost::filesystem::path GetSaveDir();
