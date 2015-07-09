@@ -89,6 +89,11 @@ private:
     void            HandleWindowClose();
     void            HandleFocusChange();
 
+    void            ConnectKeyboardAcceleratorSignals();///< installs the following 3 global hotkeys: quit, exit, togglefullscreen
+    bool            QuitGame();                         ///< quit current game to IntroScreen
+    bool            ExitGame();                         ///< quit current game & freeorion to Desktop
+    bool            ToggleFullscreen();                 ///< toggle to/from fullscreen display
+
     void            UpdateFPSLimit();                   ///< polls options database to find if FPS should be limited, and if so, to what rate
 
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost

@@ -9,6 +9,7 @@
 #include "../../UI/CUIControls.h"
 #include "../../UI/CUIStyle.h"
 #include "../../UI/MapWnd.h"
+#include "../../UI/Hotkeys.h"
 #include "../../UI/IntroScreen.h"
 #include "../../UI/GalaxySetupWnd.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
@@ -105,6 +106,10 @@ namespace {
         db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     CENTRE, OrValidator<int>( RangedValidator<int>(-10240, 10240),
                                                                                                                      DiscreteValidator<int>(CENTRE) ));
         db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      50,     RangedValidator<int>(-10240, 10240));
+
+        Hotkey::AddHotkey("exit", UserStringNop("HOTKEY_EXIT"), GG::GGK_UNKNOWN, GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("quit", UserStringNop("HOTKEY_QUIT"), GG::GGK_UNKNOWN, GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("fullscreen", UserStringNop("HOTKEY_FULLSCREEN"), GG::GGK_RETURN, GG::MOD_KEY_ALT);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -255,12 +260,25 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
         this->SetKeyMap(key_map);
     }
 
+    ConnectKeyboardAcceleratorSignals();
+
     InitAutoTurns(GetOptionsDB().Get<int>("auto-advance-n-turns"));
 
     if (fake_mode_change && !FramebuffersAvailable()) {
         ErrorLogger() << "Requested fake mode changes, but the framebuffer opengl extension is not available. Ignoring.";
     }
     m_fsm->initiate();
+}
+
+void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
+    // Add global hotkeys
+    HotkeyManager *hkm = HotkeyManager::GetManager();
+
+    hkm->Connect(boost::bind(&HumanClientApp::ExitGame, this), "exit");
+    hkm->Connect(boost::bind(&HumanClientApp::QuitGame, this), "quit");
+    hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "fullscreen");
+
+    hkm->RebuildShortcuts();
 }
 
 HumanClientApp::~HumanClientApp() {
@@ -842,6 +860,25 @@ void HumanClientApp::HandleFocusChange() {
 
     CancelDragDrop();
     ClearEventState();
+}
+
+bool HumanClientApp::QuitGame() {
+    EndGame();
+    return true;
+}
+
+bool HumanClientApp::ExitGame() {
+    QuitGame();
+    Exit(0);
+    // Not reached, but required for HotkeyManager::Connect()
+    return true;
+}
+
+bool HumanClientApp::ToggleFullscreen() {
+    bool fs = GetOptionsDB().Get<bool>("fullscreen");
+    GetOptionsDB().Set<bool>("fullscreen", !fs);
+    Reinitialize();
+    return true;
 }
 
 void HumanClientApp::StartGame() {

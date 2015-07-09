@@ -11198,6 +11198,15 @@ Previous Control
 HOTKEY_FOCUS_NEXT_WND
 Next Control
 
+HOTKEY_EXIT
+Exit to desktop
+
+HOTKEY_QUIT
+Quit current game
+
+HOTKEY_FULLSCREEN
+Toggle fullscreen
+
 ################
 ## Name Lists ##
 ################
