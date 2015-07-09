@@ -657,7 +657,7 @@ GraphicalSummaryWnd::GraphicalSummaryWnd() :
     GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_sizer(0),
     m_options_bar(0)
-{ }
+{}
 
 GG::Pt GraphicalSummaryWnd::MinUsableSize() const {
     GG::Pt min_size(GG::X0, GG::Y0);
@@ -683,11 +683,8 @@ void GraphicalSummaryWnd::SetLog(int log_id)
 { MakeSummaries(log_id); }
 
 void GraphicalSummaryWnd::DoLayout() {
-    if (!m_sizer) {
-        ErrorLogger() << "GraphicalSummaryWnd::DoLayout() called before "
-                         "creating m_sizer.";
+    if (!m_sizer || !m_options_bar)
         return;
-    }
 
     GG::Pt ul(GG::X0, SIDE_BOX_MARGIN);
 
