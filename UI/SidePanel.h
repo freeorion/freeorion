@@ -87,6 +87,9 @@ public:
       * focus is changed */
     static boost::signals2::signal<void ()>       ResourceCenterChangedSignal;
 
+    /** emitted when a planet is left double clicked*/
+    static boost::signals2::signal<void (int)>    PlanetDoubleClickedSignal;
+
     /** emitted when a planet is right clicked */
     static boost::signals2::signal<void (int)>    PlanetRightClickedSignal;
 

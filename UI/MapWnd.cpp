@@ -1103,6 +1103,7 @@ MapWnd::MapWnd() :
 
     GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem,          this);
     GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet,          this);
+    GG::Connect(SidePanel::PlanetDoubleClickedSignal,       &MapWnd::PlanetDoubleClicked,   this);
     GG::Connect(SidePanel::PlanetRightClickedSignal,        &MapWnd::PlanetRightClicked,    this);
     GG::Connect(SidePanel::BuildingRightClickedSignal,      &MapWnd::BuildingRightClicked,  this);
 
@@ -4149,6 +4150,24 @@ void MapWnd::MouseEnteringSystem(int system_id, GG::Flags< GG::ModKey > mod_keys
 
 void MapWnd::MouseLeavingSystem(int system_id)
 { MouseEnteringSystem(INVALID_OBJECT_ID, GG::Flags<GG::ModKey>()); }
+
+void MapWnd::PlanetDoubleClicked(int planet_id) {
+    if (planet_id == INVALID_OBJECT_ID)
+        return;
+
+    // retrieve system_id from planet_id
+    TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
+    if (!planet)
+        return;
+
+    // open production screen
+    if (!m_in_production_view_mode) {
+        if (!m_production_wnd->Visible())
+            ToggleProduction();
+        CenterOnObject(planet->SystemID());
+        m_production_wnd->SelectSystem(planet->SystemID());
+    }
+}
 
 void MapWnd::PlanetRightClicked(int planet_id) {
     if (planet_id == INVALID_OBJECT_ID)
