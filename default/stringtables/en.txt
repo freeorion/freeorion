@@ -8359,19 +8359,19 @@ DEF_GARRISON_2
 Planetary Garrison 2
 
 DEF_GARRISON_2_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 12, and causes troops to regenerate by an additional one per turn.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population, and causes troops to regenerate by an additional one per turn.
 
 DEF_GARRISON_3
 Planetary Garrison 3
 
 DEF_GARRISON_3_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 20, and causes troops to regenerate by an additional two per turn in addition to that from [[DEF_GARRISON_2]].
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 10, and causes troops to regenerate by an additional two per turn in addition to that from [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
 Planetary Garrison 4
 
 DEF_GARRISON_4_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 30, and causes troops to regenerate by an additional three per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.2 per population, and causes troops to regenerate by an additional three per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
