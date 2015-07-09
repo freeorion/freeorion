@@ -4,11 +4,13 @@
 
 #include <GG/GGFwd.h>
 #include <GG/Wnd.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 class AccordionPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     AccordionPanel(GG::X w);
+    virtual ~AccordionPanel();
     //@}
 
     /** \name Mutators */ //@{
@@ -20,12 +22,13 @@ public:
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
 
 protected:
-    /** \name Mutators */ //@{
-    void SetCollapsed(bool collapsed);
-    virtual void DoLayout();
-    //@}
+    GG::GL2DVertexBuffer    m_border_buffer;
 
-    GG::Button*                     m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    void            SetCollapsed(bool collapsed);
+    virtual void    DoLayout();
+    virtual void    InitBuffer();
+
+    GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 };
 
 #endif
