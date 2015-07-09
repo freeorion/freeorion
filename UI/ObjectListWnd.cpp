@@ -15,6 +15,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/Suitability.h"
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
 #include "../universe/Field.h"
