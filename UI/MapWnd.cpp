@@ -4865,9 +4865,9 @@ void MapWnd::ShowMessages() {
     GG::GUI* gui = GG::GUI::GetGUI();
     if (!gui)
         return;
-    gui->Register(msg_wnd); // GG comment for Register says re-registering same Wnd twice is a no-op.
     msg_wnd->Show();
     msg_wnd->OpenForInput();
+    gui->MoveUp(msg_wnd);
 
     // indicate selection on button
     m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
@@ -4880,10 +4880,8 @@ bool MapWnd::OpenMessages() {
 }
 
 void MapWnd::HideMessages() {
-    if (ClientUI* cui = ClientUI::GetClientUI()) {
-        HumanClientApp::GetApp()->Remove(cui->GetMessageWnd());
+    if (ClientUI* cui = ClientUI::GetClientUI())
         cui->GetMessageWnd()->Hide();
-    }
     m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
     m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
 }
@@ -4917,8 +4915,8 @@ void MapWnd::ShowEmpires() {
     GG::GUI* gui = GG::GUI::GetGUI();
     if (!gui)
         return;
-    gui->Register(plr_wnd); // GG comment for Register says re-registering same Wnd twice is a no-op.
     plr_wnd->Show();
+    gui->MoveUp(plr_wnd);
 
     // indicate selection on button
     m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
@@ -4926,10 +4924,8 @@ void MapWnd::ShowEmpires() {
 }
 
 void MapWnd::HideEmpires() {
-    if (ClientUI* cui = ClientUI::GetClientUI()) {
-        HumanClientApp::GetApp()->Remove(cui->GetPlayerListWnd());
+    if (ClientUI* cui = ClientUI::GetClientUI())
         cui->GetPlayerListWnd()->Hide();
-    }
     m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
     m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
 }

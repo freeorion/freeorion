@@ -531,7 +531,13 @@ ClientUI::ClientUI() :
     GG::X panel_width = GG::X(GetOptionsDB().Get<int>("UI.chat-panel-width"));
 
     m_message_wnd =             new MessageWnd(GG::X0,                       GG::GUI::GetGUI()->AppHeight() - panel_height, panel_width,             panel_height);
+    GG::GUI::GetGUI()->Register(m_message_wnd);
+    m_message_wnd->Hide();
+
     m_player_list_wnd =         new PlayerListWnd(m_message_wnd->Right(),    GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT, PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
+    GG::GUI::GetGUI()->Register(m_player_list_wnd);
+    m_player_list_wnd->Hide();
+
     m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
