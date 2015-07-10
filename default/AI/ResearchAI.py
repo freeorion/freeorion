@@ -468,6 +468,9 @@ def generate_research_orders():
             continue
         old_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(consider_fleet_count=False)
         new_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(additional_hulls=unlocked_hulls, additional_parts=unlocked_parts, consider_fleet_count=False)
+        if not (old_designs and new_designs):
+            # AI is likely defeated; don't bother with logging error message
+            continue
         old_rating, old_pid, old_design_id, old_cost = old_designs[0]
         old_design = fo.getShipDesign(old_design_id)
         new_rating, new_pid, new_design_id, new_cost = new_designs[0]
