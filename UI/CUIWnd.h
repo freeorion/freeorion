@@ -86,7 +86,12 @@ extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
 class CUIWnd : public GG::Wnd {
 public:
     //! \name Structors //@{
-    CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE, const std::string& config_name = ""); //!< Constructs the window to be a CUI window. Specifying \a config_name causes the window to save its position and other properties to the OptionsDB under that name, provided that the name has been registered using CUIWnd::AddWindowOptions().
+    CUIWnd(const std::string& t,
+           GG::X x, GG::Y y,
+           GG::X w, GG::Y h,
+           GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
+           const std::string& config_name = "",
+           bool visible = true); //!< Constructs the window to be a CUI window. Specifying \a config_name causes the window to save its position and other properties to the OptionsDB under that name, if no other windows are currently using that name.
     virtual ~CUIWnd();  //!< Destructor
     //@}
 

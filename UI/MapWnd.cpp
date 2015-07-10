@@ -1153,8 +1153,10 @@ MapWnd::MapWnd() :
                                      SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
                                      SITREP_WND_NAME);
     GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::ToggleSitRep, this));   // Wnd is manually closed by user
-    GG::GUI::GetGUI()->Register(m_sitrep_panel);
-    m_sitrep_panel->Hide(); // TODO: remember visibility but only show these windows with the map screen active... possibly, register/unregister instead of show/hide? check for registration instead of Visible() in the CUIWnd code?
+    if (m_sitrep_panel->Visible()) {
+        m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
+        m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
+    }
 
     // encyclopedia panel
     m_pedia_panel = new EncyclopediaDetailPanel(m_sitrep_panel->Left(), m_sitrep_panel->Bottom(),
@@ -1162,8 +1164,10 @@ MapWnd::MapWnd() :
                                                 GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
                                                 MAP_PEDIA_WND_NAME);
     GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::TogglePedia, this));     // Wnd is manually closed by user
-    GG::GUI::GetGUI()->Register(m_pedia_panel);
-    m_pedia_panel->Hide();
+    if (m_pedia_panel->Visible()) {
+        m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
+        m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
+    }
 
     // objects list
     m_object_list_wnd = new ObjectListWnd(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN),
@@ -1171,16 +1175,20 @@ MapWnd::MapWnd() :
                                           OBJECT_WND_NAME);
     GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::ToggleObjects, this));   // Wnd is manually closed by user
     GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
-    GG::GUI::GetGUI()->Register(m_object_list_wnd);
-    m_object_list_wnd->Hide();
+    if (m_object_list_wnd->Visible()) {
+        m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
+        m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
+    }
 
     // moderator actions
     m_moderator_wnd = new ModeratorActionsWnd(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN),
                                               SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
                                               MODERATOR_WND_NAME);
     GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
-    GG::GUI::GetGUI()->Register(m_moderator_wnd);
-    m_moderator_wnd->Hide();
+    if (m_moderator_wnd->Visible()) {
+        m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
+        m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
+    }
 
     // Combat report
     // These values were formerly in UI/CombatReport/CombatReportWnd.cpp
@@ -1254,6 +1262,7 @@ MapWnd::~MapWnd() {
     delete m_zoom_slider;
     delete m_sitrep_panel;
     delete m_object_list_wnd;
+    delete m_moderator_wnd;
     delete m_pedia_panel;
     delete m_research_wnd;
     delete m_production_wnd;
@@ -2055,6 +2064,35 @@ void MapWnd::RenderVisibilityRadii() {
     glPopClientAttrib();
 }
 
+void MapWnd::RegisterWindows() {
+    // TODO: move these wnds into a GG::Wnd and call parent_wnd->Show(false) to
+    //       hide all windows instead of unregistering them all.
+    // Actually register these CUIWnds so that the Visible() ones are rendered.
+    if (HumanClientApp* app = HumanClientApp::GetApp()) {
+        app->Register(m_sitrep_panel);
+        app->Register(m_object_list_wnd);
+        app->Register(m_pedia_panel);
+        app->Register(m_side_panel);
+        app->Register(m_combat_report_wnd);
+        app->Register(m_moderator_wnd);
+        // message and player list wnds are managed by the HumanClientFSM
+    }
+}
+
+void MapWnd::RemoveWindows() {
+    // Hide windows by unregistering them which works regardless of their
+    // m_visible attribute.
+    if (HumanClientApp* app = HumanClientApp::GetApp()) {
+        app->Remove(m_sitrep_panel);
+        app->Remove(m_object_list_wnd);
+        app->Remove(m_pedia_panel);
+        app->Remove(m_side_panel);
+        app->Remove(m_combat_report_wnd);
+        app->Remove(m_moderator_wnd);
+        // message and player list wnds are managed by the HumanClientFSM
+    }
+}
+
 void MapWnd::LButtonDown(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 { m_drag_offset = pt - ClientUpperLeft(); }
 
@@ -2249,10 +2287,21 @@ void MapWnd::InitTurn() {
             ShowSitRep();
     }
 
+    if (m_sitrep_panel->Visible()) {
+        // Ensure that the panel is at least updated if it's visible because it
+        // can now set itself to be visible (from the config) before a game is
+        // loaded, and it can be visible while the production/research/design
+        // windows are open.
+        m_sitrep_panel->Update();
+    }
+
     m_combat_report_wnd->Hide();
 
     if (m_object_list_wnd->Visible())
         m_object_list_wnd->Refresh();
+
+    m_moderator_wnd->Refresh();
+    m_pedia_panel->Refresh();
 
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
@@ -2347,9 +2396,6 @@ void MapWnd::InitTurn() {
         m_btn_auto_turn->Disable(false);
         m_btn_auto_turn->Show();
     }
-
-    m_moderator_wnd->Refresh();
-    m_pedia_panel->Refresh();
 }
 
 void MapWnd::MidTurnUpdate() {
@@ -4597,10 +4643,6 @@ void MapWnd::Cleanup() {
     HideResearch();
     HideProduction();
     HideDesign();
-    HideSitRep();
-    HidePedia();
-    HideObjects();
-    HideModeratorActions();
     m_pedia_panel->ClearItems();    // deletes all pedia items in the memory
     m_toolbar->Hide();
     m_FPS->Hide();

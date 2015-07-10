@@ -475,7 +475,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X default_x, GG::Y default_
     CUIWnd("",
            default_x, default_y, default_w, default_h,
            flags,
-           config_name),
+           config_name, false),
     m_name_text(0),
     m_cost_text(0),
     m_summary_text(0),

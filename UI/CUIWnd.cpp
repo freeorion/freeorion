@@ -134,7 +134,12 @@ const int CUIWnd::TITLE_OFFSET = 3;
 const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 7;
 const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 3;
 
-CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
+CUIWnd::CUIWnd(const std::string& t,
+               GG::X x, GG::Y y,
+               GG::X w, GG::Y h,
+               GG::Flags<GG::WndFlag> flags,
+               const std::string& config_name,
+               bool visible) :
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
@@ -156,7 +161,7 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     SetChildClippingMode(ClipToClientAndWindowSeparately);
     if (!m_config_name.empty()) {
         // Register the options under this name and load any already in the DB.
-        AddWindowOptions(x, y, w, h, true, false, false);
+        AddWindowOptions(x, y, w, h, visible, false, false);
         // Call AFTER buttons are initialized but before SetMinSize().
         LoadOptions();
     }

@@ -181,7 +181,7 @@ CombatReportWnd::CombatReportWnd(GG::X default_x, GG::Y default_y,
     CUIWnd(UserString("COMBAT_REPORT_TITLE"),
            default_x, default_y, default_w, default_h,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE,
-           config_name),
+           config_name, false),
     m_impl(0)
 { m_impl.reset(new CombatReportPrivate(*this)); }
 

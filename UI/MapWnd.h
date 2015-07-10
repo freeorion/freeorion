@@ -102,6 +102,9 @@ public:
 
     void            DoLayout();
 
+    void            RegisterWindows();                                      //!< registers owned wnds with the GUI (also registers message & player list wnds)
+    void            RemoveWindows();                                        //!< removes owned wnds from the GUI (also removes message & player list wnds)
+
     void            EnableOrderIssuing(bool enable = true);                 //!< enables or disables order issuing and pressing the turn button.
 
     void            InitTurn();                                             //!< called at the start of each turn

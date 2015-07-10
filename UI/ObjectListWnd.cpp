@@ -2214,7 +2214,7 @@ ObjectListWnd::ObjectListWnd(GG::X default_x, GG::Y default_y,
     CUIWnd(UserString("MAP_BTN_OBJECTS"),
            default_x, default_y, default_w, default_h,
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
-           config_name),
+           config_name, false),
     m_list_box(0),
     m_filter_button(0),
     m_collapse_button(0)
