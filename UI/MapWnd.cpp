@@ -4757,8 +4757,13 @@ void MapWnd::ShowModeratorActions() {
     HideProduction();
     HideDesign();
 
+    // update moderator window
     m_moderator_wnd->Refresh();
+
+    // show the moderator window
     m_moderator_wnd->Show();
+    GG::GUI::GetGUI()->MoveUp(m_moderator_wnd);
+
     m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
     m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
 }
@@ -4790,6 +4795,7 @@ void MapWnd::ShowObjects() {
 
     // show the objects window
     m_object_list_wnd->Show();
+    GG::GUI::GetGUI()->MoveUp(m_object_list_wnd);
 
     // indicate selection on button
     m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
@@ -4823,6 +4829,7 @@ void MapWnd::ShowSitRep() {
 
     // show the sitrep window
     m_sitrep_panel->Show();
+    GG::GUI::GetGUI()->MoveUp(m_sitrep_panel);
 
     // indicate selection on button
     m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
@@ -4951,8 +4958,12 @@ void MapWnd::ShowPedia() {
 
     if (m_pedia_panel->GetItemsSize() == 0)
         m_pedia_panel->SetIndex();
-    m_pedia_panel->Show();
+
+    // update pedia window
     m_pedia_panel->Refresh();
+
+    // show the pedia window
+    m_pedia_panel->Show();
     GG::GUI::GetGUI()->MoveUp(m_pedia_panel);
 
     // indicate selection on button
