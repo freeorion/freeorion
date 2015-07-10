@@ -20,9 +20,11 @@ namespace {
 ////////////////////////////////////////////////
 // ModeratorActionsWnd
 ////////////////////////////////////////////////
-ModeratorActionsWnd::ModeratorActionsWnd(GG::X default_w, GG::Y default_h, const std::string& config_name) :
+ModeratorActionsWnd::ModeratorActionsWnd(GG::X default_x, GG::Y default_y,
+                                         GG::X default_w, GG::Y default_h,
+                                         const std::string& config_name) :
     CUIWnd(UserString("MODERATOR"),
-           GG::X1, GG::Y1, default_w - 1, default_h - 1,
+           default_x, default_y, default_w, default_h,
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name),
     m_actions_enabled(true),

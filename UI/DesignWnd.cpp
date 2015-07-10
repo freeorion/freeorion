@@ -3080,9 +3080,11 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Y part_palette_top = detail_top;
     GG::Y main_height = ClientHeight() - main_top;
 
-    m_detail_panel = new EncyclopediaDetailPanel(detail_width, detail_height, DES_PEDIA_WND_NAME, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
+    m_detail_panel = new EncyclopediaDetailPanel(most_panels_left, detail_top,
+                                                 detail_width, detail_height,
+                                                 GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE,
+                                                 DES_PEDIA_WND_NAME);
     AttachChild(m_detail_panel);
-    m_detail_panel->MoveTo(GG::Pt(most_panels_left, detail_top));
 
     m_main_panel = new MainPanel(most_panels_width, main_height);
     AttachChild(m_main_panel);

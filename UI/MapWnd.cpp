@@ -1102,6 +1102,30 @@ MapWnd::MapWnd() :
 
 
     ///////////////////
+    // Misc widgets on map screen
+    ///////////////////
+
+    // scale line
+    m_scale_line = new MapScaleLine(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + m_toolbar->Height(),
+                                    SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
+    GG::GUI::GetGUI()->Register(m_scale_line);
+    int sel_system_id = SidePanel::SystemID();
+    m_scale_line->Update(ZoomFactor(), m_selected_fleet_ids, sel_system_id);
+    m_scale_line->Hide();
+
+    // Zoom slider
+    const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
+              ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
+    m_zoom_slider = new CUISlider<double>(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
+    m_zoom_slider->MoveTo(GG::Pt(m_btn_turn->Left(), m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
+    m_zoom_slider->Resize(GG::Pt(GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT));
+    m_zoom_slider->SlideTo(m_zoom_steps_in);
+    GG::GUI::GetGUI()->Register(m_zoom_slider);
+    m_zoom_slider->Hide();
+    GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);
+    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"),   &MapWnd::RefreshSliders, this);
+
+    ///////////////////
     // Map sub-windows
     ///////////////////
 
@@ -1125,37 +1149,49 @@ MapWnd::MapWnd() :
     GG::Connect(SidePanel::ResourceCenterChangedSignal,     &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);
 
     // situation report window
-    m_sitrep_panel = new SitRepPanel(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom(), SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT, SITREP_WND_NAME);
+    m_sitrep_panel = new SitRepPanel(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom(),
+                                     SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
+                                     SITREP_WND_NAME);
     GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::ToggleSitRep, this));   // Wnd is manually closed by user
     GG::GUI::GetGUI()->Register(m_sitrep_panel);
     m_sitrep_panel->Hide(); // TODO: remember visibility but only show these windows with the map screen active... possibly, register/unregister instead of show/hide? check for registration instead of Visible() in the CUIWnd code?
 
     // encyclopedia panel
-    m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT, MAP_PEDIA_WND_NAME);
+    m_pedia_panel = new EncyclopediaDetailPanel(m_sitrep_panel->Left(), m_sitrep_panel->Bottom(),
+                                                SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
+                                                GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
+                                                MAP_PEDIA_WND_NAME);
     GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::TogglePedia, this));     // Wnd is manually closed by user
     GG::GUI::GetGUI()->Register(m_pedia_panel);
-    //m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->Left(), m_sitrep_panel->Bottom())); // this is where it goes in Sanitize(), specify x,y in constructor to add these values as defaults.
     m_pedia_panel->Hide();
 
     // objects list
-    m_object_list_wnd = new ObjectListWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT, OBJECT_WND_NAME);
+    m_object_list_wnd = new ObjectListWnd(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN),
+                                          SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
+                                          OBJECT_WND_NAME);
     GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::ToggleObjects, this));   // Wnd is manually closed by user
     GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
     GG::GUI::GetGUI()->Register(m_object_list_wnd);
-    //m_object_list_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN))); // this is where it goes in Sanitize(), specify x,y in constructor to add these values as defaults.
     m_object_list_wnd->Hide();
 
     // moderator actions
-    m_moderator_wnd = new ModeratorActionsWnd(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT, MODERATOR_WND_NAME);
+    m_moderator_wnd = new ModeratorActionsWnd(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN),
+                                              SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
+                                              MODERATOR_WND_NAME);
     GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
     GG::GUI::GetGUI()->Register(m_moderator_wnd);
-    //m_moderator_wnd->MoveTo(GG::Pt(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN))); // this is where it goes in Sanitize(), specify x,y in constructor to add these values as defaults.
     m_moderator_wnd->Hide();
 
     // Combat report
-    m_combat_report_wnd = new CombatReportWnd(COMBAT_REPORT_WND_NAME);
+    // These values were formerly in UI/CombatReport/CombatReportWnd.cpp
+    const GG::X COMBAT_LOG_LEFT   = GG::X(150);
+    const GG::Y COMBAT_LOG_TOP    = GG::Y(50);
+    const GG::X COMBAT_LOG_WIDTH  = GG::X(400);
+    const GG::Y COMBAT_LOG_HEIGHT = GG::Y(300);
+    m_combat_report_wnd = new CombatReportWnd(COMBAT_LOG_LEFT, COMBAT_LOG_TOP,
+                                              COMBAT_LOG_WIDTH, COMBAT_LOG_HEIGHT,
+                                              COMBAT_REPORT_WND_NAME);
     GG::GUI::GetGUI()->Register(m_combat_report_wnd);
-    // TODO: specify x,y,w,h in constructor to be consistent with other wnds.
     m_combat_report_wnd->Hide();
 
     // research window
@@ -1187,30 +1223,6 @@ MapWnd::MapWnd() :
         if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
             GG::Connect(plr_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleEmpires, this));     // Wnd is manually closed by user
     }
-
-    ///////////////////
-    // Misc other stuff on map screen
-    ///////////////////
-
-    // scale line
-    m_scale_line = new MapScaleLine(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + m_toolbar->Height(),
-                                    SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
-    GG::GUI::GetGUI()->Register(m_scale_line);
-    int sel_system_id = SidePanel::SystemID();
-    m_scale_line->Update(ZoomFactor(), m_selected_fleet_ids, sel_system_id);
-    m_scale_line->Hide();
-
-    // Zoom slider
-    const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
-              ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
-    m_zoom_slider = new CUISlider<double>(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
-    m_zoom_slider->MoveTo(GG::Pt(m_btn_turn->Left(), m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN)));
-    m_zoom_slider->Resize(GG::Pt(GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT));
-    m_zoom_slider->SlideTo(m_zoom_steps_in);
-    GG::GUI::GetGUI()->Register(m_zoom_slider);
-    m_zoom_slider->Hide();
-    GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);
-    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"),   &MapWnd::RefreshSliders, this);
 
 
 

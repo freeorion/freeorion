@@ -1647,7 +1647,10 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::X ENC_WIDTH(480);
     GG::Y ENC_HEIGHT(240);
 
-    m_enc_detail_panel = new EncyclopediaDetailPanel(ENC_WIDTH, ENC_HEIGHT, RES_PEDIA_WND_NAME, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
+    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::X0, GG::Y0,
+                                                     ENC_WIDTH, ENC_HEIGHT,
+                                                     GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE,
+                                                     RES_PEDIA_WND_NAME);
     AttachChild(m_enc_detail_panel);
 
     m_tech_tree_controls = new TechTreeControls(GG::X1, GG::Y1, m_layout_panel->Width() - ClientUI::ScrollWidth());
