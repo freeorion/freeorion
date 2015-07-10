@@ -103,6 +103,62 @@ namespace {
     }
 }
 
+void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, GG::Pt& ul, const GG::Pt& lr,
+                                  double theta1, double theta2, bool filled_shape)
+{
+    int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
+    double center_x = Value(ul.x + wd / 2.0);
+    double center_y = Value(ul.y + ht / 2.0);
+    double r = std::min(wd / 2.0, ht / 2.0);
+    const double PI = 3.141594;
+
+    // correct theta* values to range [0, 2pi)
+    if (theta1 < 0)
+        theta1 += (int(-theta1 / (2 * PI)) + 1) * 2 * PI;
+    else if (theta1 >= 2 * PI)
+        theta1 -= int(theta1 / (2 * PI)) * 2 * PI;
+    if (theta2 < 0)
+        theta2 += (int(-theta2 / (2 * PI)) + 1) * 2 * PI;
+    else if (theta2 >= 2 * PI)
+        theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
+
+    const int      SLICES = std::min(std::max(12, 3 + std::max(wd, ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
+    const double   HORZ_THETA = (2 * PI) / SLICES;
+
+    static std::map<int, std::vector<double> > unit_circle_coords;
+    std::vector<double>& unit_vertices = unit_circle_coords[SLICES];
+    bool calc_vertices = unit_vertices.size() == 0;
+    if (calc_vertices) {
+        unit_vertices.resize(2 * (SLICES + 1), 0.0);
+        double theta = 0.0f;
+        for (int j = 0; j <= SLICES; theta += HORZ_THETA, ++j) { // calculate x,y values for each point on a unit circle divided into SLICES arcs
+            unit_vertices[j*2] = std::cos(-theta);
+            unit_vertices[j*2+1] = std::sin(-theta);
+        }
+    }
+    int first_slice_idx = int(theta1 / HORZ_THETA + 1);
+    int last_slice_idx = int(theta2 / HORZ_THETA - 1);
+    if (theta1 >= theta2)
+        last_slice_idx += SLICES;
+
+    if (filled_shape)
+        buffer.store(static_cast<GLfloat>(center_x),    static_cast<GLfloat>(center_y));
+
+    // point on circle at angle theta1
+    double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
+    buffer.store(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
+
+    // angles in between theta1 and theta2, if any
+    for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
+        int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
+        buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
+    }
+
+    // theta2
+    double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
+    buffer.store(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
+}
+
 void AdjustBrightness(GG::Clr& color, int amount, bool jointly_capped)
 {
     if (jointly_capped) {
@@ -253,6 +309,32 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
     glEnable(GL_TEXTURE_2D);
 }
 
+void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, GG::Pt& ul, const GG::Pt& lr,
+                                              int angle_offset, bool upper_left_angled,
+                                              bool lower_right_angled, bool connect_bottom_line)
+{
+    // these are listed in CCW order
+    if (connect_bottom_line)
+        buffer.store(Value(ul.x),                   Value(lr.y));
+
+    if (lower_right_angled) {
+        buffer.store(Value(lr.x) - angle_offset,    Value(lr.y));
+        buffer.store(Value(lr.x),                   Value(lr.y) - angle_offset);
+    } else {
+        buffer.store(Value(lr.x),                   Value(lr.y));
+    }
+
+    buffer.store(Value(lr.x),                   Value(ul.y));
+
+    if (upper_left_angled) {
+        buffer.store(0.0);
+    } else {
+        buffer.store(Value(ul.x),                   Value(ul.y));
+    }
+
+    buffer.store(Value(ul.x),                   Value(lr.y));
+}
+
 bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset, 
                         bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/)
 {
@@ -338,7 +420,8 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
     glEnd();
 }
 
-void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round, bool fill)
+void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round,
+                       bool ll_round, bool lr_round, bool fill)
 {
     const double PI = 3.141594;
     if (fill) {
@@ -417,3 +500,34 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_r
         glEnd();
     }
 }
+
+void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
+                                          int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round)
+{
+    const double PI = 3.141594;
+
+    buffer.store(Value(lr.x), Value(ul.y) + radius);
+
+    if (ur_round)
+        BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, false);
+    else
+        buffer.store(Value(lr.x), Value(ul.y));
+
+    if (ul_round)
+        BufferStoreCircleArcVertices(buffer, ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, false);
+    else
+        buffer.store(Value(ul.x), Value(ul.y));
+
+    if (ll_round)
+        BufferStoreCircleArcVertices(buffer, GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, false);
+    else
+        buffer.store(Value(ul.x), Value(lr.y));
+
+    if (lr_round)
+        BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, false);
+    else
+        buffer.store(Value(lr.x), Value(lr.y));
+
+    buffer.store(Value(lr.x), Value(ul.y) + radius);
+}
+

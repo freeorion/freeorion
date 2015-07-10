@@ -4,6 +4,7 @@
 
 #include <GG/Clr.h>
 #include <GG/PtRect.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 /** adjusts the intensity of the color up or down by \a amount units per color channel; leaves alpha unchanged 
   * if \a jointly_capped is true then, if the original \a amount would out any of the rgb channel values above 255, 
@@ -18,10 +19,17 @@ void AdjustBrightness(GG::Clr& color, double amount, bool jointly_capped=false);
 /** returns fully opaque (max alpha channel) version of the color */
 GG::Clr OpaqueColor(const GG::Clr& color);
 
-/** renders a rectangle whose upper left and lower right corners are angled.  If \a upper_left_angled == false, 
-    the upper left corner is drawn as a normal corner */
+/** Using immediate GL calls, renders a rectangle whose upper left and lower
+  * right corners are angled.  If \a upper_left_angled == false, the upper left
+  * corner is drawn as a normal corner */
 void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG::Clr border, int angle_offset, int thick,
                            bool upper_left_angled = true, bool lower_right_angled = true, bool draw_bottom = true);
+
+/** Stores, in \a buffer verticies in CCW order that outline a rectangle
+  * with upper left and lower right corners are angled. */
+void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, GG::Pt& ul, const GG::Pt& lr,
+                                              int angle_offset, bool upper_left_angled = true,
+                                              bool lower_right_angled = true, bool connect_bottom_line = true);
 
 /** returns true iff \a pt falls within \a rect, with the missing bits of the angled corners not catching the point. 
     If \a upper_left_angled == false, the upper left corner is treated as a normal corner. */
@@ -49,9 +57,22 @@ bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, S
     or an unfilled portion when \a filled_shape is false. (glBegin(GL_LINE_STRIP); glVertex2f() ...; glEnd();). */
 void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape);
 
-/** Draws a rectangle whose corners are rounded with radius \a radius as indicated by the \a *_round parameters.  If \a
-    fill is true, the resulting rectangle is solid; it is drawn in outline otherwise. */
-void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round, bool fill);
+/** Stores, in \a buffer verticies in CCW order that outline a circular arc
+  * or pie slice shape. */
+void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
+                                  double theta1, double theta2, bool filled_shape);
+
+/** Draws a rectangle whose corners are rounded with radius \a radius as
+  * indicated by the \a *_round parameters.  If \a fill is true, the resulting
+  * rectangle is solid; it is drawn in outline otherwise. */
+void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round,
+                       bool ul_round, bool ll_round, bool lr_round, bool fill);
+
+/** Stores, in \a buffer verticies in CCW order that outline rectangle with
+  * corners rounded with radius \a radrius as determined by the \a *_round
+  * parameters. */
+void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
+                                          int radius, bool ur_round, bool ul_round, bool ll_round, bool lr_round);
 
 #endif // _CUIDrawUtil_h_
 
