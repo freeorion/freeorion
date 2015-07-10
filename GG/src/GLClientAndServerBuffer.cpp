@@ -14,20 +14,16 @@ namespace GG {
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GLBufferBase
 ///////////////////////////////////////////////////////////////////////////
-
 GLBufferBase::GLBufferBase() :
-b_name(0)
+    b_name(0)
 {}
 
 GLBufferBase::~GLBufferBase()
-{
-    dropServerBuffer();
-}
+{ dropServerBuffer(); }
 
 void GLBufferBase::dropServerBuffer()
 {
-    if (b_name) 
-    {
+    if (b_name) {
         glDeleteBuffers(1, &b_name);
         b_name = 0;
     }
@@ -36,9 +32,8 @@ void GLBufferBase::dropServerBuffer()
 void GLBufferBase::harmonizeBufferType(GLBufferBase& other)
 {
     if (b_name && other.b_name) return; // OK, both have server buffer
-    
-    if (b_name || other.b_name)         // NOT OK, only one has server buffer, drop buffer
-    {
+
+    if (b_name || other.b_name) {       // NOT OK, only one has server buffer, drop buffer
         dropServerBuffer();
         other.dropServerBuffer();
     }
@@ -47,29 +42,26 @@ void GLBufferBase::harmonizeBufferType(GLBufferBase& other)
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GLClientAndServerBufferBase<vtype> template
 ///////////////////////////////////////////////////////////////////////////
-
-template <class vtype> 
+template <class vtype>
 GLClientAndServerBufferBase<vtype>::GLClientAndServerBufferBase(std::size_t elementsPerItem) :
-GLBufferBase(),
-b_data(),
-b_size(0),
-b_elementsPerItem(elementsPerItem)
+    GLBufferBase(),
+    b_data(),
+    b_size(0),
+    b_elementsPerItem(elementsPerItem)
 {}
 
-template <class vtype> 
+template <class vtype>
 std::size_t GLClientAndServerBufferBase<vtype>::size() const
-{
-    return b_size;
-}
+{ return b_size; }
 
-template <class vtype> 
+template <class vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item)
 {
     b_data.push_back(item);
     b_size=b_data.size() / b_elementsPerItem;
 }
 
-template <class vtype> 
+template <class vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2)
 {
     b_data.push_back(item1);
@@ -77,7 +69,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2)
     b_size=b_data.size() / b_elementsPerItem;
 }
 
-template <class vtype> 
+template <class vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2,vtype item3)
 {
     b_data.push_back(item1);
@@ -96,7 +88,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2,vtype ite
     b_size=b_data.size() / b_elementsPerItem;
 }
 
-template <class vtype> 
+template <class vtype>
 void GLClientAndServerBufferBase<vtype>::createServerBuffer()
 {
     glGenBuffers(1, &b_name);
@@ -113,14 +105,13 @@ void GLClientAndServerBufferBase<vtype>::createServerBuffer()
 template <class vtype> void GLClientAndServerBufferBase<vtype>::clear()
 {
     dropServerBuffer();
-    b_size=0;
+    b_size = 0;
     b_data.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GLRGBAColorBuffer
 ///////////////////////////////////////////////////////////////////////////
-
 template class GLClientAndServerBufferBase<unsigned char>;
 
 GLRGBAColorBuffer::GLRGBAColorBuffer() :
@@ -128,9 +119,7 @@ GLClientAndServerBufferBase<unsigned char>(4)
 {}
 
 void GLRGBAColorBuffer::store(Clr color)
-{
-    GLClientAndServerBufferBase::store(color.r, color.g, color.b, color.a);
-}
+{ GLClientAndServerBufferBase::store(color.r, color.g, color.b, color.a); }
 
 void GLRGBAColorBuffer::activate() const
 {
@@ -146,11 +135,10 @@ void GLRGBAColorBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GL2DVertexBuffer
 ///////////////////////////////////////////////////////////////////////////
-
 template class GLClientAndServerBufferBase<float>;
 
 GL2DVertexBuffer::GL2DVertexBuffer () :
-GLClientAndServerBufferBase<float>(2)
+    GLClientAndServerBufferBase<float>(2)
 {}
 
 void GL2DVertexBuffer::activate() const
@@ -167,22 +155,17 @@ void GL2DVertexBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GLPtBuffer
 ///////////////////////////////////////////////////////////////////////////
-
 template class GLClientAndServerBufferBase<int>;
 
 GLPtBuffer::GLPtBuffer () :
-GLClientAndServerBufferBase<int>(2)
+    GLClientAndServerBufferBase<int>(2)
 {}
 
 void GLPtBuffer::store(Pt pt)
-{
-    store(pt.x, pt.y);
-}
+{ store(pt.x, pt.y); }
 
 void GLPtBuffer::store(X x, Y y)
-{
-    GLClientAndServerBufferBase::store(Value(x), Value(y));
-}
+{ GLClientAndServerBufferBase::store(Value(x), Value(y)); }
 
 void GLPtBuffer::activate() const
 {
@@ -198,9 +181,8 @@ void GLPtBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GLTexCoordBuffer
 ///////////////////////////////////////////////////////////////////////////
-
 GLTexCoordBuffer::GLTexCoordBuffer () :
-GLClientAndServerBufferBase<float>(2)
+    GLClientAndServerBufferBase<float>(2)
 {}
 
 void GLTexCoordBuffer::activate() const

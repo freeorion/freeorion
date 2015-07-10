@@ -11,31 +11,28 @@ namespace GG {
 ///////////////////////////////////////////////////////////////////////////
 // GLBufferBase common base class for Buffer classes
 ///////////////////////////////////////////////////////////////////////////
-
 class GG_API GLBufferBase
 {
 public:
     GLBufferBase();             // ctor
     virtual ~GLBufferBase();    // dtor,    required to automatically drop  
                                 //          server buffer in case of delete
-    
+
     // use this if you want to make sure that two buffers both 
     // have server buffers or not, drops the buffer for mixed cases
     void harmonizeBufferType(GLBufferBase& other);
-    
+
 protected:
     // drops the server buffer if one exists
     void dropServerBuffer();
-    
 
     GLuint      b_name;
 };
 
 ///////////////////////////////////////////////////////////////////////////
-// GLClientAndServerBufferBase 
+// GLClientAndServerBufferBase
 // template class for buffers with different types of content
 ///////////////////////////////////////////////////////////////////////////
-
 template <class vtype> 
 class GG_API GLClientAndServerBufferBase : public GLBufferBase
 {
@@ -62,9 +59,9 @@ public:
     void clear();
 
 protected:
-    std::vector<vtype> b_data;
-    std::size_t b_size;
-    std::size_t b_elementsPerItem;
+    std::vector<vtype>  b_data;
+    std::size_t         b_size;
+    std::size_t         b_elementsPerItem;
 
     // used in derived classes to activate the buffer
     // implementations should use glBindBuffer, gl...Pointer if
@@ -75,7 +72,6 @@ protected:
 ///////////////////////////////////////////////////////////////////////////
 // GLRGBAColorBuffer specialized class for RGBA color values
 ///////////////////////////////////////////////////////////////////////////
-
 class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<unsigned char>
 {
 public:
@@ -87,7 +83,6 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 // GL2DVertexBuffer specialized class for 2d vertex data
 ///////////////////////////////////////////////////////////////////////////
-
 class GG_API GL2DVertexBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
@@ -98,7 +93,6 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 // GLPtBuffer specialized class for int 2d vertex data
 ///////////////////////////////////////////////////////////////////////////
-
 class GG_API GLPtBuffer : public GLClientAndServerBufferBase<int>
 {
 public:
@@ -111,7 +105,6 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 // GLTexCoordBuffer specialized class for texture coordinate data
 ///////////////////////////////////////////////////////////////////////////
-
 class GG_API GLTexCoordBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
