@@ -62,6 +62,11 @@ add_library(GiGi
     dialogs/ColorDlg.cpp
     dialogs/FileDlg.cpp
     dialogs/ThreeButtonDlg.cpp
+
+    RichText/RichText.cpp
+    RichText/TagParser.cpp
+    RichText/TextBlock.cpp
+    RichText/BlockControl.cpp
 )
 
 if (USE_STATIC_LIBS)

@@ -39,6 +39,7 @@ namespace GG {
     class TabWnd;
     class Texture;
     class TextControl;
+    class RichText;
     struct Clr;
 
     typedef TextControl Label;
