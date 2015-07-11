@@ -161,9 +161,9 @@ def generateOrders():  # pylint: disable=invalid-name
 
     turn_timer.start("AI planning")
     empire = fo.getEmpire()
-    # set the random seed (based on galaxy seed, empire ID and current turn)
-    # for game-reload consistency 
-    random_seed = str(fo.getGalaxySetupData().seed) + "%03d%05d" % (fo.empireID(), turn)
+    # set the random seed (based on galaxy seed, empire name and current turn)
+    # for game-reload consistency.
+    random_seed = str(fo.getGalaxySetupData().seed) + "%05d%s" % (turn, fo.getEmpire().name)
     random.seed(random_seed)
     aggression_name = fo.aggression.values[foAIstate.aggression].name
     if turn == 1:
