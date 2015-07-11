@@ -76,13 +76,15 @@ class FO_COMMON_API Effect::EffectsGroup {
 public:
     EffectsGroup(Condition::ConditionBase* scope, Condition::ConditionBase* activation,
                  const std::vector<EffectBase*>& effects, const std::string& accounting_label = "",
-                 const std::string& stacking_group = "", int priority = 0) :
+                 const std::string& stacking_group = "", int priority = 0,
+                 std::string description = "") :
         m_scope(scope),
         m_activation(activation),
         m_stacking_group(stacking_group),
         m_effects(effects),
         m_accounting_label(accounting_label),
-        m_priority(priority)
+        m_priority(priority),
+        m_description(description)
     {}
     virtual ~EffectsGroup();
 
@@ -105,6 +107,7 @@ public:
     Condition::ConditionBase* Scope() const               { return m_scope; }
     Condition::ConditionBase* Activation() const          { return m_activation; }
     const std::vector<EffectBase*>& EffectsList() const         { return m_effects; }
+    const std::string&              GetDescription() const;
     std::string                     DescriptionString() const;
     const std::string&              AccountingLabel() const     { return m_accounting_label; }
     int                             Priority() const      { return m_priority; }
@@ -119,6 +122,7 @@ protected:
     std::vector<EffectBase*>    m_effects;
     std::string                 m_accounting_label;
     int                         m_priority;
+    std::string                 m_description;
 
 private:
     friend class boost::serialization::access;
@@ -1025,7 +1029,8 @@ void Effect::EffectsGroup::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_scope)
         & BOOST_SERIALIZATION_NVP(m_activation)
         & BOOST_SERIALIZATION_NVP(m_stacking_group)
-        & BOOST_SERIALIZATION_NVP(m_effects);
+        & BOOST_SERIALIZATION_NVP(m_effects)
+        & BOOST_SERIALIZATION_NVP(m_description);
 }
 
 template <class Archive>

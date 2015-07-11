@@ -68,6 +68,7 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_f_type _f;
+            qi::_g_type _g;
             qi::_val_type _val;
             qi::lit_type lit;
             qi::eps_type eps;
@@ -77,6 +78,7 @@ namespace {
 
             effects_group
                 =   tok.EffectsGroup_
+                > -(parse::label(Description_token)      > tok.string [ _g = _1 ])
                 >   parse::label(Scope_token)            > parse::detail::condition_parser [ _a = _1 ]
                 > -(parse::label(Activation_token)       > parse::detail::condition_parser [ _b = _1 ])
                 > -(parse::label(StackingGroup_token)    > tok.string [ _c = _1 ])
@@ -87,7 +89,7 @@ namespace {
                             '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
                         |   parse::effect_parser() [ push_back(_d, _1) ]
                     )
-                    [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f) ]
+                    [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _e, _c, _f, _g) ]
                 ;
 
             start
@@ -113,7 +115,8 @@ namespace {
                 std::string,
                 std::vector<Effect::EffectBase*>,
                 std::string,
-                int
+                int,
+                std::string
             >,
             parse::skipper_type
         > effects_group_rule;

@@ -280,6 +280,9 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
     }
 }
 
+const std::string& EffectsGroup::GetDescription() const
+{ return m_description; }
+
 std::string EffectsGroup::DescriptionString() const {
     std::stringstream retval;
 
