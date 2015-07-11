@@ -40,6 +40,8 @@ namespace {
     const GG::X SPIN_WIDTH(65);
     const int LAYOUT_MARGIN = 5;
 
+    const std::string OPTIONS_WND_NAME = "options";
+
     const std::string STRINGTABLE_FILE_SUFFIX = ".txt";
     const std::string MUSIC_FILE_SUFFIX = ".ogg";
     const std::string SOUND_FILE_SUFFIX = ".ogg";
@@ -369,7 +371,8 @@ OptionsWnd::OptionsWnd():
     CUIWnd(UserString("OPTIONS_TITLE"),
            (GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
            (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
-           PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE),
+           PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
+           OPTIONS_WND_NAME),
     m_tabs(0),
     m_done_button(0)
 {

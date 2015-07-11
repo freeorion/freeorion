@@ -23,7 +23,9 @@ public:
     class PlanetPanel;
 
     /** \name Structors */ //@{
-    SidePanel(GG::X x, GG::Y y, GG::Y h);
+    SidePanel(GG::X default_x, GG::Y default_y,
+              GG::X default_w, GG::Y default_h,
+              const std::string& config_name);
     ~SidePanel();
     //@}
 

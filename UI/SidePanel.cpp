@@ -393,7 +393,6 @@ namespace {
 
     /** Adds options related to sidepanel to Options DB. */
     void        AddOptions(OptionsDB& db) {
-        db.Add("UI.sidepanel-width",                UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                384,    RangedValidator<int>(64, 512));
         db.Add("UI.sidepanel-planet-max-diameter",  UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),  128,    RangedValidator<int>(16, 512));
         db.Add("UI.sidepanel-planet-min-diameter",  UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),  24,     RangedValidator<int>(8,  128));
         db.Add("UI.sidepanel-planet-shown",         UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),         true,   Validator<bool>());
@@ -2591,9 +2590,14 @@ boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
 
-SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
-    CUIWnd("SidePanel", x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h,
-           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP),
+SidePanel::SidePanel(GG::X default_x, GG::Y default_y,
+                     GG::X default_w, GG::Y default_h,
+                     const std::string& config_name) :
+    CUIWnd("SidePanel",
+           default_x, default_y,
+           default_w, default_h,
+           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP,
+           config_name),
     m_system_name(0),
     m_star_type_text(0),
     m_button_prev(0),

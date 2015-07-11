@@ -445,7 +445,11 @@ private:
    when the end turn button is hit. */
 class MapWndPopup : public CUIWnd {
 public:
-    MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags);
+    MapWndPopup(const std::string& t,
+                GG::X default_x, GG::Y default_y,
+                GG::X default_w, GG::Y default_h,
+                GG::Flags<GG::WndFlag> flags,
+                const std::string& config_name = "");
     virtual ~MapWndPopup();
     void    CloseClicked();
     void    Close();

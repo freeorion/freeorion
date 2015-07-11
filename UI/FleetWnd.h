@@ -94,6 +94,7 @@ private:
 class FleetWnd : public MapWndPopup {
 public:
     /** \name Structors */ //@{
+    FleetWnd();
     ~FleetWnd(); ///< dtor
     //@}
 
@@ -118,9 +119,6 @@ public:
     void                    EnableOrderIssuing(bool enable = true);
     //@}
 
-    static const GG::Pt&    LastPosition();                     ///< returns the last position of the last FleetWnd that was closed
-    static const GG::Pt&    LastSize();                         ///< returns the last size ... ''
-
     mutable boost::signals2::signal<void ()>          SelectedFleetsChangedSignal;
     mutable boost::signals2::signal<void ()>          SelectedShipsChangedSignal;
     mutable boost::signals2::signal<void (FleetWnd*)> ClickedSignal;
@@ -138,11 +136,13 @@ private:
     /** \name Structors */ //@{
     FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
              int selected_fleet_id = INVALID_OBJECT_ID,
-             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE);
+             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE,
+             const std::string& config_name = "");
 
     FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
              int selected_fleet_id = INVALID_OBJECT_ID,
-             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE);
+             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE,
+             const std::string& config_name = "");
     //@}
 
     void            Init(int selected_fleet_id);
@@ -180,10 +180,8 @@ private:
     FleetDataPanel*     m_new_fleet_drop_target;
     FleetDetailPanel*   m_fleet_detail_panel;
 
-    static GG::Pt       s_last_position;    ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
-    static GG::Pt       s_last_size;        ///< the latest size to which any FleetWnd has been resized.  This is used to keep the size of the fleet window in single-fleetwindow mode.
     std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   /// statistic icons and associated meter types for multi-fleet aggregate
-    
+
     friend class FleetUIManager;
 };
 

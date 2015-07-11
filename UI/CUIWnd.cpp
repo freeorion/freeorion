@@ -609,7 +609,7 @@ void CUIWnd::AddWindowOptions(int left, int top,
         // Not necessarily an error, if a window is destroyed and constructed
         // again with the same name this will be called again, just ignore it...
         // TODO: implement a way of making sure that only one window with a
-        //       given name exists at any one time, static map<string, bool>?
+        //       given name exists at any one time, static set<string>?
         //       (that would also tell us if a name has been Add()ed to the DB)
         return;
     }

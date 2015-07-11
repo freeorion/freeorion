@@ -29,7 +29,8 @@
 #include <boost/timer.hpp>
 
 namespace {
-    const std::string RES_PEDIA_WND_NAME = "research-pedia";
+    const std::string RES_PEDIA_WND_NAME = "research.pedia";
+    const std::string RES_CONTROLS_WND_NAME = "research.tech-controls";
 
     // command-line options
     void AddOptions(OptionsDB& db) {
@@ -203,7 +204,9 @@ boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& te
 class TechTreeWnd::TechTreeControls : public CUIWnd {
 public:
     //! \name Structors //@{
-    TechTreeControls(GG::X x, GG::Y y, GG::X w);
+    TechTreeControls(GG::X default_x, GG::Y default_y,
+                     GG::X default_w,
+                     const std::string& config_name = "");
     //@}
 
     //! \name Mutators //@{
@@ -243,8 +246,14 @@ private:
 const int TechTreeWnd::TechTreeControls::BUTTON_SEPARATION = 3;
 const int TechTreeWnd::TechTreeControls::UPPER_LEFT_PAD = 2;
 
-TechTreeWnd::TechTreeControls::TechTreeControls(GG::X x, GG::Y y, GG::X w) :
-    CUIWnd(UserString("TECH_DISPLAY"), x, y, w, GG::Y(10), GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP)
+TechTreeWnd::TechTreeControls::TechTreeControls(GG::X default_x, GG::Y default_y,
+                                                GG::X default_w,
+                                                const std::string& config_name) :
+    CUIWnd(UserString("TECH_DISPLAY"),
+           default_x, default_y,
+           default_w, GG::Y(10),
+           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP,
+           config_name)
 {
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
@@ -1653,8 +1662,16 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
                                                      RES_PEDIA_WND_NAME);
     AttachChild(m_enc_detail_panel);
 
-    m_tech_tree_controls = new TechTreeControls(GG::X1, GG::Y1, m_layout_panel->Width() - ClientUI::ScrollWidth());
-    m_tech_tree_controls->MoveTo(GG::Pt(GG::X1, m_layout_panel->Height() - ClientUI::ScrollWidth() - m_tech_tree_controls->Height()));
+    // Don't know this wnd's height in advance so place it off the bottom edge,
+    // it subclasses CUIWnd so it will reposition itself to be visible.
+    m_tech_tree_controls = new TechTreeControls(GG::X1, m_layout_panel->Height(),
+                                                m_layout_panel->Width() - ClientUI::ScrollWidth(),
+                                                RES_CONTROLS_WND_NAME);
+    // Make sure the controls don't overlap the bottom scrollbar
+    if (m_tech_tree_controls->Bottom() > m_layout_panel->Bottom() - ClientUI::ScrollWidth()) {
+        m_tech_tree_controls->MoveTo(GG::Pt(m_tech_tree_controls->Left(),
+                                            m_layout_panel->Bottom() - ClientUI::ScrollWidth() - m_tech_tree_controls->Height()));
+    }
     AttachChild(m_tech_tree_controls);
 
     const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();

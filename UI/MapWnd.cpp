@@ -74,11 +74,12 @@ namespace {
     const GG::X     SITREP_PANEL_WIDTH(400);
     const GG::Y     SITREP_PANEL_HEIGHT(200);
 
-    const std::string SITREP_WND_NAME = "sitrep";
-    const std::string MAP_PEDIA_WND_NAME = "map-pedia";
-    const std::string OBJECT_WND_NAME = "object-list";
-    const std::string MODERATOR_WND_NAME = "moderator";
-    const std::string COMBAT_REPORT_WND_NAME = "combat-report";
+    const std::string SITREP_WND_NAME = "map.sitrep";
+    const std::string MAP_PEDIA_WND_NAME = "map.pedia";
+    const std::string OBJECT_WND_NAME = "map.object-list";
+    const std::string MODERATOR_WND_NAME = "map.moderator";
+    const std::string COMBAT_REPORT_WND_NAME = "map.combat-report";
+    const std::string MAP_SIDEPANEL_WND_NAME = "map.sidepanel";
 
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
     const GG::Y     SCALE_LINE_HEIGHT(20);
@@ -274,9 +275,6 @@ namespace {
         return GG::Y0;
     }
 
-    GG::X SidePanelWidth()
-    { return GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")); }
-
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
@@ -470,8 +468,16 @@ private:
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-MapWndPopup::MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags) :
-    CUIWnd(t, x, y, w, h, flags)
+MapWndPopup::MapWndPopup(const std::string& t,
+                         GG::X default_x, GG::Y default_y,
+                         GG::X default_w, GG::Y default_h,
+                         GG::Flags<GG::WndFlag> flags,
+                         const std::string& config_name) :
+    CUIWnd(t,
+           default_x, default_y,
+           default_w, default_h,
+           flags,
+           config_name)
 {
     MapWnd *mwnd = ClientUI::GetClientUI()->GetMapWnd();
     if (mwnd)
@@ -1130,7 +1136,10 @@ MapWnd::MapWnd() :
     ///////////////////
 
     // system-view side panel
-    m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->Bottom(), AppHeight() - m_toolbar->Height());
+    const GG::X SIDEPANEL_WIDTH = GG::X(384); // Formerly "UI.sidepanel-width" default
+    m_side_panel = new SidePanel(AppWidth() - SIDEPANEL_WIDTH, m_toolbar->Bottom(),
+                                 SIDEPANEL_WIDTH, AppHeight() - m_toolbar->Height(),
+                                 MAP_SIDEPANEL_WND_NAME);
     GG::GUI::GetGUI()->Register(m_side_panel);
 
     GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem,          this);
@@ -1199,8 +1208,6 @@ MapWnd::MapWnd() :
     m_combat_report_wnd = new CombatReportWnd(COMBAT_LOG_LEFT, COMBAT_LOG_TOP,
                                               COMBAT_LOG_WIDTH, COMBAT_LOG_HEIGHT,
                                               COMBAT_REPORT_WND_NAME);
-    GG::GUI::GetGUI()->Register(m_combat_report_wnd);
-    m_combat_report_wnd->Hide();
 
     // research window
     m_research_wnd = new ResearchWnd(AppWidth(), AppHeight() - m_toolbar->Height());
@@ -1223,13 +1230,21 @@ MapWnd::MapWnd() :
     m_design_wnd->Hide();
 
     // messages and empires windows
-    // TODO: specify x,y,w,h in constructors of these wnds (in their respective
-    //       files), add config names for them.
     if (ClientUI* cui = ClientUI::GetClientUI()) {
-        if (MessageWnd* msg_wnd = cui->GetMessageWnd())
+        if (MessageWnd* msg_wnd = cui->GetMessageWnd()) {
             GG::Connect(msg_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleMessages, this));    // Wnd is manually closed by user
-        if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
+            if (msg_wnd->Visible()) {
+                    m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
+                    m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
+            }
+        }
+        if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd()) {
             GG::Connect(plr_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleEmpires, this));     // Wnd is manually closed by user
+            if (plr_wnd->Visible()) {
+                m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
+                m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
+            }
+        }
     }
 
 
@@ -3330,22 +3345,6 @@ void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
 
         // opened a new FleetWnd, so play sound
         FleetButton::PlayFleetButtonOpenSound();
-
-
-        // position new FleetWnd.  default to last user-set position...
-        GG::Pt wnd_position = FleetWnd::LastPosition();
-        // unless the user hasn't opened and closed a FleetWnd yet, in which case use the lower-left
-        if (wnd_position == GG::Pt())
-            wnd_position = GG::Pt(GG::X(5), AppHeight() - fleet_wnd->Height() - 5);
-
-        fleet_wnd->MoveTo(wnd_position);
-
-
-        // safety check to ensure window is on screen... may be redundant
-        if (AppWidth() - 5 < fleet_wnd->Right())
-            fleet_wnd->OffsetMove(GG::Pt(AppWidth() - 5 - fleet_wnd->Right(), GG::Y0));
-        if (AppHeight() - 5 < fleet_wnd->Bottom())
-            fleet_wnd->OffsetMove(GG::Pt(GG::X0, AppHeight() - 5 - fleet_wnd->Bottom()));
     }
 
 
@@ -4671,10 +4670,6 @@ void MapWnd::Sanitize() {
         if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
             plr_wnd->Clear();
     }
-
-    GG::Pt sp_ul = GG::Pt(AppWidth() - SidePanelWidth(), m_toolbar->Bottom());
-    GG::Pt sp_lr = sp_ul + GG::Pt(SidePanelWidth(), AppHeight() - m_toolbar->Height());
-    m_side_panel->SizeMove(sp_ul, sp_lr);
 
     MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
     m_zoom_steps_in = 0.0;

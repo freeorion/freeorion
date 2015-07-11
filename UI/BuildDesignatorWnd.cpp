@@ -26,7 +26,9 @@
 #include <GG/StaticGraphic.h>
 
 namespace {
-    const std::string PROD_PEDIA_WND_NAME = "production-pedia";
+    const std::string PROD_PEDIA_WND_NAME = "production.pedia";
+    const std::string PROD_SELECTOR_WND_NAME = "production.selector";
+    const std::string PROD_SIDEPANEL_WND_NAME = "production.sidepanel";
 
     //////////////////////////////////
     // ProductionItemPanel
@@ -379,7 +381,9 @@ namespace {
 class BuildDesignatorWnd::BuildSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    BuildSelector(GG::X w, GG::Y h);
+    BuildSelector(GG::X default_x, GG::Y default_y,
+                  GG::X default_w, GG::Y default_h,
+                  const std::string& config_name = "");
     //@}
 
     /** \name Accessors */ //@{
@@ -464,9 +468,14 @@ private:
 const GG::X BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_X(3);
 const GG::Y BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_Y(3);
 
-BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
-    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), GG::X1, GG::Y1, w - 1, h - 1,
-           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | PINABLE ),
+BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X default_x, GG::Y default_y,
+                                                 GG::X default_w, GG::Y default_h,
+                                                 const std::string& config_name) :
+    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"),
+           default_x, default_y,
+           default_w, default_h,
+           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | PINABLE,
+           config_name),
     m_buildable_items(new BuildableItemsListBox()),
     m_production_location(INVALID_OBJECT_ID),
     m_empire_id(ALL_EMPIRES)
@@ -888,7 +897,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP)
 {
-    const GG::X SIDEPANEL_WIDTH =       GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const GG::X SIDEPANEL_WIDTH =       GG::X(384); // Formerly "UI.sidepanel-width" default
     const GG::X CHILD_WIDTHS =          w - SIDEPANEL_WIDTH;
     const GG::Y DETAIL_PANEL_HEIGHT =   GG::Y(240);
     const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
@@ -898,12 +907,14 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
                                                      GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE,
                                                      PROD_PEDIA_WND_NAME);
 
-    m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0, Height());
+    m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0,
+                                 SIDEPANEL_WIDTH, Height(),
+                                 PROD_SIDEPANEL_WND_NAME);
     m_side_panel->EnableSelection();
-    m_side_panel->Hide();
 
-    m_build_selector = new BuildSelector(CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT);
-    m_build_selector->MoveTo(GG::Pt(GG::X0, h - BUILD_SELECTOR_HEIGHT));
+    m_build_selector = new BuildSelector(GG::X0, h - BUILD_SELECTOR_HEIGHT,
+                                         CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT,
+                                         PROD_SELECTOR_WND_NAME);
 
 
     GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),                 m_enc_detail_panel);

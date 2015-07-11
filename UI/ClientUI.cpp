@@ -499,8 +499,6 @@ namespace {
         // UI behavior, hidden options
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
         db.Add("UI.design-pedia-dynamic",       UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),          false);
-        db.Add("UI.chat-panel-height",          UserStringNop("OPTIONS_DB_CHAT_PANEL_HEIGHT"),             160);
-        db.Add("UI.chat-panel-width",           UserStringNop("OPTIONS_DB_CHAT_PANEL_WIDTH"),              345);
         db.Add("UI.show-fleet-eta",             UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                true);
 
         // Other
@@ -509,8 +507,12 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const GG::Y PANEL_HEIGHT(160);
+    const GG::Y PANEL_HEIGHT(160); // Also formerly "UI.chat-panel-height" default
+    const GG::X MESSAGE_PANEL_WIDTH(345); // Formerly "UI.chat-panel-width" default
     const GG::X PLAYER_LIST_PANEL_WIDTH(424);
+
+    const std::string MESSAGE_WND_NAME = "map.messages";
+    const std::string PLAYER_LIST_WND_NAME = "map.player-list";
 }
 
 
@@ -527,11 +529,12 @@ ClientUI::ClientUI() :
     s_the_UI = this;
     Hotkey::ReadFromOptions(GetOptionsDB());
 
-    GG::Y panel_height = GG::Y(GetOptionsDB().Get<int>("UI.chat-panel-height"));
-    GG::X panel_width = GG::X(GetOptionsDB().Get<int>("UI.chat-panel-width"));
-
-    m_message_wnd =             new MessageWnd(GG::X0,                       GG::GUI::GetGUI()->AppHeight() - panel_height, panel_width,             panel_height);
-    m_player_list_wnd =         new PlayerListWnd(m_message_wnd->Right(),    GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT, PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
+    m_message_wnd =             new MessageWnd(   GG::X0,                  GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,
+                                                  MESSAGE_PANEL_WIDTH,     PANEL_HEIGHT,
+                                                  MESSAGE_WND_NAME);
+    m_player_list_wnd =         new PlayerListWnd(m_message_wnd->Right(),  GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,
+                                                  PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT,
+                                                  PLAYER_LIST_WND_NAME);
     m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
