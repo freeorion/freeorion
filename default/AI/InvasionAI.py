@@ -315,8 +315,12 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
             if path_leg_threat > max_path_threat:
                 max_path_threat = path_leg_threat
 
+    pop = planet.currentMeterValue(fo.meterType.population)
+    target_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
     troops = planet.currentMeterValue(fo.meterType.troops)
     max_troops = planet.currentMeterValue(fo.meterType.maxTroops)
+    # TODO: refactor troop determination into function for use in mid-mission updates and also consider defender techs
+    max_troops += AIDependencies.TROOPS_PER_POP * (target_pop - pop)
 
     this_system = universe.getSystem(p_sys_id)
     secure_targets = [p_sys_id] + list(this_system.planetIDs)
@@ -333,6 +337,7 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
             if (target_obj is not None) and target_obj.id in secure_targets:
                 system_secured = True
                 break
+    system_secured = system_secured and system_status.get('myFleetRating',0)
 
     if verbose:
         print "invasion eval of %s %d --- maxShields %.1f -- sysFleetThreat %.1f -- sysMonsterThreat %.1f" % (
