@@ -133,12 +133,12 @@ class AIFleetOrder(object):
         fleet = universe.getFleet(fleet_id)
         system_id = fleet.systemID
         target_id = self.target.target_id
+        main_fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
+        main_mission_type = (main_fleet_mission.get_mission_types() + [-1])[0]
 
         if verbose:
             sys1 = universe.getSystem(system_id)
             sys_name = sys1 and sys1.name or "unknown"
-            main_fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
-            main_mission_type = (main_fleet_mission.get_mission_types() + [-1])[0]
             print "** %s -- Mission Type  %s (%s) , current loc sys %d  - %s" % (self, AIFleetMissionTypeNames.name(main_mission_type), main_mission_type, system_id, sys_name)
         #
         # outpost
@@ -218,6 +218,13 @@ class AIFleetOrder(object):
             safety_factor = MilitaryAI.get_safety_factor()
             if fleet_rating >= safety_factor * threat:
                 return True
+            elif main_mission_type in [AIFleetMissionType.FLEET_MISSION_ATTACK,  # TODO: consider this later
+                                       AIFleetMissionType.FLEET_MISSION_MILITARY,
+                                       AIFleetMissionType.FLEET_MISSION_SECURE,
+                                       AIFleetMissionType.FLEET_MISSION_HIT_AND_RUN,
+                                       AIFleetMissionType.FLEET_MISSION_EXPLORATION]:
+                if not p_threat and target_id in fo.getEmpire().supplyUnobstructedSystems:
+                    return True
             else:
                 sys1 = universe.getSystem(system_id)
                 sys1_name = sys1 and sys1.name or "unknown"
@@ -243,6 +250,9 @@ class AIFleetOrder(object):
                 else:
                     if verbose:
                         print "\tHolding fleet %d (rating %d) at system %d (%s) before travelling to system %d (%s) with threat %d" % (fleet_id, fleet_rating, system_id, sys1_name, target_id, targ1_name, threat)
+                    needs_vis = foAI.foAIstate.misc.setdefault('needs_vis', [])
+                    if target_id not in needs_vis:
+                        needs_vis.append(target_id)
                     return False
         else:  # default returns true
             return True

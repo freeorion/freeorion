@@ -55,7 +55,9 @@ def assign_scouts_to_explore_systems():
     print "already targeted: %s" % already_covered
     if 'needsEmergencyExploration' not in dir(foAI.foAIstate):
         foAI.foAIstate.needsEmergencyExploration = []
-    needs_coverage = foAI.foAIstate.needsEmergencyExploration + [sys_id for sys_id in explore_list if sys_id not in already_covered]  # emergency coverage cane be due to invasion detection trouble, etc.
+    needs_vis = foAI.foAIstate.misc.setdefault('needs_vis', [])
+    check_list = foAI.foAIstate.needsEmergencyExploration + needs_vis + explore_list
+    needs_coverage = [sys_id for sys_id in check_list if sys_id not in already_covered]  # emergency coverage cane be due to invasion detection trouble, etc.
     print "needs coverage: %s" % needs_coverage
 
     print "available scouts & AIstate locs: %s" % (map(lambda x: (x, foAI.foAIstate.fleetStatus.get(x, {}).get('sysID', -1)), available_scouts))
@@ -67,7 +69,19 @@ def assign_scouts_to_explore_systems():
     sent_list = []
     while (len(available_scouts) > 0) and (len(needs_coverage) > 0):
         this_sys_id = needs_coverage.pop(0)
-        if (foAI.foAIstate.systemStatus.setdefault(this_sys_id, {}).setdefault('monsterThreat', 0) > 2000 * foAI.foAIstate.aggression) or (fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 200):
+        sys_status = foAI.foAIstate.systemStatus.setdefault(this_sys_id, {})
+        if this_sys_id not in explore_list:  # doesn't necessarily need direct visit
+            if universe.getVisibility(this_sys_id, fo.empireID()) >= fo.visibility.partial:
+                # already got visibility; remove from visit lists and skip
+                if this_sys_id in needs_vis:
+                    del needs_vis[needs_vis.index(this_sys_id)]
+                if this_sys_id in foAI.foAIstate.needsEmergencyExploration:
+                    del foAI.foAIstate.needsEmergencyExploration[
+                        foAI.foAIstate.needsEmergencyExploration.index(this_sys_id)]
+                print "sys id %d already currently visible; skipping exploration" % this_sys_id
+                continue
+        # TODO: if blocked byu monster, try to find nearby sys from which to see this sys
+        if (sys_status.setdefault('monsterThreat', 0) > 2000 * foAI.foAIstate.aggression) or (fo.currentTurn() < 20 and foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'] > 200):
             print "Skipping exploration of system %d due to Big Monster, threat %d" % (this_sys_id, foAI.foAIstate.systemStatus[this_sys_id]['monsterThreat'])
             continue
         found_fleets = []
