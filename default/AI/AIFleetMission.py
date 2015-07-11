@@ -543,7 +543,7 @@ class AIFleetMission(object):
                 repair_fleet_order = MoveUtilsAI.get_repair_fleet_order(self.target, start_sys_id)
                 if repair_fleet_order.is_valid():
                     self.orders.append(repair_fleet_order)
-            if self.get_location_target().target_id not in fleet_supplyable_system_ids:
+            if fleet.fuel < fleet.maxFuel and self.get_location_target().target_id not in fleet_supplyable_system_ids:
                 resupply_fleet_order = MoveUtilsAI.get_resupply_fleet_order(self.target, self.get_location_target())
                 if resupply_fleet_order.is_valid():
                     self.orders.append(resupply_fleet_order)
