@@ -916,7 +916,7 @@ Special
                 Planet
                 Turn low = 10
                 Unowned
-                Random probability = 0.12
+                Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = CreateShip designname = "SM_KRAKEN_1"
@@ -965,7 +965,7 @@ Special
                 Planet
                 Turn low = 10
                 Unowned
-                Random probability = 0.12
+                Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = CreateShip designname = "SM_SNOWFLAKE_1"
@@ -995,7 +995,7 @@ Special
                 Planet
                 OwnedBy affiliation = AnyEmpire
                 OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
-                Random probability = 0.06
+                Random probability = 0.06 
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [
@@ -1015,7 +1015,7 @@ Special
                 Planet
                 Turn low = 10
                 Unowned
-                Random probability = 0.12
+                Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = CreateShip designname = "SM_JUGGERNAUT_1"
