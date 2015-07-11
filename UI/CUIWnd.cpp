@@ -614,7 +614,6 @@ void CUIWnd::AddWindowOptions(int left, int top,
         return;
     }
 
-    // TODO: add stringtable entries for the descriptions
     db.Add<int>("UI.windows."+m_config_name+".left",            UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       RangedValidator<int>(0, 2560));
     db.Add<int>("UI.windows."+m_config_name+".top",             UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        RangedValidator<int>(0, 1600));
     db.Add<int>("UI.windows."+m_config_name+".left-windowed",   UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       RangedValidator<int>(0, 2560));
