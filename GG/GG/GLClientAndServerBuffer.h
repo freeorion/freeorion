@@ -47,9 +47,9 @@ public:
     // store items, buffers usually store tupels, convenience functions
     // do not use while server buffer exists
     void store(vtype item);
-    void store(vtype item1,vtype item2);
-    void store(vtype item1,vtype item2,vtype item3);
-    void store(vtype item1,vtype item2,vtype item3,vtype item4);
+    void store(vtype item1, vtype item2);
+    void store(vtype item1, vtype item2, vtype item3);
+    void store(vtype item1, vtype item2, vtype item3, vtype item4);
 
     // try to store the buffered data in a server buffer
     void createServerBuffer();
@@ -76,7 +76,7 @@ class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<unsigned cha
 {
 public:
     GLRGBAColorBuffer();
-    void store(Clr color);
+    void store(const Clr& color);
     void activate() const;
 };
 
@@ -97,7 +97,7 @@ class GG_API GLPtBuffer : public GLClientAndServerBufferBase<int>
 {
 public:
     GLPtBuffer();
-    void store(Pt pt);
+    void store(const Pt& pt);
     void store(X x, Y y);
     void activate() const;
 };

@@ -62,7 +62,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item)
 }
 
 template <class vtype>
-void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2)
+void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2)
 {
     b_data.push_back(item1);
     b_data.push_back(item2);
@@ -70,7 +70,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2)
 }
 
 template <class vtype>
-void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2,vtype item3)
+void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype item3)
 {
     b_data.push_back(item1);
     b_data.push_back(item2);
@@ -79,7 +79,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2,vtype ite
 }
 
 template <class vtype> 
-void GLClientAndServerBufferBase<vtype>::store(vtype item1,vtype item2,vtype item3,vtype item4)
+void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype item3, vtype item4)
 {
     b_data.push_back(item1);
     b_data.push_back(item2);
@@ -118,7 +118,7 @@ GLRGBAColorBuffer::GLRGBAColorBuffer() :
 GLClientAndServerBufferBase<unsigned char>(4)
 {}
 
-void GLRGBAColorBuffer::store(Clr color)
+void GLRGBAColorBuffer::store(const Clr& color)
 { GLClientAndServerBufferBase::store(color.r, color.g, color.b, color.a); }
 
 void GLRGBAColorBuffer::activate() const
@@ -137,7 +137,7 @@ void GLRGBAColorBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 template class GLClientAndServerBufferBase<float>;
 
-GL2DVertexBuffer::GL2DVertexBuffer () :
+GL2DVertexBuffer::GL2DVertexBuffer() :
     GLClientAndServerBufferBase<float>(2)
 {}
 
@@ -161,7 +161,7 @@ GLPtBuffer::GLPtBuffer () :
     GLClientAndServerBufferBase<int>(2)
 {}
 
-void GLPtBuffer::store(Pt pt)
+void GLPtBuffer::store(const Pt& pt)
 { store(pt.x, pt.y); }
 
 void GLPtBuffer::store(X x, Y y)
@@ -181,7 +181,7 @@ void GLPtBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GLTexCoordBuffer
 ///////////////////////////////////////////////////////////////////////////
-GLTexCoordBuffer::GLTexCoordBuffer () :
+GLTexCoordBuffer::GLTexCoordBuffer() :
     GLClientAndServerBufferBase<float>(2)
 {}
 
