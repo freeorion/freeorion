@@ -109,7 +109,7 @@ namespace FreeOrionPython {
             .value("starlaneSpeed",     METER_SPEED) // TODO: Remove this after some transition period
             .value("speed",             METER_SPEED)
 
-            .value("damage",            METER_DAMAGE)
+            .value("damage",            METER_CAPACITY)
             .value("capacity",          METER_CAPACITY)
         ;
         enum_<DiplomaticStatus>("diplomaticStatus")

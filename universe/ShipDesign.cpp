@@ -188,8 +188,6 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
         case PC_POINT_DEFENSE:
         case PC_MISSILES:
         case PC_FIGHTERS:
-            m_effects.push_back(IncreaseMeter(METER_DAMAGE,         m_name, m_capacity, false));
-            break;
         case PC_COLONY:
         case PC_TROOPS:
             m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));

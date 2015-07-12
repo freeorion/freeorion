@@ -185,6 +185,8 @@
     (LowestCostResearchableTech)                \
     (LowestCostTransferrableTech)               \
     (Max)                                       \
+    (MaxCapacity)                               \
+    (MaxDamage)                                 \
     (MaxDefense)                                \
     (MaxFuel)                                   \
     (MaximumNumberOf)                           \
@@ -333,6 +335,8 @@
     (SetFuel)                                   \
     (SetHappiness)                              \
     (SetIndustry)                               \
+    (SetMaxCapacity)                            \
+    (SetMaxDamage)                              \
     (SetMaxDefense)                             \
     (SetMaxFuel)                                \
     (SetMaxShield)                              \
