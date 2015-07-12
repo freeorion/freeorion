@@ -103,7 +103,7 @@ namespace {
     }
 }
 
-void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, GG::Pt& ul, const GG::Pt& lr,
+void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
                                   double theta1, double theta2, bool filled_shape)
 {
     int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
