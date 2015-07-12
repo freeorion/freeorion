@@ -115,6 +115,8 @@ try:
     branch = check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD']).strip()
     if branch == "master":
         branch = ""
+    else:
+        branch += " "
     build_no = check_output(['git', 'show', '-s', '--format=%cd.%h', '--date=short', 'HEAD']).strip()
 except:
     print "WARNING: git not installed"
@@ -122,4 +124,4 @@ except:
 for generator in generators:
     generator.execute(version, branch, build_no, build_sys)
 
-print "Building v%s %s build %s" % (version, branch, build_no)
+print "Building v%s %sbuild %s" % (version, branch, build_no)
