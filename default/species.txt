@@ -2602,6 +2602,24 @@ AVERAGE_HAPPINESS
             activation = Focus type = Source.PreferredFocus
             accountinglabel = "FOCUS_PREFERENCE_LABEL"
             effects = SetTargetHappiness value = Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Homeworld name = Source.Species
+            accountinglabel = "HOMEWORLD_BONUS"
+            effects = SetTargetHappiness value = Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = Capital
+            accountinglabel = "CAPITAL_LABEL"
+            effects = SetTargetHappiness value = Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = Contains Building name = "BLD_CONC_CAMP"
+            accountinglabel = "CONCENTRATION_CAMPS_LABEL"
+            effects = SetTargetHappiness value = 0
 '''
 
 
