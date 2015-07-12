@@ -2484,6 +2484,9 @@ Capacity: %1%
 ADDED_ON_TURN
 Present Since Turn: %1%
 
+ADDED_ON_INITIAL_TURN
+Present Since the Initial Turn
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
