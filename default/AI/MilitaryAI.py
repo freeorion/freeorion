@@ -180,6 +180,9 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
         mypattack = mydefenses.get('attack', 0)
         myphealth = mydefenses.get('health', 0)
         already_assigned_rating[sys_id] = (assigned_attack[sys_id] + mypattack) * (assigned_hp[sys_id] + myphealth)
+        if verbose_mil_reporting and already_assigned_rating[sys_id]:
+            print "\t System %s already assigned rating %.1f" % (
+                universe.getSystem(sys_id), already_assigned_rating[sys_id])
 
     # get systems to defend
     capital_id = PlanetUtilsAI.get_capital()
@@ -238,6 +241,8 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
                 continue
             top_target_systems.append(sys_id)  # doing this rather than set, to preserve order
 
+    if verbose_mil_reporting:
+        print "----------------------------"
     # allocation format: ( sysID, newAllocation, takeAny, maxMultiplier )
     # ================================
     # --------Capital Threat ----------
@@ -245,7 +250,8 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
         capital_sys_status = systems_status[capital_sys_id]
         capital_threat = safety_factor*(2 * threat_bias + combine_ratings_list([capital_sys_status[thrt_key] for thrt_key in ['totalThreat', 'neighborThreat']]))
         capital_threat += max(0, enemy_sup_factor[sys_id]*enemy_rating - capital_sys_status.get('my_neighbor_rating', 0))
-        base_needed_rating = rating_needed(1.4*capital_sys_status['regional_threat'], combine_ratings(already_assigned_rating[capital_sys_id], capital_sys_status['my_neighbor_rating']))
+        local_support = combine_ratings(already_assigned_rating[capital_sys_id], capital_sys_status['my_neighbor_rating'])
+        base_needed_rating = rating_needed(capital_sys_status['regional_threat'], local_support)
         needed_rating = max(base_needed_rating, rating_needed(1.4*capital_threat, already_assigned_rating[capital_sys_id]))
         max_alloc = max(rating_needed(1.5*capital_sys_status['regional_threat'], already_assigned_rating[capital_sys_id]),
                         rating_needed(2*capital_threat, already_assigned_rating[capital_sys_id]))
@@ -258,6 +264,12 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
             new_alloc = min(remaining_mil_rating, needed_rating)
             allocations.append((capital_sys_id, new_alloc, True, max_alloc))
             allocation_groups.setdefault('capitol', []).append((capital_sys_id, new_alloc, True, max_alloc))
+            if verbose_mil_reporting:
+                report_format = ("\tAt Capital system %s, local threat %.1f, regional threat %.1f, local support %.1f, "
+                                 + "base_needed_rating %.1f, needed_rating %.1f, new allocation %.1f")
+                print report_format % (universe.getSystem(capital_sys_id), capital_threat,
+                         capital_sys_status['regional_threat'], local_support,
+                         base_needed_rating, needed_rating, new_alloc)
             remaining_mil_rating -= new_alloc
         if "Main" in thisround or new_alloc > 0:
             if verbose_mil_reporting:
@@ -274,18 +286,22 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
             print "-----------------"
     new_alloc = 0
     if empire_occupied_system_ids:
-        oc_sys_tot_threat = [(o_s_id, threat_bias + safety_factor*combine_ratings_list(
+        oc_sys_tot_threat_v1 = [(o_s_id, threat_bias + safety_factor*combine_ratings_list(
                               [systems_status.get(o_s_id, {}).get(thrt_key, 0) for thrt_key in ['totalThreat', 'neighborThreat']]))
                                                                                             for o_s_id in empire_occupied_system_ids]
-        tot_oc_sys_threat = sum([thrt for _, thrt in oc_sys_tot_threat])
-        tot_cur_alloc = sum([already_assigned_rating[sid] for sid, _ in oc_sys_tot_threat])
+        tot_oc_sys_threat = sum([thrt for _, thrt in oc_sys_tot_threat_v1])
+        tot_cur_alloc = sum([already_assigned_rating[sid] for sid, _ in oc_sys_tot_threat_v1])
         # intentionally after tallies, but perhaps should be before
-        oc_sys_tot_threat = [(sys_id, sys_threat +
-                              max(0, enemy_sup_factor[sys_id] * 0.5 * enemy_rating +
-                                  systems_status.get(sys_id, {}).get('jump2_threat', 0) -
-                                      combine_ratings_list([systems_status.get(sys_id, {}).get('my_neighbor_rating', 0),
-                                                            already_assigned_rating[sys_id]])))
-                              for sys_id, sys_threat in oc_sys_tot_threat]
+        oc_sys_tot_threat = []
+        threat_details = {}
+        for sys_id, sys_threat in oc_sys_tot_threat_v1:
+            j2_threat = systems_status.get(sys_id, {}).get('jump2_threat', 0)
+            local_defenses = combine_ratings_list([systems_status.get(sys_id, {}).get('my_neighbor_rating', 0),
+                                                   already_assigned_rating[sys_id]])
+            threat_details[sys_id] = (sys_threat, enemy_sup_factor[sys_id]*0.5*enemy_rating,
+                                      j2_threat, local_defenses)
+            oc_sys_tot_threat.append((sys_id, sys_threat+max(0, enemy_sup_factor[sys_id]*0.5*enemy_rating +
+                                                             j2_threat-local_defenses)))
 
         oc_sys_alloc = 0
         for sid, thrt in oc_sys_tot_threat:
@@ -306,6 +322,8 @@ def get_military_fleets(milFleetIDs=None, tryReset=True, thisround="Main"):
             if "Main" in thisround or this_alloc > 0:
                 if verbose_mil_reporting:
                     print "Provincial Occupied system %4d ( %10s ) has local threat %8d ; existing military allocation %d and new allocation %8d" % (sid, universe.getSystem(sid).name, thrt, cur_alloc, this_alloc)
+                    print "\t base threat was %.1f, supply_threat %.1f, jump2_threat %.1f, and local defenses %.1f" % (
+                        threat_details[sid])
         if "Main" in thisround or new_alloc > 0:
             if verbose_mil_reporting:
                 print "Provincial Empire-Occupied Sytems under total threat: %d -- total mil allocation: existing %d ; new: %d" % (tot_oc_sys_threat, tot_cur_alloc, oc_sys_alloc)

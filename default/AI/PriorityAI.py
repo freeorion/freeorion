@@ -453,7 +453,7 @@ def calculateMilitaryPriority():
             threatRoot = status.get('fleetThreat', 0)**0.5 + monsterThreat**0.5 + status.get('planetThreat', 0)**0.5
         ships_needed_here = math.ceil(( max(0,   (threatRoot - (myRating**0.5 + my_defenses**0.5)))**2)/curShipRating)
         ships_needed += ships_needed_here
-        ships_needed_allocation.append((sysID, ships_needed_here))
+        ships_needed_allocation.append((universe.getSystem(sysID), ships_needed_here))
         if sysID in mySystems:
             defense_ships_needed += ships_needed_here
 
