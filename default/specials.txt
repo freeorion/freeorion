@@ -143,13 +143,19 @@ Special
         Planet
         Not Planet type = [Asteroids GasGiant]
         Not ContainedBy And [
-                System 
-                Contains Or [
-                    Capital
-                    And [ Planet HasSpecial name = "ANCIENT_RUINS_SPECIAL" ]
-                    Design name = "SM_EXP_OUTPOST"
-                ]
+            System 
+            Contains Or [
+                And [ Planet HasSpecial name = "ANCIENT_RUINS_SPECIAL" ]
+                Design name = "SM_EXP_OUTPOST"
             ]
+        ]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+            ]
+        ]
     ]
     effectsgroups = [
         EffectsGroup
@@ -163,13 +169,6 @@ Special
                 Random probability = 0.9
                 ValueTest low = 1 testvalue = GalaxyMaxAIAggression
                 ValueTest low = 1 testvalue = GalaxyMonsterFrequency
-                Not WithinStarlaneJumps jumps = 1 condition = And [
-                    System
-                    Contains And [
-                        Planet
-                        OwnedBy affiliation = AnyEmpire
-                    ]
-                ]
             ]
             effects = CreateShip designname = "SM_GUARD_2"
             
