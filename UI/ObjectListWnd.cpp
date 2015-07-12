@@ -55,6 +55,7 @@ namespace {
                         default_columns_widths[i].second,
                         RangedValidator<int>(1, 200));
         }
+        db.Add<bool>("UI.objects-hide-dump", UserStringNop("OPTIONS_DB_OBJECT_HIDE_DUMP_DESC"), true,  Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -2351,7 +2352,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
     // create popup menu with object commands in it
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
+    if (!GetOptionsDB().Get<bool>("UI.objects-hide-dump"))
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
@@ -2399,7 +2401,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: {
-            ObjectDumpSignal(object_id);
+            if (GetOptionsDB().Get<bool>("UI.objects-hide-dump"))
+                ErrorLogger() << "Bug: dump contxt-menu clicked, when it should not be possible";
+            else
+                ObjectDumpSignal(object_id);
             break;
         }
         case 2: {
