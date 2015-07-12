@@ -2884,6 +2884,9 @@ TECH_WND_ETA
 # ProductionInfoPanel #
 #######################
 
+PRODUCTION_INFO_AT_LOCATION_TITLE
+%1% at %2%
+
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Total Available Points
 
@@ -2893,6 +2896,7 @@ Wasted Points
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points Available Here
 
+PRODUCTION_INFO_LOCATION_NAME
 ###############
 # ResearchWnd #
 ###############

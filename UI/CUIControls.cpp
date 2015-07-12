@@ -1358,6 +1358,7 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     CUIWnd(title, GG::X0, GG::Y0, GG::X(120), GG::Y(120),
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE),
     m_units_str(point_units_str),
+    m_title_str(title),
     m_total_points_label(0),
     m_total_points(0),
     m_total_points_P_label(0),
@@ -1445,6 +1446,7 @@ void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cos
         m_local_wasted_points->SetTextColor(ClientUI::StatDecrColor());
     else
         m_local_wasted_points->SetTextColor(ClientUI::TextColor());
+    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_AT_LOCATION_TITLE")) % m_title_str % location_name));
 }
 
 void ProductionInfoPanel::ClearLocalInfo() {
@@ -1454,6 +1456,8 @@ void ProductionInfoPanel::ClearLocalInfo() {
     delete m_local_wasted_points_label;     m_local_wasted_points_label = 0;
     delete m_local_wasted_points;           m_local_wasted_points = 0;
     delete m_local_wasted_points_P_label;   m_local_wasted_points_P_label = 0;
+
+    SetName(m_title_str);
 }
 
 void ProductionInfoPanel::DoLayout() {

@@ -463,7 +463,6 @@ private:
 
     std::string m_units_str;
     std::string m_title_str;
-    std::string m_local_title_str;
 
     GG::Label*  m_total_points_label;
     GG::Label*  m_total_points;

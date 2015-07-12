@@ -761,7 +761,30 @@ void ProductionWnd::UpdateInfoPanel() {
     int prod_loc_id = this->SelectedPlanetID();
     TemporaryPtr<UniverseObject> loc_obj = GetUniverseObject(prod_loc_id);
     if (loc_obj) {
-        m_production_info_panel->SetLocalPointsCost(10.0f, 10.4f, loc_obj->Name());
+        // extract available and allocated PP at production location
+        std::map<std::set<int>, float> available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+        const std::map<std::set<int>, float>& allocated_pp = queue.AllocatedPP();
+
+        float available_pp_at_loc = 0.0f, allocated_pp_at_loc = 0.0f;   // for the resource sharing group containing the selected production location
+
+        for (std::map<std::set<int>, float>::const_iterator map_it = available_pp.begin();
+             map_it != available_pp.end(); ++map_it)
+        {
+            if (map_it->first.find(prod_loc_id) != map_it->first.end()) {
+                available_pp_at_loc = map_it->second;
+                break;
+            }
+        }
+                for (std::map<std::set<int>, float>::const_iterator map_it = allocated_pp.begin();
+             map_it != allocated_pp.end(); ++map_it)
+        {
+            if (map_it->first.find(prod_loc_id) != map_it->first.end()) {
+                allocated_pp_at_loc = map_it->second;
+                break;
+            }
+        }
+
+        m_production_info_panel->SetLocalPointsCost(available_pp_at_loc, allocated_pp_at_loc, loc_obj->Name());
     } else {
         // else clear local info...
         m_production_info_panel->ClearLocalInfo();
