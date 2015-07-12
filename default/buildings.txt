@@ -705,7 +705,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
-            effects = SetMaxSupply value = Value + 2
+            effects = SetMaxSupply value = Value + 1
     ]
     icon = "icons/building/megalith.png"
 
