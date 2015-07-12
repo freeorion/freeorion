@@ -176,22 +176,22 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         available_size = parent->ClientSize();
     } else if (const HumanClientApp* app = HumanClientApp::GetApp()) {
         // Keep this CUIWnd entirely inside the application window.
-        available_size = GG::Pt( app->AppWidth(), app->AppHeight() );
+        available_size = GG::Pt(app->AppWidth(), app->AppHeight());
     } else {
         ErrorLogger() << "CUIWnd::SizeMove() could not get app instance!";
         return;
     }
 
     // Limit window size to be no larger than the containing window.
-    GG::Pt new_size( std::min(lr.x - ul.x, available_size.x),
-                     std::min(lr.y - ul.y, available_size.y) );
+    GG::Pt new_size(std::min(lr.x - ul.x, available_size.x),
+                    std::min(lr.y - ul.y, available_size.y));
 
     // Clamp position of this window to keep its entire area visible in the
     // containing window.
-    GG::Pt new_ul( std::min( available_size.x - new_size.x,
-                             std::max(GG::X0, ul.x) ),
-                   std::min( available_size.y - new_size.y,
-                             std::max(GG::Y0, ul.y) ));
+    GG::Pt new_ul(std::min(available_size.x - new_size.x,
+                           std::max(GG::X0, ul.x)),
+                  std::min(available_size.y - new_size.y,
+                           std::max(GG::Y0, ul.y)));
 
     Wnd::SizeMove(new_ul, new_ul + new_size);
     if (Size() != old_sz) {
