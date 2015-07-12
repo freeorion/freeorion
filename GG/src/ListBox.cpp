@@ -91,8 +91,7 @@ namespace {
 
         bool operator()(const ListBox::Row* l, const ListBox::Row* r)
         {
-            bool retval = m_cmp(*l, *r, m_sort_col);
-            return m_invert ? !retval : retval;
+            return m_invert ? m_cmp(*r, *l, m_sort_col) : m_cmp(*l, *r, m_sort_col);
         }
 
     private:
