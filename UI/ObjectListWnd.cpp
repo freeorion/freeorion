@@ -2054,6 +2054,10 @@ public:
 
         if (clicked_column < 0) {
             this->SetStyle(GG::LIST_NOSORT);
+
+            // Sorting and nesting don't really work well together. The user may have turned sorting off
+            // to get nesting to work. So let's rebuild the world to make sure nesting works again.
+            Refresh();
             //std::cout << "col -1 : set style to no sort" << std::endl;
 
         } else if (!GetColumnName(clicked_column).empty()) { // empty columns are not sort-worthy
@@ -2072,7 +2076,6 @@ public:
                 this->SetStyle(GG::LIST_SORTDESCENDING);
             }
         }
-        Refresh();
     }
 
     mutable boost::signals2::signal<void ()> ExpandCollapseSignal;
