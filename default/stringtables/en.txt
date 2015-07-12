@@ -2890,14 +2890,8 @@ Total Available Points
 PRODUCTION_INFO_WASTED_PS_LABEL
 Wasted Points
 
-PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Projects in Progress
-
-PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Underfunded Project
-
-PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Projects in Queue
+PRODUCTION_INFO_LOCAL_PS_LABEL
+Points Available Here
 
 ###############
 # ResearchWnd #

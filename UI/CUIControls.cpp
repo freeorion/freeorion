@@ -56,8 +56,8 @@ namespace {
 // class CUILabel
 ///////////////////////////////////////
 CUILabel::CUILabel(const std::string& str,
-             GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
-             GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
+                   GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
+                   GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/) :
     TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, str, ClientUI::GetFont(), ClientUI::TextColor(), format, flags)
 {}
 
@@ -1349,90 +1349,111 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
 //////////////////////////////////////////////////
 // ProductionInfoPanel
 //////////////////////////////////////////////////
-// static(s)
-const int ProductionInfoPanel::CORNER_RADIUS = 9;
-const GG::Y ProductionInfoPanel::VERTICAL_SECTION_GAP(4);
-
-ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::string& points_str,
-                                         float border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color) :
-    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_border_thickness(border_thickness),
-    m_color(color),
-    m_text_and_border_color(text_and_border_color)
-{
-    const GG::Clr TEXT_COLOR = ClientUI::KnownTechTextAndBorderColor();
-
-    m_title = new CUILabel(title);
-    m_title->SetFont(ClientUI::GetFont(ClientUI::Pts() + 10));
-    m_title->SetTextColor(TEXT_COLOR);
-    m_total_points_label = new CUILabel(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT);
-    m_total_points_label->SetTextColor(TEXT_COLOR);
-    m_total_points = new CUILabel("", GG::FORMAT_LEFT);
-    m_total_points->SetTextColor(TEXT_COLOR);
-    m_total_points_P_label = new CUILabel(points_str, GG::FORMAT_LEFT);
-    m_total_points_P_label->SetTextColor(TEXT_COLOR);
-    m_wasted_points_label = new CUILabel(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
-    m_wasted_points_label->SetTextColor(TEXT_COLOR);
-    m_wasted_points = new CUILabel("", GG::FORMAT_LEFT);
-    m_wasted_points->SetTextColor(TEXT_COLOR);
-    m_wasted_points_P_label = new CUILabel(points_str, GG::FORMAT_LEFT);
-    m_wasted_points_P_label->SetTextColor(TEXT_COLOR);
-    m_projects_in_progress_label = new CUILabel(UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), GG::FORMAT_RIGHT);
-    m_projects_in_progress_label->SetTextColor(TEXT_COLOR);
-    m_projects_in_progress = new CUILabel("", GG::FORMAT_LEFT);
-    m_projects_in_progress->SetTextColor(TEXT_COLOR);
-    m_projects_in_queue_label = new CUILabel(UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), GG::FORMAT_RIGHT);
-    m_projects_in_queue_label->SetTextColor(TEXT_COLOR);
-    m_projects_in_queue = new CUILabel("", GG::FORMAT_LEFT);
-    m_projects_in_queue->SetTextColor(TEXT_COLOR);
-
-    AttachChild(m_title);
-    AttachChild(m_total_points_label);
-    AttachChild(m_total_points);
-    AttachChild(m_total_points_P_label);
-    AttachChild(m_wasted_points_label);
-    AttachChild(m_wasted_points);
-    AttachChild(m_wasted_points_P_label);
-    AttachChild(m_projects_in_progress_label);
-    AttachChild(m_projects_in_progress);
-    AttachChild(m_projects_in_queue_label);
-    AttachChild(m_projects_in_queue);
-
-    DoLayout();
+namespace {
+    GG::Y VERTICAL_SECTION_GAP(4);
 }
+
+ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::string& point_units_str,
+                                         GG::X w, GG::Y h) :
+    CUIWnd(title, GG::X0, GG::Y0, GG::X(120), GG::Y(120),
+           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE),
+    m_units_str(point_units_str),
+    m_total_points_label(0),
+    m_total_points(0),
+    m_total_points_P_label(0),
+    m_wasted_points_label(0),
+    m_wasted_points(0),
+    m_wasted_points_P_label(0),
+    m_local_points_label(0),
+    m_local_points(0),
+    m_local_points_P_label(0),
+    m_local_wasted_points_label(0),
+    m_local_wasted_points(0),
+    m_local_wasted_points_P_label(0)
+{}
 
 GG::Pt ProductionInfoPanel::MinUsableSize() const {
-    return GG::Pt(Width(), m_projects_in_queue_label->RelativeLowerRight().y + 5);
-}
-
-void ProductionInfoPanel::Render() {
-    glDisable(GL_TEXTURE_2D);
-    Draw(ClientUI::KnownTechFillColor(), true);
-    glEnable(GL_LINE_SMOOTH);
-    glLineWidth(m_border_thickness);
-    Draw(GG::Clr(ClientUI::KnownTechTextAndBorderColor().r, ClientUI::KnownTechTextAndBorderColor().g, ClientUI::KnownTechTextAndBorderColor().b, 127), false);
-    glLineWidth(1.0);
-    glDisable(GL_LINE_SMOOTH);
-    Draw(GG::Clr(ClientUI::KnownTechTextAndBorderColor().r, ClientUI::KnownTechTextAndBorderColor().g, ClientUI::KnownTechTextAndBorderColor().b, 255), false);
-    glEnable(GL_TEXTURE_2D);
+    GG::X min_x = this->LeftBorder() + this->RightBorder() + 20*ClientUI::Pts();
+    GG::Y min_y = this->TopBorder() + this->BottomBorder() + 6*ClientUI::Pts();
+    return GG::Pt(min_x, min_y);
 }
 
 void ProductionInfoPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
 
-    GG::Wnd::SizeMove(ul, lr);
+    CUIWnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size())
         DoLayout();
 }
 
-void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, int projects_in_progress, int queue_size)
-{
-    double wasted_points = total_queue_cost < total_points ? total_points - total_queue_cost : 0.0;
+void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cost) {
+    if (!m_total_points_label) {
+        m_total_points_label = new CUILabel(UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_total_points = new CUILabel("", GG::FORMAT_LEFT);
+        m_total_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+
+        m_wasted_points_label = new CUILabel(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_wasted_points = new CUILabel("", GG::FORMAT_LEFT);
+        m_wasted_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+
+        AttachChild(m_total_points_label);
+        AttachChild(m_total_points);
+        AttachChild(m_total_points_P_label);
+
+        AttachChild(m_wasted_points_label);
+        AttachChild(m_wasted_points);
+        AttachChild(m_wasted_points_P_label);
+
+        DoLayout();
+    }
+
+    float wasted_points = std::max(0.0f, total_points - total_cost);
     *m_total_points << DoubleToString(total_points, 3, false);
     *m_wasted_points << DoubleToString(wasted_points, 3, false);
-    *m_projects_in_progress << projects_in_progress;
-    *m_projects_in_queue << queue_size;
+    if (wasted_points > 0.0f)
+        m_wasted_points->SetTextColor(ClientUI::StatDecrColor());
+    else
+        m_wasted_points->SetTextColor(ClientUI::TextColor());
+}
+
+void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name) {
+    if (!m_local_points_label) {
+        m_local_points_label = new CUILabel(UserString("PRODUCTION_INFO_LOCAL_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_local_points = new CUILabel("", GG::FORMAT_LEFT);
+        m_local_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+
+        m_local_wasted_points_label = new CUILabel(UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::FORMAT_RIGHT);
+        m_local_wasted_points = new CUILabel("", GG::FORMAT_LEFT);
+        m_local_wasted_points_P_label = new CUILabel(m_units_str, GG::FORMAT_LEFT);
+
+        AttachChild(m_local_points_label);
+        AttachChild(m_local_points);
+        AttachChild(m_local_points_P_label);
+
+        AttachChild(m_local_wasted_points_label);
+        AttachChild(m_local_wasted_points);
+        AttachChild(m_local_wasted_points_P_label);
+
+        DoLayout();
+    }
+
+    float wasted_points = std::max(0.0f, local_points - local_cost);
+    *m_local_points << DoubleToString(local_points, 3, false);
+    *m_local_wasted_points << DoubleToString(wasted_points, 3, false);
+    if (wasted_points > 0.0f)
+        m_local_wasted_points->SetTextColor(ClientUI::StatDecrColor());
+    else
+        m_local_wasted_points->SetTextColor(ClientUI::TextColor());
+}
+
+void ProductionInfoPanel::ClearLocalInfo() {
+    delete m_local_points_label;            m_local_points_label = 0;
+    delete m_local_points;                  m_local_points = 0;
+    delete m_local_points_P_label;          m_local_points_P_label = 0;
+    delete m_local_wasted_points_label;     m_local_wasted_points_label = 0;
+    delete m_local_wasted_points;           m_local_wasted_points = 0;
+    delete m_local_wasted_points_P_label;   m_local_wasted_points_P_label = 0;
 }
 
 void ProductionInfoPanel::DoLayout() {
@@ -1443,59 +1464,56 @@ void ProductionInfoPanel::DoLayout() {
     const GG::X LEFT_TEXT_X(0);
     const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
     const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
-    m_center_gap = std::make_pair(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
+
+    std::pair<int, int> m_center_gap(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
+
     const GG::Pt LABEL_TEXT_SIZE(LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
     const GG::Pt VALUE_TEXT_SIZE(VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4));
     const GG::Pt P_LABEL_SIZE(Width() - 2 - 5 - P_LABEL_X, GG::Y(STAT_TEXT_PTS + 4));
+
     GG::Y row_offset(4);
 
-    m_title->MoveTo(GG::Pt(GG::X(2), row_offset));
-    m_title->Resize(GG::Pt(Width() - 4, m_title->MinUsableSize().y));
+    if (m_total_points_label) {
+        m_total_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+        m_total_points_label->Resize(LABEL_TEXT_SIZE);
+        m_total_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+        m_total_points->Resize(VALUE_TEXT_SIZE);
+        m_total_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+        m_total_points_P_label->Resize(P_LABEL_SIZE);
 
-    row_offset += m_title->MinUsableSize().y + VERTICAL_SECTION_GAP + 4;
-    m_total_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-    m_total_points_label->Resize(LABEL_TEXT_SIZE);
-    m_total_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-    m_total_points->Resize(VALUE_TEXT_SIZE);
-    m_total_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-    m_total_points_P_label->Resize(P_LABEL_SIZE);
+        row_offset += m_total_points_label->Height();
+    }
 
-    row_offset += m_total_points_label->Height();
-    m_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-    m_wasted_points_label->Resize(LABEL_TEXT_SIZE);
-    m_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-    m_wasted_points->Resize(VALUE_TEXT_SIZE);
-    m_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
-    m_wasted_points_P_label->Resize(P_LABEL_SIZE);
+    if (m_wasted_points_label) {
+        m_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+        m_wasted_points_label->Resize(LABEL_TEXT_SIZE);
+        m_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+        m_wasted_points->Resize(VALUE_TEXT_SIZE);
+        m_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+        m_wasted_points_P_label->Resize(P_LABEL_SIZE);
 
-    row_offset += m_wasted_points_label->Height() + VERTICAL_SECTION_GAP + 4;
-    m_projects_in_progress_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-    m_projects_in_progress_label->Resize(LABEL_TEXT_SIZE);
-    m_projects_in_progress->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-    m_projects_in_progress->Resize(VALUE_TEXT_SIZE);
+        row_offset += m_wasted_points_label->Height();
+    }
 
-    row_offset += m_projects_in_progress_label->Height();
-    m_projects_in_queue_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
-    m_projects_in_queue_label->Resize(LABEL_TEXT_SIZE);
-    m_projects_in_queue->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
-    m_projects_in_queue->Resize(VALUE_TEXT_SIZE);
-}
+    if (m_local_points_label) {
+        m_local_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+        m_local_points_label->Resize(LABEL_TEXT_SIZE);
+        m_local_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+        m_local_points->Resize(VALUE_TEXT_SIZE);
+        m_local_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+        m_local_points_P_label->Resize(P_LABEL_SIZE);
 
-void ProductionInfoPanel::Draw(GG::Clr clr, bool fill) {
-    GG::Pt square_3(GG::X(3), GG::Y(3));
-    GG::Pt ul = UpperLeft() + square_3, lr = LowerRight() - square_3;
-    glColor(clr);
-    PartlyRoundedRect(ul, GG::Pt(lr.x, m_title->Bottom() + 2),
-                      CORNER_RADIUS, true, true, false, false, fill);
-    std::pair<GG::X, GG::X> gap_to_use(m_center_gap.first + ul.x, m_center_gap.second + ul.x);
-    PartlyRoundedRect(GG::Pt(ul.x, m_total_points_label->Top() - 2), GG::Pt(gap_to_use.first, m_wasted_points_label->Bottom() + 2),
-                      CORNER_RADIUS, false, false, false, false, fill);
-    PartlyRoundedRect(GG::Pt(gap_to_use.second, m_total_points_label->Top() - 2), GG::Pt(lr.x, m_wasted_points_label->Bottom() + 2),
-                      CORNER_RADIUS, false, false, false, false, fill);
-    PartlyRoundedRect(GG::Pt(ul.x, m_projects_in_progress_label->Top() - 2), GG::Pt(gap_to_use.first, m_projects_in_queue_label->Bottom() + 2),
-                      CORNER_RADIUS, false, false, true, false, fill);
-    PartlyRoundedRect(GG::Pt(gap_to_use.second, m_projects_in_progress_label->Top() - 2), GG::Pt(lr.x, m_projects_in_queue_label->Bottom() + 2),
-                      CORNER_RADIUS, false, false, false, true, fill);
+        row_offset += m_local_points_label->Height();
+    }
+
+    if (m_local_wasted_points_label) {
+        m_local_wasted_points_label->MoveTo(GG::Pt(LEFT_TEXT_X, row_offset));
+        m_local_wasted_points_label->Resize(LABEL_TEXT_SIZE);
+        m_local_wasted_points->MoveTo(GG::Pt(RIGHT_TEXT_X, row_offset));
+        m_local_wasted_points->Resize(VALUE_TEXT_SIZE);
+        m_local_wasted_points_P_label->MoveTo(GG::Pt(P_LABEL_X, row_offset));
+        m_local_wasted_points_P_label->Resize(P_LABEL_SIZE);
+    }
 }
 
 
@@ -1569,11 +1587,10 @@ void FPSIndicator::UpdateEnabled()
 //////////////////////////////////////////////////
 // MultiTextureStaticGraphic
 //////////////////////////////////////////////////
-
 /** creates a MultiTextureStaticGraphic from multiple pre-existing Textures which are rendered back-to-front in the
-      * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
-      * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
-      * associated styles use the style GRAPHIC_NONE. */
+  * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
+  * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
+  * associated styles use the style GRAPHIC_NONE. */
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<boost::shared_ptr<GG::Texture> >& textures,
                                                      const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
