@@ -189,7 +189,7 @@ namespace {
             meter_name_map["Stealth"] =            METER_STEALTH;
             meter_name_map["Detection"] =          METER_DETECTION;
             meter_name_map["Speed"] =              METER_SPEED;
-            meter_name_map["Damage"] =             METER_DAMAGE;
+            meter_name_map["Damage"] =             METER_CAPACITY;
             meter_name_map["Capacity"] =           METER_CAPACITY;
             meter_name_map["Size"] =               METER_SIZE;
         }

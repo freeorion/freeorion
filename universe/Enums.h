@@ -79,10 +79,10 @@ GG_ENUM(PlanetEnvironment,
     NUM_PLANET_ENVIRONMENTS
 )
 
-/** Types for Meters 
-* Only active paired meters should lie between METER_POPULATION and METER_TROOPS
-* (See: UniverseObject::ResetPairedActiveMeters())
-*/
+/** Types for Meters
+  * Only active paired meters should lie between METER_POPULATION and METER_TROOPS
+  * (See: UniverseObject::ResetPairedActiveMeters())
+  */
 GG_ENUM(MeterType,
     INVALID_METER_TYPE = -1,
     METER_TARGET_POPULATION,
@@ -92,12 +92,14 @@ GG_ENUM(MeterType,
     METER_TARGET_CONSTRUCTION,
     METER_TARGET_HAPPINESS,
 
+    METER_MAX_CAPACITY,
+
     METER_MAX_FUEL,
     METER_MAX_SHIELD,
     METER_MAX_STRUCTURE,
     METER_MAX_DEFENSE,
-    METER_MAX_TROOPS,
     METER_MAX_SUPPLY,
+    METER_MAX_TROOPS,
 
     METER_POPULATION,
     METER_INDUSTRY,
@@ -106,21 +108,20 @@ GG_ENUM(MeterType,
     METER_CONSTRUCTION,
     METER_HAPPINESS,
 
+    METER_CAPACITY,
+
     METER_FUEL,
     METER_SHIELD,
     METER_STRUCTURE,
     METER_DEFENSE,
-    METER_TROOPS,
     METER_SUPPLY,
+    METER_TROOPS,
 
     METER_REBEL_TROOPS,
     METER_SIZE,
     METER_STEALTH,
     METER_DETECTION,
     METER_SPEED,
-
-    METER_DAMAGE,
-    METER_CAPACITY,
 
     NUM_METER_TYPES
 )

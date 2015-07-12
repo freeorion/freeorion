@@ -681,13 +681,8 @@ std::string SetShipPartMeter::Description() const {
 std::string SetShipPartMeter::Dump() const {
     std::string retval = DumpIndent();
     switch (m_meter) {
-        case METER_DAMAGE:              retval += "SetDamage";              break;
-        case METER_SPEED:               retval += "SetSpeed";               break;
-        case METER_CAPACITY:            retval += "SetCapacity";            break;
-        case METER_STEALTH:             retval += "SetStealth";             break;
-        case METER_STRUCTURE:           retval += "SetStructure";           break;
-        case METER_DETECTION:           retval += "SetDetection";           break;
-        default:                        retval += "Set????";                break;
+        case METER_CAPACITY:    retval += "SetCapacity";    break;
+        default:                retval += "Set???";         break;
     }
 
     if (m_part_name)

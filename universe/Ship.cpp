@@ -76,10 +76,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
             case PC_SHORT_RANGE:
             case PC_MISSILES:
             case PC_FIGHTERS:
-            case PC_POINT_DEFENSE: {
-                m_part_meters[std::make_pair(METER_DAMAGE,  part->Name())];
-                break;
-            }
+            case PC_POINT_DEFENSE:
             case PC_COLONY:
             case PC_TROOPS: {
                 m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
@@ -452,8 +449,11 @@ std::vector<float> Ship::AllWeaponsDamage(float shield_DR /* = 0.0 */) const {
         // get the attack power for each weapon part
         float part_attack = 0.0;
 
-        if (part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES || part_class == PC_FIGHTERS)
-            part_attack = this->CurrentPartMeterValue(METER_DAMAGE, part_name);
+        if (part_class == PC_SHORT_RANGE    || part_class == PC_POINT_DEFENSE ||
+            part_class == PC_MISSILES       || part_class == PC_FIGHTERS)
+        {
+            part_attack = this->CurrentPartMeterValue(METER_CAPACITY, part_name);
+        }
 
         if (part_attack > shield_DR)
             retval.push_back(part_attack-shield_DR);

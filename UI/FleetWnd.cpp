@@ -917,8 +917,8 @@ void ShipDataPanel::Refresh() {
         const std::string& species_name = ship->SpeciesName();
         if (!species_name.empty()) {
             m_design_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_SPECIES_SHIP_DESIGN_LABEL")) %
-                                                        design_name %
-                                                        UserString(species_name)));
+                                                       design_name %
+                                                       UserString(species_name)));
         } else {
             m_design_name_text->SetText(design_name);
         }
@@ -931,7 +931,7 @@ void ShipDataPanel::Refresh() {
         it->second->SetValue(StatValue(it->first));
 
         it->second->ClearBrowseInfoWnd();
-        if (it->first == METER_DAMAGE) {
+        if (it->first == METER_CAPACITY) {  // refers to damage
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new ShipDamageBrowseWnd(
                 m_ship_id, it->first));
             it->second->SetBrowseInfoWnd(browse_wnd);
@@ -952,7 +952,7 @@ void ShipDataPanel::Refresh() {
 
 double ShipDataPanel::StatValue(MeterType stat_name) const {
     if (TemporaryPtr<const Ship> ship = GetShip(m_ship_id)) {
-        if (stat_name == METER_DAMAGE)
+        if (stat_name == METER_CAPACITY)
             return ship->TotalWeaponsDamage();
         else if (stat_name == METER_TROOPS)
             return ship->TroopCapacity();
@@ -1033,7 +1033,7 @@ void ShipDataPanel::Init() {
     if (!show_troops) {
         // damage stat icon
         StatisticIcon* icon = new StatisticIcon(DamageIcon(), 0, 0, false);
-        m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
+        m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
     } else {
@@ -1152,7 +1152,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         if (fleet->HasArmedShips() || !fleet->HasTroopShips()) {
             // stat icon for fleet damage
             icon = new StatisticIcon(DamageIcon(), 0, 0, false);
-            m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
+            m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
             AttachChild(icon);
@@ -1534,7 +1534,7 @@ void FleetDataPanel::SetStatIconValues() {
             it->second->SetValue(shield_tally/ship_count);
         else if (stat_name == METER_STRUCTURE)
             it->second->SetValue(structure_tally);
-        else if (stat_name == METER_DAMAGE)
+        else if (stat_name == METER_CAPACITY)
             it->second->SetValue(damage_tally);
         else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);
@@ -2626,7 +2626,7 @@ void FleetWnd::Init(int selected_fleet_id) {
 
     // stat icon for fleet damage
     icon = new StatisticIcon(DamageIcon(), 0, 0, false);
-    m_stat_icons.push_back(std::make_pair(METER_DAMAGE, icon));
+    m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
     AttachChild(icon);
@@ -2745,7 +2745,7 @@ void FleetWnd::SetStatIconValues() {
             it->second->SetValue(shield_tally/ship_count);
         else if (stat_name == METER_STRUCTURE)
             it->second->SetValue(structure_tally);
-        else if (stat_name == METER_DAMAGE)
+        else if (stat_name == METER_CAPACITY)
             it->second->SetValue(damage_tally);
         else if (stat_name == METER_SIZE)
             it->second->SetValue(ship_count);

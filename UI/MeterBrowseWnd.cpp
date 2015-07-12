@@ -492,7 +492,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             continue;
 
         // get the attack power for each weapon part
-        float part_attack = ship->CurrentPartMeterValue(METER_DAMAGE, part_name);
+        float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
         std::string text = boost::io::str(FlexibleFormat(label_template)
                                 % name
                                 % UserString(part_name));

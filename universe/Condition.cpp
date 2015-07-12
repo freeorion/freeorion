@@ -5343,7 +5343,6 @@ namespace {
         case METER_SUPPLY:              return "Supply";             break;
         case METER_STEALTH:             return "Stealth";            break;
         case METER_DETECTION:           return "Detection";          break;
-        case METER_DAMAGE:              return "Damage";             break;
         case METER_SPEED:               return "Speed";              break;
         case METER_CAPACITY:            return "Capacity";           break;
         default:                        return "?Meter?";            break;
