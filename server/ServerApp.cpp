@@ -698,22 +698,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
             AddEmpireTurn(empire_id);
     }
 
-
-    // compile information about players to send out to other players at start of game.
-    DebugLogger() << "ServerApp::NewGameInit: Compiling PlayerInfo for each player";
-    std::map<int, PlayerInfo> player_info_map;
-    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
-         player_connection_it != m_networking.established_end(); ++player_connection_it)
-    {
-        const PlayerConnectionPtr player_connection = *player_connection_it;
-        int player_id = player_connection->PlayerID();
-        int empire_id = PlayerEmpireID(player_id);
-        player_info_map[player_id] = PlayerInfo(player_connection->PlayerName(),
-                                                empire_id,
-                                                player_connection->GetClientType(),
-                                                m_networking.PlayerIsHost(player_connection->PlayerID()));
-    }
-
+    std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
     // update visibility information to ensure data sent out is up-to-date
     DebugLogger() << "ServerApp::NewGameInit: Updating first-turn Empire stuff";
@@ -1125,38 +1110,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
-
-    // compile information about players to send out to other players at start of game.
-    DebugLogger() << "ServerApp::CommonGameInit: Compiling PlayerInfo for each player";
-    std::map<int, PlayerInfo> player_info_map;
-    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
-         player_connection_it != m_networking.established_end(); ++player_connection_it)
-    {
-        const PlayerConnectionPtr player_connection = *player_connection_it;
-        int player_id = player_connection->PlayerID();
-
-        int empire_id = PlayerEmpireID(player_id);
-        if (empire_id == ALL_EMPIRES)
-            ErrorLogger() << "ServerApp::CommonGameInit: couldn't find an empire for player with id " << player_id;
-
-
-        // validate some connection info
-        Networking::ClientType client_type = player_connection->GetClientType();
-        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            ErrorLogger() << "ServerApp::CommonGameInit found player connection with unsupported client type.";
-        }
-        if (player_connection->PlayerName().empty()) {
-            ErrorLogger() << "ServerApp::CommonGameInit found player connection with empty name!";
-        }
-
-
-        // assemble player info for all players
-        player_info_map[player_id] = PlayerInfo(player_connection->PlayerName(),
-                                                empire_id,
-                                                player_connection->GetClientType(),
-                                                m_networking.PlayerIsHost(player_connection->PlayerID()));
-    }
-
+    std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
 
     // assemble player state information, and send game start messages
     DebugLogger() << "ServerApp::CommonGameInit: Sending GameStartMessages to players";
@@ -1220,6 +1174,66 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
     }
+}
+
+void ServerApp::AddObserverPlayerIntoGame(int joined_player_id) {
+    const bool join_observer_allowed = GetOptionsDB().Get<bool>("allow-join-observer");
+
+    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
+         player_connection_it != m_networking.established_end(); ++player_connection_it)
+    {
+        const PlayerConnectionPtr player_connection = *player_connection_it;
+        int player_id = player_connection->PlayerID();
+        Networking::ClientType client_type = player_connection->GetClientType();
+
+        if(joined_player_id == player_id) {
+            if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER && join_observer_allowed)
+            {
+                std::map<int, PlayerInfo> player_info_map = GetPlayerInfoMap();
+                player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, ALL_EMPIRES,
+                                                                m_current_turn, m_empires, m_universe,
+                                                                GetSpeciesManager(), GetCombatLogManager(),
+                                                                player_info_map, m_galaxy_setup_data));
+            } else {
+                m_networking.Disconnect(player_connection);
+            }
+        } else {
+            // TODO: notify other players.
+        }
+    }
+}
+
+std::map<int, PlayerInfo> ServerApp::GetPlayerInfoMap() const {
+    // compile information about players to send out to other players at start of game.
+    DebugLogger() << "ServerApp::GetPlayerInfoMap: Compiling PlayerInfo for each player";
+    std::map<int, PlayerInfo> player_info_map;
+    for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
+         player_connection_it != m_networking.established_end(); ++player_connection_it)
+    {
+        const PlayerConnectionPtr player_connection = *player_connection_it;
+        int player_id = player_connection->PlayerID();
+
+        int empire_id = PlayerEmpireID(player_id);
+        if (empire_id == ALL_EMPIRES)
+            ErrorLogger() << "ServerApp::GetPlayerInfoMap: couldn't find an empire for player with id " << player_id;
+
+
+        // validate some connection info
+        Networking::ClientType client_type = player_connection->GetClientType();
+        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            ErrorLogger() << "ServerApp::GetPlayerInfoMap found player connection with unsupported client type.";
+        }
+        if (player_connection->PlayerName().empty()) {
+            ErrorLogger() << "ServerApp::GetPlayerInfoMap found player connection with empty name!";
+        }
+
+        // assemble player info for all players
+        player_info_map[player_id] = PlayerInfo(player_connection->PlayerName(),
+                                                empire_id,
+                                                player_connection->GetClientType(),
+                                                m_networking.PlayerIsHost(player_connection->PlayerID()));
+    }
+    return player_info_map;
 }
 
 int ServerApp::PlayerEmpireID(int player_id) const {

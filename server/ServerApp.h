@@ -152,6 +152,9 @@ public:
     void    LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                            const std::vector<PlayerSaveGameData>& player_save_game_data,
                            boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+
+    /** Add new observer player to running game. */
+    void    AddObserverPlayerIntoGame(int joined_player_id);
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
@@ -208,6 +211,9 @@ private:
 
     /** Sets the priority for all AI processes */
     void    SetAIsProcessPriorityToLow(bool set_to_low);
+
+    /** Get players info map to send it in GameStart message */
+    std::map<int, PlayerInfo> GetPlayerInfoMap() const;
 
     /** Handles an incoming message from the server with the appropriate action
       * or response */
