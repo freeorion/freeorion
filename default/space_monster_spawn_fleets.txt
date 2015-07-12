@@ -23,7 +23,7 @@ MonsterFleet
     location = And [
         Star type = [Blue White Yellow Orange Red]
         Not Contains Monster
-        Not WithinStarlaneJumps jumps = 1 condition = Contains And [
+        Not WithinStarlaneJumps jumps = 2 condition = Contains And [
             Planet
             OwnedBy affiliation = AnyEmpire
         ]
