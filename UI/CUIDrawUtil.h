@@ -60,7 +60,7 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
 /** Stores, in \a buffer verticies in CCW order that outline a circular arc
   * or pie slice shape. */
 void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
-                                  double theta1, double theta2, bool filled_shape);
+                                  double theta1, double theta2, bool filled_shape = false);
 
 /** Draws a rectangle whose corners are rounded with radius \a radius as
   * indicated by the \a *_round parameters.  If \a fill is true, the resulting
