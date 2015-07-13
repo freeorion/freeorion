@@ -29,26 +29,6 @@ namespace {
         markup_tags_registered = true;
     }
 
-
-    /** types of text that can appear in a MarkupBox input string, depending on present (or absence of) enclosing
-      * markup tags. */
-    enum MarkupTextBlockType {
-        INVALID_MARKUP_TEXT_BLOCK_TYPE = -1,
-        PLAIN_TEXT_MARKUP,
-        HEADING_MARKUP,
-        IMAGE_MARKUP,
-        NUM_MARKUP_TEXT_BLOCK_TYPES
-    };
-
-
-    /** contains text of a single type of markup text-block, and the parsed type and params of the tags. */
-    struct MarkupTextBlock {
-        std::string                 text;
-        MarkupTextBlockType         type;
-        std::vector<std::string>    params;
-    };
-
-
     /** Parses text and returns array of MarkupTextBlock that can be individually interpreted as a single type of 
       * object on MarkupSurface (heading, plain text, image...) */
     std::vector<MarkupTextBlock> ParseMarkupText(const std::string& text) {
