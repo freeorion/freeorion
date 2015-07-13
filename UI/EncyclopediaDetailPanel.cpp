@@ -19,6 +19,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../universe/Suitability.h"
 #include "../universe/Field.h"
 #include "../universe/Effect.h"
 #include "../universe/Predicates.h"
@@ -2163,9 +2164,6 @@ namespace {
         int planet_id = boost::lexical_cast<int>(item_name);
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
 
-        std::string original_planet_species = planet->SpeciesName();
-        int original_owner_id = planet->Owner();
-        float orig_initial_target_pop = planet->GetMeter(METER_TARGET_POPULATION)->Initial();
         name = planet->PublicName(planet_id);
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -2173,48 +2171,13 @@ namespace {
         if (!empire) {
             return;
         }
-        const std::vector<int> pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
 
-        std::set<std::string> species_names;
-        std::map<std::string, std::pair<PlanetEnvironment, float> > population_counts;
+        std::set<std::string> species_names = GetColonizerSpecies(empire, planet);
 
-        // Collect species colonizing/environment hospitality information
-        // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
-        // represented in this empire's PopCenters
-        const SpeciesManager& species_manager = GetSpeciesManager();
-        for (SpeciesManager::iterator it = species_manager.begin();
-                it != species_manager.end(); ++it)
-        {
-            if (it->second && (it->second->Tags().find("CTRL_ALWAYS_REPORT") != it->second->Tags().end()))
-                    species_names.insert(it->first);
-        }
-
-        for (std::vector<int>::const_iterator it = pop_center_ids.begin(); it != pop_center_ids.end(); it++) {
-            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
-            TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
-            if (!pc)
-                continue;
-
-            const std::string& species_name = pc->SpeciesName();
-            if (species_name.empty())
-                continue;
-
-            const Species* species = GetSpecies(species_name);
-            if (!species)
-                continue;
-
-            // Exclude species that can't colonize UNLESS they
-            // are already here (aka: it's their home planet). Showing them on
-            // their own planet allows comparison vs other races, which might
-            // be better suited to this planet. 
-            if (species->CanColonize() || species_name == planet->SpeciesName())
-                species_names.insert(species_name);
-        }
+        std::map<std::string, std::pair<PlanetEnvironment, float> > population_counts = GetSuitabilitiesForSpecies(empire_id, planet->ID(), species_names);
 
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::X max_species_name_column1_width(0);
-
-        GetUniverse().InhibitUniverseObjectSignals(true);
 
         for (std::set<std::string>::const_iterator it = species_names.begin();
              it != species_names.end(); it++)
@@ -2223,25 +2186,6 @@ namespace {
 
             std::string species_name_column1 = str(FlexibleFormat(UserString("ENC_SPECIES_PLANET_TYPE_SUITABILITY_COLUMN1")) % UserString(species_name)); 
             max_species_name_column1_width = std::max(font->TextExtent(species_name_column1).x, max_species_name_column1_width);
-
-            // Setting the planet's species allows all of it meters to reflect
-            // species (and empire) properties, such as environment type
-            // preferences and tech.
-            // @see also: MapWnd::UpdateMeterEstimates()
-            planet->SetSpecies(species_name);
-            planet->SetOwner(empire_id);
-            planet->GetMeter(METER_TARGET_POPULATION)->Set(0.0, 0.0);
-            GetUniverse().UpdateMeterEstimates(planet_id);
-
-            const Species* species = GetSpecies(species_name);
-            PlanetEnvironment planet_environment = PE_UNINHABITABLE;
-            if (species)
-                planet_environment = species->GetPlanetEnvironment(planet->Type());
-
-            double planet_capacity = ((planet_environment == PE_UNINHABITABLE) ? 0 : planet->CurrentMeterValue(METER_TARGET_POPULATION));
-
-            population_counts[species_name].first = planet_environment;
-            population_counts[species_name].second = planet_capacity;
         }
 
         std::multimap<float, std::pair<std::string, PlanetEnvironment> > target_population_species;
@@ -2292,14 +2236,6 @@ namespace {
 
             detailed_description += "\n";
         }
-
-        planet->SetSpecies(original_planet_species);
-        planet->SetOwner(original_owner_id);
-        planet->GetMeter(METER_TARGET_POPULATION)->Set(orig_initial_target_pop, orig_initial_target_pop);
-
-        GetUniverse().InhibitUniverseObjectSignals(false);
-
-        GetUniverse().UpdateMeterEstimates(planet_id);
     }
 
     void GetRefreshDetailPanelInfo(         const std::string& item_type, const std::string& item_name,
