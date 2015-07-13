@@ -1655,7 +1655,7 @@ EXPERIMENTOR_SPAWN_CALC_A
 // the following increases Experimentor spawn start by a factor of about 1.4 for low planet density, and
 // for galaxy sizes above 200 increases it somewhat as the galaxy size grows
 EXPERIMENTOR_SPAWN_START_TURN
-''' ( [[EXPERIMENTOR_SPAWN_CALC_A]] * ((Max(1, 3 - GalaxyPlanetDensity))^0.5) * ((Max(1, GalaxySize / 200))^0.4))'''
+''' ( [[EXPERIMENTOR_SPAWN_CALC_A]] * ((1.2 - ( GalaxyPlanetDensity / 10 ))) * ((Max(1, GalaxySize / 200))^0.4))'''
 
 EXPERIMENTOR_ADD_STARLANE
 '''AddStarlanes endpoint = NumberOf number = 1 condition = And [
