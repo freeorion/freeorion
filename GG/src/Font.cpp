@@ -941,10 +941,10 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
     double orig_color[4];
     glGetDoublev(GL_CURRENT_COLOR, orig_color);
 
-    for (std::size_t i = 0; i < begin_line; ++i) {
+    for (std::size_t i = 0; i <= begin_line; ++i) {
         const LineData& line = line_data[i];
         for (CPSize j = CP0;
-             j < ((i == begin_line - 1) ? begin_char : CPSize(line.char_data.size()));
+             j < ((i == begin_line) ? begin_char : CPSize(line.char_data.size()));
              ++j) {
             for (std::size_t k = 0; k < line.char_data[Value(j)].tags.size(); ++k) {
                 HandleTag(line.char_data[Value(j)].tags[k], orig_color, render_state);
