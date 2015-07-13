@@ -898,14 +898,16 @@ def generateProductionOrders():
 
     bldName = "BLD_NEUTRONIUM_EXTRACTOR"
     alreadyGotExtractor=False
-    if empire.buildingTypeAvailable(bldName) and ( [element.locationID for element in productionQueue if (element.name==bldName) ]==[]):
+    if (empire.buildingTypeAvailable(bldName) and
+                ( [element.locationID for element in productionQueue if (element.name==bldName) ]==[]) and
+                AIstate.empireStars.get(fo.starType.neutron, [])):
         #bldType = fo.getBuildingType(bldName)
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
             planet=universe.getPlanet(pid)
             if ( planet and (( planet.systemID in AIstate.empireStars.get(fo.starType.neutron, []) and
-                                                                                                 (bldName in [bld.buildingTypeName for bld in map( universe.getObject, planet.buildingIDs)]) ) or
-                                                                                                 ("BLD_NEUTRONIUM_SYNTH" in [bld.buildingTypeName for bld in map( universe.getObject, planet.buildingIDs)])
-                                                                                                 )):
+                     (bldName in [bld.buildingTypeName for bld in map( universe.getObject, planet.buildingIDs)]) ) or
+                     ("BLD_NEUTRONIUM_SYNTH" in [bld.buildingTypeName for bld in map( universe.getObject, planet.buildingIDs)])
+                     )):
                 alreadyGotExtractor = True
         if not alreadyGotExtractor:
             if not homeworld:
