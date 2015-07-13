@@ -2999,9 +2999,12 @@ Tech
     Unresearchable
     effectsgroups =
         EffectsGroup
-            scope = Building
+            scope = OR [
+                Building
+                Planet
+                ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
-            effects = SetStealth value = Value + 0.01
+            effects = SetStealth value = Value + 5
     graphic = ""
 
 

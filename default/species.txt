@@ -3399,7 +3399,7 @@ BAD_STEALTH
             ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth value = Value - 15
+            effects = SetStealth value = Value - [[LOW_STEALTH]]
 '''
 
 GOOD_STEALTH
@@ -3413,7 +3413,7 @@ GOOD_STEALTH
             ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth value = Value + 15
+            effects = SetStealth value = Value + [[LOW_STEALTH]]
 '''
             
 GREAT_STEALTH
@@ -3427,7 +3427,7 @@ GREAT_STEALTH
             ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth value = Value + 40
+            effects = SetStealth value = Value + [[MEDIUM_STEALTH]]
 '''
 
 ULTIMATE_STEALTH
@@ -3441,7 +3441,7 @@ ULTIMATE_STEALTH
             ]
             activation = Planet
             stackinggroup = "SPECIES_STEALTH_STACK"
-            effects = SetStealth value = Value + 60
+            effects = SetStealth value = Value + [[HIGH_STEALTH]]
 '''
 
 //#####      W E A P O N S     #####//

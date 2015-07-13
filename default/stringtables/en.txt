@@ -8806,10 +8806,13 @@ SHP_BIOTERM_DESC
 Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the population of enemy planets.
 
 SPY_PLANET_STEALTH_MOD
-Planet Stealth Modifier
+Universal basic stealth
 
 SPY_PLANET_STEALTH_MOD_DESC
-Increases the natural [[encyclopedia STEALTH_TITLE]] of planets to 4.99, so that systems will be made visible to empires before their planets.
+Increases the natural [[encyclopedia STEALTH_TITLE]] of all planets to 5, so that there isn't a clash between detection and stealth values.
+
+BASIC_PLANET_STEALTH
+Basic stealth stat
 
 #############################################################
 ####            T E C H   R E F I N E M E N T            ####
