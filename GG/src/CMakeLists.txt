@@ -65,6 +65,7 @@ add_library(GiGi
 
     RichText/RichText.cpp
     RichText/TagParser.cpp
+    RichText/ImageBlock.cpp
     RichText/TextBlock.cpp
     RichText/BlockControl.cpp
 )

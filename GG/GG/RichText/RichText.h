@@ -66,6 +66,9 @@ public:
     //! Registers a factory in the default block factory map.
     static int RegisterDefaultBlock(const std::string& tag, IBlockControlFactory* factory);
 
+    //! Access the default block factory map.
+    static boost::shared_ptr< RichText::BLOCK_FACTORY_MAP >& DefaultBlockFactoryMap();
+
 private:
     friend class RichTextPrivate;
     class RichTextPrivate* const m_self;

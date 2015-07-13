@@ -10,16 +10,6 @@
 
 namespace GG {
 
-namespace {
-
-/// Global storage for registered block tags.
-// The factory obejct live for the lifetime of the process, they are never deleted.
-boost::shared_ptr< RichText::BLOCK_FACTORY_MAP >& GetDefaultTagMap() {
-    static boost::shared_ptr< RichText::BLOCK_FACTORY_MAP > tag_map(new RichText::BLOCK_FACTORY_MAP());
-    return tag_map;
-}
-}
-
 
 /**
  * \brief The tag to use for text without explicit tags, or inside unknown (to the rich text system) tags.
@@ -37,7 +27,7 @@ public:
         m_font(font),
         m_color(color),
         m_format(format),
-        m_blockFactoryMap( GetDefaultTagMap() )
+        m_blockFactoryMap( RichText::DefaultBlockFactoryMap() ),
         m_padding( 0 )
     {
     }
@@ -183,9 +173,16 @@ void RichText::SetBlockFactoryMap(const boost::shared_ptr< BLOCK_FACTORY_MAP >& 
     m_self->SetBlockFactoryMap( blockFactoryMap );
 }
 
+/// Global storage for registered block tags.
+// The factory obejct live for the lifetime of the process, they are never deleted.
+boost::shared_ptr< RichText::BLOCK_FACTORY_MAP >& RichText::DefaultBlockFactoryMap() {
+    static boost::shared_ptr< RichText::BLOCK_FACTORY_MAP > tag_map(new RichText::BLOCK_FACTORY_MAP());
+    return tag_map;
+}
+
 int RichText::RegisterDefaultBlock(const std::string& tag, IBlockControlFactory* factory) {
     Font::RegisterKnownTag(tag);
-    (*GetDefaultTagMap())[tag] = factory;
+    (*DefaultBlockFactoryMap())[tag] = factory;
 
     // Return a dummy to enable static registration.
     return 0;
