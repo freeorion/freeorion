@@ -190,6 +190,8 @@ void MultiEdit::Render()
                 CPSize idx0(0);
                 CPSize idx1 = low_cursor_pos.first == row ? std::max(idx0, low_cursor_pos.second) : idx0;
                 CPSize idx3(line.char_data.size());
+                // TODO: review if the following adjustment to idx3 is truly necessary; tests suggest it is not
+                // if it is determined necessary, please comment why
                 if (LineEndsWithEndlineCharacter(lines, row, Text()))
                     --idx3;
                 CPSize idx2 = high_cursor_pos.first == row ? std::min(high_cursor_pos.second, idx3) : idx3;
@@ -210,7 +212,9 @@ void MultiEdit::Render()
 
                 glColor(text_color_to_use);
                 text_lr.x = idx2 != idx3 ? initial_text_x_pos + line.char_data[Value(idx3 - 1)].extent : text_lr.x;
-                GetFont()->RenderText(text_pos, text_lr, Text(), text_format, lines, state, row, idx2, row + 1, idx3);
+                // render the following all the way through to the end of the line, even if ends with newline,
+                // so that any tages associated with that finel character will be processed.
+                GetFont()->RenderText(text_pos, text_lr, Text(), text_format, lines, state, row, idx2, row + 1, CPSize(line.char_data.size()));
             } else { // just draw normal text on this line
                 Pt lr = text_pos + Pt(line.char_data.back().extent, GetFont()->Height());
                 glColor(text_color_to_use);
