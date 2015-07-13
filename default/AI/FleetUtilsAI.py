@@ -19,10 +19,10 @@ def combine_ratings_list(ratings_list):
     return tally
 
 def rating_needed(target, current=0):
-    if current >= target:
+    if current >= target or target <= 0:
         return 0
     else:
-        return target - current - (current * (target-current))**0.5
+        return target + current - 2*(target*current)**0.5
 
 
 def stats_meet_reqs(stats, reqs):
