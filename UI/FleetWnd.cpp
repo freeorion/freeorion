@@ -423,15 +423,15 @@ namespace {
     boost::shared_ptr<ShaderProgram> scanline_shader;
 
     void AddOptions(OptionsDB& db) {
-        db.Add("ui.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),   INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
+        db.Add("UI.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),   INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     NewFleetAggression NewFleetsAggressiveOptionSetting()
-    { return GetOptionsDB().Get<NewFleetAggression>("ui.fleet-wnd-aggression"); }
+    { return GetOptionsDB().Get<NewFleetAggression>("UI.fleet-wnd-aggression"); }
 
     void SetNewFleetAggressiveOptionSetting(NewFleetAggression aggression)
-    { GetOptionsDB().Set<NewFleetAggression>("ui.fleet-wnd-aggression", aggression); }
+    { GetOptionsDB().Set<NewFleetAggression>("UI.fleet-wnd-aggression", aggression); }
 
     boost::shared_ptr<GG::Texture> FleetAggressiveIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }
