@@ -255,7 +255,11 @@ namespace ValueRef {
 
     template <>
     std::string Constant<std::string>::Description() const
-    { return m_value; }
+    {
+        if (m_value == "CurrentContent")
+            return m_top_level_content;
+        return m_value;
+    }
 
     template <>
     std::string Constant<PlanetSize>::Dump() const
