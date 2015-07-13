@@ -13,13 +13,13 @@
 #include "../util/Logger.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
-#include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/ModeratorAction.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/thread/thread.hpp>
 
 class CombatLogManager;
