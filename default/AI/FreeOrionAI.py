@@ -128,12 +128,13 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     """Called when this player receives a chat message. sender_id is the player who sent the message, and
     message_text is the text of the sent message."""
     # print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
+    # perhaps it is a debugging interaction
+    if handle_debug_chat(sender_id, message_text):
+        return
     if not diplomatic_corp:
         DiplomaticCorp.handle_pregame_chat(sender_id,message_text)
     else:
         diplomatic_corp.handle_midgame_chat(sender_id,message_text)
-    # perhaps it is a debugging interaction
-    handle_debug_chat(sender_id, message_text)
 
 
 @chat_on_error
