@@ -3004,6 +3004,7 @@ Tech
                 Planet
                 ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
+            accountinglabel = "BASIC_PLANET_STEALTH"
             effects = SetStealth value = Value + 5
     graphic = ""
 

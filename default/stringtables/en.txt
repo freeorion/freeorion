@@ -4845,7 +4845,7 @@ Prefer Terran planets.
 
 SP_HUMAN_DESC
 '''Description:
-Humans are bipedal, clannish and omniverous, with incredible endurance capabilities. Humans evolved tool use in order to better hunt their pray, and would pursue much larger animals for days if necessary in order to bring it down and then eat it. Modern humans still have a strong fight or flight response but any threat an individual cannot handle will be met by a larger group working together to defeat it with overwhelming force. Humans have been known to eat items they know to be indigestible, simply to prove they can do it, and use toxic substances as seasoning to flavour their food.
+Humans are bipedal, clannish and omniverous, with incredible endurance capabilities. Humans evolved tool use in order to better hunt their prey, and would pursue much larger animals for days if necessary in order to bring it down and then eat it. Modern humans still have a strong fight or flight response but any threat an individual cannot handle will be met by a larger group working together to defeat it with overwhelming force. Humans have been known to eat items they know to be indigestible, simply to prove they can do it, and use toxic substances as seasoning to flavour their food.
 
 Society:
 Modern humans have formed geographic nation states with a strong basis in historic tribes. These states compete with each other, sometimes to the extent of going to war, while still cooperating on other issues. Differences over religion, resource use and even the correct way to cook a particular meal are still used to justify aggressive acts, and these wars act as spurs for further technological progress.
@@ -8806,13 +8806,13 @@ SHP_BIOTERM_DESC
 Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the population of enemy planets.
 
 SPY_PLANET_STEALTH_MOD
-Universal basic stealth
+Planet Stealth Modifier
 
 SPY_PLANET_STEALTH_MOD_DESC
 Increases the natural [[encyclopedia STEALTH_TITLE]] of all planets to 5, so that there isn't a clash between detection and stealth values.
 
 BASIC_PLANET_STEALTH
-Basic stealth stat
+Universal Basic Stealth
 
 #############################################################
 ####            T E C H   R E F I N E M E N T            ####
