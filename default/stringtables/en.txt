@@ -7764,7 +7764,7 @@ CON_TRANS_ARCH
 Transcendent Architecture
 
 CON_TRANS_ARCH_DESC
-'''Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
+'''Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring [[buildingtype BLD_MEGALITH]].
 
 The epitome of design unifies optimal functionality with elegance of form. A transcendent structure expands and inspires the minds of its occupants or observers with its shape, placement, substance and integration, whether through awe-inspiring scale, perfect emphasis of a single idea, perception or lack thereof, or utter simplicity and fitness for purpose.'''
 
@@ -9028,7 +9028,7 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing [[buildingtype BLD_IMPERIAL_PALACE]]. All resource meters for the planet on which it is built are able to reach target in a single turn. This planet also receives an increase of 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Populated planets in the owning empire receive an increase of 1 to [[encyclopedia SUPPLY_TITLE]] line range. Populated planets within two starlane jumps have their [[encyclopedia TROOP_TITLE]] increased by 10.
+'''This building may only be built in the owner empire's capital, where it further adds to the spendor of the [[buildingtype BLD_IMPERIAL_PALACE]]. All resource meters for the planet on which it is built are able to reach target in a single turn. This planet also receives an increase of 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Populated planets in the owning empire receive an increase of 1 to [[encyclopedia SUPPLY_TITLE]] line range. Populated planets within two starlane jumps have their [[encyclopedia TROOP_TITLE]] increased by 10.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
