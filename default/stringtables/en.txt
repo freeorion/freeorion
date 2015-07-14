@@ -5414,10 +5414,6 @@ SP_ACIREMA_GAMEPLAY_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-+	Good ship [[encyclopedia SHIELDS_TITLE]]: +1
-+	Good planetary [[encyclopedia SHIELDS_TITLE]]: +5
-+	Good planetary [[encyclopedia DEFENSE_TITLE]]: +5
 '''
 
 SP_ACIREMA_DESC
@@ -10421,6 +10417,15 @@ GREAT_SUPPLY
 
 ULTIMATE_SUPPLY
 ++	Ultimate [[encyclopedia SUPPLY_TITLE]]: +3
+
+GOOD_SHIP_SHIELD
++	Good ship [[encyclopedia SHIELDS_TITLE]]: +1
+
+GOOD_PLANETARY_SHIELD
++	Good planetary [[encyclopedia SHIELDS_TITLE]]: +5
+
+GOOD_PLANETARY_DEFENSE
++	Good planetary [[encyclopedia DEFENSE_TITLE]]: +5
 
 BROAD_EP
 ++	Broad Planet Tolerance: can tolerate more types.

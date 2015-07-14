@@ -5418,10 +5418,6 @@ SP_ACIREMA_GAMEPLAY_DESC
 '''Une race d'une puissance quasi-illimitée, mais qui ne peut pas survivre dans cet univers.
 Préfèrent les Planètes irradiées.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-+	Bons [[encyclopedia SHIELDS_TITLE]] d'astronefs: +1
-+	Bons [[encyclopedia SHIELDS_TITLE]] planétaires: +5
-+	Bonne [[encyclopedia DEFENSE_TITLE]] planétaire: +5
 '''
 
 SP_ACIREMA_DESC
@@ -10423,6 +10419,15 @@ GREAT_SUPPLY
 
 ULTIMATE_SUPPLY
 ++	Parfait en [[encyclopedia SUPPLY_TITLE]] : +3
+
+GOOD_SHIP_SHIELD
++	Bons [[encyclopedia SHIELDS_TITLE]] d'astronefs: +1
+
+GOOD_PLANETARY_SHIELD
++	Bons [[encyclopedia SHIELDS_TITLE]] planétaires: +5
+
+GOOD_PLANETARY_DEFENSE
++	Bonne [[encyclopedia DEFENSE_TITLE]] planétaire: +5
 
 BROAD_EP
 ++	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
