@@ -370,9 +370,11 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
 }
 
 void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    m_config_save = false;
     // maybe later do something interesting with docking
     CUIWnd::SizeMove(ul, lr);                               // set width and upper left as user-requested
     DoButtonLayout();                                       // given set width, position buttons and set appropriate minimum height
+    m_config_save = true;
     CUIWnd::SizeMove(ul, GG::Pt(lr.x, ul.y + MinSize().y)); // width and upper left unchanged.  set height to minimum height
 }
 
