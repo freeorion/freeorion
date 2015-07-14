@@ -892,6 +892,9 @@ Toggles whether to show the zoom slider on galaxy map.
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
 Toggles whether to show a right-click popup menu on the galaxy map.
 
+OPTIONS_DB_UI_HIDE_MAP_PANELS
+Toggles whether the sitrep, pedia etc. panels are temporarily hidden when opening the production window and reopened when closing the production window.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map. May crash on older graphics hardware.
 
@@ -2042,6 +2045,9 @@ Range circle opacity
 
 OPTIONS_GALAXY_MAP_POPUP
 Galaxy map pop-up menu
+
+OPTIONS_UI_HIDE_MAP_PANELS
+Hide map panels in production view
 
 OPTIONS_STARLANES
 Starlanes

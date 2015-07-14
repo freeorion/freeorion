@@ -140,6 +140,8 @@ namespace {
 
         db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                false,      Validator<bool>());
 
+        db.Add("UI.hide-map-panels",                UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                 false,      Validator<bool>());
+
 
         // Register hotkey names/default values for the context "map".
         Hotkey::AddHotkey("map.return_to_map",        UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),        GG::GGK_ESCAPE);
@@ -1161,7 +1163,7 @@ MapWnd::MapWnd() :
     m_sitrep_panel = new SitRepPanel(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->Bottom(),
                                      SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
                                      SITREP_WND_NAME);
-    GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::ToggleSitRep, this));   // Wnd is manually closed by user
+    GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::HideSitRep, this));   // Wnd is manually closed by user
     if (m_sitrep_panel->Visible()) {
         m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
         m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
@@ -1174,7 +1176,7 @@ MapWnd::MapWnd() :
                                                 SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
                                                 GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
                                                 MAP_PEDIA_WND_NAME);
-    GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::TogglePedia, this));     // Wnd is manually closed by user
+    GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::HidePedia, this));     // Wnd is manually closed by user
     if (m_pedia_panel->Visible()) {
         m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
         m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
@@ -1184,7 +1186,7 @@ MapWnd::MapWnd() :
     m_object_list_wnd = new ObjectListWnd(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN),
                                           SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
                                           OBJECT_WND_NAME);
-    GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::ToggleObjects, this));   // Wnd is manually closed by user
+    GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::HideObjects, this));   // Wnd is manually closed by user
     GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
     if (m_object_list_wnd->Visible()) {
         m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
@@ -1195,7 +1197,7 @@ MapWnd::MapWnd() :
     m_moderator_wnd = new ModeratorActionsWnd(GG::X0, m_scale_line->Bottom() + GG::Y(LAYOUT_MARGIN),
                                               SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
                                               MODERATOR_WND_NAME);
-    GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::ToggleModeratorActions,    this));
+    GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::HideModeratorActions,    this));
     if (m_moderator_wnd->Visible()) {
         m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
         m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
@@ -1234,14 +1236,14 @@ MapWnd::MapWnd() :
     // messages and empires windows
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         if (MessageWnd* msg_wnd = cui->GetMessageWnd()) {
-            GG::Connect(msg_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleMessages, this));    // Wnd is manually closed by user
+            GG::Connect(msg_wnd->ClosingSignal, boost::bind(&MapWnd::HideMessages, this));    // Wnd is manually closed by user
             if (msg_wnd->Visible()) {
                     m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
                     m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
             }
         }
         if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd()) {
-            GG::Connect(plr_wnd->ClosingSignal, boost::bind(&MapWnd::ToggleEmpires, this));     // Wnd is manually closed by user
+            GG::Connect(plr_wnd->ClosingSignal, boost::bind(&MapWnd::HideEmpires, this));     // Wnd is manually closed by user
             if (plr_wnd->Visible()) {
                 m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
                 m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
@@ -4640,10 +4642,12 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
 }
 
 void MapWnd::Cleanup() {
+    ShowAllPopups(); // make sure popups don't save visible = 0 to the config
     CloseAllPopups();
     HideResearch();
     HideProduction();
     HideDesign();
+    RemoveWindows();
     m_pedia_panel->ClearItems();    // deletes all pedia items in the memory
     m_toolbar->Hide();
     m_FPS->Hide();
@@ -4826,10 +4830,11 @@ void MapWnd::HideModeratorActions() {
 }
 
 bool MapWnd::ToggleModeratorActions() {
-    if (m_moderator_wnd->Visible())
-        HideModeratorActions();
-    else
+    if (!m_moderator_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
         ShowModeratorActions();
+    } else {
+        HideModeratorActions();
+    }
     return true;
 }
 
@@ -4860,10 +4865,11 @@ void MapWnd::HideObjects() {
 }
 
 bool MapWnd::ToggleObjects() {
-    if (m_object_list_wnd->Visible())
-        HideObjects();
-    else
+    if (!m_object_list_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
         ShowObjects();
+    } else {
+        HideObjects();
+    }
     return true;
 }
 
@@ -4894,10 +4900,11 @@ void MapWnd::HideSitRep() {
 }
 
 bool MapWnd::ToggleSitRep() {
-    if (m_sitrep_panel->Visible())
-        HideSitRep();
-    else
+    if (!m_sitrep_panel->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
         ShowSitRep();
+    } else {
+        HideSitRep();
+    }
     return true;
 }
 
@@ -4944,10 +4951,11 @@ bool MapWnd::ToggleMessages() {
     MessageWnd* msg_wnd = cui->GetMessageWnd();
     if (!msg_wnd)
         return false;
-    if (msg_wnd->Visible())
-        HideMessages();
-    else
+    if (!msg_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
         ShowMessages();
+    } else {
+        HideMessages();
+    }
     return true;
 }
 
@@ -4988,10 +4996,11 @@ bool MapWnd::ToggleEmpires() {
     PlayerListWnd* plr_wnd = cui->GetPlayerListWnd();
     if (!plr_wnd)
         return false;
-    if (plr_wnd->Visible())
-        HideEmpires();
-    else
+    if (!plr_wnd->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
         ShowEmpires();
+    } else {
+        HideEmpires();
+    }
     return true;
 }
 
@@ -5025,10 +5034,11 @@ void MapWnd::HidePedia() {
 }
 
 bool MapWnd::TogglePedia() {
-    if (m_pedia_panel->Visible())
-        HidePedia();
-    else
+    if (!m_pedia_panel->Visible() || m_production_wnd->Visible() || m_research_wnd->Visible() || m_design_wnd->Visible()) {
         ShowPedia();
+    } else {
+        HidePedia();
+    }
     return true;
 }
 
@@ -5051,8 +5061,6 @@ void MapWnd::ShowResearch() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
-    HideObjects();
-    HideSitRep();
     HideProduction();
     HideDesign();
     HideSidePanel();
@@ -5087,11 +5095,14 @@ void MapWnd::ShowProduction() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
-    HideObjects();
-    HideSitRep();
     HideResearch();
     HideDesign();
     HideSidePanel();
+    if (GetOptionsDB().Get<bool>("UI.hide-map-panels")) {
+        RemoveWindows();
+        GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetMessageWnd());
+        GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetPlayerListWnd());
+    }
 
     // show the production window
     m_production_wnd->Update();
@@ -5123,6 +5134,12 @@ void MapWnd::HideProduction() {
     m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
     m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
 
+    // Don't check UI.hide-map-panels to avoid a situation where the option is
+    // changed and the panels aren't re-registered.
+    RegisterWindows();
+    GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetMessageWnd());
+    GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetPlayerListWnd());
+
     ShowAllPopups();
     RestoreSidePanel();
 }
@@ -5143,8 +5160,6 @@ void MapWnd::ShowDesign() {
     ClearProjectedFleetMovementLines();
 
     // hide other "competing" windows
-    HideObjects();
-    HideSitRep();
     HideResearch();
     HideProduction();
     HideSidePanel();
