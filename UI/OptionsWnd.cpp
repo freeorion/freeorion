@@ -440,6 +440,7 @@ OptionsWnd::OptionsWnd():
     BoolOption(current_page, 0, "UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption(current_page, 0, "UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption(current_page, 0, "UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
+    BoolOption(current_page, 0, "window-reset",                  UserString("OPTIONS_WINDOW_RESET"));
     FileOption(current_page, 0, "stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
                std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),

@@ -1168,7 +1168,9 @@ MapWnd::MapWnd() :
     }
 
     // encyclopedia panel
-    m_pedia_panel = new EncyclopediaDetailPanel(m_sitrep_panel->Left(), m_sitrep_panel->Bottom(),
+    m_pedia_panel = new EncyclopediaDetailPanel(GG::X(GetOptionsDB().GetDefault<int>("UI.windows."+SITREP_WND_NAME+".left")),
+                                                GG::Y(GetOptionsDB().GetDefault<int>("UI.windows."+SITREP_WND_NAME+".top") +
+                                                      GetOptionsDB().GetDefault<int>("UI.windows."+SITREP_WND_NAME+".height")),
                                                 SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT,
                                                 GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
                                                 MAP_PEDIA_WND_NAME);

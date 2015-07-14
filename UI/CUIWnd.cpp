@@ -24,6 +24,11 @@ namespace {
     void PlayCloseSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
 
+    void AddOptions(OptionsDB& db) {
+        db.AddFlag('w', "window-reset", UserStringNop("OPTIONS_DB_WINDOW_RESET"), false);
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
     const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
 }
 
@@ -163,6 +168,7 @@ CUIWnd::CUIWnd(const std::string& t,
         // Call AFTER buttons are initialized but before SetMinSize().
         LoadOptions();
         GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal, boost::bind(&CUIWnd::LoadOptions, this));
+        GG::Connect(GetOptionsDB().OptionChangedSignal("window-reset"), &CUIWnd::LoadOptions, this);
     }
     // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
@@ -578,16 +584,25 @@ void CUIWnd::LoadOptions() {
         return;
     }
 
+    GG::Pt ul(GG::X0, GG::Y0);
+    GG::Pt size(GG::X1, GG::Y1);
+
     std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
     if (!db.Get<bool>("fullscreen"))
         windowed = "-windowed";
 
-    GG::Pt ul   = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".left"+windowed)),
-                         GG::Y(db.Get<int>("UI.windows."+m_config_name+".top"+windowed)));
-    GG::Pt size = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".width"+windowed)),
-                         GG::Y(db.Get<int>("UI.windows."+m_config_name+".height"+windowed)));
-
-    m_config_save = false;
+    if (db.Get<bool>("window-reset")) {
+        ul   = GG::Pt(GG::X(db.GetDefault<int>("UI.windows."+m_config_name+".left"+windowed)),
+                      GG::Y(db.GetDefault<int>("UI.windows."+m_config_name+".top"+windowed)));
+        size = GG::Pt(GG::X(db.GetDefault<int>("UI.windows."+m_config_name+".width"+windowed)),
+                      GG::Y(db.GetDefault<int>("UI.windows."+m_config_name+".height"+windowed)));
+    } else {
+        ul   = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".left"+windowed)),
+                      GG::Y(db.Get<int>("UI.windows."+m_config_name+".top"+windowed)));
+        size = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".width"+windowed)),
+                      GG::Y(db.Get<int>("UI.windows."+m_config_name+".height"+windowed)));
+        m_config_save = false;
+    }
 
     if (m_minimized) {
         MinimizeClicked();

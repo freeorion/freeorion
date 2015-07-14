@@ -319,7 +319,7 @@ private:
         static std::map<char, std::string> short_names;   ///< the master list of abbreviated option names, and their corresponding long-form names
     };
 
-    /** indicates whether an option with name \a name has been added to this
+    /** indicates whether the option referenced by \it has been added to this
         OptionsDB.  Overloaded for convenient use within other OptionsDB
         functions */
     bool        OptionExists(std::map<std::string, Option>::const_iterator it) const

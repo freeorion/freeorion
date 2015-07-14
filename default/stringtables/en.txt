@@ -1397,6 +1397,9 @@ Toggles whether a window is pinned in place.
 OPTIONS_DB_UI_WINDOWS_MINIMIZED
 Toggles whether a window is minimized.
 
+OPTIONS_DB_WINDOW_RESET
+When checked, causes windows to use their default properties instead of remembering their previous positions.
+
 #################
 # File Dialog   #
 #################
@@ -2288,6 +2291,9 @@ Add All Saved Ship Designs at Game Start
 
 OPTIONS_USE_BINARY_SERIALIZATION
 Use Binary serialization
+
+OPTIONS_WINDOW_RESET
+Reset window properties to defaults
 
 ##################
 # CombatSetupWnd #
