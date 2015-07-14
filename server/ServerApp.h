@@ -209,6 +209,9 @@ private:
     /** Sets the priority for all AI processes */
     void    SetAIsProcessPriorityToLow(bool set_to_low);
 
+    /** Get players info map to send it in GameStart message */
+    std::map<int, PlayerInfo> GetPlayerInfoMap() const;
+
     /** Handles an incoming message from the server with the appropriate action
       * or response */
     void    HandleMessage(const Message& msg, PlayerConnectionPtr player_connection);

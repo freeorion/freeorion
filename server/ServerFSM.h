@@ -48,7 +48,7 @@ struct MessageEventBase {
     MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection); ///< Basic ctor.
 
     Message              m_message;
-    PlayerConnectionPtr& m_player_connection;
+    PlayerConnectionPtr  m_player_connection;
 };
 
 // Define Boost.Preprocessor list of all Message events
