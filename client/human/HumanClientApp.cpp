@@ -723,7 +723,11 @@ void HumanClientApp::Reinitialize() {
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
     bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
     std::pair<int, int> size = GetWindowWidthHeight();
+    bool fullscreen_transition = Fullscreen() != fullscreen;
     SetVideoMode(GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
+    if (fullscreen_transition) {
+        FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
+    }
     HandleWindowResize (GG::X (size.first), GG::Y (size.second));
 }
 
