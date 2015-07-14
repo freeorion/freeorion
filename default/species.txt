@@ -466,7 +466,7 @@ Species
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_WEAPONS]]
-        
+        [[BAD_GROUND_TROOPS]]        
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
