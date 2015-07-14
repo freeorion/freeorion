@@ -376,7 +376,6 @@ OptionsWnd::OptionsWnd():
     m_tabs(0),
     m_done_button(0)
 {
-    SetMaxSize(GG::Pt(PAGE_WIDTH + 20, MaxSize().y));
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
 
     m_done_button = new CUIButton(UserString("DONE"));
