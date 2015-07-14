@@ -9166,7 +9166,7 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's population at a rate of 3 per turn, and increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population.
+'''Decreases the planet's population at a rate of 3 per turn, increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population and sets the target happiness to 0. 
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an [[encyclopedia OUTPOSTS_TITLE]].'''
 
@@ -10851,6 +10851,12 @@ Homeworld Supply
 
 HOMEWORLD_BONUS
 Homeworld
+
+CAPITAL_LABEL
+Capital
+
+CONCENTRATION_CAMPS_LABEL
+Concentration Camps
 
 ORBITAL_HAB_LABEL
 Orbital Habitation
