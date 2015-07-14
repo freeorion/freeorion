@@ -466,6 +466,7 @@ Species
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
         [[BAD_WEAPONS]]
+        [[BAD_GROUND_TROOPS]]
         
         
         // not for description
@@ -2906,7 +2907,7 @@ ULTIMATE_RESEARCH
 //#####      T R O O P S     #####//
 
 NO_GROUND_TROOPS
-''' '''
+'''[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]'''
 
 BAD_GROUND_TROOPS
 '''[[BASIC_GROUND_TROOPS]]
