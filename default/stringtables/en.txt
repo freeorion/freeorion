@@ -1361,6 +1361,9 @@ Automatically quits once any turns specified by --auto-advance-n-turns are compl
 OPTIONS_DB_BINARY_SERIALIZATION
 Use Binary serialization for savegames and client-server communications (which is compact/fast but may have cross-platform compatibility issues); if unchecked text xml serialization is used. Restart after changing is recommended.
 
+OPTIONS_DB_UI_WINDOWS_EXISTS
+True if the window with a given config name currently exists, false if one was created and deleted, doesn't exist if no window has yet been created with that name.
+
 OPTIONS_DB_UI_WINDOWS_LEFT
 The position of the left edge of a window in fullscreen mode.
 

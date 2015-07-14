@@ -137,6 +137,17 @@ protected:
     void            SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
     //@}
 
+    //! \name Statics //@{
+    static const std::string AddWindowOptions(const std::string& config_name,
+                                              int left = 0, int top = 0,
+                                              int width = 400, int height = 200,
+                                              bool visible = false, bool pinned = false, bool minimized = false);    //!< Adds OptionsDB entries for a window under a given name along with default values.
+    static const std::string AddWindowOptions(const std::string& config_name,
+                                              GG::X left = GG::X0, GG::Y top = GG::Y0,
+                                              GG::X width = GG::X(400), GG::Y height = GG::Y(200),
+                                              bool visible = false, bool pinned = false, bool minimized = false);    //!< overload that accepts GG::X and GG::Y instead of ints
+    //@}
+
     //! \name Mutators //@{
     virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
     virtual void    InitButtons();                  //!< called to create the buttons, withtout positioning them
@@ -144,13 +155,6 @@ protected:
 
     virtual void    InitBuffers();
     void            LoadOptions();                  //!< loads options for this window from the OptionsDB
-
-    void     AddWindowOptions(int left = 0, int top = 0,
-                              int width = 400, int height = 200,
-                              bool visible = false, bool pinned = false, bool minimized = false) const;    //!< Adds OptionsDB entries for a window under a given name along with default values.
-    void     AddWindowOptions(GG::X left = GG::X0, GG::Y top = GG::Y0,
-                              GG::X width = GG::X(400), GG::Y height = GG::Y(200),
-                              bool visible = false, bool pinned = false, bool minimized = false) const;    //!< overload that accepts GG::X and GG::Y instead of ints
     //@}
 
     bool                    m_resizable;            //!< true if the window is able to be resized
