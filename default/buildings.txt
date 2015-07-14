@@ -676,6 +676,7 @@ BuildingType
     buildtime = 10
     location = And [
         Planet
+        Contains Building name = "BLD_IMPERIAL_PALACE"
         Not Contains Building name = "BLD_MEGALITH"
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
