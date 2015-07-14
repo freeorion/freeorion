@@ -1192,8 +1192,8 @@ class ShipDesigner(object):
         parts = {}                # indexed by slottype, contains list of partnames (list of strings)
         total_filling = {}        # indexed by slottype, contains the number of parts (ordered as in parts)
         for slot in number_of_slots_by_slottype:
-            parts[slot] = available_parts[slot] + [""]
-            total_filling[slot] = self._starting_guess(available_parts[slot], number_of_slots_by_slottype[slot])
+            parts[slot] = available_parts.get(slot, []) + [""]
+            total_filling[slot] = self._starting_guess(available_parts.get(slot, []), number_of_slots_by_slottype[slot])
         last_changed_slottype = None
         exit_outer_loop = False
         while True:
