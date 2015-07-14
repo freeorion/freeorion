@@ -3789,7 +3789,7 @@ void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, in
 
         const std::set<int>& empire_designs = it->second;
 
-        // add all ship designs of ships this empire knows about 
+        // add all ship designs of ships this empire knows about
         for (std::set<int>::const_iterator known_design_it = empire_designs.begin(); known_design_it != empire_designs.end(); ++known_design_it) {
             int design_id = *known_design_it;
             ShipDesignMap::const_iterator universe_design_it = m_ship_designs.find(design_id);
