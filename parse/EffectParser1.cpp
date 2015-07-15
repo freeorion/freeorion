@@ -71,7 +71,7 @@ namespace {
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
                             (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
-                            |   eps [ _d = AFFIL_SELF ] 
+                            |   eps [ _d = AFFIL_SELF ]
                             )
                         >>  parse::label(Empire_token) > int_value_ref
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
