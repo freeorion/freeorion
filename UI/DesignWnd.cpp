@@ -498,7 +498,7 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     // maybe later do something interesting with docking
     CUIListBox::SizeMove(ul, lr);
 
-    if (Visible() && old_size != GG::Wnd::Size()) {
+    if (old_size != GG::Wnd::Size()) {
         // determine how many columns can fit in the box now...
         const GG::X TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
         const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));

@@ -556,7 +556,7 @@ void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt&
 
     CUIWnd::SizeMove(ul, lr);
 
-    if (Visible() && old_size != GG::Wnd::Size())
+    if (old_size != GG::Wnd::Size())
         DoLayout();
 }
 
