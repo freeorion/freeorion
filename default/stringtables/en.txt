@@ -1331,6 +1331,9 @@ Toggles inclusion of auto-generated text in tech, building or ship part descript
 OPTIONS_DB_VERBOSE_LOGGING_DESC
 Toggles verbose logging of universe contents and effect evaluation.
 
+OPTIONS_DB_OBJECT_HIDE_DUMP_DESC
+Toggles the "dump" command in object list window (this command is for developers).
+
 OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC
 Toggles verbose logging of combat resolution information.
 
