@@ -60,6 +60,20 @@ Article
     short_description = "METER_ARTICLE_SHORT_DESC"
     description = "SHIELDS_TEXT"
     icon = "icons/meter/shield.png"
+
+Article
+    name = "ARMOR_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "ARMOR_TITLE"
+    description = "ARMOR_TEXT"
+    icon = "icons/tech/armor_plating.png"
+
+Article
+    name = "SLOT_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "SLOT_TITLE"
+    description = "SLOT_TEXT"
+    icon = "icons/ship_parts/external_slot.png"
     
 Article
     name = "TROOP_TITLE"
@@ -200,6 +214,13 @@ Article
     short_description = "METER_ARTICLE_SHORT_DESC"
     description = "STRUCTURE_TEXT"
     icon = "icons/meter/structure.png"
+
+Article
+    name = "DAMAGE_TITLE"
+    category = "CATEGORY_GAME_CONCEPTS"
+    short_description = "DAMAGE_TITLE"
+    description = "DAMAGE_TEXT"
+    icon = "icons/meter/damage.png"
 
 Article
     name = "STARLANE_SPEED_TITLE"
