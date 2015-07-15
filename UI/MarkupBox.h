@@ -6,11 +6,6 @@
 #include <GG/GGFwd.h>
 #include <GG/Control.h>
 
-namespace {
-    struct MarkupTextBlock;
-}
-
-
 /** A control similar to GG::MultiEdit that displayed text, links, and images with layout determined
   * from HTML-like markup in the provided text. */
 class MarkupBox : public GG::Control {
@@ -48,9 +43,6 @@ private:
 
     GG::Scroll*                     m_vscroll;      ///< scrollbar used to scroll through marked up text
     MarkupSurface*                  m_surface;      ///< all contents are attached as children of surface so that scrolling only needs to update the surface position to move all contents
-
-    GG::Y                           m_surface_top;  ///< position, relative to top of MarkupBox where MarkupSurface is located.  Used to keep track of scrolling position.
-    std::vector<MarkupTextBlock>    m_text_blocks;  ///< result of parsing raw text.  each entry can be rendered as a single GG::Control
 };
 
 
