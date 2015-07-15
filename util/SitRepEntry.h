@@ -16,6 +16,7 @@ public:
     SitRepEntry();  ///< default ctor
     explicit SitRepEntry(const std::string& template_string, const std::string& icon = "");
     SitRepEntry(const std::string& template_string, int turn, const std::string& icon = "");
+    SitRepEntry(const std::string& template_string, const std::string& icon, const std::string& label);
     //@}
 
     /** Accessors */ //@{
@@ -23,12 +24,14 @@ public:
     const std::string&  GetDataString(const std::string& tag) const;
     int                 GetTurn() const { return m_turn; }
     const std::string&  GetIcon() const { return m_icon; }
+    const std::string&  GetTemplateString() const   { return m_stringtable_lookup_flag ? m_template_string : m_label; }
     std::string         Dump() const;
     //@}
 
 private:
     int         m_turn;
     std::string m_icon;
+    std::string m_label;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -58,6 +61,8 @@ SitRepEntry CreateEmpireEliminatedSitRep(int empire_id);
 SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id);
 FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, const std::string& icon,
                          const std::vector<std::pair<std::string, std::string> >& parameters);
+FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, const std::string& icon,
+                         const std::vector<std::pair<std::string, std::string> >& parameters, const std::string& label);
 
 // template implementations
 template <class Archive>
@@ -65,7 +70,8 @@ void SitRepEntry::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText)
         & BOOST_SERIALIZATION_NVP(m_turn)
-        & BOOST_SERIALIZATION_NVP(m_icon);
+        & BOOST_SERIALIZATION_NVP(m_icon)
+        & BOOST_SERIALIZATION_NVP(m_label);
 }
 
 #endif // _SitRepEntry_h_

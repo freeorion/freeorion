@@ -488,7 +488,7 @@ void SitRepPanel::FilterClicked() {
             all_checked = false;
         }
         menu_index_checked[index] = check;
-        const std::string& menu_label = UserString(*it + "_LABEL");
+        const std::string& menu_label =  UserStringExists(*it + "_LABEL") ? UserString(*it + "_LABEL") : *it;
         menu_contents.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
     }
     menu_contents.next_level.push_back(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),

@@ -1,0 +1,78 @@
+// The UserSitRepLabel tags and data are required if the message template (and label) is simply provided here rather than being drawn from the stringtable.
+// The data value for the UserSitRepLabel serves as the label to be used in the SitReps filters, and CustomSitrepPriority1 through CustomSitrepPriority4
+// will be at the top of the SitReps display.  As seen below, other labels are fine as well, but they cannot have any spaces if you want to use them in the SITREP_PRIORITY_ORDER
+
+effectsgroups = [
+
+
+EffectsGroup
+    scope = Capital
+    activation = Turn high = 1
+    effects =
+        GenerateSitRepMessage
+            message = "This is a sample Custom Sitrep, which is enabled by the [[tech SPY_CUSTOM_ADVISORIES]] and all the busy empire servants reporting information back to %system%"
+            icon = "icons/tech/categories/spy.png"
+            parameters = [
+                tag = "UserSitRepLabel" data = "CustomSitrepPriority1"
+                tag = "system" data = Target.SystemID
+            ]
+            empire = Source.Owner
+
+// Reminder if a Gas Giant you own in a system along with another planet you also own, populated by a species with Industry FOcus, and you have the Orbital Generation tech
+// but haven't yet built or enqueued a GG Generator in that system yet
+
+EffectsGroup
+    scope = And [
+        Planet Type = GasGiant
+        Ownedby empire = Source.Owner
+        Not Contains Building name = "BLD_GAS_GIANT_GEN"
+        ContainedBy And [
+            Contains And [
+                Planet 
+                Location type = Focus name = LocalCandidate.Species name = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+            ]
+            Not Contains And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Or [
+                    Contains Building name = "BLD_GAS_GIANT_GEN"
+                    Enqueued type = Building name = "BLD_GAS_GIANT_GEN"
+                ]
+            ]
+        ]
+    ]
+    activation = OwnerHasTech name = "PRO_ORBITAL_GEN"
+    effects =
+        GenerateSitRepMessage
+            message = "You haven't yet enqueued a [[buildingtype BLD_GAS_GIANT_GEN]] at %planet%"
+            icon = "icons/building/gas-giant-generator.png"
+            parameters = [
+                tag = "UserSitRepLabel" data = "CustomSitrepPriority2"
+                tag = "planet" data = Target.ID
+            ]
+            empire = Source.Owner
+
+
+
+// the following example is a bit silly, since it will repeat every turn (suggesting some more Conditions be implemented)
+EffectsGroup
+    scope = And [
+        Planet
+        Species
+        UnOwned
+        VisibleToEmpire empire = Source.Owner
+    ]
+    activation = Source
+    effects =
+        GenerateSitRepMessage
+            message = "There are natives at %planet%!  Go invade them!"
+            parameters = [
+                tag = "UserSitRepLabel" data = "Natives-Nag-a-tron"
+                tag = "planet" data = Target.ID
+            ]
+            empire = Source.Owner
+
+
+
+]

@@ -4318,6 +4318,10 @@ Filters
 ## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
 SITREP_PRIORITY_ORDER
 '''SITREP_WELCOME
+CustomSitrepPriority1
+CustomSitrepPriority2
+CustomSitrepPriority3
+CustomSitrepPriority4
 SITREP_VICTORY
 SITREP_VICTORY_DESTRUCTION
 SITREP_VICTORY_CAPTURE
@@ -8628,6 +8632,15 @@ SPY_STEALTH_4_DESC
 '''Unlocks the [[shippart ST_CLOAK_4]] ship part and gives all planets and outposts in the empire the [[special VOID_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. 
 
 Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
+
+SPY_CUSTOM_ADVISORIES
+Empire Intelligence Agency
+
+SPY_CUSTOM_ADVISORIES_DESC
+'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps). 
+
+Many of the SitReps are determined automatically, but additional custom SitReps can be specified by editing the file default/customizations/custom_sitreps.txt
+'''
 
 SHP_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
