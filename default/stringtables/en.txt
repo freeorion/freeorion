@@ -3760,6 +3760,16 @@ Planetary barrier shields: Act more like some kind of planetary armor. Their str
 One further difference between the two types of shields is that a ship's shields may be partially or entirely suppressed by a type of interstellar field known as a [[fieldtype FLD_MOLECULAR_CLOUD]].
 '''
 
+ARMOR_TITLE
+Armor Plating
+ARMOR_TEXT
+Allows to increase the [[encyclopedia STRUCTURE_TITLE]] of any ship by the strength rating of the armor plating part. Unlike ship [[encyclopedia SHIELDS_TITLE]], armor plating does not protect from [[encyclopedia DAMAGE_TITLE]]s caused by enemy weapons.
+
+SLOT_TITLE
+Slot
+SLOT_TEXT
+A slot is where can be mounted a [[encyclopedia ENC_SHIP_PART]] on a [[encyclopedia ENC_SHIP_HULL]], like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. Each of them has a different shape, which can receive a different type of ship part. Larger is a hull (and expensive), bigger is the number of different slots which can receive various ship parts.
+
 STEALTH_TITLE
 Stealth
 STEALTH_TEXT
@@ -3890,6 +3900,11 @@ STRUCTURE_TITLE
 Structure
 STRUCTURE_TEXT
 Structure is amount of damage that ship can take until it is destroyed. Structure can be restored by repairing.
+
+DAMAGE_TITLE
+Damage
+DAMAGE_TEXT
+Defines the amount of damage inflicted by an armed ship in one combat round. This value, equal to the strength sum of all weapons mounted on a ship, is substracted to the [[encyclopedia STRUCTURE_TITLE]] of an enemy ship after each combat round, destroying it when reaching zero. If a ship is equipped with [[encyclopedia SHIELDS_TITLE]], the damage sustained by each hit will be reduced by the strength rating of the shield part.
 
 STARLANE_SPEED_TITLE
 Starlane Speed
