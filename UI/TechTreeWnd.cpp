@@ -1711,6 +1711,7 @@ void TechTreeWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         m_enc_detail_panel->ValidatePosition();
         m_tech_tree_controls->ValidatePosition();
         m_layout_panel->Resize(this->Size());
+        m_tech_list->Resize(this->Size());
     }
 }
 
