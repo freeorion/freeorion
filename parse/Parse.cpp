@@ -437,7 +437,6 @@ namespace parse {
                         missing_include_files.insert(missing_file_pathstring);
                         ErrorLogger() << "File parsing include substitution failed to read file at path: " << insert_file_path.string();
                     }
-                    continue;
                 }
 
                 // TODO: check for cyclic file insertion
