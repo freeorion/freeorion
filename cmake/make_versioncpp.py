@@ -3,6 +3,7 @@
 import sys
 import os
 from string import Template
+from datetime import datetime
 from subprocess import check_output
 from platform import system
 from glob import glob
@@ -117,7 +118,9 @@ try:
         branch = ""
     else:
         branch += " "
-    build_no = check_output(['git', 'show', '-s', '--format=%cd.%h', '--date=short', 'HEAD']).strip()
+    commit = check_output(["git", "show", "-s", "--format=%h", "HEAD"]).strip()
+    timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"]).strip())
+    build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
 except:
     print "WARNING: git not installed"
 
