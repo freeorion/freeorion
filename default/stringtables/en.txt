@@ -4415,6 +4415,7 @@ EFFECT_CONC_CAMP_COMLETE
 EFFECT_GAIAN_TERRAFORM
 EFFECT_TERRAFORM
 EFFECT_BLACKHOLE
+EFFECT_GAIA
 EFFECT_TREE
 EFFECT_DAMP_CLOUD
 EFFECT_NEBULA
@@ -4737,6 +4738,9 @@ EFFECT_GAIAN_TERRAFORM
 On %planet%: The Gaian planet has terraformed itself to better accommodate its inhabitants.
 EFFECT_GAIAN_TERRAFORM_LABEL
 Gaia Terraform
+
+EFFECT_GAIA
+On %planet%: The citizens rejoice as their world is now a [[encyclopedia GAIA_SPECIAL]] paradise.
 
 EFFECT_TERRAFORM
 %planet% has been terraformed.

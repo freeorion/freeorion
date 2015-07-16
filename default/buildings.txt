@@ -850,7 +850,14 @@ BuildingType
                 Planet
             ]
             activation = Source
-            effects = AddSpecial name = "GAIA_SPECIAL"
+            effects = [
+                AddSpecial name = "GAIA_SPECIAL"
+                GenerateSitRepMessage
+                    message = "EFFECT_GAIA"
+                    icon = "icons/specials_huge/gaia.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+            ]
 
         EffectsGroup
             scope = Source
@@ -1653,7 +1660,7 @@ EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK
 EXPERIMENTOR_SPAWN_CALC_A
 '''( [[EXPERIMENTOR_SPAWN_BASE_TURN]] + (50 * (5 - GalaxyMaxAIAggression)) + (1000 * [[EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK]]))'''
 
-// the following increases Experimentor spawn start by a factor of about 1.4 for low planet density, and
+// the following modifies Experimentor spawn start by a factor of 0.1 up for low planet density, and 0.1 down for high planet density
 // for galaxy sizes above 200 increases it somewhat as the galaxy size grows
 EXPERIMENTOR_SPAWN_START_TURN
 ''' ( [[EXPERIMENTOR_SPAWN_CALC_A]] * ((1.2 - ( GalaxyPlanetDensity / 10 ))) * ((Max(1, GalaxySize / 200))^0.4))'''
