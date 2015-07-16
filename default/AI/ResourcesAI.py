@@ -441,10 +441,10 @@ def set_planet_resource_foci():
             RI, RR = newTargets[pid][RFocus]
             # if currentFocus[pid] == MFocus:
             # II = max( II, newTargets[pid][MFocus][0] )
-            if do_research or (gotAlgo and (
-                   (ratio > 2.0 and curTargetPP < 15) or
-                   (ratio > 2.5 and curTargetPP < 25 and II > 5) or
-                   (ratio > 3.0 and curTargetPP < 40 and II > 5) or
+            if (not do_research and (
+                   (ratio > 2.0 and curTargetPP < 15 and gotAlgo) or
+                   (ratio > 2.5 and curTargetPP < 25 and II > 5 and gotAlgo) or
+                   (ratio > 3.0 and curTargetPP < 40 and II > 5 and gotAlgo) or
                    (ratio > 4.0 and curTargetPP < 100 and II > 10) or
                    ((curTargetRP + RR - IR) / max(0.001, curTargetPP - II + RI) > 2 * priorityRatio))):  # we already have algo elegance and more RP would be too expensive, or overkill
                 if not printedHeader:
