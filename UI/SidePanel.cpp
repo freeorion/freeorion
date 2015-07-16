@@ -472,6 +472,7 @@ public:
 
     virtual void            Render();
     virtual void            LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void            LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void            RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
@@ -486,6 +487,10 @@ public:
     /** emitted when the planet panel is left clicked by the user.
       * returns the id of the clicked planet */
     mutable boost::signals2::signal<void (int)> LeftClickedSignal;
+
+    /** emitted when the planet is left double clicked by the user.
+      * returns id of the clicked planet */
+    mutable boost::signals2::signal<void (int)> LeftDoubleClickedSignal;
 
     /** emitted when the planet panel is right clicked by the user.
       * returns the id of the clicked planet */
@@ -571,6 +576,9 @@ public:
 
     /** emitted when an enabled planet panel is clicked by the user */
     mutable boost::signals2::signal<void (int)> PlanetSelectedSignal;
+
+    /** emitted when a planet panel is left-double-clicked*/
+    mutable boost::signals2::signal<void (int)> PlanetLeftDoubleClickedSignal;
 
     /** emitted when a planet panel is right-clicked */
     mutable boost::signals2::signal<void (int)> PlanetRightClickedSignal;
@@ -1811,6 +1819,11 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         LeftClickedSignal(m_planet_id);
 }
 
+void SidePanel::PlanetPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    if (!Disabled())
+        LeftDoubleClickedSignal(m_planet_id);
+}
+
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
@@ -2391,6 +2404,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
         GG::Connect(m_planet_panels.back()->LeftClickedSignal,          &SidePanel::PlanetPanelContainer::PlanetLeftClicked,   this);
+        GG::Connect(m_planet_panels.back()->LeftDoubleClickedSignal,    PlanetLeftDoubleClickedSignal);
         GG::Connect(m_planet_panels.back()->RightClickedSignal,         PlanetRightClickedSignal);
         GG::Connect(m_planet_panels.back()->BuildingRightClickedSignal, BuildingRightClickedSignal);
         GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::DoPanelsLayout,       this);
@@ -2572,6 +2586,7 @@ std::map<int, boost::signals2::connection> SidePanel::s_fleet_state_change_signa
 boost::signals2::signal<void ()>           SidePanel::ResourceCenterChangedSignal;
 boost::signals2::signal<void (int)>        SidePanel::PlanetSelectedSignal;
 boost::signals2::signal<void (int)>        SidePanel::PlanetRightClickedSignal;
+boost::signals2::signal<void (int)>        SidePanel::PlanetDoubleClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal;
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
@@ -2627,13 +2642,13 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
 
-
-    GG::Connect(m_system_name->SelChangedSignal,                        &SidePanel::SystemSelectionChanged, this);
-    GG::Connect(m_button_prev->LeftClickedSignal,                       &SidePanel::PrevButtonClicked,      this);
-    GG::Connect(m_button_next->LeftClickedSignal,                       &SidePanel::NextButtonClicked,      this);
-    GG::Connect(m_planet_panel_container->PlanetSelectedSignal,         &SidePanel::PlanetSelected,         this);
-    GG::Connect(m_planet_panel_container->PlanetRightClickedSignal,     PlanetRightClickedSignal);
-    GG::Connect(m_planet_panel_container->BuildingRightClickedSignal,   BuildingRightClickedSignal);
+    GG::Connect(m_system_name->SelChangedSignal,                         &SidePanel::SystemSelectionChanged, this);
+    GG::Connect(m_button_prev->LeftClickedSignal,                        &SidePanel::PrevButtonClicked,      this);
+    GG::Connect(m_button_next->LeftClickedSignal,                        &SidePanel::NextButtonClicked,      this);
+    GG::Connect(m_planet_panel_container->PlanetSelectedSignal,          &SidePanel::PlanetSelected,         this);
+    GG::Connect(m_planet_panel_container->PlanetLeftDoubleClickedSignal, PlanetDoubleClickedSignal);
+    GG::Connect(m_planet_panel_container->PlanetRightClickedSignal,      PlanetRightClickedSignal);
+    GG::Connect(m_planet_panel_container->BuildingRightClickedSignal,    BuildingRightClickedSignal);
 
     SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
                       PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));

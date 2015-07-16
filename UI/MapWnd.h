@@ -264,6 +264,7 @@ private:
     void            MouseEnteringSystem(int system_id, GG::Flags< GG::ModKey > mod_keys);
     void            MouseLeavingSystem(int system_id);
 
+    void            PlanetDoubleClicked(int planet_id);
     void            PlanetRightClicked(int planet_id);
     void            BuildingRightClicked(int building_id);
 
