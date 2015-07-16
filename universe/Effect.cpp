@@ -3190,26 +3190,49 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
                                              const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                                              ValueRef::ValueRefBase<int>* recipient_empire_id,
-                                             EmpireAffiliationType affiliation) :
+                                             EmpireAffiliationType affiliation,
+                                             const std::string label,
+                                             bool no_stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(recipient_empire_id),
     m_condition(0),
-    m_affiliation(affiliation)
+    m_affiliation(affiliation),
+    m_label(label),
+    m_stringtable_lookup(!no_stringtable_lookup)
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
                                              const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                                              EmpireAffiliationType affiliation,
-                                             Condition::ConditionBase* condition) :
+                                             Condition::ConditionBase* condition,
+                                             const std::string label,
+                                             bool no_stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(0),
     m_condition(condition),
-    m_affiliation(affiliation)
+    m_affiliation(affiliation),
+    m_label(label),
+    m_stringtable_lookup(!no_stringtable_lookup)
+{}
+
+GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
+                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             EmpireAffiliationType affiliation,
+                                             const std::string& label,
+                                             bool no_stringtable_lookup):
+    m_message_string(message_string),
+    m_icon(icon),
+    m_message_parameters(message_parameters),
+    m_recipient_empire_id(0),
+    m_condition(),
+    m_affiliation(affiliation),
+    m_label(label),
+    m_stringtable_lookup(!no_stringtable_lookup)
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage() {
@@ -3235,17 +3258,9 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
     std::vector<std::pair<std::string, std::string> > parameter_tag_values;
-    bool raw_sitrep_template = false;
-    std::string label;
     for (std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >::const_iterator it =
          m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
     {
-        // special case for parameter specifying to use the sitrep template raw (untranslated)
-        if (boost::to_upper_copy(it->first) == "USERSITREPLABEL") {
-            raw_sitrep_template = true;
-            label = it-> second->Eval(context);
-            continue;
-        }
         parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(context)));
 
         // special case for ship designs: make sure sitrep recipient knows about the design
@@ -3257,8 +3272,6 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
             }
         }
     }
-
-    raw_sitrep_template = raw_sitrep_template && m_affiliation == AFFIL_SELF;
 
     // whom to send to?
     std::set<int> recipient_empire_ids;
@@ -3344,10 +3357,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
         Empire* empire = GetEmpire(*emp_it);
         if (!empire)
             continue;
-        if (raw_sitrep_template)
-            empire->AddSitRepEntry(CreateSitRep(m_message_string, m_icon, parameter_tag_values, label));
-        else
-            empire->AddSitRepEntry(CreateSitRep(m_message_string, m_icon, parameter_tag_values));
+        empire->AddSitRepEntry(CreateSitRep(m_message_string, m_icon, parameter_tag_values, m_label, m_stringtable_lookup));
 
         // also inform of any ship designs recipients should know about
         for (std::set<int>::const_iterator design_it = ship_design_ids_to_inform_receipits_of.begin();

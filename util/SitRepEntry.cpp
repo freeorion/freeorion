@@ -31,8 +31,8 @@ SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std
     m_label()
 {}
 
-SitRepEntry::SitRepEntry(const std::string& template_string, const std::string& icon, const std::string& label) :
-    VarText(template_string, false),
+SitRepEntry::SitRepEntry(const std::string& template_string, const std::string& icon, const std::string label, bool stringtable_lookup) :
+    VarText(template_string, stringtable_lookup),
     m_turn(CurrentTurn()+1), // sitreps typically created by server before incrementing the turn counter, so they first appear the turn after when CurrentTurn indicates
     m_icon(icon.empty() ? "/icons/sitrep/generic.png" : icon),
     m_label(label)
@@ -365,21 +365,11 @@ SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id)
 
 SitRepEntry CreateSitRep(const std::string& template_string,
                          const std::string& icon,
-                         const std::vector<std::pair<std::string, std::string> >& parameters)
-{
-    SitRepEntry sitrep(template_string, icon);
-    for (std::vector<std::pair<std::string, std::string> >::const_iterator it = parameters.begin();
-         it != parameters.end(); ++it)
-    { sitrep.AddVariable(it->first, it->second); }
-    return sitrep;
-}
-
-SitRepEntry CreateSitRep(const std::string& template_string,
-                         const std::string& icon,
                          const std::vector<std::pair<std::string, std::string> >& parameters,
-                         const std::string& label)
+                         const std::string label,
+                         bool stringtable_lookup)
 {
-    SitRepEntry sitrep(template_string, icon, label);
+    SitRepEntry sitrep(template_string, icon, label, stringtable_lookup);
     for (std::vector<std::pair<std::string, std::string> >::const_iterator it = parameters.begin();
          it != parameters.end(); ++it)
     { sitrep.AddVariable(it->first, it->second); }

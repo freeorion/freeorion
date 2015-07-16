@@ -20,6 +20,8 @@ namespace {
             qi::_b_type _b;
             qi::_c_type _c;
             qi::_d_type _d;
+            qi::_e_type _e;
+            qi::_f_type _f;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -64,6 +66,8 @@ namespace {
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
                 >    parse::label(Message_token)    >  tok.string [ _a = _1 ]
+                >  -(parse::label(Label_token)      >  tok.string [ _e = _1 ] )
+                >  -(tok.NoStringtableLookup_                     [ _f = true ] )
                 >  -(parse::label(Icon_token)       >  tok.string [ _b = _1 ] )
                 >  -(parse::label(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
                 >   (
@@ -74,20 +78,20 @@ namespace {
                             |   eps [ _d = AFFIL_SELF ] 
                             )
                         >>  parse::label(Empire_token) > int_value_ref
-                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d) ]
+                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d, _e, _f) ]
                         )
                     |   (   // condition specified, with an affiliation type of CanSee:
                             // used to specify CanSee affiliation
                             parse::label(Affiliation_token) >>  tok.CanSee_
                         >   parse::label(Condition_token)   >   parse::detail::condition_parser
-                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1) ]
+                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f) ]
                         )
                     |   (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires
                             (   parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ]
                             |   eps [ _d = AFFIL_ANY ]
                             )
-                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d) ]
+                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d, _e, _f) ]
                         )
                     )
                 ;
@@ -179,7 +183,9 @@ namespace {
                 std::string,
                 std::string,
                 std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >,
-                EmpireAffiliationType
+                EmpireAffiliationType,
+                std::string,
+                bool
             >,
             parse::skipper_type
         > generate_sitrep_message_rule;

@@ -11,9 +11,10 @@ EffectsGroup
     effects =
         GenerateSitRepMessage
             message = "This is a sample Custom Sitrep, which is enabled by %tech% and all the busy empire servants reporting information back to %system%"
+            label = "CustomSitrepPriority1"
+            NoStringtableLookup
             icon = "icons/tech/categories/spy.png"
             parameters = [
-                tag = "UserSitRepLabel" data = "CustomSitrepPriority1"
                 tag = "tech" data = "SPY_CUSTOM_ADVISORIES"
                 tag = "system" data = Target.SystemID
             ]
@@ -48,9 +49,10 @@ EffectsGroup
     effects =
         GenerateSitRepMessage
             message = "%planet% is a prime location for a %buildingtype%, but none is being built there"
+            label = "CustomSitrepPriority2"
+            NoStringtableLookup
             icon = "icons/building/gas-giant-generator.png"
             parameters = [
-                tag = "UserSitRepLabel" data = "CustomSitrepPriority2"
                 tag = "buildingtype" data = "BLD_GAS_GIANT_GEN"
                 tag = "planet" data = Target.ID
             ]
@@ -76,9 +78,10 @@ EffectsGroup
     effects =
         GenerateSitRepMessage
             message = "You own %planet%, with a monster nest, but haven't yet researched %tech%"
+            label = "CustomSitrepPriority2"
+            NoStringtableLookup
             icon = "icons/monsters/kraken-1.png"
             parameters = [
-                tag = "UserSitRepLabel" data = "CustomSitrepPriority2"
                 tag = "planet" data = Target.ID
                 tag = "tech" data = "SHP_DOMESTIC_MONSTER"
             ]

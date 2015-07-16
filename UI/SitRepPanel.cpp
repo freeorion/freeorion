@@ -34,7 +34,9 @@ namespace {
 
     GG::X GetFontSize()
     { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-font-size")); }
- 
+    
+    std::map<std::string, std::string> label_display_map;
+    
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
         try {
@@ -100,7 +102,18 @@ namespace {
 
         for (Empire::SitRepItr sitrep_it = empire->SitRepBegin();
              sitrep_it != empire->SitRepEnd(); ++sitrep_it)
-        { template_set.insert(sitrep_it->GetTemplateString()); }
+        {
+            std::string label;
+            if(sitrep_it->GetLabelString().empty()) {
+                label = sitrep_it->GetTemplateString();
+                label_display_map[label] = UserString(label + "_LABEL");
+            } else {
+                label = sitrep_it->GetLabelString();
+                label_display_map[label] = sitrep_it->DoStringtableLookup()? UserString(label) : label;
+            }
+            template_set.insert(label);
+            
+        }
 
         return template_set;
     }
@@ -407,7 +420,7 @@ namespace {
                     if (!sitrep_it->Validate())
                         continue;
                 }
-                if (hidden_sitrep_templates.find(sitrep_it->GetTemplateString()) != hidden_sitrep_templates.end())
+                if (hidden_sitrep_templates.find(sitrep_it->GetLabelString().empty() ? sitrep_it->GetTemplateString() : sitrep_it->GetLabelString()) != hidden_sitrep_templates.end())
                     continue;
                 turns[sitrep_it->GetTurn()].push_back(*sitrep_it);
             }
@@ -488,7 +501,7 @@ void SitRepPanel::FilterClicked() {
             all_checked = false;
         }
         menu_index_checked[index] = check;
-        const std::string& menu_label =  UserStringExists(*it + "_LABEL") ? UserString(*it + "_LABEL") : *it;
+        const std::string& menu_label =  label_display_map[*it];
         menu_contents.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
     }
     menu_contents.next_level.push_back(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
@@ -567,7 +580,7 @@ void SitRepPanel::Update() {
         for (std::list<SitRepEntry>::iterator sitrep_it = currentTurnSitreps.begin();
              sitrep_it != currentTurnSitreps.end(); sitrep_it++)
         {
-            if (sitrep_it->GetTemplateString() == *template_it) {
+            if ((sitrep_it->GetLabelString().empty() ? sitrep_it->GetTemplateString() : sitrep_it->GetLabelString()) == *template_it) {
                 //DebugLogger() << "saving into orderedSitreps -  sitrep of template "<<*template_it<<" with full string "<< sitrep_it->GetText();
                 orderedSitreps.push_back(*sitrep_it);
                 //DebugLogger()<< "deleting above sitrep from currentTurnSitreps";
