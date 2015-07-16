@@ -1,0 +1,111 @@
+// The UserSitRepLabel tags and data are required if the message template (and label) is simply provided here rather than being drawn from the stringtable.
+// The data value for the UserSitRepLabel serves as the label to be used in the SitReps filters, and CustomSitrepPriority1 through CustomSitrepPriority4
+// will be at the top of the SitReps display.  As seen below, other labels are fine as well, but they cannot have any spaces if you want to use them in the SITREP_PRIORITY_ORDER
+
+effectsgroups = [
+
+
+EffectsGroup
+    scope = Capital
+    activation = Turn high = 1
+    effects =
+        GenerateSitRepMessage
+            message = "This is a sample Custom Sitrep, which is enabled by %tech% and all the busy empire servants reporting information back to %system%"
+            icon = "icons/tech/categories/spy.png"
+            parameters = [
+                tag = "UserSitRepLabel" data = "CustomSitrepPriority1"
+                tag = "tech" data = "SPY_CUSTOM_ADVISORIES"
+                tag = "system" data = Target.SystemID
+            ]
+            empire = Source.Owner
+
+
+// Reminder if a Gas Giant you own in a system along with another planet you also own, populated by a species with Industry Focus, and you have the Orbital Generation tech
+// but haven't yet built or enqueued a GG Generator in that system yet
+
+EffectsGroup
+    scope = And [
+        Planet Type = GasGiant
+        Ownedby empire = Source.Owner
+        Not Contains Building name = "BLD_GAS_GIANT_GEN"
+        ContainedBy And [
+            Contains And [
+                Planet 
+                Location type = Focus name = LocalCandidate.Species name = "FOCUS_INDUSTRY"
+                OwnedBy empire = Source.Owner
+            ]
+            Not Contains And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Or [
+                    Contains Building name = "BLD_GAS_GIANT_GEN"
+                    Enqueued type = Building name = "BLD_GAS_GIANT_GEN"
+                ]
+            ]
+        ]
+    ]
+    activation = OwnerHasTech name = "PRO_ORBITAL_GEN"
+    effects =
+        GenerateSitRepMessage
+            message = "%planet% is a prime location for a %buildingtype%, but none is being built there"
+            icon = "icons/building/gas-giant-generator.png"
+            parameters = [
+                tag = "UserSitRepLabel" data = "CustomSitrepPriority2"
+                tag = "buildingtype" data = "BLD_GAS_GIANT_GEN"
+                tag = "planet" data = Target.ID
+            ]
+            empire = Source.Owner
+
+
+
+
+// Reminder if you own a planet with a monster nest but haven't yet researched SHP_DOMESTIC_MONSTER
+// but haven't yet built or enqueued a GG Generator in that system yet
+
+EffectsGroup
+    scope = And [
+        Planet
+        Ownedby empire = Source.Owner
+        Or [
+            HasSpecial name = "KRAKEN_NEST_SPECIAL"
+            HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
+            HasSpecial name = "JUGGERNAUT_NEST_SPECIAL"
+        ]
+    ]
+    activation = Not OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
+    effects =
+        GenerateSitRepMessage
+            message = "You own %planet%, with a monster nest, but haven't yet researched %tech%"
+            icon = "icons/monsters/kraken-1.png"
+            parameters = [
+                tag = "UserSitRepLabel" data = "CustomSitrepPriority2"
+                tag = "planet" data = Target.ID
+                tag = "tech" data = "SHP_DOMESTIC_MONSTER"
+            ]
+            empire = Source.Owner
+
+
+
+// A Call to Arms
+// The VisibleToEmpire restriction is not at all necessary, but helps keep this notice from being necessarily constant
+EffectsGroup
+    scope = And [
+        Planet
+        Species
+        UnOwned
+        MaxDefense high = 0
+        VisibleToEmpire empire = Source.Owner
+    ]
+    activation = Source
+    effects =
+        GenerateSitRepMessage
+            message = "There are defenseless natives at %planet%!  Go invade them!"
+            parameters = [
+                tag = "UserSitRepLabel" data = "Natives-Nag-a-tron"
+                tag = "planet" data = Target.ID
+            ]
+            empire = Source.Owner
+
+
+
+]
