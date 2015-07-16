@@ -8640,6 +8640,7 @@ SPY_CUSTOM_ADVISORIES_DESC
 '''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps). 
 
 Many of the SitReps are determined automatically, but additional custom SitReps can be specified by editing the file default/customizations/custom_sitreps.txt
+More particulars on the FreeOrion scripting, such as for these custom SitReps, can be found at http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
 '''
 
 SHP_IMPROVED_ENGINE_COUPLINGS
