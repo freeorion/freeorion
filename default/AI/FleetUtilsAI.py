@@ -1,8 +1,8 @@
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-import AITarget
-from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType, AIShipDesignTypes, TargetType
+from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType
 import traceback
+from universe_object import Planet
 
 __designStats = {}
 __AIShipRoleTypeNames = AIShipRoleType()
@@ -80,7 +80,7 @@ def get_targeted_planet_ids(planet_ids, mission_type):
     for planet_id in planet_ids:
         # add planets that are target of a mission
         for fleet_mission in selected_fleet_missions:
-            ai_target = AITarget.AITarget(TargetType.TARGET_PLANET, planet_id)
+            ai_target = Planet(planet_id)
             if fleet_mission.has_target(mission_type, ai_target):
                 targeted_planets.append(planet_id)
     return targeted_planets
@@ -315,7 +315,7 @@ def get_empire_fleet_ids_by_role(fleet_role):
 
 def extract_fleet_ids_without_mission_types(fleets_ids):
     """Extracts a list with fleetIDs that have no mission."""
-    return [fleet_id for fleet_id in fleets_ids if not foAI.foAIstate.get_fleet_mission(fleet_id).get_mission_types()]
+    return [fleet_id for fleet_id in fleets_ids if not foAI.foAIstate.get_fleet_mission(fleet_id).type]
 
 
 def assess_fleet_role(fleet_id):
@@ -347,7 +347,7 @@ def assess_fleet_role(fleet_id):
     if AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION in ship_roles:
         selected_role = AIFleetMissionType.FLEET_MISSION_COLONISATION
     elif AIShipRoleType.SHIP_ROLE_BASE_COLONISATION in ship_roles:
-        selected_role = AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION
+        selected_role = AIFleetMissionType.FLEET_MISSION_COLONISATION
     elif AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST in ship_roles:
         selected_role = AIFleetMissionType.FLEET_MISSION_OUTPOST
     elif AIShipRoleType.SHIP_ROLE_BASE_OUTPOST in ship_roles:
@@ -362,7 +362,7 @@ def assess_fleet_role(fleet_id):
     elif favourite_role == AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION:
         selected_role = AIFleetMissionType.FLEET_MISSION_EXPLORATION
     elif favourite_role == AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK:
-        selected_role = AIFleetMissionType.FLEET_MISSION_ATTACK
+        selected_role = AIFleetMissionType.FLEET_MISSION_MILITARY
     elif favourite_role == AIShipRoleType.SHIP_ROLE_MILITARY:
         selected_role = AIFleetMissionType.FLEET_MISSION_MILITARY
     else:
@@ -416,8 +416,6 @@ def generate_fleet_orders_for_fleet_missions():
     print "Exploration Fleets : %s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     print "Colonization Fleets:%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     print "Outpost Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_OUTPOST)
-    print "Attack Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ATTACK)
-    print "Defend Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_DEFEND)
     print "Invasion Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_INVASION)
     print "Military Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_MILITARY)
     print "Orbital Defense Fleets :%s" % get_empire_fleet_ids_by_role(AIFleetMissionType.FLEET_MISSION_ORBITAL_DEFENSE)
@@ -522,8 +520,8 @@ def issue_fleet_orders_for_fleet_missions():
         thisround += 1
         print "issuing fleet orders Round %d:" % thisround
         for mission in fleet_missions:
-            fleet_id = mission.target_id
-            fleet = mission.target.target_obj
+            fleet_id = mission.fleet.id
+            fleet = mission.fleet.get_object()
             if not fleet or not fleet.shipIDs or fleet_id in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
                 continue
             mission.issue_fleet_orders()

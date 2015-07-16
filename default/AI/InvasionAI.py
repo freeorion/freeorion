@@ -5,7 +5,7 @@ import AIDependencies
 import EnumsAI
 import FleetUtilsAI
 import PlanetUtilsAI
-import AITarget
+import universe_object
 import math
 import ProductionAI
 import ColonisationAI
@@ -182,7 +182,7 @@ def get_invasion_targeted_planet_ids(planet_ids, mission_type):
     for pid in planet_ids:
         # add planets that are target of a mission
         for mission in invasion_feet_missions:
-            target = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, pid)
+            target =  universe_object.Planet(pid)
             if mission.has_target(mission_type, target):
                 targeted_planets.append(pid)
     return targeted_planets
@@ -328,13 +328,13 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
     for mission in secure_fleet_missions:
         if system_secured:
             break
-        secure_fleet_id = mission.target_id
+        secure_fleet_id = mission.fleet.id
         s_fleet = universe.getFleet(secure_fleet_id)
         if not s_fleet or s_fleet.systemID != p_sys_id:
             continue
-        for ai_target in mission.get_targets(EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE):
-            target_obj = ai_target.target_obj
-            if (target_obj is not None) and target_obj.id in secure_targets:
+        if mission == EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE:
+            target_obj = mission.target.get_object()
+            if target_obj is not None and target_obj.id in secure_targets:
                 system_secured = True
                 break
     system_secured = system_secured and system_status.get('myFleetRating',0)
@@ -405,12 +405,12 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
                 continue
             else:
                 these_fleets = found_fleets
-        target = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, planet_id)
+        target = universe_object.Planet(planet_id)
         print "assigning invasion fleets %s to target %s" % (these_fleets, target)
         for fleetID in these_fleets:
             fleet_mission = foAI.foAIstate.get_fleet_mission(fleetID)
             fleet_mission.clear_fleet_orders()
-            fleet_mission.clear_targets((fleet_mission.get_mission_types() + [-1])[0])
+            fleet_mission.clear_target()
             fleet_mission.add_target(mission_type, target)
 
 
@@ -473,7 +473,7 @@ def assign_invasion_fleets_to_invade():
                 available_troopbase_fleet_ids.discard(fid2)
             available_troopbase_fleet_ids.discard(fid)
             foAI.foAIstate.qualifyingTroopBaseTargets[target_id][1] = -1  # TODO: should probably delete
-            target = AITarget.AITarget(EnumsAI.TargetType.TARGET_PLANET, target_id)
+            target = universe_object.Planet(target_id)
             fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
             fleet_mission.add_target(EnumsAI.AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION, target)
     
