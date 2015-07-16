@@ -3324,3 +3324,14 @@ Tech
                 RemoveSpecial name = "CLOUD_COVER_SLAVE_SPECIAL"
             ]
 
+//#     Spy Other
+
+Tech
+    name = "SPY_CUSTOM_ADVISORIES"
+    description = "SPY_CUSTOM_ADVISORIES_DESC"
+    short_description = "SPY_CUSTOM_ADVISORIES"
+    techtype = Application
+    category = "SPY_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    include "customizations/custom_sitreps.txt"
