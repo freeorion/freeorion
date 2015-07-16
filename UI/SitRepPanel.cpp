@@ -36,6 +36,13 @@ namespace {
     { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-font-size")); }
     
     std::map<std::string, std::string> label_display_map;
+    std::map<int, std::set<std::string> > snoozed_sitreps;
+    std::set<std::string> permanently_snoozed_sitreps;
+
+    void SnoozeSitRepForNTurns(std::string sitrep_text, int start_turn, int num_turns) {
+        for (int turn=start_turn; turn < start_turn + num_turns; turn++)
+            snoozed_sitreps[turn].insert(sitrep_text);
+    }
     
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
@@ -322,6 +329,7 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_prev_turn_button(0),
     m_next_turn_button(0),
     m_last_turn_button(0),
+    m_filter_button(0),
     m_showing_turn(INVALID_GAME_TURN),
     m_hidden_sitrep_templates(HiddenSitRepTemplateStringsFromOptions())
 {
@@ -346,6 +354,8 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     GG::Connect(m_next_turn_button->LeftClickedSignal,  &SitRepPanel::NextClicked,          this);
     GG::Connect(m_last_turn_button->LeftClickedSignal,  &SitRepPanel::LastClicked,          this);
     GG::Connect(m_filter_button->LeftClickedSignal,     &SitRepPanel::FilterClicked,        this);
+    GG::Connect(m_sitreps_lb->DoubleClickedSignal,      &SitRepPanel::DismissSitRep,        this);
+    GG::Connect(m_sitreps_lb->RightClickedSignal,       &SitRepPanel::DismissalMenu,        this);
 
     DoLayout();
     Hide();
@@ -421,6 +431,11 @@ namespace {
                         continue;
                 }
                 if (hidden_sitrep_templates.find(sitrep_it->GetLabelString().empty() ? sitrep_it->GetTemplateString() : sitrep_it->GetLabelString()) != hidden_sitrep_templates.end())
+                    continue;
+                if (permanently_snoozed_sitreps.find(sitrep_it->GetText()) != permanently_snoozed_sitreps.end())
+                    continue;
+                std::map< int, std::set< std::string > >::iterator sitrep_set_it = snoozed_sitreps.find(sitrep_it->GetTurn());
+                if (sitrep_set_it != snoozed_sitreps.end() && sitrep_set_it->second.find(sitrep_it->GetText()) != sitrep_set_it->second.end())
                     continue;
                 turns[sitrep_it->GetTurn()].push_back(*sitrep_it);
             }
@@ -544,6 +559,74 @@ void SitRepPanel::FilterClicked() {
     Update();
 }
 
+void SitRepPanel::DismissSitRep(GG::ListBox::iterator it) {
+    SitRepRow* sitrep_row = dynamic_cast<SitRepRow*>(*it);
+    if (!sitrep_row) {
+        return;
+    }
+    const SitRepEntry& sitrep = sitrep_row->GetSitRepEntry();
+    if (sitrep.GetTurn() <= 0)
+        return;
+    snoozed_sitreps[sitrep.GetTurn()].insert(sitrep.GetText());
+
+    Update();
+}
+
+void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt) {
+
+    GG::MenuItem menu_contents;
+    std::string sitrep_text;
+    int start_turn = 0;
+    SitRepRow* sitrep_row(0);
+    if (it != m_sitreps_lb->end()) 
+        sitrep_row = dynamic_cast<SitRepRow*>(*it);
+    if (sitrep_row) {
+        sitrep_text = sitrep_row->GetSitRepEntry().GetText();
+        start_turn = sitrep_row->GetSitRepEntry().GetTurn();
+        if (start_turn > 0) {
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_5_TURNS"),      1, false, false));
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_10_TURNS"),     2, false, false));
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_INDEFINITE"),   3, false, false));
+        }
+    }
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_ALL"),        4, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"), 5, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+                        ClientUI::WndInnerBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
+    if (!popup.Run())
+        return;
+    int selected_menu_item = popup.MenuID();
+    if (selected_menu_item == 0)
+        return; // nothing was selected
+
+    switch (popup.MenuID()) {
+    case 1: { //
+        SnoozeSitRepForNTurns(sitrep_text, start_turn, 5);
+        break;
+    }
+    case 2: { //
+        SnoozeSitRepForNTurns(sitrep_text, start_turn, 10);
+        break;
+    }
+    case 3: { //
+        permanently_snoozed_sitreps.insert(sitrep_text);
+        break;
+    }
+    case 4: { //
+        snoozed_sitreps.clear();
+    }
+    case 5: { //
+        permanently_snoozed_sitreps.clear();
+        break;
+    }
+
+    default:
+        break;
+    }
+    Update();
+}
+
 void SitRepPanel::Update() {
     DebugLogger() << "SitRepPanel::Update()";
     m_sitreps_lb->Clear();
@@ -633,3 +716,5 @@ int SitRepPanel::NumVisibleSitrepsThisTurn() const {
     std::map<int, std::list<SitRepEntry> > turns = GetSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID(), m_hidden_sitrep_templates);
     return turns[CurrentTurn()].size();
 }
+
+

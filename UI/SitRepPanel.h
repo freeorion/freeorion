@@ -3,6 +3,7 @@
 #define _SitRepPanel_h_
 
 #include <GG/GGFwd.h>
+#include <GG/ListBox.h>
 #include "CUIWnd.h"
 
 class SitRepEntry;
@@ -37,7 +38,8 @@ private:
     void            NextClicked();
     void            LastClicked();
     void            FilterClicked();
-
+    void            DismissSitRep(GG::ListBox::iterator it);
+    void            DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt);
     void            DoLayout();
 
     int             GetNextNonEmptySitrepsTurn(const std::map<int, std::list<SitRepEntry> >& turns,

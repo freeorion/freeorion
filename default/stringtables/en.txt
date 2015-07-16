@@ -4310,6 +4310,21 @@ An unknown event occurred.
 FILTERS
 Filters
 
+SITREP_SNOOZE_5_TURNS
+'''  5 turn dismissal for this SitRep'''
+
+SITREP_SNOOZE_10_TURNS
+'''  10 turn dismissal for this SitRep'''
+
+SITREP_SNOOZE_INDEFINITE
+'''  Indefinite dismissal for this SitRep'''
+
+SITREP_SNOOZE_CLEAR_INDEFINITE
+'''  Clear all indefinite SitRep dismissals'''
+
+SITREP_SNOOZE_CLEAR_ALL
+'''  Clear all SitRep dismissals'''
+
 ## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.
 ## Sitreps not specified below will appear in the SitrepPanel following those below.
