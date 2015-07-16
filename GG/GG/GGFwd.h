@@ -34,6 +34,7 @@ namespace GG {
     class MultiEdit;
     class RadioButtonGroup;
     class Scroll;
+    class ScrollPanel;
     class StaticGraphic;
     class SubTexture;
     class TabWnd;

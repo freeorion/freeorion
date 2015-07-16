@@ -132,6 +132,7 @@ set(freeorion_SOURCES
     ../../UI/CombatReport/CombatReportWnd.cpp
     ../../UI/CUIControls.cpp
     ../../UI/CUIDrawUtil.cpp
+    ../../UI/CUILinkTextBlock.cpp
     ../../UI/CUIStyle.cpp
     ../../UI/CUIWnd.cpp
     ../../UI/DesignWnd.cpp
