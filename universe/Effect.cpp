@@ -3190,26 +3190,49 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
                                              const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                                              ValueRef::ValueRefBase<int>* recipient_empire_id,
-                                             EmpireAffiliationType affiliation) :
+                                             EmpireAffiliationType affiliation,
+                                             const std::string label,
+                                             bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(recipient_empire_id),
     m_condition(0),
-    m_affiliation(affiliation)
+    m_affiliation(affiliation),
+    m_label(label),
+    m_stringtable_lookup(stringtable_lookup)
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
                                              const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                                              EmpireAffiliationType affiliation,
-                                             Condition::ConditionBase* condition) :
+                                             Condition::ConditionBase* condition,
+                                             const std::string label,
+                                             bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(0),
     m_condition(condition),
-    m_affiliation(affiliation)
+    m_affiliation(affiliation),
+    m_label(label),
+    m_stringtable_lookup(stringtable_lookup)
+{}
+
+GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
+                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             EmpireAffiliationType affiliation,
+                                             const std::string& label,
+                                             bool stringtable_lookup):
+    m_message_string(message_string),
+    m_icon(icon),
+    m_message_parameters(message_parameters),
+    m_recipient_empire_id(0),
+    m_condition(),
+    m_affiliation(affiliation),
+    m_label(label),
+    m_stringtable_lookup(stringtable_lookup)
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage() {
@@ -3334,8 +3357,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
         Empire* empire = GetEmpire(*emp_it);
         if (!empire)
             continue;
-
-        empire->AddSitRepEntry(CreateSitRep(m_message_string, m_icon, parameter_tag_values));
+        empire->AddSitRepEntry(CreateSitRep(m_message_string, m_icon, parameter_tag_values, m_label, m_stringtable_lookup));
 
         // also inform of any ship designs recipients should know about
         for (std::set<int>::const_iterator design_it = ship_design_ids_to_inform_receipits_of.begin();

@@ -43,6 +43,7 @@ public:
     const std::string&          GetText() const;        //!< Returns text generated after substituting all variables.
     bool                        Validate() const;       //!< Does text generation succeed without any errors occurring?
     const std::string&          GetTemplateString() const   { return m_template_string; }
+    bool                        GetStringtableLookupFlag() const { return m_stringtable_lookup_flag; }
     std::vector<std::string>    GetVariableTags() const;//!< returns a list of tags for the variables this vartext has
     //@}
 

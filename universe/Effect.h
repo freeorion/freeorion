@@ -907,11 +907,20 @@ public:
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                           ValueRef::ValueRefBase<int>* recipient_empire_id,
-                          EmpireAffiliationType affiliation);
+                          EmpireAffiliationType affiliation,
+                          const std::string label = "",
+                          bool stringtable_lookup = true);
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                           EmpireAffiliationType affiliation,
-                          Condition::ConditionBase* condition = 0);
+                          Condition::ConditionBase* condition = 0,
+                          const std::string label = "",
+                          bool stringtable_lookup = true);
+    GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
+                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                          EmpireAffiliationType affiliation,
+                          const std::string& label = "",
+                          bool stringtable_lookup = true);
     virtual ~GenerateSitRepMessage();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -936,6 +945,8 @@ private:
     ValueRef::ValueRefBase<int>*                m_recipient_empire_id;
     Condition::ConditionBase*                   m_condition;
     EmpireAffiliationType                       m_affiliation;
+    std::string                                 m_label;
+    bool                                        m_stringtable_lookup;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1256,7 +1267,9 @@ void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int ve
         & BOOST_SERIALIZATION_NVP(m_message_parameters)
         & BOOST_SERIALIZATION_NVP(m_recipient_empire_id)
         & BOOST_SERIALIZATION_NVP(m_condition)
-        & BOOST_SERIALIZATION_NVP(m_affiliation);
+        & BOOST_SERIALIZATION_NVP(m_affiliation)
+        & BOOST_SERIALIZATION_NVP(m_label)
+        & BOOST_SERIALIZATION_NVP(m_stringtable_lookup);
 }
 
 template <class Archive>
