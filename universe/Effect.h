@@ -909,18 +909,18 @@ public:
                           ValueRef::ValueRefBase<int>* recipient_empire_id,
                           EmpireAffiliationType affiliation,
                           const std::string label = "",
-                          bool no_stringtable_lookup = false);
+                          bool stringtable_lookup = true);
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                           EmpireAffiliationType affiliation,
                           Condition::ConditionBase* condition = 0,
                           const std::string label = "",
-                          bool no_stringtable_lookup = false);
+                          bool stringtable_lookup = true);
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                           EmpireAffiliationType affiliation,
-                          const std::string& label,
-                          bool no_stringtable_lookup);
+                          const std::string& label = "",
+                          bool stringtable_lookup = true);
     virtual ~GenerateSitRepMessage();
 
     virtual void        Execute(const ScriptingContext& context) const;

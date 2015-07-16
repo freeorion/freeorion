@@ -63,11 +63,16 @@ namespace {
                      )
                 ;
 
+            // Note: the NoStringtableLookup flag controls the lookup both of template in Vartext and of the label in SitrepPanel.
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
                 >    parse::label(Message_token)    >  tok.string [ _a = _1 ]
                 >  -(parse::label(Label_token)      >  tok.string [ _e = _1 ] )
-                >  -(tok.NoStringtableLookup_                     [ _f = true ] )
+                //>  -(tok.NoStringtableLookup_                     [ _f = true ] )
+                >   (
+                       tok.NoStringtableLookup_ [ _f = false ]
+                     | eps [ _f = true ]
+                    )
                 >  -(parse::label(Icon_token)       >  tok.string [ _b = _1 ] )
                 >  -(parse::label(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
                 >   (

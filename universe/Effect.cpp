@@ -3192,7 +3192,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              ValueRef::ValueRefBase<int>* recipient_empire_id,
                                              EmpireAffiliationType affiliation,
                                              const std::string label,
-                                             bool no_stringtable_lookup) :
+                                             bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
@@ -3200,7 +3200,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
     m_condition(0),
     m_affiliation(affiliation),
     m_label(label),
-    m_stringtable_lookup(!no_stringtable_lookup)
+    m_stringtable_lookup(stringtable_lookup)
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
@@ -3209,7 +3209,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              EmpireAffiliationType affiliation,
                                              Condition::ConditionBase* condition,
                                              const std::string label,
-                                             bool no_stringtable_lookup) :
+                                             bool stringtable_lookup) :
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
@@ -3217,14 +3217,14 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
     m_condition(condition),
     m_affiliation(affiliation),
     m_label(label),
-    m_stringtable_lookup(!no_stringtable_lookup)
+    m_stringtable_lookup(stringtable_lookup)
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                                              const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              const std::string& label,
-                                             bool no_stringtable_lookup):
+                                             bool stringtable_lookup):
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
@@ -3232,7 +3232,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
     m_condition(),
     m_affiliation(affiliation),
     m_label(label),
-    m_stringtable_lookup(!no_stringtable_lookup)
+    m_stringtable_lookup(stringtable_lookup)
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage() {

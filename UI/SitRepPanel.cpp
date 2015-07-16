@@ -109,7 +109,7 @@ namespace {
                 label_display_map[label] = UserString(label + "_LABEL");
             } else {
                 label = sitrep_it->GetLabelString();
-                label_display_map[label] = sitrep_it->DoStringtableLookup()? UserString(label) : label;
+                label_display_map[label] = sitrep_it->GetStringtableLookupFlag()? UserString(label) : label;
             }
             template_set.insert(label);
             
