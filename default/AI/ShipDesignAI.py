@@ -1412,7 +1412,7 @@ class MilitaryShipDesigner(ShipDesigner):
                               self.maximum_organic_growth)
         remaining_growth = self.maximum_organic_growth - expected_growth
         effective_structure = (self.structure + expected_growth + remaining_growth/5) * shield_factor
-        speed_factor = 1 + 0.003*(self.speed - 85)
+        speed_factor = 1 + 0.005*(self.speed - 85)
         fuel_factor = 1 + 0.03*(self._effective_fuel() - self._minimum_fuel())**0.5
         return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
 
