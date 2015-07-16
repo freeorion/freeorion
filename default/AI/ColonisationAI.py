@@ -412,9 +412,9 @@ def survey_universe():
                         this_facility_dict.setdefault("systems", set()).add(sys_id)
                         this_facility_dict.setdefault("planets", set()).add(pid)
 
-                if planet.focus == EnumsAI.AIFocusType.FOCUS_INDUSTRY:
+                if planet.focus == AIFocusType.FOCUS_INDUSTRY:
                     empire_status['industrialists'] += planet_population
-                elif planet.focus == EnumsAI.AIFocusType.FOCUS_RESEARCH:
+                elif planet.focus == AIFocusType.FOCUS_RESEARCH:
                     empire_status['researchers'] += planet_population
                 if "ANCIENT_RUINS_SPECIAL" in planet.specials:
                     gotRuins = True
@@ -781,6 +781,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     retval = 0
     discount_multiplier = [30.0, 40.0][fo.empireID() % 2]
     species = fo.getSpecies(spec_name or "")  # in case None is passed as specName
+    species_foci = [] and species and list(species.foci)
     tag_list = list(species.tags) if species else []
     pilot_val = pilot_rating = 0
     if species and species.canProduceShips:
@@ -1010,7 +1011,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 retval += fort_val
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
-                honey_val = (0.5 * AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
+                honey_val = 0.3*(AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
                              empire_status['industrialists'] * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
@@ -1104,6 +1105,13 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if "ANCIENT_RUINS_SPECIAL" in planet.specials:
             retval += discount_multiplier * 50
             detail.append("Undepleted Ruins %.1f" % discount_multiplier * 50)
+        if "HONEYCOMB_SPECIAL" in planet.specials:
+            honey_val = (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
+                         empire_status['industrialists'] * discount_multiplier)
+            if not AIFocusType.FOCUS_INDUSTRY in species_foci:
+                honey_val *= -0.3  # discourage settlement by colonizers not able to use Industry Focus
+            retval += honey_val
+            detail.append("%s %.1f" % ("HONEYCOMB_SPECIAL", honey_val))
 
         if sys_supply <= 0:
             if sys_supply + planet_supply >= 0:

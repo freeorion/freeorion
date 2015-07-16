@@ -302,6 +302,19 @@ def set_planet_resource_foci():
                     if pid in empirePlanetIDs:
                         del empirePlanetIDs[empirePlanetIDs.index(pid)]
                     continue
+            if "HONEYCOMB_SPECIAL" in planet.specials and IFocus in planet.availableFoci:
+                curFocus = planet.focus
+                newFoci[pid] = IFocus
+                result = 0
+                if curFocus != IFocus:
+                    result = fo.issueChangeFocusOrder(pid, IFocus)
+                    if result == 1:
+                        universe.updateMeterEstimates(empirePlanetIDs)
+                if curFocus == IFocus or result == 1:
+                    print "%s focus of planet %s (%d) (with Honeycomb) at Industry Focus" % (["set", "left"][curFocus == IFocus], planetMap[pid].name, pid)
+                    if pid in empirePlanetIDs:
+                        del empirePlanetIDs[empirePlanetIDs.index(pid)]
+                    continue
             if ((([bld.buildingTypeName for bld in map(universe.getObject, planet.buildingIDs) if bld.buildingTypeName in
                     ["BLD_CONC_CAMP", "BLD_CONC_CAMP_REMNANT"]] != []) or
                              ([ccspec for ccspec in planet.specials if ccspec in ["CONC_CAMP_MASTER_SPECIAL", "CONC_CAMP_SLAVE_SPECIAL"]] != []))
