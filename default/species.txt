@@ -2166,7 +2166,7 @@ ULTIMATE_SUPPLY
 
 //#####     P O P U L A T I O N   #####  
 
-AVERAGE_POPULATION
+BASIC_POPULATION
 '''
         [[HOMEWORLD_BONUS_POPULATION]]
         [[ENVIRONMENT_MODIFIER]]
@@ -2185,8 +2185,12 @@ AVERAGE_POPULATION
         [[STANDARD_CONSTRUCTION]]
 '''
 
+AVERAGE_POPULATION
+'''     [[BASIC_POPULATION]]
+'''
+
 BAD_POPULATION
-'''     [[AVERAGE_POPULATION]]
+'''     [[BASIC_POPULATION]]
     
         EffectsGroup
             scope = Source
@@ -2196,7 +2200,7 @@ BAD_POPULATION
 '''
 
 GOOD_POPULATION
-'''     [[AVERAGE_POPULATION]]
+'''     [[BASIC_POPULATION]]
 
         EffectsGroup
             scope = Source
@@ -2764,8 +2768,29 @@ NO_INDUSTRY
 '''
 '''
 
+BASIC_INDUSTRY
+'''        EffectsGroup
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                TargetIndustry low = 0
+                Focus type = "FOCUS_INDUSTRY"
+            ]
+            accountinglabel = "FOCUS_INDUSTRY_LABEL"
+            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup                    // removes residual production from a dead planet
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation high = 0
+            ]
+            effects = SetIndustry value = 0
+'''
+
 BAD_INDUSTRY
-'''[[AVERAGE_INDUSTRY]]
+'''[[BASIC_INDUSTRY]]
 
         EffectsGroup
             scope = Source
@@ -2780,28 +2805,11 @@ BAD_INDUSTRY
 '''
 
 AVERAGE_INDUSTRY
-'''        EffectsGroup
-            scope = Source
-            activation = And [
-                Source
-                Planet
-                TargetIndustry low = 0
-                Focus type = "FOCUS_INDUSTRY"
-            ]
-            accountinglabel = "FOCUS_INDUSTRY_LABEL"
-            effects = SetTargetIndustry value = Value + Target.Population * [[INDUSTRY_PER_POP]]
-           
-        EffectsGroup                    // removes residual production from a dead planet
-            scope = Source
-            activation = And [
-                Planet
-                TargetPopulation high = 0
-            ]
-            effects = SetIndustry value = 0
+'''[[BASIC_INDUSTRY]]
 '''
 
 GOOD_INDUSTRY
-'''[[AVERAGE_INDUSTRY]]
+'''[[BASIC_INDUSTRY]]
 
         EffectsGroup
             scope = Source
@@ -2816,7 +2824,7 @@ GOOD_INDUSTRY
 '''
 
 GREAT_INDUSTRY
-'''[[AVERAGE_INDUSTRY]]
+'''[[BASIC_INDUSTRY]]
 
         EffectsGroup
             scope = Source
@@ -2831,7 +2839,7 @@ GREAT_INDUSTRY
 '''
 
 ULTIMATE_INDUSTRY
-'''[[AVERAGE_INDUSTRY]]
+'''[[BASIC_INDUSTRY]]
 
         EffectsGroup
             scope = Source
@@ -2847,12 +2855,32 @@ ULTIMATE_INDUSTRY
 
 //#####      R E S E A R C H    #####//
 
+BASIC_RESEARCH
+'''EffectsGroup
+            scope = Source
+            activation = And [
+                Source
+                Planet
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            accountinglabel = "FOCUS_RESEARCH_LABEL"
+            effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
+
+        EffectsGroup      // removes residual production from a dead planet
+            scope = Source
+            activation = And [
+                Planet
+                TargetPopulation high = 0
+            ]
+            effects = SetResearch value = 0
+'''
+
 NO_RESEARCH
 '''
 '''
 
 BAD_RESEARCH
-'''[[AVERAGE_RESEARCH]]
+'''[[BASIC_RESEARCH]]
 
         EffectsGroup
             scope = Source
@@ -2866,27 +2894,11 @@ BAD_RESEARCH
 '''
 
 AVERAGE_RESEARCH
-'''EffectsGroup
-            scope = Source
-            activation = And [
-                Source
-                Planet
-                Focus type = "FOCUS_RESEARCH"
-            ]
-            accountinglabel = "FOCUS_RESEARCH_LABEL"
-            effects = SetTargetResearch value = Value + Target.Population * [[RESEARCH_PER_POP]]
-           
-        EffectsGroup      // removes residual production from a dead planet
-            scope = Source
-            activation = And [
-                Planet
-                TargetPopulation high = 0
-            ]
-            effects = SetResearch value = 0
+'''[[BASIC_RESEARCH]]
 '''
 
 GOOD_RESEARCH
-'''[[AVERAGE_RESEARCH]]
+'''[[BASIC_RESEARCH]]
 
         EffectsGroup
             scope = Source
@@ -2900,7 +2912,7 @@ GOOD_RESEARCH
 '''
 
 GREAT_RESEARCH
-'''[[AVERAGE_RESEARCH]]
+'''[[BASIC_RESEARCH]]
 
         EffectsGroup
             scope = Source
@@ -2914,7 +2926,7 @@ GREAT_RESEARCH
 '''
 
 ULTIMATE_RESEARCH
-'''[[AVERAGE_RESEARCH]]
+'''[[BASIC_RESEARCH]]
 
         EffectsGroup
             scope = Source
@@ -2928,63 +2940,6 @@ ULTIMATE_RESEARCH
 '''
 
 //#####      T R O O P S     #####//
-
-NO_GROUND_TROOPS
-'''[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]'''
-
-BAD_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
-
-EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "BAD_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value * 0.5
-            
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
-'''
-
-AVERAGE_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
-            
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
-'''
-
-GOOD_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
-
-EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "GOOD_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value * 1.5
-            
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
-'''
-
-GREAT_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
-
-EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "GREAT_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value * 2
-            
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
-'''
-
-ULTIMATE_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
-
-EffectsGroup
-            scope = Source
-            activation = Planet
-            accountinglabel = "ULTIMATE_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value * 3
-            
-    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
-'''
 
 BASIC_GROUND_TROOPS
 '''EffectsGroup
@@ -3113,8 +3068,67 @@ EffectsGroup
             stackinggroup = "OUTPOST_TROOPS_STACK"
             accountinglabel = "OUTPOST_TROOP_LABEL"
             effects = SetMaxTroops value = Value * .5
+'''
+
+NO_GROUND_TROOPS
+'''[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]'''
+
+BAD_GROUND_TROOPS
+'''[[BASIC_GROUND_TROOPS]]
 
 EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "BAD_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 0.5
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+AVERAGE_GROUND_TROOPS
+'''[[BASIC_GROUND_TROOPS]]
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+GOOD_GROUND_TROOPS
+'''[[BASIC_GROUND_TROOPS]]
+
+EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "GOOD_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 1.5
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+GREAT_GROUND_TROOPS
+'''[[BASIC_GROUND_TROOPS]]
+
+EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "GREAT_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 2
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+ULTIMATE_GROUND_TROOPS
+'''[[BASIC_GROUND_TROOPS]]
+
+EffectsGroup
+            scope = Source
+            activation = Planet
+            accountinglabel = "ULTIMATE_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value * 3
+
+    [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
+
+PROTECTION_FOCUS_TROOPS
+'''EffectsGroup
             scope = Source
             activation = And [
                 Planet
