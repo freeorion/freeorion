@@ -92,7 +92,7 @@ ShipDesign
         "AR_PRECURSOR_PLATE"
         ""
         ""
-        "SH_DEFLECTOR"
+        "SH_DEFENSE_GRID"
     ]
     icon = "icons/monsters/maintenance_ship.png"
     model = "seed"
