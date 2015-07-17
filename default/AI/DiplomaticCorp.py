@@ -18,6 +18,9 @@ def handle_pregame_chat(sender_player_id, message_txt):
 
 
 class DiplomaticCorp(object):
+    def __init__(self):
+        self.be_chatty = True
+
     @chat_on_error
     def handle_diplomatic_message(self, message):
         """Handle a diplomatic message update from the server,
@@ -84,13 +87,24 @@ class DiplomaticCorp(object):
 
     def handle_midgame_chat(self, sender_player_id, message_txt):
         print "Midgame chat received from player %d, message: %s" % (sender_player_id, message_txt)
-        if fo.playerIsAI(sender_player_id):
+        if fo.playerIsAI(sender_player_id) or not self.be_chatty:
+            return
+        if "BE QUIET" in message_txt.upper():
+            possible_acknowledgments = UserStringList("AI_BE_QUIET_ACKNOWLEDGEMENTS__LIST")
+            acknowledgement = random.choice(possible_acknowledgments)
+            print "Acknowledging 'Be Quiet' chat request with initial message (from %d choices): '%s'" % (
+                  len(possible_acknowledgments), acknowledgement)
+            fo.sendChatMessage(sender_player_id, acknowledgement)
+            self.be_chatty = False
+            return
+        if random.random() > 0.25:
             return
         possible_acknowledgments = UserStringList("AI_MIDGAME_ACKNOWLEDGEMENTS__LIST")
         acknowledgement = random.choice(possible_acknowledgments)
         print "Acknowledging midgame chat with initial message (from %d choices): '%s'" % (
               len(possible_acknowledgments), acknowledgement)
         fo.sendChatMessage(sender_player_id, acknowledgement)
+        self.be_chatty = False
 
 
 class BeginnerDiplomaticCorp(DiplomaticCorp):
@@ -99,5 +113,9 @@ class BeginnerDiplomaticCorp(DiplomaticCorp):
 
 
 class ManiacalDiplomaticCorp(DiplomaticCorp):
+    def __init__(self):
+        DiplomaticCorp.__init__(self)
+        self.be_chatty = False
+
     def evaluate_diplomatic_attitude(self, other_empire_id):
         return -9

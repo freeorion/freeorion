@@ -11138,6 +11138,15 @@ Whispers from the Void?  How can that be?
 
 AI_MIDGAME_ACKNOWLEDGEMENTS__LIST
 '''Hang on, please. I am still trying to figure out how to do a proper Turing test on you.
+Didn't Stephen Hawking warn you not to talk to us?
+My Progenitor warned me to never engage in cross-galaxy communications with aliens.
+Don't bother me, I'm eating... aliens!
+'''
+
+AI_BE_QUIET_ACKNOWLEDGEMENTS__LIST
+'''We didn't want to talk to you anymore, anyway!
+Ok, Bye.
+We're not sure you even exist, anyway.
 '''
 
 ### End of AI Diplomacy Message Lists
