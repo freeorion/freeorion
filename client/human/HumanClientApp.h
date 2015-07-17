@@ -25,6 +25,8 @@ class HumanClientApp :
 public:
     class CleanQuit : public std::exception {};
 
+    typedef boost::signals2::signal<void (bool)> FullscreenSwitchSignalType;
+
     /** \name Structors */ //@{
     HumanClientApp(int width, int height, bool calculate_FPS, const std::string& name, int x, int y, bool fullscreen, bool fake_mode_change);
     virtual ~HumanClientApp();
@@ -68,6 +70,8 @@ public:
 
     void                HandleSaveGameDataRequest();
     //@}
+
+    mutable FullscreenSwitchSignalType FullscreenSwitchSignal;
 
     static std::pair<int, int>  GetWindowWidthHeight();
     static std::pair<int, int>  GetWindowLeftTop();

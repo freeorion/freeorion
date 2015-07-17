@@ -12,11 +12,6 @@
 #include <GG/TabWnd.h>
 #include <GG/Layout.h>
 
-namespace {
-    GG::X COMBAT_LOG_WIDTH(400);
-    GG::Y COMBAT_LOG_HEIGHT(300);
-}
-
 // The implementation class for CombatReportWnd
 class CombatReportWnd::CombatReportPrivate {
 public:
@@ -180,14 +175,19 @@ private:
     }
 };
 
-CombatReportWnd::CombatReportWnd() :
-    CUIWnd(UserString("COMBAT_REPORT_TITLE"), GG::X(150), GG::Y(50), COMBAT_LOG_WIDTH, COMBAT_LOG_HEIGHT,
-           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE),
+CombatReportWnd::CombatReportWnd(GG::X default_x, GG::Y default_y,
+                                 GG::X default_w, GG::Y default_h,
+                                 const std::string& config_name) :
+    CUIWnd(UserString("COMBAT_REPORT_TITLE"),
+           default_x, default_y,
+           default_w, default_h,
+           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE,
+           config_name, false),
     m_impl(0)
 { m_impl.reset(new CombatReportPrivate(*this)); }
 
 CombatReportWnd::~CombatReportWnd()
-{ }
+{}
 
 void CombatReportWnd::SetLog(int log_id)
 { m_impl->SetLog(log_id); }

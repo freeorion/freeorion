@@ -34,6 +34,8 @@
 
 namespace {
     const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38));   // area reserved for ship or fleet icon in data panels (actual height can be bigger if the row expands due to font size)
+    GG::X FLEET_WND_WIDTH = GG::X(360);
+    GG::Y FLEET_WND_HEIGHT = GG::Y(400);
 
     // how should ship and fleet icons be scaled and/or positioned in the reserved space
     const GG::Flags<GG::GraphicStyle>   DataPanelIconStyle()
@@ -44,6 +46,7 @@ namespace {
     const int           PAD = 4;
     const std::string   SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
     const std::string   FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
+    const std::string   FLEET_WND_NAME = "map.fleet";
 
     GG::Y LabelHeight()
     { return GG::Y(ClientUI::Pts()*3/2); }
@@ -500,9 +503,13 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
                                       int selected_fleet_id/* = INVALID_OBJECT_ID*/,
                                       GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
-    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows"))
+    std::string config_name = "";
+    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
         CloseAll();
-    FleetWnd* retval = new FleetWnd(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags);
+        // Only write to OptionsDB if in single fleet window mode.
+        config_name = FLEET_WND_NAME;
+    }
+    FleetWnd* retval = new FleetWnd(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
 
     m_fleet_wnds.insert(retval);
     GG::Connect(retval->ClosingSignal,              &FleetUIManager::FleetWndClosing,   this);
@@ -519,9 +526,13 @@ FleetWnd* FleetUIManager::NewFleetWnd(int system_id, int empire_id,
                                       int selected_fleet_id/* = INVALID_OBJECT_ID*/,
                                       GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
-    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows"))
+    std::string config_name = "";
+    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
         CloseAll();
-    FleetWnd* retval = new FleetWnd(system_id, empire_id, m_order_issuing_enabled, selected_fleet_id, flags);
+        // Only write to OptionsDB if in single fleet window mode.
+        config_name = FLEET_WND_NAME;
+    }
+    FleetWnd* retval = new FleetWnd(system_id, empire_id, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
 
     m_fleet_wnds.insert(retval);
     GG::Connect(retval->ClosingSignal,              &FleetUIManager::FleetWndClosing,           this);
@@ -2558,14 +2569,11 @@ int FleetDetailPanel::ShipInRow(GG::ListBox::iterator it) const {
 ////////////////////////////////////////////////
 // FleetWnd
 ////////////////////////////////////////////////
-// static(s)
-GG::Pt FleetWnd::s_last_position =  GG::Pt(GG::X0, GG::Y0);
-GG::Pt FleetWnd::s_last_size =      GG::Pt(GG::X(360), GG::Y(400));
-
 FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/) :
-    MapWndPopup("", s_last_position.x, s_last_position.y, s_last_size.x, s_last_size.y, flags),
+         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
+         const std::string& config_name) :
+    MapWndPopup("", GG::X(5), GG::GUI::GetGUI()->AppHeight() - FLEET_WND_HEIGHT - 5, FLEET_WND_WIDTH, FLEET_WND_HEIGHT, flags, config_name),
     m_fleet_ids(),
     m_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
@@ -2582,8 +2590,9 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
 
 FleetWnd::FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
-         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/) :
-    MapWndPopup("", s_last_position.x, s_last_position.y, s_last_size.x, s_last_size.y, flags | GG::RESIZABLE),
+         GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
+         const std::string& config_name) :
+    MapWndPopup("", GG::X(5), GG::GUI::GetGUI()->AppHeight() - FLEET_WND_HEIGHT - 5, FLEET_WND_WIDTH, FLEET_WND_HEIGHT, flags | GG::RESIZABLE, config_name),
     m_fleet_ids(),
     m_empire_id(empire_id),
     m_system_id(system_id),
@@ -2602,15 +2611,6 @@ FleetWnd::~FleetWnd() {
 void FleetWnd::Init(int selected_fleet_id) {
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
                                                  ListRowHeight() + 2*GG::Y(PAD)));
-
-    // ensure position is not off screen
-    GG::Pt window_pos = UpperLeft();
-    if (GG::GUI::GetGUI()->AppWidth() < Right())
-        window_pos.x = GG::GUI::GetGUI()->AppWidth() - Width();
-    if (GG::GUI::GetGUI()->AppHeight() < Bottom())
-        window_pos.y = GG::GUI::GetGUI()->AppHeight() - Height();
-    MoveTo(window_pos);
-
 
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -2854,7 +2854,6 @@ void FleetWnd::Refresh() {
 }
 
 void FleetWnd::CloseClicked() {
-    s_last_position = UpperLeft();
     CUIWnd::CloseClicked();
     delete this;
 }
@@ -3009,9 +3008,7 @@ void FleetWnd::SetSelectedShips(const std::set<int>& ship_ids)
 void FleetWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = Size();
     MapWndPopup::SizeMove(ul, lr);
-    s_last_position = ul;
-    s_last_size = Size();
-    if (s_last_size != old_size)
+    if (Size() != old_size)
         DoLayout();
 }
 
@@ -3504,12 +3501,6 @@ void FleetWnd::SystemChangedSlot() {
 
     Refresh();
 }
-
-const GG::Pt& FleetWnd::LastPosition()
-{ return s_last_position; }
-
-const GG::Pt& FleetWnd::LastSize()
-{ return s_last_size; }
 
 void FleetWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;

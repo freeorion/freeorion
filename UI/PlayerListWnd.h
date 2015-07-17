@@ -11,7 +11,9 @@ class PlayerListBox;
 class PlayerListWnd : public CUIWnd {
 public:
     //! \name Structors //@{
-    PlayerListWnd(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    PlayerListWnd(GG::X default_x, GG::Y default_y,
+                  GG::X default_w, GG::Y default_h,
+                  const std::string& config_name);
     //@}
 
     //! \name Accessors //@{

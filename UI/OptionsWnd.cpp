@@ -40,6 +40,8 @@ namespace {
     const GG::X SPIN_WIDTH(65);
     const int LAYOUT_MARGIN = 5;
 
+    const std::string OPTIONS_WND_NAME = "options";
+
     const std::string STRINGTABLE_FILE_SUFFIX = ".txt";
     const std::string MUSIC_FILE_SUFFIX = ".ogg";
     const std::string SOUND_FILE_SUFFIX = ".ogg";
@@ -369,11 +371,11 @@ OptionsWnd::OptionsWnd():
     CUIWnd(UserString("OPTIONS_TITLE"),
            (GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
            (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
-           PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE),
+           PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
+           OPTIONS_WND_NAME),
     m_tabs(0),
     m_done_button(0)
 {
-    SetMaxSize(GG::Pt(PAGE_WIDTH + 20, MaxSize().y));
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
 
     m_done_button = new CUIButton(UserString("DONE"));
@@ -438,6 +440,7 @@ OptionsWnd::OptionsWnd():
     BoolOption(current_page, 0, "UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption(current_page, 0, "UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption(current_page, 0, "UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
+    BoolOption(current_page, 0, "window-reset",                  UserString("OPTIONS_WINDOW_RESET"));
     FileOption(current_page, 0, "stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
                std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
@@ -531,6 +534,7 @@ OptionsWnd::OptionsWnd():
     IntOption(current_page,  0, "UI.detection-range-opacity",     UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
     BoolOption(current_page, 0, "UI.map-right-click-popup-menu",  UserString("OPTIONS_GALAXY_MAP_POPUP"));
     BoolOption(current_page, 0, "UI.show-unexplored_system_overlay", UserString("OPTIONS_UI_SYSTEM_UNEXPLORED_OVERLAY"));
+    BoolOption(current_page, 0, "UI.hide-map-panels",             UserString("OPTIONS_UI_HIDE_MAP_PANELS"));
 
     m_tabs->SetCurrentWnd(0);
 

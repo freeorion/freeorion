@@ -39,6 +39,10 @@ namespace {
     const std::string   COMPLETE_DESIGN_ROW_DROP_STRING = "Complete Design Row";
     const std::string   SAVED_DESIGN_ROW_DROP_STRING = "Saved Design Row";
     const std::string   EMPTY_STRING = "";
+    const std::string   DES_PEDIA_WND_NAME = "design.pedia";
+    const std::string   DES_MAIN_WND_NAME = "design.main-panel";
+    const std::string   DES_BASE_SELECTOR_WND_NAME = "design.base-selector";
+    const std::string   DES_PART_PALETTE_WND_NAME = "design.part-palette";
     const GG::Y         BASES_LIST_BOX_ROW_HEIGHT(100);
     const GG::X         PART_CONTROL_WIDTH(54);
     const GG::Y         PART_CONTROL_HEIGHT(54);
@@ -494,7 +498,7 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     // maybe later do something interesting with docking
     CUIListBox::SizeMove(ul, lr);
 
-    if (Visible() && old_size != GG::Wnd::Size()) {
+    if (old_size != GG::Wnd::Size()) {
         // determine how many columns can fit in the box now...
         const GG::X TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
         const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
@@ -750,7 +754,9 @@ void PartsListBox::HideSuperfluousParts(bool refresh_list) {
 class DesignWnd::PartPalette : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    PartPalette(GG::X w, GG::Y h);
+    PartPalette(GG::X default_x, GG::Y default_y,
+                GG::X default_w, GG::Y default_h,
+                const std::string& config_name);
     //@}
 
     /** \name Mutators */ //@{
@@ -787,9 +793,14 @@ private:
     CUIButton*                          m_superfluous_parts_button;
 };
 
-DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
-    CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"), GG::X0, GG::Y0, w, h,
-           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
+DesignWnd::PartPalette::PartPalette(GG::X default_x, GG::Y default_y,
+                                    GG::X default_w, GG::Y default_h,
+                                    const std::string& config_name) :
+    CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"),
+           default_x, default_y,
+           default_w, default_h,
+           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
+           config_name),
     m_parts_list(0),
     m_superfluous_parts_button(0)
 {
@@ -1870,7 +1881,9 @@ void BasesListBox::HideAvailability(bool available, bool refresh_list) {
 class DesignWnd::BaseSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    BaseSelector(GG::X w, GG::Y h);
+    BaseSelector(GG::X default_x, GG::Y default_y,
+                 GG::X default_w, GG::Y default_h,
+                 const std::string& config_name);
     //@}
 
     /** \name Mutators */ //@{
@@ -1905,8 +1918,14 @@ private:
     std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
 };
 
-DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
-    CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE | PINABLE ),
+DesignWnd::BaseSelector::BaseSelector(GG::X default_x, GG::Y default_y,
+                                      GG::X default_w, GG::Y default_h,
+                                      const std::string& config_name) :
+    CUIWnd(UserString("DESIGN_WND_STARTS"),
+           default_x, default_y,
+           default_w, default_h,
+           GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE | PINABLE,
+           config_name),
     m_tabs(0),
     m_hulls_list(0),
     m_designs_list(0),
@@ -2328,7 +2347,9 @@ void SlotControl::EmitNullSlotContentsAlteredSignal()
 class DesignWnd::MainPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    MainPanel(GG::X w, GG::Y h);
+    MainPanel(GG::X default_x, GG::Y default_y,
+              GG::X default_w, GG::Y default_h,
+              const std::string& config_name);
     //@}
 
     /** \name Accessors */ //@{
@@ -2449,8 +2470,14 @@ private:
 // static
 DesignWnd::MainPanel::SetPartFuncPtrType const DesignWnd::MainPanel::s_set_part_func_ptr = &DesignWnd::MainPanel::SetPart;
 
-DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
-    CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
+DesignWnd::MainPanel::MainPanel(GG::X default_x, GG::Y default_y,
+                                GG::X default_w, GG::Y default_h,
+                                const std::string& config_name) :
+    CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"),
+           default_x, default_y,
+           default_w, default_h,
+           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
+           config_name),
     m_hull(0),
     m_slots(),
     m_complete_design_id(ShipDesign::INVALID_DESIGN_ID),
@@ -3079,11 +3106,15 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Y part_palette_top = detail_top;
     GG::Y main_height = ClientHeight() - main_top;
 
-    m_detail_panel = new EncyclopediaDetailPanel(detail_width, detail_height, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE );
+    m_detail_panel = new EncyclopediaDetailPanel(most_panels_left, detail_top,
+                                                 detail_width, detail_height,
+                                                 GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE,
+                                                 DES_PEDIA_WND_NAME);
     AttachChild(m_detail_panel);
-    m_detail_panel->MoveTo(GG::Pt(most_panels_left, detail_top));
 
-    m_main_panel = new MainPanel(most_panels_width, main_height);
+    m_main_panel = new MainPanel(most_panels_left, main_top,
+                                 most_panels_width, main_height,
+                                 DES_MAIN_WND_NAME);
     AttachChild(m_main_panel);
     GG::Connect(m_main_panel->PartTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_main_panel->HullTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
@@ -3097,16 +3128,18 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
                                                                             boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
                                                                                         m_main_panel)));
     GG::Connect(m_main_panel->CompleteDesignClickedSignal,      static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign),m_detail_panel);
-    m_main_panel->MoveTo(GG::Pt(most_panels_left, main_top));
     m_main_panel->Sanitize();
 
-    m_part_palette = new PartPalette(part_palette_width, part_palette_height);
+    m_part_palette = new PartPalette(part_palette_left, part_palette_top,
+                                     part_palette_width, part_palette_height,
+                                     DES_PART_PALETTE_WND_NAME);
     AttachChild(m_part_palette);
     GG::Connect(m_part_palette->PartTypeClickedSignal,          static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_part_palette->PartTypeDoubleClickedSignal,    &DesignWnd::MainPanel::AddPart,     m_main_panel);
-    m_part_palette->MoveTo(GG::Pt(part_palette_left, part_palette_top));
 
-    m_base_selector = new BaseSelector(base_selector_width, ClientHeight());
+    m_base_selector = new BaseSelector(GG::X0, GG::Y0,
+                                       base_selector_width, ClientHeight(),
+                                       DES_BASE_SELECTOR_WND_NAME);
     AttachChild(m_base_selector);
 
     GG::Connect(m_base_selector->DesignSelectedSignal,          static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign),
@@ -3120,8 +3153,6 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
                 m_detail_panel);
     GG::Connect(m_base_selector->HullClickedSignal,             static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),
                 m_detail_panel);
-
-    m_base_selector->MoveTo(GG::Pt());
 }
 
 void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {

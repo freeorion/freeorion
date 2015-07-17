@@ -269,8 +269,14 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names,
 ////////////////////
 //   MessageWnd   //
 ////////////////////
-MessageWnd::MessageWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    CUIWnd(UserString("MESSAGES_PANEL_TITLE"), x, y, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE),
+MessageWnd::MessageWnd(GG::X default_x, GG::Y default_y,
+                       GG::X default_w, GG::Y default_h,
+                       const std::string& config_name) :
+    CUIWnd(UserString("MESSAGES_PANEL_TITLE"),
+           default_x, default_y,
+           default_w, default_h,
+           GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE,
+           config_name),
     m_display(0),
     m_edit(0),
     m_display_show_time(0),

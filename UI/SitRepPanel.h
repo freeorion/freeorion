@@ -12,7 +12,9 @@ class SitRepEntry;
 class SitRepPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h); ///< basic ctor
+    SitRepPanel(GG::X default_x, GG::Y default_y,
+                GG::X default_w, GG::Y default_h,
+                const std::string& config_name = ""); ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{

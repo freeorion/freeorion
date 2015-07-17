@@ -102,6 +102,9 @@ public:
 
     void            DoLayout();
 
+    void            RegisterWindows();                                      //!< registers owned wnds with the GUI (also registers message & player list wnds)
+    void            RemoveWindows();                                        //!< removes owned wnds from the GUI (also removes message & player list wnds)
+
     void            EnableOrderIssuing(bool enable = true);                 //!< enables or disables order issuing and pressing the turn button.
 
     void            InitTurn();                                             //!< called at the start of each turn
@@ -442,7 +445,11 @@ private:
    when the end turn button is hit. */
 class MapWndPopup : public CUIWnd {
 public:
-    MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags);
+    MapWndPopup(const std::string& t,
+                GG::X default_x, GG::Y default_y,
+                GG::X default_w, GG::Y default_h,
+                GG::Flags<GG::WndFlag> flags,
+                const std::string& config_name = "");
     virtual ~MapWndPopup();
     void    CloseClicked();
     void    Close();

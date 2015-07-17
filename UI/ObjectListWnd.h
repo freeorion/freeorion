@@ -13,7 +13,9 @@ class ObjectListBox;
 class ObjectListWnd : public CUIWnd {
 public:
     //! \name Structors //!@{
-    ObjectListWnd(GG::X w, GG::Y h);
+    ObjectListWnd(GG::X default_x, GG::Y default_y,
+                  GG::X default_w, GG::Y default_h,
+                  const std::string& config_name = "");
     //!@}
 
     /** \name Mutators */ //@{

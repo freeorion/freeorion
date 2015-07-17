@@ -217,6 +217,8 @@ namespace {
     const std::string GGWITHPTYPE_CONDITION(UserStringNop("CONDITION_PTYPE_W_GG"));
     const std::string ASTWITHPTYPE_CONDITION(UserStringNop("CONDITION_PTYPE_W_AST"));
 
+    const std::string FILTER_OPTIONS_WND_NAME = "object-list-filter";
+
     template <class enumT>
     ValueRef::ValueRefBase<enumT>*          CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
         if (const ValueRef::Constant<enumT>* constant =
@@ -918,10 +920,14 @@ private:
 ////////////////////////////////////////////////
 class FilterDialog : public CUIWnd {
 public:
-    FilterDialog(GG::X x, GG::Y y,
+    FilterDialog(GG::X default_x, GG::Y default_y,
                  const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >& vis_filters,
                  const Condition::ConditionBase* const condition_filter) :
-        CUIWnd(UserString("FILTERS"), x, y, GG::X(400), GG::Y(250), GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
+        CUIWnd(UserString("FILTERS"),
+               default_x, default_y,
+               GG::X(400), GG::Y(250),
+               GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL,
+               FILTER_OPTIONS_WND_NAME),
         m_vis_filters(vis_filters),
         m_filter_buttons(),
         m_accept_changes(false),
@@ -2208,9 +2214,14 @@ private:
 ////////////////////////////////////////////////
 // ObjectListWnd
 ////////////////////////////////////////////////
-ObjectListWnd::ObjectListWnd(GG::X w, GG::Y h) :
-    CUIWnd(UserString("MAP_BTN_OBJECTS"), GG::X1, GG::Y1, w - 1, h - 1,
-           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE ),
+ObjectListWnd::ObjectListWnd(GG::X default_x, GG::Y default_y,
+                             GG::X default_w, GG::Y default_h,
+                             const std::string& config_name) :
+    CUIWnd(UserString("MAP_BTN_OBJECTS"),
+           default_x, default_y,
+           default_w, default_h,
+           GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
+           config_name, false),
     m_list_box(0),
     m_filter_button(0),
     m_collapse_button(0)

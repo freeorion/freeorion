@@ -892,6 +892,9 @@ Toggles whether to show the zoom slider on galaxy map.
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
 Toggles whether to show a right-click popup menu on the galaxy map.
 
+OPTIONS_DB_UI_HIDE_MAP_PANELS
+Toggles whether the sitrep, pedia etc. panels are temporarily hidden when opening the production window and reopened when closing the production window.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map. May crash on older graphics hardware.
 
@@ -1360,6 +1363,45 @@ Automatically quits once any turns specified by --auto-advance-n-turns are compl
 
 OPTIONS_DB_BINARY_SERIALIZATION
 Use Binary serialization for savegames and client-server communications (which is compact/fast but may have cross-platform compatibility issues); if unchecked text xml serialization is used. Restart after changing is recommended.
+
+OPTIONS_DB_UI_WINDOWS_EXISTS
+True if the window with a given config name currently exists, false if one was created and deleted, doesn't exist if no window has yet been created with that name.
+
+OPTIONS_DB_UI_WINDOWS_LEFT
+The position of the left edge of a window in fullscreen mode.
+
+OPTIONS_DB_UI_WINDOWS_TOP
+The position of the top edge of a window in fullscreen mode.
+
+OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED
+The position of the left edge of a window in windowed mode.
+
+OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED
+The position of the top edge of a window in windowed mode.
+
+OPTIONS_DB_UI_WINDOWS_WIDTH
+The width of a window in fullscreen mode.
+
+OPTIONS_DB_UI_WINDOWS_HEIGHT
+The height of a window in fullscreen mode.
+
+OPTIONS_DB_UI_WINDOWS_WIDTH_WINDOWED
+The width of a window in windowed mode.
+
+OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED
+The height of a window in windowed mode.
+
+OPTIONS_DB_UI_WINDOWS_VISIBLE
+Toggles whether a window is displayed, when it is available.
+
+OPTIONS_DB_UI_WINDOWS_PINNED
+Toggles whether a window is pinned in place.
+
+OPTIONS_DB_UI_WINDOWS_MINIMIZED
+Toggles whether a window is minimized.
+
+OPTIONS_DB_WINDOW_RESET
+When checked, causes windows to use their default properties instead of remembering their previous positions.
 
 #################
 # File Dialog   #
@@ -2004,6 +2046,9 @@ Range circle opacity
 OPTIONS_GALAXY_MAP_POPUP
 Galaxy map pop-up menu
 
+OPTIONS_UI_HIDE_MAP_PANELS
+Hide map panels in production view
+
 OPTIONS_STARLANES
 Starlanes
 
@@ -2252,6 +2297,9 @@ Add All Saved Ship Designs at Game Start
 
 OPTIONS_USE_BINARY_SERIALIZATION
 Use Binary serialization
+
+OPTIONS_WINDOW_RESET
+Reset window properties to defaults
 
 ##################
 # CombatSetupWnd #

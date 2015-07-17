@@ -65,8 +65,8 @@ IntroMenu::IntroMenu(my_context ctx) :
     Client().GetClientUI()->GetMapWnd()->Hide();
 
     Client().Register(Client().GetClientUI()->GetIntroScreen());
-    Client().GetClientUI()->GetMapWnd()->HideMessages();
-    Client().GetClientUI()->GetMapWnd()->HideEmpires();
+    Client().Remove(Client().GetClientUI()->GetMessageWnd());
+    Client().Remove(Client().GetClientUI()->GetPlayerListWnd());
 }
 
 IntroMenu::~IntroMenu() {
@@ -361,6 +361,7 @@ boost::statechart::result PlayingGame::react(const Disconnection& d) {
     Client().EndGame(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     Client().Remove(Client().GetClientUI()->GetMapWnd());
+    Client().GetClientUI()->GetMapWnd()->RemoveWindows();
     Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
     return transit<IntroMenu>();
@@ -451,6 +452,7 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     }
     ClientUI::MessageBox(reason_message, error);
     Client().Remove(Client().GetClientUI()->GetMapWnd());
+    Client().GetClientUI()->GetMapWnd()->RemoveWindows();
     Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
     return transit<IntroMenu>();
@@ -461,6 +463,7 @@ boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg) {
 
     Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     Client().Remove(Client().GetClientUI()->GetMapWnd());
+    Client().GetClientUI()->GetMapWnd()->RemoveWindows();
     Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
     return transit<IntroMenu>();
@@ -478,6 +481,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     if (fatal) {
         Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
         Client().Remove(Client().GetClientUI()->GetMapWnd());
+        Client().GetClientUI()->GetMapWnd()->RemoveWindows();
         Client().Networking().SetHostPlayerID(Networking::INVALID_PLAYER_ID);
         Client().Networking().SetPlayerID(Networking::INVALID_PLAYER_ID);
         return transit<IntroMenu>();
@@ -515,8 +519,8 @@ WaitingForGameStart::WaitingForGameStart(my_context ctx) :
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForGameStart";
 
-    Client().GetClientUI()->GetMapWnd()->ShowMessages();
-    Client().GetClientUI()->GetMapWnd()->ShowEmpires();
+    Client().Register(Client().GetClientUI()->GetMessageWnd());
+    Client().Register(Client().GetClientUI()->GetPlayerListWnd());
 
     Client().GetClientUI()->GetMapWnd()->EnableOrderIssuing(false);
 }
@@ -620,6 +624,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingTurn";
     Client().Register(Client().GetClientUI()->GetMapWnd());
     Client().GetClientUI()->GetMapWnd()->InitTurn();
+    Client().GetClientUI()->GetMapWnd()->RegisterWindows(); // only useful at game start but InitTurn() takes a long time, don't want to display windows before content is ready.  could go in WaitingForGameStart dtor but what if it is given e.g. an error reaction?
     // TODO: reselect last fleet if stored in save game ui data?
     Client().GetClientUI()->GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");

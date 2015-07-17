@@ -486,7 +486,7 @@ public:
 
     /** Suppresses rendering of this window (and possibly its children) during
         render loop. */
-    void Hide(bool children = true);
+    virtual void Hide(bool children = true);
 
     /** Enables rendering of this window (and possibly its children) during
         render loop. */
