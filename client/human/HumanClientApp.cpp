@@ -107,8 +107,8 @@ namespace {
                                                                                                                      DiscreteValidator<int>(CENTRE) ));
         db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      50,     RangedValidator<int>(-10240, 10240));
 
-        Hotkey::AddHotkey("exit", UserStringNop("HOTKEY_EXIT"), GG::GGK_UNKNOWN, GG::MOD_KEY_NONE);
-        Hotkey::AddHotkey("quit", UserStringNop("HOTKEY_QUIT"), GG::GGK_UNKNOWN, GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("exit",       UserStringNop("HOTKEY_EXIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
+        Hotkey::AddHotkey("quit",       UserStringNop("HOTKEY_QUIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
         Hotkey::AddHotkey("fullscreen", UserStringNop("HOTKEY_FULLSCREEN"), GG::GGK_RETURN, GG::MOD_KEY_ALT);
     }
     bool temp_bool = RegisterOptions(&AddOptions);

@@ -74,7 +74,7 @@ void Hotkey::AddHotkey(const std::string& name, const std::string& description, 
     } else {
         ErrorLogger() << "Hotkey::AddHotkey attempted to set a hotkey that is not safe to use while typing: "
                       << "name: " << name << " key/mod: " << key << " / " << mod;
-        s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, GG::GGK_UNKNOWN, GG::MOD_KEY_NONE)));
+        s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, GG::GGK_NONE, GG::MOD_KEY_NONE)));
     }
 }
 
@@ -84,7 +84,7 @@ std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
         s << mod;
         s << "+";
     }
-    if (key != GG::GGK_UNKNOWN) {
+    if (key > GG::GGK_UNKNOWN) {
         s << key;
     }
     return s.str();
@@ -105,7 +105,7 @@ std::string Hotkey::ToString() const
 
 std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::string& str) {
     if (str.empty())
-        return std::make_pair(GG::GGK_UNKNOWN, GG::Flags<GG::ModKey>());
+        return std::make_pair(GG::GGK_NONE, GG::Flags<GG::ModKey>());
 
     size_t plus = str.find_first_of("+");
     std::string v = str;
@@ -209,7 +209,7 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
         std::string option_string = db.Get<std::string>(options_db_name);
         std::pair<GG::Key, GG::Flags<GG::ModKey> > key_modkey_pair = HotkeyFromString(option_string);
 
-        if (key_modkey_pair.first == GG::GGK_UNKNOWN)
+        if (key_modkey_pair.first == GG::GGK_NONE)
             continue;
 
         if (key_modkey_pair.first == GG::EnumMap<GG::Key>::BAD_VALUE) {
@@ -285,7 +285,7 @@ bool Hotkey::IsTypingSafe(GG::Key key, GG::Flags<GG::ModKey> mod) {
         return true;
     if (key >= GG::GGK_F1 && key <= GG::GGK_F15)
         return true;
-    if (key == GG::GGK_TAB || key == GG::GGK_ESCAPE || key == GG::GGK_UNKNOWN)
+    if (key == GG::GGK_TAB || key == GG::GGK_ESCAPE || key == GG::GGK_NONE)
         return true;
     return false;
 }
@@ -318,7 +318,7 @@ void Hotkey::ResetHotkey(const Hotkey& old_hotkey) {
 }
 
 void Hotkey::ClearHotkey(const Hotkey& old_hotkey)
-{ Hotkey::SetHotkey(old_hotkey, GG::GGK_UNKNOWN, GG::Flags<GG::ModKey>()); }
+{ Hotkey::SetHotkey(old_hotkey, GG::GGK_NONE, GG::Flags<GG::ModKey>()); }
 
 //////////////////////////////////////////////////////////////////////
 // InvisibleWindowCondition

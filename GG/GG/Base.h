@@ -122,6 +122,7 @@ GG_ENUM(TabBarStyle,
     letter keys added. */
 GG_ENUM(Key,
     // The keyboard symbols have been cleverly chosen to map to ASCII
+    GGK_NONE         = -999,
     GGK_UNKNOWN      = 0,
     GGK_FIRST        = 0,
     GGK_BACKSPACE    = 8,
