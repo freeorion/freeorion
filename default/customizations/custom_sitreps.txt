@@ -90,21 +90,22 @@ EffectsGroup
 
 
 // A Call to Arms
-// The VisibleToEmpire restriction is not at all necessary, but helps keep this notice from being necessarily constant
+// A prime candidate for being snoozed, but probably good to be periodically reminded about
 EffectsGroup
     scope = And [
         Planet
         Species
         UnOwned
         MaxDefense high = 0
-        VisibleToEmpire empire = Source.Owner
     ]
     activation = Source
     effects =
         GenerateSitRepMessage
             message = "There are defenseless natives at %planet%!  Go invade them!"
+            label = "Natives-Nag-a-tron"
+            NoStringtableLookup
+            icon = "icons/meter/troops.png"
             parameters = [
-                tag = "UserSitRepLabel" data = "Natives-Nag-a-tron"
                 tag = "planet" data = Target.ID
             ]
             empire = Source.Owner
