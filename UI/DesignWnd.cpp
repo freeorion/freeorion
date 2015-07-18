@@ -16,6 +16,7 @@
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
+#include "../universe/Condition.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
 #include "../parse/Parse.h"
@@ -539,6 +540,43 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
     return part_groups;
 }
 
+// Checks if the Location condition of the check_part totally contains the Location condition of ref_part
+// i,e,, the ref_part condition is met anywhere the check_part condition is
+bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, const Condition::ConditionBase* ref_part_loc) {
+    //const Condition::ConditionBase* check_part_loc = check_part->Location();
+    //const Condition::ConditionBase* ref_part_loc = ref_part->Location();
+    if (const Condition::All* ref_part_all = boost::dynamic_pointer_cast<const Condition::All>(ref_part_loc))
+        return true;
+    if (!check_part_loc || !ref_part_loc)
+        return false;
+    if (*check_part_loc == *ref_part_loc)
+        return true;
+    // could do more involved checking for And conditions & Or, etc,
+    // for now, will simply be conservative
+    return false;
+}
+
+bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_part) {
+    static std::map< std::pair<const std::string, const std::string>, bool> part_loc_comparison_map;
+    std::pair<const std::string, const std::string> part_pair = std::make_pair<const std::string, const std::string>(check_part->Name(), ref_part->Name());
+    std::map< std::pair< const std::string, const std::string >, bool >::iterator map_it = part_loc_comparison_map.find(part_pair);
+    if (map_it != part_loc_comparison_map.end())
+        return map_it->second;
+    bool result = true;
+    if (check_part->Name() == "SH_MULTISPEC" || ref_part->Name() == "SH_MULTISPEC")
+        result = false;
+    const Condition::ConditionBase* check_part_loc = check_part->Location();
+    const Condition::ConditionBase* ref_part_loc = ref_part->Location();
+    result = result && LocationASubsumesLocationB(check_part_loc, ref_part_loc);
+    part_loc_comparison_map[part_pair] = result;
+    //if (result && check_part_loc && ref_part_loc) {
+    //    DebugLogger() << "Location for partA, " << check_part->Name() << ", subsumes that for partB, " << ref_part->Name();
+    //    DebugLogger() << "   ...PartA Location is " << check_part_loc->Description();
+    //    DebugLogger() << "   ...PartB Location is " << ref_part_loc->Description();
+    //}
+    return result;
+}
+
 void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_group,
                                         ShipPartClass pclass, int empire_id, int loc_id)
 {
@@ -551,10 +589,28 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
              check_it != this_group.end(); ++check_it )
         {
             const PartType* ref_part = *check_it;
-            if ((GetMainStat(checkPart) < GetMainStat(ref_part)) &&
-                (checkPart->ProductionCost(empire_id, loc_id) >= ref_part->ProductionCost(empire_id, loc_id)) &&
-                (checkPart->ProductionTime(empire_id, loc_id) >= ref_part->ProductionTime(empire_id, loc_id)))
+            float cap_check = GetMainStat(checkPart);
+            float cap_ref = GetMainStat(ref_part);
+            if ((cap_check < 0.0f) || (cap_ref < 0.0f))
+                continue;  // not intended to handle such cases
+            float cap_ratio = cap_ref / std::max(cap_check, 1e-4f) ;  // some part types currently have zero capacity, but need to reject if both are zero
+            float cost_check = checkPart->ProductionCost(empire_id, loc_id);
+            float cost_ref = ref_part->ProductionCost(empire_id, loc_id);
+            if ((cost_check < 0.0f) || (cost_ref < 0.0f))
+                continue;  // not intended to handle such cases
+            float cost_ratio = (cost_ref + 1e-4) / (cost_check + 1e-4);  // can accept if somehow they both have cost zero
+            float bargain_ratio = cap_ratio / std::max(cost_ratio, 1e-4f);
+            // adjusting the max cost ratio to 1.4 or higher, will allow, for example, for
+            // Zortium armor to make Standard armor redundant.  Setting a min_bargain_ratio higher than one can keep
+            // trivial bargains from blocking lower valued parts.
+            // TODO: move these values into default/customizations/common_user_customizations.txt  once that is supported
+            float min_bargain_ratio = 1.0;
+            float max_cost_ratio = 1.0;
+            if ((cap_ratio > 1.0) && ((cost_ratio <= 1.0) || ((bargain_ratio >= min_bargain_ratio) && (cost_ratio <= max_cost_ratio))) &&
+                (checkPart->ProductionTime(empire_id, loc_id) >= ref_part->ProductionTime(empire_id, loc_id)) &&
+                PartALocationSubsumesPartB(checkPart, ref_part))
             {
+                DebugLogger() << "Filtering " << checkPart->Name() << " because of " << ref_part->Name();
                 this_group.erase(part_it--);
                 break;
             }

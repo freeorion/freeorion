@@ -312,7 +312,7 @@ Part
     mountableSlotTypes = External
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = All
+    location = Not All  // to keep this from making all other armor look redundant in DesignWnd; ok since not player-buildable currently
     icon = ""
 
 Part
