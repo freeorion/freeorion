@@ -1,8 +1,17 @@
 // The UserSitRepLabel tags and data are required if the message template (and label) is simply provided here rather than being drawn from the stringtable.
-// The data value for the UserSitRepLabel serves as the label to be used in the SitReps filters, and CustomSitrepPriority1 through CustomSitrepPriority4
+// The data value for the UserSitRepLabel serves as the label to be used in the SitReps filters, and Custom_1 through Custom_4
 // will be at the top of the SitReps display.  As seen below, other labels are fine as well, but they cannot have any spaces if you want to use them in the SITREP_PRIORITY_ORDER
+// More information on the scripting language used for these is available on our wiki; 
+// a suitable place to start is http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
 
+
+// Important, the following line "effectsgroups = [" is functional and important, do not change it
 effectsgroups = [
+
+
+// normally, for a custom sitrep the player will write their own message here, and label, and not look them up in the Stringtable.  For this first custom sitrep,
+// however, since it is the primary way we introduce the custom sitrep capability to players, we use stringtable references so that the message and label may be more 
+// readily translated into multiple languages as part of our standard distribution.
 
 
 EffectsGroup
@@ -10,9 +19,8 @@ EffectsGroup
     activation = Turn high = 1
     effects =
         GenerateSitRepMessage
-            message = "This is a sample Custom Sitrep, which is enabled by %tech% and all the busy empire servants reporting information back to %system%"
-            label = "CustomSitrepPriority1"
-            NoStringtableLookup
+            message = "CUSTOM_SITREP_INTRODUCTION"
+            label = "CUSTOM_1"
             icon = "icons/tech/categories/spy.png"
             parameters = [
                 tag = "tech" data = "SPY_CUSTOM_ADVISORIES"
@@ -20,6 +28,33 @@ EffectsGroup
             ]
             empire = Source.Owner
 
+// for reference, the following is fully custom format (in english) of the intrduction sitrep above.
+// Note that the message and label are directly provided here rather than being stringtable keys,
+// and the NoStringtableLookup keyword is used afer the label is given.
+// If you are using a stringtable other than English, your translator may have translate the four preset labels for you, 
+// so instead of the "Custom_1" below it might be something else for you.  The actual labels can be seen in the Pedia entry for 
+// the SPY_CUSTOM_ADVISORIES tech (the tech is named "Empire Intelligence Agency" in the English version)
+//
+//EffectsGroup
+//    scope = Capital
+//    activation = Turn high = 1
+//    effects =
+//        GenerateSitRepMessage
+//            message = "This is a sample Custom Sitrep, which is enabled by %tech% and all the busy empire servants reporting information back to %system%"
+//            label = "Custom_1"
+//            NoStringtableLookup
+//            icon = "icons/tech/categories/spy.png"
+//            parameters = [
+//                tag = "tech" data = "SPY_CUSTOM_ADVISORIES"
+//                tag = "system" data = Target.SystemID
+//            ]
+//            empire = Source.Owner
+
+
+//*********************************************************************************************************************************************************
+// The other example sitreps below are left in English, but can be translated just by changing the strings provided below for the messages and labels below.
+// It is important to note that, unlike the above entry, these entries all use the  NoStringtableLookup keyword after the label.
+//*********************************************************************************************************************************************************
 
 // Reminder if a Gas Giant you own in a system along with another planet you also own, populated by a species with Industry Focus, and you have the Orbital Generation tech
 // but haven't yet built or enqueued a GG Generator in that system yet
@@ -49,7 +84,7 @@ EffectsGroup
     effects =
         GenerateSitRepMessage
             message = "%planet% is a prime location for a %buildingtype%, but none is being built there"
-            label = "CustomSitrepPriority2"
+            label = "Custom_2"
             NoStringtableLookup
             icon = "icons/building/gas-giant-generator.png"
             parameters = [
@@ -78,7 +113,7 @@ EffectsGroup
     effects =
         GenerateSitRepMessage
             message = "You own %planet%, with a monster nest, but haven't yet researched %tech%"
-            label = "CustomSitrepPriority2"
+            label = "Custom_2"
             NoStringtableLookup
             icon = "icons/monsters/kraken-1.png"
             parameters = [
@@ -97,12 +132,16 @@ EffectsGroup
         Species
         UnOwned
         MaxDefense high = 0
+        ContainedBy And [
+            System
+            Not Contains Monster
+        ]
     ]
     activation = Source
     effects =
         GenerateSitRepMessage
-            message = "There are defenseless natives at %planet%!  Go invade them!"
-            label = "Natives-Nag-a-tron"
+            message = "There are defenseless natives at %planet%!  Go invade them with <encyclopedia TROOP_TITLE>Troops</encyclopedia>!"
+            label = "Custom_4"
             NoStringtableLookup
             icon = "icons/meter/troops.png"
             parameters = [
@@ -112,4 +151,7 @@ EffectsGroup
 
 
 
+
+
+// Note, the "]" on the following line is functional and important; it must be present and all EffectsGroups must be above it.
 ]

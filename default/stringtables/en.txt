@@ -3834,7 +3834,7 @@ Troops
 TROOP_TEXT
 '''The term Troops combines all kinds of military forces capable of operating on a planets surface.
 
-The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.'''
+The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.  Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active shields.'''
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
@@ -4381,10 +4381,14 @@ SITREP_SNOOZE_CLEAR_ALL
 ## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
 SITREP_PRIORITY_ORDER
 '''SITREP_WELCOME
-CustomSitrepPriority1
-CustomSitrepPriority2
-CustomSitrepPriority3
-CustomSitrepPriority4
+CUSTOM_1
+CUSTOM_2
+CUSTOM_3
+CUSTOM_4
+[[CUSTOM_1]]
+[[CUSTOM_2]]
+[[CUSTOM_3]]
+[[CUSTOM_4]]
 SITREP_VICTORY
 SITREP_VICTORY_DESTRUCTION
 SITREP_VICTORY_CAPTURE
@@ -4846,6 +4850,24 @@ HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
+
+CUSTOM_SITREP_INTRODUCTION
+This is a sample Custom Sitrep, which is enabled by %tech% and all the busy empire servants reporting information back to %system%
+
+# Translators: Important Note-- use underscores "_" not spaces in the translations for
+# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
+
+CUSTOM_1
+Custom_1
+
+CUSTOM_2
+Custom_2
+
+CUSTOM_3
+Custom_3
+
+CUSTOM_4
+Custom_4
 
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
@@ -8707,7 +8729,13 @@ SPY_CUSTOM_ADVISORIES_DESC
 '''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps). 
 
 Many of the SitReps are determined automatically, but additional custom SitReps can be specified by editing the file default/customizations/custom_sitreps.txt
-More particulars on the FreeOrion scripting, such as for these custom SitReps, can be found at http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
+More particulars on the FreeOrion scripting, such as for these custom SitReps, can be found at our wiki:  http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
+There are four preset (possibly translated) labels for use with custom sitreps, so that they get placement at the top of the SitRep window.  More information on how to use the labels can be found on the wiki, and in the custom_sitreps.txt. 
+These four labels are
+"[[CUSTOM_1]]"
+"[[CUSTOM_2]]"
+"[[CUSTOM_3]]"
+"[[CUSTOM_4]]"
 '''
 
 SHP_IMPROVED_ENGINE_COUPLINGS
