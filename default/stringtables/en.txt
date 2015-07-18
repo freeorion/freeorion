@@ -8726,7 +8726,7 @@ SPY_CUSTOM_ADVISORIES
 Empire Intelligence Agency
 
 SPY_CUSTOM_ADVISORIES_DESC
-'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps). 
+'''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps).  If a SitRep is repeated from turn to turn more often than you really need for remembering the information, you can dismiss the SitRep for the current turn by double-clicking its icon, or for multiple turns via right-click menu on the SitRep's icon.
 
 Many of the SitReps are determined automatically, but additional custom SitReps can be specified by editing the file default/customizations/custom_sitreps.txt
 More particulars on the FreeOrion scripting, such as for these custom SitReps, can be found at our wiki:  http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
