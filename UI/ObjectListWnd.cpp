@@ -376,7 +376,7 @@ public:
         } else if (condition_key == HASGROWTHSPECIAL_CONDITION) {
             std::vector<Condition::ConditionBase*> operands;
             // determine sitrep order
-            std::istringstream template_stream(UserString("GROWTH_SPECIALS_LIST"));
+            std::istringstream template_stream(UserString("FUNCTIONAL_GROWTH_SPECIALS_LIST"));
             for (std::istream_iterator<std::string> stream_it = std::istream_iterator<std::string>(template_stream);
                  stream_it != std::istream_iterator<std::string>(); stream_it++)
             {

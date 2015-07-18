@@ -411,7 +411,7 @@ namespace parse {
     }
 
     const sregex FILENAME_TEXT = -+_;   // any character, one or more times, not greedy
-    const sregex FILENAME_INSERTION = "include" >> *space >> "\"" >> (s1 = FILENAME_TEXT) >> "\"" >> *space >> _n;
+    const sregex FILENAME_INSERTION = bol >> "#include" >> *space >> "\"" >> (s1 = FILENAME_TEXT) >> "\"" >> *space >> _n;
 
     std::set<std::string> missing_include_files;
 

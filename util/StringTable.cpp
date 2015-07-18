@@ -2,6 +2,7 @@
 
 #include "Logger.h"
 #include "Directories.h"
+#include "../parse/Parse.h"
 
 #include <GG/utf8/checked.h>
 
@@ -40,39 +41,20 @@ const std::string& StringTable_::operator[] (const std::string& index) const {
     return it == m_strings.end() ? error_retval = S_ERROR_STRING + index : it->second;
 }
 
-namespace {
-    bool read_file(const boost::filesystem::path& path, std::string& file_contents) {
-        boost::filesystem::ifstream ifs(path);
-        if (!ifs)
-            return false;
-
-        // skip byte order mark (BOM)
-        static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
-        for (int i = 0; i < 3; i++) {
-            if (UTF8_BOM[i] != ifs.get()) {
-                // no header set stream back to start of file
-                ifs.seekg(0, std::ios::beg);
-                // and continue
-                break;
-            }
-        }
-
-        std::getline(ifs, file_contents, '\0');
-
-        // no problems?
-        return true;
-    }
-}
-
 void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
     boost::filesystem::path path = FilenameToPath(m_filename);
     std::string file_contents;
 
-    bool read_success = read_file(path, file_contents);
+    bool read_success = parse::read_file(path, file_contents);
     if (!read_success) {
         ErrorLogger() << "StringTable_::Load failed to read file at path: " << path.string();
         return;
     }
+    // add newline at end to avoid errors when one is left out, but is expected by parsers
+    file_contents += "\n";
+
+    parse::file_substitution(file_contents, path.parent_path());
+
     std::map<std::string, std::string> fallback_lookup_strings;
     std::string fallback_table_file;
     if (lookups_fallback_table) {

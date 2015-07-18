@@ -1,4 +1,3 @@
-include "shared_macros.txt"
 
 Part
     name = "GT_TROOP_POD"
@@ -1249,3 +1248,6 @@ min(min(
         (([[COUNT_OF_LOCAL_ROBOTIC_INTERFACE_SHIELDS]] * 7 ) ^ 0.5 )),
         20)
 '''
+
+// keep this entry at bottom, to best preserve line numbering for debugging
+#include "shared_macros.txt"

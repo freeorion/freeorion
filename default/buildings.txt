@@ -2035,5 +2035,5 @@ BuildingType
     icon = "icons/species/other-04.png"
 
 
-include "shared_macros.txt"
-include "col_buildings.txt"
+#include "shared_macros.txt"
+#include "col_buildings.txt"

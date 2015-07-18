@@ -14,6 +14,7 @@
 #include "../universe/Building.h"
 #include "../universe/Species.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../Empire/Empire.h"
@@ -178,8 +179,9 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
                 if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
                     continue;
 
-                // annoying hard-coded building name here... not sure how better to deal with it
-                if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
+                std::list<std::string> shipyards_list;
+                UserStringList("FUNCTIONAL_SHIPYARD_BUILDING_LIST", shipyards_list);
+                if (std::find(shipyards_list.begin(), shipyards_list.end(), building->BuildingTypeName()) != shipyards_list.end()) {
                     has_shipyard = true;
                     break;
                 }

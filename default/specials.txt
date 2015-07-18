@@ -1,4 +1,3 @@
-include "shared_macros.txt"
 
 Special
     name = "MODERATE_TECH_NATIVES_SPECIAL"
@@ -1964,3 +1963,6 @@ CHANCE_OF_GUARD_1
             ]
             effects = CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
 '''
+
+// keep this entry at bottom, to best preserve line numbering for debugging
+#include "shared_macros.txt"
