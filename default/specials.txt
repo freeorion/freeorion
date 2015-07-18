@@ -1,4 +1,4 @@
-include "shared_macros.txt"
+#include "shared_macros.txt"
 
 Special
     name = "MODERATE_TECH_NATIVES_SPECIAL"

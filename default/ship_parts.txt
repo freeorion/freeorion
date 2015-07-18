@@ -1,4 +1,4 @@
-include "shared_macros.txt"
+#include "shared_macros.txt"
 
 Part
     name = "GT_TROOP_POD"
