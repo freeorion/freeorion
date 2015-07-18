@@ -2943,8 +2943,6 @@ SP_CHATO_DESC
 Preferiscono pianeti tossici.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
-[[BROAD_EP]]
-
 Description:
 The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 Centimeters in height and 10 Centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
 
@@ -2956,8 +2954,6 @@ SP_TRITH_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NARROW_EP]]
 
 Description:
 The Trith are a mixture of matter and their enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for the Trith’s rage: While the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To the grown up Trith this is merely vexing, but for young Trith it can be fatal. The Trith that gain their ability before their adolescent years are sometimes not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
@@ -3041,8 +3037,6 @@ SP_GEORGE_DESC
 Prefers Tundra planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
-[[BROAD_EP]]
-
 George is a single telepathic entity that consists of multiple mobile telepathic units. 
 
 Description:
@@ -3053,8 +3047,6 @@ SP_CRAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer Barren planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 
 Description:
 The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray's language is done by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
@@ -3115,8 +3107,6 @@ SP_EGASSEM_DESC
 Prefer Inferno planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
-[[NARROW_EP]]
-
 Description:
 Egassem are several kilometers across and have no fixed shape, they are capable of operating multiple instruments at once through custom formed appendages. Egassem are incredibly slow, capable of moving at most a few meters an hour as moving was only necessary to strip an area of resources. They reproduce by budding, releasing a young that is a mere hundred thousand tons.
 
@@ -3131,8 +3121,6 @@ SP_SSLITH_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NARROW_EP]]
 
 Description:
 In its relaxed state, an individual Sslith is essentially a 2.15cm thick rectangular sheet, that's always 132cm long, and between 31 and 53cm wide. Its only appendage is a single tentacle that is used to sense sound and infrared light, it is also used for communication via ultrasound. Sslith are able to flex their bodies into other shapes, an ability originally evolved for the purpose of sliding into the shells of Vreen (a creature that recedes into its shell when it detects danger). Their flexibility allows them to move astonishingly fast in the oceans, by a ripple effect that looks like they are folding themselves through the water. They don't have a central brain, a Sslith's mental capacity is a collection of multiple nodes that are linked together to form a distributed consciousness allowing a Sslith to perform many tasks at once.

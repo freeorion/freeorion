@@ -3231,8 +3231,6 @@ SP_CHATO_GAMEPLAY_DESC
 '''Сидячие кристаллические сущности, ездящие верхом на животных "Гормошках". 
 Предпочитают токсичную среду.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CHATO_DESC
@@ -3249,8 +3247,6 @@ SP_TRITH_GAMEPLAY_DESC
 '''Бесплотные неприветливые существа, обладающие телепатией.
 Предпочитают радиоактивные планеты.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_TRITH_DESC
@@ -3351,8 +3347,6 @@ SP_GEORGE_GAMEPLAY_DESC
 '''Единая сущность, обладающая телепатией, состоящая из множества многоножек.
 Предпочитают тундру.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_GEORGE_DESC
@@ -3368,8 +3362,6 @@ SP_CRAY_GAMEPLAY_DESC
 '''Жизнерадостные роботы с огромным энтузиазмом.
 Предпочитают бесплодные планеты, но с легкостью приспосабливаются и к другим.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CRAY_DESC
@@ -3445,8 +3437,6 @@ SP_EGASSEM_GAMEPLAY_DESC
 '''Очень большие радиоактивные живущие в лаве кристалличесике амебы.
 Предпочитают планеты типа "Ад".
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_EGASSEM_DESC
@@ -3466,8 +3456,6 @@ SP_SSLITH_GAMEPLAY_DESC
 '''Плоские водянистые игривые существа.
 Предпочитают тундру.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_FIFTYSEVEN_GAMEPLAY_DESC
@@ -3576,8 +3564,6 @@ SP_UGMORS_GAMEPLAY_DESC
 '''Живущие в лаве дрожжеподобные сгустки, формирующиеся в големы.
 Предпочитают планеты типа "ад".
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC

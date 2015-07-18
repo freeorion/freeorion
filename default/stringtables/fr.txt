@@ -4921,8 +4921,6 @@ SP_CHATO_GAMEPLAY_DESC
 '''Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
 Préfèrent les Planètes toxiques.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CHATO_DESC
@@ -4939,8 +4937,6 @@ SP_TRITH_GAMEPLAY_DESC
 '''Télépathes xénophobes tourmentés.
 Préfèrent les Planètes désertiques.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_TRITH_DESC
@@ -5081,8 +5077,6 @@ SP_GEORGE_GAMEPLAY_DESC
 '''Entité unique élémentaire, télépathique, constituée de millions de centipèdes.
 Préfèrent les Planètes avec toundra.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_GEORGE_DESC
@@ -5098,8 +5092,6 @@ SP_CRAY_GAMEPLAY_DESC
 '''Robots dévoués et enthousiastes.
 Préfèrent les Planètes stériles.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CRAY_DESC
@@ -5175,8 +5167,6 @@ SP_EGASSEM_GAMEPLAY_DESC
 '''Amibes cristallines massives, radioactives et magmatiques.
 Préfèrent les Planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_EGASSEM_DESC
@@ -5196,8 +5186,6 @@ SP_SSLITH_GAMEPLAY_DESC
 '''Créatures aquatiques plates et souples.
 Préfèrent les Planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_SSLITH_DESC
@@ -5347,8 +5335,6 @@ SP_UGMORS_GAMEPLAY_DESC
 '''Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
 Préfèrent les Planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC

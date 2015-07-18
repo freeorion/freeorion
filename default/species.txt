@@ -197,6 +197,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
+        [[BROAD_EP]]
     ]
     
     [[TOXIC_BROAD_EP]]
@@ -235,6 +236,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
+        [[BROAD_EP]]
     ]
 
     [[BARREN_BROAD_EP]]
@@ -271,6 +273,7 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[BROAD_EP]]
     ]
     
     [[SWAMP_BROAD_EP]]
@@ -390,6 +393,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
+        [[NARROW_EP]]
     ]
     
     [[INFERNO_NARROW_EP]]
@@ -636,6 +640,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
+        [[BROAD_EP]]
     ]
     
     [[TUNDRA_BROAD_EP]]
@@ -751,6 +756,7 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[NARROW_EP]]
     ]
    
     [[OCEAN_NARROW_EP]]
@@ -1247,6 +1253,7 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[NARROW_EP]]
     ]
     
     [[TUNDRA_NARROW_EP]]
@@ -1416,6 +1423,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
+        [[NARROW_EP]]
     ]
     
     [[DESERT_NARROW_EP]]
@@ -1453,6 +1461,7 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[NARROW_EP]]
     ]
     
     [[INFERNO_NARROW_EP]]
@@ -1543,6 +1552,25 @@ Species
 //####                                               ####\\
 //#######################################################\\
 
+// BROAD_EP and NARROW_EP are stub placeholders for applying the
+// board/narrow environment tolerance description to a species.
+BROAD_EP
+'''
+        EffectsGroup
+            description = "BROAD_EP"
+            scope = Source
+            activation = None
+            effects = SetPlanetType type = Target.OriginalType
+'''
+
+NARROW_EP
+'''
+        EffectsGroup
+            description = "NARROW_EP"
+            scope = Source
+            activation = None
+            effects = SetPlanetType type = Target.OriginalType
+'''
 
 SWAMP_STANDARD_EP
 '''environments = [

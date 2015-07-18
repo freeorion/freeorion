@@ -4917,8 +4917,6 @@ SP_CHATO_GAMEPLAY_DESC
 '''Sessile crystalline entities which ride the animal Goshk.
 Prefer Toxic planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CHATO_DESC
@@ -4935,8 +4933,6 @@ SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_TRITH_DESC
@@ -5077,8 +5073,6 @@ SP_GEORGE_GAMEPLAY_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_GEORGE_DESC
@@ -5094,8 +5088,6 @@ SP_CRAY_GAMEPLAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer Barren planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CRAY_DESC
@@ -5171,8 +5163,6 @@ SP_EGASSEM_GAMEPLAY_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_EGASSEM_DESC
@@ -5192,8 +5182,6 @@ SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_SSLITH_DESC
@@ -5343,8 +5331,6 @@ SP_UGMORS_GAMEPLAY_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC

@@ -3301,8 +3301,6 @@ SP_CHATO_GAMEPLAY_DESC
 '''Sessile crystalline entities which ride the animal Goshk.
 Bevorzugt toxische Planeten.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CHATO_DESC
@@ -3317,8 +3315,6 @@ SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
 Bevorzugt wüstenhafte Planeten.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_TRITH_DESC
@@ -3408,8 +3404,6 @@ SP_GEORGE_GAMEPLAY_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Bevorzugt Tundra Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_GEORGE_DESC
@@ -3423,8 +3417,6 @@ SP_CRAY_GAMEPLAY_DESC
 '''Cheerful enthusiastic robots.
 Bevorzugt unfruchtbare Planeten.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CRAY_DESC
@@ -3456,8 +3448,6 @@ SP_CYNOS_GAMEPLAY_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 Bevorzugt sumpfige Planeten.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[BROAD_EP]]
 '''
 
 SP_CYNOS_DESC
@@ -3495,8 +3485,6 @@ SP_EGASSEM_GAMEPLAY_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Bevorzugt vulkanische Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_EGASSEM_DESC
@@ -3514,8 +3502,6 @@ SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
 Bevorzugt Tundra Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_FIFTYSEVEN_GAMEPLAY_DESC
@@ -3612,8 +3598,6 @@ SP_UGMORS_GAMEPLAY_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Bevorzugt vulkanische Planeten.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC
