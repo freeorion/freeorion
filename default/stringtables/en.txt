@@ -4029,19 +4029,6 @@ Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]] and the recen
 AI_ERROR_MSG
 AI_Error: AI script error
 
-# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
-GROWTH_SPECIALS_LIST
-'''CRYSTALS_SPECIAL
-FRUIT_SPECIAL
-ELERIUM_SPECIAL
-MINERALS_SPECIAL
-MONOPOLE_SPECIAL
-POSITRONIUM_SPECIAL
-PROBIOTIC_SPECIAL
-SPICE_SPECIAL
-SUPERCONDUCTOR_SPECIAL
-'''
-
 ####################
 # Combat Messages  #
 ####################
@@ -4372,76 +4359,6 @@ SITREP_SNOOZE_CLEAR_INDEFINITE
 
 SITREP_SNOOZE_CLEAR_ALL
 '''  Clear all SitRep dismissals'''
-
-## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
-## these sitreps to be presented in the SitrepPanel in the order set below.
-## Sitreps not specified below will appear in the SitrepPanel following those below.
-## Sitreps should be placed with similar existing Sitreps as appropriate.
-
-## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
-SITREP_PRIORITY_ORDER
-'''SITREP_WELCOME
-CUSTOM_1
-CUSTOM_2
-CUSTOM_3
-CUSTOM_4
-[[CUSTOM_1]]
-[[CUSTOM_2]]
-[[CUSTOM_3]]
-[[CUSTOM_4]]
-SITREP_VICTORY
-SITREP_VICTORY_DESTRUCTION
-SITREP_VICTORY_CAPTURE
-SITREP_VICTORY_TECH
-SITREP_VICTORY_BIO
-SITREP_EMPIRE_ELIMINATED
-HEAD_ON_A_SPIKE_MESSAGE
-EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-EFFECT_ANCIENT_SHIP
-EFFECT_ANCIENT_SHIP_RUMORS
-EFFECT_ANCIENT_BUILDING
-EFFECT_ANCIENT_BUILDING_RUMORS
-EFFECT_ANCIENT_TECH
-EFFECT_ANCIENT_TECH_RUMORS
-EFFECT_ANCIENT_RUINS_EMPTY
-SITREP_TECH_RESEARCHED
-SITREP_TECH_UNLOCKED
-SITREP_SHIP_PART_UNLOCKED
-SITREP_SHIP_HULL_UNLOCKED
-SITREP_BUILDING_TYPE_UNLOCKED
-SITREP_GROUND_BATTLE
-SITREP_GROUND_BATTLE_ENEMY
-SITREP_PLANET_CAPTURED
-SITREP_PLANET_COLONIZED
-SITREP_NEW_COLONY_ESTABLISHED
-SITREP_POP_THRESHOLD
-EFFECT_CONC_CAMP_COMLETE
-EFFECT_GAIAN_TERRAFORM
-EFFECT_TERRAFORM
-EFFECT_BLACKHOLE
-EFFECT_GAIA
-EFFECT_TREE
-EFFECT_DAMP_CLOUD
-EFFECT_NEBULA
-EFFECT_ART_PLANET
-EFFECT_TAME_MONSTER_HATCHED
-EFFECT_TAME_MONSTER_MATURED
-SITREP_BUILDING_BUILT
-SITREP_SHIP_BUILT
-SITREP_SHIP_BATCH_BUILT
-EFFECT_EVACUEES
-EFFECT_PSY_DOM
-EFFECT_STARGATE
-SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
-SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
-SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
-SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
-SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
-SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
-SITREP_FLEET_ARRIVED_AT_DESTINATION
-SITREP_PLANET_BOMBARDED_AT_SYSTEM
-SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM'''
-## END OF SITREP_PRIORITY_ORDER
 
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
@@ -11028,21 +10945,6 @@ Transpatial Drive - Cloak Interaction
 ####                       T A G S                       ####
 #############################################################
 
-## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
-## in Census pop-up, and specifies order in which they will be displayed.
-## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
-## since those won't be displayed in the census anyway.
-
-## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
-CENSUS_TAG_ORDER
-'''LITHIC
-ORGANIC
-PHOTOTROPHIC
-ROBOTIC
-SELF_SUSTAINING
-TELEPATHIC'''
-##STYLISH  // add to tag order list if ever this tag is given a function
-
 ANTIQUATED
 Antiquated
 
@@ -14654,3 +14556,10 @@ MONSTER_NAMES
 [[SHIP_NAME_BASQUE_MYTHOLOGY]]
 [[SHIP_NAME_UNSORTED_MYTHOLOGY]]
 [[SHIP_NAME_DEVS]]'''
+
+
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"
+
