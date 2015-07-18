@@ -33,3 +33,9 @@ SELF_SUSTAINING
 TELEPATHIC'''
 ##STYLISH  // add to tag order list if ever this tag is given a function
 
+
+## FUNCTIONAL_SHIPYARD_BUILDING_LIST specifies those buildings which the MapWnd should recognize as shipyards
+## Since currently the BLD_SHIPYARD_BASE is required for all more advanced shipyards to be functional,
+## so it is the only one currently listed.
+FUNCTIONAL_SHIPYARD_BUILDING_LIST
+'''BLD_SHIPYARD_BASE'''

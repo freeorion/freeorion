@@ -1391,14 +1391,17 @@ void SidePanel::PlanetPanel::Refresh() {
     }
 
     // check for shipyard
+    const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const std::set<int>& buildings = planet->BuildingIDs();
     for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
         TemporaryPtr<const Building> building = GetBuilding(*building_it);
         if (!building)
             continue;
-        // annoying hard-coded building name here... not sure how better to deal with it
-        // TODO: ^^ This isn't the stone age anymore - we have tags now, and an annoying hard-coded tag is probably at least a step up.
-        if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
+        if (known_destroyed_object_ids.find(*building_it) != known_destroyed_object_ids.end())
+            continue;
+        std::list<std::string> shipyards_list;
+        UserStringList("FUNCTIONAL_SHIPYARD_BUILDING_LIST", shipyards_list);
+        if (std::find(shipyards_list.begin(), shipyards_list.end(), building->BuildingTypeName()) != shipyards_list.end()) {
             has_shipyard = true;
             break;
         }
