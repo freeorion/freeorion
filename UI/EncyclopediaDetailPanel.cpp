@@ -1977,10 +1977,31 @@ namespace {
         FleetUIManager& fleet_manager = FleetUIManager::GetFleetUIManager();
         std::set<int> chosen_ships;
         int selected_ship = fleet_manager.SelectedShipID();
+        const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd();
+        if ((selected_ship == INVALID_OBJECT_ID) && fleet_wnd) {
+            std::set< int > selected_fleets = fleet_wnd->SelectedFleetIDs();
+            std::set< int > selected_ships = fleet_wnd->SelectedShipIDs();
+            int selected_fleet_id = INVALID_OBJECT_ID;
+            if (selected_ships.size() > 0)
+                selected_ship = *selected_ships.begin();
+            else {
+                int selected_fleet_id = INVALID_OBJECT_ID;
+                if (selected_fleets.size() == 1)
+                    selected_fleet_id = *selected_fleets.begin();
+                else if (fleet_wnd->FleetIDs().size() > 0)
+                    selected_fleet_id = *fleet_wnd->FleetIDs().begin();
+                if (TemporaryPtr< Fleet > selected_fleet = GetFleet(selected_fleet_id))
+                    if (!selected_fleet->ShipIDs().empty())
+                        selected_ship = *selected_fleet->ShipIDs().begin();
+            }
+        }
+
         if (selected_ship != INVALID_OBJECT_ID) {
             chosen_ships.insert(selected_ship);
             if (const TemporaryPtr< Ship > this_ship = GetShip(selected_ship)) {
-                if (!additional_species.empty() && ((this_ship->CurrentMeterValue(METER_MAX_SHIELD) > 0) || !this_ship->OwnedBy(client_empire_id))) {
+                if (!this_ship->SpeciesName().empty())
+                    additional_species.insert(this_ship->SpeciesName());
+                if (!this_ship->OwnedBy(client_empire_id)) {
                     enemy_DR = this_ship->CurrentMeterValue(METER_MAX_SHIELD);
                     DebugLogger() << "Using selected ship for enemy values, DR: " << enemy_DR;
                     enemy_shots.clear();
