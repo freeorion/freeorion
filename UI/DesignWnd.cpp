@@ -614,7 +614,7 @@ void PartsListBox::Populate() {
             ShipPartClass pclass = group_it->first.first;
             // currently, only cull ShortRange Weapons, though the culling code
             // is more broadly applicable.
-            if (pclass == PC_SHORT_RANGE && !m_show_superfluous_parts)
+            if (!m_show_superfluous_parts)
                 CullSuperfluousParts(group_it->second, pclass, empire_id, loc_id);
         }
     }
