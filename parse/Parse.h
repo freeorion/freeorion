@@ -76,6 +76,10 @@ namespace parse {
 
     FO_PARSE_API bool keymaps(const boost::filesystem::path& path,
                               std::map<std::string, std::map<int, int> >& nkm);
+
+    FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
+
+    FO_PARSE_API void file_substitution(std::string& text, const boost::filesystem::path& file_search_path);
 }
 
 #endif
