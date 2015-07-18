@@ -163,8 +163,8 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     AttachChild(m_tags_list);
 
     // determine tag order
-    //DebugLogger() << "Census Tag Order: " << UserString("CENSUS_TAG_ORDER");
-    std::istringstream tag_stream(UserString("CENSUS_TAG_ORDER"));
+    //DebugLogger() << "Census Tag Order: " << UserString("FUNCTIONAL_CENSUS_TAG_ORDER");
+    std::istringstream tag_stream(UserString("FUNCTIONAL_CENSUS_TAG_ORDER"));
     std::vector<std::string> tag_order;
     std::copy(std::istream_iterator<std::string>(tag_stream),
         std::istream_iterator<std::string>(),

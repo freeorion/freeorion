@@ -1,11 +1,15 @@
 
-## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
+# These are lists which the UI uses to adapt itself to current content, and to your preferences.
+
+# To minimize potential conflict with stringtable tags, all keys here should begin with "FUNCTIONAL_"
+
+## FUNCTIONAL_SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.
 ## Sitreps not specified below will appear in the SitrepPanel following those below.
 ## Sitreps should be placed with similar existing Sitreps as appropriate.  The
 ## entries will not work correctly if they contain spaces; use underscores "_" instead.
 
-SITREP_PRIORITY_ORDER
+FUNCTIONAL_SITREP_PRIORITY_ORDER
 '''SITREP_WELCOME
 CUSTOM_1
 CUSTOM_2
@@ -67,5 +71,5 @@ SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 SITREP_PLANET_BOMBARDED_AT_SYSTEM
 SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM'''
-## END OF SITREP_PRIORITY_ORDER
+## END OF FUNCTIONAL_SITREP_PRIORITY_ORDER
 

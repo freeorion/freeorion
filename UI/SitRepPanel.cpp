@@ -92,7 +92,7 @@ namespace {
 
     std::vector<std::string> OrderedSitrepTemplateStrings() {
         // determine sitrep order
-        std::istringstream template_stream(UserString("SITREP_PRIORITY_ORDER"));
+        std::istringstream template_stream(UserString("FUNCTIONAL_SITREP_PRIORITY_ORDER"));
         std::vector<std::string> sitrep_order;
         std::copy(std::istream_iterator<std::string>(template_stream),
                   std::istream_iterator<std::string>(),

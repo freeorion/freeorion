@@ -1,6 +1,13 @@
 
-PRODUCTION_QUEUE_FRONTLOAD_FACTOR
+# Note: The longer term vision is for these kinds of parameters to mostly or entirely be set as part of the Game Setup dialog rather than here.
+# To minimize potential conflict with stringtable tags, all keys here should begin with "FUNCTIONAL_"
+
+
+# The following two parameters are currently placeholders to indicate the kind of parameters that might go here; the feature they would be 
+# used by has not yet been merged into master as of the time of this writing.
+
+FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR
 0.05
 
-PRODUCTION_QUEUE_TOPPING_UP_FACTOR
+FUNCTIONAL_PRODUCTION_QUEUE_TOPPING_UP_FACTOR
 0.05

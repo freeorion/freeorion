@@ -3,6 +3,9 @@ English
 #This is the English String Table file for FreeOrion
 #Translate this file to other languages.
 
+# Note: to avoid potential conflict with functional keys in other files, do not make
+# any stringtable keys beginning with "FUNCTIONAL_"
+
 #################
 #    Common     #
 #################
