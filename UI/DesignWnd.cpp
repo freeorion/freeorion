@@ -557,14 +557,17 @@ bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, 
 }
 
 bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_part) {
-    static std::map< std::pair<const std::string, const std::string>, bool> part_loc_comparison_map;
-    std::pair<const std::string, const std::string> part_pair = std::make_pair<const std::string, const std::string>(check_part->Name(), ref_part->Name());
-    std::map< std::pair< const std::string, const std::string >, bool >::iterator map_it = part_loc_comparison_map.find(part_pair);
+    static std::map<std::pair<std::string, std::string>, bool> part_loc_comparison_map;
+
+    std::pair<std::string, std::string> part_pair = std::make_pair(check_part->Name(), ref_part->Name());
+    std::map<std::pair<std::string, std::string>, bool>::iterator map_it = part_loc_comparison_map.find(part_pair);
     if (map_it != part_loc_comparison_map.end())
         return map_it->second;
+
     bool result = true;
     if (check_part->Name() == "SH_MULTISPEC" || ref_part->Name() == "SH_MULTISPEC")
         result = false;
+
     const Condition::ConditionBase* check_part_loc = check_part->Location();
     const Condition::ConditionBase* ref_part_loc = ref_part->Location();
     result = result && LocationASubsumesLocationB(check_part_loc, ref_part_loc);
