@@ -38,7 +38,7 @@ namespace {
     float GetQueueFrontloadFactor() {
         static float front_load_factor = -1.0;
         if (front_load_factor == -1.0) {
-            front_load_factor == 0.0;
+            front_load_factor = 0.0;
             try {
                 if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
                     float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
@@ -53,7 +53,7 @@ namespace {
     float GetQueueToppingFactor() {
         static float topping_up_factor = -1.0;
         if (topping_up_factor == -1.0) {
-            topping_up_factor == 0.0;
+            topping_up_factor = 0.0;
             try {
                 if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
                     float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
