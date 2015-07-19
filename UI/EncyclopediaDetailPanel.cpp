@@ -1300,7 +1300,7 @@ namespace {
         // Specials
         name = UserString(item_name);
         texture = ClientUI::SpecialIcon(item_name);
-        detailed_description = UserString(special->Description());
+        detailed_description = special->Description();
         general_type = UserString("ENC_SPECIAL");
 
         // objects that have special

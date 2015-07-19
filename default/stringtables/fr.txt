@@ -5957,77 +5957,47 @@ Un avant-poste des Expérimentateurs est implanté dans ce système et doit êtr
 PROBIOTIC_SPECIAL
 Soupe Probiotique
 PROBIOTIC_SPECIAL_DESC
-'''La grande diversité d'organismes unicellulaires qu'offre la planète contribue à améliorer la santé et la préservation de tous types de vie organique.
-
-Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].'''
+La grande diversité d'organismes unicellulaires qu'offre la planète contribue à améliorer la santé et la préservation de tous types de vie organique.
 
 FRUIT_SPECIAL
 Fruits d'Eden
 FRUIT_SPECIAL_DESC
-'''Ce qui revêt l'apparence d'une forêt ordinaire s'avère être en réalité un organisme symbiotique de la taille d'un continent. Les fruits de ces arbres contiennent des substances organiques étonnamment complexes mais également bénéfiques à tous types de vie organique.
-
-Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].'''
+Ce qui revêt l'apparence d'une forêt ordinaire s'avère être en réalité un organisme symbiotique de la taille d'un continent. Les fruits de ces arbres contiennent des substances organiques étonnamment complexes mais également bénéfiques à tous types de vie organique.
 
 SPICE_SPECIAL
 Épice Ki
 SPICE_SPECIAL_DESC
-'''Produite uniquement par l'écosystème de cette planète, l'Épice Ki a la propriété de prolonger la vie, d'éclairer l'esprit, ou encore d'aiguiser les capacités sensorielles des êtres organiques.
-
-Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].'''
+Produite uniquement par l'écosystème de cette planète, l'Épice Ki a la propriété de prolonger la vie, d'éclairer l'esprit, ou encore d'aiguiser les capacités sensorielles des êtres organiques.
 
 MONOPOLE_SPECIAL
 Aimants Monopolaires
 MONOPOLE_SPECIAL_DESC
-'''Les Aimants Monopolaires rendent les robots plus résistants!
-
-Les espèces à [[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
-
-[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
+Les Aimants Monopolaires rendent les robots plus résistants!
 
 SUPERCONDUCTOR_SPECIAL
 Supraconducteurs Ambiants
 SUPERCONDUCTOR_SPECIAL_DESC
-'''Les Supraconducteurs Ambiants rendent les robots plus efficaces!
-
-Les espèces à [[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
-
-[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
+Les Supraconducteurs Ambiants rendent les robots plus efficaces!
 
 POSITRONIUM_SPECIAL
 Cendres Positroniques
 POSITRONIUM_SPECIAL_DESC
-'''Les Cendres Positroniques rendent les robots plus intelligents!
-
-Les espèces à [[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
-
-[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
+Les Cendres Positroniques rendent les robots plus intelligents!
 
 MINERALS_SPECIAL
 Profusion Minière
 MINERALS_SPECIAL_DESC
-'''Cette planète abrite de riches gisements de minerai, augmentant significativement la production ou la croissance des espèces lithiques.
-
-Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
-
-[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
+Cette planète abrite de riches gisements de minerai, augmentant significativement la production ou la croissance des espèces lithiques.
 
 CRYSTALS_SPECIAL
 Cristaux Silmalins
 CRYSTALS_SPECIAL_DESC
-'''Cette planète abrite de riches gisements de minerai, augmentant significativement la production ou la croissance des espèces lithiques.
-
-Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
-
-[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
+Cette planète abrite de riches gisements de minerai, augmentant significativement la production ou la croissance des espèces lithiques.
 
 ELERIUM_SPECIAL
 Elerium Originel
 ELERIUM_SPECIAL_DESC
-'''Cette planète abrite de riches gisements d'Elerium pur, augmentant significativement la production ou la croissance des espèces lithiques.
-
-Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
-
-[[GROWTH_SPECIAL_INDUSTRY_BOOST]]'''
+Cette planète abrite de riches gisements d'Elerium pur, augmentant significativement la production ou la croissance des espèces lithiques.
 
 STARSPAWN_NEBULA_SPECIAL
 Nébuleuse Mère
@@ -10592,6 +10562,15 @@ Entre autres applications, cette technologie permet de réduire le délai néces
 #############################################################
 ####              Growth Macros                          ####
 #############################################################
+
+GROWTH_SPECIAL_POPULATION_ORGANIC_INCREASE
+Les espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ORGANIC_SPECIES_TITLE]].
+
+GROWTH_SPECIAL_POPULATION_ROBOTIC_INCREASE
+Les espèces à [[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
+
+GROWTH_SPECIAL_POPULATION_LITHIC_INCREASE
+Les espèces à [[encyclopedia LITHIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[LITHIC_SPECIES_TITLE]].
 
 GROWTH_SPECIAL_POPULATION_INCREASE
 '''habitant cette planète verront leur plafond de Population augmenter selon la taille de la planète (Minuscule : +1, Petite : +2, Moyenne : +3, Grande : +4, Immense : +5), quel que soit l'environnement planétaire. 

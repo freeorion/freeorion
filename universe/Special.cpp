@@ -58,6 +58,24 @@ Special::~Special() {
     delete m_location;
 }
 
+std::string Special::Description() const {
+    std::stringstream result;
+
+    result << UserString(m_description) << "\n";
+
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = m_effects.begin();
+         m_effects.end() != it; ++it)
+    {
+        const std::string& description = (*it)->GetDescription();
+
+        if (!description.empty()) {
+            result << "\n" << UserString(description) << "\n";
+        }
+    }
+
+    return result.str();
+}
+
 void Special::Init() {
     if (m_stealth)
         m_stealth->SetTopLevelContent(m_name);
