@@ -3814,12 +3814,12 @@ One further difference between the two types of shields is that a ship's shields
 ARMOR_TITLE
 Armor Plating
 ARMOR_TEXT
-Allows to increase the [[encyclopedia STRUCTURE_TITLE]] of any ship by the strength rating of the armor plating part. Unlike ship [[encyclopedia SHIELDS_TITLE]], armor plating does not protect from [[encyclopedia DAMAGE_TITLE]]s caused by enemy weapons.
+Increases the maximum [[encyclopedia STRUCTURE_TITLE]] of its ship by the strength rating of the armor plating part.
 
 SLOT_TITLE
 Slot
 SLOT_TEXT
-A slot is where can be mounted a [[encyclopedia ENC_SHIP_PART]] on a [[encyclopedia ENC_SHIP_HULL]], like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. Each of them has a different shape, which can receive a different type of ship part. Larger is a hull (and expensive), bigger is the number of different slots which can receive various ship parts.
+A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types.  This information is also shown graphically in the Design Window, where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatble with. In most cases a part shape will clearly match a particular slot-type shape.  Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types.  Larger (and expensive) hulls often have more slots available to be filled with parts.
 
 STEALTH_TITLE
 Stealth
@@ -3955,7 +3955,7 @@ Structure is amount of damage that ship can take until it is destroyed. Structur
 DAMAGE_TITLE
 Damage
 DAMAGE_TEXT
-Defines the amount of damage inflicted by an armed ship in one combat round. This value, equal to the strength sum of all weapons mounted on a ship, is substracted to the [[encyclopedia STRUCTURE_TITLE]] of an enemy ship after each combat round, destroying it when reaching zero. If a ship is equipped with [[encyclopedia SHIELDS_TITLE]], the damage sustained by each hit will be reduced by the strength rating of the shield part.
+Defines the base extent that a weapon will reduce the [[encyclopedia STRUCTURE_TITLE]] of another ship (or the [[encyclopedia SHIELDS_TITLE]], [[encyclopedia DEFENSE_TITLE]] and [[encyclopedia INFRASTRUCTURE_TITLE]] of a planet), in one combat round (of which there are three in each turn of battle).  If a target ship is equipped with [[encyclopedia SHIELDS_TITLE]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[encyclopedia SHIELDS_TITLE]].
 
 STARLANE_SPEED_TITLE
 Starlane Speed
