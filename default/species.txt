@@ -752,6 +752,7 @@ Species
        
         [[BAD_STEALTH]]
         [[GOOD_DETECTION]]
+        [[SLOW_COLONIZATION]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1060,6 +1061,7 @@ Species
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
         [[AVERAGE_GROUND_TROOPS]]
+        [[FAST_COLONIZATION]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -3735,6 +3737,28 @@ NOT_HUGE_PLANET
             Planet Size = Huge
         ]
         effects = SetPlanetSize planetsize = Large
+'''
+
+//#####      COLONIZATION SPEED        #####//
+
+// FAST_COLONIZATION and SLOW_COLONIZATION are stubs for applying the
+// fast colonization building speed description to a species.
+FAST_COLONIZATION
+'''
+        EffectsGroup
+            description = "FAST_COLONIZATION"
+            scope = Source
+            activation = None
+            effects = SetSpeed value = Value * 0.75
+'''
+
+SLOW_COLONIZATION
+'''
+        EffectsGroup
+            description = "SLOW_COLONIZATION"
+            scope = Source
+            activation = None
+            effects = SetSpeed value = Value * 1.2
 '''
 
 //#####      M U L T I P L I E R S     #####//

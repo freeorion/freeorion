@@ -5142,8 +5142,6 @@ Phinnert
 SP_PHINNERT_GAMEPLAY_DESC
 '''Industrious Flying Monkeys.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-+	Fast Colonization: -25% time to build colonies
 '''
 
 SP_PHINNERT_DESC
@@ -10418,6 +10416,12 @@ BROAD_EP
 
 NARROW_EP
 −	Narrow Planet Tolerance: flourishes on fewer types.
+
+FAST_COLONIZATION
++	Fast Colonization: -25% time to build colonies
+
+SLOW_COLONIZATION
+−	Slow Colonization: +20% time to build colonies
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####

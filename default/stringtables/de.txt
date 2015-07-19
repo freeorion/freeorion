@@ -3467,7 +3467,6 @@ SP_PHINNERT_GAMEPLAY_DESC
 '''Flying Monkeys.
 Bevorzugt sumpfige Planeten.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
 '''
 
 SP_PHINNERT_DESC

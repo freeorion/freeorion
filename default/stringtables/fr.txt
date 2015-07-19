@@ -5146,8 +5146,6 @@ Phinnert
 SP_PHINNERT_GAMEPLAY_DESC
 '''Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-+	Colonisation rapide: -25% de délai pour la construction d'une colonie.
 '''
 
 SP_PHINNERT_DESC
@@ -10420,6 +10418,9 @@ BROAD_EP
 
 NARROW_EP
 −	Faible adaptabilité : s'acclimate à moins de types planétaires.
+
+FAST_COLONIZATION
++	Colonisation rapide: -25% de délai pour la construction d'une colonie.
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
