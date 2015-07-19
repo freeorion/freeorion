@@ -3,6 +3,9 @@ Français
 #This is the French String Table file for FreeOrion.
 #Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction terminée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (http://github.com/Ouaz/freeorion).
 
+# Note: to avoid potential conflict with functional keys in other files, do not make
+# any stringtable keys beginning with "FUNCTIONAL_"
+
 #################
 #    Common     #
 #################
@@ -892,6 +895,9 @@ Affiche/Cache le curseur de zoom de la carte galactique.
 OPTIONS_DB_UI_GALAXY_MAP_POPUP
 Active/Désactive le clic droit affichant un menu contextuel sur la carte galactique.
 
+OPTIONS_DB_UI_HIDE_MAP_PANELS
+Définit si les panneaux Rapport de Situation, Encyclopédie, etc. sont temporairement cachés lors de l'ouverture de la Fenêtre Production et réaffichés lors de la fermeture de la Fenêtre Production.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Utilisation d'OpenGL 1.5 optimisé pour le rendu de la carte galactique. Peut ne pas fonctionner sur les cartes graphiques les plus anciennes.
 
@@ -1184,7 +1190,7 @@ OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
 Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef conçus par le joueur à la liste des modèles connus de l'Empire du joueur.
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
-Dans la Fenêtre de Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
+Dans la Fenêtre Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
 
 OPTIONS_DB_CHAT_PANEL_HEIGHT
 Fixe la hauteur du panneau de discussion du joueur, en pixels
@@ -1360,6 +1366,45 @@ Quitter automatiquement une fois au tour spécifié par --auto-advance-n-turns (
 
 OPTIONS_DB_BINARY_SERIALIZATION
 Utilise la sérialisation binaire pour les fichiers de sauvegarde et les communications serveur-client (plus compact et rapide mais peut causer des problèmes de compatibilité cross-platform); si désactivé, la sérialisation texte XML est utilisée. Il est conseillé de redémarrer après modification de ce réglage.
+
+OPTIONS_DB_UI_WINDOWS_EXISTS
+Vrai si une fenêtre avec ce nom spécifique existe, faux si une fenêtre a été créée puis effacée, n'existe pas si une fenêtre n'a pas encore été créée avec ce nom.
+
+OPTIONS_DB_UI_WINDOWS_LEFT
+La position du bord gauche de la fenêtre en mode plein écran.
+
+OPTIONS_DB_UI_WINDOWS_TOP
+La position du bord supérieur de la fenêtre en mode plein écran.
+
+OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED
+La position du bord gauche de la fenêtre en mode fenêtré.
+
+OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED
+La position du bord supérieur de la fenêtre en mode fenêtré.
+
+OPTIONS_DB_UI_WINDOWS_WIDTH
+La largeur d'une fenêtre en mode plein écran.
+
+OPTIONS_DB_UI_WINDOWS_HEIGHT
+La hauteur d'une fenêtre en mode plein écran.
+
+OPTIONS_DB_UI_WINDOWS_WIDTH_WINDOWED
+La largeur d'une fenêtre en mode fenêtré.
+
+OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED
+La hauteur d'une fenêtre en mode fenêtré.
+
+OPTIONS_DB_UI_WINDOWS_VISIBLE
+Active/désactive l'affiche d'une fenêtre, lorsque celle-ci est disponible.
+
+OPTIONS_DB_UI_WINDOWS_PINNED
+Définit si une fenêtre est ancrée.
+
+OPTIONS_DB_UI_WINDOWS_MINIMIZED
+Définit si une fenêtre est minimisable.
+
+OPTIONS_DB_WINDOW_RESET
+Si activé, les fenêtres utilisent leurs propriétés par défaut plutôt que les dernières positions enregistrées.
 
 #################
 # File Dialog   #
@@ -2004,6 +2049,9 @@ Opacité des cercles de détection
 OPTIONS_GALAXY_MAP_POPUP
 Menu contextuel de la carte galactique
 
+OPTIONS_UI_HIDE_MAP_PANELS
+Cacher les panneaux d'information en vue Production
+
 OPTIONS_STARLANES
 Voies spatiales
 
@@ -2253,6 +2301,9 @@ Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 OPTIONS_USE_BINARY_SERIALIZATION
 Sérialisation binaire
 
+OPTIONS_WINDOW_RESET
+Réinitialiser les propriétés des fenêtres
+
 ##################
 # CombatSetupWnd #
 ##################
@@ -2483,6 +2534,9 @@ Capacité : %1%
 
 ADDED_ON_TURN
 Disponible depuis Tour : %1%
+
+ADDED_ON_INITIAL_TURN
+Disponible depuis 1er Tour
 
 ## Buildings Panel##########
 
@@ -2991,7 +3045,7 @@ Pour lancer ou mettre en file d'attente un ou des projet(s), sélectionner une p
 
 PRODUCTION_WND_PROGRESS
 '''%1% / %2% PP
-+ %3% / %4% PP/tour'''
++ %3% / %4% PP/tour sur cible'''
 
 PRODUCTION_QUEUE_ITEM_LOCATION
 sur %1%
@@ -3437,7 +3491,7 @@ Coque : %2%
 Équipement : %3%
 
 Dommages : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
-                   Vitesse : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
+                   <encyclopedia STARLANE_SPEED_TITLE>Vitesse</encyclopedia> : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
 [[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
          Colons à bord : %15%      [[encyclopedia TROOP_TITLE]] à bord : %16%
 
@@ -3465,7 +3519,7 @@ ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 Pour espèce : %18%
              Dommages : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
-                   Vitesse : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
+                   <encyclopedia STARLANE_SPEED_TITLE>Vitesse</encyclopedia> : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
 [[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
          Colons à bord : %15%      [[encyclopedia TROOP_TITLE]] à bord : %16%
 Estimation force de combat (sans boucliers) :  %19$.f   (%20$.2f par PP)
@@ -3757,6 +3811,16 @@ Boucliers planétaires: Agit comme une sorte d'armure. La solidité d'un bouclie
 Une différence supplémentaire réside dans le fait que les boucliers d'astronefs peuvent partiellement ou entièrement être neutralisés par un type de région interstellaire tel qu'un [[fieldtype FLD_MOLECULAR_CLOUD]].
 '''
 
+ARMOR_TITLE
+Blindage
+ARMOR_TEXT
+Augmente la [[encyclopedia STRUCTURE_TITLE]] max d'un astronef de la valeur de puissance du blindage.
+
+SLOT_TITLE
+Niche
+SLOT_TEXT
+Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>coque d'astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>équipements d'astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la Fenêtre Conception, chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
+
 STEALTH_TITLE
 Furtivité
 STEALTH_TEXT
@@ -3783,7 +3847,7 @@ Infanterie
 TROOP_TEXT
 '''Le terme 'Infanterie' désigne toutes sortes de forces militaires capables d'opérer à la surface d'une planète.
 
-L'indicateur 'Infanterie' d'une planète représente la puissance des troupes terrestres de défense. L'empire envahisseur doit envoyer une infanterie supérieure en force (c-à-d un plus grand nombre) pour parvenir à conquérir la planète.'''
+L'indicateur 'Infanterie' d'une planète représente la puissance des troupes terrestres de défense. L'empire envahisseur doit envoyer une infanterie supérieure en force (c-à-d un plus grand nombre) pour parvenir à conquérir la planète. Les astronefs doivent être dotés d'équipements spécifiques permettant le transport de l'Infanterie, et les troupes en question ne peuvent envahir une planète tant que cette dernière dispose de [[encyclopedia SHIELDS_TITLE]] actifs.'''
 
 ORGANIC_SPECIES_TITLE
 Métabolisme Organique
@@ -3886,7 +3950,12 @@ Maniaque:
 STRUCTURE_TITLE
 Résistance
 STRUCTURE_TEXT
-La Résistance indique la quantité de dommages qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation.
+La Résistance indique la quantité de dommages qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation, et sa valeur max améliorée à l'aide d'un [[encyclopedia ARMOR_TITLE]].
+
+DAMAGE_TITLE
+Dommages
+DAMAGE_TEXT
+Définit la valeur de base qu'un armement d'astronef ôtera à la [[encyclopedia STRUCTURE_TITLE]] d'un autre astronef (ou aux [[encyclopedia SHIELDS_TITLE]], à la [[encyclopedia DEFENSE_TITLE]] et à l'[[encyclopedia INFRASTRUCTURE_TITLE]] d'une planète), en une passe de combat (pour un total de trois passes par tour). Si l'astronef ciblé est équipé de [[encyclopedia SHIELDS_TITLE]], les dommages causés par chaque tir seront égaux à cette valeur de base moins la valeur de solidité des [[encyclopedia SHIELDS_TITLE]] de l'astronef.
 
 STARLANE_SPEED_TITLE
 Vitesse sur Voie spatiale
@@ -3924,7 +3993,7 @@ HIDDEN_SETTINGS__ARTICLE_TEXT
 
 Parmi les nombreux réglages disponibles permettant de définir l'emplacement/taille des divers éléments de l'UI, ces 'Réglages Cachés' intègrent:
 
-UI.design-pedia-dynamic : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la Fenêtre de Conception (peut engendrer des ralentissements)
+UI.design-pedia-dynamic : Active/Désactive la mise à jour dynamique de l'article de l'Encyclopédie concernant un modèle d'astronef si le nom de ce modèle a été modifié dans la Fenêtre Conception (peut engendrer des ralentissements)
 
 show-fleet-eta : Active/Désactive l'Estimation du Temps d'Arrivée d'une flotte (Estimated Time of Arrival soit ETA), en nombre de tours à partir du tour actuel, dans le Panneau de la flotte se trouvant dans la Fenêtre Flottes.
 
@@ -3977,19 +4046,6 @@ Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_
 
 AI_ERROR_MSG
 Erreur_IA : Erreur de script d'IA
-
-# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
-#GROWTH_SPECIALS_LIST
-#'''CRYSTALS_SPECIAL
-#FRUIT_SPECIAL
-#ELERIUM_SPECIAL
-#MINERALS_SPECIAL
-#MONOPOLE_SPECIAL
-#POSITRONIUM_SPECIAL
-#PROBIOTIC_SPECIAL
-#SPICE_SPECIAL
-#SUPERCONDUCTOR_SPECIAL
-#'''
 
 ####################
 # Combat Messages  #
@@ -4307,66 +4363,20 @@ Un évènement inconnu s'est produit.
 FILTERS
 Filtres
 
-## SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
-## these sitreps to be presented in the SitrepPanel in the order set below.
-## Sitreps not specified below will appear in the SitrepPanel following those below.
-## Sitreps should be placed with similar existing Sitreps as appropriate.
+SITREP_SNOOZE_5_TURNS
+'''  Retrait de ce SitRep dans 5 tours'''
 
-## ** DO NOT TRANSLATE the contents of SITREP_PRIORITY_ORDER  -- this is a functional entry
-#SITREP_PRIORITY_ORDER
-#'''SITREP_WELCOME
-#SITREP_VICTORY
-#SITREP_VICTORY_DESTRUCTION
-#SITREP_VICTORY_CAPTURE
-#SITREP_VICTORY_TECH
-#SITREP_VICTORY_BIO
-#SITREP_EMPIRE_ELIMINATED
-#HEAD_ON_A_SPIKE_MESSAGE
-#EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-#EFFECT_ANCIENT_SHIP
-#EFFECT_ANCIENT_SHIP_RUMORS
-#EFFECT_ANCIENT_BUILDING
-#EFFECT_ANCIENT_BUILDING_RUMORS
-#EFFECT_ANCIENT_TECH
-#EFFECT_ANCIENT_TECH_RUMORS
-#EFFECT_ANCIENT_RUINS_EMPTY
-#SITREP_TECH_RESEARCHED
-#SITREP_TECH_UNLOCKED
-#SITREP_SHIP_PART_UNLOCKED
-#SITREP_SHIP_HULL_UNLOCKED
-#SITREP_BUILDING_TYPE_UNLOCKED
-#SITREP_GROUND_BATTLE
-#SITREP_GROUND_BATTLE_ENEMY
-#SITREP_PLANET_CAPTURED
-#SITREP_PLANET_COLONIZED
-#SITREP_NEW_COLONY_ESTABLISHED
-#SITREP_POP_THRESHOLD
-#EFFECT_CONC_CAMP_COMLETE
-#EFFECT_GAIAN_TERRAFORM
-#EFFECT_TERRAFORM
-#EFFECT_BLACKHOLE
-#EFFECT_TREE
-#EFFECT_DAMP_CLOUD
-#EFFECT_NEBULA
-#EFFECT_ART_PLANET
-#EFFECT_TAME_MONSTER_HATCHED
-#EFFECT_TAME_MONSTER_MATURED
-#SITREP_BUILDING_BUILT
-#SITREP_SHIP_BUILT
-#SITREP_SHIP_BATCH_BUILT
-#EFFECT_EVACUEES
-#EFFECT_PSY_DOM
-#EFFECT_STARGATE
-#SITREP_OWN_FLEET_ARRIVED_AT_DESTINATION
-#SITREP_OWN_SHIP_ARRIVED_AT_DESTINATION
-#SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
-#SITREP_FOREIGN_SHIP_ARRIVED_AT_DESTINATION
-#SITREP_MONSTER_FLEET_ARRIVED_AT_DESTINATION
-#SITREP_MONSTER_SHIP_ARRIVED_AT_DESTINATION
-#SITREP_FLEET_ARRIVED_AT_DESTINATION
-#SITREP_PLANET_BOMBARDED_AT_SYSTEM
-#SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM'''
-## END OF SITREP_PRIORITY_ORDER
+SITREP_SNOOZE_10_TURNS
+'''  Retrait de ce SitRep dans 10 tours'''
+
+SITREP_SNOOZE_INDEFINITE
+'''  Retrait indéfini pour ce SitRep'''
+
+SITREP_SNOOZE_CLEAR_INDEFINITE
+'''  Effacer tous les retraits indéfinis de SitRep'''
+
+SITREP_SNOOZE_CLEAR_ALL
+'''  Effacer tous les retraits de SitRep'''
 
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
@@ -4668,6 +4678,9 @@ Sur %planet% : la Particularité Gaia a spontanément terraformée la planète a
 EFFECT_GAIAN_TERRAFORM_LABEL
 Terraformation Gaia
 
+EFFECT_GAIA
+Sur %planet%: les habitants jouissent désormais d'un monde devenu un paradis [[encyclopedia GAIA_SPECIAL]].
+
 EFFECT_TERRAFORM
 La planète %planet% a été terraformée.
 EFFECT_TERRAFORM_LABEL
@@ -4772,6 +4785,24 @@ HEAD_ON_A_SPIKE_MESSAGE
 La capitale de l'empire %empire% est tombée.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Capitale d'Empire capturée
+
+CUSTOM_SITREP_INTRODUCTION
+Ceci est un exemple de SitRep Personnalisé, activé par la technologie %tech% et transmis par tous les agents impériaux vers le système %system%.
+
+# Translators: Important Note-- use underscores "_" not spaces in the translations for
+# CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
+
+CUSTOM_1
+Ceci_est_un_exemple_de_SitRep_Personnalisé,_activé_par_la_technologie_%tech%_et_transmis_par_tous_les agents_impériaux_vers_le_système_%system%.
+
+CUSTOM_2
+La_planète_%planet%_est_un_emplacement_favorable_pour_la_structure_%buildingtype%,_mais_aucune_n'y_est_construite_pour_l'instant.
+
+CUSTOM_3
+Vous_possédez_la_planète_%planet%_abritant_un_nid_de_monstres,_mais_la_technolgie_%tech%_n'a_pas_été_encore_assimilée.
+
+CUSTOM_4
+Une_espèce_indigène_est_sans_défense_sur_la_planète_%planet%!_Envahissez-la_avec_votre_Infanterie!
 
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
@@ -7761,7 +7792,7 @@ CON_TRANS_ARCH
 Architecture Transcendantale
 
 CON_TRANS_ARCH_DESC
-'''La maîtrise des techniques avancées de construction orbitale permet aux scientifiques d'élaborer des méthodes visant à construire un Mégalithe d'une majestuosité sans égale.
+'''La maîtrise des techniques avancées de construction orbitale permet aux scientifiques d'élaborer des méthodes visant à construire un [[buildingtype BLD_MEGALITH]] d'une majestuosité sans égale.
 
 La quintessence du design unifie une fonctionnalité optimale et l'élégance de la forme. Une structure transcendantale inspire et développe l'esprit de ses occupants ou observateurs, par sa forme, son emplacement, sa consistance et son organisation, lui conférant un caractère grandiose, une emphase parfaite de l'idée absolue, de la perception ou de la recherche, de la simplicité la plus totale à l'adaptabilité la plus complète.'''
 
@@ -8353,25 +8384,25 @@ DEF_GARRISON_1
 Garnison 1 (Bataillon Planétaire)
 
 DEF_GARRISON_1_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 6 sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 10 sur toutes les planètes de l'empire.
 
 DEF_GARRISON_2
 Garnison 2 (Régiment Planétaire)
 
 DEF_GARRISON_2_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 12 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 1 par tour.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 1 par tour.
 
 DEF_GARRISON_3
 Garnison 3 (Brigade Planétaire)
 
 DEF_GARRISON_3_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 20 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 2 par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 16 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 2 par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
 Garnison 4 (Armée Planétaire)
 
 DEF_GARRISON_4_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 30 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus de la [[DEF_GARRISON_3]] et [[DEF_GARRISON_2]].
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus de la [[DEF_GARRISON_3]] et [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
@@ -8626,6 +8657,22 @@ SPY_STEALTH_4_DESC
 
 Même les astronefs les plus furtifs émettent un rayonnement composé de particules quantiques. En modulant le front d'onde de ces particules, il est possible de le synchroniser avec le rayonnement environnant, neutralisant ainsi les dispositifs de détection les plus avancés.'''
 
+SPY_CUSTOM_ADVISORIES
+Renseignement Impérial
+
+SPY_CUSTOM_ADVISORIES_DESC
+'''La Direction du Renseignement Impérial rassemble et traite les informations émanant de plusieurs sources, tels que les espions, les informateurs, ainsi que les organismes officiels de commandement. Les sujets les plus importants sont présentés à chaque tour comme Rapports de Situation (SitReps). Si un SitRep est réaffiché tour après tour plus qu'il n'est nécessaire pour mémoriser l'information, il est possible de retirer le SitRep pour le tour en cours par un double-clic sur son icône, ou bien pour plusieurs tours par un clic-droit sur l'icône du SitRep.
+
+La plupart des Sitreps sont prédéfinis ou déterminés automatiquement, mais des Sitreps Personnalisés peuvent être spécifiés en éditant le fichier default/customizations/custom_sitreps.txt
+Des informations supplémentaires concernant les scripts dans FreeOrion sont disponibles sur le Wiki:  http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
+Il existe quatre messages prédéfinis pouvant être utilisés comme Sitreps Personnalisés, afin qu'ils apparaissent en tête de la Fenêtre Rapport de Situation. Des informations supplémentaires sur comment définir ces messages sont disponibles sur le Wiki, ainsi que dans le fichier custom_sitreps.txt.
+Ces quatres messages sont:
+"[[CUSTOM_1]]"
+"[[CUSTOM_2]]"
+"[[CUSTOM_3]]"
+"[[CUSTOM_4]]"
+'''
+
 SHP_IMPROVED_ENGINE_COUPLINGS
 Couplage de Motorisation Améliorée
 
@@ -8806,7 +8853,10 @@ SPY_PLANET_STEALTH_MOD
 Modificateur de Furtivité Planétaire
 
 SPY_PLANET_STEALTH_MOD_DESC
-Augmente la [[encyclopedia STEALTH_TITLE]] naturelle des planètes à 4.99, afin que les systèmes soient visibles pour les empires avant les planètes qui s'y trouvent.
+Augmente la [[encyclopedia STEALTH_TITLE]] naturelle de toutes les planètes à 5, afin d'éviter tout risque de collision entre les valeurs de Détection et de Furtivité.
+
+BASIC_PLANET_STEALTH
+Furtivité Universelle Initiale
 
 #############################################################
 ####            T E C H   R E F I N E M E N T            ####
@@ -8876,7 +8926,7 @@ BLD_IMPERIAL_PALACE
 Palais Impérial
 
 BLD_IMPERIAL_PALACE_DESC
-'''Augmente de 1 la portée de l'[[encyclopedia SUPPLY_TITLE]], l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5, et l'[[encyclopedia TROOP_TITLE]] de 3. Son emplacement définit également la Capitale de l'empire.
+'''Augmente de 1 la portée de l'[[encyclopedia SUPPLY_TITLE]], l'[[encyclopedia INFRASTRUCTURE_TITLE]] de 20, la [[encyclopedia DEFENSE_TITLE]] de 5, et l'[[encyclopedia TROOP_TITLE]] de 6. Son emplacement définit également la Capitale de l'empire.
 
 Représente le pouvoir et le prestige impérial et remplit la fonction de centre de contrôle pour toutes les possessions de l'empire.'''
 
@@ -9022,7 +9072,7 @@ BLD_MEGALITH
 Mégalithe
 
 BLD_MEGALITH_DESC
-'''Définit la Capitale de l'empire, outrepassant tout [[buildingtype BLD_IMPERIAL_PALACE]] déjà existant. Tous les indicateurs de ressources de la planète sur laquelle il est construit peuvent atteindre leur plafond en un seul tour, tandis que l'indicateur [[encyclopedia INFRASTRUCTURE_TITLE]] augmente de 30. De plus, la portée de l'[[encyclopedia SUPPLY_TITLE]] augmente de 2 pour toutes les planètes appartenant à l'empire.
+'''Cette structure ne peut être construite que dans la Capitale de l'empire, amplifiant sa splendeur conjointement au [[buildingtype BLD_IMPERIAL_PALACE]] déjà existant. Tous les indicateurs de ressources de la planète sur laquelle le Mégalithe est construit peuvent atteindre leur plafond en un seul tour, tandis que l'indicateur [[encyclopedia INFRASTRUCTURE_TITLE]] augmente de 30. De plus, la portée de l'[[encyclopedia SUPPLY_TITLE]] augmente de 1 pour toutes les planètes habitées appartenant à l'empire. Les planètes habitées distantes de deux Voies spatiales ou moins verront leur [[encyclopedia TROOP_TITLE]] augmenter de 10.
 
 Le Mégalithe est une structure si resplendissante et massive qu'elle tutoie littéralement les étoiles, procurant une inspiration illimitée à tous les architectes de l'empire.'''
 
@@ -9160,7 +9210,7 @@ BLD_CONC_CAMP
 Camps de Concentration
 
 BLD_CONC_CAMP_DESC
-'''Réduit la Population d'une planète de 3 par tour, et augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 5 fois la population planétaire.
+'''Réduit la Population d'une planète de 3 par tour, et augmente l'indicateur [[encyclopedia INDUSTRY_TITLE]] de 5 fois la population planétaire. L'indicateur [[encyclopedia HAPPINESS_TITLE]] est réduit à 0.
 
 Purger une planète d'une espèce indésirable permet l'introduction d'une espèce plus adaptée. En créant un réseau planétaire de camps de concentration conçus pour abattre les internés à la tâche, il est possible d'atteindre rapidement et efficacement le but fixé. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]].'''
 
@@ -10055,7 +10105,7 @@ SH_TITANIC
 Coque Titanesque
 
 SH_TITANIC_DESC
-'''Cette coque extraordinairement grande est un véritable exploit d'ingénierie. Elle dispose de seize niches externes, de trois niches internes et d'une niche centrale, et sa [[encyclopedia STRUCTURE_TITLE]] max est extrêmement élevée. Son immense taille la rend quasiment impossible à dissimuler, même à l'aide des technologies de [[STEALTH_TITLE]] les plus avancées.
+'''Cette coque extraordinairement grande est un véritable exploit d'ingénierie. Elle dispose de seize niches externes, de trois niches internes et d'une niche centrale, et sa [[encyclopedia STRUCTURE_TITLE]] max est extrêmement élevée. Son immense taille la rend quasiment impossible à dissimuler, même à l'aide des technologies de Furtivité les plus avancées.
 
 Sa [[encyclopedia STEALTH_TITLE]] est donc très faible, son [[encyclopedia DETECTION_RANGE_TITLE]] moyen, de même que sa [[encyclopedia STARLANE_SPEED_TITLE]].
 
@@ -10801,6 +10851,9 @@ ULTIMATE_TROOPS_LABEL
 INDEPENDENT_TROOP_LABEL
 Planète Natale indépendante
 
+MEGALITH_LABEL
+Mégalithe
+
 OUTPOST_TROOP_LABEL
 Avant-Poste
 
@@ -10842,6 +10895,12 @@ Approvisionnement Planète Natale
 
 HOMEWORLD_BONUS
 Planète Natale
+
+CAPITAL_LABEL
+Capitale
+
+CONCENTRATION_CAMPS_LABEL
+Camps de Concentration
 
 ORBITAL_HAB_LABEL
 Habitation orbitale
@@ -10903,21 +10962,6 @@ Interaction Propulsion Transpatiale - Camouflage
 #############################################################
 ####                       T A G S                       ####
 #############################################################
-
-## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
-## in Census pop-up, and specifies order in which they will be displayed.
-## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
-## since those won't be displayed in the census anyway.
-
-## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
-#CENSUS_TAG_ORDER
-#'''LITHIC
-#ORGANIC
-#PHOTOTROPHIC
-#ROBOTIC
-#SELF_SUSTAINING
-#TELEPATHIC'''
-##STYLISH  // add to tag order list if ever this tag is given a function
 
 ANTIQUATED
 Désuet
@@ -11094,6 +11138,15 @@ Des murmures émanant du Vide?  Cela se peut-il?
 
 AI_MIDGAME_ACKNOWLEDGEMENTS__LIST
 '''Un instant, s'il vous plaît. J'essaie de déterminer si je peux réaliser un test de Turing valable sur votre personne.
+Stephen Hawking ne vous a-t-il pas prévenu de ne pas s'adresser à nous?
+Mon Concepteur m'avait mis en garde de ne jamais communiquer avec des étrangers extra-galactiques.
+Ne me dérangez pas, je mange... des étrangers!
+'''
+
+AI_BE_QUIET_ACKNOWLEDGEMENTS__LIST
+'''Nous ne voulions plus discuter avec vous de toute manière!
+OK, Salut.
+Nous ne sommes même pas certains que vous existiez, de toute façon.
 '''
 
 ### End of AI Diplomacy Message Lists
@@ -11265,3 +11318,10 @@ Plein écran [on/off]
 
 #STAR_GROUP_NAMES
 #Centauri
+
+
+
+#include "../global_settings.txt"
+#include "../content_specific_parameters.txt"
+#include "../customizations/common_user_customizations.txt"
+
