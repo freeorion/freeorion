@@ -2133,6 +2133,7 @@ NO_SUPPLY
 
 BAD_SUPPLY
 '''     EffectsGroup
+            description = "BAD_SUPPLY"
             scope = Source
             activation = Planet
             accountinglabel = "BAD_SUPPLY_LABEL"
@@ -2141,6 +2142,7 @@ BAD_SUPPLY
 
 AVERAGE_SUPPLY
 '''     EffectsGroup
+            description = "AVERAGE_SUPPLY"
             scope = Source
             activation = Planet
             accountinglabel = "AVERAGE_SUPPLY_LABEL"
@@ -2149,6 +2151,7 @@ AVERAGE_SUPPLY
 
 GREAT_SUPPLY
 '''     EffectsGroup
+            description = "GREAT_SUPPLY"
             scope = Source
             activation = Planet
             accountinglabel = "GREAT_SUPPLY_LABEL"
@@ -2157,6 +2160,7 @@ GREAT_SUPPLY
 
 ULTIMATE_SUPPLY
 '''     EffectsGroup
+            description = "ULTIMATE_SUPPLY"
             scope = Source
             activation = Planet
             accountinglabel = "ULTIMATE_SUPPLY_LABEL"
@@ -2187,12 +2191,19 @@ BASIC_POPULATION
 
 AVERAGE_POPULATION
 '''     [[BASIC_POPULATION]]
+
+        EffectsGroup
+            description = "AVERAGE_POPULATION"
+            scope = Source
+            activation = None
+            effects = SetTargetPopulation value = Value * 1.0
 '''
 
 BAD_POPULATION
 '''     [[BASIC_POPULATION]]
     
         EffectsGroup
+            description = "BAD_POPULATION"
             scope = Source
             activation = Planet
             accountinglabel = "BAD_POPULATION_LABEL"
@@ -2203,6 +2214,7 @@ GOOD_POPULATION
 '''     [[BASIC_POPULATION]]
 
         EffectsGroup
+            description = "GOOD_POPULATION"
             scope = Source
             activation = Planet
             accountinglabel = "GOOD_POPULATION_LABEL"
@@ -2766,6 +2778,11 @@ ADVANCED_FOCUS_EFFECTS
 
 NO_INDUSTRY
 '''
+    EffectsGroup
+        description = "NO_INDUSTRY"
+        scope = Source
+        activation = None
+        effects = SetTargetIndustry value = 0
 '''
 
 BASIC_INDUSTRY
@@ -2793,6 +2810,7 @@ BAD_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
         EffectsGroup
+            description = "BAD_INDUSTRY"
             scope = Source
             activation = And [
                 Source
@@ -2806,12 +2824,19 @@ BAD_INDUSTRY
 
 AVERAGE_INDUSTRY
 '''[[BASIC_INDUSTRY]]
+
+        EffectsGroup
+            description = "AVERAGE_INDUSTRY"
+            scope = Source
+            activation = None
+            effects = SetTargetIndustry value = Value
 '''
 
 GOOD_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
         EffectsGroup
+            description = "GOOD_INDUSTRY"
             scope = Source
             activation = And [
                 Source
@@ -2827,6 +2852,7 @@ GREAT_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
         EffectsGroup
+            description = "GREAT_INDUSTRY"
             scope = Source
             activation = And [
                 Source
@@ -2842,6 +2868,7 @@ ULTIMATE_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
         EffectsGroup
+            description = "ULTIMATE_INDUSTRY"
             scope = Source
             activation = And [
                 Source
@@ -2877,12 +2904,18 @@ BASIC_RESEARCH
 
 NO_RESEARCH
 '''
+        EffectsGroup
+            description = "NO_RESEARCH"
+            scope = Source
+            activation = None
+            effects = SetResearch value = 0
 '''
 
 BAD_RESEARCH
 '''[[BASIC_RESEARCH]]
 
         EffectsGroup
+            description = "BAD_RESEARCH"
             scope = Source
             activation = And [
                 Source
@@ -2895,12 +2928,19 @@ BAD_RESEARCH
 
 AVERAGE_RESEARCH
 '''[[BASIC_RESEARCH]]
+
+        EffectsGroup
+            description = "AVERAGE_RESEARCH"
+            scope = Source
+            activation = None
+            effects = SetTargetResearch value = Value
 '''
 
 GOOD_RESEARCH
 '''[[BASIC_RESEARCH]]
 
         EffectsGroup
+            description = "GOOD_RESEARCH"
             scope = Source
             activation = And [
                 Source
@@ -2915,6 +2955,7 @@ GREAT_RESEARCH
 '''[[BASIC_RESEARCH]]
 
         EffectsGroup
+            description = "GREAT_RESEARCH"
             scope = Source
             activation = And [
                 Source
@@ -2929,6 +2970,7 @@ ULTIMATE_RESEARCH
 '''[[BASIC_RESEARCH]]
 
         EffectsGroup
+            description = "ULTIMATE_RESEARCH"
             scope = Source
             activation = And [
                 Source
@@ -3071,12 +3113,21 @@ EffectsGroup
 '''
 
 NO_GROUND_TROOPS
-'''[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]'''
+'''
+    EffectsGroup
+        description = "NO_GROUND_TROOPS"
+        scope = Source
+        activation = None
+        effects = SetMaxTroops value = 0
+
+[[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
+'''
 
 BAD_GROUND_TROOPS
 '''[[BASIC_GROUND_TROOPS]]
 
 EffectsGroup
+            description = "BAD_GROUND_TROOPS"
             scope = Source
             activation = Planet
             accountinglabel = "BAD_TROOPS_LABEL"
@@ -3088,6 +3139,13 @@ EffectsGroup
 AVERAGE_GROUND_TROOPS
 '''[[BASIC_GROUND_TROOPS]]
 
+EffectsGroup
+            description = "AVERAGE_GROUND_TROOPS"
+            scope = Source
+            activation = Planet
+            accountinglabel = "AVERAGE_TROOPS_LABEL"
+            effects = SetMaxTroops value = Value
+
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
@@ -3095,6 +3153,7 @@ GOOD_GROUND_TROOPS
 '''[[BASIC_GROUND_TROOPS]]
 
 EffectsGroup
+            description = "GOOD_GROUND_TROOPS"
             scope = Source
             activation = Planet
             accountinglabel = "GOOD_TROOPS_LABEL"
@@ -3107,6 +3166,7 @@ GREAT_GROUND_TROOPS
 '''[[BASIC_GROUND_TROOPS]]
 
 EffectsGroup
+            description = "GREAT_GROUND_TROOPS"
             scope = Source
             activation = Planet
             accountinglabel = "GREAT_TROOPS_LABEL"
@@ -3119,6 +3179,7 @@ ULTIMATE_GROUND_TROOPS
 '''[[BASIC_GROUND_TROOPS]]
 
 EffectsGroup
+            description = "ULTIMATE_GROUND_TROOPS"
             scope = Source
             activation = Planet
             accountinglabel = "ULTIMATE_TROOPS_LABEL"
@@ -3395,6 +3456,7 @@ PROTECTION_FOCUS_DEFENSE
 
 BAD_DETECTION
 '''EffectsGroup
+            description = "BAD_DETECTION"
             scope = Source
             activation = Not Ship
             effects = SetDetection value = Value - 20
@@ -3406,18 +3468,21 @@ BAD_DETECTION
 
 GOOD_DETECTION
 '''EffectsGroup
+            description = "GOOD_DETECTION"
             scope = Source
             effects = SetDetection value = Value + 25
 '''
 
 GREAT_DETECTION
 '''        EffectsGroup
+            description = "GREAT_DETECTION"
             scope = Source
             effects = SetDetection value = Value + 50
 '''
 
 ULTIMATE_DETECTION
 '''        EffectsGroup
+            description = "ULTIMATE_DETECTION"
             scope = Source
             effects = SetDetection value = Value + 100
 '''
@@ -3427,6 +3492,7 @@ ULTIMATE_DETECTION
 
 BAD_STEALTH
 '''EffectsGroup
+            description = "BAD_STEALTH"
             scope = Or [
                 Source
                 And [
@@ -3441,6 +3507,7 @@ BAD_STEALTH
 
 GOOD_STEALTH
 '''EffectsGroup
+            description = "GOOD_STEALTH"
             scope = Or [
                 Source
                 And [
@@ -3455,6 +3522,7 @@ GOOD_STEALTH
             
 GREAT_STEALTH
 '''EffectsGroup
+            description = "GREAT_STEALTH"
             scope = Or [
                 Source
                 And [
@@ -3469,6 +3537,7 @@ GREAT_STEALTH
 
 ULTIMATE_STEALTH
 '''EffectsGroup
+            description = "ULTIMATE_STEALTH"
             scope = Or [
                 Source
                 And [
@@ -3485,6 +3554,7 @@ ULTIMATE_STEALTH
 
 BAD_WEAPONS
 '''EffectsGroup
+            description = "BAD_WEAPONS"
             scope = Source
             effects = [
                 SetDamage partname = "SR_WEAPON_1_1" value = Value - 1
@@ -3508,6 +3578,7 @@ BAD_WEAPONS
 
 GOOD_WEAPONS
 '''EffectsGroup
+            description = "GOOD_WEAPONS"
             scope = Source
             effects = [
                 SetDamage partname = "SR_WEAPON_1_1" value = Value + 1
@@ -3531,6 +3602,7 @@ GOOD_WEAPONS
 
 GREAT_WEAPONS
 '''EffectsGroup
+            description = "GREAT_WEAPONS"
             scope = Source
             effects = [
                 SetDamage partname = "SR_WEAPON_1_1" value = Value + 2
@@ -3554,6 +3626,7 @@ GREAT_WEAPONS
 
 ULTIMATE_WEAPONS
 '''EffectsGroup
+            description = "ULTIMATE_WEAPONS"
             scope = Source
             effects = [
                 SetDamage partname = "SR_WEAPON_1_1" value = Value + 3

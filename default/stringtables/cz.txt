@@ -1366,8 +1366,6 @@ ALL_ENEMIES_ELIMINATED_VICTORY
 ####                    S P E C I E S                    ####
 #############################################################
 
-### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
-
 #############################################################
 ####                   S P E C I A L S                   ####
 #############################################################

@@ -1656,7 +1656,7 @@ namespace {
         name = UserString(item_name);
         texture = ClientUI::SpeciesIcon(item_name);
         general_type = UserString("ENC_SPECIES");
-        detailed_description = UserString(species->GameplayDescription());
+        detailed_description = species->GameplayDescription();
 
         // inherent species limitations
         detailed_description += "\n";

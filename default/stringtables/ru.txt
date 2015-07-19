@@ -3172,20 +3172,12 @@ OCCUPIED_PLANETS
 ENVIRONMENTAL_PREFERENCES
 Настройки окружающей среды:
 
-### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
-
 SP_HUMAN
 Люди
 SP_HUMAN_GAMEPLAY_DESC
 '''В основном безвредны. Все характеристики усреднены для тестирования.
 Предпочитают планеты земного типа.
 [[encyclopedia ORGANIC_SPECIES_TITLE]].
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_SCYLIOR
@@ -3194,12 +3186,6 @@ SP_SCYLIOR_GAMEPLAY_DESC
 '''Водоплавающие с тремя щупальцами.
 Предпочитают водную среду.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[GREAT_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_SCYLIOR_DESC
@@ -3223,13 +3209,6 @@ SP_GYSACHE_GAMEPLAY_DESC
 '''Трусливые причудливые травоядные, напоминающие овец.
 Предпочитают болотистые планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[GREAT_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_GYSACHE_DESC
@@ -3253,12 +3232,6 @@ SP_CHATO_GAMEPLAY_DESC
 Предпочитают токсичную среду.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 
-[[AVERAGE_INDUSTRY]]
-[[GREAT_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[BAD_GROUND_TROOPS]]
-        
 [[BROAD_EP]]
 '''
 
@@ -3277,15 +3250,6 @@ SP_TRITH_GAMEPLAY_DESC
 Предпочитают радиоактивные планеты.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
-        
-[[GREAT_DETECTION]]
-[[GOOD_STEALTH]]
-
 [[NARROW_EP]]
 '''
 
@@ -3303,14 +3267,6 @@ SP_HHHOH_GAMEPLAY_DESC
 '''Огромные медленные многохоботовые мамонты.
 Педпочитают тундру.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_GROUND_TROOPS]]
-
-[[GOOD_WEAPONS]]
 '''
 
 SP_HHHOH_DESC
@@ -3328,13 +3284,6 @@ SP_EAXAW_GAMEPLAY_DESC
 '''Злобные агрессивные черви.
 Предпочитают пустыни.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
-[[ULTIMATE_WEAPONS]]
 '''
 
 SP_EAXAW_DESC
@@ -3354,11 +3303,6 @@ SP_DERTHREAN_GAMEPLAY_DESC
 '''Пацифистичные, болебоязненные плавающие полурастения полувирусы.
 Предпочитают токсичные планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[BAD_WEAPONS]]
 '''
 
 SP_DERTHREAN_DESC
@@ -3375,15 +3319,6 @@ SP_LAENFA_GAMEPLAY_DESC
 '''Подлые, чувствительные, обладающие телепатией черви.
 Предпочитают водную среду.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[BAD_GROUND_TROOPS]]
-
-[[GREAT_DETECTION]]
-[[GREAT_STEALTH]]
 '''
 
 SP_LAENFA_DESC
@@ -3400,13 +3335,6 @@ SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Слабые нелетающие птицы, объединяющиеся в сообщества.
 Предпочитают болотистые планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_MUURSH
@@ -3415,12 +3343,6 @@ SP_MUURSH_GAMEPLAY_DESC
 '''Воинствующе-миролюбивые травоядные.
 Предпочитают пустыни.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[GREAT_WEAPONS]]
-[[GREAT_GROUND_TROOPS]]
 '''
 
 SP_GEORGE
@@ -3429,12 +3351,6 @@ SP_GEORGE_GAMEPLAY_DESC
 '''Единая сущность, обладающая телепатией, состоящая из множества многоножек.
 Предпочитают тундру.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
 
 [[BROAD_EP]]
 '''
@@ -3453,12 +3369,6 @@ SP_CRAY_GAMEPLAY_DESC
 Предпочитают бесплодные планеты, но с легкостью приспосабливаются и к другим.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 
-[[BAD_INDUSTRY]]
-[[GOOD_RESEARCH]]
-       
-[[AVERAGE_POPULATION]]
-[[GOOD_GROUND_TROOPS]]
-        
 [[BROAD_EP]]
 '''
 
@@ -3477,17 +3387,6 @@ SP_ETTY_GAMEPLAY_DESC
 '''Кибернетические насаждения.
 Предпочитают пустыни.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GOOD_GROUND_TROOPS]]
-                
-[[GOOD_WEAPONS]]
-
-[[BAD_DETECTION]]
-[[GOOD_STEALTH]]
 '''
 
 SP_ETTY_DESC
@@ -3506,14 +3405,6 @@ SP_CYNOS_GAMEPLAY_DESC
 '''Ходячие деревья неотделимые от огромного бесчувственного материнского дерева.
 Предпочитают болота.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GOOD_GROUND_TROOPS]]
-        
-[[BROAD_EP]]
 '''
 
 SP_CYNOS_DESC
@@ -3535,12 +3426,6 @@ SP_PHINNERT_GAMEPLAY_DESC
 '''Летающие обезъяны.
 Предпочитают океаны.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[NO_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_PHINNERT_DESC
@@ -3561,11 +3446,6 @@ SP_EGASSEM_GAMEPLAY_DESC
 Предпочитают планеты типа "Ад".
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
-[[ULTIMATE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[BAD_POPULATION]]
-[[GREAT_GROUND_TROOPS]]
 [[NARROW_EP]]
 '''
 
@@ -3587,12 +3467,6 @@ SP_SSLITH_GAMEPLAY_DESC
 Предпочитают тундру.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[BAD_GROUND_TROOPS]]
-        
 [[NARROW_EP]]
 '''
 
@@ -3600,12 +3474,6 @@ SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Одержимые математикой летучие змеи, распевающие фрактальные песни на всю планету.
 Предпочитают болотистые планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[ULTIMATE_RESEARCH]]
-
-[[BAD_POPULATION]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_FIFTYSEVEN_DESC
@@ -3628,14 +3496,6 @@ SP_SETINON_GAMEPLAY_DESC
 '''Эгоистичные, раздражительные микроскопические организмы.
 Предпочитают океанические планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[NO_GROUND_TROOPS]]  
-        
-[[GREAT_STEALTH]]
 '''
 
 SP_SETINON_DESC
@@ -3655,15 +3515,6 @@ SP_NYMNMN_GAMEPLAY_DESC
 '''Мудрые магнитно-волновые образования планетарного масштаба.
 Предпочитают пустыни.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[BAD_POPULATION]]
-[[BAD_GROUND_TROOPS]]
-
-[[GREAT_DETECTION]]
-[[GOOD_STEALTH]]
 '''
 
 SP_TRENCHERS
@@ -3672,12 +3523,6 @@ SP_TRENCHERS_GAMEPLAY_DESC
 '''Загадочные колесные роботы, тщательно нарезающие на поверхности своей планеты кривые и спирали.
 Предпочитают бесплодные земли.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[NO_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_RAAAGH
@@ -3686,12 +3531,6 @@ SP_RAAAGH_GAMEPLAY_DESC
 '''Похожи на кошек..
 Предпочитают планеты земного типа.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[NO_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[ULTIMATE_GROUND_TROOPS]]
 '''
 
 SP_RAAAGH_DESC
@@ -3713,12 +3552,6 @@ SP_BEIGEGOO_GAMEPLAY_DESC
 '''Безумные, очень недоверчивые, поглощающие почву черви.
 Предпочитают радиоактивные планеты.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[NO_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[GREAT_GROUND_TROOPS]]
 '''
 
 SP_SILEXIAN
@@ -3727,13 +3560,6 @@ SP_SILEXIAN_GAMEPLAY_DESC
 '''Самосветящиеся роботы-садовники, оставленные на волю судьбы.
 Предпочитают планеты земного типа.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_KOBUNTURA
@@ -3742,12 +3568,6 @@ SP_KOBUNTURA_GAMEPLAY_DESC
 '''Чувствительные образования из магнитной пыли с пристрастием к строительству.
 Предпочитают бесплодные земли.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_UGMORS
@@ -3757,12 +3577,6 @@ SP_UGMORS_GAMEPLAY_DESC
 Предпочитают планеты типа "ад".
 [[encyclopedia LITHIC_SPECIES_TITLE]]
 
-[[GOOD_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
 [[NARROW_EP]]
 '''
 
@@ -3787,12 +3601,6 @@ SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Травоядные ракообразные, живущие в колонии вне планеты в гелеобразной субстанции.
 Предпочитают токсичные миры.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[GOOD_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_HIDDENGARDENER
@@ -3801,13 +3609,6 @@ SP_HIDDENGARDENER_GAMEPLAY_DESC
 '''Мудрая грибница, живущая глубоко в почве.
 Предпочитает планеты земного типа.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[GOOD_STEALTH]]
-
-[[NO_INDUSTRY]]
-[[NO_RESEARCH]]
-
-[[NO_GROUND_TROOPS]]
 '''
 
 SP_HIDDENGARDENER_DESC
@@ -3823,12 +3624,6 @@ SP_ABADDONI_GAMEPLAY_DESC
 '''Раса обитающих в пещерах существ, находящихся в рабстве у суперзащищенного компьютера, который они сами и создали.
 Предпочитают планеты типа "ад".
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_ACIREMA
@@ -3837,12 +3632,6 @@ SP_ACIREMA_GAMEPLAY_DESC
 '''Раса с практически беспредельным могуществом, которая не может выжить во вселенной.
 Предпочитают радиоактивные планеты.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[GOOD_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_ACIREMA_DESC
@@ -3865,14 +3654,6 @@ SP_OURBOOLS_GAMEPLAY_DESC
 '''Гигантские слепые водоплавающие, которые могут "видеть" силы притяжения.
 Предпочитают океаны.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
-        
-[[ULTIMATE_DETECTION]]
 '''
 
 SP_OURBOOLS_DESC
@@ -3896,12 +3677,6 @@ SP_VOLP_GAMEPLAY_DESC
 '''Огромное скопление в конец обуревших сверлильщиков.
 Предпочитают бесплодные планеты.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_EXOBOT
@@ -3909,13 +3684,6 @@ SP_EXOBOT
 SP_EXOBOT_GAMEPLAY_DESC
 '''Полуавтономные роботы, созданные для добычи полезных ископаемых и производства на бесплодных, радиоактивных и вулканических планетах.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_EXPERIMENTOR
@@ -3923,15 +3691,6 @@ SP_EXPERIMENTOR
 SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''Предтечи безумных ученых.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NO_INDUSTRY]]
-[[ULTIMATE_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[ULTIMATE_GROUND_TROOPS]]
-
-[[ULTIMATE_STEALTH]]
-[[ULTIMATE_DETECTION]]
 '''
 
 SP_SUPER_TEST
@@ -3940,15 +3699,6 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 '''Супер-тестеры несбалансированы и бесчестны. Они почти всеведующи и обитают на всех планетах.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
-
-
-[[GREAT_INDUSTRY]]
-[[GREAT_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[GREAT_GROUND_TROOPS]]
-        
-[[ULTIMATE_WEAPONS]]
 '''
 
 #############################################################
