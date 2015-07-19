@@ -1216,6 +1216,12 @@ Sets width of queues on research and production screens.
 OPTIONS_DB_UI_PROD_QUEUE_LOCATION
 Sets whether to show the production location for items on the production queue
 
+OPTIONS_DB_PROD_QUEUE_FRONTLOAD
+Sets a maximum percentage of total item cost for the frontloading of allocation towards an item being built, spread over the initial turns of construction; in any given case the frontloading factor will also be constrained to not reduce the minimum build time
+
+OPTIONS_DB_PROD_QUEUE_TOPPING_UP
+Sets a maximum percentage  of total item cost for the topping-up of allocation towards an item being built, allowed on the final turn of construction if costs have increased; in any given case the frontloading factor will also be constrained to not reduce the minimum build time.  Furthermore, any allowed frontloading of allocation will reduce the range of allowed topping-up.
+
 OPTIONS_DB_GAMESETUP_SEED
 '''The seed used for randomly generating the galaxy.
 Galaxies generated with the same settings and the same seed will be identical.'''

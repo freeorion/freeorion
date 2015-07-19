@@ -108,6 +108,38 @@ namespace {
     }
 
 
+    void AddOptions(OptionsDB& db) {
+        db.Add("empire.production-queue-frontload-factor",      UserStringNop("OPTIONS_DB_PROD_QUEUE_FRONTLOAD"), 0.0f, RangedValidator<float>(0.0f, 0.3f));
+        db.Add("empire.production-queue-topping-up-factor",     UserStringNop("OPTIONS_DB_PROD_QUEUE_TOPPING_UP"), 0.3f, RangedValidator<float>(0.0f, 0.3f));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
+    float CalculateProductionPerTurnLimit(const ProductionQueue::Element& queue_element, float item_cost, int build_turns) {
+        float frontload_limit_factor = GetOptionsDB().Get<float>("empire.production-queue-frontload-factor");
+        float topping_up_limit_factor = GetOptionsDB().Get<float>("empire.production-queue-topping-up-factor");
+        topping_up_limit_factor = std::max(0.0f, topping_up_limit_factor - frontload_limit_factor);  // any allowed topping up is limited by how much frontloading was allowed
+        item_cost *= queue_element.blocksize;
+        build_turns = std::max(build_turns, 1);
+        float element_accumulated_PP = queue_element.progress;                                 // PP accumulated by this element towards producing  next item
+        float element_total_cost = item_cost * queue_element.remaining;                        // total PP to produce all items in this element
+        float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to produce all items in this element
+        float additional_pp_to_complete_item = item_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to produce the current item of this element
+        float basic_element_per_turn_limit = item_cost / build_turns;
+        // the extra constraints on frontload and topping up amounts ensure that won't let complete in less than build_turns (so long as costs do not decrease)
+        float frontload = (1.0 + frontload_limit_factor/std::max(build_turns-1,1)) * basic_element_per_turn_limit  - 2 * EPSILON;
+        float topping_up_limit = basic_element_per_turn_limit + std::min(topping_up_limit_factor * item_cost, basic_element_per_turn_limit - 2 * EPSILON);
+        float topping_up = (additional_pp_to_complete_item < topping_up_limit) ? additional_pp_to_complete_item : basic_element_per_turn_limit;
+        float returnval = std::min(additional_pp_to_complete_element, std::max(basic_element_per_turn_limit, std::max(frontload, topping_up)));
+        //DebugLogger() << "CalculateProductionPerTurnLimit for item " << queue_element.item.build_type << " " << queue_element.item.name 
+        //              << " " << queue_element.item.design_id << " :  accumPP: " << element_accumulated_PP << " pp_to_complete_elem: "
+        //              << additional_pp_to_complete_element << " pp_to_complete_item: " << additional_pp_to_complete_item 
+        //              <<  " basic_element_per_turn_limit: " << basic_element_per_turn_limit << " frontload: " << frontload
+        //              << " topping_up_limit: " << topping_up_limit << " topping_up: " << topping_up << " returnval: " << returnval;
+
+        return returnval;
+    }
+
+
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
       * nonzero funding to a Tech if it is researchable this turn.  Also
       * determines total number of spent RP (returning by reference in
@@ -187,6 +219,10 @@ namespace {
             ErrorLogger() << "SetProdQueueElementSpending queue size and sharing groups size inconsistent. aborting";
             return;
         }
+        float frontload_limit_factor = GetOptionsDB().Get<float>("empire.production-queue-frontload-factor");
+        float topping_up_limit_factor = GetOptionsDB().Get<float>("empire.production-queue-topping-up-factor");
+        DebugLogger() << "SetProdQueueElementSpending frontload  factor " << frontload_limit_factor;
+        DebugLogger() << "SetProdQueueElementSpending topping up factor " << topping_up_limit_factor;
 
         // See explanation at CalculateProductionPerTurnLimit() above regarding operation of these factors.
         const float frontload_limit_factor = GetQueueFrontloadFactor();
