@@ -34,6 +34,79 @@
 namespace {
     const float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
+    
+    float GetQueueFrontloadFactor() {
+        static float front_load_factor = -1.0;
+        if (front_load_factor == -1.0) {
+            front_load_factor == 0.0;
+            try {
+                if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
+                    float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
+                    if (new_front_factor > 0.0f && new_front_factor <= 0.3f)
+                        front_load_factor = new_front_factor;
+                }
+            } catch (...) {}
+        }
+        return front_load_factor;
+    }
+
+    float GetQueueToppingFactor() {
+        static float topping_up_factor = -1.0;
+        if (topping_up_factor == -1.0) {
+            topping_up_factor == 0.0;
+            try {
+                if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
+                    float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
+                    if (new_front_factor > 0.0f && new_front_factor <= 0.3f)
+                        topping_up_factor = new_front_factor;
+                }
+            } catch (...) {}
+        }
+        return topping_up_factor;
+    }
+
+// FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR and FUNCTIONAL_PRODUCTION_QUEUE_TOPPING_UP_FACTOR specify global_settings.txt values that affect how the ProductionQueue will limit
+// allocation towards building a given item on a given turn.  The base amount of maximum allocation per turn (if the player has enough PP available) is the item's total
+// cost, divided over its minimum build time.  Sometimes complications arise, though, which unexpectedly delay the completion even if the item had been fully-funded 
+// every turn, because costs have risen partway through (such as due to increasing ship costs resulting from recent ship constructoin completion and ensuing increase 
+// of Fleet Maintenance costs.  These two settings provide a mechanism for some allocation leeway to deal with mid-build cost increases without causing the project 
+// completion to take an extra turn because of the small bit of increased cost.  The settings differ in the timing of the extra allocation allowed.
+// Both factors have a minimum value of 0.0 and a maximum value of 0.3.
+
+// Making the frontloaded factor greater than zero increases the per-turn allocation cap by the specified percentage (so it always spreads the extra allocation across all turns).
+// Making the topping-up option nonzero allows the final turn allocation cap to be increased by the specified percentage of the total cost, if needed (and then subject to 
+// availability of course). They can both be nonzero, although to avoid that introducing too much interaction complexity into the minimum build time safeguard for topping-up, 
+// the topping-up percentage will be reduced by the frontloading setting. 
+
+// Note that for very small values of the options (less than 5%), when dealing with very low cost items the effect/protection may be noticeably less than expected because of
+// interactions with the ProductionQueue Epsilon value (0.01)
+
+    float CalculateProductionPerTurnLimit(const ProductionQueue::Element& queue_element, float item_cost, int build_turns) {
+        const float frontload_limit_factor = GetQueueFrontloadFactor();
+        // any allowed topping up is limited by how much frontloading was allowed
+        const float topping_up_limit_factor = std::max(0.0f, GetQueueToppingFactor() - frontload_limit_factor);
+
+        item_cost *= queue_element.blocksize;
+        build_turns = std::max(build_turns, 1);
+        float element_accumulated_PP = queue_element.progress;                                 // PP accumulated by this element towards producing  next item
+        float element_total_cost = item_cost * queue_element.remaining;                        // total PP to produce all items in this element
+        float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to produce all items in this element
+        float additional_pp_to_complete_item = item_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to produce the current item of this element
+        float basic_element_per_turn_limit = item_cost / build_turns;
+        // the extra constraints on frontload and topping up amounts ensure that won't let complete in less than build_turns (so long as costs do not decrease)
+        float frontload = (1.0 + frontload_limit_factor/std::max(build_turns-1,1)) * basic_element_per_turn_limit  - 2 * EPSILON;
+        float topping_up_limit = basic_element_per_turn_limit + std::min(topping_up_limit_factor * item_cost, basic_element_per_turn_limit - 2 * EPSILON);
+        float topping_up = (additional_pp_to_complete_item < topping_up_limit) ? additional_pp_to_complete_item : basic_element_per_turn_limit;
+        float returnval = std::min(additional_pp_to_complete_element, std::max(basic_element_per_turn_limit, std::max(frontload, topping_up)));
+        //DebugLogger() << "CalculateProductionPerTurnLimit for item " << queue_element.item.build_type << " " << queue_element.item.name 
+        //              << " " << queue_element.item.design_id << " :  accumPP: " << element_accumulated_PP << " pp_to_complete_elem: "
+        //              << additional_pp_to_complete_element << " pp_to_complete_item: " << additional_pp_to_complete_item 
+        //              <<  " basic_element_per_turn_limit: " << basic_element_per_turn_limit << " frontload: " << frontload
+        //              << " topping_up_limit: " << topping_up_limit << " topping_up: " << topping_up << " returnval: " << returnval;
+
+        return returnval;
+    }
+
 
     /** sets the .allocated_rp, value for each Tech in the queue.  Only sets
       * nonzero funding to a Tech if it is researchable this turn.  Also
@@ -115,6 +188,13 @@ namespace {
             return;
         }
 
+        // See explanation at CalculateProductionPerTurnLimit() above regarding operation of these factors.
+        const float frontload_limit_factor = GetQueueFrontloadFactor();
+        // any allowed topping up is limited by how much frontloading was allowed
+        const float topping_up_limit_factor = std::max(0.0f, GetQueueToppingFactor() - frontload_limit_factor);
+        // DebugLogger() << "SetProdQueueElementSpending frontload  factor " << frontload_limit_factor;
+        // DebugLogger() << "SetProdQueueElementSpending topping up factor " << topping_up_limit_factor;
+
         projects_in_progress = 0;
         allocated_pp.clear();
 
@@ -122,6 +202,7 @@ namespace {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return;
+        
 
         // cache production item costs and times
         std::map<std::pair<ProductionQueue::ProductionItem, int>,
@@ -186,22 +267,14 @@ namespace {
             boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             //DebugLogger() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
-            item_cost *= queue_element.blocksize;
-            // determine additional PP needed to complete build queue element: total cost - progress
-            float element_accumulated_PP = queue_element.progress;                                 // PP accumulated by this element towards producing  next item
-            float element_total_cost = item_cost * queue_element.remaining;                        // total PP to produce all items in this element
-            float additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to produce all items in this element
-            float element_per_turn_limit = item_cost / std::max(build_turns, 1);
+            float element_this_turn_limit = CalculateProductionPerTurnLimit(queue_element, item_cost, build_turns);
 
             // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
             // item cost, which is the max number of PP per turn that can be put towards this item, and by the
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group
-            float allocation = std::max(std::min(std::min(additional_pp_to_complete_element,
-                                                          element_per_turn_limit),
-                                                 group_pp_available),
-                                        EPSILON);   // max(...) prevents negative-allocations and helps avoid rounding issues by making any allocation at least a certain small number
+            float allocation = std::max(0.0f, std::min(element_this_turn_limit, group_pp_available));
 
             //DebugLogger() << "element accumulated " << element_accumulated_PP << " of total cost "
             //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
@@ -209,7 +282,7 @@ namespace {
             //DebugLogger() << "... allocating " << allocation;
 
             // allocate pp
-            queue_element.allocated_pp = allocation;
+            queue_element.allocated_pp = std::max(allocation, EPSILON);
 
             // record alloation in group, if group is not empty
             allocated_pp[group] += allocation;  // assuming the float indexed by group will be default initialized to 0.0f if that entry doesn't already exist in the map
@@ -945,12 +1018,9 @@ void ProductionQueue::Update() {
             float item_cost;
             int build_turns;
             boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+            float total_item_cost = item_cost * element.blocksize;
 
-
-            item_cost *= element.blocksize;
-            float element_total_cost = item_cost * element.remaining;              // total PP to build all items in this element
-            float element_per_turn_limit = item_cost / std::max(build_turns, 1);
-            float additional_pp_to_complete_element = element_total_cost - element.progress; // additional PP, beyond already-accumulated PP, to build all items in this element
+            float additional_pp_to_complete_element = total_item_cost * element.remaining - element.progress; // additional PP, beyond already-accumulated PP, to build all items in this element
             //DebugLogger()  << " element total cost: "<<element_total_cost<<"; progress: "<<element.progress;
             if (additional_pp_to_complete_element < EPSILON) {
                 //DebugLogger()  << "     will complete next turn";
@@ -962,12 +1032,14 @@ void ProductionQueue::Update() {
             // need 2+ rather than 1+ below to avoid premature halt with edge cases
             int max_turns = std::max(std::max(build_turns+1, 1),
                 2 + static_cast<int>(additional_pp_to_complete_element /
-                                     ppStillAvailable[firstTurnPPAvailable-1]));
+                                     std::max(ppStillAvailable[firstTurnPPAvailable-1], 0.01f)));
+            max_turns *= 2;  // double the turns for simulations, because of uncertainties around frontloading
 
             max_turns = std::min(max_turns, int(DP_TURNS - firstTurnPPAvailable + 1));
             //DebugLogger() << "     max turns simulated: "<< max_turns << "first turn pp avail: "<<(firstTurnPPAvailable-1);
 
             float allocation;
+            float element_this_turn_limit;
             //DebugLogger() << "ProductionQueue::Update Queue index   Queue Item: " << element.item.name;
 
             for (int j = 0; j < max_turns; j++) {  // iterate over the turns necessary to complete item
@@ -977,26 +1049,26 @@ void ProductionQueue::Update() {
                 // the last item complete already) and by the total pp available in this element's production location's
                 // resource sharing group
                 //DebugLogger()  << "     turn: "<<j<<"; max_pp_needed: "<< additional_pp_to_complete_element <<"; per turn limit: " << element_per_turn_limit<<"; pp stil avail: "<<ppStillAvailable[firstTurnPPAvailable+j-1];
-                allocation = std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), ppStillAvailable[firstTurnPPAvailable+j-1]);
-                allocation = std::max(allocation, EPSILON);
+                element_this_turn_limit = CalculateProductionPerTurnLimit(element, item_cost, build_turns);
+                allocation = std::max(0.0f, std::min(element_this_turn_limit, ppStillAvailable[firstTurnPPAvailable+j-1]));
                 element.progress += allocation;   // add turn's allocation
-                additional_pp_to_complete_element = element_total_cost - element.progress;
-                float item_cost_remaining = item_cost - element.progress;
+                additional_pp_to_complete_element -= allocation;
+                float item_cost_remaining = total_item_cost - element.progress;
                 //DebugLogger()  << "     allocation: " << allocation << "; new progress: "<< element.progress<< " with " << item_cost_remaining <<" remaining";
                 ppStillAvailable[firstTurnPPAvailable+j-1] -= allocation;
-                if (ppStillAvailable[firstTurnPPAvailable+j-1] <= EPSILON ) {
+                if (ppStillAvailable[firstTurnPPAvailable+j-1] <= 0 ) {
                     ppStillAvailable[firstTurnPPAvailable+j-1] = 0;
                     ++turnJump;
                 }
 
                 // check if additional turn's PP allocation was enough to finish next item in element
-                if ((item_cost_remaining < EPSILON ) || ((j==build_turns-1) && (item_cost_remaining < EPSILON))) {
+                if (item_cost_remaining < EPSILON ) {
                     //DebugLogger()  << "     finished an item";
                     // an item has been completed. 
                     // deduct cost of one item from accumulated PP.  don't set
                     // accumulation to zero, as this would eliminate any partial
                     // completion of the next item
-                    element.progress = std::max(0.0f, element.progress-item_cost);
+                    element.progress = std::max(0.0f, element.progress-total_item_cost);
                     --element.remaining;  //pretty sure this just effects the dp version & should do even if also doing ORIG_SIMULATOR
 
                     //DebugLogger() << "ProductionQueue::Recording DP sim results for item " << element.item.name;

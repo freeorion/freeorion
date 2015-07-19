@@ -3045,7 +3045,7 @@ Note that ships can only be built on planets with a shipyard, and that various o
 
 PRODUCTION_WND_PROGRESS
 '''%1% / %2% PP
-+ %3% / %4% PP/turn'''
++ %3% / %4% target PP/turn'''
 
 PRODUCTION_QUEUE_ITEM_LOCATION
 At %1%
