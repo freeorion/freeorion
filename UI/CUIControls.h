@@ -5,6 +5,7 @@
 
 #include "ClientUI.h"
 #include "CUIDrawUtil.h"
+#include "CUIWnd.h"
 #include <GG/Button.h>
 #include <GG/DropDownList.h>
 #include <GG/Edit.h>
@@ -438,49 +439,44 @@ public:
 };
 
 /** Despite the name, this is actually used to display info in both the Research and Production screens. */
-class ProductionInfoPanel : public GG::Wnd {
+class ProductionInfoPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    ProductionInfoPanel(const std::string& title, const std::string& points_str,
-                        float border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color);
+    ProductionInfoPanel(const std::string& title, const std::string& point_units_str,
+                        GG::X w = GG::X1, GG::Y h = GG::Y1);
     //@}
 
     /** \name Accessors */ //@{
-    virtual GG::Pt MinUsableSize() const;
+    virtual GG::Pt  MinUsableSize() const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void Render();
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-
-    void Reset(double total_points, double total_queue_cost, int projects_in_progress, int queue_size);
+    void            SetTotalPointsCost(float total_points, float total_cost);
+    void            SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name);
+    void            ClearLocalInfo();
     //@}
 
 private:
     void DoLayout();
 
-    void Draw(GG::Clr clr, bool fill);
+    std::string m_units_str;
+    std::string m_title_str;
 
-    GG::Label* m_title;
-    GG::Label* m_total_points_label;
-    GG::Label* m_total_points;
-    GG::Label* m_total_points_P_label;
-    GG::Label* m_wasted_points_label;
-    GG::Label* m_wasted_points;
-    GG::Label* m_wasted_points_P_label;
-    GG::Label* m_projects_in_progress_label;
-    GG::Label* m_projects_in_progress;
-    GG::Label* m_projects_in_queue_label;
-    GG::Label* m_projects_in_queue;
+    GG::Label*  m_total_points_label;
+    GG::Label*  m_total_points;
+    GG::Label*  m_total_points_P_label;
+    GG::Label*  m_wasted_points_label;
+    GG::Label*  m_wasted_points;
+    GG::Label*  m_wasted_points_P_label;
 
-    std::pair<int, int> m_center_gap;
-    float m_border_thickness;
-    GG::Clr m_color;
-    GG::Clr m_text_and_border_color;
-
-    static const int CORNER_RADIUS;
-    static const GG::Y VERTICAL_SECTION_GAP;
+    GG::Label*  m_local_points_label;
+    GG::Label*  m_local_points;
+    GG::Label*  m_local_points_P_label;
+    GG::Label*  m_local_wasted_points_label;
+    GG::Label*  m_local_wasted_points;
+    GG::Label*  m_local_wasted_points_P_label;
 };
 
 /** Displays progress that is divided over mulitple turns, as in the Research and Production screens. */

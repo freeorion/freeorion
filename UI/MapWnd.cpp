@@ -5126,6 +5126,7 @@ void MapWnd::ShowProduction() {
         // default when the production screen opens up
         m_production_wnd->SelectDefaultPlanet();
     }
+    m_production_wnd->Update();
 }
 
 void MapWnd::HideProduction() {

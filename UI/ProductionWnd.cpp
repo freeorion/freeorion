@@ -575,21 +575,21 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_order_issuing_enabled(false)
 {
     DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
-                           << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
+                  << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
+
+    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
 
     m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_INFO_PANEL_TITLE"),
                                                       UserString("PRODUCTION_INFO_PP"),
-                                                      static_cast<GLfloat>(OUTER_LINE_THICKNESS),
-                                                      ClientUI::KnownTechFillColor(),
-                                                      ClientUI::KnownTechTextAndBorderColor());
+                                                      queue_width, GG::Y(100));
 
     m_queue_lb = new QueueListBox("PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
     m_queue_lb->SetName("ProductionQueue ListBox");
 
-    GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0);
+    GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(queue_width, GG::Y0);
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
-    m_build_designator_wnd->MoveTo(GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0));
+    m_build_designator_wnd->MoveTo(GG::Pt(queue_width, GG::Y0));
 
     SetChildClippingMode(ClipToClient);
 
@@ -628,7 +628,9 @@ void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ProductionWnd::DoLayout() {
-    m_production_info_panel->Resize(GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), m_production_info_panel->MinUsableSize().y));
+    m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
+    m_production_info_panel->Resize(GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")),
+                                           m_production_info_panel->MinUsableSize().y));
     GG::Pt queue_ul = GG::Pt(GG::X(2), m_production_info_panel->Height());
     GG::Pt queue_size = GG::Pt(m_production_info_panel->Width() - 4,
                                ClientSize().y - 4 - m_production_info_panel->Height());
@@ -751,9 +753,42 @@ void ProductionWnd::UpdateInfoPanel() {
     if (!empire)
         return;
     const ProductionQueue& queue = empire->GetProductionQueue();
-    double PPs = empire->ProductionPoints();
-    double total_queue_cost = queue.TotalPPsSpent();
-    m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), queue.size());
+    float PPs = empire->ProductionPoints();
+    float total_queue_cost = queue.TotalPPsSpent();
+    m_production_info_panel->SetTotalPointsCost(PPs, total_queue_cost);
+
+    // find if there is a local location
+    int prod_loc_id = this->SelectedPlanetID();
+    TemporaryPtr<UniverseObject> loc_obj = GetUniverseObject(prod_loc_id);
+    if (loc_obj) {
+        // extract available and allocated PP at production location
+        std::map<std::set<int>, float> available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+        const std::map<std::set<int>, float>& allocated_pp = queue.AllocatedPP();
+
+        float available_pp_at_loc = 0.0f, allocated_pp_at_loc = 0.0f;   // for the resource sharing group containing the selected production location
+
+        for (std::map<std::set<int>, float>::const_iterator map_it = available_pp.begin();
+             map_it != available_pp.end(); ++map_it)
+        {
+            if (map_it->first.find(prod_loc_id) != map_it->first.end()) {
+                available_pp_at_loc = map_it->second;
+                break;
+            }
+        }
+                for (std::map<std::set<int>, float>::const_iterator map_it = allocated_pp.begin();
+             map_it != allocated_pp.end(); ++map_it)
+        {
+            if (map_it->first.find(prod_loc_id) != map_it->first.end()) {
+                allocated_pp_at_loc = map_it->second;
+                break;
+            }
+        }
+
+        m_production_info_panel->SetLocalPointsCost(available_pp_at_loc, allocated_pp_at_loc, loc_obj->Name());
+    } else {
+        // else clear local info...
+        m_production_info_panel->ClearLocalInfo();
+    }
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location) {
