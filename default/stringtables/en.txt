@@ -6944,6 +6944,12 @@ DESC_ALL
 DESC_ALL_NOT
 ''' not in the universe'''
 
+DESC_NONE
+[[DESC_ALL_NOT]]
+
+DESC_NONE_NOT
+[[DESC_ALL]]
+
 DESC_EMPIRE_AFFILIATION_SELF
 ''' that belongs to %1% empire'''
 
