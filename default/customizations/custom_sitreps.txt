@@ -15,7 +15,7 @@ effectsgroups = [
 
 
 EffectsGroup
-    scope = Capital
+    scope = Source
     activation = Turn high = 1
     effects =
         GenerateSitRepMessage
@@ -135,6 +135,10 @@ EffectsGroup
         ContainedBy And [
             System
             Not Contains Monster
+        ]
+        Or [ 
+            VisibleToEmpire empire = Source.Owner
+            ExploredByEmpire empire = Source.Owner
         ]
     ]
     activation = Source
