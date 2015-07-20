@@ -1,7 +1,42 @@
 
-# These are lists which the UI uses to adapt itself to current content, and to your preferences.
+# These are settings & lists which the UI uses to adapt itself to current content, and to your preferences.
 
 # To minimize potential conflict with stringtable tags, all keys here should begin with "FUNCTIONAL_"
+
+
+## DesignWnd Redundant Part Filtering
+## Default settings will deem a first part redundant to a second only if the second is all of (i) more powerful,
+## (ii) no more expensive, (iii) takes no longer to build, and (iv) has no Location restrictions not also required
+## by the first part (note that the checking on this point is currently over-conservative).
+## Adjusting the Max Cost Ratio above 1.0 allows the filtering to consider a superior part which might cost a bit
+## more, but whose Capacity/Cost ratio is at least equal to the Min Bargain Ratio.  For example, with the current content
+## as of the time of this writing, setting the Max Cost Ratio to 2.1 and leaving the Min Bargain Ratio at 1.0 woould cause
+## Zortrium armor to suppress Standard armor, and for Advanced Ground Troop Pods to suppress Standard Troop Pods.  Then
+## also increasing the Max Time Ratio to 1.4 or higher would cause N-Dimensional Engines to suppress Improved Engine Couplings.
+## Dropping the Max Cost Ratio below 2.0, or increasing the Min Bargain Ratio above 1.0, would prevent the redundancy filtering
+## for troop Pods.  If the Min Bargain Ratio were no higher than about 1.2 and the Max Cost Ratio at least about 1.4, then
+## some of the armor redundancy filtering would still occur.
+## Both settings have a minimum value of 1.0
+ 
+FUNCTIONAL_MAX_COST_RATIO
+1.0
+
+FUNCTIONAL_MIN_BARGAIN_RATIO
+1.0
+
+FUNCTIONAL_MAX_TIME_RATIO
+1.0
+
+
+## Some parts have special Effects and so may be preferred to be excluded from the redundancy
+## checks, which do not consider such Effects.  Parts on this list will be excluded from Redundancy checks.
+## The SH_MULTISPEC shield part is one such part; it as a strong stealth Effect, but unless excluded
+## here the Black Shield can suppress it as redundant.
+
+FUNCTIONAL_SHIP_PART_REDUNDANCY_SKIP_LIST
+'''SH_MULTISPEC
+'''
+
 
 ## FUNCTIONAL_SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.

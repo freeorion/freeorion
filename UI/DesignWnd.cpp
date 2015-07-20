@@ -98,6 +98,7 @@ namespace {
             case PC_COLONY:
             case PC_ARMOUR:
             case PC_SPEED:
+            case PC_TROOPS:
             case PC_RESEARCH:
             case PC_INDUSTRY:
             case PC_TRADE:
@@ -556,6 +557,8 @@ bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, 
     return false;
 }
 
+
+
 bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_part) {
     static std::map<std::pair<std::string, std::string>, bool> part_loc_comparison_map;
 
@@ -584,6 +587,48 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
                                         ShipPartClass pclass, int empire_id, int loc_id)
 {
     /// This is not merely a check for obsolescence; see PartsListBox::Populate for more info
+
+    static std::list<std::string> redundancy_exclusion_list;
+    if (redundancy_exclusion_list.empty())
+        UserStringList("FUNCTIONAL_SHIP_PART_REDUNDANCY_SKIP_LIST", redundancy_exclusion_list);
+
+    static float min_bargain_ratio = -1.0;
+    static float max_cost_ratio = -1.0;
+    static float max_time_ratio = -1.0;
+    
+    if (min_bargain_ratio == -1.0) {
+        min_bargain_ratio = 1.0;
+        try {
+            if (UserStringExists("FUNCTIONAL_MIN_BARGAIN_RATIO")) {
+                float new_bargain_ratio = std::atof(UserString("FUNCTIONAL_MIN_BARGAIN_RATIO").c_str());
+                if (new_bargain_ratio > 1.0f)
+                    min_bargain_ratio = new_bargain_ratio;
+            }
+        } catch (...) {}
+    }
+
+    if (max_cost_ratio == -1.0) {
+        max_cost_ratio = 1.0;
+        try {
+            if (UserStringExists("FUNCTIONAL_MAX_COST_RATIO")) {
+                float new_cost_ratio = std::atof(UserString("FUNCTIONAL_MAX_COST_RATIO").c_str());
+                if (new_cost_ratio > 1.0f)
+                    max_cost_ratio = new_cost_ratio;
+            }
+        } catch (...) {}
+    }
+
+    if (max_time_ratio == -1.0) {
+        max_time_ratio = 1.0;
+        try {
+            if (UserStringExists("FUNCTIONAL_MAX_TIME_RATIO")) {
+                float new_time_ratio = std::atof(UserString("FUNCTIONAL_MAX_TIME_RATIO").c_str());
+                if (new_time_ratio > 1.0f)
+                    max_time_ratio = new_time_ratio;
+            }
+        } catch (...) {}
+    }
+
     for (std::vector<const PartType* >::iterator part_it = this_group.begin();
          part_it != this_group.end(); ++part_it)
     {
@@ -603,21 +648,21 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
                 continue;  // not intended to handle such cases
             float cost_ratio = (cost_ref + 1e-4) / (cost_check + 1e-4);  // can accept if somehow they both have cost zero
             float bargain_ratio = cap_ratio / std::max(cost_ratio, 1e-4f);
+            float time_ratio = float(std::max(1, ref_part->ProductionTime(empire_id, loc_id))) / std::max(1, checkPart->ProductionTime(empire_id, loc_id));
             // adjusting the max cost ratio to 1.4 or higher, will allow, for example, for
             // Zortium armor to make Standard armor redundant.  Setting a min_bargain_ratio higher than one can keep
             // trivial bargains from blocking lower valued parts.
             // TODO: move these values into default/customizations/common_user_customizations.txt  once that is supported
-            float min_bargain_ratio = 1.0;
-            float max_cost_ratio = 1.0;
+
             if ((cap_ratio > 1.0) && ((cost_ratio <= 1.0) || ((bargain_ratio >= min_bargain_ratio) && (cost_ratio <= max_cost_ratio))) &&
-                (checkPart->ProductionTime(empire_id, loc_id) >= ref_part->ProductionTime(empire_id, loc_id)) &&
-                PartALocationSubsumesPartB(checkPart, ref_part))
+                (time_ratio <= max_time_ratio) && PartALocationSubsumesPartB(checkPart, ref_part))
             {
-                DebugLogger() << "Filtering " << checkPart->Name() << " because of " << ref_part->Name();
+                //DebugLogger() << "Filtering " << checkPart->Name() << " because of " << ref_part->Name();
                 this_group.erase(part_it--);
                 break;
             }
         }
+            
     }
 }
 
@@ -671,8 +716,6 @@ void PartsListBox::Populate() {
              group_it != part_groups.end(); group_it++)
         {
             ShipPartClass pclass = group_it->first.first;
-            // currently, only cull ShortRange Weapons, though the culling code
-            // is more broadly applicable.
             if (!m_show_superfluous_parts)
                 CullSuperfluousParts(group_it->second, pclass, empire_id, loc_id);
         }
