@@ -8,6 +8,7 @@ import ColonisationAI
 import ShipDesignAI
 import random
 
+from ProductionAI import get_design_cost
 from freeorion_tools import tech_is_complete, get_ai_tag_grade
 
 inProgressTechs = {}
@@ -46,7 +47,7 @@ def get_max_stealth_species():
     stealth_grades = {'BAD': -15, 'GOOD': 15, 'GREAT': 40, 'ULTIMATE': 60}
     stealth = -999
     stealth_species = ""
-    for specName in ColonisationAI.empire_species:
+    for specName in ColonisationAI.empire_colonizers:
         this_spec = fo.getSpecies(specName)
         if not this_spec:
             continue
@@ -67,13 +68,10 @@ def get_ship_tech_usefulness(tech, ship_designer):
     unlocked_parts = []
     for item in unlocked_items:
         if item.type == fo.unlockableItemType.shipPart:
-            print "Tech %s unlocks a ShipPart: %s" % (tech, item.name)
             unlocked_parts.append(item.name)
         elif item.type == fo.unlockableItemType.shipHull:
-            print "Tech %s unlocks a ShipHull: %s" % (tech, item.name)
             unlocked_hulls.append(item.name)
     if not (unlocked_parts or unlocked_hulls):
-        print "No new ship parts/hulls unlocked by tech %s" % tech
         return 0
     old_designs = ship_designer.optimize_design(consider_fleet_count=False)
     new_designs = ship_designer.optimize_design(additional_hulls=unlocked_hulls, additional_parts=unlocked_parts, consider_fleet_count=False)
@@ -82,19 +80,14 @@ def get_ship_tech_usefulness(tech, ship_designer):
         return 0
     old_rating, old_pid, old_design_id, old_cost = old_designs[0]
     old_design = fo.getShipDesign(old_design_id)
+    old_rating = old_rating
     new_rating, new_pid, new_design_id, new_cost = new_designs[0]
     new_design = fo.getShipDesign(new_design_id)
+    new_rating = new_rating
     if new_rating > old_rating:
-        ratio = new_rating / old_rating
-        print "Tech %s gives access to a better design!" % tech
-        print "old best design: Rating %.5f" % old_rating
-        print "old design specs: %s - " % old_design.hull, list(old_design.parts)
-        print "new best design: Rating %.5f" % new_rating
-        print "new design specs: %s - " % new_design.hull, list(new_design.parts)
-        print "priority for tech %s: %.5f" % (tech, ratio)
-        return ratio
+        ratio = (new_rating - old_rating) / (new_rating + old_rating)
+        return ratio * 1.5 + 0.5
     else:
-        print "Tech %s gives access to new parts or hulls but there seems to be no military advantage." % tech
         return 0
 
 def get_defense_priority(rng):
@@ -102,7 +95,6 @@ def get_defense_priority(rng):
         print "AI is cautious. Increasing priority for defense techs."
         return 2
     if foAI.foAIstate.misc.get('enemies_sighted', {}):
-        print "Enemy sighted. Increasing priority for defense techs."
         return 1
     else:
         return 0.2
@@ -114,7 +106,7 @@ def get_research_boost_priority(rng):
     return 2
 
 def get_production_and_research_boost_priority(rng):
-    return 3
+    return 2.5
 
 def get_population_boost_priority(rng):
     return 2
@@ -131,13 +123,22 @@ def get_detection_priority(rng):
     return 1
 
 def get_weapon_priority(rng):
-    return 1
+    if foAI.foAIstate.misc.get('enemies_sighted', {}):
+        return 1
+    else:
+        return 0.1
 
 def get_armor_priority(rng):
-    return 1
+    if foAI.foAIstate.misc.get('enemies_sighted', {}):
+        return 1
+    else:
+        return 0.1
 
 def get_shield_priority(rng):
-    return 1
+    if foAI.foAIstate.misc.get('enemies_sighted', {}):
+        return 1
+    else:
+        return 0.1
 
 def get_engine_priority(rng):
     return 1 if rng.random() < 0.7 else 0
@@ -146,7 +147,10 @@ def get_fuel_priority(rng):
     return 1 if rng.random() < 0.7 else 0
 
 def get_troop_pod_priority(rng):
-    return 1
+    if foAI.foAIstate.misc.get('enemies_sighted', {}):
+        return 1
+    else:
+        return 0
 
 def get_colony_pod_priority(rng):
     return 1
@@ -202,7 +206,10 @@ def get_nest_domestication_priority(rng):
         return 0
 
 def get_damage_control_priority(rng):
-    return 1
+    if foAI.foAIstate.misc.get('enemies_sighted', {}):
+        return 0.5
+    else:
+        return 0.1
 
 def get_hull_priority(rng, tech_name):
     hull = 1
@@ -218,7 +225,7 @@ def get_hull_priority(rng, tech_name):
             org = offtrack_hull
             robotic = offtrack_hull
     else:
-        asteroid = offtrack_hull
+        asteroid = 0
     if has_star(fo.starType.blue) or has_star(fo.starType.blackHole):
         extra = rng.random() < 0.05
         energy = hull if chosen_hull == 3 or extra else offtrack_hull
@@ -227,22 +234,28 @@ def get_hull_priority(rng, tech_name):
             robotic = offtrack_hull
             asteroid = offtrack_hull
     else:
-        energy = offtrack_hull
+        energy = 0
 
     useful = max(
         get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner()),
         get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardTroopShipDesigner()),
         get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardColonisationShipDesigner()))
-    if tech_name in AIDependencies.ROBOTIC_HULL_TECHS:
-        return robotic * useful
-    elif tech_name in AIDependencies.ORGANIC_HULL_TECHS:
-        return org * useful
-    elif tech_name in AIDependencies.ASTEROID_HULL_TECHS:
-        return asteroid * useful
-    elif tech_name in AIDependencies.ENERGY_HULL_TECHS:
-        return energy * useful
+    
+    if foAI.foAIstate.misc.get('enemies_sighted', {}):
+        aggression = 1
     else:
-        return useful
+        aggression = 0.1
+    
+    if tech_name in AIDependencies.ROBOTIC_HULL_TECHS:
+        return robotic * useful * aggression
+    elif tech_name in AIDependencies.ORGANIC_HULL_TECHS:
+        return org * useful * aggression
+    elif tech_name in AIDependencies.ASTEROID_HULL_TECHS:
+        return asteroid * useful * aggression
+    elif tech_name in AIDependencies.ENERGY_HULL_TECHS:
+        return energy * useful * aggression
+    else:
+        return useful * aggression
 
 def get_priority(rng, tech_name):
     """
@@ -346,12 +359,18 @@ def get_priority(rng, tech_name):
 
     # ship engines
     if tech_name in AIDependencies.ENGINE_TECHS:
-        useful = get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner())
+        useful = max(
+                get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner()),
+                get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardTroopShipDesigner()),
+                get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardColonisationShipDesigner()))
         return useful * get_engine_priority(rng)
 
     # ship fuels
     if tech_name in AIDependencies.FUEL_TECHS:
-        useful = get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner())
+        useful = max(
+                get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner()),
+                get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardTroopShipDesigner()),
+                get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardColonisationShipDesigner()))
         return useful * get_fuel_priority(rng)
 
     # ship shields
@@ -376,7 +395,7 @@ def get_priority(rng, tech_name):
 
 
 def calculate_research_requirements(empire):
-    """calculate RPs and prerequisties of every tech"""
+    """calculate RPs and prerequisties of every tech, in (prereqs, cost)"""
     result = {}
 
     # TODO subtract already spent RPs from research projects
@@ -905,11 +924,17 @@ def generate_research_orders():
     rng.seed(fo.getEmpire().name + fo.getGalaxySetupData().seed)
 
     research_reqs = calculate_research_requirements(empire)
+    total_rp = empire.resourceProduction(fo.resourceType.research)
+
+    if total_rp <= 0: # No RP available - no research.
+        return
+
     priorities = {}
     for tech_name in fo.techs():
         priority = get_priority(rng, tech_name)
         if not tech_is_complete(tech_name) and priority >= 0:
-            priorities[tech_name] = float(priority) / research_reqs[tech_name][1]
+            turn_needed = float(research_reqs[tech_name][1]) / total_rp
+            priorities[tech_name] = float(priority) / turn_needed / max(1, (turn_needed - 12) / 4 + 1)**2
 
     #
     # put in highest priority techs until all RP spent
@@ -917,12 +942,11 @@ def generate_research_orders():
     possible = sorted(priorities.keys(), key=priorities.__getitem__)
 
     print "Research priorities"
-    print "    %25s %8s %8s %s" % ("Name", "Priority", "Cost", "Missing Prerequisties")
+    print "    %25s %8s %8s %s" % ("Name", "Priority", "Cost","Missing Prerequisties")
     for tech_name in possible[-10:]:
-        print "    %25s %8.6f %8.2f %s" % (tech_name, priorities[tech_name], research_reqs[tech_name][1], research_reqs[tech_name][0])
+        print "    %25s %8.6f %8.2f %s" % (tech_name, priorities[tech_name], research_reqs[tech_name][1],research_reqs[tech_name][0])
     print
 
-    total_rp = empire.resourceProduction(fo.resourceType.research)
     print "enqueuing techs. already spent RP: %s total RP: %s" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
 
     if fo.currentTurn() == 1:
