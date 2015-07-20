@@ -9180,6 +9180,9 @@ Remote Terraforming
 BLD_REMOTE_TERRAFORM_DESC
 Terraforms a world one step closer to the environmental preference of the inhabiting species. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
 
+MACRO_NEUTRONIUM_BUILDINGS
+'''To use neutronium an empire needs either to have built a [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] in a Neutron Star system or to have found a [[buildingtype BLD_NEUTRONIUM_SYNTH]], and a [[buildingtype BLD_NEUTRONIUM_FORGE]] on the planet it is being used'''
+
 BLD_NEUTRONIUM_EXTRACTOR
 Neutronium Extractor
 
@@ -9194,7 +9197,7 @@ Neutronium Forge
 BLD_NEUTRONIUM_FORGE_DESC
 '''This building is required at the same location as a [[buildingtype BLD_SHIPYARD_BASE]] to enable building ships with neutronium parts.
 
-The industrial processing of neutronium requires an extensive specialized facility. This building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
+The industrial processing of neutronium requires an extensive specialized facility, this building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]]. [[MACRO_NEUTRONIUM_BUILDINGS]]'''
 
 BLD_NEUTRONIUM_SYNTH
 Neutronium Synthesizer
@@ -9900,7 +9903,7 @@ AR_NEUTRONIUM_PLATE
 Neutronium Armor Plating
 
 AR_NEUTRONIUM_PLATE_DESC
-Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. Strongest, most durable armor plating. Admirable defense.
+Increases ship's hull [[encyclopedia STRUCTURE_TITLE]]. Strongest, most durable armor plating. Admirable defense. [[MACRO_NEUTRONIUM_BUILDINGS]].
 
 AR_PRECURSOR_PLATE
 Precursor Armor Plating
