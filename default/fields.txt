@@ -4,7 +4,7 @@ FieldType
     stealth = 0.01
     tags = [ "EXOTIC" ]
     effectsgroups = [
-        EffectsGroup    // move around, grow when near stars, shrink a bit each turn
+        EffectsGroup    // move around, shrink a bit each turn when near systems
             scope = Source
             effects = [
                 SetSpeed value = 15
@@ -39,7 +39,7 @@ FieldType
     stealth = 0.01
     tags = [ "EXOTIC" ]
     effectsgroups = [
-        EffectsGroup    // move around, grow when near stars, shrink a bit each turn
+        EffectsGroup    // move around, shrink a bit each turn when near systems
             scope = Source
             effects = [
                 SetSpeed value = 5
@@ -190,5 +190,3 @@ CREATE_PLANETS
                     effects = CreatePlanet type = asteroids planetsize = asteroids name = UserString("NEW_ASTEROIDS_NAME") % Target.Name % Source.Name
             ]
 '''
-
-    
