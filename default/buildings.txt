@@ -948,6 +948,7 @@ BuildingType
     location = AND [
         Not Contains Building name = "BLD_SOL_ORB_GEN"
         OwnedBy empire = Source.Owner
+        Not Star type = [Neutron BlackHole]
         ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
