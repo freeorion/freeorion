@@ -878,10 +878,8 @@ namespace {
     TemporaryPtr<Field> CreateField(const std::string& field_type_name, double x, double y, double size) {
         // check if a field type with the specified field type name exists and get the field type
         const FieldType* field_type = GetFieldType(field_type_name);
-        if (!field_type) {
-            ErrorLogger() << "PythonUniverseGenerator::CreateField: couldn't get field type with name: " << field_type_name;
-            return;
-        }
+        if (!field_type)
+            throw std::runtime_error("PythonUniverseGenerator::CreateField: couldn't get field type with name: " + field_type_name);
 
         // check if the specified size is within sane limits, and reset its value if not
         if (size < 1.0) {
@@ -895,10 +893,8 @@ namespace {
 
         // create the new field
         TemporaryPtr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
-        if (!field) {
-            ErrorLogger() << "PythonUniverseGenerator::CreateField: couldn't create field";
-            return;
-        }
+        if (!field)
+            throw std::runtime_error("PythonUniverseGenerator::CreateField: couldn't create field");
 
         // get the localized version of the field type name and set that as the fields name
         field->Rename(UserString(field_type->Name()));
@@ -906,11 +902,13 @@ namespace {
     }
 
     int CreateField1(const std::string& field_type_name, double x, double y, double size) {
-        TemporaryPtr<Field> field = CreateField(field_type_name, x, y, size);
-        if (field)
+        try {
+            TemporaryPtr<Field> field = CreateField(field_type_name, x, y, size);
             return field->ID();
-        else
+        } catch (const std::exception& e) {
+            ErrorLogger() << e.what();
             return INVALID_OBJECT_ID;
+        }
     }
     
     int CreateField2(const std::string& field_type_name, double size, int system_id) {
@@ -920,12 +918,15 @@ namespace {
             ErrorLogger() << "PythonUniverseGenerator::CreateField2: couldn't get system with ID" << system_id;
             return INVALID_OBJECT_ID;
         }
-        // create the field with the coordinates of the system
-        TemporaryPtr<Field> field = CreateField(field_type_name, system->X(), system->Y(), size);
-        if (!field)
+        try {
+            // create the field with the coordinates of the system
+            TemporaryPtr<Field> field = CreateField(field_type_name, system->X(), system->Y(), size);
+            system->Insert(field); // insert the field into the system
+            return field->ID();
+        } catch (const std::exception& e) {
+            ErrorLogger() << e.what();
             return INVALID_OBJECT_ID;
-        system->Insert(field); // insert the field into the system
-        return field->ID();
+        }
     }
 
     // Wrappers for System class member functions
