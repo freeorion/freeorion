@@ -915,7 +915,7 @@ namespace {
     
     int CreateField2(const std::string& field_type_name, double size, int system_id) {
         // check if system exists and get system
-        TemporaryPtr<System>system = GetSystem(system_id);
+        TemporaryPtr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "PythonUniverseGenerator::CreateField2: couldn't get system with ID" << system_id;
             return INVALID_OBJECT_ID;
