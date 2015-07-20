@@ -87,6 +87,51 @@ def irregular2_galaxy_calc_positions(positions, size, width):
     print "Reset to origin", reset_to_origin, "times"
 
 
+def recalc_universe_width(positions):
+    """
+    Recalculates the universe width. This is done by shifting all positions by a delta so too much "extra space"
+    beyond the uppermost, lowermost, leftmost and rightmost positions is cropped, and adjust the universe width
+    accordingly.
+
+    Returns the new universe width and the recalculated positions.
+    """
+    print "Recalculating universe width..."
+    # first, get the uppermost, lowermost, leftmost and rightmost positions
+    # (these are those with their x or y coordinate closest to or farthest away from the x or y axis)
+    min_x = min(positions, key=lambda p: p.x).x
+    max_x = max(positions, key=lambda p: p.x).x
+    min_y = min(positions, key=lambda p: p.y).y
+    max_y = max(positions, key=lambda p: p.y).y
+    print "...the leftmost system position is at x coordinate", min_x
+    print "...the uppermost system position is at y coordinate", min_y
+    print "...the rightmost system position is at x coordinate", max_x
+    print "...the lowermost system position is at y coordinate", max_y
+
+    # calculate the actual universe width by determining the width and height of an rectangle that encompasses all
+    # positions, and take the greater of the two as the new actual width for the universe
+    # also add a constant value to the width so we have some small space around
+    width = max_x - min_x
+    height = max_y - min_y
+    actual_width = max(width, height) + 20.0
+    print "...recalculated universe width:", actual_width
+
+    # shift all positions so the entire map is centered in a quadratic box of the width we just calculated
+    # this box defines the extends of our universe
+    delta_x = ((actual_width - width) / 2) - min_x
+    delta_y = ((actual_width - height) / 2) - min_y
+    print "...shifting all system positions by", delta_x, "/", delta_y
+    new_positions = fo.SystemPositionVec()
+    for position in positions:
+        new_positions.append(fo.SystemPosition(position.x + delta_x, position.y + delta_y))
+
+    print "...the leftmost system position is now at x coordinate", min(new_positions, key=lambda p: p.x).x
+    print "...the uppermost system position is now at y coordinate", min(new_positions, key=lambda p: p.y).y
+    print "...the rightmost system position is now at x coordinate", max(new_positions, key=lambda p: p.x).x
+    print "...the lowermost system position is now at y coordinate", max(new_positions, key=lambda p: p.y).y
+
+    return actual_width, new_positions
+
+
 def calc_star_system_positions(shape, size):
     """
     Calculates list of positions (x, y) for a given galaxy shape,
@@ -100,8 +145,8 @@ def calc_star_system_positions(shape, size):
         width *= 1.4
     if shape == fo.galaxyShape.elliptical:
         width *= 1.4
-    fo.set_universe_width(width)
     print "Set universe width to", width
+    fo.set_universe_width(width)
 
     positions = fo.SystemPositionVec()
     if shape == fo.galaxyShape.random:
@@ -133,5 +178,11 @@ def calc_star_system_positions(shape, size):
     if not positions:
         # ...if not, fall back on irregular1 shape
         fo.irregular_galaxy_positions(positions, size, width, width)
+
+    # to avoid having too much "extra space" around the system positions of our galaxy map, recalculate the universe
+    # width and shift all positions accordingly
+    width, positions = recalc_universe_width(positions)
+    print "Set universe width to", width
+    fo.set_universe_width(width)
 
     return positions
