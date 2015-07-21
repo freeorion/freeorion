@@ -9,7 +9,7 @@ def execute_turn_events():
     print "Executing turn events for turn", fo.current_turn()
 
     # creating fields
-    if random() < min(0.2 * (fo.get_universe_width() / 1000.0), 0.05):
+    if random() < max(0.2 * (fo.get_universe_width() / 1000.0), 0.1):
         if random() < 0.3:
             field_type = "FLD_MOLECULAR_CLOUD"
             size = 120.0
