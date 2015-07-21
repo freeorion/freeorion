@@ -880,7 +880,7 @@ namespace {
         const FieldType* field_type = GetFieldType(field_type_name);
         if (!field_type) {
             ErrorLogger() << "PythonUniverseGenerator::CreateField: couldn't get field type with name: " << field_type_name;
-            return;
+            return TemporaryPtr<Field>();
         }
 
         // check if the specified size is within sane limits, and reset its value if not
@@ -897,7 +897,7 @@ namespace {
         TemporaryPtr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
         if (!field) {
             ErrorLogger() << "PythonUniverseGenerator::CreateField: couldn't create field";
-            return;
+			return TemporaryPtr<Field>();
         }
 
         // get the localized version of the field type name and set that as the fields name
