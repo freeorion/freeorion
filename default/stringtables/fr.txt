@@ -680,7 +680,7 @@ Un astronef armé, sans équipage, construit par les Acirema pour défendre un s
 SM_EXP_OUTPOST
 Expérience Zero
 SM_EXP_OUTPOST_DESC
-'''Une ancienne création des Expérimentateurs réduisant les [[encyclopedia SHIELDS_TITLE]] et dommages adverses. 
+'''Une ancienne création des Expérimentateurs réduisant les [[encyclopedia SHIELDS_TITLE]] et [[encyclopedia DAMAGE_TITLE]] adverses. 
 
 L'Expérience Zero fut envoyée dans cette galaxie pour protéger les avant-postes des Expérimentateurs grâce à ses capacités uniques. Bien que n'attaquant pas directement ses ennemis, elle essaime des quadrillions d'unités microscopiques colonisant l'espace entier d'un système, et neutralisant les boucliers et armements ennemis, la plupart devenant inopérants, exceptés les plus performants issus des toutes dernières technologies.'''
 
@@ -2935,21 +2935,19 @@ TECH_WND_ETA
 # ProductionInfoPanel #
 #######################
 
+PRODUCTION_INFO_AT_LOCATION_TITLE
+%1% sur %2%
+
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Ressources disponibles
+Points disponibles
 
 PRODUCTION_INFO_WASTED_PS_LABEL
-Ressources gaspillées
+Points gaspillés
 
-PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Projets en cours
+PRODUCTION_INFO_LOCAL_PS_LABEL
+Points disponibles ici
 
-PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Projets sous-financés
-
-PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Projets en file d'attente
-
+PRODUCTION_INFO_LOCATION_NAME
 ###############
 # ResearchWnd #
 ###############
@@ -3490,7 +3488,7 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Coque : %2%
 Équipement : %3%
 
-Dommages : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
+[[encyclopedia DAMAGE_TITLE]] : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
                    <encyclopedia STARLANE_SPEED_TITLE>Vitesse</encyclopedia> : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
 [[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
          Colons à bord : %15%      [[encyclopedia TROOP_TITLE]] à bord : %16%
@@ -3518,7 +3516,7 @@ Coque: %2%
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 Pour espèce : %18%
-             Dommages : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
+             [[encyclopedia DAMAGE_TITLE]] : %17%      [[encyclopedia STRUCTURE_TITLE]] : %8%    [[encyclopedia SHIELDS_TITLE]] : %9%
                    <encyclopedia STARLANE_SPEED_TITLE>Vitesse</encyclopedia> : %13%    Capacité [[encyclopedia FUEL_TITLE]] : %14%
 [[encyclopedia DETECTION_RANGE_TITLE]] : %10%    [[encyclopedia STEALTH_TITLE]] : %11%
          Colons à bord : %15%      [[encyclopedia TROOP_TITLE]] à bord : %16%
@@ -3797,14 +3795,14 @@ L'Infrastructure englobe toutes les structures et organisations qui assurent la 
 DEFENSE_TITLE
 Défense
 DEFENSE_TEXT
-L'indicateur 'Défense' d'une planète représente la puissance de feu (mesurée par l'ampleur des dégâts qu'elle cause) de l'ensemble des armes sol/air installées. Il est comparable à l'indicateur 'Dommages' des astronefs.
+L'indicateur 'Défense' d'une planète représente la puissance de feu (mesurée par l'ampleur des dégâts qu'elle cause) de l'ensemble des armes sol/air installées. Il est comparable à l'indicateur '[[encyclopedia DAMAGE_TITLE]]' des astronefs.
 
 SHIELDS_TITLE
 Boucliers
 SHIELDS_TEXT
 '''Le terme 'Boucliers' désigne toutes sortes de champs d'énergie de protection, ces derniers constituant en général la première barrière défensive contre toute attaque. Il existe deux types distincts de boucliers: les Boucliers d'astronefs et les Boucliers planétaires, les astronefs comme les planètes ayant tous deux un indicateur 'Bouclier'. La principale différence entre les deux types de boucliers est la manière dont ils se rechargent: les boucliers d'astronefs se rechargent instantanément après chaque tir subi, tandis que les boucliers planétaires nécessitent un temps de recharge plus important. Cette légère nuance de fonctionnement peut paraître minime de prime abord mais engendre une différence notable en situation de combat. 
 
-Boucliers d'astronefs: les Dommages infligés par chaque tir sont réduits de la valeur de solidité du Bouclier. Une arme peut pénétrer un Bouclier seulement si les Dommages qu'elle inflige sont supérieurs à la solidité du Bouclier.
+Boucliers d'astronefs: les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir sont réduits de la valeur de solidité du Bouclier. Une arme peut pénétrer un Bouclier seulement si les Dommages qu'elle inflige sont supérieurs à la solidité du Bouclier.
 
 Boucliers planétaires: Agit comme une sorte d'armure. La solidité d'un bouclier planétaire s'amenuise après chaque tir encaissé jusqu'à que celle-ci soit réduite à néant, les tirs suivants passant alors au travers et endommageant les structures planétaires (en premier lieu les structures de [[encyclopedia DEFENSE_TITLE]], puis dans un second temps l'[[encyclopedia INFRASTRUCTURE_TITLE]] dans son ensemble). Les Boucliers planétaires se regénèrent après chaque tour à un certain taux, ce dernier pouvant varier selon les technologies maîtrisées.
 
@@ -3819,7 +3817,7 @@ Augmente la [[encyclopedia STRUCTURE_TITLE]] max d'un astronef de la valeur de p
 SLOT_TITLE
 Niche
 SLOT_TEXT
-Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>coque d'astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>équipements d'astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la Fenêtre Conception, chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
+Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>Coque d'astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la Fenêtre Conception, chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
 
 STEALTH_TITLE
 Furtivité
@@ -3950,7 +3948,7 @@ Maniaque:
 STRUCTURE_TITLE
 Résistance
 STRUCTURE_TEXT
-La Résistance indique la quantité de dommages qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation, et sa valeur max améliorée à l'aide d'un [[encyclopedia ARMOR_TITLE]].
+La Résistance indique la quantité de [[encyclopedia DAMAGE_TITLE]] qu'un astronef peut subir avant destruction. La Résistance peut être restaurée via réparation, et sa valeur max améliorée à l'aide d'un [[encyclopedia ARMOR_TITLE]].
 
 DAMAGE_TITLE
 Dommages
@@ -6946,6 +6944,12 @@ DESC_ALL
 DESC_ALL_NOT
 ''' absent de l'univers'''
 
+DESC_NONE  # translated
+[[DESC_ALL_NOT]]
+
+DESC_NONE_NOT  # translated
+[[DESC_ALL]]
+
 DESC_EMPIRE_AFFILIATION_SELF
 ''' appartenant à l'empire %1%'''
 
@@ -7460,7 +7464,7 @@ LRN_FORCE_FIELD
 Harmonique des Champs de Force
 
 LRN_FORCE_FIELD_DESC
-'''Augmente les [[encyclopedia SHIELDS_TITLE]] max de 10 sur toutes les planètes et débloque la technologie de base pour les boucliers d'astronef. Les [[encyclopedia SHIELDS_TITLE]] sont en général plus chers que les blindages, en raison de la technologie nécessaire pour les fabriquer, les boucliers procurant une bien meilleure défense qu'un simple blindage. Cependant, il ne peut y avoir qu'un seul bouclier actif par astronef, rendant par conséquent impossible l'addition défensive de plusieurs boucliers.
+'''Augmente les [[encyclopedia SHIELDS_TITLE]] max de 10 sur toutes les planètes et débloque la technologie de base pour les boucliers d'astronef. Les [[encyclopedia SHIELDS_TITLE]] sont en général plus chers que les blindages, en raison de la technologie nécessaire pour les fabriquer, les boucliers procurant une bien meilleure défense qu'un simple [[encyclopedia ARMOR_TITLE]]. Cependant, il ne peut y avoir qu'un seul bouclier actif par astronef, rendant par conséquent impossible l'addition défensive de plusieurs boucliers.
 
 Tout comme l'analyse du son de Fourier, l'électromagnétisme ainsi que les interactions fortes et faibles peuvent être exprimées sous la forme de superpositions d'ondes d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, ces forces peuvent être contrôlées pour défendre, attaquer, contenir ou soutenir.'''
 
@@ -8719,25 +8723,25 @@ SHP_ROOT_ARMOR
 Blindage
 
 SHP_ROOT_ARMOR_DESC
-La recherche d'alliages spéciaux permet d'équiper les coques des astronefs d'un blindage, améliorant substantiellement leur [[encyclopedia STRUCTURE_TITLE]], en particulier dans les batailles.
+La recherche d'alliages spéciaux permet d'équiper les coques des astronefs d'un [[encyclopedia ARMOR_TITLE]], améliorant substantiellement leur [[encyclopedia STRUCTURE_TITLE]], en particulier dans les batailles.
 
 SHP_ZORTRIUM_PLATE
 Blindage Zortrium
 
 SHP_ZORTRIUM_PLATE_DESC
-En affinant les techniques de fabrication des blindages, des matériaux de meilleure qualité et donc plus résistants peuvent être utilisés, permettant la production de blindages plus efficaces.
+En affinant les techniques de fabrication des [[encyclopedia ARMOR_TITLE]]s, des matériaux de meilleure qualité et donc plus résistants peuvent être utilisés, permettant la production de blindages plus efficaces.
 
 SHP_DIAMOND_PLATE
 Blindage Diamant
 
 SHP_DIAMOND_PLATE_DESC
-Des techniques avancées de fabrication permettent la conception d'un blindage très résistant à partir d'un unique et massif diamant synthétique.
+Des techniques avancées de fabrication permettent la conception d'un [[encyclopedia ARMOR_TITLE]] très résistant à partir d'un unique et massif diamant synthétique.
 
 SHP_XENTRONIUM_PLATE
 Blindage Xentronium
 
 SHP_XENTRONIUM_PLATE_DESC
-Le Xentronium est l'un des matériaux connus les plus résistants, mais également l'un des plus complexes à manipuler. Maîtriser le processus de fabrication d'un blindage à partir de Xentronium permet d'atteindre une capacité de résistance sans égale.
+Le Xentronium est l'un des matériaux connus les plus résistants, mais également l'un des plus complexes à manipuler. Maîtriser le processus de fabrication d'un [[encyclopedia ARMOR_TITLE]] à partir de Xentronium permet d'atteindre une capacité de résistance sans égale.
 
 SHP_DEFLECTOR_SHIELD
 Bouclier Déflecteur
@@ -9019,7 +9023,7 @@ Compresseur d'Énergie
 BLD_SHIPYARD_ENRG_COMP_DESC
 '''Amélioration du [[buildingtype BLD_SHIPYARD_BASE]] requise pour la production de toutes les coques à énergie et avant toute construction de structures additionnelles pour Compresseur d'Énergie.
 
-Une structure hautement spécialisée conçue pour créer et assembler des coques constituées de grandes quantités d'énergie fortement compressées. S'agissant d'un processus délicat, le compresseur serait détruit dans une puissante explosion s'il venait à encaisser davantage qu'une infime quantité de dommages.'''
+Une structure hautement spécialisée conçue pour créer et assembler des coques constituées de grandes quantités d'énergie fortement compressées. S'agissant d'un processus délicat, le compresseur serait détruit dans une puissante explosion s'il venait à encaisser davantage qu'une infime quantité de [[encyclopedia DAMAGE_TITLE]].'''
 
 BLD_SHIPYARD_ENRG_SOLAR
 Unité de Confinement Solaire
@@ -9182,6 +9186,9 @@ Terraformeur à Distance
 BLD_REMOTE_TERRAFORM_DESC
 Terraforme une planète en un type d'environnement un palier plus proche de l'environnement favori de l'espèce. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
+MACRO_NEUTRONIUM_BUILDINGS
+'''Afin d'exploiter le Neutronium, un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] est requis au sein d'un système abritant une Étoile à Neutrons, ou bien l'empire doit avoir découvert un [[buildingtype BLD_NEUTRONIUM_SYNTH]]. Une [[buildingtype BLD_NEUTRONIUM_FORGE]] est également requise sur la planète où le Neutronium sera utilisé'''
+
 BLD_NEUTRONIUM_EXTRACTOR
 Extracteur Neutronium
 
@@ -9196,7 +9203,7 @@ Forge Neutronium
 BLD_NEUTRONIUM_FORGE_DESC
 '''Cette structure est requise au même emplacement qu'un [[buildingtype BLD_SHIPYARD_BASE]] afin de permettre la production d'astronefs dotés d'équipements en Neutronium.
 
-Le travail industriel du Neutronium nécessite une installation spécialisée. Cette structure ne peut pas être construite sur un [[encyclopedia OUTPOSTS_TITLE]].'''
+Le travail industriel du Neutronium nécessite une installation spécialisée. Cette structure ne peut pas être construite sur un [[encyclopedia OUTPOSTS_TITLE]]. [[MACRO_NEUTRONIUM_BUILDINGS]].'''
 
 BLD_NEUTRONIUM_SYNTH
 Synthétiseur Neutronium
@@ -9204,7 +9211,7 @@ Synthétiseur Neutronium
 BLD_NEUTRONIUM_SYNTH_DESC
 '''Un empire abritant cette structure n'a pas besoin d'un [[buildingtype BLD_NEUTRONIUM_EXTRACTOR]] pour récolter le Neutronium nécessaire à la fabrication d'équipements d'astronef en Neutronium.
 
-Une structure issu des temps ancestraux, conçue pour synthétiser le Neutronium.'''
+Une structure issue des temps ancestraux, conçue pour synthétiser le Neutronium.'''
 
 BLD_CONC_CAMP
 Camps de Concentration
@@ -9798,7 +9805,7 @@ FU_TRANSPATIAL_DRIVE
 Propulsion Trans-Spatiale
 
 FU_TRANSPATIAL_DRIVE_DESC
-Un dispositif de motorisation incroyablement puissant capable de courber l'espace-temps lui-même, augmentant à la fois la [[encyclopedia STARLANE_SPEED_TITLE]] et la [[encyclopedia STEALTH_TITLE]] d'un astronef de 40. Ne peut être monté que dans la Niche Centrale d'un astronef. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.
+Un dispositif de motorisation incroyablement puissant capable de courber l'espace-temps lui-même, augmentant à la fois la [[encyclopedia STARLANE_SPEED_TITLE]] et la [[encyclopedia STEALTH_TITLE]] d'un astronef de 40. Ne peut être monté que dans la [[encyclopedia SLOT_TITLE]] Centrale d'un astronef. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.
 
 FU_BASIC_TANK
 Réservoir Additionnel de Carburant
@@ -9902,7 +9909,7 @@ AR_NEUTRONIUM_PLATE
 Blindage Neutronium
 
 AR_NEUTRONIUM_PLATE_DESC
-Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Le blindage le plus résistant et efficace qui puisse être produit, offrant une excellente défense à l'astronef qui en est doté.
+Augmente la [[encyclopedia STRUCTURE_TITLE]] d'un astronef. Le blindage le plus résistant et efficace qui puisse être produit, offrant une excellente défense à l'astronef qui en est doté. [[MACRO_NEUTRONIUM_BUILDINGS]].
 
 AR_PRECURSOR_PLATE
 Blindage Précurseur
@@ -9914,7 +9921,7 @@ SH_DEFENSE_GRID
 Grillage Défensif
 
 SH_DEFENSE_GRID_DESC
-'''Bouclier procurant une défense de base. Capable de neutraliser ou du moins de réduire substantiellement les dommages causés par les armes de faible puissance.
+'''Bouclier procurant une défense de base. Capable de neutraliser ou du moins de réduire substantiellement les [[encyclopedia DAMAGE_TITLE]] causés par les armes de faible puissance.
 
 Les [[encyclopedia SHIELDS_TITLE]] réduisent les dommages infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
 
@@ -9922,7 +9929,7 @@ SH_DEFLECTOR
 Bouclier Déflecteur
 
 SH_DEFLECTOR_DESC
-'''Bouclier offrant une défense plus efficace que le [[shippart SH_DEFENSE_GRID]]. Capable de neutraliser ou du moins de réduire substantiellement les dommages causés par les armes de moyenne puissance.
+'''Bouclier offrant une défense plus efficace que le [[shippart SH_DEFENSE_GRID]]. Capable de neutraliser ou du moins de réduire substantiellement les [[encyclopedia DAMAGE_TITLE]] causés par les armes de moyenne puissance.
 
 Les [[encyclopedia SHIELDS_TITLE]] réduisent les dommages infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
 
@@ -9930,7 +9937,7 @@ SH_PLASMA
 Bouclier Plasma
 
 SH_PLASMA_DESC
-'''Puissant bouclier réduisant significativement les dommages causés par les armements avancés, et neutralisant toutes les armes de puissance inférieure.
+'''Puissant bouclier réduisant significativement les [[encyclopedia DAMAGE_TITLE]] causés par les armements avancés, et neutralisant toutes les armes de puissance inférieure.
 
 Les [[encyclopedia SHIELDS_TITLE]] réduisent les dommages infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
 
@@ -9940,7 +9947,7 @@ Bouclier Obscur
 SH_BLACK_DESC
 '''Bouclier le plus solide pouvant être produit, procurant une excellente défense et ne pouvant être pénétré que par les armements les plus puissants. La Recherche concernant le [[tech SHP_BLACKSHIELD]] est extrêmement coûteuse tout comme sa production.
 
-Les [[encyclopedia SHIELDS_TITLE]] réduisent les dommages infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
+Les [[encyclopedia SHIELDS_TITLE]] réduisent les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
 
 SH_MULTISPEC
 Bouclier Multi-Spectral
@@ -9948,7 +9955,7 @@ Bouclier Multi-Spectral
 SH_MULTISPEC_DESC
 '''Puissant bouclier capable de protéger un astronef à l'intérieur d'une étoile. Procure un important bonus de [[encyclopedia STEALTH_TITLE]] sur la carte galactique lorsque l'astronef se trouve dans une étoile autre qu'une Étoile à Neutrons ou qu'un Trou Noir. Permet également à un astronef d'entrer dans une étoile au cours d'un combat.
 
-Les [[encyclopedia SHIELDS_TITLE]] réduisent les dommages infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
+Les [[encyclopedia SHIELDS_TITLE]] réduisent les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir de la valeur de solidité du Bouclier. Il ne peut y avoir qu'un seul bouclier actif par astronef, rendant impossible l'addition défensive de plusieurs boucliers.'''
 
 SH_ROBOTIC_INTERFACE_SHIELDS
 Boucliers à Interface Robotique
@@ -10438,7 +10445,7 @@ SH_FLOATER_BODY
 Corps Flotteur
 
 SH_FLOATER_BODY_DESC
-Petit corps fragile peu résistant face aux dommages adverses.
+Petit corps fragile peu résistant face aux [[encyclopedia DAMAGE_TITLE]] adverses.
 
 SH_TREE_BODY
 Corps Dyson
@@ -10987,8 +10994,8 @@ Autosuffisant
 TELEPATHIC
 Télépathique
 
-#ORBITAL
-#Orbital
+ORBITAL  # translated
+Orbital
 
 #############################################################
 ####           A I   S T R I N G S                       ####
