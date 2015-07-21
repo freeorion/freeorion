@@ -680,7 +680,7 @@ An unmanned armed ship, built by the Acirema, guards the system.
 SM_EXP_OUTPOST
 Experiment Zero
 SM_EXP_OUTPOST_DESC
-'''An ancient creation of the Experimentors that reduces [[encyclopedia SHIELDS_TITLE]] and damage. 
+'''An ancient creation of the Experimentors that reduces [[encyclopedia SHIELDS_TITLE]] and [[encyclopedia DAMAGE_TITLE]]. 
 
 Experiment Zero was sent to this galaxy to guard the outpost of the Experimentors with its unique abilities. While it does not attack directly it consists of quadrillions of diminutive units that fill the whole space of the system and hamper enemy shields and weapons to the point that all but the very best equipment will be ineffective.'''
 
@@ -3795,14 +3795,14 @@ The term Infrastructure refers to technical structures that support a colonized 
 DEFENSE_TITLE
 Defense
 DEFENSE_TEXT
-The Defense meter of a planet represents the power of the ground to space weapons installed. It's comparable to the Damage value of a space ship.
+The Defense meter of a planet represents the power of the ground to space weapons installed. It's comparable to the [[encyclopedia DAMAGE_TITLE]] value of a space ship.
 
 SHIELDS_TITLE
 Shields
 SHIELDS_TEXT
 '''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter.  The main difference between them is simply how they recharge-- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barier shields take more time to recharge.  The result of that seemingly small difference makes a very noticable difference in combat, however.
 
-Ship shields: Reduce the damage sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength.
+Ship shields: Reduce the [[encyclopedia DAMAGE_TITLE]] sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength.
 
 Planetary barrier shields: Act more like some kind of planetary armor. Their strength is reduced by each hit until they are completely depleted, at which point further hits will finally get through and damage planetary structures (first [[encyclopedia DEFENSE_TITLE]] installations and then more general planetary [[encyclopedia INFRASTRUCTURE_TITLE]]). Planetary barrier shields regenerate their strength each turn at a certain rate which can be affected by various technologies.
 
@@ -3817,7 +3817,7 @@ Increases the maximum [[encyclopedia STRUCTURE_TITLE]] of its ship by the streng
 SLOT_TITLE
 Slot
 SLOT_TEXT
-A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types.  This information is also shown graphically in the Design Window, where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatble with. In most cases a part shape will clearly match a particular slot-type shape.  Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types.  Larger (and expensive) hulls often have more slots available to be filled with parts.
+A slot is a type of ship mount on a [[encyclopedia ENC_SHIP_HULL]], which can hold certain types of [[encyclopedia ENC_SHIP_PART]]s, like weapons, shields, armor plating, engines and various other devices. There are three slot types: external, internal, and core slots. [[encyclopedia ENC_SHIP_PART]] descriptions will state what kind of slots they are compatible with; some are compatble with multiple slot types.  This information is also shown graphically in the Design Window, where each type of slot in a hull is shown with a shape specific to its type. The [[encyclopedia ENC_SHIP_PART]]s in the Design Window are also shown with shapes that indicate which slots they are compatible with. In most cases a part shape will clearly match a particular slot-type shape.  Parts that can fit into multiple slot types will have shapes that are visibly compatible with the shapes of those slot types.  Larger (and expensive) hulls often have more slots available to be filled with parts.
 
 STEALTH_TITLE
 Stealth
@@ -3845,7 +3845,7 @@ Troops
 TROOP_TEXT
 '''The term Troops combines all kinds of military forces capable of operating on a planets surface.
 
-The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.  Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active shields.'''
+The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.  Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active [[encyclopedia SHIELDS_TITLE]].'''
 
 ORGANIC_SPECIES_TITLE
 Organic Metabolism
@@ -3948,7 +3948,7 @@ Maniacal:
 STRUCTURE_TITLE
 Structure
 STRUCTURE_TEXT
-Structure is amount of damage that ship can take until it is destroyed. Structure can be restored by repairing.
+Structure is amount of [[encyclopedia DAMAGE_TITLE]] that ship can take until it is destroyed. Structure can be restored by repairing, and its max value increased with [[encyclopedia ARMOR_TITLE]].
 
 DAMAGE_TITLE
 Damage
@@ -7464,7 +7464,7 @@ LRN_FORCE_FIELD
 Force-Field Harmonics
 
 LRN_FORCE_FIELD_DESC
-'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10 and unlocks basic ship shielding technology. [[encyclopedia SHIELDS_TITLE]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than armor. However, there can only be one active shield generator on a ship, so shield parts do not stack.
+'''Increases max [[encyclopedia SHIELDS_TITLE]] on all planets by 10 and unlocks basic ship shielding technology. [[encyclopedia SHIELDS_TITLE]] are generally much more expensive than armor, due to the technology needed to produce shielding fields, but shields provide a far stronger defense than [[encyclopedia ARMOR_TITLE]]. However, there can only be one active shield generator on a ship, so shield parts do not stack.
 
 Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles. By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.'''
 
@@ -8723,25 +8723,25 @@ SHP_ROOT_ARMOR
 Armor Plating
 
 SHP_ROOT_ARMOR_DESC
-Researching special alloys that allow to equip ship hulls with armor plating greatly enhances their [[encyclopedia STRUCTURE_TITLE]], especially in battle.
+Researching special alloys that allow to equip ship hulls with [[encyclopedia ARMOR_TITLE]] greatly enhances their [[encyclopedia STRUCTURE_TITLE]], especially in battle.
 
 SHP_ZORTRIUM_PLATE
 Zortrium Armor Plating
 
 SHP_ZORTRIUM_PLATE_DESC
-By refining the methods to construct armor plating, better, more durable special materials can be employed, giving stronger armor parts.
+By refining the methods to construct [[encyclopedia ARMOR_TITLE]], better, more durable special materials can be employed, giving stronger armor parts.
 
 SHP_DIAMOND_PLATE
 Diamond Armor Plating
 
 SHP_DIAMOND_PLATE_DESC
-Advanced processing techniques allow the construction of armor plating cut out of single huge synthetic diamonds. Provides very durable armor parts.
+Advanced processing techniques allow the construction of [[encyclopedia ARMOR_TITLE]] cut out of single huge synthetic diamonds. Provides very durable armor parts.
 
 SHP_XENTRONIUM_PLATE
 Xentronium Armor Plating
 
 SHP_XENTRONIUM_PLATE_DESC
-Xentronium is one of the most durable materials known, but also very difficult to process. Mastering the art of constructing armor plating made of xentronium  allows to build extremely durable armor parts.
+Xentronium is one of the most durable materials known, but also very difficult to process. Mastering the art of constructing [[encyclopedia ARMOR_TITLE]] made of xentronium allows to build extremely durable armor parts.
 
 SHP_DEFLECTOR_SHIELD
 Deflector Shield
@@ -9023,7 +9023,7 @@ Energy Compressor
 BLD_SHIPYARD_ENRG_COMP_DESC
 '''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the formation of all energy hulls and all further energy hull shipyard upgrades.
 
-A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy. This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of damage.'''
+A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy. This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of [[encyclopedia DAMAGE_TITLE]].'''
 
 BLD_SHIPYARD_ENRG_SOLAR
 Solar Containment Unit
@@ -9203,7 +9203,7 @@ Neutronium Forge
 BLD_NEUTRONIUM_FORGE_DESC
 '''This building is required at the same location as a [[buildingtype BLD_SHIPYARD_BASE]] to enable building ships with neutronium parts.
 
-The industrial processing of neutronium requires an extensive specialized facility, this building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]]. [[MACRO_NEUTRONIUM_BUILDINGS]]'''
+The industrial processing of neutronium requires an extensive specialized facility, this building cannot be built at an [[encyclopedia OUTPOSTS_TITLE]]. [[MACRO_NEUTRONIUM_BUILDINGS]].'''
 
 BLD_NEUTRONIUM_SYNTH
 Neutronium Synthesizer
@@ -9217,7 +9217,7 @@ BLD_CONC_CAMP
 Concentration Camps
 
 BLD_CONC_CAMP_DESC
-'''Decreases the planet's population at a rate of 3 per turn, increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population and sets the target happiness to 0. 
+'''Decreases the planet's population at a rate of 3 per turn, increases target [[encyclopedia INDUSTRY_TITLE]] by 5 times the planet's population and sets the target [[encyclopedia HAPPINESS_TITLE]] to 0. 
 
 Ridding a planet of an undesirable species allows the introduction of a more suited species. By creating a planet-wide network of concentration camps designed to work the citizens to death, this goal can be achieved quickly and efficiently. This building can be built on an [[encyclopedia OUTPOSTS_TITLE]].'''
 
@@ -9805,7 +9805,7 @@ FU_TRANSPATIAL_DRIVE
 Trans-spatial Drive
 
 FU_TRANSPATIAL_DRIVE_DESC
-An incredibly powerful drive that bends spacetime itself, increasing both [[encyclopedia STARLANE_SPEED_TITLE]] and [[encyclopedia STEALTH_TITLE]] by 40. Can only be mounted in a Core slot. Stealth boost does not stack with other part bonuses.
+An incredibly powerful drive that bends spacetime itself, increasing both [[encyclopedia STARLANE_SPEED_TITLE]] and [[encyclopedia STEALTH_TITLE]] by 40. Can only be mounted in a Core [[encyclopedia SLOT_TITLE]]. Stealth boost does not stack with other part bonuses.
 
 FU_BASIC_TANK
 Extra Fuel Tank
@@ -9921,7 +9921,7 @@ SH_DEFENSE_GRID
 Defense Grid
 
 SH_DEFENSE_GRID_DESC
-'''Provides basic shield defense. Capable of completely negating or at least substantially reducing damage from hits by low powered weapons.
+'''Provides basic shield defense. Capable of completely negating or at least substantially reducing [[encyclopedia DAMAGE_TITLE]] from hits by low powered weapons.
 
 [[encyclopedia SHIELDS_TITLE]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
@@ -9929,7 +9929,7 @@ SH_DEFLECTOR
 Deflector Shield
 
 SH_DEFLECTOR_DESC
-'''Provides advanced shield defense. Can absorb or at least substantially reduce damage dealt by moderately powered weapons.
+'''Provides advanced shield defense. Can absorb or at least substantially reduce [[encyclopedia DAMAGE_TITLE]] dealt by moderately powered weapons.
 
 [[encyclopedia SHIELDS_TITLE]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
@@ -9937,7 +9937,7 @@ SH_PLASMA
 Plasma Shield
 
 SH_PLASMA_DESC
-'''Powerful shield that significantly reduces damage suffered from hits even by advanced weapons, and completely absorbs anything less.
+'''Powerful shield that significantly reduces [[encyclopedia DAMAGE_TITLE]] suffered from hits even by advanced weapons, and completely absorbs anything less.
 
 [[encyclopedia SHIELDS_TITLE]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
@@ -9947,7 +9947,7 @@ Blackshield
 SH_BLACK_DESC
 '''Most powerful shield defense, can only be penetrated by the most powerful weapons. Extremely expensive to research and build.
 
-[[encyclopedia SHIELDS_TITLE]] reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+[[encyclopedia SHIELDS_TITLE]] reduce [[encyclopedia DAMAGE_TITLE]] sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_MULTISPEC
 Multi-Spectral Shield
@@ -9955,7 +9955,7 @@ Multi-Spectral Shield
 SH_MULTISPEC_DESC
 '''Powerful [[encyclopedia SHIELDS_TITLE]] capable of protecting a ship within a star. Provides a high [[encyclopedia STEALTH_TITLE]] bonus on the galaxy map when the ship is in a star other than a Black Hole or a Neutron Star and allows the ship to enter a star in combat.
 
-Shields reduce damage sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
+Shields reduce [[encyclopedia DAMAGE_TITLE]] sustained from each hit by their Shield Strength. There can only be one active shield generator on a ship, so shield parts do not stack.'''
 
 SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
@@ -10445,7 +10445,7 @@ SH_FLOATER_BODY
 Floater Body
 
 SH_FLOATER_BODY_DESC
-Small frail body that is unable to withstand significant damage.
+Small frail body that is unable to withstand significant [[encyclopedia DAMAGE_TITLE]].
 
 SH_TREE_BODY
 Tree Body
