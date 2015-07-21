@@ -19,8 +19,8 @@ def execute_turn_events():
 
         center_x = center_y = fo.get_universe_width() / 2.0
         angle = random() * 2.0 * pi
-        x = center_x + ((1.25 + (random() / 4.0)) * center_x * sin(angle))
-        y = center_y + ((1.25 + (random() / 4.0)) * center_y * cos(angle))
+        x = center_x + ((center_x + 150.0 + (random() * 50)) * sin(angle))
+        y = center_y + ((center_x + 150.0 + (random() * 50)) * cos(angle))
 
         print "...creating new", field_type, "field at:", x, "/", y
         if fo.create_field(field_type, x, y, size) == fo.invalid_object():
