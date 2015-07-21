@@ -80,11 +80,11 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
         m_incr = style->NewScrollRightButton(color);
         m_tab = style->NewHScrollTabButton(color);
     }
-    if(m_decr) {
+    if (m_decr) {
         AttachChild(m_decr);
         Connect(m_decr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));
     }
-    if(m_incr) {
+    if (m_incr) {
         AttachChild(m_incr);
         Connect(m_incr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, 1));
     }
@@ -97,6 +97,7 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
     }
 
     DoLayout();
+    InitBuffer();
 }
 
 Pt Scroll::MinUsableSize() const
@@ -135,11 +136,36 @@ Clr Scroll::InteriorColor() const
 Orientation Scroll::ScrollOrientation() const
 { return m_orientation; }
 
+void Scroll::InitBuffer()
+{
+    GG::Pt sz = Size();
+    m_buffer.clear();
+    m_buffer.store(0.0f,        0.0f);
+    m_buffer.store(Value(sz.x), 0.0f);
+    m_buffer.store(Value(sz.x), Value(sz.y));
+    m_buffer.store(0.0f,        Value(sz.y));
+    m_buffer.store(0.0f,        0.0f);
+}
+
 void Scroll::Render()
 {
-    Pt ul = UpperLeft(), lr = LowerRight();
-    Clr int_color_to_use = Disabled() ? DisabledColor(m_int_color) : m_int_color;
-    FlatRectangle(ul, lr, int_color_to_use, CLR_ZERO, 0);
+    Pt ul = UpperLeft();
+
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(2.0);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    m_buffer.activate();
+    glColor(Disabled() ? DisabledColor(m_int_color) : m_int_color);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, m_buffer.size() - 1);
+
+    glLineWidth(1.0f);
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void Scroll::SizeMove(const Pt& ul, const Pt& lr)
@@ -148,8 +174,10 @@ void Scroll::SizeMove(const Pt& ul, const Pt& lr)
 
     Wnd::SizeMove(ul, lr);
 
-    if(old_size != Size())
+    if (old_size != Size()) {
         DoLayout();
+        InitBuffer();
+    }
 }
 
 void Scroll::DoLayout()

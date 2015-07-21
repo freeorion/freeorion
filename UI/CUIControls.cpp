@@ -578,17 +578,38 @@ void CUIScroll::Render() {
     GG::Clr color_to_use =          Disabled() ? DisabledColor(Color())         :   Color();
     GG::Clr border_color_to_use =   Disabled() ? DisabledColor(m_border_color)  :   m_border_color;
     GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    FlatRectangle(ul, lr, color_to_use, border_color_to_use, 1);
+
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(1.0f);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    m_buffer.activate();
+    glColor(color_to_use);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, m_buffer.size() - 1);
+    glColor(border_color_to_use);
+    glDrawArrays(GL_LINE_STRIP,     0, m_buffer.size());
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Pt old_sz = Size();
     Wnd::SizeMove(ul, lr);
+
     TabButton()->SizeMove(TabButton()->RelativeUpperLeft(), 
                           (ScrollOrientation() == GG::VERTICAL) ?
                           GG::Pt(Size().x, TabButton()->RelativeLowerRight().y) :
                           GG::Pt(TabButton()->RelativeLowerRight().x, Size().y));
+
     SizeScroll(ScrollRange().first, ScrollRange().second, LineSize(), PageSize()); // update tab size and position
+
+    if (Size() != old_sz)
+        InitBuffer();
 }
 
 

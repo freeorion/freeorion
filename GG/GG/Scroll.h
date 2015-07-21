@@ -29,6 +29,7 @@
 #define _GG_Scroll_h_
 
 #include <GG/Control.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 
 namespace GG {
@@ -135,27 +136,31 @@ protected:
     virtual void  MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
 
     virtual bool  EventFilter(Wnd* w, const WndEvent& event);
+
+    virtual void  InitBuffer();
     //@}
 
+    GG::GL2DVertexBuffer    m_buffer;
+
 private:
-    void              UpdatePosn();        ///< adjusts m_posn due to a tab-drag
-    void              MoveTabToPosn();     ///< adjusts tab due to a button click, PgUp, etc.
+    void              UpdatePosn();         ///< adjusts m_posn due to a tab-drag
+    void              MoveTabToPosn();      ///< adjusts tab due to a button click, PgUp, etc.
     void              ScrollLineIncrDecrImpl(bool signal, int lines);
 
-    Clr               m_int_color;   ///< color inside border of slide area
-    const Orientation m_orientation; ///< vertical or horizontal scroll? (use enum for these declared above)
-    int               m_posn;        ///< current position of tab in logical coords (will be in [m_range_min, m_range_max - m_page_sz])
-    int               m_range_min;   ///< lowest value in range of scrollbar
-    int               m_range_max;   ///< highest value "
-    unsigned int      m_line_sz;     ///< logical units traversed in a line movement (such as a click on either end button)
-    unsigned int      m_page_sz;     ///< logical units traversed for a page movement (such as a click in non-tab middle area, or PgUp/PgDn)
-    Button*           m_tab;         ///< the button representing the tab
-    Button*           m_incr;        ///< the increase button (line down/line right)
-    Button*           m_decr;        ///< the decrease button (line up/line left)
-    ScrollRegion      m_initial_depressed_region; ///< the part of the scrollbar originally under cursor in LButtonDown msg
-    ScrollRegion      m_depressed_region;         ///< the part of the scrollbar currently being "depressed" by held-down mouse button
-    bool              m_dragging_tab;
-    bool              m_tab_dragged;
+    Clr                     m_int_color;    ///< color inside border of slide area
+    const Orientation       m_orientation; ///< vertical or horizontal scroll? (use enum for these declared above)
+    int                     m_posn;         ///< current position of tab in logical coords (will be in [m_range_min, m_range_max - m_page_sz])
+    int                     m_range_min;    ///< lowest value in range of scrollbar
+    int                     m_range_max;    ///< highest value "
+    unsigned int            m_line_sz;      ///< logical units traversed in a line movement (such as a click on either end button)
+    unsigned int            m_page_sz;      ///< logical units traversed for a page movement (such as a click in non-tab middle area, or PgUp/PgDn)
+    Button*                 m_tab;          ///< the button representing the tab
+    Button*                 m_incr;         ///< the increase button (line down/line right)
+    Button*                 m_decr;         ///< the decrease button (line up/line left)
+    ScrollRegion            m_initial_depressed_region; ///< the part of the scrollbar originally under cursor in LButtonDown msg
+    ScrollRegion            m_depressed_region;         ///< the part of the scrollbar currently being "depressed" by held-down mouse button
+    bool                    m_dragging_tab;
+    bool                    m_tab_dragged;
 };
 
 /** A convenience function that signals \a scroll's position, via
