@@ -235,7 +235,7 @@ namespace parse {
     const sregex MACRO_KEY = +_w;   // word character (alnum | _), one or more times, greedy
     const sregex MACRO_TEXT = -*_;  // any character, zero or more times, not greedy
     const sregex MACRO_DEFINITION = (s1 = MACRO_KEY) >> _n >> "'''" >> (s2 = MACRO_TEXT) >> "'''" >> _n;
-    const sregex MACRO_INSERTION = "[[" >> *space >> (s1 = MACRO_KEY) >> *space >> !("(" >> (s2 = -+~_n) >> ")") >> "]]";
+    const sregex MACRO_INSERTION = "[[" >> *space >> (s1 = MACRO_KEY) >> *space >> !("(" >> (s2 = +~(set = ')', '\n')) >> ")") >> "]]";
 
     void parse_and_erase_macro_definitions(std::string& text, std::map<std::string, std::string>& macros) {
         try {
