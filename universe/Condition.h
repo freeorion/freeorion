@@ -52,6 +52,7 @@ namespace Condition {
 
     struct ConditionBase;
     struct All;
+    struct None;
     struct EmpireAffiliation;
     struct Source;
     struct RootCandidate;
@@ -354,6 +355,32 @@ struct FO_COMMON_API Condition::All : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const { return true; }
 
     virtual void        SetTopLevelContent(const std::string& content_name) {}
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches no objects. Currently only has an experimental use for efficient immediate rejection as the top-line condition.
+ *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
+struct FO_COMMON_API Condition::None : public Condition::ConditionBase {
+    None() : ConditionBase() {}
+    virtual bool        operator==(const Condition::ConditionBase& rhs) const;
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual bool        SourceInvariant() const { return true; }
+
+    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                          Condition::ObjectSet& condition_non_targets) const { }  // efficient rejection of everything
+
 
 private:
     friend class boost::serialization::access;
@@ -2247,6 +2274,10 @@ void Condition::SortedNumberOf::serialize(Archive& ar, const unsigned int versio
 
 template <class Archive>
 void Condition::All::serialize(Archive& ar, const unsigned int version)
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
+
+template <class Archive>
+void Condition::None::serialize(Archive& ar, const unsigned int version)
 { ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>

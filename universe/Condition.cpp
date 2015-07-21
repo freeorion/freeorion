@@ -1043,6 +1043,33 @@ std::string Condition::All::Dump() const
 { return DumpIndent() + "All\n"; }
 
 ///////////////////////////////////////////////////////////
+// None                                                   //
+///////////////////////////////////////////////////////////
+void Condition::None::Eval(const ScriptingContext& parent_context,
+                          ObjectSet& matches, ObjectSet& non_matches,
+                          SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    if (search_domain == MATCHES) {
+        // move all objects from matches to non_matches
+        non_matches.insert(non_matches.end(), matches.begin(), matches.end());
+        matches.clear();
+    }
+    // if search domain is non_matches, no need to do anything since none of them match None.
+}
+
+bool Condition::None::operator==(const Condition::ConditionBase& rhs) const
+{ return Condition::ConditionBase::operator==(rhs); }
+
+std::string Condition::None::Description(bool negated/* = false*/) const {
+    return (!negated)
+        ? UserString("DESC_NONE")
+        : UserString("DESC_NONE_NOT");
+}
+
+std::string Condition::None::Dump() const
+{ return DumpIndent() + "None\n"; }
+
+///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
 Condition::EmpireAffiliation::~EmpireAffiliation() {

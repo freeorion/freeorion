@@ -38,6 +38,10 @@ namespace {
                 =   tok.All_ [ _val = new_<Condition::All>() ]
                 ;
 
+            none
+                =   tok.None_ [ _val = new_<Condition::None>() ]
+                ;
+
             source
                 =   tok.Source_ [ _val = new_<Condition::Source>() ]
                 ;
@@ -131,6 +135,7 @@ namespace {
 
             start
                 %=  all
+                |   none
                 |   source
                 |   root_candidate
                 |   target
@@ -148,6 +153,7 @@ namespace {
                 ;
 
             all.name("All");
+            none.name("None");
             source.name("Source");
             root_candidate.name("RootCandidate");
             target.name("Target");
@@ -165,6 +171,7 @@ namespace {
 
 #if DEBUG_CONDITION_PARSERS
             debug(all);
+            debug(none);
             debug(source);
             debug(root_candidate);
             debug(target);
@@ -202,6 +209,7 @@ namespace {
         > described_rule;
 
         parse::condition_parser_rule    all;
+        parse::condition_parser_rule    none;
         parse::condition_parser_rule    source;
         parse::condition_parser_rule    root_candidate;
         parse::condition_parser_rule    target;
