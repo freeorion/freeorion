@@ -35,9 +35,9 @@ namespace {
                                                        const ScriptingContext& context)
     {
         //DebugLogger() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
-        //    << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
-        //    << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
-        //    << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
+        //              << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
+        //              << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
+        //              << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
 
         TemporaryPtr<const UniverseObject> obj;
         switch(ref_type) {
@@ -575,7 +575,7 @@ namespace ValueRef {
             FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             ErrorLogger() << "Variable<double>::Eval unable to follow reference: "
-                                   << TraceReference(m_property_name, m_ref_type, context);
+                          << TraceReference(m_property_name, m_ref_type, context);
             return 0.0;
         }
 
