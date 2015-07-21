@@ -1851,7 +1851,7 @@ Una batalla tuvo lugar en %system%.
 SITREP_PLANET_CAPTURED
 %planet% fue capturado por %empire%.
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_DEPOPULATED
 La población entera en %planet% se muere de hambre. ¡El planeta esta perdido!
 
 SITREP_PLANET_COLONIZED

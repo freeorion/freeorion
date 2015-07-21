@@ -4518,9 +4518,9 @@ La planète %planet% a été capturée par %empire%.
 SITREP_PLANET_CAPTURED_LABEL
 Planète capturée
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_DEPOPULATED
 La colonie établie sur %planet% a été détruite!
-SITREP_PLANET_LOST_STARVED_TO_DEATH_LABEL
+SITREP_PLANET_DEPOPULATED_LABEL
 Colonie détruite
 
 SITREP_PLANET_COLONIZED

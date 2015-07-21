@@ -246,7 +246,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
 }
 
 SitRepEntry CreatePlanetStarvedToDeathSitRep(int planet_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_LOST_STARVED_TO_DEATH"), "icons/sitrep/colony_destroyed.png");
+    SitRepEntry sitrep(UserStringNop("SITREP_PLANET_DEPOPULATED"), "icons/sitrep/colony_destroyed.png");
     sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     return sitrep;
 }
