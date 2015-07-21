@@ -875,28 +875,28 @@ namespace {
     int CreateMonster(const std::string& design_name, int fleet_id)
     { return CreateShip(NewMonsterName(), design_name, "", fleet_id); }
 
-    TemporaryPtr<Field> CreateField(const std::string& field_type_name, double x, double y, double size) {
+    TemporaryPtr<Field> CreateFieldImpl(const std::string& field_type_name, double x, double y, double size) {
         // check if a field type with the specified field type name exists and get the field type
         const FieldType* field_type = GetFieldType(field_type_name);
         if (!field_type) {
-            ErrorLogger() << "PythonUniverseGenerator::CreateField: couldn't get field type with name: " << field_type_name;
+            ErrorLogger() << "PythonUniverseGenerator::CreateFieldImpl: couldn't get field type with name: " << field_type_name;
             return TemporaryPtr<Field>();
         }
 
         // check if the specified size is within sane limits, and reset its value if not
         if (size < 1.0) {
-            ErrorLogger() << "PythonUniverseGenerator::CreateField given very small / negative size: " << size << ", resetting to 1.0";
+            ErrorLogger() << "PythonUniverseGenerator::CreateFieldImpl given very small / negative size: " << size << ", resetting to 1.0";
             size = 1.0;
         }
         if (size > 10000.0) {
-            ErrorLogger() << "PythonUniverseGenerator::CreateField given very large size: " << size << ", so resetting to 10000.0";
+            ErrorLogger() << "PythonUniverseGenerator::CreateFieldImpl given very large size: " << size << ", so resetting to 10000.0";
             size = 10000.0;
         }
 
         // create the new field
         TemporaryPtr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
         if (!field) {
-            ErrorLogger() << "PythonUniverseGenerator::CreateField: couldn't create field";
+            ErrorLogger() << "PythonUniverseGenerator::CreateFieldImpl: couldn't create field";
 			return TemporaryPtr<Field>();
         }
 
@@ -905,23 +905,23 @@ namespace {
         return field;
     }
 
-    int CreateField1(const std::string& field_type_name, double x, double y, double size) {
-        TemporaryPtr<Field> field = CreateField(field_type_name, x, y, size);
+    int CreateField(const std::string& field_type_name, double x, double y, double size) {
+        TemporaryPtr<Field> field = CreateFieldImpl(field_type_name, x, y, size);
         if (field)
             return field->ID();
         else
             return INVALID_OBJECT_ID;
     }
     
-    int CreateField2(const std::string& field_type_name, double size, int system_id) {
+    int CreateFieldInSystem(const std::string& field_type_name, double size, int system_id) {
         // check if system exists and get system
         TemporaryPtr<System> system = GetSystem(system_id);
         if (!system) {
-            ErrorLogger() << "PythonUniverseGenerator::CreateField2: couldn't get system with ID" << system_id;
+            ErrorLogger() << "PythonUniverseGenerator::CreateFieldInSystem: couldn't get system with ID" << system_id;
             return INVALID_OBJECT_ID;
         }
         // create the field with the coordinates of the system
-        TemporaryPtr<Field> field = CreateField(field_type_name, system->X(), system->Y(), size);
+        TemporaryPtr<Field> field = CreateFieldImpl(field_type_name, system->X(), system->Y(), size);
         if (!field)
             return INVALID_OBJECT_ID;
         system->Insert(field); // insert the field into the system
@@ -1323,8 +1323,8 @@ void WrapServerAPI() {
     def("create_ship",                          CreateShip);
     def("create_monster_fleet",                 CreateMonsterFleet);
     def("create_monster",                       CreateMonster);
-    def("create_field",                         CreateField1);
-    def("create_field",                         CreateField2);
+    def("create_field",                         CreateField);
+    def("create_field_in_system",               CreateFieldInSystem);
 
     def("sys_get_star_type",                    SystemGetStarType);
     def("sys_set_star_type",                    SystemSetStarType);
