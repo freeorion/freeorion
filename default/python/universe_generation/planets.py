@@ -2,6 +2,7 @@ import sys
 import random
 import freeorion as fo
 import util
+import universe_tables as tables
 
 
 # tuple of all valid planet sizes (with "no world")
@@ -39,17 +40,17 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
         max_roll = 0
         for candidate in planet_sizes_all:
             roll = random.randint(1, 100) \
-                + fo.density_mod_to_planet_size_dist(planet_density, candidate) \
-                + fo.star_type_mod_to_planet_size_dist(star_type, candidate) \
-                + fo.orbit_mod_to_planet_size_dist(orbit, candidate) \
-                + fo.galaxy_shape_mod_to_planet_size_dist(galaxy_shape, candidate)
+                + tables.DENSITY_MOD_TO_PLANET_SIZE_DIST[planet_density][candidate] \
+                + tables.STAR_TYPE_MOD_TO_PLANET_SIZE_DIST[star_type][candidate] \
+                + tables.ORBIT_MOD_TO_PLANET_SIZE_DIST[orbit][candidate] \
+                + tables.GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST[galaxy_shape][candidate]
             if max_roll < roll:
                 max_roll = roll
                 planet_size = candidate
     except:
-        # in case of an error play save and set planet size to invalid
+        # in case of an error play it safe and set planet size to invalid
         planet_size = fo.planetSize.unknown
-        util.report_error("Python calc_planet_size: Pick planet size failed\n" + sys.exc_info()[1])
+        util.report_error("Python calc_planet_size: Pick planet size failed" + str(sys.exc_info()[1]))
 
     # if we got an invalid planet size (for whatever reason),
     # just select one randomly from the global tuple based
@@ -65,14 +66,7 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
 
 def calc_planet_type(star_type, orbit, planet_size):
     """
-    Calculate planet type for a potential new planet.
-
-    TEMP: For now, pick planet type randomly, unless it is required by size
-    TODO: Consider using the universe tables that modify planet type again,
-          this has been (temporarily?) disabled in C code. But the respective
-          tables are there, the Python interface to them is in place, and
-          this function is already prepared to take all necessary parameters.
-          So if anyone feels like experimenting, go for it... :)
+    Calculate planet type randomly for a potential new planet.
     """
 
     # check specified planet size to determine if we want a planet at all

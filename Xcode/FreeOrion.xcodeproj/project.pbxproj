@@ -165,7 +165,6 @@
 		471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030470CEF569200A7DF2B /* ServerFSM.cpp */; };
 		471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA00CEF562700A7DF2B /* PythonAI.cpp */; };
 		4710338A0CEF723900A7DF2B /* AIInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F9E0CEF562700A7DF2B /* AIInterface.cpp */; };
-		47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */; };
 		47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */; };
 		47103BF30CF04E5900A7DF2B /* OptionsDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D290A98A3F900DA9C21 /* OptionsDB.cpp */; };
 		47103BF40CF04E5900A7DF2B /* Order.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D2C0A98A3F900DA9C21 /* Order.cpp */; };
@@ -793,8 +792,6 @@
 		471D5D190A98A3F900DA9C21 /* AppInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AppInterface.h; sourceTree = "<group>"; };
 		471D5D1A0A98A3F900DA9C21 /* binreloc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = binreloc.c; sourceTree = "<group>"; };
 		471D5D1B0A98A3F900DA9C21 /* binreloc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = binreloc.h; sourceTree = "<group>"; };
-		471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DataTable.cpp; sourceTree = "<group>"; };
-		471D5D1D0A98A3F900DA9C21 /* DataTable.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DataTable.h; sourceTree = "<group>"; };
 		471D5D1E0A98A3F900DA9C21 /* Directories.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Directories.cpp; sourceTree = "<group>"; };
 		471D5D1F0A98A3F900DA9C21 /* Directories.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Directories.h; sourceTree = "<group>"; };
 		471D5D210A98A3F900DA9C21 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
@@ -1774,8 +1771,6 @@
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
 				471D5D1B0A98A3F900DA9C21 /* binreloc.h */,
 				471D5CF60A98A3F900DA9C21 /* blocking_combiner.h */,
-				471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */,
-				471D5D1D0A98A3F900DA9C21 /* DataTable.h */,
 				471D5D1E0A98A3F900DA9C21 /* Directories.cpp */,
 				471D5D1F0A98A3F900DA9C21 /* Directories.h */,
 				471D5D200A98A3F900DA9C21 /* doc */,
@@ -2357,7 +2352,6 @@
 				34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */,
 				34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */,
 				34C449631182716E0071E09A /* SerializeUniverse.cpp in Sources */,
-				47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */,
 				47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */,
 				47103BF30CF04E5900A7DF2B /* OptionsDB.cpp in Sources */,
 				47103BF40CF04E5900A7DF2B /* Order.cpp in Sources */,

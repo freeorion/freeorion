@@ -4,6 +4,7 @@ import freeorion as fo
 
 import planets
 import statistics
+import universe_tables
 
 natives_for_planet_type = {}
 planet_types_for_natives = {}
@@ -28,12 +29,10 @@ def generate_natives(native_freq, systems, empire_home_systems):
 
     # first, calculate the chance for natives on a planet based on the native frequency that has been passed
     # get the corresponding value for the specified natives frequency from the universe tables
-    inverse_native_chance = fo.native_frequency(native_freq)
-    # as the value in the universe table is higher for a lower frequency, we have to invert it
-    # exception: a value of 0 means no natives, in this case return immediately
-    if inverse_native_chance <= 0:
+    native_chance = universe_tables.NATIVE_FREQUENCY[native_freq]
+    # a value of 0 means no natives, in this case return immediately
+    if native_chance <= 0:
         return
-    native_chance = 1.0 / float(inverse_native_chance)
 
     # compile a list of planets where natives can be placed
     # select only planets sufficiently far away from player home systems

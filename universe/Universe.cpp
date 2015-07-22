@@ -1,6 +1,5 @@
 #include "Universe.h"
 
-#include "../util/DataTable.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"

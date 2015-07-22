@@ -5,6 +5,7 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../parse/Parse.h"
+#include "../python/server/PythonServerFramework.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
@@ -12,14 +13,6 @@
 #include "System.h"
 #include "Species.h"
 #include "ValueRef.h"
-
-
-DataTableMap& UniverseDataTables() {
-    static DataTableMap map;
-    if (map.empty())
-        LoadDataTables((GetResourceDir() / "universe_tables.txt").string(), map);
-    return map;
-}
 
 //////////////////////////////////////////
 //  Universe Setup Functions            //
@@ -735,10 +728,7 @@ namespace {
     }
 }
 
-void GenerateStarlanes(GalaxySetupOption freq) {
-    if (freq == GALAXY_SETUP_NONE)
-        return;
-
+void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength) {
     int numSys, s1, s2, s3; // numbers of systems, indices in vec_sys
     int n; // loop counter
 
@@ -765,12 +755,6 @@ void GenerateStarlanes(GalaxySetupOption freq) {
     }
 
     Delauney::DTTriangle tri;
-
-    // convert passed StarlaneFrequency freq into maximum number of starlane jumps between systems that are
-    // "adjacent" in the delauney triangulation.  (separated by a single potential starlane).
-    // these numbers can be tweaked
-    int maxJumpsBetweenSystems = UniverseDataTables()["MaxJumpsBetweenSystems"][0][freq];
-
     // initialize arrays...
     potentialLaneSetArray.resize(numSys);
     for (n = 0; n < numSys; n++) {
@@ -816,7 +800,6 @@ void GenerateStarlanes(GalaxySetupOption freq) {
 
     //DebugLogger() << "Extracted Potential Starlanes from Triangulation";
 
-    double maxStarlaneLength = UniverseDataTables()["MaxStarlaneLength"][0][0];
     CullTooLongLanes(maxStarlaneLength, potentialLaneSetArray, sys_vec);
 
     CullAngularlyTooCloseLanes(0.98, potentialLaneSetArray, sys_vec);

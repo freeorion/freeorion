@@ -171,7 +171,6 @@ set (freeorioncommon_HEADER
     universe/ValueRefFwd.h
     util/AppInterface.h
     util/blocking_combiner.h
-    util/DataTable.h
     util/Directories.h
     util/EnumText.h
     util/i18n.h
@@ -231,7 +230,6 @@ set (freeorioncommon_SOURCE
     universe/UniverseObject.cpp
     universe/ValueRef.cpp
     util/AppInterface.cpp
-    util/DataTable.cpp
     util/Directories.cpp
     util/EnumText.cpp
     util/i18n.cpp
