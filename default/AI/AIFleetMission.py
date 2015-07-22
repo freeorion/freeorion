@@ -1,6 +1,6 @@
 import freeOrionAIInterface as fo # pylint: disable=import-error
 
-from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
+from AIFleetOrder import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
 import AIstate
 import FleetUtilsAI
 import EnumsAI
@@ -71,7 +71,7 @@ class AIFleetMission(object):
         ORDER_MILITARY = 10
         ORDER_REPAIR = 12
 
-        from fleet_orders import (OrderMove, OrderResupply, OrderSplitFleet, OrderOutpost, OrderColonize,
+        from AIFleetOrder import (OrderMove, OrderResupply, OrderSplitFleet, OrderOutpost, OrderColonize,
                                   OrderAttack, OrderDefend, OrderInvade, OrderMilitary, OrderRepair)
 
         def convert_order(obj):

@@ -2,7 +2,7 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import AIstate
 import universe_object
-import fleet_orders
+import AIFleetOrder
 import ColonisationAI
 import PlanetUtilsAI
 from freeorion_tools import ppstring
@@ -37,7 +37,7 @@ def get_fleet_orders_from_system_targets(fleet_target, targets):  # TODO conside
                 # remember last system which will be visited
                 last_system_target = system_targer
                 # create move order
-                fleet_order = fleet_orders.OrderMove(fleet_target, system_targer)
+                fleet_order = AIFleetOrder.OrderMove(fleet_target, system_targer)
                 result.append(fleet_order)
         else:
             if last_system_target.id != target.id:
@@ -277,7 +277,7 @@ def get_resupply_fleet_order(fleet_target, current_system_target):
     # find nearest supplied system
     supplied_system_target = get_nearest_supplied_system(current_system_target.id)
     # create resupply AIFleetOrder
-    return fleet_orders.OrderResupply(fleet_target, supplied_system_target)
+    return AIFleetOrder.OrderResupply(fleet_target, supplied_system_target)
 
 
 def get_repair_fleet_order(fleet_target, current_sys_id):
@@ -296,4 +296,4 @@ def get_repair_fleet_order(fleet_target, current_sys_id):
     drydock_sys_id = get_nearest_drydock_system_id(current_sys_id)
     print "ordering fleet %d to %s for repair" % (fleet_target.id, ppstring(PlanetUtilsAI.sys_name_ids([drydock_sys_id])))
     # create resupply AIFleetOrder
-    return fleet_orders.OrderRepair(fleet_target, universe_object.System(drydock_sys_id))
+    return AIFleetOrder.OrderRepair(fleet_target, universe_object.System(drydock_sys_id))
