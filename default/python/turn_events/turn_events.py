@@ -1,5 +1,5 @@
 import sys
-from random import random
+from random import random, uniform
 from math import sin, cos, pi
 
 import freeorion as fo
@@ -9,20 +9,21 @@ def execute_turn_events():
     print "Executing turn events for turn", fo.current_turn()
 
     # creating fields
-    if random() < max(0.2 * (fo.get_universe_width() / 1000.0), 0.1):
-        if random() < 0.3:
+    if random() < max(0.00015 * fo.get_universe_width(), 0.05):
+        if random() < 0.4:
             field_type = "FLD_MOLECULAR_CLOUD"
-            size = 120.0
+            size = 5.0
         else:
             field_type = "FLD_ION_STORM"
-            size = 50.0
+            size = 5.0
 
-        center_x = center_y = fo.get_universe_width() / 2.0
+        radius = fo.get_universe_width() / 2.0
         angle = random() * 2.0 * pi
-        x = center_x + ((center_x + 150.0 + (random() * 50)) * sin(angle))
-        y = center_y + ((center_x + 150.0 + (random() * 50)) * cos(angle))
+        dist_from_center = radius + uniform(min(radius * 0.02, 50.0), min(radius * 0.05, 100.0))
+        x = radius + (dist_from_center * sin(angle))
+        y = radius + (dist_from_center * cos(angle))
 
-        print "...creating new", field_type, "field at:", x, "/", y
+        print "...creating new", field_type, "field, at distance", dist_from_center, "from center"
         if fo.create_field(field_type, x, y, size) == fo.invalid_object():
             print >> sys.stderr, "Turn events: couldn't create new field"
 

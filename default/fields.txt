@@ -4,20 +4,35 @@ FieldType
     stealth = 0.01
     tags = [ "EXOTIC" ]
     effectsgroups = [
-        EffectsGroup    // move around, shrink a bit each turn when near systems
+        EffectsGroup    // move around
             scope = Source
             effects = [
-                SetSpeed value = 15
-                
+                SetSpeed value = 10
                 MoveTowards speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
                 MoveInOrbit speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
-
-                SetSize value = Value - 0.3*(Count condition = And [
-                    System
-                    WithinDistance distance = 80 condition = Source
-                ])
             ]
-            
+
+        EffectsGroup    // grow size when young
+            scope = Source
+            activation = And [
+                ValueTest high = max((UniverseWidth ^ 1.1) / 50, 20) TestValue = Source.Age
+                Size high = 50
+               ]
+            effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
+
+        EffectsGroup    // shrink size when old
+            scope = Source
+            activation = ValueTest low = max((UniverseWidth ^ 1.1) / 50, 20) TestValue = Source.Age
+            effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
+/*
+        EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
+            scope = Source
+            activation = ValueTest low = 10 TestValue = Source.Age
+            effects = SetSize value = Value - 0.3 * (Count condition = And [
+                System
+                WithinDistance distance = 80 condition = Source
+            ])
+*/
         EffectsGroup    // affect stealth / detection of objects in storm
             scope = WithinDistance distance = Source.Size condition = Source
             stackinggroup = "ION_STORM_STEALTH_DETECTION_REDUCTION"
@@ -25,11 +40,15 @@ FieldType
                 SetStealth value = Value - 40
                 SetDetection value = Value - 40
             ]
-            
-        EffectsGroup    // dissipate when small
+
+        EffectsGroup    // after reaching a certain age, dissipate when small
             scope = Source
-            activation = Size high = 10
+            activation = And [
+                ValueTest low = 10 TestValue = Source.Age
+                Size high = 10
+            ]
             effects = Destroy
+
     ]
     graphic = "fields/rainbow_storm.png"
 
@@ -39,20 +58,35 @@ FieldType
     stealth = 0.01
     tags = [ "EXOTIC" ]
     effectsgroups = [
-        EffectsGroup    // move around, shrink a bit each turn when near systems
+        EffectsGroup    // move around
             scope = Source
             effects = [
                 SetSpeed value = 5
-                
                 MoveTowards speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
                 MoveInOrbit speed = Source.Speed/1.4 x = UniverseCentreX y = UniverseCentreY
-
-                SetSize value = Value - 0.1*(Count condition = And [
-                    System
-                    WithinDistance distance = 80 condition = Source
-                ])
             ]
-            
+
+        EffectsGroup    // grow size when young
+            scope = Source
+            activation = And [
+                ValueTest high = max((UniverseWidth ^ 1.1) / 50, 30) TestValue = Source.Age
+                Size high = 120
+               ]
+            effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
+
+        EffectsGroup    // shrink size when old
+            scope = Source
+            activation = ValueTest low = max((UniverseWidth ^ 1.1) / 50, 30) TestValue = Source.Age
+            effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
+/*
+        EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
+            scope = Source
+            activation = ValueTest low = 10 TestValue = Source.Age
+            effects = SetSize value = Value - 0.1 * (Count condition = And [
+                System
+                WithinDistance distance = 80 condition = Source
+            ])
+*/
         EffectsGroup    // reduce shields
             scope = And [
                 Ship
@@ -60,10 +94,13 @@ FieldType
             ]
             stackinggroup = "MOLECULAR_CLOUD_SHIELD_REDUCTION"
             effects = SetMaxShield value = Value - 15
-            
-        EffectsGroup    // dissipate when small
+
+        EffectsGroup    // after reaching a certain age, dissipate when small
             scope = Source
-            activation = Size high = 10
+            activation = And [
+                ValueTest low = 10 TestValue = Source.Age
+                Size high = 10
+            ]
             effects = Destroy
     ]
     graphic = "nebulae/nebula8.png"
