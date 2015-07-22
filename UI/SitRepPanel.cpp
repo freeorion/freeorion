@@ -404,12 +404,18 @@ void SitRepPanel::KeyPress(GG::Key key, boost::uint32_t key_code_point,
 
 void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
+    std::size_t first_visible_queue_row = std::distance(m_sitreps_lb->begin(), m_sitreps_lb->FirstRowShown());
 
     CUIWnd::SizeMove(ul, lr);
 
     if (old_size != GG::Wnd::Size()) {
+        GG::ListBox::iterator row_to_show = m_sitreps_lb->FirstRowShown();
         DoLayout();
         Update();
+        if (!m_sitreps_lb->Empty()) {
+            m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
+            m_sitreps_lb->BringRowIntoView(boost::next(m_sitreps_lb->begin(), first_visible_queue_row));
+        }
     }
 }
 

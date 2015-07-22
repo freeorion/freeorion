@@ -4379,9 +4379,7 @@ SITREP_SNOOZE_CLEAR_ALL
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_WELCOME
-'''
-[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]
-'''
+'''[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]'''
 
 SITREP_WELCOME_LABEL
 Welcome
