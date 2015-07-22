@@ -2352,6 +2352,17 @@ ENVIRONMENT_MODIFIER
             scope = Source
             activation = And [
                 Planet
+                Planet environment = [ Good Adequate ]
+                OwnerHasTech name = "GRO_PLANET_ECOL"
+                Not OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
+            ]
+            accountinglabel = "GRO_PLANET_ECOL"
+            effects = SetTargetPopulation value = Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
                 Planet environment = [ Good Adequate Poor ]
                 OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
             ]

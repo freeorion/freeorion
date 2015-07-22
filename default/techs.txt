@@ -973,7 +973,7 @@ Tech
 Tech
     name = "GRO_PLANET_ECOL"
     description = "GRO_PLANET_ECOL_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "POPULATION_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
