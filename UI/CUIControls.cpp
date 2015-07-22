@@ -588,9 +588,9 @@ void CUIScroll::Render() {
 
     m_buffer.activate();
     glColor(color_to_use);
-    glDrawArrays(GL_TRIANGLE_FAN,   0, m_buffer.size() - 1);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, m_buffer.size());
     glColor(border_color_to_use);
-    glDrawArrays(GL_LINE_STRIP,     0, m_buffer.size());
+    glDrawArrays(GL_LINE_LOOP,      0, m_buffer.size());
 
     glEnable(GL_TEXTURE_2D);
     glPopMatrix();

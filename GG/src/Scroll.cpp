@@ -144,7 +144,6 @@ void Scroll::InitBuffer()
     m_buffer.store(Value(sz.x), 0.0f);
     m_buffer.store(Value(sz.x), Value(sz.y));
     m_buffer.store(0.0f,        Value(sz.y));
-    m_buffer.store(0.0f,        0.0f);
 }
 
 void Scroll::Render()
@@ -160,7 +159,7 @@ void Scroll::Render()
 
     m_buffer.activate();
     glColor(Disabled() ? DisabledColor(m_int_color) : m_int_color);
-    glDrawArrays(GL_TRIANGLE_FAN,   0, m_buffer.size() - 1);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, m_buffer.size());
 
     glLineWidth(1.0f);
     glEnable(GL_TEXTURE_2D);

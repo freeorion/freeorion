@@ -209,7 +209,6 @@ void CensusBrowseWnd::InitBuffer() {
     m_buffer.store(Value(sz.x), 0.0f);
     m_buffer.store(Value(sz.x), Value(sz.y));
     m_buffer.store(0.0f,        Value(sz.y));
-    m_buffer.store(0.0f,        0.0f);
 }
 
 void CensusBrowseWnd::Render() {
@@ -226,7 +225,7 @@ void CensusBrowseWnd::Render() {
     glColor(ClientUI::WndColor());
     glDrawArrays(GL_TRIANGLE_FAN,   2, 4);
     glColor(ClientUI::WndOuterBorderColor());
-    glDrawArrays(GL_LINE_STRIP,     2, 5);
+    glDrawArrays(GL_LINE_LOOP,      2, 4);
     glDrawArrays(GL_TRIANGLE_FAN,   0, 4);
 
     glEnable(GL_TEXTURE_2D);
