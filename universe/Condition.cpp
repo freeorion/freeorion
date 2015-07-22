@@ -2993,7 +2993,7 @@ std::string Condition::ObjectID::Description(bool negated/* = false*/) const {
 }
 
 std::string Condition::ObjectID::Dump() const
-{ return DumpIndent() + "Object id = " + m_object_id->Dump(); }
+{ return DumpIndent() + "Object id = " + m_object_id->Dump() + "\n"; }
 
 void Condition::ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                             Condition::ObjectSet& condition_non_targets) const
