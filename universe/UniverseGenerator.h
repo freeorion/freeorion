@@ -5,7 +5,6 @@
 #include "Condition.h"
 #include "Universe.h"
 
-#include "../util/DataTable.h"
 #include "../util/MultiplayerCommon.h"
 
 
@@ -85,10 +84,6 @@ protected:
     const Condition::ConditionBase* m_location;
 };
 
-
-// Returns map of universe tables
-DataTableMap& UniverseDataTables();
-
 // Calculates typical universe width based on number of systems
 // A 150 star universe should be 1000 units across
 double CalcTypicalUniverseWidth(int size);
@@ -102,7 +97,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);
 void SetNativePopulationValues(ObjectMap& object_map);
     
 /** Creates starlanes and adds them systems already generated. */
-void GenerateStarlanes(GalaxySetupOption freq);
+void GenerateStarlanes(int maxJumpsBetweenSystems, int maxStarlaneLength);
 
 /** Sets empire homeworld
  * This includes setting ownership, capital, species,

@@ -148,9 +148,6 @@
     <ClInclude Include="..\..\util\AppInterface.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\util\DataTable.h">
-      <Filter>Header Files\util</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\util\Directories.h">
       <Filter>Header Files\util</Filter>
     </ClInclude>
@@ -239,9 +236,6 @@
     </ClCompile>
     <ClCompile Include="..\..\network\Networking.cpp">
       <Filter>Source Files\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\DataTable.cpp">
-      <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\Directories.cpp">
       <Filter>Source Files\util</Filter>

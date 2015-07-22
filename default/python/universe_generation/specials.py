@@ -1,6 +1,7 @@
 import random
 import freeorion as fo
 import statistics
+import universe_tables
 
 
 def distribute_specials(specials_freq, universe_objects):
@@ -9,8 +10,7 @@ def distribute_specials(specials_freq, universe_objects):
     """
 
     # get basic chance for occurrence of specials from the universe tables
-    # the values there are integers, so we have to divide them by 10,000 to get the actual basic probability value
-    basic_chance = float(fo.specials_frequency(specials_freq)) / 10000.0
+    basic_chance = universe_tables.SPECIALS_FREQUENCY[specials_freq]
     if basic_chance <= 0:
         return
 

@@ -4,6 +4,7 @@ from math import pi, sin, cos, sqrt
 
 import freeorion as fo
 import util
+import universe_tables
 
 
 # tuple of galaxy shapes to randomly choose from when shape is "random"
@@ -353,7 +354,7 @@ def irregular_galaxy_calc_positions(positions, size, width):
     Calculate positions for the irregular galaxy shape.
     """
     adjacency_grid = AdjacencyGrid(width)
-    max_delta = max(min(float(fo.max_starlane_length()), width / 10.0), adjacency_grid.min_dist * 2.0)
+    max_delta = max(min(float(universe_tables.MAX_STARLANE_LENGTH), width / 10.0), adjacency_grid.min_dist * 2.0)
     print "Irregular galaxy shape: max delta distance =", max_delta
     origin_x, origin_y = width / 2.0, width / 2.0
     prev_x, prev_y = origin_x, origin_y

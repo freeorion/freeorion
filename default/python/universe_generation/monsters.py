@@ -2,6 +2,7 @@ import random
 import freeorion as fo
 import util
 import statistics
+import universe_tables
 
 
 def generate_monsters(monster_freq, systems):
@@ -12,12 +13,10 @@ def generate_monsters(monster_freq, systems):
     # first, calculate the basic chance for monster generation in a system
     # based on the monster frequency that has been passed
     # get the corresponding value for the specified monster frequency from the universe tables
-    inverse_monster_chance = fo.monster_frequency(monster_freq)
-    # as the value in the universe table is higher for a lower frequency, we have to invert it
-    # exception: a value of 0 means no monsters, in this case return immediately
-    if inverse_monster_chance <= 0:
+    basic_chance = universe_tables.MONSTER_FREQUENCY[monster_freq]
+    # a value of 0 means no monsters, in this case return immediately
+    if basic_chance <= 0:
         return
-    basic_chance = 1.0 / float(inverse_monster_chance)
     print "Default monster spawn chance:", basic_chance
     expectation_tally = 0.0
     actual_tally = 0
