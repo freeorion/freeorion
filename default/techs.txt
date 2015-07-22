@@ -1528,7 +1528,7 @@ Tech
 Tech
     name = "CON_ARCH_MONOFILS"
     description = "CON_ARCH_MONOFILS_DESC"
-    short_description = "SUPPLY_SHORT_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
@@ -1958,7 +1958,7 @@ Tech
 Tech
     name = "SHP_INTSTEL_LOG"
     description = "SHP_INTSTEL_LOG_DESC"
-    short_description = "SUPPLY_SHORT_DESC"
+    short_description = "STARLANE_SPEED_SHORT_DESC"
     techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
