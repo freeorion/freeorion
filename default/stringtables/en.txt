@@ -7521,7 +7521,9 @@ GRO_PLANET_ECOL
 Planetary Ecology
 
 GRO_PLANET_ECOL_DESC
-Agriculture and medical science can drastically increase survivability, allowing great increases in population and food production. Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it. Understanding natural ecology and its interaction to stresses permits the system to be modified and enhanced, and its benefits reaped for generations to come.
+'''Increases the max population of Adequate planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+
+Agriculture and medical science can drastically increase survivability, allowing great increases in population and food production. Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it. Understanding natural ecology and its interaction to stresses permits the system to be modified and enhanced, and its benefits reaped for generations to come.'''
 
 GRO_GENETIC_ENG
 Genetic Engineering
@@ -7565,7 +7567,8 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-'''Increases the max population of Adequate & Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10, and Hostile planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+'''Increases the max population of Adequate planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5. 
+Increases the max population of Poor and Hostile planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10.
 
 The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
 
