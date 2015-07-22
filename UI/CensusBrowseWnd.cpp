@@ -187,6 +187,8 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
     m_tags_list->Resize(GG::Pt(BROWSE_TEXT_WIDTH, top2 -top -ROW_HEIGHT - HALF_HEIGHT + (EDGE_PAD*3)));
 
     Resize(GG::Pt(BROWSE_TEXT_WIDTH, top2  + (EDGE_PAD*3)));
+
+    InitBuffer();
 }
 
 bool CensusBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
@@ -194,14 +196,40 @@ bool CensusBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
     return true;
 }
 
-void CensusBrowseWnd::Render() {
-    GG::Pt      ul = UpperLeft();
-    GG::Pt      lr = LowerRight();
+void CensusBrowseWnd::InitBuffer() {
+    GG::Pt sz = Size();
     const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
-    // main background
-    GG::FlatRectangle(ul + m_offset, lr + m_offset, ClientUI::WndColor(),
-                      ClientUI::WndOuterBorderColor(), 1);
-    // top title filled background
-    GG::FlatRectangle(ul + m_offset, GG::Pt(lr.x, ul.y + ROW_HEIGHT) + m_offset,
-                      ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+
+    m_buffer.clear();
+
+    m_buffer.store(Value(sz.x), Value(ROW_HEIGHT));
+    m_buffer.store(0.0f,        Value(ROW_HEIGHT));
+
+    m_buffer.store(0.0f,        0.0f);
+    m_buffer.store(Value(sz.x), 0.0f);
+    m_buffer.store(Value(sz.x), Value(sz.y));
+    m_buffer.store(0.0f,        Value(sz.y));
+    m_buffer.store(0.0f,        0.0f);
+}
+
+void CensusBrowseWnd::Render() {
+    GG::Pt ul = UpperLeft() + m_offset;
+
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(1.0);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    m_buffer.activate();
+    glColor(ClientUI::WndColor());
+    glDrawArrays(GL_TRIANGLE_FAN,   2, 4);
+    glColor(ClientUI::WndOuterBorderColor());
+    glDrawArrays(GL_LINE_STRIP,     2, 5);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, 4);
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
 }

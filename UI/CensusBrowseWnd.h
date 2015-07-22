@@ -15,13 +15,17 @@ public:
     void            DoLayout();
 
 private:
-    GG::Label*          m_title_text;
-    GG::Label*          m_species_text;
-    GG::ListBox*        m_list;
-    GG::Label*          m_tags_text;
-    GG::ListBox*        m_tags_list;
-    GG::Pt              m_offset;
-    GG::Y               m_row_height;
+    virtual void  InitBuffer();
+
+    GG::GL2DVertexBuffer    m_buffer;
+
+    GG::Label*      m_title_text;
+    GG::Label*      m_species_text;
+    GG::ListBox*    m_list;
+    GG::Label*      m_tags_text;
+    GG::ListBox*    m_tags_list;
+    GG::Pt          m_offset;
+    GG::Y           m_row_height;
 
     void InitRowSizes();
 };
