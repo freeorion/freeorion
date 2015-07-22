@@ -117,6 +117,7 @@ class AIFleetMissionType(EnumsType):
     FLEET_MISSION_ORBITAL_DEFENSE = 12
     FLEET_MISSION_ORBITAL_INVASION = 13
     FLEET_MISSION_ORBITAL_OUTPOST = 14
+    # FLEET_MISSION_ORBITAL_COLONISATION = 15 Not implemented yet
 
     names = ['explore', 'outpost', 'colonize', 'split_fleet', 'mergeFleet', 'hit&Run', 'attack', 'defend', 'last_stand', 'invasion', 'military', 'secure',
                                                     'orbitalDefense', 'orbitalInvasion', 'orbitalOutpost', 'orbitalColonisation', 'repair', 'invalid']
