@@ -52,6 +52,7 @@ namespace {
             free_variable_name
                 =   tok.UniverseCentreX_
                 |   tok.UniverseCentreY_
+                |   tok.UniverseWidth_
                 ;
 
             constant

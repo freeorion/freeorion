@@ -564,6 +564,8 @@ namespace ValueRef {
                 property_name == "UniverseCentreY")
             {
                 return GetUniverse().UniverseWidth() / 2;
+            } else if (property_name == "UniverseWidth") {
+                return GetUniverse().UniverseWidth();
             }
 
             // add more non-object reference double functions here

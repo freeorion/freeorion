@@ -465,6 +465,7 @@
     (Uninhabitable)                             \
     (UniverseCentreX)                           \
     (UniverseCentreY)                           \
+    (UniverseWidth)                             \
     (Unlock)                                    \
     (Unowned)                                   \
     (Unproducible)                              \
