@@ -332,7 +332,7 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
         s_fleet = universe.getFleet(secure_fleet_id)
         if not s_fleet or s_fleet.systemID != p_sys_id:
             continue
-        if mission == EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE:
+        if mission.type == EnumsAI.AIFleetMissionType.FLEET_MISSION_SECURE:
             target_obj = mission.target.get_object()
             if target_obj is not None and target_obj.id in secure_targets:
                 system_secured = True
