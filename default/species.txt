@@ -2321,7 +2321,7 @@ ENVIRONMENT_MODIFIER
                 Planet environment = Hostile
             ]
             accountinglabel = "HOSTILE_ENVIRONMENT_LABEL"
-            effects = SetTargetPopulation value = Value - 4 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value - 5 * Source.SizeAsDouble
             
         EffectsGroup
             scope = Source
@@ -2352,6 +2352,16 @@ ENVIRONMENT_MODIFIER
             scope = Source
             activation = And [
                 Planet
+                Planet environment = [ Adequate ]
+                OwnerHasTech name = "GRO_PLANET_ECOL"
+            ]
+            accountinglabel = "GRO_PLANET_ECOL"
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
                 Planet environment = [ Good Adequate Poor ]
                 OwnerHasTech name = "GRO_SYMBIOTIC_BIO"
             ]
@@ -2362,21 +2372,21 @@ ENVIRONMENT_MODIFIER
             scope = Source
             activation = And [
                 Planet
-                Planet environment = [ Adequate Poor ]
+                Planet environment = [ Adequate ]
                 OwnerHasTech name = "GRO_XENO_GENETICS"
             ]
             accountinglabel = "GRO_XENO_GENETICS"
-            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
             activation = And [
                 Planet
-                Planet environment = [ Hostile ]
+                Planet environment = [ Poor Hostile ]
                 OwnerHasTech name = "GRO_XENO_GENETICS"
             ]
             accountinglabel = "GRO_XENO_GENETICS"
-            effects = SetTargetPopulation value = Value + 1 * Source.SizeAsDouble
+            effects = SetTargetPopulation value = Value + 2 * Source.SizeAsDouble
 
         EffectsGroup
             scope = Source
