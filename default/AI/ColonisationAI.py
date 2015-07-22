@@ -76,6 +76,8 @@ POP_SIZE_MOD_MAP = {
 
 def get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, star_pop_mod):
     detail = []
+    # if someone introduces a new environment without this being updated, AI simply won't try
+    # to colonize it.
     pop_size_mod = POP_SIZE_MOD_MAP["environment_bonus"][planet_env]
     detail.append("EnvironPopSizeMod(%d)" % pop_size_mod)
     if "SELF_SUSTAINING" in tag_list:
@@ -84,40 +86,32 @@ def get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, sta
     if "PHOTOTROPHIC" in tag_list:
         pop_size_mod += star_pop_mod
         detail.append("Phototropic Star Bonus_PSM(%0.1f)" % star_pop_mod)
-    for tech in ["GRO_SYMBIOTIC_BIO", "GRO_XENO_GENETICS", "GRO_XENO_HYBRID", "GRO_CYBORG"]:
-        if tech_is_complete(tech):
+    for tech in POP_SIZE_MOD_MAP:
+        if tech != "environment_bonus" and tech_is_complete(tech):
             pop_size_mod += POP_SIZE_MOD_MAP[tech][planet_env]
             detail.append("%s_PSM(%d)" % (tech, POP_SIZE_MOD_MAP[tech][planet_env]))
-    if pop_size_mod >= 0:
-        if tech_is_complete("GRO_SUBTER_HAB"):
-            pop_size_mod += POP_SIZE_MOD_MAP["GRO_SUBTER_HAB"][planet_env]
-            detail.append("Sub_Hab_PSM(%d)" % POP_SIZE_MOD_MAP["GRO_SUBTER_HAB"][planet_env])
-        for tech in ["CON_NDIM_STRUC", "CON_ORBITAL_HAB"]:
-            if tech_is_complete(tech):
-                pop_size_mod += POP_SIZE_MOD_MAP[tech][planet_env]
-                detail.append("%s_PSM(%d)" % (tech, POP_SIZE_MOD_MAP[tech][planet_env]))
-        #  exobots can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
-        if "GAIA_SPECIAL" in planet.specials and species.name != "SP_EXOBOT":
-            pop_size_mod += 3
-            detail.append("Gaia_PSM(3)")
+    #  exobots can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
+    if "GAIA_SPECIAL" in planet.specials and species.name != "SP_EXOBOT":
+        pop_size_mod += 3
+        detail.append("Gaia_PSM(3)")
 
-        applicable_boosts = set()
-        for thisTag in [tag for tag in tag_list if tag in AIDependencies.metabolismBoostMap]:
-            metab_boosts = AIDependencies.metabolismBoostMap.get(thisTag, [])
-            if pop_size_mod > 0:
-                for key in active_growth_specials.keys():
-                    if len(active_growth_specials[key]) > 0 and key in metab_boosts:
-                        applicable_boosts.add(key)
-                        detail.append("%s boost active" % key)
-            for boost in metab_boosts:
-                if boost in planet_specials:
-                    applicable_boosts.add(boost)
-                    detail.append("%s boost present" % boost)
+    applicable_boosts = set()
+    for thisTag in [tag for tag in tag_list if tag in AIDependencies.metabolismBoostMap]:
+        metab_boosts = AIDependencies.metabolismBoostMap.get(thisTag, [])
+        if pop_size_mod > 0:
+            for key in active_growth_specials.keys():
+                if len(active_growth_specials[key]) > 0 and key in metab_boosts:
+                    applicable_boosts.add(key)
+                    detail.append("%s boost active" % key)
+        for boost in metab_boosts:
+            if boost in planet_specials:
+                applicable_boosts.add(boost)
+                detail.append("%s boost present" % boost)
 
-        n_boosts = len(applicable_boosts)
-        if n_boosts:
-            pop_size_mod += n_boosts
-            detail.append("boosts_PSM(%d from %s)" % (n_boosts, applicable_boosts))
+    n_boosts = len(applicable_boosts)
+    if n_boosts:
+        pop_size_mod += n_boosts
+        detail.append("boosts_PSM(%d from %s)" % (n_boosts, applicable_boosts))
     return pop_size_mod, detail
 
 
@@ -1280,7 +1274,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if AIFocusType.FOCUS_INDUSTRY in species.foci:
             max_ind_factor += base_pop_ind * mining_bonus
             max_ind_factor += base_pop_ind * ind_mult
-        cur_pop = 1.0  # assume an initial colonization vale
+        cur_pop = 1.0  # assume an initial colonization value
         if planet.speciesName != "":
             cur_pop = planet.currentMeterValue(fo.meterType.population)
         elif tech_is_complete("GRO_LIFECYCLE_MAN"):
