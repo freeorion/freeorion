@@ -529,6 +529,10 @@ ClientUI::ClientUI() :
     s_the_UI = this;
     Hotkey::ReadFromOptions(GetOptionsDB());
 
+    // Remove all window properties if asked to
+    if (GetOptionsDB().Get<bool>("window-reset"))
+        CUIWnd::RemoveUnusedOptions();
+
     m_message_wnd =             new MessageWnd(   GG::X0,                  GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,
                                                   MESSAGE_PANEL_WIDTH,     PANEL_HEIGHT,
                                                   MESSAGE_WND_NAME);
