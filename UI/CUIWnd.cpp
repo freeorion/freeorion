@@ -584,25 +584,16 @@ void CUIWnd::LoadOptions() {
         return;
     }
 
-    GG::Pt ul(GG::X0, GG::Y0);
-    GG::Pt size(GG::X1, GG::Y1);
-
     std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
     if (!db.Get<bool>("fullscreen"))
         windowed = "-windowed";
 
-    if (db.Get<bool>("window-reset")) {
-        ul   = GG::Pt(GG::X(db.GetDefault<int>("UI.windows."+m_config_name+".left"+windowed)),
-                      GG::Y(db.GetDefault<int>("UI.windows."+m_config_name+".top"+windowed)));
-        size = GG::Pt(GG::X(db.GetDefault<int>("UI.windows."+m_config_name+".width"+windowed)),
-                      GG::Y(db.GetDefault<int>("UI.windows."+m_config_name+".height"+windowed)));
-    } else {
-        ul   = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".left"+windowed)),
-                      GG::Y(db.Get<int>("UI.windows."+m_config_name+".top"+windowed)));
-        size = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".width"+windowed)),
-                      GG::Y(db.Get<int>("UI.windows."+m_config_name+".height"+windowed)));
-        m_config_save = false;
-    }
+    GG::Pt ul   = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".left"+windowed)),
+                         GG::Y(db.Get<int>("UI.windows."+m_config_name+".top"+windowed)));
+    GG::Pt size = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".width"+windowed)),
+                         GG::Y(db.Get<int>("UI.windows."+m_config_name+".height"+windowed)));
+
+    m_config_save = false;
 
     if (m_minimized) {
         MinimizeClicked();
@@ -694,6 +685,58 @@ const std::string CUIWnd::AddWindowOptions(const std::string& config_name,
                             Value(left), Value(top),
                             Value(width), Value(height),
                             visible, pinned, minimized);
+}
+
+void CUIWnd::RemoveWindowOptions(const std::string& config_name) {
+    OptionsDB& db = GetOptionsDB();
+    if (db.OptionExists("UI.windows."+config_name+".exists") &&
+        db.Get<bool>("UI.windows."+config_name+".exists"))
+    {
+        // Should be set to false in window dtor.
+        ErrorLogger() << "CUIWnd::RemoveWindowOptions() : attempted to remove window options using name \"" << config_name << "\" but they appear to be in use by a window.";
+        return;
+    } else if (!db.OptionExists("UI.windows."+config_name+".exists")) {
+        ErrorLogger() << "CUIWnd::RemoveWindowOptions() : attempted to remove window options using name \"" << config_name << "\" but the options do not appear to be registered in the OptionsDB.";
+        return;
+    }
+
+    db.Remove("UI.windows."+config_name+".exists");
+    db.Remove("UI.windows."+config_name+".left");
+    db.Remove("UI.windows."+config_name+".top");
+    db.Remove("UI.windows."+config_name+".left-windowed");
+    db.Remove("UI.windows."+config_name+".top-windowed");
+    db.Remove("UI.windows."+config_name+".width");
+    db.Remove("UI.windows."+config_name+".height");
+    db.Remove("UI.windows."+config_name+".width-windowed");
+    db.Remove("UI.windows."+config_name+".height-windowed");
+    db.Remove("UI.windows."+config_name+".visible");
+    db.Remove("UI.windows."+config_name+".pinned");
+    db.Remove("UI.windows."+config_name+".minimized");
+}
+
+void CUIWnd::RemoveUnusedOptions() {
+    OptionsDB& db = GetOptionsDB();
+    std::string prefix("UI.windows.");
+    std::string suffix(".exists");
+
+    // Remove unrecognized options from the DB so that their values aren't
+    // applied when they are eventually registered.
+    db.RemoveUnrecognized(prefix);
+
+    // Remove registered options for windows that aren't currently
+    // instantiated so they fall back on defaults when they are re-constructed.
+    std::set<std::string> window_options;
+    db.FindOptions(window_options, prefix);
+    for (std::set<std::string>::iterator it = window_options.begin(); it != window_options.end(); ++it) {
+        // If the ".exists" option is registered, the rest are implied to be
+        // there.
+        if (it->rfind(suffix) == it->length() - suffix.length() &&
+            db.OptionExists(*it))
+        {
+            std::string name = it->substr(prefix.length(), it->length() - prefix.length() - suffix.length());
+            RemoveWindowOptions(name);
+        }
+    }
 }
 
 ///////////////////////////////////////

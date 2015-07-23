@@ -125,6 +125,10 @@ public:
     virtual void    PinClicked();                       //!< called when window is pinned or unpinned via the pin button
     //@}
 
+    //! \name Statics //@{
+    static void     RemoveUnusedOptions();              //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
+    //@}
+
 protected:
     //! \name Accessors //@{
     virtual GG::Pt  MinimizedSize() const;              //!< the size of a minimized CUIWnd
@@ -146,6 +150,7 @@ protected:
                                               GG::X left = GG::X0, GG::Y top = GG::Y0,
                                               GG::X width = GG::X(400), GG::Y height = GG::Y(200),
                                               bool visible = false, bool pinned = false, bool minimized = false);    //!< overload that accepts GG::X and GG::Y instead of ints
+    static void              RemoveWindowOptions(const std::string& config_name);           //!< removes options containing \a config_name, logs an error instead if "UI.windows."+config_name+".initialized" exists (i.e. if a window is currently using that name)
     //@}
 
     //! \name Mutators //@{

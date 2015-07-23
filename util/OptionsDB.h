@@ -167,6 +167,10 @@ public:
     /** returns the contents of the DB as an XMLDoc. */
     XMLDoc      GetXML() const;
 
+    /** find all registered Options that begin with \a prefix and store them in
+      * \a ret. */
+    void        FindOptions(std::set<std::string>& ret, const std::string& prefix) const;
+
     /** the option changed signal object for the given option */
     OptionChangedSignalType&    OptionChangedSignal(const std::string& option);
 
@@ -270,6 +274,10 @@ public:
 
     /** removes an Option */
     void        Remove(const std::string& name);
+
+    /** removes all unrecognized Options that begin with \a prefix.  A blank
+      * string will remove all unrecognized Options. */
+    void        RemoveUnrecognized(const std::string& prefix = "");
 
     /** sets the value of option \a name to \a value */
     template <class T>
