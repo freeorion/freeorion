@@ -856,9 +856,7 @@ void PartsListBox::HideSuperfluousParts(bool refresh_list) {
 class DesignWnd::PartPalette : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    PartPalette(GG::X default_x, GG::Y default_y,
-                GG::X default_w, GG::Y default_h,
-                const std::string& config_name);
+    PartPalette(const std::string& config_name);
     //@}
 
     /** \name Mutators */ //@{
@@ -895,12 +893,8 @@ private:
     CUIButton*                          m_superfluous_parts_button;
 };
 
-DesignWnd::PartPalette::PartPalette(GG::X default_x, GG::Y default_y,
-                                    GG::X default_w, GG::Y default_h,
-                                    const std::string& config_name) :
+DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
     CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"),
-           default_x, default_y,
-           default_w, default_h,
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name),
     m_parts_list(0),
@@ -1983,9 +1977,7 @@ void BasesListBox::HideAvailability(bool available, bool refresh_list) {
 class DesignWnd::BaseSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    BaseSelector(GG::X default_x, GG::Y default_y,
-                 GG::X default_w, GG::Y default_h,
-                 const std::string& config_name);
+    BaseSelector(const std::string& config_name);
     //@}
 
     /** \name Mutators */ //@{
@@ -2020,12 +2012,8 @@ private:
     std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
 };
 
-DesignWnd::BaseSelector::BaseSelector(GG::X default_x, GG::Y default_y,
-                                      GG::X default_w, GG::Y default_h,
-                                      const std::string& config_name) :
+DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     CUIWnd(UserString("DESIGN_WND_STARTS"),
-           default_x, default_y,
-           default_w, default_h,
            GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE | PINABLE,
            config_name),
     m_tabs(0),
@@ -2449,9 +2437,7 @@ void SlotControl::EmitNullSlotContentsAlteredSignal()
 class DesignWnd::MainPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    MainPanel(GG::X default_x, GG::Y default_y,
-              GG::X default_w, GG::Y default_h,
-              const std::string& config_name);
+    MainPanel(const std::string& config_name);
     //@}
 
     /** \name Accessors */ //@{
@@ -2572,12 +2558,8 @@ private:
 // static
 DesignWnd::MainPanel::SetPartFuncPtrType const DesignWnd::MainPanel::s_set_part_func_ptr = &DesignWnd::MainPanel::SetPart;
 
-DesignWnd::MainPanel::MainPanel(GG::X default_x, GG::Y default_y,
-                                GG::X default_w, GG::Y default_h,
-                                const std::string& config_name) :
+DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"),
-           default_x, default_y,
-           default_w, default_h,
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE,
            config_name),
     m_hull(0),
@@ -3195,28 +3177,15 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     Sound::TempUISoundDisabler sound_disabler;
     SetChildClippingMode(ClipToClient);
 
-    GG::X base_selector_width(250);
-    GG::X most_panels_left = base_selector_width;
-    GG::X most_panels_width = ClientWidth() - most_panels_left;
-    GG::X detail_width = 5*most_panels_width/11;
-    GG::X part_palette_left = base_selector_width + detail_width;
-    GG::X part_palette_width = most_panels_width - detail_width;
-    GG::Y detail_top = GG::Y0;
-    GG::Y detail_height = 2*ClientHeight()/5;
-    GG::Y main_top = detail_top + detail_height;
-    GG::Y part_palette_height = detail_height;
-    GG::Y part_palette_top = detail_top;
-    GG::Y main_height = ClientHeight() - main_top;
+    m_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, DES_PEDIA_WND_NAME);
+    m_main_panel = new MainPanel(DES_MAIN_WND_NAME);
+    m_part_palette = new PartPalette(DES_PART_PALETTE_WND_NAME);
+    m_base_selector = new BaseSelector(DES_BASE_SELECTOR_WND_NAME);
+    InitializeWindows();
+    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, &DesignWnd::InitializeWindows, this);
 
-    m_detail_panel = new EncyclopediaDetailPanel(most_panels_left, detail_top,
-                                                 detail_width, detail_height,
-                                                 GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE,
-                                                 DES_PEDIA_WND_NAME);
     AttachChild(m_detail_panel);
 
-    m_main_panel = new MainPanel(most_panels_left, main_top,
-                                 most_panels_width, main_height,
-                                 DES_MAIN_WND_NAME);
     AttachChild(m_main_panel);
     GG::Connect(m_main_panel->PartTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_main_panel->HullTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
@@ -3232,16 +3201,10 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Connect(m_main_panel->CompleteDesignClickedSignal,      static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign),m_detail_panel);
     m_main_panel->Sanitize();
 
-    m_part_palette = new PartPalette(part_palette_left, part_palette_top,
-                                     part_palette_width, part_palette_height,
-                                     DES_PART_PALETTE_WND_NAME);
     AttachChild(m_part_palette);
     GG::Connect(m_part_palette->PartTypeClickedSignal,          static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
     GG::Connect(m_part_palette->PartTypeDoubleClickedSignal,    &DesignWnd::MainPanel::AddPart,     m_main_panel);
 
-    m_base_selector = new BaseSelector(GG::X0, GG::Y0,
-                                       base_selector_width, ClientHeight(),
-                                       DES_BASE_SELECTOR_WND_NAME);
     AttachChild(m_base_selector);
 
     GG::Connect(m_base_selector->DesignSelectedSignal,          static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign),
@@ -3296,6 +3259,28 @@ void DesignWnd::Render() {
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
+}
+
+void DesignWnd::InitializeWindows() {
+    const GG::X selector_width = GG::X(250);
+    const GG::X main_width = ClientWidth() - selector_width;
+
+    const GG::Pt pedia_ul(selector_width, GG::Y0);
+    const GG::Pt pedia_wh(5*main_width/11, 2*ClientHeight()/5);
+
+    const GG::Pt main_ul(selector_width, pedia_ul.y + pedia_wh.y);
+    const GG::Pt main_wh(main_width, ClientHeight() - main_ul.y);
+
+    const GG::Pt palette_ul(selector_width + pedia_wh.x, pedia_ul.y);
+    const GG::Pt palette_wh(main_width - pedia_wh.x, pedia_wh.y);
+
+    const GG::Pt selector_ul(GG::X0, GG::Y0);
+    const GG::Pt selector_wh(selector_width, ClientHeight());
+
+    m_detail_panel-> InitSizeMove(pedia_ul,     pedia_ul + pedia_wh);
+    m_main_panel->   InitSizeMove(main_ul,      main_ul + main_wh);
+    m_part_palette-> InitSizeMove(palette_ul,   palette_ul + palette_wh);
+    m_base_selector->InitSizeMove(selector_ul,  selector_ul + selector_wh);
 }
 
 void DesignWnd::ShowPartTypeInEncyclopedia(const std::string& part_type)

@@ -27,6 +27,9 @@ public:
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //!@}
 
+protected:
+    virtual GG::Rect CalculatePosition() const;
+
 private:
     typedef void (OptionsWnd::* VolumeSliderHandler)(int, int, int);
 

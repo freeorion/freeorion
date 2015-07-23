@@ -74,6 +74,8 @@ private:
     void    TechDoubleClickedSlot(const std::string& tech_name,
                                   const GG::Flags<GG::ModKey>& modkeys);
 
+    void    InitializeWindows();
+
     TechTreeControls*           m_tech_tree_controls;
     EncyclopediaDetailPanel*    m_enc_detail_panel;
     LayoutPanel*                m_layout_panel;

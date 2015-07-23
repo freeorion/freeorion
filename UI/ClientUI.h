@@ -86,6 +86,9 @@ public:
 
     void    DumpObject(int object_id);                                 //!< Displays debug info about specified object in messages window
 
+    void    InitializeWindows();
+    void    RecalculateWindowDefaults();                               //!< Recalculates default positions for all windows based on the current app size
+
     /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
     boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
 

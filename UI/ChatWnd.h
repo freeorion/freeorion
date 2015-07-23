@@ -16,9 +16,7 @@ class MessageWndEdit;
 class MessageWnd : public CUIWnd {
 public:
     //! \name Structors //@{
-    MessageWnd(GG::X default_x, GG::Y default_y,
-               GG::X default_w, GG::Y default_h,
-               const std::string& config_name = "");
+    MessageWnd(const std::string& config_name = "");
     //@}
 
     //! \name Mutators //@{
