@@ -1186,6 +1186,9 @@ If true, clicks on multiple fleet buttons will open multiple fleet windows at th
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
 
+OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
+Toggles whether to automatically reposition windows when the application size changes.
+
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
 At game start automatically add all user-saved ship designs to the player-empire known designs.
 
@@ -1836,6 +1839,9 @@ Quick-close windows
 OPTIONS_SHOW_SIDEPANEL_PLANETS
 Show side panel planets
 
+OPTIONS_AUTO_REPOSITION_WINDOWS
+Automatically reposition windows
+
 OPTIONS_MISC_UI
 Miscellaneous UI Settings
 
@@ -1949,6 +1955,9 @@ Apply
 
 OPTIONS_FLUSH_STRINGTABLE
 Flush Stringtables
+
+OPTIONS_WINDOW_RESET
+Reposition Windows
 
 OPTIONS_CHAT
 Chat
@@ -2300,9 +2309,6 @@ Add All Saved Ship Designs at Game Start
 
 OPTIONS_USE_BINARY_SERIALIZATION
 Use Binary serialization
-
-OPTIONS_WINDOW_RESET
-Reset window properties to defaults
 
 ##################
 # CombatSetupWnd #

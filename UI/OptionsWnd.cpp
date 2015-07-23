@@ -369,20 +369,19 @@ namespace {
 
 OptionsWnd::OptionsWnd():
     CUIWnd(UserString("OPTIONS_TITLE"),
-           (GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
-           (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2,
-           PAGE_WIDTH + 20, PAGE_HEIGHT + 70, GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
+           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
            OPTIONS_WND_NAME),
     m_tabs(0),
     m_done_button(0)
 {
-    SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
-
     m_done_button = new CUIButton(UserString("DONE"));
     // FIXME: PAGE_WIDTH is needed to prevent triggering an assert within the TabBar class.
     // The placement of the tab register buttons assumes that the whole TabWnd is at least
     // wider than the first tab button.
     m_tabs = new GG::TabWnd(GG::X0, GG::Y0, PAGE_WIDTH, GG::Y1, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
+
+    ResetDefaultPosition();
+    SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
 
     AttachChild(m_done_button);
     AttachChild(m_tabs);
@@ -440,6 +439,17 @@ OptionsWnd::OptionsWnd():
     BoolOption(current_page, 0, "UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption(current_page, 0, "UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption(current_page, 0, "UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
+    BoolOption(current_page, 0, "UI.auto-reposition-windows",    UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
+
+    // manual reposition windows button
+    GG::Button* window_reset_button = new CUIButton(UserString("OPTIONS_WINDOW_RESET"));
+    window_reset_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    row->Resize(GG::Pt(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), window_reset_button, 0));
+    current_page->Insert(row);
+    GG::Connect(window_reset_button->LeftClickedSignal, &ClientUI::RecalculateWindowDefaults, ClientUI::GetClientUI());
+
     FileOption(current_page, 0, "stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
                std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
@@ -449,7 +459,7 @@ OptionsWnd::OptionsWnd():
     // flush stringtable button
     GG::Button* flush_button = new CUIButton(UserString("OPTIONS_FLUSH_STRINGTABLE"));
     flush_button->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)));
-    GG::ListBox::Row* row = new GG::ListBox::Row();
+    row = new GG::ListBox::Row();
     row->Resize(GG::Pt(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), flush_button, 0));
     current_page->Insert(row);
@@ -627,6 +637,13 @@ void OptionsWnd::DoLayout() {
 
     GG::Pt tabs_lr = ScreenToClient(ClientLowerRight()) - GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN + BUTTON_HEIGHT + LAYOUT_MARGIN));
     m_tabs->SizeMove(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN)), tabs_lr);
+}
+
+GG::Rect OptionsWnd::CalculatePosition() const {
+    GG::Pt ul((GG::GUI::GetGUI()->AppWidth() - (PAGE_WIDTH + 20)) / 2,
+              (GG::GUI::GetGUI()->AppHeight() - (PAGE_HEIGHT + 70)) / 2);
+    GG::Pt wh(PAGE_WIDTH + 20, PAGE_HEIGHT + 70);
+    return GG::Rect(ul, ul + wh);
 }
 
 GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {

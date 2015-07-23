@@ -40,6 +40,8 @@ private:
 
     void    AddDesign();    ///< adds current design to those stored by this empire, allowing ships of this design to be produced
 
+    void    InitializeWindows();
+
     EncyclopediaDetailPanel*    m_detail_panel;
     BaseSelector*               m_base_selector;
     PartPalette*                m_part_palette;

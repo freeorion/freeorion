@@ -828,6 +828,16 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
             intro_screen->Resize(GG::Pt(w, h));
             intro_screen->DoLayout();
         }
+
+        // Ignore fullscreen/windowed transitions and events that don't really
+        // resize the app (e.g. one is sent when the app is opened)
+        // TODO: properly check for fullscreen/windowed transitions
+        if (GetOptionsDB().Get<bool>("UI.auto-reposition-windows") &&
+            (GetOptionsDB().Get<int>("app-width-windowed") != w ||
+             GetOptionsDB().Get<int>("app-height-windowed") != h))
+        {
+            ui->RecalculateWindowDefaults();
+        }
     }
 
     // Notify all modal CUIWnds.

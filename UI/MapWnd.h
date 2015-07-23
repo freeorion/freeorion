@@ -198,6 +198,8 @@ private:
 
     class MapScaleLine;
 
+    void            InitializeWindows();
+
     void            Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
     void            Zoom(int delta, const GG::Pt& position);    //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent) Keeps the screen position \a position in the same place after zooming
     void            ZoomSlid(double pos, double low, double high);
@@ -448,6 +450,9 @@ public:
     MapWndPopup(const std::string& t,
                 GG::X default_x, GG::Y default_y,
                 GG::X default_w, GG::Y default_h,
+                GG::Flags<GG::WndFlag> flags,
+                const std::string& config_name = "");
+    MapWndPopup(const std::string& t,
                 GG::Flags<GG::WndFlag> flags,
                 const std::string& config_name = "");
     virtual ~MapWndPopup();

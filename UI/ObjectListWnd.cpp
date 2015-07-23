@@ -920,12 +920,9 @@ private:
 ////////////////////////////////////////////////
 class FilterDialog : public CUIWnd {
 public:
-    FilterDialog(GG::X default_x, GG::Y default_y,
-                 const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >& vis_filters,
+    FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >& vis_filters,
                  const Condition::ConditionBase* const condition_filter) :
         CUIWnd(UserString("FILTERS"),
-               default_x, default_y,
-               GG::X(400), GG::Y(250),
                GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL,
                FILTER_OPTIONS_WND_NAME),
         m_vis_filters(vis_filters),
@@ -945,6 +942,10 @@ public:
     // caller takes ownership of returned ConditionBase*
     Condition::ConditionBase*                               GetConditionFilter()
     { return m_condition_widget->GetCondition(); }
+
+protected:
+    virtual GG::Rect CalculatePosition() const
+    { return GG::Rect(GG::X(100), GG::Y(100), GG::X(500), GG::Y(350)); }
 
 private:
     void    Init(const Condition::ConditionBase* const condition_filter) {
@@ -1028,6 +1029,8 @@ private:
 
         GG::Connect(m_cancel_button->LeftClickedSignal, &FilterDialog::CancelClicked,   this);
         GG::Connect(m_apply_button->LeftClickedSignal, &FilterDialog::AcceptClicked,   this);
+
+        ResetDefaultPosition();
 
         GG::Pt button_lr = this->ClientSize();
         m_cancel_button->Resize(GG::Pt(button_width, m_cancel_button->MinUsableSize().y));
@@ -2214,12 +2217,8 @@ private:
 ////////////////////////////////////////////////
 // ObjectListWnd
 ////////////////////////////////////////////////
-ObjectListWnd::ObjectListWnd(GG::X default_x, GG::Y default_y,
-                             GG::X default_w, GG::Y default_h,
-                             const std::string& config_name) :
+ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     CUIWnd(UserString("MAP_BTN_OBJECTS"),
-           default_x, default_y,
-           default_w, default_h,
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name, false),
     m_list_box(0),
@@ -2468,8 +2467,7 @@ int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {
 }
 
 void ObjectListWnd::FilterClicked() {
-    FilterDialog dlg(GG::X(100), GG::Y(100),
-                     m_list_box->Visibilities(), m_list_box->FilterCondition());
+    FilterDialog dlg(m_list_box->Visibilities(), m_list_box->FilterCondition());
     dlg.Run();
 
     if (dlg.ChangesAccepted()) {
