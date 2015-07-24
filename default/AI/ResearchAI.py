@@ -14,6 +14,7 @@ from freeorion_tools import tech_is_complete, get_ai_tag_grade
 inProgressTechs = {}
 
 empire_stars = {}
+choices = {}
 
 # TODO research AI no longer use this method, rename and move this method elsewhere
 def get_research_index():
@@ -90,7 +91,7 @@ def get_ship_tech_usefulness(tech, ship_designer):
     else:
         return 0
 
-def get_defense_priority(rng):
+def get_defense_priority():
     if foAI.foAIstate.aggression <= fo.aggression.cautious:
         print "AI is cautious. Increasing priority for defense techs."
         return 2
@@ -99,63 +100,63 @@ def get_defense_priority(rng):
     else:
         return 0.2
 
-def get_production_boost_priority(rng):
+def get_production_boost_priority():
     return 1.5
 
-def get_research_boost_priority(rng):
+def get_research_boost_priority():
     return 2
 
-def get_production_and_research_boost_priority(rng):
+def get_production_and_research_boost_priority():
     return 2.5
 
-def get_population_boost_priority(rng):
+def get_population_boost_priority():
     return 2
 
-def get_supply_boost_priority(rng):
+def get_supply_boost_priority():
     # TODO consider starlane density and planet density
     return 1
 
-def get_meter_change_boost_priority(rng):
+def get_meter_change_boost_priority():
     return 1
 
-def get_detection_priority(rng):
+def get_detection_priority():
     # TODO consider stealth of enemies
     return 1
 
-def get_weapon_priority(rng):
+def get_weapon_priority():
     if foAI.foAIstate.misc.get('enemies_sighted', {}):
         return 1
     else:
         return 0.1
 
-def get_armor_priority(rng):
+def get_armor_priority():
     if foAI.foAIstate.misc.get('enemies_sighted', {}):
         return 1
     else:
         return 0.1
 
-def get_shield_priority(rng):
+def get_shield_priority():
     if foAI.foAIstate.misc.get('enemies_sighted', {}):
         return 1
     else:
         return 0.1
 
-def get_engine_priority(rng):
-    return 1 if rng.random() < 0.7 else 0
+def get_engine_priority():
+    return 1 if choices['engine'] else 0
 
-def get_fuel_priority(rng):
-    return 1 if rng.random() < 0.7 else 0
+def get_fuel_priority():
+    return 1 if choices['fuel'] else 0
 
-def get_troop_pod_priority(rng):
+def get_troop_pod_priority():
     if foAI.foAIstate.misc.get('enemies_sighted', {}):
         return 1
     else:
         return 0
 
-def get_colony_pod_priority(rng):
+def get_colony_pod_priority():
     return 1
 
-def get_stealth_priority(rng):
+def get_stealth_priority():
     max_stealth_species = get_max_stealth_species()
     if max_stealth_species[1] > 0:
         print "Has a stealthy species %s. Increase stealth tech priority" % max_stealth_species[0]
@@ -163,21 +164,21 @@ def get_stealth_priority(rng):
     else:
         return 0
 
-def get_genome_bank_priority(rng):
+def get_genome_bank_priority():
     # TODO boost genome bank if enemy is using bioterror
     return 1
 
-def get_xeno_genetics_priority(rng):
+def get_xeno_genetics_priority():
     if foAI.foAIstate.aggression < fo.aggression.cautious:
-        return get_population_boost_priority(rng)
+        return get_population_boost_priority()
     if has_only_bad_colonizers():
         # Empire only have lousy colonisers, xeno-genetics are really important for them
         print "Empire has only lousy colonizers, increase priority to xeno_genetics"
-        return get_population_boost_priority(rng) * 3
+        return get_population_boost_priority() * 3
     else:
-        return get_population_boost_priority(rng)
+        return get_population_boost_priority()
 
-def get_xenoarch_priority(rng):
+def get_xenoarch_priority():
     if foAI.foAIstate.aggression < fo.aggression.typical:
         return 1
     if ColonisationAI.gotRuins:
@@ -186,7 +187,7 @@ def get_xenoarch_priority(rng):
     else:
         return 0
 
-def get_artificial_black_hole_priority(rng):
+def get_artificial_black_hole_priority():
     if has_star(fo.starType.blackHole) or not has_star(fo.starType.red):
         print "Already have black hole, or does not have a red star to turn to black hole. Skipping ART_BLACK_HOLE"
         return 0
@@ -196,7 +197,7 @@ def get_artificial_black_hole_priority(rng):
             return 999
     return 1
 
-def get_nest_domestication_priority(rng):
+def get_nest_domestication_priority():
     if foAI.foAIstate.aggression < fo.aggression.typical:
         return 0
     if ColonisationAI.got_nest:
@@ -205,32 +206,32 @@ def get_nest_domestication_priority(rng):
     else:
         return 0
 
-def get_damage_control_priority(rng):
+def get_damage_control_priority():
     if foAI.foAIstate.misc.get('enemies_sighted', {}):
         return 0.5
     else:
         return 0.1
 
-def get_hull_priority(rng, tech_name):
+def get_hull_priority(tech_name):
     hull = 1
     offtrack_hull = 0.05
 
-    chosen_hull = rng.randrange(4)
-    org = hull if chosen_hull % 2 == 0 or rng.random() < 0.05 else offtrack_hull
-    robotic = hull if chosen_hull % 2 == 1 or rng.random() < 0.05 else offtrack_hull
+    chosen_hull = choices['hull']
+    organic = hull if chosen_hull % 2 == 0 or choices['extra_organic_hull'] else offtrack_hull
+    robotic = hull if chosen_hull % 2 == 1 or choices['extra_robotic_hull'] else offtrack_hull
     if ColonisationAI.got_ast:
-        extra = rng.random() < 0.05
+        extra = choices['extra_asteroid_hull']
         asteroid = hull if chosen_hull == 2 or extra else offtrack_hull
         if asteroid == hull and not extra:
-            org = offtrack_hull
+            organic = offtrack_hull
             robotic = offtrack_hull
     else:
         asteroid = 0
     if has_star(fo.starType.blue) or has_star(fo.starType.blackHole):
-        extra = rng.random() < 0.05
+        extra = choices['extra_energy_hull']
         energy = hull if chosen_hull == 3 or extra else offtrack_hull
         if energy == hull and not extra:
-            org = offtrack_hull
+            organic = offtrack_hull
             robotic = offtrack_hull
             asteroid = offtrack_hull
     else:
@@ -249,7 +250,7 @@ def get_hull_priority(rng, tech_name):
     if tech_name in AIDependencies.ROBOTIC_HULL_TECHS:
         return robotic * useful * aggression
     elif tech_name in AIDependencies.ORGANIC_HULL_TECHS:
-        return org * useful * aggression
+        return organic * useful * aggression
     elif tech_name in AIDependencies.ASTEROID_HULL_TECHS:
         return asteroid * useful * aggression
     elif tech_name in AIDependencies.ENERGY_HULL_TECHS:
@@ -257,7 +258,7 @@ def get_hull_priority(rng, tech_name):
     else:
         return useful * aggression
 
-def get_priority(rng, tech_name):
+def get_priority(tech_name):
     """
     Get tech priority. 1 is default. 0 if not useful (but doesn't hurt to research),
     < 0 to prevent AI to research it
@@ -274,62 +275,62 @@ def get_priority(rng, tech_name):
 
     # defense
     if tech_name.startswith(AIDependencies.DEFENSE_TECHS_PREFIX):
-        return get_defense_priority(rng)
+        return get_defense_priority()
 
     # production
     if tech_name in AIDependencies.PRODUCTION_BOOST_TECHS:
-        return get_production_boost_priority(rng)
+        return get_production_boost_priority()
 
     if tech_name == AIDependencies.PRO_MICROGRAV_MAN:
-        return get_production_boost_priority(rng) if ColonisationAI.got_ast else 0
+        return get_production_boost_priority() if ColonisationAI.got_ast else 0
 
     if tech_name == AIDependencies.PRO_ORBITAL_GEN:
-        return get_production_boost_priority(rng) if ColonisationAI.got_gg else 0
+        return get_production_boost_priority() if ColonisationAI.got_gg else 0
 
     if tech_name == AIDependencies.PRO_SINGULAR_GEN:
-        return get_production_boost_priority(rng) if has_star(fo.starType.blackHole) else 0
+        return get_production_boost_priority() if has_star(fo.starType.blackHole) else 0
 
     # research
     if tech_name in AIDependencies.RESEARCH_BOOST_TECHS:
-        return get_research_boost_priority(rng)
+        return get_research_boost_priority()
 
     if tech_name in AIDependencies.PRODUCTION_AND_RESEARCH_BOOST_TECHS:
-        return get_production_and_research_boost_priority(rng)
+        return get_production_and_research_boost_priority()
 
     # growth
     if tech_name in AIDependencies.POPULATION_BOOST_TECHS:
-        return get_population_boost_priority(rng)
+        return get_population_boost_priority()
 
     if tech_name == AIDependencies.GRO_XENO_GENETICS:
-        return get_xeno_genetics_priority(rng)
+        return get_xeno_genetics_priority()
 
     # supply
     if tech_name in AIDependencies.SUPPLY_BOOST_TECHS:
-        return get_supply_boost_priority(rng)
+        return get_supply_boost_priority()
 
     # meter change
     if tech_name in AIDependencies.METER_CHANGE_BOOST_TECHS:
-        return get_meter_change_boost_priority(rng)
+        return get_meter_change_boost_priority()
 
     # detection
     if tech_name in AIDependencies.DETECTION_TECHS:
-        return get_detection_priority(rng)
+        return get_detection_priority()
 
     # Stealth
     if tech_name in AIDependencies.STEALTH_TECHS:
-        return get_stealth_priority(rng)
+        return get_stealth_priority()
 
     # xenoarcheology
     if tech_name == AIDependencies.LRN_XENOARCH:
-        return get_xenoarch_priority(rng)
+        return get_xenoarch_priority()
 
     # artificial black hole
     if tech_name == AIDependencies.LRN_ART_BLACK_HOLE:
-        return get_artificial_black_hole_priority(rng)
+        return get_artificial_black_hole_priority()
 
     # genome bank (its tech)
     if tech_name == AIDependencies.GRO_GENOME_BANK:
-        return get_genome_bank_priority(rng)
+        return get_genome_bank_priority()
 
     # concentration camp
     if tech_name == AIDependencies.CON_CONC_CAMP:
@@ -337,25 +338,25 @@ def get_priority(rng, tech_name):
 
     # tames space monsters
     if tech_name == AIDependencies.NEST_DOMESTICATION_TECH:
-        return get_nest_domestication_priority(rng)
+        return get_nest_domestication_priority()
 
     # damage control
     if tech_name in AIDependencies.DAMAGE_CONTROL_TECHS:
-        return get_damage_control_priority(rng)
+        return get_damage_control_priority()
 
     # ship hulls
     if tech_name in AIDependencies.HULL_TECHS:
-        return get_hull_priority(rng, tech_name)
+        return get_hull_priority(tech_name)
 
     # ship weapons
-    if tech_name in AIDependencies.WEAPON_TECHS:
+    if tech_name.startswith(AIDependencies.WEAPON_PREFIX):
         useful = get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner())
-        return useful * get_weapon_priority(rng)
+        return useful * get_weapon_priority()
 
     # ship armors
     if tech_name in AIDependencies.ARMOR_TECHS:
         useful = get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner())
-        return useful * get_armor_priority(rng)
+        return useful * get_armor_priority()
 
     # ship engines
     if tech_name in AIDependencies.ENGINE_TECHS:
@@ -363,7 +364,7 @@ def get_priority(rng, tech_name):
                 get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner()),
                 get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardTroopShipDesigner()),
                 get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardColonisationShipDesigner()))
-        return useful * get_engine_priority(rng)
+        return useful * get_engine_priority()
 
     # ship fuels
     if tech_name in AIDependencies.FUEL_TECHS:
@@ -371,22 +372,22 @@ def get_priority(rng, tech_name):
                 get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner()),
                 get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardTroopShipDesigner()),
                 get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardColonisationShipDesigner()))
-        return useful * get_fuel_priority(rng)
+        return useful * get_fuel_priority()
 
     # ship shields
     if tech_name in AIDependencies.SHIELD_TECHS:
         useful = get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner())
-        return useful * get_shield_priority(rng)
+        return useful * get_shield_priority()
 
     # troop pod parts
     if tech_name in AIDependencies.TROOP_POD_TECHS:
         useful = get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardTroopShipDesigner())
-        return useful * get_troop_pod_priority(rng)
+        return useful * get_troop_pod_priority()
 
     # colony pod parts
     if tech_name in AIDependencies.COLONY_POD_TECHS:
         useful = get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardColonisationShipDesigner())
-        return useful * get_colony_pod_priority(rng)
+        return useful * get_colony_pod_priority()
 
     # default priority for unseen techs
     print "Tech %s does not have a priority, falling back to default." % tech_name
@@ -923,6 +924,17 @@ def generate_research_orders():
     rng = random.Random()
     rng.seed(fo.getEmpire().name + fo.getGalaxySetupData().seed)
 
+    if '_selected' not in choices:
+        choices['_selected'] = True
+        choices['engine'] = rng.random() < 0.7
+        choices['fuel'] = rng.random() < 0.7
+        
+        choices['hull'] = rng.randrange(4)
+        choices['extra_organic_hull'] = rng.random() < 0.05
+        choices['extra_robotic_hull'] = rng.random() < 0.05
+        choices['extra_asteroid_hull'] = rng.random() < 0.05
+        choices['extra_energy_hull'] = rng.random() < 0.05
+
     research_reqs = calculate_research_requirements(empire)
     total_rp = empire.resourceProduction(fo.resourceType.research)
 
@@ -931,7 +943,7 @@ def generate_research_orders():
 
     priorities = {}
     for tech_name in fo.techs():
-        priority = get_priority(rng, tech_name)
+        priority = get_priority(tech_name)
         if not tech_is_complete(tech_name) and priority >= 0:
             turn_needed = float(research_reqs[tech_name][1]) / total_rp
             priorities[tech_name] = float(priority) / turn_needed / max(1, (turn_needed - 12) / 4 + 1)**2
