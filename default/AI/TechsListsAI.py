@@ -42,8 +42,8 @@ def defense_techs_2():
 
 def tech_group_1a(): # early org_hull
     result = [
-            "LRN_ALGO_ELEGANCE",
             "GRO_PLANET_ECOL",
+            "LRN_ALGO_ELEGANCE",
             "GRO_SUBTER_HAB",
             "DEF_GARRISON_1",
             "SHP_WEAPON_1_2",
@@ -57,11 +57,11 @@ def tech_group_1a(): # early org_hull
 
 def tech_group_1b():  # early _lrn_artif_minds and SHP_MIL_ROBO_CONT
     result = [
+            "GRO_PLANET_ECOL",
             "LRN_ALGO_ELEGANCE",
             "DEF_GARRISON_1",
             "LRN_ARTIF_MINDS",
             "SHP_WEAPON_1_2",
-            "GRO_PLANET_ECOL",
             "GRO_SUBTER_HAB",
             "SHP_WEAPON_1_3",
             "PRO_ROBOTIC_PROD",
@@ -74,8 +74,8 @@ def tech_group_1b():  # early _lrn_artif_minds and SHP_MIL_ROBO_CONT
 
 def tech_group_1_sparse(): # 
     result = [
-            "LRN_ALGO_ELEGANCE",
             "GRO_PLANET_ECOL",
+            "LRN_ALGO_ELEGANCE",
             "GRO_SUBTER_HAB",
             "DEF_GARRISON_1",
             "LRN_ARTIF_MINDS",
@@ -90,8 +90,8 @@ def tech_group_1_sparse(): #
 
 def tech_group_1_sparse_b(): # 
     result = [
-            "LRN_ALGO_ELEGANCE",
             "GRO_PLANET_ECOL",
+            "LRN_ALGO_ELEGANCE",
             "GRO_SUBTER_HAB",
             "DEF_GARRISON_1",
             "LRN_ARTIF_MINDS",

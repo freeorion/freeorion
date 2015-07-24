@@ -73,12 +73,18 @@ POP_SIZE_MOD_MAP = {
     "CON_ORBITAL_HAB": [0, 1, 1, 1, 1],
 }
 
+POP_CONST_MOD_MAP = {
+    "GRO_PLANET_ECOL": [0, 0, 0, 1, 1],
+    "GRO_SYMBIOTIC_BIO": [0, 0, 0, -1, -1],
+}
 
-def get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, star_pop_mod):
+
+def get_pop_mods(planet, tag_list, species, planet_env, planet_specials, star_pop_mod):
     detail = []
     # if someone introduces a new environment without this being updated, AI simply won't try
     # to colonize it.
     pop_size_mod = POP_SIZE_MOD_MAP["environment_bonus"][planet_env]
+    pop_const_mod = 0
     detail.append("EnvironPopSizeMod(%d)" % pop_size_mod)
     if "SELF_SUSTAINING" in tag_list:
         pop_size_mod *= 2
@@ -90,6 +96,10 @@ def get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, sta
         if tech != "environment_bonus" and tech_is_complete(tech):
             pop_size_mod += POP_SIZE_MOD_MAP[tech][planet_env]
             detail.append("%s_PSM(%d)" % (tech, POP_SIZE_MOD_MAP[tech][planet_env]))
+    for tech in POP_CONST_MOD_MAP:
+        if tech_is_complete(tech):
+            pop_const_mod += POP_CONST_MOD_MAP[tech][planet_env]
+            detail.append("%s_PCM(%d)" % (tech, POP_CONST_MOD_MAP[tech][planet_env]))
     #  exobots can't ever get to good environ so no gaia bonus, for others we'll assume they'll get there
     if "GAIA_SPECIAL" in planet.specials and species.name != "SP_EXOBOT":
         pop_size_mod += 3
@@ -111,7 +121,7 @@ def get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, sta
     if n_boosts:
         pop_size_mod += n_boosts
         detail.append("boosts_PSM(%d from %s)" % (n_boosts, applicable_boosts))
-    return pop_size_mod, detail
+    return pop_size_mod, pop_const_mod, detail
 
 
 NEST_VAL_MAP = {
@@ -1227,15 +1237,15 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if not planet_env:
             return -9999
 
-        pop_size_mod, _detail = get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, star_pop_mod)
+        pop_size_mod, pop_const_mod, _detail = get_pop_mods(planet, tag_list, species, planet_env, planet_specials, star_pop_mod)
         detail.extend(_detail)
 
         if planet_id in species.homeworlds:  # TODO: check for homeworld growth focus
             pop_size_mod += 2
 
-        max_pop_size = planet_size * pop_size_mod * pop_tag_mod
+        max_pop_size = pop_const_mod + planet_size * pop_size_mod * pop_tag_mod
         detail.append(
-            "baseMaxPop size*psm %d * %d * %.2f = %d" % (planet_size, pop_size_mod, pop_tag_mod, max_pop_size))
+            "baseMaxPop %d + size*psm %d * %d * %.2f = %d" % (pop_const_mod, planet_size, pop_size_mod, pop_tag_mod, max_pop_size))
 
         if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
             max_pop_size -= 4
