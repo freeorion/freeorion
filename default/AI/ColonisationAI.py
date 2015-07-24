@@ -98,11 +98,10 @@ def get_pop_size_mod(planet, tag_list, species, planet_env, planet_specials, sta
     applicable_boosts = set()
     for thisTag in [tag for tag in tag_list if tag in AIDependencies.metabolismBoostMap]:
         metab_boosts = AIDependencies.metabolismBoostMap.get(thisTag, [])
-        if pop_size_mod > 0:
-            for key in active_growth_specials.keys():
-                if len(active_growth_specials[key]) > 0 and key in metab_boosts:
-                    applicable_boosts.add(key)
-                    detail.append("%s boost active" % key)
+        for key in active_growth_specials.keys():
+            if len(active_growth_specials[key]) > 0 and key in metab_boosts:
+                applicable_boosts.add(key)
+                detail.append("%s boost active" % key)
         for boost in metab_boosts:
             if boost in planet_specials:
                 applicable_boosts.add(boost)
@@ -1286,6 +1285,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         # used to give preference to closest worlds
 
         for special in [spec for spec in planet_specials if spec in AIDependencies.metabolismBoosts]:
+            #TODO: also consider potential future benefit re currently unpopulated planets
             gbonus = discount_multiplier * base_pop_ind * ind_mult * empire_metabolisms.get(
                 AIDependencies.metabolismBoosts[special], 0)  # due to growth applicability to other planets
             growth_val += gbonus

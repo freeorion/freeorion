@@ -244,13 +244,13 @@ def set_planet_resource_foci():
         rpPrio = foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH)
         priorityRatio = float(rpPrio) / (ppPrio + 0.0001)
         resource_timer.start("Shuffle")
-        # not supporting Growth for general planets until also adding code to make sure would actually benefit
         # shuffle(generalPlanetIDs)
         resource_timer.start("Targets")
         planets = map(universe.getPlanet, empirePlanetIDs)
         planetMap.clear()
         planetMap.update(zip(empirePlanetIDs, planets))
         if useGrowth:
+            #TODO: also consider potential future benefit re currently unpopulated planets
             for metab, metabIncPop in ColonisationAI.empire_metabolisms.items():
                 for special in [aspec for aspec in AIDependencies.metabolismBoostMap.get(metab, []) if aspec in ColonisationAI.available_growth_specials]:
                     rankedPlanets = []
