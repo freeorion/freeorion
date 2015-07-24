@@ -1192,6 +1192,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
     meters[METER_RESEARCH] =     METER_TARGET_RESEARCH;
     meters[METER_TRADE] =        METER_TARGET_TRADE;
     meters[METER_CONSTRUCTION] = METER_TARGET_CONSTRUCTION;
+    meters[METER_HAPPINESS] =    METER_TARGET_HAPPINESS;
     meters[METER_FUEL] =         METER_MAX_FUEL;
     meters[METER_SHIELD] =       METER_MAX_SHIELD;
     meters[METER_STRUCTURE] =    METER_MAX_STRUCTURE;
