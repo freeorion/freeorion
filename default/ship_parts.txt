@@ -1100,13 +1100,7 @@ Part
             scope = And [
                 Source
                 HasTag name = "ROBOTIC"
-                Or [
-                    DesignHasHull name = "SH_ROBOTIC"
-                    DesignHasHull name = "SH_SELF_GRAVITATING"
-                    DesignHasHull name = "SH_NANOROBOTIC"
-                    DesignHasHull name = "SH_LOGISTICS_FACILITATOR"
-                    DesignHasHull name = "SH_TITANIC"
-                ]
+                HasTag name = "ROBOTIC_HULL"
             ]
             activation = ValueTest Low = [[BEST_SHIELD_EFFECT]] TestValue= [[ROBOTIC_SHIELD_EFFECT]]
             stackinggroup = "ROBOTIC_SHIELD_PART_STACK"
@@ -1122,15 +1116,9 @@ Count condition = And [
                 OwnedBy empire = Source.Owner
                 VisibleToEmpire empire = Source.Owner
                 HasTag name = "ROBOTIC"
+                HasTag name = "ROBOTIC_HULL"
                 Not Source
                 DesignHasPart low = 1 high = 999 name = "SH_ROBOTIC_INTERFACE_SHIELDS"
-                Or [
-                    DesignHasHull name = "SH_ROBOTIC"
-                    DesignHasHull name = "SH_SELF_GRAVITATING"
-                    DesignHasHull name = "SH_NANOROBOTIC"
-                    DesignHasHull name = "SH_LOGISTICS_FACILITATOR"
-                    DesignHasHull name = "SH_TITANIC"
-                ]
                 WithinStarlaneJumps jumps = 0 condition = Source
             ]
 '''

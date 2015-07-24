@@ -141,6 +141,7 @@ Hull
     ]
     buildCost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "ROBOTIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -224,6 +225,7 @@ Hull
     ]
     buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "ROBOTIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_GEOINT"
@@ -266,6 +268,7 @@ Hull
     ]
     buildCost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "ROBOTIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_NANOROBO"
@@ -326,6 +329,7 @@ Hull
     ]
     buildCost = 160 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
+    tags = [ "ROBOTIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_GEOINT"
@@ -408,6 +412,7 @@ Hull
     ]
     buildCost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 8
+    tags = [ "ROBOTIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -474,6 +479,7 @@ Hull
     ]
     buildCost = 20.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Planet
         Contains And [
@@ -518,6 +524,7 @@ Hull
     ]
     buildCost = 6.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -568,6 +575,7 @@ Hull
     ]
     buildCost = 40.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -613,6 +621,7 @@ Hull
     ]
     buildCost = 16.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -656,6 +665,7 @@ Hull
     ]
     buildCost = 9.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -717,6 +727,7 @@ Hull
     ]
     buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -768,6 +779,7 @@ Hull
     ]
     buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -841,6 +853,7 @@ Hull
     ]
     buildCost = 120.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 8
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -908,6 +921,7 @@ Hull
     ]
     buildCost = 20.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
+    tags = [ "ASTEROID_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -960,6 +974,7 @@ Hull
     ]
     buildCost = 14 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
+    tags = [ "ORGANIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_ORB_INC"
@@ -1010,6 +1025,7 @@ Hull
     ]
     buildCost = 18 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 4
+    tags = [ "ORGANIC_HULL" ]
     location = And [
        // Contains And [
         //    Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1051,6 +1067,7 @@ Hull
     ]
     buildCost = 23 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
+    tags = [ "ORGANIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1100,6 +1117,7 @@ Hull
     ]
     buildCost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 4
+    tags = [ "ORGANIC_HULL" ]
     location = And [
         //Contains And [
          //   Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1154,6 +1172,7 @@ Hull
     ]
     buildCost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
+    tags = [ "ORGANIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1210,6 +1229,7 @@ Hull
     ]
     buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
+    tags = [ "ORGANIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1270,6 +1290,7 @@ Hull
     ]
     buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
+    tags = [ "ORGANIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1321,6 +1342,7 @@ Hull
     ]
     buildCost = 21 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
+    tags = [ "ORGANIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -1384,6 +1406,7 @@ Hull
     ]
     buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 8
+    tags = [ "ORGANIC_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -1452,6 +1475,7 @@ Hull
     slots = Slot type = External position = (0.65, 0.40)
     buildCost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "ENERGY_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
@@ -1498,6 +1522,7 @@ Hull
     ]
     buildCost = 60.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 7
+    tags = [ "ENERGY_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
@@ -1540,6 +1565,7 @@ Hull
     ]
     buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
+    tags = [ "ENERGY_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
@@ -1599,6 +1625,7 @@ Hull
     ]
     buildCost = 120.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 10
+    tags = [ "ENERGY_HULL" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
