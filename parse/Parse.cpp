@@ -16,6 +16,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/spirit/include/phoenix.hpp>
+#include <boost/algorithm/string/find_iterator.hpp>
 
 #define DEBUG_PARSERS 0
 
@@ -234,9 +235,9 @@ namespace parse {
     const sregex MACRO_KEY = +_w;   // word character (alnum | _), one or more times, greedy
     const sregex MACRO_TEXT = -*_;  // any character, zero or more times, not greedy
     const sregex MACRO_DEFINITION = (s1 = MACRO_KEY) >> _n >> "'''" >> (s2 = MACRO_TEXT) >> "'''" >> _n;
-    const sregex MACRO_INSERTION = "[[" >> *space >> (s1 = MACRO_KEY) >> *space >> "]]";
+    const sregex MACRO_INSERTION = "[[" >> *space >> (s1 = MACRO_KEY) >> *space >> !("(" >> (s2 = +~(set = ')', '\n')) >> ")") >> "]]";
 
-    void parse_and_erase_macros_from_text(std::string& text, std::map<std::string, std::string>& macros) {
+    void parse_and_erase_macro_definitions(std::string& text, std::map<std::string, std::string>& macros) {
         try {
             std::string::iterator text_it = text.begin();
             while (true) {
@@ -338,7 +339,7 @@ namespace parse {
             smatch match;
             while (regex_search(text.begin() + position, text.end(), match, MACRO_INSERTION, regex_constants::match_default)) {
                 position += match.position();
-                const std::string& matched_text = match.str();  // [[MACRO_KEY]]
+                const std::string& matched_text = match.str();  // [[MACRO_KEY]] or [[MACRO_KEY(foo,bar,...)]]
                 const std::string& macro_key = match[1];        // just MACRO_KEY
                 // look up macro key to insert
                 std::map<std::string, std::string>::const_iterator macro_lookup_it = macros.find(macro_key);
@@ -349,8 +350,21 @@ namespace parse {
                         position += match.length();
                     } else {
                         // insert macro text in place of reference
-                        text.replace(position, matched_text.length(), macro_lookup_it->second);
-                        // recusrive replacement allowed, so don't skip past
+                        std::string replacement = macro_lookup_it->second;
+                        std::string macro_params = match[2]; // arg1,arg2,arg3,etc.
+                        if (!macro_params.empty()) { // found macro parameters
+                            int replace_number = 1;
+                            for (boost::split_iterator<std::string::iterator> it =
+                                    boost::make_split_iterator(macro_params, boost::first_finder(",", boost::is_iequal()));
+                                it != boost::split_iterator<std::string::iterator>();
+                                ++it, ++replace_number)
+                            {
+                                // not using %1% (and boost::fmt) because the replaced text may itself have %s inside it that will get eaten
+                                boost::replace_all(replacement, "@" + boost::lexical_cast<std::string>(replace_number) + "@", boost::copy_range<std::string>(*it));
+                            }
+                        }
+                        text.replace(position, matched_text.length(), replacement);
+                        // recursive replacement allowed, so don't skip past
                         // start of replacement text, so that inserted text can
                         // be matched on the next pass
                     }
@@ -370,7 +384,7 @@ namespace parse {
         //DebugLogger() << "macro_substitution for text:" << text;
         std::map<std::string, std::string> macros;
 
-        parse_and_erase_macros_from_text(text, macros);
+        parse_and_erase_macro_definitions(text, macros);
         check_for_cyclic_macro_references(macros);
 
         //DebugLogger() << "after macro pasring text:" << text;
