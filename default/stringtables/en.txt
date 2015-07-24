@@ -7519,7 +7519,9 @@ GRO_PLANET_ECOL
 Planetary Ecology
 
 GRO_PLANET_ECOL_DESC
-Agriculture and medical science can drastically increase survivability, allowing great increases in population and food production. Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it. Understanding natural ecology and its interaction to stresses permits the system to be modified and enhanced, and its benefits reaped for generations to come.
+'''Increases the max population of Good and Adequate planets by +1. This bonus is not cumulative with [[tech GRO_SYMBIOTIC_BIO]].
+
+Agriculture and medical science can drastically increase survivability, allowing great increases in population and food production. Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it. Understanding natural ecology and its interaction to stresses permits the system to be modified and enhanced, and its benefits reaped for generations to come.'''
 
 GRO_GENETIC_ENG
 Genetic Engineering
