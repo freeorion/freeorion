@@ -4635,6 +4635,21 @@ void MapWnd::RegisterPopup(MapWndPopup* popup) {
 
 void MapWnd::RemovePopup(MapWndPopup* popup) {
     if (popup) {
+        if (!popup->Visible()) {
+            // Make sure it doesn't save visible = 0 to the config (doesn't
+            // make sense for windows that are created/destroyed repeatedly),
+            // try/catch because this is called from a dtor and OptionsDB
+            // functions can throw.
+            try {
+                popup->Show();
+            } catch (std::runtime_error& e) {
+                ErrorLogger() << "MapWnd::RemovePopup() : caught exception "
+                                 "cleaning up a popup: " << e.what();
+            } catch (boost::bad_any_cast& e) {
+                ErrorLogger() << "MapWnd::RemovePopup() : caught exception "
+                                 "cleaning up a popup: " << e.what();
+            }
+        }
         std::list<MapWndPopup*>::iterator it = std::find(m_popups.begin(), m_popups.end(), popup);
         if (it != m_popups.end())
             m_popups.erase(it);
@@ -5079,7 +5094,6 @@ void MapWnd::HideResearch() {
     m_btn_research->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research.png")));
     m_btn_research->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "research_mouseover.png")));
 
-    ShowAllPopups();
     RestoreSidePanel();
 }
 
