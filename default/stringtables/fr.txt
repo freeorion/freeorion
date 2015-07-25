@@ -4379,9 +4379,7 @@ SITREP_SNOOZE_CLEAR_ALL
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
 SITREP_WELCOME  # translated
-'''
-[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]
-'''
+'''[[encyclopedia GREETINGS_GUIDE_TITLE]]  [[GREETINGS_GUIDE_REFERENCE]]'''
 
 SITREP_WELCOME_LABEL
 Bienvenue
@@ -4851,8 +4849,6 @@ Opinions des Empires :
 
 OPINIONS_OF_OTHER_SPECIES
 Opinions des autres Espèces :
-
-### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
 
 SP_HUMAN
 Humain
@@ -7197,7 +7193,9 @@ GRO_PLANET_ECOL
 Écologie Planétaire
 
 GRO_PLANET_ECOL_DESC
-L'agriculture et la science médicale peuvent considérablement augmenter les chances de survie et entraîner d'importants accroissements de population ainsi que de production de nourriture. Toutefois, la croissance démographique se trouve limitée par la capacité en ressources naturelles de la planète et des biosphères qui la constituent. Comprendre les écosystèmes naturels et les contraintes qu'il subissent, permet la conservation et l'amélioration de l'environnement planétaire, au bénéfice des générations futures.
+'''Accroît de 1 la Population max des planètes parfaites et convenables. Ce bonus ne s'additionne pas avec la technologie de [[tech GRO_SYMBIOTIC_BIO]].
+
+L'agriculture et la science médicale peuvent considérablement augmenter les chances de survie et entraîner d'importants accroissements de population ainsi que de production de nourriture. Toutefois, la croissance démographique se trouve limitée par la capacité en ressources naturelles de la planète et des biosphères qui la constituent. Comprendre les écosystèmes naturels et les contraintes qu'il subissent, permet la conservation et l'amélioration de l'environnement planétaire, au bénéfice des générations futures.'''
 
 GRO_GENETIC_ENG
 Génie Génétique
@@ -10405,13 +10403,13 @@ ULTIMATE_SUPPLY
 ++	Parfait en [[encyclopedia SUPPLY_TITLE]] : +3
 
 GOOD_SHIP_SHIELD
-+	Bons [[encyclopedia SHIELDS_TITLE]] d'astronefs: +1
++	Bons [[encyclopedia SHIELDS_TITLE]] d'astronefs : +1
 
 GOOD_PLANETARY_SHIELD
-+	Bons [[encyclopedia SHIELDS_TITLE]] planétaires: +5
++	Bons [[encyclopedia SHIELDS_TITLE]] planétaires : +5
 
 GOOD_PLANETARY_DEFENSE
-+	Bonne [[encyclopedia DEFENSE_TITLE]] planétaire: +5
++	Bonne [[encyclopedia DEFENSE_TITLE]] planétaire : +5
 
 BROAD_EP
 ++	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
@@ -10420,7 +10418,10 @@ NARROW_EP
 −	Faible adaptabilité : s'acclimate à moins de types planétaires.
 
 FAST_COLONIZATION
-+	Colonisation rapide: -25% de délai pour la construction d'une colonie.
++	Colonisation rapide : -25% de délai pour bâtir une colonie.
+
+SLOW_COLONIZATION
+−	Colonisation lente : +20% de délai pour bâtir une colonie.
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
