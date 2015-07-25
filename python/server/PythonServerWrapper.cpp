@@ -667,6 +667,15 @@ namespace {
         return py_all_objects;
     }
 
+    list GetSystems() {
+        list py_systems;
+        std::vector<int> systems = Objects().FindObjectIDs<System>();
+        for (std::vector<int>::iterator it = systems.begin(); it != systems.end(); ++it) {
+            py_systems.append(*it);
+        }
+        return py_systems;
+    }
+
     int CreateSystem(StarType star_type, const std::string& star_name, double x, double y) {
         // Check if star type is set to valid value
         if ((star_type == INVALID_STAR_TYPE) || (star_type == NUM_STAR_TYPES)) {
@@ -1316,6 +1325,7 @@ void WrapServerAPI() {
     def("linear_distance",                      LinearDistance);
     def("jump_distance",                        JumpDistanceBetweenSystems);
     def("get_all_objects",                      GetAllObjects);
+    def("get_systems",                          GetSystems);
     def("create_system",                        CreateSystem);
     def("create_planet",                        CreatePlanet);
     def("create_building",                      CreateBuilding);
