@@ -111,6 +111,9 @@ public:
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //!@}
 
+protected:
+    virtual GG::Rect CalculatePosition() const;
+
 private:
     void DoLayout();
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);

@@ -38,10 +38,9 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 }
 
-ServerConnectWnd::ServerConnectWnd() : 
+ServerConnectWnd::ServerConnectWnd() :
     CUIWnd(UserString("SCONNECT_WINDOW_TITLE"),
-           (GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGHT) / 2,
-           WINDOW_WIDTH, WINDOW_HEIGHT, GG::INTERACTIVE | GG::MODAL),
+           GG::INTERACTIVE | GG::MODAL),
     m_host_or_join_radio_group(0),
     m_LAN_game_label(0),
     m_servers_lb(0),
@@ -98,12 +97,21 @@ ServerConnectWnd::ServerConnectWnd() :
 
     SetLayout(layout);
 
+    ResetDefaultPosition();
+
     m_LAN_servers = HumanClientApp::GetApp()->Networking().DiscoverLANServers();
     Init();
 }
 
 void ServerConnectWnd::ModalInit()
 { GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit); }
+
+GG::Rect ServerConnectWnd::CalculatePosition() const {
+    GG::Pt new_ul((GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2,
+                  (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGHT) / 2);
+    GG::Pt new_sz(WINDOW_WIDTH, WINDOW_HEIGHT);
+    return GG::Rect(new_ul, new_ul + new_sz);
+}
 
 void ServerConnectWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed

@@ -29,6 +29,8 @@ public:
     const std::pair<std::string, std::string>& Result() const;
     //@}
 
+protected:
+    virtual GG::Rect CalculatePosition() const;
 
 private:
     void Init();
