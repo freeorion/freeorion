@@ -48,6 +48,7 @@ add_library(GiGi
     MultiEdit.cpp
     PtRect.cpp
     Scroll.cpp
+    ScrollPanel.cpp
     StaticGraphic.cpp
     StyleFactory.cpp
     TabWnd.cpp
