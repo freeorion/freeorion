@@ -352,6 +352,8 @@ def survey_universe():
         empire_has_qualifying_planet = False
         this_system_facilities = set()
         best_local_pilot_val = 0
+        if sys_id in AIstate.colonyTargetedSystemIDs:
+            empire_has_qualifying_planet = True
         for pid in sys.planetIDs:
             planet = universe.getPlanet(pid)
             if not planet:
