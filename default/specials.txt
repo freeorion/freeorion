@@ -992,39 +992,10 @@ Special
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                OwnedBy affiliation = AnyEmpire
-                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
-                Random probability = 0.05
-            ]
-            stackinggroup = "KRAKEN_NEST_STACK"
-            effects = [
-                CreateShip designname = "SM_KRAKEN_1" empire = Source.Owner
-                GenerateSitRepMessage
-                    message = "EFFECT_TAME_MONSTER_HATCHED"
-                    icon = "icons/monsters/kraken-1.png"
-                    parameters = [
-                        tag = "planet" data = Source.ID
-                        tag = "predefinedshipdesign" data = "SM_KRAKEN_1"
-                    ]
-                    empire = Source.Owner
-            ]
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                Turn low = 10
-                Unowned
-                Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
-            ]
-            stackinggroup = "KRAKEN_NEST_STACK"
-            effects = CreateShip designname = "SM_KRAKEN_1"
-        ]
+        [[MONSTER_NEST(KRAKEN,kraken,0.05)]]
+    ]
     graphic = "icons/specials_huge/kraken-nest.png"
-    
+
 Special
     name = "SNOWFLAKE_NEST_SPECIAL"
     description = "SNOWFLAKE_NEST_SPECIAL_DESC"
@@ -1041,39 +1012,10 @@ Special
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                OwnedBy affiliation = AnyEmpire
-                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
-                Random probability = 0.08
-            ]
-            stackinggroup = "SNOWFLAKE_NEST_STACK"
-            effects = [
-                CreateShip designname = "SM_SNOWFLAKE_1" empire = Source.Owner
-                GenerateSitRepMessage
-                    message = "EFFECT_TAME_MONSTER_HATCHED"
-                    icon = "icons/monsters/snowflake-1.png"
-                    parameters = [
-                        tag = "planet" data = Source.ID
-                        tag = "predefinedshipdesign" data = "SM_SNOWFLAKE_1"
-                    ]
-                    empire = Source.Owner
-            ]
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                Turn low = 10
-                Unowned
-                Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
-            ]
-            stackinggroup = "SNOWFLAKE_NEST_STACK"
-            effects = CreateShip designname = "SM_SNOWFLAKE_1"
-        ]
+        [[MONSTER_NEST(SNOWFLAKE,snowflake,0.08)]]
+    ]
     graphic = "icons/specials_huge/snowflake-nest.png"
-    
+
 Special
     name = "JUGGERNAUT_NEST_SPECIAL"
     description = "JUGGERNAUT_NEST_SPECIAL_DESC"
@@ -1091,38 +1033,8 @@ Special
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                OwnedBy affiliation = AnyEmpire
-                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
-                Random probability = 0.06 
-            ]
-            stackinggroup = "JUGGERNAUT_NEST_STACK"
-            effects = [
-                CreateShip designname = "SM_JUGGERNAUT_1" empire = Source.Owner
-                GenerateSitRepMessage
-                    message = "EFFECT_TAME_MONSTER_HATCHED"
-                    icon = "icons/monsters/juggernaut-1.png"
-                    parameters = [
-                        tag = "planet" data = Source.ID
-                        tag = "predefinedshipdesign" data = "SM_JUGGERNAUT_1"
-                    ]
-                    empire = Source.Owner
-            ]
-        EffectsGroup
-            scope = Source
-            activation = AND [
-                Planet
-                Turn low = 10
-                Unowned
-                Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
-            ]
-            stackinggroup = "JUGGERNAUT_NEST_STACK"
-            effects = CreateShip designname = "SM_JUGGERNAUT_1"
-        ]
-        
+        [[MONSTER_NEST(JUGGERNAUT,juggernaut,0.06)]]
+    ]
     graphic = "icons/specials_huge/juggernaut-nest.png"
 
 Special
@@ -1872,6 +1784,45 @@ Special
 //###                     M A C R O S                    ###
 //##########################################################
 
+
+// parameter 1 is the upper case monster name to address stacking group and
+//             used ship design.
+// parameter 2 is the lower case monster name to select the sit rep monster
+//             icon.
+// parameter 3 us the monster spawn probability
+MONSTER_NEST
+'''
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
+                Random probability = @3@
+            ]
+            stackinggroup = "@1@_NEST_STACK"
+            effects = [
+                CreateShip designname = "SM_@1@_1" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_HATCHED"
+                    icon = "icons/monsters/@2@-1.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SM_@1@_1"
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Turn low = 10
+                Unowned
+                Random probability = 0.12 * GalaxyMonsterFrequency / 2.0
+            ]
+            stackinggroup = "@1@_NEST_STACK"
+            effects = CreateShip designname = "SM_@1@_1"
+'''
 
 STANDARD_MINERAL_BOOST
 '''EffectsGroup
