@@ -199,12 +199,24 @@ void CUIWnd::Init(const std::string& t) {
     SetName(t);
     InitButtons();
     SetChildClippingMode(ClipToClientAndWindowSeparately);
+
     if (!m_config_name.empty()) {
         // Call AFTER buttons are initialized but before SetMinSize().
         LoadOptions();
         GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal, boost::bind(&CUIWnd::LoadOptions, this));
+    } else if (!Dragable() && !m_resizable) {
+        GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal, boost::bind(&CUIWnd::ResetDefaultPosition, this));
     }
-    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, boost::bind(&CUIWnd::ResetDefaultPosition, this));
+
+    // User-dragable windows recalculate their position only when told to (e.g.
+    // auto-reposition is set or user clicks a 'reset windows' button).
+    // Non-user-dragable windows are given the chance to position themselves on
+    // every resize event.
+    if (Dragable() || m_resizable)
+        GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, &CUIWnd::ResetDefaultPosition, this);
+    else
+        GG::Connect(HumanClientApp::GetApp()->WindowResizedSignal, boost::bind(&CUIWnd::ResetDefaultPosition, this));
+
     // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
 }
