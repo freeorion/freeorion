@@ -4860,13 +4860,6 @@ SP_HUMAN_GAMEPLAY_DESC
 '''Opiniâtres et prédateurs (toutes caractéristiques normales afin de permettre les tests).
 Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_HUMAN_DESC
@@ -4883,13 +4876,6 @@ SP_SCYLIOR_GAMEPLAY_DESC
 '''Possèdent trois tentacules, nautiloïdes aquatiques.
 Préfèrent les Planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[GREAT_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_SCYLIOR_DESC
@@ -4913,14 +4899,6 @@ SP_GYSACHE_GAMEPLAY_DESC
 '''Herbivores craintifs insolites, organisation en troupeau.
 Préfèrent les Planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[GREAT_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_GYSACHE_DESC
@@ -4943,15 +4921,6 @@ SP_CHATO_GAMEPLAY_DESC
 '''Entités cristallines sessiles chevauchant des animaux nommés Gormoshk.
 Préfèrent les Planètes toxiques.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[GREAT_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-        
-[[BROAD_EP]]
 '''
 
 SP_CHATO_DESC
@@ -4968,18 +4937,6 @@ SP_TRITH_GAMEPLAY_DESC
 '''Télépathes xénophobes tourmentés.
 Préfèrent les Planètes désertiques.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-        
-[[GREAT_DETECTION]]
-[[GOOD_STEALTH]]
-
-[[NARROW_EP]]
 '''
 
 SP_TRITH_DESC
@@ -4997,16 +4954,6 @@ SP_HAPPY_GAMEPLAY_DESC
 Préfèrent les Planètes océaniques.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[GOOD_RESEARCH]]
-       
-[[BAD_POPULATION]]
-[[GREAT_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-       
-[[BAD_STEALTH]]
-[[GOOD_DETECTION]]
 '''
 
 SP_HAPPY_DESC
@@ -5033,15 +4980,6 @@ SP_HHHOH_GAMEPLAY_DESC
 '''Mammouths gigantesques et lents, dotés d'une multi-trompe.
 Préfèrent les Planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
-        
-[[GOOD_WEAPONS]]
 '''
 
 SP_HHHOH_DESC
@@ -5059,14 +4997,6 @@ SP_EAXAW_GAMEPLAY_DESC
 '''Vers amazones agressifs et xénophobes.
 Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]] [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-[[GREAT_WEAPONS]]
 '''
 
 SP_EAXAW_DESC
@@ -5086,15 +5016,6 @@ SP_DERTHREAN_GAMEPLAY_DESC
 '''Virus végétaux flottants, pacifiques, bio-ingénieurs, souffrant continuellement.
 Préfèrent les Planètes toxiques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-
-[[BAD_WEAPONS]]
 '''
 
 SP_DERTHREAN_DESC
@@ -5111,16 +5032,6 @@ SP_LAENFA_GAMEPLAY_DESC
 '''Vignes sensibles, télépathes, et insidieuses.
 Préfèrent les Planètes océaniques.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-
-[[GREAT_DETECTION]]
-[[GREAT_STEALTH]]
 '''
 
 SP_LAENFA_DESC
@@ -5137,14 +5048,6 @@ SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Oiseaux fragiles et incapables de voler, unis par une coopération totale.
 Préfèrent les Planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_TAEGHIRUS_DESC
@@ -5161,13 +5064,6 @@ SP_MUURSH_GAMEPLAY_DESC
 '''Herbivores pacifiques et activistes.
 Préfèrent les Planètes désertiques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[GREAT_WEAPONS]]
-[[BAD_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
 '''
 
 SP_MUURSH_DESC
@@ -5181,15 +5077,6 @@ SP_GEORGE_GAMEPLAY_DESC
 '''Entité unique élémentaire, télépathique, constituée de millions de centipèdes.
 Préfèrent les Planètes avec toundra.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-
-[[BROAD_EP]]
 '''
 
 SP_GEORGE_DESC
@@ -5205,15 +5092,6 @@ SP_CRAY_GAMEPLAY_DESC
 '''Robots dévoués et enthousiastes.
 Préfèrent les Planètes stériles.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[GOOD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-        
-[[BROAD_EP]]
 '''
 
 SP_CRAY_DESC
@@ -5231,18 +5109,6 @@ SP_ETTY_GAMEPLAY_DESC
 '''Plantes cybernétiques.
 Préfèrent les Planètes désertiques.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-                
-[[GOOD_WEAPONS]]
-        
-[[BAD_DETECTION]]
-[[GOOD_STEALTH]]
 '''
 
 SP_ETTY_DESC
@@ -5260,14 +5126,6 @@ Les Etty sont excessivement respectueux et honorent immanquablement tous contrat
 SP_CYNOS_GAMEPLAY_DESC
 '''Végétaux mobiles entretenus par une plante-mère géante non-sensible.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-        
 '''
 
 SP_CYNOS_DESC
@@ -5288,15 +5146,6 @@ Phinnert
 SP_PHINNERT_GAMEPLAY_DESC
 '''Singes volants industrialisés.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[NO_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[BAD_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-
-+	Colonisation rapide: -25% de délai pour la construction d'une colonie.
 '''
 
 SP_PHINNERT_DESC
@@ -5316,14 +5165,6 @@ SP_EGASSEM_GAMEPLAY_DESC
 '''Amibes cristallines massives, radioactives et magmatiques.
 Préfèrent les Planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[ULTIMATE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[BAD_POPULATION]]
-[[GREAT_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
-[[NARROW_EP]]
 '''
 
 SP_EGASSEM_DESC
@@ -5343,15 +5184,6 @@ SP_SSLITH_GAMEPLAY_DESC
 '''Créatures aquatiques plates et souples.
 Préfèrent les Planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-        
-[[NARROW_EP]]
 '''
 
 SP_SSLITH_DESC
@@ -5367,13 +5199,6 @@ Fifty-Seven
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Serpents célestes mathématiciens, sifflant des mélopées fractales au sein d'une chorale planétaire.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[ULTIMATE_RESEARCH]]
-        
-[[BAD_POPULATION]]
-[[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_FIFTYSEVEN_DESC
@@ -5396,15 +5221,6 @@ SP_SETINON_GAMEPLAY_DESC
 '''Cellules microscopiques sensibles et individualistes.
 Préfèrent les Planètes marécageuses.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[NO_GROUND_TROOPS]]  
-        
-[[GREAT_STEALTH]]
 '''
 
 SP_SETINON_DESC
@@ -5424,16 +5240,6 @@ SP_NYMNMN_GAMEPLAY_DESC
 '''Formes d'ondes magnétiques sensibles, intrication planétaire.
 Préfèrent les Planètes désertiques.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[BAD_POPULATION]]
-[[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-
-[[GREAT_DETECTION]]
-[[GOOD_STEALTH]]
 '''
 
 #SP_NYMNMN_DESC
@@ -5445,13 +5251,6 @@ SP_TRENCHERS_GAMEPLAY_DESC
 '''Robots énigmatiques munis de roues, se consacrant exclusivement à sculpter la surface de leur planète en courbes et spirales les plus élaborées.
 Préfèrent les Planètes stériles.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[NO_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 #SP_TRENCHERS_DESC
@@ -5463,13 +5262,6 @@ SP_RAAAGH_GAMEPLAY_DESC
 '''Félidés hautement territoriaux.
 Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[NO_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[BAD_SUPPLY]]
-[[ULTIMATE_GROUND_TROOPS]]
 '''
 
 SP_RAAAGH_DESC
@@ -5491,13 +5283,6 @@ SP_BEIGEGOO_GAMEPLAY_DESC
 '''Essaim de nanorobots à propagation planétaire, féroce auto-protection.
 Préfèrent les Planètes irradiées.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[NO_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
 '''
 
 SP_BEIGEGOO_DESC
@@ -5510,14 +5295,6 @@ SP_SILEXIAN_GAMEPLAY_DESC
 '''Robots écologistes brillants, abandonnés à leur sort.
 Préfèrent les Planètes de type terrestre.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_SILEXIAN_DESC
@@ -5540,13 +5317,6 @@ SP_KOBUNTURA_GAMEPLAY_DESC
 '''Formes sensibles de poussière magnétique, fascinées par la construction et l'infrastructure.
 Préfèrent les Planètes stériles.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_KOBUNTURA_DESC
@@ -5563,14 +5333,6 @@ SP_UGMORS_GAMEPLAY_DESC
 '''Amas d'écume magmatique, pouvant s'agglomérer temporairement en golems.
 Préfèrent les Planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC
@@ -5594,13 +5356,6 @@ SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Herbivores à carapace, vivant uniquement à la surface de planètes recouvertes par un organisme gélatineux parasitaire singulier.
 Préfèrent les Planètes toxiques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[GOOD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_GISGUFGTHRIM_DESC
@@ -5613,13 +5368,6 @@ SP_HIDDENGARDENER_GAMEPLAY_DESC
 '''Réseau fongique sensible, implantion et prédation souterraines.
 Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[GOOD_STEALTH]]
-
-[[NO_INDUSTRY]]
-[[NO_RESEARCH]]
-
-[[NO_GROUND_TROOPS]]
 '''
 
 SP_HIDDENGARDENER_DESC
@@ -5637,13 +5385,6 @@ SP_ABADDONI_GAMEPLAY_DESC
 '''Organismes troglodytes généralement inoffensifs, et totalement soumis à un ordinateur central surprotecteur créé par ces derniers. 
 Préfèrent les Planètes infernales.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_ABADDONI_DESC
@@ -5661,17 +5402,6 @@ SP_ACIREMA_GAMEPLAY_DESC
 '''Une race d'une puissance quasi-illimitée, mais qui ne peut pas survivre dans cet univers.
 Préfèrent les Planètes irradiées.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[GOOD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-
-+	Bons [[encyclopedia SHIELDS_TITLE]] d'astronefs: +1
-+	Bons [[encyclopedia SHIELDS_TITLE]] planétaires: +5
-+	Bonne [[encyclopedia DEFENSE_TITLE]] planétaire: +5
 '''
 
 SP_ACIREMA_DESC
@@ -5695,15 +5425,6 @@ SP_OURBOOLS_GAMEPLAY_DESC
 '''Organismes aquatiques géants et aveugles, s'orientant grâce à la perception de la gravitation.
 Préfèrent les Planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[BAD_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-        
-[[ULTIMATE_DETECTION]]
 '''
 
 SP_OURBOOLS_DESC
@@ -5727,13 +5448,6 @@ SP_VOLP_GAMEPLAY_DESC
 '''Organismes fouisseurs très organisés, à forte démographie.
 Préfèrent les Planètes stériles.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[ULTIMATE_SUPPLY]]        
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_VOLP_DESC
@@ -5756,16 +5470,6 @@ SP_FURTHEST_GAMEPLAY_DESC
 '''Herbivores paranoïaques, à trois têtes et trois pattes.
 Préfèrent les Planètes avec toundra.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-                
-[[BAD_POPULATION]]
-[[BAD_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-        
-[[GOOD_DETECTION]]
-[[GREAT_STEALTH]]
 '''
 
 SP_FURTHEST_DESC
@@ -5787,14 +5491,6 @@ Exobot
 SP_EXOBOT_GAMEPLAY_DESC
 '''Robots semi-autonomes, conçus pour la production industrielle sur les planètes stériles, irradiées et infernales.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_EXOBOT_DESC
@@ -5806,16 +5502,6 @@ Expérimentateur
 SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''Scientifiques fous précurseurs.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NO_INDUSTRY]]
-[[ULTIMATE_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[ULTIMATE_GROUND_TROOPS]]
-        
-[[ULTIMATE_STEALTH]]
-[[ULTIMATE_DETECTION]]
 '''
 
 SP_EXPERIMENTOR_DESC
@@ -5827,16 +5513,6 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 '''Les Super-Testeurs, performants dans chaque domaine, sont quasiment omniscients. Ils prospèrent sur tous types de planètes. (Leur pouvoir de neutralisation de [[encyclopedia STEALTH_TITLE]] ne fonctionne que lorsqu'ils se trouvent dans leur Capitale)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
-
-
-[[GREAT_INDUSTRY]]
-[[GREAT_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[ULTIMATE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
-        
-[[ULTIMATE_WEAPONS]]
 '''
 
 #SP_SUPER_TEST_DESC
@@ -10728,11 +10404,23 @@ GREAT_SUPPLY
 ULTIMATE_SUPPLY
 ++	Parfait en [[encyclopedia SUPPLY_TITLE]] : +3
 
+GOOD_SHIP_SHIELD
++	Bons [[encyclopedia SHIELDS_TITLE]] d'astronefs: +1
+
+GOOD_PLANETARY_SHIELD
++	Bons [[encyclopedia SHIELDS_TITLE]] planétaires: +5
+
+GOOD_PLANETARY_DEFENSE
++	Bonne [[encyclopedia DEFENSE_TITLE]] planétaire: +5
+
 BROAD_EP
 ++	Grande adaptabilité : peut s'acclimater à plus de types planétaires.
 
 NARROW_EP
 −	Faible adaptabilité : s'acclimate à moins de types planétaires.
+
+FAST_COLONIZATION
++	Colonisation rapide: -25% de délai pour la construction d'une colonie.
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####

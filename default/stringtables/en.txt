@@ -4850,21 +4850,12 @@ Opinions of Empires:
 OPINIONS_OF_OTHER_SPECIES
 Opinions of Other Species:
 
-### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
-
 SP_HUMAN
 Human
 SP_HUMAN_GAMEPLAY_DESC
 '''Relentless, tribal pursuit predators (average stats for testing purposes).
 Prefer Terran planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_HUMAN_DESC
@@ -4881,13 +4872,6 @@ SP_SCYLIOR_GAMEPLAY_DESC
 '''Three-tentacled, aquatic Nautiloid.
 Prefer Ocean planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[GREAT_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_SCYLIOR_DESC
@@ -4911,14 +4895,6 @@ SP_GYSACHE_GAMEPLAY_DESC
 '''Cowardly, freakish sheep-like herbivores.
 Prefer Swamp planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[GREAT_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_GYSACHE_DESC
@@ -4941,15 +4917,6 @@ SP_CHATO_GAMEPLAY_DESC
 '''Sessile crystalline entities which ride the animal Goshk.
 Prefer Toxic planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[GREAT_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-        
-[[BROAD_EP]]
 '''
 
 SP_CHATO_DESC
@@ -4966,18 +4933,6 @@ SP_TRITH_GAMEPLAY_DESC
 '''Bereaved xenophobic telepaths.
 Prefer Desert planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-        
-[[GREAT_DETECTION]]
-[[GOOD_STEALTH]]
-
-[[NARROW_EP]]
 '''
 
 SP_TRITH_DESC
@@ -4995,16 +4950,6 @@ SP_HAPPY_GAMEPLAY_DESC
 Prefer Ocean planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[GOOD_RESEARCH]]
-       
-[[BAD_POPULATION]]
-[[GREAT_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-       
-[[BAD_STEALTH]]
-[[GOOD_DETECTION]]
 '''
 
 SP_HAPPY_DESC
@@ -5031,15 +4976,6 @@ SP_HHHOH_GAMEPLAY_DESC
 '''Huge, slow, multi-trunked Mammoths.
 Prefer Tundra planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
-        
-[[GOOD_WEAPONS]]
 '''
 
 SP_HHHOH_DESC
@@ -5057,14 +4993,6 @@ SP_EAXAW_GAMEPLAY_DESC
 '''Evil amazonian xenophobic aggressive worms.
 Prefer Terran planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]] [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-[[GREAT_WEAPONS]]
 '''
 
 SP_EAXAW_DESC
@@ -5084,15 +5012,6 @@ SP_DERTHREAN_GAMEPLAY_DESC
 '''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 Prefer Toxic planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-
-[[BAD_WEAPONS]]
 '''
 
 SP_DERTHREAN_DESC
@@ -5109,16 +5028,6 @@ SP_LAENFA_GAMEPLAY_DESC
 '''Sneaky, telepathic, sentient vines.
 Prefer Ocean Planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-
-[[GREAT_DETECTION]]
-[[GREAT_STEALTH]]
 '''
 
 SP_LAENFA_DESC
@@ -5135,14 +5044,6 @@ SP_TAEGHIRUS_GAMEPLAY_DESC
 '''Weak, flightless birds, united in total mutual cooperation.
 Prefer Swamp planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_TAEGHIRUS_DESC
@@ -5159,13 +5060,6 @@ SP_MUURSH_GAMEPLAY_DESC
 '''Militantly peaceful herbivores.
 Prefer Desert planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[GREAT_WEAPONS]]
-[[BAD_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
 '''
 
 SP_MUURSH_DESC
@@ -5179,15 +5073,6 @@ SP_GEORGE_GAMEPLAY_DESC
 '''A single, childish Telepathic entity consisting of tons of centipedeoids.
 Prefers Tundra planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-
-[[BROAD_EP]]
 '''
 
 SP_GEORGE_DESC
@@ -5203,15 +5088,6 @@ SP_CRAY_GAMEPLAY_DESC
 '''Cheerful enthusiastic robots.
 Prefer Barren planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[GOOD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-        
-[[BROAD_EP]]
 '''
 
 SP_CRAY_DESC
@@ -5229,18 +5105,6 @@ SP_ETTY_GAMEPLAY_DESC
 '''Cybernetic plants.
 Prefer Desert planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-                
-[[GOOD_WEAPONS]]
-        
-[[BAD_DETECTION]]
-[[GOOD_STEALTH]]
 '''
 
 SP_ETTY_DESC
@@ -5258,14 +5122,6 @@ Cynos
 SP_CYNOS_GAMEPLAY_DESC
 '''Walking plants sustained by a giant non-sentient mother plant.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-        
 '''
 
 SP_CYNOS_DESC
@@ -5286,15 +5142,6 @@ Phinnert
 SP_PHINNERT_GAMEPLAY_DESC
 '''Industrious Flying Monkeys.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[NO_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[BAD_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-
-+	Fast Colonization: -25% time to build colonies
 '''
 
 SP_PHINNERT_DESC
@@ -5314,14 +5161,6 @@ SP_EGASSEM_GAMEPLAY_DESC
 '''Super massive, nuclear, lava-dwelling, crystalline amoebas.
 Prefer Inferno planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[ULTIMATE_INDUSTRY]]
-[[BAD_RESEARCH]]
-
-[[BAD_POPULATION]]
-[[GREAT_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
-[[NARROW_EP]]
 '''
 
 SP_EGASSEM_DESC
@@ -5341,15 +5180,6 @@ SP_SSLITH_GAMEPLAY_DESC
 '''Flat, aquatic, pliable creatures.
 Prefer Tundra planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-        
-[[NARROW_EP]]
 '''
 
 SP_SSLITH_DESC
@@ -5365,13 +5195,6 @@ Fifty-seven
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[ULTIMATE_RESEARCH]]
-        
-[[BAD_POPULATION]]
-[[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_FIFTYSEVEN_DESC
@@ -5394,15 +5217,6 @@ SP_SETINON_GAMEPLAY_DESC
 '''Individualistic sentient microscopic cells.
 Prefer Swamp planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[NO_GROUND_TROOPS]]  
-        
-[[GREAT_STEALTH]]
 '''
 
 SP_SETINON_DESC
@@ -5422,16 +5236,6 @@ SP_NYMNMN_GAMEPLAY_DESC
 '''Planet-wide sapient magnetic waveforms.
 Prefer Desert planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-
-[[BAD_POPULATION]]
-[[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-
-[[GREAT_DETECTION]]
-[[GOOD_STEALTH]]
 '''
 
 SP_NYMNMN_DESC
@@ -5443,13 +5247,6 @@ SP_TRENCHERS_GAMEPLAY_DESC
 '''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 Prefers Barren planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[NO_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[BAD_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_TRENCHERS_DESC
@@ -5461,13 +5258,6 @@ SP_RAAAGH_GAMEPLAY_DESC
 '''Highly territorial felinoids.
 Prefer Terran planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[NO_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[BAD_SUPPLY]]
-[[ULTIMATE_GROUND_TROOPS]]
 '''
 
 SP_RAAAGH_DESC
@@ -5489,13 +5279,6 @@ SP_BEIGEGOO_GAMEPLAY_DESC
 '''Insane, intensely private, planet-engulfing nanite swarm.
 Prefers Radiated planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[NO_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
 '''
 
 SP_BEIGEGOO_DESC
@@ -5508,14 +5291,6 @@ SP_SILEXIAN_GAMEPLAY_DESC
 '''Gleaming gardener robots, left on their own.
 Prefer Terran planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[NO_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_SILEXIAN_DESC
@@ -5538,13 +5313,6 @@ SP_KOBUNTURA_GAMEPLAY_DESC
 '''Sentient magnetic dust formations with a fascination for building and construction.
 Prefer Barren planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_KOBUNTURA_DESC
@@ -5561,14 +5329,6 @@ SP_UGMORS_GAMEPLAY_DESC
 '''Lava-dwelling yeast piles, which form temporary golems.
 Prefer Inferno planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[GOOD_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-[[NARROW_EP]]
 '''
 
 SP_UGMORS_DESC
@@ -5592,13 +5352,6 @@ SP_GISGUFGTHRIM_GAMEPLAY_DESC
 '''Shelled herbivores that live off a singular planets-sized colonial gel.
 Prefer Toxic planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[GOOD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_GISGUFGTHRIM_DESC
@@ -5611,13 +5364,6 @@ SP_HIDDENGARDENER_GAMEPLAY_DESC
 '''A sapient fungal network that tends its plant food from beneath
 Prefers Terran planets
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[GOOD_STEALTH]]
-
-[[NO_INDUSTRY]]
-[[NO_RESEARCH]]
-
-[[NO_GROUND_TROOPS]]
 '''
 
 SP_HIDDENGARDENER_DESC
@@ -5635,13 +5381,6 @@ SP_ABADDONI_GAMEPLAY_DESC
 '''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
 Prefers Inferno planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
 '''
 
 SP_ABADDONI_DESC
@@ -5659,17 +5398,6 @@ SP_ACIREMA_GAMEPLAY_DESC
 '''A race with nearly limitless power, that cannot survive in this universe.
 Prefers Radiated planets.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-[[GREAT_INDUSTRY]]
-[[GOOD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[GREAT_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-
-+	Good ship [[encyclopedia SHIELDS_TITLE]]: +1
-+	Good planetary [[encyclopedia SHIELDS_TITLE]]: +5
-+	Good planetary [[encyclopedia DEFENSE_TITLE]]: +5
 '''
 
 SP_ACIREMA_DESC
@@ -5693,15 +5421,6 @@ SP_OURBOOLS_GAMEPLAY_DESC
 '''Giant blind swimmers who "see" gravitation.
 Prefer Ocean planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[BAD_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-                
-[[AVERAGE_POPULATION]]
-[[BAD_SUPPLY]]
-[[AVERAGE_GROUND_TROOPS]]
-        
-[[ULTIMATE_DETECTION]]
 '''
 
 SP_OURBOOLS_DESC
@@ -5725,13 +5444,6 @@ SP_VOLP_GAMEPLAY_DESC
 '''Highly bureaucratic, overcrowded burrowers.
 Prefer Barren planets.
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[AVERAGE_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[ULTIMATE_SUPPLY]]        
-[[AVERAGE_GROUND_TROOPS]]
 '''
 
 SP_VOLP_DESC
@@ -5754,16 +5466,6 @@ SP_FURTHEST_GAMEPLAY_DESC
 '''Paranoid three-headed, tripedal herbivores.
 Prefer Tundra planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-                
-[[BAD_POPULATION]]
-[[BAD_SUPPLY]]
-[[GOOD_GROUND_TROOPS]]
-        
-[[GOOD_DETECTION]]
-[[GREAT_STEALTH]]
 '''
 
 SP_FURTHEST_DESC
@@ -5785,14 +5487,6 @@ Exobot
 SP_EXOBOT_GAMEPLAY_DESC
 '''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-[[AVERAGE_INDUSTRY]]
-[[BAD_RESEARCH]]
-        
-[[AVERAGE_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[BAD_GROUND_TROOPS]]
-[[BAD_WEAPONS]]
 '''
 
 SP_EXOBOT_DESC
@@ -5804,16 +5498,6 @@ Experimentor
 SP_EXPERIMENTOR_GAMEPLAY_DESC
 '''Precursor mad scientists
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-[[NO_INDUSTRY]]
-[[ULTIMATE_RESEARCH]]
-
-[[GOOD_POPULATION]]
-[[AVERAGE_SUPPLY]]
-[[ULTIMATE_GROUND_TROOPS]]
-        
-[[ULTIMATE_STEALTH]]
-[[ULTIMATE_DETECTION]]
 '''
 
 SP_EXPERIMENTOR_DESC
@@ -5825,16 +5509,6 @@ SP_SUPER_TEST_GAMEPLAY_DESC
 '''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. ([[encyclopedia STEALTH_TITLE]]-busting power only works when they are in a Capital)
 [[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 [[encyclopedia TELEPATHIC_TITLE]]
-
-
-[[GREAT_INDUSTRY]]
-[[GREAT_RESEARCH]]
-        
-[[GOOD_POPULATION]]
-[[ULTIMATE_SUPPLY]]
-[[GREAT_GROUND_TROOPS]]
-        
-[[ULTIMATE_WEAPONS]]
 '''
 
 SP_SUPER_TEST_DESC
@@ -10728,11 +10402,26 @@ GREAT_SUPPLY
 ULTIMATE_SUPPLY
 ++	Ultimate [[encyclopedia SUPPLY_TITLE]]: +3
 
+GOOD_SHIP_SHIELD
++	Good ship [[encyclopedia SHIELDS_TITLE]]: +1
+
+GOOD_PLANETARY_SHIELD
++	Good planetary [[encyclopedia SHIELDS_TITLE]]: +5
+
+GOOD_PLANETARY_DEFENSE
++	Good planetary [[encyclopedia DEFENSE_TITLE]]: +5
+
 BROAD_EP
 ++	Broad Planet Tolerance: can tolerate more types.
 
 NARROW_EP
 −	Narrow Planet Tolerance: flourishes on fewer types.
+
+FAST_COLONIZATION
++	Fast Colonization: -25% time to build colonies
+
+SLOW_COLONIZATION
+−	Slow Colonization: +20% time to build colonies
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####

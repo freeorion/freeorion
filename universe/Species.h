@@ -139,7 +139,8 @@ public:
     /** \name Accessors */ //@{
     const std::string&              Name() const                        { return m_name; }                  ///< returns the unique name for this type of species
     const std::string&              Description() const                 { return m_description; }           ///< returns a text description of this type of species
-    const std::string&              GameplayDescription() const         { return m_gameplay_description; }  ///< returns a text description of this type of species
+    /** returns a text description of this type of species */
+    std::string                     GameplayDescription() const;
 
     const std::set<int>&                    Homeworlds() const          { return m_homeworlds; }            ///< returns the ids of objects that are homeworlds for this species
     const std::map<int, double>&            EmpireOpinions() const      { return m_empire_opinions; }       ///< returns the positive/negative opinions of this species about empires

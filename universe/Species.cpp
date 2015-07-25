@@ -146,6 +146,34 @@ std::string Species::Dump() const {
     return retval;
 }
 
+std::string Species::GameplayDescription() const
+{
+    std::stringstream result;
+
+    result << UserString(m_gameplay_description);
+
+    bool requires_separator = true;
+
+    for (std::vector<boost::shared_ptr<Effect::EffectsGroup> >::const_iterator it = m_effects.begin();
+         m_effects.end() != it; ++it)
+    {
+        const std::string& description = (*it)->GetDescription();
+
+        if (!description.empty())
+        {
+            if (requires_separator)
+            {
+                result << "\n";
+                requires_separator = false;
+            }
+
+            result << UserString(description) << "\n";
+        }
+    }
+
+    return result.str();
+}
+
 const Condition::ConditionBase* Species::Location() const {
     if (!m_location) {
         // set up a Condition structure to match popcenters that have (not uninhabitable) environment for this species
