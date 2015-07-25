@@ -33,6 +33,9 @@ public:
     void            Refresh();
     //@}
 
+protected:
+    virtual GG::Rect CalculatePosition() const;
+
 private:
     void            DoLayout();
     void            NewLoadClicked(std::size_t idx);
