@@ -626,13 +626,18 @@ def get_colony_fleets():
                 continue
             best_ship, col_design, build_choices = ProductionAI.getBestShipInfo(
                 EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_ORBITAL_OUTPOST, loc)
-            if not best_ship:
-                print "Error: no outpost base can be built at ", PlanetUtilsAI.planet_name_ids([loc])
-                continue
+            if best_ship is None:
+                print "Error: can't get standard best outpost base design that can be built at ", PlanetUtilsAI.planet_name_ids([loc])
+                outpost_base_design_ids = [design for design in empire.availableShipDesigns if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name(False)]
+                if outpost_base_design_ids:
+                    print "trying fallback outpost base design SD_OUTPOST_BASE"
+                    best_ship = outpost_base_design_ids.pop()
+                else:
+                    continue
             # print "selecting ", PlanetUtilsAI.planet_name_ids([pid]), " to build Orbital Defenses"
             retval = fo.issueEnqueueShipProductionOrder(best_ship, loc)
-            print "Enqueueing Outpost Base at %s for %s" % (
-                PlanetUtilsAI.planet_name_ids([loc]), PlanetUtilsAI.planet_name_ids([pid]))
+            print "Enqueueing Outpost Base at %s for %s with result %s" % (
+                PlanetUtilsAI.planet_name_ids([loc]), PlanetUtilsAI.planet_name_ids([pid]), retval)
             if retval:
                 foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] = loc
                 queued_outpost_bases.append((planet and planet.systemID) or -1)
