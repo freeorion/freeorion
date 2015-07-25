@@ -840,13 +840,6 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
         }
     }
 
-    // Notify all modal CUIWnds.
-    for (const_modal_iterator modal_it = modal_begin(); modal_it != modal_end(); ++modal_it) {
-        if (CUIWnd* cui_wnd = dynamic_cast<CUIWnd*>((*modal_it).first)) {
-            cui_wnd->ValidatePosition();
-        }
-    }
-
     // store resize if window is not full-screen (so that fullscreen
     // resolution doesn't overwrite windowed resolution)
     if (!GetOptionsDB().Get<bool>("fullscreen")) {
