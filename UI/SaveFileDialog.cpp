@@ -38,6 +38,8 @@ namespace {
     const GG::X SAVE_FILE_DIALOG_MIN_WIDTH ( 160 );
     const GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT ( 100 );
 
+    const std::string SAVE_FILE_WND_NAME = "save-load";
+
     const GG::X PROMT_WIDTH ( 200 );
     const GG::Y PROMPT_HEIGHT ( 75 );
 
@@ -558,10 +560,8 @@ private:
 
 SaveFileDialog::SaveFileDialog (const std::string& extension, bool load) :
     CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
-           (GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH) / 2,
-           (GG::GUI::GetGUI()->AppHeight() - SAVE_FILE_DIALOG_HEIGHT) / 2,
-           SAVE_FILE_DIALOG_WIDTH, SAVE_FILE_DIALOG_HEIGHT,
-           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE)
+           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
+           SAVE_FILE_WND_NAME)
 {
     m_extension = extension;
     m_load_only = load;
@@ -571,10 +571,8 @@ SaveFileDialog::SaveFileDialog (const std::string& extension, bool load) :
 
 SaveFileDialog::SaveFileDialog (bool load) :
     CUIWnd(UserString("GAME_MENU_SAVE_FILES"),
-           (GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH) / 2,
-           (GG::GUI::GetGUI()->AppHeight() - SAVE_FILE_DIALOG_HEIGHT) / 2,
-           SAVE_FILE_DIALOG_WIDTH, SAVE_FILE_DIALOG_HEIGHT,
-           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE)
+           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL | GG::RESIZABLE,
+           SAVE_FILE_WND_NAME)
 {
     m_load_only = load;
     m_server_previews = true;
@@ -583,6 +581,7 @@ SaveFileDialog::SaveFileDialog (bool load) :
 }
 
 void SaveFileDialog::Init() {
+    ResetDefaultPosition();
     SetMinSize(GG::Pt(2*SAVE_FILE_DIALOG_MIN_WIDTH, 2*SAVE_FILE_DIALOG_MIN_HEIGHT));
 
     m_layout = new GG::Layout(GG::X0, GG::Y0,
@@ -666,6 +665,13 @@ void SaveFileDialog::Init() {
 
 SaveFileDialog::~SaveFileDialog()
 {}
+
+GG::Rect SaveFileDialog::CalculatePosition() const {
+    GG::Pt ul((GG::GUI::GetGUI()->AppWidth() - SAVE_FILE_DIALOG_WIDTH) / 2,
+              (GG::GUI::GetGUI()->AppHeight() - SAVE_FILE_DIALOG_HEIGHT) / 2);
+    GG::Pt wh(SAVE_FILE_DIALOG_WIDTH, SAVE_FILE_DIALOG_HEIGHT);
+    return GG::Rect(ul, ul + wh);
+}
 
 void SaveFileDialog::ModalInit() {
     GG::Wnd::ModalInit();
