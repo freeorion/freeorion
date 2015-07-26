@@ -239,7 +239,7 @@ class ShipDesignCache(object):
         print
 
     def update_cost_cache(self, partnames=None, hullnames=None):
-        """Cache the production cost and time for each part and hull for each habitated for this turn.
+        """Cache the production cost and time for each part and hull for each inhabited planet for this turn.
 
         If partnames and hullnames are both None, rebuild Cache with available parts.
         Otherwise, update cache for the specified items.
@@ -362,9 +362,9 @@ class ShipDesignCache(object):
         #
         self.hulls_for_planets.clear()
         self.parts_for_planets.clear()
-        habitated_planets = AIstate.popCtrIDs
-        if not habitated_planets:
-            print "No habitated planets found. The design process was aborted."
+        inhabited_planets = AIstate.popCtrIDs
+        if not inhabited_planets:
+            print "No inhabited planets found. The design process was aborted."
             return
         get_shipdesign = fo.getShipDesign
         get_hulltype = fo.getHullType
@@ -451,12 +451,12 @@ class ShipDesignCache(object):
         # 2. Cache the list of buildable ship hulls for each planet
         print "Caching buildable hulls per planet..."
         testname = "%s_%s" % (TESTDESIGN_NAME_HULL, "%s")
-        for pid in habitated_planets:
+        for pid in inhabited_planets:
             self.hulls_for_planets[pid] = []
         for hullname in available_hulls:
             testdesign = _get_design_by_name(testname % hullname)
             if testdesign:
-                for pid in habitated_planets:
+                for pid in inhabited_planets:
                     if _can_build(testdesign, empire_id, pid):
                         self.hulls_for_planets[pid].append(hullname)
             else:
@@ -464,7 +464,7 @@ class ShipDesignCache(object):
 
         # 3. Update ship part test designs
         #     Because there are different slottypes, we need to find a hull that can host said slot.
-        #     However, not every planet can buld every hull. Thus, for each habitated planet:
+        #     However, not every planet can buld every hull. Thus, for each inhabited planet:
         #       I. Check which parts do not have a testdesign yet with a hull we can build on this planet
         #       II. If there are parts, find out which slots we need
         #       III. For each slot type, try to find a hull we can build on this planet
@@ -474,7 +474,7 @@ class ShipDesignCache(object):
             print "Available parts: ", available_parts
             print "Existing Designs (prefix: %s): " % TESTDESIGN_NAME_PART,
             print [x.replace(TESTDESIGN_NAME_PART, "") for x in testdesign_names_part]
-        for pid in habitated_planets:
+        for pid in inhabited_planets:
             planetname = universe.getPlanet(pid).name
             local_hulls = self.hulls_for_planets[pid]
             needs_update = [_get_part_type(partname) for partname in available_parts
@@ -531,7 +531,7 @@ class ShipDesignCache(object):
 
         # 4. Cache the list of buildable ship parts for each planet
         print "Caching buildable ship parts per planet..."
-        for pid in habitated_planets:
+        for pid in inhabited_planets:
             local_testhulls = [hull for hull in self.testhulls
                                if hull in self.hulls_for_planets[pid][:number_of_testhulls]]
             self.parts_for_planets[pid] = {}
@@ -1070,7 +1070,7 @@ class ShipDesigner(object):
                     print_error("The best design for %s on planet %d could not be added."
                                 % (self.__class__.__name__, pid))
             elif verbose:
-                print "Could not find a suitable design for planet %s." % planet
+                print "Could not find a suitable design of type %s for planet %s." % (self.__class__, planet)
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
         return sorted_design_list
 
