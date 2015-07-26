@@ -2692,6 +2692,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     ResetDefaultPosition();
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
                                                  ListRowHeight() + 2*GG::Y(PAD)));
+    DoLayout();
 }
 
 GG::Rect FleetWnd::CalculatePosition() const {
