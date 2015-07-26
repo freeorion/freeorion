@@ -26,27 +26,6 @@ Indlæs
 SAVE
 Gem
 
-# used to generate names for new fleets when they are created
-
-# used to generate name for effect-created planets. %1% is the system name.
-
-###########################
-# Predefined Ship Designs #
-###########################
-# in premade_ship_designs.txt
-
-############
-# Monsters #
-############
-
-##########
-# Fields #
-##########
-
-##############################
-# Predefined Starting Fleets #
-##############################
-
 ##########################
 # Status Update Messages #
 ##########################
@@ -56,18 +35,6 @@ Serveren svarer ikke
 
 SERVER_LOST
 Forbindelsen til serveren er mistet.
-
-######################################
-# Command Line and OptionsDB Options #
-######################################
-
-#################
-# File Dialog   #
-#################
-
-#################
-# Color Dialog  #
-#################
 
 #################
 # Intro Screen  #
@@ -221,9 +188,6 @@ Lavet af
 # Game Menu               #
 ###########################
 
-GAME_MENU_WINDOW_TITLE
-Options
-
 GAME_MENU_SAVE
 Gem Spil
 
@@ -236,24 +200,12 @@ Afslut Spil
 GAME_MENU_SAVE_FILES
 Gemte Spil filer
 
-###########################
-# Save Game Dialog        #
-###########################
-
-###########################
-# Game Options            #
-###########################
-
-##################
-# CombatSetupWnd #
-##################
-
 #################
 # Main Map      #
 #################
 
 MAP_BTN_TURN_UPDATE
-'''Tur '''
+Tur %1%
 
 #################
 # SidePanel     #
@@ -268,65 +220,6 @@ PL_UNINHABITED
 Ubeboet
 PL_COLONIZE
 Kolonisér
-
-## Resources Panel ##########
-
-## Specials Panel ##########
-
-## Buildings Panel##########
-
-## General Tooltips#########
-
-#################
-# Fleet Window  #
-#################
-
-# the name of the new fleet icon in the fleet listbox
-
-# the name that is used for fleets the player does not control
-
-# the name that is used for fleets that no player controls
-
-# the name that is used for ships the player does not control
-
-# the name that is used for ships that no player controls
-
-###############
-#  Moderator  #
-###############
-
-###############
-#  Diplomacy  #
-###############
-
-###############
-# TechTreeWnd #
-###############
-
-#######################
-# ProductionInfoPanel #
-#######################
-
-###############
-# ResearchWnd #
-###############
-
-####################
-# BuildSelectorWnd #
-####################
-
-#################
-# ProductionWnd #
-#################
-
-###############
-#  DesignWnd  #
-###############
-
-################
-## Statistics ##
-################
-    
 
 #############################################################
 ####               E N C Y C L O P E D I A               ####
@@ -355,36 +248,6 @@ Kolonisér
 # auto-generated production time description. %1% will be the auto-generated time text. This string should
 # provide an appropriate heading to appear before the auto-generated text.
 
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
-##
-
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
-
-###########################################
-# Combat Report #
-###########################################
-
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
-
-###########################################
-# ARTICLES #
-###########################################
-
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
-
-# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
-
-####################
-# Combat Messages  #
-####################
-
 ####################
 # TurnProgress     #
 ####################
@@ -403,26 +266,6 @@ Venter på at spillere færdigører deres tur
 
 TURN_PROGRESS_PHASE_ORDERS
 Udfører ordre
-
-########################
-# Messages Panel       #
-########################
-
-########################
-# Players List         #
-########################
-
-####################
-## Objects Window ##
-####################
-
-#####################
-## Objects Columns ##
-#####################
-
-####################
-## Filters Dialog ##
-####################
 
 #############################################################
 ####                    S I T   R E P                    ####
@@ -446,153 +289,3 @@ Et nyt skib %ship% er nu i kredsløb omkring planeten %planet%.
 SITREP_TECH_RESEARCHED
 Teknologien %tech% er blevet opfundet.
 
-#############################################################
-####           V I C T O R Y   /   D E F E A T           ####
-#############################################################
-
-#############################################################
-####                    S P E C I E S                    ####
-#############################################################
-
-### Note: Description Macros for species are named the same as the Effect controlling Macros in species.txt. Copy&Paste for accurate description.
-
-#############################################################
-####                   S P E C I A L S                   ####
-#############################################################
-
-#############################################################
-####        E N U M E R A T I O N   V A L U E S          ####
-#############################################################
-
-# UniverseObjectTypes
-
-# StarTypes
-
-# PlanetTypes
-
-# Planet Sizes
-
-# PlanetEnvironments
-
-# FocusTypes
-
-# MeterTypes
-
-# EmpireAffiliationTypes
-
-# UnlockableItemTypes
-
-# TechTypes
-
-# BuildTypes
-
-# StockpileTypes
-
-# Resource Types
-
-# Ship Slot Types
-
-# Ship Part Classes
-
-#############################################################
-####      ValueRef, Effect, & Condition Descriptions     ####
-#############################################################
-
-# ValueRef
-
-# this one is intentionally left empty
-
-# six is probably more than will be needed, but just in case ...
-
-# Effects
-
-# SetMeter
-
-# others
-
-# Object Creation
-
-# Conditions
-
- 
-
- 
-
-#############################################################
-####            T E C H   C A T A G O R I E S            ####
-#############################################################
-
-#############################################################
-####               T E C H   T H E O R I E S             ####
-#############################################################
-
-#############################################################
-####          T E C H   A P P L I C A T I O N S          ####
-#############################################################
-
-#############################################################
-####            T E C H   R E F I N E M E N T            ####
-#############################################################
-
-#############################################################
-####                  B U I L D I N G S                  ####
-#############################################################
-
-#############################################################
-####           Hull/Part Description Templates           ####
-#############################################################
-
-# Detection Range: %2%
-
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
-
-#############################################################
-####                 S H I P   P A R T S                 ####
-#############################################################
-
-#############################################################
-####                 S H I P   H U L L S                 ####
-#############################################################
-
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
-
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
-
-#############################################################
-####                       T A G S                       ####
-#############################################################
-
-## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
-## in Census pop-up, and specifies order in which they will be displayed.
-## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
-## since those won't be displayed in the census anyway.
-
-## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
-##STYLISH  // add to tag order list if ever this tag is given a function
-
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
-
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
-
-### Beginning of AI Aggression Level Capital Name Lists
-
-### End of Capital Names Lists
-
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
-
-################
-## Name Lists ##
-################
-
-# TODO: Sort these into their proper locations?

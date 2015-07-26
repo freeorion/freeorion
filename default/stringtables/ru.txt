@@ -3188,41 +3188,12 @@ SP_SCYLIOR_GAMEPLAY_DESC
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
-SP_SCYLIOR_DESC
-'''Description:
-Scyliori are shelled cephalopods similar to a Nautilus. They possess advanced vision provided by four eyes and have four antennae containing millions of neuromasts, allowing the Scyliori to detect changes in water pressure and also electrical fields. Scyliori have three large, strong feeding tentacles which they use to grasp and hold tools or food while it is broken up by the beak and ingested.
-
-Chromatophores provide the race with their main form of communication. When two Scyliori wish to communicate with each other, they rapidly change the coloring and patterning of their skin.
-
-Scyliori are without gender and reproduce in an iteroparous style. The lifespan of a Scylior is roughly 30 years in which they never stop growing, hatching with a shell diameter of only 5cm and experiencing roughly 10 percent growth each year.
-
-Society:
-The remnant of a once-mighty telepathic hive brain, referred to as the Mind is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to it's former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
-
-History:
-Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
-'''
-
 SP_GYSACHE
 Гисач
 SP_GYSACHE_GAMEPLAY_DESC
 '''Трусливые причудливые травоядные, напоминающие овец.
 Предпочитают болотистые планеты.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_GYSACHE_DESC
-'''The Gysache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
-
-Description:
-The Gysache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
-Their oblong bodies lack anything resembling a head, instead they have three identical eye stalks that are located at the forward tip of the body. A small mouth is located at the base of them.
-
-Personality:
-The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
-
-Homeworld:
-Their homeworld has a thick atmosphere of nitrogen, ammonina and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
 '''
 
 SP_CHATO
@@ -3233,28 +3204,12 @@ SP_CHATO_GAMEPLAY_DESC
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
 
-SP_CHATO_DESC
-'''Description:
-The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 Centimeters in height and 10 Centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
-
-Social Structure:
-In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
-'''
-
 SP_TRITH
 Трит
 SP_TRITH_GAMEPLAY_DESC
 '''Бесплотные неприветливые существа, обладающие телепатией.
 Предпочитают радиоактивные планеты.
 [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-'''
-
-SP_TRITH_DESC
-'''Description:
-The Trith are a mixture of matter and their enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for the Trith’s rage: While the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To the grown up Trith this is merely vexing, but for young Trith it can be fatal. The Trith that gain their ability before their adolescent years are sometimes not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
-
-Social Structure:
-The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought noise in the universe.
 '''
 
 SP_HHHOH
@@ -3265,32 +3220,12 @@ SP_HHHOH_GAMEPLAY_DESC
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
-SP_HHHOH_DESC
-'''Description:
-Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
-Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
-
-Personality:
-Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
-'''
-
 SP_EAXAW
 Эксо
 SP_EAXAW_GAMEPLAY_DESC
 '''Злобные агрессивные черви.
 Предпочитают пустыни.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_EAXAW_DESC
-'''Description:
-The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a 3 beaked mouth that is used to dig extensive tunnel system. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the Body is musculature, the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
-
-Social Structure:
-Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
-
-History:
-A long time ago a derelict ship of the Precursers crashed on the Eaxaws homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation "All of this must Go!".
 '''
 
 SP_DERTHREAN
@@ -3301,28 +3236,12 @@ SP_DERTHREAN_GAMEPLAY_DESC
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
-SP_DERTHREAN_DESC
-'''Description:
-The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and the plant without it is but an empty shell, yet somehow together, their neural synapses are compatible to create a reasonable being. Although the virus brings awareness to the plant, it is also toxic to its nervous system, inflicting great amounts of pain to the host, slowly murdering it the greater it spawns, and in the end, killing the plant itself, effectively meaning that the greater the intelligence of a Derthrean, the more pain he endures.
-
-Social Structure:
-The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays the fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
-'''
-
 SP_LAENFA
 Линфа
 SP_LAENFA_GAMEPLAY_DESC
 '''Подлые, чувствительные, обладающие телепатией черви.
 Предпочитают водную среду.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-'''
-
-SP_LAENFA_DESC
-'''Description:
-The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others and has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility , as they are able to swim and slither like a serpent. The increased effectiveness of attached Laenfa's telepathic communication allows them to synchronize the motions of a single vine for more effective transportation.
-
-Social Structure:
-The Laenfa have a unified culture due to their telepathy, but as their ability to communicate telepathically weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret, but takes into account the voices of all Laenfa they are able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goal of gaining knowledge of other species and protecting knowledge of themselves.
 '''
 
 SP_TAEGHIRUS
@@ -3349,28 +3268,12 @@ SP_GEORGE_GAMEPLAY_DESC
 [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
-SP_GEORGE_DESC
-'''George is a single telepathic entity that consists of multiple mobile telepathic units. 
-
-Description:
-The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
-'''
-
 SP_CRAY
 Крэй
 SP_CRAY_GAMEPLAY_DESC
 '''Жизнерадостные роботы с огромным энтузиазмом.
 Предпочитают бесплодные планеты, но с легкостью приспосабливаются и к другим.
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
-'''
-
-SP_CRAY_DESC
-'''Description:
-The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray's language is done by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
-
-Social Structure:
-The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsman rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
-Day to day decisions run on an extremely complex web of favors, all Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
 '''
 
 SP_ETTY
@@ -3381,35 +3284,12 @@ SP_ETTY_GAMEPLAY_DESC
 [[encyclopedia ROBOTIC_SPECIES_TITLE]]
 '''
 
-SP_ETTY_DESC
-'''Description:
-Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong sent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the sent of greater predators, they also have a powerful sense of smell.
-
-The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
-
-Social Structure:
-The Etty are exceedingly polite and strictly honor all contracts and agreements. Their culture is very clean, civil, kind and courteous, but very withdrawn. Etty government is a true democracy with a strong civil service held in check by a powerful press.
-'''
-
 SP_CYNOS
 Синос
 SP_CYNOS_GAMEPLAY_DESC
 '''Ходячие деревья неотделимые от огромного бесчувственного материнского дерева.
 Предпочитают болота.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-'''
-
-SP_CYNOS_DESC
-'''Description:
-The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
-
-A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant. 
-
-Social Structure:
-Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods. 
-
-Reason for Staying:
-Neither can the Cynos reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
 '''
 
 SP_PHINNERT
@@ -3420,34 +3300,12 @@ SP_PHINNERT_GAMEPLAY_DESC
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
-SP_PHINNERT_DESC
-'''Description:
-Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile flyers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
-
-Social Structure:
-Life is much shorter for Phinnerts than for most other sentient life, owing to the many dangers of the swamp. All Phinnerts are generally treated as extended family by each other and grudges do not last long. There is no central authority, there's only a vague hierarchy. The balance of power can change very quickly with the high mortality rate. Society is far less individualistic, and more focused on the group.
-
-Homeworld: 
-Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gasses. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
-'''
-
 SP_EGASSEM
 Егассем
 SP_EGASSEM_GAMEPLAY_DESC
 '''Очень большие радиоактивные живущие в лаве кристалличесике амебы.
 Предпочитают планеты типа "Ад".
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-'''
-
-SP_EGASSEM_DESC
-'''Description:
-Egassem are several kilometers across and have no fixed shape, they are capable of operating multiple instruments at once through custom formed appendages. Egassem are incredibly slow, capable of moving at most a few meters an hour as moving was only necessary to strip an area of resources. They reproduce by budding, releasing a young that is a mere hundred thousand tons.
-
-Social Structure:
-Egassem society is essentially feudalistic, with each Egassem individual being one 'fiefdom'. The fact that Egassem are typically long-lived (effectively ageless) means that they are highly conservative and highly concerned with wealth.
-
-Homeworld:
-A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface.  
 '''
 
 SP_SSLITH
@@ -3486,17 +3344,6 @@ SP_SETINON_GAMEPLAY_DESC
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
-SP_SETINON_DESC
-'''Description:
-The Setinon evolved from genetic defense cells protecting a larger organism from parasites and viruses. They are about 1 mm across with multiple sub subcompartments and structures. Proteins and nucleic acids are taking the place of neurons of the more standard minds of sentient organisms. They use biological constructs (requiring thousands of Setinon operators) to execute tasks their microscopic nature wouldn't normally allow them to carry out.
-
-Social Structure:
-Setinon society is based on two factors, firstly their strongly individualistic, defensive nature, and secondly their contrasting need to cooperate to deal with the world. Therefore Setinon society is best summed up as highly complex with multiple interacting channels of power that may change weekly.
-
-Homeworld:
-A swamp world with a dense atmosphere and fairly dense biosphere.
-'''
-
 SP_NYMNMN
 Нимнмн
 SP_NYMNMN_GAMEPLAY_DESC
@@ -3519,19 +3366,6 @@ SP_RAAAGH_GAMEPLAY_DESC
 '''Похожи на кошек..
 Предпочитают планеты земного типа.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_RAAAGH_DESC
-'''The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
-
-Personality:
-Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture.  Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
-
-Homeworld:
-The Raaagh homeworld is of the Terran type.  Sea and land are more or less evenly spread out, with the largest continent coverly only 4% of planet's surface.  The many small continents and large islands encourage a territorial attitude.
-
-Reason for Staying:
-There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries.  The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land.  Abandoning one's territory is inconcievable, and a Raaagh forcibly removed from his territory goes violently insane.
 '''
 
 SP_BEIGEGOO
@@ -3564,21 +3398,6 @@ SP_UGMORS_GAMEPLAY_DESC
 '''Живущие в лаве дрожжеподобные сгустки, формирующиеся в големы.
 Предпочитают планеты типа "ад".
 [[encyclopedia LITHIC_SPECIES_TITLE]]
-'''
-
-SP_UGMORS_DESC
-'''The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
-
-Social Structure:
-The Larar drifts are the true center of the species. These masses of yeast sit on top of the hottest part of the lava seas and absorb energy. When enough energy is available a large colony of supercharged yeast will gather large rocks at the edge of the lava pool and join them together to form an Ugmor. The Ugmors were originally designed to get from one lava pool to another, but have since developed into a very complex society. The Larar drifts are not very intelligent on their own, acting as more of a central memory which carries out the directives of the most recent Ugmor to be privileged enough to return to the Larar drifts. 
-
-Ugmors have a very unified form of government. It resembles a hive, but without a central queen. This is because all Ugmors start out with the same racial memories and agenda. When something new is discovered the Ugmor who discovered it usually returns to the nearest Larar drift to share his discovery with the rest of the species.
-
-Description:
-An Ugmor can take on many shapes, but all of them consist of rocks or sheets of metal connected by a sticky fibrous material. They are extremely durable and can even live in empty space for several hours. In their natural environment they can live for up to five years before cooling down and dieing of “old age.” Ugmors as a race are not very bright. While the Larar pools see the value of intelligence, they tend to see it as a trait which should be grown in new Ugmors only in moderation.
-
-Homeworld:
-The Ugmors home world is a rockey planet that rotates very quickly, (once every 3 and a half hours) and 30% of it’s surface is covered by seas of lava and liquid metals.
 '''
 
 SP_GISGUFGTHRIM
@@ -3640,21 +3459,6 @@ SP_OURBOOLS_GAMEPLAY_DESC
 '''Гигантские слепые водоплавающие, которые могут "видеть" силы притяжения.
 Предпочитают океаны.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_OURBOOLS_DESC
-'''Biology:
-A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
-
-Personality:
-Ourbools are inclined to a nomadic life, hunting or herding their prey ichtioids.  Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
-A significant minority drop out of society and adopt sedentary lives bound by the practical requirements of their craft
-
-Homeworld:
-The homeworld, Oolur is orbited by 23 moons.
-
-Reason for Staying:
-The Ourbools find their sense of position via the regular movements of the 23 moons.  Everything is perceived against that gravitational background.  To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler.  He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
 '''
 
 SP_VOLP
@@ -6723,14 +6527,3 @@ AI_CAPITOL_NAMES_TURTLE
 '''Цитадель
 Тюремный Мир'''
 
-### End of Capital Names Lists
-
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
-
-################
-## Name Lists ##
-################
-
-# TODO: Sort these into their proper locations?
