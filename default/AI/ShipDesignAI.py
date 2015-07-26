@@ -45,6 +45,7 @@ import AIDependencies
 import copy
 import traceback
 import math
+import AIstate
 from collections import Counter, defaultdict
 from freeorion_tools import print_error, UserString
 
@@ -238,7 +239,7 @@ class ShipDesignCache(object):
         print
 
     def update_cost_cache(self, partnames=None, hullnames=None):
-        """Cache the production cost and time for each part and hull for each planet (with shipyard) for this turn.
+        """Cache the production cost and time for each part and hull for each habitated for this turn.
 
         If partnames and hullnames are both None, rebuild Cache with available parts.
         Otherwise, update cache for the specified items.
@@ -263,7 +264,7 @@ class ShipDesignCache(object):
             hulls_to_update.update(hullnames)
 
         # no need to update items we already cached in this turn
-        pids = _get_planets_with_shipyard().keys()
+        pids = AIstate.popCtrIDs
         if self.production_cost and pids:
             cached_items = set(self.production_cost[pids[0]].keys())
             parts_to_update -= cached_items
@@ -361,9 +362,9 @@ class ShipDesignCache(object):
         #
         self.hulls_for_planets.clear()
         self.parts_for_planets.clear()
-        planets_with_shipyards = _get_planets_with_shipyard()
-        if not planets_with_shipyards:
-            print "No shipyards found. The design process was aborted."
+        habitated_planets = AIstate.popCtrIDs
+        if not habitated_planets:
+            print "No habitated planets found. The design process was aborted."
             return
         get_shipdesign = fo.getShipDesign
         get_hulltype = fo.getHullType
@@ -450,12 +451,12 @@ class ShipDesignCache(object):
         # 2. Cache the list of buildable ship hulls for each planet
         print "Caching buildable hulls per planet..."
         testname = "%s_%s" % (TESTDESIGN_NAME_HULL, "%s")
-        for pid in planets_with_shipyards:
+        for pid in habitated_planets:
             self.hulls_for_planets[pid] = []
         for hullname in available_hulls:
             testdesign = _get_design_by_name(testname % hullname)
             if testdesign:
-                for pid in planets_with_shipyards:
+                for pid in habitated_planets:
                     if _can_build(testdesign, empire_id, pid):
                         self.hulls_for_planets[pid].append(hullname)
             else:
@@ -463,7 +464,7 @@ class ShipDesignCache(object):
 
         # 3. Update ship part test designs
         #     Because there are different slottypes, we need to find a hull that can host said slot.
-        #     However, not every planet can buld every hull. Thus, for each planet with a shipyard:
+        #     However, not every planet can buld every hull. Thus, for each habitated planet:
         #       I. Check which parts do not have a testdesign yet with a hull we can build on this planet
         #       II. If there are parts, find out which slots we need
         #       III. For each slot type, try to find a hull we can build on this planet
@@ -473,7 +474,7 @@ class ShipDesignCache(object):
             print "Available parts: ", available_parts
             print "Existing Designs (prefix: %s): " % TESTDESIGN_NAME_PART,
             print [x.replace(TESTDESIGN_NAME_PART, "") for x in testdesign_names_part]
-        for pid in planets_with_shipyards:
+        for pid in habitated_planets:
             planetname = universe.getPlanet(pid).name
             local_hulls = self.hulls_for_planets[pid]
             needs_update = [_get_part_type(partname) for partname in available_parts
@@ -530,7 +531,7 @@ class ShipDesignCache(object):
 
         # 4. Cache the list of buildable ship parts for each planet
         print "Caching buildable ship parts per planet..."
-        for pid in planets_with_shipyards:
+        for pid in habitated_planets:
             local_testhulls = [hull for hull in self.testhulls
                                if hull in self.hulls_for_planets[pid][:number_of_testhulls]]
             self.parts_for_planets[pid] = {}
@@ -974,7 +975,7 @@ class ShipDesigner(object):
         :type consider_fleet_count: bool
         """
         if loc is None:
-            planets = _get_planets_with_shipyard()
+            planets = AIstate.popCtrIDs
         elif isinstance(loc, int):
             planets = [loc]
         elif isinstance(loc, list):
@@ -1009,6 +1010,7 @@ class ShipDesigner(object):
             # The piloting species is only important if its modifiers are of any use to the design
             # Therefore, consider only those treats that are actually useful. Note that the
             # canColonize trait is covered by the parts we can build, so no need to consider it here.
+            # The same is true for the canProduceShips trait which simply means no hull can be built.
             weapons_grade, shields_grade = foAI.foAIstate.get_piloting_grades(self.species)
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
@@ -1067,7 +1069,7 @@ class ShipDesigner(object):
                 else:
                     print_error("The best design for %s on planet %d could not be added."
                                 % (self.__class__.__name__, pid))
-            else:
+            elif verbose:
                 print "Could not find a suitable design for planet %s." % planet
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
         return sorted_design_list
@@ -1828,13 +1830,6 @@ class KrillSpawnerShipDesigner(ShipDesigner):
             ret_val[idx] = 1
             ret_val[-1] = num_slots - 1
         return ret_val
-
-
-def _get_planets_with_shipyard():
-    """Get all planets with shipyards.
-
-    :return: list of planet_ids"""
-    return ColonisationAI.empire_shipyards
 
 
 def _get_design_by_name(design_name):

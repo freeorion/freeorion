@@ -117,14 +117,11 @@ def cur_best_military_design_rating():
 def getBestShipInfo(priority, loc=None):
     """ Returns 3 item tuple: designID, design, buildLocList."""
     if loc is None:
-        planet_ids = ColonisationAI.empire_shipyards
+        planet_ids = AIstate.popCtrIDs
     elif isinstance(loc, list):
-        planet_ids = set(loc).intersection(ColonisationAI.empire_shipyards)
-    elif isinstance(loc, int):
-        if loc in ColonisationAI.empire_shipyards:
-            planet_ids = [loc]
-        else:
-            return None, None, None
+        planet_ids = set(loc).intersection(AIstate.popCtrIDs)
+    elif isinstance(loc, int) and loc in AIstate.popCtrIDs:
+        planet_ids = [loc]
     else:  # problem
         return None, None, None
     if priority in design_cache:
