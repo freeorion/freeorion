@@ -133,12 +133,6 @@ Palvelin on lähettänyt viestin. Peli ohi. Hei hei.
 PLAYER_DISCONNECTED
 Pelaajalla %1% ei ole enää yhteyttä palvelimeen.
 
-PLAYER_DEFEATED
-Sinut on lyöty.
-
-EMPIRE_DEFEATED
-%1% Imperiumia ei enää ole.
-
 UNKNOWN_EMPIRE
 Tuntematon Imperiumi
 

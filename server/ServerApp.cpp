@@ -322,7 +322,7 @@ void ServerApp::CleanupAIs() {
         for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
             PlayerConnectionPtr player = *it;
             if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                player->SendMessage(EndGameMessage(player->PlayerID(), Message::YOU_ARE_ELIMINATED));
+                player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
                 ai_connection_lingering = true;
             }
         }
@@ -3102,7 +3102,6 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //                for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
     //                    boost::shared_ptr<PlayerConnection> player_connection = *player_it;
     //                    int recipient_player_id = player_connection->PlayerID();
-    //                    player_connection->SendMessage(VictoryDefeatMessage(recipient_player_id, Message::VICTORY, reason_string, victor_empire_id));
     //                    if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
     //                        recipient_empire->AddSitRepEntry(CreateVictorySitRep(reason_string, victor_empire_name));
     //                }
@@ -3136,10 +3135,8 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //        boost::shared_ptr<PlayerConnection> player_connection = *player_it;
     //        int recipient_player_id = player_connection->PlayerID();
     //        if (recipient_player_id == elim_player_id) {
-    //            player_connection->SendMessage(EndGameMessage(recipient_player_id, Message::YOU_ARE_ELIMINATED));
     //            m_ai_client_processes.erase(recipient_player_id);   // done now so that PlayerConnection doesn't need to be re-retreived when dumping connections
     //        } else {
-    //            player_connection->SendMessage(PlayerEliminatedMessage(recipient_player_id, elim_empire_id, elim_empire_name));    // PlayerEliminatedMessage takes the eliminated empire id, not the eliminated player id, for unknown reasons, as of this writing
     //            if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
     //                recipient_empire->AddSitRepEntry(CreateEmpireEliminatedSitRep(elim_empire_id));
     //        }

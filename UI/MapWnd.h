@@ -379,8 +379,6 @@ private:
     void            SelectedFleetsChanged();
     void            SelectedShipsChanged();
 
-    void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
-
     std::set<int>               m_selected_fleet_ids;
     std::set<int>               m_selected_ship_ids;
 

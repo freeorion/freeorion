@@ -770,12 +770,6 @@ Le serveur a envoyé un message de fin de jeu. Au revoir.
 PLAYER_DISCONNECTED
 Le joueur %1% n'est plus connecté au serveur.
 
-PLAYER_DEFEATED
-Vous êtes vaincu.
-
-EMPIRE_DEFEATED
-L'empire %1% n'est plus.
-
 UNKNOWN_EMPIRE
 Empire inconnu
 

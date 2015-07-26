@@ -174,8 +174,6 @@ namespace {
         case Message::DISPATCH_NEW_OBJECT_ID:   return "Dispatch New Object ID";
         case Message::REQUEST_NEW_DESIGN_ID:    return "Request New Design ID";
         case Message::DISPATCH_NEW_DESIGN_ID:   return "Dispatch New Design ID";
-        case Message::VICTORY_DEFEAT:       return "Victory/Defeat";
-        case Message::PLAYER_ELIMINATED:    return "Player Elimination";
         case Message::END_GAME:             return "End Game";
         case Message::MODERATOR_ACTION:     return "Moderator Action";
         case Message::SHUT_DOWN_SERVER:     return "Shut Down Server";

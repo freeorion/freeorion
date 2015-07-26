@@ -461,12 +461,6 @@ SERVER_GAME_END
 PLAYER_DISCONNECTED
 Игрок %1% покинул сервер.
 
-PLAYER_DEFEATED
-Вы проиграли.
-
-EMPIRE_DEFEATED
-Империя %1% более не существует.
-
 UNKNOWN_EMPIRE
 Неизвестная империя
 

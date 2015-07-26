@@ -145,12 +145,6 @@ Server ukončil hru...
 PLAYER_DISCONNECTED
 Hráč č. %1% se odpojil.
 
-PLAYER_DEFEATED
-Byl si poražen.
-
-EMPIRE_DEFEATED
-Impérium rasy %1%  přestalo existovat.
-
 UNKNOWN_EMPIRE
 Neznámá říše
 

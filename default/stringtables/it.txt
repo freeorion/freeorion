@@ -264,12 +264,6 @@ Il server ha inviato un messaggio di fine partita. Buh-bye.
 PLAYER_DISCONNECTED
 Il giocatore %1% si è disconnesso.
 
-PLAYER_DEFEATED
-Sei stato sconfitto.
-
-EMPIRE_DEFEATED
-L'impero %1% non esiste più.
-
 UNKNOWN_EMPIRE
 Impero Sconosciuto
 

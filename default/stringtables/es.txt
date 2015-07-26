@@ -191,12 +191,6 @@ El servidor envío un mensaje de fin del juego. Hasta Luego.
 PLAYER_DISCONNECTED
 El jugador %1% se ha desconectado del servidor.
 
-PLAYER_DEFEATED
-Has sido derrotado.
-
-EMPIRE_DEFEATED
-El imperio %1% ya no existe.
-
 UNKNOWN_EMPIRE
 Imperio Desconocido
 

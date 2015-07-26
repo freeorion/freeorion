@@ -38,8 +38,6 @@ struct MessageEventBase
     (PlayerChat)                               \
     (Diplomacy)                                \
     (DiplomaticStatusUpdate)                   \
-    (VictoryDefeat)                            \
-    (PlayerEliminated)                         \
     (EndGame)
 
 

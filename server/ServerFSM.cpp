@@ -195,8 +195,9 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
             m_server.SelectNewHost();
 
     } else if ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) &&
-                m_server.m_eliminated_players.find(id) == m_server.m_eliminated_players.end())
+               player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
+               // eliminated players can leave safely
+               && !GetEmpire(m_server.PlayerEmpireID(id))->Eliminated())
     {
         // player abnormally disconnected during a regular game
         DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id)

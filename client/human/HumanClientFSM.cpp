@@ -401,33 +401,6 @@ boost::statechart::result PlayingGame::react(const DiplomaticStatusUpdate& u) {
     return discard_event();
 }
 
-boost::statechart::result PlayingGame::react(const VictoryDefeat& msg) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.VictoryDefeat";
-    Message::VictoryOrDefeat victory_or_defeat;
-    std::string reason_string;
-    int empire_id;
-    ExtractMessageData(msg.m_message, victory_or_defeat, reason_string, empire_id);
-
-    const Empire* empire = GetEmpire(empire_id);
-    std::string empire_name = UserString("UNKNOWN_EMPIRE");
-    if (empire)
-        empire_name = empire->Name();
-
-    //ClientUI::MessageBox(boost::io::str(FlexibleFormat(UserString(reason_string)) % empire_name));
-    return discard_event();
-}
-
-boost::statechart::result PlayingGame::react(const PlayerEliminated& msg) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.PlayerEliminated";
-    int empire_id;
-    std::string empire_name;
-    ExtractMessageData(msg.m_message, empire_id, empire_name);
-    Client().EmpireEliminatedSignal(empire_id);
-    // TODO: replace this with something better
-    //ClientUI::MessageBox(boost::io::str(FlexibleFormat(UserString("EMPIRE_DEFEATED")) % empire_name));
-    return discard_event();
-}
-
 boost::statechart::result PlayingGame::react(const EndGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.EndGame";
     Message::EndGameReason reason;
@@ -444,10 +417,6 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
         Client().EndGame(true);
         reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;
-        break;
-    case Message::YOU_ARE_ELIMINATED:
-        Client().EndGame(true);
-        reason_message = UserString("PLAYER_DEFEATED");
         break;
     }
     ClientUI::MessageBox(reason_message, error);

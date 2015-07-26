@@ -102,12 +102,6 @@ Serwer przesłał wiadomość o zakończeniu gry. Pa pa.
 PLAYER_DISCONNECTED
 Gracz %1% utracił połączenie z serwerem.
 
-PLAYER_DEFEATED
-Zostałeś pokonany.
-
-EMPIRE_DEFEATED
-Imperium %1% już nie istnieje.
-
 UNKNOWN_EMPIRE
 Nieznane imperium
 

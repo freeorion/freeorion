@@ -451,12 +451,6 @@ Der Server hat das Spiel beendet.
 PLAYER_DISCONNECTED
 Spieler %1% ist nicht länger mit dem Server verbunden.
 
-PLAYER_DEFEATED
-Sie wurden besiegt.
-
-EMPIRE_DEFEATED
-Das Imperium %1% existiert nicht mehr.
-
 UNKNOWN_EMPIRE
 Unbekanntes Imperium
 

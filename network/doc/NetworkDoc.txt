@@ -200,13 +200,6 @@
 
    MESSAGE : the text of the message to be sent to the other player\endverbatim
 
-   \section player_eliminated PLAYER_ELIMINATED
-   \subsection use_13 Usage
-   sent to all clients when a player is eliminated from play
-   \subsection player_eliminated_format_1 Format
-   \verbatim
-   \endverbatim
-
    \section player_exit PLAYER_EXIT
    \subsection use_14 Usage
    sent to the "host" client when another player leaves the game

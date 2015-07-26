@@ -3581,9 +3581,6 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 void Universe::EffectVictory(int object_id, const std::string& reason_string)
 { m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string)); }
 
-void Universe::HandleEmpireElimination(int empire_id)
-{}
-
 void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
     boost::shared_ptr<GraphImpl> new_graph_impl(new GraphImpl());

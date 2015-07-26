@@ -389,9 +389,6 @@ public:
       * information about this design is retained in the Universe. */
     bool            DeleteShipDesign(int design_id);
 
-    /** Cleans up internal storage of now-invalidated empire ID. */
-    void            HandleEmpireElimination(int empire_id);
-
     /** Used by the Victory effect to mark an object to give it owner victory. */
     void            EffectVictory(int object_id, const std::string& reason_string);
 
