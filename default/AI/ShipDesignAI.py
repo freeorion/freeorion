@@ -1070,7 +1070,7 @@ class ShipDesigner(object):
                     print_error("The best design for %s on planet %d could not be added."
                                 % (self.__class__.__name__, pid))
             elif verbose:
-                print "Could not find a suitable design of type %s for planet %s." % (self.__class__, planet)
+                print "Could not find a suitable design of type %s for planet %s." % (self.__class__.__name__, planet)
         sorted_design_list = sorted(best_design_list, key=lambda x: x[0], reverse=True)
         return sorted_design_list
 
