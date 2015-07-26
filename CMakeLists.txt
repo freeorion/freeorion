@@ -15,7 +15,7 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 ########################################
 project(FreeOrion)
 
-set(FreeOrion_VERSION 0.4.4+)
+set(FreeOrion_VERSION 0.4.5+)
 set(FREEORION_RELEASE false)
 
 set(MINIMUM_BOOST_VERSION 1.54.0)
