@@ -1262,6 +1262,8 @@ void Empire::Init() {
     m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
 
+    m_eliminated = false;
+
     //// Add alignment meters to empire
     //const AlignmentManager& alignment_manager = GetAlignmentManager();
     //const std::vector<Alignment>& alignments = alignment_manager.Alignments();
@@ -1698,7 +1700,13 @@ int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
     return count;
 }
 
-void Empire::EliminationCleanup() {
+bool Empire::Eliminated() const {
+    return m_eliminated;
+}
+
+void Empire::Eliminate() {
+    m_eliminated = true;
+
     // some Empire data not cleared when eliminating since it might be useful
     // to remember later, and having it doesn't hurt anything (as opposed to
     // the production queue that might actually cause some problems if left
@@ -1729,6 +1737,10 @@ void Empire::EliminationCleanup() {
     m_supply_starlane_obstructed_traversals.clear();
     m_fleet_supplyable_system_ids.clear();
     m_resource_supply_groups.clear();
+}
+
+bool Empire::Win(const std::string& reason) {
+    return m_victories.insert(reason).second;
 }
 
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {

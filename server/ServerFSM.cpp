@@ -1390,7 +1390,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // if all players have responded, proceed with save and continue game
     m_players_responded.insert(message.SendingPlayer());
     if (m_players_responded == m_needed_reponses) {
-        ServerSaveGameData server_data(server.m_current_turn, server.m_victors);
+        ServerSaveGameData server_data(server.m_current_turn);
 
         // retreive requested save name from Base state, which should have been
         // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)

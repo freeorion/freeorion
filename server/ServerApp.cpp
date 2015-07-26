@@ -106,9 +106,8 @@ ServerSaveGameData::ServerSaveGameData() :
     m_current_turn(INVALID_GAME_TURN)
 {}
 
-ServerSaveGameData::ServerSaveGameData(int current_turn, const std::map<int, std::set<std::string> >& victors) :
-    m_current_turn(current_turn),
-    m_victors(victors)
+ServerSaveGameData::ServerSaveGameData(int current_turn) :
+    m_current_turn(current_turn)
 {}
 
 
@@ -657,14 +656,11 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
     // clear previous game player state info
     m_turn_sequence.clear();
-    m_eliminated_players.clear();
     m_player_empire_ids.clear();
 
 
     // set server state info for new game
     m_current_turn = BEFORE_FIRST_TURN;
-    m_victors.clear();
-
 
     // create universe and empires for players
     DebugLogger() << "ServerApp::NewGameInit: Creating Universe";
@@ -718,9 +714,9 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
     // Determine initial supply distribution and exchanging and resource pools for empires
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (empires.Eliminated(it->first))
-            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
         Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
@@ -1029,14 +1025,11 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     // clear previous game player state info
     m_turn_sequence.clear();
-    m_eliminated_players.clear();
     m_player_empire_ids.clear();
 
 
     // restore server state info from save
     m_current_turn = server_save_game_data->m_current_turn;
-    m_victors =      server_save_game_data->m_victors;
-    // todo: save and restore m_eliminated_players ?
 
     std::map<int, PlayerSaveGameData> player_id_save_game_data;
 
@@ -1105,9 +1098,9 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // Determine supply distribution and exchanging and resource pools for empires
     EmpireManager& empires = Empires();
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (empires.Eliminated(it->first))
-            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
         Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
@@ -2615,7 +2608,7 @@ void ServerApp::PreCombatProcessTurns() {
 
     // update production queues after order execution
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        if (Empires().Eliminated(it->first))
+        if (it->second->Eliminated())
             continue;   // skip eliminated empires
         it->second->UpdateProductionQueue();
     }
@@ -2854,9 +2847,9 @@ void ServerApp::PostCombatProcessTurns() {
     // Determine how much of each resource is available, and determine how to
     // distribute it to planets or on queues
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (empires.Eliminated(it->first))
-            continue;   // skip eliminated empires
         Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
@@ -2869,7 +2862,7 @@ void ServerApp::PostCombatProcessTurns() {
     // Update fleet travel restrictions (monsters and empire fleets)
     UpdateMonsterTravelRestrictions();
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (!empires.Eliminated(it->first)) {
+        if (!it->second->Eliminated()) {
             Empire* empire = it->second;
             empire->UpdateAvailableLanes();
             empire->UpdateUnobstructedFleets();     // must be done after *all* noneliminated empires have updated their unobstructed systems
@@ -2887,9 +2880,10 @@ void ServerApp::PostCombatProcessTurns() {
     // objects for completed production and give techs to empires that have
     // researched them
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        if (empires.Eliminated(it->first))
-            continue;   // skip eliminated empires
         Empire* empire = it->second;
+        if (empire->Eliminated())
+            continue;   // skip eliminated empires
+
         empire->CheckResearchProgress();
         empire->CheckProductionProgress();
         empire->CheckTradeSocialProgress();
@@ -3024,7 +3018,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //std::map<int, int> eliminations; // map from player id to empire id of eliminated players, for empires eliminated this turn
     //for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
     //    int empire_id = it->first;
-    //    if (empires.Eliminated(empire_id))
+    //    if (it->second->Eliminated())
     //        continue;   // don't double-eliminate an empire
     //    DebugLogger() << "empire " << empire_id << " not yet eliminated";
 
@@ -3070,30 +3064,13 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
 
     //        const std::set<std::string>& reasons = it->second;
     //        for (std::set<std::string>::const_iterator reason_it = reasons.begin(); reason_it != reasons.end(); ++reason_it) {
-    //            std::string reason_string = *reason_it;
-
-    //            // see if player has already won the game...
-    //            bool new_victory = false;
-    //            std::map<int, std::set<std::string> >::const_iterator vict_it = m_victors.find(victor_player_id);
-    //            if (vict_it == m_victors.end()) {
-    //                // player hasn't yet won, so victory is new
-    //                new_victory = true;
-    //            } else {
-    //                // player has won at least once, but also need to check of the type of victory is new
-    //                std::set<std::string>::const_iterator vict_type_it = vict_it->second.find(reason_string);
-    //                if (vict_type_it == vict_it->second.end())
-    //                    new_victory = true;
+    //            Empire* empire = GetEmpire(victor_player_id);
+    //            if (!empire) {
+    //                ErrorLogger() << "Trying to grant victory to a missing empire!";
+    //                continue;
     //            }
+    //            if (empire->Win(*it)) {
 
-    //            if (new_victory) {
-    //                // record victory
-    //                m_victors[victor_player_id].insert(reason_string);
-
-    //                Empire* empire = GetPlayerEmpire(victor_player_id);
-    //                if (!empire) {
-    //                    ErrorLogger() << "Trying to grant victory to a missing empire!";
-    //                    continue;
-    //                }
     //                const std::string& victor_empire_name = empire->Name();
     //                int victor_empire_id = empire->EmpireID();
 
@@ -3152,10 +3129,9 @@ void ServerApp::CheckForEmpireEliminationOrVictory() {
     //        (*obj_it)->SetOwner(ALL_EMPIRES);
 
     //    DebugLogger() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
-    //    m_eliminated_players.insert(it->first);
     //    m_networking.Disconnect(it->first);
 
-    //    empires.EliminateEmpire(it->second);
+    //    it->second->Eliminate();
     //    RemoveEmpireTurn(it->second);
     //}
 }
