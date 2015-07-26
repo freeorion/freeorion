@@ -31,7 +31,7 @@ Graphics / GUI:
 ~ Made mousewheel scrolling pan the tabs in a tabbed window widget
 ~ Fixed layout placement of buttons in object filter window
 ~ Made colonization suitability report always include Exobots
-~ Added an option to toggle whether the pedia in the design screen will instantly update as a design's text is edited
+~ Added an option to toggle whether the pedia in the design screen will instantly update as a designs text is edited
 ~ Removed various unused properties from ship designs in the pedia (and internally)
 ~ Added some helper sitreps informing of a planet having sufficient population / happiness to be used for recolonization
 ~~ These helpers are easily customizable by players
@@ -45,7 +45,7 @@ Graphics / GUI:
 ~ Removed unimplemented statistics about empires from pedia
 ~ Added tooltips to auto/manual turn advance toggle
 ~ Made copy and paste functions in GUI work with OS clipboard
-~ Added right-click command on icons to look up buidling types
+~ Added right-click command on icons to look up building types
 ~ Added an optional mapscale circle overlay to MapWnd, centered on the currently selected system
 ~ Added (yellow, 3-flanged) mouseover indicator for unexplored systems
 ~ Made some of the darkest empire colors slightly less dark
@@ -60,7 +60,7 @@ Graphics / GUI:
 ~ Enabled "snoozing" (dismissing from display) of a sitrep by double-clicking or right-clicking
 ~ Removed max size from options window
 ~ Made the DesignWnd Redundancy check be applied to all part types, not just weapons
-~ Enabled customization of the DesignWnd redundant part filtering creiteria via common_user_customizations.txt
+~ Enabled customization of the DesignWnd redundant part filtering criteria via common_user_customizations.txt
 ~ Removed (most of) the extra space in ListBoxes after the end of the content
 ~ Made SitRep panel remember which SitRep it was showing first, when it is resized
 
@@ -91,12 +91,12 @@ Balance:
 ~ Concentration camps require a population of at least 3 to be produced, and set planet happiness to 0
 ~ Hull production and research cost rebalancing
 ~ Adjusted artificial planet cost
-~ Ajusted cost of tech victory
+~ Adjusted cost of tech victory
 ~ Reworked troop level calculations from various techs and buildings, including being more population-dependent
 ~ Adjusted timing and results of Experimentors doing things, tweaked their shields and defense
 ~ Made mines work on monsters
 ~ Made the requirement for attacking during combat be having partial visibility of the target, to be consistent with the criteria for starting a battle
-~ Added requirements for a minimum number of planets and planets near home system locations
+~ Added requirements for a minimum number of planets and systems near home system locations
 ~ Reduced shield part strengths and costs
 ~ Tweaked monster maturation to depend on the game turn
 ~ Added shields to the Bloated Juggernaut and reduced its damage value
@@ -115,7 +115,7 @@ Balance:
 ~~ Standardised modifiers as multiples of 20
 ~~ Each stealth special can be penetrated by the same level detection
 ~~ All planets given base stealth 5
-~ Made the megalith producible only on planets with an imperial palace
+~ Made the megalith producible only on planets with an imperial palace, and provide a troop bonus to nearby systems
 ~ Added ProductionQueue support for frontloading and/or topping-up, controlled by default/global_settings.txt
 ~ Planetary Ecology will now grant a flat + 1 bonus to Good and Adequate that expires with Symbiotic Biology
 ~ Starting planets have max happiness
@@ -1187,4 +1187,4 @@ RC5 has been released. It represents a lot of behind-the-scenes work, and some m
  ~ There are now two modes of running FreeOrion available in the start menu -- full-screen and windowed. 
  ~ Numerous bug fixes. 
 
-Note that the save file format has completely changed, and so your old files will not work. 
+Note that the save file format has completely changed, and so your old files will not work.
