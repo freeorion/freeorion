@@ -51,7 +51,7 @@ Graphics / GUI:
 ~ Made some of the darkest empire colors slightly less dark
 ~ Made pressing return to map hotkey close the fleetwnd, if open, and if not, the sidepanel, if open, if no other subscreens were open
 ~ Ensured that if a planet has nonzero max defenses (or shields or troops) the SidePanel PlanetPanel will display the military panel regardless of whether the planet is populated or owned
-~ Added display of troop info to FleetWnd
+~ Troop ships and fleets will now show their total troops value
 ~ Adjusted sitrep font size to be the greater of the client UI standard font size or 75% of the size for sitrep icons
 ~ Added several new hotkey commands
 ~ Made most interface windows be constrained to within their parent window, or the application window
@@ -71,7 +71,8 @@ Content:
 ~ Improved randomness of random empire species selection
 ~ Exobot colony origin building replaced by new-standard add-species-to-planet style building, but without a standard species requirement of having a source of that species supply connected to the production location
 ~ Made AIs occasionally respond to chat messages (not meaningfully)
-~ Added a world tree special
+~ Added three new specials: World Tree, Honeycomb and Fortress
+~ Added two variants of Artificial Planets: Artificial Paradise World and Artificial Factory World
 ~ Made high tech natives special produce one or more buildings on planets
 ~~ "Primitive" natives can't get this special
 ~ Added a higher-capacity advance ground troops pod
@@ -81,13 +82,9 @@ Content:
 ~ Added colony buildings for natives that can colonize but can't build ships
 ~ Added the Maintenance Ship as an alternative to the Sentry monster type
 ~ New native species: Happybirthday
-~ Added the Honeycomb and Fortress specials
 ~ Added Species Homeworlds page to Pedia
 ~ Improved slot positions of ship hulls
-~ Changes to fields:
-~~ Reduced the spawn rate on small and normal sized maps
-~~ Made starting size random
-~~ Increased minimum spawn distance from centre of galaxy
+~ Changes to fields: Ion Storms and Molecular Clouds now start very small, but grow large before shrinking again. 
 
 Balance:
 ~ Tweaked galaxy special distributions to lessen frequency of multiple specials on one object
@@ -114,7 +111,6 @@ Balance:
 ~ Dyson Forests will have a location condition of at least 3 jumps from empire homes
 ~ Dyson Forest's regeneration effect will receive a no-combat-last-turn-here condition.
 ~ Homeworlds and capitals get +5 happiness
-~ Concentration camps set happiness to 0
 ~ Rebalanced planetary stealth and detection modifiers
 ~~ Standardised modifiers as multiples of 20
 ~~ Each stealth special can be penetrated by the same level detection
@@ -154,6 +150,7 @@ Bugs:
 ~ Fixed Pedia Species Homeworlds bug that had caused entries with more than 5 occupied planets to be left out of the display
 ~ Fixed planet names on sidepanel losing formatting tags when the planet is renamed
 ~ Fixed multiline text display bug when rendering colored highlighted text
+~ Fixed Exobots not having Bad Ground Troops as described
 
 
 v0.4.4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
