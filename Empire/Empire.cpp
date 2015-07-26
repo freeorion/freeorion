@@ -34,7 +34,7 @@
 namespace {
     const float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
-    
+
     float GetQueueFrontloadFactor() {
         static float front_load_factor = -1.0;
         if (front_load_factor == -1.0) {
