@@ -160,14 +160,6 @@ Diente de Dragón
 SD_DRAGON_TOOTH_DESC
 Antiguo diseño naval con armas avanzadas y sistemas defensivos.
 
-############
-# Monsters #
-############
-
-##########
-# Fields #
-##########
-
 ##############################
 # Predefined Starting Fleets #
 ##############################
@@ -1341,8 +1333,6 @@ Seleccionar colonizador
 RP_FOCUS_TOOLTIP
 Enfoque: %1%
 
-## Specials Panel ##########
-
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -1485,14 +1475,6 @@ Destruir Nave
 
 ORDER_CANCEL_SHIP_SCRAP
 Cancelar Destruir Nave
-
-###############
-#  Moderator  #
-###############
-
-###############
-#  Diplomacy  #
-###############
 
 ###############
 # TechTreeWnd #
@@ -1684,11 +1666,6 @@ Limpiar Partes
 DESIGN_DELETE
 Borrar Diseño
 
-################
-## Statistics ##
-################
-    
-
 #############################################################
 ####               E N C Y C L O P E D I A               ####
 #############################################################
@@ -1780,34 +1757,6 @@ Capacidad de Combustible: %11%
 Capacidad de Colonización: %12%
 Ocultación: %13%
 '''
-## Temporarily removed
-# Direct Fire Parts: %4%
-# Missile Parts: %5%
-# Fighter Bays: %6%
-# Point Defense Parts: %7%
-# Battle Speed: %12%
-##
-
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
-
-ENC_TECH_DETAIL_TYPE_STR
-%1% %2% - %3%
-
-###########################################
-# Combat Report #
-###########################################
-
-###########################################
-# ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
-###########################################
-
-###########################################
-# ARTICLES #
-###########################################
-
-#The Mining Focus is only available on planets with certain rare specials. Focusing on Mining provides a production bonus.
-
-# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 
 ####################
 # Combat Messages  #
@@ -1867,26 +1816,6 @@ Ejecutando ordenes ...
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Descargando estado actual del juego ...
-
-########################
-# Messages Panel       #
-########################
-
-########################
-# Players List         #
-########################
-
-####################
-## Objects Window ##
-####################
-
-#####################
-## Objects Columns ##
-#####################
-
-####################
-## Filters Dialog ##
-####################
 
 #############################################################
 ####                    S I T   R E P                    ####
@@ -4435,43 +4364,3 @@ Casco de Colonia Base
 SH_COLONY_BASE_DESC
 Un casco diseñado para crear una colonia en otro planeta del sistema.  No puede moverse entre sistemas o de forma rápida dentro del sistema.
 
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
-
-#############################################################
-####          A C C O U N T I N G    L A B E L S         ####
-#############################################################
-
-#############################################################
-####                       T A G S                       ####
-#############################################################
-
-## CENSUS_TAG_ORDER is a whitespace separated list, acts as a filter for which Tags will be presented 
-## in Census pop-up, and specifies order in which they will be displayed.
-## This list should not include any AI helper tags (ones starting with "AI_TAG_") or any non-species tags,
-## since those won't be displayed in the census anyway.
-
-## ** DO NOT TRANSLATE the contents of CENSUS_TAG_ORDER  -- this is a functional entry
-##STYLISH  // add to tag order list if ever this tag is given a function
-
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
-
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
-
-### Beginning of AI Aggression Level Capital Name Lists
-
-### End of Capital Names Lists
-
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
-
-################
-## Name Lists ##
-################
-
-# TODO: Sort these into their proper locations?

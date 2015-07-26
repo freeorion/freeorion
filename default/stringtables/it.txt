@@ -210,66 +210,6 @@ Progetto antico di nave con armi avanzate e sistemi difensivi.
 SM_MONSTER
 Mostri
 
-SM_KRILL_3_DESC
-Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
-
-SM_KRILL_4_DESC
-Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
-
-SM_FLOATER_DESC
-Gas-filled bulbous sac drifting through space.
-
-SM_DRONE_FACTORY_DESC
-Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
-
-SM_GUARD_1_DESC
-Sentries guard cool minor stuff.
-
-SM_GUARD_3_DESC
-Wardens guard cool major stuff.
-
-SM_KRAKEN_1_DESC
-In the larval form, a kraken is a cautious and harmless type of space-bourn fauna. Its natural prey is the krill swarms, which it help to keep in check. But a well-fed larval kraken may grow into a larger and more dangerous adult form.
-
-SM_KRAKEN_2_DESC
-A formidable medium-weight space monster.
-
-SM_KRAKEN_3_DESC
-A formidable medium-weight space monster.
-
-SM_BLACK_KRAKEN_DESC
-A powerful, unnatural-seeming space monster.
-
-SM_SNOWFLAKE_1_DESC
-A formidable light-weight space monster.
-
-SM_SNOWFLAKE_2_DESC
-A formidable light-weight space monster.
-
-SM_SNOWFLAKE_3_DESC
-A formidable light-weight space monster.
-
-SM_PSIONIC_SNOWFLAKE_DESC
-A monster with the power to neutralize the minds of organic beings.
-
-SM_JUGGERNAUT_1_DESC
-A formidable heavy-weight space monster.
-
-SM_JUGGERNAUT_2_DESC
-A formidable heavy-weight space monster.
-
-SM_JUGGERNAUT_3_DESC
-A formidable heavy-weight space monster.
-
-SM_BLOATED_JUGGERNAUT_DESC
-A massive, sickly-looking space monster.
-
-SM_ACIREMA_GUARD_DESC
-An unmanned armed ship built by the Acirema guards the system.
-
-SM_COSMIC_DRAGON_DESC
-A fearsome space monster with the power to destroy entire star systems.
-
 ##########
 # Fields #
 ##########
@@ -1044,10 +984,6 @@ GAME_MENU_SAVE_FILES
 Salvataggi
 
 ###########################
-# Save Game Dialog        #
-###########################
-
-###########################
 # Game Options            #
 ###########################
 
@@ -1602,8 +1538,6 @@ Seleziona nave colonizzatrice per colonizzare.
 RP_FOCUS_TOOLTIP
 Obbiettivo: %1%
 
-## Specials Panel ##########
-
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -2073,11 +2007,6 @@ Rimuovi Parti
 DESIGN_DELETE
 Cancella Progetto
 
-################
-## Statistics ##
-################
-    
-
 #############################################################
 ####               E N C Y C L O P E D I A               ####
 #############################################################
@@ -2271,10 +2200,6 @@ ENC_COMBAT_UNKNOWN_OBJECT
 Sconosciuto
 
 ###########################################
-# Combat Report #
-###########################################
-
-###########################################
 # ARTICLE CATEGORIES & SHORT DESCRIPTIONS #
 ###########################################
 
@@ -2420,70 +2345,30 @@ Le specie organiche sono, 'la vita come noi la conosciamo', più o meno.  These 
 
 LITHIC_SPECIES_TITLE
 Metabolismo Litico
-LITHIC_SPECIES_TEXT
-Lithic species are silicon or mineral-based.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth.  Lithic Growth specials are marked with a little grey 'L' in the corner.
 
 ROBOTIC_SPECIES_TITLE
 Metabolismo Robotico
-ROBOTIC_SPECIES_TEXT
-Robotic species are sapient machines.  These species max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Robotic Growth Special is colonized, and focused on Growth.  Robotic Growth specials are marked with a little red 'R' in the corner.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Metabolismo Fototrofico
-PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species live mainly or entirely on sunlight. These species max population is greatly influenced by the brightness of the local star -- the bigger the better.  Growth specials do not benefit them.
-
-Population changes:
-Blue Star: Tiny +3 , Small +6 , Medium +9 , Large +12 , Huge +15.
-White Star: Tiny +1.5 , Small +3 , Medium +4.5 , Large +6 , Huge +7.5.
-Yellow Star, Orange Star: No changes.
-Red Star, Neutron Star: Tiny -1 , Small -2 , Medium -3 , Large -4 , Huge -5.
-Black Hole, No Star: Tiny -10 , Small -20 , Medium -30 , Large -40 , Huge -50.'''
 
 SELF_SUSTAINING_SPECIES_TITLE
 Metabolismo Auto-Sostenibile
-SELF_SUSTAINING_SPECIES_TEXT
-Self-Sustaining species may be energy or crystalline beings or something even stranger.  Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three growth specials.
 
 TELEPATHIC_TITLE
 Telepatia
 
 FUEL_TITLE
 Carburante
-FUEL_TEXT
-Fuel allows ships to travel the star-lanes. When entering a star-lane a ship consumes 1 unit of fuel.  Fuel is not used up at any other time.  [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship.  If a ship travels beyond friendly supply lines, fuel will slowly regenerate when the ship is outside of the star-lanes.
 
 SUPPLY_TITLE
 Rifornimenti
-SUPPLY_TEXT
-'''Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines can share physical resources -- production created on one planet, can be used on any connected planet to build ships or structures.  Supply lines can also be used to refill the [[encyclopedia FUEL_TITLE]] supply of ships.
-
-The supply meter on a planet represents the number of star-lanes supply can reach.'''
 
 FLEET_UPKEEP_TITLE
 Mantenimento della Flotta
-FLEET_UPKEEP_TEXT
-The cost of a fleet is more than the sum of the cost of its ships due to the oporational costs associated with managing multiple ships. When producing new ships, hull costs increase by 5% for each ship already owned by the empire.
 
 EVACUATION_TITLE
 Evacuazione
-EVACUATION_TEXT
-'''The [[buildingtype BLD_EVACUATION]] project when built will remove the population of a planet. Each turn some of the population will be removed. If there are planets colonized by the same species with free space, and connected by [[encyclopedia SUPPLY_TITLE]] lines, one will be randomly chosen and the population will move there. If there are no appropriate planets available, the population disapears into the vastness of space.
-During an evacuation production drops to nothing. When the colony is empty, it reverts to an [[encyclopedia OUTPOSTS_TITLE]]. It still belongs to the same empire, and may be re-colonized once the [[buildingtype BLD_EVACUATION]] deletes itself.'''
-
-AI_LEVELS_TEXT
-'''AI aggression levels are meant to be roughly akin to difficulty levels, but not exactly, particularly in that they are differentiated in various aspects of risk-taking and aggression, with only some actual limitations being applied to the lower level ones. They can all still play pretty well, but the lower aggression ones may be a bit easier to manage, even if not necessarily easier to actually take over. The more aggressive ones do a bit better over the course of a game.
-
-AIs rename their capitol planet on turn 1, adding a prefix. Once you discover their home system you can determine their personality.
-The current prefixes are:
-Turtle: Citadel
-Cautious: Bastion of the Brave
-Moderate: Haven
-Aggressive: Royal Demesne
-Maniacal: Stairway to Heaven
-There is also a "Beginner Mode" AI level, which has the most handicapping. '''
-
-# Functional list; do not translate. Used for logging during universe creation and for an ObjectListWnd condition
 
 ####################
 # Combat Messages  #
@@ -2600,10 +2485,6 @@ Comprimi Tutto
 
 EXPAND_ALL
 Espandi Tutto
-
-#####################
-## Objects Columns ##
-#####################
 
 ####################
 ## Filters Dialog ##
@@ -2812,33 +2693,6 @@ Impero Eliminato
 SITREP_VICTORY_LABEL
 Vittoria
 
-SITREP_VICTORY_DESTRUCTION
-At last, the mysterious violent threat plagueing the galaxy has been eliminated.  The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
-
-SITREP_VICTORY_CAPTURE
-The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have fallen uder your control.
-
-SITREP_VICTORY_BIO
-The mystery of the fearsome threat plagueing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty warfleet.
-
-EFFECT_ANCIENT_SHIP
-Ancient Ruins in %planet% have revealed a %predefinedshipdesign%.
-
-EFFECT_ANCIENT_BUILDING
-Ancient Ruins in %planet% have revealed a %buildingtype%.
-
-EFFECT_ANCIENT_TECH
-Ancient Ruins in %planet% have revealed %tech%.
-
-EFFECT_MONSTER_SPAWNING
-A %predefinedshipdesign% was spawned in %system%!
-
-EFFECT_TAME_MONSTER_HATCHED
-A tamed %predefinedshipdesign% is ready for service at %planet%.
-
-EFFECT_DERELICT_MINERALS
-Twenty minerals were scavenged from an abandoned derelict at %system%.
-
 EFFECT_DERELICT_MAP
 Informazioni sull'area sono state ottenute da un relitto abbandonato su %system%.
 EFFECT_DERELICT_MAP_LABEL
@@ -2872,9 +2726,6 @@ La nave dell'impero %empire% della flotta %fleet% ha subito %rawtext% punti di d
 EFFECT_MINES_LABEL
 Mine di Sistema
 
-EFFECT_MINES_SHIP_DESTROYED
-The %empire% ship %ship% has been destroyed by mines in the %system% system!
-
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
@@ -2901,484 +2752,27 @@ Preferiscono pianeti terrestri.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
 
-SP_SCYLIOR_DESC
+SP_SCYLIOR_GAMEPLAY_DESC
 '''Tri-Tentacoli, nautiloidi acquatici.
 Preferiscono pianeti oceanici.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Description:
-Scyliori are shelled cephalopods similar to a Nautilus. They possess advanced vision provided by four eyes and have four antennae containing millions of neuromasts, allowing the Scyliori to detect changes in water pressure and also electrical fields. Scyliori have three large, strong feeding tentacles which they use to grasp and hold tools or food while it is broken up by the beak and ingested.
-
-Chromatophores provide the race with their main form of communication. When two Scyliori wish to communicate with each other, they rapidly change the coloring and patterning of their skin.
-
-Scyliori are without gender and reproduce in an iteroparous style. The lifespan of a Scylior is roughly 30 years in which they never stop growing, hatching with a shell diameter of only 5cm and experiencing roughly 10 percent growth each year.
-
-Society:
-The remnant of a once-mighty telepathic hive brain, referred to as the Mind is treated by the Scyliori as a benevolent god. It has instilled in them a mission to journey the stars in hopes of returning to it's former might. Scyliori are highly social and came to love learning things and sharing knowledge with the Mind.
-
-History:
-Millennia ago an expedition of the precursors discovered the Mind controlling the whole planet with his telepathic powers. The Mind immediately reached out and began copying the knowledge of the scientists and their ship crew, but the scientists cut out most of the Mind's brain and took it with them as a sample. The rest survived and lusted to recover the memories that had been taken from it. The Mind, however, was immobile, and for the time being, had no nearby intelligent beings to act as it's hands. Enter the Scyliori.
 '''
 
-SP_GYSACHE_DESC
+SP_GYSACHE_GAMEPLAY_DESC
 '''Codardi, bizzarri erbivori simil-pecore.
 Preferiscono pianeti paludosi.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-The Gysache are a herbivorous species that has always been the prey. They seek to remove all that threatens them, until every place in the universe is safe.
-
-Description:
-The Gysache are bipedal, each leg has two forward knees and one backward knee in between. When they crouch, the leg folds into an efficient 'W' making them only half a meter tall (compared to 2.5 meters when fully erect).
-Their oblong bodies lack anything resembling a head, instead they have three identical eye stalks that are located at the forward tip of the body. A small mouth is located at the base of them.
-
-Personality:
-The Gysache are always wary of predators and are easily alarmed. Their natural response is to run away from everything. Their government system is dispersed as each individual is completely independent and forms no bonds with other individuals. They do have a herding tendency though and this keeps them together when faced with danger.
-
-Homeworld:
-Their homeworld has a thick atmosphere of nitrogen, ammonina and carbon dioxide. Most parts of it are moist but it lacks large oceans, only 5% of its surface is covered in water. The main topographical features are enormous high rocky mesas cut by mile deep canyons the bottoms of which contain the only standing water.
 '''
 
-SP_CHATO_DESC
+SP_CHATO_GAMEPLAY_DESC
 '''Entità cristalline sessili che cavalcano gli animali Goshk.
 Preferiscono pianeti tossici.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-Description:
-The Chato'matou'Gormoshk are actually two species together, however it is not entirely clear if the connection between the species should be called symbiosis or parasitism. The master species are the Chato'matou, crystalline life forms about 30 Centimeters in height and 10 Centimeters in width. Their color ranges from a light blue to a deep crimson. They get the energy they need to live from the sun or in exceptional cases from the Gormoshk they are attached to. The Gormoshk are predatory animals formerly living in underground caverns. Their bodies are flat and round and rest on five insect-like legs. The Chato'matou attach themselves to the flat part on top of the Gormoshk's bodies, directly above the brain. Through a crystalline outgrowth they can control the Gormoshk completely.
-
-Social Structure:
-In Chato'matou society, age is the most important factor as they are nearly immortal. Every command the elders issue is obeyed at once and to disobey an elder is the greatest crime in Chato'matou society. They developed a system to transmit signals without delay throughout an entire colony, enabling them to converse with near the speed of light. This greatly enhanced the species mental capabilities, as all new ideas and theories could be instantly processed throughout the colony. The Gormoshk are valued as mounts and well cared for under normal circumstances, however they are also seen mostly as animals.
-'''
-
-SP_TRITH_DESC
-'''Bereaved xenophobic telepaths.
-Prefer Desert planets.
-[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-Description:
-The Trith are a mixture of matter and their enormous psychic energies. Their shape is vaguely humanoid. All Trith are telepathic, and herein lies the reason for the Trith’s rage: While the Trith can learn to keep their own thoughts to themselves, they are unable to tune out the thoughts of others. To the grown up Trith this is merely vexing, but for young Trith it can be fatal. The Trith that gain their ability before their adolescent years are sometimes not ready to cope with the combined minds of all people in the universe screaming at them and go mad or die.
-
-Social Structure:
-The Trith are a theocracy led by the priests of Quaran-Dor (The God of the Mind). They are united in the single goal of eliminating all other thinking species to silence the thought noise in the universe.
-'''
-
-SP_HHHOH_DESC
-'''Huge, slow, multi-trunked Mammoths.
-Prefer Tundra planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Description:
-Hhhoh are large, warm blooded creatures measuring over 16 meters in length (including leg/tail), 6 meters in width, stand at 5 and a half meters tall and weigh over 5 tons. They have a very thick layer of white fur.
-Hhhoh locomotion is performed by using their two, large front legs, while using their hind leg to balance their large back. They also have four long trunk-like appendages of 8 meters in length, with four sharp fingered claws they use to handle objects. When not in use, Hhhoh’s curl these trunks under their bodies and bury them in large fat pouches to conserve heat. They are omnivorous, but do not actively hunt or farm large domesticated life.
-
-Personality:
-Hhhoh's describe themselves as social pragmatists. Elders are very much revered, some living close to 230 years. Their sloth-like disposition makes them aversive to any fast movements, as well as hasty decisions.
-'''
-
-SP_EAXAW_DESC
-'''Evil amazonian xenophobic agressive worms.
-Prefer Terran planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Description:
-The Eaxaw have 3 body forms. First is the newborn larval form, then the male form and lastly the adult female form. All forms are completely blind and use touch, smell, hearing and a sense for electric currents to explore their world. The female form is a segmented worm approximately 8 meters long. At the front is a 3 beaked mouth that is used to dig extensive tunnel system. The neural network of the female is distributed along chains of neural nodes that run the length of the body. Most of the rest of the Body is musculature, the armored outer body segments provide support. These outer segments have a small overlap much like scales, under which larvae are grown. Eaxaw in their male form are much smaller and rather dim witted. At the end of their tail is a complex grasping claw that comes in very specialized varieties.
-
-Social Structure:
-Eaxaw are organized into matriarchal breeding groups. A female keeps a "harem" of approximately 200 males which protect, feed and mate with her. Any new males that the female births are added to the harem but are frequently traded with other females like a currency. This ensures genetic diversity and promotes a wide variety of males to perform specialized tasks. The highest ranking females (having the largest and most diverse Harems) form the Great Matriarchal Council which sets the global agenda for the Eaxaw.
-
-History:
-A long time ago a derelict ship of the Precursers crashed on the Eaxaws homeworld. As they learned some of its secrets they deduced that there were other intelligent species besides them. Their great matriarchal council soon issued its greatest proclamation "All of this must Go!".
-'''
-
-SP_DERTHREAN_DESC
-'''Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
-Prefer Toxic planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-Description:
-The Derthrean consciousness represents a half parasitic, half symbiotic relationship of viruses living in the bodies of plants. The virus has no intelligence and the plant without it is but an empty shell, yet somehow together, their neural synapses are compatible to create a reasonable being. Although the virus brings awareness to the plant, it is also toxic to its nervous system, inflicting great amounts of pain to the host, slowly murdering it the greater it spawns, and in the end, killing the plant itself, effectively meaning that the greater the intelligence of a Derthrean, the more pain he endures.
-
-Social Structure:
-The Derthrean are a sharply divided race, split by the legacy of their forebears into castes. They are born into a caste, they mate in their caste, and they die as a member of a caste. Because the breeding has been so isolated throughout the millennia, there are even physical varieties in different castes. The castes are divided as follows: the most benevolent Priest caste, the Worker caste, the Grower caste, the Provider caste, the Scholar caste and the most despised of all, the Warrior caste. Religion plays the fundamental role in their society. Each Derthrean is a pacifist and lives to please their Goddess, in hopes of relieving the terrible burden of pain and earning forgiveness for the betrayal and bloodlust of their ancestors.
-'''
-
-SP_LAENFA_DESC
-'''Sneaky, telepathic, sentient vines.
-Prefer Ocean Planets.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-Description:
-The Laenfa are long and vine-like, able to attach and detach into any number of larger or smaller vines at will. Each leaf has its own consciousness, separate from the others and has direct control over the small length of vine to which it is attached. Laenfa have high underwater mobility and reasonable ground mobility , as they are able to swim and slither like a serpent. The increased effectiveness of attached Laenfa's telepathic communication allows them to synchronize the motions of a single vine for more effective transportation.
-
-Social Structure:
-The Laenfa have a unified culture due to their telepathy, but as their ability to communicate telepathically weakens with distance, there is a large central vine that decides on most important decisions. This vine carries out its debates in secret, but takes into account the voices of all Laenfa they are able to detect. The Laenfa carry out their duties with hive-like efficiency with each individual working for the collective goal of gaining knowledge of other species and protecting knowledge of themselves.
-'''
-
-SP_TAEGHIRUS_DESC
-'''Weak, flightless birds, united in total mutual cooperation.
-Prefer Swamp planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-Description:
-The Tae Ghirus look like feather-less vultures with a fragile grey body. Their wings were designed for gliding, not flying, but even this aerodynamic function was lost in evolution.
-
-Social Structure:
-The Tae Ghirus are very social and cooperative to make up for their weak bodies. Their social and political system, called "The Allegiance", is a mixture of participative democracy and a brotherhood which works surprisingly well.
-'''
-
-SP_MUURSH_DESC
-'''Militantly peaceful herbivores.
-Prefer Desert planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-'''
-
-SP_GEORGE_DESC
-'''A single, childish Telepathic entity consisting of tons of centipedeoids.
-Prefers Tundra planets.
-[[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-George is a single telepathic entity that consists of multiple mobile telepathic units. 
-
-Description:
-The units that make up George look like 2.5 m long, 0.5 m tall centipedes except with a far smoother skin and a cluster of about 6 tentacle/antennae at the front for manipulation. The units can't act or even think on their own, the mind of George is the sum of all the units communicating telepathically (over any distance).
-'''
-
-SP_CRAY_DESC
-'''Cheerful enthusiastic robots.
-Prefer Barren planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-Description:
-The Cray resemble a large black box of smooth shiny plastic with rounded corners which measure six meters in all directions. A large mechanical tentacle extends from the center of four of the faces (the other two being top and bottom) these serve primary for locomotion and heavy lifting. The Cray's language is done by wireless radio. They are impressively parallelized and can hold an average of four trains of thought at once, frequently having more than one conversation at a time, often several with the same person.
-
-Social Structure:
-The Cray are a tribal society. Each tribe is formed around a single Cray known as a Master Craftsman who has the skills to build and maintain Cray. Because the Cray are so badly designed even the Master Craftsman rarely get them perfect and each tribe gets its own “racial characteristics” based on the idiosyncrasies of its Master Craftsman's work.
-Day to day decisions run on an extremely complex web of favors, all Cray will happily help their kin if asked and afterwards both will remember exactly what the debt is. While not the most efficient way of running an economy this system means that within a tribe the Cray will owe or be owed favors by a good portion of the community fostering exceptionally strong social bonds and that is just the way they like it.
-'''
-
-SP_ETTY_DESC
-'''Cybernetic plants.
-Prefer Desert planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-Description:
-Etty are an unnaturally evolved race of intelligent plants. They can grow up to half a meter in length and have a central brain found in a large bulb. Etty have very strong sent which they can vary at will, this evolutionary adoption allowed them to protect themselves from plant eaters by mimicking the sent of greater predators, they also have a powerful sense of smell.
-
-The robot bodies of the Etty serve as legs, eyes, ears and hands. A socket connects the body with the Etty, allowing them to move from one body to another without needing to painfully uproot themselves. The robot form itself is highly varied based on its function.
-
-Social Structure:
-The Etty are exceedingly polite and strictly honor all contracts and agreements. Their culture is very clean, civil, kind and courteous, but very withdrawn. Etty government is a true democracy with a strong civil service held in check by a powerful press.
-'''
-
-SP_CYNOS_DESC
-'''Walking plants sustained by a giant non-sentient mother plant.
-Prefer Swamp planets.
-[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-
-Description:
-The Cynos are part of a mother plant which resembles a 90 meters high agave plant. Its huge fronds are a bluish aquamarine color radiating from a central bulb that forms the core of the plant. The extensive but rather shallow root system sprouts offshoots to grow adjacent to the central plant. A single plant can live near 5000 years. There are numerous "brood chambers" inside the fronds in which the Cynos are "born" and regenerate.
-
-A Cyno starts as a small bulb inside the brood chamber, grows into a full sized individual within a few days and detaches itself. It is 3.5 meters long and roughly rectangular shaped with a tapering vine at each corner. These limbs are used for movement, feeding and fighting alike. A Cyno is capable of approximately 30 hours of independent activity before it has to feed at a mother plant. 
-
-Social Structure:
-Cynos are highly cooperative and altruistic in protecting the mother plants. They have a consensus government strongly influenced by the mother plants, which are mindless but still communicate through the Cynos on a chemical level and manipulate their moods. 
-
-Reason for Staying:
-Neither can the Cynos reproduce without their mother plants, nor can they bring themselves to plant a seed anywhere but their homeworld.
-'''
-
-SP_PHINNERT_DESC
-'''Flying Monkeys.
-Prefer Swamp planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Description:
-Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. They have long arms, with a wingspan of about twice their height. They have hairy, retractable flaps of skin that stretch from wrist to ankle and allow for fully functional flight in low gravity. They are very agile flyers and can catch flying bug-like creatures with a fully prehensile nose appendage. Like bats they can use echo-location, this sense is not highly developed though.
-
-Social Structure:
-Life is much shorter for Phinnerts than for most other sentient life, owing to the many dangers of the swamp. All Phinnerts are generally treated as extended family by each other and grudges do not last long. There is no central authority, there's only a vague hierarchy. The balance of power can change very quickly with the high mortality rate. Society is far less individualistic, and more focused on the group.
-
-Homeworld: 
-Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gasses. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
-'''
-
-SP_EGASSEM_DESC
-'''Super massive, nuclear, lava-dwelling, crystalline amoebas.
-Prefer Inferno planets.
-[[encyclopedia LITHIC_SPECIES_TITLE]]
-
-Description:
-Egassem are several kilometers across and have no fixed shape, they are capable of operating multiple instruments at once through custom formed appendages. Egassem are incredibly slow, capable of moving at most a few meters an hour as moving was only necessary to strip an area of resources. They reproduce by budding, releasing a young that is a mere hundred thousand tons.
-
-Social Structure:
-Egassem society is essentially feudalistic, with each Egassem individual being one 'fiefdom'. The fact that Egassem are typically long-lived (effectively ageless) means that they are highly conservative and highly concerned with wealth.
-
-Homeworld:
-A world wracked with tidal and geological heating, as well as the more conventional solar radiation. Large 'oceans' of liquid rock cover most of the surface.  
-'''
-
-SP_SSLITH_DESC
-'''Flat, aquatic, pliable creatures.
-Prefer Tundra planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-Description:
-In its relaxed state, an individual Sslith is essentially a 2.15cm thick rectangular sheet, that's always 132cm long, and between 31 and 53cm wide. Its only appendage is a single tentacle that is used to sense sound and infrared light, it is also used for communication via ultrasound. Sslith are able to flex their bodies into other shapes, an ability originally evolved for the purpose of sliding into the shells of Vreen (a creature that recedes into its shell when it detects danger). Their flexibility allows them to move astonishingly fast in the oceans, by a ripple effect that looks like they are folding themselves through the water. They don't have a central brain, a Sslith's mental capacity is a collection of multiple nodes that are linked together to form a distributed consciousness allowing a Sslith to perform many tasks at once.
-
-Social Structure:
-The Sslith are organized into groups called Pnacra which serve as independent governmental units. Though there are a few global laws that all Sslith in all Pnacra obey, each Pnacra has it's own rules and laws as to conduct and actions. The Pnacra move around of their own accord, and have no fixed geographic location. If two or more of them meet, then members who are discontented with their present Pnacra can move to another to try out its ways and customs.
-'''
-
-SP_FIFTYSEVEN_DESC
-'''Math-obsessed sky-serpents, singing planet-wide fractal songs.
-Prefer Swamp planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Biology:
-Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side. Various fins provide fine control. Entirely blind, they rely on smell, hearing, an exquisitely honed pressure sensitivity, and when the need arises bursts of echolocation. Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton. Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
-
-Personality:
-The Fifty-Seven show little interest in the rest of the galaxy, or indeed in the parts of their planet that they don't use. The bulk of their attention individually, and culturally is focused on math. They do seem eager for new mathematical puzzles, so if research problems can be phrased properly...
-
-Homeworld:
-High g swamp world with a very dense atmosphere.
-
-Reason for Staying:
-The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.
-'''
-
-SP_SETINON_DESC
-'''Individualistic sentient microscopic cells.
-Prefer Swamp planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Description:
-The Setinon evolved from genetic defense cells protecting a larger organism from parasites and viruses. They are about 1 mm across with multiple sub subcompartments and structures. Proteins and nucleic acids are taking the place of neurons of the more standard minds of sentient organisms. They use biological constructs (requiring thousands of Setinon operators) to execute tasks their microscopic nature wouldn't normally allow them to carry out.
-
-Social Structure:
-Setinon society is based on two factors, firstly their strongly individualistic, defensive nature, and secondly their contrasting need to cooperate to deal with the world. Therefore Setinon society is best summed up as highly complex with multiple interacting channels of power that may change weekly.
-
-Homeworld:
-A swamp world with a dense atmosphere and fairly dense biosphere.
-'''
-
-SP_NYMNMN_DESC
-'''Planet-wide sapient magnetic waveforms.
-Prefer Desert planets.
-[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-'''
-
-SP_TRENCHERS_DESC
-'''Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
-Prefers Barren planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
-'''
-
-SP_RAAAGH_DESC
-'''Highly territorial felinoids.
-Prefer Terran planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-The Raaagh are 1.5 meter tall stripe-furred bipeds.  The body is held leaning forward at 45 degrees, leaving the fanged jaws, and clawed arms free to fight, build or capture prey. Triangular ears and slit pupils give a cat-like appearance.  The tiny young hatch from a clutch of a dozen eggs at once. Little care or attention is paid to the young at this stage-- they must survive on their own competing against their siblings for hiding places and stealing food like vermin.  After three years usually only one is left, and the surviving young begin to learn to speak.  This suddenly activates parental instincts, and the survivor is carefully raised as a member of the Pride.
-
-Personality:
-Extreme territoriality is the Raaagh's most distinctive trait- woven throughout their daily lives and culture.  Related to that is a preference for the familiar and known. Curiosity is minimal, which probably explains their stone age technology.
-
-Homeworld:
-The Raaagh homeworld is of the Terran type.  Sea and land are more or less evenly spread out, with the largest continent coverly only 4% of planet's surface.  The many small continents and large islands encourage a territorial attitude.
-
-Reason for Staying:
-There's not bit of land big enough for an individual Raaagh to live on that hasn't been fought over for centuries.  The genetic compulsion of a Raaagh is to guard his territory with his life, and when possible to expand into adjacent land.  Abandoning one's territory is inconcievable, and a Raaagh forcibly removed from his territory goes violently insane.
-'''
-
-SP_BEIGEGOO_DESC
-'''Insane, intensely private, planet-engulfing nanite swarm.
-Prefers Radiated planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-The entire planet is covered in a beige haze of Nanites. It is unknown wheather they were dropped as a weapon, were an out of control experiment, or are a means of extracting resources, but they have been thorough. There's nothing left but the planet's radioactive core.  These Nanites are very efficient assemblers, and are eager to do so if provided raw materials.  However the Nanites, are extremely protective of the secret of their design-- they self destruct if any are captured or removed from the planet.
-'''
-
-SP_SILEXIAN_DESC
-'''Gleaming gardener robots, left on their own.
-Prefer Terran planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-The Silexians are a race of ecological maintenance robots. They see their own existence as a means of bringing biological beauty and balance to the galaxy.
-
-Description:
-As each type of Silexian is customized for a specific task, there are variations in appearance. The majority of Silexians however, share many similar features: They are wholly artificial robotic beings made primarily of metals. They have an antennae used for short range radio communication, advanced tactile sensors as well as wide-frequency photon detectors.
-Silexians generally have a flat base equipped with wheels and rocket boosters, but the occasional model is bipedal, to allow greater agility. Many have pincer-like appendages and injector tubules for manipulating objects.
-
-Social Structure:
-The Silexians have a hierarchical caste system under a dictatorship government. Each Silexian is created for a specific job, and fills that job until declared obsolete. There is no social mobility. In fact the very idea would be alien and somewhat unwholesome to a Silexian. The race is led by a caste of supervisors giving work assignments, determine upgrades and declare models obsolete. Supervisors themselves defer to the Prime Operator, whom nobody has the authority to deem obsolete, and therefore is practically immortal.
-
-History:
-The Silexians were created by the Caretakers in order to increase the efficiency and automation of their environmental maintenance projects. Eventually, all of the Caretakers’ worlds were inhabited and maintained by the peaceful and loyal Silexians. When the Caretakers left the galaxy, some Silexians were abandoned.
-'''
-
-SP_KOBUNTURA_DESC
-'''Sentient magnetic dust formations with a fascination for building and construction.
-Prefer Barren planets.
-[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-Description:
-A Kobuntura is composed of trillions of magnetic dust particles. Their dense core of vibrating molecules generates a magnetic field which manipulates a less dense cloud of particles orbiting it in complex patterns. Kobuntura can directly detect and manipulate objects on the outer reaches of their particle clouds, but can indirectly detect, manipulate and communicate with objects and individuals much further away using there magnetic fields. The primary method of locomotion involves interaction with the planet’s magnetic field. Whenever a Kobuntura moves, there is a small chance that the movement will magnetize and agitate the surrounding dust particles to a sufficient extent to trigger a chain reaction which causes a new fully matured Kobuntura to form in a matter of seconds.
-
-Social Structure:
-The Kobuntura have a guild system since ancient times, but one of the guilds, the Dark Enclave specialized in martial arts, has gained control over all the other guilds and established a military dictatorship. Despite this, there are no secrets amongst Kobuntura as they can't communicate without all the other Kobuntura noticing. Recreation and trade are very limited, as the sole intent of the Dark Enclave, and indeed all of Kobuntura society, is to find one of the Precursor species, the Builders, and unlock the greatest secrets of construction. This goal is the impetus driving their entire civilization.
-'''
-
-SP_UGMORS_DESC
-'''Lava-dwelling yeast piles, which form temporary golems.
-Prefer Inferno planets.
-[[encyclopedia LITHIC_SPECIES_TITLE]]
-
-The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
-
-Social Structure:
-The Larar drifts are the true center of the species. These masses of yeast sit on top of the hottest part of the lava seas and absorb energy. When enough energy is available a large colony of supercharged yeast will gather large rocks at the edge of the lava pool and join them together to form an Ugmor. The Ugmors were originally designed to get from one lava pool to another, but have since developed into a very complex society. The Larar drifts are not very intelligent on their own, acting as more of a central memory which carries out the directives of the most recent Ugmor to be privileged enough to return to the Larar drifts. 
-
-Ugmors have a very unified form of government. It resembles a hive, but without a central queen. This is because all Ugmors start out with the same racial memories and agenda. When something new is discovered the Ugmor who discovered it usually returns to the nearest Larar drift to share his discovery with the rest of the species.
-
-Description:
-An Ugmor can take on many shapes, but all of them consist of rocks or sheets of metal connected by a sticky fibrous material. They are extremely durable and can even live in empty space for several hours. In their natural environment they can live for up to five years before cooling down and dieing of “old age.” Ugmors as a race are not very bright. While the Larar pools see the value of intelligence, they tend to see it as a trait which should be grown in new Ugmors only in moderation.
-
-Homeworld:
-The Ugmors home world is a rockey planet that rotates very quickly, (once every 3 and a half hours) and 30% of it’s surface is covered by seas of lava and liquid metals.
-'''
-
-SP_GISGUFGTHRIM_DESC
-'''Shelled herbivores that live off a singular planets-sized colonial gel.
-Prefer Toxic planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Most of the equatorial region of the Gis Guf Gthrim homeworld is covered with a single gelatinous organism known as the amber expanse, that replaces all plant life. The Gis (and many other creatures) live on and feed only on the Amber expanse. The Gis lifecycle is also closely tied to the amber expanse.  The expanse itself seems to be immortal, and non-reproducing. Attempts to clone part of it have failed, so it seems the Gis will be unable to leave their world.
-'''
-
-SP_HIDDENGARDENER_DESC
-'''A sapient fungal network that tends its plant food from beneath
-Prefers Terran planets
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kilometers. Its actions and thoughts are slow. Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden. A Hidden Gardener, by means of enzymes, the encapsulation and releases of seeds, and the control of water, tends its garden to produce precisely the rotting plant matter it needs to survive.
-
-Fungal-type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
-
-Their terran homeworld is an eerily park-like place with plants arranged with unnatural precision, but no other signs of habitation.
-
-The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet, and since the Hidden Gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
-
-SP_ABADDONI_DESC
-'''A race of cave dwelling generally decent folk living in permanent slavery to an overprotective computer they created. 
-Prefers Inferno planets.
-[[encyclopedia LITHIC_SPECIES_TITLE]]
-
-Description:
-Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and deep red with black spots. Their predominant feature is a large mouth starting at the point and extending back for a full third of the body.
-At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
-
-Social Structure:
-The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves. 
-'''
-
-SP_ACIREMA_DESC
-'''A race with nearly limitless power, that cannot survive in this universe.
-Prefers Radiated planets.
-[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]
-
-Description
-An Acirem is a 10-30 m ellipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
-
-As the Acirema found the anomaly that allowed them to enter into this universe, they also found that harnessing the differences in structure allowed them to generate energy in massive amounts in both universes. They also found that their bodies could release and manipulate massive amounts of energy. They rapidly began gathering material on Portal to study, and use to build structures on Portal itself. However that massive amount of energy meant they rapidly mined Portal out, and soon had very limited minerals that were safe for them to extract.
-
-The massive amount of energy they can release as individuals and across the connection from Portal to their home universe, gives them the ability to produce large amounts of Industry, and also allows them to act as weapons. This makes Portal a very dangerous world to approach, as the Acirema are very wary of outsiders, and are sensitive to the vulnerability of their position. Trade with another universe is definitely beneficial, especially since they cannot obtain minerals from other planets. The Acirema on Portal seem to have a government that is similar to a military and/or research outpost (tightly controlled core with a majority loosely controlled) They are very secretive of the nature of their society back home.
-
-"Homeworld"
-Portal is a Radiated world close to an unusually bright Blue Giant Star, with a connection to another universe. It is thought that Precursor testing may have opened the connection, and caused the star to change. There is suspicion that there may have been intelligent life on Portal, and they were destroyed by the Acirema when the connection opened (either due to research or advanced weapons use).
-
-Reason for staying
-They can't stay here long enough to actually move to another planet and still survive.'''
-
-SP_OURBOOLS_DESC
-'''Giant blind swimmers who "see" gravitation.
-Prefer Ocean planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Biology:
-A giant serpentine swimmer, an Ourbools most distinctive feature is the massive bow curving away on either side of their head.  This houses the gravi-sensory organs.  Three tentacles hanging in front of the mouth allow Ourbools to manipulate their environment.  Ourbools mate only once in their life, and devote the next 35 years to caring for the school of 5 to 7 young -- generally assisted by relatives.  Ourbools live long so
-
-Personality:
-Ourbools are inclined to a nomadic life, hunting or herding their prey ichtioids.  Society focuses to a large degree on the proper and graceful interaction between two wandering groups that meet by chance.
-A significant minority drop out of society and adopt sedentary lives bound by the practical requirements of their craft
-
-Homeworld:
-The homeworld, Oolur is orbited by 23 moons.
-
-Reason for Staying:
-The Ourbools find their sense of position via the regular movements of the 23 moons.  Everything is perceived against that gravitational background.  To be removed from that context is extremely disorienting to the point of "blinding" the unlucky traveler.  He no longer has the familiar to calibrate against so all he can perceive is meaningless graviton noise.
-'''
-
-SP_VOLP_DESC
-'''Highly bureacratic, overcrowded burrowers.
-Prefer Barren planets.
-[[encyclopedia LITHIC_SPECIES_TITLE]]
-
-Description:
-The Volp-Uglush are an asexual species approximately 300 meters in length that live in tunnels on their homeworld. They subsist on silicates and have a vast number of short arm/mouth parts on the front of their thick cylindrical bodies that they use for manipulation/tunnelling/eating and for sending messages through their tunnel network. In early historical times there were several different strains of Volp-Uglush but they were in constant conflict. Groups that successfully organized themselves were the best competers for resources, and as they moved from industrial to information age, one strain became dominant, and the remainder died out. The remaining strain began to optimize their homeworld for most efficient use of resources. They became incredibly adept at recognizing resouce needs, as well as how societal structures affected individual behavior.
-The Volp-Uglush society almost acts as a single organism, because society has been adapted to run so smoothly. However, this has led to a critical loss of independent function. While Volp-Uglush society is incredibly efficient, it would take individual Volp-Uglushs hundreds, if not thousands of years to be able to successfully develop a new independent society.
-They are very effective at directing merchant fleets, and make excellent bureaucrats for creating changes in societies. While they have an incredibly efficient war machine, and are capable of indivudually taking on various large battle engines, the chaos of combat is not their most effective environment.
-
-Home World:
-Hive is a large Barren world that is ~2 times bigger than its mass and material would suggest as all of it but a small metal core has been converted through tunneling and building into the Vast tunnel network of the Volp-Uglush bureaucracy.
-
-Reason for Staying:
-Volp-Uglush are now to integrated and ingrown. They now totally lack the independance and innovation needed to leave Hive and start a new colony.
-'''
-
-SP_FURTHEST_DESC
-'''Paranoid three-headed, triped herbivores
-Prefer Tundra planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]]
-
-Biology:
-The Furthest are furry, 1.5 m tall creatures.  Radially symmetric, they have three long legs, and three long flexible necks. Atop each neck, is a compound eye, and a mouth used for ingestion and for manipulating objects.  This allows the creature too keep watch in most directions at once.  The actual brain is in the center of the body.
-
-Name:
-The Furthest believe that sapience is measured by the distance that a being can separate itself from danger. Thus the name " Furthest" describes their species as the most advanced of beings.
-
-Personality: 
-The Furthest report that their homeworld was once full of the deadliest predators imaginable.  They survived by developing caution to the utmost level.  Indeed staying alert for threats, and hiding  are the core of their psychology and culture. The Furthest homeworld currently contains no carnivore they can't crush underfoot.
-
-Reason for Staying:
-The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
-'''
-
-SP_EXOBOT_DESC
-'''Semi-autonomous robots, designed for industry on Barren, Radiated, & Inferno planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
-
-While not as efficient as fully self-directed citizens, Exobots can colonize otherwise inhospitable planets, and build more exobots.
-'''
-
-SP_EXPERIMENTOR_DESC
-'''Precursor mad scientists
-[[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
-
-The Experimentors are an ancient precursor race, whose existence is devoted to the pursuit of knowledge.  Their desire to learn is unmatched, and they unashamed to treat even entire galaxies as mere laboratories for their experiments.'''
-
-SP_SUPER_TEST_DESC
-'''Super Testers are grossly unbalanced and unfair. They are nearly Omniscient. And they thrive on all planets. (Stealth-busting power only works when they are in a Capital)
-[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia LITHIC_SPECIES_TITLE]], [[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
-[[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 #############################################################
 ####                   S P E C I A L S                   ####
 #############################################################
-
-ANCIENT_RUINS_DEPLETED_SPECIAL
-Ancient Ruins
 
 ANCIENT_RUINS_SPECIAL
 Antiche rovine
@@ -3390,56 +2784,6 @@ This planet holds the ruins of an unknown, advanced ancient race. The first empi
 
 ECCENTRIC_ORBIT_SPECIAL
 Orbita eccentrica
-
-ECCENTRIC_ORBIT_SPECIAL_DESC
-'''[[encyclopedia INFRASTRUCTURE_TITLE]] on the planet is decreased by 20, but [[encyclopedia RESEARCH_TITLE]] is increased by 3.
-
-This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.'''
-
-SNOWFLAKE_NEST_SPECIAL_DESC
-At some point young snowflakes will rise from this place. With the proper tech, these mega-fauna could be domesticated.
-
-JUGGERNAUT_NEST_SPECIAL_DESC
-At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
-
-CLOUD_COVER_MASTER_SPECIAL_DESC
-This planet is populated with aerial creatures that emit humidity, causing high cloud cover.  Later in their lifecycle, they will burrow into the ground, causing high amounts of volcanic activity.
-
-CLOUD_COVER_SLAVE_SPECIAL_DESC
-This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]] by 20.
-
-VOLCANIC_ASH_MASTER_SPECIAL_DESC
-This planet has monsters burrowing around in its core causing high volcanic activity.  These burrowers are undergoing metamorphasis and will transform into creatures capable of tearing a dimensional rift in the fabric of space later in their lifecycle.
-
-VOLCANIC_ASH_SLAVE_SPECIAL_DESC
-This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]] by 40.
-
-DIM_RIFT_MASTER_SPECIAL_DESC
-This planet has monsters burrowing around in its core causing dimensional tears in and around the planet.  Later on, these monsters will mature and begin dragging the planet into the void.
-
-DIM_RIFT_SLAVE_SPECIAL_DESC
-This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]] by 60.
-
-VOID_MASTER_SPECIAL_DESC
-Monsters inside the core of this planet are dragging it into the void.  There should perhaps be some impending doom associated with this special.
-
-VOID_SLAVE_SPECIAL
-Void Metamorphisis
-VOID_SLAVE_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80.
-
-EXPERIMENTOR_OUTPOST_SPECIAL_DESC
-En Experimentor outpost exists in this system, and defeating them is necessary to ensure the safety of the galaxy.
-
-MINERALS_SPECIAL
-Rich Minerals
-MINERALS_SPECIAL_DESC
-'''Increases max Population if inhabited by Lithic species by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
-When a planet with Rich Minerals is focused on Growth, all connected planets with Lithic species receive the same bonus.
-
-When focused on Industry, increases target [[encyclopedia INDUSTRY_TITLE]] by 0.2 per Population.
-
-This planet has a rich natural deposit of minerals, boosting production or Lithic growth significantly.'''
 
 #############################################################
 ####        E N U M E R A T I O N   V A L U E S          ####
@@ -3836,19 +3180,6 @@ DESC_PLANET_SIZE
 DESC_PLANET_SIZE_NOT
 ''' che non è un pianeta %1%'''
 
-DESC_PLANET_ENVIRONMENT
-''' that is a %1% planet'''
-
-DESC_PLANET_ENVIRONMENT_NOT
-''' that is not a %1% planet'''
-
- 
-
-DESC_ENQUEUED_DESIGN_NOT
-''' where empire %1% dows not have between %2% and %3% %4% ships on the production queue'''
-
- 
-
 DESC_AND_BETWEEN_OPERANDS
 ''' e'''
 
@@ -3898,33 +3229,14 @@ Algoritmi Eleganti
 LRN_TRANSLING_THT
 Translinguistica
 
-LRN_TRANSLING_THT_DESC
-'''Does nothing. Later this can enable peaceful acquistion of native planets.
-
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?'''
-
 LRN_PSIONICS
 Psionica
 
 LRN_ARTIF_MINDS
 Mente Artificiale
 
-LRN_ARTIF_MINDS_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 2.
-
-While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable faximilies may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
-
-Nacent AIs can input all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility. Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
-
 LRN_XENOARCH
 Xenoarcheologia
-
-LRN_XENOARCH_DESC
-'''Allows discoveries from [[special ANCIENT_RUINS_SPECIAL]].
-
-The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy. Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space. Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
-
-It is often exceedingly difficult and dangerous to decipher the clues left by ancient civilizations in the form of highly advanced technology. Mistreatment of the technology or accidental activation can cause the technology itself and/or the archaeologists extracting the technology to be lost. By containing the technology safely within a force field and probing its depths via non-local field manipulation, it is possible to safely recover and unlock the mysteries of ancient technology.'''
 
 LRN_GRAVITONICS
 Gravitonica
@@ -4008,25 +3320,11 @@ Advanced Ecomanipulation
 GRO_XENO_GENETICS
 Genetica Xenologica
 
-GRO_XENO_GENETICS_DESC
-'''Increases the max population of Adequate & Poor planets by planet size; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10, and Hostile planets by planet size; Molto piccolo: +1, Piccolo: +2, Medio: +3, Grande: +4, Enorme: +5.
-
-The study of other life forms often exemplifies the weaknesses inherent in one's own species. By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
-
-Early genetics is limited by the available samples of naturally occurring organisms on which to base its modifications. As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals. By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revelations may be reached, spurring new developments in more familiar genetic systems.'''
-
 GRO_NANOTECH_MED
 Medicina Nanotecnologica
 
 GRO_XENO_HYBRIDS
 Ibridazione Xenologica
-
-GRO_XENO_HYBRIDS_DESC
-'''Increases the max population of Poor planets by planet size; Molto piccolo: +1, Piccolo: +2, Medio: +3, Grande: +4, Enorme: +5 e dei pianeti ostili poveri in base alla dimensione del pianeta; Molto piccolo: +2, Piccolo: +4, Medio: +6, Grande: +8, Enorme: +10
-
-Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it. These adverse effects can include anything from weather patterns to the planet's size. Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
-
-Regardless of how well understood, or how adeptly improved, a biological system is limited by its inherent nature. Structures and basic physiology can only be altered so far within the confines of a single planet's biology. With understanding of other biologies however, the disparate systems may be fused, forming an entirely new hybrid biology with potential abilities and traits greater than those of any of its parts.'''
 
 GRO_NANO_CYBERNET
 Naniti Cibernetici
@@ -4037,22 +3335,8 @@ Metabolismo Energetico Puro
 PRO_MICROGRAV_MAN
 Industria Microgravitazionale
 
-PRO_MICROGRAV_MAN_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
-
-Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
-
-The microgravity of low planetary orbit offers great potential for novel manufacturing facility designs, equipment and techniques not possible on planet surfaces. Solids may be held in place with minimal support. Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated. Factory equipment may be arranged optimally in three dimensions. These conditions permit great increases in efficiency and productivity, if properly exploited.'''
-
 PRO_CORE_MINE
 Tectonic Minerology
-
-PRO_CORE_MINE_DESC
-'''Some sort of very aggressive mining goes here.
-
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism. The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations. Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
-
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis. After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources. Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
 
 PRO_ROBOTIC_PROD
 Produzione Robotica
@@ -4110,22 +3394,8 @@ PRO_INTSTEL_COPRO_DESC
 PRO_NDIM_ASSMB
 Assemblaggio N-Dimensionale
 
-PRO_NDIM_ASSMB_DESC
-''' Unlocks the Hyperspatial Dam
-
-Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
-
-The geometry of physical space has always been a major impediment to the assembly of objects within that space. Objects cannot be collocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions. Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and contiguous lines may be passed around other masses by going "off-axis". Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.'''
-
 PRO_ZERO_GEN
 Generatore di Gravità-Zero
-
-PRO_ZERO_GEN_DESC
-'''Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency. By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available. The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
-
-At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon. Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two. Transmutation and replication, at limited scales, become possible.  However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation.
-
-Previous production techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter. None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of supplied materials, be they prefabricated subsections, or raw minerals. By converting pure energy directly into the desired material object, the need for supplied materials such as minerals or food can become greatly reduced in times of necessity.'''
 
 CON_ARCH_PSYCH
 Psicologia architettonica
@@ -4141,41 +3411,6 @@ Materiali Asintotici
 
 CON_ASYMP_MATS_DESC
 Una volta che determinate le soglie di prestazioni vengono superate, la misurazione delle proprietà fisiche dei materiali, per il confronto relativo, diventa impraticabile in qualsiasi termine  diverso da ordini di grandezza o scale logaritmiche. Molto simile alla superconduttività in elettronica, la resistenza alla trazione, tenacità, densità, elasticità, indice refrattario ed altre proprietà meccaniche dei materiali possono essere controllate efficacemente senza limiti. Con tutte le limitazioni significative precedentemente rimosse, le progettazioni sono ulteriormente facilitate, e si possono ampliare o modificare di svariati ordini di grandezza.
-
-CON_CONTGRAV_ARCH
-Controlled Gravity Architecture
-
-SHP_INTSTEL_LOG_DESC
-'''Unlocks the Logistics focus setting, which increases the [[encyclopedia SUPPLY_TITLE]] meter of planets by an amount equal to one half the planet's population.
-
-Effectively supplying ships, ordering general fleet movement and even organizing the movement of specific ships in battle requires a complex understanding of navigation and detection, and of methods of information acquisition.'''
-
-SHP_CONTGRAV_MAINT
-Contra-Gravitational Maintenance
-
-SHP_MASSPROP_SPEC
-Mass-Propulsion Specialization
-
-SHP_MIDCOMB_LOG_DESC
-When interstellar fleets are in regular, commonplace use, the transfer of personnel and materiel in the absence of enemy ships is a relatively trivial task. In combat however, when such transfers could potentially have great tactical merit, there is great difficulty with the coordinational aspects of logistics due to the possibility of sudden changes in the tactical scenario. By using a single mobile command station, it is possible to organize and enact logistic patterns in the midst of combat.
-
-SHP_ENDOCRINE_SYSTEMS_DESC
-'''The study of space-faring organisms' endocrine systems allows for the expansion of organic ships' internal structures.  '''
-
-SHP_QUANT_ENRG_MAG_DESC
-'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
-
-Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence. By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.'''
-
-SHP_ENRG_BOUND_MAN_DESC
-'''Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility. Pure energy however, has no such restrictions. This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
-
-This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has twenty-seven external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.'''
-
-SHP_SOLAR_CONT_DESC
-'''A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects. If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
-
-This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
 #############################################################
 ####          T E C H   A P P L I C A T I O N S          ####
@@ -4279,14 +3514,6 @@ CON_ORBITAL_CON_DESC
 
 On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
-CON_FRC_ENRG_CAMO_DESC
-'''Increases the [[encyclopedia STEALTH_TITLE]] of all buildings by 20.
-
-Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials. A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one color to another at will. While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
-
-CON_ART_PLANET_DESC
-Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets. Such planets would offer new centres for production in previously empty or entirely occupied systems. In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
-
 GRO_BIOTERROR
 Servizi di Bioterrorismo
 
@@ -4325,11 +3552,6 @@ Buco Nero Artificiale
 
 LRN_PSY_DOM
 Dominazione Psicogena
-
-LRN_PSY_DOM_DESC
-'''Has a 10% chance of taking control of any enemy ship within one starlane jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech or piloted by a telepathic species.
-
-It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
 
 MIND_CONTROL_SHORT_DESC
 Consente il Controllo Mentale
@@ -4504,71 +3726,23 @@ Unlocks the Electromagnetic Damper ship part and increases the [[encyclopedia ST
 SPY_STEALTH_2
 Campo di Assorbimento
 
-SPY_STEALTH_2_DESC
-'''Increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. This bonus is not cumulative with that of other stealth techs.
-
-Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
-
-SPY_STEALTH_3_DESC
-Unlocks the Dimensional Cloak ship part and increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60. This bonus is not cumulative with that of other stealth techs.
-
-SPY_STEALTH_4_DESC
-'''Increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. This bonus is not cumulative with that of other stealth techs.
-
-Even the most carefully concealed ship emits radiation in the form of force carrier particles. By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
-
-SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC
-N-Dimensional subspace research resulted in a more efficient engine matrix. Increases Starlane speed by 15. May be added more than once to a hull.
-
-SHP_SINGULARITY_ENGINE_CORE_DESC
-A smaller cousin of the Hyperspace Dam outfitted for ships, the Singularity Engine Core drastically boosts power generation. Increases Starlane speed by 20. May be added more than once to a hull.
-
 SHP_DEUTERIUM_TANK
 Serbatoio di deuterio
-
-SHP_BLACKSHIELD_DESC
-'''Most advanced ship shielding technology.
-
-Blackshields got their name because they create what looks like an almost inpenetrable black sphere around the object they protect. A blackshield is in essence some kind of dimensional rift projected around a space ship that completely swallows up almost anything thrown at it. It requires tremendous amounts of energy to penetrate a blackshield.'''
-
-SHP_CAMO_AST_HULL_DESC
-This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-SHP_MINIAST_SWARM_DESC
-This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-SHP_SCAT_AST_HULL_DESC
-This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_ORG_HULL
 Scafo Organico
 
-SHP_ORG_HULL_DESC
-This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. [[encyclopedia STEALTH_TITLE]] is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
-
 SHP_ENDOSYMB_HULL
 Scafo Endosimbiotico
 
-SHP_ENDOSYMB_HULL_DESC
-This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and [[encyclopedia STEALTH_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
-
 SHP_SENT_HULL
 Scafo Senziente
-
-SHP_SENT_HULL_DESC
-This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
 
 SHP_BIOINTERCEPTOR
 Biointercettori
 
 SHP_BIOBOMBER
 Biobombardieri
-
-SHP_DEATH_SPORE_DESC
-Unlocks the Death Spores ship part, which allows ships to somewhat reduce the population of planets.
-
-SHP_BIOTERM_DESC
-Unlocks the Bio-Terminators ship part, which allows ships to greatly reduce the population of planets.
 
 #############################################################
 ####            T E C H   R E F I N E M E N T            ####
@@ -4581,19 +3755,11 @@ Raffineria
 ####                  B U I L D I N G S                  ####
 #############################################################
 
-BLD_EVACUATION_DESC
-Remove population from this planet over several turns.  If a suitable alternate planets are available, with the same species and sufficient extra capacity, population will move there.
-
 BLD_OBSERVATORY
 Osservatorio
 
 BLD_IMPERIAL_PALACE
 Palazzo imperiale
-
-BLD_IMPERIAL_PALACE_DESC
-'''Increases [[encyclopedia SUPPLY_TITLE]] line range by 1, [[encyclopedia INFRASTRUCTURE_TITLE]] by 20, [[encyclopedia DEFENSE_TITLE]] by 5, and [[encyclopedia TROOP_TITLE]] by 3. Also sets the owner's Capital for the empire.
-
-Represents imperial power and prestige and functions as a centre of control for the empire's holdings.'''
 
 BLD_SHIPYARD_BASE
 Cantiere Navale di Base
@@ -4603,52 +3769,6 @@ Impianto orbitale per la produzione e l'assemblaggio di navi militari interstell
 
 BLD_SHIPYARD_ORBITAL_DRYDOCK
 Bacino di Carenaggio Orbitale
-
-BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
-'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_BASE]] and is required for all constructed hulls and all further constructed hulls shipyard upgrades to be built, this upgrade also provides repair abilities to repair damaged ships in a single turn.
-
-When a large interstellar vessel is being constructed, it is not practical to move large parts up and down space elevators for orbital assembly. Rather, it is far more practical to fabricate the parts and assemble them in the same orbital facility, thus eliminating the need to transport particularly massive ship parts from the surface of the planet.'''
-
-BLD_SHIPYARD_CON_NANOROBO_DESC
-'''This is an upgrade for the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_NANOROBOTIC]]s.
-
-The production of millions of maintenance nanorobots and their connection to a single master AI requires more extensive robotics facilities than the production of a basic robotic hull. This building is able to facilitate the construction of more advanced robotic hulls.'''
-
-BLD_SHIPYARD_CON_GEOINT
-Geointegration Facility
-
-BLD_SHIPYARD_CON_GEOINT_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows production of [[shiphull SH_TITANIC]]s and [[shiphull SH_SELF_GRAVITATING]]s.
-
-When the needs of a shipyard become sufficiently great, it is no longer practical for the shipyard and the planet on which it is built to remain separate entities. Rather, it is more useful to integrate the two into a harmonious unit, with the shipyard extending from below the surface to beyond geosynchronous orbit, making full use of all the geological aspects of the planet.'''
-
-BLD_SHIPYARD_CON_ADV_ENGINE_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and allows construction of Spatial Flux Hulls and Trans-Spatial Hulls.
-
-An extremely well-developed engineering facility which specializes in the production of the Trans-Spatial Drive, but is also capable of producing the Spatial Flux Drive.'''
-
-BLD_SHIPYARD_AST_DESC
-'''This building is required for the production of all asteroid hulls and all further asteroid processor upgrades.
-
-A massive processing plant dedicated to the purpose of hollowing out asteroids and preparing them to be used as ships' hulls. Asteroids thus prepared are sent to a shipyard in the same system, where they are turned into the final hull. This building can only be built on asteroid belts.'''
-
-BLD_SHIPYARD_ORG_ORB_INC_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the development of all organic hulls with the exception of the Static Multicellular Hull, and for the production of all further organic hull shipyard upgrades.
-
-A shipyard designed to meet the needs of maturing space-creatures. Conditions within the shipyard must meet exacting specifications in order for the ships within to continue living and developing. As such, any unfinished living ships within are liable to be destroyed if the shipyard is sufficiently damaged.'''
-
-BLD_SHIPYARD_ORG_CELL_GRO_CHAMB_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_PROTOPLASMIC]]s, [[shiphull SH_SYMBIOTIC]]s and [[shiphull SH_BIOADAPTIVE]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
-
-A specialized shipyard upgrade able to increase the size of monocellular organisms to truly massive proportions.'''
-
-BLD_SHIPYARD_ORG_XENO_FAC_DESC
-'''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and allows development of [[shiphull SH_STATIC_MULTICELLULAR]]s, [[shiphull SH_ENDOMORPHIC]]s and [[shiphull SH_RAVENOUS]]s. The presence of this upgrade and the [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] on the same planet allows development of the [[shiphull SH_ENDOSYMBIOTIC]] and [[shiphull SH_SENTIENT]].
-
-A facility dedicated to creating a fully symbiotic relationship between a ship and its crew.'''
-
-BLD_LIGHTHOUSE_DESC
-Increases speed of ships departing this system, and decreases the [[encyclopedia STEALTH_TITLE]] of all objects in the same system by 30. This building can be built at an outpost.
 
 BLD_SCANNING_FACILITY
 Impianto di Scansione
@@ -4661,28 +3781,11 @@ A combination of long-range scanning devices and great computing power to analyz
 BLD_INDUSTRY_CENTER
 Centro Industriale
 
-BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry by 0.2 per Population.
-
-[[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
-
-[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus.'''
-
 BLD_MEGALITH
 Megalito
 
-BLD_MEGALITH_DESC
-'''Sets the owner empire's capital, overriding any existing Imperial Palace. The planet on which it is built receives an increase of 2 to [[encyclopedia SUPPLY_TITLE]] line range, and 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Additionally all resource meters are able to reach target in a single turn.
-
-The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
-
 BLD_SPACE_ELEVATOR
 Elevatore Spaziale
-
-BLD_SPACE_ELEVATOR_DESC
-'''Doubles [[encyclopedia SUPPLY_TITLE]] line range on the planet on which it is built.
-
-Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity. An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end.'''
 
 BLD_GENOME_BANK
 Banca del Genoma
@@ -4690,18 +3793,8 @@ Banca del Genoma
 BLD_GAIA_TRANS
 Trasformazione di Gaia
 
-BLD_GAIA_TRANS_DESC
-'''Increases max Population according to planet size-- Tiny: 3, Small: 6, Medium: 9, Large: 12, Huge: 15.
-
-Convert a planet into a Gaia world by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own.'''
-
 BLD_COLLECTIVE_NET
 Rete Neuronica Collettiva
-
-BLD_COLLECTIVE_NET_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.5 per Population, and [[encyclopedia RESEARCH_TITLE]] on Planets with the Research focus by 0.5 per Population. Starlane travel within 500 uus will disrupt this building's effectiveness and eliminate these bonuses.
-
-By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.'''
 
 BLD_GATEWAY_VOID
 Passaggio per il Vuoto
@@ -4715,20 +3808,8 @@ Diga Iperspaziale
 BLD_SOL_ACCEL
 Acceleratore Solare
 
-BLD_SOL_ORB_GEN_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population for Blue and White, Yellow and Orange, or Red stars, respectively.
-
-A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependant on star type. This building can be built at an outpost.'''
-
 BLD_CLONING_CENTER
 Centro di Clonazione
-
-BLD_PLANET_DRIVE_DESC
-'''Allows a planet to move between star systems. An interstellar lighthouse is required within 200 uus of the target system to allow the planet to proceed safely. Otherwise, the planet will have a 50% chance of being destroyed in transit. This is a hazardous journey even if the planet survives however, and only half the population of a planet will live even with support from the interstellar lighthouse. This building can be built at an outpost, but not on an asteroid belt.
-
-Due to a lack of UI targeting, a second building is currently required on the other end of the starlane. This building will destroy itself immediately, so that the planet can move to a different target system later.
-
-To use this building, set the planet to Planet Drive focus, and construct a Planetary Beacon in an adjacent system. The planet will then be moved to that system.'''
 
 BLD_TRANSFORMER
 Trasformatore
@@ -4743,9 +3824,6 @@ Dispositivo di Occultamento Planetario
 
 BLD_STARGATE
 Portale Spaziale
-
-BLD_EXPERIMENTOR_OUTPOST_DESC
-The outpost of the Experimentors, used for carrying out highly advanced experiments.  This structure also acts as a cloak to prevent anyone from interfering with their work.
 
 #############################################################
 ####           Hull/Part Description Templates           ####
@@ -4862,11 +3940,6 @@ Smorzatore Elettromagnetico
 ST_CLOAK_2
 Campo di Assorbimento
 
-ST_CLOAK_3_DESC
-'''Strong Cloking (+60)
-
-Hides this ship within a dimensional rift, greatly increasing [[encyclopedia STEALTH_TITLE]]. [[encyclopedia STEALTH_TITLE]]-causing ship parts do not stack.'''
-
 AR_STD_PLATE
 Corazzatura Blindata
 
@@ -4879,11 +3952,6 @@ Scudo Deflettore
 CO_COLONY_POD
 Capsula Coloni
 
-CO_COLONY_POD_DESC
-'''Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
-
-All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
-
 CO_SUSPEND_ANIM_POD
 Capsula Coloni Criogenica
 
@@ -4892,24 +3960,6 @@ CO_SUSPEND_ANIM_POD_DESC
 
 All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
 
-CO_OUTPOST_POD_DESC
-Outposts modules allow you to establish unmanned station. These may be place on uninhabitable planets. They have no population, and normally produce no resources. But they provide vision create [[encyclopedia SUPPLY_TITLE]] lines when the rigth tech is researched. Colonies can be founded on planets that already have an Outpost.
-
-GT_TROOP_POD_DESC
-Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can be deployed onto a planet.
-
-SP_DISTORTION_MODULATOR_DESC
-Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity. All objects within 0 uus have max [[encyclopedia STEALTH_TITLE]] reduced by 20. The effect is non-stacking.
-
-SP_DEATH_SPORE_DESC
-A biological weapon which gradually reduces the population of a planet.
-
-SP_BIOTERM_DESC
-A powerful biological weapon which quickly reduces the population of a planet.
-
-SP_NOVA_BOMB_DESC
-A weapon of tremendous power capable of destroying an entire system.  The weapon will activate when it recieves the signal from a Nova Bomb Activator not more than one starlane jump away.
-
 #############################################################
 ####                 S H I P   H U L L S                 ####
 #############################################################
@@ -4917,187 +3967,11 @@ A weapon of tremendous power capable of destroying an entire system.  The weapon
 SH_ROBOTIC
 Scafo Robotico
 
-SH_ROBOTIC_DESC
-'''This hull is completely automated and functions under the principals of Military Robotic Control. Like the standard hull, it has four external slots and one internal slot. It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
-
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]] an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] is required at the planet where it is constructed.'''
-
-SH_SPATIAL_FLUX_DESC
-'''This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive. It has only two external slots however, and its max structure is low. [[encyclopedia STEALTH_TITLE]] is fairly high, but it receives a large [[encyclopedia STEALTH_TITLE]] penalty for movement both in combat and on the galaxy map.
-
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] is required at the planet where it is constructed.'''
-
-SH_SELF_GRAVITATING_DESC
-'''This hull is immense in both size and power, with eight external slots and two internal slots. It is fairly sturdy, having a high max structure, but [[encyclopedia STEALTH_TITLE]] and speed are fairly low.
-
-In addition to a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] is required at the planet where it is constructed.'''
-
 SH_NANOROBOTIC
 Scafo Nano-Robotico
 
-SH_NANOROBOTIC_DESC
-'''This automated hull is large and fast, and repairs damage to itself using millions of nano-robots. It has six external slots and one internal slot, but it has low [[encyclopedia STEALTH_TITLE]] and is very fragile, though it regenerates structure during combat and restores structure completely between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]] unit at the planet where it is constructed.'''
-
 SH_TITANIC
 Scafo Titanico
-
-SH_TITANIC_DESC
-'''This extraordinarily large hull requires quite a feat of engineering even to move. It has sixteen external slots and three internal slots, and its max structure is very high, but at the cost of a great deal of speed and [[encyclopedia STEALTH_TITLE]].
-
-Requires a Basic [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and a [[buildingtype BLD_SHIPYARD_CON_GEOINT]] at the planet where it is constructed.'''
-
-SH_TRANSSPATIAL_DESC
-'''This hull is able to travel stealthily and at an incredible speed due to the Trans-Spatial drive. It has only a single external slot however, and its max structure is extremely low.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]] and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
-
-SH_LOGISTICS_FACILITATOR_DESC
-'''This organizational flagship is designed to organize and manage mid-battle transfers of crewmen and other objects. It has seven external slots and two internal slots. Its speed is low, but max structure is fairly high. In addition, its built-in fleet of stealthy freighters allows transfer of personnel and materiel during battle, enabling all friendly ships to recover structure during combat and completely restore structure between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], a [[buildingtype BLD_SHIPYARD_CON_NANOROBO]], a [[buildingtype BLD_SHIPYARD_CON_GEOINT]], and an [[buildingtype BLD_SHIPYARD_CON_ADV_ENGINE]] at the planet where it is constructed.'''
-
-SH_ASTEROID_DESC
-'''This hull is constructed from an average-sized asteroid. A bit roomier than the standard hull, it has four external slots and two internal slots. Speed and structure are relatively low, but it is fairly inexpensive to build. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
-
-SH_SMALL_ASTEROID_DESC
-'''This hull is constructed from a very small asteroid. It has only a single external slot and a single internal slot. Speed is very good, but structure is quite low. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
-
-SH_HEAVY_ASTEROID_DESC
-'''This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots. Speed is very low, but structure is moderately high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
-
-SH_CAMOUFLAGE_ASTEROID_DESC
-'''This hull is designed to look exactly like a real asteroid. It has four internal slots, but no external slots. Structure is average, but speed is fairly low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
-
-SH_SMALL_CAMOUFLAGE_ASTEROID_DESC
-'''This camouflage asteroid hull is able to make use of camouflage asteroid parts on its exterior, although it must be made much smaller to compensate and avoid losing its [[encyclopedia STEALTH_TITLE]] bonus. It has a single external slot and a single internal slot. Speed is average, but structure is quite low. This hull gets a tremendous bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] present in the system where it is produced.'''
-
-SH_AGREGATE_ASTEROID_DESC
-'''This massive hull is formed by combining several large asteroids. It has fifteen external slots and four internal slots. Structure is good, but speed is very low. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
-
-SH_MINIASTEROID_SWARM_DESC
-'''This hull is constructed from a small asteroid, much of which has been broken off to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect the main ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]]. This hull has two external slots, but no internal slots. Structure is very low, but speed is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
-
-SH_SCATTERED_ASTEROID_DESC
-'''This flagship is constructed from several large asteroids, some of which have been combined to form the main hull, and some of which have been broken apart to form numerous tiny asteroids, which are controlled by the main hull. These asteroids protect not only the main ship, but every accompanying friendly ship, giving a bonus to [[encyclopedia SHIELDS_TITLE]] for all owned ships and allies' ships in the vicinity. Like the compound asteroid hull, this hull has fifteen external slots and four internal slots. Speed is very low, but structure is high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
-
-SH_CRYSTALLIZED_ASTEROID_DESC
-'''This sturdy hull is made from a average-sized asteroid, hardened by advanced crystallization techniques. Like the regular Asteroid Hull, it has four external slots and two internal slots. Speed is somewhat low, but structure is extremely high. This hull gets a large bonus to [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an asteroid belt with an [[buildingtype BLD_SHIPYARD_AST]] and an [[buildingtype BLD_SHIPYARD_AST_REF]] present in the system where it is produced.'''
-
-SH_ORGANIC_DESC
-'''This is the most basic type of organic hull: a living hull grown from the most basic unit of life and raised for battle. It has three external slots and one internal slot. [[encyclopedia STEALTH_TITLE]] is high and speed is average, but structure is a bit low. This hull regenerates structure and fuel between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] at the planet where it is developed.'''
-
-SH_STATIC_MULTICELLULAR_DESC
-'''Despite being organic, this hull is non-living, being produced via multi-cellular casting. The versatility of the interior and the lack of necessity for internal organs increases its capacity, but without living systems, it cannot replenish health or energy. It has three external slots and two internal slots. Structure is average and speed is good, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]] and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is constructed.'''
-
-SH_ENDOMORPHIC_DESC
-'''This hull contains non-living multicellular components for greater external modularity. This hull has four external slots and two internal slots. Structure is good and speed is average, but [[encyclopedia STEALTH_TITLE]] is low. This hull regenerates neither structure nor fuel between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.'''
-
-SH_SYMBIOTIC_DESC
-'''This living hull exists in a symbiotic relationship with its crew, increasing its [[encyclopedia STEALTH_TITLE]] and speed. It has two of each internal and external slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all good. This hull regenerates structure and fuel between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
-
-SH_PROTOPLASMIC_DESC
-'''This monocellular hull suspends its internal parts in its cytoplasm rather than mounting them on a solid internal structure. It has three internal slots and two external slots. Structure is high, and speed and [[encyclopedia STEALTH_TITLE]] are good. This hull regenerates structure and fuel between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
-
-SH_ENDOSYMBIOTIC_DESC
-'''This mono-cellular hull exists in a symbiotic relationship with its crew, suspending them in its cytoplasm and using them as organelles. It has four external slots and three internal slots. Speed and [[encyclopedia STEALTH_TITLE]] are good, and structure is average. This hull regenerates structure and fuel between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
-
-SH_RAVENOUS_DESC
-'''This hull has been raised on the blood of its brethren. It has five external slots and two internal slots. [[encyclopedia STEALTH_TITLE]] is low, but speed and structure are high. This hull regenerates neither structure nor fuel between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] at the planet where it is developed.'''
-
-SH_BIOADAPTIVE_DESC
-'''This living hull has mind and body working in perfect unison, allowing it to react and adapt to its surroundings with unparalleled efficiency. It has three external slots and three internal slots. [[encyclopedia STEALTH_TITLE]], speed and structure are all very high. This hull regenerates fuel and completely recovers structure between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
-
-SH_SENTIENT_DESC
-'''This self-aware flagship has powerful analytical abilities and a tremendous memory capacity, which allow it to direct friendly vessels and provide them with useful information and subtle tactical cues in combat, giving a [[encyclopedia STEALTH_TITLE]] and [[encyclopedia DETECTION_RANGE_TITLE]] bonus to all accompanying friendly ships. It has six external slots and three internal slots. It has low speed, but [[encyclopedia STEALTH_TITLE]] and structure are good. This hull regenerates structure and fuel between combats.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], a [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]] and a [[buildingtype BLD_SHIPYARD_ORG_CELL_GRO_CHAMB]] at the planet where it is developed.'''
-
-SH_COMPRESSED_ENERGY_DESC
-'''This fast hull is comprised entirely of compressed energy and has a single external slot. Structure is low, but [[encyclopedia STEALTH_TITLE]] and speed are very high. This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
-
-SH_FRACTAL_ENERGY_DESC
-'''This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull. It has fourteen external slots, but no internal slots. [[encyclopedia STEALTH_TITLE]] is very low, but structure and speed are average. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
-
-SH_QUANTUM_ENERGY_DESC
-'''This hull magnifies quantum energy fluctuations to increase its own power. It has seven external slots and three internal slots. Speed and structure are very high, but [[encyclopedia STEALTH_TITLE]] is very low. This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
-
-SH_SOLAR_DESC
-'''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[encyclopedia STEALTH_TITLE]]. This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull. Structure is extremely high, but speed and [[encyclopedia STEALTH_TITLE]] are very low. However, this ship has the ability to enter a star and hide, giving it perfect [[encyclopedia STEALTH_TITLE]] on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star. This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]] at the planet where it is built.'''
-
-SH_BASIC_SMALL_DESC
-'''A small, basic interstellar hull. Can make an extra jump compared to other basic hulls.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
-
-SH_BASIC_MEDIUM_DESC
-'''A medium-sized, basic interstellar hull.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
-
-SH_STANDARD_DESC
-'''A large, basic interstellar hull.
-
-Requires a [[buildingtype BLD_SHIPYARD_BASE]] at the planet where it is Constructed.'''
-
-SH_COSMIC_DRAGON_BODY_DESC
-A fearsom space dragon the size of a small planet.
-
-#############################################################
-####              S P E C I E S   P I C K S              ####
-#############################################################
-
-GOOD_WEAPONS
-+	Starts with [[tech SHP_WEAPON_1_3]] and one additional ship.
-
-GREAT_WEAPONS
-++	Starts with [[tech SHP_WEAPON_2_2]] and two additional ships.
-
-ULTIMATE_WEAPONS
-+++	Starts with [[tech SHP_WEAPON_2_4]] and three additional ships.
 
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
@@ -5142,23 +4016,3 @@ Telepatico
 ORBITAL
 Orbitale
 
-#############################################################
-####           A I   S T R I N G S                       ####
-#############################################################
-
-### Translator Note: the formatting of capital name lists as one name per line has functional significance for AI parsing
-### You may feel free to have any given Aggression Level Capital Name list include more or fewer names than are provided below in the EN stringtable
-
-### Beginning of AI Aggression Level Capital Name Lists
-
-### End of Capital Names Lists
-
-#############################################################
-####           HOTKEYS NAMES AND DESCRIPTIONS            ####
-#############################################################
-
-################
-## Name Lists ##
-################
-
-# TODO: Sort these into their proper locations?
