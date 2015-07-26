@@ -204,7 +204,7 @@ void CUIWnd::Init(const std::string& t) {
         // Call AFTER buttons are initialized but before SetMinSize().
         LoadOptions();
         GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal, boost::bind(&CUIWnd::LoadOptions, this));
-    } else if (!Dragable() && !m_resizable) {
+    } else {
         GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal, boost::bind(&CUIWnd::ResetDefaultPosition, this));
     }
 
@@ -226,11 +226,15 @@ void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     if (!m_config_name.empty()) {
         if (db.OptionExists("UI.windows."+m_config_name+".initialized")) {
+            std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+            if (!db.Get<bool>("fullscreen"))
+                windowed = "-windowed";
             // If the window has already had its default position specified
             // (either in the ctor or a previous call to this function), apply
             // this position to the window.
             if (db.Get<bool>("UI.windows."+m_config_name+".initialized") ||
-                db.Get<int>("UI.windows."+m_config_name+".left") == INVALID_X)
+                db.Get<bool>("UI.auto-reposition-windows") ||
+                db.Get<int>("UI.windows."+m_config_name+".left"+windowed) == INVALID_X)
             {
                 SizeMove(ul, lr);
             }
@@ -637,21 +641,14 @@ void CUIWnd::SaveOptions() const {
     else
         size = Size();
 
-    // Set the position options if we are in the relevant fullscreen/windowed
-    // mode or if those options have no valid values.
-    if (db.Get<int>("UI.windows."+m_config_name+".left") == INVALID_POS || db.Get<bool>("fullscreen")) {
-        db.Set<int>("UI.windows."+m_config_name+".left",   Value(RelativeUpperLeft().x));
-        db.Set<int>("UI.windows."+m_config_name+".top",    Value(RelativeUpperLeft().y));
-        db.Set<int>("UI.windows."+m_config_name+".width",  Value(size.x));
-        db.Set<int>("UI.windows."+m_config_name+".height", Value(size.y));
-    }
+    std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+    if (!db.Get<bool>("fullscreen"))
+        windowed = "-windowed";
 
-    if (db.Get<int>("UI.windows."+m_config_name+".left-windowed") == INVALID_POS || !db.Get<bool>("fullscreen")) {
-        db.Set<int>("UI.windows."+m_config_name+".left-windowed",   Value(RelativeUpperLeft().x));
-        db.Set<int>("UI.windows."+m_config_name+".top-windowed",    Value(RelativeUpperLeft().y));
-        db.Set<int>("UI.windows."+m_config_name+".width-windowed",  Value(size.x));
-        db.Set<int>("UI.windows."+m_config_name+".height-windowed", Value(size.y));
-    }
+    db.Set<int>("UI.windows."+m_config_name+".left"+windowed,   Value(RelativeUpperLeft().x));
+    db.Set<int>("UI.windows."+m_config_name+".top"+windowed,    Value(RelativeUpperLeft().y));
+    db.Set<int>("UI.windows."+m_config_name+".width"+windowed,  Value(size.x));
+    db.Set<int>("UI.windows."+m_config_name+".height"+windowed, Value(size.y));
 
     if (!Modal()) {
         db.Set<bool>("UI.windows."+m_config_name+".visible", Visible());
@@ -688,7 +685,17 @@ void CUIWnd::LoadOptions() {
         MinimizeClicked();
     }
 
-    SizeMove(ul, ul + size);
+    if (ul.x == INVALID_X || ul.y == INVALID_Y) {
+        // If no options have been saved yet, allow the window to calculate its
+        // own position.  Note that when this is first called from the CUIWnd
+        // constructor it will call CUIWnd::CalculatePosition() (a no-op) but
+        // afterwards will call derived overrides.  This will still do nothing
+        // for windows that don't override CalculatePosition() but they should
+        // be positioned by their owners in any case.
+        ResetDefaultPosition();
+    } else {
+        SizeMove(ul, ul + size);
+    }
 
     if (!Modal()) {
         if (db.Get<bool>("UI.windows."+m_config_name+".visible")) {

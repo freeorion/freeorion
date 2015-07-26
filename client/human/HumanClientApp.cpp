@@ -724,10 +724,15 @@ void HumanClientApp::Reinitialize() {
     std::pair<int, int> size = GetWindowWidthHeight();
     bool fullscreen_transition = Fullscreen() != fullscreen;
     SetVideoMode(GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
-    if (fullscreen_transition) {
+    if (fullscreen_transition)
         FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
-    }
     HandleWindowResize (GG::X (size.first), GG::Y (size.second));
+
+    // Pick up fullscreen->windowed transitions here because
+    // HandleWindowResize will not call RecalculateWindowDefaults in some
+    // situations in order to ignore repeated/non-useful events.
+    if (fullscreen_transition && !fullscreen && GetOptionsDB().Get<bool>("UI.auto-reposition-windows"))
+        ClientUI::GetClientUI()->RecalculateWindowDefaults();
 }
 
 float HumanClientApp::GLVersion() const
@@ -829,11 +834,16 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
             intro_screen->DoLayout();
         }
 
-        // Ignore fullscreen/windowed transitions and events that don't really
-        // resize the app (e.g. one is sent when the app is opened)
-        // TODO: properly check for fullscreen/windowed transitions
+        // Ignore bogus resize events, or ones that do not actually change the
+        // size of the window (one is sent on app initialization, two extra
+        // ones are sent on every fullscreen -> windowed transition in addition
+        // to the call from Reinitialize())
+        // NB: this does not detect fullscreen -> windowed transistions, so
+        //     RecalculateWindowedPositions is called from Reinitialize()
+        //     instead.
         if (GetOptionsDB().Get<bool>("UI.auto-reposition-windows") &&
-            (GetOptionsDB().Get<int>("app-width-windowed") != w ||
+            (GetOptionsDB().Get<bool>("fullscreen") ||
+             GetOptionsDB().Get<int>("app-width-windowed") != w ||
              GetOptionsDB().Get<int>("app-height-windowed") != h))
         {
             ui->RecalculateWindowDefaults();
