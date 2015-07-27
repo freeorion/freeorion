@@ -14,7 +14,7 @@ import MilitaryAI
 import ShipDesignAI
 import time
 import cProfile, pstats, StringIO
-from freeorion_tools import dict_from_map, ppstring, chat_human
+from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete
 from TechsListsAI import EXOBOT_TECH_NAME
 from freeorion_tools import print_error
 
@@ -327,19 +327,6 @@ def generateProductionOrders():
                     except:
                         print "Error: exception triggered and caught: ", traceback.format_exc()
 
-            for bldName in [ "BLD_SHIPYARD_ORG_XENO_FAC", "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"   ]:
-                if ( totalPP >30 or currentTurn > 30 ) and (bldName in possibleBuildingTypes) and (bldName not in (capitalBldgs+queuedBldgNames)) and (bldgExpense<bldgRatio*totalPP):
-                    try:
-                        res=fo.issueEnqueueBuildingProductionOrder(bldName, homeworld.id)
-                        print "Enqueueing %s at capitol, with result %d"%(bldName, res)
-                        if res:
-                            cost, time = empire.productionCostAndTime( productionQueue[productionQueue.size -1] )
-                            bldgExpense += cost/time
-                            res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
-                            print "Requeueing %s to front of build queue, with result %d"%(bldName, res)
-                    except:
-                        print "Error: exception triggered and caught: ", traceback.format_exc()
-
             numExobotShips=0 #TODO: do real calc here
             num_queued_exobots = len(queued_exobot_locs)
             if empire.techResearched(EXOBOT_TECH_NAME) and num_queued_exobots < 2:
@@ -561,39 +548,13 @@ def generateProductionOrders():
                         print "Requeueing %s to front of build queue, with result %d"%(bldName, res)
                         break #only start one per turn
 
-    for bldName in [ "BLD_SHIPYARD_ORG_ORB_INC" , "BLD_SHIPYARD_ORG_XENO_FAC" ]:
-        if empire.buildingTypeAvailable(bldName) and (bldgExpense<bldgRatio*totalPP) and ( totalPP >40 or currentTurn > 40 ):
-            queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
-            bldType = fo.getBuildingType(bldName)
-            for pid in popCtrs:
-                if len(queuedBldLocs)>1+int(totalPP/200.0) : # limit build at once
-                    break
-                if pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID, pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
-                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
-                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName, pid, universe.getPlanet(pid).name, res)
-                    if res:
-                        queuedBldLocs.append(pid)
-                        cost, time = empire.productionCostAndTime( productionQueue[productionQueue.size -1] )
-                        bldgExpense += cost/time  # productionQueue[productionQueue.size -1].blocksize *
-                        res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
-                        print "Requeueing %s to front of build queue, with result %d"%(bldName, res)
+    for bld_name in [ "BLD_SHIPYARD_ORG_ORB_INC" ]:
+        build_ship_facilities(bld_name, best_pilot_facilities)
 
-    for bldName in [ "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB" ]:
-        if empire.buildingTypeAvailable(bldName) and (bldgExpense<bldgRatio*totalPP) and ( totalPP >50 or currentTurn > 80 ):
-            queuedBldLocs = [element.locationID for element in productionQueue if (element.name==bldName) ]
-            bldType = fo.getBuildingType(bldName)
-            for pid in popCtrs:
-                if len(queuedBldLocs)>1: #build a max of 2 at once
-                    break
-                if pid not in queuedBldLocs and bldType.canBeProduced(empire.empireID, pid):#TODO: verify that canBeProduced() checks for prexistence of a barring building
-                    res=fo.issueEnqueueBuildingProductionOrder(bldName, pid)
-                    print "Enqueueing %s at planet %d (%s) , with result %d"%(bldName, pid, universe.getPlanet(pid).name, res)
-                    if res:
-                        queuedBldLocs.append(pid)
-                        cost, time = empire.productionCostAndTime( productionQueue[productionQueue.size -1] )
-                        bldgExpense += cost/time  # productionQueue[productionQueue.size -1].blocksize *
-                        res=fo.issueRequeueProductionOrder(productionQueue.size -1, 0) # move to front
-                        print "Requeueing %s to front of build queue, with result %d"%(bldName, res)
+    # gating by life cycle manipulation helps delay these until they are closer to being worthwhile
+    if tech_is_complete(AIDependencies.GRO_LIFE_CYCLE) or empire.researchProgress(AIDependencies.GRO_LIFE_CYCLE) > 0:
+        for bld_name in ["BLD_SHIPYARD_ORG_XENO_FAC", "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"]:
+            build_ship_facilities(bld_name, best_pilot_facilities)
 
     ShipYardType = fo.getBuildingType("BLD_SHIPYARD_BASE")
     bldName = "BLD_SHIPYARD_AST"
