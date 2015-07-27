@@ -1433,7 +1433,7 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
     float wasted_points = std::max(0.0f, total_points - total_cost);
     *m_total_points << DoubleToString(total_points, 3, false);
     *m_wasted_points << DoubleToString(wasted_points, 3, false);
-    if (wasted_points > 0.0f)
+    if (wasted_points > 0.01f)
         m_wasted_points->SetTextColor(ClientUI::StatDecrColor());
     else
         m_wasted_points->SetTextColor(ClientUI::TextColor());
