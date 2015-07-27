@@ -88,6 +88,8 @@ DEFENSE_REGEN_1_TECH = "DEF_DEFENSE_NET_REGEN_1"
 
 PROT_FOCUS_MULTIPLIER = 2.0
 
+GRO_LIFE_CYCLE = "GRO_LIFECYCLE_MAN"
+
 
 # ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
 # not currently determined dynamically because it is initially used in a location-independent fashion
