@@ -513,7 +513,7 @@ namespace {
 
     const GG::Y PANEL_HEIGHT(160); // Also formerly "UI.chat-panel-height" default
     const GG::X MESSAGE_PANEL_WIDTH(345); // Formerly "UI.chat-panel-width" default
-    const GG::X PLAYER_LIST_PANEL_WIDTH(424);
+    const GG::X PLAYER_LIST_PANEL_WIDTH(445);
 
     const std::string MESSAGE_WND_NAME = "map.messages";
     const std::string PLAYER_LIST_WND_NAME = "map.player-list";

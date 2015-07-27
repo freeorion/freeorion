@@ -354,6 +354,7 @@ public:
     bool                    HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
 
     bool                    Eliminated() const;                                         ///< whether this empire has lost the game
+    bool                    Won() const;                                                ///< whether this empire has won the game
 
     int                     NumSitRepEntries(int turn = INVALID_GAME_TURN) const;       ///< number of entries in the SitRep.
 

@@ -1742,6 +1742,10 @@ void Empire::Eliminate() {
     m_resource_supply_groups.clear();
 }
 
+bool Empire::Won() const {
+    return !m_victories.empty();
+}
+
 void Empire::Win(const std::string& reason) {
     if (m_victories.insert(reason).second) {
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
