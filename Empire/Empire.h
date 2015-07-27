@@ -458,7 +458,7 @@ public:
 
     std::string NewShipName();                              ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
     void        Eliminate();                                ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
-    bool        Win(const std::string& reason);             ///< Marks this empire as having won for this reason; returns whether it has already done so before
+    void        Win(const std::string& reason);             ///< Marks this empire as having won for this reason, and sends the appropriate sitreps
 
     /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
      *  \warning When you call this method, you are transferring ownership

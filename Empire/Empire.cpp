@@ -1707,6 +1707,9 @@ bool Empire::Eliminated() const {
 void Empire::Eliminate() {
     m_eliminated = true;
 
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it)
+        it->second->AddSitRepEntry(CreateEmpireEliminatedSitRep(EmpireID()));
+
     // some Empire data not cleared when eliminating since it might be useful
     // to remember later, and having it doesn't hurt anything (as opposed to
     // the production queue that might actually cause some problems if left
@@ -1739,8 +1742,12 @@ void Empire::Eliminate() {
     m_resource_supply_groups.clear();
 }
 
-bool Empire::Win(const std::string& reason) {
-    return m_victories.insert(reason).second;
+void Empire::Win(const std::string& reason) {
+    if (m_victories.insert(reason).second) {
+        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+            it->second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID()));
+        }
+    }
 }
 
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {

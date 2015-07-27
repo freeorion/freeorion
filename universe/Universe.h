@@ -232,10 +232,6 @@ public:
       * were applied to the meter. */
     const Effect::AccountingMap&            GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
-    /** Returns set of objects that have been marked by the Victory effect
-      * to grant their owners victory. */
-    const std::multimap<int, std::string>&  GetMarkedForVictory() const {return m_marked_for_victory;}
-
     const std::map<std::string, std::map<int, std::map<int, double> > >&
                                             GetStatRecords() const { return m_stat_records; }
 
@@ -388,9 +384,6 @@ public:
     /** Permanently deletes the ship design with ID number \a design_id. No
       * information about this design is retained in the Universe. */
     bool            DeleteShipDesign(int design_id);
-
-    /** Used by the Victory effect to mark an object to give it owner victory. */
-    void            EffectVictory(int object_id, const std::string& reason_string);
 
     /** Sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit
       * is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
@@ -545,7 +538,6 @@ private:
     int                             m_last_allocated_design_id;
 
     std::map<int, std::set<int> >   m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
-    std::multimap<int, std::string> m_marked_for_victory;               ///< used while applying effects to cache objects whose owner should be victorious.  Victory testing is done separately from effects execution, so this needs to be stored temporarily...
 
     double                          m_universe_width;
     bool                            m_inhibit_universe_object_signals;

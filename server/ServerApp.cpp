@@ -1278,11 +1278,11 @@ bool ServerApp::AllOrdersReceived() {
 namespace {
     /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
-      * having no ships and no fleets. */
-    //bool EmpireEliminated(int empire_id) {
-    //    return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
-    //            Objects().FindObjects(OwnedVisitor<Fleet>(empire_id)).empty());      // no fleets
-    //}
+      * having no ships and no planets. */
+      bool EmpireEliminated(int empire_id) {
+          return (Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
+                  Objects().FindObjects(OwnedVisitor<Ship>(empire_id)).empty());      // no ship
+      }
 
     /** Compiles and return set of ids of empires that are controlled by a
       * human player.*/
@@ -2958,6 +2958,8 @@ void ServerApp::PostCombatProcessTurns() {
         DebugLogger() << objects.Dump();
     }
 
+    // this has to be here for the sitreps it creates to be in the right turn
+    CheckForEmpireElimination();
 
     // update current turn number so that following visibility updates and info
     // sent to players will have updated turn associated with them
@@ -2971,7 +2973,6 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // misc. other updates and records
-    CheckForEmpireEliminationOrVictory();
     m_universe.UpdateStatRecords();
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
         empire_it->second->UpdateOwnedObjectCounters();
@@ -3010,130 +3011,19 @@ void ServerApp::PostCombatProcessTurns() {
     DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }
 
-void ServerApp::CheckForEmpireEliminationOrVictory() {
-    //EmpireManager& empires = Empires();
-    //ObjectMap& objects = m_universe.Objects();
+void ServerApp::CheckForEmpireElimination() {
+    std::set<Empire*> surviving_empires;
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        if (it->second->Eliminated())
+            continue;   // don't double-eliminate an empire
+        else if (EmpireEliminated(it->first))
+            it->second->Eliminate();
+        else
+            surviving_empires.insert(it->second);
+    }
 
-    //// check for eliminated empires and players
-    //std::map<int, int> eliminations; // map from player id to empire id of eliminated players, for empires eliminated this turn
-    //for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
-    //    int empire_id = it->first;
-    //    if (it->second->Eliminated())
-    //        continue;   // don't double-eliminate an empire
-    //    DebugLogger() << "empire " << empire_id << " not yet eliminated";
-
-    //    if (!EmpireEliminated(empire_id))
-    //        continue;
-    //    DebugLogger() << " ... but IS eliminated this turn";
-
-    //    int elim_player_id = EmpirePlayerID(empire_id);
-    //    eliminations[elim_player_id] = empire_id;
-    //}
-
-
-    //// check for victorious players
-    //std::map<int, std::set<std::string> > new_victors; // map from player ID to set of victory reason strings
-
-    //// marked by Victory effect?
-    //const std::multimap<int, std::string>& marked_for_victory = m_universe.GetMarkedForVictory();
-    //for (std::multimap<int, std::string>::const_iterator it = marked_for_victory.begin(); it != marked_for_victory.end(); ++it) {
-    //    const UniverseObject* obj = objects.Object(it->first);
-    //    if (!obj || obj->Unowned()) continue; // perhaps it was destroyed?
-    //    int empire_id = obj->Owner();
-    //    if (empires.Lookup(empire_id))
-    //        new_victors[EmpirePlayerID(empire_id)].insert(it->second);
-    //}
-
-    //// all enemies eliminated?
-    //if (eliminations.size() == m_networking.NumEstablishedPlayers() - 1) {
-    //    // only one player not eliminated.  treat this as a win for the remaining player
-    //    ServerNetworking::established_iterator player_it = m_networking.established_begin();
-    //    if (player_it != m_networking.established_end()) {
-    //        boost::shared_ptr<PlayerConnection> player_connection = *player_it;
-    //        int cur_player_id = player_connection->PlayerID();
-    //        if (eliminations.find(cur_player_id) == eliminations.end())
-    //            new_victors[cur_player_id].insert(UserStringNop("ALL_ENEMIES_ELIMINATED_VICTORY"));
-    //    }
-    //}
-
-
-    //// check if any victors are new.  (don't want to re-announce old victors each subsequent turn)
-    //if (!new_victors.empty()) {
-    //    for (std::map<int, std::set<std::string> >::const_iterator it = new_victors.begin(); it != new_victors.end(); ++it) {
-    //        int victor_player_id = it->first;
-
-    //        const std::set<std::string>& reasons = it->second;
-    //        for (std::set<std::string>::const_iterator reason_it = reasons.begin(); reason_it != reasons.end(); ++reason_it) {
-    //            Empire* empire = GetEmpire(victor_player_id);
-    //            if (!empire) {
-    //                ErrorLogger() << "Trying to grant victory to a missing empire!";
-    //                continue;
-    //            }
-    //            if (empire->Win(*it)) {
-
-    //                const std::string& victor_empire_name = empire->Name();
-    //                int victor_empire_id = empire->EmpireID();
-
-
-    //                // notify all players of victory
-    //                for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-    //                    boost::shared_ptr<PlayerConnection> player_connection = *player_it;
-    //                    int recipient_player_id = player_connection->PlayerID();
-    //                    if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
-    //                        recipient_empire->AddSitRepEntry(CreateVictorySitRep(reason_string, victor_empire_name));
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-
-
-    //if (eliminations.empty())
-    //    return;
-
-
-    // time for elimination messages to propegate
-    //boost::this_thread::sleep(boost::posix_time::seconds(1));
-
-
-    //// inform all players of eliminations
-    //for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-    //    int elim_player_id = it->first;
-    //    int elim_empire_id = it->second;
-    //    Empire* empire = empires.Lookup(elim_empire_id);
-    //    if (!empire) {
-    //        ErrorLogger() << "Trying to eliminate a missing empire!";
-    //        continue;
-    //    }
-    //    const std::string& elim_empire_name = empire->Name();
-
-    //    // notify all players of disconnection, and end game of eliminated player
-    //    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-    //        boost::shared_ptr<PlayerConnection> player_connection = *player_it;
-    //        int recipient_player_id = player_connection->PlayerID();
-    //        if (recipient_player_id == elim_player_id) {
-    //            m_ai_client_processes.erase(recipient_player_id);   // done now so that PlayerConnection doesn't need to be re-retreived when dumping connections
-    //        } else {
-    //            if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
-    //                recipient_empire->AddSitRepEntry(CreateEmpireEliminatedSitRep(elim_empire_id));
-    //        }
-    //    }
-    //}
-
-    //// dump connections to eliminated players, and remove server-side empire data
-    //for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-    //    int elim_empire_id = it->second;
-    //    // remove eliminated empire's ownership of UniverseObjects
-    //    std::vector<UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(elim_empire_id));
-    //    for (std::vector<UniverseObject*>::iterator obj_it = object_vec.begin(); obj_it != object_vec.end(); ++obj_it)
-    //        (*obj_it)->SetOwner(ALL_EMPIRES);
-
-    //    DebugLogger() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
-    //    m_networking.Disconnect(it->first);
-
-    //    it->second->Eliminate();
-    //    RemoveEmpireTurn(it->second);
-    //}
+    if (surviving_empires.size() == 1) // last man standing
+        (*surviving_empires.begin())->Win(UserStringNop("VICTORY_ALL_ENEMIES_ELIMINATED"));
 }
 
 void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {

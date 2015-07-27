@@ -129,9 +129,8 @@ public:
 
     /** Determines if any empires are eliminated (for the first time this turn,
       * skipping any which were also eliminated previously) and if any empires
-      * are victorious.  Informs players of victories or eliminations, and
-      * disconnects eliminated players. */
-    void    CheckForEmpireEliminationOrVictory();
+      * are thereby victorious. */
+    void    CheckForEmpireElimination();
 
     /** Intializes single player game universe, sends out initial game state to
       * clients, and signals clients to start first turn */

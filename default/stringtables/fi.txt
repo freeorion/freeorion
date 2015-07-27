@@ -136,9 +136,6 @@ Pelaajalla %1% ei ole enää yhteyttä palvelimeen.
 UNKNOWN_EMPIRE
 Tuntematon Imperiumi
 
-LAST_OPPONENT_DEFEATED_VICTORY
-Viimeinenkin vastustajasi on lyöty ja olet voittanut!
-
 UNABLE_TO_WRITE_CONFIG_XML
 Config.xml tiedoston kirjoituksessa tapahtui virhe. Asetuksia ei voitu tallentaa.
 
@@ -1630,21 +1627,18 @@ SITREP_PLANET_COLONIZED
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% on saapunut %system% tähtijärjestelmään.
 
-SITREP_EMPIRE_ELIMINATED
-%empire% imperiumi on tuhottu.
-
-SITREP_VICTORY
-%empire% imperiumi %text%
-
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-'''on saavuttanut teknologisen voiton. '''
+VICTORY_TECH
+%empire% imperiumi on saavuttanut teknologisen voiton.
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-on saavuttanut voiton ainoana jäljellä olevana imperiumina.
+VICTORY_ALL_ENEMIES_ELIMINATED
+%empire% imperiumi on saavuttanut voiton ainoana jäljellä olevana imperiumina.
+
+SITREP_EMPIRE_ELIMINATED
+%empire% imperiumi on tuhottu.
 
 #############################################################
 ####                    S P E C I E S                    ####

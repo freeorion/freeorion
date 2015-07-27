@@ -773,9 +773,6 @@ Le joueur %1% n'est plus connecté au serveur.
 UNKNOWN_EMPIRE
 Empire inconnu
 
-LAST_OPPONENT_DEFEATED_VICTORY
-Votre dernier adversaire est vaincu! Vous êtes victorieux!
-
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Le serveur a reçu des données de sauvegarde client invalides. Certaines seront peut-être ignorées.
 
@@ -4593,36 +4590,6 @@ La flotte '%fleet%' de %empire% (%rawtext% astronefs) a atteint le système %sys
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Flotte étrangère arrivée à destination
 
-SITREP_EMPIRE_ELIMINATED
-L'empire %empire% a été détruit!
-SITREP_EMPIRE_ELIMINATED_LABEL
-Empire détruit
-
-SITREP_VICTORY
-L'empire %empire% %text%
-SITREP_VICTORY_LABEL
-Victoire
-
-SITREP_VICTORY_DESTRUCTION
-Enfin, le fléau violent et mystérieux qui tourmentait la galaxie a été éradiqué. Cette menace qui mettait en péril la galaxie a été vaincu, mais son origine demeure une énigme, tapie à jamais dans les profondeurs insondables du Cosmos.
-SITREP_VICTORY_DESTRUCTION_LABEL
-Victoire par Éradication
-
-SITREP_VICTORY_CAPTURE
-Victoire! Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, sont désormais sous votre contrôle. Vous pouvez continuer la partie si vous le désirez.
-SITREP_VICTORY_CAPTURE_LABEL
-Victoire par Capture
-
-SITREP_VICTORY_TECH
-Votre Empire a découvert la Singularité Transcendantale. Vous gagnez la partie !
-SITREP_VICTORY_TECH_LABEL
-Victoire Technologique
-
-SITREP_VICTORY_BIO
-Le mystère qui entourait l'effroyable menace pesant sur la galaxie a été percé, et ses responsables, les puissants Expérimentateurs, ont rencontré leur inévitable destin sous la puissance de feu de votre formidable flotte de guerre.
-SITREP_VICTORY_BIO_LABEL
-Victoire Biologique
-
 SITREP_POP_THRESHOLD
 Sur %planet% : la colonie a atteint la taille et le [[encyclopedia HAPPINESS_TITLE]] prérequis pour entreprendre la colonisation d'autres planètes.
 SITREP_POP_THRESHOLD_LABEL
@@ -4845,11 +4812,19 @@ Custom_4
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-%1% a remporté une victoire technologique.
+VICTORY_TECH
+%empire% a remporté une victoire technologique.
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-a remporté une victoire comme dernier survivant.
+VICTORY_ALL_ENEMIES_ELIMINATED
+%empire% a remporté une victoire comme dernier survivant.
+
+SITREP_VICTORY_LABEL
+Victoire
+
+SITREP_EMPIRE_ELIMINATED
+L'empire %empire% a été détruit!
+SITREP_EMPIRE_ELIMINATED_LABEL
+Empire détruit
 
 #############################################################
 ####                    S P E C I E S                    ####

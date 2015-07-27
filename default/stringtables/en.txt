@@ -773,9 +773,6 @@ Player %1% no longer has a connection to the server.
 UNKNOWN_EMPIRE
 Unknown Empire
 
-LAST_OPPONENT_DEFEATED_VICTORY
-Your last opponent has been defeated and you are victorious!
-
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 The server received invalid client save data. Some may be ignored.
 
@@ -4598,36 +4595,6 @@ At %system%: the %empire% fleet '%fleet%' (%rawtext% ships) has arrived.
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Foreign Fleet Arrived
 
-SITREP_EMPIRE_ELIMINATED
-%empire% has been eliminated!
-SITREP_EMPIRE_ELIMINATED_LABEL
-Empire Eliminated
-
-SITREP_VICTORY
-%empire% %text%
-SITREP_VICTORY_LABEL
-Victory
-
-SITREP_VICTORY_DESTRUCTION
-At last, the mysterious violent threat plaguing the galaxy has been eliminated. The source of the galaxy's peril has been vanquished, and its origins will forever remain a mystery.
-SITREP_VICTORY_DESTRUCTION_LABEL
-Victory Destruction
-
-SITREP_VICTORY_CAPTURE
-VICTORY! You have captured the powerful Experimentors and ended the fearsome threat plaguing the galaxy. You may continue playing if you wish.
-SITREP_VICTORY_CAPTURE_LABEL
-Victory Capture
-
-SITREP_VICTORY_TECH
-Your Empire has discovered the Singularity of Transcendence. You win!
-SITREP_VICTORY_TECH_LABEL
-Victory Technology
-
-SITREP_VICTORY_BIO
-The mystery of the fearsome threat plaguing the galaxy has been solved, and its perpetrators, the powerful Experimentors, have met their just fate at the hands of your mighty war fleet.
-SITREP_VICTORY_BIO_LABEL
-Victory Biological
-
 SITREP_POP_THRESHOLD
 On %planet%: The colony has reached sufficient size and [[encyclopedia HAPPINESS_TITLE]] to be a settler source for colonizing other planets.
 SITREP_POP_THRESHOLD_LABEL
@@ -4850,11 +4817,22 @@ Custom_4
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-%1% has achieved a technological victory.
+VICTORY_TECH
+The %empire% has achieved a technological victory!
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-has achieved a sole-survivor victory.
+VICTORY_ALL_ENEMIES_ELIMINATED
+The %empire% has achieved a sole-survivor victory!
+
+VICTORY_EXPERIMENTOR_CAPTURE
+The %empire% has achieved victory by capturing the powerful Experimentors and ending the fearsome threat plaguing the galaxy!
+
+SITREP_VICTORY_LABEL
+Victory
+
+SITREP_EMPIRE_ELIMINATED
+The %empire% has been defeated!
+SITREP_EMPIRE_ELIMINATED_LABEL
+Empire Eliminated
 
 #############################################################
 ####                    S P E C I E S                    ####

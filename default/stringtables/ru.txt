@@ -464,9 +464,6 @@ PLAYER_DISCONNECTED
 UNKNOWN_EMPIRE
 Неизвестная империя
 
-LAST_OPPONENT_DEFEATED_VICTORY
-Ваш последний противник повержен, и теперь вы - победитель!
-
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Сервер получил некорректные сохраненные данные. Некоторые из них будут проигнорированы.
 
@@ -3058,23 +3055,6 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Иностранный Флот Прибыл
 
-SITREP_EMPIRE_ELIMINATED
-Империя %name% была уничтожена.
-SITREP_EMPIRE_ELIMINATED_LABEL
-Империя Уничтожена.
-
-SITREP_VICTORY_LABEL
-Победа
-
-SITREP_VICTORY_DESTRUCTION
-Наконец мистическая угроза, нависшая над всей галактике устранена. Источник угрозы уничтожен, а его тайна ушла в века.
-
-SITREP_VICTORY_CAPTURE
-Тайна устрашающей угрозы, нависшей над галактикой, была раскрыта и преступники, могущественные Экспериментаторы, пали к вашим ногам.
-
-SITREP_VICTORY_BIO
-Тайна устрашающей угрозы, нависшей над галактикой, была раскрыта и преступники, могущественные Экспериментаторы, встретили свою судьбу в сражении с вашим непобедимым флотом.
-
 SITREP_POP_THRESHOLD
 Колония на планете %planet% достигла достаточных размеров и [[encyclopedia HAPPINESS_TITLE]] направляет своих колонистов на другие планеты.
 SITREP_POP_THRESHOLD_LABEL
@@ -3169,11 +3149,13 @@ HEAD_ON_A_SPIKE_MESSAGE_LABEL
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-одержала технологическую победу.
+SITREP_VICTORY_LABEL
+Победа
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-единственная из оставшихся в живых.
+SITREP_EMPIRE_ELIMINATED
+Империя %empire% была уничтожена.
+SITREP_EMPIRE_ELIMINATED_LABEL
+Империя Уничтожена.
 
 #############################################################
 ####                    S P E C I E S                    ####

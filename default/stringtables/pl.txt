@@ -105,9 +105,6 @@ Gracz %1% utracił połączenie z serwerem.
 UNKNOWN_EMPIRE
 Nieznane imperium
 
-LAST_OPPONENT_DEFEATED_VICTORY
-Twój ostatni przeciwnik został pokonany. Zwycięstwo!
-
 ######################################
 # Command Line and OptionsDB Options #
 ######################################

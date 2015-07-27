@@ -469,7 +469,6 @@ void Universe::Clear() {
     m_empire_known_ship_design_ids.clear();
 
     m_marked_destroyed.clear();
-    m_marked_for_victory.clear();
 }
 
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const {
@@ -2241,7 +2240,6 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     ScopedTimer timer("Universe::ExecuteEffects", true);
 
     m_marked_destroyed.clear();
-    m_marked_for_victory.clear();
     std::map< std::string, std::set<int> > executed_nonstacking_effects;
     bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
 
@@ -3577,9 +3575,6 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
         return;
     m_marked_destroyed[object_id].insert(source_object_id);
 }
-
-void Universe::EffectVictory(int object_id, const std::string& reason_string)
-{ m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string)); }
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;

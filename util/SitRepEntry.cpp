@@ -351,14 +351,13 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
 
 SitRepEntry CreateEmpireEliminatedSitRep(int empire_id) {
     SitRepEntry sitrep(UserStringNop("SITREP_EMPIRE_ELIMINATED"), "icons/sitrep/empire_eliminated.png");
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(empire_id));
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, boost::lexical_cast<std::string>(empire_id));
     return sitrep;
 }
 
 SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id) {
-    SitRepEntry sitrep(UserStringNop("SITREP_VICTORY"), "icons/sitrep/victory.png");
-    sitrep.AddVariable(VarText::TEXT_TAG,          reason_string);
-    sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(empire_id));
+    SitRepEntry sitrep(reason_string, CurrentTurn() + 1, "icons/sitrep/victory.png", UserStringNop("SITREP_VICTORY_LABEL"), true);
+    sitrep.AddVariable(VarText::EMPIRE_ID_TAG, boost::lexical_cast<std::string>(empire_id));
     return sitrep;
 }
 
