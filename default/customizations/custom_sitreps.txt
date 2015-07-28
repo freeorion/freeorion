@@ -20,7 +20,7 @@ EffectsGroup
     effects =
         GenerateSitRepMessage
             message = "CUSTOM_SITREP_INTRODUCTION"
-            label = "CUSTOM_1"
+            label = "SITREP_WELCOME_LABEL"
             icon = "icons/tech/categories/spy.png"
             parameters = [
                 tag = "tech" data = "SPY_CUSTOM_ADVISORIES"
@@ -28,10 +28,10 @@ EffectsGroup
             ]
             empire = Source.Owner
 
-// for reference, the following is fully custom format (in english) of the intrduction sitrep above.
+// for reference, the following is fully custom format (in english) of the intrduction sitrep above, except that it has a different label.
 // Note that the message and label are directly provided here rather than being stringtable keys,
 // and the NoStringtableLookup keyword is used afer the label is given.
-// If you are using a stringtable other than English, your translator may have translate the four preset labels for you, 
+// If you are using a stringtable other than English, your translator may have translated the four preset labels for you, 
 // so instead of the "Custom_1" below it might be something else for you.  The actual labels can be seen in the Pedia entry for 
 // the SPY_CUSTOM_ADVISORIES tech (the tech is named "Empire Intelligence Agency" in the English version)
 //
@@ -51,10 +51,6 @@ EffectsGroup
 //            empire = Source.Owner
 
 
-//*********************************************************************************************************************************************************
-// The other example sitreps below are left in English, but can be translated just by changing the strings provided below for the messages and labels below.
-// It is important to note that, unlike the above entry, these entries all use the  NoStringtableLookup keyword after the label.
-//*********************************************************************************************************************************************************
 
 // Reminder if a Gas Giant you own in a system along with another planet you also own, populated by a species with Industry Focus, and you have the Orbital Generation tech
 // but haven't yet built or enqueued a GG Generator in that system yet
@@ -83,9 +79,8 @@ EffectsGroup
     activation = OwnerHasTech name = "PRO_ORBITAL_GEN"
     effects =
         GenerateSitRepMessage
-            message = "%planet% is a prime location for a %buildingtype%, but none is being built there"
-            label = "Custom_2"
-            NoStringtableLookup
+            message = "SITREP_GAS_GIANT_GENERATION_REMINDER"
+            label = "CUSTOM_2"
             icon = "icons/building/gas-giant-generator.png"
             parameters = [
                 tag = "buildingtype" data = "BLD_GAS_GIANT_GEN"
@@ -96,63 +91,106 @@ EffectsGroup
 
 
 
+
+//*********************************************************************************************************************************************************
+// The other example sitreps below are left in English, but can be translated just by changing the strings provided below for the messages and labels below.
+// It is important to note that, unlike the above entry, these entries all use the  NoStringtableLookup keyword after the label.
+//*********************************************************************************************************************************************************
+
+// Reminder if a Gas Giant you own in a system along with another planet you also own, populated by a species with Industry Focus, and you have the Orbital Generation tech
+// but haven't yet built or enqueued a GG Generator in that system yet
+
+// EffectsGroup
+//     scope = And [
+//         Planet Type = GasGiant
+//         Ownedby empire = Source.Owner
+//         Not Contains Building name = "BLD_GAS_GIANT_GEN"
+//         ContainedBy And [
+//             Contains And [
+//                 Planet 
+//                 Location type = Focus name = LocalCandidate.Species name = "FOCUS_INDUSTRY"
+//                 OwnedBy empire = Source.Owner
+//             ]
+//             Not Contains And [
+//                 Planet
+//                 OwnedBy empire = Source.Owner
+//                 Or [
+//                     Contains Building name = "BLD_GAS_GIANT_GEN"
+//                     Enqueued type = Building name = "BLD_GAS_GIANT_GEN"
+//                 ]
+//             ]
+//         ]
+//     ]
+//     activation = OwnerHasTech name = "PRO_ORBITAL_GEN"
+//     effects =
+//         GenerateSitRepMessage
+//             message = "%planet% is a prime location for a %buildingtype%, but none is being built there"
+//             label = "Custom_2"
+//             NoStringtableLookup
+//             icon = "icons/building/gas-giant-generator.png"
+//             parameters = [
+//                 tag = "buildingtype" data = "BLD_GAS_GIANT_GEN"
+//                 tag = "planet" data = Target.ID
+//             ]
+//             empire = Source.Owner
+
+
+
+
 // Reminder if you own a planet with a monster nest but haven't yet researched SHP_DOMESTIC_MONSTER
 // but haven't yet built or enqueued a GG Generator in that system yet
 
-EffectsGroup
-    scope = And [
-        Planet
-        Ownedby empire = Source.Owner
-        Or [
-            HasSpecial name = "KRAKEN_NEST_SPECIAL"
-            HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
-            HasSpecial name = "JUGGERNAUT_NEST_SPECIAL"
-        ]
-    ]
-    activation = Not OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
-    effects =
-        GenerateSitRepMessage
-            message = "You own %planet%, with a monster nest, but haven't yet researched %tech%"
-            label = "Custom_2"
-            NoStringtableLookup
-            icon = "icons/monsters/kraken-1.png"
-            parameters = [
-                tag = "planet" data = Target.ID
-                tag = "tech" data = "SHP_DOMESTIC_MONSTER"
-            ]
-            empire = Source.Owner
+// EffectsGroup
+//     scope = And [
+//         Planet
+//         Ownedby empire = Source.Owner
+//         Or [
+//             HasSpecial name = "KRAKEN_NEST_SPECIAL"
+//             HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
+//             HasSpecial name = "JUGGERNAUT_NEST_SPECIAL"
+//         ]
+//     ]
+//     activation = Not OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
+//     effects =
+//         GenerateSitRepMessage
+//             message = "You own %planet%, with a monster nest, but haven't yet researched %tech%"
+//             label = "Custom_2"
+//             NoStringtableLookup
+//             icon = "icons/monsters/kraken-1.png"
+//             parameters = [
+//                 tag = "planet" data = Target.ID
+//                 tag = "tech" data = "SHP_DOMESTIC_MONSTER"
+//             ]
+//             empire = Source.Owner
 
 
 
 // A Call to Arms
 // A prime candidate for being snoozed, but probably good to be periodically reminded about
-EffectsGroup
-    scope = And [
-        Planet
-        Species
-        UnOwned
-        MaxDefense high = 0
-        ContainedBy And [
-            System
-            Not Contains Monster
-        ]
-        Or [ 
-            VisibleToEmpire empire = Source.Owner
-            ExploredByEmpire empire = Source.Owner
-        ]
-    ]
-    activation = Source
-    effects =
-        GenerateSitRepMessage
-            message = "There are defenseless natives at %planet%!  Go invade them with <encyclopedia TROOP_TITLE>Troops</encyclopedia>!"
-            label = "Custom_4"
-            NoStringtableLookup
-            icon = "icons/meter/troops.png"
-            parameters = [
-                tag = "planet" data = Target.ID
-            ]
-            empire = Source.Owner
-
+// EffectsGroup
+//     scope = And [
+//         Planet
+//         Species
+//         UnOwned
+//         MaxDefense high = 0
+//         ContainedBy And [
+//             System
+//             Not Contains Monster
+//         ]
+//         VisibleToEmpire empire = Source.Owner
+//     ]
+//     activation = Source
+//     effects =
+//         GenerateSitRepMessage
+//             message = "There are defenseless natives at %planet%!  Go invade them with <encyclopedia TROOP_TITLE>Troops</encyclopedia>!"
+//             label = "Custom_4"
+//             NoStringtableLookup
+//             icon = "icons/meter/troops.png"
+//             parameters = [
+//                 tag = "planet" data = Target.ID
+//             ]
+//             empire = Source.Owner
+// 
 
 
 
