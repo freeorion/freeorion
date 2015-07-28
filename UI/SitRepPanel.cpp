@@ -300,7 +300,6 @@ namespace {
         {
             SetName("SitRepRow");
             SetChildClippingMode(ClipToClient);
-            SetDragDropDataType("SitRepRow");
             m_panel = new SitRepDataPanel(w, h, sitrep);
             push_back(m_panel);
         }
