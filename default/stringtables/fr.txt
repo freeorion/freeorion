@@ -4362,19 +4362,19 @@ FILTERS
 Filtres
 
 SITREP_SNOOZE_5_TURNS
-'''  Retrait de ce SitRep dans 5 tours'''
+'''  Retrait de ce SitRep pour 5 tours'''
 
 SITREP_SNOOZE_10_TURNS
-'''  Retrait de ce SitRep dans 10 tours'''
+'''  Retrait de ce SitRep pour 10 tours'''
 
 SITREP_SNOOZE_INDEFINITE
 '''  Retrait indéfini pour ce SitRep'''
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Effacer tous les retraits indéfinis de SitRep'''
+'''  Réinitialiser tous les retraits indéfinis de SitRep'''
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Effacer tous les retraits de SitRep'''
+'''  Réinitialiser tous les retraits de SitRep'''
 
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
@@ -4789,16 +4789,16 @@ Ceci est un exemple de SitRep Personnalisé, activé par la technologie %tech% e
 # CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
 
 CUSTOM_1
-Ceci_est_un_exemple_de_SitRep_Personnalisé,_activé_par_la_technologie_%tech%_et_transmis_par_tous_les agents_impériaux_vers_le_système_%system%.
+Custom_1
 
 CUSTOM_2
-La_planète_%planet%_est_un_emplacement_favorable_pour_la_structure_%buildingtype%,_mais_aucune_n'y_est_construite_pour_l'instant.
+Custom_2
 
 CUSTOM_3
-Vous_possédez_la_planète_%planet%_abritant_un_nid_de_monstres,_mais_la_technolgie_%tech%_n'a_pas_été_encore_assimilée.
+Custom_3
 
 CUSTOM_4
-Une_espèce_indigène_est_sans_défense_sur_la_planète_%planet%!_Envahissez-la_avec_votre_Infanterie!
+Custom_4
 
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
@@ -7193,7 +7193,7 @@ GRO_PLANET_ECOL
 Écologie Planétaire
 
 GRO_PLANET_ECOL_DESC
-'''Accroît de 1 la Population max des planètes parfaites et convenables. Ce bonus ne s'additionne pas avec la technologie de [[tech GRO_SYMBIOTIC_BIO]].
+'''Accroît de 1 le plafond de Population des planètes parfaites et convenables. Ce bonus ne s'additionne pas avec la technologie de [[tech GRO_SYMBIOTIC_BIO]].
 
 L'agriculture et la science médicale peuvent considérablement augmenter les chances de survie et entraîner d'importants accroissements de population ainsi que de production de nourriture. Toutefois, la croissance démographique se trouve limitée par la capacité en ressources naturelles de la planète et des biosphères qui la constituent. Comprendre les écosystèmes naturels et les contraintes qu'il subissent, permet la conservation et l'amélioration de l'environnement planétaire, au bénéfice des générations futures.'''
 
@@ -8341,10 +8341,10 @@ Renseignement Impérial
 SPY_CUSTOM_ADVISORIES_DESC
 '''La Direction du Renseignement Impérial rassemble et traite les informations émanant de plusieurs sources, tels que les espions, les informateurs, ainsi que les organismes officiels de commandement. Les sujets les plus importants sont présentés à chaque tour comme Rapports de Situation (SitReps). Si un SitRep est réaffiché tour après tour plus qu'il n'est nécessaire pour mémoriser l'information, il est possible de retirer le SitRep pour le tour en cours par un double-clic sur son icône, ou bien pour plusieurs tours par un clic-droit sur l'icône du SitRep.
 
-La plupart des Sitreps sont prédéfinis ou déterminés automatiquement, mais des Sitreps Personnalisés peuvent être spécifiés en éditant le fichier default/customizations/custom_sitreps.txt
+La plupart des Sitreps sont prédéfinis ou déterminés automatiquement, mais des Sitreps Personnalisés peuvent être spécifiés et/ou traduits en éditant le fichier default/customizations/custom_sitreps.txt.
 Des informations supplémentaires concernant les scripts dans FreeOrion sont disponibles sur le Wiki:  http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
-Il existe quatre messages prédéfinis pouvant être utilisés comme Sitreps Personnalisés, afin qu'ils apparaissent en tête de la Fenêtre Rapport de Situation. Des informations supplémentaires sur comment définir ces messages sont disponibles sur le Wiki, ainsi que dans le fichier custom_sitreps.txt.
-Ces quatres messages sont:
+Il existe quatre labels prédéfinis pouvant être utilisés avec des Sitreps Personnalisés, afin que ces derniers apparaissent en tête de la Fenêtre Rapport de Situation. Des informations supplémentaires sur comment définir ces messages sont disponibles sur le Wiki, ainsi que dans le fichier custom_sitreps.txt.
+Ces quatres labels sont:
 "[[CUSTOM_1]]"
 "[[CUSTOM_2]]"
 "[[CUSTOM_3]]"
