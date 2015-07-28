@@ -57,6 +57,7 @@ EffectsGroup
 
 EffectsGroup
     scope = And [
+        Planet
         Planet Type = GasGiant
         Ownedby empire = Source.Owner
         Not Contains Building name = "BLD_GAS_GIANT_GEN"
@@ -102,6 +103,7 @@ EffectsGroup
 
 // EffectsGroup
 //     scope = And [
+//         Planet
 //         Planet Type = GasGiant
 //         Ownedby empire = Source.Owner
 //         Not Contains Building name = "BLD_GAS_GIANT_GEN"
