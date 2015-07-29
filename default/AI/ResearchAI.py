@@ -1,17 +1,14 @@
+from functools import partial
+import math
+import random
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 import TechsListsAI
 import AIDependencies
 import AIstate
-import traceback
 import ColonisationAI
 import ShipDesignAI
-import math
-import random
-
-from functools import partial
-
-from ProductionAI import get_design_cost
 from freeorion_tools import tech_is_complete, get_ai_tag_grade
 
 inProgressTechs = {}
@@ -25,6 +22,7 @@ REQS_COST_IDX = 1
 REQS_TIME_IDX = 2
 REQS_PER_TURN_COST_IDX = 3
 
+
 # TODO research AI no longer use this method, rename and move this method elsewhere
 def get_research_index():
     empire_id = fo.empireID()
@@ -35,6 +33,7 @@ def get_research_index():
         research_index += 1
     return research_index
 
+
 def const_priority(this_const=0.0, tech_name=""):
     """
     returns a constant priority
@@ -43,6 +42,7 @@ def const_priority(this_const=0.0, tech_name=""):
     :rtype float
     """
     return this_const
+
 
 # because this constant is used so often
 def priority_zero(tech_name=""):
@@ -53,6 +53,7 @@ def priority_zero(tech_name=""):
     """
     return 0.0
 
+
 # because this constant is used so often
 def priority_low(tech_name=""):
     """
@@ -61,6 +62,7 @@ def priority_low(tech_name=""):
     :rtype float
     """
     return 0.1
+
 
 # because this constant is used so often
 def priority_one(tech_name=""):
@@ -71,6 +73,7 @@ def priority_one(tech_name=""):
     """
     return 1.0
 
+
 def conditional_priority(func_if_true, func_if_false, cond_func=None, this_object=None, this_attr=None, this_tech=""):
     """
     returns a priority dependent on a condition, either a function or an object attribute
@@ -79,7 +82,7 @@ def conditional_priority(func_if_true, func_if_false, cond_func=None, this_objec
     :type cond_func:(str) -> bool
     :type this_object: object
     :type this_attr:str
-    :type tech_name:str
+    :type this_tech:str
     :rtype float
     """
     if cond_func is None:
@@ -97,11 +100,14 @@ TROOP_IDX = 1
 COLONY_IDX = 2
 
 MAIN_SHIP_DESIGNER_LIST = []
+
+
 def get_main_ship_designer_list():
     if not MAIN_SHIP_DESIGNER_LIST:
         MAIN_SHIP_DESIGNER_LIST.extend([ShipDesignAI.MilitaryShipDesigner(), ShipDesignAI.StandardTroopShipDesigner(),
                                         ShipDesignAI.StandardColonisationShipDesigner()])
     return MAIN_SHIP_DESIGNER_LIST
+
 
 def ship_usefulness(base_priority_func, this_designer=None, tech_name=""):
     """
@@ -109,7 +115,7 @@ def ship_usefulness(base_priority_func, this_designer=None, tech_name=""):
     :type base_priority_func: () _> bool
     :type this_designer: int | None
     """
-    if this_designer == None:
+    if this_designer is None:
         this_designer_list = get_main_ship_designer_list()
     elif isinstance(this_designer, int):
         this_designer_list = get_main_ship_designer_list()[:this_designer+1][-1:]
@@ -126,14 +132,18 @@ def has_star(star_type):
         empire_stars[star_type] = len(AIstate.empireStars.get(star_type, [])) != 0
     return empire_stars[star_type]
 
+
 def if_enemies(false_val=0.1, true_val=1.0, tech_name=""):
     return true_val if foAI.foAIstate.misc.get('enemies_sighted', {}) else false_val
+
 
 def if_dict(this_dict, this_key, false_val=0.1, true_val=1.0, tech_name=""):
     return true_val if this_dict.get(this_key, False) else false_val
 
+
 def if_tech_target(tech_target, false_val=0.1, true_val=1.0, tech_name=""):
     return true_val if tech_is_complete(tech_target) else false_val
+
 
 def has_only_bad_colonizers():
     most_adequate = 0
@@ -142,11 +152,14 @@ def has_only_bad_colonizers():
         this_spec = fo.getSpecies(specName)
         if not this_spec:
             continue
-        for ptype in [fo.planetType.swamp, fo.planetType.radiated, fo.planetType.toxic, fo.planetType.inferno, fo.planetType.barren, fo.planetType.tundra, fo.planetType.desert, fo.planetType.terran, fo.planetType.ocean, fo.planetType.asteroids]:
+        for ptype in [fo.planetType.swamp, fo.planetType.radiated, fo.planetType.toxic, fo.planetType.inferno,
+                      fo.planetType.barren, fo.planetType.tundra, fo.planetType.desert, fo.planetType.terran,
+                      fo.planetType.ocean, fo.planetType.asteroids]:
             environ = this_spec.getPlanetEnvironment(ptype)
             environs.setdefault(environ, []).append(ptype)
         most_adequate = max(most_adequate, len(environs.get(fo.planetEnvironment.adequate, [])))
     return most_adequate == 0
+
 
 def get_max_stealth_species():
     stealth_grades = {'BAD': -15, 'GOOD': 15, 'GREAT': 40, 'ULTIMATE': 60}
@@ -163,9 +176,11 @@ def get_max_stealth_species():
     result = (stealth_species, stealth)
     return result
 
+
 def get_initial_research_target():
     # TODO: consider cases where may want lesser target
     return AIDependencies.ART_MINDS
+
 
 def get_ship_tech_usefulness(tech, ship_designer):
     this_tech = fo.getTech(tech)
@@ -183,15 +198,14 @@ def get_ship_tech_usefulness(tech, ship_designer):
     if not (unlocked_parts or unlocked_hulls):
         return 0
     old_designs = ship_designer.optimize_design(consider_fleet_count=False)
-    new_designs = ship_designer.optimize_design(additional_hulls=unlocked_hulls, additional_parts=unlocked_parts, consider_fleet_count=False)
+    new_designs = ship_designer.optimize_design(additional_hulls=unlocked_hulls, additional_parts=unlocked_parts,
+                                                consider_fleet_count=False)
     if not (old_designs and new_designs):
         # AI is likely defeated; don't bother with logging error message
         return 0
     old_rating, old_pid, old_design_id, old_cost = old_designs[0]
-    old_design = fo.getShipDesign(old_design_id)
     old_rating = old_rating
     new_rating, new_pid, new_design_id, new_cost = new_designs[0]
-    new_design = fo.getShipDesign(new_design_id)
     new_rating = new_rating
     if new_rating > old_rating:
         ratio = (new_rating - old_rating) / (new_rating + old_rating)
@@ -199,8 +213,10 @@ def get_ship_tech_usefulness(tech, ship_designer):
     else:
         return 0
 
+
 def get_population_boost_priority(tech_name=""):
     return 2
+
 
 def get_stealth_priority(tech_name=""):
     max_stealth_species = get_max_stealth_species()
@@ -209,6 +225,7 @@ def get_stealth_priority(tech_name=""):
         return 1.5
     else:
         return 0.1
+
 
 def get_xeno_genetics_priority():
     if foAI.foAIstate.aggression < fo.aggression.cautious:
@@ -221,6 +238,7 @@ def get_xeno_genetics_priority():
         # TODO: assess number of planets with Adequate/Poor planets owned or considered for colonies
         return 0.6 * get_population_boost_priority()
 
+
 def get_artificial_black_hole_priority():
     if has_star(fo.starType.blackHole) or not has_star(fo.starType.red):
         print "Already have black hole, or does not have a red star to turn to black hole. Skipping ART_BLACK_HOLE"
@@ -230,6 +248,7 @@ def get_artificial_black_hole_priority():
             print "Solar hull is researched, needs a black hole to produce it. Research ART_BLACK_HOLE now!"
             return 999
     return 1
+
 
 def get_hull_priority(tech_name):
     hull = 1
@@ -280,7 +299,6 @@ def get_hull_priority(tech_name):
 # TODO boost genome bank if enemy is using bioterror
 # TODO for supply techs consider starlane density and planet density
 
-
 # initializing priority functions here within generate_research_orders() to avoid import race
 
 # keys are "PREFIX1", as in "DEF" or "SPY"
@@ -298,6 +316,8 @@ individual_priority_funcs = {}
 ALL_MISC_GROUP_TECH_NAMES = []
 
 DEFAULT_PRIORITY = 0.5
+
+
 def get_priority(tech_name):
     """
     Get tech priority. the default is just above. 0 if not useful (but doesn't hurt to research),
@@ -323,7 +343,8 @@ def get_priority(tech_name):
 
     return DEFAULT_PRIORITY
 
-def calculate_research_requirements(empire):
+
+def calculate_research_requirements():
     """calculate RPs and prerequisites of every tech, in (prereqs, cost, time)"""
     empire = fo.getEmpire()
     research_reqs.clear()
@@ -357,11 +378,14 @@ def calculate_research_requirements(empire):
             cost += prereq_cost
         research_reqs[tech_name] = (prereqs, cost, turns_needed, per_turn_cost)
 
+
 def tech_cost_sort_key(tech_name):
-    return research_reqs.get(tech_name, ([],0,0,0))[REQS_COST_IDX]
+    return research_reqs.get(tech_name, ([], 0, 0, 0))[REQS_COST_IDX]
+
 
 def tech_time_sort_key(tech_name):
-    return research_reqs.get(tech_name, ([],0,0,0))[REQS_TIME_IDX]
+    return research_reqs.get(tech_name, ([], 0, 0, 0))[REQS_TIME_IDX]
+
 
 def generate_classic_research_orders():
     """generate research orders"""
@@ -889,12 +913,8 @@ def generate_research_orders():
     if not ALL_MISC_GROUP_TECH_NAMES:
         ALL_MISC_GROUP_TECH_NAMES.extend(list(tech_name for misc_group in misc_group_priority_funcs for tech_name in misc_group))
 
-
-
-    report_adjustments = False
     empire = fo.getEmpire()
     empire_id = empire.empireID
-    galaxy_is_sparse = ColonisationAI.galaxy_is_sparse()
     print "Research Queue Management on turn %d:" % fo.currentTurn()
     print "ColonisationAI survey: got_ast %s, got_gg %s, gotRuins %s" % (ColonisationAI.got_ast, ColonisationAI.got_gg, ColonisationAI.gotRuins)
     resource_production = empire.resourceProduction(fo.resourceType.research)
@@ -947,10 +967,10 @@ def generate_research_orders():
         choices['extra_asteroid_hull'] = rng.random() < 0.05
         choices['extra_energy_hull'] = rng.random() < 0.05
 
-    calculate_research_requirements(empire)
+    calculate_research_requirements()
     total_rp = empire.resourceProduction(fo.resourceType.research)
 
-    if total_rp <= 0: # No RP available - no research.
+    if total_rp <= 0:  # No RP available - no research.
         return
 
     base_priorities = {}
@@ -965,7 +985,7 @@ def generate_research_orders():
     # inherited priorities are modestly attenuated by total time
     TIMESCALE_PERIOD = 30.0
     for tech_name, priority in base_priorities.iteritems():
-        if  priority >= 0:
+        if priority >= 0:
             turns_needed = max(research_reqs[tech_name][REQS_TIME_IDX], math.ceil(float(research_reqs[tech_name][REQS_COST_IDX]) / total_rp))
             time_attenuation = 2**(-max(0.0, turns_needed-5)/TIMESCALE_PERIOD)
             attenuated_priority = priority * time_attenuation
@@ -979,9 +999,9 @@ def generate_research_orders():
         if priority >= 0:
             relative_turn_cost = max(research_reqs[tech_name][REQS_PER_TURN_COST_IDX], 0.1) / total_rp
             relative_total_cost = max(research_reqs[tech_name][REQS_COST_IDX], 0.1) / total_rp
-            cost_factor = 2.0 /(relative_turn_cost + relative_total_cost)
+            cost_factor = 2.0 / (relative_turn_cost + relative_total_cost)
             adjusted_priority = float(priority) * cost_factor
-            #if priority > 1:
+            # if priority > 1:
             #    print "tech %s has raw priority %.1f and adjusted priority %.1f, with %.1f total remaining cost, %.1f min turns needed and %.1f projected turns needed" % (tech_name, priority, adjusted_priority, research_reqs[tech_name][REQS_COST_IDX], research_reqs[tech_name][REQS_TIME_IDX], turns_needed)
             priorities[tech_name] = adjusted_priority
 
