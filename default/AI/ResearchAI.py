@@ -74,7 +74,7 @@ def priority_one(tech_name=""):
     return 1.0
 
 
-def conditional_priority(func_if_true, func_if_false, cond_func=None, this_object=None, this_attr=None, this_tech=""):
+def conditional_priority(func_if_true, func_if_false, cond_func=None, this_object=None, this_attr=None, tech_name=""):
     """
     returns a priority dependent on a condition, either a function or an object attribute
     :type func_if_true: () -> bool
@@ -82,7 +82,7 @@ def conditional_priority(func_if_true, func_if_false, cond_func=None, this_objec
     :type cond_func:(str) -> bool
     :type this_object: object
     :type this_attr:str
-    :type this_tech:str
+    :type tech_name:str
     :rtype float
     """
     if cond_func is None:
@@ -91,9 +91,9 @@ def conditional_priority(func_if_true, func_if_false, cond_func=None, this_objec
         else:
             return priority_low()
     if cond_func():
-        return func_if_true(this_tech)
+        return func_if_true(tech_name)
     else:
-        return func_if_false(this_tech)
+        return func_if_false(tech_name)
 
 MIL_IDX = 0
 TROOP_IDX = 1
@@ -182,7 +182,7 @@ def get_initial_research_target():
     return AIDependencies.ART_MINDS
 
 
-def get_ship_tech_usefulness(tech, ship_designer):
+def get_ship_tech_usefulness(tech, ship_designer, tech_name=""):
     this_tech = fo.getTech(tech)
     if not this_tech:
         print "Invalid Tech specified"
@@ -227,7 +227,7 @@ def get_stealth_priority(tech_name=""):
         return 0.1
 
 
-def get_xeno_genetics_priority():
+def get_xeno_genetics_priority(tech_name=""):
     if foAI.foAIstate.aggression < fo.aggression.cautious:
         return get_population_boost_priority()
     if has_only_bad_colonizers():
@@ -239,7 +239,7 @@ def get_xeno_genetics_priority():
         return 0.6 * get_population_boost_priority()
 
 
-def get_artificial_black_hole_priority():
+def get_artificial_black_hole_priority(tech_name=""):
     if has_star(fo.starType.blackHole) or not has_star(fo.starType.red):
         print "Already have black hole, or does not have a red star to turn to black hole. Skipping ART_BLACK_HOLE"
         return 0
@@ -307,13 +307,8 @@ primary_prefix_priority_funcs = {}
 # keys are "PREFIX1_PREFIX2", as in "SHP_WEAPON"
 secondary_prefix_priority_funcs = {}
 
-# keys are lists of full tech names
-misc_group_priority_funcs = {}
-
 # keys are individual full tech names
-individual_priority_funcs = {}
-
-ALL_MISC_GROUP_TECH_NAMES = []
+priority_funcs = {}
 
 DEFAULT_PRIORITY = 0.5
 
@@ -326,12 +321,8 @@ def get_priority(tech_name):
     name_parts = tech_name.split('_')
     primary_prefix = name_parts[0]
     secondary_prefix = '_'.join(name_parts[:2])
-    if tech_name in individual_priority_funcs:
-        return individual_priority_funcs[tech_name]()
-    elif tech_name in ALL_MISC_GROUP_TECH_NAMES:
-        for misc_group, priority_func in misc_group_priority_funcs.iteritems():
-            if tech_name in misc_group:
-                return priority_func(tech_name=tech_name)
+    if tech_name in priority_funcs:
+        return priority_funcs[tech_name](tech_name=tech_name)
     elif secondary_prefix in secondary_prefix_priority_funcs:
         return secondary_prefix_priority_funcs[secondary_prefix](tech_name=tech_name)
     elif primary_prefix in primary_prefix_priority_funcs:
@@ -872,46 +863,138 @@ def generate_research_orders():
             AIDependencies.WEAPON_PREFIX: partial(ship_usefulness, partial(if_enemies, 0.2), MIL_IDX)
             })
 
-    # keys are lists of full tech names
-    if not misc_group_priority_funcs:
-        misc_group_priority_funcs.update({
-            tuple(AIDependencies.UNRESEARCHABLE_TECHS): partial(const_priority, -1.0),
-            tuple(AIDependencies.UNUSED_TECHS): priority_zero,
-            tuple(AIDependencies.THEORY_TECHS): priority_zero,
-            tuple(AIDependencies.PRODUCTION_BOOST_TECHS): partial(if_dict, ColonisationAI.empire_status, 'industrialists', 0.6, 1.5),
-            tuple(AIDependencies.RESEARCH_BOOST_TECHS): partial(if_tech_target, get_initial_research_target(), 2.1, 2.5),
-            tuple(AIDependencies.PRODUCTION_AND_RESEARCH_BOOST_TECHS): partial(const_priority, 2.5),
-            tuple(AIDependencies.POPULATION_BOOST_TECHS): get_population_boost_priority,
-            tuple(AIDependencies.SUPPLY_BOOST_TECHS): partial(if_tech_target, AIDependencies.SUPPLY_BOOST_TECHS[0], 1.0, 0.5),
-            tuple(AIDependencies.METER_CHANGE_BOOST_TECHS): partial(const_priority, 1.0),
-            tuple(AIDependencies.DETECTION_TECHS): partial(const_priority, 0.5),
-            tuple(AIDependencies.STEALTH_TECHS): get_stealth_priority,
-            tuple(AIDependencies.DAMAGE_CONTROL_TECHS): partial(if_enemies, 0.1, 0.5),
-            tuple(AIDependencies.HULL_TECHS): get_hull_priority,
-            tuple(AIDependencies.ARMOR_TECHS): partial(ship_usefulness, if_enemies, MIL_IDX),
-            tuple(AIDependencies.ENGINE_TECHS): partial(ship_usefulness, partial(if_dict, choices, 'engine', true_val=0.6), None),
-            tuple(AIDependencies.FUEL_TECHS): partial(ship_usefulness, partial(if_dict, choices, 'fuel'), None),
-            tuple(AIDependencies.SHIELD_TECHS): partial(ship_usefulness, if_enemies, MIL_IDX),
-            tuple(AIDependencies.TROOP_POD_TECHS): partial(ship_usefulness, partial(if_enemies, 0.1, 0.3), TROOP_IDX),
-            tuple(AIDependencies.COLONY_POD_TECHS): partial(ship_usefulness, partial(const_priority, 0.5), COLONY_IDX),
-        })
-
-    # keys are individual full tech names
-    if not individual_priority_funcs:
-        individual_priority_funcs.update({
-            AIDependencies.PRO_MICROGRAV_MAN: partial(conditional_priority, partial(const_priority, 3.5), priority_low, None, ColonisationAI, 'got_ast'),
-            AIDependencies.PRO_ORBITAL_GEN: partial(conditional_priority, partial(const_priority, 3.0), priority_low, None, ColonisationAI, 'got_gg'),
-            AIDependencies.PRO_SINGULAR_GEN: partial(conditional_priority, partial(const_priority, 3.0), priority_low, partial(has_star, fo.starType.blackHole)),
-            AIDependencies.GRO_XENO_GENETICS: get_xeno_genetics_priority,
-            AIDependencies.LRN_XENOARCH: priority_low if foAI.foAIstate.aggression < fo.aggression.typical else partial(conditional_priority, partial(const_priority, 5.0), priority_low, None, ColonisationAI, 'gotRuins'),
-            AIDependencies.LRN_ART_BLACK_HOLE: get_artificial_black_hole_priority,
-            AIDependencies.GRO_GENOME_BANK: priority_low,
-            AIDependencies.CON_CONC_CAMP: partial(priority_zero),
-            AIDependencies.NEST_DOMESTICATION_TECH: priority_zero if foAI.foAIstate.aggression < fo.aggression.typical else partial(conditional_priority, partial(const_priority, 3.0), priority_low, None, ColonisationAI, 'got_nest'),
-        })
-
-    if not ALL_MISC_GROUP_TECH_NAMES:
-        ALL_MISC_GROUP_TECH_NAMES.extend(list(tech_name for misc_group in misc_group_priority_funcs for tech_name in misc_group))
+    if not priority_funcs:
+        tech_handlers = (
+            (
+                AIDependencies.PRO_MICROGRAV_MAN,
+                partial(conditional_priority, partial(const_priority, 3.5), priority_low, None, ColonisationAI,
+                        'got_ast')
+            ),
+            (
+                AIDependencies.PRO_ORBITAL_GEN,
+                partial(conditional_priority, partial(const_priority, 3.0), priority_low, None, ColonisationAI,
+                        'got_gg')
+            ),
+            (
+                AIDependencies.PRO_SINGULAR_GEN,
+                partial(conditional_priority,
+                        partial(const_priority, 3.0),
+                        priority_low, partial(has_star,
+                                              fo.starType.blackHole))
+            ),
+            (
+                AIDependencies.GRO_XENO_GENETICS,
+                get_xeno_genetics_priority
+            ),
+            (
+                AIDependencies.LRN_XENOARCH,
+                priority_low if foAI.foAIstate.aggression < fo.aggression.typical else partial(
+                    conditional_priority,
+                    partial(const_priority, 5.0),
+                    priority_low, None,
+                    ColonisationAI, 'gotRuins')
+            ),
+            (
+                AIDependencies.LRN_ART_BLACK_HOLE,
+                get_artificial_black_hole_priority),
+            (
+                (AIDependencies.GRO_GENOME_BANK,), priority_low
+            ),
+            (
+                AIDependencies.CON_CONC_CAMP,
+                partial(priority_zero)
+            ),
+            (
+                AIDependencies.NEST_DOMESTICATION_TECH,
+                priority_zero if foAI.foAIstate.aggression < fo.aggression.typical else partial(
+                    conditional_priority,
+                    partial(const_priority, 3.0),
+                    priority_low, None, ColonisationAI,
+                    'got_nest')
+            ),
+            (
+                AIDependencies.UNRESEARCHABLE_TECHS,
+                partial(const_priority, -1.0)
+            ),
+            (
+                AIDependencies.UNUSED_TECHS,
+                priority_zero
+            ),
+            (
+                AIDependencies.THEORY_TECHS,
+                priority_zero
+            ),
+            (
+                AIDependencies.PRODUCTION_BOOST_TECHS,
+                partial(if_dict, ColonisationAI.empire_status,
+                        'industrialists', 0.6, 1.5)
+            ),
+            (
+                AIDependencies.RESEARCH_BOOST_TECHS,
+                partial(if_tech_target, get_initial_research_target(), 2.1, 2.5)
+            ),
+            (
+                AIDependencies.PRODUCTION_AND_RESEARCH_BOOST_TECHS,
+                partial(const_priority, 2.5)
+            ),
+            (
+                AIDependencies.POPULATION_BOOST_TECHS,
+                get_population_boost_priority
+            ),
+            (
+                AIDependencies.SUPPLY_BOOST_TECHS,
+                partial(if_tech_target, AIDependencies.SUPPLY_BOOST_TECHS[0], 1.0, 0.5)
+            ),
+            (
+                AIDependencies.METER_CHANGE_BOOST_TECHS,
+                partial(const_priority, 1.0)
+            ),
+            (
+                AIDependencies.DETECTION_TECHS,
+                partial(const_priority, 0.5)
+            ),
+            (
+                AIDependencies.STEALTH_TECHS,
+                get_stealth_priority
+            ),
+            (
+                AIDependencies.DAMAGE_CONTROL_TECHS,
+                partial(if_enemies, 0.1, 0.5)
+            ),
+            (
+                AIDependencies.HULL_TECHS,
+                get_hull_priority
+            ),
+            (
+                AIDependencies.ARMOR_TECHS,
+                partial(ship_usefulness, if_enemies, MIL_IDX)
+            ),
+            (
+                AIDependencies.ENGINE_TECHS,
+                partial(ship_usefulness, partial(if_dict, choices, 'engine', true_val=0.6), None)
+            ),
+            (
+                AIDependencies.FUEL_TECHS,
+                partial(ship_usefulness, partial(if_dict, choices, 'fuel'), None)),
+            (
+                AIDependencies.SHIELD_TECHS,
+                partial(ship_usefulness, if_enemies, MIL_IDX)
+            ),
+            (
+                AIDependencies.TROOP_POD_TECHS,
+                partial(ship_usefulness,
+                        partial(if_enemies, 0.1, 0.3), TROOP_IDX)
+            ),
+            (
+                AIDependencies.COLONY_POD_TECHS,
+                partial(ship_usefulness, partial(const_priority, 0.5), COLONY_IDX)
+            ),
+        )
+        for k, v in tech_handlers:
+            if isinstance(k, basestring):
+                k = (k, )  # wrap single techs to tuple
+            for tech in k:
+                priority_funcs[tech] = v
 
     empire = fo.getEmpire()
     empire_id = empire.empireID
