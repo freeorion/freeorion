@@ -2373,6 +2373,8 @@ namespace {
         GetUniverse().InhibitUniverseObjectSignals(false);
 
         GetUniverse().UpdateMeterEstimates(planet_id);
+
+        detailed_description += "\nSuitability is determined by distance from home in this wheel: <img \"encyclopedia/EP_wheel.png\"></img>";
     }
 
     void GetRefreshDetailPanelInfo(         const std::string& item_type, const std::string& item_name,
