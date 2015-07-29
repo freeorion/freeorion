@@ -491,93 +491,88 @@ Monster
 SM_KRILL_1
 Small Krill Swarm
 SM_KRILL_1_DESC
-Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation and block resupply. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
 
 SM_KRILL_2
 Medium Krill Swarm
 SM_KRILL_2_DESC
-Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation and block resupply. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
 
 SM_KRILL_3
 Large Krill Swarm
 SM_KRILL_3_DESC
-Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become aggressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become aggressive towards ships. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
 
 SM_KRILL_4
 Plague of Krill
 SM_KRILL_4_DESC
-Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well. Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+Small, vaguely insectoid organisms that feed on the dust and rocks far from any gravity well. Individually simple, Space Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt provide Krill with the perfect conditions to rapidly multiply.
 
 SM_TREE
 Dyson Forest
 SM_TREE_DESC
-A Dyson Forest is made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. At intervals they may send out a seed through the star-lanes to colonize other stars.
-
-SM_SEED
-Dyson Seed
-SM_SEED_DESC
-Dyson Forests intermittently produce a star-lane capable seed, sent away to found a new forest around other stars.
+A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. At intervals they may send out a seed through the starlanes to colonize other stars.
 
 SM_FLOATER
 Floater
 SM_FLOATER_DESC
-Dyson Forests intermittently produce a star-lane capable seed: gas-filled bulbous sacs that drift through space, sent away to found a new forest around other stars.
+A gas-filled bulbous sac drifting through space, sent as a seed by a Dyson Forest to found a new forest around other stars.
 
 SM_DRAGON
 Vacuum Dragon
 SM_DRAGON_DESC
-Terrifying giant monster that prowls space for prey.
+A terrifying giant monster that prowls space for prey, wreaking havoc on populated areas.
 
 SM_DRONE
 Drone
 SM_DRONE_DESC
-Tool of a forgotten war, the Drone Fighter still fulfills its original purpose: mindlessly attacking any ships in range.
+A tool of a forgotten war, still fulfilling its original purpose: to mindlessly attack any ships in range.
 
 SM_DRONE_FACTORY
 Drone Factory
 SM_DRONE_FACTORY_DESC
-Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory still functions, slowly producing new Drone Fighters.
+A production facility built in some long-forgotten war to defend long-vanished builders, Amazingly, it still functions, slowly producing new Drone Fighters.
 
 SM_GUARD_0
 Maintenance Ship
 SM_GUARD_0_DESC
-'''An unmanned ship programmed by the Precursers to maintain the starlane entries of the system. It's only lightly armed, but will attack all intruders.'''
+An unmanned ship programmed by the Precursors to maintain the starlane entries of the system. It is armed only lightly, but will attack all intruders.
 
 SM_GUARD_1
 Sentry
 SM_GUARD_1_DESC
-A small unmanned guard ship programmed by the Precursers to defend the system against intruders.
+A small unmanned guard ship programmed by the Precursors to defend the system against intruders.
 
 SM_GUARD_2
 Sentinel
 SM_GUARD_2_DESC
-An unmanned guard ship programmed by the Precursers to defend the system against intruders.
+An unmanned guard ship programmed by the Precursors to defend the system against intruders.
 
 SM_GUARD_3
 Warden
 SM_GUARD_3_DESC
-A powerful unmanned guard ship programmed by the Precursers to defend the system against intruders.
+A powerful unmanned guard ship programmed by the Precursors to defend the system against intruders.
 
 SM_KRAKEN_1
 Larval Kraken
 SM_KRAKEN_1_DESC
-'''In the larval form, a kraken is a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarms, which it helps to keep in check. But a well fed larval kraken may grow into a larger and more dangerous adult form.
+'''In the larval form, a cautious and relatively harmless type of spaceborne fauna. Its natural prey is the krill swarm. A well-fed larval kraken may grow into a larger and more dangerous adult form.
 
-Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants'''
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
 
 SM_KRAKEN_2
 Kraken
 SM_KRAKEN_2_DESC
-'''A formidable medium-weight space monster.
+'''A formidable medium-weight space monster. Its natural prey is the krill swarm. A well-fed kraken may grow into an even larger and more dangerous form.
 
-Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants'''
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
 
 SM_KRAKEN_3
 Great Kraken
 SM_KRAKEN_3_DESC
 '''A formidable and very tough space monster.
 
-Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants'''
+Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of Gas Giant planets, and Kraken can mature into larger forms in systems with Gas Giants.'''
 
 SM_BLACK_KRAKEN
 Black Kraken
@@ -591,21 +586,21 @@ Small Snowflake
 SM_SNOWFLAKE_1_DESC
 '''A small and harmless space monster with exceptional vision.
 
-Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets'''
+Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets.'''
 
 SM_SNOWFLAKE_2
 Snowflake
 SM_SNOWFLAKE_2_DESC
 '''A light-weight space monster with exceptional vision.
 
-Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets'''
+Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets.'''
 
 SM_SNOWFLAKE_3
 Large Snowflake
 SM_SNOWFLAKE_3_DESC
 '''A formidable light-weight space monster.
 
-Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets'''
+Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets.'''
 
 SM_PSIONIC_SNOWFLAKE
 Psionic Snowflake
@@ -617,23 +612,23 @@ Psionic Snowflakes are bioengineered space monsters with dangerous weapons and t
 SM_JUGGERNAUT_1
 Small Juggernaut
 SM_JUGGERNAUT_1_DESC
-'''A formidable heavy-weight space monster with protective shielding.
+'''A formidable heavy-weight space monster with some protective shielding.
 
-Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts'''
+Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
 
 SM_JUGGERNAUT_2
 Juggernaut
 SM_JUGGERNAUT_2_DESC
 '''A formidable heavy-weight space monster with moderate protective shielding.
 
-Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts'''
+Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
 
 SM_JUGGERNAUT_3
 Large Juggernaut
 SM_JUGGERNAUT_3_DESC
 '''A formidable heavy-weight space monster with powerful protective shielding.
 
-Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts'''
+Favored Environment: Asteroids. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.'''
 
 SM_BLOATED_JUGGERNAUT
 Bloated Juggernaut
@@ -665,24 +660,24 @@ A nebulous creature that adds [[encyclopedia STEALTH_TITLE]] to random planets.
 SM_SNAIL
 Asteroid Snail
 SM_SNAIL_DESC
-Feeding upon minerals, the shell of a space snail strongly resembles a normal asteroid making them very hard to detect.
+A timid monster, feeding on minerals. Its shell strongly resembles a normal asteroid, increasing its [[encyclopedia STEALTH_TITLE]] if it can hide inside an asteroid belt.
 
 SM_DAMPENING_CLOUD
 Dampening Cloud
 SM_DAMPENING_CLOUD_DESC
-A cosmic cloud of high energetic particles that has gained some form of sentience. It's highly attracted to and will discharge any greater reserves of potential energy, which will lead to entire space ship fleets being bereft of [[encyclopedia FUEL_TITLE]] in a matter of seconds.
+A cosmic cloud of highly energetic particles that has gained some form of sentience. It is repelled by the energy signatures of populated colonies. It is nonetheless highly attracted to reserves of potential energy, and will steal the [[encyclopedia FUEL_TITLE]] from vessels in the system.
 
 SM_ACIREMA_GUARD
 Acirema Guard Ship
 SM_ACIREMA_GUARD_DESC
-An unmanned armed ship, built by the Acirema, guards the system.
+An unmanned armed ship built by the Acirema, standing guard over the system.
 
 SM_EXP_OUTPOST
 Experiment Zero
 SM_EXP_OUTPOST_DESC
 '''An ancient creation of the Experimentors that reduces [[encyclopedia SHIELDS_TITLE]] and [[encyclopedia DAMAGE_TITLE]]. 
 
-Experiment Zero was sent to this galaxy to guard the outpost of the Experimentors with its unique abilities. While it does not attack directly it consists of quadrillions of diminutive units that fill the whole space of the system and hamper enemy shields and weapons to the point that all but the very best equipment will be ineffective.'''
+Experiment Zero was sent to this galaxy to guard the outpost of the Experimentors with its unique abilities. While it does not attack ships directly, it fills the whole system with quadrillions of diminutive units, hampering enemy shields and weapons to the point that all but the very best equipment will be ineffective.'''
 
 SM_COSMIC_DRAGON
 Cosmic Dragon
@@ -3619,7 +3614,7 @@ COMBAT_SUMMARY_HEALTH_BAR_TIP
 The healthiness of a ship is currently shown with a two colour bar
 
 OPTIONS_DB_UI_COMBAT_SUMMARY_BAR_HEALTH_SMOOTH
-If true, the color of the bars of battle participant will be interpolated smootly accoring to their remaining health percentage.
+If true, the color of the bars of battle participant will be interpolated smoothly according to their remaining health percentage.
 
 COMBAT_SUMMARY_BAR_HEIGHT_PROPORTIONAL
 Bar Height:Proportional
@@ -3843,7 +3838,7 @@ Space ships and planets have a Detection Range meter. There is the option to dis
 TROOP_TITLE
 Troops
 TROOP_TEXT
-'''The term Troops combines all kinds of military forces capable of operating on a planets surface.
+'''The term Troops combines all kinds of military forces capable of operating on a planet's surface.
 
 The Troop meter on a planet represents the power of the defending ground forces. The invading force must send a more powerful force (i.e. a higher cumulative number) to conquer a planet.  Ships must be built with special parts for carrying troops, and such troops cannot invade if the defending planet has active [[encyclopedia SHIELDS_TITLE]].'''
 
@@ -3894,14 +3889,14 @@ Xenophobic species start with [[tech CON_CONC_CAMP]].'''
 FUEL_TITLE
 Fuel
 FUEL_TEXT
-Fuel allows ships to travel the starlanes outside of [[encyclopedia SUPPLY_TITLE]] of your empire. Fuel is consumed for each starlane traversed outside of supply and stopping within [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship. If a ship remains stationery beyond friendly supply lines, fuel will slowly regenerate.
+Fuel allows ships to travel the starlanes outside of [[encyclopedia SUPPLY_TITLE]] of your empire. Fuel is consumed for each starlane traversed outside of supply; stopping within [[encyclopedia SUPPLY_TITLE]] lines will fully refuel a ship. If a ship remains stationary beyond friendly [[encyclopedia SUPPLY_TITLE]] lines, fuel will slowly regenerate. The amount of fuel a [[encyclopedia ENC_SHIP_DESIGN]] has depends on the [[encyclopedia ENC_SHIP_HULL]] used, but it can also be increased using some [[encyclopedia ENC_SHIP_PART]]s.
 
 SUPPLY_TITLE
 Supply
 SUPPLY_TEXT
 '''The supply meter on a planet represents the number of star-lanes supply can extend through. Smaller planets can supply greater distances, large planets reduced distances.
 
-Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines form a 'Resource Group' and can share physical resources. Production Points created on one planet can be used on any connected planet to build ships or structures. 
+Supply lines are shown by coloring star-lanes with an empire's color. Planets connected by supply lines form a 'Resource Group' and can share physical resources. Production Points created on one planet can be used on any connected planet to build ships or structures.
 
 A set of core supply starlanes for an empire (the set of least-jump starlanes connecting the resource-producing systems of each Resource Group) will have greater thickness than the non-core starlanes.  If PP is currently being wasted within a Resource Group, the outer bands of the core starlanes will be a contrasting color.
 
@@ -4869,7 +4864,7 @@ Modern humans have formed geographic nation states with a strong basis in histor
 SP_SCYLIOR
 Scylior
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Three-tentacled, aquatic Nautiloid.
+'''Three-tentacled, aquatic nautiloids.
 Prefer Ocean planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -4914,7 +4909,7 @@ Their homeworld has a thick atmosphere of nitrogen, ammonia and carbon dioxide. 
 SP_CHATO
 Chato
 SP_CHATO_GAMEPLAY_DESC
-'''Sessile crystalline entities which ride the animal Goshk.
+'''Sessile crystalline entities which ride the animal Gormoshk.
 Prefer Toxic planets.
 [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
 '''
@@ -5151,7 +5146,7 @@ Phinnerts are tree-dwelling mammals with size varying from 1 to 2 meters tall. T
 Social Structure:
 Life is much shorter for Phinnerts than for most other sentient life, owing to the many dangers of the swamp. All Phinnerts are generally treated as extended family by each other and grudges do not last long. There is no central authority, there's only a vague hierarchy. The balance of power can change very quickly with the high mortality rate. Society is far less individualistic, and more focused on the group.
 
-Homeworld: 
+Homeworld:
 Their planet has low gravity and a very thick atmosphere. Its composition is unique as it has a low proportion of heavier metals, but a much higher proportion of other heavy elements, particularly noble gases. It also has very stable tectonic formations meaning that the surface of the crust is very flat, and so is mostly covered with shallow, standing water. The entire world is like a giant everglade.
 '''
 
@@ -5335,7 +5330,7 @@ SP_UGMORS_DESC
 '''The Ugmors is a race of sentient yeast which uses rocks and minerals to make temporary bodies designed to perform specific tasks.
 
 Social Structure:
-The Larar drifts are the true center of the species. These masses of yeast sit on top of the hottest part of the lava seas and absorb energy. When enough energy is available a large colony of supercharged yeast will gather large rocks at the edge of the lava pool and join them together to form an Ugmor. The Ugmors were originally designed to get from one lava pool to another, but have since developed into a very complex society. The Larar drifts are not very intelligent on their own, acting as more of a central memory which carries out the directives of the most recent Ugmor to be privileged enough to return to the Larar drifts. 
+The Larar drifts are the true center of the species. These masses of yeast sit on top of the hottest part of the lava seas and absorb energy. When enough energy is available a large colony of supercharged yeast will gather large rocks at the edge of the lava pool and join them together to form an Ugmor. The Ugmors were originally designed to get from one lava pool to another, but have since developed into a very complex society. The Larar drifts are not very intelligent on their own, acting as more of a central memory which carries out the directives of the most recent Ugmor to be privileged enough to return to the Larar drifts.
 
 Ugmors have a very unified form of government. It resembles a hive, but without a central queen. This is because all Ugmors start out with the same racial memories and agenda. When something new is discovered the Ugmor who discovered it usually returns to the nearest Larar drift to share his discovery with the rest of the species.
 
@@ -5389,7 +5384,7 @@ Abaddoni are shaped like a chicken egg on its side, roughly 0,8 meters tall and 
 At the end of each of their 6 short crab like legs, is an inflatable sac which enables them to climb upside down. Because they grew up underground Abaddoni have no eyes, they mainly rely on smell and to a lesser extent sound and touch to navigate.
 
 Social Structure:
-The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves. 
+The entire Abaddonnian species lives in a dictatorship ruled by a sentient artificial intelligence called Mother. This AI was created by the Abaddoni as a governmental assistant, but slowly took over. Now every newborn Abaddoni gets a wireless transmitter placed into the brain, for Mother to read their thoughts and being able to terminate them when necessary. There is no real social structure between the Abaddoni, they are all the same - slaves.
 '''
 
 SP_ACIREMA
@@ -5536,13 +5531,13 @@ Gaia
 GAIA_SPECIAL_DESC
 '''Increases max Population by planet size; Tiny: +3, Small: +6, Medium: +9, Large: +12, Huge: +15.
 
-This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of it's population.'''
+This planet has essentially been transformed into a living organism, allowing it to change and adapt to suit the needs of its population.'''
 
 WORLDTREE_SPECIAL
 World Tree
 
 WORLDTREE_SPECIAL_DESC
-'''Increases [[encyclopedia SUPPLY_TITLE]] by +1, [[encyclopedia DETECTION_RANGE_TITLE]] by +10, max Population by +1, [[encyclopedia HAPPINESS_TITLE]] on the planet that has the special by +5 and Happiness on all other planets owned by the same empire by +1
+'''Increases [[encyclopedia SUPPLY_TITLE]] by +1, [[encyclopedia DETECTION_RANGE_TITLE]] by +10, max Population by +1, [[encyclopedia HAPPINESS_TITLE]] on the planet that has the special by +5 and [[encyclopedia HAPPINESS_TITLE]] on all other planets owned by the same empire by +1
 
 A gigantic tree has grown so large that its crown has left the atmosphere of the planet. Scientists suspect that it has been planted by the Caretakers in ancient times.'''
 
@@ -5662,7 +5657,7 @@ This planet is populated with aerial creatures that emit humidity, causing high 
 CLOUD_COVER_SLAVE_SPECIAL
 High Cloud Cover
 CLOUD_COVER_SLAVE_SPECIAL_DESC
-This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]] by 20. This may be naturally occurring, the result of a space creature or through technology such as [[tech SPY_STEALTH_1]].
+This planet has unusually dense cloud cover, increasing its [[encyclopedia STEALTH_TITLE]] by 20. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_1]].
 
 VOLCANIC_ASH_MASTER_SPECIAL
 Hidden Burrowers
@@ -5677,7 +5672,7 @@ This planet has high levels of volcanic activity, possibly obscuring the planet'
 VOLCANIC_ASH_SLAVE_SPECIAL
 Volcanic Ash
 VOLCANIC_ASH_SLAVE_SPECIAL_DESC
-This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]] by 40. This may be naturally occurring, the result of a space creature or through technology such as [[tech SPY_STEALTH_2]].
+This planet is surrounded by volcanic ash, increasing its [[encyclopedia STEALTH_TITLE]] by 40. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_2]].
 
 DIM_RIFT_MASTER_SPECIAL
 Dimensional Burrowers
@@ -5687,7 +5682,7 @@ This planet has monsters burrowing around in its core causing dimensional tears 
 DIM_RIFT_SLAVE_SPECIAL
 Dimensional Rift
 DIM_RIFT_SLAVE_SPECIAL_DESC
-This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]] by 60. This may be naturally occurring, the result of a space creature or through technology such as [[tech SPY_STEALTH_3]].
+This planet is partially concealed by a dimensional rift, increasing its [[encyclopedia STEALTH_TITLE]] by 60. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_3]].
 
 VOID_MASTER_SPECIAL
 Void Monsters
@@ -5697,7 +5692,7 @@ Monsters inside the core of this planet are dragging it into the void. There sho
 VOID_SLAVE_SPECIAL
 Void Metamorphosis
 VOID_SLAVE_SPECIAL_DESC
-This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80. This may be naturally occurring, the result of a space creature or through technology such as [[tech SPY_STEALTH_4]].
+This planet exists partially in this universe and partially in the void, increasing its [[encyclopedia STEALTH_TITLE]] by 80. This may be naturally occurring, the result of a space creature, or caused by technology such as [[tech SPY_STEALTH_4]].
 
 DERELICT_SPECIAL
 Derelict
@@ -5773,7 +5768,7 @@ SUPERCONDUCTOR_SPECIAL_DESC
 POSITRONIUM_SPECIAL
 Positronium Ash
 POSITRONIUM_SPECIAL_DESC
-'''Positronium Ash makes better robots brains!
+'''Positronium Ash makes better robot brains!
 
 [[encyclopedia ROBOTIC_SPECIES_TITLE]] [[GROWTH_SPECIAL_POPULATION_INCREASE]] [[ROBOTIC_SPECIES_TITLE]].
 
@@ -8588,9 +8583,9 @@ BLD_CULTURE_ARCHIVES
 Cultural Archives
 
 BLD_CULTURE_ARCHIVES_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] by 5, target [[encyclopedia INDUSTRY_TITLE]] by half the planet's Population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] by 5 and target [[encyclopedia INDUSTRY_TITLE]] by half the planet's Population.
 
-Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.'''
+Stores the sum accumulated knowledge from thousands of years of life on this planet, improving many aspects of planetary productivity.'''
 
 BLD_CULTURE_LIBRARY
 Cultural Library
@@ -8713,7 +8708,7 @@ Bioterror Projection Base
 BLD_BIOTERROR_PROJECTOR_DESC
 '''Gives the planet on which it is built the Bioterror focus, which decreases Population on enemy planets within 4 starlane jumps at a rate of 2 per turn, provided the enemy empire does not contain a Genome Bank.
 
-This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Gradually reduces the Population of all enemy planets within four starlane jumps until the planet's population is gone. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. This building can also be built at an [[encyclopedia OUTPOSTS_TITLE]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
+This clandestine biological warfare base wreaks havoc on enemy planets in the vicinity. Such activities are not endorsed by the public however, and this facility can only be built on a planet with a resonant moon. Ineffective if there is a [[buildingtype BLD_GENOME_BANK]] building in the enemy empire. This building can also be built at an [[encyclopedia OUTPOSTS_TITLE]], provided it has a [[special RESONANT_MOON_SPECIAL]].'''
 
 BLD_LIGHTHOUSE
 Interstellar Lighthouse
