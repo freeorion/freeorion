@@ -16,7 +16,7 @@ effectsgroups = [
 
 EffectsGroup
     scope = Source
-    activation = Turn high = 1
+    activation = Turn low = 0 high = 0
     effects =
         GenerateSitRepMessage
             message = "CUSTOM_SITREP_INTRODUCTION"
@@ -37,7 +37,7 @@ EffectsGroup
 //
 //EffectsGroup
 //    scope = Capital
-//    activation = Turn high = 1
+//    activation = Turn low = 0 high = 0
 //    effects =
 //        GenerateSitRepMessage
 //            message = "This is a sample Custom Sitrep, which is enabled by %tech% and all the busy empire servants reporting information back to %system%"
