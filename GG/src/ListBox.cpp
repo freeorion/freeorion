@@ -1826,23 +1826,9 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
                : m_header_row->Height())));
 
     X total_x_extent = std::accumulate(m_col_widths.begin(), m_col_widths.end(), X0);
-
     Y total_y_extent(0);
-    if (!m_rows.empty()) {
+    if (!m_rows.empty())
         total_y_extent = m_rows.back()->Bottom() - m_rows.front()->Top();
-        for (std::list<Row*>::reverse_iterator it = m_rows.rbegin(); it != m_rows.rend(); it++) {
-            Y height_to_display = m_rows.back()->Bottom() - (*it)->Top();
-            if (height_to_display >= cl_sz.y - 1) {
-                if (height_to_display > cl_sz.y) {
-                    // fill in the rest of the space of an imaginary row with the
-                    // same height as the top one, so that you can scroll down one
-                    // more time, preventing the last row from being cut off
-                    total_y_extent += (*it)->Height() - (height_to_display - cl_sz.y);
-                }
-                break;
-            }
-        }
-    }
 
     bool vertical_needed =
         m_first_row_shown != m_rows.begin() ||
@@ -1854,6 +1840,16 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
         m_rows.size() && (cl_sz.x < total_x_extent ||
                           (cl_sz.x < total_x_extent - SCROLL_WIDTH &&
                            cl_sz.y < total_y_extent - SCROLL_WIDTH));
+
+    // This probably looks a little odd.  We only want to show scrolls if they
+    // are needed, that is if the data shown exceed the bounds of the client
+    // area.  However, if we are going to show scrolls, we want to allow them
+    // to range such that the first row/column shown can be any of the N
+    // rows/columns.  Dead space after the last row/column is fine.
+    if (!m_col_widths.empty() && m_col_widths.back() < cl_sz.x)
+        total_x_extent += cl_sz.x - m_col_widths.back();
+    if (!m_rows.empty() && m_rows.back()->Height() < cl_sz.y)
+        total_y_extent += cl_sz.y - m_rows.back()->Height();
 
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
