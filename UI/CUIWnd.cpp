@@ -781,7 +781,7 @@ const std::string CUIWnd::AddWindowOptions(const std::string& config_name,
                             visible, pinned, minimized);
 }
 
-void CUIWnd::RemoveWindowOptions(const std::string& config_name) {
+void CUIWnd::InvalidateWindowOptions(const std::string& config_name) {
     OptionsDB& db = GetOptionsDB();
     if (db.OptionExists("UI.windows."+config_name+".initialized")) {
         // Should be removed in window dtor.
@@ -792,20 +792,18 @@ void CUIWnd::RemoveWindowOptions(const std::string& config_name) {
         return;
     }
 
-    db.Remove("UI.windows."+config_name+".left");
-    db.Remove("UI.windows."+config_name+".top");
-    db.Remove("UI.windows."+config_name+".left-windowed");
-    db.Remove("UI.windows."+config_name+".top-windowed");
-    db.Remove("UI.windows."+config_name+".width");
-    db.Remove("UI.windows."+config_name+".height");
-    db.Remove("UI.windows."+config_name+".width-windowed");
-    db.Remove("UI.windows."+config_name+".height-windowed");
-    db.Remove("UI.windows."+config_name+".visible");
-    db.Remove("UI.windows."+config_name+".pinned");
-    db.Remove("UI.windows."+config_name+".minimized");
+    std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+    if (!db.Get<bool>("fullscreen"))
+        windowed = "-windowed";
+
+    db.Set<int>("UI.windows."+config_name+".left"+windowed, INVALID_POS);
+    db.Set<int>("UI.windows."+config_name+".top"+windowed,  INVALID_POS);
+    db.Set<bool>("UI.windows."+config_name+".visible", db.GetDefault<bool>("UI.windows."+config_name+".visible"));
+    db.Set<bool>("UI.windows."+config_name+".pinned", db.GetDefault<bool>("UI.windows."+config_name+".pinned"));
+    db.Set<bool>("UI.windows."+config_name+".minimized", db.GetDefault<bool>("UI.windows."+config_name+".minimized"));
 }
 
-void CUIWnd::RemoveUnusedOptions() {
+void CUIWnd::InvalidateUnusedOptions() {
     OptionsDB& db = GetOptionsDB();
     std::string prefix("UI.windows.");
     std::string suffix_used(".initialized"); // this is present if the options are being used by a window
@@ -829,7 +827,7 @@ void CUIWnd::RemoveUnusedOptions() {
             // If the ".initialized" option isn't present under this name,
             // remove the options.
             if (window_options.find(prefix + name + suffix_used) == window_options.end()) {
-                RemoveWindowOptions(name);
+                InvalidateWindowOptions(name);
             }
         }
     }

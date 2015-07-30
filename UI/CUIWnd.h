@@ -141,7 +141,7 @@ public:
     //@}
 
     //! \name Statics //@{
-    static void     RemoveUnusedOptions();              //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
+    static void     InvalidateUnusedOptions();          //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
     //@}
 
 protected:
@@ -167,7 +167,7 @@ protected:
                                               GG::X left, GG::Y top, GG::X width, GG::Y height,
                                               bool visible, bool pinned, bool minimized);   //!< overload that accepts GG::X and GG::Y instead of ints
 
-    static void              RemoveWindowOptions(const std::string& config_name);           //!< removes options containing \a config_name, logs an error instead if "UI.windows."+config_name+".initialized" exists (i.e. if a window is currently using that name)
+    static void              InvalidateWindowOptions(const std::string& config_name);       //!< removes options containing \a config_name, logs an error instead if "UI.windows."+config_name+".initialized" exists (i.e. if a window is currently using that name)
     //@}
 
     //! \name Mutators //@{
