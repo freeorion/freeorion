@@ -2358,7 +2358,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         moderator = true;
 
     // Right click on an unselected row should automatically select it
-    m_list_box->SelectRow(it);
+    m_list_box->SelectRow(it, true);
 
     // create popup menu with object commands in it
     GG::MenuItem menu_contents;
