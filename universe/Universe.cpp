@@ -1299,7 +1299,7 @@ void Universe::ApplyGenerateSitRepEffects() {
     // activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
-    ExecuteEffects(targets_causes, false, false, false, true);
+    ExecuteEffects(targets_causes, false, false, false, false, true);
 }
 
 void Universe::InitMeterEstimatesAndDiscrepancies() {
