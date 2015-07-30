@@ -100,7 +100,8 @@ namespace {
     void GenerateSitRep(int empire_id,
                         const std::string& template_string,
                         const dict& py_params,
-                        const std::string& icon) {
+                        const std::string& icon)
+    {
         std::vector<std::pair<std::string, std::string> > params;
 
         if (py_params) {
@@ -906,7 +907,7 @@ namespace {
         TemporaryPtr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
         if (!field) {
             ErrorLogger() << "PythonUniverseGenerator::CreateFieldImpl: couldn't create field";
-			return TemporaryPtr<Field>();
+            return TemporaryPtr<Field>();
         }
 
         // get the localized version of the field type name and set that as the fields name
@@ -921,7 +922,7 @@ namespace {
         else
             return INVALID_OBJECT_ID;
     }
-    
+
     int CreateFieldInSystem(const std::string& field_type_name, double size, int system_id) {
         // check if system exists and get system
         TemporaryPtr<System> system = GetSystem(system_id);
@@ -1199,20 +1200,20 @@ namespace {
             ErrorLogger() << "PythonUniverseGenerator::PlanetMakeColony: couldn't get planet with ID:" << planet_id;
             return false;
         }
-        
+
         if (!GetEmpire(empire_id)) {
             ErrorLogger() << "PythonUniverseGenerator::PlanetMakeColony: couldn't get empire with ID " << empire_id;
             return false;
         }
-        
+
         if (!GetSpecies(species)) {
             ErrorLogger() << "PythonUniverseGenerator::PlanetMakeColony: couldn't get species with name: " << species;
             return false;
         }
-        
+
         if (population < 0.0)
             population = 0.0;
-        
+
         return planet->Colonize(empire_id, species, population);
     }
 }
