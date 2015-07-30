@@ -54,8 +54,26 @@ public:
         DoLayout();
     }
 
-    virtual void    Render()
-    { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndColor(), 1u); }
+    virtual void    Render() {
+        GG::Pt ul = UpperLeft();
+
+        glPushMatrix();
+        glLoadIdentity();
+        glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+        glDisable(GL_TEXTURE_2D);
+        glLineWidth(1.0);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        m_buffer.activate();
+        glColor(ClientUI::WndColor());
+        glDrawArrays(GL_TRIANGLE_FAN,   0, 4);
+        glColor(ClientUI::WndOuterBorderColor());
+        glDrawArrays(GL_LINE_LOOP,      0, 4);
+
+        glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+        glDisableClientState(GL_VERTEX_ARRAY);
+    }
 
 private:
     void            DoLayout() {
@@ -74,12 +92,25 @@ private:
 
         m_census_val->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + SPECIES_CENSUS_WIDTH, bottom));
         left += SPECIES_CENSUS_WIDTH;
+
+        InitBuffer();
     }
 
-    GG::StaticGraphic*  m_icon;
-    GG::Label*          m_name;
-    GG::Label*          m_census_val;
-    bool                m_show_icon;
+    void            InitBuffer() {
+        GG::Pt sz = Size();
+        m_buffer.clear();
+
+        m_buffer.store(0.0f,        0.0f);
+        m_buffer.store(Value(sz.x), 0.0f);
+        m_buffer.store(Value(sz.x), Value(sz.y));
+        m_buffer.store(0.0f,        Value(sz.y));
+    }
+
+    GG::GL2DVertexBuffer    m_buffer;
+    GG::StaticGraphic*      m_icon;
+    GG::Label*              m_name;
+    GG::Label*              m_census_val;
+    bool                    m_show_icon;
 };
 
 CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text,
