@@ -16,15 +16,15 @@ public:
     SitRepEntry();  ///< default ctor
     explicit SitRepEntry(const std::string& template_string, const std::string& icon = "");
     SitRepEntry(const std::string& template_string, int turn, const std::string& icon = "");
-    SitRepEntry(const std::string& template_string, const std::string& icon, const std::string label, bool stringtable_lookup);
+    SitRepEntry(const std::string& template_string, int turn, const std::string& icon, const std::string label, bool stringtable_lookup);
     //@}
 
     /** Accessors */ //@{
     int                 GetDataIDNumber(const std::string& tag) const;
     const std::string&  GetDataString(const std::string& tag) const;
-    int                 GetTurn() const { return m_turn; }
-    const std::string&  GetIcon() const { return m_icon; }
-    const std::string&  GetLabelString() const   { return m_label; }
+    int                 GetTurn() const         { return m_turn; }
+    const std::string&  GetIcon() const         { return m_icon; }
+    const std::string&  GetLabelString() const  { return m_label; }
     std::string         Dump() const;
     //@}
 
@@ -59,7 +59,7 @@ FO_COMMON_API SitRepEntry CreatePlanetColonizedSitRep(int planet_id);
 FO_COMMON_API SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id);
 SitRepEntry               CreateEmpireEliminatedSitRep(int empire_id);
 SitRepEntry               CreateVictorySitRep(const std::string& reason_string, int empire_id);
-FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, const std::string& icon,
+FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, int turn, const std::string& icon,
                                        const std::vector<std::pair<std::string, std::string> >& parameters, const std::string label = "", bool stringtable_lookup = true);
 
 // template implementations

@@ -19,7 +19,7 @@ SitRepEntry::SitRepEntry() :
 
 SitRepEntry::SitRepEntry(const std::string& template_string, const std::string& icon) :
     VarText(template_string, true),
-    m_turn(CurrentTurn()+1), // sitreps typically created by server before incrementing the turn counter, so they first appear the turn after when CurrentTurn indicates
+    m_turn(CurrentTurn() + 1), // sitreps typically created by server before incrementing the turn counter, so they first appear the turn after when CurrentTurn indicates
     m_icon(icon.empty() ? "/icons/sitrep/generic.png" : icon),
     m_label()
 {}
@@ -31,13 +31,12 @@ SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std
     m_label()
 {}
 
-SitRepEntry::SitRepEntry(const std::string& template_string, const std::string& icon, const std::string label, bool stringtable_lookup) :
+SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std::string& icon, const std::string label, bool stringtable_lookup) :
     VarText(template_string, stringtable_lookup),
-    m_turn(CurrentTurn()+1), // sitreps typically created by server before incrementing the turn counter, so they first appear the turn after when CurrentTurn indicates
+    m_turn(turn),
     m_icon(icon.empty() ? "/icons/sitrep/generic.png" : icon),
     m_label(label)
 {}
-
 
 int SitRepEntry::GetDataIDNumber(const std::string& tag) const {
     if (!m_variables.ContainsChild(tag))
@@ -363,13 +362,11 @@ SitRepEntry CreateVictorySitRep(const std::string& reason_string, int empire_id)
     return sitrep;
 }
 
-SitRepEntry CreateSitRep(const std::string& template_string,
-                         const std::string& icon,
+SitRepEntry CreateSitRep(const std::string& template_string, int turn, const std::string& icon,
                          const std::vector<std::pair<std::string, std::string> >& parameters,
-                         const std::string label,
-                         bool stringtable_lookup)
+                         const std::string label, bool stringtable_lookup)
 {
-    SitRepEntry sitrep(template_string, icon, label, stringtable_lookup);
+    SitRepEntry sitrep(template_string, turn, icon, label, stringtable_lookup);
     for (std::vector<std::pair<std::string, std::string> >::const_iterator it = parameters.begin();
          it != parameters.end(); ++it)
     { sitrep.AddVariable(it->first, it->second); }

@@ -97,11 +97,11 @@ namespace {
     { return object(PathString(GetResourceDir())); }
 
     // Wrappers for generating sitrep messages
-    void GenerateSitRep(int empire_id,
-                        const std::string& template_string,
-                        const dict& py_params,
-                        const std::string& icon)
+    void GenerateSitRep(int empire_id, const std::string& template_string,
+                        const dict& py_params, const std::string& icon)
     {
+        int sitrep_turn = CurrentTurn() + 1;
+
         std::vector<std::pair<std::string, std::string> > params;
 
         if (py_params) {
@@ -114,7 +114,7 @@ namespace {
 
         if (empire_id == ALL_EMPIRES) {
             for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-                it->second->AddSitRepEntry(CreateSitRep(template_string, icon, params));
+                it->second->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));
             }
         } else {
             Empire* empire = GetEmpire(empire_id);
@@ -122,7 +122,7 @@ namespace {
                 ErrorLogger() << "PythonServerWrapper::GenerateSitRep: couldn't get empire with ID " << empire_id;
                 return;
             }
-            empire->AddSitRepEntry(CreateSitRep(template_string, icon, params));
+            empire->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));
         }
     }
 

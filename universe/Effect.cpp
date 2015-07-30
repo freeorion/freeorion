@@ -3352,6 +3352,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
     }
     }
 
+    int sitrep_turn = CurrentTurn() + 1;
 
     // send to recipient empires
     for (std::set<int>::const_iterator emp_it = recipient_empire_ids.begin();
@@ -3360,7 +3361,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
         Empire* empire = GetEmpire(*emp_it);
         if (!empire)
             continue;
-        empire->AddSitRepEntry(CreateSitRep(m_message_string, m_icon, parameter_tag_values, m_label, m_stringtable_lookup));
+        empire->AddSitRepEntry(CreateSitRep(m_message_string, sitrep_turn, m_icon, parameter_tag_values, m_label, m_stringtable_lookup));
 
         // also inform of any ship designs recipients should know about
         for (std::set<int>::const_iterator design_it = ship_design_ids_to_inform_receipits_of.begin();
