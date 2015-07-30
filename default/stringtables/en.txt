@@ -7228,7 +7228,9 @@ GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
 
 GRO_LIFECYCLE_MAN_DESC
-'''Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, colonists can be transported much more efficiently, and the amount of colonists on a freshly built colony as well as the capacity of colony ships is greatly increased.
+'''In addition to the ship part, this tech also increases the population of new colonies produced with colony buildings to 3.
+
+Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently. Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space. With this technique, colonists can be transported much more efficiently, and the amount of colonists on a freshly built colony as well as the capacity of colony ships is greatly increased.
 
 Most complex organisms progress through various physiological stages during a lifetime, whether distinctly separated by metamorphoses, or blurred by continuous slow aging. In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others. By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.'''
 
