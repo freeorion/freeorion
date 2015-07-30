@@ -563,11 +563,28 @@ ClientUI::ClientUI() :
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
 
+    GG::Connect(GetOptionsDB().OptionChangedSignal("app-width"),
+                boost::bind(&ClientUI::HandleSizeChange, this, true));
+    GG::Connect(GetOptionsDB().OptionChangedSignal("app-height"),
+                boost::bind(&ClientUI::HandleSizeChange, this, true));
+    GG::Connect(GetOptionsDB().OptionChangedSignal("app-width-windowed"),
+                boost::bind(&ClientUI::HandleSizeChange, this, false));
+    GG::Connect(GetOptionsDB().OptionChangedSignal("app-height-windowed"),
+                boost::bind(&ClientUI::HandleSizeChange, this, false));
     GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
                 &ClientUI::InitializeWindows, this);
+    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
+                &CUIWnd::RemoveUnusedOptions,
+                boost::signals2::at_front);
+
+    // Connected at front to make sure CUIWnd::LoadOptions() doesn't overwrite
+    // the values we're checking here...
+    GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal,
+                boost::bind(&ClientUI::HandleFullscreenSwitch, this),
+                boost::signals2::at_front);
 
     ConditionalConnectOption("UI.auto-reposition-windows",
-                             boost::bind(&ClientUI::RecalculateWindowDefaults, this),
+                             HumanClientApp::GetApp()->RepositionWindowsSignal,
                              true, std::equal_to<bool>());
 }
 
@@ -817,13 +834,39 @@ void ClientUI::InitializeWindows() {
     m_player_list_wnd->InitSizeMove(player_list_ul, player_list_ul + player_list_wh);
 }
 
-void ClientUI::RecalculateWindowDefaults() {
-    CUIWnd::RemoveUnusedOptions();
+void ClientUI::HandleSizeChange(bool fullscreen) const {
+    OptionsDB& db = GetOptionsDB();
 
-    // Signal allows windows such as options and save/load dialogs to connect
-    // themselves instead of relying on every caller to delegate this event to
-    // them...
-    HumanClientApp::GetApp()->RepositionWindowsSignal();
+    if (db.Get<bool>("UI.auto-reposition-windows")) {
+        std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+        if (!fullscreen)
+            windowed = "-windowed";
+
+        // Invalidate the message window position so that we know to
+        // recalculate positions on the next resize or fullscreen switch...
+        db.Set<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed,
+                    db.GetDefault<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed));
+    }
+}
+
+void ClientUI::HandleFullscreenSwitch() const {
+    OptionsDB& db = GetOptionsDB();
+
+    std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+    if (!db.Get<bool>("fullscreen"))
+        windowed = "-windowed";
+
+    // Check if the message window position has been invalidated as a stand-in
+    // for actually checking if all windows have been given valid positions for
+    // this video mode... (the default value is
+    // std::numeric_limits<GG::X::value_type>::min(), defined in UI/CUIWnd.cpp).
+    // This relies on the message window not supplying a default position to
+    // the CUIWnd constructor...
+    if (db.Get<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed) ==
+        db.GetDefault<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed))
+    {
+        HumanClientApp::GetApp()->RepositionWindowsSignal();
+    }
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,

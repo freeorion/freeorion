@@ -448,7 +448,7 @@ OptionsWnd::OptionsWnd():
     row->Resize(GG::Pt(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), window_reset_button, 0));
     current_page->Insert(row);
-    GG::Connect(window_reset_button->LeftClickedSignal, &ClientUI::RecalculateWindowDefaults, ClientUI::GetClientUI());
+    GG::Connect(window_reset_button->LeftClickedSignal, HumanClientApp::GetApp()->RepositionWindowsSignal);
 
     FileOption(current_page, 0, "stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
