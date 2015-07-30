@@ -1291,6 +1291,17 @@ void Universe::ApplyAppearanceEffects() {
     ExecuteEffects(targets_causes, false, false, true);
 }
 
+void Universe::ApplyGenerateSitRepEffects() {
+    ScopedTimer timer("Universe::ApplyGenerateSitRepEffects on all objects");
+
+    // cache all activation and scoping condition results before applying
+    // Effects, since the application of these Effects may affect the
+    // activation and scoping evaluations
+    Effect::TargetsCauses targets_causes;
+    GetEffectsAndTargets(targets_causes);
+    ExecuteEffects(targets_causes, false, false, false, false, true);
+}
+
 void Universe::InitMeterEstimatesAndDiscrepancies() {
     DebugLogger() << "Universe::InitMeterEstimatesAndDiscrepancies";
     ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies");
@@ -2229,7 +2240,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                               bool update_effect_accounting,
                               bool only_meter_effects/* = false*/,
                               bool only_appearance_effects/* = false*/,
-                              bool include_empire_meter_effects/* = false*/)
+                              bool include_empire_meter_effects/* = false*/,
+                              bool only_generate_sitrep_effects/* = false*/)
 {
     ScopedTimer timer("Universe::ExecuteEffects", true);
 
@@ -2328,7 +2340,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                 update_effect_accounting ? &m_effect_accounting_map : NULL,
                 only_meter_effects,
                 only_appearance_effects,
-                include_empire_meter_effects);
+                include_empire_meter_effects,
+                only_generate_sitrep_effects);
         }
     }
 

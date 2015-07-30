@@ -101,7 +101,8 @@ public:
                     AccountingMap* accounting_map = 0,
                     bool only_meter_effects = false,
                     bool only_appearance_effects = false,
-                    bool include_empire_meter_effects = false) const;
+                    bool include_empire_meter_effects = false,
+                    bool only_generate_sitrep_effects = false) const;
 
     const std::string&              StackingGroup() const       { return m_stacking_group; }
     Condition::ConditionBase* Scope() const               { return m_scope; }
@@ -149,7 +150,8 @@ public:
                                 AccountingMap* accounting_map = 0,
                                 bool only_meter_effects = false,
                                 bool only_appearance_effects = false,
-                                bool include_empire_meter_effects = false) const;
+                                bool include_empire_meter_effects = false,
+                                bool only_generate_sitrep_effects = false) const;
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0;
 
