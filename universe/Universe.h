@@ -284,6 +284,9 @@ public:
     /** Executes effects that modify objects' apperance for all objects. */
     void            ApplyAppearanceEffects();
 
+    /** Executes effects that modify objects' apperance for all objects. */
+    void            ApplyGenerateSitRepEffects();
+
     /** For all objects and meters, determines discrepancies between actual meter
       * maxes and what the known universe should produce, and and stores in
       * m_effect_discrepancy_map. */
@@ -508,7 +511,8 @@ private:
                            bool update_effect_accounting,
                            bool only_meter_effects = false,
                            bool only_appearance_effects = false,
-                           bool include_empire_meter_effects = false);
+                           bool include_empire_meter_effects = false,
+                           bool only_generate_sitrep_effects = false);
 
     /** Does actual updating of meter estimates after the public function have
       * processed objects_vec or whatever they were passed and cleared the

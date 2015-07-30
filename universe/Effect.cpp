@@ -265,7 +265,8 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
                            AccountingMap* accounting_map/* = 0*/,
                            bool only_meter_effects/* = false*/,
                            bool only_appearance_effects/* = false*/,
-                           bool include_empire_meter_effects/* = false*/) const
+                           bool include_empire_meter_effects/* = false*/,
+                           bool only_generate_sitrep_effects/* = false*/) const
 {
     // execute each effect of the group one by one, unless filtered by flags
     for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
@@ -276,7 +277,8 @@ void EffectsGroup::Execute(const Effect::TargetsCauses& targets_causes,
                               accounting_map,
                               only_meter_effects,
                               only_appearance_effects,
-                              include_empire_meter_effects);
+                              include_empire_meter_effects,
+                              only_generate_sitrep_effects);
     }
 }
 
@@ -370,7 +372,8 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
                          AccountingMap* accounting_map/* = 0*/,
                          bool only_meter_effects/* = false*/,
                          bool only_appearance_effects/* = false*/,
-                         bool include_empire_meter_effects/* = false*/) const
+                         bool include_empire_meter_effects/* = false*/,
+                         bool only_generate_sitrep_effects/* = false*/) const
 {
     bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
 
@@ -400,6 +403,9 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
             if (!dynamic_cast<const SetEmpireMeter*>(this))
                 return;
         }
+    } else if (only_generate_sitrep_effects) {
+        if (!dynamic_cast<const GenerateSitRepMessage*>(this))
+            return;
     }
 
     // apply this effect to each source causing it
