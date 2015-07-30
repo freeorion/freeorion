@@ -674,7 +674,13 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
     // m_current_turn set above so that every UniverseObject created before game
     // starts will have m_created_on_turn BEFORE_FIRST_TURN
     GenerateUniverse(active_players_id_setup_data);
-    // after all game initialization stuff has been created, can set current turn to 1 for start of game
+
+    // after all game initialization stuff has been created, set current turn to 0 and apply only GenerateSitRep Effects
+    // so that a set of SitReps intended as the player's initial greeting will be segregated
+    m_current_turn = 0;
+    m_universe.ApplyGenerateSitRepEffects();
+
+    //can set current turn to 1 for start of game
     m_current_turn = 1;
 
 

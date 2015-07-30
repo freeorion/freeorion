@@ -1935,7 +1935,7 @@ Tech
 
         EffectsGroup
             scope = Source
-            activation = Turn high = 1
+            activation = Turn low = 0 high = 0
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_WELCOME"
