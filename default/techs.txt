@@ -1939,6 +1939,7 @@ Tech
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_WELCOME"
+                    label = "SITREP_WELCOME_LABEL"  // explicitly provided so that the custom SitRep intro message can share the same SitRepPanel filter
                     icon = "icons/sitrep/fo_logo.png"
                     empire = Source.Owner
                 ]
