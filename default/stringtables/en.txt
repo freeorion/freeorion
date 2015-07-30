@@ -1957,7 +1957,7 @@ OPTIONS_FLUSH_STRINGTABLE
 Flush Stringtables
 
 OPTIONS_WINDOW_RESET
-Reposition Windows
+Reposition Windows Now
 
 OPTIONS_CHAT
 Chat
