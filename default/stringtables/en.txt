@@ -4384,6 +4384,9 @@ SITREP_WELCOME
 SITREP_WELCOME_LABEL
 Welcome
 
+SITREP_GAS_GIANT_GENERATION_REMINDER
+'''%planet% is a prime location for a %buildingtype%, but none is being built there'''
+
 SITREP_SHIP_BUILT
 At %system%: a new %shipdesign%, the '%ship%', has been produced.
 SITREP_SHIP_BUILT_LABEL
@@ -4783,7 +4786,7 @@ HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
 
 CUSTOM_SITREP_INTRODUCTION
-This is a sample Custom Sitrep, which is enabled by %tech% and all the busy empire servants reporting information back to %system%
+Welcome to the intial Situation Report Briefing.  Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
 
 # Translators: Important Note-- use underscores "_" not spaces in the translations for
 # CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
@@ -8342,7 +8345,8 @@ SPY_CUSTOM_ADVISORIES_DESC
 '''The Empire Intelligence Agency gathers and organizes information from many sources, including spies, common informers, and official chains of command reporting.  The most important items of information are presented each turn as Situation Reports (SitReps).  If a SitRep is repeated from turn to turn more often than you really need for remembering the information, you can dismiss the SitRep for the current turn by double-clicking its icon, or for multiple turns via right-click menu on the SitRep's icon.
 
 Many of the SitReps are determined automatically, but additional custom SitReps can be specified by editing the file default/customizations/custom_sitreps.txt
-More particulars on the FreeOrion scripting, such as for these custom SitReps, can be found at our wiki:  http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
+(Note: in a multiplayer game, the content files of the Server are the ones which determine what SitReps are sent to empires.)
+More particulars on the FreeOrion scripting language, such as for these custom SitReps, can be found at our wiki:  http://www.freeorion.org/index.php/Free_Orion_Content_Script_(FOCS)
 There are four preset (possibly translated) labels for use with custom sitreps, so that they get placement at the top of the SitRep window.  More information on how to use the labels can be found on the wiki, and in the custom_sitreps.txt. 
 These four labels are
 "[[CUSTOM_1]]"

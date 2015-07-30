@@ -45,7 +45,7 @@ FUNCTIONAL_SHIP_PART_REDUNDANCY_SKIP_LIST
 ## entries will not work correctly if they contain spaces; use underscores "_" instead.
 
 FUNCTIONAL_SITREP_PRIORITY_ORDER
-'''SITREP_WELCOME
+'''SITREP_WELCOME_LABEL
 CUSTOM_1
 CUSTOM_2
 CUSTOM_3
