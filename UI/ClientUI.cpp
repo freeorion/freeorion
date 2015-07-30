@@ -553,7 +553,7 @@ ClientUI::ClientUI() :
 
     // Remove all window properties if asked to
     if (GetOptionsDB().Get<bool>("window-reset"))
-        CUIWnd::RemoveUnusedOptions();
+        CUIWnd::InvalidateUnusedOptions();
 
     m_message_wnd = new MessageWnd(MESSAGE_WND_NAME);
     m_player_list_wnd = new PlayerListWnd(PLAYER_LIST_WND_NAME);
@@ -574,7 +574,7 @@ ClientUI::ClientUI() :
     GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
                 &ClientUI::InitializeWindows, this);
     GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
-                &CUIWnd::RemoveUnusedOptions,
+                &CUIWnd::InvalidateUnusedOptions,
                 boost::signals2::at_front);
 
     // Connected at front to make sure CUIWnd::LoadOptions() doesn't overwrite
