@@ -201,11 +201,8 @@ void CUIWnd::Init(const std::string& t) {
     SetChildClippingMode(ClipToClientAndWindowSeparately);
 
     if (!m_config_name.empty()) {
-        // Call AFTER buttons are initialized but before SetMinSize().
         LoadOptions();
         GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal, boost::bind(&CUIWnd::LoadOptions, this));
-    } else {
-        GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal, boost::bind(&CUIWnd::ResetDefaultPosition, this));
     }
 
     // User-dragable windows recalculate their position only when told to (e.g.
@@ -233,7 +230,6 @@ void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             // (either in the ctor or a previous call to this function), apply
             // this position to the window.
             if (db.Get<bool>("UI.windows."+m_config_name+".initialized") ||
-                db.Get<bool>("UI.auto-reposition-windows") ||
                 db.Get<int>("UI.windows."+m_config_name+".left"+windowed) == INVALID_X)
             {
                 SizeMove(ul, lr);
@@ -670,6 +666,9 @@ void CUIWnd::LoadOptions() {
         return;
     }
 
+    // These functions are only called in certain circumstances, could pass in
+    // things like the fullscreen/windowed mode instead of using global program
+    // state like this?
     std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
     if (!db.Get<bool>("fullscreen"))
         windowed = "-windowed";
@@ -751,10 +750,10 @@ const std::string CUIWnd::AddWindowOptions(const std::string& config_name,
     } else if (!config_name.empty()) {
         db.Add<bool>("UI.windows."+config_name+".initialized",      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(),              false);
 
-        db.Add<int> ("UI.windows."+config_name+".left",             UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       RangedValidator<int>(0, 2560));
-        db.Add<int> ("UI.windows."+config_name+".top",              UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        RangedValidator<int>(0, 1600));
-        db.Add<int> ("UI.windows."+config_name+".left-windowed",    UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       RangedValidator<int>(0, 2560));
-        db.Add<int> ("UI.windows."+config_name+".top-windowed",     UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        RangedValidator<int>(0, 1600));
+        db.Add<int> ("UI.windows."+config_name+".left",             UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       OrValidator<int>(RangedValidator<int>(0, 2560), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("UI.windows."+config_name+".top",              UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        OrValidator<int>(RangedValidator<int>(0, 1600), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("UI.windows."+config_name+".left-windowed",    UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       OrValidator<int>(RangedValidator<int>(0, 2560), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("UI.windows."+config_name+".top-windowed",     UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        OrValidator<int>(RangedValidator<int>(0, 1600), DiscreteValidator<int>(INVALID_POS)));
 
         db.Add<int> ("UI.windows."+config_name+".width",            UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH"),           width,      RangedValidator<int>(0, 2560));
         db.Add<int> ("UI.windows."+config_name+".height",           UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT"),          height,     RangedValidator<int>(0, 1600));
@@ -834,6 +833,8 @@ void CUIWnd::RemoveUnusedOptions() {
             }
         }
     }
+
+    db.Commit();
 }
 
 ///////////////////////////////////////
