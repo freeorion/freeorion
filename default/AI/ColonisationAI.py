@@ -791,7 +791,19 @@ def get_base_outpost_defense_value():
     """
     #TODO: assess current AI defense technology, compare the resulting planetary rating to the current
     # best military ship design, derive a planet defenses value related to the cost of such a ship
-    return 20.0
+
+    net_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_DEFENSE_NET_TECHS)
+    regen_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_REGEN_TECHS)
+    garrison_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_GARRISON_TECHS)
+    shield_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_SHIELDS_TECHS)
+    # not counting mine techs because their effects are per-system, not per-planet
+
+    # for now, just combing these for rough composite factor
+    # since outposts have no infrastructure (until late game at least), many of these have less weight
+    # than for colonies
+    result = 6 * (0.1 + net_count) * (1 + regen_count/3.0) * ( 1+ garrison_count/6.0) * (1 + shield_count/3.0)
+
+    return result
 
 @cache_by_turn
 def get_base_colony_defense_value():
@@ -801,7 +813,17 @@ def get_base_colony_defense_value():
     """
     #TODO: assess current AI defense technology, compare the resulting planetary rating to the current
     # best military ship design, derive a planet defenses value related to the cost of such a ship
-    return 40.0
+
+    net_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_DEFENSE_NET_TECHS)
+    regen_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_REGEN_TECHS)
+    garrison_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_GARRISON_TECHS)
+    shield_count = sum(tech_is_complete(tech_name) for tech_name in AIDependencies.DEFENSE_SHIELDS_TECHS)
+    # not counting mine techs because their effects are per-system, not per-planet
+
+    # for now, just combing these for rough composite factor
+    result = 6 * (0.1 + net_count) * (1 + regen_count/2.0) * ( 1+ garrison_count/4.0) * (1 + shield_count/2.0)
+
+    return result
 
 def get_defense_value(species_name):
     """
