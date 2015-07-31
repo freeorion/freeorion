@@ -860,8 +860,29 @@ Special
             activation = AND [
                 Planet
                 OwnedBy affiliation = AnyEmpire
-                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
+                OwnerHasTech name = "SHP_MONSTER_MATURATION"
+                Contains Building name = "BLD_MATURATION_PEN"
                 Random probability = 0.05
+            ]
+            stackinggroup = "KRAKEN_NEST_STACK"
+            effects = [
+                CreateShip designname = "SM_KRAKEN_2" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_HATCHED"
+                    icon = "icons/monsters/kraken-2.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SM_KRAKEN_2"
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy affiliation = AnyEmpire
+                OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
+                Random probability = 0.05 + 0.05 * If condition = OwnerHasTech name = "SHP_MONSTER_MATURATION"
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
@@ -909,8 +930,29 @@ Special
             activation = AND [
                 Planet
                 OwnedBy affiliation = AnyEmpire
+                OwnerHasTech name = "SHP_MONSTER_MATURATION"
+                Contains Building name = "BLD_MATURATION_PEN"
+                Random probability = 0.05
+            ]
+            stackinggroup = "SNOWFLAKE_NEST_STACK"
+            effects = [
+                CreateShip designname = "SM_SNOWFLAKE_2" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_HATCHED"
+                    icon = "icons/monsters/snowflake-2.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SM_SNOWFLAKE_2"
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy affiliation = AnyEmpire
                 OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
-                Random probability = 0.08
+                Random probability = 0.08 + 0.05 * If condition = OwnerHasTech name = "SHP_MONSTER_MATURATION"
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = [
@@ -959,8 +1001,29 @@ Special
             activation = AND [
                 Planet
                 OwnedBy affiliation = AnyEmpire
+                OwnerHasTech name = "SHP_MONSTER_MATURATION"
+                Contains Building name = "BLD_MATURATION_PEN"
+                Random probability = 0.05
+            ]
+            stackinggroup = "JUGGERNAUT_NEST_STACK"
+            effects = [
+                CreateShip designname = "SM_JUGGERNAUT_2" empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_HATCHED"
+                    icon = "icons/monsters/juggernaut-2.png"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SM_JUGGERNAUT_2"
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy affiliation = AnyEmpire
                 OwnerHasTech name = "SHP_DOMESTIC_MONSTER"
-                Random probability = 0.06 
+                Random probability = 0.06 + 0.05 * If condition = OwnerHasTech name = "SHP_MONSTER_MATURATION"
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [
