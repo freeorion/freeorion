@@ -363,6 +363,7 @@ namespace {
     const GG::Y     LOBBY_WND_HEIGHT(600);
     const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
     const GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
+    const GG::Y     GALAXY_SETUP_PANEL_HEIGHT(340);
     const GG::Y     SAVED_GAMES_LIST_ROW_HEIGHT(22);
     const GG::Y     SAVED_GAMES_LIST_DROP_HEIGHT(10 * SAVED_GAMES_LIST_ROW_HEIGHT);
     const GG::X     CHAT_WIDTH(250);
@@ -398,7 +399,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_chat_box = new CUIMultiEdit("", GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
-    m_galaxy_setup_panel = new GalaxySetupPanel();
+    m_galaxy_setup_panel = new GalaxySetupPanel(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
 
     m_new_load_game_buttons = new GG::RadioButtonGroup(GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
@@ -586,7 +587,7 @@ void MultiPlayerLobbyWnd::DoLayout() {
     const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
 
     GG::Pt galaxy_setup_panel_ul(CHAT_WIDTH + 2*CONTROL_MARGIN, RADIO_BN_HT);
-    GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, GG::Y(340));
+    GG::Pt galaxy_setup_panel_lr = galaxy_setup_panel_ul + GG::Pt(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);
     m_galaxy_setup_panel->SizeMove(galaxy_setup_panel_ul, galaxy_setup_panel_lr);
 
     GG::Pt game_buttons_ul(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN));

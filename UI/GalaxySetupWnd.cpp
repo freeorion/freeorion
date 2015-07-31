@@ -55,8 +55,8 @@ namespace {
 ////////////////////////////////////////////////
 const GG::X GalaxySetupPanel::DEFAULT_WIDTH(305);
 
-GalaxySetupPanel::GalaxySetupPanel() :
-    GG::Control(GG::X0, GG::Y0, GalaxySetupPanel::DEFAULT_WIDTH, GAL_SETUP_PANEL_HT, GG::NO_WND_FLAGS),
+GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_seed_label(0),
     m_seed_edit(0),
     m_random(0),
@@ -272,6 +272,10 @@ GalaxySetupPanel::GalaxySetupPanel() :
 
     SettingsChangedSignal();
 }
+
+GalaxySetupPanel::GalaxySetupPanel() :
+    GalaxySetupPanel::GalaxySetupPanel(GalaxySetupPanel::DEFAULT_WIDTH, GAL_SETUP_PANEL_HT) {}
+
 
 namespace {
     // set of characters from which to generate random seed that excludes some ambiguous letter/number pairs
