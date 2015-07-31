@@ -5583,9 +5583,17 @@ ECCENTRIC_ORBIT_SPECIAL
 Eccentric Orbit
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Population on the planet is decreased by 3, but [[encyclopedia RESEARCH_TITLE]] is increased by 3.
+'''Increases [[encyclopedia RESEARCH_TITLE]] by 3, but [[encyclopedia SUPLLY_TITLE]] is decreased by 2.
 
-This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit population growth, but provide a beneficial platform for research.'''
+This planet's orbit is very eccentric. It has a large distance between its closest and farthest approaches to its star. Total insolation varies significantly throughout the year. The varied conditions inhibit the supply the planet can provide, but are a beneficial platform for research.'''
+
+TIDAL_LOCK_SPECIAL
+Tidally Locked Rotation
+
+TIDAL_LOCK_SPECIAL_DESC
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on this planet by 0.2 per Population when Focus is set to [[encyclopedia INDUSTRY_TITLE]], but population is decreased: Tiny: -1, Small: -2, Medium: -3, Large: -4, Huge: -5.
+
+This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
 
 RESONANT_MOON_SPECIAL
 Resonant Moon
@@ -10465,6 +10473,9 @@ Gaia Bonus
 
 WORLDTREE_LABEL
 World Tree Bonus
+
+TIDAL_LOCK_LABEL
+Tidally Locked Rotation
 
 HOMEWORLD_LABEL
 Homeworld

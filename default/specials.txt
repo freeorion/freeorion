@@ -88,12 +88,32 @@ Special
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = Source
             effects = [
                 SetTargetResearch value = Value + 3
-                SetTargetPopulation value = Value - 3
+                SetMaxSupply value = Value -2
             ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
+
+Special
+    name = "TIDAL_LOCK_SPECIAL"
+    description = "TIDAL_LOCK_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Capital
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = EffectsGroup
+        scope = And [
+            Source
+            Focus type = "FOCUS_INDUSTRY"
+        ]
+        effects = [
+            SetTargetIndustry value = Value + Target.Population * 0.2
+        ]
+    graphic = "icons/specials_huge/tidal_lock.png"
 
 Special
     name = "ANCIENT_RUINS_SPECIAL"
