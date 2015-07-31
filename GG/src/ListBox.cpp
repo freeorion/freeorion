@@ -762,6 +762,21 @@ void ListBox::Render()
 
 void ListBox::SizeMove(const Pt& ul, const Pt& lr)
 {
+    // TODO: fix incomplete/wrong resizing of widths.  This current call to NormalizeRow appears to force the header 
+    // columns to fit the previous widths rather than adapting them all to the new width akin to what is done when the
+    // first rown is inserted with Insert().  The places where I believe this failure makes noticeable problems are
+    // with the multiplayer galaxy setup panel and with the SitRep panel.  In the former, a post-creation SizeMove
+    // making it more narrow was causing the dropdowns to get unneeded and blocking horizonal scrollbars.  Extra 
+    // debugging logging had shown that when the galaxy panel dropdowns (listbox's) were made more narrow, their
+    // column width was left unchanged, convincing ListBox that it now needed a horizontal scrollbar.  The workaround
+    // for that being put into place in this same commit is to have that panel simply be made the desired size to begin
+    // with rather than later being resized.  I believe the same failure leads to a different symptom with the 
+    // SitRepPanel.  There it has no horizontal scroll and instead uses wraparaound, but when resized the SitRep panel
+    // is forced delete and remake those (listbox) Rows whose wraparound status would be changed by the new width.  I
+    // believe this makes it's resizing behavior noticeably jerky-- the jerkiness had been far worse until recently
+    // because it was simply recreating all rows rather than only those really impacted by the change in width.
+    // My initial experiments to resolve this here have failed; hence this long comment.
+
     Wnd::SizeMove(ul, lr);
     if (!m_header_row->empty())
         NormalizeRow(m_header_row);
