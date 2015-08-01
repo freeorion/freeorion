@@ -611,6 +611,11 @@ namespace ValueRef {
         } else if (property_name == "CurrentTurn") {
             return CurrentTurn();
 
+        } else if (property_name == "Attack") {
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+                return fleet->Damage();
+            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+                return ship->TotalWeaponsDamage();
         }
 
         ErrorLogger() << "Variable<double>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
