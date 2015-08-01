@@ -3156,6 +3156,9 @@ This design is a duplicate of "%1%".
 ################
 SHIP_COUNT
 Ship Count
+
+MILITARY_STRENGTH_STAT
+Rough Estimate of Total Military Strength
     
 PP_OUTPUT
 Production Output
