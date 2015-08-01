@@ -1284,8 +1284,8 @@ void Universe::ApplyAppearanceEffects() {
     ScopedTimer timer("Universe::ApplyAppearanceEffects on all objects");
 
     // cache all activation and scoping condition results before applying
-    // Effects, since the application of these Effects may affect the
-    // activation and scoping evaluations
+    // Effects, since the application of Effects in general (even if not these
+    // particular Effects) may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
     ExecuteEffects(targets_causes, false, false, true);
@@ -1295,8 +1295,8 @@ void Universe::ApplyGenerateSitRepEffects() {
     ScopedTimer timer("Universe::ApplyGenerateSitRepEffects on all objects");
 
     // cache all activation and scoping condition results before applying
-    // Effects, since the application of these Effects may affect the
-    // activation and scoping evaluations
+    // Effects, since the application of Effects in general (even if not these
+    // particular Effects) may affect the activation and scoping evaluations
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
     ExecuteEffects(targets_causes, false, false, false, false, true);
