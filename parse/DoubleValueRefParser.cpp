@@ -71,17 +71,8 @@ namespace {
 
             initialize_bound_variable_parser<double>(bound_variable, bound_variable_name);
 
-            statistic_sub_value_ref
-                =   constant
-                |   free_variable
-                |   bound_variable
-                |   int_bound_variable_cast
-                |   double_var_complex()
-                |   int_complex_variable_cast
-            ;
-
             initialize_numeric_statistic_parser<double>(statistic, statistic_1, statistic_2,
-                                                        statistic_sub_value_ref);
+                                                        primary_expr);
 
             initialize_numeric_expression_parsers<double>(function_expr,
                                                           exponential_expr,
@@ -162,7 +153,6 @@ namespace {
         statistic_rule      statistic_1;
         statistic_rule      statistic_2;
         statistic_rule      statistic;
-        rule                statistic_sub_value_ref;
         rule                int_bound_variable_cast;
         rule                int_statistic_cast;
         rule                int_complex_variable_cast;
