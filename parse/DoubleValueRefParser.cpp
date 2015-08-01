@@ -47,6 +47,7 @@ namespace {
                 |   tok.NextTurnPopGrowth_
                 |   tok.Size_
                 |   tok.DistanceFromOriginalType_
+                |   tok.Attack_
                 ;
 
             free_variable_name
