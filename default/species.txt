@@ -3147,6 +3147,8 @@ EffectsGroup
             stackinggroup = "OUTPOST_TROOPS_STACK"
             accountinglabel = "OUTPOST_TROOP_LABEL"
             effects = SetMaxTroops value = Value * .5
+
+[[PROTECTION_FOCUS_TROOPS]]
 '''
 
 NO_GROUND_TROOPS
