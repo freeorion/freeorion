@@ -645,29 +645,55 @@ namespace {
 CUIDropDownList::CUIDropDownList(size_t num_shown_elements) :
     DropDownList(num_shown_elements, ClientUI::CtrlBorderColor()),
     m_render_drop_arrow(true),
-    m_mouse_here(false)
+    m_mouse_here(false),
+    m_num_border_vertices(0)
 {
     SetInteriorColor(ClientUI::CtrlColor());
     SetMinSize(GG::Pt(MinSize().x, CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT));
 }
 
+void CUIDropDownList::InitBuffer() {
+    m_buffer.clear();
+    GG::Pt sz = Size();
+    BufferStoreAngledCornerRectangleVertices(this->m_buffer, GG::Pt(GG::X0, GG::Y0), sz,
+                                             CUIDROPDOWNLIST_ANGLE_OFFSET, false, true, false);
+    m_num_border_vertices = m_buffer.size();
+}
+
 void CUIDropDownList::Render() {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt ul = UpperLeft();
     GG::Clr lb_color = LB()->Color();
     GG::Clr lb_interior_color = LB()->InteriorColor();
-    GG::Clr color_to_use = Disabled() ? DisabledColor(lb_color) : lb_color;
-    GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
+    GG::Clr border_color = Disabled() ? DisabledColor(lb_color) : lb_color;
+    GG::Clr interior_color = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
-    AngledCornerRectangle(ul, lr, int_color_to_use, GG::CLR_ZERO, CUIDROPDOWNLIST_ANGLE_OFFSET, 3, false);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-    LB()->SetColor(GG::CLR_ZERO);
-    LB()->SetInteriorColor(GG::CLR_ZERO);
-    DropDownList::Render();
-    LB()->SetInteriorColor(lb_interior_color);
-    LB()->SetColor(lb_color);
 
-    AngledCornerRectangle(ul, lr, GG::CLR_ZERO, color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
+    m_buffer.activate();
 
+    // interior
+    glColor(interior_color);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, m_num_border_vertices);
+    // border
+    glLineWidth(1.0f);
+    glColor(border_color);
+    glDrawArrays(GL_LINE_LOOP,      0, m_num_border_vertices);
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+
+    // Draw the ListBox::Row of currently displayed item, if any.
+    RenderDisplayedRow();
+
+
+    GG::Pt lr = LowerRight();
     int margin = 3;
     int triangle_width = Value(lr.y - ul.y - 4 * margin);
     int outline_width = triangle_width + 3 * margin;
@@ -681,7 +707,7 @@ void CUIDropDownList::Render() {
                           SHAPE_DOWN, triangle_color_to_use);
         AngledCornerRectangle(GG::Pt(lr.x - outline_width - margin, ul.y + margin),
                               GG::Pt(lr.x - margin, lr.y - margin),
-                              GG::CLR_ZERO, color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
+                              GG::CLR_ZERO, border_color, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
     }
 }
 
@@ -692,7 +718,8 @@ void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void CUIDropDownList::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+    if (!Disabled())
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
     m_mouse_here = true;
 }
 
@@ -1290,7 +1317,6 @@ void ColorSelector::InitBuffer() {
     m_border_buffer.store(Value(sz.x), 0.0f);
     m_border_buffer.store(Value(sz.x), Value(sz.y));
     m_border_buffer.store(0.0f,        Value(sz.y));
-    m_border_buffer.store(0.0f,        0.0f);
 }
 
 void ColorSelector::Render() {
@@ -1305,9 +1331,9 @@ void ColorSelector::Render() {
 
     m_border_buffer.activate();
     glColor(Color());
-    glDrawArrays(GL_TRIANGLE_FAN,   0, m_border_buffer.size() - 1);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, m_border_buffer.size());
     glColor(GG::CLR_WHITE);
-    glDrawArrays(GL_LINE_STRIP,     0, m_border_buffer.size());
+    glDrawArrays(GL_LINE_LOOP,      0, m_border_buffer.size());
 
     glEnable(GL_TEXTURE_2D);
     glPopMatrix();

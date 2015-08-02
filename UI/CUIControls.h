@@ -200,22 +200,25 @@ public:
 class CUIDropDownList : public GG::DropDownList {
 public:
     /** \name Structors */ //@{
-    CUIDropDownList(size_t num_shown_elements); ///< basic ctor
+    explicit CUIDropDownList(size_t num_shown_elements); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
-    virtual void Render();
-    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void MouseLeave();
+    virtual void    Render();
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseLeave();
 
-    void         DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
-    void         EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
+    void            DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
+    void            EnableDropArrow();   ///< enables rendering of the small downward-facing arrow on the right of the control
     //@}
 
 private:
-    bool m_render_drop_arrow;
-    bool m_mouse_here;
+    virtual void    InitBuffer();
+
+    bool    m_render_drop_arrow;
+    bool    m_mouse_here;
+    int     m_num_border_vertices;
 };
 
 /** a FreeOrion Edit control */
