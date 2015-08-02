@@ -50,6 +50,9 @@ bool InTriangle(const GG::Pt& pt, const GG::Pt& pt1, const GG::Pt pt2, const GG:
     of one of (<i>x2</i> - <i>x1</i>) and (<i>y2</i> - <i>y1</i>), depending on \a orientation, and a height of the other. */
 void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation, GG::Clr color, bool border = true);
 
+/** Stores, in \a buffer, vertices in CCW order that outline an isosceles triangle. */
+void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation);
+
 /** returns true iff \a pt falls within the isosceles triangle described by the other parameters */
 bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation);
 
@@ -57,8 +60,7 @@ bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, S
     or an unfilled portion when \a filled_shape is false. (glBegin(GL_LINE_STRIP); glVertex2f() ...; glEnd();). */
 void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape);
 
-/** Stores, in \a buffer verticies in CCW order that outline a circular arc
-  * or pie slice shape. */
+/** Stores, in \a buffer vertices in CCW order that outline a circular arc or pie slice shape. */
 void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
                                   double theta1, double theta2, bool filled_shape = false);
 

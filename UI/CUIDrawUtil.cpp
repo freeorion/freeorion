@@ -402,6 +402,14 @@ void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orie
     Triangle(x1_, y1_, x2_, y2_, x3_, y3_, color, border);
 }
 
+void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation) {
+    double x1_, y1_, x2_, y2_, x3_, y3_;
+    FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
+    buffer.store(x1_,   y1_);
+    buffer.store(x3_,   y2_);
+    buffer.store(x2_,   y3_);
+}
+
 bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation)
 {
     double x1_, y1_, x2_, y2_, x3_, y3_;
