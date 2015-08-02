@@ -324,15 +324,16 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, GG::
         buffer.store(Value(lr.x),                   Value(lr.y));
     }
 
-    buffer.store(Value(lr.x),                   Value(ul.y));
+    buffer.store(Value(lr.x),                       Value(ul.y));
 
     if (upper_left_angled) {
-        buffer.store(0.0);
+        buffer.store(Value(ul.x) + angle_offset,    Value(ul.y));
+        buffer.store(Value(ul.x),                   Value(ul.y) + angle_offset);
     } else {
         buffer.store(Value(ul.x),                   Value(ul.y));
     }
 
-    buffer.store(Value(ul.x),                   Value(lr.y));
+    buffer.store(Value(ul.x),                       Value(lr.y));
 }
 
 bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset, 
