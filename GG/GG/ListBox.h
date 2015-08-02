@@ -356,8 +356,8 @@ public:
     void            SetSelections(const SelectionSet& s,
                                   bool signal = false);     ///< sets the set of selected rows to \a s
 
-    iterator            begin();                            ///< returns an iterator to the first list row
-    iterator            end();                              ///< returns an iterator to the imaginary row one past the last one
+    iterator        begin();                                ///< returns an iterator to the first list row
+    iterator        end();                                  ///< returns an iterator to the imaginary row one past the last one
 
     Row&            GetRow(std::size_t n);                  ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 
