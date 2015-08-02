@@ -302,21 +302,27 @@ void DropDownList::Render()
     glDisableClientState(GL_VERTEX_ARRAY);
 
 
+    RenderDisplayedRow();
+}
+
+void DropDownList::RenderDisplayedRow()
+{
     // Draw the ListBox::Row of currently displayed item, if any.
-    if (CurrentItem() != LB()->end()) {
-        Row* current_item = *CurrentItem();
-        Pt offset = ClientUpperLeft() - current_item->UpperLeft();
-        bool visible = current_item->Visible();
-        current_item->OffsetMove(offset);
-        if (!visible)
-            current_item->Show();
-        BeginClipping();
-        GUI::GetGUI()->RenderWindow(current_item);
-        EndClipping();
-        current_item->OffsetMove(-offset);
-        if (!visible)
-            current_item->Hide();
-    }
+    if (CurrentItem() == LB()->end())
+        return;
+
+    Row* current_item = *CurrentItem();
+    Pt offset = ClientUpperLeft() - current_item->UpperLeft();
+    bool visible = current_item->Visible();
+    current_item->OffsetMove(offset);
+    if (!visible)
+        current_item->Show();
+    BeginClipping();
+    GUI::GetGUI()->RenderWindow(current_item);
+    EndClipping();
+    current_item->OffsetMove(-offset);
+    if (!visible)
+        current_item->Hide();
 }
 
 void DropDownList::SizeMove(const Pt& ul, const Pt& lr)

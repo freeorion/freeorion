@@ -183,6 +183,7 @@ protected:
     ListBox*        LB();                ///< returns the ListBox used to render the selected row and the popup list
 
     virtual void    InitBuffer();
+    virtual void    RenderDisplayedRow();
 
     GL2DVertexBuffer    m_buffer;
     //@}
