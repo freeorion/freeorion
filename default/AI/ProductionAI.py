@@ -14,9 +14,8 @@ import MilitaryAI
 import ShipDesignAI
 import time
 import cProfile, pstats, StringIO
-from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete
+from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error
 from TechsListsAI import EXOBOT_TECH_NAME
-from freeorion_tools import print_error
 
 best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 design_cost_cache = {0: {(-1, -1): 0}} #outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
@@ -876,9 +875,9 @@ def generateProductionOrders():
                     if sysID == -1:
                         continue
                     try:
-                        distanceMap[sysID] = universe.jumpDistance(homeworld.systemID, sysID, empire.empireID)
-                    except:
-                        pass
+                        distanceMap[sysID] = universe.jumpDistance(homeworld.systemID, sysID)
+                    except Exception as e:
+                        print_error(e, location="ProductionAI.generateProductionOrders")
                 print ([-1] + sorted( [ (dist, sysID) for sysID, dist in distanceMap.items() ] ))
                 useSys = ([(-1, -1)] + sorted( [ (dist, sysID) for sysID, dist in distanceMap.items() ] ))[:2][-1][-1]  # kinda messy, but ensures a value
             if useSys!= -1:
