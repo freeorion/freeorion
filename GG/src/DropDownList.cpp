@@ -503,6 +503,26 @@ void DropDownList::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKe
     }
 }
 
+void DropDownList::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
+{
+    if (!Disabled()) {
+        if (CurrentItem() == LB()->end())
+            return;
+
+        for (int i = 0; i < move; ++i) {
+            if (CurrentItem() != LB()->begin())
+                SelectImpl(boost::prior(CurrentItem()), true);
+        }
+
+        for (int i = 0; i < -move; ++i) {
+            if (CurrentItem() != --LB()->end())
+                SelectImpl(boost::next(CurrentItem()), true);
+        }
+    } else {
+        Control::MouseWheel(pt, move, mod_keys);
+    }
+}
+
 ListBox* DropDownList::LB()
 { return m_modal_picker->LB(); }
 

@@ -179,6 +179,7 @@ protected:
     /** \name Mutators */ ///@{
     virtual void    LClick(const Pt& pt, Flags<ModKey> mod_keys);
     virtual void    KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    virtual void    MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
 
     ListBox*        LB();                ///< returns the ListBox used to render the selected row and the popup list
 
