@@ -32,6 +32,7 @@
 #define _GG_DropDownList_h_
 
 #include <GG/ListBox.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 class ModalListPicker;
 
@@ -114,9 +115,7 @@ public:
 
     /** \name Mutators */ ///@{
     virtual void    Render();
-
     virtual void    SizeMove(const Pt& ul, const Pt& lr); ///< resizes the control, ensuring the proper height is maintained based on the list's row height
-
     virtual void    SetColor(Clr c);
 
     /** Insertion sorts \a row into a sorted list, or inserts into an unsorted
@@ -143,8 +142,8 @@ public:
     Row*            Erase(iterator it, bool signal = false); ///< removes and returns \a it from the list, or 0 if no such row exists
     void            Clear();                        ///< empties the list
 
-    iterator            begin();                    ///< returns an iterator to the first list row
-    iterator            end();                      ///< returns an iterator to the imaginary row one past the last one
+    iterator        begin();                    ///< returns an iterator to the first list row
+    iterator        end();                      ///< returns an iterator to the imaginary row one past the last one
 
     Row&            GetRow(std::size_t n);          ///< returns a reference to the Row at row index \a n; not range-checked.  \note This function is O(n).
 
@@ -182,6 +181,10 @@ protected:
     virtual void    KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
     ListBox*        LB();                ///< returns the ListBox used to render the selected row and the popup list
+
+    virtual void    InitBuffer();
+
+    GL2DVertexBuffer    m_buffer;
     //@}
 
 private:

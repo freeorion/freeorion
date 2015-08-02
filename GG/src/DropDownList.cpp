@@ -152,6 +152,8 @@ DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(SelChangedSignal, DropDownListSelChangedEcho(*this));
+
+    InitBuffer();
 }
 
 DropDownList::~DropDownList() {
@@ -159,6 +161,8 @@ DropDownList::~DropDownList() {
         m_modal_picker->EndRun();
     DetachChild(m_modal_picker);
     delete m_modal_picker;
+
+    m_buffer.clear();
 }
 
 DropDownList::iterator DropDownList::CurrentItem() const
@@ -229,14 +233,74 @@ Pt DropDownList::ClientUpperLeft() const
 Pt DropDownList::ClientLowerRight() const
 { return LowerRight() - Pt(X(BORDER_THICK), Y(BORDER_THICK)); }
 
+void DropDownList::InitBuffer()
+{
+    m_buffer.clear();
+
+    GG::Pt lr = Size();
+    GG::Pt inner_ul = GG::Pt(GG::X(BORDER_THICK), GG::Y(BORDER_THICK));
+    GG::Pt inner_lr = lr - inner_ul;
+
+    // outer border
+    m_buffer.store(0.0f,        0.0f);
+    m_buffer.store(Value(lr.x), 0.0f);
+    m_buffer.store(Value(lr.x), Value(lr.y));
+    m_buffer.store(0.0f,        Value(lr.y));
+
+    // inner bevel quad strip
+    m_buffer.store(Value(inner_lr.x),   Value(inner_ul.y));
+    m_buffer.store(Value(lr.x),         0.0f);
+    m_buffer.store(Value(inner_ul.x),   Value(inner_ul.y));
+    m_buffer.store(0.0f,                0.0f);
+    m_buffer.store(Value(inner_ul.x),   Value(inner_lr.y));
+    m_buffer.store(0.0f,                Value(lr.y));
+    m_buffer.store(Value(inner_lr.x),   Value(inner_lr.y));
+    m_buffer.store(Value(lr.x),         Value(lr.y));
+    m_buffer.store(Value(inner_lr.x),   Value(inner_ul.y));
+    m_buffer.store(Value(lr.x),         0.0f);
+}
+
 void DropDownList::Render()
 {
-    // draw beveled rectangle around client area
-    Pt ul = UpperLeft(), lr = LowerRight();
-    Clr color_to_use = Disabled() ? DisabledColor(LB()->Color()) : LB()->Color();
-    Clr int_color_to_use = Disabled() ? DisabledColor(LB()->m_int_color) : LB()->m_int_color;
+    // draw beveled-down rectangle around client area
+    Pt ul = UpperLeft();
 
-    BeveledRectangle(ul, lr, int_color_to_use, color_to_use, false, BORDER_THICK);
+    Clr border_color = Disabled() ? DisabledColor(LB()->Color()) : LB()->Color();
+    Clr border_color1 = DarkColor(border_color);
+    Clr border_color2 = LightColor(border_color);
+    Clr interior_color = Disabled() ? DisabledColor(LB()->m_int_color) : LB()->m_int_color;
+
+
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+    glDisable(GL_TEXTURE_2D);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+
+    m_buffer.activate();
+
+    // draw interior of rectangle
+    if (interior_color != CLR_ZERO) {
+        glColor(interior_color);
+        glDrawArrays(GL_TRIANGLE_FAN,   0, 4);
+    }
+
+    // draw beveled edges
+    if (BORDER_THICK && (border_color1 != CLR_ZERO || border_color2 != CLR_ZERO)) {
+        // top left shadowed bevel
+        glColor(border_color1);
+        glDrawArrays(GL_QUAD_STRIP,     4, 6);
+
+        // bottom right brightened bevel
+        glColor(border_color2);
+        glDrawArrays(GL_QUAD_STRIP,     8, 6);
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
+
 
     // Draw the ListBox::Row of currently displayed item, if any.
     if (CurrentItem() != LB()->end()) {
@@ -258,13 +322,17 @@ void DropDownList::Render()
 void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
 {
     // adjust size to keep correct height based on row height, etc.
+    GG::Pt sz = Size();
     Wnd::SizeMove(ul, lr);
     Pt drop_down_size(Width(), Height());
-    if(LB()->NumRows() > 0)
+    if (LB()->NumRows() > 0)
         // lets assume that all rows have the same height. Also add some
         // magic padding for now to prevent the scroll bars showing up.
         drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 5;
     LB()->SizeMove(Pt(X0, Height()), Pt(X0, Height()) + drop_down_size);
+
+    if (sz != Size())
+        InitBuffer();
 }
 
 void DropDownList::SetColor(Clr c)
