@@ -1557,22 +1557,10 @@ Species
 // BROAD_EP and NARROW_EP are stub placeholders for applying the
 // board/narrow environment tolerance description to a species.
 BROAD_EP
-'''
-        EffectsGroup
-            description = "BROAD_EP"
-            scope = Source
-            activation = None
-            effects = SetPlanetType type = Target.OriginalType
-'''
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(BROAD_EP)]]'''
 
 NARROW_EP
-'''
-        EffectsGroup
-            description = "NARROW_EP"
-            scope = Source
-            activation = None
-            effects = SetPlanetType type = Target.OriginalType
-'''
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NARROW_EP)]]'''
 
 SWAMP_STANDARD_EP
 '''environments = [
@@ -2229,11 +2217,7 @@ BASIC_POPULATION
 AVERAGE_POPULATION
 '''     [[BASIC_POPULATION]]
 
-        EffectsGroup
-            description = "AVERAGE_POPULATION"
-            scope = Source
-            activation = None
-            effects = SetTargetPopulation value = Value * 1.0
+        [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_POPULATION)]]
 '''
 
 BAD_POPULATION
@@ -2814,13 +2798,7 @@ ADVANCED_FOCUS_EFFECTS
 //#####      I N D U S T R Y    #####//
 
 NO_INDUSTRY
-'''
-    EffectsGroup
-        description = "NO_INDUSTRY"
-        scope = Source
-        activation = None
-        effects = SetTargetIndustry value = 0
-'''
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_INDUSTRY)]]'''
 
 BASIC_INDUSTRY
 '''        EffectsGroup
@@ -2862,11 +2840,7 @@ BAD_INDUSTRY
 AVERAGE_INDUSTRY
 '''[[BASIC_INDUSTRY]]
 
-        EffectsGroup
-            description = "AVERAGE_INDUSTRY"
-            scope = Source
-            activation = None
-            effects = SetTargetIndustry value = Value
+   [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_INDUSTRY)]]
 '''
 
 GOOD_INDUSTRY
@@ -2940,13 +2914,7 @@ BASIC_RESEARCH
 '''
 
 NO_RESEARCH
-'''
-        EffectsGroup
-            description = "NO_RESEARCH"
-            scope = Source
-            activation = None
-            effects = SetResearch value = 0
-'''
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_RESEARCH)]]'''
 
 BAD_RESEARCH
 '''[[BASIC_RESEARCH]]
@@ -2966,11 +2934,7 @@ BAD_RESEARCH
 AVERAGE_RESEARCH
 '''[[BASIC_RESEARCH]]
 
-        EffectsGroup
-            description = "AVERAGE_RESEARCH"
-            scope = Source
-            activation = None
-            effects = SetTargetResearch value = Value
+    [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_RESEARCH)]]
 '''
 
 GOOD_RESEARCH
@@ -3152,12 +3116,7 @@ EffectsGroup
 '''
 
 NO_GROUND_TROOPS
-'''
-    EffectsGroup
-        description = "NO_GROUND_TROOPS"
-        scope = Source
-        activation = None
-        effects = SetMaxTroops value = 0
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_GROUND_TROOPS)]]
 
 [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
@@ -3178,12 +3137,7 @@ EffectsGroup
 AVERAGE_GROUND_TROOPS
 '''[[BASIC_GROUND_TROOPS]]
 
-EffectsGroup
-            description = "AVERAGE_GROUND_TROOPS"
-            scope = Source
-            activation = Planet
-            accountinglabel = "AVERAGE_TROOPS_LABEL"
-            effects = SetMaxTroops value = Value
+    [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_GROUND_TROOPS)]]
 
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
@@ -3746,22 +3700,10 @@ NOT_HUGE_PLANET
 // FAST_COLONIZATION and SLOW_COLONIZATION are stubs for applying the
 // fast colonization building speed description to a species.
 FAST_COLONIZATION
-'''
-        EffectsGroup
-            description = "FAST_COLONIZATION"
-            scope = Source
-            activation = None
-            effects = SetSpeed value = Value * 0.75
-'''
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(FAST_COLONIZATION)]]'''
 
 SLOW_COLONIZATION
-'''
-        EffectsGroup
-            description = "SLOW_COLONIZATION"
-            scope = Source
-            activation = None
-            effects = SetSpeed value = Value * 1.2
-'''
+'''[[DESCRIPTION_EFFECTSGROUP_MACRO(SLOW_COLONIZATION)]]'''
 
 //#####      M U L T I P L I E R S     #####//
 
