@@ -273,10 +273,6 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     SettingsChangedSignal();
 }
 
-GalaxySetupPanel::GalaxySetupPanel() :
-    GalaxySetupPanel::GalaxySetupPanel(GalaxySetupPanel::DEFAULT_WIDTH, GAL_SETUP_PANEL_HT) {}
-
-
 namespace {
     // set of characters from which to generate random seed that excludes some ambiguous letter/number pairs
     static char alphanum[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";

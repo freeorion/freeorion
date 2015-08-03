@@ -18,8 +18,7 @@ public:
     static const GG::X DEFAULT_WIDTH;
 
     /** \name Structors*/ //!@{
-    GalaxySetupPanel(GG::X w, GG::Y h);
-    GalaxySetupPanel();
+    GalaxySetupPanel(GG::X w = GG::X(305), GG::Y h = GG::Y(330));
     //!@}
 
     /** \name Accessors*/ //!@{
