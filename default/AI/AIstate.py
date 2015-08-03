@@ -10,11 +10,10 @@ import ExplorationAI
 import FleetUtilsAI
 import ProductionAI
 import ResourcesAI
-from EnumsAI import AIFleetMissionType, AIExplorableSystemType
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType, TargetType
 import MilitaryAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map, get_ai_tag_grade
-from universe_object import System
 
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -600,7 +599,8 @@ class AIstate(object):
         """Returns all AIFleetMissions which contains any of fleetMissionTypes."""
         result = []
         for mission in self.get_all_fleet_missions():
-            if mission.type in mission_types:
+            these_types = mission.get_mission_types()
+            if any(wanted_mission_type in these_types for wanted_mission_type in mission_types):
                 result.append(mission)
         return result
 
@@ -628,8 +628,8 @@ class AIstate(object):
 
         deleted_fleet_ids = []
         for mission in self.get_all_fleet_missions():
-            if mission.fleet.id not in fleet_ids:
-                deleted_fleet_ids.append(mission.fleet.id)
+            if mission.target_id not in fleet_ids:
+                deleted_fleet_ids.append(mission.target_id)
         for deleted_fleet_id in deleted_fleet_ids:
             self.__remove_fleet_mission(deleted_fleet_id)
 
@@ -905,6 +905,7 @@ class AIstate(object):
             if role in [AIFleetMissionType.FLEET_MISSION_COLONISATION,  
                         AIFleetMissionType.FLEET_MISSION_OUTPOST,
                         AIFleetMissionType.FLEET_MISSION_ORBITAL_INVASION,
+                        AIFleetMissionType.FLEET_MISSION_ORBITAL_COLONISATION,
                         AIFleetMissionType.FLEET_MISSION_ORBITAL_OUTPOST
                         ]:
                 pass
@@ -962,7 +963,7 @@ class AIstate(object):
         invasion_missions = self.get_fleet_missions_with_any_mission_types([EnumsAI.AIFleetMissionType.FLEET_MISSION_INVASION])
         for mission in invasion_missions:
             mission.clear_fleet_orders()
-            mission.clear_target()
+            mission.clear_targets(([-1] + mission.get_mission_types()[:1])[-1])
 
     def __clean_fleet_roles(self, just_resumed=False):
         """Removes fleetRoles if a fleet has been lost, and update fleet Ratings."""
@@ -1050,9 +1051,9 @@ class AIstate(object):
                     if main_mission_type != -1:
                         targets = main_missin.getAITargets(main_mission_type)
                         if targets:
-                            mMT0=targets[0]
-                            if isinstance(mMT0.target_type, System):
-                                status['sysID'] = mMT0.target.id  # hmm, but might still be a fair ways from here
+                            mMT0 = targets[0]
+                            if mMT0.target_type == TargetType.TARGET_SYSTEM:
+                                status['sysID'] = mMT0.target_id  # hmm, but might still be a fair ways from here
         self.shipCount = ship_count
         std_fighter = sorted([(v, k) for k, v in fighters.items()])[-1][1]  # selects k with highest count (from fighters[k])
         self.empire_standard_fighter = std_fighter

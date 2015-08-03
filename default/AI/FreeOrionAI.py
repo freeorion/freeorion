@@ -94,31 +94,14 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     print "Resuming loaded game"
     try:
         # loading saved state
-        # pre load code
-        import imp
-        import sys
-
-        ai_target_name = 'AITarget'
-        ai_target = imp.new_module(ai_target_name)
-        sys.modules[ai_target_name] = ai_target
-
-        class AITarget(object):
-            pass
-        ai_target.AITarget = AITarget
-
-        ai_order_name = 'AIFleetOrder'
-        ai_order = imp.new_module(ai_order_name)
-        sys.modules[ai_order_name] = ai_order
-
-        class AIFleetOrder(object):
-            pass
-        ai_order.AIFleetOrder = AIFleetOrder
         foAIstate = pickle.loads(saved_state_string)
-    except Exception as e:
+        foAIstate.session_start_cleanup()
+    except:
+        print "failed to parse saved state string"
         # assigning new state
         foAIstate = AIstate.AIstate(aggression=fo.aggression.aggressive)
         foAIstate.session_start_cleanup()
-        print_error("Fail to load aiState form saved game: e")
+        print_error("Fail to load aiState form saved game")
 
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}

@@ -1,8 +1,8 @@
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client # pylint: disable=import-error
 import FreeOrionAI as foAI
 import FleetUtilsAI
-from EnumsAI import AIFleetMissionType
-import universe_object
+from EnumsAI import AIFleetMissionType, TargetType
+import AITarget
 import MoveUtilsAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map
@@ -23,16 +23,16 @@ def get_current_exploration_info(verbose=True):
     already_covered = set()
     for fleet_id in fleet_ids:
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
-        if not fleet_mission.type:
+        if len(fleet_mission.get_mission_types()) == 0:
             available_scouts.append(fleet_id)
         else:
-            if fleet_mission.type == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
-                already_covered.add(fleet_mission.target)
-                if verbose:
-                    if not fleet_mission.target:
-                        print "problem determining existing exploration target systems"
-                    else:
-                        print "found existing exploration target: %s" % fleet_mission.target
+            targets = [targ.target_id for targ in fleet_mission.get_targets(AIFleetMissionType.FLEET_MISSION_EXPLORATION)]
+            if verbose:
+                if len(targets) == 0:
+                    print "problem determining existing exploration target systems from targets:\n%s" % (fleet_mission.get_targets(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
+                else:
+                    print "found existing exploration targets: %s" % targets
+            already_covered.update(targets)
     return list(already_covered), available_scouts
 
 
@@ -92,7 +92,7 @@ def assign_scouts_to_explore_systems():
             break  # must have ran out of scouts
         fleet_id = this_fleet_list[0]
         fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
-        target = universe_object.System(this_sys_id)
+        target = AITarget.AITarget(TargetType.TARGET_SYSTEM, this_sys_id)
         if len(MoveUtilsAI.can_travel_to_system_and_return_to_resupply(fleet_id, fleet_mission.get_location_target(), target)) > 0:
             fleet_mission.add_target(AIFleetMissionType.FLEET_MISSION_EXPLORATION, target)
             sent_list.append(this_sys_id)
