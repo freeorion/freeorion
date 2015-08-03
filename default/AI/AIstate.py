@@ -627,9 +627,23 @@ class AIstate(object):
                 self.__add_fleet_mission(fleet_id)
 
         deleted_fleet_ids = []
+        fleet_ids_with_wrong_mission_version = []
         for mission in self.get_all_fleet_missions():
+            if not hasattr(mission, "target_id"):
+                if hasattr(mission, "fleet") and mission.fleet is not None:
+                    fleet_ids_with_wrong_mission_version.append(mission.fleet.id)
+                else:
+                    for fid2, mission2 in self.__aiMissionsByFleetID.iteritems():
+                        if mission2 is mission:
+                            fleet_ids_with_wrong_mission_version.append(fid2)
+                            break
+                continue
             if mission.target_id not in fleet_ids:
                 deleted_fleet_ids.append(mission.target_id)
+        for fleet_id in fleet_ids_with_wrong_mission_version:
+            self.__remove_fleet_mission(fleet_id)
+        self.ensure_have_fleet_missions(fleet_ids_with_wrong_mission_version)
+
         for deleted_fleet_id in deleted_fleet_ids:
             self.__remove_fleet_mission(deleted_fleet_id)
 
