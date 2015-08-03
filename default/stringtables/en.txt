@@ -4856,7 +4856,7 @@ Opinions of Other Species:
 SP_HUMAN
 Human
 SP_HUMAN_GAMEPLAY_DESC
-'''Relentless, tribal pursuit predators (average stats for testing purposes).
+'''Relentless, tribal pursuit predators.
 Prefer Terran planets.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
