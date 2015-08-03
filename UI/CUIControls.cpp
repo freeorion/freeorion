@@ -696,30 +696,12 @@ void CUIDropDownList::Render() {
     glColor(border_color);
     glDrawArrays(GL_LINE_LOOP,      0, 5);
 
-    glEnable(GL_TEXTURE_2D);
-    glPopMatrix();
-    glDisableClientState(GL_VERTEX_ARRAY);
-
-
-    // Draw the ListBox::Row of currently displayed item, if any.
-    RenderDisplayedRow();
-
-
     if (m_render_drop_arrow) {
         GG::Clr triangle_fill_color = ClientUI::DropDownListArrowColor();
         if (m_mouse_here && !Disabled())
             AdjustBrightness(triangle_fill_color, ARROW_BRIGHTENING_SCALE_FACTOR);
         GG::Clr triangle_border_color = triangle_fill_color;
         AdjustBrightness(triangle_border_color, 75);
-
-        glPushMatrix();
-        glLoadIdentity();
-        glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
-        glDisable(GL_TEXTURE_2D);
-        glEnableClientState(GL_VERTEX_ARRAY);
-
-        m_buffer.activate();
-
 
         // triangle interior
         glColor(triangle_fill_color);
@@ -731,12 +713,15 @@ void CUIDropDownList::Render() {
         // button border around triangle
         glColor(border_color);
         glDrawArrays(GL_LINE_LOOP,      8, 5);
-
-
-        glEnable(GL_TEXTURE_2D);
-        glPopMatrix();
-        glDisableClientState(GL_VERTEX_ARRAY);
     }
+
+    glEnable(GL_TEXTURE_2D);
+    glPopMatrix();
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    // Draw the ListBox::Row of currently displayed item, if any.
+    RenderDisplayedRow();
+
 }
 
 void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
