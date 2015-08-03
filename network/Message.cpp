@@ -762,9 +762,9 @@ void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  "
-                               << "Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -781,9 +781,9 @@ void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& "
-                               << "lobby_data) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "lobby_data) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -870,13 +870,13 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
-                               << "int& current_turn, EmpireManager& empires, Universe& universe, "
-                               << "std::map<int, PlayerInfo>& players, OrderSet& orders, "
-                               << "bool& loaded_game_data, bool& ui_data_available, "
-                               << "SaveGameUIData& ui_data, bool& save_state_string_available, "
-                               << "std::string& save_state_string) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "int& current_turn, EmpireManager& empires, Universe& universe, "
+                      << "std::map<int, PlayerInfo>& players, OrderSet& orders, "
+                      << "bool& loaded_game_data, bool& ui_data_available, "
+                      << "SaveGameUIData& ui_data, bool& save_state_string_available, "
+                      << "std::string& save_state_string) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -896,9 +896,9 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& player_name, "
-                               << "Networking::ClientType client_type) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "Networking::ClientType client_type) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -915,9 +915,9 @@ void ExtractMessageData(const Message& msg, OrderSet& orders) {
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  "
-                               << "Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -951,10 +951,10 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, int& "
-                               << "current_turn, EmpireManager& empires, Universe& universe, "
-                               << "std::map<int, PlayerInfo>& players) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "current_turn, EmpireManager& empires, Universe& universe, "
+                      << "std::map<int, PlayerInfo>& players) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -974,9 +974,9 @@ void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, "
-                               << "Universe& universe) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "Universe& universe) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1022,11 +1022,11 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, OrderSet& orders, "
-                               << "bool& ui_data_available, SaveGameUIData& ui_data, "
-                               << "bool& save_state_string_available, std::string& save_state_string) "
-                               << "failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "bool& ui_data_available, SaveGameUIData& ui_data, "
+                      << "bool& save_state_string_available, std::string& save_state_string) "
+                      << "failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1043,9 +1043,9 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
-                               << "phase_id) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "phase_id) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1064,9 +1064,9 @@ void ExtractMessageData(const Message& msg, int& about_player_id, Message::Playe
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, int& about_player_id "
-                               << "Message::PlayerStatus&) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "Message::PlayerStatus&) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1083,9 +1083,9 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data) {
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& "
-                               << "setup_data) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "setup_data) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1106,9 +1106,9 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, "
-                               << "std::string& reason_player_name) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "std::string& reason_player_name) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1125,9 +1125,9 @@ void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_act
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
-                               << "failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
     }
 }
 
@@ -1145,9 +1145,9 @@ void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
-                               << "empire_name) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "empire_name) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1164,9 +1164,9 @@ void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticMessage& "
-                               << "diplo_message) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "diplo_message) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1187,9 +1187,9 @@ void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_up
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticStatusUpdate& "
-                               << "diplo_update) failed!  Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "diplo_update) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
@@ -1212,17 +1212,16 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
         }
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
-                               << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
-                               << "Message:\n"
-                               << msg.Text() << "\n"
-                               << "Error: " << err.what();
+                      << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
+                      << "Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, std::string& directory) {
-    directory = msg.Text();
-}
+void ExtractMessageData(const Message& msg, std::string& directory)
+{ directory = msg.Text(); }
 
 void ExtractMessageData(const Message& msg, PreviewInformation& previews) {
     try{
@@ -1234,12 +1233,11 @@ void ExtractMessageData(const Message& msg, PreviewInformation& previews) {
             freeorion_xml_iarchive ia(is);
             ia >> BOOST_SERIALIZATION_NVP(previews);
         }
-    }catch(const std::exception& err){
+    } catch(const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, PreviewInformation& previews"
-        << ") failed!  "
-        << "Message:\n"
-        << msg.Text() << "\n"
-        << "Error: " << err.what();
+                      << ") failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
         throw err;
     }
 }

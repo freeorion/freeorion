@@ -258,7 +258,7 @@ void ClientNetworking::SendMessage(Message message) {
     }
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendMessage() : "
-                               << "sending message " << message;
+                      << "sending message " << message;
     m_io_service.post(boost::bind(&ClientNetworking::SendMessageImpl, this, message));
 }
 
@@ -270,7 +270,7 @@ void ClientNetworking::GetMessage(Message& message) {
     m_incoming_messages.PopFront(message);
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::GetMessage() : received message "
-                               << message;
+                      << message;
 }
 
 void ClientNetworking::SendSynchronousMessage(Message message, Message& response_message) {

@@ -721,7 +721,6 @@ void CUIDropDownList::Render() {
 
     // Draw the ListBox::Row of currently displayed item, if any.
     RenderDisplayedRow();
-
 }
 
 void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {

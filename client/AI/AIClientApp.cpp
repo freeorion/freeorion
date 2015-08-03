@@ -108,7 +108,7 @@ void AIClientApp::Run() {
 void AIClientApp::HandleMessage(const Message& msg) {
     //DebugLogger() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
-    case Message::ERROR_MSG : {
+    case Message::ERROR_MSG: {
         ErrorLogger() << "AIClientApp::HandleMessage : Received ERROR message from server: " << msg.Text();
         break;
     }

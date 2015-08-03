@@ -184,8 +184,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         if (use_binary) {
-            freeorion_bin_iarchive ia ( ifs );
-            //freeorion_iarchive ia(ifs);
+            freeorion_bin_iarchive ia(ifs);
             DebugLogger() << "LoadGame : Passing Preview Data";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
 
@@ -208,7 +207,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             DebugLogger() << "LoadGame : Reading Universe Data";
             Deserialize(ia, universe);
         } else {
-            freeorion_xml_iarchive ia ( ifs );
+            freeorion_xml_iarchive ia(ifs);
             DebugLogger() << "LoadGame : Passing Preview Data";
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
 
@@ -237,7 +236,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             throw e;
         } else {
             LoadGame(filename, server_save_game_data, player_save_game_data, universe, empire_manager,
-                    species_manager, combat_log_manager, galaxy_setup_data, true);
+                     species_manager, combat_log_manager, galaxy_setup_data, true);
             DebugLogger() << "LoadGame: alternate serialization used to load game file " << filename;
         }
     }
@@ -249,14 +248,13 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
               Universe& universe, EmpireManager& empire_manager,
               SpeciesManager& species_manager, CombatLogManager& combat_log_manager,
               GalaxySetupData& galaxy_setup_data)
-    {
-        LoadGame(filename, server_save_game_data, player_save_game_data, universe, empire_manager,
-                species_manager, combat_log_manager, galaxy_setup_data, false);
-    }
+{
+    LoadGame(filename, server_save_game_data, player_save_game_data, universe, empire_manager,
+             species_manager, combat_log_manager, galaxy_setup_data, false);
+}
 
 
 void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data, bool alternate_serialization) {
-    
     SaveGamePreviewData ignored_save_preview_data;
 
     try {
@@ -267,12 +265,11 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         bool use_binary = GetOptionsDB().Get<bool>("binary-serialization") ^ alternate_serialization;
         if (use_binary) {
-            freeorion_bin_iarchive ia ( ifs );
-            //freeorion_iarchive ia(ifs);
+            freeorion_bin_iarchive ia(ifs);
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         } else {
-            freeorion_xml_iarchive ia ( ifs );
+            freeorion_xml_iarchive ia(ifs);
             ia >> BOOST_SERIALIZATION_NVP(ignored_save_preview_data);
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
         }
@@ -288,10 +285,12 @@ void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_se
     }
 }
 
-void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data) 
-    { LoadGalaxySetupData(filename, galaxy_setup_data, false); } 
+void LoadGalaxySetupData(const std::string& filename, GalaxySetupData& galaxy_setup_data)
+{ LoadGalaxySetupData(filename, galaxy_setup_data, false); }
 
-void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data, bool alternate_serialization) {
+void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data,
+                            bool alternate_serialization)
+{
     SaveGamePreviewData ignored_save_preview_data;
     ServerSaveGameData  ignored_server_save_game_data;
     GalaxySetupData     ignored_galaxy_setup_data;
@@ -330,7 +329,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 }
 
 void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data)
-    { LoadPlayerSaveGameData(filename, player_save_game_data, false); }
+{ LoadPlayerSaveGameData(filename, player_save_game_data, false); }
 
 
 void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data, bool alternate_serialization) {
@@ -376,4 +375,4 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
 }
 
 void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data)
-    { LoadEmpireSaveGameData(filename, empire_save_game_data, false); }
+{ LoadEmpireSaveGameData(filename, empire_save_game_data, false); }

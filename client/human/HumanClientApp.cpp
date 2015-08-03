@@ -676,7 +676,6 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     }
 }
 
-
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     int left(0), top(0);
 
