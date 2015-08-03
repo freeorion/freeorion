@@ -27,7 +27,7 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
 
 /** Stores, in \a buffer verticies in CCW order that outline a rectangle
   * with upper left and lower right corners are angled. */
-void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, GG::Pt& ul, const GG::Pt& lr,
+void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
                                               int angle_offset, bool upper_left_angled = true,
                                               bool lower_right_angled = true, bool connect_bottom_line = true);
 

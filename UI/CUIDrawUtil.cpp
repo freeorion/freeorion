@@ -309,7 +309,7 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
     glEnable(GL_TEXTURE_2D);
 }
 
-void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, GG::Pt& ul, const GG::Pt& lr,
+void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
                                               int angle_offset, bool upper_left_angled,
                                               bool lower_right_angled, bool connect_bottom_line)
 {
