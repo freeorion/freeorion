@@ -4856,7 +4856,7 @@ Opinions des autres Espèces :
 SP_HUMAN
 Humain
 SP_HUMAN_GAMEPLAY_DESC
-'''Opiniâtres et prédateurs (toutes caractéristiques normales afin de permettre les tests).
+'''Opiniâtres et prédateurs.
 Préfèrent les Planètes de type terrestre.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -8338,7 +8338,7 @@ Camouflage de Phase
 SPY_STEALTH_4_DESC
 '''Débloque l'équipement [[shippart ST_CLOAK_4]] pour les astronefs et confère la Particularité [[special VOID_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 80 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent. 
 
-Même les astronefs les plus furtifs émettent un rayonnement composé de particules quantiques. En modulant le front d'onde de ces particules, il est possible de le synchroniser avec le rayonnement environnant, neutralisant ainsi les dispositifs de détection les plus avancés.'''
+Même les astronefs les plus furtifs émettent un rayonnement composé de particules quantiques. En modulant le front d'onde de ces particules, il est possible de le synchroniser avec le rayonnement ambiant, neutralisant ainsi les dispositifs de détection les plus avancés.'''
 
 SPY_CUSTOM_ADVISORIES
 Renseignement Impérial
@@ -8451,7 +8451,7 @@ SPY_DIST_MOD
 Modulateur de Distortion
 
 SPY_DIST_MOD_DESC
-Tout objet possédant une masse crée une courbure de l'espace-temps en raison des effets gravitationnels. D'autres forces telles que la force électromagnétique, induisent des effets géométriques similaires. En amplifiant d'une manière distincte ces effets dans une région donnée, la distorsion de l'espace-temps causée par des astronefs peut être facilement distinguée et différenciée du champ gravitationnel et du rayonnement électromagnétique environnant.
+Tout objet possédant une masse crée une courbure de l'espace-temps en raison des effets gravitationnels. D'autres forces telles que la force électromagnétique, induisent des effets géométriques similaires. En amplifiant d'une manière distincte ces effets dans une région donnée, la distorsion de l'espace-temps causée par des astronefs peut être facilement distinguée et différenciée du champ gravitationnel et du rayonnement électromagnétique ambiant.
 
 SHP_ANTIMAT_TORP
 Torpille Anti-Matière
@@ -9547,7 +9547,7 @@ Camouflage de Phase
 ST_CLOAK_4_DESC
 '''Camouflage Très Puissant (+80)
 
-Augmente de 80 la [[encyclopedia STEALTH_TITLE]] d'un astronef en modulant la fréquence des émissions électromagnétiques émises par l'astronef, afin que celles-ci soit synchrones avec le rayonnement environnant. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.'''
+Augmente de 80 la [[encyclopedia STEALTH_TITLE]] d'un astronef en modulant la fréquence des émissions électromagnétiques émises par l'astronef, afin que celles-ci soit synchrones avec le rayonnement ambiant. Les bonus de Furtivité des équipements d'astronef ne s'additionnent pas.'''
 
 AR_STD_PLATE
 Blindage Standard
