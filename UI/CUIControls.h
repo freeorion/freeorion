@@ -218,7 +218,6 @@ private:
 
     bool    m_render_drop_arrow;
     bool    m_mouse_here;
-    int     m_num_border_vertices;
 };
 
 /** a FreeOrion Edit control */

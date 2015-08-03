@@ -645,8 +645,7 @@ namespace {
 CUIDropDownList::CUIDropDownList(size_t num_shown_elements) :
     DropDownList(num_shown_elements, ClientUI::CtrlBorderColor()),
     m_render_drop_arrow(true),
-    m_mouse_here(false),
-    m_num_border_vertices(0)
+    m_mouse_here(false)
 {
     SetInteriorColor(ClientUI::CtrlColor());
     SetMinSize(GG::Pt(MinSize().x, CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT));
@@ -657,7 +656,20 @@ void CUIDropDownList::InitBuffer() {
     GG::Pt sz = Size();
     BufferStoreAngledCornerRectangleVertices(this->m_buffer, GG::Pt(GG::X0, GG::Y0), sz,
                                              CUIDROPDOWNLIST_ANGLE_OFFSET, false, true, false);
-    m_num_border_vertices = m_buffer.size();
+
+    int margin = 3;
+    int triangle_width = Value(sz.y - 4 * margin);
+    int outline_width = triangle_width + 3 * margin;
+
+    GG::Pt triangle_ul = GG::Pt(sz.x - triangle_width - margin * 5 / 2, GG::Y(2 * margin));
+    GG::Pt triangle_lr = GG::Pt(sz.x - margin * 5 / 2, sz.y - 2 * margin);
+    BufferStoreIsoscelesTriangle(this->m_buffer, triangle_ul, triangle_lr, SHAPE_DOWN);
+
+    GG::Pt btn_ul = GG::Pt(sz.x - outline_width - margin, GG::Y(margin));
+    GG::Pt btn_lr = GG::Pt(sz.x - margin, sz.y - margin);
+
+    BufferStoreAngledCornerRectangleVertices(this->m_buffer, btn_ul, btn_lr,
+                                             CUIDROPDOWNLIST_ANGLE_OFFSET, false, true, false);
 }
 
 void CUIDropDownList::Render() {
@@ -678,11 +690,11 @@ void CUIDropDownList::Render() {
 
     // interior
     glColor(interior_color);
-    glDrawArrays(GL_TRIANGLE_FAN,   0, m_num_border_vertices);
+    glDrawArrays(GL_TRIANGLE_FAN,   0, 5);
     // border
     glLineWidth(1.0f);
     glColor(border_color);
-    glDrawArrays(GL_LINE_LOOP,      0, m_num_border_vertices);
+    glDrawArrays(GL_LINE_LOOP,      0, 5);
 
     glEnable(GL_TEXTURE_2D);
     glPopMatrix();
@@ -693,21 +705,37 @@ void CUIDropDownList::Render() {
     RenderDisplayedRow();
 
 
-    GG::Pt lr = LowerRight();
-    int margin = 3;
-    int triangle_width = Value(lr.y - ul.y - 4 * margin);
-    int outline_width = triangle_width + 3 * margin;
-
     if (m_render_drop_arrow) {
-        GG::Clr triangle_color_to_use = ClientUI::DropDownListArrowColor();
+        GG::Clr triangle_fill_color = ClientUI::DropDownListArrowColor();
         if (m_mouse_here && !Disabled())
-            AdjustBrightness(triangle_color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
-        IsoscelesTriangle(GG::Pt(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin),
-                          GG::Pt(lr.x - margin * 5 / 2, lr.y - 2 * margin), 
-                          SHAPE_DOWN, triangle_color_to_use);
-        AngledCornerRectangle(GG::Pt(lr.x - outline_width - margin, ul.y + margin),
-                              GG::Pt(lr.x - margin, lr.y - margin),
-                              GG::CLR_ZERO, border_color, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
+            AdjustBrightness(triangle_fill_color, ARROW_BRIGHTENING_SCALE_FACTOR);
+        GG::Clr triangle_border_color = triangle_fill_color;
+        AdjustBrightness(triangle_border_color, 75);
+
+        glPushMatrix();
+        glLoadIdentity();
+        glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
+        glDisable(GL_TEXTURE_2D);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        m_buffer.activate();
+
+
+        // triangle interior
+        glColor(triangle_fill_color);
+        glDrawArrays(GL_TRIANGLE_FAN,   5, 3);
+        // triangle border
+        glColor(triangle_border_color);
+        glDrawArrays(GL_LINE_LOOP,      5, 3);
+
+        // button border around triangle
+        glColor(border_color);
+        glDrawArrays(GL_LINE_LOOP,      8, 5);
+
+
+        glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+        glDisableClientState(GL_VERTEX_ARRAY);
     }
 }
 
