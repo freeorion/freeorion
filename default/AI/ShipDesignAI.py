@@ -534,6 +534,9 @@ class ShipDesignCache(object):
         for pid in inhabited_planets:
             local_testhulls = [hull for hull in self.testhulls
                                if hull in self.hulls_for_planets[pid][:number_of_testhulls]]
+            this_planet = universe.getPlanet(pid)
+            if verbose:
+                print "Testhulls for %s are %s" % (this_planet, local_testhulls)
             self.parts_for_planets[pid] = {}
             local_ignore = set()
             local_cache = self.parts_for_planets[pid]
@@ -560,7 +563,7 @@ class ShipDesignCache(object):
                 local_cache[slot] = tuple(local_cache[slot])
 
             if verbose:
-                print "%s: " % universe.getPlanet(pid).name, self.parts_for_planets[pid]
+                print "Parts for Planet: %s: " % universe.getPlanet(pid).name, self.parts_for_planets[pid]
 
 
 Cache = ShipDesignCache()
@@ -925,7 +928,7 @@ class ShipDesigner(object):
 
         if reference_name in Cache.map_reference_design_name:
             if verbose:
-                print "Design already exists"
+                print "Design with reference name %s already exists, cache entry %s" % (reference_name, Cache.map_reference_design_name[reference_name])
             try:
                 return _get_design_by_name(Cache.map_reference_design_name[reference_name]).id
             except AttributeError:
@@ -1063,8 +1066,10 @@ class ShipDesigner(object):
             if best_hull:
                 self.update_hull(best_hull)
                 self.update_parts(best_parts)
-                design_id = self.add_design()
-                if design_id:
+                design_id = self.add_design(verbose=verbose)
+                if verbose:
+                    print "For best design got got design id %s" % design_id
+                if design_id is not None:
                     best_design_list.append((best_rating_for_planet, pid, design_id, self.production_cost))
                 else:
                     print_error("The best design for %s on planet %d could not be added."
@@ -1832,7 +1837,7 @@ class KrillSpawnerShipDesigner(ShipDesigner):
         return ret_val
 
 
-def _get_design_by_name(design_name):
+def _get_design_by_name(design_name, verbose=False):
     """Return the shipDesign object of the design with the name design_name.
 
     Results are cached for performance improvements. The cache is to be
@@ -1848,6 +1853,8 @@ def _get_design_by_name(design_name):
     else:
         design = None
         for ID in fo.getEmpire().allShipDesigns:
+            if verbose:
+                print "Checking design %s in search for %s" % (fo.getShipDesign(ID).name(False), design_name)
             if fo.getShipDesign(ID).name(False) == design_name:
                 design = fo.getShipDesign(ID)
                 break
