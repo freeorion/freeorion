@@ -6629,7 +6629,9 @@ namespace {
         const float MAX_LANE_DOT_PRODUCT = 0.98f;   // magic limit copied from CullAngularlyTooCloseLanes in UniverseGenerator
 
         float dp = (dx1 * dx2) + (dy1 * dy2);
-        return dp < MAX_LANE_DOT_PRODUCT;   // if dot product too high after normalizing vectors, angles are adequately separated
+        //std::cout << "systems: " << sys1->UniverseObject::Name() << "  " << lane1_sys2->UniverseObject::Name() << "  " << lane2_sys2->UniverseObject::Name() << "  dp: " << dp << std::endl;
+
+        return dp >= MAX_LANE_DOT_PRODUCT;   // if dot product too high after normalizing vectors, angles are adequately separated
     }
 
     // check the distance between a system and a (possibly nonexistant)
@@ -6709,11 +6711,11 @@ namespace {
     {
         // are all endpoints valid systems?
         if (!lane1_end_sys1 || !lane1_end_sys2 || !lane2_end_sys1 || !lane2_end_sys2)
-            return true;
+            return false;
 
         // is either lane degenerate (same start and endpoints)
         if (lane1_end_sys1 == lane1_end_sys2 || lane2_end_sys1 == lane2_end_sys2)
-            return true;
+            return false;
 
         // do the two lanes share endpoints?
         bool share_endpoint_1 = lane1_end_sys1 == lane2_end_sys1 || lane1_end_sys1 == lane2_end_sys2;
@@ -6737,7 +6739,7 @@ namespace {
         float v_11_21_y = lane2_end_sys1->Y() - lane1_end_sys1->Y();
         // lane 1 endpoint 1 to lane 2 endpoint 2
         float v_11_22_x = lane2_end_sys2->X() - lane1_end_sys1->X();
-        float v_11_22_y = lane2_end_sys2->Y() - lane2_end_sys2->Y();
+        float v_11_22_y = lane2_end_sys2->Y() - lane1_end_sys1->Y();
 
         // find cross products of vectors to check on which sides of lane 1 the
         // endpoints of lane 2 are located...
@@ -6799,8 +6801,11 @@ namespace {
                 if (lane_end_sys3 == lane_end_sys1 || lane_end_sys3 == lane_end_sys2)
                     continue;
 
-                if (LanesCross(lane_end_sys1, lane_end_sys2, system, lane_end_sys3))
+                if (LanesCross(lane_end_sys1, lane_end_sys2, system, lane_end_sys3)) {
+                    //std::cout << "... ... ... lane from: " << lane_end_sys1->UniverseObject::Name() << " to: " << lane_end_sys2->UniverseObject::Name()
+                    //          << " crosses lane from: " << system->UniverseObject::Name() << " to: " << lane_end_sys3->UniverseObject::Name() << std::endl;
                     return true;
+                }
             }
         }
 
@@ -6883,6 +6888,7 @@ namespace {
 
             // check if any of the proposed lanes are too close to any already-
             // present lanes of the candidate system
+            //std::cout << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
             for (std::map<int, bool>::const_iterator it = candidate_already_existing_lanes.begin();
                  it != candidate_already_existing_lanes.end(); ++it)
             {
@@ -6896,14 +6902,17 @@ namespace {
                 {
                     TemporaryPtr<const System> dest_sys = *dest_it;
 
-                    if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys))
+                    if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys)) {
+                        //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << std::endl;
                         return false;
+                    }
                 }
             }
 
 
             // check if any of the proposed lanes are too close to any already-
             // present lanes of any of the destination systems
+            //std::cout << "... Checking lanes of destination systems:" << std::endl;
             for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
                  dest_it != m_destination_systems.end(); ++dest_it)
             {
@@ -6920,13 +6929,16 @@ namespace {
                     if (!dest_lane_end_sys)
                         continue;
 
-                    if (LanesAngularlyTooClose(dest_sys, candidate_sys, dest_lane_end_sys))
+                    if (LanesAngularlyTooClose(dest_sys, candidate_sys, dest_lane_end_sys)) {
+                        //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane from dest to " << dest_lane_end_sys->UniverseObject::Name() << std::endl;
                         return false;
+                    }
                 }
             }
 
 
             // check if any of the proposed lanes are too close to eachother
+            //std::cout << "... Checking proposed lanes against eachother" << std::endl;
             for (std::vector<TemporaryPtr<const System> >::const_iterator it1 = m_destination_systems.begin();
                  it1 != m_destination_systems.end(); ++it1)
             {
@@ -6936,28 +6948,36 @@ namespace {
                 std::vector<TemporaryPtr<const System> >::const_iterator it2 = it1; it2++;
                 for (; it2 != m_destination_systems.end(); ++it2) {
                     TemporaryPtr<const System> dest_sys2 = *it2;
-                    if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2))
+                    if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {
+                        //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << std::endl;
                         return false;
+                    }
                 }
             }
 
 
             // check that the proposed lanes are not too close to any existing
             // system they are not connected to
+            //std::cout << "... Checking proposed lanes for proximity to other systems" <<std::endl;
             for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
                  dest_it != m_destination_systems.end(); ++dest_it)
             {
-                if (LaneTooCloseToOtherSystem(candidate_sys, *dest_it))
+                if (LaneTooCloseToOtherSystem(candidate_sys, *dest_it)) {
+                    //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << (*dest_it)->UniverseObject::Name() << " due to proximity to another system." << std::endl;
                     return false;
+                }
             }
 
 
             // check that there are no lanes already existing that cross the proposed lanes
+            //std::cout << "... Checking for potential lanes crossing existing lanes" << std::endl;
             for (std::vector<TemporaryPtr<const System> >::const_iterator dest_it = m_destination_systems.begin();
                  dest_it != m_destination_systems.end(); ++dest_it)
             {
-                if (LaneCrossesExistingLane(candidate_sys, *dest_it))
+                if (LaneCrossesExistingLane(candidate_sys, *dest_it)) {
+                    //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << (*dest_it)->UniverseObject::Name() << " due to crossing an existing lane." << std::endl;
                     return false;
+                }
             }
 
             return true;
