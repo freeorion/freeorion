@@ -186,6 +186,7 @@ MonsterFleet
         Contains And [
             Planet
             Unowned
+            Not Species
             Not Planet type = [Asteroids GasGiant]
         ]
         Not Contains Or [
