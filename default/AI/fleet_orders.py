@@ -117,7 +117,7 @@ class OrderMove(AIFleetOrder):
         universe = fo.getUniverse()
         if fleet_rating >= safety_factor * threat:
             return True
-        elif not p_threat and system_id in fo.getEmpire().supplyUnobstructedSystems:
+        elif not p_threat and self.target.id in fo.getEmpire().supplyUnobstructedSystems:
                     return True
         else:
             sys1 = universe.getSystem(system_id)
@@ -146,8 +146,8 @@ class OrderMove(AIFleetOrder):
                 if verbose:
                     print "\tHolding fleet %d (rating %d) at system %d (%s) before travelling to system %d (%s) with threat %d" % (self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, targ1_name, threat)
                 needs_vis = foAI.foAIstate.misc.setdefault('needs_vis', [])
-                if system_id not in needs_vis:
-                    needs_vis.append(system_id)
+                if self.target.id not in needs_vis:
+                    needs_vis.append(self.target.id)
                 return False
         return True
 
