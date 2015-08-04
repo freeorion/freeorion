@@ -138,10 +138,10 @@ FieldType
                 Star type = NoStar
             ]
             effects = [
-                SetStarType type = Blue
+                SetStarType type = OneOf(White, Yellow, Orange, Red)
                 GenerateSitRepMessage
                     message = "EFFECT_NEBULA"
-                    icon = "stars/blue01.png"
+                    icon = "nebulae/nebula12.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
                         ]
@@ -155,7 +155,7 @@ FieldType
             activation = Size high = 5
             effects = Destroy
     ]
-    graphic = "nebulae/nebula9.png"
+    graphic = "nebulae/nebula12.png"
     
 FieldType
     name = "FLD_NEBULA_2"
@@ -190,10 +190,10 @@ FieldType
                 Star type = NoStar
             ]
             effects = [
-                SetStarType type = White
+                SetStarType type = OneOf(Blue, Blue, White, Yellow)
                 GenerateSitRepMessage
                     message = "EFFECT_NEBULA"
-                    icon = "stars/white01.png"
+                    icon = "nebulae/nebula15.png"
                     parameters = [
                         tag = "system" data = Source.SystemID
                         ]
