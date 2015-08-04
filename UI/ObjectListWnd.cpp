@@ -1219,10 +1219,10 @@ public:
         SetChildClippingMode(ClipToClient);
         TemporaryPtr<const ResourceCenter> rcobj = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (rcobj)
-            GG::Connect(rcobj->ResourceCenterChangedSignal, &ObjectPanel::RCChanged, this);
+            GG::Connect(rcobj->ResourceCenterChangedSignal, &ObjectPanel::ResourceCenterChanged, this);
     }
 
-    void RCChanged() {
+    void                ResourceCenterChanged() {
         RefreshCache();
         Refresh();
     }
