@@ -58,7 +58,7 @@ class AIFleetOrder(object):
             return False
 
         if verbose:
-            sys1 = self.fleet.get_object()
+            sys1 = self.fleet.get_system()
             sys_name = sys1 and sys1.name or "unknown"
             main_fleet_mission = foAI.foAIstate.get_fleet_mission(self.fleet.id)
             print "** %s -- Mission Type %s (%s) , current loc sys %d - %s" % (
