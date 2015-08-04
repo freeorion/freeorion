@@ -445,7 +445,8 @@ class FO_COMMON_API Effect::CreatePlanet : public Effect::EffectBase {
 public:
     CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
                  ValueRef::ValueRefBase<PlanetSize>* size,
-                 ValueRef::ValueRefBase<std::string>* name = 0);
+                 ValueRef::ValueRefBase<std::string>* name = 0,
+                 std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     virtual ~CreatePlanet();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -458,6 +459,7 @@ private:
     ValueRef::ValueRefBase<PlanetType>*     m_type;
     ValueRef::ValueRefBase<PlanetSize>*     m_size;
     ValueRef::ValueRefBase<std::string>*    m_name;
+    std::vector<Effect::EffectBase*>        m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1115,7 +1117,8 @@ void Effect::CreatePlanet::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_size)
-        & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_effects_to_apply_after);
 }
 
 template <class Archive>

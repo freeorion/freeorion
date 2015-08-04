@@ -39,7 +39,13 @@ namespace {
                         >   parse::label(Type_token)        >   planet_type_value_ref [ _a = _1 ]
                         >   parse::label(PlanetSize_token)  >   planet_size_value_ref [ _b = _1 ]
                         > -(parse::label(Name_token)        >   string_value_ref      [ _c = _1 ])
-                    ) [ _val = new_<Effect::CreatePlanet>(_a, _b, _c) ]
+                        > -(parse::label(Effects_token)
+                        >   (
+                                '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
+                            |   parse::effect_parser() [ push_back(_d, _1) ]
+                            )
+                           )
+                    ) [ _val = new_<Effect::CreatePlanet>(_a, _b, _c, _d) ]
                 ;
 
             create_building
@@ -140,7 +146,8 @@ namespace {
             qi::locals<
                 ValueRef::ValueRefBase< ::PlanetType>*,
                 ValueRef::ValueRefBase< ::PlanetSize>*,
-                ValueRef::ValueRefBase<std::string>*
+                ValueRef::ValueRefBase<std::string>*,
+                std::vector<Effect::EffectBase*>
             >,
             parse::skipper_type
         > create_planet_rule;
@@ -152,7 +159,8 @@ namespace {
                 ValueRef::ValueRefBase< ::StarType>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<std::string>*
+                ValueRef::ValueRefBase<std::string>*,
+                std::vector<Effect::EffectBase*>
             >,
             parse::skipper_type
         > create_system_rule;

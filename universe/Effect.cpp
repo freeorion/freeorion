@@ -1270,16 +1270,22 @@ void SetSpeciesSpeciesOpinion::SetTopLevelContent(const std::string& content_nam
 ///////////////////////////////////////////////////////////
 CreatePlanet::CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
                            ValueRef::ValueRefBase<PlanetSize>* size,
-                           ValueRef::ValueRefBase<std::string>* name) :
+                           ValueRef::ValueRefBase<std::string>* name,
+                           std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_type(type),
     m_size(size),
-    m_name(name)
+    m_name(name),
+    m_effects_to_apply_after(effects_to_apply_after)
 {}
 
 CreatePlanet::~CreatePlanet() {
     delete m_type;
     delete m_size;
     delete m_name;
+    for (std::vector<Effect::EffectBase*>::iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    { delete *it; }
+    m_effects_to_apply_after.clear();
 }
 
 void CreatePlanet::Execute(const ScriptingContext& context) const {
@@ -1331,6 +1337,18 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         name_str = str(FlexibleFormat(UserString("NEW_PLANET_NAME")) % system->Name());
     }
     planet->Rename(name_str);
+
+    // apply after-creation effects
+    ScriptingContext local_context = context;
+    local_context.effect_target = planet;
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->Execute(local_context);
+    }
 }
 
 std::string CreatePlanet::Description() const {
