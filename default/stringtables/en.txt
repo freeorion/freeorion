@@ -10349,22 +10349,22 @@ ULTIMATE_DEFENSE_TROOPS
 +++	Ultimate Defensive Ground [[encyclopedia TROOP_TITLE]]: 300%.
 
 NO_OFFENSE_TROOPS
-−−−	No Offenive Ground [[encyclopedia TROOP_TITLE]]
+−−−	No Offensive Ground [[encyclopedia TROOP_TITLE]]
 
 BAD_OFFENSE_TROOPS
-−	Bad Offenive Ground [[encyclopedia TROOP_TITLE]]: -50%
+−	Bad Offensive Ground [[encyclopedia TROOP_TITLE]]: -50%
 
 AVERAGE_OFFENSE_TROOPS
-'''	Average Offenive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
+'''	Average Offensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
 
 GOOD_OFFENSE_TROOPS
-+	Good Offenive Ground [[encyclopedia TROOP_TITLE]]: 150%.
++	Good Offensive Ground [[encyclopedia TROOP_TITLE]]: 150%.
 
 GREAT_OFFENSE_TROOPS
-++	Great Offenive Ground [[encyclopedia TROOP_TITLE]]: 200%.
+++	Great Offensive Ground [[encyclopedia TROOP_TITLE]]: 200%.
 
 ULTIMATE_OFFENSE_TROOPS
-+++	Ultimate Offenive Ground [[encyclopedia TROOP_TITLE]]: 300%.
++++	Ultimate Offensive Ground [[encyclopedia TROOP_TITLE]]: 300%.
 
 BAD_DETECTION
 −	Bad [[encyclopedia DETECTION_RANGE_TITLE]]: −20 malus.
