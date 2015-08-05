@@ -1460,6 +1460,18 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
             name_str = UserString(name_str);
         building->Rename(name_str);
     }
+
+    // apply after-creation effects
+    ScriptingContext local_context = context;
+    local_context.effect_target = building;
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->Execute(local_context);
+    }
 }
 
 std::string CreateBuilding::Description() const {
@@ -1632,6 +1644,18 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
 
     CreateNewFleet(system, ship);
+
+    // apply after-creation effects
+    ScriptingContext local_context = context;
+    local_context.effect_target = ship;
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->Execute(local_context);
+    }
 }
 
 std::string CreateShip::Description() const {
@@ -1816,6 +1840,18 @@ void CreateField::Execute(const ScriptingContext& context) const {
         name_str = UserString(field_type->Name());
     }
     field->Rename(name_str);
+
+    // apply after-creation effects
+    ScriptingContext local_context = context;
+    local_context.effect_target = field;
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->Execute(local_context);
+    }
 }
 
 std::string CreateField::Description() const {
@@ -1951,6 +1987,18 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
+    }
+
+    // apply after-creation effects
+    ScriptingContext local_context = context;
+    local_context.effect_target = system;
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->Execute(local_context);
     }
 }
 
