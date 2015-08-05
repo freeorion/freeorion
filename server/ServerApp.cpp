@@ -2908,6 +2908,9 @@ void ServerApp::PostCombatProcessTurns() {
         DebugLogger() << objects.Dump();
     }
 
+    // execute turn events implemented as Python scripts
+    ExecuteScriptedTurnEvents();
+
     // Execute meter-related effects on objects created this turn, so that new
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
@@ -2934,10 +2937,6 @@ void ServerApp::PostCombatProcessTurns() {
     // store initial values of meters for this turn.
     m_universe.BackPropegateObjectMeters();
     empires.BackPropegateMeters();
-
-
-    // execute turn events implemented as Python scripts
-    ExecuteScriptedTurnEvents();
 
 
     // check for loss of empire capitals
