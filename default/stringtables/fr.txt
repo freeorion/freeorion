@@ -3157,11 +3157,14 @@ Ce modèle est une réplique de "%1%".
 SHIP_COUNT
 Nombre d'astronefs
     
+MILITARY_STRENGTH_STAT
+Estimation puissance militaire totale
+
 PP_OUTPUT
-Production disponible
+Rendement Production
 
 RP_OUTPUT
-Recherche disponible
+Rendement Recherche
 
 PLANET_COUNT
 Planètes
