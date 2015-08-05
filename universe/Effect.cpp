@@ -1271,7 +1271,7 @@ void SetSpeciesSpeciesOpinion::SetTopLevelContent(const std::string& content_nam
 CreatePlanet::CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
                            ValueRef::ValueRefBase<PlanetSize>* size,
                            ValueRef::ValueRefBase<std::string>* name,
-                           std::vector<Effect::EffectBase*>& effects_to_apply_after) :
+                           const std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_type(type),
     m_size(size),
     m_name(name),

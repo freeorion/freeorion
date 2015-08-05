@@ -446,7 +446,7 @@ public:
     CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
                  ValueRef::ValueRefBase<PlanetSize>* size,
                  ValueRef::ValueRefBase<std::string>* name = 0,
-                 std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
+                 const std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     virtual ~CreatePlanet();
 
     virtual void        Execute(const ScriptingContext& context) const;
