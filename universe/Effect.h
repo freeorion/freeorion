@@ -470,7 +470,8 @@ private:
 class FO_COMMON_API Effect::CreateBuilding : public Effect::EffectBase {
 public:
     explicit CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
-                            ValueRef::ValueRefBase<std::string>* name = 0);
+                            ValueRef::ValueRefBase<std::string>* name = 0,
+                            const std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     virtual ~CreateBuilding();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -482,6 +483,7 @@ public:
 private:
     ValueRef::ValueRefBase<std::string>*    m_building_type_name;
     ValueRef::ValueRefBase<std::string>*    m_name;
+    std::vector<Effect::EffectBase*>        m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -496,11 +498,13 @@ public:
     explicit CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
                         ValueRef::ValueRefBase<int>* empire_id = 0,
                         ValueRef::ValueRefBase<std::string>* species_name = 0,
-                        ValueRef::ValueRefBase<std::string>* ship_name = 0);
+                        ValueRef::ValueRefBase<std::string>* ship_name = 0,
+                        const std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     explicit CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
                         ValueRef::ValueRefBase<int>* empire_id = 0,
                         ValueRef::ValueRefBase<std::string>* species_name = 0,
-                        ValueRef::ValueRefBase<std::string>* ship_name = 0);
+                        ValueRef::ValueRefBase<std::string>* ship_name = 0,
+                        const std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     virtual ~CreateShip();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -515,6 +519,7 @@ private:
     ValueRef::ValueRefBase<int>*            m_empire_id;
     ValueRef::ValueRefBase<std::string>*    m_species_name;
     ValueRef::ValueRefBase<std::string>*    m_name;
+    std::vector<Effect::EffectBase*>        m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -527,12 +532,14 @@ class FO_COMMON_API Effect::CreateField : public Effect::EffectBase {
 public:
     explicit CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                          ValueRef::ValueRefBase<double>* size = 0,
-                         ValueRef::ValueRefBase<std::string>* name = 0);
+                         ValueRef::ValueRefBase<std::string>* name = 0,
+                         const std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                 ValueRef::ValueRefBase<double>* x,
                 ValueRef::ValueRefBase<double>* y,
                 ValueRef::ValueRefBase<double>* size = 0,
-                ValueRef::ValueRefBase<std::string>* name = 0);
+                ValueRef::ValueRefBase<std::string>* name = 0,
+                const std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     virtual ~CreateField();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -547,6 +554,7 @@ private:
     ValueRef::ValueRefBase<double>*         m_y;
     ValueRef::ValueRefBase<double>*         m_size;
     ValueRef::ValueRefBase<std::string>*    m_name;
+    std::vector<Effect::EffectBase*>        m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -560,10 +568,12 @@ public:
     CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
                  ValueRef::ValueRefBase<double>* x,
                  ValueRef::ValueRefBase<double>* y,
-                 ValueRef::ValueRefBase<std::string>* name = 0);
+                 ValueRef::ValueRefBase<std::string>* name = 0,
+                 const std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     CreateSystem(ValueRef::ValueRefBase<double>* x,
                  ValueRef::ValueRefBase<double>* y,
-                 ValueRef::ValueRefBase<std::string>* name = 0);
+                 ValueRef::ValueRefBase<std::string>* name = 0,
+                 const std::vector<Effect::EffectBase*>& effects_to_apply_after = std::vector<Effect::EffectBase*>());
     virtual ~CreateSystem();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -577,6 +587,7 @@ private:
     ValueRef::ValueRefBase<double>*         m_x;
     ValueRef::ValueRefBase<double>*         m_y;
     ValueRef::ValueRefBase<std::string>*    m_name;
+    std::vector<Effect::EffectBase*>        m_effects_to_apply_after;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1126,7 +1137,8 @@ void Effect::CreateBuilding::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_building_type_name)
-        & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_effects_to_apply_after);
 }
 
 template <class Archive>
@@ -1137,7 +1149,8 @@ void Effect::CreateShip::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_design_id)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_species_name)
-        & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_effects_to_apply_after);
 }
 
 template <class Archive>
@@ -1148,7 +1161,8 @@ void Effect::CreateField::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
         & BOOST_SERIALIZATION_NVP(m_size)
-        & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_effects_to_apply_after);
 }
 
 template <class Archive>
@@ -1158,7 +1172,8 @@ void Effect::CreateSystem::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
-        & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_effects_to_apply_after);
 }
 
 template <class Archive>

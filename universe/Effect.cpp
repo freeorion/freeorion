@@ -1382,6 +1382,14 @@ void CreatePlanet::SetTopLevelContent(const std::string& content_name) {
         m_size->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->SetTopLevelContent(content_name);
+    }
 }
 
 
@@ -1389,14 +1397,20 @@ void CreatePlanet::SetTopLevelContent(const std::string& content_name) {
 // CreateBuilding                                        //
 ///////////////////////////////////////////////////////////
 CreateBuilding::CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
-                               ValueRef::ValueRefBase<std::string>* name) :
+                               ValueRef::ValueRefBase<std::string>* name,
+                               const std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_building_type_name(building_type_name),
-    m_name(name)
+    m_name(name),
+    m_effects_to_apply_after(effects_to_apply_after)
 {}
 
 CreateBuilding::~CreateBuilding() {
     delete m_building_type_name;
     delete m_name;
+    for (std::vector<Effect::EffectBase*>::iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    { delete *it; }
+    m_effects_to_apply_after.clear();
 }
 
 void CreateBuilding::Execute(const ScriptingContext& context) const {
@@ -1471,6 +1485,14 @@ void CreateBuilding::SetTopLevelContent(const std::string& content_name) {
         m_building_type_name->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->SetTopLevelContent(content_name);
+    }
 }
 
 
@@ -1480,23 +1502,27 @@ void CreateBuilding::SetTopLevelContent(const std::string& content_name) {
 CreateShip::CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
                        ValueRef::ValueRefBase<int>* empire_id,
                        ValueRef::ValueRefBase<std::string>* species_name,
-                       ValueRef::ValueRefBase<std::string>* ship_name) :
+                       ValueRef::ValueRefBase<std::string>* ship_name,
+                       const std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_design_name(predefined_ship_design_name),
     m_design_id(0),
     m_empire_id(empire_id),
     m_species_name(species_name),
-    m_name(ship_name)
+    m_name(ship_name),
+    m_effects_to_apply_after(effects_to_apply_after)
 {}
 
 CreateShip::CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
                        ValueRef::ValueRefBase<int>* empire_id,
                        ValueRef::ValueRefBase<std::string>* species_name,
-                       ValueRef::ValueRefBase<std::string>* ship_name) :
+                       ValueRef::ValueRefBase<std::string>* ship_name,
+                       const std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_design_name(0),
     m_design_id(ship_design_id),
     m_empire_id(empire_id),
     m_species_name(species_name),
-    m_name(ship_name)
+    m_name(ship_name),
+    m_effects_to_apply_after(effects_to_apply_after)
 {}
 
 CreateShip::~CreateShip() {
@@ -1505,6 +1531,10 @@ CreateShip::~CreateShip() {
     delete m_empire_id;
     delete m_species_name;
     delete m_name;
+    for (std::vector<Effect::EffectBase*>::iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    { delete *it; }
+    m_effects_to_apply_after.clear();
 }
 
 void CreateShip::Execute(const ScriptingContext& context) const {
@@ -1674,6 +1704,14 @@ void CreateShip::SetTopLevelContent(const std::string& content_name) {
         m_species_name->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->SetTopLevelContent(content_name);
+    }
 }
 
 
@@ -1682,24 +1720,28 @@ void CreateShip::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                          ValueRef::ValueRefBase<double>* size,
-                         ValueRef::ValueRefBase<std::string>* name) :
+                         ValueRef::ValueRefBase<std::string>* name,
+                         const std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_field_type_name(field_type_name),
     m_x(0),
     m_y(0),
     m_size(size),
-    m_name(name)
+    m_name(name),
+    m_effects_to_apply_after(effects_to_apply_after)
 {}
 
 CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                          ValueRef::ValueRefBase<double>* x,
                          ValueRef::ValueRefBase<double>* y,
                          ValueRef::ValueRefBase<double>* size,
-                         ValueRef::ValueRefBase<std::string>* name) :
+                         ValueRef::ValueRefBase<std::string>* name,
+                         const std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_field_type_name(field_type_name),
     m_x(x),
     m_y(y),
     m_size(size),
-    m_name(name)
+    m_name(name),
+    m_effects_to_apply_after(effects_to_apply_after)
 {}
 
 CreateField::~CreateField() {
@@ -1708,6 +1750,10 @@ CreateField::~CreateField() {
     delete m_y;
     delete m_size;
     delete m_name;
+    for (std::vector<Effect::EffectBase*>::iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    { delete *it; }
+    m_effects_to_apply_after.clear();
 }
 
 void CreateField::Execute(const ScriptingContext& context) const {
@@ -1825,6 +1871,14 @@ void CreateField::SetTopLevelContent(const std::string& content_name) {
         m_size->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->SetTopLevelContent(content_name);
+    }
 }
 
 
@@ -1834,20 +1888,24 @@ void CreateField::SetTopLevelContent(const std::string& content_name) {
 CreateSystem::CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
                            ValueRef::ValueRefBase<double>* x,
                            ValueRef::ValueRefBase<double>* y,
-                           ValueRef::ValueRefBase<std::string>* name) :
+                           ValueRef::ValueRefBase<std::string>* name,
+                           const std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_type(type),
     m_x(x),
     m_y(y),
-    m_name(name)
+    m_name(name),
+    m_effects_to_apply_after(effects_to_apply_after)
 {}
 
 CreateSystem::CreateSystem(ValueRef::ValueRefBase<double>* x,
                            ValueRef::ValueRefBase<double>* y,
-                           ValueRef::ValueRefBase<std::string>* name) :
+                           ValueRef::ValueRefBase<std::string>* name,
+                           const std::vector<Effect::EffectBase*>& effects_to_apply_after) :
     m_type(0),
     m_x(x),
     m_y(y),
-    m_name(name)
+    m_name(name),
+    m_effects_to_apply_after(effects_to_apply_after)
 {}
 
 CreateSystem::~CreateSystem() {
@@ -1855,6 +1913,10 @@ CreateSystem::~CreateSystem() {
     delete m_x;
     delete m_y;
     delete m_name;
+    for (std::vector<Effect::EffectBase*>::iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    { delete *it; }
+    m_effects_to_apply_after.clear();
 }
 
 void CreateSystem::Execute(const ScriptingContext& context) const {
@@ -1930,6 +1992,14 @@ void CreateSystem::SetTopLevelContent(const std::string& content_name) {
         m_type->SetTopLevelContent(content_name);
     if (m_name)
         m_name->SetTopLevelContent(content_name);
+    for (std::vector<Effect::EffectBase*>::const_iterator it = m_effects_to_apply_after.begin();
+         it != m_effects_to_apply_after.end(); ++it)
+    {
+        Effect::EffectBase* effect = *it;
+        if (!effect)
+            continue;
+        effect->SetTopLevelContent(content_name);
+    }
 }
 
 

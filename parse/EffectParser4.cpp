@@ -19,6 +19,7 @@ namespace {
             qi::_c_type _c;
             qi::_d_type _d;
             qi::_e_type _e;
+            qi::_f_type _f;
             qi::_val_type _val;
             qi::eps_type eps;
             using phoenix::new_;
@@ -51,17 +52,29 @@ namespace {
             create_building
                 =   (       tok.CreateBuilding_
                         >   parse::label(Type_token)        >   string_value_ref [ _a = _1 ]
-                        > -(parse::label(Name_token)        >   string_value_ref [ _d = _1 ])
-                    ) [ _val = new_<Effect::CreateBuilding>(_a, _d) ]
+                        > -(parse::label(Name_token)        >   string_value_ref [ _b = _1 ])
+                        > -(parse::label(Effects_token)
+                        >   (
+                                '[' > +parse::effect_parser() [ push_back(_c, _1) ] > ']'
+                            |   parse::effect_parser() [ push_back(_c, _1) ]
+                            )
+                           )
+                    ) [ _val = new_<Effect::CreateBuilding>(_a, _b, _c) ]
                 ;
 
             create_ship_1
                 =   (       tok.CreateShip_
                         >>  parse::label(DesignID_token)    >   int_value_ref    [ _b = _1 ]
                         > -(parse::label(Empire_token)      >   int_value_ref    [ _c = _1 ])
-                        > -(parse::label(Species_token)     >   string_value_ref [ _a = _1 ])
-                        > -(parse::label(Name_token)        >   string_value_ref [ _d = _1 ])
-                    ) [ _val = new_<Effect::CreateShip>(_b, _c, _a, _d) ]
+                        > -(parse::label(Species_token)     >   string_value_ref [ _d = _1 ])
+                        > -(parse::label(Name_token)        >   string_value_ref [ _e = _1 ])
+                        > -(parse::label(Effects_token)
+                        >   (
+                                '[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']'
+                            |   parse::effect_parser() [ push_back(_f, _1) ]
+                            )
+                           )
+                    ) [ _val = new_<Effect::CreateShip>(_b, _c, _d, _e, _f) ]
                 ;
 
             create_ship_2
@@ -70,7 +83,13 @@ namespace {
                         > -(parse::label(Empire_token)      >   int_value_ref    [ _c = _1 ])
                         > -(parse::label(Species_token)     >   string_value_ref [ _d = _1 ])
                         > -(parse::label(Name_token)        >   string_value_ref [ _e = _1 ])
-                    ) [ _val = new_<Effect::CreateShip>(_a, _c, _d, _e) ]
+                        > -(parse::label(Effects_token)
+                        >   (
+                                '[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']'
+                            |   parse::effect_parser() [ push_back(_f, _1) ]
+                            )
+                           )
+                    ) [ _val = new_<Effect::CreateShip>(_a, _c, _d, _e, _f) ]
                 ;
 
             create_field_1
@@ -78,7 +97,13 @@ namespace {
                         >>  parse::label(Type_token)    >>  string_value_ref [ _a = _1 ]
                         >>  parse::label(Size_token)    >   double_value_ref [ _b = _1 ]
                         > -(parse::label(Name_token)    >   string_value_ref [ _d = _1 ])
-                    ) [ _val = new_<Effect::CreateField>(_a, _b, _d) ]
+                        > -(parse::label(Effects_token)
+                        >   (
+                                '[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']'
+                            |   parse::effect_parser() [ push_back(_f, _1) ]
+                            )
+                           )
+                    ) [ _val = new_<Effect::CreateField>(_a, _b, _d, _f) ]
                 ;
 
             create_field_2
@@ -88,7 +113,13 @@ namespace {
                         >   parse::label(Y_token)       >   double_value_ref [ _c = _1 ]
                         >   parse::label(Size_token)    >   double_value_ref [ _e = _1 ]
                         > -(parse::label(Name_token)    >   string_value_ref [ _d = _1 ])
-                    ) [ _val = new_<Effect::CreateField>(_a, _b, _c, _e, _d) ]
+                        > -(parse::label(Effects_token)
+                        >   (
+                                '[' > +parse::effect_parser() [ push_back(_f, _1) ] > ']'
+                            |   parse::effect_parser() [ push_back(_f, _1) ]
+                            )
+                           )
+                    ) [ _val = new_<Effect::CreateField>(_a, _b, _c, _e, _d, _f) ]
                 ;
 
             create_system_1
@@ -97,7 +128,13 @@ namespace {
                         >   parse::label(X_token)       >   double_value_ref    [ _b = _1 ]
                         >   parse::label(Y_token)       >   double_value_ref    [ _c = _1 ]
                         > -(parse::label(Name_token)    >   string_value_ref    [ _d = _1 ])
-                    ) [ _val = new_<Effect::CreateSystem>(_a, _b, _c, _d) ]
+                        > -(parse::label(Effects_token)
+                        >   (
+                                '[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']'
+                            |   parse::effect_parser() [ push_back(_e, _1) ]
+                            )
+                           )
+                    ) [ _val = new_<Effect::CreateSystem>(_a, _b, _c, _d, _e) ]
                 ;
 
             create_system_2
@@ -105,7 +142,13 @@ namespace {
                         >>  parse::label(X_token)       >   double_value_ref [ _b = _1 ]
                         >   parse::label(Y_token)       >   double_value_ref [ _c = _1 ]
                         > -(parse::label(Name_token)    >   string_value_ref [ _d = _1 ])
-                    ) [ _val = new_<Effect::CreateSystem>(_b, _c, _d) ]
+                        > -(parse::label(Effects_token)
+                        >   (
+                                '[' > +parse::effect_parser() [ push_back(_e, _1) ] > ']'
+                            |   parse::effect_parser() [ push_back(_e, _1) ]
+                            )
+                           )
+                    ) [ _val = new_<Effect::CreateSystem>(_b, _c, _d, _e) ]
                 ;
 
             start
@@ -156,6 +199,17 @@ namespace {
             parse::token_iterator,
             Effect::EffectBase* (),
             qi::locals<
+                ValueRef::ValueRefBase<std::string>*,
+                ValueRef::ValueRefBase<std::string>*,
+                std::vector<Effect::EffectBase*>
+            >,
+            parse::skipper_type
+        > create_building_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            Effect::EffectBase* (),
+            qi::locals<
                 ValueRef::ValueRefBase< ::StarType>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
@@ -173,10 +227,11 @@ namespace {
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<std::string>*
+                ValueRef::ValueRefBase<std::string>*,
+                std::vector<Effect::EffectBase*>
             >,
             parse::skipper_type
-        > stringref_and_intref_rule;
+        > create_ship_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -186,10 +241,11 @@ namespace {
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<double>*
+                ValueRef::ValueRefBase<double>*,
+                std::vector<Effect::EffectBase*>
             >,
             parse::skipper_type
-        > stringref_and_doubleref_rule;
+        > create_field_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -204,11 +260,11 @@ namespace {
         > generate_sitrep_message_rule;
 
         create_planet_rule              create_planet;
-        stringref_and_intref_rule       create_building;
-        stringref_and_intref_rule       create_ship_1;
-        stringref_and_intref_rule       create_ship_2;
-        stringref_and_doubleref_rule    create_field_1;
-        stringref_and_doubleref_rule    create_field_2;
+        create_building_rule            create_building;
+        create_ship_rule                create_ship_1;
+        create_ship_rule                create_ship_2;
+        create_field_rule               create_field_1;
+        create_field_rule               create_field_2;
         create_system_rule              create_system_1;
         create_system_rule              create_system_2;
         parse::effect_parser_rule       start;
