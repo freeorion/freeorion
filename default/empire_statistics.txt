@@ -1,3 +1,11 @@
+
+Statistic name = "MILITARY_STRENGTH_STAT" value =
+    Sum value = (LocalCandidate.Attack * (LocalCandidate.Structure + 2 * LocalCandidate.MaxShield))
+        condition = And [
+            Ship
+            OwnedBy empire = Source.Owner
+        ]
+
 Statistic name = "PP_OUTPUT" value =
     Sum value = LocalCandidate.Industry condition = And [
         Planet
