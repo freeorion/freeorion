@@ -199,6 +199,17 @@ Part
     icon = "icons/ship_parts/death-ray-4.png"
 
 Part
+    name = "SR_SPINAL_ANTIMATTER"
+    description = "SR_SPINAL_ANTIMATTER_DESC"
+    class = ShortRange
+    damage = 100
+    mountableSlotTypes = Core
+    buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 4
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/spinal_antimatter.png"
+
+Part
     name = "AR_STD_PLATE"
     description = "AR_STD_PLATE_DESC"
     class = Armour
