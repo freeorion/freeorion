@@ -8402,6 +8402,12 @@ Générateur Zero-Point de Carburant
 SHP_ZERO_POINT_DESC
 Un module performant exploitant l'énergie Zero-Point, approvisionnant ainsi automatiquement un astronef en carburant.
 
+SHP_SPINAL_ANTIMATTER
+Canon Anti-Matière
+
+SHP_SPINAL_ANTIMATTER_DESC
+Un gigantesque canon automatique propulsant de lourdes charges explosives faites d'anti-matière. Ne peut être monté que dans la [[encyclopedia SLOT_TITLE]] Centrale d'un astronef.
+
 SHP_ROOT_ARMOR
 Blindage
 
@@ -9329,6 +9335,12 @@ SR_WEAPON_4_4
 Rayon Gamma 4
 SR_WEAPON_4_4_DESC
 Rayon Gamma, perfectionné au niveau 4. L'amélioration ultime de l'arme ultime.
+
+SR_SPINAL_ANTIMATTER
+Canon Anti-Matière
+
+SR_SPINAL_ANTIMATTER_DESC
+Un gigantesque canon automatique propulsant de lourdes charges explosives faites d'anti-matière.
 
 SR_WEAPON_2
 Canon Laser
