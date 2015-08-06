@@ -505,6 +505,7 @@ void CUIWnd::InitBuffers() {
     }
     m_outer_border_buffer.store(0.0f,           Value(sz.y));
     m_outer_border_buffer.store(0.0f,           0.0f);
+    m_outer_border_buffer.createServerBuffer();
 
     // inner border, with optional corner cutout
     m_inner_border_buffer.clear();
@@ -518,6 +519,7 @@ void CUIWnd::InitBuffers() {
     }
     m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_lr.y));
     m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_ul.y));
+    m_inner_border_buffer.createServerBuffer();
 
     // resize hash marks
     m_resize_corner_lines_buffer.clear();
@@ -525,6 +527,7 @@ void CUIWnd::InitBuffers() {
     m_resize_corner_lines_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK1_OFFSET,Value(cl_lr.y));
     m_resize_corner_lines_buffer.store(Value(cl_lr.x),                          Value(cl_lr.y) - RESIZE_HASHMARK2_OFFSET);
     m_resize_corner_lines_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK2_OFFSET,Value(cl_lr.y));
+    m_resize_corner_lines_buffer.createServerBuffer();
 }
 
 void CUIWnd::Hide(bool children) {

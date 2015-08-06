@@ -15,10 +15,10 @@ class GG_API GLBufferBase
 {
 public:
     GLBufferBase();             // ctor
-    virtual ~GLBufferBase();    // dtor,    required to automatically drop  
+    virtual ~GLBufferBase();    // dtor,    required to automatically drop
                                 //          server buffer in case of delete
 
-    // use this if you want to make sure that two buffers both 
+    // use this if you want to make sure that two buffers both
     // have server buffers or not, drops the buffer for mixed cases
     void harmonizeBufferType(GLBufferBase& other);
 
@@ -37,8 +37,8 @@ template <class vtype>
 class GG_API GLClientAndServerBufferBase : public GLBufferBase
 {
 private:
-    GLClientAndServerBufferBase(); // default ctor forbidden, 
-                                   // buffer needs to know number 
+    GLClientAndServerBufferBase(); // default ctor forbidden,
+                                   // buffer needs to know number
                                    // of elements per item
 public:
     GLClientAndServerBufferBase(std::size_t elementsPerItem);

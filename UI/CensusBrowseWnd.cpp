@@ -104,6 +104,7 @@ private:
         m_buffer.store(Value(sz.x), 0.0f);
         m_buffer.store(Value(sz.x), Value(sz.y));
         m_buffer.store(0.0f,        Value(sz.y));
+        m_buffer.createServerBuffer();
     }
 
     GG::GL2DVertexBuffer    m_buffer;
@@ -240,6 +241,7 @@ void CensusBrowseWnd::InitBuffer() {
     m_buffer.store(Value(sz.x), 0.0f);
     m_buffer.store(Value(sz.x), Value(sz.y));
     m_buffer.store(0.0f,        Value(sz.y));
+    m_buffer.createServerBuffer();
 }
 
 void CensusBrowseWnd::Render() {

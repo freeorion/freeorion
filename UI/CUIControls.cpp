@@ -670,6 +670,8 @@ void CUIDropDownList::InitBuffer() {
 
     BufferStoreAngledCornerRectangleVertices(this->m_buffer, btn_ul, btn_lr,
                                              CUIDROPDOWNLIST_ANGLE_OFFSET, false, true, false);
+
+    this->m_buffer.createServerBuffer();
 }
 
 void CUIDropDownList::Render() {
@@ -1329,6 +1331,7 @@ void ColorSelector::InitBuffer() {
     m_border_buffer.store(Value(sz.x), 0.0f);
     m_border_buffer.store(Value(sz.x), Value(sz.y));
     m_border_buffer.store(0.0f,        Value(sz.y));
+    m_border_buffer.createServerBuffer();
 }
 
 void ColorSelector::Render() {

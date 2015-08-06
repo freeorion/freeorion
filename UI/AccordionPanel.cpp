@@ -32,6 +32,7 @@ void AccordionPanel::InitBuffer() {
     m_border_buffer.store(Value(sz.x), Value(sz.y));
     m_border_buffer.store(0.0f,        Value(sz.y));
     m_border_buffer.store(0.0f,        0.0f);
+    m_border_buffer.createServerBuffer();
 }
 
 void AccordionPanel::Render() {

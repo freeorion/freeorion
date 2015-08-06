@@ -86,7 +86,7 @@ public:
                 std::string tech1 = set_it->first;
                 const std::set<std::string>& heads = set_it->second;
 
-                for(std::set<std::string>::const_iterator it = heads.begin(); it != heads.end(); ++it) {
+                for (std::set<std::string>::const_iterator it = heads.begin(); it != heads.end(); ++it) {
                     if (queue.InQueue(*it) && (queue.InQueue(tech1) || empire->GetTechStatus(tech1) == TS_COMPLETE)) {
                         // FillArcBuffer will put lines whose both ends are in highlights
                         // into the buffer
@@ -98,6 +98,7 @@ public:
         }
         FillArcBuffer(m_highlight_buffer, highlights);
     }
+
 private:
     const TechTreeLayout& m_layout;
     std::map<std::string, std::set<std::string> > m_edges_to_show;
@@ -134,7 +135,7 @@ private:
                 // To be able to draw all the lines in one call,
                 // we will draw the with GL_LINES, which means all
                 // vertices except the first and the last must occur twice
-                for(unsigned i = 0; i < points.size() - 1; ++i){
+                for (unsigned i = 0; i < points.size() - 1; ++i){
                     buffer.store(points[i].first, points[i].second);
                     buffer.store(points[i+1].first, points[i+1].second);
                 }

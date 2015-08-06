@@ -397,12 +397,12 @@ private:
     std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_core_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_halo_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_galaxy_gas_quad_vertices;
-    GG::GLTexCoordBuffer                    m_star_texture_coords;
+    GG::GLTexCoordBuffer                m_star_texture_coords;
 
-    GG::GL2DVertexBuffer                    m_starlane_vertices;
-    GG::GLRGBAColorBuffer                   m_starlane_colors;
-    GG::GL2DVertexBuffer                    m_RC_starlane_vertices;
-    GG::GLRGBAColorBuffer                   m_RC_starlane_colors;
+    GG::GL2DVertexBuffer                m_starlane_vertices;
+    GG::GLRGBAColorBuffer               m_starlane_colors;
+    GG::GL2DVertexBuffer                m_RC_starlane_vertices;
+    GG::GLRGBAColorBuffer               m_RC_starlane_colors;
     std::set<int>                       m_resourceCenters;
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;

@@ -258,6 +258,7 @@ void DropDownList::InitBuffer()
     m_buffer.store(Value(lr.x),         Value(lr.y));
     m_buffer.store(Value(inner_lr.x),   Value(inner_ul.y));
     m_buffer.store(Value(lr.x),         0.0f);
+    m_buffer.createServerBuffer();
 }
 
 void DropDownList::Render()
