@@ -8402,6 +8402,12 @@ Zero-Point Fuel Generator
 SHP_ZERO_POINT_DESC
 A powerful zero point fuel module that refuels the ship automatically.
 
+SHP_SPINAL_ANTIMATTER
+Spinal Antimatter Cannon
+
+SHP_SPINAL_ANTIMATTER_DESC
+A huge spinal mount mass driver firing heavy projectiles made of antimatter. Needs a Core slot to install.
+
 SHP_ROOT_ARMOR
 Armor Plating
 
@@ -9329,6 +9335,12 @@ SR_WEAPON_4_4
 Death Ray 4
 SR_WEAPON_4_4_DESC
 Death Ray, refined to level 4. The ultimate refinement of the ultimate weapon.
+
+SR_SPINAL_ANTIMATTER
+Spinal Antimatter Cannon
+
+SR_SPINAL_ANTIMATTER_DESC
+A huge spinal mount mass driver firing heavy projectiles made of antimatter.
 
 SR_WEAPON_2
 Laser
