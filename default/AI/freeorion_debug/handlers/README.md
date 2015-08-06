@@ -5,7 +5,7 @@
   - Create python file
   - Add call of `register_pre_handler` or `register_post_handler` on file import
   - Add handler to config file (section: `main`, key: `handler` space separated paths to python files)
-    path can be relative form AI folder or absolute. Backslashes should be escaped.
+    path can be absolute, single_name(in same folder as config file) or relative form AI folder. Backslashes should be escaped.
   - run game with param `--ai-config <path to config file>`
 
   If game freezes on stat check log for error.
