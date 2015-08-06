@@ -11,11 +11,17 @@ handlers = split(get_option_dict()[HANDLERS])
 
 for handler in handlers:
     module = os.path.basename(handler)[:-3]
+
+    # There is 3 way to specify path:
+    # - absolute path to module
+    # - single name, then module should be in same directory as config
+    # - relative path, then use AI folder as base path.
     if os.path.exists(handler):
         module_path = os.path.dirname(handler)
+    elif not os.path.dirname(handler):
+        module_path = os.path.dirname(fo.getAIConfigStr())
     else:
         module_path = os.path.join(fo.getAIDir(), os.path.dirname(handler))
-
     sys.path.insert(0, module_path)
     try:
         __import__(module)
