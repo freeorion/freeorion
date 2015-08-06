@@ -81,28 +81,10 @@ def _parse_options():
             sectioned_options[section][k] = v
 
 
-def _get_AI_folder_path():
-    # hack to allow lunch this code separately to dump default config
-    try:
-        return fo.getAIDir()
-    except AttributeError as e:
-        print "Cant get options file", e
-        return None
-
-
-def _get_option_file_name():
-    # hack to allow lunch this code separately to dump default config
-    try:
-        return fo.getAIConfigStr()
-    except AttributeError as e:
-        print "Cant get options file", e
-        return None
-
-
 def _get_option_file_path():
     # hack to allow lunch this code separately to dump default config
-    ai_path = _get_AI_folder_path()
-    option_file = _get_option_file_name()
+    ai_path = fo.getAIDir()
+    option_file = fo.getAIConfigStr()
     if ai_path and option_file:
         return os.path.join(ai_path, option_file)
     else:
@@ -111,7 +93,7 @@ def _get_option_file_path():
 
 def _get_default_file_path():
     # TODO: determine more robust treatment in case ResourceDir is not writable by user
-    return os.path.join(_get_AI_folder_path() or ".", DEFAULT_CONFIG_FILE)
+    return os.path.join(fo.getAIDir() or ".", DEFAULT_CONFIG_FILE)
 
 
 def _get_preset_default_ai_options():
