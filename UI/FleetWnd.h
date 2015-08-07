@@ -106,6 +106,7 @@ public:
     std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
     std::set<int>           SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
     NewFleetAggression      GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, or passive)
+    virtual GG::Rect        CalculatePosition() const;
     //@}
 
     //! \name Mutators //@{

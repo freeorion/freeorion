@@ -322,11 +322,8 @@ namespace {
     };
 }
 
-SitRepPanel::SitRepPanel(GG::X default_x, GG::Y default_y,
-                         GG::X default_w, GG::Y default_h,
-                         const std::string& config_name) :
+SitRepPanel::SitRepPanel(const std::string& config_name) :
     CUIWnd(UserString("SITREP_PANEL_TITLE"),
-           default_x, default_y, default_w, default_h,
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name),
     m_sitreps_lb(0),

@@ -495,6 +495,7 @@ namespace {
         db.Add("UI.tooltip-delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              100,        RangedValidator<int>(0, 3000));
         db.Add("UI.multiple-fleet-windows",     UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),     false);
         db.Add("UI.window-quickclose",          UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),          false);
+        db.Add("UI.auto-reposition-windows",    UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),    true);
 
         // UI behavior, hidden options
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
@@ -513,6 +514,27 @@ namespace {
 
     const std::string MESSAGE_WND_NAME = "map.messages";
     const std::string PLAYER_LIST_WND_NAME = "map.player-list";
+
+    template <class OptionType, class PredicateType>
+    void ConditionalForward(const std::string& option_name,
+                            const OptionsDB::OptionChangedSignalType::slot_type& slot,
+                            OptionType ref_val,
+                            PredicateType pred)
+    {
+        if (pred(GetOptionsDB().Get<OptionType>(option_name), ref_val))
+            slot();
+    }
+
+    template <class OptionType, class PredicateType>
+    void ConditionalConnectOption(const std::string& option_name,
+                                  const OptionsDB::OptionChangedSignalType::slot_type& slot,
+                                  OptionType ref_val,
+                                  PredicateType pred)
+    {
+        GG::Connect(GetOptionsDB().OptionChangedSignal(option_name),
+                    boost::bind(&ConditionalForward<OptionType, PredicateType>,
+                                option_name, slot, ref_val, pred));
+    }
 }
 
 
@@ -529,15 +551,41 @@ ClientUI::ClientUI() :
     s_the_UI = this;
     Hotkey::ReadFromOptions(GetOptionsDB());
 
-    m_message_wnd =             new MessageWnd(   GG::X0,                  GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,
-                                                  MESSAGE_PANEL_WIDTH,     PANEL_HEIGHT,
-                                                  MESSAGE_WND_NAME);
-    m_player_list_wnd =         new PlayerListWnd(m_message_wnd->Right(),  GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,
-                                                  PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT,
-                                                  PLAYER_LIST_WND_NAME);
+    // Remove all window properties if asked to
+    if (GetOptionsDB().Get<bool>("window-reset"))
+        CUIWnd::InvalidateUnusedOptions();
+
+    m_message_wnd = new MessageWnd(MESSAGE_WND_NAME);
+    m_player_list_wnd = new PlayerListWnd(PLAYER_LIST_WND_NAME);
+    InitializeWindows();
+
     m_map_wnd =                 new MapWnd();
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
+
+    GG::Connect(GetOptionsDB().OptionChangedSignal("app-width"),
+                boost::bind(&ClientUI::HandleSizeChange, this, true));
+    GG::Connect(GetOptionsDB().OptionChangedSignal("app-height"),
+                boost::bind(&ClientUI::HandleSizeChange, this, true));
+    GG::Connect(GetOptionsDB().OptionChangedSignal("app-width-windowed"),
+                boost::bind(&ClientUI::HandleSizeChange, this, false));
+    GG::Connect(GetOptionsDB().OptionChangedSignal("app-height-windowed"),
+                boost::bind(&ClientUI::HandleSizeChange, this, false));
+    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
+                &ClientUI::InitializeWindows, this);
+    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
+                &CUIWnd::InvalidateUnusedOptions,
+                boost::signals2::at_front);
+
+    // Connected at front to make sure CUIWnd::LoadOptions() doesn't overwrite
+    // the values we're checking here...
+    GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal,
+                boost::bind(&ClientUI::HandleFullscreenSwitch, this),
+                boost::signals2::at_front);
+
+    ConditionalConnectOption("UI.auto-reposition-windows",
+                             HumanClientApp::GetApp()->RepositionWindowsSignal,
+                             true, std::equal_to<bool>());
 }
 
 ClientUI::~ClientUI() {
@@ -773,6 +821,52 @@ void ClientUI::DumpObject(int object_id) {
     if (!obj)
         return;
     m_message_wnd->HandleLogMessage(obj->Dump() + "\n");
+}
+
+void ClientUI::InitializeWindows() {
+    const GG::Pt message_ul(GG::X0, GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT);
+    const GG::Pt message_wh(MESSAGE_PANEL_WIDTH, PANEL_HEIGHT);
+
+    const GG::Pt player_list_ul(MESSAGE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT);
+    const GG::Pt player_list_wh(PLAYER_LIST_PANEL_WIDTH, PANEL_HEIGHT);
+
+    m_message_wnd->    InitSizeMove(message_ul,     message_ul + message_wh);
+    m_player_list_wnd->InitSizeMove(player_list_ul, player_list_ul + player_list_wh);
+}
+
+void ClientUI::HandleSizeChange(bool fullscreen) const {
+    OptionsDB& db = GetOptionsDB();
+
+    if (db.Get<bool>("UI.auto-reposition-windows")) {
+        std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+        if (!fullscreen)
+            windowed = "-windowed";
+
+        // Invalidate the message window position so that we know to
+        // recalculate positions on the next resize or fullscreen switch...
+        db.Set<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed,
+                    db.GetDefault<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed));
+    }
+}
+
+void ClientUI::HandleFullscreenSwitch() const {
+    OptionsDB& db = GetOptionsDB();
+
+    std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
+    if (!db.Get<bool>("fullscreen"))
+        windowed = "-windowed";
+
+    // Check if the message window position has been invalidated as a stand-in
+    // for actually checking if all windows have been given valid positions for
+    // this video mode... (the default value is
+    // std::numeric_limits<GG::X::value_type>::min(), defined in UI/CUIWnd.cpp).
+    // This relies on the message window not supplying a default position to
+    // the CUIWnd constructor...
+    if (db.Get<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed) ==
+        db.GetDefault<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed))
+    {
+        HumanClientApp::GetApp()->RepositionWindowsSignal();
+    }
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,

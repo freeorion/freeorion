@@ -86,13 +86,27 @@ extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
 class CUIWnd : public GG::Wnd {
 public:
     //! \name Structors //@{
+    /** Constructs the window to be a CUI window. Specifying \a config_name
+      * causes the window to save its position and other properties to the
+      * OptionsDB under that name, if no other windows are currently using that
+      * name. */
     CUIWnd(const std::string& t,
-           GG::X x, GG::Y y,
-           GG::X w, GG::Y h,
+           GG::X x, GG::Y y, GG::X w, GG::Y h,
            GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
            const std::string& config_name = "",
-           bool visible = true); //!< Constructs the window to be a CUI window. Specifying \a config_name causes the window to save its position and other properties to the OptionsDB under that name, if no other windows are currently using that name.
-    virtual ~CUIWnd();  //!< Destructor
+           bool visible = true);
+
+    /** Constructs a CUI window without specifying the initial (default)
+      * position, either call InitSizeMove() if the window is positioned by
+      * something else or override CalculatePosition() then call
+      * ResetDefaultPosition() for windows that position themselves. */
+    CUIWnd(const std::string& t,
+           GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE,
+           const std::string& config_name = "",
+           bool visible = true);
+
+    /** Virtual destructor. */
+    virtual ~CUIWnd();
     //@}
 
     //! \name Accessors //@{
@@ -117,12 +131,17 @@ public:
 
     void            ToggleMinimized() { MinimizeClicked(); }
     void            Close()           { CloseClicked(); }
-    void            ValidatePosition();                 //!< positions window entirely within the parent window/app window
+    void            ValidatePosition();                                 //!< calls SizeMove() to trigger position-checking and position the window entirely within the parent window/app window
+    void            InitSizeMove(const GG::Pt& ul, const GG::Pt& lr);   //!< sets default positions and if default positions were set beforehand, calls SizeMove()
     //@}
 
     //! \name Mutators //@{
     virtual void    CloseClicked();                     //!< called when window is closed via the close button
     virtual void    PinClicked();                       //!< called when window is pinned or unpinned via the pin button
+    //@}
+
+    //! \name Statics //@{
+    static void     InvalidateUnusedOptions();          //!< removes unregistered and registered-but-unused window options from the OptionsDB so that new windows fall back to their default properties.
     //@}
 
 protected:
@@ -135,17 +154,20 @@ protected:
     int             InnerBorderAngleOffset() const;     //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
     bool            InResizeTab(const GG::Pt& pt) const;//!< returns true iff the specified \a pt is in the region where dragging will resize this Wnd
     void            SaveOptions() const;                //!< saves options for this window to the OptionsDB if config_name was specified in the constructor
+
+    virtual GG::Rect    CalculatePosition() const;      //!< override this if a class determines its own position/size and return the calculated values, called by ResetDefaultPosition()
     //@}
 
     //! \name Statics //@{
     static const std::string AddWindowOptions(const std::string& config_name,
-                                              int left = 0, int top = 0,
-                                              int width = 400, int height = 200,
-                                              bool visible = false, bool pinned = false, bool minimized = false);    //!< Adds OptionsDB entries for a window under a given name along with default values.
+                                              int left, int top, int width, int height,
+                                              bool visible, bool pinned, bool minimized);   //!< Adds OptionsDB entries for a window under a given name along with default values.
+
     static const std::string AddWindowOptions(const std::string& config_name,
-                                              GG::X left = GG::X0, GG::Y top = GG::Y0,
-                                              GG::X width = GG::X(400), GG::Y height = GG::Y(200),
-                                              bool visible = false, bool pinned = false, bool minimized = false);    //!< overload that accepts GG::X and GG::Y instead of ints
+                                              GG::X left, GG::Y top, GG::X width, GG::Y height,
+                                              bool visible, bool pinned, bool minimized);   //!< overload that accepts GG::X and GG::Y instead of ints
+
+    static void              InvalidateWindowOptions(const std::string& config_name);       //!< removes options containing \a config_name, logs an error instead if "UI.windows."+config_name+".initialized" exists (i.e. if a window is currently using that name)
     //@}
 
     //! \name Mutators //@{
@@ -155,6 +177,8 @@ protected:
 
     virtual void    InitBuffers();
     void            LoadOptions();                  //!< loads options for this window from the OptionsDB
+    void            Init(const std::string& t);     //!< performs initialization common to all CUIWnd constructors
+    void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
     //@}
 
     bool                    m_resizable;            //!< true if the window is able to be resized

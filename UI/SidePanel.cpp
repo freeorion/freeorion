@@ -2593,12 +2593,8 @@ boost::signals2::signal<void (int)>        SidePanel::BuildingRightClickedSignal
 boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
 
-SidePanel::SidePanel(GG::X default_x, GG::Y default_y,
-                     GG::X default_w, GG::Y default_h,
-                     const std::string& config_name) :
+SidePanel::SidePanel(const std::string& config_name) :
     CUIWnd("SidePanel",
-           default_x, default_y,
-           default_w, default_h,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP,
            config_name),
     m_system_name(0),

@@ -722,12 +722,30 @@ void HumanClientApp::Reinitialize() {
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
     bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
     std::pair<int, int> size = GetWindowWidthHeight();
+
     bool fullscreen_transition = Fullscreen() != fullscreen;
+    GG::X old_width = AppWidth();
+    GG::Y old_height = AppHeight();
+
     SetVideoMode(GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
     if (fullscreen_transition) {
         FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
+    } else if (fullscreen &&
+               (old_width != size.first || old_height != size.second) &&
+               GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
+        // Reposition windows if in fullscreen mode... handled here instead of
+        // HandleWindowResize() because the prev. fullscreen resolution is only
+        // available here.
+        RepositionWindowsSignal();
     }
-    HandleWindowResize (GG::X (size.first), GG::Y (size.second));
+
+    // HandleWindowResize is already called via this signal sent from
+    // SDLGUI::HandleSystemEvents() when in windowed mode.  This sends the
+    // signal (and hence calls HandleWindowResize()) when in fullscreen mode,
+    // making the signal more consistent...
+    if (fullscreen) {
+        WindowResizedSignal(GG::X(size.first), GG::Y(size.second));
+    }
 }
 
 float HumanClientApp::GLVersion() const
@@ -830,16 +848,16 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
         }
     }
 
-    // Notify all modal CUIWnds.
-    for (const_modal_iterator modal_it = modal_begin(); modal_it != modal_end(); ++modal_it) {
-        if (CUIWnd* cui_wnd = dynamic_cast<CUIWnd*>((*modal_it).first)) {
-            cui_wnd->ValidatePosition();
+    if (!GetOptionsDB().Get<bool>("fullscreen") &&
+         (GetOptionsDB().Get<int>("app-width-windowed") != w ||
+          GetOptionsDB().Get<int>("app-height-windowed") != h))
+    {
+        if (GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
+            // Reposition windows if in windowed mode.
+            RepositionWindowsSignal();
         }
-    }
-
-    // store resize if window is not full-screen (so that fullscreen
-    // resolution doesn't overwrite windowed resolution)
-    if (!GetOptionsDB().Get<bool>("fullscreen")) {
+        // store resize if window is not full-screen (so that fullscreen
+        // resolution doesn't overwrite windowed resolution)
         GetOptionsDB().Set<int>("app-width-windowed", Value(w));
         GetOptionsDB().Set<int>("app-height-windowed", Value(h));
     }

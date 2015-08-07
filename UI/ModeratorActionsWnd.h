@@ -14,9 +14,7 @@
 class ModeratorActionsWnd : public CUIWnd {
 public:
     //! \name Structors //!@{
-    ModeratorActionsWnd(GG::X default_x, GG::Y default_y,
-                        GG::X default_w, GG::Y default_h,
-                        const std::string& config_name = "");
+    ModeratorActionsWnd(const std::string& config_name = "");
     virtual ~ModeratorActionsWnd();
     //!@}
 

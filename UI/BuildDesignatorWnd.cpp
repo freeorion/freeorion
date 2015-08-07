@@ -381,9 +381,7 @@ namespace {
 class BuildDesignatorWnd::BuildSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    BuildSelector(GG::X default_x, GG::Y default_y,
-                  GG::X default_w, GG::Y default_h,
-                  const std::string& config_name = "");
+    BuildSelector(const std::string& config_name = "");
     //@}
 
     /** \name Accessors */ //@{
@@ -468,12 +466,8 @@ private:
 const GG::X BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_X(3);
 const GG::Y BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_Y(3);
 
-BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X default_x, GG::Y default_y,
-                                                 GG::X default_w, GG::Y default_h,
-                                                 const std::string& config_name) :
+BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name) :
     CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"),
-           default_x, default_y,
-           default_w, default_h,
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | PINABLE,
            config_name),
     m_buildable_items(new BuildableItemsListBox()),
@@ -895,27 +889,18 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 // BuildDesignatorWnd
 //////////////////////////////////////////////////
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
-    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP)
+    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
+    m_enc_detail_panel(0),
+    m_build_selector(0),
+    m_side_panel(0)
 {
-    const GG::X SIDEPANEL_WIDTH =       GG::X(384); // Formerly "UI.sidepanel-width" default
-    const GG::X CHILD_WIDTHS =          w - SIDEPANEL_WIDTH;
-    const GG::Y DETAIL_PANEL_HEIGHT =   GG::Y(240);
-    const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
+    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, PROD_PEDIA_WND_NAME);
+    m_side_panel = new SidePanel(PROD_SIDEPANEL_WND_NAME);
+    m_build_selector = new BuildSelector(PROD_SELECTOR_WND_NAME);
+    InitializeWindows();
+    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, &BuildDesignatorWnd::InitializeWindows, this);
 
-    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::X0, GG::Y0,
-                                                     CHILD_WIDTHS, DETAIL_PANEL_HEIGHT,
-                                                     GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE,
-                                                     PROD_PEDIA_WND_NAME);
-
-    m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0,
-                                 SIDEPANEL_WIDTH, Height(),
-                                 PROD_SIDEPANEL_WND_NAME);
     m_side_panel->EnableSelection();
-
-    m_build_selector = new BuildSelector(GG::X0, h - BUILD_SELECTOR_HEIGHT,
-                                         CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT,
-                                         PROD_SELECTOR_WND_NAME);
-
 
     GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),                 m_enc_detail_panel);
     GG::Connect(m_build_selector->DisplayShipDesignSignal,      static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),                   m_enc_detail_panel);
@@ -1051,6 +1036,24 @@ void BuildDesignatorWnd::Update() {
     SidePanel::Update();
     m_build_selector->Refresh();
     m_enc_detail_panel->Refresh();
+}
+
+void BuildDesignatorWnd::InitializeWindows() {
+    const GG::X SIDEPANEL_WIDTH = GG::X(384); // Formerly "UI.sidepanel-width" default
+    const GG::Y PANEL_HEIGHT    = GG::Y(240);
+
+    const GG::Pt pedia_ul(GG::X0, GG::Y0);
+    const GG::Pt pedia_wh(Width() - SIDEPANEL_WIDTH, PANEL_HEIGHT);
+
+    const GG::Pt sidepanel_ul(Width() - SIDEPANEL_WIDTH, GG::Y0);
+    const GG::Pt sidepanel_wh(SIDEPANEL_WIDTH, Height());
+
+    const GG::Pt selector_ul(GG::X0, Height() - PANEL_HEIGHT);
+    const GG::Pt selector_wh(Width() - SIDEPANEL_WIDTH, PANEL_HEIGHT);
+
+    m_enc_detail_panel->InitSizeMove(pedia_ul,      pedia_ul + pedia_wh);
+    m_side_panel->      InitSizeMove(sidepanel_ul,  sidepanel_ul + sidepanel_wh);
+    m_build_selector->  InitSizeMove(selector_ul,   selector_ul + selector_wh);
 }
 
 void BuildDesignatorWnd::Reset() {

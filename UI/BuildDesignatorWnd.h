@@ -105,6 +105,8 @@ private:
     void            BuildQuantityChanged(int queue_idx, int quantity);
     void            SetBuild(int queue_idx);
 
+    void            InitializeWindows();
+
     EncyclopediaDetailPanel*    m_enc_detail_panel;
     BuildSelector*              m_build_selector;
     SidePanel*                  m_side_panel;

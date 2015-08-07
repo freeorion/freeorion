@@ -204,9 +204,7 @@ boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& te
 class TechTreeWnd::TechTreeControls : public CUIWnd {
 public:
     //! \name Structors //@{
-    TechTreeControls(GG::X default_x, GG::Y default_y,
-                     GG::X default_w,
-                     const std::string& config_name = "");
+    TechTreeControls(const std::string& config_name = "");
     //@}
 
     //! \name Mutators //@{
@@ -246,12 +244,8 @@ private:
 const int TechTreeWnd::TechTreeControls::BUTTON_SEPARATION = 3;
 const int TechTreeWnd::TechTreeControls::UPPER_LEFT_PAD = 2;
 
-TechTreeWnd::TechTreeControls::TechTreeControls(GG::X default_x, GG::Y default_y,
-                                                GG::X default_w,
-                                                const std::string& config_name) :
+TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) :
     CUIWnd(UserString("TECH_DISPLAY"),
-           default_x, default_y,
-           default_w, GG::Y(10),
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP,
            config_name)
 {
@@ -1637,6 +1631,7 @@ void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it) {
 TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_enc_detail_panel(0),
+    m_tech_tree_controls(0),
     m_layout_panel(0),
     m_tech_list(0)
 {
@@ -1655,25 +1650,18 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Connect(m_tech_list->TechRightClickedSignal,    &TechTreeWnd::TechRightClickedSlot,     this);
     GG::Connect(m_tech_list->TechDoubleClickedSignal,   &TechTreeWnd::TechDoubleClickedSlot,    this);
 
-    GG::X ENC_WIDTH(480);
-    GG::Y ENC_HEIGHT(240);
+    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE, RES_PEDIA_WND_NAME);
+    m_tech_tree_controls = new TechTreeControls(RES_CONTROLS_WND_NAME);
 
-    m_enc_detail_panel = new EncyclopediaDetailPanel(GG::X0, GG::Y0,
-                                                     ENC_WIDTH, ENC_HEIGHT,
-                                                     GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | PINABLE,
-                                                     RES_PEDIA_WND_NAME);
-    AttachChild(m_enc_detail_panel);
-
-    // Don't know this wnd's height in advance so place it off the bottom edge,
-    // it subclasses CUIWnd so it will reposition itself to be visible.
-    m_tech_tree_controls = new TechTreeControls(GG::X1, m_layout_panel->Height(),
-                                                m_layout_panel->Width() - ClientUI::ScrollWidth(),
-                                                RES_CONTROLS_WND_NAME);
+    InitializeWindows();
     // Make sure the controls don't overlap the bottom scrollbar
     if (m_tech_tree_controls->Bottom() > m_layout_panel->Bottom() - ClientUI::ScrollWidth()) {
         m_tech_tree_controls->MoveTo(GG::Pt(m_tech_tree_controls->Left(),
                                             m_layout_panel->Bottom() - ClientUI::ScrollWidth() - m_tech_tree_controls->Height()));
     }
+    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, &TechTreeWnd::InitializeWindows, this);
+
+    AttachChild(m_enc_detail_panel);
     AttachChild(m_tech_tree_controls);
 
     const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
@@ -1735,6 +1723,21 @@ void TechTreeWnd::Clear() {
 void TechTreeWnd::Reset() {
     m_layout_panel->Reset();
     m_tech_list->Reset();
+}
+
+void TechTreeWnd::InitializeWindows() {
+    const GG::Pt pedia_ul(GG::X0,  GG::Y0);
+    const GG::Pt pedia_wh(GG::X(480), GG::Y(240));
+
+    // Don't know this wnd's height in advance so place it off the bottom edge,
+    // it subclasses CUIWnd so it will reposition itself to be visible.
+    const GG::Pt controls_ul(GG::X1, m_layout_panel->Height());
+    const GG::Pt controls_wh(m_layout_panel->Width() - ClientUI::ScrollWidth(), GG::Y0);
+
+    m_enc_detail_panel->InitSizeMove(pedia_ul,  pedia_ul + pedia_wh);
+    // Size to new width so it recalculates its own height.
+    m_tech_tree_controls->Resize(GG::Pt(controls_wh.x, m_tech_tree_controls->Height()));
+    m_tech_tree_controls->InitSizeMove(controls_ul,  controls_ul + controls_wh);
 }
 
 void TechTreeWnd::ShowCategory(const std::string& category) {

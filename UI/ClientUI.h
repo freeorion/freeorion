@@ -86,6 +86,8 @@ public:
 
     void    DumpObject(int object_id);                                 //!< Displays debug info about specified object in messages window
 
+    void    InitializeWindows();
+
     /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
     boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
 
@@ -210,6 +212,9 @@ private:
     TexturesAndDist     PrefixedTexturesAndDist(const boost::filesystem::path& dir,
                                                 const std::string& prefix,
                                                 bool mipmap);
+
+    void                HandleSizeChange(bool fullscreen) const;
+    void                HandleFullscreenSwitch() const;
 
     MapWnd*                 m_map_wnd;              //!< the galaxy map
     MessageWnd*             m_message_wnd;          //!< the messages / chat display

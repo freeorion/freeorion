@@ -26,9 +26,7 @@ namespace {
 
 InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"),
-           (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
-           (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2,
-           IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::INTERACTIVE | GG::MODAL)
+           GG::INTERACTIVE | GG::MODAL)
 {
     m_save_btn = new CUIButton(UserString("GAME_MENU_SAVE"));
     m_load_btn = new CUIButton(UserString("GAME_MENU_LOAD"));
@@ -57,37 +55,26 @@ InGameMenu::InGameMenu():
         m_save_btn->Disable();
     }
 
-    ValidatePosition();
+    ResetDefaultPosition();
     DoLayout();
 }
 
 InGameMenu::~InGameMenu()
 {}
 
-void InGameMenu::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    // This wnd determines its own size.
-    GG::Pt new_size(MinUsableSize());
-
-    // This wnd determines its own position.
-    GG::Pt new_ul(HumanClientApp::GetApp()->AppWidth()  * 0.5 - new_size.x/2,
-                  HumanClientApp::GetApp()->AppHeight() * 0.5 - new_size.y/2);
-    GG::Pt new_lr(HumanClientApp::GetApp()->AppWidth()  * 0.5 + new_size.x/2,
-                  HumanClientApp::GetApp()->AppHeight() * 0.5 + new_size.y/2);
-
-    CUIWnd::SizeMove(new_ul, new_lr);
-}
-
-GG::Pt InGameMenu::MinUsableSize() const {
+GG::Rect InGameMenu::CalculatePosition() const {
     const GG::X H_MAINMENU_MARGIN(40);  //horizontal empty space
     const GG::Y V_MAINMENU_MARGIN(40);  //vertical empty space
-    GG::X mainmenu_width(0);            //width of the mainmenu
-    GG::Y mainmenu_height(0);           //height of the mainmenu
 
     // Calculate window width and height
-    mainmenu_width  =        ButtonWidth()  + H_MAINMENU_MARGIN;
-    mainmenu_height = 5.75 * ButtonCellHeight() + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+    GG::Pt new_size(ButtonWidth() + H_MAINMENU_MARGIN,
+                    5.75 * ButtonCellHeight() + V_MAINMENU_MARGIN); // 8 rows + 0.75 before exit button
 
-    return GG::Pt(mainmenu_width, mainmenu_height);
+    // This wnd determines its own position.
+    GG::Pt new_ul((HumanClientApp::GetApp()->AppWidth()  - new_size.x) / 2,
+                  (HumanClientApp::GetApp()->AppHeight() - new_size.y) / 2);
+
+    return GG::Rect(new_ul, new_ul + new_size);
 }
 
 GG::X InGameMenu::ButtonWidth() const {

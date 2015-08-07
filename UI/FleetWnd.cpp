@@ -2573,7 +2573,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
          GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
          const std::string& config_name) :
-    MapWndPopup("", GG::X(5), GG::GUI::GetGUI()->AppHeight() - FLEET_WND_HEIGHT - 5, FLEET_WND_WIDTH, FLEET_WND_HEIGHT, flags, config_name),
+    MapWndPopup("", flags, config_name),
     m_fleet_ids(),
     m_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
@@ -2592,7 +2592,7 @@ FleetWnd::FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
          int selected_fleet_id/* = INVALID_OBJECT_ID*/,
          GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE | RESIZABLE*/,
          const std::string& config_name) :
-    MapWndPopup("", GG::X(5), GG::GUI::GetGUI()->AppHeight() - FLEET_WND_HEIGHT - 5, FLEET_WND_WIDTH, FLEET_WND_HEIGHT, flags | GG::RESIZABLE, config_name),
+    MapWndPopup("", flags | GG::RESIZABLE, config_name),
     m_fleet_ids(),
     m_empire_id(empire_id),
     m_system_id(system_id),
@@ -2609,9 +2609,6 @@ FleetWnd::~FleetWnd() {
 }
 
 void FleetWnd::Init(int selected_fleet_id) {
-    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
-                                                 ListRowHeight() + 2*GG::Y(PAD)));
-
     Sound::TempUISoundDisabler sound_disabler;
 
     // add fleet aggregate stat icons
@@ -2692,7 +2689,16 @@ void FleetWnd::Init(int selected_fleet_id) {
         selected_fleet_id = INVALID_OBJECT_ID;
     }
 
+    ResetDefaultPosition();
+    SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
+                                                 ListRowHeight() + 2*GG::Y(PAD)));
     DoLayout();
+}
+
+GG::Rect FleetWnd::CalculatePosition() const {
+    GG::Pt ul(GG::X(5), GG::GUI::GetGUI()->AppHeight() - FLEET_WND_HEIGHT - 5);
+    GG::Pt wh(FLEET_WND_WIDTH, FLEET_WND_HEIGHT);
+    return GG::Rect(ul, ul + wh);
 }
 
 void FleetWnd::SetStatIconValues() {

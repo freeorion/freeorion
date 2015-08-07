@@ -374,9 +374,6 @@ namespace {
 
 MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"),
-           (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2,
-           (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2,
-           LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT,
            GG::ONTOP | GG::INTERACTIVE),
     m_chat_box(0),
     m_chat_input_edit(0),
@@ -444,6 +441,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     AttachChild(m_cancel_bn);
     AttachChild(m_start_conditions_text);
 
+    ResetDefaultPosition();
     DoLayout();
 
     // default settings (new game)
@@ -464,9 +462,16 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 
 void MultiPlayerLobbyWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
-    GG::Wnd::SizeMove(ul, lr);
+    CUIWnd::SizeMove(ul, lr);
     if (old_size != Size())
         DoLayout();
+}
+
+GG::Rect MultiPlayerLobbyWnd::CalculatePosition() const {
+    GG::Pt new_ul((GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2,
+                  (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2);
+    GG::Pt new_sz(LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT);
+    return GG::Rect(new_ul, new_ul + new_sz);
 }
 
 bool MultiPlayerLobbyWnd::LoadGameSelected() const

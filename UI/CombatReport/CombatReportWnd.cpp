@@ -175,12 +175,8 @@ private:
     }
 };
 
-CombatReportWnd::CombatReportWnd(GG::X default_x, GG::Y default_y,
-                                 GG::X default_w, GG::Y default_h,
-                                 const std::string& config_name) :
+CombatReportWnd::CombatReportWnd(const std::string& config_name) :
     CUIWnd(UserString("COMBAT_REPORT_TITLE"),
-           default_x, default_y,
-           default_w, default_h,
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE,
            config_name, false),
     m_impl(0)

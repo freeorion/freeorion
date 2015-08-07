@@ -469,8 +469,7 @@ void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
 // GalaxySetupWnd
 ////////////////////////////////////////////////
 GalaxySetupWnd::GalaxySetupWnd() :
-    CUIWnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2,
-           (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT,
+    CUIWnd(UserString("GSETUP_WINDOW_TITLE"),
            GG::INTERACTIVE | GG::MODAL),
     m_ended_with_ok(false),
     m_galaxy_setup_panel(0),
@@ -573,6 +572,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     AttachChild(m_ok);
     AttachChild(m_cancel);
 
+    ResetDefaultPosition();
     DoLayout();
 
     GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,   &GalaxySetupWnd::PreviewImageChanged, this);
@@ -615,6 +615,13 @@ void GalaxySetupWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::F
 void GalaxySetupWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
     DoLayout();
+}
+
+GG::Rect GalaxySetupWnd::CalculatePosition() const {
+    GG::Pt new_ul((HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2,
+                  (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2);
+    GG::Pt new_sz(GAL_SETUP_WND_WD, GAL_SETUP_WND_HT);
+    return GG::Rect(new_ul, new_ul + new_sz);
 }
 
 void GalaxySetupWnd::DoLayout() {

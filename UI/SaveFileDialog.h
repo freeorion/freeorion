@@ -42,6 +42,9 @@ public:
     /// Get the chosen save files full path
     std::string Result() const;
 
+protected:
+    virtual GG::Rect CalculatePosition() const;
+
 private:
     void Init();
 

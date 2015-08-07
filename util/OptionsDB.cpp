@@ -305,6 +305,23 @@ void OptionsDB::Remove(const std::string& name) {
     OptionRemovedSignal(name);
 }
 
+void OptionsDB::RemoveUnrecognized(const std::string& prefix) {
+    std::map<std::string, Option>::iterator it = m_options.begin();
+    while (it != m_options.end()) {
+        if (!it->second.recognized && it->first.find(prefix) == 0)
+            Remove((it++)->first); // note postfix operator++
+        else
+            ++it;
+    }
+}
+
+void OptionsDB::FindOptions(std::set<std::string>& ret, const std::string& prefix) const {
+    ret.clear();
+    for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it)
+        if (it->second.recognized && it->first.find(prefix) == 0)
+            ret.insert(it->first);
+}
+
 void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     //bool option_changed = false;
 
