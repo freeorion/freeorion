@@ -1186,6 +1186,9 @@ Si activé, cliquer sur plusieurs boutons de flotte ouvrent plusieurs Fenêtres 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Active/Désactive l'effet du clic droit sur la carte galactique qui ferme d'abord les Fenêtres Flottes puis, lorsque réitéré, le panneau latéral de système stellaire.
 
+OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
+Active/Désactive le repositionnement automatique des fenêtres lorsque la taille d'affichage de l'application est modifiée.
+
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
 Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef conçus par le joueur à la liste des modèles connus de l'Empire du joueur.
 
@@ -1404,7 +1407,7 @@ OPTIONS_DB_UI_WINDOWS_MINIMIZED
 Définit si une fenêtre est minimisable.
 
 OPTIONS_DB_WINDOW_RESET
-Si activé, les fenêtres utilisent leurs propriétés par défaut plutôt que les dernières positions enregistrées.
+Les fenêtres utilisent leurs propriétés par défaut plutôt que les dernières positions enregistrées.
 
 #################
 # File Dialog   #
@@ -1836,6 +1839,9 @@ Fermeture rapide des fenêtres
 OPTIONS_SHOW_SIDEPANEL_PLANETS
 Affichage des planètes dans le panneau latéral
 
+OPTIONS_AUTO_REPOSITION_WINDOWS
+Repositionnement automatique des fenêtres
+
 OPTIONS_MISC_UI
 Options diverses de l'interface utilisateur
 
@@ -1949,6 +1955,9 @@ Appliquer
 
 OPTIONS_FLUSH_STRINGTABLE
 Réinitialiser le fichier langue en mémoire
+
+OPTIONS_WINDOW_RESET
+Repositionner les fenêtres
 
 OPTIONS_CHAT  # translated
 Chat
@@ -2300,9 +2309,6 @@ Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
 OPTIONS_USE_BINARY_SERIALIZATION
 Sérialisation binaire
-
-OPTIONS_WINDOW_RESET
-Réinitialiser les propriétés des fenêtres
 
 ##################
 # CombatSetupWnd #
