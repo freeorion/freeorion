@@ -1,6 +1,6 @@
 from functools import partial
 import math
-from operator import itemgetter
+from operator import attrgetter
 import random
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -51,27 +51,23 @@ priority_zero = const_priority(0.0)
 priority_low = const_priority(0.1)
 priority_one = const_priority(1.0)
 
+# TODO: Move this functions to ColonisationAI
+have_asteroids = partial(attrgetter('got_ast'), ColonisationAI)
+have_gas_giant = partial(attrgetter('got_gg'), ColonisationAI)
+have_ruins = partial(attrgetter('gotRuins'), ColonisationAI)
+have_nest = partial(attrgetter('got_nest'), ColonisationAI)
 
-def conditional_priority(func_if_true, func_if_false, cond_func=None, this_object=None, this_attr=None):
+
+def conditional_priority(func_if_true, func_if_false, cond_func):
     """
     returns a priority dependent on a condition, either a function or an object attribute
     :type func_if_true: ()
     :type func_if_false: ()
     :type cond_func:(str) -> bool
-    :type this_object: object
-    :type this_attr:str
     :rtype float
     """
     def get_priority(tech_name=""):
-        if cond_func:
-            _cond_func = cond_func
-        else:
-            if this_object is not None:
-                _cond_func = partial(getattr, this_object, this_attr)
-            else:
-                return priority_low()
-
-        if _cond_func():
+        if cond_func():
             return func_if_true(tech_name=tech_name)
         else:
             return func_if_false(tech_name=tech_name)
@@ -855,11 +851,11 @@ def generate_research_orders():
         tech_handlers = (
             (
                 Dep.PRO_MICROGRAV_MAN,
-                conditional_priority(const_priority(3.5), priority_low, None, ColonisationAI, 'got_ast')
+                conditional_priority(const_priority(3.5), priority_low, have_asteroids)
             ),
             (
                 Dep.PRO_ORBITAL_GEN,
-                conditional_priority(const_priority(3.0), priority_low, None, ColonisationAI, 'got_gg')
+                conditional_priority(const_priority(3.0), priority_low, have_gas_giant)
             ),
             (
                 Dep.PRO_SINGULAR_GEN,
@@ -872,7 +868,7 @@ def generate_research_orders():
             (
                 Dep.LRN_XENOARCH,
                 priority_low if foAI.foAIstate.aggression < fo.aggression.typical else
-                conditional_priority(const_priority(5.0), priority_low, None, ColonisationAI, 'gotRuins')
+                conditional_priority(const_priority(5.0), priority_low, have_ruins)
             ),
             (
                 Dep.LRN_ART_BLACK_HOLE,
@@ -887,7 +883,7 @@ def generate_research_orders():
             (
                 Dep.NEST_DOMESTICATION_TECH,
                 priority_zero if foAI.foAIstate.aggression < fo.aggression.typical else conditional_priority(
-                    const_priority(3.0), priority_low, None, ColonisationAI, 'got_nest')
+                    const_priority(3.0), priority_low, have_nest)
             ),
             (
                 Dep.UNRESEARCHABLE_TECHS,
