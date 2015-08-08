@@ -4,12 +4,14 @@ import random
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-import TechsListsAI
-import AIDependencies
+import AIDependencies as Dep
 import AIstate
 import ColonisationAI
 import ShipDesignAI
+import TechsListsAI
 from freeorion_tools import tech_is_complete, get_ai_tag_grade
+
+AIDependencies = Dep  # TODO: fix remaining references and remove this line
 
 inProgressTechs = {}
 
@@ -74,7 +76,7 @@ def priority_one(tech_name=""):
     return 1.0
 
 
-def conditional_priority(func_if_true, func_if_false, cond_func=None, this_object=None, this_attr=None, tech_name=""):
+def conditional_priority(func_if_true, func_if_false, cond_func=None, this_object=None, this_attr=None):
     """
     returns a priority dependent on a condition, either a function or an object attribute
     :type func_if_true: () -> bool
@@ -85,15 +87,20 @@ def conditional_priority(func_if_true, func_if_false, cond_func=None, this_objec
     :type tech_name:str
     :rtype float
     """
-    if cond_func is None:
-        if this_object is not None:
-            cond_func = partial(getattr, this_object, this_attr)
+    def get_priority(tech_name=""):
+        if cond_func:
+            _cond_func = cond_func
         else:
-            return priority_low()
-    if cond_func():
-        return func_if_true(tech_name)
-    else:
-        return func_if_false(tech_name)
+            if this_object is not None:
+                _cond_func = partial(getattr, this_object, this_attr)
+            else:
+                return priority_low()
+
+        if _cond_func():
+            return func_if_true(tech_name=tech_name)
+        else:
+            return func_if_false(tech_name=tech_name)
+    return get_priority
 
 MIL_IDX = 0
 TROOP_IDX = 1
@@ -179,7 +186,7 @@ def get_max_stealth_species():
 
 def get_initial_research_target():
     # TODO: consider cases where may want lesser target
-    return AIDependencies.ART_MINDS
+    return Dep.ART_MINDS
 
 
 def get_ship_tech_usefulness(tech, ship_designer):
@@ -243,7 +250,7 @@ def get_artificial_black_hole_priority(tech_name=""):
     if has_star(fo.starType.blackHole) or not has_star(fo.starType.red):
         print "Already have black hole, or does not have a red star to turn to black hole. Skipping ART_BLACK_HOLE"
         return 0
-    for tech in AIDependencies.SHIP_TECHS_REQUIRING_BLACK_HOLE:
+    for tech in Dep.SHIP_TECHS_REQUIRING_BLACK_HOLE:
         if tech_is_complete(tech):
             print "Solar hull is researched, needs a black hole to produce it. Research ART_BLACK_HOLE now!"
             return 999
@@ -285,13 +292,13 @@ def get_hull_priority(tech_name):
     else:
         aggression = 0.1
 
-    if tech_name in AIDependencies.ROBOTIC_HULL_TECHS:
+    if tech_name in Dep.ROBOTIC_HULL_TECHS:
         return robotic * useful * aggression
-    elif tech_name in AIDependencies.ORGANIC_HULL_TECHS:
+    elif tech_name in Dep.ORGANIC_HULL_TECHS:
         return organic * useful * aggression
-    elif tech_name in AIDependencies.ASTEROID_HULL_TECHS:
+    elif tech_name in Dep.ASTEROID_HULL_TECHS:
         return asteroid * useful * aggression
-    elif tech_name in AIDependencies.ENERGY_HULL_TECHS:
+    elif tech_name in Dep.ENERGY_HULL_TECHS:
         return energy * useful * aggression
     else:
         return useful * aggression
@@ -854,139 +861,135 @@ def generate_research_orders():
     # keys are "PREFIX1", as in "DEF" or "SPY"
     if not primary_prefix_priority_funcs:
         primary_prefix_priority_funcs.update({
-            AIDependencies.DEFENSE_TECHS_PREFIX: partial(const_priority, 2.0) if DEFENSIVE else partial(if_enemies, 0.2)
+            Dep.DEFENSE_TECHS_PREFIX: partial(const_priority, 2.0) if DEFENSIVE else partial(if_enemies, 0.2)
             })
 
     # keys are "PREFIX1_PREFIX2", as in "SHP_WEAPON"
     if not secondary_prefix_priority_funcs:
         secondary_prefix_priority_funcs.update({
-            AIDependencies.WEAPON_PREFIX: partial(ship_usefulness, partial(if_enemies, 0.2), MIL_IDX)
+            Dep.WEAPON_PREFIX: partial(ship_usefulness, partial(if_enemies, 0.2), MIL_IDX)
             })
 
     if not priority_funcs:
         tech_handlers = (
             (
-                AIDependencies.PRO_MICROGRAV_MAN,
-                partial(conditional_priority, partial(const_priority, 3.5), priority_low, None, ColonisationAI,
-                        'got_ast')
+                Dep.PRO_MICROGRAV_MAN,
+                conditional_priority(partial(const_priority, 3.5), priority_low, None, ColonisationAI, 'got_ast')
             ),
             (
-                AIDependencies.PRO_ORBITAL_GEN,
-                partial(conditional_priority, partial(const_priority, 3.0), priority_low, None, ColonisationAI,
-                        'got_gg')
+                Dep.PRO_ORBITAL_GEN,
+                conditional_priority(partial(const_priority, 3.0), priority_low, None, ColonisationAI, 'got_gg')
             ),
             (
-                AIDependencies.PRO_SINGULAR_GEN,
-                partial(conditional_priority,
-                        partial(const_priority, 3.0),
+                Dep.PRO_SINGULAR_GEN,
+                conditional_priority(partial(const_priority, 3.0),
                         priority_low, partial(has_star,
                                               fo.starType.blackHole))
             ),
             (
-                AIDependencies.GRO_XENO_GENETICS,
+                Dep.GRO_XENO_GENETICS,
                 get_xeno_genetics_priority
             ),
             (
-                AIDependencies.LRN_XENOARCH,
-                priority_low if foAI.foAIstate.aggression < fo.aggression.typical else partial(
-                    conditional_priority,
+                Dep.LRN_XENOARCH,
+                priority_low if foAI.foAIstate.aggression < fo.aggression.typical else
+                    conditional_priority(
                     partial(const_priority, 5.0),
                     priority_low, None,
                     ColonisationAI, 'gotRuins')
             ),
             (
-                AIDependencies.LRN_ART_BLACK_HOLE,
+                Dep.LRN_ART_BLACK_HOLE,
                 get_artificial_black_hole_priority),
             (
-                (AIDependencies.GRO_GENOME_BANK,), priority_low
+                (Dep.GRO_GENOME_BANK,), priority_low
             ),
             (
-                AIDependencies.CON_CONC_CAMP,
+                Dep.CON_CONC_CAMP,
                 partial(priority_zero)
             ),
             (
-                AIDependencies.NEST_DOMESTICATION_TECH,
-                priority_zero if foAI.foAIstate.aggression < fo.aggression.typical else partial(
-                    conditional_priority,
+                Dep.NEST_DOMESTICATION_TECH,
+                priority_zero if foAI.foAIstate.aggression < fo.aggression.typical else conditional_priority(
                     partial(const_priority, 3.0),
                     priority_low, None, ColonisationAI,
                     'got_nest')
             ),
             (
-                AIDependencies.UNRESEARCHABLE_TECHS,
+                Dep.UNRESEARCHABLE_TECHS,
                 partial(const_priority, -1.0)
             ),
             (
-                AIDependencies.UNUSED_TECHS,
+                Dep.UNUSED_TECHS,
                 priority_zero
             ),
             (
-                AIDependencies.THEORY_TECHS,
+                Dep.THEORY_TECHS,
                 priority_zero
             ),
             (
-                AIDependencies.PRODUCTION_BOOST_TECHS,
+                Dep.PRODUCTION_BOOST_TECHS,
                 partial(if_dict, ColonisationAI.empire_status,
                         'industrialists', 0.6, 1.5)
             ),
             (
-                AIDependencies.RESEARCH_BOOST_TECHS,
+                Dep.RESEARCH_BOOST_TECHS,
                 partial(if_tech_target, get_initial_research_target(), 2.1, 2.5)
             ),
             (
-                AIDependencies.PRODUCTION_AND_RESEARCH_BOOST_TECHS,
+                Dep.PRODUCTION_AND_RESEARCH_BOOST_TECHS,
                 partial(const_priority, 2.5)
             ),
             (
-                AIDependencies.POPULATION_BOOST_TECHS,
+                Dep.POPULATION_BOOST_TECHS,
                 get_population_boost_priority
             ),
             (
-                AIDependencies.SUPPLY_BOOST_TECHS,
-                partial(if_tech_target, AIDependencies.SUPPLY_BOOST_TECHS[0], 1.0, 0.5)
+                Dep.SUPPLY_BOOST_TECHS,
+                partial(if_tech_target, Dep.SUPPLY_BOOST_TECHS[0], 1.0, 0.5)
             ),
             (
-                AIDependencies.METER_CHANGE_BOOST_TECHS,
+                Dep.METER_CHANGE_BOOST_TECHS,
                 partial(const_priority, 1.0)
             ),
             (
-                AIDependencies.DETECTION_TECHS,
+                Dep.DETECTION_TECHS,
                 partial(const_priority, 0.5)
             ),
             (
-                AIDependencies.STEALTH_TECHS,
+                Dep.STEALTH_TECHS,
                 get_stealth_priority
             ),
             (
-                AIDependencies.DAMAGE_CONTROL_TECHS,
+                Dep.DAMAGE_CONTROL_TECHS,
                 partial(if_enemies, 0.1, 0.5)
             ),
             (
-                AIDependencies.HULL_TECHS,
+                Dep.HULL_TECHS,
                 get_hull_priority
             ),
             (
-                AIDependencies.ARMOR_TECHS,
+                Dep.ARMOR_TECHS,
                 partial(ship_usefulness, if_enemies, MIL_IDX)
             ),
             (
-                AIDependencies.ENGINE_TECHS,
+                Dep.ENGINE_TECHS,
                 partial(ship_usefulness, partial(if_dict, choices, 'engine', true_val=0.6), None)
             ),
             (
-                AIDependencies.FUEL_TECHS,
+                Dep.FUEL_TECHS,
                 partial(ship_usefulness, partial(if_dict, choices, 'fuel'), None)),
             (
-                AIDependencies.SHIELD_TECHS,
+                Dep.SHIELD_TECHS,
                 partial(ship_usefulness, if_enemies, MIL_IDX)
             ),
             (
-                AIDependencies.TROOP_POD_TECHS,
+                Dep.TROOP_POD_TECHS,
                 partial(ship_usefulness,
                         partial(if_enemies, 0.1, 0.3), TROOP_IDX)
             ),
             (
-                AIDependencies.COLONY_POD_TECHS,
+                Dep.COLONY_POD_TECHS,
                 partial(ship_usefulness, partial(const_priority, 0.5), COLONY_IDX)
             ),
         )
