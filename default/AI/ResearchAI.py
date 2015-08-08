@@ -182,7 +182,7 @@ def get_initial_research_target():
     return AIDependencies.ART_MINDS
 
 
-def get_ship_tech_usefulness(tech, ship_designer, tech_name=""):
+def get_ship_tech_usefulness(tech, ship_designer):
     this_tech = fo.getTech(tech)
     if not this_tech:
         print "Invalid Tech specified"
