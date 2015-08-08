@@ -3156,7 +3156,7 @@ This design is a duplicate of "%1%".
 ################
 SHIP_COUNT
 Ship Count
-
+    
 MILITARY_STRENGTH_STAT
 Rough Estimate of Total Military Strength
     
@@ -7604,6 +7604,14 @@ Domesticated Mega-Fauna
 SHP_DOMESTIC_MONSTER_DESC
 Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the starlanes. Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.
 
+SHP_MONSTER_MATURATION
+Controlled Mega-Fauna Maturation
+
+SHP_MONSTER_MATURATION_DESC
+'''Increases the spawn rate of space monsters at controlled monster nest specials.
+
+By combining advanced bio-engineering technology with a deepening understanding of megafauna biological processes, it is possible to accelerate the rate of growth of space monsters.'''
+
 SHP_ENDOCRINE_SYSTEMS
 Mega-Fauna Endocrine Systems
 
@@ -7764,6 +7772,9 @@ Makes the Game Work
 
 TAME_MONSTER_SHORT_DESC
 Tames Space Monsters
+
+SPAWN_RATE_SHORT_DESC
+Increases Monster Spawn Rate
 
 EXOBOT_SHORT_DESC
 Builds Exobot Citizens
@@ -9015,6 +9026,14 @@ BLD_GAS_GIANT_GEN_DESC
 Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
+
+BLD_MATURATION_PEN
+Mega-Fauna Maturation Pen
+
+BLD_MATURATION_PEN_DESC
+'''This building can only be constructed on a planet with a monster nest special and provides a chance of spawning level 2 space monsters each turn.
+
+A specialized complex featuring incubators, training areas and bio-laboratories. This building advances a portion of domesticated mega-fauna beyond their usual growth cycles.'''
 
 BLD_COLONY_BASE
 Colony Base
