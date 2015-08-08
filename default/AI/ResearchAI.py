@@ -36,51 +36,26 @@ def get_research_index():
     return research_index
 
 
-def const_priority(this_const=0.0, tech_name=""):
+def const_priority(this_const):
     """
-    returns a constant priority
+    Returns function that returns constant result.
     :type this_const: float
-    :type tech_name: str
-    :rtype float
+    :rtype function
     """
-    return this_const
+    def wrapper(tech_name=""):
+        return this_const
+    return wrapper
 
-
-# because this constant is used so often
-def priority_zero(tech_name=""):
-    """
-    returns a constant 0.0 priority
-    :type tech_name: str
-    :rtype float
-    """
-    return 0.0
-
-
-# because this constant is used so often
-def priority_low(tech_name=""):
-    """
-    returns a constant 0.0 priority
-    :type tech_name: str
-    :rtype float
-    """
-    return 0.1
-
-
-# because this constant is used so often
-def priority_one(tech_name=""):
-    """
-    returns a constant 0.0 priority
-    :type tech_name: str
-    :rtype float
-    """
-    return 1.0
+priority_zero = const_priority(0.0)
+priority_low = const_priority(0.1)
+priority_one = const_priority(1.0)
 
 
 def conditional_priority(func_if_true, func_if_false, cond_func=None, this_object=None, this_attr=None):
     """
     returns a priority dependent on a condition, either a function or an object attribute
-    :type func_if_true: () -> bool
-    :type func_if_false: () -> bool
+    :type func_if_true: ()
+    :type func_if_false: ()
     :type cond_func:(str) -> bool
     :type this_object: object
     :type this_attr:str
@@ -861,7 +836,7 @@ def generate_research_orders():
     # keys are "PREFIX1", as in "DEF" or "SPY"
     if not primary_prefix_priority_funcs:
         primary_prefix_priority_funcs.update({
-            Dep.DEFENSE_TECHS_PREFIX: partial(const_priority, 2.0) if DEFENSIVE else partial(if_enemies, 0.2)
+            Dep.DEFENSE_TECHS_PREFIX: const_priority(2.0) if DEFENSIVE else partial(if_enemies, 0.2)
             })
 
     # keys are "PREFIX1_PREFIX2", as in "SHP_WEAPON"
@@ -874,15 +849,15 @@ def generate_research_orders():
         tech_handlers = (
             (
                 Dep.PRO_MICROGRAV_MAN,
-                conditional_priority(partial(const_priority, 3.5), priority_low, None, ColonisationAI, 'got_ast')
+                conditional_priority(const_priority(3.5), priority_low, None, ColonisationAI, 'got_ast')
             ),
             (
                 Dep.PRO_ORBITAL_GEN,
-                conditional_priority(partial(const_priority, 3.0), priority_low, None, ColonisationAI, 'got_gg')
+                conditional_priority(const_priority(3.0), priority_low, None, ColonisationAI, 'got_gg')
             ),
             (
                 Dep.PRO_SINGULAR_GEN,
-                conditional_priority(partial(const_priority, 3.0),
+                conditional_priority(const_priority(3.0),
                         priority_low, partial(has_star,
                                               fo.starType.blackHole))
             ),
@@ -894,7 +869,7 @@ def generate_research_orders():
                 Dep.LRN_XENOARCH,
                 priority_low if foAI.foAIstate.aggression < fo.aggression.typical else
                     conditional_priority(
-                    partial(const_priority, 5.0),
+                    const_priority(5.0),
                     priority_low, None,
                     ColonisationAI, 'gotRuins')
             ),
@@ -911,13 +886,13 @@ def generate_research_orders():
             (
                 Dep.NEST_DOMESTICATION_TECH,
                 priority_zero if foAI.foAIstate.aggression < fo.aggression.typical else conditional_priority(
-                    partial(const_priority, 3.0),
+                    const_priority(3.0),
                     priority_low, None, ColonisationAI,
                     'got_nest')
             ),
             (
                 Dep.UNRESEARCHABLE_TECHS,
-                partial(const_priority, -1.0)
+                const_priority(-1.0)
             ),
             (
                 Dep.UNUSED_TECHS,
@@ -938,7 +913,7 @@ def generate_research_orders():
             ),
             (
                 Dep.PRODUCTION_AND_RESEARCH_BOOST_TECHS,
-                partial(const_priority, 2.5)
+                const_priority(2.5)
             ),
             (
                 Dep.POPULATION_BOOST_TECHS,
@@ -950,11 +925,11 @@ def generate_research_orders():
             ),
             (
                 Dep.METER_CHANGE_BOOST_TECHS,
-                partial(const_priority, 1.0)
+                const_priority(1.0)
             ),
             (
                 Dep.DETECTION_TECHS,
-                partial(const_priority, 0.5)
+                const_priority(0.5)
             ),
             (
                 Dep.STEALTH_TECHS,
@@ -990,7 +965,7 @@ def generate_research_orders():
             ),
             (
                 Dep.COLONY_POD_TECHS,
-                partial(ship_usefulness, partial(const_priority, 0.5), COLONY_IDX)
+                partial(ship_usefulness, const_priority(0.5), COLONY_IDX)
             ),
         )
         for k, v in tech_handlers:
