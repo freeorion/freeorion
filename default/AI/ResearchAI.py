@@ -1078,7 +1078,7 @@ def generate_research_orders():
                     on_path_to[prereq] = tech_name
 
     # final priorities are scaled by a combination of relative per-turn cost and relative total cost
-    for tech_name, priority in base_priorities.iteritems():
+    for tech_name, priority in priorities.iteritems():
         if priority >= 0:
             relative_turn_cost = max(research_reqs[tech_name][REQS_PER_TURN_COST_IDX], 0.1) / total_rp
             relative_total_cost = max(research_reqs[tech_name][REQS_COST_IDX], 0.1) / total_rp
@@ -1095,12 +1095,21 @@ def generate_research_orders():
     possible.sort(key=tech_time_sort_key)
     possible.sort(key=priorities.__getitem__, reverse=True)
 
+    missing_prereq_list = []
     print "Research priorities"
     print "    %25s %8s %8s %8s %25s %s" % ("Name", "Priority", "Cost", "Time", "As Prereq To", "Missing Prerequisties")
-    for tech_name in possible[:20]:
+    for idx, tech_name in enumerate(possible[:20]):
         tech_info = research_reqs[tech_name]
         print "    %25s %8.6f %8.2f %8.2f %25s %s" % (tech_name, priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
+        missing_prereq_list.extend([prereq for prereq in tech_info[0] if prereq not in possible[:idx] and not tech_is_complete(prereq)])
     print
+
+    print "Prereqs seeming out of order:"
+    print "    %25s %8s %8s %8s %8s %25s %s" % ("Name", "Priority", "Base Prio",  "Cost", "Time", "As Prereq To", "Missing Prerequisties")
+    for tech_name in missing_prereq_list:
+        tech_info = research_reqs[tech_name]
+        print "    %25s %8.6f %8.6f %8.2f %8.2f %25s %s" % (tech_name, priorities[tech_name], base_priorities[tech_name], tech_info[1], tech_info[2], on_path_to.get(tech_name, ""), tech_info[0])
+
 
     print "enqueuing techs. already spent RP: %s total RP: %s" % (fo.getEmpire().researchQueue.totalSpent, total_rp)
 
