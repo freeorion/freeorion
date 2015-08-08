@@ -1,5 +1,6 @@
 from functools import partial
 import math
+from operator import itemgetter
 import random
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -90,22 +91,20 @@ def get_main_ship_designer_list():
     return MAIN_SHIP_DESIGNER_LIST
 
 
-def ship_usefulness(base_priority_func, this_designer=None, tech_name=""):
-    """
+def ship_usefulness(base_priority_func, designer=None):
 
-    :type base_priority_func: () _> bool
-    :type this_designer: int | None
-    """
-    if this_designer is None:
-        this_designer_list = get_main_ship_designer_list()
-    elif isinstance(this_designer, int):
-        this_designer_list = get_main_ship_designer_list()[:this_designer+1][-1:]
-    else:
-        return 0.0
-    useful = 0.0
-    for this_designer in this_designer_list:
-        useful = max(useful, get_ship_tech_usefulness(tech_name, this_designer))
-    return useful * base_priority_func()
+    def wrapper(tech_name=""):
+        if designer is None:
+            designer_list = get_main_ship_designer_list()
+        elif isinstance(designer, int):
+            designer_list = get_main_ship_designer_list()[:designer+1][-1:]
+        else:
+            return 0.0
+        useful = 0.0
+        for this_designer in designer_list:
+            useful = max(useful, get_ship_tech_usefulness(tech_name, this_designer))
+        return useful * base_priority_func()
+    return wrapper
 
 
 def has_star(star_type):
@@ -114,16 +113,24 @@ def has_star(star_type):
     return empire_stars[star_type]
 
 
-def if_enemies(false_val=0.1, true_val=1.0, tech_name=""):
-    return true_val if foAI.foAIstate.misc.get('enemies_sighted', {}) else false_val
+def if_enemies(false_val, true_val):
+    return conditional_priority(const_priority(true_val),
+                                const_priority(false_val),
+                                cond_func=lambda: foAI.foAIstate.misc.get('enemies_sighted', {}))
 
 
-def if_dict(this_dict, this_key, false_val=0.1, true_val=1.0, tech_name=""):
-    return true_val if this_dict.get(this_key, False) else false_val
+def if_dict(this_dict, this_key, false_val, true_val):
+    return conditional_priority(const_priority(true_val),
+                                const_priority(false_val),
+                                cond_func=lambda: this_dict.get(this_key, False))
 
 
-def if_tech_target(tech_target, false_val=0.1, true_val=1.0, tech_name=""):
-    return true_val if tech_is_complete(tech_target) else false_val
+
+def if_tech_target(tech_target, false_val, true_val):
+    return conditional_priority(
+        const_priority(true_val),
+        const_priority(false_val),
+        cond_func=lambda: tech_is_complete(tech_target))
 
 
 def has_only_bad_colonizers():
@@ -835,13 +842,13 @@ def generate_research_orders():
     # keys are "PREFIX1", as in "DEF" or "SPY"
     if not primary_prefix_priority_funcs:
         primary_prefix_priority_funcs.update({
-            Dep.DEFENSE_TECHS_PREFIX: const_priority(2.0) if DEFENSIVE else partial(if_enemies, 0.2)
+            Dep.DEFENSE_TECHS_PREFIX: const_priority(2.0) if DEFENSIVE else if_enemies(0.2, 0.1)
             })
 
     # keys are "PREFIX1_PREFIX2", as in "SHP_WEAPON"
     if not secondary_prefix_priority_funcs:
         secondary_prefix_priority_funcs.update({
-            Dep.WEAPON_PREFIX: partial(ship_usefulness, partial(if_enemies, 0.2), MIL_IDX)
+            Dep.WEAPON_PREFIX: ship_usefulness(if_enemies(0.2, 0.1), MIL_IDX)
             })
 
     if not priority_funcs:
@@ -896,11 +903,11 @@ def generate_research_orders():
             ),
             (
                 Dep.PRODUCTION_BOOST_TECHS,
-                partial(if_dict, ColonisationAI.empire_status, 'industrialists', 0.6, 1.5)
+                if_dict(ColonisationAI.empire_status, 'industrialists', 0.6, 1.5)
             ),
             (
                 Dep.RESEARCH_BOOST_TECHS,
-                partial(if_tech_target, get_initial_research_target(), 2.1, 2.5)
+                if_tech_target(get_initial_research_target(), 2.1, 2.5)
             ),
             (
                 Dep.PRODUCTION_AND_RESEARCH_BOOST_TECHS,
@@ -912,7 +919,7 @@ def generate_research_orders():
             ),
             (
                 Dep.SUPPLY_BOOST_TECHS,
-                partial(if_tech_target, Dep.SUPPLY_BOOST_TECHS[0], 1.0, 0.5)
+                if_tech_target(Dep.SUPPLY_BOOST_TECHS[0], 1.0, 0.5)
             ),
             (
                 Dep.METER_CHANGE_BOOST_TECHS,
@@ -928,7 +935,7 @@ def generate_research_orders():
             ),
             (
                 Dep.DAMAGE_CONTROL_TECHS,
-                partial(if_enemies, 0.1, 0.5)
+                if_enemies(0.1, 0.5)
             ),
             (
                 Dep.HULL_TECHS,
@@ -936,27 +943,26 @@ def generate_research_orders():
             ),
             (
                 Dep.ARMOR_TECHS,
-                partial(ship_usefulness, if_enemies, MIL_IDX)
+                ship_usefulness(if_enemies(0.1, 0.1), MIL_IDX)
             ),
             (
                 Dep.ENGINE_TECHS,
-                partial(ship_usefulness, partial(if_dict, choices, 'engine', true_val=0.6), None)
+                ship_usefulness(if_dict(choices, 'engine', 0.1, 0.6), None)
             ),
             (
                 Dep.FUEL_TECHS,
-                partial(ship_usefulness, partial(if_dict, choices, 'fuel'), None)),
+                ship_usefulness(if_dict(choices, 'fuel', 0.1, 1.0), None)),
             (
                 Dep.SHIELD_TECHS,
-                partial(ship_usefulness, if_enemies, MIL_IDX)
+                ship_usefulness(if_enemies(0.1, 0.1), MIL_IDX)
             ),
             (
                 Dep.TROOP_POD_TECHS,
-                partial(ship_usefulness,
-                        partial(if_enemies, 0.1, 0.3), TROOP_IDX)
+                ship_usefulness(if_enemies(0.1, 0.3), TROOP_IDX)
             ),
             (
                 Dep.COLONY_POD_TECHS,
-                partial(ship_usefulness, const_priority(0.5), COLONY_IDX)
+                ship_usefulness(const_priority(0.5), COLONY_IDX)
             ),
         )
         for k, v in tech_handlers:
