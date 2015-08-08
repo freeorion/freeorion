@@ -4504,7 +4504,7 @@ GRO_BIOTERROR_DESC
 Ein Forschungszentrum erschaffen, um sicher die gefährlichsten Biologischen Waffen zu entwickeln, versteckt vor neugierigen Augen. Biologische Waffen wirken zu langsam um in einem offenen miliärischen Konflikt wirksam zu sein, als Terrorwaffe sind sie unerreicht, eine langsam wachsende Kontamination verbreitet Angst und Schrecken. Bilder von verzweifelten Personen, in Quarantäne gehalten durch ihre eigene Regierung, säen Verzweiflung jenseits der betroffenen Gebiete. Jedoch müssen größte Sicherheitsmaßnahmen eingehalten werden, wenn man solche Organismen entwickelt, um sicherzustellen, dass sie nicht versehentlich freigesetzt werden. Außerdem ist strikte Geheimhaltung notwendig, um nicht zu riskieren, dass diplomatische Beziehungen mit anderen Imperien und zur eigenen Bevölkerung leiden.
 
 GRO_CYBORG_DESC
-''''''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_HOSTILE]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
+'''Erhöht die Maximale Bevölkerung von Planeten des Typs [[PE_HOSTILE]], abhängig von deren Größe; [[SZ_TINY]]: +2, [[SZ_SMALL]]: +4, [[SZ_MEDIUM]]: +6, [[SZ_LARGE]]: +8, [[SZ_HUGE]]: +10.
 
 A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances. Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
