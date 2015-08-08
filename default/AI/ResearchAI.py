@@ -59,7 +59,6 @@ def conditional_priority(func_if_true, func_if_false, cond_func=None, this_objec
     :type cond_func:(str) -> bool
     :type this_object: object
     :type this_attr:str
-    :type tech_name:str
     :rtype float
     """
     def get_priority(tech_name=""):
@@ -318,7 +317,7 @@ def get_priority(tech_name):
 
 
 def calculate_research_requirements():
-    """calculate RPs and prerequisites of every tech, in (prereqs, cost, time)"""
+    """Calculate RPs and prerequisites of every tech, in (prereqs, cost, time)."""
     empire = fo.getEmpire()
     research_reqs.clear()
 
@@ -857,9 +856,7 @@ def generate_research_orders():
             ),
             (
                 Dep.PRO_SINGULAR_GEN,
-                conditional_priority(const_priority(3.0),
-                        priority_low, partial(has_star,
-                                              fo.starType.blackHole))
+                conditional_priority(const_priority(3.0), priority_low, partial(has_star, fo.starType.blackHole))
             ),
             (
                 Dep.GRO_XENO_GENETICS,
@@ -868,10 +865,7 @@ def generate_research_orders():
             (
                 Dep.LRN_XENOARCH,
                 priority_low if foAI.foAIstate.aggression < fo.aggression.typical else
-                    conditional_priority(
-                    const_priority(5.0),
-                    priority_low, None,
-                    ColonisationAI, 'gotRuins')
+                conditional_priority(const_priority(5.0), priority_low, None, ColonisationAI, 'gotRuins')
             ),
             (
                 Dep.LRN_ART_BLACK_HOLE,
@@ -886,9 +880,7 @@ def generate_research_orders():
             (
                 Dep.NEST_DOMESTICATION_TECH,
                 priority_zero if foAI.foAIstate.aggression < fo.aggression.typical else conditional_priority(
-                    const_priority(3.0),
-                    priority_low, None, ColonisationAI,
-                    'got_nest')
+                    const_priority(3.0), priority_low, None, ColonisationAI, 'got_nest')
             ),
             (
                 Dep.UNRESEARCHABLE_TECHS,
@@ -904,8 +896,7 @@ def generate_research_orders():
             ),
             (
                 Dep.PRODUCTION_BOOST_TECHS,
-                partial(if_dict, ColonisationAI.empire_status,
-                        'industrialists', 0.6, 1.5)
+                partial(if_dict, ColonisationAI.empire_status, 'industrialists', 0.6, 1.5)
             ),
             (
                 Dep.RESEARCH_BOOST_TECHS,
