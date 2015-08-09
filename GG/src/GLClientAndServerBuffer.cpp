@@ -55,6 +55,10 @@ std::size_t GLClientAndServerBufferBase<vtype>::size() const
 { return b_size; }
 
 template <class vtype>
+bool GLClientAndServerBufferBase<vtype>::empty() const
+{ return b_size == 0; }
+
+template <class vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item)
 {
     b_data.push_back(item);

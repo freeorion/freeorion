@@ -43,6 +43,7 @@ private:
 public:
     GLClientAndServerBufferBase(std::size_t elementsPerItem);
     std::size_t size() const;
+    bool        empty() const;
 
     // store items, buffers usually store tupels, convenience functions
     // do not use while server buffer exists
