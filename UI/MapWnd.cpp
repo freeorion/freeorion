@@ -680,7 +680,7 @@ MapWnd::MapWnd() :
     m_starlane_colors(),
     m_RC_starlane_vertices(),
     m_RC_starlane_colors(),
-    m_resourceCenters(),
+    m_resource_centers(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
     m_btn_turn(0),
@@ -1551,7 +1551,7 @@ void MapWnd::RenderGalaxyGas() {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it =
-            m_galaxy_gas_quad_vertices.begin(); it != m_galaxy_gas_quad_vertices.end(); ++it)
+         m_galaxy_gas_quad_vertices.begin(); it != m_galaxy_gas_quad_vertices.end(); ++it)
     {
         glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
         it->second.activate();
@@ -2616,9 +2616,6 @@ void MapWnd::InitSystemRenderingBuffers() {
         float icon_lr_y = static_cast<float>(system->Y() + icon_size);
 
         if (icon->DiscTexture()) {
-            glBindTexture(GL_TEXTURE_2D, icon->DiscTexture()->OpenGLId());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
             GG::GL2DVertexBuffer& core_vertices = m_star_core_quad_vertices[icon->DiscTexture()];
             core_vertices.store(icon_lr_x,icon_ul_y);
             core_vertices.store(icon_ul_x,icon_ul_y);
@@ -2627,9 +2624,6 @@ void MapWnd::InitSystemRenderingBuffers() {
         }
 
         if (icon->HaloTexture()) {
-            glBindTexture(GL_TEXTURE_2D, icon->HaloTexture()->OpenGLId());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
             GG::GL2DVertexBuffer& halo_vertices = m_star_halo_quad_vertices[icon->HaloTexture()];
             halo_vertices.store(icon_lr_x,icon_ul_y);
             halo_vertices.store(icon_ul_x,icon_ul_y);
@@ -2640,69 +2634,82 @@ void MapWnd::InitSystemRenderingBuffers() {
 
         // add (rotated) gaseous substance around system
         if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", system_id)) {
-            glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-            const double GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
-            const double ROTATION = system_id * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
-            const double COS_THETA = std::cos(ROTATION);
-            const double SIN_THETA = std::sin(ROTATION);
+            const float GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
+            const float ROTATION = system_id * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
+            const float COS_THETA = std::cos(ROTATION);
+            const float SIN_THETA = std::sin(ROTATION);
 
             // Components of corner points of a quad
-            const double X1 =  1.0, Y1 =  1.0;  // upper right corner (X1, Y1)
-            const double X2 = -1.0, Y2 =  1.0;  // upper left corner  (X2, Y2)
-            const double X3 = -1.0, Y3 = -1.0;  // lower left corner  (X3, Y3)
-            const double X4 =  1.0, Y4 = -1.0;  // lower right corner (X4, Y4)
+            const float X1 =  GAS_SIZE, Y1 =  GAS_SIZE;  // upper right corner (X1, Y1)
+            const float X2 = -GAS_SIZE, Y2 =  GAS_SIZE;  // upper left corner  (X2, Y2)
+            const float X3 = -GAS_SIZE, Y3 = -GAS_SIZE;  // lower left corner  (X3, Y3)
+            const float X4 =  GAS_SIZE, Y4 = -GAS_SIZE;  // lower right corner (X4, Y4)
 
             // Calculate rotated corner point components after CCW ROTATION radians around origin.
-            const double X1r =  COS_THETA*X1 + SIN_THETA*Y1;
-            const double Y1r = -SIN_THETA*X1 + COS_THETA*Y1;
-            const double X2r =  COS_THETA*X2 + SIN_THETA*Y2;
-            const double Y2r = -SIN_THETA*X2 + COS_THETA*Y2;
-            const double X3r =  COS_THETA*X3 + SIN_THETA*Y3;
-            const double Y3r = -SIN_THETA*X3 + COS_THETA*Y3;
-            const double X4r =  COS_THETA*X4 + SIN_THETA*Y4;
-            const double Y4r = -SIN_THETA*X4 + COS_THETA*Y4;
+            const float X1r =  COS_THETA*X1 + SIN_THETA*Y1;
+            const float Y1r = -SIN_THETA*X1 + COS_THETA*Y1;
+            const float X2r =  COS_THETA*X2 + SIN_THETA*Y2;
+            const float Y2r = -SIN_THETA*X2 + COS_THETA*Y2;
+            const float X3r =  COS_THETA*X3 + SIN_THETA*Y3;
+            const float Y3r = -SIN_THETA*X3 + COS_THETA*Y3;
+            const float X4r =  COS_THETA*X4 + SIN_THETA*Y4;
+            const float Y4r = -SIN_THETA*X4 + COS_THETA*Y4;
 
-            // Multiply all coords by GAS_SIZE to get relative scaled rotated quad corner components
             // See note above texture coords for why we're making coordinate sets that are 2x too big.
 
             // add to system position to get translated scaled rotated quad corner
-            const float GAS_X1 = static_cast<float>(system->X() + (X1r * GAS_SIZE));
-            const float GAS_Y1 = static_cast<float>(system->Y() + (Y1r * GAS_SIZE));
-            const float GAS_X2 = static_cast<float>(system->X() + (X2r * GAS_SIZE));
-            const float GAS_Y2 = static_cast<float>(system->Y() + (Y2r * GAS_SIZE));
-            const float GAS_X3 = static_cast<float>(system->X() + (X3r * GAS_SIZE));
-            const float GAS_Y3 = static_cast<float>(system->Y() + (Y3r * GAS_SIZE));
-            const float GAS_X4 = static_cast<float>(system->X() + (X4r * GAS_SIZE));
-            const float GAS_Y4 = static_cast<float>(system->Y() + (Y4r * GAS_SIZE));
+            const float GAS_X1 = system->X() + X1r;
+            const float GAS_Y1 = system->Y() + Y1r;
+            const float GAS_X2 = system->X() + X2r;
+            const float GAS_Y2 = system->Y() + Y2r;
+            const float GAS_X3 = system->X() + X3r;
+            const float GAS_Y3 = system->Y() + Y3r;
+            const float GAS_X4 = system->X() + X4r;
+            const float GAS_Y4 = system->Y() + Y4r;
 
             GG::GL2DVertexBuffer& gas_vertices = m_galaxy_gas_quad_vertices[gaseous_texture];
 
-            gas_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
-            gas_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
-            gas_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
-            gas_vertices.store(GAS_X4,GAS_Y4); // rotated lower right
+            gas_vertices.store(GAS_X1, GAS_Y1); // rotated upper right
+            gas_vertices.store(GAS_X2, GAS_Y2); // rotated upper left
+            gas_vertices.store(GAS_X3, GAS_Y3); // rotated lower left
+            gas_vertices.store(GAS_X4, GAS_Y4); // rotated lower right
         }
     }
 
     // create new buffers
 
     // star cores
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it =
-             m_star_core_quad_vertices.begin(); it != m_star_core_quad_vertices.end(); ++it)
-    { m_star_core_quad_vertices[it->first].createServerBuffer(); }
+    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::iterator it =
+         m_star_core_quad_vertices.begin(); it != m_star_core_quad_vertices.end(); ++it)
+    {
+        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+        it->second.createServerBuffer();
+    }
 
     // star halos
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::iterator it = m_star_halo_quad_vertices.begin();
          it != m_star_halo_quad_vertices.end(); ++it)
-    { m_star_halo_quad_vertices[it->first].createServerBuffer(); }
+    {
+        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+        it->second.createServerBuffer();
+    }
 
     // galaxy gas
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::iterator it = m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end(); ++it)
-    { m_galaxy_gas_quad_vertices[it->first].createServerBuffer(); }
+    {
+        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
+        it->second.createServerBuffer();
+    }
     // fill buffers with star textures
     m_star_texture_coords.createServerBuffer();
 }
@@ -2773,7 +2780,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     // clear old buffers
     ClearStarlaneRenderingBuffers();
-    m_resourceCenters.clear();
+    m_resource_centers.clear();
 
     // temp storage
     std::set<std::pair<int, int> >  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
@@ -2817,7 +2824,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 int system_id = planet->SystemID();
                 resPoolSystems[it->first].insert(system_id);
-                m_resourceCenters.insert(system_id);
+                m_resource_centers.insert(system_id);
                 if (group_pp > allocatedPP[it->first] + 0.05)
                     underAllocResSys.insert(system_id);
             }
@@ -3036,7 +3043,7 @@ void MapWnd::ClearStarlaneRenderingBuffers() {
     m_starlane_colors.clear();
     m_RC_starlane_vertices.clear();
     m_RC_starlane_colors.clear();
-    m_resourceCenters.clear();
+    m_resource_centers.clear();
 }
 
 LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {

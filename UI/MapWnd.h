@@ -225,6 +225,8 @@ private:
     void            ClearSystemRenderingBuffers();
     void            InitStarlaneRenderingBuffers();             //!< initializes or refreshes buffers for rendering of starlanes
     void            ClearStarlaneRenderingBuffers();
+    void            InitFieldRenderingBuffers();
+    void            ClearFieldRenderingBuffers();
 
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
@@ -405,7 +407,11 @@ private:
     GG::GLRGBAColorBuffer               m_starlane_colors;
     GG::GL2DVertexBuffer                m_RC_starlane_vertices;
     GG::GLRGBAColorBuffer               m_RC_starlane_colors;
-    std::set<int>                       m_resourceCenters;
+
+    std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer> >    m_field_vertices;   //!< first buffer is visible fields, second buffer is not visible (scanlined) fields for each texture
+    GG::GLTexCoordBuffer                m_field_texture_coords;
+
+    std::set<int>                       m_resource_centers;
 
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;
 
