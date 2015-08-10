@@ -104,7 +104,7 @@ namespace {
 }
 
 void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
-                                  double theta1, double theta2, bool filled_shape)
+                                  double theta1, double theta2, bool filled_shape, int num_slices, bool fan)
 {
     int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
     double center_x = Value(ul.x + wd / 2.0);
@@ -122,7 +122,11 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
     else if (theta2 >= 2 * PI)
         theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
 
-    const int      SLICES = std::min(std::max(12, 3 + std::max(wd, ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
+    int SLICES = 50;
+    if (num_slices <= 0)
+        SLICES = std::min(std::max(12, 3 + std::max(wd, ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
+    else
+        SLICES = num_slices;
     const double   HORZ_THETA = (2 * PI) / SLICES;
 
     static std::map<int, std::vector<double> > unit_circle_coords;
@@ -141,22 +145,62 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
     if (theta1 >= theta2)
         last_slice_idx += SLICES;
 
-    if (filled_shape)
-        buffer.store(static_cast<GLfloat>(center_x),    static_cast<GLfloat>(center_y));
+    if (fan) {
+        // central vertex
+        if (filled_shape)
+            buffer.store(static_cast<GLfloat>(center_x),    static_cast<GLfloat>(center_y));
 
-    // point on circle at angle theta1
-    double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
-    buffer.store(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
+        // point on circle at angle theta1
+        double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
+        buffer.store(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
 
-    // angles in between theta1 and theta2, if any
-    for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
-        int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
+        // angles in between theta1 and theta2, if any
+        for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
+            int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
+            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
+        }
+
+        // theta2
+        double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
+        buffer.store(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
+
+    } else {
+        double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
+
+        std::pair<GLfloat, GLfloat> first_point;
+        if (filled_shape) {
+            first_point = std::make_pair(static_cast<GLfloat>(center_x),    static_cast<GLfloat>(center_y));
+            first_slice_idx--;
+        } else {
+            first_point = std::make_pair(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
+        }
+
+
+        // angles in between theta1 and theta2, if any
+        for (int i = first_slice_idx; i <= last_slice_idx - 1; ++i) {
+            buffer.store(first_point.first, first_point.second);
+
+            int X = (i > SLICES ? (i - SLICES) : i) * 2;
+            int Y = X + 1;
+            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
+
+            int next_i = i + 1;
+            X = (next_i > SLICES ? (next_i - SLICES) : next_i) * 2;
+            Y = X + 1;
+            buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
+        }
+
+        // theta2
+        buffer.store(first_point.first, first_point.second);
+
+        int i = last_slice_idx;
+        int X = (i > SLICES ? (i - SLICES) : i) * 2;
+        int Y = X + 1;
         buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
-    }
 
-    // theta2
-    double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
-    buffer.store(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
+        double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
+        buffer.store(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
+    }
 }
 
 void AdjustBrightness(GG::Clr& color, int amount, bool jointly_capped)

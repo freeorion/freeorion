@@ -60,9 +60,16 @@ bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, S
     or an unfilled portion when \a filled_shape is false. (glBegin(GL_LINE_STRIP); glVertex2f() ...; glEnd();). */
 void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape);
 
-/** Stores, in \a buffer vertices in CCW order that outline a circular arc or pie slice shape. */
+/** Stores, in \a buffer vertices in CCW order that outline a circular arc or
+  * \a num_slices indicates how many triangles to use to compose the circle, or
+  * if 0, indicates that the function should auto-determine how many slices. 
+  * if \a fan is true, the vertices are stored as a triangle fan- compatible
+  * list, while false indicates a triangle list (where each triangle has all
+  * 3 vertices specified explicitly. \a filled_shape indicates that a vertex
+  * at the centre of the circle should be present and shared with all triangles.*/
 void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul, const GG::Pt& lr,
-                                  double theta1, double theta2, bool filled_shape = false);
+                                  double theta1, double theta2, bool filled_shape = false,
+                                  int num_slices = 0, bool fan = true);
 
 /** Draws a rectangle whose corners are rounded with radius \a radius as
   * indicated by the \a *_round parameters.  If \a fill is true, the resulting
