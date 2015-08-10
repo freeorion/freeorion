@@ -680,6 +680,9 @@ MapWnd::MapWnd() :
     m_starlane_colors(),
     m_RC_starlane_vertices(),
     m_RC_starlane_colors(),
+    m_field_vertices(),
+    m_field_scanline_circles(),
+    m_field_texture_coords(),
     m_resource_centers(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
@@ -1458,87 +1461,63 @@ void MapWnd::RenderStarfields() {
 }
 
 void MapWnd::RenderFields() {
-    // render fields in 3 steps:
-    // 1) not visible field textures
-    // 2) scanlines on not visible fields
-    // 3) visible field textures
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-    const Universe& universe = GetUniverse();
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glEnable(GL_TEXTURE_2D);
-    glPushMatrix();
-    glLoadIdentity();
-    glColor(GG::CLR_WHITE);
-
-    // draw not visible fields first
-    for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
-         it != m_field_icons.end(); ++it)
+    // render not visible fields
+    for (std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer> >::const_iterator it =
+         m_field_vertices.begin(); it != m_field_vertices.end(); ++it)
     {
-        if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) > VIS_BASIC_VISIBILITY)
+        if (it->second.second.empty())
             continue;
 
-        const FieldIcon* icon = it->second;
-        GG::Pt ul = icon->UpperLeft();
-        GG::Pt lr = icon->LowerRight();
-        boost::shared_ptr<GG::Texture> texture = icon->FieldTexture();
-        if (texture)
-            texture->OrthoBlit(ul, lr);
+        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        it->second.second.activate();
+        m_field_texture_coords.activate();
+        glDrawArrays(GL_QUADS, 0, it->second.second.size());
     }
 
-    // if possible, draw scanlines for not visible fields
-    if (m_scanline_shader &&
-        empire_id != ALL_EMPIRES &&
+    // if any, render scanlines over not-visible fields
+    if (!m_field_scanline_circles.empty() &&
+        m_scanline_shader &&
+        HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES &&
         GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
     {
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        m_field_scanline_circles.activate();
+        glBindTexture(GL_TEXTURE_2D, 0);
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
         m_scanline_shader->Use();
         float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
         m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
 
-        for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
-             it != m_field_icons.end(); ++it)
-        {
-            if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) > VIS_BASIC_VISIBILITY)
-                continue;
-
-            const FieldIcon* icon = it->second;
-            const int ARC_SIZE = Value(icon->Width());
-            const double TWO_PI = 2.0*3.14159;
-            GG::Pt ul = icon->UpperLeft();
-            GG::Pt lr = icon->LowerRight();
-
-            GG::Pt size = lr - ul;
-            GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
-            GG::Pt middle = ul + half_size;
-
-            GG::Pt circle_size = GG::Pt(static_cast<GG::X>(ARC_SIZE),
-                                        static_cast<GG::Y>(ARC_SIZE));
-            GG::Pt circle_half_size = GG::Pt(circle_size.x / 2, circle_size.y / 2);
-            GG::Pt circle_ul = middle - circle_half_size;
-            GG::Pt circle_lr = circle_ul + circle_size;
-
-            CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
-        }
+        glDrawArrays(GL_TRIANGLES, 0, m_field_scanline_circles.size());
 
         m_scanline_shader->stopUse();
+        /*glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
-    // draw visible fields over top without scanline shader
-    for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
-         it != m_field_icons.end(); ++it)
+
+    // render visible fields
+    for (std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer> >::const_iterator it =
+         m_field_vertices.begin(); it != m_field_vertices.end(); ++it)
     {
-        if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) <= VIS_BASIC_VISIBILITY)
+        if (it->second.first.empty())
             continue;
 
-        const FieldIcon* icon = it->second;
-        GG::Pt ul = icon->UpperLeft();
-        GG::Pt lr = icon->LowerRight();
-        boost::shared_ptr<GG::Texture> texture = icon->FieldTexture();
-        if (texture)
-            texture->OrthoBlit(ul, lr);
+        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        it->second.first.activate();
+        m_field_texture_coords.activate();
+        glDrawArrays(GL_QUADS, 0, it->second.first.size());
     }
 
-    glPopMatrix();
+
+    glPopClientAttrib();
 }
 
 void MapWnd::RenderGalaxyGas() {
@@ -1553,6 +1532,9 @@ void MapWnd::RenderGalaxyGas() {
     for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it =
          m_galaxy_gas_quad_vertices.begin(); it != m_galaxy_gas_quad_vertices.end(); ++it)
     {
+        if (it->second.empty())
+            continue;
+
         glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
         it->second.activate();
         m_star_texture_coords.activate();
@@ -1649,8 +1631,8 @@ void MapWnd::RenderSystems() {
     }
 
     const double TWO_PI = 2.0*3.14159;
-    if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale") && GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle") 
-            && SidePanel::SystemID() != INVALID_OBJECT_ID) 
+    if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale") && GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle")
+        && SidePanel::SystemID() != INVALID_OBJECT_ID) 
     {
         glPushMatrix();
         glLoadIdentity();
@@ -2567,6 +2549,7 @@ void MapWnd::InitTurnRendering() {
 
     // position field icons
     DoFieldIconsLayout();
+    InitFieldRenderingBuffers();
 
 
     // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
@@ -2669,10 +2652,10 @@ void MapWnd::InitSystemRenderingBuffers() {
 
             GG::GL2DVertexBuffer& gas_vertices = m_galaxy_gas_quad_vertices[gaseous_texture];
 
-            gas_vertices.store(GAS_X1, GAS_Y1); // rotated upper right
-            gas_vertices.store(GAS_X2, GAS_Y2); // rotated upper left
-            gas_vertices.store(GAS_X3, GAS_Y3); // rotated lower left
-            gas_vertices.store(GAS_X4, GAS_Y4); // rotated lower right
+            gas_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
+            gas_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
+            gas_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
+            gas_vertices.store(GAS_X4,GAS_Y4); // rotated lower right
         }
     }
 
@@ -3073,6 +3056,118 @@ LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1,
     retval.X2 = static_cast<float>(X2);
     retval.Y2 = static_cast<float>(Y2);
     return retval;
+}
+
+void MapWnd::InitFieldRenderingBuffers() {
+    DebugLogger() << "MapWnd::InitFieldRenderingBuffers";
+    ScopedTimer timer("MapWnd::InitFieldRenderingBuffers", true);
+
+    ClearFieldRenderingBuffers();
+
+    const Universe& universe = GetUniverse();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+
+    for (std::map<int, FieldIcon*>::const_iterator it = m_field_icons.begin();
+         it != m_field_icons.end(); ++it)
+    {
+        bool current_field_visible = universe.GetObjectVisibilityByEmpire(it->first, empire_id) > VIS_BASIC_VISIBILITY;
+        TemporaryPtr<const Field> field = GetField(it->first);
+        if (!field)
+            continue;
+        const float FIELD_SIZE = field->CurrentMeterValue(METER_SIZE);  // field size is its radius
+        if (FIELD_SIZE <= 0)
+            continue;
+        boost::shared_ptr<GG::Texture> field_texture = it->second->FieldTexture();
+        if (!field_texture)
+            continue;
+
+        std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer>& field_both_vertex_buffers = m_field_vertices[field_texture];
+        GG::GL2DVertexBuffer& current_field_vertex_buffer = current_field_visible ? field_both_vertex_buffers.first : field_both_vertex_buffers.second;
+
+        // determine field rotation angle...
+        float rotation_angle = field->ID() * 27.0f; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
+        // per-turn rotation of texture. TODO: make depend on something scriptable
+        float rotation_speed = 0.03f;               // arbitrary rotation rate in radians
+        if (rotation_speed != 0.0f)
+            rotation_angle += CurrentTurn() * rotation_speed;
+
+        const float COS_THETA = std::cos(rotation_angle);
+        const float SIN_THETA = std::sin(rotation_angle);
+
+        // Components of corner points of a quad
+        const float X1 =  FIELD_SIZE, Y1 =  FIELD_SIZE; // upper right corner (X1, Y1)
+        const float X2 = -FIELD_SIZE, Y2 =  FIELD_SIZE; // upper left corner  (X2, Y2)
+        const float X3 = -FIELD_SIZE, Y3 = -FIELD_SIZE; // lower left corner  (X3, Y3)
+        const float X4 =  FIELD_SIZE, Y4 = -FIELD_SIZE; // lower right corner (X4, Y4)
+
+        // Calculate rotated corner point components after CCW ROTATION radians around origin.
+        const float X1r =  COS_THETA*X1 + SIN_THETA*Y1;
+        const float Y1r = -SIN_THETA*X1 + COS_THETA*Y1;
+        const float X2r =  COS_THETA*X2 + SIN_THETA*Y2;
+        const float Y2r = -SIN_THETA*X2 + COS_THETA*Y2;
+        const float X3r =  COS_THETA*X3 + SIN_THETA*Y3;
+        const float Y3r = -SIN_THETA*X3 + COS_THETA*Y3;
+        const float X4r =  COS_THETA*X4 + SIN_THETA*Y4;
+        const float Y4r = -SIN_THETA*X4 + COS_THETA*Y4;
+
+        // add to system position to get translated scaled rotated quad corners
+        const float FIELD_X1 = field->X() + X1r;
+        const float FIELD_Y1 = field->Y() + Y1r;
+        const float FIELD_X2 = field->X() + X2r;
+        const float FIELD_Y2 = field->Y() + Y2r;
+        const float FIELD_X3 = field->X() + X3r;
+        const float FIELD_Y3 = field->Y() + Y3r;
+        const float FIELD_X4 = field->X() + X4r;
+        const float FIELD_Y4 = field->Y() + Y4r;
+
+        current_field_vertex_buffer.store(FIELD_X1, FIELD_Y1);  // rotated upper right
+        current_field_vertex_buffer.store(FIELD_X2, FIELD_Y2);  // rotated upper left
+        current_field_vertex_buffer.store(FIELD_X3, FIELD_Y3);  // rotated lower left
+        current_field_vertex_buffer.store(FIELD_X4, FIELD_Y4);  // rotated lower right
+
+        // also add circles to render scanlines for not-visible fields
+        if (!current_field_visible) {
+            const double PI = 3.141594;
+            GG::Pt circle_ul = GG::Pt(GG::X(field->X() - FIELD_SIZE), GG::Y(field->Y() - FIELD_SIZE));
+            GG::Pt circle_lr = GG::Pt(GG::X(field->X() + FIELD_SIZE), GG::Y(field->Y() + FIELD_SIZE));
+            BufferStoreCircleArcVertices(m_field_scanline_circles, circle_ul, circle_lr, 0, 2*PI, true, 0, false);
+        }
+    }
+    m_field_scanline_circles.createServerBuffer();
+
+    for (std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer> >::iterator
+         it = m_field_vertices.begin(); it != m_field_vertices.end(); ++it)
+    {
+        boost::shared_ptr<GG::Texture> field_texture = it->first;
+        if (!field_texture)
+            continue;
+
+        glBindTexture(GL_TEXTURE_2D, field_texture->OpenGLId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+        it->second.first.createServerBuffer();
+        it->second.second.createServerBuffer();
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // this buffer should only need to be as big as the largest number of
+    // visible or not visisble fields for any single texture, but
+    // this is simpler to prepare and should be more than big enough
+    for (std::size_t i = 0; i < m_field_icons.size(); ++i) {
+        m_field_texture_coords.store(1.0f, 0.0f); // todo: convert to tex cords in range 0 to 1
+        m_field_texture_coords.store(0.0f, 0.0f);
+        m_field_texture_coords.store(0.0f, 1.0f);
+        m_field_texture_coords.store(1.0f, 1.0f);
+    }
+    m_field_texture_coords.createServerBuffer();
+}
+
+void MapWnd::ClearFieldRenderingBuffers() {
+    m_field_vertices.clear();
+    m_field_texture_coords.clear();
+    m_field_scanline_circles.clear();
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
@@ -3559,7 +3654,7 @@ void MapWnd::DoFieldIconsLayout() {
             continue;
         }
 
-        double RADIUS = ZoomFactor()*field->CurrentMeterValue(METER_SIZE);
+        double RADIUS = ZoomFactor() * field->CurrentMeterValue(METER_SIZE);    // Field's METER_SIZE gives the radius of the field
 
         GG::Pt icon_ul(GG::X(static_cast<int>(field->X()*ZoomFactor() - RADIUS)),
                        GG::Y(static_cast<int>(field->Y()*ZoomFactor() - RADIUS)));

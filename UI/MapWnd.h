@@ -409,6 +409,7 @@ private:
     GG::GLRGBAColorBuffer               m_RC_starlane_colors;
 
     std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer> >    m_field_vertices;   //!< first buffer is visible fields, second buffer is not visible (scanlined) fields for each texture
+    GG::GL2DVertexBuffer                m_field_scanline_circles;
     GG::GLTexCoordBuffer                m_field_texture_coords;
 
     std::set<int>                       m_resource_centers;
