@@ -1281,7 +1281,7 @@ OPTIONS_DB_RESOURCE_DIR
 Sets the root directory for the game resource files (game content and data files).
 
 OPTIONS_DB_LOG_LEVEL
-Sets the level at or above which log messages will be output (levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)
+Sets the level at or above which log messages will be output (levels in order of increasing verbosity: FATAL, ERROR, WARN, INFO, DEBUG, TRACE)
 
 OPTIONS_DB_STRINGTABLE_FILENAME
 Sets the language-specific string table filename.
@@ -1408,6 +1408,25 @@ Toggles whether a window is minimized.
 
 OPTIONS_DB_WINDOW_RESET
 Causes windows to use their default properties instead of remembering their previous positions.
+
+OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC
+Hidden sitrep templates
+
+OPTIONS_DB_UI_SAVE_DIALOG_TOOLTIP_DELAY
+Tooltip delay for save dialog
+
+OPTIONS_DB_OBJECTS_LIST_COLUMN_INFO
+Object list column contents
+
+OPTIONS_DB_OBJECTS_LIST_COLUMN_WIDTH
+Object list column widths
+
+HOTKEY_MAP_OBJECTS
+Hotkey to open Objects list
+
+OPTIONS_DB_FLEET_WND_AGGRESSION
+Fleet window default aggression setting
+
 
 #################
 # File Dialog   #
