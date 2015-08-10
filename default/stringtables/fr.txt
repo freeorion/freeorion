@@ -1281,7 +1281,7 @@ OPTIONS_DB_RESOURCE_DIR
 L'adresse du répertoire où sont localisées les ressources du jeu (fichiers exécutables et fichiers de données).
 
 OPTIONS_DB_LOG_LEVEL
-Fixe le niveau d'importance à partir duquel les messages du journal seront affichés (niveaux par ordre décroissant de verbosité: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG).
+Fixe le niveau d'importance à partir duquel les messages du journal seront affichés (niveaux par ordre croissant de verbosité: FATAL, ERROR, WARN, INFO, DEBUG, TRACE).
 
 OPTIONS_DB_STRINGTABLE_FILENAME
 L'adresse du fichier contenant la langue choisie pour l'interface utilisateur. Une fois le fichier sélectionné, cliquez sur 'Réinitialiser le fichier langue en mémoire' puis validez.
@@ -1408,6 +1408,25 @@ Définit si une fenêtre est minimisable.
 
 OPTIONS_DB_WINDOW_RESET
 Les fenêtres utilisent leurs propriétés par défaut plutôt que les dernières positions enregistrées.
+
+OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC
+Modèles cachés de Sitreps
+
+OPTIONS_DB_UI_SAVE_DIALOG_TOOLTIP_DELAY
+Délai avant infobulle Fenêtre de sauvegarde
+
+OPTIONS_DB_OBJECTS_LIST_COLUMN_INFO
+Contenu des colonnes Fenêtre Objets
+
+OPTIONS_DB_OBJECTS_LIST_COLUMN_WIDTH
+Largeur des colonnes Fenêtre Objets
+
+HOTKEY_MAP_OBJECTS
+Fenêtre Objets [on/off]
+
+OPTIONS_DB_FLEET_WND_AGGRESSION
+Comportement par défaut des Flottes
+
 
 #################
 # File Dialog   #
