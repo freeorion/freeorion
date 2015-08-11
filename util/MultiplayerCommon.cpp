@@ -33,7 +33,6 @@ namespace {
         db.Add<std::string>('S', "save-dir",        UserStringNop("OPTIONS_DB_SAVE_DIR"),              PathString(GetUserDir() / "save"));
         db.Add<std::string>("log-level",            UserStringNop("OPTIONS_DB_LOG_LEVEL"),             "DEBUG");
         db.Add<std::string>("stringtable-filename", UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),  PathString(GetRootDataDir() / "default" / "stringtables" / "en.txt"));
-        db.AddFlag("test-3d-combat",                UserStringNop("OPTIONS_DB_TEST_3D_COMBAT"),        false);
         db.Add("binary-serialization",              UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),  true);  // Consider changing to Enum to support more serialization formats
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget; 

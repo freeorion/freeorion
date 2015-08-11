@@ -356,8 +356,7 @@ void HumanClientApp::StartServer() {
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
     args.push_back("--log-level");
     args.push_back(GetOptionsDB().Get<std::string>("log-level"));
-    if (GetOptionsDB().Get<bool>("test-3d-combat"))
-        args.push_back("--test-3d-combat");
+
     if (ai_path != GetOptionsDB().GetDefaultValueString("ai-path")) {
         args.push_back("--ai-path");
         args.push_back(ai_path);

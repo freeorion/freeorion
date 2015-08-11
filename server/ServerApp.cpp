@@ -2726,13 +2726,6 @@ void ServerApp::ProcessCombats() {
         //}
         //// END DEBUG
 
-        // TODO: Remove this up-front check when the 3D combat system is in
-        // place
-        if (!GetOptionsDB().Get<bool>("test-3d-combat")) {
-            AutoResolveCombat(combat_info);
-            continue;
-        }
-
         std::set<int>& empire_ids = combat_info.empire_ids;
 
         // find which human players are involved in this battle
