@@ -1310,18 +1310,6 @@ Si activé, les effets des clics droit et gauche de la souris seront inversés.
 OPTIONS_DB_MUSIC_VOLUME
 Fixe le volume sonore de la musique (de 0 à 255).
 
-OPTIONS_DB_COMBAT_ENABLE_GLOW
-Active/Désactive les effets d'éclat.
-
-OPTIONS_DB_COMBAT_ENABLE_SKYBOX
-Active/Désactive le fond skybox.
-
-OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
-Active/Désactive les effets de lens flares.
-
-OPTIONS_DB_COMBAT_FILLED_SELECTION
-Remplissage/Encadrement des objets sélectionnés.
-
 OPTIONS_DB_QUICKSTART
 Lance une nouvelle partie en court-circuitant le menu principal.
 
@@ -1351,12 +1339,6 @@ Définit la largeur et la hauteur des icônes du Rapport de Situation; par défa
 
 OPTIONS_DB_UI_SITREP_FONTSIZE
 Définit la taille de texte du Rapport de Situation; par défaut 12 (min 10, max 48).
-
-OPTIONS_DB_TECH_DEMO
-Active/Désactive la démonstration de combat tactique en trois dimensions.
-
-OPTIONS_DB_TEST_3D_COMBAT
-Active/Désactive la résolution de combat en trois dimensions.
 
 OPTIONS_DB_LOAD
 Charge la partie solo sauvegardée spécifiée.
@@ -2245,9 +2227,6 @@ Interface
 OPTIONS_PAGE_COLORS
 Couleurs
 
-OPTIONS_PAGE_COMBAT
-Combats
-
 OPTIONS_PAGE_DIRECTORIES
 Répertoires
 
@@ -2277,18 +2256,6 @@ Arrière plan
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Barre
-
-OPTIONS_COMBAT_ENABLE_GLOW
-Éclat
-
-#OPTIONS_COMBAT_ENABLE_SKYBOX
-#Skybox
-
-#OPTIONS_COMBAT_ENABLE_LENS_FLARES
-#Lens Flares
-
-OPTIONS_COMBAT_FILLED_SELECTION
-Affichage sélection
 
 OPTIONS_ANY_FILE
 Tout fichier
@@ -2328,16 +2295,6 @@ Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
 OPTIONS_USE_BINARY_SERIALIZATION
 Sérialisation binaire
-
-##################
-# CombatSetupWnd #
-##################
-
-AUTO_PLACE_SHIPS
-Positionnement automatique des astronefs
-
-REDO_PLACEMENTS
-Repositionnements
 
 #################
 # Main Map      #
