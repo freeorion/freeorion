@@ -509,16 +509,27 @@ void DropDownList::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
     if (!Disabled()) {
         if (CurrentItem() == LB()->end())
             return;
+        if (move == 0)
+            return;
 
-        for (int i = 0; i < move; ++i) {
-            if (CurrentItem() != LB()->begin())
-                SelectImpl(boost::prior(CurrentItem()), true);
+        //std::cout << "DropDownList::MouseWheel move: " << move << std::endl;
+
+        DropDownList::iterator cur_it = CurrentItem();
+
+        if (move > 0) {
+            int dist_to_last = std::distance(cur_it, end()) - 1; // end is one past last valid item
+            if (move > dist_to_last)
+                move = dist_to_last;
+        } else {
+            int dist_from_first = std::distance(begin(), cur_it);// begin is the first valid item
+            if (-move > dist_from_first)
+                move = -dist_from_first;
+        }
+        if (move != 0) {
+            std::advance(cur_it, move);
+            SelectImpl(cur_it, true);
         }
 
-        for (int i = 0; i < -move; ++i) {
-            if (CurrentItem() != --LB()->end())
-                SelectImpl(boost::next(CurrentItem()), true);
-        }
     } else {
         Control::MouseWheel(pt, move, mod_keys);
     }
