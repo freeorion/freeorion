@@ -52,7 +52,7 @@ namespace {
             //nameText += GetShipDesign(designID)->Name();
             GG::Label* text = new CUILabel(nameText, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
             text->SetTextColor(txtClr);
-            text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3))); //
+            text->OffsetMove(GG::Pt(GG::X0, GG::Y(-3)));
             AttachChild(text);
             Resize(GG::Pt(nwidth, text->Height()));
         }
@@ -93,7 +93,7 @@ namespace {
     //////////////////////
     class QuantitySelector : public CUIDropDownList {
     public:
-        mutable boost::signals2::signal<void (int,int)> QuantChangedSignal;
+        mutable boost::signals2::signal<void (int, int)> QuantChangedSignal;
 
         /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
@@ -123,47 +123,43 @@ namespace {
                     : ClientUI::ResearchableTechFillColor()
             );
             SetNumCols(1);
-            //m_quantity_selector->SetColWidth(0, GG::X(14));
-            //m_quantity_selector->LockColWidths();
 
-            int quantInts[] = {1, 2, 3, 4, 5, 10, 20, 50, 99};
-            std::set<int> myQuantSet(quantInts, quantInts+9);
+            int quantInts[] = {1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 99};
+            std::set<int> myQuantSet(quantInts, quantInts + 11);
             if (amBlockType)
                 myQuantSet.insert(blocksize); //as currently implemented this one not actually necessary since blocksize has no other way to change
             else
                 myQuantSet.insert(quantity);
             GG::Y height;
+
             for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
                 QuantRow* newRow =  new QuantRow(*it, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 if (newRow->width)
                     width = newRow->width;
+
                 GG::DropDownList::iterator latest_it = Insert(newRow);
-                if (amBlockType)
+
+                if (amBlockType) {
                     if (build.blocksize == *it)
                         Select(latest_it);
-                    else {}
-                else
+                } else {
                     if (build.remaining == *it)
                         Select(latest_it);
+                }
                 height = newRow->height;
-                //Resize(GG::Pt(width, height)); //doesn't work on DropDownList itself, goes by Row
             }
             // set dropheight.  shrink to fit a small number, but cap at a reasonable max
-            SetDropHeight(GG::Y(std::max( 8, int(myQuantSet.size() ) )*height + 4));
-            //QuantLabel ref1 = QuantLabel(quantity, ClientUI::Pts());
-            //QuantLabel ref2 = QuantLabel(100, ClientUI::Pts());
-            //OffsetMove(GG::Pt(ref1.Width()-GG::X(50) +GG::X(8), GG::Y(-4)));
+            SetDropHeight(GG::Y(std::max(8, int(myQuantSet.size()))*height + 4));
+
+            GG::Connect(this->SelChangedSignal, &QuantitySelector::SelectionChanged, this);
         }
 
         void SelectionChanged(GG::DropDownList::iterator it) {
-            int quant;
-            //SetInteriorColor(GG::Clr(0, 0, 0, 0));
             amOn = false;
-            //Hide();
-            //Render();
+
             DebugLogger() << "QuantSelector:  selection made ";
             if (it != end()) {
-                quant = boost::polymorphic_downcast<const QuantRow*>(*it)->Quant();
+                int quant = boost::polymorphic_downcast<const QuantRow*>(*it)->Quant();
                 if (amBlockType) {
                     DebugLogger() << "Blocksize Selector:  selection changed to " << quant;
                     blocksize = quant;
@@ -172,7 +168,8 @@ namespace {
                     quantity = quant;
                 }
             }
-            if ( (quantity != prevQuant) || (blocksize != prevBlocksize) )
+
+            if ((quantity != prevQuant) || (blocksize != prevBlocksize))
                 QuantChangedSignal(quantity, blocksize);
         }
 
@@ -437,11 +434,11 @@ namespace {
         left += GRAPHIC_SIZE + MARGIN;
 
         if (m_build.item.build_type == BT_SHIP) {
-            m_quantity_selector = new QuantitySelector(m_build, left, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), m_in_progress, GG::X(FONT_PTS*2.5), false);
-            GG::Connect(m_quantity_selector->SelChangedSignal,        &QuantitySelector::SelectionChanged, m_quantity_selector);
+            m_quantity_selector = new QuantitySelector(m_build, left, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+                                                       m_in_progress, GG::X(FONT_PTS*2.5), false);
             left += m_quantity_selector->Width();
-            m_block_size_selector = new QuantitySelector(m_build, left,    GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN), m_in_progress, GG::X(FONT_PTS*2.5), true);
-            GG::Connect(m_block_size_selector->SelChangedSignal,           &QuantitySelector::SelectionChanged, m_block_size_selector);
+            m_block_size_selector = new QuantitySelector(m_build, left,    GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+                                                         m_in_progress, GG::X(FONT_PTS*2.5), true);
             left += m_block_size_selector->Width();
         }
 
