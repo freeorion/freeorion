@@ -974,7 +974,7 @@ Tech
     name = "GRO_PLANET_ECOL"
     description = "GRO_PLANET_ECOL_DESC"
     short_description = "POPULATION_SHORT_DESC"
-    techtype = Theory
+    techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
