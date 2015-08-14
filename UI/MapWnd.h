@@ -86,7 +86,7 @@ public:
 
     /** Returns the id of the currently-selected planet, or
       * INVALID_OBJECT_ID if no planet is selected */
-    int                 SelectedPlanetID() const;
+    int                         SelectedPlanetID() const;
     //!@}
 
     //! \name Mutators //!@{
@@ -157,9 +157,10 @@ public:
     void            RemoveProjectedFleetMovementLine(int fleet_id); //!< removes projected fleet movement line for specified fleet.
     void            ClearProjectedFleetMovementLines();             //!< removes all projected fleet movement lines
 
+    void            ResetEmpireShown();                             //!< auto-resets the shown empire in any contained Wnds, to the current client's empire (if any)
+
     void            RegisterPopup(MapWndPopup* popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void            RemovePopup(MapWndPopup* popup);                //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
-    void            Cleanup();                                      //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
     void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
 
@@ -227,6 +228,8 @@ private:
     void            ClearStarlaneRenderingBuffers();
     void            InitFieldRenderingBuffers();
     void            ClearFieldRenderingBuffers();
+    void            InitVisibilityRadiiRenderingBuffers();
+    void            ClearVisibilityRadiiRenderingBuffers();
 
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
@@ -411,6 +414,9 @@ private:
     std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer> >    m_field_vertices;   //!< first buffer is visible fields, second buffer is not visible (scanlined) fields for each texture
     GG::GL2DVertexBuffer                m_field_scanline_circles;
     GG::GLTexCoordBuffer                m_field_texture_coords;
+
+    GG::GL2DVertexBuffer                m_visibility_radii_vertices;
+    GG::GLRGBAColorBuffer               m_visibility_radii_colors;
 
     std::set<int>                       m_resource_centers;
 

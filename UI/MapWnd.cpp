@@ -683,6 +683,8 @@ MapWnd::MapWnd() :
     m_field_vertices(),
     m_field_scanline_circles(),
     m_field_texture_coords(),
+    m_visibility_radii_vertices(),
+    m_visibility_radii_colors(),
     m_resource_centers(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
@@ -1898,7 +1900,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         glDisable(GL_TEXTURE_2D);
         if (vert.flag_blockade) {
             float wedge = TWO_PI/12.0;
-            for (int n = 0; n<12; n=n+2 ) {
+            for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
                 CircleArc(ul + GG::Pt(-flag_border*GG::X1,  -flag_border*GG::Y1), lr + GG::Pt(flag_border*GG::X1,  flag_border*GG::Y1), n*wedge, (n+1)*wedge, true);
                 glColor(GG::CLR_RED);
@@ -1906,7 +1908,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
             }
         } else if (vert.flag_supply_block){
             float wedge = TWO_PI/12.0;
-            for (int n = 0; n<12; n=n+2 ) {
+            for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
                 CircleArc(ul + GG::Pt(-flag_border*GG::X1,  -flag_border*GG::Y1), lr + GG::Pt(flag_border*GG::X1,  flag_border*GG::Y1), n*wedge, (n+1)*wedge, true);
                 glColor(GG::CLR_YELLOW);
@@ -2031,13 +2033,8 @@ void MapWnd::RenderVisibilityRadii() {
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
-
-#define USE_STENCILS 1
-
-#if USE_STENCILS
     glPushAttrib(GL_ENABLE_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_STENCIL_TEST);
-#endif
 
     const double TWO_PI = 2.0*3.1415926536;
     const GG::Pt UNIT(GG::X1, GG::Y1);
@@ -2072,20 +2069,9 @@ void MapWnd::RenderVisibilityRadii() {
         }
     }
 
-#if !USE_STENCILS
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LINE_SMOOTH);
-#endif
-
     glPopMatrix();
     glLineWidth(1.0);
-
-#if USE_STENCILS
     glPopAttrib();
-#endif
-
-#undef USE_STENCILS
-
     glPopClientAttrib();
 }
 
@@ -2551,6 +2537,7 @@ void MapWnd::InitTurnRendering() {
     DoFieldIconsLayout();
     InitFieldRenderingBuffers();
 
+    InitVisibilityRadiiRenderingBuffers();
 
     // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
     RefreshFleetButtons();
@@ -3156,7 +3143,7 @@ void MapWnd::InitFieldRenderingBuffers() {
     // visible or not visisble fields for any single texture, but
     // this is simpler to prepare and should be more than big enough
     for (std::size_t i = 0; i < m_field_icons.size(); ++i) {
-        m_field_texture_coords.store(1.0f, 0.0f); // todo: convert to tex cords in range 0 to 1
+        m_field_texture_coords.store(1.0f, 0.0f);
         m_field_texture_coords.store(0.0f, 0.0f);
         m_field_texture_coords.store(0.0f, 1.0f);
         m_field_texture_coords.store(1.0f, 1.0f);
@@ -3168,6 +3155,125 @@ void MapWnd::ClearFieldRenderingBuffers() {
     m_field_vertices.clear();
     m_field_texture_coords.clear();
     m_field_scanline_circles.clear();
+}
+
+void MapWnd::InitVisibilityRadiiRenderingBuffers() {
+    DebugLogger() << "MapWnd::InitVisibilityRadiiRenderingBuffers";
+    ScopedTimer timer("MapWnd::InitVisibilityRadiiRenderingBuffers", true);
+
+    ClearVisibilityRadiiRenderingBuffers();
+
+    int                     client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>&    destroyed_object_ids = GetUniverse().DestroyedObjectIds();
+    const std::set<int>&    stale_object_ids = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
+    const ObjectMap&        objects = GetUniverse().Objects();
+
+    // for each map position and empire, find max value of detection range at that position
+    std::map<std::pair<int, std::pair<float, float> >, float> empire_position_max_detection_ranges;
+
+    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
+        int object_id = it->ID();
+        // skip destroyed objects
+        if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
+            continue;
+        // skip stale objects
+        if (stale_object_ids.find(object_id) != stale_object_ids.end())
+            continue;
+
+        TemporaryPtr<const UniverseObject> obj = *it;
+
+        // skip unowned objects
+        if (obj->Unowned())
+            continue;
+
+        // skip objects not at least partially visible this turn
+        if (obj->GetVisibility(client_empire_id) <= VIS_BASIC_VISIBILITY)
+            continue;
+
+        // don't show radii for fleets or moving ships
+        if (obj->ObjectType() == OBJ_FLEET)
+            continue;
+        if (obj->ObjectType() == OBJ_SHIP) {
+            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
+            if (!ship)
+                continue;
+            TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(ship->FleetID());
+            if (!fleet)
+                continue;
+            int cur_id = fleet->SystemID();
+            if (cur_id == INVALID_OBJECT_ID)
+                continue;
+        }
+
+        const Meter* detection_meter = obj->GetMeter(METER_DETECTION);
+        if (!detection_meter)
+            continue;
+
+        // if this object has the largest yet checked visibility range at this location, update the location's range
+        float X = static_cast<float>(obj->X());
+        float Y = static_cast<float>(obj->Y());
+        float D = detection_meter->Current();
+        // skip objects that don't contribute detection
+        if (D <= 0.0f)
+            continue;
+
+        // find this empires entry for this location, if any
+        std::pair<int, std::pair<float, float> > key = std::make_pair(obj->Owner(), std::make_pair(X, Y));
+        std::map<std::pair<int, std::pair<float, float> >, float>::iterator range_it =
+            empire_position_max_detection_ranges.find(key);
+        if (range_it != empire_position_max_detection_ranges.end()) {
+            if (range_it->second < D) range_it->second = D; // update existing entry
+        } else {
+            empire_position_max_detection_ranges[key] = D;  // add new entry to map
+        }
+    }
+
+    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > > circles;
+    for (std::map<std::pair<int, std::pair<float, float> >, float>::const_iterator it =
+            empire_position_max_detection_ranges.begin();
+         it != empire_position_max_detection_ranges.end(); ++it)
+    {
+        if (const Empire* empire = GetEmpire(it->first.first)) {
+            GG::Clr circle_colour = empire->Color();
+            circle_colour.a = 8*GetOptionsDB().Get<int>("UI.detection-range-opacity");
+
+            GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->first.second.first, it->first.second.second);
+            float radius = it->second*ZoomFactor();
+            if (radius < 20.0f)
+                continue;
+
+            GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+            GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+
+            circles[circle_colour].push_back(std::make_pair(ul, lr));
+        }
+    }
+
+
+    const float TWO_PI = 2.0*3.1415926536f;
+    const GG::Pt UNIT(GG::X1, GG::Y1);
+
+    for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > >::iterator it = circles.begin();
+         it != circles.end(); ++it)
+    {
+        GG::Clr circle_colour = it->first;
+        const std::vector<std::pair<GG::Pt, GG::Pt> >& circles_in_this_colour = it->second;
+        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
+            CircleArc(circles_in_this_colour[i].first, circles_in_this_colour[i].second,
+                      0.0, TWO_PI, true);
+        }
+        circle_colour.a = std::min(255, circle_colour.a + 80);
+        AdjustBrightness(circle_colour, 2.0, true);
+        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
+            CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
+                      0.0, TWO_PI, false);
+        }
+    }
+}
+
+void MapWnd::ClearVisibilityRadiiRenderingBuffers() {
+    m_visibility_radii_vertices.clear();
+    m_visibility_radii_colors.clear();
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
@@ -4782,7 +4888,12 @@ void MapWnd::RemovePopup(MapWndPopup* popup) {
     }
 }
 
-void MapWnd::Cleanup() {
+void MapWnd::ResetEmpireShown() {
+    m_production_wnd->SetEmpireShown(HumanClientApp::GetApp()->EmpireID());
+    // TODO: Research... Design?
+}
+
+void MapWnd::Sanitize() {
     ShowAllPopups(); // make sure popups don't save visible = 0 to the config
     CloseAllPopups();
     HideResearch();
@@ -4798,16 +4909,15 @@ void MapWnd::Cleanup() {
     m_sitrep_panel->ShowSitRepsForTurn(INVALID_GAME_TURN);
     if (m_auto_end_turn)
         ToggleAutoEndTurn();
-}
 
-void MapWnd::Sanitize() {
-    //std::cout << "MapWnd::Sanitize()" << std::endl;
-    Cleanup();
+    ResetEmpireShown();
 
     SelectSystem(INVALID_OBJECT_ID);
 
     ClearSystemRenderingBuffers();
     ClearStarlaneRenderingBuffers();
+    ClearFieldRenderingBuffers();
+    ClearVisibilityRadiiRenderingBuffers();
 
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         // clearing of message window commented out because scrollbar has quirks
@@ -4820,6 +4930,7 @@ void MapWnd::Sanitize() {
 
     MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
     m_zoom_steps_in = 0.0;
+
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
     m_design_wnd->Sanitize();
