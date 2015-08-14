@@ -9,6 +9,7 @@
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Species.h"
+#include "../Empire/Empire.h"
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
@@ -1432,7 +1433,8 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_local_points_P_label(0),
     m_local_wasted_points_label(0),
     m_local_wasted_points(0),
-    m_local_wasted_points_P_label(0)
+    m_local_wasted_points_P_label(0),
+    m_empire_id(ALL_EMPIRES)
 {}
 
 GG::Pt ProductionInfoPanel::MinUsableSize() const {
@@ -1478,6 +1480,13 @@ void ProductionInfoPanel::SetTotalPointsCost(float total_points, float total_cos
         m_wasted_points->SetTextColor(ClientUI::StatDecrColor());
     else
         m_wasted_points->SetTextColor(ClientUI::TextColor());
+
+    const Empire* empire = GetEmpire(m_empire_id);
+    std::string empire_name;
+    if (empire)
+        empire_name = empire->Name();
+
+    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
 }
 
 void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name) {
@@ -1508,7 +1517,27 @@ void ProductionInfoPanel::SetLocalPointsCost(float local_points, float local_cos
         m_local_wasted_points->SetTextColor(ClientUI::StatDecrColor());
     else
         m_local_wasted_points->SetTextColor(ClientUI::TextColor());
-    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_AT_LOCATION_TITLE")) % m_title_str % location_name));
+
+    const Empire* empire = GetEmpire(m_empire_id);
+    std::string empire_name;
+    if (empire)
+        empire_name = empire->Name();
+
+    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_AT_LOCATION_TITLE")) % m_title_str % location_name % empire_name));
+}
+
+void ProductionInfoPanel::SetEmpireID(int empire_id) {
+    int old_empire_id = m_empire_id;
+    m_empire_id = empire_id;
+    if (old_empire_id != m_empire_id) {
+        const Empire* empire = GetEmpire(m_empire_id);
+        std::string empire_name;
+        if (empire)
+            empire_name = empire->Name();
+
+        // let a subsequent SetLocalPointsCost call re-set the title to include location info if necessary
+        SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
+    }
 }
 
 void ProductionInfoPanel::ClearLocalInfo() {
@@ -1519,7 +1548,25 @@ void ProductionInfoPanel::ClearLocalInfo() {
     delete m_local_wasted_points;           m_local_wasted_points = 0;
     delete m_local_wasted_points_P_label;   m_local_wasted_points_P_label = 0;
 
-    SetName(m_title_str);
+    const Empire* empire = GetEmpire(m_empire_id);
+    std::string empire_name;
+    if (empire)
+        empire_name = empire->Name();
+
+    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % empire_name));
+}
+
+void ProductionInfoPanel::Clear() {
+    delete m_total_points_label;            m_total_points_label = 0;
+    delete m_total_points;                  m_total_points = 0;
+    delete m_total_points_P_label;          m_total_points_P_label = 0;
+    delete m_wasted_points_label;           m_wasted_points_label = 0;
+    delete m_wasted_points;                 m_wasted_points = 0;
+    delete m_wasted_points_P_label;         m_wasted_points_P_label = 0;
+    m_empire_id = ALL_EMPIRES;
+
+    ClearLocalInfo();
+    SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_INFO_EMPIRE")) % m_title_str % ""));
 }
 
 void ProductionInfoPanel::DoLayout() {

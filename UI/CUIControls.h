@@ -457,7 +457,9 @@ public:
 
     void            SetTotalPointsCost(float total_points, float total_cost);
     void            SetLocalPointsCost(float local_points, float local_cost, const std::string& location_name);
+    void            SetEmpireID(int empire_id);
     void            ClearLocalInfo();
+    void            Clear();
     //@}
 
 private:
@@ -465,6 +467,7 @@ private:
 
     std::string m_units_str;
     std::string m_title_str;
+    int         m_empire_id;
 
     GG::Label*  m_total_points_label;
     GG::Label*  m_total_points;
