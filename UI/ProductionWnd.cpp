@@ -350,11 +350,11 @@ namespace {
             }
         }
 
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             if (!empty() && old_size != Size() && m_panel) {
-                std::cout << "QueueRow resized to: " << Size() << std::endl;
+                //std::cout << "QueueRow resized to: " << Size() << std::endl;
                 m_panel->Resize(Size());
             }
         }
@@ -648,14 +648,15 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_production_info_panel(0),
     m_queue_wnd(0),
     m_build_designator_wnd(0),
-    m_order_issuing_enabled(false)
+    m_order_issuing_enabled(false),
+    m_empire_shown_id(ALL_EMPIRES)
 {
-    DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
-                  << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
+    //DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
+    //              << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
 
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
 
-    m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_INFO_PANEL_TITLE"),
+    m_production_info_panel = new ProductionInfoPanel(UserString("PRODUCTION_WND_TITLE"),
                                                       UserString("PRODUCTION_INFO_PP"),
                                                       queue_width, GG::Y(100));
 
@@ -718,13 +719,21 @@ void ProductionWnd::DoLayout() {
 void ProductionWnd::Render()
 {}
 
-void ProductionWnd::Refresh() {
-    // useful at start of turn or when loading empire from save.
-    // since empire object is recreated based on turn update from server, 
-    // connections of signals emitted from the empire must be remade
-    m_empire_connection.disconnect();
+void ProductionWnd::SetEmpireShown(int empire_id) {
+    if (empire_id != m_empire_shown_id) {
+        m_empire_shown_id = empire_id;
+        Refresh();
+    }
+}
 
-    if (Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
+void ProductionWnd::Refresh() {
+    // useful at start of turn or when loading empire from save, or when
+    // the selected empire shown has changed.
+    // because empire object is recreated based on turn update from server,
+    // connections of signals emitted from the empire must be remade after
+    // getting a turn update
+    m_empire_connection.disconnect();
+    if (Empire* empire = GetEmpire(m_empire_shown_id))
         m_empire_connection = GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,
                                           &ProductionWnd::ProductionQueueChangedSlot, this);
 
@@ -735,15 +744,13 @@ void ProductionWnd::Refresh() {
 }
 
 void ProductionWnd::Reset() {
-    //std::cout << "ProductionWnd::Reset()" << std::endl;
-    UpdateInfoPanel();
-    UpdateQueue();
+    m_empire_shown_id = ALL_EMPIRES;
+    Refresh();
     m_queue_wnd->GetQueueListBox()->BringRowIntoView(m_queue_wnd->GetQueueListBox()->begin());
-    m_build_designator_wnd->Reset();
 }
 
 void ProductionWnd::Update() {
-    //std::cout << "ProductionWnd::Update()" << this << std::endl;
+    // useful when empire hasn't changed, but production status of it might have
     UpdateInfoPanel();
     UpdateQueue();
 
@@ -800,11 +807,16 @@ void ProductionWnd::ProductionQueueChangedSlot() {
 
 void ProductionWnd::UpdateQueue() {
     DebugLogger() << "ProductionWnd::UpdateQueue()";
-    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = GetEmpire(m_empire_shown_id);
     if (!empire)
         return;
 
     QueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
+
+    if (empire)
+        queue_lb->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) % empire->Name()));
+    else
+        queue_lb->SetName("");
 
     const ProductionQueue& queue = empire->GetProductionQueue();
     std::size_t first_visible_queue_row = std::distance(queue_lb->begin(), queue_lb->FirstRowShown());
@@ -827,9 +839,14 @@ void ProductionWnd::UpdateQueue() {
 }
 
 void ProductionWnd::UpdateInfoPanel() {
-    const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
-    if (!empire)
-        return;
+    const Empire* empire = GetEmpire(m_empire_shown_id);
+    if (!empire) {
+        m_production_info_panel->SetName(UserString("PRODUCTION_WND_TITLE"));
+        m_production_info_panel->ClearLocalInfo();
+    } else {
+        m_production_info_panel->SetEmpireID(m_empire_shown_id);
+    }
+
     const ProductionQueue& queue = empire->GetProductionQueue();
     float PPs = empire->ProductionPoints();
     float total_queue_cost = queue.TotalPPsSpent();

@@ -13,16 +13,16 @@ class BuildDesignatorWnd;
 class ProductionQueueWnd;
 
 /** Contains a BuildDesignatorWnd, some stats on the empire-wide production queue, and the queue itself. */
-class ProductionWnd : public GG::Wnd
-{
+class ProductionWnd : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     ProductionWnd(GG::X w, GG::Y h);
-    ~ProductionWnd();
+    virtual ~ProductionWnd();
     //@}
 
     /** \name Accessors */ //@{
     int             SelectedPlanetID() const;
+    int             ShownEmpireID() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -31,6 +31,8 @@ public:
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void            Render();
+
+    void            SetEmpireShown(int empire_id);
 
     void            Refresh();
     void            Reset();
@@ -96,7 +98,8 @@ private:
     BuildDesignatorWnd*     m_build_designator_wnd;
     bool                    m_order_issuing_enabled;
 
-    boost::signals2::connection  m_empire_connection;
+    int                         m_empire_shown_id;
+    boost::signals2::connection m_empire_connection;
 };
 
 #endif // _ProductionWnd_h_
