@@ -2205,9 +2205,9 @@ public:
         }
     }
 
-    GG::Pt          ListRowSize() const {
-        return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight());
-    }
+    GG::Pt          ListRowSize() const
+    { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
+
 private:
     int     m_fleet_id;
     bool    m_order_issuing_enabled;
