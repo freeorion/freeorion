@@ -133,11 +133,11 @@ namespace {
             GG::Y height;
 
             for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
-                QuantRow* newRow =  new QuantRow(*it, build.item.design_id, nwidth, h, inProgress, amBlockType);
-                if (newRow->width)
-                    width = newRow->width;
+                QuantRow* row =  new QuantRow(*it, build.item.design_id, nwidth, h, inProgress, amBlockType);
+                if (row->width)
+                    width = row->width;
 
-                GG::DropDownList::iterator latest_it = Insert(newRow);
+                GG::DropDownList::iterator latest_it = Insert(row);
 
                 if (amBlockType) {
                     if (build.blocksize == *it)
@@ -146,7 +146,7 @@ namespace {
                     if (build.remaining == *it)
                         Select(latest_it);
                 }
-                height = newRow->height;
+                height = row->height;
             }
             // set dropheight.  shrink to fit a small number, but cap at a reasonable max
             SetDropHeight(GG::Y(std::max(8, int(myQuantSet.size()))*height + 4));
@@ -196,11 +196,13 @@ namespace {
         void            UpdateQueue();
         void            ItemQuantityChanged(int quant, int blocksize);
         void            ItemBlocksizeChanged(int quant, int blocksize);
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
         mutable boost::signals2::signal<void(int,int)>    PanelUpdateQuantSignal;
 
     private:
-        void Draw(GG::Clr clr, bool fill);
+        void            Draw(GG::Clr clr, bool fill);
+        void            DoLayout();
 
         const ProductionQueue::Element  m_build;
         GG::Label*                      m_name_text;
@@ -305,34 +307,35 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const ProductionQueue::Element& elem, int queue_index_) :
-            GG::ListBox::Row(GG::X1, GG::Y1, "PRODUCTION_QUEUE_ROW"),
+            GG::ListBox::Row(w, GG::Y1, "PRODUCTION_QUEUE_ROW"),
             queue_index(queue_index_),
             m_build(elem)
         {
+            //std::cout << "QueueRow(" << w << ", ...)" << std::endl;
+
             const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
-            double total_cost(1.0);
-            int minimum_turns(1.0);
+            float total_cost(1.0f);
+            int minimum_turns(1);
             if (empire)
                 boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
             total_cost *= elem.blocksize;
-            double per_turn_cost = total_cost / std::max(1, minimum_turns);
-            double progress = empire->ProductionStatus(queue_index);
-            if (progress == -1.0)
-                progress = 0.0;
+            float per_turn_cost = total_cost / std::max(1, minimum_turns);
+            float progress = empire->ProductionStatus(queue_index);
+            if (progress == -1.0f)
+                progress = 0.0f;
 
-            QueueProductionItemPanel* panel =
-                new QueueProductionItemPanel(w, elem, elem.allocated_pp, minimum_turns, elem.remaining,
-                                             static_cast<int>(progress / std::max(1e-6,per_turn_cost)),
-                                             std::fmod(progress, per_turn_cost) / std::max(1e-6,per_turn_cost));
-            Resize(panel->Size());
-            push_back(panel);
+            m_panel = new QueueProductionItemPanel(w, elem, elem.allocated_pp, minimum_turns, elem.remaining,
+                                                   static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
+                                                   std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
+            Resize(m_panel->Size());
+            push_back(m_panel);
 
             SetDragDropDataType("PRODUCTION_QUEUE_ROW");
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
-            GG::Connect(panel->PanelUpdateQuantSignal,  &QueueRow::RowQuantChanged, this);
+            GG::Connect(m_panel->PanelUpdateQuantSignal,  &QueueRow::RowQuantChanged, this);
         }
 
         virtual void Disable(bool b) {
@@ -347,12 +350,22 @@ namespace {
             }
         }
 
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::ListBox::Row::SizeMove(ul, lr);
+            if (!empty() && old_size != Size() && m_panel) {
+                std::cout << "QueueRow resized to: " << Size() << std::endl;
+                m_panel->Resize(Size());
+            }
+        }
+
         void RowQuantChanged(int quantity, int blocksize) {
             if (this->Disabled())
                 return;
             RowQuantChangedSignal(queue_index, quantity, blocksize);
         }
 
+        QueueProductionItemPanel*                           m_panel;
         const int                                           queue_index;
         const ProductionQueue::Element                      m_build;
         mutable boost::signals2::signal<void (int,int,int)> RowQuantChangedSignal;
@@ -361,6 +374,8 @@ namespace {
     //////////////////////////////////////////////////
     // QueueProductionItemPanel implementation
     //////////////////////////////////////////////////
+    const int MARGIN = 2;
+
     QueueProductionItemPanel::QueueProductionItemPanel(GG::X w, const ProductionQueue::Element& build,
                                                        double turn_spending, int turns, int number,
                                                        int turns_completed, double partially_complete_turn) :
@@ -379,19 +394,6 @@ namespace {
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
-        const int MARGIN = 2;
-
-        const int FONT_PTS = ClientUI::Pts();
-        const GG::Y METER_HEIGHT(FONT_PTS);
-
-        const GG::Y HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
-
-        const int GRAPHIC_SIZE = Value(HEIGHT - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
-
-        const GG::X METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
-
-        Resize(GG::Pt(w, HEIGHT));
-
         GG::Clr clr = m_in_progress
             ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
             : ClientUI::ResearchableTechTextAndBorderColor();
@@ -419,33 +421,22 @@ namespace {
                 location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
         }
 
-        // create and arrange widgets to display info
-        GG::Y top(MARGIN);
-        GG::X left(MARGIN);
 
-        if (graphic) {
+        const int FONT_PTS = ClientUI::Pts();
+
+
+        m_icon = 0;
+        if (graphic)
             m_icon = new GG::StaticGraphic(graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            m_icon->MoveTo(GG::Pt(left, top));
-            m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
-        }
-        else
-            m_icon = 0;
-
-        left += GRAPHIC_SIZE + MARGIN;
 
         if (m_build.item.build_type == BT_SHIP) {
-            m_quantity_selector = new QuantitySelector(m_build, left, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+            m_quantity_selector = new QuantitySelector(m_build, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
                                                        m_in_progress, GG::X(FONT_PTS*2.5), false);
-            left += m_quantity_selector->Width();
-            m_block_size_selector = new QuantitySelector(m_build, left,    GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
+            m_block_size_selector = new QuantitySelector(m_build, GG::X1, GG::Y(MARGIN), GG::Y(FONT_PTS-2*MARGIN),
                                                          m_in_progress, GG::X(FONT_PTS*2.5), true);
-            left += m_block_size_selector->Width();
         }
 
-        const GG::X NAME_WIDTH = w - left - MARGIN;
         m_name_text = new CUILabel(name_text, GG::FORMAT_TOP | GG::FORMAT_LEFT);
-        m_name_text->MoveTo(GG::Pt(left, top));
-        m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
         m_name_text->SetTextColor(clr);
         m_name_text->ClipText(true);
 
@@ -459,38 +450,24 @@ namespace {
             m_location_text = new CUILabel(location_text, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
             m_location_text->SetTextColor(location_clr);
         }
-        m_location_text->MoveTo(GG::Pt(left, top));
-        m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
 
-        top += m_name_text->Height();
-        left = GG::X(GRAPHIC_SIZE + MARGIN*2);
         m_progress_bar = new MultiTurnProgressBar(turns, turns_completed + partially_complete_turn,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
                                                   m_in_progress
                                                     ? ClientUI::ResearchableTechFillColor()
                                                     : GG::LightColor(ClientUI::ResearchableTechFillColor()));
-        m_progress_bar->MoveTo(GG::Pt(left, top));
-        m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
-
-        top += m_progress_bar->Height() + MARGIN;
 
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
-        GG::X TURNS_AND_COST_WIDTH = METER_WIDTH / 2;
         m_PPs_and_turns_text = new CUILabel(turn_spending_text, GG::FORMAT_LEFT);
-        m_PPs_and_turns_text->MoveTo(GG::Pt(left, top));
-        m_PPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_PPs_and_turns_text->SetTextColor(clr);
 
-        left += TURNS_AND_COST_WIDTH;
 
         int turns_left = build.turns_left_to_next_item;
         std::string turns_left_text = turns_left < 0
             ? UserString("PRODUCTION_TURNS_LEFT_NEVER")
             : str(FlexibleFormat(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
         m_turns_remaining_until_next_complete_text = new CUILabel(turns_left_text, GG::FORMAT_RIGHT);
-        m_turns_remaining_until_next_complete_text->MoveTo(GG::Pt(left, top));
-        m_turns_remaining_until_next_complete_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
         m_turns_remaining_until_next_complete_text->SetTextColor(clr);
         m_turns_remaining_until_next_complete_text->ClipText(true);
 
@@ -509,6 +486,59 @@ namespace {
             GG::Connect(m_quantity_selector->QuantChangedSignal,    &QueueProductionItemPanel::ItemQuantityChanged, this);
         if (m_block_size_selector)
             GG::Connect(m_block_size_selector->QuantChangedSignal,  &QueueProductionItemPanel::ItemBlocksizeChanged, this);
+
+        const GG::Y HEIGHT = GG::Y(MARGIN) + FONT_PTS + MARGIN + FONT_PTS + MARGIN + FONT_PTS + MARGIN + 6;
+        Resize(GG::Pt(w, HEIGHT));
+    }
+
+    void QueueProductionItemPanel::DoLayout() {
+        const int FONT_PTS = ClientUI::Pts();
+        const GG::Y METER_HEIGHT(FONT_PTS);
+        const GG::Y HEIGHT = GG::Y(MARGIN) + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
+        const int GRAPHIC_SIZE = Value(HEIGHT - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+        const GG::X METER_WIDTH = Width() - GRAPHIC_SIZE - 3*MARGIN - 3;
+
+        // create and arrange widgets to display info
+        GG::Y top(MARGIN);
+        GG::X left(MARGIN);
+
+        if (m_icon) {
+            m_icon->MoveTo(GG::Pt(left, top));
+            m_icon->Resize(GG::Pt(GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE)));
+        }
+
+        left += GRAPHIC_SIZE + MARGIN;
+        if (m_quantity_selector) {
+            m_quantity_selector->MoveTo(GG::Pt(left, GG::Y(MARGIN)));
+            left += m_quantity_selector->Width();
+        }
+        if (m_block_size_selector) {
+            m_block_size_selector->MoveTo(GG::Pt(left, GG::Y(MARGIN)));
+            left += m_quantity_selector->Width();
+        }
+
+        const GG::X NAME_WIDTH = Width() - left - MARGIN;
+        m_name_text->MoveTo(GG::Pt(left, top));
+        m_name_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
+
+        m_location_text->MoveTo(GG::Pt(left, top));
+        m_location_text->Resize(GG::Pt(NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN)));
+
+        top += m_name_text->Height();
+        left = GG::X(GRAPHIC_SIZE + MARGIN*2);
+        m_progress_bar->MoveTo(GG::Pt(left, top));
+        m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
+
+        top += m_progress_bar->Height() + MARGIN;
+
+        GG::X TURNS_AND_COST_WIDTH = METER_WIDTH / 2;
+        m_PPs_and_turns_text->MoveTo(GG::Pt(left, top));
+        m_PPs_and_turns_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
+
+        left += TURNS_AND_COST_WIDTH;
+
+        m_turns_remaining_until_next_complete_text->MoveTo(GG::Pt(left, top));
+        m_turns_remaining_until_next_complete_text->Resize(GG::Pt(TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN)));
     }
 
     void QueueProductionItemPanel::ItemQuantityChanged(int quant, int blocksize)
@@ -541,7 +571,73 @@ namespace {
         glColor(clr);
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
     }
+
+    void QueueProductionItemPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::Control::SizeMove(ul, lr);
+            if (Size() != old_size)
+                DoLayout();
+    }
 }
+
+//////////////////////////////////////////////////
+// ProductionQueueWnd                           //
+//////////////////////////////////////////////////
+class ProductionQueueWnd : public CUIWnd {
+public:
+    /** \name Structors */ //@{
+    explicit ProductionQueueWnd(GG::X w, GG::Y h) :
+        CUIWnd("", GG::X0, GG::Y0, w, h,
+               GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
+               "ProductionQueueWnd"),
+        m_queue_lb(0)
+    {
+        Init(HumanClientApp::GetApp()->EmpireID());
+    }
+
+    explicit ProductionQueueWnd(int empire_id, GG::X w, GG::Y h) :
+        CUIWnd("", GG::X0, GG::Y0, w, h,
+               GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
+               "ProductionQueueWnd"),
+        m_queue_lb(0)
+    {
+        Init(empire_id);
+    }
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        GG::Pt sz = Size();
+        CUIWnd::SizeMove(ul, lr);
+        if (Size() != sz)
+            DoLayout();
+    }
+    QueueListBox*   GetQueueListBox() { return m_queue_lb; }
+    //@}
+
+private:
+    void DoLayout() {
+        m_queue_lb->SizeMove(GG::Pt(GG::X0, GG::Y0),
+                             GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
+    }
+
+    void Init(int empire_id) {
+        m_queue_lb = new QueueListBox("PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
+        m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
+        m_queue_lb->SetName("ProductionQueue ListBox");
+
+        const Empire* empire = GetEmpire(empire_id);
+        if (empire)
+            SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) % empire->Name()));
+        else
+            SetName("");
+
+        AttachChild(m_queue_lb);
+        DoLayout();
+    }
+
+    QueueListBox*   m_queue_lb;
+};
 
 
 //////////////////////////////////////////////////
@@ -550,7 +646,7 @@ namespace {
 ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_production_info_panel(0),
-    m_queue_lb(0),
+    m_queue_wnd(0),
     m_build_designator_wnd(0),
     m_order_issuing_enabled(false)
 {
@@ -563,9 +659,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
                                                       UserString("PRODUCTION_INFO_PP"),
                                                       queue_width, GG::Y(100));
 
-    m_queue_lb = new QueueListBox("PRODUCTION_QUEUE_ROW", UserString("PRODUCTION_QUEUE_PROMPT"));
-    m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
-    m_queue_lb->SetName("ProductionQueue ListBox");
+    m_queue_wnd = new ProductionQueueWnd(queue_width, GG::Y(100));
 
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(queue_width, GG::Y0);
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
@@ -577,12 +671,12 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal,      static_cast<void (ProductionWnd::*)(BuildType, int, int, int)>(&ProductionWnd::AddBuildToQueueSlot), this);
     GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
     GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
-    GG::Connect(m_queue_lb->QueueItemMovedSignal,                       &ProductionWnd::QueueItemMoved, this);
-    GG::Connect(m_queue_lb->LeftClickedSignal,                          &ProductionWnd::QueueItemClickedSlot, this);
-    GG::Connect(m_queue_lb->DoubleClickedSignal,                        &ProductionWnd::QueueItemDoubleClickedSlot, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal,   &ProductionWnd::QueueItemMoved, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,      &ProductionWnd::QueueItemClickedSlot, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,    &ProductionWnd::QueueItemDoubleClickedSlot, this);
 
     AttachChild(m_production_info_panel);
-    AttachChild(m_queue_lb);
+    AttachChild(m_queue_wnd);
     AttachChild(m_build_designator_wnd);
 
     DoLayout();
@@ -595,10 +689,10 @@ int ProductionWnd::SelectedPlanetID() const
 { return m_build_designator_wnd->SelectedPlanetID(); }
 
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
-{ return m_production_info_panel->InWindow(pt) || m_queue_lb->InWindow(pt) || m_build_designator_wnd->InWindow(pt); }
+{ return m_production_info_panel->InWindow(pt) || m_queue_wnd->InWindow(pt) || m_build_designator_wnd->InWindow(pt); }
 
 bool ProductionWnd::InClient(const GG::Pt& pt) const
-{ return m_production_info_panel->InClient(pt) || m_queue_lb->InClient(pt) || m_build_designator_wnd->InClient(pt); }
+{ return m_production_info_panel->InClient(pt) || m_queue_wnd->InClient(pt) || m_build_designator_wnd->InClient(pt); }
 
 void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
@@ -614,7 +708,7 @@ void ProductionWnd::DoLayout() {
     GG::Pt queue_ul = GG::Pt(GG::X(2), m_production_info_panel->Height());
     GG::Pt queue_size = GG::Pt(m_production_info_panel->Width() - 4,
                                ClientSize().y - 4 - m_production_info_panel->Height());
-    m_queue_lb->SizeMove(queue_ul, queue_ul + queue_size);
+    m_queue_wnd->SizeMove(queue_ul, queue_ul + queue_size);
 
     GG::Pt build_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), GG::Y0);
     GG::Pt build_wnd_ul = GG::Pt(m_production_info_panel->Width(), GG::Y0);
@@ -644,7 +738,7 @@ void ProductionWnd::Reset() {
     //std::cout << "ProductionWnd::Reset()" << std::endl;
     UpdateInfoPanel();
     UpdateQueue();
-    m_queue_lb->BringRowIntoView(m_queue_lb->begin());
+    m_queue_wnd->GetQueueListBox()->BringRowIntoView(m_queue_wnd->GetQueueListBox()->begin());
     m_build_designator_wnd->Reset();
 }
 
@@ -710,22 +804,26 @@ void ProductionWnd::UpdateQueue() {
     if (!empire)
         return;
 
+    QueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
+
     const ProductionQueue& queue = empire->GetProductionQueue();
-    std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
-    m_queue_lb->Clear();
-    const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
+    std::size_t first_visible_queue_row = std::distance(queue_lb->begin(), queue_lb->FirstRowShown());
+    queue_lb->Clear();
 
     int i = 0;
     for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
-        QueueRow* newRow = new QueueRow(QUEUE_WIDTH, *it, i);
-        GG::Connect(newRow->RowQuantChangedSignal,     &ProductionWnd::ChangeBuildQuantityBlockSlot, this);
-        m_queue_lb->Insert(newRow);
+        QueueRow* row = new QueueRow(queue_lb->RowWidth(), *it, i);
+        GG::Connect(row->RowQuantChangedSignal,     &ProductionWnd::ChangeBuildQuantityBlockSlot, this);
+
+        const GG::Pt row_size = row->Size();
+        queue_lb->Insert(row);
+        //row->Resize(row_size);
     }
 
-    if (!m_queue_lb->Empty())
-        m_queue_lb->BringRowIntoView(--m_queue_lb->end());
-    if (first_visible_queue_row < m_queue_lb->NumRows())
-        m_queue_lb->BringRowIntoView(boost::next(m_queue_lb->begin(), first_visible_queue_row));
+    if (!queue_lb->Empty())
+        queue_lb->BringRowIntoView(--queue_lb->end());
+    if (first_visible_queue_row < queue_lb->NumRows())
+        queue_lb->BringRowIntoView(boost::next(queue_lb->begin(), first_visible_queue_row));
 }
 
 void ProductionWnd::UpdateInfoPanel() {
@@ -783,7 +881,7 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string&
         new ProductionQueueOrder(client_empire_id, build_type, name, number, location)));
 
     empire->UpdateProductionQueue();
-    m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
+    m_build_designator_wnd->CenterOnBuild(m_queue_wnd->GetQueueListBox()->NumRows() - 1);
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location) {
@@ -798,7 +896,7 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int
         new ProductionQueueOrder(client_empire_id, build_type, design_id, number, location)));
 
     empire->UpdateProductionQueue();
-    m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
+    m_build_designator_wnd->CenterOnBuild(m_queue_wnd->GetQueueListBox()->NumRows() - 1);
 }
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
@@ -838,24 +936,24 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_lb->begin(), it))));
+        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it))));
 
     empire->UpdateProductionQueue();
 }
 
 void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt) {
-    if (m_queue_lb->DisplayingValidQueueItems()) {
-        m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_lb->begin(), it));
+    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
+        m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it));
     }
 }
 
 void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
-    if (m_queue_lb->DisplayingValidQueueItems()) {
+    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         DeleteQueueItem(it);
     }
 }
 
 void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
-    m_queue_lb->EnableOrderIssuing(m_order_issuing_enabled);
+    m_queue_wnd->GetQueueListBox()->EnableOrderIssuing(m_order_issuing_enabled);
 }

@@ -10,6 +10,7 @@
 class QueueListBox;
 class ProductionInfoPanel;
 class BuildDesignatorWnd;
+class ProductionQueueWnd;
 
 /** Contains a BuildDesignatorWnd, some stats on the empire-wide production queue, and the queue itself. */
 class ProductionWnd : public GG::Wnd
@@ -91,7 +92,7 @@ private:
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
 
     ProductionInfoPanel*    m_production_info_panel;
-    QueueListBox*           m_queue_lb;
+    ProductionQueueWnd*     m_queue_wnd;
     BuildDesignatorWnd*     m_build_designator_wnd;
     bool                    m_order_issuing_enabled;
 

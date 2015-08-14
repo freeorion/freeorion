@@ -1,6 +1,7 @@
 #include "QueueListBox.h"
 
 #include "../util/i18n.h"
+#include "../util/Logger.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
@@ -11,17 +12,30 @@
 // PromptRow
 ////////////////////////////////////////////////////////////
 struct PromptRow : GG::ListBox::Row {
-    PromptRow(GG::X w, std::string prompt_str) {
-        Resize(GG::Pt(w, GG::Y(3*ClientUI::Pts() + 15)));
+    PromptRow(GG::X w, std::string prompt_str) :
+        GG::ListBox::Row(w, GG::Y(20), ""),
+        m_prompt(0)
+    {
+        //std::cout << "PromptRow(" << w << ", ...)" << std::endl;
 
-        GG::Label* prompt = new CUILabel(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
-        prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
-        prompt->Resize(GG::Pt(Width() - 10, Height()));
-        prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
-        prompt->ClipText(true);
-        Resize(prompt->Size());
-        push_back(prompt);
+        m_prompt = new CUILabel(prompt_str, GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK);
+        m_prompt->MoveTo(GG::Pt(GG::X(2), GG::Y(2)));
+        m_prompt->Resize(GG::Pt(Width() - 10, Height()));
+        m_prompt->SetTextColor(GG::LightColor(ClientUI::TextColor()));
+        m_prompt->ClipText(true);
+        Resize(GG::Pt(w, m_prompt->Height()));
+        push_back(m_prompt);
     }
+
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        const GG::Pt old_size = Size();
+        GG::ListBox::Row::SizeMove(ul, lr);
+        if (!empty() && old_size != Size() && m_prompt)
+            m_prompt->Resize(Size());
+    }
+
+private:
+     GG::Label* m_prompt;
 };
 
 
@@ -43,14 +57,36 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     GG::Connect(ClearedSignal,                      &QueueListBox::ShowPromptSlot,              this);
     GG::Connect(GG::ListBox::RightClickedSignal,    &QueueListBox::ItemRightClicked,            this);
 
-    Insert(new PromptRow(GG::X(10), m_prompt_str));
+    // preinitialize listbox/row column widths, because what
+    // ListBox::Insert does on default is not suitable for this case
+    SetNumCols(1);
+    SetColWidth(0, GG::X0);
+    LockColWidths();
+    NormalizeRowsOnInsert(false);
+
+    Insert(new PromptRow(RowWidth(), m_prompt_str));
 }
 
-void QueueListBox::DropsAcceptable(DropsAcceptableIter first,
-                                   DropsAcceptableIter last,
-                                   const GG::Pt& pt) const
-{
-    assert(std::distance(first, last) == 1);
+GG::X QueueListBox::RowWidth() const
+{ return Width() - ClientUI::ScrollWidth() - 5; }
+
+void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    CUIListBox::SizeMove(ul, lr);
+
+    if (old_size != Size()) {
+        for (GG::ListBox::iterator it = begin(); it != end(); ++it) {
+            GG::Pt old_row_sz = (*it)->Size();
+            (*it)->Resize(GG::Pt(Width() - ClientUI::ScrollWidth() - 5, old_row_sz.y));
+        }
+    }
+}
+
+void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
+    if (std::distance(first, last) != 1) {
+        ErrorLogger() << "QueueListBox::DropsAcceptable unexpected passed more than one Wnd to test";
+    }
+
     for (DropsAcceptableIter it = first; it != last; ++it) {
         it->second = m_order_issuing_enabled &&
             AllowedDropTypes().find(it->first->DragDropDataType()) != AllowedDropTypes().end();
