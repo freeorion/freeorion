@@ -404,6 +404,10 @@ public:
     /** Sets the alignment of row \a it to \a align; not range-checked */
     void            SetRowAlignment(iterator it, Alignment align);
 
+    /** Sets whether to normalize rows when inserted (true) or leave them as
+      * they are. */
+    void            NormalizeRowsOnInsert(bool enable = true);
+
     /** Allows Rows with data type \a str to be dropped over this ListBox when
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
     void            AllowDropType(const std::string& str);
@@ -548,6 +552,8 @@ private:
     bool            m_auto_scrolling_left;
     bool            m_auto_scrolling_right;
     Timer           m_auto_scroll_timer;
+
+    bool            m_normalize_rows_on_insert;
 
     iterator*       m_iterator_being_erased;
 

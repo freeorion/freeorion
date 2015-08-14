@@ -441,6 +441,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_auto_scrolling_left(false),
     m_auto_scrolling_right(false),
     m_auto_scroll_timer(250),
+    m_normalize_rows_on_insert(true),
     m_iterator_being_erased(0)
 {
     Control::SetColor(color);
@@ -1107,6 +1108,9 @@ void ListBox::SetColAlignment(std::size_t n, Alignment align)
 void ListBox::SetRowAlignment(iterator it, Alignment align)
 { (*it)->SetRowAlignment(align); }
 
+void ListBox::NormalizeRowsOnInsert(bool enable)
+{ m_normalize_rows_on_insert = enable; }
+
 void ListBox::AllowDropType(const std::string& str)
 { m_allowed_drop_types.insert(str); }
 
@@ -1517,12 +1521,13 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
         }
         m_col_widths.back() += total - WIDTH;
 
-        if (!m_header_row->empty())
+        if (!m_header_row->empty() && m_normalize_rows_on_insert)
             NormalizeRow(m_header_row);
     }
 
     row->InstallEventFilter(this);
-    NormalizeRow(row);
+    if (m_normalize_rows_on_insert)
+        NormalizeRow(row);
 
     if (signal)
         BeforeInsertSignal(it);
@@ -1619,7 +1624,7 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
         }
         m_col_widths.back() += total - WIDTH;
 
-        if (!m_header_row->empty())
+        if (!m_header_row->empty() && m_normalize_rows_on_insert)
             NormalizeRow(m_header_row);
     }
 
@@ -1629,7 +1634,8 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
     {
         Row* row = *row_it;
         row->InstallEventFilter(this);
-        NormalizeRow(row);
+        if (m_normalize_rows_on_insert)
+            NormalizeRow(row);
     }
 
     // add row at requested location (or default end position)
