@@ -3,6 +3,7 @@ these methods in turn activate other portions of the python AI code."""
 import pickle  # Python object serialization library
 import sys
 import random
+from time import sleep
 
 # IMPORTANT! this import also execute python code to update freeOrionAIInterface interface,
 # removing this import will brake AI in unexpected way.
@@ -174,6 +175,7 @@ def generateOrders():  # pylint: disable=invalid-name
     at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
     and can be sent to the server for processing."""
     turn = fo.currentTurn()
+    sleep(10)
     turn_uid = foAIstate.set_turn_uid()
     print "Start turn %s (%s) of game: %s" % (turn, turn_uid, foAIstate.uid)
 
