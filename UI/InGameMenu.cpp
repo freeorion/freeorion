@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "OptionsWnd.h"
 #include "SaveFileDialog.h"
+#include "TextBrowseWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "../network/Networking.h"
 #include "../util/i18n.h"
@@ -53,6 +54,9 @@ InGameMenu::InGameMenu():
 
     if (!HumanClientApp::GetApp()->CanSaveNow()) {
         m_save_btn->Disable();
+        m_save_btn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_save_btn->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new TextBrowseWnd(UserString("BUTTON_DISABLED"), UserString("SAVE_DISABLED_BROWSE_TEXT"), GG::X(400))));
     }
 
     ResetDefaultPosition();
