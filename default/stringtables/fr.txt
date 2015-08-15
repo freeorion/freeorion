@@ -3010,6 +3010,12 @@ Production
 PRODUCTION_INFO_PP
 pts.
 
+PRODUCTION_QUEUE_EMPIRE
+%1% : File d'Attente de Production
+
+PRODUCTION_QUEUE_EMPIRE_AT
+%1% : File d'Attente de Production sur %2%
+
 #PRODUCTION_QUEUE_MULTIPLES
 #'''%1%x '''
 
