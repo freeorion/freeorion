@@ -594,15 +594,6 @@ public:
     {
         Init(HumanClientApp::GetApp()->EmpireID());
     }
-
-    explicit ProductionQueueWnd(int empire_id, GG::X w, GG::Y h) :
-        CUIWnd("", GG::X0, GG::Y0, w, h,
-               GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
-               "ProductionQueueWnd"),
-        m_queue_lb(0)
-    {
-        Init(empire_id);
-    }
     //@}
 
     /** \name Mutators */ //@{
@@ -612,7 +603,16 @@ public:
         if (Size() != sz)
             DoLayout();
     }
+
     QueueListBox*   GetQueueListBox() { return m_queue_lb; }
+
+    void            SetEmpire(int id) {
+        const Empire* empire = GetEmpire(id);
+        if (empire)
+            SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) % empire->Name()));
+        else
+            SetName("");
+    }
     //@}
 
 private:
@@ -626,11 +626,7 @@ private:
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ProductionQueue ListBox");
 
-        const Empire* empire = GetEmpire(empire_id);
-        if (empire)
-            SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) % empire->Name()));
-        else
-            SetName("");
+        SetEmpire(empire_id);
 
         AttachChild(m_queue_lb);
         DoLayout();
@@ -807,17 +803,12 @@ void ProductionWnd::ProductionQueueChangedSlot() {
 
 void ProductionWnd::UpdateQueue() {
     DebugLogger() << "ProductionWnd::UpdateQueue()";
+
+    m_queue_wnd->SetEmpire(m_empire_shown_id);
+
     const Empire* empire = GetEmpire(m_empire_shown_id);
-    if (!empire)
-        return;
 
     QueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
-
-    if (empire)
-        queue_lb->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_EMPIRE")) % empire->Name()));
-    else
-        queue_lb->SetName("");
-
     const ProductionQueue& queue = empire->GetProductionQueue();
     std::size_t first_visible_queue_row = std::distance(queue_lb->begin(), queue_lb->FirstRowShown());
     queue_lb->Clear();
