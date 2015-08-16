@@ -1603,6 +1603,23 @@ BuildingType
     icon = "icons/building/gas-giant-generator.png"
 
 BuildingType
+    name = "BLD_MATURATION_PEN"
+    description = "BLD_MATURATION_PEN_DESC"
+    buildcost = 250
+    buildtime = 4
+    location = And [
+        Planet
+        Not Contains Building name = "BLD_MATURATION_PEN"
+        OwnedBy empire = Source.Owner
+        OR [
+            HasSpecial name = "KRAKEN_NEST_SPECIAL"
+            HasSpecial name = "SNOWFLAKE_NEST_SPECIAL"
+            HasSpecial name = "JUGGERNAUT_NEST_SPECIAL"
+        ]
+    ]
+    icon = ""
+
+BuildingType
     name = "BLD_COLONY_BASE"
     description = "BLD_COLONY_BASE_DESC"
     buildcost = 45

@@ -1957,6 +1957,20 @@ Tech
     prerequisites = "GRO_PLANET_ECOL"
 
 Tech
+    name = "SHP_MONSTER_MATURATION"
+    description = "SHP_MONSTER_MATURATION_DESC"
+    short_description = "SPAWN_RATE_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 50 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = [
+        "SHP_ENDOCRINE_SYSTEMS"
+    ]
+    unlock = Item type = Building name = "BLD_MATURATION_PEN"
+    graphic = "icons/tech/industrial_cloning.png"
+
+Tech
     name = "SHP_INTSTEL_LOG"
     description = "SHP_INTSTEL_LOG_DESC"
     short_description = "STARLANE_SPEED_SHORT_DESC"
