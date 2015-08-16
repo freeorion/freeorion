@@ -2918,7 +2918,10 @@ TECH_WND_ETA
 #######################
 
 PRODUCTION_INFO_AT_LOCATION_TITLE
-%1% sur %2%
+%3% %1% sur %2%
+
+PRODUCTION_INFO_EMPIRE
+%2% %1%
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
 Points disponibles
@@ -2929,7 +2932,6 @@ Points gaspillés
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points disponibles ici
 
-PRODUCTION_INFO_LOCATION_NAME
 ###############
 # ResearchWnd #
 ###############
@@ -3004,11 +3006,14 @@ Double-clic sur les projets disponibles pour les ajouter à la file d'attente de
 PRODUCTION_WND_TITLE  # translated
 Production
 
-PRODUCTION_INFO_PANEL_TITLE  # translated
-Production
-
 PRODUCTION_INFO_PP
 pts.
+
+PRODUCTION_QUEUE_EMPIRE
+%1% : File d'Attente de Production
+
+PRODUCTION_QUEUE_EMPIRE_AT
+%1% : File d'Attente de Production sur %2%
 
 #PRODUCTION_QUEUE_MULTIPLES
 #'''%1%x '''
