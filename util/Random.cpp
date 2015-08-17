@@ -7,7 +7,7 @@ namespace {
 }
 
 void Seed(unsigned int seed) { 
-    gen.seed(static_cast<boost::mt19937::result_type>(seed)); 
+    gen.seed(static_cast<boost::mt19937::result_type>(seed));
 }
 
 void ClockSeed() {
