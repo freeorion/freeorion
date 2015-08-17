@@ -10,7 +10,7 @@ from fields import generate_fields
 from natives import generate_natives
 from monsters import generate_monsters
 from specials import distribute_specials
-from util import seed_rng, report_error, error_list
+from util import int_hash, seed_rng, report_error, error_list
 import statistics
 
 
@@ -32,8 +32,11 @@ def create_universe(psd_map):
     total_players = len(psd_map)
 
     # initialize RNG
-    seed_rng(gsd.seed)
+    h = int_hash(gsd.seed)
+    print "Using hashed seed", h
+    seed_rng(h)
     seed_pool = [random.random() for _ in range(100)]
+    print "Seed pool:", seed_pool
 
     # make sure there are enough systems for the given number of players
     print "Universe creation requested with %d systems for %d players" % (gsd.size, total_players)

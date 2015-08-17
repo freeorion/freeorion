@@ -1,9 +1,16 @@
 import sys
 import math
 import random
+from hashlib import md5
 
 
 error_list = []
+
+
+def int_hash(s):
+    h = md5()
+    h.update(s)
+    return int(h.hexdigest(), 16)
 
 
 def seed_rng(seed):
