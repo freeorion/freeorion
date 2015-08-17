@@ -806,12 +806,15 @@ void ProductionWnd::UpdateQueue() {
 
     m_queue_wnd->SetEmpire(m_empire_shown_id);
 
-    const Empire* empire = GetEmpire(m_empire_shown_id);
-
     QueueListBox* queue_lb = m_queue_wnd->GetQueueListBox();
-    const ProductionQueue& queue = empire->GetProductionQueue();
     std::size_t first_visible_queue_row = std::distance(queue_lb->begin(), queue_lb->FirstRowShown());
     queue_lb->Clear();
+
+    const Empire* empire = GetEmpire(m_empire_shown_id);
+    if (!empire)
+        return;
+
+    const ProductionQueue& queue = empire->GetProductionQueue();
 
     int i = 0;
     for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
@@ -834,6 +837,7 @@ void ProductionWnd::UpdateInfoPanel() {
     if (!empire) {
         m_production_info_panel->SetName(UserString("PRODUCTION_WND_TITLE"));
         m_production_info_panel->ClearLocalInfo();
+        return;
     } else {
         m_production_info_panel->SetEmpireID(m_empire_shown_id);
     }
