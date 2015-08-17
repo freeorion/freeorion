@@ -49,6 +49,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+*.nib
 
 # PyCharm
 *.idea/
