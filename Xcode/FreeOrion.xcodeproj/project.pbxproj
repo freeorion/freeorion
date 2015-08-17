@@ -235,7 +235,6 @@
 		478418F70CF05AAA00BE4710 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA40CEF565700A7DF2B /* MessageQueue.cpp */; };
 		47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C9F0A98A3F900DA9C21 /* dmain.cpp */; };
 		47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA20A98A3F900DA9C21 /* ServerApp.cpp */; };
-		8207301F19BF384300F375AF /* main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
 		820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 820BDECB1848A93E009BC457 /* Hotkeys.cpp */; };
 		82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */; };
 		82182CFA185B506200D70FF2 /* PythonUniverseWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */; };
@@ -328,6 +327,8 @@
 		82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
+		CE5C92C91B81FE9C002346C0 /* main.xib in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
+		CE5C92CB1B8201E2002346C0 /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = CE5C92CA1B8201A8002346C0 /* main.nib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1081,6 +1082,7 @@
 		9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_signals.a; sourceTree = "<group>"; };
 		9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
 		9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
+		CE5C92CA1B8201A8002346C0 /* main.nib */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = main.nib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1238,6 +1240,7 @@
 				825E7258196EC28A00F8114D /* default */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
 				34ACA40C0FFFABE600500F40 /* main.xib */,
+				CE5C92CA1B8201A8002346C0 /* main.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2100,6 +2103,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3402E2610F5A319200DF6FE7 /* Build configuration list for PBXNativeTarget "FreeOrion" */;
 			buildPhases = (
+				CE5C92C81B81FE8F002346C0 /* Sources */,
 				3402E53C0F5A33E300DF6FE7 /* Copy Main Executable */,
 				3402EB750F5A34FC00DF6FE7 /* Copy Server and AI client */,
 				3402E2590F5A317400DF6FE7 /* Resources */,
@@ -2286,7 +2290,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8207301F19BF384300F375AF /* main.xib in Resources */,
+				CE5C92CB1B8201E2002346C0 /* main.nib in Resources */,
 				825E7259196EC28A00F8114D /* default in Resources */,
 				3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */,
 				8273F49515DD774C000F6A09 /* changelog.txt in Resources */,
@@ -2621,6 +2625,14 @@
 				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
 				471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */,
 				8275F3FB1AD31381003568FF /* CensusBrowseWnd.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE5C92C81B81FE8F002346C0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE5C92C91B81FE9C002346C0 /* main.xib in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
