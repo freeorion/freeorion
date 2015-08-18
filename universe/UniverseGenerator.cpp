@@ -50,66 +50,6 @@ namespace {
 double CalcTypicalUniverseWidth(int size)
 { return (1000.0 / std::sqrt(150.0)) * std::sqrt(static_cast<double>(size)); }
 
-void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
-                               unsigned int arms, unsigned int stars, double width, double height)
-{
-    double arm_offset     = RandDouble(0.0,2.0*PI);
-    double arm_angle      = 2.0*PI / arms;
-    double arm_spread     = 0.3 * PI / arms;
-    double arm_length     = 1.5 * PI;
-    double center         = 0.25;
-    double x,y;
-
-    int i, attempts;
-
-    GaussianDistType  random_gaussian = GaussianDist(0.0, arm_spread);
-    SmallIntDistType  random_arm      = SmallIntDist(0  , arms);
-    DoubleDistType    random_angle    = DoubleDist  (0.0, 2.0*PI);
-    DoubleDistType    random_radius   = DoubleDist  (0.0, 1.0);
-
-    for (i = 0, attempts = 0; i < static_cast<int>(stars) && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
-        double radius = random_radius();
-
-        if (radius < center) {
-            double angle = random_angle();
-            x = radius * cos( arm_offset + angle );
-            y = radius * sin( arm_offset + angle );
-        } else {
-            double arm    = static_cast<double>(random_arm()) * arm_angle;
-            double angle  = random_gaussian();
-
-            x = radius * cos( arm_offset + arm + angle + radius * arm_length );
-            y = radius * sin( arm_offset + arm + angle + radius * arm_length );
-        }
-
-        x = (x + 1) * width / 2.0;
-        y = (y + 1) * height / 2.0;
-
-        if (x < 0 || width <= x || y < 0 || height <= y)
-            continue;
-
-        // See if new star is too close to any existing star.
-        double lowest_dist = CalcNewPosNearestNeighbour(x, y, positions);
-
-        // If so, we try again or give up.
-        if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
-            if (attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
-                --i; //try again for same star
-            } else {
-                attempts=0; //give up on this star, move on to next
-                DebugLogger() << "Giving up on placing star "<< i <<" with lowest dist squared " << lowest_dist;
-            }
-            continue;
-        }
-
-        // Add the new star location.
-        positions.push_back(SystemPosition(x, y));
-
-        // Note that attempts is reset for every star.
-        attempts = 0;
-    }
-}
-
 void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
                                    unsigned int stars, double width, double height)
 {

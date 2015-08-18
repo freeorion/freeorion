@@ -95,9 +95,6 @@ double CalcTypicalUniverseWidth(int size);
 
 // Helper functions that calculate system positions for various
 // predefined galaxy shapes
-void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
-                               unsigned int arms, unsigned int stars, double width, double height);
-
 void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
                                    unsigned int stars, double width, double height);
 

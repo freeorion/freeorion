@@ -1277,7 +1277,6 @@ void WrapServerAPI() {
     def("specials_frequency",                   SpecialsFrequency);
     def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
 
-    def("spiral_galaxy_calc_positions",         SpiralGalaxyCalcPositions);
     def("elliptical_galaxy_calc_positions",     EllipticalGalaxyCalcPositions);
     def("cluster_galaxy_calc_positions",        ClusterGalaxyCalcPositions);
     def("ring_galaxy_calc_positions",           RingGalaxyCalcPositions);

@@ -1,4 +1,6 @@
-import random
+from random import random, uniform, randint, gauss, choice
+from math import pi, sin, cos
+
 import freeorion as fo
 import util
 
@@ -55,9 +57,56 @@ def get_systems_within_jumps(origin_system, jumps):
     return matching_systems
 
 
+def spiral_galaxy_calc_positions(positions, arms, size, width):
+    """
+    Calculate positions for the spiral galaxy shapes
+    """
+    adjacency_grid = AdjacencyGrid(width)
+    arm_offset = uniform(0.0, 2.0 * pi)
+    arm_angle = (2.0 * pi) / float(arms)
+    arm_spread = (0.3 * pi) / float(arms)
+    arm_length = 1.5 * pi
+    center = 0.25
+
+    for i in range(size):
+        attempts = 100
+        while attempts > 0:
+            radius = random()
+            if radius < center:
+                angle = uniform(0.0, 2.0 * pi)
+                x = radius * cos(arm_offset + angle)
+                y = radius * sin(arm_offset + angle)
+            else:
+                arm = randint(0, arms - 1) * arm_angle
+                angle = gauss(0.0, arm_spread)
+                x = radius * cos(arm_offset + arm + angle + radius * arm_length)
+                y = radius * sin(arm_offset + arm + angle + radius * arm_length)
+
+            x = (x + 1) * width / 2.0
+            y = (y + 1) * width / 2.0
+            if (x < 0.0) or (width <= x) or (y < 0.0) or (width <= y):
+                continue
+
+            # see if new star is too close to any existing star.
+            # if so, we try again or give up
+            if adjacency_grid.too_close_to_other_positions(x, y):
+                attempts -= 1
+                continue
+
+            # add the new star location
+            pos = fo.SystemPosition(x, y)
+            adjacency_grid.insert_pos(pos)
+            positions.append(pos)
+            break
+
+        if not attempts:
+            print "Spiral galaxy shape: giving up on placing star", i,\
+                ", can't find position sufficiently far from other systems"
+
+
 def irregular2_galaxy_calc_positions(positions, size, width):
     """
-    Calculate positions for the 'Python Test' galaxy shape
+    Calculate positions for the irregular2 galaxy shape
     """
     adjacency_grid = AdjacencyGrid(width)
     max_delta = max(min(float(fo.max_starlane_length()), width / 10.0), adjacency_grid.min_dist * 2.0)
@@ -70,8 +119,8 @@ def irregular2_galaxy_calc_positions(positions, size, width):
         found = False
         while (attempts > 0) and not found:
             attempts -= 1
-            x = prev_x + random.uniform(-max_delta, max_delta)
-            y = prev_y + random.uniform(-max_delta, max_delta)
+            x = prev_x + uniform(-max_delta, max_delta)
+            y = prev_y + uniform(-max_delta, max_delta)
             if util.distance(x, y, origin_x, origin_y) > width * 0.45:
                 prev_x, prev_y = origin_x, origin_y
                 reset_to_origin += 1
@@ -150,14 +199,15 @@ def calc_star_system_positions(shape, size):
 
     positions = fo.SystemPositionVec()
     if shape == fo.galaxyShape.random:
-        shape = random.choice(shapes)
+        shape = choice(shapes)
 
+    print "Creating", shape, "galaxy shape"
     if shape == fo.galaxyShape.spiral2:
-        fo.spiral_galaxy_calc_positions(positions, 2, size, width, width)
+        spiral_galaxy_calc_positions(positions, 2, size, width)
     elif shape == fo.galaxyShape.spiral3:
-        fo.spiral_galaxy_calc_positions(positions, 3, size, width, width)
+        spiral_galaxy_calc_positions(positions, 3, size, width)
     elif shape == fo.galaxyShape.spiral4:
-        fo.spiral_galaxy_calc_positions(positions, 4, size, width, width)
+        spiral_galaxy_calc_positions(positions, 4, size, width)
     elif shape == fo.galaxyShape.elliptical:
         fo.elliptical_galaxy_calc_positions(positions, size, width, width)
     elif shape == fo.galaxyShape.cluster:
@@ -166,7 +216,7 @@ def calc_star_system_positions(shape, size):
         if avg_clusters < 2:
             avg_clusters = 2
         # Add a bit of random variation (+/- 20%)
-        clusters = random.randint((avg_clusters * 8) / 10, (avg_clusters * 12) / 10)
+        clusters = randint((avg_clusters * 8) / 10, (avg_clusters * 12) / 10)
         if clusters >= 2:
             fo.cluster_galaxy_calc_positions(positions, clusters, size, width, width)
     elif shape == fo.galaxyShape.ring:
