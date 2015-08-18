@@ -121,6 +121,7 @@
       <PERSON name=""                         nick="andrewsa"         task="Russian Translation"/>
       <PERSON name=""                         nick="Nilstilar"        task="French Translation"/>
       <PERSON name="Jean-Charles Schmidt"     nick="Ouaz"             task="French Translation"/>
-      </GROUP>
+      <PERSON name=""                         nick="evzorge"          task="Russian Translation"/>
+    </GROUP>
   </CREDITS>
 </XMLDoc>
