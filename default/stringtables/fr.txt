@@ -9009,6 +9009,12 @@ Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
 Un puissant générateur conçu pour puiser l'énergie des Géantes Gazeuses.'''
 
+BLD_STARLANE_NEXUS
+Nexus Starlane
+
+BLD_STARLANE_NEXUS_DESC
+Génère des Voies spatiales vers d'autres systèmes stellaires en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
+
 BLD_COLONY_BASE
 Colonisateur Stellaire
 
