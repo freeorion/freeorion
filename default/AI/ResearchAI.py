@@ -128,7 +128,7 @@ def has_star(star_type):
     return empire_stars[star_type]
 
 
-def if_enemies(false_val, true_val):
+def if_enemies(true_val, false_val):
     return conditional_priority(true_val,
                                 false_val,
                                 cond_func=lambda: foAI.foAIstate.misc.get('enemies_sighted', {}))
@@ -361,8 +361,8 @@ def init():
     # prefixes for tech search. Check for prefix will be applied in same order as they defined
     defensive = foAI.foAIstate.aggression <= fo.aggression.cautious
     prefixes = [
-        (Dep.DEFENSE_TECHS_PREFIX, 2.0 if defensive else if_enemies(0.2, 1.0)),
-        (Dep.WEAPON_PREFIX, ship_usefulness(if_enemies(0.2, 1.0), MIL_IDX))
+        (Dep.DEFENSE_TECHS_PREFIX, 2.0 if defensive else if_enemies(1.0, 0.2)),
+        (Dep.WEAPON_PREFIX, ship_usefulness(if_enemies(1.0, 0.2), MIL_IDX))
     ]
 
     tech_handlers = (
@@ -386,13 +386,13 @@ def init():
         (Dep.METER_CHANGE_BOOST_TECHS, 1.0),
         (Dep.DETECTION_TECHS, 0.5),
         (Dep.STEALTH_TECHS, get_stealth_priority),
-        (Dep.DAMAGE_CONTROL_TECHS, if_enemies(0.1, 0.5)),
+        (Dep.DAMAGE_CONTROL_TECHS, if_enemies(0.5, 0.1)),
         (Dep.HULL_TECHS, get_hull_priority),
-        (Dep.ARMOR_TECHS, ship_usefulness(if_enemies(0.1, 1.0), MIL_IDX)),
+        (Dep.ARMOR_TECHS, ship_usefulness(if_enemies(1.0, 0.1,), MIL_IDX)),
         (Dep.ENGINE_TECHS, ship_usefulness(0.6 if choices.engine else 0.1, None)),
         (Dep.FUEL_TECHS, ship_usefulness(1.0 if choices.fuel else 0.1, None)),
-        (Dep.SHIELD_TECHS, ship_usefulness(if_enemies(0.1, 1.0), MIL_IDX)),
-        (Dep.TROOP_POD_TECHS, ship_usefulness(if_enemies(0.1, 0.3), TROOP_IDX)),
+        (Dep.SHIELD_TECHS, ship_usefulness(if_enemies(1.0, 0.1), MIL_IDX)),
+        (Dep.TROOP_POD_TECHS, ship_usefulness(if_enemies(0.3, 0.1), TROOP_IDX)),
         (Dep.COLONY_POD_TECHS, ship_usefulness(0.5, COLONY_IDX))
     )
 
