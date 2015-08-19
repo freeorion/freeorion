@@ -426,7 +426,7 @@ def init():
 
 
 def generate_research_orders():
-    """generate research orders"""
+    """Generate research orders."""
 
     if use_classic_research_approach():
         generate_classic_research_orders()
@@ -610,12 +610,12 @@ def get_possible_projects():
 
 
 def get_completed_techs():
-    """get completed and available for use techs"""
+    """Get completed and available for use techs."""
     return [tech for tech in fo.techs() if tech_is_complete(tech)]
 
 
 def get_research_queue_techs():
-    """ Get list of techs in research queue."""
+    """Get list of techs in research queue."""
     return [element.tech for element in fo.getEmpire().researchQueue]
 
 def exclude_tech(tech_name):
