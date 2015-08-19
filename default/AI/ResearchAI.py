@@ -19,9 +19,6 @@ inProgressTechs = {}
 
 class Choices(object):
     # Cannot construct on import, because fo.getEmpire() is None at this time
-    def __init__(self):
-        self.inited = False
-
     def init(self):
         rng = random.Random()
         rng.seed(fo.getEmpire().name + fo.getGalaxySetupData().seed)
@@ -32,18 +29,34 @@ class Choices(object):
         self.extra_robotic_hull = rng.random() < 0.05
         self.extra_asteroid_hull = rng.random() < 0.05
         self.extra_energy_hull = rng.random() < 0.05
-        self.inited = True
-
 
 empire_stars = {}
 research_reqs = {}
 choices = Choices()
+MAIN_SHIP_DESIGNER_LIST = []
 
+# keys are individual full tech names
+priority_funcs = {}
 
 REQS_PREREQS_IDX = 0
 REQS_COST_IDX = 1
 REQS_TIME_IDX = 2
 REQS_PER_TURN_COST_IDX = 3
+
+MIL_IDX = 0
+TROOP_IDX = 1
+COLONY_IDX = 2
+
+# Priorities
+ZERO = 0.0
+LOW = 0.1
+DEFAULT_PRIORITY = 0.5
+
+# TODO: Move this functions to ColonisationAI
+have_asteroids = partial(attrgetter('got_ast'), ColonisationAI)
+have_gas_giant = partial(attrgetter('got_gg'), ColonisationAI)
+have_ruins = partial(attrgetter('gotRuins'), ColonisationAI)
+have_nest = partial(attrgetter('got_nest'), ColonisationAI)
 
 
 # TODO research AI no longer use this method, rename and move this method elsewhere
@@ -55,16 +68,6 @@ def get_research_index():
     elif foAI.foAIstate.aggression >= fo.aggression.typical:
         research_index += 1
     return research_index
-
-# Priorities
-ZERO = 0.0
-LOW = 0.1
-
-# TODO: Move this functions to ColonisationAI
-have_asteroids = partial(attrgetter('got_ast'), ColonisationAI)
-have_gas_giant = partial(attrgetter('got_gg'), ColonisationAI)
-have_ruins = partial(attrgetter('gotRuins'), ColonisationAI)
-have_nest = partial(attrgetter('got_nest'), ColonisationAI)
 
 
 def has_low_aggression():
@@ -86,11 +89,7 @@ def conditional_priority(func_if_true, func_if_false, cond_func):
             return execute(func_if_false, tech_name=tech_name)
     return get_priority
 
-MIL_IDX = 0
-TROOP_IDX = 1
-COLONY_IDX = 2
 
-MAIN_SHIP_DESIGNER_LIST = []
 
 
 def get_main_ship_designer_list():
@@ -302,11 +301,6 @@ def get_hull_priority(tech_name):
 # TODO boost genome bank if enemy is using bioterror
 # TODO for supply techs consider starlane density and planet density
 
-# keys are individual full tech names
-priority_funcs = {}
-
-DEFAULT_PRIORITY = 0.5
-
 
 def get_priority(tech_name):
     """
@@ -361,7 +355,6 @@ def tech_time_sort_key(tech_name):
 
 def init():
     """
-    Initializing priority functions here within generate_research_orders() to avoid import race.
     Set handlers for all techs that present in game.
     """
     choices.init()
@@ -433,7 +426,7 @@ def generate_research_orders():
         return
     
     # initializing priority functions here within generate_research_orders() to avoid import race
-    if not choices.inited:
+    if not priority_funcs:
         init()
 
     empire = fo.getEmpire()
