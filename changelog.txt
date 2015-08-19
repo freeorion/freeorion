@@ -1,16 +1,29 @@
 v0.4.5 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 Key Changes:
+
 ~ Replaced Ogre3D with SDL based windowing for human client
 ~~ Improved mouse rendering and responsiveness and keyboard behaviour, particularly when switching between windows
+
 ~ Interface and turn processing time improvements
 ~~ Tech tree rendering speed especially improved
+
 ~ Extensive AI updates
+
 ~ New pedia content including introductory articles on game concepts and the interface
+
 ~ Revised colonization mechanics to allow producing a building that will convert an outpost to a colony
 ~~ Species added must have a supply connection from a already-populated planet with sufficient happiness
 ~~ Production time depends on distance from the production location to the already-species-populated planet
+
 ~ New graphical combat summary
+
+~ Improvements to the object list window
+~~ Additional object list column types and filter conditions
+~~ Added right-click commands to object list to set planet focus (this works for multiple planets at once)
+~~ Made the objectlist update when a planet changes focus
+~~ Fixed layout placement of buttons in object filter window
+~~ Fixed object list column sorting of numbers (as numbers instead of as text)
 
 Graphics / GUI:
 ~ Added a pin toggle to most UI windows, which fixes them in place
@@ -24,12 +37,10 @@ Graphics / GUI:
 ~ Tweaked ship design description part list to show multiple copies of a part with a number, instead of repeating the part name
 ~ Changed allowed hotkey bindings, so most printable character hotkeys need to have a modifier key (CTRL, SHIFT, ALT) held, to prevent hotkeys from firing while typing text.
 ~ Removed some unused sound options
-~ Additional object list column types and filter conditions
 ~ Added popup menu command to save ship designs as a file, and list of saved designs that can be used when designing ships
 ~ Added monster designs tab to ship design screen
 ~ Tweaked layout in the generic file load/save dialog
 ~ Made mousewheel scrolling pan the tabs in a tabbed window widget
-~ Fixed layout placement of buttons in object filter window
 ~ Made colonization suitability report always include Exobots
 ~ Added an option to toggle whether the pedia in the design screen will instantly update as a designs text is edited
 ~ Removed various unused properties from ship designs in the pedia (and internally)
@@ -37,8 +48,6 @@ Graphics / GUI:
 ~~ These helpers are easily customizable by players
 ~ Changed default player empire colour
 ~ Added combat assessment to ship designs' pedia pages
-~ Added right-click commands to object list to set planet focus
-~ Made the objectlist update when a planet changes focus
 ~ Made cycling through sitrep turns skip turns with no sitreps
 ~ Made display of moving fleet ETA controllable with a config option
 ~ Add "does not stack" information to building descriptions
@@ -49,7 +58,7 @@ Graphics / GUI:
 ~ Added an optional mapscale circle overlay to MapWnd, centered on the currently selected system
 ~ Added (yellow, 3-flanged) mouseover indicator for unexplored systems
 ~ Made some of the darkest empire colors slightly less dark
-~ Made pressing return to map hotkey close the fleetwnd, if open, and if not, the sidepanel, if open, if no other subscreens were open
+~ Made pressing return to map hotkey close the fleet window, if open, and if not, the sidepanel, if open, if no other subscreens were open
 ~ Ensured that if a planet has nonzero max defenses (or shields or troops) the SidePanel PlanetPanel will display the military panel regardless of whether the planet is populated or owned
 ~ Troop ships and fleets will now show their total troops value
 ~ Adjusted sitrep font size to be the greater of the client UI standard font size or 75% of the size for sitrep icons
@@ -62,7 +71,8 @@ Graphics / GUI:
 ~ Made the DesignWnd Redundancy check be applied to all part types, not just weapons
 ~ Enabled customization of the DesignWnd redundant part filtering criteria via common_user_customizations.txt
 ~ Removed (most of) the extra space in ListBoxes after the end of the content
-~ Made SitRep panel remember which SitRep it was showing first, when it is resized
+~ Made sitrep panel remember which sitrep it was showing first, when it is resized
+~ Cleaned up the massive list of sitreps on turn 1
 
 Content:
 ~ Translation updates, most notably an (almost) complete French translation
@@ -77,14 +87,15 @@ Content:
 ~~ "Primitive" natives can't get this special
 ~ Added a higher-capacity advance ground troops pod
 ~ More empire statistic tracking
-~ Added sitreps, including nebula collapse, dyson forest birth, 
+~ Added sitreps, including nebula collapse, dyson forest birth
 ~ Expanded Nebula collapse to create random combinations of asteroid fields and planets
 ~ Added colony buildings for natives that can colonize but can't build ships
 ~ Added the Maintenance Ship as an alternative to the Sentry monster type
 ~ New native species: Happybirthday
 ~ Added Species Homeworlds page to Pedia
 ~ Improved slot positions of ship hulls
-~ Changes to fields: Ion Storms and Molecular Clouds now start very small, but grow large before shrinking again. 
+~ Changes to fields: Ion Storms and Molecular Clouds now start very small, but grow large before shrinking again
+~ Improved species traits listing in game setup window
 
 Balance:
 ~ Tweaked galaxy special distributions to lessen frequency of multiple specials on one object
@@ -102,7 +113,7 @@ Balance:
 ~ Added shields to the Bloated Juggernaut and reduced its damage value
 ~ Adjusted the Krill Spawner part (from Ancient Ruins) so that when in an unarmed ship it provides a stealth bonus
 ~ Removed biospores from level 1 Kraken and Juggernauts. For level 3 of same, changed biospores to bioterminators
-~ Phototrophic natives can now have bright or dim stars (not only orange/yellow ones)
+~ Phototrophic natives can now be found in systems with bright or dim stars (not only orange/yellow ones)
 ~ Changed time to build Phinnert colonies to 75%
 ~ Removed Large Planet trait from Scylior and Hhhoh (natives) and added it to the Etty (playable)
 ~ Self Sustaining Xenophobes (ie Trith) should have more stable population problems as it's based on explored systems not visible systems
@@ -118,7 +129,7 @@ Balance:
 ~ Made the megalith producible only on planets with an imperial palace, and provide a troop bonus to nearby systems
 ~ Added ProductionQueue support for frontloading and/or topping-up, controlled by default/global_settings.txt
 ~ Planetary Ecology will now grant a flat + 1 bonus to Good and Adequate that expires with Symbiotic Biology
-~ Starting planets have max happiness
+~ Empire homeworlds have max happiness at game start
 
 Bugs:
 ~ Fixed multiplayer lobby player list scroll position resetting when receiving updates from the server
@@ -140,7 +151,6 @@ Bugs:
 ~ Fixed a bug where a combat sitrep would not be sent to an empire whose outpost had been in combat, if the empire had no non-outpost combatants
 ~ Changed combat attacker order shuffle algorithm to standard Fisher–Yates shuffle to avoid a bias
 ~ Fixed issue where centred button text labels weren't repositioning properly when resizing
-~ Fixed object list column sorting of numbers (as numbers instead of as text)
 ~ Fixed a bug where outposts could be prematurely excused from combat, allowing them to wrongly get shield regen the next turn
 ~ Fixed multicolored system names on the MapWnd for systems with more than one empire owning planets
 ~ Fixed names in multiplayer lobby, which were showing the local player's name for all players
@@ -151,6 +161,9 @@ Bugs:
 ~ Fixed planet names on sidepanel losing formatting tags when the planet is renamed
 ~ Fixed multiline text display bug when rendering colored highlighted text
 ~ Fixed Exobots not having Bad Ground Troops as described
+~ Removed the (useless and faulty) ability to drag sitrep entries
+~ Fixed the multiplayer galaxy setup dropdowns having unneeded and blocking scrollbars
+~ Only partially fixed: same seed and game settings do not reliably produce the same map independent of platform
 
 
 v0.4.4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
