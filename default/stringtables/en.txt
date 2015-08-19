@@ -9009,6 +9009,12 @@ Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
 
+BLD_STARLANE_NEXUS
+Starlane Nexus
+
+BLD_STARLANE_NEXUS_DESC
+Generates starlanes to other star systems that can be connected without crossing existing starlanes or passing too close to another system.
+
 BLD_COLONY_BASE
 Colony Base
 
