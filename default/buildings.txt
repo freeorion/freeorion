@@ -1628,10 +1628,32 @@ BuildingType
     icon = "icons/ship_hulls/colony_base_hull_small.png"
 
 BuildingType
+    name = "BLD_STARLANE_BORE"
+    description = "BLD_STARLANE_BORE_DESC"
+    buildcost = 100
+    buildtime = 1 + Target.System.NumStarlanes
+    location = Planet
+    effectsgroups = [
+        EffectsGroup
+            scope = Object id = Source.SystemID
+            effects = AddStarlanes endpoint = MinimumNumberOf
+                number = 1
+                sortkey = DirectDistanceBetween object = Source.ID object = LocalCandidate.ID
+                condition =  And [
+                    System
+                    CanAddStarlanesTo condition = Source
+                ]
+        EffectsGroup
+            scope = Source
+            effects = Destroy
+    ]
+    icon = "icons/tech/n-dimensional_structures.png"
+
+BuildingType
     name = "BLD_STARLANE_NEXUS"
     description = "BLD_STARLANE_NEXUS_DESC"
-    buildcost = 1
-    buildtime = 1
+    buildcost = 1000
+    buildtime = 8
     location = Planet
     effectsgroups = [
         EffectsGroup
@@ -1645,6 +1667,8 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/tech/n-dimensional_structures.png"
+
+
 
 /* Experimentor related variables / macros */
 

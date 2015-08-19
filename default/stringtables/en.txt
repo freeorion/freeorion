@@ -9012,6 +9012,12 @@ Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
 
+BLD_STARLANE_BORE
+Starlane Bore
+
+BLD_STARLANE_BORE_DESC
+Generates a single new starlane to the nearest system that can be connected without crossing existing starlanes or passing too close to another system.
+
 BLD_STARLANE_NEXUS
 Starlane Nexus
 
