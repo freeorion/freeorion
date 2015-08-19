@@ -6384,6 +6384,9 @@ id système précédent
 DESC_VAR_NUMSHIPS
 nombre d'astronefs
 
+DESC_VAR_NUMSTARLANES
+nombre de voies spatiales connectées
+
 DESC_VAR_CURRENTTURN
 tour actuel
 
@@ -9008,6 +9011,18 @@ BLD_GAS_GIANT_GEN_DESC
 Les bonus de plusieurs exemplaires dans le même système ne s'additionnent pas.
 
 Un puissant générateur conçu pour puiser l'énergie des Géantes Gazeuses.'''
+
+BLD_STARLANE_BORE
+Générateur de Voies Spatiales
+
+BLD_STARLANE_BORE_DESC
+Génère une nouvelle Voie spatiale vers le système le plus proche en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
+
+BLD_STARLANE_NEXUS
+Générateur Avancé de Voies Spatiales
+
+BLD_STARLANE_NEXUS_DESC
+Génère de nouvelles Voies spatiales vers d'autres systèmes stellaires en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
 
 BLD_COLONY_BASE
 Colonisateur Stellaire
