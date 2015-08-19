@@ -134,7 +134,7 @@ def if_enemies(true_val, false_val):
                                 cond_func=lambda: foAI.foAIstate.misc.get('enemies_sighted', {}))
 
 
-def if_dict(this_dict, this_key, false_val, true_val):
+def if_dict(this_dict, this_key, true_val, false_val):
     return conditional_priority(true_val,
                                 false_val,
                                 cond_func=lambda: this_dict.get(this_key, False))
@@ -378,7 +378,7 @@ def init():
         (Dep.UNRESEARCHABLE_TECHS, -1.0),
         (Dep.UNUSED_TECHS, ZERO),
         (Dep.THEORY_TECHS, ZERO),
-        (Dep.PRODUCTION_BOOST_TECHS, if_dict(ColonisationAI.empire_status, 'industrialists', 0.6, 1.5)),
+        (Dep.PRODUCTION_BOOST_TECHS, if_dict(ColonisationAI.empire_status, 'industrialists', 1.5, 0.6)),
         (Dep.RESEARCH_BOOST_TECHS, if_tech_target(get_initial_research_target(), 2.1, 2.5)),
         (Dep.PRODUCTION_AND_RESEARCH_BOOST_TECHS, 2.5),
         (Dep.POPULATION_BOOST_TECHS, get_population_boost_priority),
