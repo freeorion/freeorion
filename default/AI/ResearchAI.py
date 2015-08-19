@@ -66,8 +66,10 @@ have_gas_giant = partial(attrgetter('got_gg'), ColonisationAI)
 have_ruins = partial(attrgetter('gotRuins'), ColonisationAI)
 have_nest = partial(attrgetter('got_nest'), ColonisationAI)
 
+
 def has_low_aggression():
     return foAI.foAIstate.aggression < fo.aggression.typical
+
 
 def conditional_priority(func_if_true, func_if_false, cond_func):
     """
@@ -300,14 +302,6 @@ def get_hull_priority(tech_name):
 # TODO boost genome bank if enemy is using bioterror
 # TODO for supply techs consider starlane density and planet density
 
-# initializing priority functions here within generate_research_orders() to avoid import race
-
-# keys are "PREFIX1", as in "DEF" or "SPY"
-primary_prefix_priority_funcs = {}
-
-# keys are "PREFIX1_PREFIX2", as in "SHP_WEAPON"
-secondary_prefix_priority_funcs = {}
-
 # keys are individual full tech names
 priority_funcs = {}
 
@@ -319,21 +313,7 @@ def get_priority(tech_name):
     Get tech priority. the default is just above. 0 if not useful (but doesn't hurt to research),
     < 0 to prevent AI to research it
     """
-    name_parts = tech_name.split('_')
-    primary_prefix = name_parts[0]
-    secondary_prefix = '_'.join(name_parts[:2])
-    if tech_name in priority_funcs:
-        return execute(priority_funcs[tech_name], tech_name=tech_name)
-    elif secondary_prefix in secondary_prefix_priority_funcs:
-        return execute(secondary_prefix_priority_funcs[secondary_prefix], tech_name=tech_name)
-    elif primary_prefix in primary_prefix_priority_funcs:
-        return execute(primary_prefix_priority_funcs[primary_prefix], tech_name=tech_name)
-
-    # default priority for unseen techs
-    if not tech_is_complete(tech_name):
-        print "Tech %s does not have a priority, falling back to default." % tech_name
-
-    return DEFAULT_PRIORITY
+    return execute(priority_funcs[tech_name], tech_name=tech_name)
 
 
 def calculate_research_requirements():
@@ -381,20 +361,16 @@ def tech_time_sort_key(tech_name):
 
 def init():
     """
-    Fill initial data
+    Initializing priority functions here within generate_research_orders() to avoid import race.
+    Set handlers for all techs that present in game.
     """
     choices.init()
-    DEFENSIVE = foAI.foAIstate.aggression <= fo.aggression.cautious
-
-    # keys are "PREFIX1", as in "DEF" or "SPY"
-    primary_prefix_priority_funcs.update({
-        Dep.DEFENSE_TECHS_PREFIX: 2.0 if DEFENSIVE else if_enemies(0.2, 1.0)
-        })
-
-    # keys are "PREFIX1_PREFIX2", as in "SHP_WEAPON"
-    secondary_prefix_priority_funcs.update({
-        Dep.WEAPON_PREFIX: ship_usefulness(if_enemies(0.2, 1.0), MIL_IDX)
-        })
+    # prefixes for tech search. Check for prefix will be applied in same order as they defined
+    defensive = foAI.foAIstate.aggression <= fo.aggression.cautious
+    prefixes = [
+        (Dep.DEFENSE_TECHS_PREFIX, 2.0 if defensive else if_enemies(0.2, 1.0)),
+        (Dep.WEAPON_PREFIX, ship_usefulness(if_enemies(0.2, 1.0), MIL_IDX))
+    ]
 
     tech_handlers = (
         (Dep.PRO_MICROGRAV_MAN, conditional_priority(3.5, LOW, have_asteroids)),
@@ -432,6 +408,21 @@ def init():
             k = (k, )  # wrap single techs to tuple
         for tech in k:
             priority_funcs[tech] = v
+
+    # add all techs priority_funcs
+    # if tech already in priority_funcs do nothing
+    # if tech starts with prefix add prefix handler
+    # otherwise print warning and add DEFAULT_PRIORITY
+    for tech in fo.techs():
+        if tech in priority_funcs:
+            continue
+        for prefix, handler in prefixes:
+            if tech.startswith(prefix):
+                priority_funcs[tech] = handler
+                break
+        else:
+            print "Tech %s does not have a priority, falling back to default." % tech
+            priority_funcs[tech] = DEFAULT_PRIORITY
 
 
 def generate_research_orders():
@@ -485,11 +476,6 @@ def generate_research_orders():
     #
     # calculate all research priorities, as in get_priority(tech) / total cost of tech (including prereqs)
     #
-
-
-
-
-
     calculate_research_requirements()
     total_rp = empire.resourceProduction(fo.resourceType.research)
 
