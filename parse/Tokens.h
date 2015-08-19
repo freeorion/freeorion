@@ -234,6 +234,7 @@
     (Number)                                    \
     (NumberOf)                                  \
     (NumShips)                                  \
+    (NumStarlanes)                              \
 
 #define TOKEN_SEQ_8                             \
     (Object)                                    \

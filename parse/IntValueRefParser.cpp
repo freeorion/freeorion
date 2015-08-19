@@ -27,6 +27,7 @@ namespace {
                 |   tok.NearestSystemID_
                 |   tok.PreviousSystemID_
                 |   tok.NumShips_
+                |   tok.NumStarlanes_
                 |   tok.LastTurnBattleHere_
                 |   tok.LastTurnActiveInBattle_
                 |   tok.Orbit_

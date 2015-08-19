@@ -6384,6 +6384,9 @@ previous system id
 DESC_VAR_NUMSHIPS
 number of ships
 
+DESC_VAR_NUMSTARLANES
+number of starlanes connected
+
 DESC_VAR_CURRENTTURN
 the current turn
 
@@ -9013,7 +9016,7 @@ BLD_STARLANE_NEXUS
 Starlane Nexus
 
 BLD_STARLANE_NEXUS_DESC
-Generates starlanes to other star systems that can be connected without crossing existing starlanes or passing too close to another system.
+Generates new starlanes to other star systems that can be connected without crossing existing starlanes or passing too close to another system.
 
 BLD_COLONY_BASE
 Colony Base

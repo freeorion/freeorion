@@ -738,6 +738,13 @@ namespace ValueRef {
                 return fleet->NumShips();
             else
                 return 0;
+
+        } else if (property_name == "NumStarlanes") {
+            if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(object))
+                return system->NumStarlanes();
+            else
+                return 0;
+
         } else if (property_name == "LastTurnBattleHere") {
             if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(object))
                 return system->LastTurnBattleHere();
