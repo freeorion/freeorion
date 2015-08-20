@@ -2544,7 +2544,7 @@ TT_THIS_TURN
 This Turn
 
 TT_NEXT_TURN
-Next Turn
+Predicted Next Turn
 
 TT_CHANGE
 Change
