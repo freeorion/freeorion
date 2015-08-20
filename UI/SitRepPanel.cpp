@@ -24,7 +24,7 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>());
         db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
-        db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 16, RangedValidator<int>(12, 64));
+        db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 24, RangedValidator<int>(12, 64));
         db.Add("UI.sitrep-font-size", UserStringNop("OPTIONS_DB_UI_SITREP_FONTSIZE"), 12, RangedValidator<int>(10, 48));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
