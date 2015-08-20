@@ -2777,18 +2777,20 @@ ADVANCED_FOCUS_EFFECTS
                 Fleet
                 Not Stationary
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
-                WithinStarlaneJumps jumps = 1 condition = Source
+                WithinStarlaneJumps jumps = 0 condition = Source
                 Not WithinDistance distance = 0 condition = Source
             ]
             activation = And [
                 Planet
                 Focus type = "FOCUS_DISTORTION"
             ]
-            effects = MoveTo destination = And [
-                System
-                WithinStarlaneJumps jumps = 1 condition = Source
-                Not WithinDistance distance = 0 condition = Source
-            ]
+            effects = MoveTo destination = NumberOf
+                number = 1
+                condition = And [
+                    System
+                    WithinStarlaneJumps jumps = 1 condition = Source
+                    Not WithinDistance distance = 0 condition = Source
+                ]
 
         EffectsGroup
             scope = Source
