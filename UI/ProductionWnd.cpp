@@ -168,9 +168,6 @@ namespace {
                     quantity = quant;
                 }
             }
-
-            if ((quantity != prevQuant) || (blocksize != prevBlocksize))
-                QuantChangedSignal(quantity, blocksize);
         }
 
     private:
@@ -182,6 +179,25 @@ namespace {
         bool    amBlockType;
         bool    amOn;
         GG::Y   h;
+
+        void LosingFocus() {
+            amOn = false;
+            DropDownList::LosingFocus();
+        }
+
+        void LButtonDown(const GG::Pt&  pt, GG::Flags<GG::ModKey> mod_keys) {
+            amOn = !amOn;
+            DropDownList::LButtonDown(pt, mod_keys);
+        }
+
+        void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+            if (this->Disabled())
+                return;
+
+            DropDownList::LClick(pt, mod_keys);
+            if ( (quantity != prevQuant) || (blocksize != prevBlocksize) )
+                QuantChangedSignal(quantity, blocksize);
+        }
     };
 
     //////////////////////////////////////////////////
