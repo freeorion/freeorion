@@ -1544,7 +1544,7 @@ BuildingType
 BuildingType
     name = "BLD_SPATIAL_DISTORT_GEN"
     description = "BLD_SPATIAL_DISTORT_GEN_DESC"
-    buildcost = 30
+    buildcost = 500
     buildtime = 10
     location = AND [
         Not Contains Building name = "BLD_SPATIAL_DISTORT_GEN"
@@ -1630,7 +1630,7 @@ BuildingType
 BuildingType
     name = "BLD_STARLANE_BORE"
     description = "BLD_STARLANE_BORE_DESC"
-    buildcost = 100
+    buildcost = 200 + 50 * Target.System.NumStarlanes
     buildtime = 1 + Target.System.NumStarlanes
     location = Planet
     effectsgroups = [

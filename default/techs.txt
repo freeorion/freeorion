@@ -619,12 +619,13 @@ Tech
 Tech
     name = "LRN_GRAVITONICS"
     description = "LRN_GRAVITONICS_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "LRN_FORCE_FIELD"
+    unlock = Item type = Building name = "BLD_STARLANE_BORE"
     graphic = "icons/tech/gravitonics.png"
 
 Tech
@@ -675,12 +676,13 @@ Tech
 Tech
     name = "LRN_TIME_MECH"
     description = "LRN_TIME_MECH_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
     prerequisites = "LRN_EVERYTHING"
+    unlock = Item type = Building name = "BLD_STARLANE_NEXUS"
     graphic = "icons/tech/temporal_mechanics.png"
 
 Tech
