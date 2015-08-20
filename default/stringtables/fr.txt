@@ -491,42 +491,37 @@ Monstre
 SM_KRILL_1
 Petit Essaim de Krill
 SM_KRILL_1_DESC
-Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
+Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. D'ordinaire non agressifs, leur grand nombre les transforme en potentielle menace pour la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_2
 Essaim de Krill Moyen
 SM_KRILL_2_DESC
-Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
+Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. D'ordinaire non agressifs, leur grand nombre les transforme en potentielle menace pour la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_3
 Grand Essaim de Krill
 SM_KRILL_3_DESC
-Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Non agressifs, leur grand nombre les transforme en potentielle menace durant la navigation interstellaire et peut bloquer les voies d'approvisionnement. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
+Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le Krill Spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. Lorsque ce dernier atteint une population importante, il commence à se montrer agressif envers tout astronef passant à proximité. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_KRILL_4
 Fléau Krill
 SM_KRILL_4_DESC
-Le krill spatial est constitué de petits organismes insectoïdes se nourrissant des poussières et roches éloignées des puits gravitationnels. Ces organismes élémentaires communiquent entre eux via lumière visible pour se coordonner en essaims et calculer leurs trajectoires. Le comportements du krill change radicalement lorsqu'une population critique est atteinte (quelques dizaines de millions). Le krill spatial, d'ordinaire pacifique, devient alors agressif, attaque les astronefs et détruit les structures orbitales. La grande quantité de nourriture sous faible gravité que l'on trouve dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
+Petits organismes insectoïdes se nourrissant des poussières et roches distantes de toute influence gravitationnelle. Organisme primitif, le krill spatial communique via la lumière visible pour coordonner l'essaim et calculer sa trajectoire. Le comportements du Krill change radicalement lorsqu'une population critique est atteinte (quelques dizaines de millions). Le Krill Spatial, d'ordinaire pacifique, devient alors agressif, attaquant les astronefs et détruisant les structures orbitales. La grande quantité de nourriture en faible gravité disponible dans une ceinture d'astéroïdes leur fournit les conditions idéales pour se multiplier rapidement.
 
 SM_TREE
 Forêt Dyson
 SM_TREE_DESC
-Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Par intervalles, ces forêts relâchent des graines le long des Voies spatiales pour coloniser d'autres étoiles.
-
-SM_SEED
-Graine Dyson
-SM_SEED_DESC
-Les Forêts Dyson produisent par intermittence des graines, relâchées sur les Voies spatiales à la recherche d'autres étoiles autour desquelles fonder de nouvelles forêts.
+Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Par intervalles, ces forêts relâchent des graines le long des Voies spatiales afin de coloniser d'autres étoiles.
 
 SM_FLOATER
 Flotteur
 SM_FLOATER_DESC
-Les Forêts Dyson produisent par intermittence des bulbes remplis de gaz, dérivant sur les Voies spatiales à la recherche d'autres étoiles autour desquelles fonder de nouvelles forêts.
+Les Forêts Dyson produisent par intermittence des bulbes remplis de gaz, relâchés sous forme de graines dérivant sur les Voies spatiales à la recherche d'autres étoiles autour desquelles fonder de nouvelles forêts.
 
 SM_DRAGON
 Dragon du Vide
 SM_DRAGON_DESC
-Terrifiant monstre géant rôdant dans l'espace à la recherche d'une proie.
+Un terrifiant monstre géant, rôdant dans l'espace à la recherche d'une proie et semant la dévastation dans les zones habitées.
 
 SM_DRONE  # translated
 Drone
@@ -534,14 +529,14 @@ SM_DRONE_DESC
 Outils d'une guerre oubliée depuis longtemps, les Drones remplissent encore aujourd'hui l'objectif qui leur fut initialement fixé : attaquer systématiquement tout astronef à leur portée.
 
 SM_DRONE_FACTORY
-Mère Drone
+Drone Usine
 SM_DRONE_FACTORY_DESC
-Conçue, lors d'une guerre oubliée depuis longtemps, pour défendre ses constructeurs désormais disparus, la Mère Drone, étonnamment, fonctionne encore aujourd'hui, produisant lentement mais de manière continue, de nouveaux Drones.
+Un dispositif de production conçu lors d'une guerre depuis longtemps oubliée afin de défendre ses constructeurs désormais disparus. Contre toute attente, il fonctionne encore aujourd'hui, produisant lentement mais de manière continue, de nouveaux Drones.
 
 SM_GUARD_0
 Vaisseau de Maintenance
 SM_GUARD_0_DESC
-Un astronef sans équipage conçu par les Précurseurs pour entretenir les voies spatiales d'un système. Bien que peu armé, il attaquera tout intrus à proximité.
+Un astronef sans équipage conçu par les Précurseurs pour entretenir les Voies spatiales d'un système. Bien que peu armé, il attaquera tout intrus à proximité.
 
 SM_GUARD_1
 Factionnaire
@@ -561,23 +556,23 @@ Un puissant astronef de défense sans équipage conçu par les Précurseurs pour
 SM_KRAKEN_1
 Kraken Larvaire
 SM_KRAKEN_1_DESC
-'''Dans sa forme larvaire, un Kraken est un animal spatial prudent et inoffensif. Ses proies naturelles sont les essaims de Krill, dont il contribue à contrôler les populations. Mais une larve de Kraken bien nourrie peut se transformer en adulte bien plus massif et dangereux.
+'''Dans sa forme larvaire, un Kraken est un animal spatial prudent et relativement inoffensif. Ses proies naturelles sont les essaims de Krill. Une larve de Kraken bien nourrie peut se transformer en un spécimen adulte bien plus massif et dangereux.
 
-Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Certains Krakens peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs Géantes gazeuses.'''
+Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Les Krakens peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des Géantes gazeuses.'''
 
 SM_KRAKEN_2  # translated
 Kraken
 SM_KRAKEN_2_DESC
-'''Un redoutable monstre de l'espace de taille intermédiaire.
+'''Un redoutable monstre de l'espace de taille intermédiaire. Ses proies naturelles sont les essaims de Krill. Un Kraken bien nourri peut se transformer en un spécimen encore plus massif et dangereux.
 
-Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Certains Krakens peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs Géantes gazeuses.'''
+Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Les Krakens peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des Géantes gazeuses.'''
 
 SM_KRAKEN_3
 Kraken Massif
 SM_KRAKEN_3_DESC
 '''Un redoutable monstre de l'espace de grande taille.
 
-Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Certains Krakens peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs Géantes gazeuses.'''
+Environnement favori: Géantes gazeuses. Les nids de Kraken se trouvent normalement en orbite autour des planètes gazeuses. Les Krakens peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des Géantes gazeuses.'''
 
 SM_BLACK_KRAKEN
 Kraken Noir
@@ -589,51 +584,51 @@ Les Kraken Noirs sont des monstres spatiaux issus de la bio-ingénierie, incroya
 SM_SNOWFLAKE_1
 Flocon de Neige Juvénile
 SM_SNOWFLAKE_1_DESC
-'''Un petit et inoffensif monstre de l'espace, doté une exceptionnelle vision.
+'''Un petit monstre de l'espace inoffensif, doté une exceptionnelle vision.
 
-Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Les Flocons de Neige peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des petites planètes.'''
 
 SM_SNOWFLAKE_2
 Flocon de Neige
 SM_SNOWFLAKE_2_DESC
 '''Un monstre de l'espace de petite masse, doté une exceptionnelle vision.
 
-Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes avec plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Les Flocons de Neige peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des petites planètes.'''
 
 SM_SNOWFLAKE_3
 Flocon de Neige Massif
 SM_SNOWFLAKE_3_DESC
 '''Un redoutable monstre de l'espace de petite masse.
 
-Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Certains Flocons de Neige peuvent évoluer en des formes plus imposantes, au sein de systèmes abritant plusieurs petites planètes.'''
+Environnement favori: Petites planètes. Les nids de Flocons de Neige se trouvent habituellement en orbite autour des petites planètes. Les Flocons de Neige peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des petites planètes.'''
 
 SM_PSIONIC_SNOWFLAKE
 Flocon de Neige Psionique
 SM_PSIONIC_SNOWFLAKE_DESC
 '''Un monstre capable de neutraliser l'esprit des êtres organiques.
 
-Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs avec un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Ils chassent et attaquent les vaisseaux spatiaux, forçant les équipages vulnérables à leurs attaques psychiques à abandonner leur empire, mais peuvent également attaquer les populations planétaires.'''
+Les Flocons de Neige Psioniques sont des monstres spatiaux issues de la bio-ingénierie, munis d'armes dangereuses, ayant la capacité de prendre le contrôle des astronefs abritant un équipage à [[encyclopedia ORGANIC_SPECIES_TITLE]]. Une flotte puissante sera nécessaire pour les combattre. Chassant et attaquant les vaisseaux spatiaux ennemis, les Flocons de Neige Psioniques forcent les équipages vulnérables à leurs attaques psychiques à abandonner leur empire, et sont également capables d'attaquer directement les populations planétaires.'''
 
 SM_JUGGERNAUT_1
 Mastodonte Juvénile
 SM_JUGGERNAUT_1_DESC
 '''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection.
 
-Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Certains Mastodontes peuvent évoluer en des formes plus imposantes dans les systèmes contenant des ceintures d'astéroïdes.'''
+Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Les Mastodontes peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des ceintures d'astéroïdes.'''
 
 SM_JUGGERNAUT_2
 Mastodonte
 SM_JUGGERNAUT_2_DESC
 '''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection assez résistant.
 
-Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Certains Mastodontes peuvent évoluer en des formes plus imposantes dans les systèmes contenant des ceintures d'astéroïdes.'''
+Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Les Mastodontes peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des ceintures d'astéroïdes.'''
 
 SM_JUGGERNAUT_3
 Mastodonte Massif
 SM_JUGGERNAUT_3_DESC
-'''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection puissant.
+'''Un redoutable monstre de l'espace de masse importante, muni d'un bouclier de protection très résistant.
 
-Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Certains Mastodontes peuvent évoluer en des formes plus imposantes dans les systèmes contenant des ceintures d'astéroïdes.'''
+Environnement favori: Astéroïdes. Les nids de Mastodontes se trouvent normalement dans les ceintures d'astéroïdes. Les Mastodontes peuvent évoluer en des spécimens plus imposants, au sein de systèmes abritant des ceintures d'astéroïdes.'''
 
 SM_BLOATED_JUGGERNAUT
 Mastodonte Déformé
@@ -665,24 +660,24 @@ Une créature nébuleuse qui accroît la [[encyclopedia STEALTH_TITLE]] de plan�
 SM_SNAIL
 Astergot
 SM_SNAIL_DESC
-Se nourrit de minéraux. La coquille de l'Astergot ressemblant à s'y méprendre à un banal astéroïde, il est très difficile à repérer.
+Un monstre timide se nourrissant de minéraux. La coquille de l'Astergot ressemblant à s'y méprendre à un banal astéroïde, sa [[encyclopedia STEALTH_TITLE]] augmente grandement une fois dissimulé dans une ceinture d'astéroïdes.
 
 SM_DAMPENING_CLOUD
 Nuage Siphonnant
 SM_DAMPENING_CLOUD_DESC
-Un nuage cosmique de particules à haute énergie qui a développé une forme de sensibilité. Irrésistiblement attiré par les plus grandes réserves d'énergie potentielle dont il se nourrit, une flotte entière d'astronefs peut tomber en panne de [[encyclopedia FUEL_TITLE]] en quelques secondes.
+Un nuage cosmique de particules de haute énergie ayant développé une forme de sensibilité. Repoussé par les signatures énergétiques des colonies habitées, il est cependant irrésistiblement attiré par les réserves d'énergie potentielle, et dérobera le [[encyclopedia FUEL_TITLE]] de tous les astronefs présents dans un système.
 
 SM_ACIREMA_GUARD
 Astrogarde Acirema
 SM_ACIREMA_GUARD_DESC
-Un astronef armé, sans équipage, construit par les Acirema pour défendre un système stellaire.
+Un astronef armé, sans équipage, conçu par les Acirema afin de défendre un système stellaire.
 
 SM_EXP_OUTPOST
 Expérience Zero
 SM_EXP_OUTPOST_DESC
 '''Une ancienne création des Expérimentateurs réduisant les [[encyclopedia SHIELDS_TITLE]] et [[encyclopedia DAMAGE_TITLE]] adverses. 
 
-L'Expérience Zero fut envoyée dans cette galaxie pour protéger les avant-postes des Expérimentateurs grâce à ses capacités uniques. Bien que n'attaquant pas directement ses ennemis, elle essaime des quadrillions d'unités microscopiques colonisant l'espace entier d'un système, et neutralisant les boucliers et armements ennemis, la plupart devenant inopérants, exceptés les plus performants issus des toutes dernières technologies.'''
+L'Expérience Zero fut envoyée dans cette galaxie afin de protéger les avant-postes des Expérimentateurs grâce à ses capacités uniques. Bien que n'attaquant pas directement ses ennemis, elle essaime des quadrillions d'unités microscopiques colonisant l'espace entier d'un système, neutralisant les boucliers et armements ennemis, la plupart devenant inopérants, exceptés les équipements les plus performants issus des toutes dernières technologies.'''
 
 SM_COSMIC_DRAGON
 Dragon Cosmique
@@ -2541,10 +2536,10 @@ Annuler la destruction
 ## General Tooltips#########
 
 TT_THIS_TURN
-Ce tour
+Tour Actuel
 
 TT_NEXT_TURN
-Tour suivant
+Prévision Tour Suivant
 
 TT_CHANGE
 Évolution
@@ -3884,7 +3879,7 @@ Les espèces xénophobes commencent avec les [[tech CON_CONC_CAMP]] disponibles.
 FUEL_TITLE
 Carburant
 FUEL_TEXT
-Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[encyclopedia SUPPLY_TITLE]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale).
+Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[encyclopedia SUPPLY_TITLE]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[encyclopedia SUPPLY_TITLE]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale). La quantité initiale de carburant qu'embarque un <encyclopedia ENC_SHIP_DESIGN>Modèle d'astronef</encyclopedia> dépend de son type de <encyclopedia ENC_SHIP_HULL>Coque</encyclopedia>, et peut être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia>.
 
 SUPPLY_TITLE
 Approvisionnement
@@ -4862,7 +4857,7 @@ Les humains modernes ont formé géographiquement des états-nations, chacun ét
 SP_SCYLIOR  # translated
 Scylior
 SP_SCYLIOR_GAMEPLAY_DESC
-'''Possèdent trois tentacules, nautiloïdes aquatiques.
+'''Nautiloïdes aquatiques dotés de trois tentacules.
 Préfèrent les Planètes océaniques.
 [[encyclopedia ORGANIC_SPECIES_TITLE]]
 '''
@@ -5144,7 +5139,7 @@ Les Phinnerts sont des mammifères arboricoles d'une taille variant entre 1 et 2
 Structure sociale:
 La vie est bien plus courte pour les Phinnerts que pour la majorité des espèces sensibles, en raison des nombreux dangers d'un marais. Tous les Phinnerts sont considérés comme les membres d'une grande famille et les différends ne durent jamais très longtemps. Il n'y aucune autorité centrale, seulement une vague hiérarchie. Du fait de leur mortalité élevée, l'équilibre des forces chez les Phinnerts peut varier très rapidement. En compensation, leur société est très peu individualiste, et bien plus centrée sur le groupe.
 
-Planète Natale: 
+Planète Natale:
 Leur planète possède une faible gravité et une atmosphère très épaisse. Sa composition géologique est unique du fait de la faible proportion de métaux lourds, mais de la bien plus forte présence d'autres éléments lourds, particulièrement les gaz nobles. De son activité tectonique très stable, résulte une croûte terrestre très plate, qui par conséquent est principalement recouverte d'eaux stagnantes et peu profondes. La totalité de leur monde s'apparente à une zone marécageuse géante.
 '''
 
@@ -5328,7 +5323,7 @@ SP_UGMORS_DESC
 '''Les Ugmors sont une forme d'écume magmatique utilisant les roches et les minéraux pour fabriquer des entités temporaires, chacune conçue pour accomplir des tâches spécifiques.
 
 Structure sociale:
-Les Trappes de Larar sont le cœur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège. 
+Les Trappes de Larar sont le cœur biologique de l'espèce. Ces amas d'écume magmatique se trouvent sur la surface la plus chaude des mers de lave et en absorbe l'énergie. Lorsque suffisamment d'énergie est accumulée, ces masses de magma énergétiques commencent à rassembler des roches imposantes sur tout le pourtour des mers de lave, puis les imbriquent entre elles pour former un Ugmor. Les Ugmors furent à la base simplement conçus pour passer d'une mer de lave à l'autre, mais une société complexe s'est développée au fil du temps. Les Trappes de Larar ne peuvent pas être considérées comme un organisme intelligent, mais plutôt comme une mémoire centrale, lieu de convergence et d'activité de tous les Ugmors, pour lesquels réintégrer les Trappes de Larar est un privilège.
 
 Les Ugmors ont une forme de gouvernement très centralisé, ressemblant à une ruche, mais sans aucune reine. Cela s'explique par le fait que tous les Ugmors naissent avec les mêmes données mémorielles et partagent les mêmes buts. Lorsqu'un Ugmor découvre quelque chose de nouveau, il retourne aux Trappes de Larar les plus proches afin de partager sa découverte avec le reste de l'espèce.
 
@@ -5382,7 +5377,7 @@ Les Abaddoni ont une forme ovoïde d'environ 0.8 mètres de diamètre, arborent 
 À l'extrémité de chacune de leurs 6 pattes ressemblant à celles de crustacés, se trouve une sorte de sac gonflable qui leur permet de s'accrocher par effet de ventouse à n'importe quelle surface, quelle que soit son inclinaison. Comme les Abaddoni se développent en milieu souterrain, ils ne possèdent pas d'organe de vision, se référant ainsi principalement à leur odorat, et dans une moindre proportion, à l'ouïe et au toucher pour se déplacer.
 
 Structure sociale:
-L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves. 
+L'espèce entière des Abaddonni vit sous le joug d'une intelligence artificielle sensible appelée Mère. Cette IA fut créée par les Abaddoni comme une assistante gouvernementale, mais elle prit lentement le dessus sur ses créateurs. À présent, chaque nouveau-né Abaddoni se voit implanter un transmetteur dans le cerveau, pour que Mère puisse connaître les pensées de chacun de ses sujets et pouvoir contrôler leurs fonctions vitales au besoin. Il n'y aucun semblant de structure sociale chez les Abaddoni: ils sont tous semblables, c'est-à-dire esclaves.
 '''
 
 #SP_ACIREMA
@@ -8595,7 +8590,7 @@ Archives Culturelles
 BLD_CULTURE_ARCHIVES_DESC
 '''Augmente l'indicateur [[encyclopedia RESEARCH_TITLE]] de 5, ainsi que l'indicateur [[encyclopedia INDUSTRY_TITLE]] de la moitié de la Population planétaire.
 
-Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, octroyant ainsi un bonus dans différents domaines de la productivité planétaire.'''
+Abrite le savoir accumulé durant des milliers d'années d'existence sur cette planète, améliorant différents aspects de la productivité planétaire.'''
 
 BLD_CULTURE_LIBRARY
 Bibliothèque Culturelle
@@ -10187,9 +10182,9 @@ SH_DRONE_BODY_DESC
 Coque de Drone
 
 SH_IMMOBILE_FACTORY
-Coque Fabrique de Drones
+Coque Drone Usine
 SH_IMMOBILE_FACTORY_DESC
-Fabrique de Drones
+Drone Usine
 
 SH_KRAKEN_1_BODY
 Corps Kraken Larvaire
