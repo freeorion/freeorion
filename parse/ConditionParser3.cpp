@@ -64,6 +64,7 @@ namespace {
 
             value_test
                 =   tok.ValueTest_
+                > -(parse::label(Value_token)  > double_value_ref [ _a = _1, _b = _1])
                 > -(parse::label(Low_token)    > double_value_ref [ _a = _1 ])
                 > -(parse::label(High_token)   > double_value_ref [ _b = _1 ])
                 >   parse::label(TestValue_token) > double_value_ref

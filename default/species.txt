@@ -2781,9 +2781,7 @@ ADVANCED_FOCUS_EFFECTS
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
                 ]
-                ValueTest low = Source.System.ID
-                          high = Source.System.ID
-                          testvalue = LocalCandidate.NextSystemID
+                ValueTest value = Source.System.ID testvalue = LocalCandidate.NextSystemID
             ]
             activation = And [
                 Planet
