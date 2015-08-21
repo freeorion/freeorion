@@ -3666,7 +3666,7 @@ Conditional::Conditional(Condition::ConditionBase* target_condition,
 void Conditional::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
-    if (!m_target_condition || m_target_condition->Eval(context.effect_target)) {
+    if (!m_target_condition || m_target_condition->Eval(context, context.effect_target)) {
         for (std::vector<EffectBase*>::const_iterator it = m_true_effects.begin(); it != m_true_effects.end(); ++it) {
             if (*it)
                 (*it)->Execute(context);
