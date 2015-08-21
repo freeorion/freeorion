@@ -694,7 +694,7 @@ FLD_ION_STORM
 Ion Storm
 
 FLD_ION_STORM_DESC
-Magnetic vortex of relativistic charged particles that can interfere with sensors and damage ships and planets.
+Magnetic vortex of relativistic charged particles that can interfere with sensors and obscures all objects within it.
 
 FLD_MOLECULAR_CLOUD
 Molecular Cloud
