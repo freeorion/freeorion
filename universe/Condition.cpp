@@ -6486,17 +6486,9 @@ namespace {
 
             // is candidate object close enough to any subcondition matches?
             for (Condition::ObjectSet::const_iterator it = m_from_objects.begin(); it != m_from_objects.end(); ++it) {
-                if (m_jump_limit == 0) {
-                    // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
-                    double delta_x = (*it)->X() - candidate->X();
-                    double delta_y = (*it)->Y() - candidate->Y();
-                    if (delta_x*delta_x + delta_y*delta_y == 0)
-                        return true;
-                } else {
-                    int jumps = GetUniverse().JumpDistanceBetweenObjects((*it)->ID(), candidate->ID());
-                    if (jumps != -1 && jumps <= m_jump_limit)
-                        return true;
-                }
+                int jumps = GetUniverse().JumpDistanceBetweenObjects((*it)->ID(), candidate->ID());
+                if (jumps != -1 && jumps <= m_jump_limit)
+                    return true;
             }
 
             return false;
