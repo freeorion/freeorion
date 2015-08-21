@@ -685,6 +685,8 @@ MapWnd::MapWnd() :
     m_field_texture_coords(),
     m_visibility_radii_vertices(),
     m_visibility_radii_colors(),
+    m_visibility_radii_border_vertices(),
+    m_visibility_radii_border_colors(),
     m_resource_centers(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
@@ -1527,6 +1529,7 @@ void MapWnd::RenderGalaxyGas() {
         return;
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+    glEnable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1944,133 +1947,37 @@ void MapWnd::RenderVisibilityRadii() {
     if (!GetOptionsDB().Get<bool>("UI.show-detection-range"))
         return;
 
-    int                     client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    const std::set<int>&    destroyed_object_ids = GetUniverse().DestroyedObjectIds();
-    const std::set<int>&    stale_object_ids = GetUniverse().EmpireStaleKnowledgeObjectIDs(client_empire_id);
-    const ObjectMap&        objects = GetUniverse().Objects();
-
-    // for each map position and empire, find max value of detection range at that position
-    std::map<std::pair<int, std::pair<double, double> >, float> empire_position_max_detection_ranges;
-
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-        int object_id = it->ID();
-        // skip destroyed objects
-        if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
-            continue;
-        // skip stale objects
-        if (stale_object_ids.find(object_id) != stale_object_ids.end())
-            continue;
-
-        TemporaryPtr<const UniverseObject> obj = *it;
-
-        // skip unowned objects
-        if (obj->Unowned())
-            continue;
-
-        // skip objects not at least partially visible this turn
-        if (obj->GetVisibility(client_empire_id) <= VIS_BASIC_VISIBILITY)
-            continue;
-
-        // don't show radii for fleets or moving ships
-        if (obj->ObjectType() == OBJ_FLEET)
-            continue;
-        if (obj->ObjectType() == OBJ_SHIP) {
-            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
-            if (!ship)
-                continue;
-            TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(ship->FleetID());
-            if (!fleet)
-                continue;
-            int cur_id = fleet->SystemID();
-            if (cur_id == INVALID_OBJECT_ID)
-                continue;
-        }
-
-        const Meter* detection_meter = obj->GetMeter(METER_DETECTION);
-        if (!detection_meter)
-            continue;
-
-        // if this object has the largest yet checked visibility range at this location, update the location's range
-        double X = obj->X();
-        double Y = obj->Y();
-        float D = detection_meter->Current();
-        // skip objects that don't contribute detection
-        if (D <= 0.0f)
-            continue;
-
-        // find this empires entry for this location, if any
-        std::pair<int, std::pair<double, double> > key = std::make_pair(obj->Owner(), std::make_pair(X, Y));
-        std::map<std::pair<int, std::pair<double, double> >, float>::iterator range_it =
-            empire_position_max_detection_ranges.find(key);
-        if (range_it != empire_position_max_detection_ranges.end()) {
-            if (range_it->second < D) range_it->second = D; // update existing entry
-        } else {
-            empire_position_max_detection_ranges[key] = D;  // add new entry to map
-        }
-    }
-
-    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > > circles;
-    for (std::map<std::pair<int, std::pair<double, double> >, float>::const_iterator it =
-            empire_position_max_detection_ranges.begin();
-         it != empire_position_max_detection_ranges.end(); ++it)
-    {
-        if (const Empire* empire = GetEmpire(it->first.first)) {
-            GG::Clr circle_colour = empire->Color();
-            circle_colour.a = 8*GetOptionsDB().Get<int>("UI.detection-range-opacity");
-
-            GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->first.second.first, it->first.second.second);
-            double radius = it->second*ZoomFactor();
-            if (radius < 20.0)
-                continue;
-
-            GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-            GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-
-            circles[circle_colour].push_back(std::make_pair(ul, lr));
-        }
-    }
-
-
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
     glPushAttrib(GL_ENABLE_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_STENCIL_TEST);
 
-    const double TWO_PI = 2.0*3.1415926536;
-    const GG::Pt UNIT(GG::X1, GG::Y1);
-
-    glLineWidth(1.5);
-    glPushMatrix();
-    glLoadIdentity();
+    //glPushMatrix();
+    //glLoadIdentity();
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_TEXTURE_2D);
 
-    for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > >::iterator it = circles.begin();
-         it != circles.end(); ++it)
-    {
-        glClear(GL_STENCIL_BUFFER_BIT);
-        glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-        glStencilFunc(GL_EQUAL, 0x0, 0xff);
-        GG::Clr circle_colour = it->first;
-        glColor(circle_colour);
-        const std::vector<std::pair<GG::Pt, GG::Pt> >& circles_in_this_colour = it->second;
-        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
-            CircleArc(circles_in_this_colour[i].first, circles_in_this_colour[i].second,
-                      0.0, TWO_PI, true);
-        }
-        glStencilFunc(GL_GREATER, 0x2, 0xff);
-        glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
-        circle_colour.a = std::min(255, circle_colour.a + 80);
-        AdjustBrightness(circle_colour, 2.0, true);
-        glColor(circle_colour);
-        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
-            CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
-                      0.0, TWO_PI, false);
-        }
-    }
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+    glStencilFunc(GL_EQUAL, 0x0, 0xff);
 
-    glPopMatrix();
-    glLineWidth(1.0);
+    m_visibility_radii_vertices.activate();
+    m_visibility_radii_colors.activate();
+    glDrawArrays(GL_TRIANGLES, 0, m_visibility_radii_vertices.size());
+
+    glStencilFunc(GL_GREATER, 0x2, 0xff);
+    glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
+
+    m_visibility_radii_border_vertices.activate();
+    m_visibility_radii_border_colors.activate();
+
+    glLineWidth(2.5f);
+    glDrawArrays(GL_LINES, 0, m_visibility_radii_border_vertices.size());
+
+    glEnable(GL_TEXTURE_2D);
+    //glPopMatrix();
+    glLineWidth(1.0f);
     glPopAttrib();
     glPopClientAttrib();
 }
@@ -3159,6 +3066,7 @@ void MapWnd::ClearFieldRenderingBuffers() {
 
 void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     DebugLogger() << "MapWnd::InitVisibilityRadiiRenderingBuffers";
+    std::cout << "InitVisibilityRadiiRenderingBuffers" << std::endl;
     ScopedTimer timer("MapWnd::InitVisibilityRadiiRenderingBuffers", true);
 
     ClearVisibilityRadiiRenderingBuffers();
@@ -3233,47 +3141,77 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             empire_position_max_detection_ranges.begin();
          it != empire_position_max_detection_ranges.end(); ++it)
     {
-        if (const Empire* empire = GetEmpire(it->first.first)) {
-            GG::Clr circle_colour = empire->Color();
-            circle_colour.a = 8*GetOptionsDB().Get<int>("UI.detection-range-opacity");
-
-            GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->first.second.first, it->first.second.second);
-            float radius = it->second*ZoomFactor();
-            if (radius < 20.0f)
-                continue;
-
-            GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-            GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
-
-            circles[circle_colour].push_back(std::make_pair(ul, lr));
+        const Empire* empire = GetEmpire(it->first.first);
+        if (!empire) {
+            ErrorLogger() << "InitVisibilityRadiiRenderingBuffers couldn't find empire with id: " << it->first.first;
+            continue;
         }
+
+        float radius = it->second;
+        if (radius < 5.0f)
+            continue;
+
+        GG::Clr circle_colour = empire->Color();
+        circle_colour.a = 8*GetOptionsDB().Get<int>("UI.detection-range-opacity");
+
+        GG::Pt circle_centre = GG::Pt(GG::X(it->first.second.first), GG::Y(it->first.second.second));
+        GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+        GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+
+        circles[circle_colour].push_back(std::make_pair(ul, lr));
+
+        std::cout << "adding radii circle at: " << circle_centre << " for empire: " << it->first.first << std::endl;
     }
 
 
-    const float TWO_PI = 2.0*3.1415926536f;
-    const GG::Pt UNIT(GG::X1, GG::Y1);
+    const double TWO_PI = 2.0*3.1415926536;
+    const GG::Pt UNIT(GG::X(0.5f), GG::Y(0.5f));
 
     for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > >::iterator it = circles.begin();
          it != circles.end(); ++it)
     {
         GG::Clr circle_colour = it->first;
+
+        GG::Clr border_colour = circle_colour;
+        border_colour.a = std::min(255, border_colour.a + 80);
+        AdjustBrightness(border_colour, 2.0, true);
+
         const std::vector<std::pair<GG::Pt, GG::Pt> >& circles_in_this_colour = it->second;
         for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
-            CircleArc(circles_in_this_colour[i].first, circles_in_this_colour[i].second,
-                      0.0, TWO_PI, true);
-        }
-        circle_colour.a = std::min(255, circle_colour.a + 80);
-        AdjustBrightness(circle_colour, 2.0, true);
-        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
-            CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
-                      0.0, TWO_PI, false);
+            const GG::Pt& ul = circles_in_this_colour[i].first;
+            const GG::Pt& lr = circles_in_this_colour[i].second;
+
+            unsigned int initial_size = m_visibility_radii_vertices.size();
+            // store triangles for filled / transparent part of radii
+            BufferStoreCircleArcVertices(m_visibility_radii_vertices, ul, lr, 0.0, TWO_PI, true, 0, false);
+
+            // store colours for triangles
+            unsigned int size_increment = m_visibility_radii_vertices.size() - initial_size;
+            for (unsigned int count = 0; count < size_increment; ++count)
+                 m_visibility_radii_colors.store(circle_colour);
+
+            // store line segments for border lines of radii
+            initial_size = m_visibility_radii_border_vertices.size();
+            BufferStoreCircleArcVertices(m_visibility_radii_border_vertices, ul + UNIT, lr - UNIT, 0.0, TWO_PI, false, 0, false);
+
+            // store colours for line segments
+            size_increment = m_visibility_radii_border_vertices.size() - initial_size;
+            for (unsigned int count = 0; count < size_increment; ++count)
+                 m_visibility_radii_border_colors.store(border_colour);
         }
     }
+
+    m_visibility_radii_border_vertices.createServerBuffer();
+    m_visibility_radii_border_colors.createServerBuffer();
+    m_visibility_radii_vertices.createServerBuffer();
+    m_visibility_radii_colors.createServerBuffer();
 }
 
 void MapWnd::ClearVisibilityRadiiRenderingBuffers() {
     m_visibility_radii_vertices.clear();
     m_visibility_radii_colors.clear();
+    m_visibility_radii_border_vertices.clear();
+    m_visibility_radii_border_colors.clear();
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
