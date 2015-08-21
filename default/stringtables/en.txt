@@ -4773,9 +4773,13 @@ System Mines Destroyed Ship
 
 EFFECT_FLEET_MOVED_TOWARDS
 %fleet% was moved back towards %system% by %planet%. They were initially %rawtext% uu apart.
+EFFECT_FLEET_MOVED_TOWARDS_LABEL
+Fleet Moved Towards
 
 EFFECT_FLEET_MOVED_TO
 %fleet% was moved back into %system% by %planet%. They were initially %rawtext% uu apart.
+EFFECT_FLEET_MOVED_TO_LABEL
+Fleet Moved Into
 
 HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
