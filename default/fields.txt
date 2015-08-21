@@ -37,7 +37,7 @@ FieldType
             scope = WithinDistance distance = Source.Size condition = Source
             stackinggroup = "ION_STORM_STEALTH_DETECTION_REDUCTION"
             effects = [
-                SetStealth value = Value - 40
+                SetStealth value = Value + 40
                 SetDetection value = Value - 40
             ]
 
