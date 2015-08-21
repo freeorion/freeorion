@@ -926,6 +926,17 @@ Tech
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
 
 Tech
+    name = "LRN_COLLAPSER"
+    description = "LRN_COLLAPSER"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1500 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 8
+    prerequisites = ["LRN_ART_BLACK_HOLE" "LRN_STELLAR_TOMOGRAPHY" "LRN_SPATIAL_DISTORT_GEN"]
+    unlock = Item type = Building name = "BLD_BLACK_HOLE_COLLAPSER"
+
+Tech
     name = "LRN_UNIF_CONC"
     description = "LRN_UNIF_CONC_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"

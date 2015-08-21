@@ -1554,6 +1554,27 @@ BuildingType
     icon = ""
 
 BuildingType
+    name = "BLD_BLACK_HOLE_COLLAPSER"
+    description = "BLD_BLACK_HOLE_COLLAPSER_DESC"
+    buildcost = 5000
+    buildtime = 10
+    location = AND [
+        Planet
+        OwnedBy empire = Source.Owner
+        ContainedBy Contains And [ Planet Star type = BlackHole ]
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = [
+                Destroy
+                CreateField type = "FLD_SUBSPACE_RIFT" size = 100
+            ]
+    ]
+    icon = ""
+
+BuildingType
     name = "BLD_STARGATE"
     description = "BLD_STARGATE_DESC"
     buildcost = 500 + 50 *

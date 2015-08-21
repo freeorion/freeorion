@@ -714,6 +714,12 @@ FLD_NEBULA_2
 FLD_NEBULA_2_DESC
 [[FLD_NEBULA_1_DESC]]
 
+FLD_SUBSPACE_RIFT
+Scissor Rift
+
+FLD_SUBSPACE_RIFT_DESC
+Violent and destructive tear in spacetime which rapidly collapses. Pulls in and devours ships, systems, and planets that are caught within its area, although ships may be able to escape if moving quick enough.
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
@@ -7173,6 +7179,12 @@ A massive, empire-wide data network able to transfer information instantaneously
 
 Every particle is inextricably connected on the quantum level to every particle with which it has previously interacted. Older mechanistic ideas about cause and effect do not apply on this level, and particles can "communicate" instantaneously across vast distances. When a thorough understanding of this phenomena is acquired, selective small-scale action-at-a-distance between any two points can be achieved instantaneously and outdated relativistic speed limits no longer apply to the transfer of information.'''
 
+LRN_COLLAPSER
+Black Hole Collapser
+
+LRN_COLLAPSER_DESC
+The culmination of spatial distortion and stellar-scale manipulation allows the singularity with a black hole to be inverted, creating a spacetime disruption on an interstellar scale. This disruption is unstable, however, and rapidly collapses upon itself, drawing with it all fleets, planets, or entire systems within range and utterly destroying whatever falls into the centre.
+
 LRN_TRANSCEND
 Singularity of Transcendence
 
@@ -8813,6 +8825,12 @@ Artificial Black Hole
 
 BLD_ART_BLACK_HOLE_DESC
 By introducing a tremendous amount of artificial gravity into a star without increasing its energy, it can be made to collapse in on itself and form a Black Hole. This technique is limited to red stars however, as overcoming the internal pressure of a hotter star would require an absurdly powerful gravity generator. This process can be enacted at an [[encyclopedia OUTPOSTS_TITLE]].
+
+BLD_BLACK_HOLE_COLLAPSER
+Black Hole Collapser
+
+BLD_BLACK_HOLE_COLLAPSER_DESC
+Generates a [[fieldtype FLD_SUBSPACE_RIFT]] with radious 100 uu centred at the building's location.
 
 BLD_HYPER_DAM
 Hyperspatial Dam
