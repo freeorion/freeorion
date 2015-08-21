@@ -6,10 +6,11 @@
 #include <GG/BrowseInfoWnd.h>
 
 
+
 /** A popup tooltop for display when mousing over in-game icons.  A title and some detail text.*/
 class TextBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    TextBrowseWnd(const std::string& title_text, const std::string& main_text);
+    TextBrowseWnd(const std::string& title_text, const std::string& main_text, GG::X w = GG::X(200));
     virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
     virtual void Render();
 

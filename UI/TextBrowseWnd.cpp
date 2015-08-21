@@ -10,12 +10,11 @@ namespace {
 
     const int       EDGE_PAD(3);
 
-    const GG::X     BROWSE_TEXT_WIDTH(200);
     const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
 }
 
-TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& main_text) :
-    GG::BrowseInfoWnd(GG::X0, GG::Y0, BROWSE_TEXT_WIDTH, GG::Y1)
+TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& main_text, GG::X w /* = GG::X(200) */) :
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, w, GG::Y1)
 {
     const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
 
@@ -23,19 +22,19 @@ TextBrowseWnd::TextBrowseWnd(const std::string& title_text, const std::string& m
 
     m_title_text = new CUILabel(title_text, GG::FORMAT_LEFT);
     m_title_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, GG::Y0 + m_offset.y));
-    m_title_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT));
+    m_title_text->Resize(GG::Pt(w, ROW_HEIGHT));
     m_title_text->SetFont(ClientUI::GetBoldFont());
 
     m_main_text = new CUILabel(main_text, GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     m_main_text->MoveTo(GG::Pt(GG::X(EDGE_PAD) + m_offset.x, ROW_HEIGHT + m_offset.y));
-    m_main_text->Resize(GG::Pt(BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT));
+    m_main_text->Resize(GG::Pt(w, ICON_BROWSE_ICON_HEIGHT));
     m_main_text->SetMinSize(true);
     m_main_text->Resize(m_main_text->MinSize());
 
     AttachChild(m_main_text);
     AttachChild(m_title_text);
 
-    Resize(GG::Pt(BROWSE_TEXT_WIDTH, ROW_HEIGHT + m_main_text->Height()));
+    Resize(GG::Pt(w, ROW_HEIGHT + m_main_text->Height()));
 }
 
 bool TextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
