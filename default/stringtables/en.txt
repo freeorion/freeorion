@@ -4765,6 +4765,12 @@ At %system%: mines destroyed the %empire% ship %ship%.
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 System Mines Destroyed Ship
 
+EFFECT_FLEET_MOVED_TOWARDS
+%fleet% was moved back towards %system% by %planet%. They were initially %rawtext% uu apart.
+
+EFFECT_FLEET_MOVED_TO
+%fleet% was moved back into %system% by %planet%. They were initially %rawtext% uu apart.
+
 HEAD_ON_A_SPIKE_MESSAGE
 The capital of the %empire% empire has fallen.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
@@ -7895,9 +7901,7 @@ LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-'''By manipulating the dimensional properties of a starlane, it would be possible to selectively bend it so that an incoming ship of sufficiently low speed would inadvertently arrive back where it began, having wasted its time and fuel.
-
-Alternatively, such a ship may be sent randomly along a completely different starlane adjacent to the building.'''
+'''By manipulating the dimensional properties of a starlane, it would be possible to selectively bend it. Slow incoming ships may be returned to their previous system of departure, and faster ships may be substantially delayed.'''
 
 LRN_GATEWAY_VOID
 Gateway to the Void

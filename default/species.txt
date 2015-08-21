@@ -2776,19 +2776,47 @@ ADVANCED_FOCUS_EFFECTS
             scope = And [
                 Fleet
                 Not Stationary
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
-                WithinStarlaneJumps jumps = 1 condition = Source
-                Not WithinDistance distance = 0 condition = Source
+                Not InSystem
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
+                ValueTest low = Source.System.ID
+                          high = Source.System.ID
+                          testvalue = LocalCandidate.NextSystemID
             ]
             activation = And [
                 Planet
-                Focus type = "FOCUS_DISTORTION"
+                Focus type = "FOCUS_DISTORTION" 
             ]
-            effects = MoveTo destination = And [
-                System
-                WithinStarlaneJumps jumps = 1 condition = Source
-                Not WithinDistance distance = 0 condition = Source
-            ]
+            stackinggroup = "DISTORTION_MOVEMENT_STACK"
+            effects = [
+                If condition = WithinDistance distance = 40 condition = Object id = Target.PreviousSystemID
+                    effects = [
+                        GenerateSitrepMessage
+                            message = "EFFECT_FLEET_MOVED_TO"
+                            parameters = [
+                                tag = "fleet" data = Target.ID
+                                tag = "system" data = Target.PreviousSystemID
+                                tag = "rawtext" data = DirectDistanceBetween object = Target.ID object = Target.PreviousSystemID
+                                tag = "planet" data = Source.ID
+                            ]
+                            empire = Source.Owner
+                        MoveTo destination = Object id = Target.PreviousSystemID
+                    ]
+                    else = [
+                        GenerateSitrepMessage
+                            message = "EFFECT_FLEET_MOVED_TOWARDS"
+                            parameters = [
+                                tag = "fleet" data = Target.ID
+                                tag = "system" data = Target.PreviousSystemID
+                                tag = "rawtext" data = DirectDistanceBetween object = Target.ID object = Target.PreviousSystemID
+                                tag = "planet" data = Source.ID
+                            ]
+                            empire = Source.Owner
+                        MoveTowards speed = 40 target = Object id = Target.PreviousSystemID
+                    ]
+                ]
 
         EffectsGroup
             scope = Source
