@@ -49,21 +49,40 @@ namespace {
         default:                                                obj = context.condition_local_candidate;    break;
         }
 
+        if (!obj) {
+            std::string type_string;
+            switch(ref_type) {
+            case ValueRef::SOURCE_REFERENCE:                        type_string = "Source";         break;
+            case ValueRef::EFFECT_TARGET_REFERENCE:                 type_string = "Target";         break;
+            case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:      type_string = "RootCandidate";  break;
+            case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:
+            default:                                                type_string = "LocalCandidate"; break;
+            }
+            ErrorLogger() << "FollowReference : top level object (" << type_string << ") not defined in scripting context";
+            return TemporaryPtr<const UniverseObject>();
+        }
+
         while (first != last) {
             std::string property_name = *first;
             if (property_name == "Planet") {
-                if (TemporaryPtr<const Building> b = boost::dynamic_pointer_cast<const Building>(obj))
+                if (TemporaryPtr<const Building> b = boost::dynamic_pointer_cast<const Building>(obj)) {
                     obj = GetPlanet(b->PlanetID());
-                else
+                } else {
+                    ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
                     obj = TemporaryPtr<const UniverseObject>();
+                }
             } else if (property_name == "System") {
                 if (obj)
                     obj = GetSystem(obj->SystemID());
+                if (!obj)
+                    ErrorLogger() << "FollowReference : Unable to get system for object";
             } else if (property_name == "Fleet") {
-                if (TemporaryPtr<const Ship> s = boost::dynamic_pointer_cast<const Ship>(obj))
+                if (TemporaryPtr<const Ship> s = boost::dynamic_pointer_cast<const Ship>(obj)) {
                     obj = GetFleet(s->FleetID());
-                else
+                } else {
+                    ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
                     obj = TemporaryPtr<const UniverseObject>();
+                }
             }
             ++first;
         }
