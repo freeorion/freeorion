@@ -2924,7 +2924,6 @@ Wasted Points
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points Available Here
 
-PRODUCTION_INFO_LOCATION_NAME
 ###############
 # ResearchWnd #
 ###############
