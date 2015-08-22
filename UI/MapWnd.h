@@ -419,6 +419,8 @@ private:
     GG::GLRGBAColorBuffer               m_visibility_radii_colors;
     GG::GL2DVertexBuffer                m_visibility_radii_border_vertices;
     GG::GLRGBAColorBuffer               m_visibility_radii_border_colors;
+    std::vector<std::pair<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> > >
+                                        m_radii_radii_vertices_indices_runs;
 
     std::set<int>                       m_resource_centers;
 

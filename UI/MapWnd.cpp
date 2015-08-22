@@ -687,6 +687,7 @@ MapWnd::MapWnd() :
     m_visibility_radii_colors(),
     m_visibility_radii_border_vertices(),
     m_visibility_radii_border_colors(),
+    m_radii_radii_vertices_indices_runs(),
     m_resource_centers(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
@@ -1953,30 +1954,35 @@ void MapWnd::RenderVisibilityRadii() {
     glPushAttrib(GL_ENABLE_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_STENCIL_TEST);
 
-    //glPushMatrix();
-    //glLoadIdentity();
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_TEXTURE_2D);
+    glLineWidth(1.5f);
 
-    glClear(GL_STENCIL_BUFFER_BIT);
-    glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-    glStencilFunc(GL_EQUAL, 0x0, 0xff);
+    // render each colour's radii separately, so they can consistently blend
+    // when overlapping other colours, but be stenciled to avoid blending
+    // when overlapping within a colour
+    for (unsigned int i = 0; i < m_radii_radii_vertices_indices_runs.size(); ++i) {
+        const std::pair<std::size_t, std::size_t>& radii_start_run = m_radii_radii_vertices_indices_runs[i].first;
+        const std::pair<std::size_t, std::size_t>& border_start_run = m_radii_radii_vertices_indices_runs[i].second;
 
-    m_visibility_radii_vertices.activate();
-    m_visibility_radii_colors.activate();
-    glDrawArrays(GL_TRIANGLES, 0, m_visibility_radii_vertices.size());
+        glClear(GL_STENCIL_BUFFER_BIT);
+        glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+        glStencilFunc(GL_EQUAL, 0x0, 0xff);
 
-    glStencilFunc(GL_GREATER, 0x2, 0xff);
-    glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
+        m_visibility_radii_vertices.activate();
+        m_visibility_radii_colors.activate();
+        glDrawArrays(GL_TRIANGLES, radii_start_run.first, radii_start_run.second);
 
-    m_visibility_radii_border_vertices.activate();
-    m_visibility_radii_border_colors.activate();
+        glStencilFunc(GL_GREATER, 0x2, 0xff);
+        glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
 
-    glLineWidth(2.5f);
-    glDrawArrays(GL_LINES, 0, m_visibility_radii_border_vertices.size());
+        m_visibility_radii_border_vertices.activate();
+        m_visibility_radii_border_colors.activate();
+
+        glDrawArrays(GL_LINES, border_start_run.first, border_start_run.second);
+    }
 
     glEnable(GL_TEXTURE_2D);
-    //glPopMatrix();
     glLineWidth(1.0f);
     glPopAttrib();
     glPopClientAttrib();
@@ -3167,14 +3173,19 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     const double TWO_PI = 2.0*3.1415926536;
     const GG::Pt UNIT(GG::X(0.5f), GG::Y(0.5f));
 
+    // loop over colours / empires, adding a batch of triangles to buffers for
+    // each's visibilty circles and outlines
     for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > >::iterator it = circles.begin();
          it != circles.end(); ++it)
     {
+        // get empire colour and calculate brighter radii outline colour
         GG::Clr circle_colour = it->first;
-
         GG::Clr border_colour = circle_colour;
         border_colour.a = std::min(255, border_colour.a + 80);
         AdjustBrightness(border_colour, 2.0, true);
+
+        std::size_t radii_start_index = m_visibility_radii_vertices.size();
+        std::size_t border_start_index = m_visibility_radii_border_vertices.size();
 
         const std::vector<std::pair<GG::Pt, GG::Pt> >& circles_in_this_colour = it->second;
         for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i) {
@@ -3199,6 +3210,14 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             for (unsigned int count = 0; count < size_increment; ++count)
                  m_visibility_radii_border_colors.store(border_colour);
         }
+
+        // store how many vertices to render for this colour
+        std::size_t radii_end_index = m_visibility_radii_vertices.size();
+        std::size_t border_end_index = m_visibility_radii_border_vertices.size();
+
+        m_radii_radii_vertices_indices_runs.push_back(std::make_pair(
+            std::make_pair(radii_start_index, radii_end_index - radii_start_index),
+            std::make_pair(border_start_index, border_end_index - border_start_index)));
     }
 
     m_visibility_radii_border_vertices.createServerBuffer();
@@ -3212,6 +3231,7 @@ void MapWnd::ClearVisibilityRadiiRenderingBuffers() {
     m_visibility_radii_colors.clear();
     m_visibility_radii_border_vertices.clear();
     m_visibility_radii_border_colors.clear();
+    m_radii_radii_vertices_indices_runs.clear();
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
