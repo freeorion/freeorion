@@ -149,8 +149,8 @@ namespace {
         // get OpenGL version string and parse to get version number
         float version_number = GetGLVersion();
         DebugLogger() << "OpenGL Version Number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
-        if (version_number < 1.5) {
-            ErrorLogger() << "OpenGL Version is less than 2.0 (official required) or 1.5 (usually works).  FreeOrion may crash when trying to start a game.";
+        if (version_number < 2.0) {
+            ErrorLogger() << "OpenGL Version is less than 2.0. FreeOrion may crash when trying to start a game.";
         }
 
         // only execute default option setting once
@@ -159,19 +159,17 @@ namespace {
         GetOptionsDB().Set<bool>("checked-gl-version", true);
 
         // if GL version is too low, set various map rendering options to
-        // disabled, so as to prevent crashes when running on systems that
-        // don't support these GL features.  these options are added to the
-        // DB in MapWnd.cpp's AddOptions and all default to true.
+        // disabled, to hopefully improve frame rate.
         if (version_number < 2.0) {
             GetOptionsDB().Set<bool>("UI.galaxy-gas-background",        false);
             GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
-            GetOptionsDB().Set<bool>("UI.optimized-system-rendering",   false);
             GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
         }
     }
 }
 
-HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name, int x, int y, bool fullscreen, bool fake_mode_change) :
+HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
+                               int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
     SDLGUI(width, height, calculate_fps, name, x, y, fullscreen, fake_mode_change),
     m_fsm(0),

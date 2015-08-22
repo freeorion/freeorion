@@ -515,7 +515,6 @@ OptionsWnd::OptionsWnd():
     ColorOption(current_page,  0, "UI.system-name-unowned-color",       UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
     BoolOption(current_page,   0, "UI.system-fog-of-war",               UserString("OPTIONS_UI_SYSTEM_FOG"));
     DoubleOption(current_page, 0, "UI.system-fog-of-war-spacing",       UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
-    BoolOption(current_page,   0, "UI.optimized-system-rendering",      UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FLEET_ICONS"));
     DoubleOption(current_page, 0, "UI.tiny-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));

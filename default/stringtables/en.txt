@@ -899,9 +899,6 @@ Toggles whether to show a right-click popup menu on the galaxy map.
 OPTIONS_DB_UI_HIDE_MAP_PANELS
 Toggles whether the sitrep, pedia etc. panels are temporarily hidden when opening the production window and reopened when closing the production window.
 
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map. May crash on older graphics hardware.
-
 OPTIONS_DB_STARLANE_THICKNESS
 Sets how wide to render starlanes in pixels.
 
@@ -1984,9 +1981,6 @@ Content Descriptions
 
 OPTIONS_SYSTEM_ICONS
 System Icons
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Optimized system rendering
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 System icon size

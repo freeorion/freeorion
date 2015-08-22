@@ -105,7 +105,6 @@ namespace {
         db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale-circle",   UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
         db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
-        db.Add("UI.optimized-system-rendering",     UserStringNop("OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING"),         true,       Validator<bool>());
         db.Add("UI.starlane-thickness",             UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                      4.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
         db.Add("UI.resource-starlane-colouring",    UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
@@ -1572,57 +1571,42 @@ void MapWnd::RenderSystems() {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
-        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-        if (0.5f < HALO_SCALE_FACTOR && m_star_texture_coords.size()) {
-            glMatrixMode(GL_TEXTURE);
-            glTranslatef(0.5f, 0.5f, 0.0f);
-            glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
-            glTranslatef(-0.5f, -0.5f, 0.0f);
-            for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
-                 it != m_star_halo_quad_vertices.end(); ++it)
-            {
-                if (!it->second.size())
-                    continue;
-
-                glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-                it->second.activate();
-                m_star_texture_coords.activate();
-                glDrawArrays(GL_QUADS, 0, it->second.size());
-            }
-            glLoadIdentity();
-            glMatrixMode(GL_MODELVIEW);
-        }
-
-        if (m_star_texture_coords.size() &&
-            ClientUI::SystemTinyIconSizeThreshold() < ZoomFactor() * ClientUI::SystemIconSize())
+    if (0.5f < HALO_SCALE_FACTOR && m_star_texture_coords.size()) {
+        glMatrixMode(GL_TEXTURE);
+        glTranslatef(0.5f, 0.5f, 0.0f);
+        glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
+        glTranslatef(-0.5f, -0.5f, 0.0f);
+        for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+                it != m_star_halo_quad_vertices.end(); ++it)
         {
-            for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
-                 it != m_star_core_quad_vertices.end(); ++it)
-            {
-                if (!it->second.size())
-                    continue;
+            if (!it->second.size())
+                continue;
 
-                glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-
-                it->second.activate();
-
-                m_star_texture_coords.activate();
-                glDrawArrays(GL_QUADS, 0, it->second.size());
-            }
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+            it->second.activate();
+            m_star_texture_coords.activate();
+            glDrawArrays(GL_QUADS, 0, it->second.size());
         }
-    } else {
-        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        glPushMatrix();
         glLoadIdentity();
-        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
-             it != m_system_icons.end(); ++it)
-        { it->second->RenderHalo(HALO_SCALE_FACTOR); }
-        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin();
-             it != m_system_icons.end(); ++it)
-        { it->second->RenderDisc(); }
-        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+    }
+
+    if (m_star_texture_coords.size() &&
+        ClientUI::SystemTinyIconSizeThreshold() < ZoomFactor() * ClientUI::SystemIconSize())
+    {
+        for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator
+             it = m_star_core_quad_vertices.begin(); it != m_star_core_quad_vertices.end(); ++it)
+        {
+            if (!it->second.size())
+                continue;
+
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+            it->second.activate();
+            m_star_texture_coords.activate();
+            glDrawArrays(GL_QUADS, 0, it->second.size());
+        }
     }
 
     // circles around system icons and fog over unexplored systems
