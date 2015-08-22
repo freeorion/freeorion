@@ -207,6 +207,10 @@ private:
     void            SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
     void            SetZoom(double steps_in, bool update_slide, const GG::Pt& position);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true. Keeps the screen position \a position in the same place after zooming
 
+    void            Pan(const GG::Pt& delta);                   //!< pans map
+    bool            PanX(GG::X x = GG::X(50));
+    bool            PanY(GG::Y y = GG::Y(50));
+
     void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
     void            FleetsAddedOrRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);
@@ -264,7 +268,7 @@ private:
 
     void            RenderVisibilityRadii();                    //!< renders circles around objects' locations indicating distance they have visibility
 
-    void            CorrectMapPosition(GG::Pt &move_to_pt);     //!< ensures that the map data are positioned sensibly
+    void            CorrectMapPosition(GG::Pt& move_to_pt);     //!< constrains \a move_to_pt so that if the map is repositioned to that location, it will not be problematically positioned, so that galaxy contents remain visible
 
     void            FieldRightClicked(int field_id);
 

@@ -10964,6 +10964,18 @@ Switch to previous idle fleet
 HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET
 Switch to next idle fleet
 
+HOTKEY_MAP_PAN_RIGHT
+Pan map right
+
+HOTKEY_MAP_PAN_LEFT
+Pan map left
+
+HOTKEY_MAP_PAN_UP
+Pan map up
+
+HOTKEY_MAP_PAN_DOWN
+Pan map down
+
 HOTKEY_MAP_TOGGLE_SCALE_LINE
 Toggle Map Scale Line
 

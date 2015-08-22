@@ -164,6 +164,11 @@ namespace {
         Hotkey::AddHotkey("map.zoom_prev_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"), GG::GGK_f,          GG::MOD_KEY_ALT);
         Hotkey::AddHotkey("map.zoom_next_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"), GG::GGK_g,          GG::MOD_KEY_ALT);
 
+        Hotkey::AddHotkey("map.pan_right",            UserStringNop("HOTKEY_MAP_PAN_RIGHT"),            GG::GGK_RIGHT,      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.pan_left",             UserStringNop("HOTKEY_MAP_PAN_LEFT"),             GG::GGK_LEFT,       GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.pan_up",               UserStringNop("HOTKEY_MAP_PAN_UP"),               GG::GGK_UP,         GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("map.pan_down",             UserStringNop("HOTKEY_MAP_PAN_DOWN"),             GG::GGK_DOWN,       GG::MOD_KEY_CTRL);
+
         Hotkey::AddHotkey("map.toggle_scale_line",    UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_LINE"),    GG::GGK_l,          GG::MOD_KEY_ALT);
         Hotkey::AddHotkey("map.toggle_scale_circle",  UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_CIRCLE"),  GG::GGK_c,          GG::MOD_KEY_ALT);
 
@@ -1999,6 +2004,22 @@ void MapWnd::RemoveWindows() {
         app->Remove(m_moderator_wnd);
         // message and player list wnds are managed by the HumanClientFSM
     }
+}
+
+void MapWnd::Pan(const GG::Pt& delta) {
+    GG::Pt move_to_pt = ClientUpperLeft() + delta;
+    CorrectMapPosition(move_to_pt);
+    MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
+}
+
+bool MapWnd::PanX(GG::X x) {
+    Pan(GG::Pt(x, GG::Y0));
+    return true;
+}
+
+bool MapWnd::PanY(GG::Y y) {
+    Pan(GG::Pt(GG::X0, y));
+    return true;
 }
 
 void MapWnd::LButtonDown(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
@@ -4267,7 +4288,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
 void MapWnd::ZoomSlid(double pos, double low, double high)
 { SetZoom(pos, false); }
 
-void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt) {
+void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
     GG::X contents_width(static_cast<int>(ZoomFactor() * GetUniverse().UniverseWidth()));
     GG::X app_width =  AppWidth();
     GG::Y app_height = AppHeight();
@@ -5795,12 +5816,20 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(this, &MapWnd::ZoomToNextIdleFleet,    "map.zoom_next_idle_fleet", new OrCondition(new InvisibleWindowCondition(bl),
                                                                                                     new VisibleWindowCondition(this)));
 
-    boost::function<bool()> toggle_scale_line = boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale");
-    hkm->Connect(toggle_scale_line,                     "map.toggle_scale_line",    new OrCondition(new InvisibleWindowCondition(bl),
+    hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(50)),   "map.pan_right",    new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+    hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(-50)),  "map.pan_left",     new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+    hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(50)),   "map.pan_down",     new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+    hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(-50)),  "map.pan_up",       new OrCondition(new InvisibleWindowCondition(bl),
                                                                                                     new VisibleWindowCondition(this)));
 
-    boost::function<bool()> toggle_scale_circle = boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale-circle");
-    hkm->Connect(toggle_scale_circle,                   "map.toggle_scale_circle",  new OrCondition(new InvisibleWindowCondition(bl),
+    hkm->Connect(boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale"),
+                                                        "map.toggle_scale_line",    new OrCondition(new InvisibleWindowCondition(bl),
+                                                                                                    new VisibleWindowCondition(this)));
+    hkm->Connect(boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale-circle"),
+                                                        "map.toggle_scale_circle",  new OrCondition(new InvisibleWindowCondition(bl),
                                                                                                     new VisibleWindowCondition(this)));
 
 
