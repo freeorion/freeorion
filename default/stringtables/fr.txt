@@ -2924,7 +2924,6 @@ Points gaspillés
 PRODUCTION_INFO_LOCAL_PS_LABEL
 Points disponibles ici
 
-PRODUCTION_INFO_LOCATION_NAME
 ###############
 # ResearchWnd #
 ###############
