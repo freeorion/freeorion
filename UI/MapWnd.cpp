@@ -3072,7 +3072,7 @@ void MapWnd::ClearFieldRenderingBuffers() {
 
 void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     DebugLogger() << "MapWnd::InitVisibilityRadiiRenderingBuffers";
-    std::cout << "InitVisibilityRadiiRenderingBuffers" << std::endl;
+    //std::cout << "InitVisibilityRadiiRenderingBuffers" << std::endl;
     ScopedTimer timer("MapWnd::InitVisibilityRadiiRenderingBuffers", true);
 
     ClearVisibilityRadiiRenderingBuffers();
@@ -3166,12 +3166,12 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
         circles[circle_colour].push_back(std::make_pair(ul, lr));
 
-        std::cout << "adding radii circle at: " << circle_centre << " for empire: " << it->first.first << std::endl;
+        //std::cout << "adding radii circle at: " << circle_centre << " for empire: " << it->first.first << std::endl;
     }
 
 
     const double TWO_PI = 2.0*3.1415926536;
-    const GG::Pt UNIT(GG::X(0.5f), GG::Y(0.5f));
+    const GG::Pt BORDER_INSET(GG::X(1.0f), GG::Y(1.0f));
 
     // loop over colours / empires, adding a batch of triangles to buffers for
     // each's visibilty circles and outlines
@@ -3203,7 +3203,8 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
             // store line segments for border lines of radii
             initial_size = m_visibility_radii_border_vertices.size();
-            BufferStoreCircleArcVertices(m_visibility_radii_border_vertices, ul + UNIT, lr - UNIT, 0.0, TWO_PI, false, 0, false);
+            BufferStoreCircleArcVertices(m_visibility_radii_border_vertices, ul + BORDER_INSET, lr - BORDER_INSET,
+                                         0.0, TWO_PI, false, 0, false);
 
             // store colours for line segments
             size_increment = m_visibility_radii_border_vertices.size() - initial_size;
