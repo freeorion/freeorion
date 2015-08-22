@@ -7695,6 +7695,7 @@ Condition::ValueTest::~ValueTest() {
     delete m_value_ref;
     delete m_low;
     delete m_high;
+    delete m_equal;
 }
 
 bool Condition::ValueTest::operator==(const Condition::ConditionBase& rhs) const {
@@ -7708,6 +7709,7 @@ bool Condition::ValueTest::operator==(const Condition::ConditionBase& rhs) const
     CHECK_COND_VREF_MEMBER(m_value_ref)
     CHECK_COND_VREF_MEMBER(m_low)
     CHECK_COND_VREF_MEMBER(m_high)
+    CHECK_COND_VREF_MEMBER(m_equal)
 
     return true;
 }
@@ -7718,6 +7720,7 @@ void Condition::ValueTest::Eval(const ScriptingContext& parent_context,
 {
     bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
                              (!m_high || m_high->LocalCandidateInvariant()) &&
+                             (!m_equal || m_equal->LocalCandidateInvariant()) &&
                              (!m_value_ref || m_value_ref->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
 
@@ -7728,6 +7731,10 @@ void Condition::ValueTest::Eval(const ScriptingContext& parent_context,
 
         float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
         float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+        if (m_equal) {
+            low = m_equal->Eval(local_context);
+            high = low;
+        }
         float value = (m_value_ref ? m_value_ref->Eval(local_context) : 0.0);
 
         bool in_range = (low <= value && value <= high);
@@ -7752,19 +7759,22 @@ void Condition::ValueTest::Eval(const ScriptingContext& parent_context,
 bool Condition::ValueTest::RootCandidateInvariant() const {
     return (!m_value_ref  || m_value_ref->RootCandidateInvariant()) &&
            (!m_low        || m_low->RootCandidateInvariant()) &&
-           (!m_high       || m_high->RootCandidateInvariant());
+           (!m_high       || m_high->RootCandidateInvariant()) &&
+           (!m_equal      || m_equal->RootCandidateInvariant());;
 }
 
 bool Condition::ValueTest::TargetInvariant() const {
     return (!m_value_ref  || m_value_ref->TargetInvariant()) &&
            (!m_low        || m_low->TargetInvariant()) &&
-           (!m_high       || m_high->TargetInvariant());
+           (!m_high       || m_high->TargetInvariant()) &&
+           (!m_equal      || m_equal->TargetInvariant());
 }
 
 bool Condition::ValueTest::SourceInvariant() const {
     return (!m_value_ref  || m_value_ref->SourceInvariant()) &&
            (!m_low        || m_low->SourceInvariant()) &&
-           (!m_high       || m_high->SourceInvariant());
+           (!m_high       || m_high->SourceInvariant()) &&
+           (!m_equal      || m_equal->SourceInvariant());
 }
 
 std::string Condition::ValueTest::Description(bool negated/* = false*/) const {
@@ -7780,6 +7790,10 @@ std::string Condition::ValueTest::Description(bool negated/* = false*/) const {
                                       boost::lexical_cast<std::string>(m_high->Eval()) :
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+    if (m_equal) {
+        low_str = ValueRef::ConstantExpr(m_equal) ? boost::lexical_cast<std::string>(m_equal->Eval()) : m_equal->Description();
+        high_str = low_str;
+    }
 
     return str(FlexibleFormat((!negated)
                ? UserString("DESC_VALUE_TEST")
@@ -7795,6 +7809,8 @@ std::string Condition::ValueTest::Dump() const {
         retval += " low = " + m_low->Dump();
     if (m_high)
         retval += " high = " + m_high->Dump();
+    if (m_equal)
+        retval += " value = " + m_equal->Dump();
     if (m_value_ref) {
         retval += " value_ref =\n";
         ++g_indent;
@@ -7815,6 +7831,10 @@ bool Condition::ValueTest::Match(const ScriptingContext& local_context) const {
 
     float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
     float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
+    if (m_equal) {
+        low = m_equal->Eval(local_context);
+        high = low;
+    }
     float value = (m_value_ref ? m_value_ref->Eval(local_context) : 0);
 
     return low <= value && value <= high;
@@ -7827,6 +7847,8 @@ void Condition::ValueTest::SetTopLevelContent(const std::string& content_name) {
         m_low->SetTopLevelContent(content_name);
     if (m_high)
         m_high->SetTopLevelContent(content_name);
+    if (m_equal)
+        m_equal->SetTopLevelContent(content_name);
 }
 
 ///////////////////////////////////////////////////////////

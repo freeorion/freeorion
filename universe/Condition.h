@@ -2047,7 +2047,16 @@ struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
         ConditionBase(),
         m_value_ref(value_ref),
         m_low(low),
-        m_high(high)
+        m_high(high),
+        m_equal(0)
+    {}
+    ValueTest(ValueRef::ValueRefBase<double>* value_ref,
+              ValueRef::ValueRefBase<double>* equal) :
+        ConditionBase(),
+        m_value_ref(value_ref),
+        m_low(0),
+        m_high(0),
+        m_equal(0)
     {}
     virtual ~ValueTest();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -2063,6 +2072,7 @@ struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
     const ValueRef::ValueRefBase<double>*  GetValueRef() const { return m_value_ref; }
     const ValueRef::ValueRefBase<double>*  Low() const { return m_low; }
     const ValueRef::ValueRefBase<double>*  High() const { return m_high; }
+    const ValueRef::ValueRefBase<double>*  Equal() const { return m_equal; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
@@ -2072,6 +2082,7 @@ private:
     ValueRef::ValueRefBase<double>* m_value_ref;
     ValueRef::ValueRefBase<double>* m_low;
     ValueRef::ValueRefBase<double>* m_high;
+    ValueRef::ValueRefBase<double>* m_equal;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2616,7 +2627,8 @@ void Condition::ValueTest::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_value_ref)
         & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high);
+        & BOOST_SERIALIZATION_NVP(m_high)
+        & BOOST_SERIALIZATION_NVP(m_equal);
 }
 
 template <class Archive>

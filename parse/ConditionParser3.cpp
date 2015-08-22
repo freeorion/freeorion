@@ -62,13 +62,19 @@ namespace {
                 [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
-            value_test
+            value_test_1
                 =   tok.ValueTest_
-                > -(parse::label(Value_token)  > double_value_ref [ _a = _1, _b = _1])
                 > -(parse::label(Low_token)    > double_value_ref [ _a = _1 ])
                 > -(parse::label(High_token)   > double_value_ref [ _b = _1 ])
-                >   parse::label(TestValue_token) > double_value_ref
+                >>  parse::label(TestValue_token) > double_value_ref
                 [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
+                ;
+
+            value_test_2
+                =   tok.ValueTest_
+                >>  parse::label(Value_token)   > double_value_ref [ _a = _1 ]
+                >   parse::label(TestValue_token) > double_value_ref
+                [ _val = new_<Condition::ValueTest>(_1, _a) ]
                 ;
 
             turn
@@ -139,7 +145,8 @@ namespace {
                 |   within_distance
                 |   within_starlane_jumps
                 |   number
-                |   value_test
+                |   value_test_2
+                |   value_test_1
                 |   turn
                 |   created_on_turn
                 |   number_of
@@ -153,7 +160,8 @@ namespace {
             within_distance.name("WithinDistance");
             within_starlane_jumps.name("WithinStarlaneJumps");
             number.name("Number");
-            value_test.name("ValueTest");
+            value_test_1.name("ValueTest");
+            value_test_2.name("ValueTest");
             turn.name("Turn");
             created_on_turn.name("CreatedOnTurn");
             number_of.name("NumberOf");
@@ -167,7 +175,8 @@ namespace {
             debug(within_distance);
             debug(within_starlane_jumps);
             debug(number);
-            debug(value_test);
+            debug(value_test_1);
+            debug(value_test_2);
             debug(turn);
             debug(created_on_turn);
             debug(number_of);
@@ -224,7 +233,8 @@ namespace {
         double_ref_double_ref_rule              within_distance;
         int_ref_int_ref_rule                    within_starlane_jumps;
         int_ref_int_ref_rule                    number;
-        double_ref_double_ref_rule              value_test;
+        double_ref_double_ref_rule              value_test_1;
+        double_ref_double_ref_rule              value_test_2;
         int_ref_int_ref_rule                    turn;
         int_ref_int_ref_rule                    created_on_turn;
         int_ref_sorting_method_double_ref_rule  number_of;
