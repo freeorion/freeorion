@@ -694,7 +694,7 @@ FLD_ION_STORM
 Tempête Ionique
 
 FLD_ION_STORM_DESC
-Vortex magnétique de particules relativistes chargées, pouvant interférer avec les capteurs et endommager astronefs et planètes.
+Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet se trouvant en son sein.
 
 FLD_MOLECULAR_CLOUD
 Nuage Moléculaire
@@ -4759,6 +4759,16 @@ Dans %system% : des mines ont détruit l'astronef '%ship%' de %empire%.
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
 
+EFFECT_FLEET_MOVED_TOWARDS
+La flotte %fleet% a été repoussée vers le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+EFFECT_FLEET_MOVED_TOWARDS_LABEL
+Flotte repoussée vers
+
+EFFECT_FLEET_MOVED_TO
+La flotte %fleet% a éte renvoyée dans le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+EFFECT_FLEET_MOVED_TO_LABEL
+Flotte renvoyée dans
+
 HEAD_ON_A_SPIKE_MESSAGE
 La capitale de l'empire %empire% est tombée.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
@@ -7886,9 +7896,7 @@ LRN_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-'''En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière de manière à ce qu'un astronef l'empruntant à une vitesse suffisamment faible, aboutisse par inavertance à un point antérieur à son lieu de départ, lui faisant ainsi gaspiller un temps et un carburant précieux.
-
-Par ailleurs, le même astronef pourrait être envoyé aléatoirement sur une toute autre Voie spatiale, adjacente au Générateur de Distortion.'''
+En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière. Les astronefs l'empruntant à une faible vitesse seraient alors renvoyés instantanément dans leur système stellaire de départ, tandis que les astronefs les plus rapides seraient considérablement retardés.
 
 LRN_GATEWAY_VOID
 Portail du Vide
@@ -9078,7 +9086,7 @@ BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_GYSACHE]]. [[BLD_COL_PART_2]] colonie Gysache [[BLD_COL_PART_3]].
 
 BLD_COL_HAPPY
-Colonie Happybirthday 
+Colonie Happybirthday
 
 BLD_COL_HAPPY_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_HAPPY]]. [[BLD_COL_PART_2]] colonie Happybirthday [[BLD_COL_PART_3]].
