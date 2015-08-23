@@ -694,7 +694,7 @@ FLD_ION_STORM
 Tempête Ionique
 
 FLD_ION_STORM_DESC
-Vortex magnétique de particules relativistes chargées, pouvant interférer avec les capteurs et endommager astronefs et planètes.
+Vortex magnétique de particules relativistes chargées, pouvant perturber les capteurs et masquer tout objet se trouvant en son sein.
 
 FLD_MOLECULAR_CLOUD
 Nuage Moléculaire
@@ -713,6 +713,12 @@ FLD_NEBULA_2  # translated
 
 FLD_NEBULA_2_DESC  # translated
 [[FLD_NEBULA_1_DESC]]
+
+FLD_SUBSPACE_RIFT
+Faille Dimensionnelle
+
+FLD_SUBSPACE_RIFT_DESC
+Une violente et dévastatrice déchirure de l'espace-temps se refermant aussi rapidement qu'elle est apparue. Attire et dévore les astronefs, planètes, et systèmes se situant dans son champ gravitationnel. Toutefois, les astronefs disposant d'une vitesse suffisante sont éventuellement capables d'y échapper.
 
 ##############################
 # Predefined Starting Fleets #
@@ -892,9 +898,6 @@ Active/Désactive le clic droit affichant un menu contextuel sur la carte galact
 
 OPTIONS_DB_UI_HIDE_MAP_PANELS
 Définit si les panneaux Rapport de Situation, Encyclopédie, etc. sont temporairement cachés lors de l'ouverture de la Fenêtre Production et réaffichés lors de la fermeture de la Fenêtre Production.
-
-OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Utilisation d'OpenGL 1.5 optimisé pour le rendu de la carte galactique. Peut ne pas fonctionner sur les cartes graphiques les plus anciennes.
 
 OPTIONS_DB_STARLANE_THICKNESS
 Épaisseur en pixels des Voies spatiales.
@@ -1730,6 +1733,12 @@ Abandonner
 GAME_MENU_SAVE_FILES
 Fichiers de sauvegarde
 
+BUTTON_DISABLED
+Bouton désactivé
+
+SAVE_DISABLED_BROWSE_TEXT
+Le bouton "Sauvegarder" est désactivé, soit parce qu'il s'agit d'une partie multijoueurs dont vous n'êtes ni l'Hôte ni le Modérateur, soit parce que le menu a été ouvert alors qu'au moins une des IAs n'a pas encore terminé son tour de jeu (indiqué par un triangle vert à gauche de l'icône représentant le type de joueur dans la fenêtre Empires).
+
 ###########################
 # Save Game Dialog        #
 ###########################
@@ -1972,9 +1981,6 @@ Description du contenu
 
 OPTIONS_SYSTEM_ICONS
 Icônes de système stellaire
-
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Rendu optimisé des systèmes stellaires
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 Taille d'icône de Système
@@ -4765,6 +4771,16 @@ Dans %system% : des mines ont détruit l'astronef '%ship%' de %empire%.
 EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
 
+EFFECT_FLEET_MOVED_TOWARDS
+La flotte %fleet% a été repoussée vers le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+EFFECT_FLEET_MOVED_TOWARDS_LABEL
+Flotte repoussée vers
+
+EFFECT_FLEET_MOVED_TO
+La flotte %fleet% a éte renvoyée dans le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+EFFECT_FLEET_MOVED_TO_LABEL
+Flotte renvoyée dans
+
 HEAD_ON_A_SPIKE_MESSAGE
 La capitale de l'empire %empire% est tombée.
 HEAD_ON_A_SPIKE_MESSAGE_LABEL
@@ -5979,6 +5995,8 @@ METER_MAX_REBEL_TROOPS
 Max Rebelles
 METER_MAX_SUPPLY
 Max Approvisionnement
+METER_MAX_CAPACITY
+Max Capacité
 METER_POPULATION  # translated
 Population
 METER_HEALTH
@@ -6015,8 +6033,6 @@ METER_STEALTH
 Furtivité
 METER_DETECTION
 Rayon de Détection
-METER_DAMAGE
-Dommages
 METER_SPEED
 Vitesse
 METER_CAPACITY
@@ -6291,6 +6307,8 @@ une variable libre
 #[[METER_MAX_DEFENSE]]
 #DESC_VAR_MAXTROOPS
 #[[METER_MAX_TROOPS]]
+#DESC_VAR_MAXCAPACITY
+#[[METER_MAX_CAPACITY]]
 #DESC_VAR_POPULATION
 #[[METER_POPULATION]]
 #DESC_VAR_HEALTH
@@ -6321,8 +6339,6 @@ une variable libre
 #[[METER_STEALTH]]
 #DESC_VAR_DETECTION
 #[[METER_DETECTION]]
-#DESC_VAR_DAMAGE
-#[[METER_DAMAGE]]
 #DESC_VAR_SPEED
 #[[METER_SPEED]]
 #DESC_VAR_CAPACITY
@@ -7167,6 +7183,12 @@ Un réseau massif de donnés, à l'échelle de l'empire, capable de transférer 
 
 Chaque particule est inextricablement liée au niveau quantique à toute particule avec laquelle elle a déjà interagi. Les vieilles idées mécanistes concernant la cause et la conséquence ne sont plus applicables à ce niveau, les particules pouvant "communiquer" instantanément sur de vastes distances. Lorsque la compréhension approfondie de ce phénomène est acquise, certaines actions de petite échelle entre deux lieux distants peuvent être réalisées instantanément, tandis que les limites obsolètes de la vitesse relativiste ne s'appliquent plus au transfert de l'information.'''
 
+LRN_COLLAPSER
+Inversion de Trou Noir
+
+LRN_COLLAPSER_DESC
+Le point culminant de la distortion spatiale et de la manipulation stellaire permet d'inverser la singularité d'un trou noir, provoquant une perturbation de l'espace-temps à l'échelle interstellaire. Cette perturbation est cependant très instable, et s'effondre rapidement sur elle-même, attirant toutes les flottes, planètes, et systèmes entiers se trouvant à proximité, et détruisant tout ce qui tombe en son centre.
+
 LRN_TRANSCEND
 Singularité Transcendantale
 
@@ -7895,9 +7917,7 @@ LRN_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
 LRN_SPATIAL_DISTORT_GEN_DESC
-'''En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière de manière à ce qu'un astronef l'empruntant à une vitesse suffisamment faible, aboutisse par inavertance à un point antérieur à son lieu de départ, lui faisant ainsi gaspiller un temps et un carburant précieux.
-
-Par ailleurs, le même astronef pourrait être envoyé aléatoirement sur une toute autre Voie spatiale, adjacente au Générateur de Distortion.'''
+En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière. Les astronefs l'empruntant à une faible vitesse seraient alors renvoyés instantanément dans leur système stellaire de départ, tandis que les astronefs les plus rapides seraient considérablement retardés.
 
 LRN_GATEWAY_VOID
 Portail du Vide
@@ -8810,6 +8830,12 @@ Trou Noir Artificiel
 BLD_ART_BLACK_HOLE_DESC
 En augmentant artificiellement la gravité à l'intérieur d'une étoile, mais sans accroître son énergie, il est possible de faire s'effondrer l'étoile sur elle-même et ainsi former un Trou Noir. Cette technique est cependant limitée aux étoiles rouges, car dépasser la pression interne d'une étoile plus chaude nécessiterait un générateur de gravité d'une puissance inimaginable. Ce processus peut être enclenché depuis un [[encyclopedia OUTPOSTS_TITLE]].
 
+BLD_BLACK_HOLE_COLLAPSER
+Inverseur de Trou Noir
+
+BLD_BLACK_HOLE_COLLAPSER_DESC
+Génère une [[fieldtype FLD_SUBSPACE_RIFT]] d'un rayon de 100 uu dont l'origine se situe à l'emplacement de la structure.
+
 BLD_HYPER_DAM
 Barrage Hyperspatial
 
@@ -9105,7 +9131,7 @@ BLD_COL_GYSACHE_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_GYSACHE]]. [[BLD_COL_PART_2]] colonie Gysache [[BLD_COL_PART_3]].
 
 BLD_COL_HAPPY
-Colonie Happybirthday 
+Colonie Happybirthday
 
 BLD_COL_HAPPY_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_HAPPY]]. [[BLD_COL_PART_2]] colonie Happybirthday [[BLD_COL_PART_3]].
@@ -10937,6 +10963,18 @@ Flotte stationnaire précédente
 
 HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET
 Flotte stationnaire suivante
+
+HOTKEY_MAP_PAN_RIGHT
+Défilement carte vers droite
+
+HOTKEY_MAP_PAN_LEFT
+Défilement carte vers gauche
+
+HOTKEY_MAP_PAN_UP
+Défilement carte vers haut
+
+HOTKEY_MAP_PAN_DOWN
+Défilement carte vers bas
 
 HOTKEY_MAP_TOGGLE_SCALE_LINE
 Barre d'échelle [on/off]
