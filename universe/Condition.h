@@ -2056,7 +2056,7 @@ struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
         m_value_ref(value_ref),
         m_low(0),
         m_high(0),
-        m_equal(0)
+        m_equal(equal)
     {}
     virtual ~ValueTest();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
