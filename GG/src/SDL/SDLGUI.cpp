@@ -636,14 +636,14 @@ void SDLGUI::SDLInit()
                                 Value(m_app_width), Value(m_app_height), SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     if (m_window == 0) {
-        std::cerr << "Video mode set failed: " << SDL_GetError();
+        std::cerr << "Video mode set failed: " << SDL_GetError() << std::endl;
         Exit(1);
     }
     m_gl_context = SDL_GL_CreateContext(m_window);
 
     GLenum error = glewInit();
     if(error != GLEW_OK){
-        std::cerr << "Glew initialization failed: " << error << " = " << glewGetErrorString(error);
+        std::cerr << "Glew initialization failed: " << error << " = " << glewGetErrorString(error) << std::endl;
         Exit(1);
     }
 
@@ -854,13 +854,13 @@ void SDLGUI::Run()
         // Normal exit
         return;
     } catch (const std::invalid_argument& e) {
-        std::cerr << "std::invalid_argument exception caught in GUI::Run(): " << e.what();
+        std::cerr << "std::invalid_argument exception caught in GUI::Run(): " << e.what() << std::endl;
         Exit(1);
     } catch (const std::runtime_error& e) {
-        std::cerr << "std::runtime_error exception caught in GUI::Run(): " << e.what();
+        std::cerr << "std::runtime_error exception caught in GUI::Run(): " << e.what() << std::endl;
         Exit(1);
     } catch (const ExceptionBase& e) {
-        std::cerr << "GG exception (subclass " << e.type() << ") caught in GUI::Run(): " << e.what();
+        std::cerr << "GG exception (subclass " << e.type() << ") caught in GUI::Run(): " << e.what() << std::endl;
         Exit(1);
     }
 }
@@ -896,7 +896,7 @@ Pt SDLGUI::GetDefaultResolutionStatic(int display_id)
     // Must initialize sdl here to be able to query the default screen resolution
     if (!SDL_WasInit(SDL_INIT_VIDEO)) {
         if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-            std::cerr << "SDL initialization failed: " << SDL_GetError();
+            std::cerr << "SDL initialization failed: " << SDL_GetError() << std::endl;
             throw std::runtime_error("Failed to initialize SDL");
         }
     }
@@ -928,7 +928,7 @@ void SDLGUI::ResetFramebuffer()
         try {
             m_framebuffer.reset(new Framebuffer(Pt(m_app_width, m_app_height)));
         } catch (FramebufferFailedException ex) {
-            std::cerr << "Fake resolution change failed. Reason: \"" << ex.what() << "\". Reverting to real resolution change.";
+            std::cerr << "Fake resolution change failed. Reason: \"" << ex.what() << "\". Reverting to real resolution change." << std::endl;
             m_fake_mode_change = false;
         }
     }

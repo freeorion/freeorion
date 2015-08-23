@@ -43,7 +43,7 @@ namespace {
     {
         SignalEcho(const std::string& name) : m_name(name) {}
         void operator()(std::size_t index)
-            { std::cerr << "GG SIGNAL : " << m_name << "(index=" << index << ")\n"; }
+        { std::cerr << "GG SIGNAL : " << m_name << "(index=" << index << ")" << std::endl; }
         std::string m_name;
     };
 

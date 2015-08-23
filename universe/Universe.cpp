@@ -1431,9 +1431,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     std::vector<TemporaryPtr<UniverseObject> > object_ptrs = m_objects.FindObjects(objects_vec);
     if (objects_vec.empty()) {
         object_ptrs.reserve(m_objects.NumExistingObjects());
-        std::transform( Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(), 
-                        std::back_inserter(object_ptrs), 
-                        boost::bind(&std::map< int, TemporaryPtr< UniverseObject > >::value_type::second,_1) );
+        std::transform(Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(),
+                       std::back_inserter(object_ptrs),
+                       boost::bind(&std::map<int, TemporaryPtr<UniverseObject> >::value_type::second, _1));
     }
 
     for (std::vector<TemporaryPtr<UniverseObject> >::iterator obj_it = object_ptrs.begin();
@@ -1455,7 +1455,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                 info.meter_change = meter->Current() - Meter::DEFAULT_VALUE;
                 info.running_meter_total = meter->Current();
 
-                if (info.meter_change > 0.0f)
+                if (info.meter_change != 0.0f)
                     m_effect_accounting_map[obj_id][type].push_back(info);
             }
         }
@@ -1474,7 +1474,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     GetEffectsAndTargets(targets_causes, objects_vec);
 
     // Apply and record effect meter adjustments
-    ExecuteEffects(targets_causes, true, true, false, false);
+    ExecuteEffects(targets_causes, true, true, false, false, false);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "UpdateMeterEstimatesImpl after executing effects objects:";

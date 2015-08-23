@@ -266,7 +266,7 @@ const Meter* UniverseObject::GetMeter(MeterType type) const {
 float UniverseObject::CurrentMeterValue(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::CurrentMeterValue was passed a MeterType that this UniverseObject does not have");
+        throw std::invalid_argument("UniverseObject::CurrentMeterValue was passed a MeterType that this UniverseObject does not have: " + boost::lexical_cast<std::string>(type));
 
     return it->second.Current();
 }
@@ -274,7 +274,7 @@ float UniverseObject::CurrentMeterValue(MeterType type) const {
 float UniverseObject::InitialMeterValue(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::InitialMeterValue was passed a MeterType that this UniverseObject does not have");
+        throw std::invalid_argument("UniverseObject::InitialMeterValue was passed a MeterType that this UniverseObject does not have: " + boost::lexical_cast<std::string>(type));
 
     return it->second.Initial();
 }

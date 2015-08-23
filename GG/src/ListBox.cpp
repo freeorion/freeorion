@@ -48,29 +48,30 @@ namespace {
         ListSignalEcho(const ListBox& lb, const std::string& name) :
             m_LB(lb),
             m_name(name)
-            {}
+        {}
         void operator()()
-            { std::cerr << "GG SIGNAL : " << m_name << "()\n"; }
+        { std::cerr << "GG SIGNAL : " << m_name << "()" << std::endl; }
         void operator()(const ListBox::SelectionSet& sels)
-            {
-                std::cerr << "GG SIGNAL : " << m_name
-                          << "(sels=[ ";
-                for (ListBox::SelectionSet::const_iterator it = sels.begin();
-                     it != sels.end();
-                     ++it) {
-                    std::cerr << RowIndex(*it) << ' ';
-                }
-                std::cerr << "])\n";
+        {
+            std::cerr << "GG SIGNAL : " << m_name
+                        << "(sels=[ ";
+            for (ListBox::SelectionSet::const_iterator it = sels.begin();
+                    it != sels.end();
+                    ++it) {
+                std::cerr << RowIndex(*it) << ' ';
             }
+            std::cerr << "])" << std::endl;
+        }
         void operator()(ListBox::const_iterator it)
-            { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << ")\n"; }
+        { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << ")" << std::endl; }
         void operator()(ListBox::const_iterator it, const Pt& pt)
-            {
-                std::cerr << "GG SIGNAL : " << m_name
-                          << "(row=" << RowIndex(it) << " pt=" << pt << ")\n";
-            }
+        {
+            std::cerr << "GG SIGNAL : " << m_name
+                        << "(row=" << RowIndex(it) << " pt=" << pt << ")" << std::endl;
+        }
         std::size_t RowIndex(ListBox::const_iterator it)
-            { return std::distance(m_LB.begin(), it); }
+        { return std::distance(m_LB.begin(), it); }
+
         const ListBox& m_LB;
         std::string m_name;
     };

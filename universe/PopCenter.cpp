@@ -56,7 +56,7 @@ std::string PopCenter::Dump() const {
 float PopCenter::CurrentMeterValue(MeterType type) const {
     const Meter* meter = GetMeter(type);
     if (!meter) {
-        throw std::invalid_argument("PopCenter::CurrentMeterValue was passed a MeterType that this PopCenter does not have");
+        throw std::invalid_argument("PopCenter::CurrentMeterValue was passed a MeterType that this PopCenter does not have: " + boost::lexical_cast<std::string>(type));
     }
     return meter->Current();
 }
@@ -64,13 +64,15 @@ float PopCenter::CurrentMeterValue(MeterType type) const {
 float PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
     const Meter* meter = GetMeter(meter_type);
     if (!meter) {
-        throw std::invalid_argument("PopCenter::PopCenterNextTurnMeterValue passed meter type that the PopCenter does not have.");
+        throw std::invalid_argument("PopCenter::PopCenterNextTurnMeterValue passed meter type that the PopCenter does not have: " + boost::lexical_cast<std::string>(meter_type));
 
     } else if (meter_type == METER_POPULATION) {
         return meter->Current() + NextTurnPopGrowth();
 
-    } else if (meter_type == METER_TARGET_POPULATION) {
-        DebugLogger() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type.  Returning meter->Current()";
+    } else if (meter_type == METER_TARGET_POPULATION ||
+               meter_type == METER_TARGET_HAPPINESS)
+    {
+        DebugLogger() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type" << boost::lexical_cast<std::string>(meter_type) << ".  Returning meter->Current()";
         return meter->Current();
 
     } else if (meter_type == METER_HAPPINESS) {
@@ -88,7 +90,7 @@ float PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const {
         else
             return current_meter_value;
     } else {
-        ErrorLogger() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
+        ErrorLogger() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type: " + boost::lexical_cast<std::string>(meter_type);
         return 0.0f;
     }
 }

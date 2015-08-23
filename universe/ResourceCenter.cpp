@@ -92,7 +92,7 @@ std::string ResourceCenter::Dump() const {
 float ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const {
     const Meter* meter = GetMeter(type);
     if (!meter)
-        throw std::invalid_argument("ResourceCenter::ResourceCenterNextTurnMeterValue passed meter type that the ResourceCenter does not have.");
+        throw std::invalid_argument("ResourceCenter::ResourceCenterNextTurnMeterValue passed meter type that the ResourceCenter does not have: " + boost::lexical_cast<std::string>(type));
     float current_meter_value = meter->Current();
 
     MeterType target_meter_type = INVALID_METER_TYPE;

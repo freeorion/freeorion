@@ -71,7 +71,7 @@ namespace {
         {
             std::cerr << "GG SIGNAL : DropDownList::SelChangedSignal(row="
                       << m_drop_list.IteratorToIndex(it)
-                      << ")\n";
+                      << ")" << std::endl;
         }
         const DropDownList& m_drop_list;
     };
@@ -85,7 +85,7 @@ namespace {
         {
             std::cerr << "GG SIGNAL : ModalListPicker::SelChangedSignal(row="
                       << std::distance(m_picker.LB()->begin(), it)
-                      << ")\n";
+                      << ")" << std::endl;
         }
         ModalListPicker& m_picker;
     };

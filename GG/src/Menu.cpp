@@ -38,9 +38,9 @@ namespace {
     {
         MenuSignalEcho(const std::string& name) : m_name(name) {}
         void operator()()
-            { std::cerr << "GG SIGNAL : " << m_name << "()\n"; }
+        { std::cerr << "GG SIGNAL : " << m_name << "()" << std::endl; }
         void operator()(int id)
-            { std::cerr << "GG SIGNAL : " << m_name << "(id=" << id << ")\n"; }
+        { std::cerr << "GG SIGNAL : " << m_name << "(id=" << id << ")" << std::endl; }
         std::string m_name;
     };
 

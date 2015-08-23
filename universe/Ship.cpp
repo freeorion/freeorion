@@ -12,6 +12,8 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
+#include <boost/lexical_cast.hpp>
+
 class Species;
 const Species* GetSpecies(const std::string& name);
 
@@ -348,7 +350,7 @@ TemporaryPtr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) 
 float Ship::NextTurnCurrentMeterValue(MeterType type) const {
     const Meter* meter = UniverseObject::GetMeter(type);
     if (!meter)
-        throw std::invalid_argument("Ship::NextTurnCurrentMeterValue passed meter type that the Ship does not have.");
+        throw std::invalid_argument("Ship::NextTurnCurrentMeterValue passed meter type that the Ship does not have: " + boost::lexical_cast<std::string>(type));
     float current_meter_value = meter->Current();
 
     //if (type == METER_FUEL) {
@@ -384,7 +386,7 @@ float Ship::NextTurnCurrentMeterValue(MeterType type) const {
 
     const Meter* target_meter = UniverseObject::GetMeter(target_meter_type);
     if (!target_meter)
-        throw std::runtime_error("Ship::NextTurnCurrentMeterValue dealing with invalid meter type");
+        throw std::runtime_error("Ship::NextTurnCurrentMeterValue dealing with invalid meter type: " + boost::lexical_cast<std::string>(type));
     float target_meter_value = target_meter->Current();
 
     // meter growth or decay towards target is one per turn.

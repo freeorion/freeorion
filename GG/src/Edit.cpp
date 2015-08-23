@@ -37,7 +37,7 @@ namespace {
     {
         EditedEcho(const std::string& name) : m_name(name) {}
         void operator()(const std::string& str)
-        { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")\n"; }
+        { std::cerr << "GG SIGNAL : " << m_name << "(str=" << str << ")" << std::endl; }
         std::string m_name;
     };
 

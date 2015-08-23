@@ -467,13 +467,13 @@ float Planet::NextTurnCurrentMeterValue(MeterType type) const {
 
     const Meter* meter = GetMeter(type);
     if (!meter) {
-        throw std::invalid_argument("Planet::NextTurnCurrentMeterValue passed meter type that the Planet does not have, but should.");
+        throw std::invalid_argument("Planet::NextTurnCurrentMeterValue passed meter type that the Planet does not have, but should: " + boost::lexical_cast<std::string>(type));
     }
     float current_meter_value = meter->Current();
 
     const Meter* max_meter = GetMeter(max_meter_type);
     if (!max_meter) {
-        throw std::runtime_error("Planet::NextTurnCurrentMeterValue dealing with invalid meter type");
+        throw std::runtime_error("Planet::NextTurnCurrentMeterValue dealing with invalid meter type: " + boost::lexical_cast<std::string>(type));
     }
     float max_meter_value = max_meter->Current();
 

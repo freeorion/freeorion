@@ -69,13 +69,13 @@ namespace {
                   boost::lexical_cast<std::string>(key) +
                   " mod_keys=" +
                   boost::lexical_cast<std::string>(mod_keys) +
-                  ")\n")
-            {}
+                  ")")
+        {}
         bool operator()()
-            {
-                std::cerr << m_str;
-                return false;
-            }
+        {
+            std::cerr << m_str << std::endl;
+            return false;
+        }
         std::string m_str;
     };
 

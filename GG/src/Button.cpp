@@ -36,15 +36,15 @@ using namespace GG;
 
 namespace {
     void ClickedEcho()
-    { std::cerr << "GG SIGNAL : Button::LeftClickedSignal()\n"; }
+    { std::cerr << "GG SIGNAL : Button::LeftClickedSignal()" << std::endl; }
 
     void CheckedEcho(bool checked)
-    { std::cerr << "GG SIGNAL : StateButton::CheckedSignal(checked=" << checked << ")\n"; }
+    { std::cerr << "GG SIGNAL : StateButton::CheckedSignal(checked=" << checked << ")" << std::endl; }
 
     void ButtonChangedEcho(std::size_t index)
     {
         std::cerr << "GG SIGNAL : RadioButtonGroup::ButtonChangedSignal(index="
-                  << index << ")\n";
+                  << index << ")" << std::endl;
     }
 }
 
