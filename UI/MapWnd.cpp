@@ -680,6 +680,7 @@ MapWnd::MapWnd() :
     m_star_halo_quad_vertices(),
     m_galaxy_gas_quad_vertices(),
     m_star_texture_coords(),
+    m_star_circle_vertices(),
     m_starlane_vertices(),
     m_starlane_colors(),
     m_RC_starlane_vertices(),
@@ -1538,16 +1539,15 @@ void MapWnd::RenderGalaxyGas() {
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    m_star_texture_coords.activate();
 
     for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it =
          m_galaxy_gas_quad_vertices.begin(); it != m_galaxy_gas_quad_vertices.end(); ++it)
     {
         if (it->second.empty())
             continue;
-
         glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
         it->second.activate();
-        m_star_texture_coords.activate();
         glDrawArrays(GL_QUADS, 0, it->second.size());
     }
 
@@ -1583,15 +1583,14 @@ void MapWnd::RenderSystems() {
         glTranslatef(0.5f, 0.5f, 0.0f);
         glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
         glTranslatef(-0.5f, -0.5f, 0.0f);
+        m_star_texture_coords.activate();
         for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
                 it != m_star_halo_quad_vertices.end(); ++it)
         {
             if (!it->second.size())
                 continue;
-
             glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
             it->second.activate();
-            m_star_texture_coords.activate();
             glDrawArrays(GL_QUADS, 0, it->second.size());
         }
         glLoadIdentity();
@@ -1601,15 +1600,14 @@ void MapWnd::RenderSystems() {
     if (m_star_texture_coords.size() &&
         ClientUI::SystemTinyIconSizeThreshold() < ZoomFactor() * ClientUI::SystemIconSize())
     {
+        m_star_texture_coords.activate();
         for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator
              it = m_star_core_quad_vertices.begin(); it != m_star_core_quad_vertices.end(); ++it)
         {
             if (!it->second.size())
                 continue;
-
             glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
             it->second.activate();
-            m_star_texture_coords.activate();
             glDrawArrays(GL_QUADS, 0, it->second.size());
         }
     }
@@ -1899,7 +1897,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
                 glColor(GG::CLR_RED);
                 CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,  -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,  (flag_border)*GG::Y1), (n+1)*wedge, (n+2)*wedge, true);
             }
-        } else if (vert.flag_supply_block){
+        } else if (vert.flag_supply_block) {
             float wedge = TWO_PI/12.0;
             for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
@@ -2607,6 +2605,7 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_star_halo_quad_vertices.clear();
     m_galaxy_gas_quad_vertices.clear();
     m_star_texture_coords.clear();
+    m_star_circle_vertices.clear();
 }
 
 std::vector<int> MapWnd::GetLeastJumps(int startSys, int endSys, const std::set<int>& resGroup,
