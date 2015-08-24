@@ -397,8 +397,8 @@ Special
                 ContainedBy And [
                     System 
                     Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                        Source
+                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
                 Or [
@@ -414,8 +414,8 @@ Special
                 ContainedBy And [
                     System 
                     Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                        Source
+                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
@@ -439,8 +439,8 @@ Special
                 ContainedBy And [
                     System 
                     Contains And [
-                        Planet
-                        OwnedBy empire = Source.Owner
+                        Source
+                        Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
