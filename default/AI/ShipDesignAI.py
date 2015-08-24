@@ -858,11 +858,12 @@ class ShipDesigner(object):
         self._apply_hardcoded_effects()
 
         if self.species and not ignore_species:
-            # TODO: Add troop modifiers once added
-            weapons_grade, shields_grade = foAI.foAIstate.get_piloting_grades(self.species)
+            weapons_grade, shields_grade, troops_grade = foAI.foAIstate.get_piloting_grades(self.species)
             self.shields = foAI.foAIstate.weight_shields(self.shields, shields_grade)
             if self.attacks:
                 self.attacks = foAI.foAIstate.weight_attacks(self.attacks, weapons_grade)
+            if self.troops:
+                self.troops = foAI.foAIstate.weight_attack_troops(self.troops, troops_grade)
 
     def _apply_hardcoded_effects(self):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
@@ -1014,13 +1015,14 @@ class ShipDesigner(object):
             # Therefore, consider only those treats that are actually useful. Note that the
             # canColonize trait is covered by the parts we can build, so no need to consider it here.
             # The same is true for the canProduceShips trait which simply means no hull can be built.
-            weapons_grade, shields_grade = foAI.foAIstate.get_piloting_grades(self.species)
+            weapons_grade, shields_grade, troops_grade = foAI.foAIstate.get_piloting_grades(self.species)
             relevant_grades = []
             if WEAPONS & self.useful_part_classes:
                 relevant_grades.append("WEAPON: %s" % weapons_grade)
             if SHIELDS & self.useful_part_classes:
                 relevant_grades.append("SHIELDS: %s" % shields_grade)
-            # TODO: Add troop modifiers once added
+            if TROOPS & self.useful_part_classes:
+                relevant_grades.append("TROOPS: %s" % troops_grade)
             species_tuple = tuple(relevant_grades)
 
             design_cache_species = design_cache_reqs.setdefault(species_tuple, {})

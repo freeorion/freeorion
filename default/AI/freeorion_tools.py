@@ -19,14 +19,14 @@ def dict_from_map(thismap):
 
 
 def get_ai_tag_grade(tag_list, tag_type):
-    '''
+    """
     Accepts a list of string tags and a tag_type (like 'WEAPONS').
     Checks for the first tag in the list (if any), for tag_type "TYPE",
     having the structure AI_TAG_X_TYPE
     and then returns 'X'
     X is most commonly (but not necessarily) one of [NO, BAD, AVERAGE, GOOD, GREAT, ULTIMATE]
     If no matching tags, returns empty string (which for most types should be considered equivalent to AVERAGE)
-    '''
+    """
     for tag in filter(lambda tag: tag.startswith("AI_TAG_"), tag_list):
         parts = tag.split("_")
         if parts[3:4] == [tag_type.upper()]:

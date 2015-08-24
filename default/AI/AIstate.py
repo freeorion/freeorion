@@ -739,8 +739,22 @@ class AIstate(object):
                 else:
                     print "Error: get_piloting_grades couldn't retrieve species '%s'" % species_name
             piloting_grades[species_name] = (get_ai_tag_grade(spec_tags, 'WEAPONS'),
-                                             get_ai_tag_grade(spec_tags, 'SHIELDS'))
+                                             get_ai_tag_grade(spec_tags, 'SHIELDS'),
+                                             get_ai_tag_grade(spec_tags, 'ATTACKTROOPS'),
+                                             )
         return piloting_grades[species_name]
+
+    def weight_attack_troops(self, troops, grade):
+        """Re-weights troops on a ship based on species piloting grade.
+
+        :type troops: float
+        :type grade: str
+        :return: piloting grade weighted troops
+        :rtype: float
+        """
+        weight = {'NO': 0.0, 'BAD': 0.5, '': 1.0, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}.get(grade, 1.0)
+        return troops * weight
+
 
     def weight_attacks(self, attacks, grade):
         """Re-weights attacks based on species piloting grade."""
@@ -759,7 +773,7 @@ class AIstate(object):
     def get_weighted_design_stats(self, design_id, species_name=""):
         """Rate a design, including species pilot effects
             returns dict of attacks {dmg1:count1}, attack, shields, structure."""
-        weapons_grade, shields_grade = self.get_piloting_grades(species_name)
+        weapons_grade, shields_grade, troops_grade = self.get_piloting_grades(species_name)
         design_stats = dict(self.get_design_id_stats(design_id))  # new dict so we don't modify our original data
         myattacks = self.weight_attacks(design_stats.get('attacks', {}), weapons_grade)
         design_stats['attacks'] = myattacks
