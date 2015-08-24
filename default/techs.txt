@@ -320,6 +320,7 @@ Tech
                     Contains And [
                         Planet
                         OwnedBy empire = Source.Owner
+                        Not HasSpecial name = "FORTRESS_SPECIAL"
                     ]
                 ]
                 Or [
@@ -337,6 +338,7 @@ Tech
                     Contains And [
                         Planet
                         OwnedBy empire = Source.Owner
+                        Not HasSpecial name = "FORTRESS_SPECIAL"
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
@@ -362,6 +364,7 @@ Tech
                     Contains And [
                         Planet
                         OwnedBy empire = Source.Owner
+                        Not HasSpecial name = "FORTRESS_SPECIAL"
                     ]
                 ]
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
