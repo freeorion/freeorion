@@ -31,6 +31,7 @@ Graphics / GUI:
 ~ Adjusted default window positioning
 ~~ Made some window positions be saved between sessions
 ~ Various new/updated icons, including building and sitrep icons
+~ Increased default sitrep icon size to 24
 ~ Added an option to save games in an XML text format, which should be readable on any OS, although is a larger file than the binary serialization (default)
 ~ Adjusted the size of the planet focus droplist
 ~ Changed layout of sitreps to be multi-line
@@ -73,6 +74,7 @@ Graphics / GUI:
 ~ Removed (most of) the extra space in ListBoxes after the end of the content
 ~ Made sitrep panel remember which sitrep it was showing first, when it is resized
 ~ Cleaned up the massive list of sitreps on turn 1
+~ Changed "Next Turn" meter growth tooltip label to "Predicted Next Turn"
 
 Content:
 ~ Translation updates, most notably an (almost) complete French translation
@@ -96,6 +98,8 @@ Content:
 ~ Improved slot positions of ship hulls
 ~ Changes to fields: Ion Storms and Molecular Clouds now start very small, but grow large before shrinking again
 ~ Improved species traits listing in game setup window
+~ Adjusted/fixed ion storm effects and description
+~ Reworked Spatial Distortion Generator to push ships back along their route by a fixed amount, and generate sitreps explaining what has happened
 
 Balance:
 ~ Tweaked galaxy special distributions to lessen frequency of multiple specials on one object
