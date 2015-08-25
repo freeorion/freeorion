@@ -1679,6 +1679,7 @@ BuildingType
             scope = Object id = Source.SystemID
             effects = AddStarlanes endpoint = And [
                 System
+                WithinDistance distance = 250 condition = Source
                 CanAddStarlanesTo condition = Source
             ]
         EffectsGroup
@@ -1771,7 +1772,7 @@ BuildingType
                     Planet
             ]
             activation = Or [
-                Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]
+               // Turn high = [[EXPERIMENTOR_SPAWN_START_TURN]]
                 Not ContainedBy Contains And [ Ship OwnedBy affiliation = AnyEmpire ]
             ]
             effects = [
