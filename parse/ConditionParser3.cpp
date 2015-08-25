@@ -77,6 +77,16 @@ namespace {
                 [ _val = new_<Condition::ValueTest>(_1, _a) ]
                 ;
 
+            value_test_3
+                = '(' >> double_value_ref [ _a = _1 ]
+                >> (
+                      ('='  > double_value_ref [ _val = new_<Condition::ValueTest>(_a, _1) ])
+                   |  (">=" > double_value_ref [ _val = new_<Condition::ValueTest>(_a, _1, _b) ])   // here _b = 0 so only setting the low parameter
+                   |  ("<=" > double_value_ref [ _val = new_<Condition::ValueTest>(_a, _b, _1) ])   // here _b = 0 so only setting the high parameter
+                   )
+                > ')'
+                ;
+
             turn
                 =  (tok.Turn_
                 > -(parse::label(Low_token)  > (flexible_int_ref [ _a = _1 ]))
@@ -147,6 +157,7 @@ namespace {
                 |   number
                 |   value_test_2
                 |   value_test_1
+                |   value_test_3
                 |   turn
                 |   created_on_turn
                 |   number_of
@@ -162,6 +173,7 @@ namespace {
             number.name("Number");
             value_test_1.name("ValueTest");
             value_test_2.name("ValueTest");
+            value_test_3.name("ValueTest");
             turn.name("Turn");
             created_on_turn.name("CreatedOnTurn");
             number_of.name("NumberOf");
@@ -177,6 +189,7 @@ namespace {
             debug(number);
             debug(value_test_1);
             debug(value_test_2);
+            debug(value_test_3);
             debug(turn);
             debug(created_on_turn);
             debug(number_of);
@@ -235,6 +248,7 @@ namespace {
         int_ref_int_ref_rule                    number;
         double_ref_double_ref_rule              value_test_1;
         double_ref_double_ref_rule              value_test_2;
+        double_ref_double_ref_rule              value_test_3;
         int_ref_int_ref_rule                    turn;
         int_ref_int_ref_rule                    created_on_turn;
         int_ref_sorting_method_double_ref_rule  number_of;
