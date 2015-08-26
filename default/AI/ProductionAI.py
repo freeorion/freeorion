@@ -425,7 +425,7 @@ def generateProductionOrders():
     systemColonies={}
     colonySystems={}
     for specName in ColonisationAI.empire_colonizers:
-        if (len( ColonisationAI.empire_colonizers[specName])<=int(currentTurn/100)) and (specName in ColonisationAI.empire_species): #not enough current shipyards for this species#TODO: also allow orbital incubators and/or asteroid ships
+        if (len( ColonisationAI.empire_colonizers[specName])==0) and (specName in ColonisationAI.empire_species): #not enough current shipyards for this species#TODO: also allow orbital incubators and/or asteroid ships
             for pID in ColonisationAI.empire_species.get(specName, []): #SP_EXOBOT may not actually have a colony yet but be in empireColonizers
                 if pID in queuedShipyardLocs:
                     break #won't try building more than one shipyard at once, per colonizer
