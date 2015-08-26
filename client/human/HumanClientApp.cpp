@@ -125,6 +125,9 @@ namespace {
             GetOptionsDB().Set("multiplayersetup.player-name", UserString("DEFAULT_PLAYER_NAME"));
     }
 
+    std::string GetGLVersionString()
+    { return boost::lexical_cast<std::string>(glGetString(GL_VERSION)); }
+
     static float stored_gl_version = -1.0f;  // to be replaced when gl version first checked
 
     float GetGLVersion() {
@@ -132,8 +135,7 @@ namespace {
             return stored_gl_version;
 
         // get OpenGL version string and parse to get version number
-        const GLubyte* gl_version = glGetString(GL_VERSION);
-        std::string gl_version_string = boost::lexical_cast<std::string>(gl_version);
+        std::string gl_version_string = GetGLVersionString();
 
         float version_number = 0.0f;
         std::istringstream iss(gl_version_string);
@@ -189,6 +191,12 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDir() / "freeorion.log").string());
 
     InitLogger(HUMAN_CLIENT_LOG_FILENAME, "Client");
+
+    try {
+        DebugLogger() << "GL Version String: " << GetGLVersionString();
+    } catch (...) {
+        ErrorLogger() << "Unable to get GL Version String?";
+    }
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
