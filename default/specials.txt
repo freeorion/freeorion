@@ -103,7 +103,7 @@ Special
     spawnlimit = 9999
     location = And [
         Or [
-            ValueTest low = 1 testvalue = GalaxyMonsterFrequency
+            (GalaxyMonsterFrequency >= 1)
             Random probability = 0.2
         ]
         Planet
@@ -128,13 +128,13 @@ Special
             scope = Source
             effects = SetTexture name = "planets/overlays/ruins.png"
             
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             activation = AND [
                 Turn high = 0
                 Random probability = 0.9
-                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
-                ValueTest low = 1 testvalue = GalaxyMonsterFrequency
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
             ]
             effects = CreateShip designname = "SM_GUARD_2"
             
@@ -173,7 +173,7 @@ Special
         EffectsGroup
             scope = Source
             activation = And [
-                Random probability = .25
+                Random probability = 0.25
                 OwnerHasTech name = "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
@@ -198,7 +198,7 @@ Special
         EffectsGroup
             scope = Source
             activation = And [
-                Random probability = .50
+                Random probability = 0.50
                 NotOwnerHasTech name = "SHP_WEAPON_4_1"
                 OwnerHasTech name = "LRN_XENOARCH"
             ]
@@ -324,15 +324,15 @@ Special
             ]
         EffectsGroup
             scope = Source
-            effects = SetTexture name = "planets/overlays/ruins.png"     
+            effects = SetTexture name = "planets/overlays/ruins.png"
             
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             activation = AND [
                 Turn high = 0
                 Random probability = 0.5
-                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
-                ValueTest low = 1 testvalue = GalaxyMonsterFrequency                
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
                 Not WithinStarlaneJumps jumps = 1 condition = And [
                     System
                     Contains And [
@@ -343,13 +343,13 @@ Special
             ]
             effects = CreateShip designname = "SM_GUARD_2"
         
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             activation = And [
                 Turn high = 0
-                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
-                ValueTest low = 1 testvalue = GalaxyMonsterFrequency
-            ]                
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+            ]
             effects = CreateShip designname = "SM_GUARD_2"
         ]
         graphic = "icons/meter/detection.png"
@@ -478,15 +478,15 @@ Special
                         tag = "predefinedshipdesign" data = "SM_GUARD_1"
                     ]
                     empire = Source.Owner
-            ]     
+            ]
 
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             activation = And [
                 Turn high = 0
-                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
-                ValueTest low = 1 testvalue = GalaxyMonsterFrequency
-            ]                
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
+            ]
             effects = CreateShip designname = "SM_GUARD_2"
         ]
         graphic = "icons/specials_huge/fortress.png"
@@ -609,11 +609,11 @@ Special
             scope = Source     
             activation = AND [
                 Turn high = 0
-                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
-                ValueTest low = 1 testvalue = GalaxyMonsterFrequency                
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
                 Not ContainedBy Contains OR [
-                                    Design name = "SM_EXP_OUTPOST"
-                                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                    Design name = "SM_EXP_OUTPOST"
+                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
                 ]
             ]
             effects = CreateShip designname = "SM_GUARD_3"
@@ -659,8 +659,8 @@ Special
         ]
     ]
     effectsgroups = [
-        EffectsGroup     
-            scope = Source     
+        EffectsGroup
+            scope = Source
             activation = Turn high = 0
             effects = SetPlanetType type = Radiated
         
@@ -767,8 +767,8 @@ Special
             scope = Source
             activation = And [
                 Turn high = 0
-                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
-                ValueTest low = 1 testvalue = GalaxyMonsterFrequency
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
             ]
             stackinggroup = "GAIAN_STACK"
             effects = CreateShip designname = "SM_GUARD_2"
@@ -843,8 +843,8 @@ Special
     description = "KRAKEN_NEST_SPECIAL_DESC"
     spawnrate = 0.0
     location = And [
-        ValueTest low = 1 testvalue = GalaxyMonsterFrequency    
-        Planet        
+        (GalaxyMonsterFrequency >= 1)
+        Planet
         Planet type = GasGiant
         Not WithinStarlaneJumps jumps = 3 condition = And [
             System
@@ -943,7 +943,7 @@ Special
     spawnrate = 0.0
     location = And [
         Planet
-        ValueTest low = 1 testvalue = GalaxyMonsterFrequency        
+        (GalaxyMonsterFrequency >= 1)
         Planet type = Asteroids
         Not WithinStarlaneJumps jumps = 4 condition = And [
             System
@@ -1043,7 +1043,7 @@ Special
                 Not Contains Building name = "BLD_CONC_CAMP"
                 Population low = 0.0001
             ]
-            effects = [                
+            effects = [
                 AddSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
                 RemoveSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
@@ -1487,7 +1487,7 @@ Special
             ]
         ]
     ]
-    effectsgroups = [       
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
@@ -1530,7 +1530,7 @@ Special
             ]
         ]
     ]
-    effectsgroups = [       
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
@@ -1572,7 +1572,7 @@ Special
             ]
         ]
     ]
-    effectsgroups = [       
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Planet
@@ -1915,18 +1915,18 @@ REMOVE_VOID
 '''
 
 CHANCE_OF_GUARD_1
-'''        EffectsGroup     
-            scope = Source     
+'''        EffectsGroup
+            scope = Source
             activation = AND [
                 Turn high = 0
                 Random probability = 0.60
-                ValueTest low = 1 testvalue = GalaxyMaxAIAggression
-                ValueTest low = 1 testvalue = GalaxyMonsterFrequency                
+                (GalaxyMaxAIAggression >= 1)
+                (GalaxyMonsterFrequency >= 1)
                 Not ContainedBy Contains OR [
-                                    Design name = "SM_EXP_OUTPOST"
-                                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
-                                    And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
-                                    ]
+                    Design name = "SM_EXP_OUTPOST"
+                    Building name = "BLD_EXPERIMENTOR_OUTPOST"
+                    And [ Planet HasSpecial name = "HIGH_TECH_NATIVES_SPECIAL" ]
+                ]
             ]
             effects = CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
 '''

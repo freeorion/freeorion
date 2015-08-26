@@ -28,7 +28,10 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_c_type _c;
+            qi::_d_type _d;
+            qi::_e_type _e;
             qi::_val_type _val;
+            qi::lit_type lit;
             using phoenix::new_;
             using phoenix::push_back;
 
@@ -63,28 +66,38 @@ namespace {
                 ;
 
             value_test_1
-                =   tok.ValueTest_
-                > -(parse::label(Low_token)    > double_value_ref [ _a = _1 ])
-                > -(parse::label(High_token)   > double_value_ref [ _b = _1 ])
-                >>  parse::label(TestValue_token) > double_value_ref
-                [ _val = new_<Condition::ValueTest>(_1, _a, _b) ]
+                = '('
+                >> double_value_ref [ _a = _1 ]
+                >> (    lit('=')    [ _d = Condition::ValueTest::EQUAL ]
+                      | lit(">=")   [ _d = Condition::ValueTest::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _d = Condition::ValueTest::GREATER_THAN ]
+                      | lit("<=")   [ _d = Condition::ValueTest::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _d = Condition::ValueTest::LESS_THAN ]
+                      | lit("!=")   [ _d = Condition::ValueTest::NOT_EQUAL ])
+                >> double_value_ref
+                [ _val = new_<Condition::ValueTest>(_a, _d, _1) ]
+                >> ')'
                 ;
 
             value_test_2
-                =   tok.ValueTest_
-                >>  parse::label(Value_token)   > double_value_ref [ _a = _1 ]
-                >   parse::label(TestValue_token) > double_value_ref
-                [ _val = new_<Condition::ValueTest>(_1, _a) ]
-                ;
-
-            value_test_3
-                = '(' >> double_value_ref [ _a = _1 ]
-                >> (
-                      ('='  > double_value_ref [ _val = new_<Condition::ValueTest>(_a, _1) ])
-                   |  (">=" > double_value_ref [ _val = new_<Condition::ValueTest>(_a, _1, _b) ])   // here _b = 0 so only setting the low parameter
-                   |  ("<=" > double_value_ref [ _val = new_<Condition::ValueTest>(_a, _b, _1) ])   // here _b = 0 so only setting the high parameter
-                   )
-                > ')'
+                = '('
+                >> double_value_ref [ _a = _1 ]
+                >> (    lit('=')    [ _d = Condition::ValueTest::EQUAL ]
+                      | lit(">=")   [ _d = Condition::ValueTest::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _d = Condition::ValueTest::GREATER_THAN ]
+                      | lit("<=")   [ _d = Condition::ValueTest::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _d = Condition::ValueTest::LESS_THAN ]
+                      | lit("!=")   [ _d = Condition::ValueTest::NOT_EQUAL ])
+                >> double_value_ref [ _b = _1 ]
+                >> (    lit('=')    [ _e = Condition::ValueTest::EQUAL ]
+                      | lit(">=")   [ _e = Condition::ValueTest::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _e = Condition::ValueTest::GREATER_THAN ]
+                      | lit("<=")   [ _e = Condition::ValueTest::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _e = Condition::ValueTest::LESS_THAN ]
+                      | lit("!=")   [ _e = Condition::ValueTest::NOT_EQUAL ])
+                >  double_value_ref
+                [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
+                >  ')'
                 ;
 
             turn
@@ -157,7 +170,6 @@ namespace {
                 |   number
                 |   value_test_2
                 |   value_test_1
-                |   value_test_3
                 |   turn
                 |   created_on_turn
                 |   number_of
@@ -171,9 +183,8 @@ namespace {
             within_distance.name("WithinDistance");
             within_starlane_jumps.name("WithinStarlaneJumps");
             number.name("Number");
-            value_test_1.name("ValueTest");
-            value_test_2.name("ValueTest");
-            value_test_3.name("ValueTest");
+            value_test_1.name("ValueTest Binary");
+            value_test_2.name("ValueTest Trinary");
             turn.name("Turn");
             created_on_turn.name("CreatedOnTurn");
             number_of.name("NumberOf");
@@ -189,7 +200,6 @@ namespace {
             debug(number);
             debug(value_test_1);
             debug(value_test_2);
-            debug(value_test_3);
             debug(turn);
             debug(created_on_turn);
             debug(number_of);
@@ -206,7 +216,9 @@ namespace {
             qi::locals<
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
-                ValueRef::ValueRefBase<std::string>*
+                ValueRef::ValueRefBase<std::string>*,
+                Condition::ValueTest::ComparisonType,
+                Condition::ValueTest::ComparisonType
             >,
             parse::skipper_type
         > double_ref_double_ref_rule;
@@ -248,7 +260,6 @@ namespace {
         int_ref_int_ref_rule                    number;
         double_ref_double_ref_rule              value_test_1;
         double_ref_double_ref_rule              value_test_2;
-        double_ref_double_ref_rule              value_test_3;
         int_ref_int_ref_rule                    turn;
         int_ref_int_ref_rule                    created_on_turn;
         int_ref_sorting_method_double_ref_rule  number_of;

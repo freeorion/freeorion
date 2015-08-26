@@ -1930,12 +1930,16 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
                 CanColonize
-                (LocalCandidate.NextTurnPopGrowth   >= [[MIN_RECOLONIZING_SIZE]] - LocalCandidate.Population)
-                (LocalCandidate.TargetHappiness     >= [[MIN_RECOLONIZING_HAPPINESS]]                       )
-                (LocalCandidate.Happiness           >= [[MIN_RECOLONIZING_HAPPINESS]] - 1                   )
+                //(6 > 4) // test
+                //(5 = 5)
+                //(3 != 83)
+                //(6 >= 0)
+                (LocalCandidate.NextTurnPopGrowth       >= [[MIN_RECOLONIZING_SIZE]] - LocalCandidate.Population)
+                (LocalCandidate.TargetHappiness         >= [[MIN_RECOLONIZING_HAPPINESS]]                       )
+                (LocalCandidate.Happiness               >= [[MIN_RECOLONIZING_HAPPINESS]] - 1                   )
                 Or [
-                    ValueTest low = 0.1 high = ([[MIN_RECOLONIZING_SIZE]] - 0.001) testvalue = LocalCandidate.Population
-                    ValueTest low = 0.1 high = ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001) testvalue = LocalCandidate.Happiness
+                    (0.1 <= LocalCandidate.Population   <= ([[MIN_RECOLONIZING_SIZE]] - 0.001)                  )
+                    (0.1 <= LocalCandidate.Happiness    <= ([[MIN_RECOLONIZING_HAPPINESS]] - 0.001)             )
                 ]
             ]
             activation = Source

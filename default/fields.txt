@@ -15,19 +15,19 @@ FieldType
         EffectsGroup    // grow size when young
             scope = Source
             activation = And [
-                ValueTest high = max((UniverseWidth ^ 1.1) / 50, 20) TestValue = Source.Age
+                (Source.Age <= max((UniverseWidth ^ 1.1) / 50, 20))
                 Size high = 50
-               ]
+            ]
             effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
 
         EffectsGroup    // shrink size when old
             scope = Source
-            activation = ValueTest low = max((UniverseWidth ^ 1.1) / 50, 20) TestValue = Source.Age
+            activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 20))
             effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 3.0)
 /*
         EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
             scope = Source
-            activation = ValueTest low = 10 TestValue = Source.Age
+            activation = (Source.Age >= 10)
             effects = SetSize value = Value - 0.3 * (Count condition = And [
                 System
                 WithinDistance distance = 80 condition = Source
@@ -44,7 +44,7 @@ FieldType
         EffectsGroup    // after reaching a certain age, dissipate when small
             scope = Source
             activation = And [
-                ValueTest low = 10 TestValue = Source.Age
+                (Source.Age >= 10)
                 Size high = 10
             ]
             effects = Destroy
@@ -69,19 +69,19 @@ FieldType
         EffectsGroup    // grow size when young
             scope = Source
             activation = And [
-                ValueTest high = max((UniverseWidth ^ 1.1) / 50, 30) TestValue = Source.Age
+                (Source.Age <= max((UniverseWidth ^ 1.1) / 50, 30))
                 Size high = 120
                ]
             effects = SetSize value = Value + min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
 
         EffectsGroup    // shrink size when old
             scope = Source
-            activation = ValueTest low = max((UniverseWidth ^ 1.1) / 50, 30) TestValue = Source.Age
+            activation = (Source.Age >= max((UniverseWidth ^ 1.1) / 50, 30))
             effects = SetSize value = Value - min(max(Value * RandomNumber(0.05, 0.1), 1.0), 5.0)
 /*
         EffectsGroup    // after reaching a certain age, shrink size a bit each turn when near systems
             scope = Source
-            activation = ValueTest low = 10 TestValue = Source.Age
+            activation = (Source.Age >= 10)
             effects = SetSize value = Value - 0.1 * (Count condition = And [
                 System
                 WithinDistance distance = 80 condition = Source
@@ -98,7 +98,7 @@ FieldType
         EffectsGroup    // after reaching a certain age, dissipate when small
             scope = Source
             activation = And [
-                ValueTest low = 10 TestValue = Source.Age
+                (Source.Age >= 10)
                 Size high = 10
             ]
             effects = Destroy

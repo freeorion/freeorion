@@ -2038,25 +2038,30 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects if the evaluation of \a value_ref returns a value
-  * within the range between \a low and \a high. */
+/** Matches all objects if the comparisons between values of ValueRefs meet the
+  * specified comparison types. */
 struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
-    ValueTest(ValueRef::ValueRefBase<double>* value_ref,
-              ValueRef::ValueRefBase<double>* low,
-              ValueRef::ValueRefBase<double>* high) :
+    enum ComparisonType {
+        INVALID_COMPARISON = -1,
+        EQUAL,
+        GREATER_THAN,
+        GREATER_THAN_OR_EQUAL,
+        LESS_THAN,
+        LESS_THAN_OR_EQUAL,
+        NOT_EQUAL
+    };
+
+    ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
+              ComparisonType comp1,
+              ValueRef::ValueRefBase<double>* value_ref2,
+              ComparisonType comp2 = INVALID_COMPARISON,
+              ValueRef::ValueRefBase<double>* value_ref3 = 0) :
         ConditionBase(),
-        m_value_ref(value_ref),
-        m_low(low),
-        m_high(high),
-        m_equal(0)
-    {}
-    ValueTest(ValueRef::ValueRefBase<double>* value_ref,
-              ValueRef::ValueRefBase<double>* equal) :
-        ConditionBase(),
-        m_value_ref(value_ref),
-        m_low(0),
-        m_high(0),
-        m_equal(equal)
+        m_value_ref1(value_ref1),
+        m_value_ref2(value_ref2),
+        m_value_ref3(value_ref3),
+        m_compare_type1(comp1),
+        m_compare_type2(comp2)
     {}
     virtual ~ValueTest();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -2069,20 +2074,22 @@ struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
     virtual bool        SourceInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<double>*  GetValueRef() const { return m_value_ref; }
-    const ValueRef::ValueRefBase<double>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<double>*  High() const { return m_high; }
-    const ValueRef::ValueRefBase<double>*  Equal() const { return m_equal; }
+    const ValueRef::ValueRefBase<double>*   GetValueRef1() const { return m_value_ref1; }
+    const ValueRef::ValueRefBase<double>*   GetValueRef2() const { return m_value_ref2; }
+    const ValueRef::ValueRefBase<double>*   GetValueRef3() const { return m_value_ref3; }
+    ComparisonType                          GetComparisonType1() const { return m_compare_type1; }
+    ComparisonType                          GetComparisonType2() const { return m_compare_type2; }
 
     virtual void        SetTopLevelContent(const std::string& content_name);
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    ValueRef::ValueRefBase<double>* m_value_ref;
-    ValueRef::ValueRefBase<double>* m_low;
-    ValueRef::ValueRefBase<double>* m_high;
-    ValueRef::ValueRefBase<double>* m_equal;
+    ValueRef::ValueRefBase<double>* m_value_ref1;
+    ValueRef::ValueRefBase<double>* m_value_ref2;
+    ValueRef::ValueRefBase<double>* m_value_ref3;
+    ComparisonType                  m_compare_type1;
+    ComparisonType                  m_compare_type2;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2625,10 +2632,11 @@ template <class Archive>
 void Condition::ValueTest::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_value_ref)
-        & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high)
-        & BOOST_SERIALIZATION_NVP(m_equal);
+        & BOOST_SERIALIZATION_NVP(m_value_ref1)
+        & BOOST_SERIALIZATION_NVP(m_value_ref2)
+        & BOOST_SERIALIZATION_NVP(m_value_ref3)
+        & BOOST_SERIALIZATION_NVP(m_compare_type1)
+        & BOOST_SERIALIZATION_NVP(m_compare_type2);
 }
 
 template <class Archive>
