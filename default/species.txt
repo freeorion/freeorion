@@ -19,7 +19,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "LITHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -36,7 +36,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -72,7 +73,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
 
         // not for description
         
@@ -154,7 +155,7 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -174,7 +175,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "PHOTOTROPHIC" "AI_TAG_GREAT_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "PHOTOTROPHIC" "AI_TAG_GREAT_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -191,7 +192,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -230,7 +232,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -268,7 +270,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -289,7 +291,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY"]
+    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_NO_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -306,7 +308,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
+        [[NO_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
         
         // not for description
@@ -344,7 +347,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         [[GREAT_WEAPONS]]
         
@@ -370,7 +373,7 @@ Species
     CanProduceShips
     CanColonize
     
-    tags = [ "LITHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_ULTIMATE_INDUSTRY" "AI_TAG_BAD_POPULATION" "AI_TAG_GREAT_SUPPLY" ]
+    tags = [ "LITHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_ULTIMATE_INDUSTRY" "AI_TAG_BAD_POPULATION" "AI_TAG_GREAT_SUPPLY" "AI_TAG_GREAT_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -387,7 +390,8 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
+        [[GREAT_OFFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -429,7 +433,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
 
                 
         [[GOOD_WEAPONS]]
@@ -455,7 +459,7 @@ Species
     CanProduceShips
     CanColonize
     
-    Tags = [ "ROBOTIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "CTRL_ALWAYS_REPORT"]
+    Tags = [ "ROBOTIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "CTRL_ALWAYS_REPORT" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -472,8 +476,9 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
-        [[BAD_GROUND_TROOPS]]        
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -519,7 +524,7 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[ULTIMATE_GROUND_TROOPS]]
+        [[ULTIMATE_DEFENSE_TROOPS]]
         
         [[ULTIMATE_STEALTH]]
         [[ULTIMATE_DETECTION]]
@@ -557,7 +562,7 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -594,7 +599,7 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
         
         [[GOOD_DETECTION]]
         [[GREAT_STEALTH]]
@@ -634,7 +639,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
      
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -654,7 +659,7 @@ Species
     Native
     CanProduceShips
 
-    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -671,7 +676,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -691,7 +697,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "ORGANIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -708,7 +714,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
         
         // not for description
@@ -729,7 +736,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ROBOTIC" "TELEPATHIC" "AI_TAG_GOOD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_GREAT_SUPPLY" "AI_TAG_GOOD_DETECTION" "AI_TAG_BAD_STEALTH"]
+    tags = [ "ROBOTIC" "TELEPATHIC" "AI_TAG_GOOD_RESEARCH" "AI_TAG_BAD_POPULATION" "AI_TAG_GREAT_SUPPLY" "AI_TAG_GOOD_DETECTION" "AI_TAG_BAD_STEALTH" "AI_TAG_BAD_ATTACKTROOPS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -748,7 +755,8 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
        
         [[BAD_STEALTH]]
         [[GOOD_DETECTION]]
@@ -790,7 +798,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
         
         [[GOOD_WEAPONS]]
        
@@ -831,12 +839,12 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_INDUSTRY)]]
         [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_RESEARCH)]]
         [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_POPULATION)]]
         [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_SUPPLY)]]
-        [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_GROUND_TROOPS)]]
+        [[DESCRIPTION_EFFECTSGROUP_MACRO(AVERAGE_DEFENSE_TROOPS)]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -857,7 +865,7 @@ Species
     CanProduceShips
     CanColonize
     
-    tags = [ "SELF_SUSTAINING" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "SELF_SUSTAINING" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -874,7 +882,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
 
         // not for description
         [[NATIVE_PLANETARY_DEFENSE]]
@@ -894,7 +903,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "PHOTOTROPHIC" "TELEPATHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GREAT_DETECTION" "AI_TAG_GREAT_STEALTH" ]
+    tags = [ "PHOTOTROPHIC" "TELEPATHIC" "AI_TAG_BAD_RESEARCH" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GREAT_DETECTION" "AI_TAG_GREAT_STEALTH" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -911,7 +920,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
 
         [[GREAT_DETECTION]]
         [[GREAT_STEALTH]]
@@ -952,7 +962,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
 
         [[GREAT_WEAPONS]]
         
@@ -988,7 +998,7 @@ Species
         [[BAD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
    
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
@@ -1026,7 +1036,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         [[ULTIMATE_DETECTION]]
         
@@ -1065,7 +1075,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         [[FAST_COLONIZATION]]
 
         // not for description
@@ -1101,7 +1111,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[ULTIMATE_GROUND_TROOPS]]
+        [[ULTIMATE_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1141,7 +1151,7 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1161,7 +1171,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GREAT_STEALTH" ]
+    tags = [ "ORGANIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_GOOD_POPULATION" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GREAT_STEALTH" "AI_TAG_NO_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1178,7 +1188,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[NO_GROUND_TROOPS]]  
+        [[NO_DEFENSE_TROOPS]]
+        [[NO_OFFENSE_TROOPS]]
         
         [[GREAT_STEALTH]]
         
@@ -1217,7 +1228,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[GREAT_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         [[BAD_WEAPONS]]
 
         // not for description
@@ -1238,7 +1249,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_BAD_INDUSTRY" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1255,7 +1266,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1276,7 +1288,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC" "SELF_SUSTAINING" "TELEPATHIC" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION"  "AI_TAG_ULTIMATE_SUPPLY" "AI_TAG_INFINITE_DETECTION" ]
+    tags = [ "ORGANIC" "ROBOTIC" "LITHIC" "PHOTOTROPHIC" "SELF_SUSTAINING" "TELEPATHIC" "AI_TAG_GREAT_INDUSTRY" "AI_TAG_GREAT_RESEARCH" "AI_TAG_GOOD_POPULATION"  "AI_TAG_ULTIMATE_SUPPLY" "AI_TAG_INFINITE_DETECTION" "AI_TAG_GREAT_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1293,7 +1305,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[ULTIMATE_SUPPLY]]
-        [[GREAT_GROUND_TROOPS]]
+        [[GREAT_DEFENSE_TROOPS]]
+        [[GREAT_OFFENSE_TROOPS]]
         
         [[ULTIMATE_WEAPONS]]
 
@@ -1327,7 +1340,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "ORGANIC" "TELEPATHIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_BAD_WEAPONS" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_BAD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1344,7 +1357,8 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
+        [[BAD_OFFENSE_TROOPS]]
         [[BAD_WEAPONS]]
 
         // not for description
@@ -1380,7 +1394,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[BAD_SUPPLY]]
-        [[BAD_GROUND_TROOPS]]
+        [[BAD_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1417,7 +1431,7 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         [[GREAT_DETECTION]]
         [[GOOD_STEALTH]]
@@ -1446,7 +1460,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_BAD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" ]
+    tags = [ "LITHIC" "AI_TAG_GOOD_INDUSTRY" "AI_TAG_BAD_RESEARCH" "AI_TAG_AVERAGE_SUPPLY" "AI_TAG_GOOD_ATTACKTROOPS" ]
     
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -1463,7 +1477,8 @@ Species
         [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[GOOD_GROUND_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
+        [[GOOD_OFFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1499,7 +1514,7 @@ Species
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[ULTIMATE_SUPPLY]]        
-        [[AVERAGE_GROUND_TROOPS]]
+        [[AVERAGE_DEFENSE_TROOPS]]
         
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
@@ -1532,7 +1547,7 @@ Species
         [[NO_INDUSTRY]]
         [[NO_RESEARCH]]
         
-        [[NO_GROUND_TROOPS]]
+        [[NO_DEFENSE_TROOPS]]
 
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
@@ -3008,7 +3023,7 @@ ULTIMATE_RESEARCH
 
 //#####      T R O O P S     #####//
 
-BASIC_GROUND_TROOPS
+BASIC_DEFENSE_TROOPS
 '''EffectsGroup
             scope = Source
             activation = And [
@@ -3139,17 +3154,22 @@ EffectsGroup
 [[PROTECTION_FOCUS_TROOPS]]
 '''
 
-NO_GROUND_TROOPS
-'''[[DESCRIPTION_EFFECTSGROUP_MACRO(NO_GROUND_TROOPS)]]
+NO_DEFENSE_TROOPS
+'''
+    EffectsGroup
+        description = "NO_DEFENSE_TROOPS"
+        scope = Source
+        activation = None
+        effects = SetMaxTroops value = 0
 
 [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
-BAD_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+BAD_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
-            description = "BAD_GROUND_TROOPS"
+            description = "BAD_DEFENSE_TROOPS"
             scope = Source
             activation = Planet
             accountinglabel = "BAD_TROOPS_LABEL"
@@ -3158,17 +3178,17 @@ EffectsGroup
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
-AVERAGE_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+AVERAGE_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
-GOOD_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+GOOD_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
-            description = "GOOD_GROUND_TROOPS"
+            description = "GOOD_DEFENSE_TROOPS"
             scope = Source
             activation = Planet
             accountinglabel = "GOOD_TROOPS_LABEL"
@@ -3177,11 +3197,11 @@ EffectsGroup
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
-GREAT_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+GREAT_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
-            description = "GREAT_GROUND_TROOPS"
+            description = "GREAT_DEFENSE_TROOPS"
             scope = Source
             activation = Planet
             accountinglabel = "GREAT_TROOPS_LABEL"
@@ -3190,11 +3210,11 @@ EffectsGroup
     [[AFTER_SPECIES_MULTIPLICATOR_TROOPS]]
 '''
 
-ULTIMATE_GROUND_TROOPS
-'''[[BASIC_GROUND_TROOPS]]
+ULTIMATE_DEFENSE_TROOPS
+'''[[BASIC_DEFENSE_TROOPS]]
 
 EffectsGroup
-            description = "ULTIMATE_GROUND_TROOPS"
+            description = "ULTIMATE_DEFENSE_TROOPS"
             scope = Source
             activation = Planet
             accountinglabel = "ULTIMATE_TROOPS_LABEL"
@@ -3213,6 +3233,79 @@ PROTECTION_FOCUS_TROOPS
             stackinggroup = "FOCUS_PROTECTION_TROOPS_STACK"
             accountinglabel = "FOCUS_PROTECTION_LABEL"
             effects = SetMaxTroops value = Value * 2
+'''
+
+NO_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "NO_OFFENSE_TROOPS"
+            scope = Source
+            activation = Ship
+            stackinggroup = "NO_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "NO_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = 0
+                SetCapacity partname = "GT_TROOP_POD_2" value = 0
+            ]
+'''
+
+BAD_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "BAD_OFFENSE_TROOPS"
+            scope = Source
+            activation = Ship
+            stackinggroup = "BAD_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "BAD_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 0.5
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 0.5
+            ]
+'''
+
+AVERAGE_OFFENSE_TROOPS
+'''       EffectsGroup
+            description = "AVERAGE_OFFENSE_TROOPS"
+            scope = Source
+            activation = None
+            effects = SetTargetResearch value = Value
+'''
+
+GOOD_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "GOOD_OFFENSE_TROOPS"
+            scope = Source
+            activation = Ship
+            stackinggroup = "GOOD_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "GOOD_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 1.5
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 1.5
+            ]
+'''
+
+GREAT_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "GREAT_OFFENSE_TROOPS"
+            scope = Source
+            activation = Ship
+            stackinggroup = "GREAT_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "GREAT_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 2
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 2
+            ]
+'''
+
+ULTIMATE_OFFENSE_TROOPS
+'''EffectsGroup
+            description = "ULTIMATE_OFFENSE_TROOPS"
+            scope = Source
+            activation = Ship
+            stackinggroup = "ULTIMATE_OFFENSIVE_TROOPS_STACK"
+            accountinglabel = "ULTIMATE_OFFENSIVE_TROOPS_LABEL"
+            effects = [
+                SetCapacity partname = "GT_TROOP_POD"   value = (PartCapacity name = "GT_TROOP_POD") * 3
+                SetCapacity partname = "GT_TROOP_POD_2" value = (PartCapacity name = "GT_TROOP_POD_2") * 3
+            ]
 '''
 
 //#####      P L A N E T A R Y   S H I E L D S     #####//

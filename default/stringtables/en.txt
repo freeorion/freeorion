@@ -10368,23 +10368,41 @@ GREAT_RESEARCH
 ULTIMATE_RESEARCH
 +++	Ultimate [[encyclopedia RESEARCH_TITLE]]: 400%
 
-NO_GROUND_TROOPS
-−−−	No Ground [[encyclopedia TROOP_TITLE]]
+NO_DEFENSE_TROOPS
+−−−	No Defensive Ground [[encyclopedia TROOP_TITLE]]
 
-BAD_GROUND_TROOPS
-−	Bad Ground [[encyclopedia TROOP_TITLE]]: -50%
+BAD_DEFENSE_TROOPS
+−	Bad Defensive Ground [[encyclopedia TROOP_TITLE]]: -50%
 
-AVERAGE_GROUND_TROOPS
-'''	Average Ground [[encyclopedia TROOP_TITLE]]: 100%'''
+AVERAGE_DEFENSE_TROOPS
+'''	Average Defensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
 
-GOOD_GROUND_TROOPS
-+	Good Ground [[encyclopedia TROOP_TITLE]]: 150%.
+GOOD_DEFENSE_TROOPS
++	Good Defensive Ground [[encyclopedia TROOP_TITLE]]: 150%.
 
-GREAT_GROUND_TROOPS
-++	Great Ground [[encyclopedia TROOP_TITLE]]: 200%.
+GREAT_DEFENSE_TROOPS
+++	Great Defensive Ground [[encyclopedia TROOP_TITLE]]: 200%.
 
-ULTIMATE_GROUND_TROOPS
-+++	Ultimate Ground [[encyclopedia TROOP_TITLE]]: 300%.
+ULTIMATE_DEFENSE_TROOPS
++++	Ultimate Defensive Ground [[encyclopedia TROOP_TITLE]]: 300%.
+
+NO_OFFENSE_TROOPS
+−−−	No Offensive Ground [[encyclopedia TROOP_TITLE]]
+
+BAD_OFFENSE_TROOPS
+−	Bad Offensive Ground [[encyclopedia TROOP_TITLE]]: -50%
+
+AVERAGE_OFFENSE_TROOPS
+'''	Average Offensive Ground [[encyclopedia TROOP_TITLE]]: 100%'''
+
+GOOD_OFFENSE_TROOPS
++	Good Offensive Ground [[encyclopedia TROOP_TITLE]]: 150%.
+
+GREAT_OFFENSE_TROOPS
+++	Great Offensive Ground [[encyclopedia TROOP_TITLE]]: 200%.
+
+ULTIMATE_OFFENSE_TROOPS
++++	Ultimate Offensive Ground [[encyclopedia TROOP_TITLE]]: 300%.
 
 BAD_DETECTION
 −	Bad [[encyclopedia DETECTION_RANGE_TITLE]]: −20 malus.
