@@ -489,7 +489,7 @@ Part
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = (1<= [[BEST_CLOAK_EFFECT]] <= 40)
+            activation = (1 <= [[BEST_CLOAK_EFFECT]] <= 40)
             stackinggroup = "ENGINE_STEALTH_PART_STACK1"
             accountinglabel = "TRANSPATIAL_CLOAK_INTERACTION"
             effects = SetStealth value = Value - [[BEST_CLOAK_EFFECT]]
@@ -1113,7 +1113,7 @@ Part
                 HasTag name = "ROBOTIC"
                 HasTag name = "ROBOTIC_HULL"
             ]
-            activation = ([[ROBOTIC_SHIELD_EFFECT]] <= [[BEST_SHIELD_EFFECT]])
+            activation = ([[ROBOTIC_SHIELD_EFFECT]] >= [[BEST_SHIELD_EFFECT]])
             stackinggroup = "ROBOTIC_SHIELD_PART_STACK"
             accountinglabel = "ROBOTIC_INTERFACE_EFFECT"
             effects = SetMaxShield value = Value - [[BEST_SHIELD_EFFECT]] + [[ROBOTIC_SHIELD_EFFECT]]

@@ -290,24 +290,20 @@ private:
   * selected preferentially. */
 struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase {
     /** Sorts randomly, without considering a sort key. */
-    SortedNumberOf(ValueRef::ValueRefBase<int>* number,
-                   ConditionBase* condition) :
+    SortedNumberOf(ValueRef::ValueRefBase<int>* number) :
         m_number(number),
         m_sort_key(0),
-        m_sorting_method(Condition::SORT_RANDOM),
-        m_condition(condition)
+        m_sorting_method(Condition::SORT_RANDOM)
     {}
 
     /** Sorts according to the specified method, based on the key values
       * evaluated for each object. */
     SortedNumberOf(ValueRef::ValueRefBase<int>* number,
                    ValueRef::ValueRefBase<double>* sort_key_ref,
-                   SortingMethod sorting_method,
-                   ConditionBase* condition) :
+                   SortingMethod sorting_method) :
         m_number(number),
         m_sort_key(sort_key_ref),
-        m_sorting_method(sorting_method),
-        m_condition(condition)
+        m_sorting_method(sorting_method)
     {}
     virtual ~SortedNumberOf();
     virtual bool        operator==(const Condition::ConditionBase& rhs) const;
@@ -323,7 +319,6 @@ struct FO_COMMON_API Condition::SortedNumberOf : public Condition::ConditionBase
     const ValueRef::ValueRefBase<int>*      Number() const { return m_number; }
     const ValueRef::ValueRefBase<double>*   SortKey() const { return m_sort_key; }
     SortingMethod                           GetSortingMethod() const { return m_sorting_method; }
-    const ConditionBase*                    GetCondition() const { return m_condition; }
     virtual void                            GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                                               Condition::ObjectSet& condition_non_targets) const;
 
@@ -333,7 +328,6 @@ private:
     ValueRef::ValueRefBase<int>*    m_number;
     ValueRef::ValueRefBase<double>* m_sort_key;
     SortingMethod                   m_sorting_method;
-    ConditionBase*                  m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2286,8 +2280,7 @@ void Condition::SortedNumberOf::serialize(Archive& ar, const unsigned int versio
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_number)
         & BOOST_SERIALIZATION_NVP(m_sort_key)
-        & BOOST_SERIALIZATION_NVP(m_sorting_method)
-        & BOOST_SERIALIZATION_NVP(m_condition);
+        & BOOST_SERIALIZATION_NVP(m_sorting_method);
 }
 
 template <class Archive>
