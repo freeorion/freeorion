@@ -65,7 +65,6 @@ BuildingType
             effects = [
                 SetTargetResearch value = Value + 5
                 SetTargetIndustry value = Value + Target.Population / 2
-                SetResearch value = Value - 3
             ]
             
         EffectsGroup
@@ -1700,7 +1699,7 @@ EXPERIMENTOR_SPAWN_BASE_TURN
 '''200'''
 
 EXPERIMENTOR_SPAWN_AI_AGGRESSION_CHECK
-'''(If condition = (GalaxyMaxAIAggression <= 5))'''
+'''(If condition = (GalaxyMaxAIAggression <= 2))'''
 
 // the following intermediate value is turn 200 for Manaical Max AI Aggression, and 50 turns later for each aggression tier less,
 // for AI aggressions above Typical, otherwise adding 1000 turns
