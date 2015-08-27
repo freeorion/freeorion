@@ -3158,7 +3158,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         }
 
         float radius = it->second;
-        if (radius < 5.0f)
+        if (radius < 5.0f || radius > 2048.0f)  // hide uselessly small and ridiculously large circles. the latter so super-testers don't have an empire-coloured haze over the whole map.
             continue;
 
         GG::Clr circle_colour = empire->Color();
