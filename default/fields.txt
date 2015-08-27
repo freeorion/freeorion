@@ -34,7 +34,16 @@ FieldType
             ])
 */
         EffectsGroup    // affect stealth / detection of objects in storm
-            scope = WithinDistance distance = Source.Size condition = Source
+            scope = And [
+            	Or [
+            		Building
+            		Ship
+            		Fleet
+            		Planet
+            		System
+            	]
+            	WithinDistance distance = Source.Size condition = Source
+            ]
             stackinggroup = "ION_STORM_STEALTH_DETECTION_REDUCTION"
             effects = [
                 SetStealth value = Value + 40
