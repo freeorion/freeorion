@@ -1188,7 +1188,7 @@ OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
 At game start automatically add all user-saved ship designs to the player-empire known designs.
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
-In the Deisgn Window, dynamically update the pedia detail page while the design name is being edited.
+In the Design Window, dynamically update the pedia detail page while the design name is being edited.
 
 OPTIONS_DB_CHAT_PANEL_HEIGHT
 Sets the height of the player chat panel, in pixels
@@ -3779,7 +3779,7 @@ The Defense meter of a planet represents the power of the ground to space weapon
 SHIELDS_TITLE
 Shields
 SHIELDS_TEXT
-'''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter.  The main difference between them is simply how they recharge-- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barier shields take more time to recharge.  The result of that seemingly small difference makes a very noticable difference in combat, however.
+'''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter.  The main difference between them is simply how they recharge -- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barrier shields take more time to recharge.  The result of that seemingly small difference makes a very noticeable difference in combat, however.
 
 Ship shields: Reduce the [[encyclopedia DAMAGE_TITLE]] sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength.
 
@@ -3957,7 +3957,7 @@ FLEET_MOVEMENT_ARTICLE_TEXT
 
 To order a selected fleet to move to another system, right-click on the destination. Fleets with a move order will be shown in left upper corner of the system. To cancel the order right-click on the system the fleet is in.
 
-Fleets can contain any number of ships and can be devided and merged with other fleets in the same system.
+Fleets can contain any number of ships and can be divided and merged with other fleets in the same system.
 
 Each fleet has the option to hide (Eye symbol) or be aggressive (Fist symbol).   
 
@@ -4775,7 +4775,7 @@ HEAD_ON_A_SPIKE_MESSAGE_LABEL
 Empire Capital Captured
 
 CUSTOM_SITREP_INTRODUCTION
-Welcome to the intial Situation Report Briefing.  Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
+Welcome to the initial Situation Report Briefing.  Pursuant to the %tech% Directive, all the busy empire servants endeavor to collect important information and send it back to %system%, where it is compiled into Situation Reports, such as this, providing notice of important events and other reminders selected by the empire leadership.
 
 # Translators: Important Note-- use underscores "_" not spaces in the translations for
 # CUSTOM_1 through CUSTOM_4 -- any spaces will prevent them from working properly
@@ -4852,7 +4852,7 @@ Prefer Terran planets.
 
 SP_HUMAN_DESC
 '''Description:
-Humans are bipedal, clannish and omniverous, with incredible endurance capabilities. Humans evolved tool use in order to better hunt their prey, and would pursue much larger animals for days if necessary in order to bring it down and then eat it. Modern humans still have a strong fight or flight response but any threat an individual cannot handle will be met by a larger group working together to defeat it with overwhelming force. Humans have been known to eat items they know to be indigestible, simply to prove they can do it, and use toxic substances as seasoning to flavour their food.
+Humans are bipedal, clannish and omnivorous, with incredible endurance capabilities. Humans evolved tool use in order to better hunt their prey, and would pursue much larger animals for days if necessary in order to bring it down and then eat it. Modern humans still have a strong fight or flight response but any threat an individual cannot handle will be met by a larger group working together to defeat it with overwhelming force. Humans have been known to eat items they know to be indigestible, simply to prove they can do it, and use toxic substances as seasoning to flavour their food.
 
 Society:
 Modern humans have formed geographic nation states with a strong basis in historic tribes. These states compete with each other, sometimes to the extent of going to war, while still cooperating on other issues. Differences over religion, resource use and even the correct way to cook a particular meal are still used to justify aggressive acts, and these wars act as spurs for further technological progress.
@@ -10719,8 +10719,8 @@ Invincible'''
 ### End of Capital Names Lists
 
 ### Beginning of AI Shipdesign Name Lists
-### Make sure that only one name is used per line. The names are roughly ordered by order of appearence in the game.
-### Adding more names here does not neccssarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
+### Make sure that only one name is used per line. The names are roughly ordered by order of appearance in the game.
+### Adding more names here does not necessarily mean they will be used by the AI as the switch to another name is determined by some algorithm.
 AI_SHIPDESIGN_NAME_INVALID
 Invalid Design
 
