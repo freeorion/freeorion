@@ -1706,6 +1706,7 @@ namespace {
             case OBJ_FLEET:
             case OBJ_PLANET:
             case OBJ_SYSTEM:
+            case OBJ_FIELD:
                 return candidate->ObjectType() == m_type;
                 break;
             case OBJ_POP_CENTER:
