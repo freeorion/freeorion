@@ -68,12 +68,12 @@ namespace {
             value_test_1
                 = '('
                 >> double_value_ref [ _a = _1 ]
-                >> (    lit('=')    [ _d = Condition::ValueTest::EQUAL ]
-                      | lit(">=")   [ _d = Condition::ValueTest::GREATER_THAN_OR_EQUAL ]
-                      | lit('>')    [ _d = Condition::ValueTest::GREATER_THAN ]
-                      | lit("<=")   [ _d = Condition::ValueTest::LESS_THAN_OR_EQUAL ]
-                      | lit('<')    [ _d = Condition::ValueTest::LESS_THAN ]
-                      | lit("!=")   [ _d = Condition::ValueTest::NOT_EQUAL ])
+                >> (    lit('=')    [ _d = Condition::EQUAL ]
+                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _d = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _d = Condition::LESS_THAN ]
+                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
                 >> double_value_ref
                 [ _val = new_<Condition::ValueTest>(_a, _d, _1) ]
                 >> ')'
@@ -82,19 +82,19 @@ namespace {
             value_test_2
                 = '('
                 >> double_value_ref [ _a = _1 ]
-                >> (    lit('=')    [ _d = Condition::ValueTest::EQUAL ]
-                      | lit(">=")   [ _d = Condition::ValueTest::GREATER_THAN_OR_EQUAL ]
-                      | lit('>')    [ _d = Condition::ValueTest::GREATER_THAN ]
-                      | lit("<=")   [ _d = Condition::ValueTest::LESS_THAN_OR_EQUAL ]
-                      | lit('<')    [ _d = Condition::ValueTest::LESS_THAN ]
-                      | lit("!=")   [ _d = Condition::ValueTest::NOT_EQUAL ])
+                >> (    lit('=')    [ _d = Condition::EQUAL ]
+                      | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _d = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _d = Condition::LESS_THAN ]
+                      | lit("!=")   [ _d = Condition::NOT_EQUAL ])
                 >> double_value_ref [ _b = _1 ]
-                >> (    lit('=')    [ _e = Condition::ValueTest::EQUAL ]
-                      | lit(">=")   [ _e = Condition::ValueTest::GREATER_THAN_OR_EQUAL ]
-                      | lit('>')    [ _e = Condition::ValueTest::GREATER_THAN ]
-                      | lit("<=")   [ _e = Condition::ValueTest::LESS_THAN_OR_EQUAL ]
-                      | lit('<')    [ _e = Condition::ValueTest::LESS_THAN ]
-                      | lit("!=")   [ _e = Condition::ValueTest::NOT_EQUAL ])
+                >> (    lit('=')    [ _e = Condition::EQUAL ]
+                      | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
+                      | lit('>')    [ _e = Condition::GREATER_THAN ]
+                      | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
+                      | lit('<')    [ _e = Condition::LESS_THAN ]
+                      | lit("!=")   [ _e = Condition::NOT_EQUAL ])
                 >  double_value_ref
                 [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
                 >  ')'
@@ -217,8 +217,8 @@ namespace {
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<std::string>*,
-                Condition::ValueTest::ComparisonType,
-                Condition::ValueTest::ComparisonType
+                Condition::ComparisonType,
+                Condition::ComparisonType
             >,
             parse::skipper_type
         > double_ref_double_ref_rule;

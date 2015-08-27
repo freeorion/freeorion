@@ -7719,29 +7719,29 @@ bool Condition::ValueTest::operator==(const Condition::ConditionBase& rhs) const
 }
 
 namespace {
-    bool Comparison(float val1, Condition::ValueTest::ComparisonType comp, float val2) {
+    bool Comparison(float val1, Condition::ComparisonType comp, float val2) {
         switch(comp) {
-            case Condition::ValueTest::EQUAL:                   return val1 == val2;
-            case Condition::ValueTest::GREATER_THAN:            return val1 > val2;
-            case Condition::ValueTest::GREATER_THAN_OR_EQUAL:   return val1 >= val2;
-            case Condition::ValueTest::LESS_THAN:               return val1 < val2;
-            case Condition::ValueTest::LESS_THAN_OR_EQUAL:      return val1 <= val2;
-            case Condition::ValueTest::NOT_EQUAL:               return val1 != val2;
-            case Condition::ValueTest::INVALID_COMPARISON:
-            default:                                            return false;
+            case Condition::EQUAL:                  return val1 == val2;
+            case Condition::GREATER_THAN:           return val1 > val2;
+            case Condition::GREATER_THAN_OR_EQUAL:  return val1 >= val2;
+            case Condition::LESS_THAN:              return val1 < val2;
+            case Condition::LESS_THAN_OR_EQUAL:     return val1 <= val2;
+            case Condition::NOT_EQUAL:              return val1 != val2;
+            case Condition::INVALID_COMPARISON:
+            default:                                return false;
         }
     }
 
-    std::string CompareTypeString(Condition::ValueTest::ComparisonType comp) {
+    std::string CompareTypeString(Condition::ComparisonType comp) {
         switch(comp) {
-        case Condition::ValueTest::EQUAL:                   return "=";
-        case Condition::ValueTest::GREATER_THAN:            return ">";
-        case Condition::ValueTest::GREATER_THAN_OR_EQUAL:   return ">=";
-        case Condition::ValueTest::LESS_THAN:               return "<";
-        case Condition::ValueTest::LESS_THAN_OR_EQUAL:      return "<=";
-        case Condition::ValueTest::NOT_EQUAL:               return "!=";
-        case Condition::ValueTest::INVALID_COMPARISON:
-        default:                                            return "";
+        case Condition::EQUAL:                  return "=";
+        case Condition::GREATER_THAN:           return ">";
+        case Condition::GREATER_THAN_OR_EQUAL:  return ">=";
+        case Condition::LESS_THAN:              return "<";
+        case Condition::LESS_THAN_OR_EQUAL:     return "<=";
+        case Condition::NOT_EQUAL:              return "!=";
+        case Condition::INVALID_COMPARISON:
+        default:                                return "";
         }
     }
 }

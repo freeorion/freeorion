@@ -41,6 +41,16 @@ namespace Condition {
         SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
     };
 
+    enum ComparisonType {
+        INVALID_COMPARISON = -1,
+        EQUAL,
+        GREATER_THAN,
+        GREATER_THAN_OR_EQUAL,
+        LESS_THAN,
+        LESS_THAN_OR_EQUAL,
+        NOT_EQUAL
+    };
+
     enum ContentType {
         CONTENT_BUILDING,
         CONTENT_SPECIES,
@@ -2041,16 +2051,6 @@ private:
 /** Matches all objects if the comparisons between values of ValueRefs meet the
   * specified comparison types. */
 struct FO_COMMON_API Condition::ValueTest : public Condition::ConditionBase {
-    enum ComparisonType {
-        INVALID_COMPARISON = -1,
-        EQUAL,
-        GREATER_THAN,
-        GREATER_THAN_OR_EQUAL,
-        LESS_THAN,
-        LESS_THAN_OR_EQUAL,
-        NOT_EQUAL
-    };
-
     ValueTest(ValueRef::ValueRefBase<double>* value_ref1,
               ComparisonType comp1,
               ValueRef::ValueRefBase<double>* value_ref2,

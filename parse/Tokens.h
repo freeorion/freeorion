@@ -478,7 +478,6 @@
     (Unresearchable)                            \
     (UserString)                                \
     (Value)                                     \
-    (ValueTest)                                 \
     (Victory)                                   \
     (VisibleToEmpire)                           \
     (White)                                     \

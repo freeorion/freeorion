@@ -52,91 +52,91 @@ namespace {
             using phoenix::push_back;
 
             string_ref_vec
-                =    '[' > +string_value_ref [ push_back(_val, _1) ] > ']'
-                |    string_value_ref [ push_back(_val, _1) ]
+                =   '[' > +string_value_ref [ push_back(_val, _1) ] > ']'
+                |   string_value_ref [ push_back(_val, _1) ]
                 ;
 
             homeworld
-                =    tok.Homeworld_
+                =   tok.Homeworld_
                 >   (
-                            parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ]
-                        |   eps [ _val = new_<Condition::Homeworld>() ]
+                        parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Homeworld>(_1) ]
+                    |   eps [ _val = new_<Condition::Homeworld>() ]
                     )
                 ;
 
             building
-                =    (
-                            tok.Building_
-                        >  -(parse::label(Name_token) > string_ref_vec [ _a = _1 ])
-                     )
-                     [ _val = new_<Condition::Building>(_a) ]
+                =   (
+                        tok.Building_
+                    >  -(parse::label(Name_token) > string_ref_vec [ _a = _1 ])
+                    )
+                    [ _val = new_<Condition::Building>(_a) ]
                 ;
 
             species
-                =    tok.Species_
-                >    (
-                            parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Species>(_1) ]
-                        |   eps [ _val = new_<Condition::Species>() ]
-                     )
+                =   tok.Species_
+                >   (
+                        parse::label(Name_token) > string_ref_vec [ _val = new_<Condition::Species>(_1) ]
+                    |   eps [ _val = new_<Condition::Species>() ]
+                    )
                 ;
 
             focus_type
-                =    tok.Focus_
-                >    (
-                            parse::label(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
-                        |   eps [ _val = new_<Condition::FocusType>(std::vector<ValueRef::ValueRefBase<std::string>*>()) ]
-                     )
+                =   tok.Focus_
+                >   (
+                        parse::label(Type_token) > string_ref_vec [ _val = new_<Condition::FocusType>(_1) ]
+                |   eps [ _val = new_<Condition::FocusType>(std::vector<ValueRef::ValueRefBase<std::string>*>()) ]
+                    )
                 ;
 
             planet_type
-                =    tok.Planet_
-                >>   parse::label(Type_token)
-                >    (
-                            '[' > +planet_type_value_ref [ push_back(_a, _1) ] > ']'
-                        |   planet_type_value_ref [ push_back(_a, _1) ]
-                     )
-                     [ _val = new_<Condition::PlanetType>(_a) ]
+                =   tok.Planet_
+                >>  parse::label(Type_token)
+                >   (
+                        '[' > +planet_type_value_ref [ push_back(_a, _1) ] > ']'
+                    |   planet_type_value_ref [ push_back(_a, _1) ]
+                    )
+                    [ _val = new_<Condition::PlanetType>(_a) ]
                 ;
 
             planet_size
-                =    tok.Planet_
-                >>   parse::label(Size_token)
-                >    (
-                            '[' > +planet_size_value_ref [ push_back(_a, _1) ] > ']'
-                        |   planet_size_value_ref [ push_back(_a, _1) ]
-                     )
-                     [ _val = new_<Condition::PlanetSize>(_a) ]
+                =   tok.Planet_
+                >>  parse::label(Size_token)
+                >   (
+                        '[' > +planet_size_value_ref [ push_back(_a, _1) ] > ']'
+                    |   planet_size_value_ref [ push_back(_a, _1) ]
+                    )
+                    [ _val = new_<Condition::PlanetSize>(_a) ]
                 ;
 
             planet_environment
                 =   (tok.Planet_
-                >>   parse::label(Environment_token)
-                >    (
-                            '[' > +planet_environment_value_ref [ push_back(_a, _1) ] > ']'
-                        |   planet_environment_value_ref [ push_back(_a, _1) ]
-                     )
+                >>  parse::label(Environment_token)
+                >   (
+                        '[' > +planet_environment_value_ref [ push_back(_a, _1) ] > ']'
+                    |   planet_environment_value_ref [ push_back(_a, _1) ]
+                    )
                 >  -(parse::label(Species_token)        >  string_value_ref [_b = _1]))
-                     [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
+                    [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
                 ;
 
             object_type
-                =    parse::enum_parser<UniverseObjectType>() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
-                |    (
-                            tok.ObjectType_
-                        >  parse::label(Type_token) > universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
-                     )
+                =   parse::enum_parser<UniverseObjectType>() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
+                |   (
+                        tok.ObjectType_
+                    >   parse::label(Type_token) > universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
+                    )
                 ;
 
 
             start
-                %=   homeworld
-                |    building
-                |    species
-                |    focus_type
-                |    planet_type
-                |    planet_size
-                |    planet_environment
-                |    object_type
+                %=  homeworld
+                |   building
+                |   species
+                |   focus_type
+                |   planet_type
+                |   planet_size
+                |   planet_environment
+                |   object_type
                 ;
 
             string_ref_vec.name("sequence of string expressions");
