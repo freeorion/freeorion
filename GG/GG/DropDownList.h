@@ -151,7 +151,6 @@ public:
     void            Select(std::size_t n);          ///< selects row-item \a it in the list
 
     void            SetInteriorColor(Clr c);        ///< sets the color painted into the client area of the control
-    void            SetDropHeight(Y h);             ///< sets the height of the drop-down list
 
     /** sets the style flags for the list to \a s (invalidates currently
         selected item). \see GG::ListBoxStyle */

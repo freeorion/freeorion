@@ -332,10 +332,12 @@ void DropDownList::SizeMove(const Pt& ul, const Pt& lr)
     GG::Pt sz = Size();
     Wnd::SizeMove(ul, lr);
     Pt drop_down_size(Width(), Height());
+
+    // reset size of displayed drop list based on number of shown rows set.
+    // assumes that all rows have the same height.
+    // adds some magic padding for now to prevent the scroll bars showing up.
     if (LB()->NumRows() > 0)
-        // lets assume that all rows have the same height. Also add some
-        // magic padding for now to prevent the scroll bars showing up.
-        drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 5;
+        drop_down_size.y = LB()->GetRow(0).Height() * std::min<int>(m_num_shown_elements, LB()->NumRows()) + 4;
     LB()->SizeMove(Pt(X0, Height()), Pt(X0, Height()) + drop_down_size);
 
     if (sz != Size())
@@ -405,9 +407,6 @@ void DropDownList::Select(std::size_t n)
 
 void DropDownList::SetInteriorColor(Clr c)
 { LB()->SetInteriorColor(c); }
-
-void DropDownList::SetDropHeight(Y h)
-{ LB()->Resize(Pt(Width(), h)); }
 
 void DropDownList::SetStyle(Flags<ListBoxStyle> s)
 {

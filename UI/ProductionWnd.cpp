@@ -98,7 +98,7 @@ namespace {
         /** \name Structors */
         QuantitySelector(const ProductionQueue::Element &build, GG::X xoffset, GG::Y yoffset,
                          GG::Y h, bool inProgress, GG::X nwidth, bool amBlockType) :
-            CUIDropDownList(6),
+            CUIDropDownList(12),
             quantity(build.remaining),
             prevQuant(build.remaining),
             blocksize(build.blocksize),
@@ -109,34 +109,25 @@ namespace {
         {
             MoveTo(GG::Pt(xoffset, yoffset));
             Resize(GG::Pt(nwidth, h - GG::Y(2)));
-            GG::X width = GG::X0;
+
             DisableDropArrow();
             SetStyle(GG::LIST_LEFT | GG::LIST_NOSORT);
-            SetColor(
-                inProgress
-                    ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
-                    : ClientUI::ResearchableTechTextAndBorderColor()
-            );
-            SetInteriorColor(
-                inProgress
-                    ? GG::LightColor(ClientUI::ResearchableTechFillColor())
-                    : ClientUI::ResearchableTechFillColor()
-            );
+            SetColor(inProgress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+                                : ClientUI::ResearchableTechTextAndBorderColor());
+            SetInteriorColor(inProgress ? GG::LightColor(ClientUI::ResearchableTechFillColor())
+                                        : ClientUI::ResearchableTechFillColor());
             SetNumCols(1);
 
             int quantInts[] = {1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 99};
             std::set<int> myQuantSet(quantInts, quantInts + 11);
+
             if (amBlockType)
                 myQuantSet.insert(blocksize); //as currently implemented this one not actually necessary since blocksize has no other way to change
             else
                 myQuantSet.insert(quantity);
-            GG::Y height;
 
-            for (std::set<int>::iterator it=myQuantSet.begin(); it != myQuantSet.end(); it++ ) {
+            for (std::set<int>::iterator it = myQuantSet.begin(); it != myQuantSet.end(); it++) {
                 QuantRow* row =  new QuantRow(*it, build.item.design_id, nwidth, h, inProgress, amBlockType);
-                if (row->width)
-                    width = row->width;
-
                 GG::DropDownList::iterator latest_it = Insert(row);
 
                 if (amBlockType) {
@@ -146,10 +137,7 @@ namespace {
                     if (build.remaining == *it)
                         Select(latest_it);
                 }
-                height = row->height;
             }
-            // set dropheight.  shrink to fit a small number, but cap at a reasonable max
-            SetDropHeight(GG::Y(std::max(8, int(myQuantSet.size()))*height + 4));
 
             GG::Connect(this->SelChangedSignal, &QuantitySelector::SelectionChanged, this);
         }

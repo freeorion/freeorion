@@ -1655,10 +1655,6 @@ void SidePanel::PlanetPanel::Refresh() {
         }
         m_focus_drop->Insert(rows, false);
 
-        // set drop height
-        int drop_items = std::min(5, static_cast<int>(available_foci.size()));
-        m_focus_drop->SetDropHeight(drop_items * MeterIconSize().y*3/2 + GG::Y(5));
-
         // set browse text and select appropriate focus in droplist
         std::string focus_text;
         if (!planet->Focus().empty()) {
@@ -2849,13 +2845,6 @@ void SidePanel::RefreshImpl() {
                 }
             }
         }
-
-        // set dropheight.  shrink to fit a small number, but cap at a reasonable max
-        const GG::Y TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
-        const GG::Y MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
-        const int TOTAL_LISTBOX_MARGIN = 4;
-        GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * int(system_map.size()), MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-        m_system_name->SetDropHeight(drop_height);
     }
 
     // (re)create top right star graphic

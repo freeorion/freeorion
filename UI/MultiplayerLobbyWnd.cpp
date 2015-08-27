@@ -113,7 +113,6 @@ namespace {
                     // For AI players on host, have "AI" shown on droplist, with "Drop" shown as alternate selection to remove the AI
                     Insert(new TypeRow(Networking::CLIENT_TYPE_AI_PLAYER));      // "AI" display
                     Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
-                    SetDropHeight(h * 3);
                     Select(0);
                 }
             } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
@@ -130,7 +129,7 @@ namespace {
                     Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
                     Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_MODERATOR));// "Moderator" display / option
                     Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
-                    SetDropHeight(h * 4);
+
                     if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
                         Select(0);
                     else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
@@ -149,7 +148,7 @@ namespace {
                     // For empty row on host, have "None" and "Add AI" options on droplist
                     Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE));        // "None" display
                     Insert(new TypeRow(Networking::CLIENT_TYPE_AI_PLAYER, true));// "Add AI" option
-                    SetDropHeight(h * 3);
+
                     Select(0);
                 }
             }
