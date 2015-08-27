@@ -319,6 +319,7 @@ namespace ValueRef {
         case OBJ_POP_CENTER:    return "PopulationCenter";
         case OBJ_PROD_CENTER:   return "ProductionCenter";
         case OBJ_SYSTEM:        return "System";
+        case OBJ_FIELD:         return "Field";
         default:                return "?";
         }
     }
