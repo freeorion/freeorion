@@ -4744,6 +4744,16 @@ La flotte %fleet% a atteint le système %system% via Stargate.
 EFFECT_STARGATE_LABEL
 Utilisation Stargate
 
+EFFECT_PLANET_DRIVE
+Dans %system% : la planète %planet% est arrivée à destination grâce à son [[encyclopedia BLD_PLANET_DRIVE]].
+EFFECT_PLANET_DRIVE_LABEL
+Réussite Navigation Planétaire
+
+SITREP_PLANET_DRIVE_FAILURE
+Dans %system% : en raison de l'absence d'un [[encyclopedia SPY_LIGHTHOUSE]] à proximité, le [[encyclopedia BLD_PLANET_DRIVE]] de la planète %planet% a été l'objet d'un disfonctionnement fatal lors de la phase d'arrivée, causant la destruction de la planète entière!
+SITREP_PLANET_DRIVE_FAILURE_LABEL
+Échec Navigation Planétaire
+
 EFFECT_PSY_DOM
 L'astronef '%ship%' de %empire% est passé sous contrôle psychique!
 EFFECT_PSY_DOM_LABEL
@@ -7957,7 +7967,7 @@ SPY_LIGHTHOUSE_DESC
 En ayant recours à un système complexe d'impulsions électromagnétiques et de jets de particules permettant de déceler l'emplacement d'objets dans un système, il devient alors possible de détecter des objets extrêmement furtifs, et ce même à l'aide d'un équipement classique de détection.
 
 DEF_DEFENSE_NET_1
-Réseau Défense Planétaire 1
+Dispositif Défense Planétaire 1
 
 DEF_DEFENSE_NET_1_DESC
 '''Augmente la [[encyclopedia DEFENSE_TITLE]] max de 5 sur toutes les planètes.
@@ -7965,13 +7975,13 @@ DEF_DEFENSE_NET_1_DESC
 Avec l'exploration galactique vient la possibilité de rencontrer de nouvelles races - mais aussi de nouveaux ennemis. En disposant plusieurs bases de défense armées en orbite autour d'une planète, il est possible de conférer à cette planète une capacité défensive importante sans qu'il soit nécessaire de de recourir à des astronefs.'''
 
 DEF_DEFENSE_NET_2
-Réseau Défense Planétaire 2
+Dispositif Défense Planétaire 2
 
 DEF_DEFENSE_NET_2_DESC
 Augmente la [[encyclopedia DEFENSE_TITLE]] max de 15 sur toutes les planètes, et s'ajoute au bonus du [[tech DEF_DEFENSE_NET_1]].
 
 DEF_DEFENSE_NET_3
-Réseau Défense Planétaire 3
+Dispositif Défense Planétaire 3
 
 DEF_DEFENSE_NET_3_DESC
 Augmente la [[encyclopedia DEFENSE_TITLE]] max de 25 sur toutes les planètes, et s'ajoute aux bonus des précédentes technologies de réseau de défense planétaire.
@@ -8051,28 +8061,28 @@ DEF_ROOT_DEFENSE_DESC
 Le concept d'Auto-défense est à la racine de maints développements technologiques.'''
 
 DEF_GARRISON_1
-Garnison 1 (Bataillon Planétaire)
+Réseau Bunker Planétaire
 
 DEF_GARRISON_1_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 10 sur toutes les planètes de l'empire.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 10 sur toutes les planètes de l'empire, indépendamment des caractéristiques de l'espèce.
 
 DEF_GARRISON_2
-Garnison 2 (Régiment Planétaire)
+Milice Planétaire Défensive
 
 DEF_GARRISON_2_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 1 par tour.
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 1 par tour.
 
 DEF_GARRISON_3
-Garnison 3 (Brigade Planétaire)
+Réseau Fortication Planétaire
 
 DEF_GARRISON_3_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 16 sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 2 par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 16 sur toutes les planètes de l'empire (indépendamment des caractéristiques de l'espèce), et régénère l'Infanterie d'un bonus de 2 par tour cumulable avec le bonus de la [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
-Garnison 4 (Armée Planétaire)
+Armée Planétaire Défensive
 
 DEF_GARRISON_4_DESC
-Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire, et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus de la [[DEF_GARRISON_3]] et [[DEF_GARRISON_2]].
+Augmente l'[[encyclopedia TROOP_TITLE]] max de 0.4 par Population sur toutes les planètes de l'empire (variable selon les caractéristiques défensives de l'espèce), et régénère l'Infanterie d'un bonus de 3 par tour cumulable avec les bonus de la [[DEF_GARRISON_3]] et [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Camouflage Planétaire
@@ -8915,7 +8925,7 @@ BLD_PLANET_DRIVE
 Navigateur Planétaire
 
 BLD_PLANET_DRIVE_DESC
-'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais pas sur une ceinture d'astéroïdes.
+'''Permet à une planète de se déplacer entre les systèmes stellaires. Un [[buildingtype BLD_LIGHTHOUSE]] doit se trouver à une distance de 200 uu ou moins du système visé, afin que la planète y arrive en toute sécurité. Dans le cas contraire, la planète aura 50% de chance de se perdre ou d'être détruite durant son voyage. S'agissant dans tous les cas d'un périple dangereux, même si la planète arrive à bon port, seule la moitié de sa population survivra. Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais pas dans une ceinture d'astéroïdes.
 
 En raison d'un manque de précision du dispostif de navigation, une seconde structure est requise et doit se trouver à l'arrivée de la Voie spatiale empruntée. Cette structure s'auto-détruira une fois utilisée, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
 
