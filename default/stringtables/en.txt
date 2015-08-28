@@ -8072,28 +8072,28 @@ DEF_ROOT_DEFENSE_DESC
 The concept of 'self defense' is at the root of many avenues of technological advance.'''
 
 DEF_GARRISON_1
-Planetary Garrison 1
+Planetary Bunker Complex
 
 DEF_GARRISON_1_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 10.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 10, unmodified by species traits.
 
 DEF_GARRISON_2
-Planetary Garrison 2
+Defensive Militia Training
 
 DEF_GARRISON_2_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population, and causes troops to regenerate by an additional one per turn.
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population (modified by species defensive trait), and causes troops to regenerate by an additional one per turn.
 
 DEF_GARRISON_3
-Planetary Garrison 3
+Planetary Fortification Network
 
 DEF_GARRISON_3_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 16, and causes troops to regenerate by an additional two per turn in addition to that from [[DEF_GARRISON_2]].
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 16 (unmodified by species traits) and causes troops to regenerate by an additional two per turn in addition to that from [[DEF_GARRISON_2]].
 
 DEF_GARRISON_4
-Planetary Garrison 4
+Planetary Guard Brigades
 
 DEF_GARRISON_4_DESC
-Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population, and causes troops to regenerate by an additional three per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
+Increases max [[encyclopedia TROOP_TITLE]] on all planets by 0.4 per population (modified by species defensive trait), and causes troops to regenerate by an additional three per turn in addition to that from [[DEF_GARRISON_3]] and [[DEF_GARRISON_2]].
 
 DEF_PLANET_CLOAK
 Planetary Cloaking Device
