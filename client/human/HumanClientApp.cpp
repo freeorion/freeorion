@@ -42,6 +42,7 @@
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <sstream>
 
@@ -1127,3 +1128,44 @@ HumanClientApp* HumanClientApp::GetApp()
 
 void HumanClientApp::Initialize()
 {}
+
+void HumanClientApp::OpenURL(const std::string& url) {
+    // make sure it's a legit url
+    std::string trimmed_url = url;
+    boost::algorithm::trim(trimmed_url);
+    // shouldn't be excessively long
+    if (trimmed_url.size() > 500) { // arbitrary limit
+        ErrorLogger() << "HumanClientApp::OpenURL given bad-looking url (too long): " << trimmed_url;
+        return;
+    }
+    // should start with http:// or https://
+    if (trimmed_url.size() < 8) {
+        ErrorLogger() << "HumanClientApp::OpenURL given bad-looking url (too short): " << trimmed_url;
+        return;
+    }
+    if (trimmed_url.find_first_of("http://") != 0 &&
+        trimmed_url.find_first_of("https://") != 0)
+    {
+        ErrorLogger() << "HumanClientApp::OpenURL given url that doesn't start with http:// :" << trimmed_url;
+        return;
+    }
+    // should not have newlines...
+    if (trimmed_url.find_first_of("\n") != std::string::npos) {
+        ErrorLogger() << "HumanClientApp::OpenURL given url that contains a newline. rejecting.";
+        return;
+    }
+
+    // append url to OS-specific open command
+    std::string command;
+#ifdef _WIN32
+    command += "start ";
+#elif __APPLE__
+    command += "open ";
+#else
+    command += "xdg-open ";
+#endif
+    command += url;
+
+    // execute open command
+    system(command.c_str());
+}

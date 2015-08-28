@@ -70,6 +70,8 @@ public:
     virtual void        StartTurn();
 
     void                HandleSaveGameDataRequest();
+
+    void                OpenURL(const std::string& url);
     //@}
 
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;
