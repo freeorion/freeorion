@@ -4756,6 +4756,16 @@ At %system%: the fleet %fleet% has arrived by Stargate.
 EFFECT_STARGATE_LABEL
 Stargate Use
 
+EFFECT_PLANET_DRIVE
+At %system%: the planet %planet% has arrived by use of its [[encyclopedia BLD_PLANET_DRIVE]].
+EFFECT_PLANET_DRIVE_LABEL
+Planetary Starlane Drive Engaged
+
+SITREP_PLANET_DRIVE_FAILURE
+At %system%: Due to a lack of guidance by a nearby [[encyclopedia SPY_LIGHTHOUSE]], the [[encyclopedia BLD_PLANET_DRIVE]] of %planet% suffered catastrophic failure upon arrival, destroying the entire planet!
+SITREP_PLANET_DRIVE_FAILURE_LABEL
+Planetary Starlane Drive Failure
+
 EFFECT_PSY_DOM
 The %empire% ship %ship% has been psychically controlled!
 EFFECT_PSY_DOM_LABEL
