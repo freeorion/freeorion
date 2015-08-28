@@ -1,5 +1,22 @@
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
+# Note re common dictionary lookup structure, "PlanetSize-Dependent-Lookup":
+# Many dictionaries herein (a prime example being the building_supply dictionary) have a primary key (such as
+# special_name, or building_type_name), and then provide a sub-dictionary with which to look up the resultant value
+# which may in some cases depend upon PlanetSize; if not then the key -1 stands for any planet size.
+# So, if the value to be provided by the sub-dictionary does not depend on PlanetSize, then this sub-dictionary
+# should be of the form
+#    {-1: return_val}
+# if the return value *is* dependent on PlanetSize, then the sub-dictionary should be of the form:
+#    {fo.planetSize.tiny: return_val_1,
+#     fo.planetSize.small: return_val_2,
+#     fo.planetSize.medium: return_val_3,
+#     fo.planetSize.large: return_val_4,
+#     fo.planetSize.huge: return_val_5,
+#     fo.planetSize.gasGiant: return_val_6,
+#     }
+# Please refer to the building_supply dictionary below for an example that displays both of these uses.
+
 #
 #  Miscellaneous
 #
@@ -41,6 +58,25 @@ SHIP_UPKEEP = 0.01
 
 OUTPOSTING_TECH = "SHP_GAL_EXPLO"
 
+# Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
+# Regardless of whether the sub-dictionary here has PlanetSize keys, the final
+# value will be applied as a *fixed-size mod* to the max population
+POP_FIXED_MOD_SPECIALS = {'DIM_RIFT_MASTER_SPECIAL': {-1: -4},
+                          }
+
+# Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
+# The return value from the respective sub-dictionary will be applied as a
+# population modifier proportional to PlanetSize, i.e.,
+#       max_pop += return_val * PlanetSize
+# So, most commonly the lookup key for the sub-dictionary here will be
+# PlanetSize independent (i.e., -1), although it is possible to use
+# PlanetSize keys here for a more complex interaction.
+# Regardless of whether the sub-dictionary here has PlanetSize keys, the final
+# value will be applied as a fixed-size mod to the max population
+POP_PROPORTIONAL_MOD_SPECIALS = {'TIDAL_LOCK_SPECIAL': {-1: -1},
+                                 }
+
+
 #
 #  Supply details
 #
@@ -52,8 +88,11 @@ supply_by_size = {fo.planetSize.tiny: 2,
                   fo.planetSize.gasGiant: -1
                   }
 
-SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL': {-1: 1}}
+SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL': {-1: 1},
+                       'ECCENTRIC_ORBIT_SPECIAL': {-1: -2},
+                       }
 
+# Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
 # building supply bonuses are keyed by planet size; key -1 stands for any planet size
 building_supply = {"BLD_IMPERIAL_PALACE": {-1: 2},
                    "BLD_MEGALITH": {-1: 2},
