@@ -1112,7 +1112,7 @@ BuildingType
         Not Contains Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         OwnedBy empire = Source.Owner
         Star type = Neutron
-        ]
+    ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     icon = "icons/building/neutronium-forge.png"
 
@@ -1125,6 +1125,10 @@ BuildingType
     location = And [
         Planet
         Not Contains Building name = "BLD_NEUTRONIUM_FORGE"
+        Contains And [
+            Building name = "BLD_SHIPYARD_BASE"
+            OwnedBy empire = Source.Owner
+        ]
         OwnedBy empire = Source.Owner
         TargetPopulation low = 1
     ]
