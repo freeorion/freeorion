@@ -1134,11 +1134,22 @@ Count condition = And [
             ]
 '''
 
+// Beginning of Stacking macros
+/* For the AI and general uniformity, shields, detectors and cloaks are assigned a capacity.
+However, to prevent stacking, for each group X there is a X_STACKING macro which basically 
+first removes all effects of the used parts (by subtracting the summed capacity of all used parts)
+and then only applies the effect of the strongest part. For this, there exist two more macros:
+The SUM_X_CAPACITY macro returns the summed capacities of all used parts (including multiple copies of the same part type).
+The BEST_X_EFFECT macro checks which of the relevant parts are used in the design and returns the capacity of only the strongest part.
+
+If new parts in these categories are introduced, make sure to add the X_STACKING macro to its effects and the part is added to the 
+SUM_X_CAPACITY and BEST_X_EFFECT macros.
+*/
 
 BEST_DETECTOR_EFFECT
 '''
 max(max(max(
-    min(1, PartsInShipDesign Name = "DT_DETECTOR_1" design = Source.DesignID)
+    min(1, PartsInShipDesign Name = "DT_DETECTOR_1" design = Source.DesignID) // 0 if no "DT_DETECTOR_1" in the design else 1
     * PartCapacity name = "DT_DETECTOR_1",
     min(1, PartsInShipDesign Name = "DT_DETECTOR_2" design = Source.DesignID)
     * PartCapacity name = "DT_DETECTOR_2"),
@@ -1239,6 +1250,7 @@ EffectsGroup    // Make sure to add new shield parts to the macros SUM_SHIELD_CA
     effects = SetMaxShield value = Value - [[SUM_SHIELD_CAPACITY]] + [[BEST_SHIELD_EFFECT]]
 '''
 
+// End of Stacking macros
 
 ROBOTIC_SHIELD_EFFECT
 '''
