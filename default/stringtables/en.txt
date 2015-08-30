@@ -4679,6 +4679,11 @@ EFFECT_TERRAFORM
 EFFECT_TERRAFORM_LABEL
 Terraform
 
+EFFECT_STARLANE_BORE
+At %planet%: a new starlane has opened linking to a nearby system.
+EFFECT_TERRAFORM_LABEL
+Starlane Bore
+
 EFFECT_BLACKHOLE
 %system% has been collapsed to create a black hole.
 EFFECT_BLACKHOLE_LABEL

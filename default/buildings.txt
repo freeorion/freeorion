@@ -1659,12 +1659,19 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = Object id = Source.SystemID
-            effects = AddStarlanes endpoint = MinimumNumberOf
+            effects = [
+                AddStarlanes endpoint = MinimumNumberOf
                 number = 1
                 sortkey = DirectDistanceBetween object = Source.ID object = LocalCandidate.ID
                 condition =  And [
                     System
                     CanAddStarlanesTo condition = Source
+                    ]
+                GenerateSitRepMessage
+                    message = "EFFECT_STARLANE_BORE"
+                    icon = "icons/tech/n-dimensional_structures.png"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
                 ]
         EffectsGroup
             scope = Source
