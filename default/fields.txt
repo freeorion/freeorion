@@ -156,7 +156,10 @@ FieldType
         EffectsGroup    // dissipate when small
             scope = Source
             activation = Size high = 5
-            effects = Destroy
+            effects = [
+                Destroy
+                CreateField type = "FLD_ACCRETION_DISC" size = 20
+            ]
     ]
     graphic = "nebulae/nebula12.png"
     
@@ -208,7 +211,10 @@ FieldType
         EffectsGroup    // dissipate when small
             scope = Source
             activation = Size high = 5
-            effects = Destroy
+            effects = [
+                Destroy
+                CreateField type = "FLD_ACCRETION_DISC" size = 20
+            ]
     ]
     graphic = "nebulae/nebula15.png"
 
@@ -262,3 +268,17 @@ FieldType
             effects = Destroy
     ]
     graphic = "nebulae/nebula9.png"
+
+FieldType
+    name = "FLD_ACCRETION_DISC"
+    description = "FLD_ACCRETION_DISC_DESC"
+    stealth = 0.01
+    effectsgroups = [
+        EffectsGroup    // reduce supply
+            scope = And [
+                Planet
+                ContainedBy Contains Source
+            ]
+            effects = SetMaxSupply value = Value - 1
+    ]
+    graphic = "nebulae/nebula20.png"

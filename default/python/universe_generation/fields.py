@@ -24,3 +24,21 @@ def generate_fields(systems):
             # create field failed, report an error
             report_error("Python generate_fields: create field %s in system %d failed" % (field_type, system))
     print "...fields created in %d systems out of %d empty no star systems" % (len(accepted), len(candidates))
+
+    """
+    Generate accretion discs in black hole systems
+    """
+    # filter out all black hole systems
+    candidates = [s for s in systems if (fo.sys_get_star_type(s) == fo.starType.blackHole)]
+    # make sure we have at least one empty no star system, otherwise return without creating any fields
+    if not candidates:
+        print "...no black hole systems found, no accretion disks created"
+        return
+    # pick 80-90% of all black hole systems to create accretion disks in them, but at least one
+    accepted = sample(candidates, max(int(len(candidates) * uniform(0.8, 0.9)), 1))
+    for system in accepted:
+        # create the field
+        if fo.create_field_in_system("FLD_ACCRETION_DISC", uniform(18, 22), system) == fo.invalid_object():
+            # create field failed, report an error
+            report_error("Python generate_fields: create field %s in system %d failed" % ("FLD_ACCRETION_DISC", system))
+    print "...fields created in %d systems out of %d black hole systems" % (len(accepted), len(candidates))
