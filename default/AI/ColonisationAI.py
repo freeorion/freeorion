@@ -1276,12 +1276,17 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         detail.append(
             "baseMaxPop %d + size*psm %d * %d * %.2f = %d" % (pop_const_mod, planet_size, pop_size_mod, pop_tag_mod, max_pop_size))
 
-        if "DIM_RIFT_MASTER_SPECIAL" in planet.specials:
-            max_pop_size -= 4
-            detail.append("DIM_RIFT_MASTER_SPECIAL(maxPop-4)")
-        if "ECCENTRIC_ORBIT_SPECIAL" in planet.specials:
-            max_pop_size -= 3
-            detail.append("ECCENTRIC_ORBIT_SPECIAL(maxPop-3)")
+        for _special in set(planet.specials).intersection(AIDependencies.POP_FIXED_MOD_SPECIALS):
+            this_mod = sum(AIDependencies.POP_FIXED_MOD_SPECIALS[_special].get(int(psize), 0)
+                           for psize in [-1, planet.size])
+            detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
+            max_pop_size += this_mod
+
+        for _special in set(planet.specials).intersection(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS):
+            this_mod = planet.size * sum(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special].get(int(psize), 0)
+                                         for psize in [-1, planet.size])
+            detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
+            max_pop_size += this_mod
 
         detail.append("maxPop %.1f" % max_pop_size)
 
@@ -1310,6 +1315,8 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if tech_is_complete("PRO_SENTIENT_AUTOMATION"):
             fixed_ind += discount_multiplier * 5
         if AIFocusType.FOCUS_INDUSTRY in species.foci:
+            if 'TIDAL_LOCK_SPECIAL' in planet.specials:
+                ind_mult += 1
             max_ind_factor += base_pop_ind * mining_bonus
             max_ind_factor += base_pop_ind * ind_mult
         cur_pop = 1.0  # assume an initial colonization value
