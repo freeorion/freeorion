@@ -565,7 +565,7 @@ def get_colony_fleets():
     queued_colony_bases = []
     for queue_index in range(0, len(production_queue)):
         element = production_queue[queue_index]
-        if element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP:
+        if element.buildType == EnumsAI.AIEmpireProductionTypes.BT_SHIP and element.turnsLeft != -1:
             if foAI.foAIstate.get_ship_role(element.designID) in [EnumsAI.AIShipRoleType.SHIP_ROLE_BASE_OUTPOST]:
                 build_planet = universe.getPlanet(element.locationID)
                 queued_outpost_bases.append(build_planet.systemID)
@@ -801,7 +801,7 @@ def get_base_outpost_defense_value():
     # for now, just combing these for rough composite factor
     # since outposts have no infrastructure (until late game at least), many of these have less weight
     # than for colonies
-    result = 6 * (0.1 + net_count) * (1 + regen_count/3.0) * ( 1+ garrison_count/6.0) * (1 + shield_count/3.0)
+    result = 3 * (0.1 + net_count) * (1 + regen_count/3.0) * ( 1+ garrison_count/6.0) * (1 + shield_count/3.0)
 
     return result
 
@@ -821,7 +821,7 @@ def get_base_colony_defense_value():
     # not counting mine techs because their effects are per-system, not per-planet
 
     # for now, just combing these for rough composite factor
-    result = 6 * (0.1 + net_count) * (1 + regen_count/2.0) * ( 1+ garrison_count/4.0) * (1 + shield_count/2.0)
+    result = 4 * (0.1 + net_count) * (1 + regen_count/2.0) * ( 1+ garrison_count/4.0) * (1 + shield_count/2.0)
 
     return result
 
@@ -1150,9 +1150,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 detail.extend(gg_detail)
             else:
                 detail.append("Won't GGG")
-        if thrt_factor < 1.0:
-            retval *= thrt_factor
-            detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
         if existing_presence:
             detail.append("preexisting system colony")
             retval = (retval + existing_presence * get_defense_value(spec_name)) * 1.5
@@ -1166,6 +1163,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             supply_val += 25 * (planet_supply - sys_supply)
         detail.append("sys_supply: %d, planet_supply: %d, supply_val: %.0f" % (sys_supply, planet_supply, supply_val))
         retval += supply_val
+        if thrt_factor < 1.0:
+            retval *= thrt_factor
+            detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
         return int(retval)
     else:  # colonization mission
         if not species:
@@ -1353,12 +1353,12 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         retval += max(ind_val + asteroid_bonus + gas_giant_bonus, research_bonus,
                       growth_val) + fixed_ind + fixed_res + supply_val
         retval *= priority_scaling
-        if thrt_factor < 1.0:
-            retval *= thrt_factor
-            detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
         if existing_presence:
             detail.append("preexisting system colony")
             retval = (retval + existing_presence * get_defense_value(spec_name)) * 2
+        if thrt_factor < 1.0:
+            retval *= thrt_factor
+            detail.append("threat reducing value by %3d %%" % (100 * (1 - thrt_factor)))
     return retval
 
 
