@@ -465,12 +465,12 @@ Hull
     stealth = 5
     structure = 30
     slots = [
-        Slot type = External position = (0.50, 0.15)
-        Slot type = External position = (0.20, 0.50)
-        Slot type = External position = (0.80, 0.50)
-        Slot type = External position = (0.50, 0.85)
+        Slot type = External position = (0.47, 0.20)
+        Slot type = External position = (0.25, 0.50)
+        Slot type = External position = (0.70, 0.50)
+        Slot type = External position = (0.47, 0.80)
         Slot type = Internal position = (0.40, 0.50)
-        Slot type = Internal position = (0.60, 0.50)
+        Slot type = Internal position = (0.55, 0.50)
     ]
     buildCost = 20.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
@@ -513,8 +513,8 @@ Hull
     stealth = 5
     structure = 15
     slots = [
-        Slot type = External position = (0.75, 0.50)
-        Slot type = Internal position = (0.50, 0.50)
+        Slot type = External position = (0.60, 0.50)
+        Slot type = Internal position = (0.40, 0.50)
     ]
     buildCost = 6.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
@@ -556,16 +556,16 @@ Hull
     stealth = 5
     structure = 50
     slots = [
-        Slot type = External position = (0.20, 0.55)
-        Slot type = External position = (0.35, 0.20)
-        Slot type = External position = (0.50, 0.20)
-        Slot type = External position = (0.65, 0.20)
-        Slot type = External position = (0.80, 0.40)
-        Slot type = External position = (0.80, 0.70)
-        Slot type = Internal position = (0.35, 0.55)
-        Slot type = Internal position = (0.50, 0.55)
-        Slot type = Internal position = (0.65, 0.55)
-    ]
+        Slot type = External position = (0.30, 0.25)
+        Slot type = External position = (0.45, 0.25)
+        Slot type = External position = (0.60, 0.25)
+        Slot type = External position = (0.75, 0.50)
+        Slot type = Internal position = (0.30, 0.50)
+        Slot type = Internal position = (0.45, 0.50)
+        Slot type = Internal position = (0.60, 0.50)
+        Slot type = External position = (0.52, 0.75)
+        Slot type = External position = (0.68, 0.75)
+]
     buildCost = 40.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
     location = And [
