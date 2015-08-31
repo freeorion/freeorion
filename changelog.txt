@@ -31,6 +31,7 @@ Graphics / GUI:
 ~ Adjusted default window positioning
 ~~ Made some window positions be saved between sessions
 ~ Various new/updated icons, including building and sitrep icons
+~ New graphics for several hulls of the asteroid and organic line
 ~ Increased default sitrep icon size to 24
 ~ Added an option to save games in an XML text format, which should be readable on any OS, although is a larger file than the binary serialization (default)
 ~ Adjusted the size of the planet focus droplist
@@ -100,6 +101,9 @@ Content:
 ~ Improved species traits listing in game setup window
 ~ Adjusted/fixed ion storm effects and description
 ~ Reworked Spatial Distortion Generator to push ships back along their route by a fixed amount, and generate sitreps explaining what has happened
+~ Renamed Garrison techs and adjusted their description accordingly
+~ Added sitreps to Planetary Starlane Drive (upon arrival/destruction of the planet)
+~ Made Neutronium Forge only be buildable at locations with a Basic Shipyard (like all other shipyard upgrade buildings)
 
 Balance:
 ~ Tweaked galaxy special distributions to lessen frequency of multiple specials on one object
