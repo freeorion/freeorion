@@ -349,9 +349,11 @@ public:
         glLineWidth(1.0);
     }
 
-    GG::X GetLength() {
-        return m_line_length;
-    }
+    GG::X GetLength() const
+    { return m_line_length; }
+
+    double GetScaleFactor() const
+    { return m_scale_factor; }
 
     void Update(double zoom_factor, std::set<int>& fleet_ids, int sel_system_id) {
         // The uu length of the map scale line is generally adjusted in this routine up or down by factors of two or five as
@@ -360,7 +362,7 @@ public:
         // radius is the same as the map scale length).  These additional stopping points include the speeds and detection
         // ranges of any selected fleets, and the detection ranges of all planets in the currently selected system, 
         // provided such values are at least 20 uu.
-        
+
         // get selected fleet speeds and detection ranges
         std::set<double> fixed_distances;
         for (std::set<int>::iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
@@ -417,7 +419,7 @@ public:
             shown_length *= 5.0;
         else if (shown_length * 2.0 <= max_shown_length)
             shown_length *= 2.0;
-        
+
         // DebugLogger()  << "MapScaleLine::Update maxLen: " << max_shown_length
         //                        << "; init_length: " << init_length
         //                        << "; shown_length: " << shown_length;
@@ -425,7 +427,7 @@ public:
         // for (std::set<double>::iterator it = fixed_distances.begin(); it != fixed_distances.end(); ++it) {
         //     DebugLogger()  << " MapScaleLine::Update fleet speed: " << *it;
         // }
-        
+
         // if there are additional scale steps to check (from fleets & planets)
         if (!fixed_distances.empty()) {
             // check if the set of fixed distances includes a value that is in between the max_shown_length
@@ -456,6 +458,7 @@ public:
         m_label->SetText(label_text);
         m_label->Resize(GG::Pt(GG::X(m_line_length), Height()));
     }
+
 private:
     void UpdateEnabled() {
         m_enabled = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
@@ -693,6 +696,7 @@ MapWnd::MapWnd() :
     m_visibility_radii_border_vertices(),
     m_visibility_radii_border_colors(),
     m_radii_radii_vertices_indices_runs(),
+    m_scale_circle_vertices(),
     m_resource_centers(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
@@ -1551,7 +1555,6 @@ void MapWnd::RenderGalaxyGas() {
         glDrawArrays(GL_QUADS, 0, it->second.size());
     }
 
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glPopClientAttrib();
 }
 
@@ -1623,30 +1626,9 @@ void MapWnd::RenderSystems() {
         fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
     }
 
-    const double TWO_PI = 2.0*3.14159;
-    if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale") && GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle")
-        && SidePanel::SystemID() != INVALID_OBJECT_ID) 
-    {
-        glPushMatrix();
-        glLoadIdentity();
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_LINE_SMOOTH);
-        glLineWidth(2.0);
-        GG::X radius = m_scale_line->GetLength();
-        TemporaryPtr< System > selected_system = GetSystem(SidePanel::SystemID());
-        GG::Pt circle_centre = ScreenCoordsFromUniversePosition(selected_system->X(), selected_system->Y());
-        GG::Pt ul = circle_centre - GG::Pt(radius, GG::Y(Value(radius)));
-        GG::Pt lr = circle_centre + GG::Pt(radius, GG::Y(Value(radius)));
-        GG::Clr circle_colour = GG::CLR_WHITE;
-        circle_colour.a = 128;
-        glColor(circle_colour);
-        CircleArc(ul, lr,0.0, TWO_PI, false);
-        glDisable(GL_LINE_SMOOTH);
-        glEnable(GL_TEXTURE_2D);
-        glPopMatrix();
-        glLineWidth(1.0f);
-    }
+    RenderScaleCircle();
 
+    const double TWO_PI = 2.0*3.14159;
     if (fog_scanlines || circles) {
         glPushMatrix();
         glLoadIdentity();
@@ -1696,7 +1678,6 @@ void MapWnd::RenderSystems() {
         glLineWidth(1.0f);
     }
 
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glPopClientAttrib();
 }
 
@@ -1972,6 +1953,35 @@ void MapWnd::RenderVisibilityRadii() {
     glEnable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
     glPopAttrib();
+    glPopClientAttrib();
+}
+
+void MapWnd::RenderScaleCircle() {
+    if (SidePanel::SystemID() == INVALID_OBJECT_ID)
+        return;
+    if (!GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale") ||
+        !GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle"))
+    { return; }
+    if (m_scale_circle_vertices.empty())
+        InitScaleCircleRenderingBuffer();
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(2.0f);
+
+    GG::Clr circle_colour = GG::CLR_WHITE;
+    circle_colour.a = 128;
+    glColor(circle_colour);
+
+    m_scale_circle_vertices.activate();
+    glDrawArrays(GL_LINE_STRIP, 0, m_scale_circle_vertices.size());
+
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_LINE_SMOOTH);
+    glLineWidth(1.0f);
     glPopClientAttrib();
 }
 
@@ -3239,6 +3249,34 @@ void MapWnd::ClearVisibilityRadiiRenderingBuffers() {
     m_radii_radii_vertices_indices_runs.clear();
 }
 
+void MapWnd::InitScaleCircleRenderingBuffer() {
+    ClearScaleCircleRenderingBuffer();
+
+    if (!m_scale_line)
+        return;
+
+    int radius = static_cast<int>(Value(m_scale_line->GetLength()) / std::max(0.001, m_scale_line->GetScaleFactor()));
+    if (radius < 5)
+        return;
+
+    TemporaryPtr<System> selected_system = GetSystem(SidePanel::SystemID());
+    if (!selected_system)
+        return;
+
+    GG::Pt circle_centre = GG::Pt(GG::X(selected_system->X()), GG::Y(selected_system->Y()));
+    GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
+    GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
+
+    const double TWO_PI = 2.0*3.1415926536;
+
+    BufferStoreCircleArcVertices(m_scale_circle_vertices, ul, lr, 0, TWO_PI, false, 0, true);
+
+    m_scale_circle_vertices.createServerBuffer();
+}
+
+void MapWnd::ClearScaleCircleRenderingBuffer()
+{ m_scale_circle_vertices.clear(); }
+
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
     m_zoom_steps_in = data.map_zoom_steps_in;
 
@@ -3447,6 +3485,8 @@ void MapWnd::SelectSystem(int system_id) {
         // selected a valid system, show sidepanel
         m_side_panel->Show();
     }
+
+    InitScaleCircleRenderingBuffer();
 }
 
 void MapWnd::ReselectLastFleet() {
@@ -4281,6 +4321,8 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
     if (update_slide && m_zoom_slider)
         m_zoom_slider->SlideTo(m_zoom_steps_in);
 
+    InitScaleCircleRenderingBuffer();
+
     ZoomedSignal(ZoomFactor());
 }
 
@@ -4881,6 +4923,7 @@ void MapWnd::Sanitize() {
     ClearStarlaneRenderingBuffers();
     ClearFieldRenderingBuffers();
     ClearVisibilityRadiiRenderingBuffers();
+    ClearScaleCircleRenderingBuffer();
 
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         // clearing of message window commented out because scrollbar has quirks

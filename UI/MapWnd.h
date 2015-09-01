@@ -234,6 +234,8 @@ private:
     void            ClearFieldRenderingBuffers();
     void            InitVisibilityRadiiRenderingBuffers();
     void            ClearVisibilityRadiiRenderingBuffers();
+    void            InitScaleCircleRenderingBuffer();
+    void            ClearScaleCircleRenderingBuffer();
 
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
@@ -266,7 +268,12 @@ private:
      * attribute of \a move_line */
     void            RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr = GG::CLR_ZERO);
 
-    void            RenderVisibilityRadii();                    //!< renders circles around objects' locations indicating distance they have visibility
+    /* renders circles around objects' locations indicating distance they have
+     * visibility */
+    void            RenderVisibilityRadii();
+
+    /* renders scale circle around selected system. */
+    void            RenderScaleCircle();
 
     void            CorrectMapPosition(GG::Pt& move_to_pt);     //!< constrains \a move_to_pt so that if the map is repositioned to that location, it will not be problematically positioned, so that galaxy contents remain visible
 
@@ -426,6 +433,8 @@ private:
     GG::GLRGBAColorBuffer               m_visibility_radii_border_colors;
     std::vector<std::pair<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> > >
                                         m_radii_radii_vertices_indices_runs;
+
+    GG::GL2DVertexBuffer                m_scale_circle_vertices;
 
     std::set<int>                       m_resource_centers;
 
