@@ -158,7 +158,7 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
         buffer.store(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
 
         // angles in between theta1 and theta2, if any
-        for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
+        for (int i = first_slice_idx; i <= last_slice_idx + 1; ++i) {
             int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
             buffer.store(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
         }
