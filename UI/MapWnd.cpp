@@ -3237,8 +3237,10 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
 
     m_visibility_radii_border_vertices.createServerBuffer();
     m_visibility_radii_border_colors.createServerBuffer();
+    m_visibility_radii_border_vertices.harmonizeBufferType(m_visibility_radii_border_colors);
     m_visibility_radii_vertices.createServerBuffer();
     m_visibility_radii_colors.createServerBuffer();
+    m_visibility_radii_vertices.harmonizeBufferType(m_visibility_radii_colors);
 }
 
 void MapWnd::ClearVisibilityRadiiRenderingBuffers() {
