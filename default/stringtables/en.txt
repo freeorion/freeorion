@@ -1500,6 +1500,9 @@ Options
 INTRO_BTN_ABOUT
 About
 
+INTRO_BTN_WEBSITE
+Open freeorion.org
+
 INTRO_BTN_CREDITS
 Credits
 

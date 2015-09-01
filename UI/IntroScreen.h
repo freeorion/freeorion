@@ -25,12 +25,13 @@ public:
     /** \name Mutators*/ //!@{
     void            OnSinglePlayer();  //!< called when single player is clicked
     void            OnQuickStart();    //!< called when quick start is clicked
-    void            OnMultiPlayer();   //!< called when multi player is clicked
-    void            OnLoadGame();      //!< called when load game is clicked
-    void            OnOptions();       //!< called when options is clicked
-    void            OnAbout();         //!< called when about is clicked
-    void            OnCredits();       //!< called when credits is clicked
-    void            OnExitGame();      //!< called when exit_game is clicked
+    void            OnMultiPlayer();   //!< ...
+    void            OnLoadGame();
+    void            OnOptions();
+    void            OnAbout();
+    void            OnWebsite();
+    void            OnCredits();
+    void            OnExitGame();
     virtual void    KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
 
     void            DoLayout();
@@ -39,14 +40,15 @@ public:
     //!@}
 
 private:
-    GG::Button*         m_single_player; //!< opens up the single player game dialog
-    GG::Button*         m_quick_start;   //!< starts a single-player game with the default options (no dialog)
-    GG::Button*         m_multi_player;  //!< opens up the multi player game dialog
-    GG::Button*         m_load_game;     //!< loads a saved single player game
-    GG::Button*         m_options;       //!< opens the options dialog
-    GG::Button*         m_about;         //!< opens a dialog to choose to see credits or license
-    GG::Button*         m_credits;       //!< displays credits
-    GG::Button*         m_exit_game;     //!< button that exits the program
+    GG::Button*         m_single_player;//!< opens up the single player game dialog
+    GG::Button*         m_quick_start;  //!< starts a single-player game with the default options (no dialog)
+    GG::Button*         m_multi_player; //!< opens up the multi player game dialog
+    GG::Button*         m_load_game;    //!< loads a saved single player game
+    GG::Button*         m_options;      //!< opens the options dialog
+    GG::Button*         m_about;        //!< opens a dialog to choose to see credits or license
+    GG::Button*         m_website;      //!< opens web browser (or however system handles urls) to http://freeorion.org
+    GG::Button*         m_credits;      //!< displays credits
+    GG::Button*         m_exit_game;    //!< button that exits the program
 
     CreditsWnd*         m_credits_wnd;
 

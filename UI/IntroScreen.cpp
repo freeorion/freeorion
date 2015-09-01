@@ -192,6 +192,7 @@ IntroScreen::IntroScreen() :
     m_load_game(0),
     m_options(0),
     m_about(0),
+    m_website(0),
     m_credits(0),
     m_exit_game(0),
     m_credits_wnd(0),
@@ -222,6 +223,7 @@ IntroScreen::IntroScreen() :
     m_load_game =     new CUIButton(UserString("INTRO_BTN_LOAD_GAME"));
     m_options =       new CUIButton(UserString("INTRO_BTN_OPTIONS"));
     m_about =         new CUIButton(UserString("INTRO_BTN_ABOUT"));
+    m_website =       new CUIButton(UserString("INTRO_BTN_WEBSITE"));
     m_credits =       new CUIButton(UserString("INTRO_BTN_CREDITS"));
     m_exit_game =     new CUIButton(UserString("INTRO_BTN_EXIT"));
 
@@ -232,6 +234,7 @@ IntroScreen::IntroScreen() :
     m_menu->AttachChild(m_load_game);
     m_menu->AttachChild(m_options);
     m_menu->AttachChild(m_about);
+    m_menu->AttachChild(m_website);
     m_menu->AttachChild(m_credits);
     m_menu->AttachChild(m_exit_game);
 
@@ -242,6 +245,7 @@ IntroScreen::IntroScreen() :
     GG::Connect(m_load_game->LeftClickedSignal,     &IntroScreen::OnLoadGame,       this);
     GG::Connect(m_options->LeftClickedSignal,       &IntroScreen::OnOptions,        this);
     GG::Connect(m_about->LeftClickedSignal,         &IntroScreen::OnAbout,          this);
+    GG::Connect(m_website->LeftClickedSignal,       &IntroScreen::OnWebsite,        this);
     GG::Connect(m_credits->LeftClickedSignal,       &IntroScreen::OnCredits,        this);
     GG::Connect(m_exit_game->LeftClickedSignal,     &IntroScreen::OnExitGame,       this);
 
@@ -293,6 +297,9 @@ void IntroScreen::OnAbout() {
     About about_wnd;
     about_wnd.Run();
 }
+
+void IntroScreen::OnWebsite()
+{ HumanClientApp::GetApp()->OpenURL("https://freeorion.org"); }
 
 void IntroScreen::OnCredits() {
     if (m_credits_wnd) {
@@ -367,6 +374,7 @@ void IntroScreen::DoLayout() {
     button_width = std::max(button_width, m_load_game->MinUsableSize().x);
     button_width = std::max(button_width, m_options->MinUsableSize().x);
     button_width = std::max(button_width, m_about->MinUsableSize().x);
+    button_width = std::max(button_width, m_website->MinUsableSize().x);
     button_width = std::max(button_width, m_credits->MinUsableSize().x);
     button_width = std::max(button_width, m_exit_game->MinUsableSize().x);
     button_width = std::max(MIN_BUTTON_WIDTH, button_width);
@@ -375,7 +383,7 @@ void IntroScreen::DoLayout() {
     button_cell_height = std::max(MIN_BUTTON_HEIGHT, m_exit_game->MinUsableSize().y);
     //culate window width and height
     mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 8.75 * button_cell_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+    mainmenu_height = 9.75 * button_cell_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
 
     // place buttons
     GG::Pt button_ul(GG::X(15), GG::Y(12));
@@ -399,6 +407,9 @@ void IntroScreen::DoLayout() {
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
     m_about->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_cell_height);
+    button_lr.y += GG::Y(button_cell_height);
+    m_website->SizeMove(button_ul, button_lr);
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
     m_credits->SizeMove(button_ul, button_lr);
