@@ -29,19 +29,18 @@ namespace {
     const double        PI                          = 3.141592653589793;
     const int           MAX_ATTEMPTS_PLACE_SYSTEM   = 100;
 
-    double CalcNewPosNearestNeighbour(double x, double y, const std::vector<SystemPosition>& positions)
-    {
+    double CalcNewPosNearestNeighbour(double x, double y, const std::vector<SystemPosition>& positions) {
         if (positions.size() == 0) // means that we are placing the first star, return a max val to not reject placement
             return 1e6;
 
         unsigned int j;
-        double lowest_dist=  (positions[0].x  - x ) * (positions[0].x  - x ) 
+        double lowest_dist=  (positions[0].x - x ) * (positions[0].x - x)
             + (positions[0].y - y) * (positions[0].y - y),distance=0.0;
 
         for (j = 1; j < positions.size(); ++j) {
-            distance =  (positions[j].x  - x ) * (positions[j].x  - x ) 
+            distance =  (positions[j].x - x ) * (positions[j].x - x)
                 + (positions[j].y - y) * (positions[j].y - y);
-            if(lowest_dist>distance)
+            if (lowest_dist > distance)
                 lowest_dist = distance;
         }
         return lowest_dist;
@@ -78,7 +77,7 @@ void SpiralGalaxyCalcPositions(std::vector<SystemPosition>& positions,
         } else {
             double arm    = static_cast<double>(random_arm()) * arm_angle;
             double angle  = random_gaussian();
-            
+
             x = radius * cos( arm_offset + arm + angle + radius * arm_length );
             y = radius * sin( arm_offset + arm + angle + radius * arm_length );
         }
@@ -207,9 +206,10 @@ void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned
 
         // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
         for (j = 0; j < clusters_position.size(); j++) {
-            if ((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)+ (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
+            if ((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)
+                    + (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
                 < (2.0/clusters))
-                break;
+            { break; }
         }
         if (j < clusters_position.size()) {
             i--;
@@ -702,7 +702,8 @@ namespace {
 //#ifdef OUTPUT_PLANS_LIST
         DebugLogger() << "Starting Monster Fleet Plans:";
         for (iterator it = begin(); it != end(); ++it)
-            DebugLogger() << " ... " << (*it)->Name() << " spawn rate: " << (*it)->SpawnRate() << " spawn limit: " << (*it)->SpawnLimit();
+            DebugLogger() << " ... " << (*it)->Name() << " spawn rate: " << (*it)->SpawnRate()
+                          << " spawn limit: " << (*it)->SpawnLimit();
 //#endif
     }
 
@@ -1180,7 +1181,7 @@ void GenerateStarlanes(GalaxySetupOption freq) {
         for (std::set<int>::const_iterator it = lanes.begin(); it != lanes.end(); ++it)
             sys_vec[n]->AddStarlane(sys_vec[*it]->ID()); // System::AddStarlane() expects a system ID
     }
-    
+
     DebugLogger() << "Initializing System Graph";
     GetUniverse().InitializeSystemGraph();
 }
@@ -1235,14 +1236,13 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
     }
 
     DebugLogger() << "UniverseGenerator::SetEmpireHomeworld: setting system " << home_system->ID()
-                           << " (planet " <<  home_planet->ID()
-                           << ") to be home system for empire " << empire->EmpireID();
+                  << " (planet " <<  home_planet->ID() << ") to be home system for empire " << empire->EmpireID();
 
     // get species, check if it exists
     Species* species = GetSpeciesManager().GetSpecies(species_name);
     if (!species) {
         ErrorLogger() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \""
-                               << species_name << "\" to set with homeworld id " << home_planet->ID();
+                      << species_name << "\" to set with homeworld id " << home_planet->ID();
         return false;
     }
 
@@ -1289,6 +1289,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         int         player_id =     setup_data_it->first;
         if (player_id == Networking::INVALID_PLAYER_ID)
             ErrorLogger() << "Universe::InitEmpires player id (" << player_id << ") is invalid";
+
         // use player ID for empire ID so that the calling code can get the
         // correct empire for each player ID  in player_setup_data
         int         empire_id =     player_id;
@@ -1318,7 +1319,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(empire_id);
 
         DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
-                               << " for player: " << player_name << " (with player id: " << player_id << ")";
+                      << " for player: " << player_name << " (with player id: " << player_id << ")";
 
         // create new Empire object through empire manager
         Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour);

@@ -2189,7 +2189,7 @@ public:
                     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                         new DeleteFleetOrder(empire_id, dropped_ship_fleet_id)));
         } else {
-                    // TODO: moderator action to transfer ships / remove empty fleets
+            // TODO: moderator action to transfer ships / remove empty fleets
         }
     }
 
