@@ -92,10 +92,10 @@ namespace {
     // Generates a debug  trace that can be included in error logs, augmenting the ReconstructName() info with
     // additional info identifying the object references that were successfully followed.
     std::string TraceReference(const std::vector<std::string>& property_name, ValueRef::ReferenceType ref_type,
-                                                       const ScriptingContext& context)
+                               const ScriptingContext& context)
     {
-        TemporaryPtr<const UniverseObject> obj;
-        std::string retval = ReconstructName(property_name, ref_type) + " :  ";
+        TemporaryPtr<const UniverseObject> obj, initial_obj;
+        std::string retval = ReconstructName(property_name, ref_type) + " : ";
         switch(ref_type) {
         case ValueRef::NON_OBJECT_REFERENCE:
             retval += " | Non Object Reference |";
@@ -120,7 +120,9 @@ namespace {
             break;
         }
         if (obj) {
-            retval += boost::lexical_cast<std::string>(obj->ObjectType()) + " " + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " ) ";
+            retval += UserString(boost::lexical_cast<std::string>(obj->ObjectType())) + " "
+                    + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " ) ";
+            initial_obj = obj;
         }
         retval += " | ";
 
@@ -128,28 +130,31 @@ namespace {
         std::vector<std::string>::const_iterator last = property_name.end();
         while (first != last) {
             std::string property_name = *first;
-            retval += " " + property_name;
+            retval += " " + property_name + " ";
             if (property_name == "Planet") {
                 if (TemporaryPtr<const Building> b = boost::dynamic_pointer_cast<const Building>(obj)) {
-                    retval += " (" + boost::lexical_cast<std::string>(b->PlanetID()) + "): ";
+                    retval += "(" + boost::lexical_cast<std::string>(b->PlanetID()) + "): ";
                     obj = GetPlanet(b->PlanetID());
                 } else
                     obj = TemporaryPtr<const UniverseObject>();
             } else if (property_name == "System") {
                 if (obj) {
-                    retval += " (" + boost::lexical_cast<std::string>(obj->SystemID()) + "): ";
+                    retval += "(" + boost::lexical_cast<std::string>(obj->SystemID()) + "): ";
                     obj = GetSystem(obj->SystemID());
                 }
             } else if (property_name == "Fleet") {
                 if (TemporaryPtr<const Ship> s = boost::dynamic_pointer_cast<const Ship>(obj))  {
-                    retval += " (" + boost::lexical_cast<std::string>(s->FleetID()) + "): ";
+                    retval += "(" + boost::lexical_cast<std::string>(s->FleetID()) + "): ";
                     obj = GetFleet(s->FleetID());
                 } else
                     obj = TemporaryPtr<const UniverseObject>();
             }
+
             ++first;
-            if (obj) {
-                retval += boost::lexical_cast<std::string>(obj->ObjectType()) + " " + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " )";
+
+            if (obj && initial_obj != obj) {
+                retval += "  Referenced Object: " + UserString(boost::lexical_cast<std::string>(obj->ObjectType())) + " "
+                        + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " )";
             }
             retval += " | ";
         }
@@ -589,7 +594,8 @@ namespace ValueRef {
             }
 
             // add more non-object reference double functions here
-            ErrorLogger() << "Variable<double>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
+            ErrorLogger() << "Variable<double>::Eval unrecognized non-object property: "
+                          << TraceReference(m_property_name, m_ref_type, context);
             return 0.0;
         }
 
@@ -638,7 +644,8 @@ namespace ValueRef {
                 return ship->TotalWeaponsDamage();
         }
 
-        ErrorLogger() << "Variable<double>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+        ErrorLogger() << "Variable<double>::Eval unrecognized object property: "
+                      << TraceReference(m_property_name, m_ref_type, context);
         return 0.0;
     }
 
