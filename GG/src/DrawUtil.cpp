@@ -331,7 +331,8 @@ namespace { // file-scope constants and functions
         glEnable(GL_TEXTURE_2D);
     }
 
-    void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2, unsigned int bevel_thick, double theta1, double theta2)
+    void CircleArc(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
+                   unsigned int bevel_thick, double theta1, double theta2)
     {
         X wd = lr.x - ul.x;
         Y ht = lr.y - ul.y;
@@ -423,7 +424,8 @@ namespace { // file-scope constants and functions
         glEnable(GL_TEXTURE_2D);
     }
 
-    void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2, unsigned int corner_radius, int thick)
+    void RoundedRectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2,
+                          unsigned int corner_radius, int thick)
     {
         int circle_diameter = corner_radius * 2;
         CircleArc(Pt(lr.x - circle_diameter, ul.y), Pt(lr.x, ul.y + circle_diameter), color, border_color2, border_color1, thick, 0, 0.5 * PI);  // ur corner
@@ -570,7 +572,6 @@ namespace { // file-scope constants and functions
 
 
 namespace GG {
-
     void glColor(Clr clr)
     { glColor4ub(clr.r, clr.g, clr.b, clr.a); }
 
@@ -779,5 +780,4 @@ namespace GG {
                           (up ? DarkColor(color) : LightColor(color)),
                           corner_radius);
     }
-
 } // namespace GG

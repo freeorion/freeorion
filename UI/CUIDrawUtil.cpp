@@ -92,11 +92,13 @@ namespace {
         // point on circle at angle theta1
         double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
         glVertex2f(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
+
         // angles in between theta1 and theta2, if any
         for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
             int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
             glVertex2f(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
         }
+
         // theta2
         double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
         glVertex2f(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
@@ -147,10 +149,8 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
 
     if (fan) {  // store a triangle fan vertex list, specifying each vertex just once
 
-        if (filled_shape) {
-            // specify the central vertex first, to act as the pivot vertex for the fan
+        if (filled_shape)   // specify the central vertex first, to act as the pivot vertex for the fan
             buffer.store(static_cast<GLfloat>(center_x),    static_cast<GLfloat>(center_y));
-        }
         // if not filled_shape, assumes a previously-specified vertex in the buffer will act as the pivot for the fan
 
         // point on circle at angle theta1
@@ -172,9 +172,6 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
         std::pair<GLfloat, GLfloat> first_point = std::make_pair(static_cast<GLfloat>(center_x), static_cast<GLfloat>(center_y));
         // (not used for non-filled-shape)
 
-
-        //float R_temp = r;
-
         // angles in between theta1 and theta2, if any
         for (int i = first_slice_idx - 1; i <= last_slice_idx; ++i) {
             if (filled_shape) {
@@ -182,8 +179,6 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
                 // list of triangles: need two more vertices on the arc per starting vertex
             }
             // else: list of lines, with two vertices each
-
-            //r = R_temp * i / last_slice_idx;
 
             int X = (i > SLICES ? (i - SLICES) : i) * 2;
             int Y = X + 1;
