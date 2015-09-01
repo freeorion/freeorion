@@ -436,8 +436,6 @@ private:
 
     GG::GL2DVertexBuffer                m_scale_circle_vertices;
 
-    std::set<int>                       m_resource_centers;
-
     boost::shared_ptr<ShaderProgram>    m_scanline_shader;
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)

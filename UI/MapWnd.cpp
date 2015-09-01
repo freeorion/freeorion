@@ -697,7 +697,6 @@ MapWnd::MapWnd() :
     m_visibility_radii_border_colors(),
     m_radii_radii_vertices_indices_runs(),
     m_scale_circle_vertices(),
-    m_resource_centers(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
     m_btn_turn(0),
@@ -2677,7 +2676,6 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     // clear old buffers
     ClearStarlaneRenderingBuffers();
-    m_resource_centers.clear();
 
     // temp storage
     std::set<std::pair<int, int> >  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
@@ -2721,7 +2719,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 int system_id = planet->SystemID();
                 resPoolSystems[it->first].insert(system_id);
-                m_resource_centers.insert(system_id);
+
                 if (group_pp > allocatedPP[it->first] + 0.05)
                     underAllocResSys.insert(system_id);
             }
@@ -2940,7 +2938,6 @@ void MapWnd::ClearStarlaneRenderingBuffers() {
     m_starlane_colors.clear();
     m_RC_starlane_vertices.clear();
     m_RC_starlane_colors.clear();
-    m_resource_centers.clear();
 }
 
 LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {
