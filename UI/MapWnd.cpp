@@ -1857,11 +1857,11 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
     glPushMatrix();
     glLoadIdentity();
     int flag_border = 5;
+
     for (std::vector<MovementLineData::Vertex>::const_iterator verts_it = vertices.begin(); verts_it != vertices.end(); ++verts_it) {
         const MovementLineData::Vertex& vert = *verts_it;
         if (!vert.show_eta)
             continue;
-
 
         // draw background disc in empire colour, or passed-in colour
         GG::Pt marker_centre = ScreenCoordsFromUniversePosition(vert.x, vert.y);
@@ -1869,24 +1869,28 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         GG::Pt lr = marker_centre + GG::Pt(GG::X(static_cast<int>(MARKER_HALF_SIZE)), GG::Y(static_cast<int>(MARKER_HALF_SIZE)));
 
         glDisable(GL_TEXTURE_2D);
+
+        // segmented circle of wedges to indicate blockades
         if (vert.flag_blockade) {
             float wedge = TWO_PI/12.0;
             for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
-                CircleArc(ul + GG::Pt(-flag_border*GG::X1,  -flag_border*GG::Y1), lr + GG::Pt(flag_border*GG::X1,  flag_border*GG::Y1), n*wedge, (n+1)*wedge, true);
+                CircleArc(ul + GG::Pt(-flag_border*GG::X1,      -flag_border*GG::Y1),   lr + GG::Pt(flag_border*GG::X1,     flag_border*GG::Y1),    n*wedge,        (n+1)*wedge, true);
                 glColor(GG::CLR_RED);
-                CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,  -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,  (flag_border)*GG::Y1), (n+1)*wedge, (n+2)*wedge, true);
+                CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,    -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,   (flag_border)*GG::Y1),  (n+1)*wedge,    (n+2)*wedge, true);
             }
         } else if (vert.flag_supply_block) {
             float wedge = TWO_PI/12.0;
             for (int n = 0; n < 12; n = n + 2) {
                 glColor(GG::CLR_BLACK);
-                CircleArc(ul + GG::Pt(-flag_border*GG::X1,  -flag_border*GG::Y1), lr + GG::Pt(flag_border*GG::X1,  flag_border*GG::Y1), n*wedge, (n+1)*wedge, true);
+                CircleArc(ul + GG::Pt(-flag_border*GG::X1,      -flag_border*GG::Y1),   lr + GG::Pt(flag_border*GG::X1,     flag_border*GG::Y1),    n*wedge,        (n+1)*wedge, true);
                 glColor(GG::CLR_YELLOW);
-                CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,  -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,  (flag_border)*GG::Y1), (n+1)*wedge, (n+2)*wedge, true);
+                CircleArc(ul + GG::Pt(-(flag_border)*GG::X1,    -(flag_border)*GG::Y1), lr + GG::Pt((flag_border)*GG::X1,   (flag_border)*GG::Y1),  (n+1)*wedge,    (n+2)*wedge, true);
             }
         }
 
+
+        // empire-coloured central fill within wedged outer ring
         if (clr == GG::CLR_ZERO)
             glColor(move_line.colour);
         else
@@ -1897,14 +1901,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
 
         // render ETA number in white with black shadows
-        std::string text = boost::lexical_cast<std::string>(vert.eta);
-
-        glColor(GG::CLR_BLACK);
-        font->RenderText(ul + GG::Pt(-GG::X1,  GG::Y0), lr + GG::Pt(-GG::X1,  GG::Y0), text, flags);
-        font->RenderText(ul + GG::Pt( GG::X1,  GG::Y0), lr + GG::Pt( GG::X1,  GG::Y0), text, flags);
-        font->RenderText(ul + GG::Pt( GG::X0, -GG::Y1), lr + GG::Pt( GG::X0, -GG::Y1), text, flags);
-        font->RenderText(ul + GG::Pt( GG::X0,  GG::Y1), lr + GG::Pt( GG::X0,  GG::Y1), text, flags);
-
+        std::string text = "<s>" + boost::lexical_cast<std::string>(vert.eta) + "</s>";
         glColor(GG::CLR_WHITE);
         font->RenderText(ul, lr, text, flags);
     }
