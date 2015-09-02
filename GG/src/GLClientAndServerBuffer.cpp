@@ -47,7 +47,7 @@ GLClientAndServerBufferBase<vtype>::GLClientAndServerBufferBase(std::size_t elem
     GLBufferBase(),
     b_data(),
     b_size(0),
-    b_elementsPerItem(elementsPerItem)
+    b_elements_per_item(elementsPerItem)
 {}
 
 template <class vtype>
@@ -59,10 +59,14 @@ bool GLClientAndServerBufferBase<vtype>::empty() const
 { return b_size == 0; }
 
 template <class vtype>
+void GLClientAndServerBufferBase<vtype>::reserve(std::size_t num_items)
+{ b_data.reserve(num_items * b_elements_per_item); }
+
+template <class vtype>
 void GLClientAndServerBufferBase<vtype>::store(vtype item)
 {
     b_data.push_back(item);
-    b_size=b_data.size() / b_elementsPerItem;
+    b_size=b_data.size() / b_elements_per_item;
 }
 
 template <class vtype>
@@ -70,7 +74,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2)
 {
     b_data.push_back(item1);
     b_data.push_back(item2);
-    b_size=b_data.size() / b_elementsPerItem;
+    b_size=b_data.size() / b_elements_per_item;
 }
 
 template <class vtype>
@@ -79,7 +83,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype i
     b_data.push_back(item1);
     b_data.push_back(item2);
     b_data.push_back(item3);
-    b_size=b_data.size() / b_elementsPerItem;
+    b_size=b_data.size() / b_elements_per_item;
 }
 
 template <class vtype> 
@@ -89,7 +93,7 @@ void GLClientAndServerBufferBase<vtype>::store(vtype item1, vtype item2, vtype i
     b_data.push_back(item2);
     b_data.push_back(item3);
     b_data.push_back(item4);
-    b_size=b_data.size() / b_elementsPerItem;
+    b_size=b_data.size() / b_elements_per_item;
 }
 
 template <class vtype>

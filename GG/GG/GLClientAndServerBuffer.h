@@ -45,6 +45,9 @@ public:
     std::size_t size() const;
     bool        empty() const;
 
+    // pre-allocate space for item data
+    void reserve(std::size_t num_items);
+
     // store items, buffers usually store tupels, convenience functions
     // do not use while server buffer exists
     void store(vtype item);
@@ -62,7 +65,7 @@ public:
 protected:
     std::vector<vtype>  b_data;
     std::size_t         b_size;
-    std::size_t         b_elementsPerItem;
+    std::size_t         b_elements_per_item;
 
     // used in derived classes to activate the buffer
     // implementations should use glBindBuffer, gl...Pointer if
