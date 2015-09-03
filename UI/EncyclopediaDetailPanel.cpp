@@ -841,8 +841,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
         std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
         GetSortedPediaDirEntires(type_text, sorted_entries_list);
         for (std::multimap<std::string, std::pair<std::string, std::string> >::const_iterator
-             entry_it = sorted_entries_list.begin(); 
-             entry_it != sorted_entries_list.end(); ++entry_it)
+             entry_it = sorted_entries_list.begin();  entry_it != sorted_entries_list.end(); ++entry_it)
         {
             if (boost::icontains(entry_it->first, search_text)) {
                 AddItem(type_text, entry_it->second.second);
