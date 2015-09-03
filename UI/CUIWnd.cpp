@@ -222,24 +222,20 @@ void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     OptionsDB& db = GetOptionsDB();
 
     if (!m_config_name.empty()) {
-        if (db.OptionExists("UI.windows."+m_config_name+".initialized")) {
+        if (db.OptionExists("UI.windows." + m_config_name + ".initialized")) {
             std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
             if (!db.Get<bool>("fullscreen"))
                 windowed = "-windowed";
             // If the window has already had its default position specified
             // (either in the ctor or a previous call to this function), apply
             // this position to the window.
-            if (db.Get<bool>("UI.windows."+m_config_name+".initialized") ||
-                db.Get<int>("UI.windows."+m_config_name+".left"+windowed) == INVALID_X)
-            {
-                SizeMove(ul, lr);
-            }
+            if (db.Get<bool>("UI.windows." + m_config_name + ".initialized") ||
+                db.Get<int>("UI.windows." + m_config_name + ".left" + windowed) == INVALID_X)
+            { SizeMove(ul, lr); }
             db.Set<bool>("UI.windows."+m_config_name+".initialized", true);
         } else {
-            ErrorLogger() << "CUIWnd::InitSizeMove() : attempted to check if "
-                             "window using name \"" << m_config_name << "\" "
-                             "was initialized but the options do not appear "
-                             "to be registered in the OptionsDB.";
+            ErrorLogger() << "CUIWnd::InitSizeMove() : attempted to check if window using name \"" << m_config_name
+                          << "\" was initialized but the options do not appear to be registered in the OptionsDB.";
         }
     } else {
         SizeMove(ul, lr);
@@ -315,26 +311,26 @@ void CUIWnd::Render() {
     if (m_minimized) {
         m_minimized_buffer.activate();
         glColor(ClientUI::WndColor());
-        glDrawArrays(GL_TRIANGLE_FAN,   0, m_minimized_buffer.size() - 1);
+        glDrawArrays(GL_TRIANGLE_FAN,   0, m_minimized_buffer.size());
         glColor(ClientUI::WndOuterBorderColor());
-        glDrawArrays(GL_LINE_STRIP,     0, m_minimized_buffer.size());
+        glDrawArrays(GL_LINE_LOOP,      0, m_minimized_buffer.size());
 
     } else {
         m_outer_border_buffer.activate();
         glColor(ClientUI::WndColor());
-        glDrawArrays(GL_TRIANGLE_FAN,   0, m_outer_border_buffer.size() - 1);
+        glDrawArrays(GL_TRIANGLE_FAN,   0, m_outer_border_buffer.size());
         glColor(ClientUI::WndOuterBorderColor());
-        glDrawArrays(GL_LINE_STRIP,     0, m_outer_border_buffer.size());
+        glDrawArrays(GL_LINE_LOOP,      0, m_outer_border_buffer.size());
 
         m_inner_border_buffer.activate();
         glColor(ClientUI::WndInnerBorderColor());
-        glDrawArrays(GL_LINE_STRIP,     0, m_inner_border_buffer.size());
+        glDrawArrays(GL_LINE_LOOP,      0, m_inner_border_buffer.size());
 
         if (m_resizable) {
             m_resize_corner_lines_buffer.activate();
             GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
             glColor(tab_lines_colour);
-            glDrawArrays(GL_LINES,          0, m_resize_corner_lines_buffer.size());
+            glDrawArrays(GL_LINES,      0, m_resize_corner_lines_buffer.size());
         }
     }
 
@@ -556,7 +552,6 @@ void CUIWnd::InitBuffers() {
     m_minimized_buffer.store(Value(m_sz.x), 0.0f);
     m_minimized_buffer.store(Value(m_sz.x), Value(m_sz.y));
     m_minimized_buffer.store(0.0f,          Value(m_sz.y));
-    m_minimized_buffer.store(0.0f,          0.0f);
     m_minimized_buffer.createServerBuffer();
 
     GG::Pt sz = Size();
@@ -574,7 +569,6 @@ void CUIWnd::InitBuffers() {
         m_outer_border_buffer.store(Value(sz.x),Value(sz.y));
     }
     m_outer_border_buffer.store(0.0f,           Value(sz.y));
-    m_outer_border_buffer.store(0.0f,           0.0f);
     m_outer_border_buffer.createServerBuffer();
 
     // inner border, with optional corner cutout
@@ -588,7 +582,6 @@ void CUIWnd::InitBuffers() {
         m_inner_border_buffer.store(Value(cl_lr.x),Value(cl_lr.y));
     }
     m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_lr.y));
-    m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_ul.y));
     m_inner_border_buffer.createServerBuffer();
 
     // resize hash marks
