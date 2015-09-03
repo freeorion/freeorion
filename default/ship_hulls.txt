@@ -1058,12 +1058,12 @@ Hull
     stealth = 5
     structure = 5
     slots = [
-        Slot type = External position = (0.20, 0.45)
         Slot type = External position = (0.40, 0.25)
-        Slot type = External position = (0.60, 0.25)
-        Slot type = External position = (0.80, 0.45)
+        Slot type = External position = (0.60, 0.35)
+        Slot type = External position = (0.60, 0.55)
+        Slot type = External position = (0.75, 0.50)
+        Slot type = Internal position = (0.25, 0.45)
         Slot type = Internal position = (0.40, 0.55)
-        Slot type = Internal position = (0.60, 0.55)
     ]
     buildCost = 23 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
@@ -1749,7 +1749,7 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
-        [[EXCELLENT_VISION]]
+        [[MODERATE_VISION]]
 
         EffectsGroup    // remove self and recreate on first turn, so that trees start with age 0, and thus low initial health, instead of having thousands of structure at start of game
             scope = Source
@@ -1807,7 +1807,7 @@ Hull
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
-        [[EXCELLENT_VISION]]
+        [[GOOD_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/dragon.png"
@@ -1879,7 +1879,7 @@ Hull
     Unproducible
     location = All
     effectsgroups = [
-        [[EXCELLENT_VISION]]
+        [[GOOD_VISION]]
         EffectsGroup
             scope = Source
             activation = Not Turn low = 1
@@ -2318,7 +2318,7 @@ Hull
                     ]
                     empire = Source.Owner
             ]
-        [[WEAK_VISION]]
+        [[MODERATE_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/kraken-1.png"
@@ -2627,7 +2627,7 @@ Hull
                     ]
                     empire = Source.Owner
             ]
-        [[GOOD_VISION]]
+        [[MODERATE_VISION]]
     ]
     icon = ""
     graphic = "icons/monsters/juggernaut-1.png"
@@ -2715,7 +2715,7 @@ Hull
     description = "SH_NEBULOUS_BODY"
     speed = 100
     fuel = 1
-    stealth = 80
+    stealth = 75
     structure = 5000
     slots = [
         Slot type = External position = (0.60, 0.45)
@@ -2796,7 +2796,7 @@ Hull
     description = "SH_BLACK_KRAKEN_BODY_DESC"
     speed = 200
     fuel = 100
-    stealth = 20
+    stealth = 25
     structure = 4000
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2898,7 +2898,7 @@ Hull
     description = "SH_COSMIC_DRAGON_BODY_DESC"
     speed = 25
     fuel = 100
-    stealth = 10
+    stealth = 5
     structure = 50000
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -2986,7 +2986,7 @@ WEAK_VISION
         scope = Source
         activation = Source
         accountinglabel = "WEAK_VISION_LABEL"
-        effects = SetDetection value = Value + 50
+        effects = SetDetection value = Value + 10
 '''
 
 MODERATE_VISION
@@ -2994,7 +2994,7 @@ MODERATE_VISION
         scope = Source
         activation = Source
         accountinglabel = "MODERATE_VISION_LABEL"
-        effects = SetDetection value = Value + 75
+        effects = SetDetection value = Value + 30
 '''
 
 GOOD_VISION
@@ -3002,7 +3002,7 @@ GOOD_VISION
         scope = Source
         activation = Source
         accountinglabel = "GOOD_VISION_LABEL"
-        effects = SetDetection value = Value + 100
+        effects = SetDetection value = Value + 50
 '''
 
 EXCELLENT_VISION
@@ -3021,7 +3021,7 @@ UNOWNED_GOOD_VISION
             Unowned
         ]
         accountinglabel = "GOOD_VISION_LABEL"
-        effects = SetDetection value = Value + 100
+        effects = SetDetection value = Value + 50
 '''
 
 
