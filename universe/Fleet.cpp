@@ -1213,7 +1213,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     const Empire* empire = GetEmpire(this->Owner());
-    if (empire) {  
+    if (empire) {
         std::set<int> unobstructed_systems = empire->SupplyUnobstructedSystems();
         if (unobstructed_systems.find(start_system_id) != unobstructed_systems.end())
             return false;
@@ -1224,17 +1224,17 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         }
     }
 
-    float lowestShipStealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
+    float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
     std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(this->ShipIDs());
     for (std::vector<TemporaryPtr<const Ship> >::iterator it = ships.begin();
          it != ships.end(); ++it)
     {
         TemporaryPtr<const Ship> ship = *it;
-        if (lowestShipStealth > ship->CurrentMeterValue(METER_STEALTH))
-            lowestShipStealth = ship->CurrentMeterValue(METER_STEALTH);
+        if (lowest_ship_stealth > ship->CurrentMeterValue(METER_STEALTH))
+            lowest_ship_stealth = ship->CurrentMeterValue(METER_STEALTH);
     }
 
-    float monsterDetection = 0.0f;
+    float monster_detection = 0.0f;
     std::vector<TemporaryPtr<const Fleet> > fleets =
         Objects().FindObjects<const Fleet>(current_system->FleetIDs());
     for (std::vector<TemporaryPtr<const Fleet> >::iterator fleet_it = fleets.begin();
@@ -1249,13 +1249,13 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
              ship_it != ships.end(); ++ship_it)
         {
             TemporaryPtr<const Ship> ship = *ship_it;
-            float curDetect = ship->CurrentMeterValue(METER_DETECTION);
-            if (curDetect >= monsterDetection)
-                monsterDetection = curDetect;
+            float cur_detection = ship->CurrentMeterValue(METER_DETECTION);
+            if (cur_detection >= monster_detection)
+                monster_detection = cur_detection;
         }
     }
 
-    bool canBeBlockaded = false;
+    bool can_be_blockaded = false;
     for (std::vector<TemporaryPtr<const Fleet> >::iterator fleet_it = fleets.begin();
          fleet_it != fleets.end(); ++fleet_it)
     {
@@ -1270,18 +1270,18 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
         }
         bool can_see;
         if (!fleet->Unowned()) {
-            can_see = (GetEmpire(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowestShipStealth);
+            can_see = (GetEmpire(fleet->Owner())->GetMeter("METER_DETECTION_STRENGTH")->Current() >= lowest_ship_stealth);
         } else {
-            can_see = (monsterDetection >= lowestShipStealth);
+            can_see = (monster_detection >= lowest_ship_stealth);
         }
         bool at_war = Unowned() || fleet->Unowned() ||
                       Empires().GetDiplomaticStatus(this->Owner(), fleet->Owner()) == DIPLO_WAR;
         bool aggressive = (fleet->Aggressive() || fleet->Unowned());
 
         if (aggressive && fleet->HasArmedShips() && at_war && can_see && (unrestricted || not_yet_in_system))
-            canBeBlockaded = true; // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
+            can_be_blockaded = true; // don't exit early here, because blockade may yet be thwarted by ownership & presence check above
     }
-    if (canBeBlockaded) {
+    if (can_be_blockaded) {
         return true;
     }
     return false;
