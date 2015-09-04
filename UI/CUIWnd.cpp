@@ -164,7 +164,9 @@ CUIWnd::CUIWnd(const std::string& t,
     m_config_name(AddWindowOptions(config_name, x, y, w, h, visible, false, false)),
     m_close_button(0),
     m_minimize_button(0),
-    m_pin_button(0)
+    m_pin_button(0),
+    m_vertex_buffer(),
+    m_buffer_indices()
 {
     Init(t);
     if (!m_config_name.empty()) {
@@ -192,7 +194,9 @@ CUIWnd::CUIWnd(const std::string& t,
     m_config_name(AddWindowOptions(config_name, INVALID_POS, INVALID_POS, 1, 1, visible, false, false)),
     m_close_button(0),
     m_minimize_button(0),
-    m_pin_button(0)
+    m_pin_button(0),
+    m_vertex_buffer(),
+    m_buffer_indices()
 { Init(t); }
 
 void CUIWnd::Init(const std::string& t) {
@@ -244,15 +248,13 @@ void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 CUIWnd::~CUIWnd() {
     try {
-        if (!m_config_name.empty() && GetOptionsDB().OptionExists("UI.windows."+m_config_name+".initialized"))
+        if (!m_config_name.empty() && GetOptionsDB().OptionExists("UI.windows." + m_config_name + ".initialized"))
             GetOptionsDB().Remove("UI.windows."+m_config_name+".initialized");
     } catch (std::exception& e) { // catch std::runtime_error, boost::bad_any_cast
-        ErrorLogger() << "CUIWnd::~CUIWnd() : caught exception while removing \"UI.windows."<<m_config_name<<".initialized\": " << e.what();
+        ErrorLogger() << "CUIWnd::~CUIWnd() : caught exception while removing \"UI.windows." << m_config_name
+                      << ".initialized\": " << e.what();
     }
-    m_minimized_buffer.clear();
-    m_outer_border_buffer.clear();
-    m_inner_border_buffer.clear();
-    m_resize_corner_lines_buffer.clear();
+    m_vertex_buffer.clear();
 }
 
 void CUIWnd::ValidatePosition()
@@ -260,8 +262,8 @@ void CUIWnd::ValidatePosition()
 
 void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_sz = Size();
-    if (m_config_save) {
-        GG::Pt available_size;
+    if (m_config_save) {    // can write position/size to OptionsDB
+        GG::Pt available_size(GG::X(2048), GG::Y(2048));    // arbitrary large values in case available_size can't be set below
 
         if (const GG::Wnd* parent = Parent()) {
             // Keep this CUIWnd entirely inside its parent.
@@ -271,7 +273,6 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             available_size = GG::Pt(app->AppWidth(), app->AppHeight());
         } else {
             ErrorLogger() << "CUIWnd::SizeMove() could not get app instance!";
-            return;
         }
 
         // Limit window size to be no larger than the containing window.
@@ -280,63 +281,62 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
         // Clamp position of this window to keep its entire area visible in the
         // containing window.
-        GG::Pt new_ul(std::min(available_size.x - new_size.x,
-                               std::max(GG::X0, ul.x)),
-                      std::min(available_size.y - new_size.y,
-                               std::max(GG::Y0, ul.y)));
+        GG::Pt new_ul(std::min(available_size.x - new_size.x, std::max(GG::X0, ul.x)),
+                      std::min(available_size.y - new_size.y, std::max(GG::Y0, ul.y)));
 
         Wnd::SizeMove(new_ul, new_ul + new_size);
-    } else {
+
+    } else {    // don't write position/size to OptionsDB
         Wnd::SizeMove(ul, lr);
     }
-    if (Size() != old_sz) {
+
+    if (Size() != old_sz)
         PositionButtons();
-        InitBuffers();
-    }
 
     SaveOptions();
+    InitBuffers();  // after every reposition or resize, reinitialize rendering buffers accordingly
 }
 
 void CUIWnd::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
 
-    glPushMatrix();
-    glLoadIdentity();
-    glTranslatef(static_cast<GLfloat>(Value(ul.x)), static_cast<GLfloat>(Value(ul.y)), 0.0f);
     glDisable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
 
+    m_vertex_buffer.activate();
+
+    // within m_vertex_buffer:
+    // [0] is the start and range for minimized background triangle fan and minimized border line loop
+    // [1] is ... the background fan / outer border line loop
+    // [2] is ... the inner border line loop
+    // [3] is ... the resize tab line list
+
     if (m_minimized) {
-        m_minimized_buffer.activate();
         glColor(ClientUI::WndColor());
-        glDrawArrays(GL_TRIANGLE_FAN,   0, m_minimized_buffer.size());
+        glDrawArrays(GL_TRIANGLE_FAN,   m_buffer_indices[0].first, m_buffer_indices[0].second);
         glColor(ClientUI::WndOuterBorderColor());
-        glDrawArrays(GL_LINE_LOOP,      0, m_minimized_buffer.size());
+        glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[0].first, m_buffer_indices[0].second);
 
     } else {
-        m_outer_border_buffer.activate();
         glColor(ClientUI::WndColor());
-        glDrawArrays(GL_TRIANGLE_FAN,   0, m_outer_border_buffer.size());
+        glDrawArrays(GL_TRIANGLE_FAN,   m_buffer_indices[1].first, m_buffer_indices[1].second);
         glColor(ClientUI::WndOuterBorderColor());
-        glDrawArrays(GL_LINE_LOOP,      0, m_outer_border_buffer.size());
-
-        m_inner_border_buffer.activate();
+        glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[1].first, m_buffer_indices[1].second);
         glColor(ClientUI::WndInnerBorderColor());
-        glDrawArrays(GL_LINE_LOOP,      0, m_inner_border_buffer.size());
+        glDrawArrays(GL_LINE_LOOP,      m_buffer_indices[2].first, m_buffer_indices[2].second);
 
         if (m_resizable) {
-            m_resize_corner_lines_buffer.activate();
             GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
             glColor(tab_lines_colour);
-            glDrawArrays(GL_LINES,      0, m_resize_corner_lines_buffer.size());
+            glDrawArrays(GL_LINES,      m_buffer_indices[3].first, m_buffer_indices[3].second);
         }
     }
 
     glEnable(GL_TEXTURE_2D);
-    glPopMatrix();
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glPopClientAttrib();
 
     GG::BeginScissorClipping(ul, lr);
     glColor(ClientUI::TextColor());
@@ -544,53 +544,69 @@ void CUIWnd::MinimizeClicked() {
 }
 
 void CUIWnd::InitBuffers() {
-    // for when minimized... m_minimized_buffer
-    GG::Pt m_sz = MinimizedSize();
+    m_vertex_buffer.clear();
+    m_vertex_buffer.reserve(17);
+    m_buffer_indices.resize(4);
+    std::size_t previous_buffer_size = m_vertex_buffer.size();
 
-    m_minimized_buffer.clear();
-    m_minimized_buffer.store(0.0f,          0.0f);
-    m_minimized_buffer.store(Value(m_sz.x), 0.0f);
-    m_minimized_buffer.store(Value(m_sz.x), Value(m_sz.y));
-    m_minimized_buffer.store(0.0f,          Value(m_sz.y));
-    m_minimized_buffer.createServerBuffer();
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt cl_ul = ClientUpperLeft(), cl_lr = ClientLowerRight();
 
-    GG::Pt sz = Size();
-    GG::Pt cl_ul = ClientUpperLeft() - UpperLeft();
-    GG::Pt cl_lr = ClientLowerRight() - UpperLeft();
+    // within m_vertex_buffer:
+    // [0] is the start and range for minimized background triangle fan and minimized border line loop
+    // [1] is ... the background fan / outer border line loop
+    // [2] is ... the inner border line loop
+    // [3] is ... the resize tab line list
+
+    // minimized background fan and border line loop
+    m_vertex_buffer.store(Value(ul.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(lr.y));
+    m_vertex_buffer.store(Value(ul.x),  Value(lr.y));
+    m_buffer_indices[0].first = previous_buffer_size;
+    m_buffer_indices[0].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
 
     // outer border, with optional corner cutout
-    m_outer_border_buffer.clear();
-    m_outer_border_buffer.store(0.0f,           0.0f);
-    m_outer_border_buffer.store(Value(sz.x),    0.0f);
+    m_vertex_buffer.store(Value(ul.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(ul.y));
     if (!m_resizable) {
-        m_outer_border_buffer.store(Value(sz.x),                            Value(sz.y) - OUTER_EDGE_ANGLE_OFFSET);
-        m_outer_border_buffer.store(Value(sz.x) - OUTER_EDGE_ANGLE_OFFSET,  Value(sz.y));
+        m_vertex_buffer.store(Value(lr.x),                            Value(lr.y) - OUTER_EDGE_ANGLE_OFFSET);
+        m_vertex_buffer.store(Value(lr.x) - OUTER_EDGE_ANGLE_OFFSET,  Value(lr.y));
     } else {
-        m_outer_border_buffer.store(Value(sz.x),Value(sz.y));
+        m_vertex_buffer.store(Value(lr.x),  Value(lr.y));
     }
-    m_outer_border_buffer.store(0.0f,           Value(sz.y));
-    m_outer_border_buffer.createServerBuffer();
+    m_vertex_buffer.store(Value(ul.x),      Value(lr.y));
+    m_buffer_indices[1].first = previous_buffer_size;
+    m_buffer_indices[1].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
 
     // inner border, with optional corner cutout
-    m_inner_border_buffer.clear();
-    m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_ul.y));
-    m_inner_border_buffer.store(Value(cl_lr.x), Value(cl_ul.y));
+    m_vertex_buffer.store(Value(cl_ul.x),       Value(cl_ul.y));
+    m_vertex_buffer.store(Value(cl_lr.x),       Value(cl_ul.y));
     if (m_resizable) {
-        m_inner_border_buffer.store(Value(cl_lr.x),                             Value(cl_lr.y) - INNER_BORDER_ANGLE_OFFSET);
-        m_inner_border_buffer.store(Value(cl_lr.x) - INNER_BORDER_ANGLE_OFFSET, Value(cl_lr.y));
+        m_vertex_buffer.store(Value(cl_lr.x),                             Value(cl_lr.y) - INNER_BORDER_ANGLE_OFFSET);
+        m_vertex_buffer.store(Value(cl_lr.x) - INNER_BORDER_ANGLE_OFFSET, Value(cl_lr.y));
     } else {
-        m_inner_border_buffer.store(Value(cl_lr.x),Value(cl_lr.y));
+        m_vertex_buffer.store(Value(cl_lr.x),   Value(cl_lr.y));
     }
-    m_inner_border_buffer.store(Value(cl_ul.x), Value(cl_lr.y));
-    m_inner_border_buffer.createServerBuffer();
+    m_vertex_buffer.store(Value(cl_ul.x),       Value(cl_lr.y));
+    m_buffer_indices[2].first = previous_buffer_size;
+    m_buffer_indices[2].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
 
     // resize hash marks
-    m_resize_corner_lines_buffer.clear();
-    m_resize_corner_lines_buffer.store(Value(cl_lr.x),                          Value(cl_lr.y) - RESIZE_HASHMARK1_OFFSET);
-    m_resize_corner_lines_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK1_OFFSET,Value(cl_lr.y));
-    m_resize_corner_lines_buffer.store(Value(cl_lr.x),                          Value(cl_lr.y) - RESIZE_HASHMARK2_OFFSET);
-    m_resize_corner_lines_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK2_OFFSET,Value(cl_lr.y));
-    m_resize_corner_lines_buffer.createServerBuffer();
+    m_vertex_buffer.store(Value(cl_lr.x),                           Value(cl_lr.y) - RESIZE_HASHMARK1_OFFSET);
+    m_vertex_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK1_OFFSET, Value(cl_lr.y));
+    m_vertex_buffer.store(Value(cl_lr.x),                           Value(cl_lr.y) - RESIZE_HASHMARK2_OFFSET);
+    m_vertex_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK2_OFFSET, Value(cl_lr.y));
+    m_buffer_indices[3].first = previous_buffer_size;
+    m_buffer_indices[3].second = m_vertex_buffer.size() - previous_buffer_size;
+    //previous_buffer_size = m_vertex_buffer.size();
+
+    m_vertex_buffer.createServerBuffer();
+
+    //std::cout << "CUIWnd vertex buffer final size: " << previous_buffer_size << std::endl;
 }
 
 void CUIWnd::Hide(bool children) {

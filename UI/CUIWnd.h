@@ -200,10 +200,8 @@ protected:
     CUI_MinRestoreButton*   m_minimize_button;      //!< the minimize/restore button
     CUI_PinButton*          m_pin_button;           //!< the pin button
 
-    GG::GL2DVertexBuffer    m_minimized_buffer;
-    GG::GL2DVertexBuffer    m_outer_border_buffer;
-    GG::GL2DVertexBuffer    m_inner_border_buffer;
-    GG::GL2DVertexBuffer    m_resize_corner_lines_buffer;
+    GG::GL2DVertexBuffer                                m_vertex_buffer;
+    std::vector<std::pair<std::size_t, std::size_t> >   m_buffer_indices;
 
     static const GG::Y      BUTTON_TOP_OFFSET;
     static const GG::X      BUTTON_RIGHT_OFFSET;
