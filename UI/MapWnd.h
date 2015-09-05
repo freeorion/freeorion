@@ -259,9 +259,11 @@ private:
     /* renders the dashed lines indicating where each fleet is going */
     void            RenderFleetMovementLines();
 
-    /* renders a single fleet movement line.  if \a clr is GG::CLR_ZERO, the lane
-     * is rendered with the .colour attribute of \a move_line */
-    void            RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::Clr clr = GG::CLR_ZERO);
+    /* renders a single fleet movement line. if \a clr is GG::CLR_ZERO, the lane
+     * is rendered with the .colour attribute of \a move_line. assumes that the
+     * move dot texture has already been bound. */
+    void            RenderMovementLine(const MapWnd::MovementLineData& move_line, float dot_size, float dot_spacing, float dot_shift,
+                                       GG::Clr clr = GG::CLR_ZERO);
 
     /* renders ETA indicators at end-of-turn positions for a single fleet movement
      * line.  if \a clr is GG::CLR_ZERO, the indicators are filled with the .colour
@@ -472,18 +474,12 @@ private:
 };
 
 
-/** Derive any window from this class to have it managed by MapWnd. For example, MapWnd will delete all open popups
-   when the end turn button is hit. */
+/** Derive any window from this class to have it managed by MapWnd. */
 class MapWndPopup : public CUIWnd {
 public:
-    MapWndPopup(const std::string& t,
-                GG::X default_x, GG::Y default_y,
-                GG::X default_w, GG::Y default_h,
-                GG::Flags<GG::WndFlag> flags,
-                const std::string& config_name = "");
-    MapWndPopup(const std::string& t,
-                GG::Flags<GG::WndFlag> flags,
-                const std::string& config_name = "");
+    MapWndPopup(const std::string& t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
+                GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+    MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
     virtual ~MapWndPopup();
     void    CloseClicked();
     void    Close();

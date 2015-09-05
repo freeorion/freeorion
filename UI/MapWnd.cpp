@@ -477,25 +477,18 @@ private:
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-MapWndPopup::MapWndPopup(const std::string& t,
-                         GG::X default_x, GG::Y default_y,
-                         GG::X default_w, GG::Y default_h,
-                         GG::Flags<GG::WndFlag> flags,
-                         const std::string& config_name) :
+MapWndPopup::MapWndPopup(const std::string& t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
+                         GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(t, default_x, default_y, default_w, default_h, flags, config_name)
 {
-    MapWnd *mwnd = ClientUI::GetClientUI()->GetMapWnd();
-    if (mwnd)
+    if (MapWnd *mwnd = ClientUI::GetClientUI()->GetMapWnd())
         mwnd->RegisterPopup(this);
 }
 
-MapWndPopup::MapWndPopup(const std::string& t,
-                         GG::Flags<GG::WndFlag> flags,
-                         const std::string& config_name) :
+MapWndPopup::MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(t, flags, config_name)
 {
-    MapWnd *mwnd = ClientUI::GetClientUI()->GetMapWnd();
-    if (mwnd)
+    if (MapWnd *mwnd = ClientUI::GetClientUI()->GetMapWnd())
         mwnd->RegisterPopup(this);
 }
 
@@ -1729,27 +1722,60 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
     glLineWidth(1.0);
 }
 
+namespace {
+    GG::GL2DVertexBuffer dot_vertices_buffer;
+    GG::GLTexCoordBuffer dot_star_texture_coords;
+    const unsigned int BUFFER_CAPACITY(512);    // should be long enough for most plausible fleet move lines
+}
+
 void MapWnd::RenderFleetMovementLines() {
     if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
         return;
 
-    // set common animation shift for move lines
-    const int       MOVE_LINE_DOT_SPACING = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
-    const double    RATE                  = GetOptionsDB().Get<double>("UI.fleet-supply-line-dot-rate");
-    move_line_animation_shift = static_cast<double>(static_cast<int>(static_cast<double>(GG::GUI::GetGUI()->Ticks()) * RATE) % MOVE_LINE_DOT_SPACING);
+    // determine animation shift for move lines
+    int dot_spacing = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
+    float rate = static_cast<float>(GetOptionsDB().Get<double>("UI.fleet-supply-line-dot-rate"));
+    int ticks = GG::GUI::GetGUI()->Ticks();
+    float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
+    // texture for dots
+    boost::shared_ptr<GG::Texture> move_line_dot_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
+    float dot_size = Value(move_line_dot_texture->DefaultWidth());
+    //std::cout << "dot size: " << dot_size << std::endl;
+
+    // texture coords
+    if (dot_star_texture_coords.empty()) {
+        dot_star_texture_coords.reserve(BUFFER_CAPACITY*4);
+        for (std::size_t i = 0; i < BUFFER_CAPACITY; ++i) {
+            dot_star_texture_coords.store(0.0f, 0.0f);
+            dot_star_texture_coords.store(0.0f, 1.0f);
+            dot_star_texture_coords.store(1.0f, 1.0f);
+            dot_star_texture_coords.store(1.0f, 0.0f);
+        }
+    }
+
+
+    // dots rendered same size for all zoom levels, so do positioning in screen
+    // space instead of universe space
+    glPushMatrix();
+    glLoadIdentity();
 
     // render movement lines for all fleets
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
     for (std::map<int, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
-        RenderMovementLine(it->second);
+    { RenderMovementLine(it->second, dot_size, dot_spacing, move_line_animation_shift); }
 
     // re-render selected fleets' movement lines in white
     for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         int fleet_id = *it;
         std::map<int, MovementLineData>::const_iterator line_it = m_fleet_lines.find(fleet_id);
         if (line_it != m_fleet_lines.end())
-            RenderMovementLine(line_it->second, GG::CLR_WHITE);
+            RenderMovementLine(line_it->second, dot_size, dot_spacing, move_line_animation_shift, GG::CLR_WHITE);
     }
+    glPopClientAttrib();
 
     // render move line ETA indicators for selected fleets
     for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
@@ -1760,86 +1786,110 @@ void MapWnd::RenderFleetMovementLines() {
     }
 
     // render projected move lines
-    for (std::map<int, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
-        RenderMovementLine(it->second, GG::CLR_WHITE);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
+    for (std::map<int, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin();
+         it != m_projected_fleet_lines.end(); ++it)
+    { RenderMovementLine(it->second, dot_size, dot_spacing, move_line_animation_shift, GG::CLR_WHITE); }
+    glPopClientAttrib();
 
     // render projected move line ETA indicators
-    for (std::map<int, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
-        RenderMovementLineETAIndicators(it->second, GG::CLR_WHITE);
+    for (std::map<int, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin();
+         it != m_projected_fleet_lines.end(); ++it)
+    { RenderMovementLineETAIndicators(it->second, GG::CLR_WHITE); }
+
+    glPopMatrix();
 }
 
-void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::Clr clr) {
+void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, float dot_size,
+                                float dot_spacing, float dot_shift, GG::Clr clr)
+{
+    // assumes:
+    // - dot texture has already been bound
+    // - identity matrix has been loaded
+    // - vertex array and texture coord array client states ahve been enabled
+
     const std::vector<MovementLineData::Vertex>& vertices = move_line.vertices;
     if (vertices.empty())
         return; // nothing to draw.  need at least two nodes at different locations to draw a line
     if (vertices.size() % 2 == 1) {
-        ErrorLogger() << "RenderMovementLine given an odd number of vertices to render?!";
+        //ErrorLogger() << "RenderMovementLine given an odd number of vertices (" << vertices.size() << ") to render?!";
         return;
     }
 
-    glPushMatrix();
-    glLoadIdentity();
-
-    if (clr == GG::CLR_ZERO) {
+    // if no override colour specified, use line's own colour info
+    if (clr == GG::CLR_ZERO)
         glColor(move_line.colour);
-    } else {
+    else
         glColor(clr);
-    }
 
-    boost::shared_ptr<GG::Texture> move_line_dot_texture =
-        ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
-    GG::Pt      texture_half_size = GG::Pt(GG::X(move_line_dot_texture->DefaultWidth() / 2),
-                                           GG::Y(move_line_dot_texture->DefaultHeight() / 2));
-    const int   MOVE_LINE_DOT_SPACING = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
+    float dot_half_sz = dot_size / 2.0f;
+    float offset = dot_shift;  // step along line in by move_line_animation_shift to get position of first dot
 
-    double offset = move_line_animation_shift;  // step along line in by move_line_animation_shift to get position of first dot
 
-    // blit a series of coloured dots along move path
-    for (std::vector<MovementLineData::Vertex>::const_iterator verts_it = vertices.begin(); verts_it != vertices.end(); ++verts_it) {
+    // movement line data changes every frame, so no use for a server buffer...
+    // so fill a client buffer each frame with latest vertex data for this line.
+    // however, want to avoid extra reallocations of buffer, so reserve space.
+    dot_vertices_buffer.clear();
+    dot_vertices_buffer.reserve(BUFFER_CAPACITY*4);
+
+    unsigned int dots_added_to_buffer = 0;
+
+    // set vertex positions to outline a quad for each move line vertex
+    for (std::vector<MovementLineData::Vertex>::const_iterator verts_it = vertices.begin();
+         verts_it != vertices.end(); ++verts_it)
+    {
+        if (dots_added_to_buffer >= BUFFER_CAPACITY)
+            break; // can't fit any more!
+
         // get next two vertices
         const MovementLineData::Vertex& vert1 = *verts_it;
         verts_it++;
         const MovementLineData::Vertex& vert2 = *verts_it;
 
-        GG::Pt vert1Pt = ScreenCoordsFromUniversePosition(vert1.x, vert1.y) - texture_half_size;
-        GG::Pt vert2Pt = ScreenCoordsFromUniversePosition(vert2.x, vert2.y) - texture_half_size;
+        // find centres of dots on screen
+        GG::Pt vert1Pt = ScreenCoordsFromUniversePosition(vert1.x, vert1.y);
+        GG::Pt vert2Pt = ScreenCoordsFromUniversePosition(vert2.x, vert2.y);
 
         // get unit vector along line connecting vertices
-        double deltaX = Value(vert2Pt.x - vert1Pt.x), deltaY = Value(vert2Pt.y - vert1Pt.y);
-        double length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
-        if (length == 0.0) // safety check
-            length = 1.0;
-        double uVecX = deltaX / length, uVecY = deltaY / length;
+        float deltaX = Value(vert2Pt.x - vert1Pt.x);
+        float deltaY = Value(vert2Pt.y - vert1Pt.y);
+        float length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+        if (length == 0.0f) // safety check
+            length = 1.0f;
+        float uVecX = deltaX / length;
+        float uVecY = deltaY / length;
 
+        // increment along line, adding dots to buffers, until end of line segment is passed
+        while (offset < length && dots_added_to_buffer < BUFFER_CAPACITY) {
+            ++dots_added_to_buffer;
 
-        // increment along line, rendering dots, until end of line segment is passed
-        while (offset < length) {
+            // don't know why the dot needs to be shifted half a dot size down/right and
+            // rendered 2 x dot size on each axis, but apparently it does...
+
             // find position of dot from initial vertex position, offset length and unit vectors
-            std::pair<double, double> ul(Value(vert1Pt.x) + offset * uVecX,
-                                         Value(vert1Pt.y) + offset * uVecY);
+            std::pair<float, float> ul(Value(vert1Pt.x) + offset * uVecX + dot_half_sz,
+                                       Value(vert1Pt.y) + offset * uVecY + dot_half_sz);
 
-            // blit texture (appropriately coloured) into place
-            glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
-            const GLfloat* tex_coords = move_line_dot_texture->DefaultTexCoords();
-            glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2f(tex_coords[0], tex_coords[1]);
-            glVertex2f(static_cast<GLfloat>(ul.first), static_cast<GLfloat>(ul.second));
-            glTexCoord2f(tex_coords[2], tex_coords[1]);
-            glVertex2f(static_cast<GLfloat>(ul.first + Value(move_line_dot_texture->DefaultWidth())), static_cast<GLfloat>(ul.second));
-            glTexCoord2f(tex_coords[0], tex_coords[3]);
-            glVertex2f(static_cast<GLfloat>(ul.first), static_cast<GLfloat>(ul.second + Value(move_line_dot_texture->DefaultHeight())));
-            glTexCoord2f(tex_coords[2], tex_coords[3]);
-            glVertex2f(static_cast<GLfloat>(ul.first + Value(move_line_dot_texture->DefaultWidth())),
-                       static_cast<GLfloat>(ul.second + Value(move_line_dot_texture->DefaultHeight())));
-            glEnd();
+            dot_vertices_buffer.store(ul.first - dot_size,   ul.second - dot_size);
+            dot_vertices_buffer.store(ul.first - dot_size,   ul.second + dot_size);
+            dot_vertices_buffer.store(ul.first + dot_size,   ul.second + dot_size);
+            dot_vertices_buffer.store(ul.first + dot_size,   ul.second - dot_size);
 
             // move offset to that for next dot
-            offset += MOVE_LINE_DOT_SPACING;
+            offset += dot_spacing;
         }
 
         offset -= length;   // so next segment's dots meld smoothly into this segment's
     }
-    glPopMatrix();
+
+    // after adding all dots to buffer, render in one call
+    dot_vertices_buffer.activate();
+    dot_star_texture_coords.activate();
+    glDrawArrays(GL_QUADS, 0, dot_vertices_buffer.size());
+    //std::cout << "dot verts buffer size: " << dot_vertices_buffer.size() << std::endl;
 }
 
 void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr) {
@@ -3051,6 +3101,7 @@ void MapWnd::InitFieldRenderingBuffers() {
         if (!field_texture)
             continue;
 
+        // todo: why the binding here?
         glBindTexture(GL_TEXTURE_2D, field_texture->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);

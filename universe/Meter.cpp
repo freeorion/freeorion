@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <sstream>
 
-const float Meter::DEFAULT_VALUE = 0.0;
+const float Meter::DEFAULT_VALUE = 0.0f;
 const float Meter::LARGE_VALUE = static_cast<float>(2 << 15);
 const float Meter::INVALID_VALUE = -LARGE_VALUE;
 
