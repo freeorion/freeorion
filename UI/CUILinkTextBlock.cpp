@@ -32,7 +32,7 @@ LinkText& CUILinkTextBlock::Text(){
 
 GG::BlockControl* CUILinkTextBlock::Factory::CreateFromTag(
     const std::string& tag,
-    const std::string& params,
+    const GG::RichText::TAG_PARAMS& params,
     const std::string& content,
     const boost::shared_ptr<GG::Font>& font,
     GG::Clr color,

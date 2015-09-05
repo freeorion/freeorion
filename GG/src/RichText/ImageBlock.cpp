@@ -77,7 +77,7 @@ public:
 
     //! Create a Text block from a plain text tag.
     virtual BlockControl* CreateFromTag(const std::string& tag,
-                                        const std::string& params,
+                                        const RichText::TAG_PARAMS& params,
                                         const std::string& content,
                                         const boost::shared_ptr<Font>& font,
                                         Clr color,
@@ -98,28 +98,19 @@ public:
 private:
     boost::filesystem::path m_rootPath;
 
-    // Extracts the path from the given params. The path is the first double quote delimeted substring.
-    static std::string ExtractPath( const std::string& params){
+    // Extracts the path from the given params.
+    static std::string ExtractPath( const RichText::TAG_PARAMS& params ){
 
-        // Find the first double quote.
-        std::string::const_iterator path_begin = std::find(params.begin(), params.end(), '"');
+        // Find the src.
+        RichText::TAG_PARAMS::const_iterator src_param = params.find("src");
 
-        // If not found, or is at the end of params, error.
-        if(path_begin == params.end() || path_begin + 1 == params.end()){
-            return std::string("ERR:invalid params: missing \"path\":") + params;
+        // If src not found, error out.
+        if(src_param == params.end()){
+            return std::string("ERR:invalid params: missing src.");
+        }else{
+            // Return the path.
+            return src_param->second;
         }
-
-        // Find the second quote.
-        std::string::const_iterator path_end = std::find( path_begin + 1, params.end(), '"');
-
-        // If not found, error.
-        if(path_end == params.end()){
-            return std::string("ERR:invalid params: missing ending \":") + params;
-        }
-
-        // Return the path.
-        std::string path(path_begin + 1, path_end);
-        return path;
     }
 };
 

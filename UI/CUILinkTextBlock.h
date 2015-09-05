@@ -25,7 +25,7 @@ public:
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
         virtual GG::BlockControl* CreateFromTag(const std::string& tag,
-                                                const std::string& params,
+                                                const GG::RichText::TAG_PARAMS& params,
                                                 const std::string& content,
                                                 const boost::shared_ptr<GG::Font>& font,
                                                 GG::Clr color,

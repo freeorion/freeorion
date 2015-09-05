@@ -1,9 +1,35 @@
 #include "TagParser.h"
 
+
 #include <boost/foreach.hpp>
 #include <boost/regex.hpp>
 
 namespace GG {
+
+RichTextTag::RichTextTag(
+    const std::string& tag,
+    const std::string& params_string,
+    const std::string& content):
+    tag(tag),
+    tag_params(params_string),
+    content(content) {
+}
+
+std::string RichTextTag::ToString() const
+{
+    std::string str("<");
+    str += tag;
+
+    // Convert parameters to key="value".
+    if(tag_params.length() != 0){
+
+        str+=" " + tag_params;
+    }
+
+    str+= ">" + content + "</" + tag + ">";
+
+    return str;
+}
 
 
 /**
@@ -155,15 +181,7 @@ private:
 
     /// Wraps a tag in a plaintext tag.
     RichTextTag WrapInPlaintext(const RichTextTag& tag) {
-        std::string wrapped("<");
-        wrapped += tag.tag;
-
-        if(tag.tag_params.size() > 0) {
-            wrapped += " " + tag.tag_params;
-        }
-
-        wrapped+= ">" + tag.content + "</" + tag.tag + ">";
-        return RichTextTag(RichText::PLAINTEXT_TAG, "", wrapped);
+        return RichTextTag(RichText::PLAINTEXT_TAG, "", tag.ToString() );
     }
 
     // Creates a tag for displaying an error.

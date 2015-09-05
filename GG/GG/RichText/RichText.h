@@ -16,6 +16,7 @@ namespace GG {
 class GG_API RichText: public Control
 {
 public:
+    typedef std::map<std::string, std::string> TAG_PARAMS;
 
     //! An interface for object that create block controls from tags.
     class IBlockControlFactory {
@@ -23,7 +24,7 @@ public:
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
         virtual BlockControl* CreateFromTag(const std::string& tag,
-                                            const std::string& params,
+                                            const TAG_PARAMS& params,
                                             const std::string& content,
                                             const boost::shared_ptr<Font>& font,
                                             Clr color,

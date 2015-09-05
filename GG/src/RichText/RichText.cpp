@@ -8,8 +8,117 @@
 
 #include <sstream>
 
-namespace GG {
+#include <boost/algorithm/string.hpp>
+#include <cctype>
 
+namespace{
+    using namespace GG;
+
+    //! Skips over white space characters. On return, \a it will point to \a end or the next non-white space character.
+    void pass_space(std::string::const_iterator& it, const std::string::const_iterator& end){
+        for(; it != end && isspace(*it); ++it){}
+    }
+
+    //! Reads from \a it, expecting to find somthing of the form "key =". Returns key. Leaves \a it past the '=' or at \a end.
+    std::string read_key(std::string::const_iterator& it, const std::string::const_iterator& end){
+        // Move past space.
+        pass_space(it, end);
+
+        std::string key;
+        while( it != end && !isspace(*it) && *it != '='){
+            key.push_back(*it);
+            ++it;
+        }
+
+        // Move past space.
+        pass_space(it, end);
+
+        // Move past '='.
+        if(*it == '='){
+            ++it;
+        }
+
+        return key;
+    }
+
+    //! Read from \a it, expecting a string of the form '"escape \" with \\"'. Returns the text between the quotes.
+    //! \a it will be at the first character after the second " or at \a end.
+    std::string read_quoted(std::string::const_iterator& it, const std::string::const_iterator& end){
+        // Move past space.
+        pass_space(it, end);
+
+        // Move past ".
+        if(*it == '"'){
+            ++it;
+        } else {
+            std::string rest(it, end);
+            throw std::runtime_error( std::string("Failed to parse string to end: ") + rest );
+        }
+
+        // Build up return value here.
+        std::string value;
+
+        // True when the last character was an escape.
+        bool escaped = false;
+
+        // Iterate until end or the closing '"'.
+        while( (*it != '"' || escaped) && it != end){
+            // If not escaped, '\' escapes.
+            if(!escaped && *it == '\\'){
+                escaped = true;
+            } else {
+                value.push_back(*it);
+                escaped = false;
+            }
+            ++it;
+        }
+
+        // it should always end pointing at a ".
+        // Otherwise we exited the previous loop because we ran into the end of the string.
+        if( *it != '"' ){
+            throw std::runtime_error( "Parameter value not properly enclosed in \"" );
+        } else {
+            // Move past the closing ".
+            ++it;
+            return value;
+        }
+    }
+
+    //! Extracts key="value" pairs from a string to a map.
+    void ExtractParameters(const std::string& params_string, RichText::TAG_PARAMS& tag_params ){
+
+        // Next key to be stored.
+        std::string key;
+        // Next value to be stored.
+        std::string value;
+
+        std::string::const_iterator it = params_string.begin();
+        const std::string::const_iterator& end = params_string.end();
+
+        try{
+            while(it != end){
+
+                // Read key and equals sign.
+                key = read_key(it, end);
+                // Read value.
+                value = read_quoted(it, end);
+
+                // If key is valid, store value.
+                if( key != ""  ){
+                    tag_params[key] = value;
+                }
+
+                // Pass space.
+                pass_space(it, end);
+            }
+        } catch( std::exception& ex ){
+            // Store error in special parameter.
+            tag_params["GG_ERROR"] = ex.what();
+        }
+    }
+}
+
+namespace GG {
 
 /**
  * \brief The tag to use for text without explicit tags, or inside unknown (to the rich text system) tags.
@@ -106,7 +215,11 @@ private:
     void PopulateBlocks(const std::vector< RichTextTag >& tags) {
         // Create blocks using factories.
         BOOST_FOREACH(const RichTextTag& tag, tags) {
-            BlockControl* block = FactoryMap()[tag.tag]->CreateFromTag(tag.tag, tag.tag_params, tag.content, m_font, m_color, m_format);
+            RichText::TAG_PARAMS params;
+            // Extract the parameters from params_string to the tag_params map.
+            ExtractParameters( tag.tag_params, params );
+
+            BlockControl* block = FactoryMap()[tag.tag]->CreateFromTag(tag.tag, params, tag.content, m_font, m_color, m_format);
             m_owner->AttachChild(block);
             m_blocks.push_back(block);
         }

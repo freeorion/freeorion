@@ -33,7 +33,7 @@ class TextBlockFactory: public RichText::IBlockControlFactory {
 public:
     //! Create a Text block from a plain text tag.
     virtual BlockControl* CreateFromTag(const std::string& tag,
-                                        const std::string& params,
+                                        const RichText::TAG_PARAMS& params,
                                         const std::string& content,
                                         const boost::shared_ptr<Font>& font,
                                         Clr color,

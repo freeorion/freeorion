@@ -16,13 +16,12 @@ struct RichTextTag {
 
     RichTextTag(
         const std::string& tag,
-        const std::string& tag_params,
-        const std::string& content):
-        tag(tag),
-        tag_params(tag_params),
-        content(content) {
+        const std::string& params_string, //!< The parameters as a string of key value pairs key="value".
+        const std::string& content);
 
-        }
+    //! Return the tag as a string that parses back to itself.
+    std::string ToString() const;
+
 };
 
 
