@@ -1500,6 +1500,9 @@ Options
 INTRO_BTN_ABOUT
 À propos
 
+INTRO_BTN_WEBSITE
+Visiter freeorion.org
+
 INTRO_BTN_CREDITS
 Crédits
 
@@ -4669,12 +4672,17 @@ EFFECT_GAIAN_TERRAFORM_LABEL
 Terraformation Gaia
 
 EFFECT_GAIA
-Sur %planet%: les habitants jouissent désormais d'un monde devenu un paradis [[encyclopedia GAIA_SPECIAL]].
+Sur %planet% : les habitants jouissent désormais d'un monde devenu un paradis [[encyclopedia GAIA_SPECIAL]].
 
 EFFECT_TERRAFORM
 La planète %planet% a été terraformée.
 EFFECT_TERRAFORM_LABEL
 Terraformation
+
+EFFECT_STARLANE_BORE
+Sur %planet% : une nouvelle Voie spatiale a été ouverte vers un système proche.
+EFFECT_TERRAFORM_LABEL
+Générateur de Voies Spatiales
 
 EFFECT_BLACKHOLE
 Effondrement du système %system% afin de créer un Trou Noir.
@@ -7604,7 +7612,7 @@ SHP_ASTEROID_REFORM_DESC
 Grâce à des procédés avancés de transformation des corps astéroïdaux, un blindage carbone aussi peu coûteux mais plus résistant qu'un blindage standard en plomb peut être produit.
 
 SHP_MONOMOLEC_LATTICE
-Réseau Monomoléculaire
+Maillage Monomoléculaire
 
 SHP_MONOMOLEC_LATTICE_DESC
 Les Coques Astéroïdales peuvent être renforcées et blindées, mais il demeure que les constituants de base de la majorité des astéroïdes sont généralement moins résistants que la plupart des alliages modernes. Cependant, si la structure moléculaire des roches elles-mêmes est modifiée afin d'obtenir un réseau cristallin, leur résistance pourrait être prodigieusement accrue, permettant l'élaboration de coques astéroïdales à la robustesse auparavant inconcevable.
