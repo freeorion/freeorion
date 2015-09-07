@@ -1219,13 +1219,13 @@ Hull
     stealth = 25
     structure = 5
     slots = [
-        Slot type = External position = (0.20, 0.45)
-        Slot type = External position = (0.40, 0.30)
-        Slot type = External position = (0.60, 0.30)
-        Slot type = External position = (0.80, 0.45)
-        Slot type = Internal position = (0.35, 0.60)
-        Slot type = Internal position = (0.50, 0.60)
-        Slot type = Internal position = (0.65, 0.60)
+        Slot type = External position = (0.26, 0.45)
+        Slot type = External position = (0.42, 0.45)
+        Slot type = External position = (0.58, 0.45)
+        Slot type = External position = (0.73, 0.45)
+        Slot type = Internal position = (0.47, 0.68)
+        Slot type = Internal position = (0.59, 0.68)
+        Slot type = Internal position = (0.70, 0.68)
     ]
     buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
