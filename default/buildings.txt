@@ -1441,6 +1441,7 @@ BuildingType
         Not Contains Building name = "BLD_ART_MOON"
         OwnedBy empire = Source.Owner
         Not Planet type = [Asteroids GasGiant]
+        Not HasSpecial name = "RESONANT_MOON_SPECIAL"
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups =
