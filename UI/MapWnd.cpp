@@ -1444,6 +1444,25 @@ void MapWnd::RenderStarfields() {
         UpperLeft() + GG::Pt(AppWidth(), AppHeight());
     glMatrixMode(GL_TEXTURE);
 
+    GG::GL2DVertexBuffer verts; verts.reserve(4);
+    GG::GLTexCoordBuffer tex;   tex.reserve(4);
+
+    tex.store(0.0f, 0.0f);
+    verts.store(0, 0);
+    tex.store(0.0f, 1.0f);
+    verts.store(0, Value(Height()));
+    tex.store(1.0f, 1.0f);
+    verts.store(Value(Width()), Value(Height()));
+    tex.store(1.0f, 0.0f);
+    verts.store(Value(Width()), 0);
+
+    glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    verts.activate();
+    tex.activate();
+
     for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
         float texture_coords_per_pixel_x = 1.0f / Value(m_backgrounds[i]->Width());
         float texture_coords_per_pixel_y = 1.0f / Value(m_backgrounds[i]->Height());
@@ -1454,18 +1473,12 @@ void MapWnd::RenderStarfields() {
                      static_cast<GLfloat>(Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0f * m_bg_scroll_rate[i])),
                      0.0f);
         glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
-        glBegin(GL_QUADS);
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2i(0, 0);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex(GG::X0, Height());
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex(Width(), Height());
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex(Width(), GG::Y0);
-        glEnd();
+        glDrawArrays(GL_QUADS, 0, verts.size());
+
         glLoadIdentity();
     }
+
+    glPopClientAttrib();
 
     glMatrixMode(GL_MODELVIEW);
 }
