@@ -327,23 +327,27 @@ public:
         GG::Pt ul = UpperLeft();
         GG::Pt lr = ul + GG::Pt(m_line_length, Height());
 
+        GG::GL2DVertexBuffer verts;
+        verts.reserve(6);
+        // left border
+        verts.store(Value(ul.x), Value(ul.y));
+        verts.store(Value(ul.x), Value(lr.y));
+        // right border
+        verts.store(Value(lr.x), Value(ul.y));
+        verts.store(Value(lr.x), Value(lr.y));
+        // bottom line
+        verts.store(Value(ul.x), Value(lr.y));
+        verts.store(Value(lr.x), Value(lr.y));
+
         glColor(GG::CLR_WHITE);
         glLineWidth(2.0);
 
         glDisable(GL_TEXTURE_2D);
-        glBegin(GL_LINES);
-            // left border
-            glVertex(ul.x, ul.y);
-            glVertex(ul.x, lr.y);
-
-            // right border
-            glVertex(lr.x, ul.y);
-            glVertex(lr.x, lr.y);
-
-            // bottom line
-            glVertex(ul.x, lr.y);
-            glVertex(lr.x, lr.y);
-        glEnd();
+        glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        verts.activate();
+        glDrawArrays(GL_LINES, 0, verts.size());
+        glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
 
         glLineWidth(1.0);
