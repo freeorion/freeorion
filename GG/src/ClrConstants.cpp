@@ -38,3 +38,15 @@ const Clr GG::CLR_BLUE(0, 0, 255, 255);
 const Clr GG::CLR_CYAN(0, 255, 255, 255);
 const Clr GG::CLR_YELLOW(255, 255, 0, 255);
 const Clr GG::CLR_MAGENTA(255, 0, 255, 255);
+
+const Clr GG::CLR_LIGHT_GRAY(192, 192, 192, 255);
+const Clr GG::CLR_DARK_GRAY(64, 64, 64, 255);
+const Clr GG::CLR_PINK(255, 127, 127, 255);
+const Clr GG::CLR_DARK_RED(127, 0, 0, 255);
+const Clr GG::CLR_OLIVE(127, 127, 0, 255);
+const Clr GG::CLR_DARK_GREEN(0, 127, 0, 255);
+const Clr GG::CLR_TEAL(0, 127, 127, 255);
+const Clr GG::CLR_DARK_BLUE(0, 0, 127, 255);
+const Clr GG::CLR_PURPLE(127, 0, 127, 255);
+const Clr GG::CLR_ORANGE(255, 127, 0, 255);
+

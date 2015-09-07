@@ -46,6 +46,18 @@ extern GG_API const Clr CLR_CYAN;
 extern GG_API const Clr CLR_YELLOW;
 extern GG_API const Clr CLR_MAGENTA;
 
+extern GG_API const Clr CLR_LIGHT_GRAY;
+extern GG_API const Clr CLR_DARK_GRAY;
+extern GG_API const Clr CLR_PINK;
+extern GG_API const Clr CLR_DARK_RED;
+extern GG_API const Clr CLR_OLIVE;
+extern GG_API const Clr CLR_DARK_GREEN;
+extern GG_API const Clr CLR_TEAL;
+extern GG_API const Clr CLR_DARK_BLUE;
+extern GG_API const Clr CLR_PURPLE;
+extern GG_API const Clr CLR_ORANGE;
+
+
 } // namespace GG
 
 #endif
