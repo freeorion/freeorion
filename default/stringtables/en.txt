@@ -4612,7 +4612,7 @@ SITREP_POP_THRESHOLD_LABEL
 Colonizing Threshold
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %planet%!
+WARNING: Sightings of %rawtext% %predefinedshipdesign% are reported around the %species% Outpost at %system%!
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Experimentor Monster Spawn
 
@@ -4680,8 +4680,8 @@ EFFECT_TERRAFORM_LABEL
 Terraform
 
 EFFECT_STARLANE_BORE
-At %planet%: a new starlane has opened linking to a nearby system.
-EFFECT_TERRAFORM_LABEL
+At %system%: a new starlane has opened linking to a nearby system.
+EFFECT_STARLANE_BORE_LABEL
 Starlane Bore
 
 EFFECT_BLACKHOLE
@@ -4790,12 +4790,12 @@ EFFECT_MINES_SHIP_DESTROYED_LABEL
 System Mines Destroyed Ship
 
 EFFECT_FLEET_MOVED_TOWARDS
-%fleet% was moved back towards %system% by %planet%. They were initially %rawtext% uu apart.
+At %planet%: [[tech LRN_SPATIAL_DISTORT_GEN]] moved %fleet% back towards %system%. They were initially %rawtext% uu apart.
 EFFECT_FLEET_MOVED_TOWARDS_LABEL
 Fleet Moved Towards
 
 EFFECT_FLEET_MOVED_TO
-%fleet% was moved back into %system% by %planet%. They were initially %rawtext% uu apart.
+At %planet%: [[tech LRN_SPATIAL_DISTORT_GEN]] moved %fleet% back into %system%. They were initially %rawtext% uu apart.
 EFFECT_FLEET_MOVED_TO_LABEL
 Fleet Moved Into
 
@@ -7932,7 +7932,7 @@ LRN_STELLAR_TOMOGRAPHY_DESC
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
 LRN_SPATIAL_DISTORT_GEN
-Spatial Distortion Generator
+Spatial Distortion
 
 LRN_SPATIAL_DISTORT_GEN_DESC
 '''By manipulating the dimensional properties of a starlane, it would be possible to selectively bend it. Slow incoming ships may be returned to their previous system of departure, and faster ships may be substantially delayed.'''

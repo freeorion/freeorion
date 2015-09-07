@@ -1664,14 +1664,14 @@ BuildingType
                 AddStarlanes endpoint = MinimumNumberOf
                 number = 1
                 sortkey = DirectDistanceBetween object = Source.ID object = LocalCandidate.ID
-                condition =  And [
+                condition = And [
                     System
                     CanAddStarlanesTo condition = Source
-                    ]
+                ]
                 GenerateSitRepMessage
                     message = "EFFECT_STARLANE_BORE"
                     icon = "icons/tech/n-dimensional_structures.png"
-                    parameters = tag = "planet" data = Target.ID
+                    parameters = tag = "system" data = Target.ID
                     empire = Source.Owner
                 ]
         EffectsGroup
@@ -1837,7 +1837,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "3"
@@ -1858,7 +1858,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLACK_KRAKEN"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
@@ -1880,7 +1880,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "3"
@@ -1901,7 +1901,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_BLOATED_JUGGERNAUT"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
@@ -1923,7 +1923,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "3"
@@ -1944,7 +1944,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_PSIONIC_SNOWFLAKE"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "2"
@@ -1964,7 +1964,7 @@ BuildingType
                     message = "EFFECT_EXPERIMENT_MONSTERS_LAUNCH"
                     icon = "icons/specials_huge/ancient_ruins.png"
                     parameters = [
-                        tag = "planet" data = Source.SystemID
+                        tag = "system" data = Source.SystemID
                         tag = "predefinedshipdesign" data = "SM_COSMIC_DRAGON"
                         tag = "species" data = "SP_EXPERIMENTOR"
                         tag = "rawtext" data = "1"
