@@ -102,7 +102,7 @@ namespace {
 ////////////////////////////////////////////////
 class RotatingGraphic : public GG::StaticGraphic {
 public:
-    RotatingGraphic(boost::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
+    RotatingGraphic(const boost::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
                     GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS) :
         GG::StaticGraphic(texture, style, flags),
         m_rpm(20.0f)
@@ -371,7 +371,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_tiny_graphic->Hide();
 
     // selection indicator graphic
-    boost::shared_ptr<GG::Texture>& texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
+    const boost::shared_ptr<GG::Texture>& texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
 
     GG::X texture_width = texture->DefaultWidth();
     GG::Y texture_height = texture->DefaultHeight();
@@ -381,7 +381,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // tiny selection indicator graphic
-    boost::shared_ptr<GG::Texture>& tiny_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
+    const boost::shared_ptr<GG::Texture>& tiny_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
     texture_width = tiny_texture->DefaultWidth();
     texture_height = tiny_texture->DefaultHeight();
     m_tiny_selection_indicator = new RotatingGraphic(tiny_texture, GG::GRAPHIC_NONE);
@@ -390,7 +390,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_tiny_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // mouseover indicator graphic
-    boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
+    const boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
     texture_width = mouseover_texture->DefaultWidth();
     texture_height = mouseover_texture->DefaultHeight();
     m_mouseover_indicator = new GG::StaticGraphic(mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
