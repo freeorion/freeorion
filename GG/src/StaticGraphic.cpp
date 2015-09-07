@@ -139,6 +139,9 @@ Rect StaticGraphic::RenderedArea() const
     return Rect(pt1, pt2);
 }
 
+const SubTexture& StaticGraphic::GetTexture() const
+{ return m_graphic; }
+
 void StaticGraphic::Render()
 {
     Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();

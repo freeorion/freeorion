@@ -74,6 +74,8 @@ public:
         UpperLeft()-relative coordinates.  This may not be the entire area of
         the StaticGraphic, based on the style being used. */
     Rect RenderedArea() const;
+
+    const SubTexture& GetTexture() const;
     //@}
 
     /** \name Mutators */ ///@{
