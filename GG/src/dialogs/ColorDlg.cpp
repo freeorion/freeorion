@@ -369,16 +369,29 @@ void ColorDlg::ColorDisplay::Render()
     glEnd();
     Clr full_alpha_color = Color();
     full_alpha_color.a = 255;
-    glBegin(GL_TRIANGLES);
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    GLfloat verts[6];
+
+    // upper left: full alpha colour
+    verts[0] = Value(lr.x); verts[1] = Value(ul.y);
+    verts[2] = Value(ul.x); verts[3] = Value(ul.y);
+    verts[4] = Value(ul.x); verts[5] = Value(lr.y);
     glColor(full_alpha_color);
-    glVertex(lr.x, ul.y);
-    glVertex(ul.x, ul.y);
-    glVertex(ul.x, lr.y);
+    glVertexPointer(2, GL_FLOAT, 0, verts);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // bottom right: actual alpha colour
+    verts[0] = Value(ul.x); verts[1] = Value(lr.y);
+    verts[2] = Value(lr.x); verts[3] = Value(lr.y);
+    verts[4] = Value(lr.x); verts[5] = Value(ul.y);
     glColor(Color());
-    glVertex(ul.x, lr.y);
-    glVertex(lr.x, lr.y);
-    glVertex(lr.x, ul.y);
-    glEnd();
+    glVertexPointer(2, GL_FLOAT, 0, verts);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -455,11 +468,31 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
 
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
-    const int COLOR_BUTTON_ROWS = 3;
+    const int COLOR_BUTTON_ROWS = 4;
     const int COLOR_BUTTON_COLS = 5;
     if (s_custom_colors.empty()) {
-        for (int i = 0; i < COLOR_BUTTON_ROWS * COLOR_BUTTON_COLS; ++i) {
-            s_custom_colors.push_back(CLR_BLACK);
+        s_custom_colors.push_back(GG::CLR_WHITE);
+        s_custom_colors.push_back(GG::CLR_LIGHT_GRAY);
+        s_custom_colors.push_back(GG::CLR_GRAY);
+        s_custom_colors.push_back(GG::CLR_DARK_GRAY);
+        s_custom_colors.push_back(GG::CLR_BLACK);
+        s_custom_colors.push_back(GG::CLR_PINK);
+        s_custom_colors.push_back(GG::CLR_RED);
+        s_custom_colors.push_back(GG::CLR_DARK_RED);
+        s_custom_colors.push_back(GG::CLR_MAGENTA);
+        s_custom_colors.push_back(GG::CLR_PURPLE);
+        s_custom_colors.push_back(GG::CLR_BLUE);
+        s_custom_colors.push_back(GG::CLR_DARK_BLUE);
+        s_custom_colors.push_back(GG::CLR_TEAL);
+        s_custom_colors.push_back(GG::CLR_CYAN);
+        s_custom_colors.push_back(GG::CLR_GREEN);
+        s_custom_colors.push_back(GG::CLR_DARK_GREEN);
+        s_custom_colors.push_back(GG::CLR_OLIVE);
+        s_custom_colors.push_back(GG::CLR_YELLOW);
+        s_custom_colors.push_back(GG::CLR_ORANGE);
+
+        for (unsigned int i = s_custom_colors.size(); i < COLOR_BUTTON_ROWS * COLOR_BUTTON_COLS; ++i) {
+            s_custom_colors.push_back(CLR_GRAY);
         }
     }
 
