@@ -42,7 +42,7 @@ namespace {
             ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection_tiny", "system_selection_tiny", false);
         return tiny_textures;
     }
-    
+
     // Wrap content int an rgba tag with color color. Opacity ignored.
     std::string ColorTag(const std::string& content, GG::Clr color){
         boost::format templ("<rgba %d %d %d 255>%s</rgba>");
@@ -97,6 +97,102 @@ namespace {
     const double        PI = 3.1415926535;
     const unsigned int  MAX_TRIES = 128;     // most allowed unique fleetbutton locations
 }
+
+////////////////////////////////////////////////
+// RotatingGraphic
+////////////////////////////////////////////////
+class RotatingGraphic : public GG::StaticGraphic {
+public:
+    RotatingGraphic(boost::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
+                    GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS) :
+        GG::StaticGraphic(texture, style, flags),
+        m_rpm(20.0f)
+    {}
+
+    void SetRPM(float rpm)  { m_rpm = std::max(1.0f, std::min(3600.0f, rpm)); }
+
+    virtual void Render()   {
+        GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+        glColor(color_to_use);
+
+        int ticks = GG::GUI::GetGUI()->Ticks();
+        float minutes = ticks / 1000.0f / 60.0f;
+
+        const GG::Texture* texture = GetTexture().GetTexture();
+        if (!texture)
+            return;
+        glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
+
+        glPushMatrix();
+
+        // rotate around centre of rendered texture...
+        GG::Rect rendered_area = RenderedArea();
+        float width = Value(rendered_area.Width());
+        float height = Value(rendered_area.Height());
+        float mid_x = Value(rendered_area.Left()) + width / 2.0f;
+        float mid_y = Value(rendered_area.Top()) + height / 2.0f;
+        float angle = 2*PI*minutes * m_rpm;
+
+        const float COS_THETA = std::cos(angle);
+        const float SIN_THETA = std::sin(angle);
+
+            // Components of corner points of a quad
+        const float X1 =  width/2, Y1 =  height/2;  // upper right corner (X1, Y1)
+        const float X2 = -width/2, Y2 =  height/2;  // upper left corner  (X2, Y2)
+        const float X3 = -width/2, Y3 = -height/2;  // lower left corner  (X3, Y3)
+        const float X4 =  width/2, Y4 = -height/2;  // lower right corner (X4, Y4)
+
+        // Calculate rotated corner point components after CCW ROTATION radians around origin.
+        const float X1r =  COS_THETA*X1 + SIN_THETA*Y1;
+        const float Y1r = -SIN_THETA*X1 + COS_THETA*Y1;
+        const float X2r =  COS_THETA*X2 + SIN_THETA*Y2;
+        const float Y2r = -SIN_THETA*X2 + COS_THETA*Y2;
+        const float X3r =  COS_THETA*X3 + SIN_THETA*Y3;
+        const float Y3r = -SIN_THETA*X3 + COS_THETA*Y3;
+        const float X4r =  COS_THETA*X4 + SIN_THETA*Y4;
+        const float Y4r = -SIN_THETA*X4 + COS_THETA*Y4;
+
+        // add to system position to get translated scaled rotated quad corner
+        GG::GL2DVertexBuffer verts;
+        verts.store(mid_x + X2r, mid_y + Y2r); // rotated upper left
+        verts.store(mid_x + X1r, mid_y + Y1r); // rotated upper right
+        verts.store(mid_x + X3r, mid_y + Y3r); // rotated lower left
+        verts.store(mid_x + X4r, mid_y + Y4r); // rotated lower right
+
+        GLfloat texture_coordinate_data[8];
+        const GLfloat* tex_coords = GetTexture().TexCoords();
+
+        texture_coordinate_data[2*0] =      tex_coords[0];
+        texture_coordinate_data[2*0 + 1] =  tex_coords[1];
+        texture_coordinate_data[2*1] =      tex_coords[2];
+        texture_coordinate_data[2*1 + 1] =  tex_coords[1];
+        texture_coordinate_data[2*2] =      tex_coords[0];
+        texture_coordinate_data[2*2 + 1] =  tex_coords[3];
+        texture_coordinate_data[2*3] =      tex_coords[2];
+        texture_coordinate_data[2*3 + 1] =  tex_coords[3];
+
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        verts.activate();
+        glTexCoordPointer(2, GL_FLOAT, 0, texture_coordinate_data);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
+
+        //// testing: triangle lines rendering
+        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glBindTexture(GL_TEXTURE_2D, 0);
+        //glColor(GG::CLR_WHITE);
+        //glDrawArrays(GL_LINE_LOOP, 0, verts.size());
+
+        glPopClientAttrib();
+        glPopMatrix();
+    }
+
+private:
+    float   m_rpm;
+};
 
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
@@ -276,28 +372,23 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_tiny_graphic->Hide();
 
     // selection indicator graphic
-    const std::vector<boost::shared_ptr<GG::Texture> >& textures = GetSelectionIndicatorTextures();
-    GG::X texture_width = textures.at(0)->DefaultWidth();
-    GG::Y texture_height = textures.at(0)->DefaultHeight();
-    m_selection_indicator = new GG::DynamicGraphic(GG::X0, GG::Y0,
-                                                   texture_width, texture_height, true,
-                                                   texture_width, texture_height, 0, textures,
-                                                   GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_selection_indicator->SetFPS(ClientUI::SystemSelectionIndicatorFPS());
+    boost::shared_ptr<GG::Texture>& texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
+
+    GG::X texture_width = texture->DefaultWidth();
+    GG::Y texture_height = texture->DefaultHeight();
+    m_selection_indicator = new RotatingGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorFPS());
     AttachChild(m_selection_indicator);
-    m_selection_indicator->Play();
+    m_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // tiny selection indicator graphic
-    const std::vector<boost::shared_ptr<GG::Texture> >& tiny_textures = GetSelectionIndicatorTinyTextures();
-    texture_width = tiny_textures.at(0)->DefaultWidth();
-    texture_height = tiny_textures.at(0)->DefaultHeight();
-    m_tiny_selection_indicator = new GG::DynamicGraphic(GG::X0, GG::Y0,
-                                                        texture_width, texture_height, true,
-                                                        texture_width, texture_height, 0, tiny_textures,
-                                                        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_tiny_selection_indicator->SetFPS(ClientUI::SystemSelectionIndicatorFPS());
+    boost::shared_ptr<GG::Texture>& tiny_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
+    texture_width = tiny_texture->DefaultWidth();
+    texture_height = tiny_texture->DefaultHeight();
+    m_tiny_selection_indicator = new RotatingGraphic(tiny_texture, GG::GRAPHIC_NONE);
+    m_tiny_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorFPS());
     AttachChild(m_tiny_selection_indicator);
-    m_tiny_selection_indicator->Play();
+    m_tiny_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // mouseover indicator graphic
     boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");

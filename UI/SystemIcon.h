@@ -7,7 +7,7 @@
 #include <GG/Control.h>
 
 class FleetButton;
-
+class RotatingGraphic;
 
 /** A label like GG::Control that displays the name of a system in the
   * color(s) of the owning empire(s).  This class is derived from GG::Control
@@ -84,8 +84,8 @@ private:
     boost::shared_ptr<GG::Texture>  m_overlay_texture;          //!< extra texture drawn over / behind system
     double                          m_overlay_size;             //!< size of extra texture in universe units
     GG::StaticGraphic*              m_tiny_graphic;             //!< non-scaled texture shown when zoomed far enough out
-    GG::DynamicGraphic*             m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
-    GG::DynamicGraphic*             m_tiny_selection_indicator; //!< non-scaled indicator shown when showing tiny graphic
+    RotatingGraphic*                m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
+    RotatingGraphic*                m_tiny_selection_indicator; //!< non-scaled indicator shown when showing tiny graphic
     GG::StaticGraphic*              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system and the system has been explored by the client empire
     GG::StaticGraphic*              m_mouseover_unexplored_indicator; //!< shown when the mouse cursor is over the system and teh system is unexplored by the client empire
     GG::StaticGraphic*              m_tiny_mouseover_indicator; //!< non-scaled indicator shown when showing tiny graphic
