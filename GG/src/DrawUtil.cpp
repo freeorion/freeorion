@@ -26,6 +26,8 @@
 
 #include <GG/ClrConstants.h>
 #include <GG/GUI.h>
+#include <GG/GLClientAndServerBuffer.h>
+
 
 #include <valarray>
 
@@ -59,54 +61,49 @@ namespace { // file-scope constants and functions
         X inner_x2 = lr.x - (bevel_right ? static_cast<int>(bevel_thick) : 0);
         Y inner_y2 = lr.y - (bevel_bottom ? static_cast<int>(bevel_thick) : 0);
 
-        int vertices[] = {
-            Value(inner_x2), Value(inner_y1),
-            Value(lr.x), Value(ul.y),
-            Value(inner_x1), Value(inner_y1),
-            Value(ul.x), Value(ul.y),
-            Value(inner_x1), Value(inner_y2),
-            Value(ul.x), Value(lr.y),
-            Value(inner_x2), Value(inner_y2),
-            Value(lr.x), Value(lr.y),
-            Value(inner_x2), Value(inner_y1),
-            Value(lr.x), Value(ul.y)
-        };
+        GL2DVertexBuffer verts;
+        verts.reserve(14);
+        verts.store(Value(inner_x2),    Value(inner_y1));
+        verts.store(Value(lr.x),        Value(ul.y));
+        verts.store(Value(inner_x1),    Value(inner_y1));
+        verts.store(Value(ul.x),        Value(ul.y));
+        verts.store(Value(inner_x1),    Value(inner_y2));
+        verts.store(Value(ul.x),        Value(lr.y));
+        verts.store(Value(inner_x2),    Value(inner_y2));
+        verts.store(Value(lr.x),        Value(lr.y));
+        verts.store(Value(inner_x2),    Value(inner_y1));
+        verts.store(Value(lr.x),        Value(ul.y));
+
+        verts.store(Value(inner_x2),    Value(inner_y1));
+        verts.store(Value(inner_x1),    Value(inner_y1));
+        verts.store(Value(inner_x1),    Value(inner_y2));
+        verts.store(Value(inner_x2),    Value(inner_y2));
+
+        verts.activate();
+
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
 
         // draw beveled edges
         if (bevel_thick && (border_color1 != CLR_ZERO || border_color2 != CLR_ZERO)) {
             glColor(border_color1);
             if (border_color1 == border_color2) {
-                glBegin(GL_QUAD_STRIP);
-                for (int i = 0; i < 10; ++i) {
-                    glVertex2i(vertices[i * 2 + 0], vertices[i * 2 + 1]);
-                }
-                glEnd();
+                glDrawArrays(GL_QUAD_STRIP, 0, 10);
             } else {
-                glBegin(GL_QUAD_STRIP);
-                for (int i = 0; i < 6; ++i) {
-                    glVertex2i(vertices[i * 2 + 0], vertices[i * 2 + 1]);
-                }
-                glEnd();
+                glDrawArrays(GL_QUAD_STRIP, 0, 6);
                 glColor(border_color2);
-                glBegin(GL_QUAD_STRIP);
-                for (int i = 4; i < 10; ++i) {
-                    glVertex2i(vertices[i * 2 + 0], vertices[i * 2 + 1]);
-                }
-                glEnd();
+                glDrawArrays(GL_QUAD_STRIP, 4, 6);
             }
         }
 
         // draw interior of rectangle
         if (color != CLR_ZERO) {
             glColor(color);
-            glBegin(GL_QUADS);
-            glVertex(inner_x2, inner_y1);
-            glVertex(inner_x1, inner_y1);
-            glVertex(inner_x1, inner_y2);
-            glVertex(inner_x2, inner_y2);
-            glEnd();
+            glDrawArrays(GL_QUADS, 10, 4);
         }
 
+        glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
 
