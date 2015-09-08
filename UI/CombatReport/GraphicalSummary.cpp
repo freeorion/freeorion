@@ -535,7 +535,7 @@ class OptionsBar : public GG::Wnd {
 public:
     boost::signals2::signal<void ()> ChangedSignal;
 
-    OptionsBar(boost::scoped_ptr<BarSizer>& sizer):
+    OptionsBar(boost::scoped_ptr<BarSizer>& sizer) :
         GG::Wnd(),
         m_sizer(sizer)
     {
@@ -586,7 +586,8 @@ public:
         GG::Pt pos(GG::X(0), GG::Y(0));
         for (std::vector<ToggleData*>::iterator it = m_toggles.begin(); it != m_toggles.end(); ++it) {
             ToggleData& toggle = **it;
-            toggle.button->Resize( GG::Pt( cui_font->TextExtent(toggle.button->Text(), GG::FORMAT_LEFT).x + OPTION_BUTTON_PADDING, OPTION_BUTTON_HEIGHT ) );
+            toggle.button->Resize(GG::Pt(cui_font->TextExtent(toggle.button->Text(), GG::FORMAT_LEFT).x + OPTION_BUTTON_PADDING,
+                                         OPTION_BUTTON_HEIGHT));
             toggle.button->MoveTo(pos);
             pos.x += toggle.button->Width() + OPTION_BUTTON_PADDING;
         }
@@ -627,10 +628,14 @@ private:
                    const std::string& tip_true, const std::string& tip_false,
                    std::string option_key,
                    boost::scoped_ptr<BarSizer>* sizer, OptionsBar* parent) :
-            label_true(label_true), label_false(label_false),
-            tip_true(tip_true), tip_false(tip_false),
+            label_true(label_true),
+            label_false(label_false),
+            tip_true(tip_true),
+            tip_false(tip_false),
             option_key(option_key),
-            sizer(sizer), parent(parent), button(0)
+            sizer(sizer),
+            parent(parent),
+            button(0)
         {
             button = new CUIButton("-");
             parent->AttachChild(button);
@@ -694,11 +699,8 @@ void GraphicalSummaryWnd::DoLayout() {
 }
 
 void GraphicalSummaryWnd::Render() {
-    GG::FlatRectangle(UpperLeft() + GG::Pt(GG::X1, GG::Y0),
-                      LowerRight(),
-                      ClientUI::CtrlColor(),
-                      ClientUI::CtrlBorderColor(),
-                      1);
+    GG::FlatRectangle(UpperLeft() + GG::Pt(GG::X1, GG::Y0), LowerRight(), ClientUI::CtrlColor(),
+                      ClientUI::CtrlBorderColor(), 1);
 }
 
 void GraphicalSummaryWnd::HandleButtonChanged() {
@@ -712,16 +714,16 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
         ErrorLogger() << "CombatReportWnd::CombatReportPrivate::MakeSummaries: Could not find log: " << log_id;
     } else {
         const CombatLog& log = GetCombatLog(log_id);
-        for ( std::set<int>::const_iterator it = log.object_ids.begin(); it != log.object_ids.end(); ++it) {
+        for (std::set<int>::const_iterator it = log.object_ids.begin(); it != log.object_ids.end(); ++it) {
             TemporaryPtr<UniverseObject> object = Objects().Object(*it);
             if (object) {
                 int owner_id = object->Owner();
                 int object_id = object->ID();
-                if ( m_summaries.find(owner_id) == m_summaries.end() ) {
-                    m_summaries.insert( std::map<int, CombatSummary>::value_type(owner_id,CombatSummary(owner_id)) );
+                if (m_summaries.find(owner_id) == m_summaries.end()) {
+                    m_summaries.insert(std::map<int, CombatSummary>::value_type(owner_id,CombatSummary(owner_id)));
                 }
                 std::map<int, CombatParticipantState>::const_iterator map_it = log.participant_states.find(object_id);
-                if ( map_it != log.participant_states.end() ) {
+                if (map_it != log.participant_states.end()) {
                     m_summaries[owner_id].AddUnit(object_id, map_it->second);
                 } else {
                     ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;
@@ -729,7 +731,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             }
         }
 
-        for ( std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it ) {
+        for (std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it) {
             DebugLogger() << "MakeSummaries: empire " << it->first
                           << " total health: " << it->second.total_current_health
                           << " max health: " << it->second.total_max_health
