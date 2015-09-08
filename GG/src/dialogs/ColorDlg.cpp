@@ -179,28 +179,65 @@ void HueSaturationPicker::Render()
     Pt ul = UpperLeft(), lr = LowerRight();
     Pt size = Size();
     glDisable(GL_TEXTURE_2D);
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    // grid of quads of varying hue and saturation
     glPushMatrix();
     glTranslated(Value(ul.x), Value(ul.y), 0.0);
     glScaled(Value(size.x), Value(size.y), 1.0);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
     for (std::size_t i = 0; i < m_vertices.size(); ++i) {
         glVertexPointer(2, GL_DOUBLE, 0, &m_vertices[i][0]);
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, &m_colors[i][0]);
         glDrawArrays(GL_QUAD_STRIP, 0, m_vertices[i].size());
     }
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
     glPopMatrix();
+
+    glDisableClientState(GL_COLOR_ARRAY);
+
+    // lines to indicate currently selected colour
+    glLineWidth(1.5f);
     Pt color_position(static_cast<X>(ul.x + size.x * m_hue),
                       static_cast<Y>(ul.y + size.y * (1.0 - m_saturation)));
     glColor(CLR_SHADOW);
-    glBegin(GL_LINES);
-    glVertex(color_position.x, ul.y);
-    glVertex(color_position.x, lr.y);
-    glVertex(ul.x, color_position.y);
-    glVertex(lr.x, color_position.y);
-    glEnd();
+
+    const float GAP(3.0f);
+
+    GL2DVertexBuffer lines_verts;
+    lines_verts.reserve(16);
+    lines_verts.store(Value(color_position.x),      Value(ul.y));
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) - GAP);
+
+    lines_verts.store(Value(color_position.x),      Value(lr.y));
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) + GAP);
+
+    lines_verts.store(Value(ul.x),                  Value(color_position.y));
+    lines_verts.store(Value(color_position.x) - GAP,Value(color_position.y));
+
+    lines_verts.store(Value(lr.x),                  Value(color_position.y));
+    lines_verts.store(Value(color_position.x) + GAP,Value(color_position.y));
+
+
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) - GAP);
+    lines_verts.store(Value(color_position.x) - GAP,Value(color_position.y));
+
+    lines_verts.store(Value(color_position.x) - GAP,Value(color_position.y));
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) + GAP);
+
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) + GAP);
+    lines_verts.store(Value(color_position.x) + GAP,Value(color_position.y));
+
+    lines_verts.store(Value(color_position.x) + GAP,Value(color_position.y));
+    lines_verts.store(Value(color_position.x),      Value(color_position.y) - GAP);
+
+    lines_verts.activate();
+
+    glDrawArrays(GL_LINES, 0, lines_verts.size());
+    glLineWidth(1.0f);
+
+    glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -352,6 +389,7 @@ void ColorDlg::ColorDisplay::Render()
     GL2DVertexBuffer    vert_buf;
     GLRGBAColorBuffer   colour_buf;
 
+    // background checkerboard for curent colour display (to see through transparent areas)
     int i = 0, j = 0;
     for (Y y = lr.y; y > ul.y; y -= SQUARE_SIZE, ++j) {
         Y y0 = y - SQUARE_SIZE;
