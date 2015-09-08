@@ -119,6 +119,9 @@ public:
         the next invocation of FileDlg::Run()) */
     static const boost::filesystem::path& WorkingDirectory();
 
+    /** Converts a string to a path in a cross platform safe manner. */
+    static const boost::filesystem::path StringToPath(const std::string& str);
+
     /** \name Exceptions */ ///@{
     /** The base class for FileDlg exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);

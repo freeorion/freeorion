@@ -9,7 +9,7 @@ namespace GG {
 class Scroll;
 
 /**
- * @brief A panel that allows scrollin its contents.
+ * @brief A panel that allows scrolling its contents.
  *
  * Only Vertical scrolling is implemented for now.
  * The scroll panel takes on child and tells it to fill
@@ -18,7 +18,7 @@ class Scroll;
  * can be viewed by scrolling.
  *
  */
-class ScrollPanel : public Wnd
+class GG_API ScrollPanel : public Wnd
 {
 public:
     virtual void SizeMove(const Pt& ul, const Pt& lr);
@@ -28,7 +28,7 @@ public:
     ScrollPanel(X x, Y y, X w, Y h, Wnd* content);
 
     //! Set the scroll position
-    void ScrollTo(X pos);
+    void ScrollTo(Y pos);
 
     //! Sets the background color of the panel.
     void SetBackgroundColor(const Clr& color);

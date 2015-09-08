@@ -28,7 +28,7 @@ public:
                                                 const GG::RichText::TAG_PARAMS& params,
                                                 const std::string& content,
                                                 const boost::shared_ptr<GG::Font>& font,
-                                                GG::Clr color,
+                                                const GG::Clr& color,
                                                 GG::Flags<GG::TextFormat> format);
 
         ///< link clicked signals: first string is the link type, second string is the specific item clicked
@@ -38,7 +38,7 @@ public:
     private:
     };
 private:
-    LinkText* m_linkText;
+    LinkText* m_link_text;
 };
 
 #endif // CUILINKTEXTBLOCK_H
