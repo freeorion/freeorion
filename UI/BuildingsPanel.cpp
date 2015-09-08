@@ -318,14 +318,23 @@ void BuildingIndicator::Render() {
     float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
     s_scanline_shader->Use();
     s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
-    glBegin(GL_POLYGON);
-        glColor(GG::CLR_WHITE);
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
+
+    GLfloat verts[8];
+    verts[0] = Value(ul.x); verts[1] = Value(ul.y);
+    verts[2] = Value(lr.x); verts[3] = Value(ul.y);
+    verts[4] = Value(lr.x); verts[5] = Value(lr.y);
+    verts[6] = Value(ul.x); verts[7] = Value(lr.y);
+
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glVertexPointer(2, GL_FLOAT, 0, verts);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+    glPopClientAttrib();
+    glEnable(GL_TEXTURE_2D);
+
     s_scanline_shader->stopUse();
 }
 

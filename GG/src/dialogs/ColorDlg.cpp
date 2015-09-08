@@ -31,6 +31,7 @@
 #include <GG/Slider.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 
 using namespace GG;
@@ -347,8 +348,10 @@ void ColorDlg::ColorDisplay::Render()
 {
     Pt ul = UpperLeft(), lr = LowerRight();
     const int SQUARE_SIZE = 7;
-    glDisable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
+
+    GL2DVertexBuffer    vert_buf;
+    GLRGBAColorBuffer   colour_buf;
+
     int i = 0, j = 0;
     for (Y y = lr.y; y > ul.y; y -= SQUARE_SIZE, ++j) {
         Y y0 = y - SQUARE_SIZE;
@@ -359,37 +362,50 @@ void ColorDlg::ColorDisplay::Render()
             X x0 = x - SQUARE_SIZE;
             if (x0 < ul.x)
                 x0 = ul.x;
-            glColor(((i + j) % 2) ? CLR_WHITE : CLR_BLACK);
-            glVertex(x, y0);
-            glVertex(x0, y0);
-            glVertex(x0, y);
-            glVertex(x, y);
+            Clr vert_clr = ((i + j) % 2) ? CLR_WHITE : CLR_BLACK;
+            colour_buf.store(vert_clr);
+            vert_buf.store(Value(x), Value(y0));
+            colour_buf.store(vert_clr);
+            vert_buf.store(Value(x0), Value(y0));
+            colour_buf.store(vert_clr);
+            vert_buf.store(Value(x0), Value(y));
+            colour_buf.store(vert_clr);
+            vert_buf.store(Value(x), Value(y));
         }
     }
-    glEnd();
+
+
     Clr full_alpha_color = Color();
     full_alpha_color.a = 255;
 
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-    glEnableClientState(GL_VERTEX_ARRAY);
 
-    GLfloat verts[6];
-
+    GLfloat verts[12];
     // upper left: full alpha colour
     verts[0] = Value(lr.x); verts[1] = Value(ul.y);
     verts[2] = Value(ul.x); verts[3] = Value(ul.y);
     verts[4] = Value(ul.x); verts[5] = Value(lr.y);
-    glColor(full_alpha_color);
-    glVertexPointer(2, GL_FLOAT, 0, verts);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
     // bottom right: actual alpha colour
-    verts[0] = Value(ul.x); verts[1] = Value(lr.y);
-    verts[2] = Value(lr.x); verts[3] = Value(lr.y);
-    verts[4] = Value(lr.x); verts[5] = Value(ul.y);
-    glColor(Color());
+    verts[6] = Value(ul.x); verts[7] = Value(lr.y);
+    verts[8] = Value(lr.x); verts[9] = Value(lr.y);
+    verts[10]= Value(lr.x); verts[11]= Value(ul.y);
+
+
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    vert_buf.activate();
+    colour_buf.activate();
+    glDrawArrays(GL_QUADS, 0, vert_buf.size());
+
+    glDisableClientState(GL_COLOR_ARRAY);
+
     glVertexPointer(2, GL_FLOAT, 0, verts);
+    glColor(full_alpha_color);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    glColor(Color());
+    glDrawArrays(GL_TRIANGLES, 3, 3);
 
     glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
