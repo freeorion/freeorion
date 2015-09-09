@@ -54,11 +54,11 @@ namespace parse {
 
         template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
         void operator()(Arg1 first, Arg2, Arg3 it, Arg4 rule_name) const
-            {
-                std::string error_string;
-                generate_error_string(first, it, rule_name, error_string);
-                send_error_string(error_string);
-            }
+        {
+            std::string error_string;
+            generate_error_string(first, it, rule_name, error_string);
+            send_error_string(error_string);
+        }
 
         static boost::function<void (const std::string&)> send_error_string;
 
