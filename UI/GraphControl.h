@@ -5,7 +5,7 @@
 #include <vector>
 #include <GG/GGFwd.h>
 #include <GG/Control.h>
-
+#include <GG/GLClientAndServerBuffer.h>
 
 class GraphControl : public GG::Control {
 public:
@@ -38,7 +38,8 @@ private:
     bool    m_show_points, m_show_lines, m_show_scale;
     double  m_x_min, m_x_max, m_y_min, m_y_max;
     std::vector<std::pair<std::vector<std::pair<double, double> >,  GG::Clr> > m_data;
-    std::vector<std::pair<std::vector<std::pair<int, int> >,        GG::Clr> > m_render_pts;
+    GG::GL2DVertexBuffer    m_vert_buf;
+    GG::GLRGBAColorBuffer   m_colour_buf;
     std::map<int, double>   m_x_scale_ticks;
     std::map<int, double>   m_y_scale_ticks;
 };

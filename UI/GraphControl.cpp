@@ -5,6 +5,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/ClrConstants.h>
 
+
 GraphControl::GraphControl() :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_show_points(true),
@@ -15,7 +16,8 @@ GraphControl::GraphControl() :
     m_y_min(1.0),
     m_y_max(1.0),
     m_data(),
-    m_render_pts(),
+    m_vert_buf(),
+    m_colour_buf(),
     m_x_scale_ticks(),
     m_y_scale_ticks()
 {
@@ -79,8 +81,7 @@ void GraphControl::SetYMax(double y_max) {
 }
 
 void GraphControl::SetRange(double x1, double x2, double y1, double y2) {
-    if(m_x_min != x1 || m_y_min != y1 || m_x_max != x2 || m_y_max != y2)
-    {
+    if (m_x_min != x1 || m_y_min != y1 || m_x_max != x2 || m_y_max != y2) {
         m_x_min = x1;
         m_y_min = y1;
         m_x_max = x2;
@@ -94,6 +95,7 @@ void GraphControl::AutoSetRange() {
     if (m_data.empty())
         return;
 
+    // large default values that are expected to be overwritten by the first seen value
     double x_min = 99999999.9;
     double y_min = 99999999.9;
     double x_max = -99999999.9;
@@ -156,49 +158,36 @@ void GraphControl::Render() {
     GG::Pt lr = ul + GG::Pt(GG::X(WIDTH), GG::Y(HEIGHT));
 
     GG::BeginScissorClipping(ul, lr);
+
+    glPushMatrix();
+    glTranslatef(Value(ul.x), Value(lr.y), 0.0f);
+
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-    if (m_show_lines) {
-        glLineWidth(2.0f);
-        for (std::vector<std::pair<std::vector<std::pair<int, int> >, GG::Clr> >::const_iterator
-             it = m_render_pts.begin(); it != m_render_pts.end(); ++it)
-        {
-            const std::vector<std::pair<int, int> >& curve = it->first;
-            if (curve.empty())
-                continue;
-            glColor(it->second);
-            glBegin(GL_LINE_STRIP);
+    glLineWidth(2.0f);
+    glPointSize(5.0f);
 
-            for (std::vector<std::pair<int, int> >::const_iterator curve_it = curve.begin();
-                 curve_it != curve.end(); ++curve_it)
-            { glVertex(ul.x + curve_it->first, lr.y - curve_it->second); }
+    m_vert_buf.activate();
+    m_colour_buf.activate();
 
-            glEnd();
-        }
-    }
-    if (m_show_points) {
-        glPointSize(5.0f);
-        for (std::vector<std::pair<std::vector<std::pair<int, int> >, GG::Clr> >::const_iterator
-             it = m_render_pts.begin(); it != m_render_pts.end(); ++it)
-        {
-            const std::vector<std::pair<int, int> >& curve = it->first;
-            if (curve.empty())
-                continue;
-            glColor(it->second);
-            glBegin(GL_POINTS);
+    if (m_show_lines)
+        glDrawArrays(GL_LINES, 0, m_vert_buf.size());
+    if (m_show_points)
+        glDrawArrays(GL_POINTS, 0, m_vert_buf.size());
 
-            for (std::vector<std::pair<int, int> >::const_iterator curve_it = curve.begin();
-                 curve_it != curve.end(); ++curve_it)
-            { glVertex(ul.x + curve_it->first, lr.y - curve_it->second); }
+    glLineWidth(1.0f);
+    glPointSize(1.0f);
 
-            glEnd();
-        }
-    }
-
-    glColor(GG::CLR_WHITE);
+    glPopClientAttrib();
     glDisable(GL_LINE_SMOOTH);
     glEnable(GL_TEXTURE_2D);
+
+    glPopMatrix();
+
     GG::EndScissorClipping();
 }
 
@@ -210,33 +199,50 @@ void GraphControl::DoLayout() {
     double x_range = m_x_max - m_x_min;
     double y_range = m_y_max - m_y_min;
 
-    // determine screen pixel positions, relative to bottom left of graph, at
-    // which to display points and lines
-    m_render_pts.clear();
+    m_vert_buf.clear();
+    m_colour_buf.clear();
+
+
     for (std::vector<std::pair<std::vector<std::pair<double, double> >, GG::Clr> >::const_iterator
          it = m_data.begin(); it != m_data.end(); ++it)
     {
         const std::vector<std::pair<double, double> >& curve_pts = it->first;
-        std::vector<std::pair<int, int> > screen_pts;
+        if (curve_pts.empty())
+            continue;
 
-        for (std::vector<std::pair<double, double> >::const_iterator curve_it = curve_pts.begin();
-             curve_it != curve_pts.end(); ++curve_it)
-        {
-            double curve_x = curve_it->first;
-            int screen_x = static_cast<int>((curve_x - m_x_min) * WIDTH / x_range);
-            double curve_y = curve_it ->second;
-            int screen_y = static_cast<int>((curve_y - m_y_min) * HEIGHT / y_range);
-            screen_pts.push_back(std::make_pair(screen_x, screen_y));
+        GG::Clr curve_colour = it->second;
+        double curve_x, curve_y;
+        float screen_x, screen_y;
+
+        // pairs of n and n+1 point, starting with first-second, to the second-last-last
+        std::vector<std::pair<double, double> >::const_iterator curve_it = curve_pts.begin();
+        for (; curve_it != curve_pts.end(); ++curve_it) {
+            std::vector<std::pair<double, double> >::const_iterator next_it = curve_it;
+            ++next_it;
+            if (next_it == curve_pts.end())
+                break;
+
+            curve_x = curve_it->first;
+            screen_x = static_cast<float>((curve_x - m_x_min) * WIDTH / x_range);
+            curve_y = curve_it->second;
+            screen_y = static_cast<float>((curve_y - m_y_min) * HEIGHT / y_range);
+            m_vert_buf.store(screen_x, -screen_y);  // OpenGL is positive down / negative up
+            m_colour_buf.store(curve_colour);
+
+            curve_x = next_it->first;
+            screen_x = static_cast<float>((curve_x - m_x_min) * WIDTH / x_range);
+            curve_y = next_it->second;
+            screen_y = static_cast<float>((curve_y - m_y_min) * HEIGHT / y_range);
+            m_vert_buf.store(screen_x, -screen_y);  // OpenGL is positive down / negative up
+            m_colour_buf.store(curve_colour);
         }
-
-        m_render_pts.push_back(std::make_pair(screen_pts, it->second));
     }
 
-    // determine screen and data points at which to draw scale ticks
-    //
-    // ticks placed at increments of powers of 10 multiplied by 2, 5, or 10.
-    // eg. 4,6,8,10,12,14; -5,0,5,10,15,20; 0,10,20,30,40,50
-    //
-    // find 
+    m_vert_buf.createServerBuffer();
+    m_colour_buf.createServerBuffer();
 
+    // todo: determine screen and data points at which to draw scale ticks
+    //
+    // ticks should be placed at increments of powers of 10 multiplied by 2, 5, or 10.
+    // eg. 4,6,8,10,12,14; -5,0,5,10,15,20; 0,10,20,30,40,50
 }
