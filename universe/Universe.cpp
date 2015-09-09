@@ -1092,14 +1092,9 @@ int Universe::NearestSystemTo(double x, double y) const {
 int Universe::GenerateObjectID() {
     if (m_last_allocated_object_id + 1 < MAX_ID)
         return ++m_last_allocated_object_id;
-
-    int last_id_seen = -1; // 0 is the first valid object id
-    for (ObjectMap::iterator<> it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (it->ID() - last_id_seen > 1)
-            return last_id_seen + 1;
-    }
-
-    return INVALID_OBJECT_ID; // We're screwed.
+    // the object id number space is exhausted, which means we're screwed
+    ErrorLogger() << "Universe::GenerateObjectID: object id number space exhausted!";
+    return INVALID_OBJECT_ID;
 }
 
 template <class T>
