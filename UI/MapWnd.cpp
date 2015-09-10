@@ -2158,6 +2158,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool gas            = GetOptionsDB().Get<bool>("UI.galaxy-gas-background");
         bool starfields     = GetOptionsDB().Get<bool>("UI.galaxy-starfields");
         bool scale          = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
+        bool scaleCircle    = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle");
         bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
         bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),            1, false, fps));
@@ -2168,8 +2169,9 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),         7, false, gas));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),   8, false, starfields));
         menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),    9, false, scale));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),    10, false, zoomSlider));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"), 11, false, detectionRange));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"),  10, false, scaleCircle));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),    11, false, zoomSlider));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"), 12, false, detectionRange));
         // display popup menu
         GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                             ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
@@ -2183,8 +2185,9 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
                 case 7: { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        break; }
                 case 8: { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  break; }
                 case 9: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        break; }
-                case 10: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);    break; }
-                case 11: { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange); break; }
+                case 10: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale-circle",!scaleCircle);  break; }
+                case 11: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);     break; }
+                case 12: { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange);  break; }
                 default: break;
             }
         }
