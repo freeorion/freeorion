@@ -31,8 +31,9 @@ public:
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    /** Centres map wnd on location of item on queue with index \a queue_idx
-      * and displays info about that item in encyclopedia window. */
+    /** Centres map wnd on location of item on queue with index \a queue_idx,
+      * displays info about that item in encyclopedia window, and sets it as
+      * the selected planet. */
     void            CenterOnBuild(int queue_idx);
 
     /** Programatically sets this Wnd's selected system.

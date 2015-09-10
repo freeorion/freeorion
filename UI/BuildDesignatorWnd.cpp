@@ -974,6 +974,8 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
             int system_id = build_location->SystemID();
             MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
             map->CenterOnObject(system_id);
+            SelectSystem(system_id);
+            SelectPlanet(location_id);
         }
     }
 }
