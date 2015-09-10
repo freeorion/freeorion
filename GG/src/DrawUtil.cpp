@@ -173,77 +173,47 @@ namespace { // file-scope constants and functions
         glDisable(GL_TEXTURE_2D);
 
         // all vertices
-        double verts[][2] = {{-0.4, -0.6}, {-0.6, -0.4}, {-0.4, -0.4}, {-0.2, 0.0}, {-0.6, 0.4},
-                             {-0.4, 0.6}, {-0.4, 0.4}, {0.0, 0.2}, {0.4, 0.6}, {0.6, 0.4},
-                             {0.4, 0.4}, {0.2, 0.0}, {0.6, -0.4}, {0.4, -0.6}, {0.4, -0.4},
-                             {0.0, -0.2}, {0.0, 0.0}};
+        GLfloat verts[][2] = {{-0.4f, -0.6f}, {-0.6f, -0.4f}, {-0.4f, -0.4f}, {-0.2f,  0.0f}, {-0.6f,  0.4f},
+                              {-0.4f,  0.6f}, {-0.4f,  0.4f}, { 0.0f,  0.2f}, { 0.4f,  0.6f}, { 0.6f,  0.4f},
+                              { 0.4f,  0.4f}, { 0.2f,  0.0f}, { 0.6f, -0.4f}, { 0.4f, -0.6f}, { 0.4f, -0.4f},
+                              { 0.0f, -0.2f}, { 0.0f,  0.0f}};
 
         glPushMatrix();
         const double sf = 1.75; // just a scale factor; the check wasn't the right size as drawn originally
         glTranslatef(Value(ul.x + wd / 2.0), Value(ul.y + ht / 2.0), 0.0); // move origin to the center of the rectangle
         glScalef(Value(wd / 2.0 * sf), Value(ht / 2.0 * sf), 1.0); // map the range [-1,1] to the rectangle in both directions
 
+        static std::size_t indices[44] = {12, 13, 14,
+                                          15,  0,  2, 16,  9, 11, 16, 10,
+                                           0,  1,  2,
+                                          13, 15, 16, 14,  3,  4,  6, 16,
+                                           4,  5,  6,  8,  9, 10,
+                                          14, 16, 11, 12,  2,  1,  3, 16, 16,  6,  5,  7, 16,  7,  8, 10};
+
+        GL2DVertexBuffer vert_buf;
+        vert_buf.reserve(44);
+        for (std::size_t i = 0; i < 44; ++i)
+            vert_buf.store(verts[indices[i]][0], verts[indices[i]][1]);
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        vert_buf.activate();
+
         glColor(color1);
-        glBegin(GL_TRIANGLES);
-        glVertex2dv(verts[12]);
-        glVertex2dv(verts[13]);
-        glVertex2dv(verts[14]);
-        glEnd();
-        glBegin(GL_QUADS);
-        glVertex2dv(verts[15]);
-        glVertex2dv(verts[0]);
-        glVertex2dv(verts[2]);
-        glVertex2dv(verts[16]);
-        glVertex2dv(verts[9]);
-        glVertex2dv(verts[11]);
-        glVertex2dv(verts[16]);
-        glVertex2dv(verts[10]);
-        glEnd();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_QUADS, 3, 8);
 
         glColor(color2);
-        glBegin(GL_TRIANGLES);
-        glVertex2dv(verts[0]);
-        glVertex2dv(verts[1]);
-        glVertex2dv(verts[2]);
-        glEnd();
-        glBegin(GL_QUADS);
-        glVertex2dv(verts[13]);
-        glVertex2dv(verts[15]);
-        glVertex2dv(verts[16]);
-        glVertex2dv(verts[14]);
-        glVertex2dv(verts[3]);
-        glVertex2dv(verts[4]);
-        glVertex2dv(verts[6]);
-        glVertex2dv(verts[16]);
-        glEnd();
+        glDrawArrays(GL_TRIANGLES, 11, 3);
+        glDrawArrays(GL_QUADS, 14, 8);
 
         glColor(color3);
-        glBegin(GL_TRIANGLES);
-        glVertex2dv(verts[4]);
-        glVertex2dv(verts[5]);
-        glVertex2dv(verts[6]);
-        glVertex2dv(verts[8]);
-        glVertex2dv(verts[9]);
-        glVertex2dv(verts[10]);
-        glEnd();
-        glBegin(GL_QUADS);
-        glVertex2dv(verts[14]);
-        glVertex2dv(verts[16]);
-        glVertex2dv(verts[11]);
-        glVertex2dv(verts[12]);
-        glVertex2dv(verts[2]);
-        glVertex2dv(verts[1]);
-        glVertex2dv(verts[3]);
-        glVertex2dv(verts[16]);
-        glVertex2dv(verts[16]);
-        glVertex2dv(verts[6]);
-        glVertex2dv(verts[5]);
-        glVertex2dv(verts[7]);
-        glVertex2dv(verts[16]);
-        glVertex2dv(verts[7]);
-        glVertex2dv(verts[8]);
-        glVertex2dv(verts[10]);
-        glEnd();
+        glDrawArrays(GL_TRIANGLES, 22, 6);
+        glDrawArrays(GL_QUADS, 28, 16);
+
+        glPopClientAttrib();
+
         glPopMatrix();
         glEnable(GL_TEXTURE_2D);
     }
@@ -764,7 +734,7 @@ namespace GG {
 
     void BeveledCircle(Pt ul, Pt lr, Clr color, Clr border_color, bool up/* = true*/, unsigned int bevel_thick/* = 2*/)
     {
-        CircleArc(ul, lr, color, 
+        CircleArc(ul, lr, color,
                   (up ? DarkColor(border_color) : LightColor(border_color)),
                   (up ? LightColor(border_color) : DarkColor(border_color)),
                   bevel_thick, 0, 0);
