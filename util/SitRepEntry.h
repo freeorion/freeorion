@@ -54,7 +54,7 @@ FO_COMMON_API SitRepEntry CreateGroundCombatSitRep(int planet_id, int empire_id)
 FO_COMMON_API SitRepEntry CreatePlanetCapturedSitRep(int planet_id, int empire_id);
 FO_COMMON_API SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id);
 FO_COMMON_API SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id);
-SitRepEntry               CreatePlanetStarvedToDeathSitRep(int planet_id);
+SitRepEntry               CreatePlanetDepopulatedSitRep(int planet_id);
 FO_COMMON_API SitRepEntry CreatePlanetColonizedSitRep(int planet_id);
 FO_COMMON_API SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id);
 SitRepEntry               CreateEmpireEliminatedSitRep(int empire_id);

@@ -1193,7 +1193,7 @@ SITREP_BUILDING_BUILT
 SITREP_TECH_RESEARCHED
 %tech% is onderzocht.
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_DEPOPULATED
 De gehele populatie van %planet% is uitgehongerd. De planeet is verloren!
 
 SITREP_PLANET_COLONIZED

@@ -1018,7 +1018,7 @@ SITREP_BUILDING_BUILT
 SITREP_TECH_RESEARCHED
 %tech% har forskats fram.
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_DEPOPULATED
 Hela populationen på %planet% har svultit ihjäl. Planeten har gått förlorad!
 
 SITREP_PLANET_COLONIZED

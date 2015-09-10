@@ -810,12 +810,10 @@ void Planet::PopGrowthProductionResearchPhase() {
 
     PopCenterPopGrowthProductionResearchPhase();
 
-    // check for planets with zero population.  If they have a species set, then
-    // they probably just starved
+    // check for colonies without positive population, and change to outposts
     if (!SpeciesName().empty() && GetMeter(METER_POPULATION)->Current() <= 0.0f) {
         if (Empire* empire = GetEmpire(this->Owner())) {
-            // generate starvation sitrep for empire that owns this depopulated planet
-            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
+            empire->AddSitRepEntry(CreatePlanetDepopulatedSitRep(this->ID()));
 
             // record depopulation of planet with species while owned by this empire
             std::map<std::string, int>::iterator species_it = empire->SpeciesPlanetsDepoped().find(SpeciesName());

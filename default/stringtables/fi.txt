@@ -1627,7 +1627,7 @@ SITREP_COMBAT_SYSTEM
 SITREP_PLANET_CAPTURED
 %empire% valloitti %planet% planeetan.
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_DEPOPULATED
 '''%planet% planeetan väestö on kuollut nälkään.  '''
 
 SITREP_PLANET_COLONIZED

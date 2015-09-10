@@ -1078,7 +1078,7 @@ Došlo k bitvě v systému "%system%"".
 SITREP_PLANET_CAPTURED
 Planeta "%planet%" byla zabrána říší "%empire%"".
 
-SITREP_PLANET_LOST_STARVED_TO_DEATH
+SITREP_PLANET_DEPOPULATED
 Popualce na planetě "%planet%" byla zahubena hladomorem.
 
 SITREP_PLANET_COLONIZED
