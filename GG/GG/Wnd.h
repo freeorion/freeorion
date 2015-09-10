@@ -877,6 +877,8 @@ protected:
         called.  \note This function is only useful when
         GetChildClippingMode() is ClipToClientAndWindowSeparately. */
     void EndNonclientClipping();
+
+    virtual void SetParent(Wnd* wnd);
     //@}
 
     /** Modal Wnd's set this to true to stop modal loop. */
@@ -888,7 +890,6 @@ private:
     virtual void EndClippingImpl(ChildClippingMode mode);
     virtual void BeginNonclientClippingImpl();
     virtual void EndNonclientClippingImpl();
-
 
     Wnd*              m_parent;        ///< Ptr to this window's parent; may be 0
     std::string       m_name;          ///< A user-significant name for this Wnd

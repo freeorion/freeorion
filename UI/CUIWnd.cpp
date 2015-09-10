@@ -174,7 +174,6 @@ CUIWnd::CUIWnd(const std::string& t,
         GetOptionsDB().Set<bool>("UI.windows."+m_config_name+".initialized", true);
     }
     ValidatePosition();
-    InitBuffers();
 }
 
 CUIWnd::CUIWnd(const std::string& t,
@@ -294,10 +293,13 @@ void CUIWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         PositionButtons();
 
     SaveOptions();
-    InitBuffers();  // after every reposition or resize, reinitialize rendering buffers accordingly
+    m_vertex_buffer.clear();    // force buffer re-init on next Render call
 }
 
 void CUIWnd::Render() {
+    if (m_vertex_buffer.empty())
+        InitBuffers();
+
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
 
@@ -513,7 +515,7 @@ void CUIWnd::PinClicked() {
     m_pinned = !m_pinned;
     m_resizable = !m_pinned;
     m_pin_button->Toggle(m_pinned); // Change the icon on the pin button
-    InitBuffers();
+    m_vertex_buffer.clear();        // force buffer re-init on next Render call
     SaveOptions();
 }
 
@@ -845,6 +847,11 @@ void CUIWnd::InvalidateUnusedOptions() {
     }
 
     db.Commit();
+}
+
+void CUIWnd::SetParent(GG::Wnd* wnd) {
+    GG::Wnd::SetParent(wnd);
+    m_vertex_buffer.clear();    // force buffer re-init on next Render call, so background is properly positioned for new parent-relative position
 }
 
 ///////////////////////////////////////

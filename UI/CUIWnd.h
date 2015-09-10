@@ -179,6 +179,8 @@ protected:
     void            LoadOptions();                  //!< loads options for this window from the OptionsDB
     void            Init(const std::string& t);     //!< performs initialization common to all CUIWnd constructors
     void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
+
+    virtual void    SetParent(GG::Wnd* wnd);
     //@}
 
     bool                    m_resizable;            //!< true if the window is able to be resized

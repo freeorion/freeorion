@@ -547,7 +547,7 @@ void Wnd::AttachChild(Wnd* wnd)
             wnd->Parent()->DetachChild(wnd);
         GUI::GetGUI()->Remove(wnd);
         m_children.push_back(wnd);
-        wnd->m_parent = this;
+        wnd->SetParent(this);
         if (Layout* this_as_layout = dynamic_cast<Layout*>(this))
             wnd->m_containing_layout = this_as_layout;
     }
@@ -579,7 +579,7 @@ void Wnd::DetachChild(Wnd* wnd)
         std::list<Wnd*>::iterator it = std::find(m_children.begin(), m_children.end(), wnd);
         if (it != m_children.end()) {
             m_children.erase(it);
-            wnd->m_parent = 0;
+            wnd->SetParent(0);
             if (Layout* this_as_layout = dynamic_cast<Layout*>(this)) {
                 this_as_layout->Remove(wnd);
                 wnd->m_containing_layout = 0;
@@ -1189,3 +1189,6 @@ void Wnd::BeginNonclientClippingImpl()
 
 void Wnd::EndNonclientClippingImpl()
 { EndStencilClipping(); }
+
+void Wnd::SetParent(Wnd* wnd)
+{ m_parent = wnd; }
