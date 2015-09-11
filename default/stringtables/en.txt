@@ -4356,19 +4356,19 @@ FILTERS
 Filters
 
 SITREP_SNOOZE_5_TURNS
-'''  5 turn dismissal for this SitRep'''
+'''  Hide this Sitrep for 5 turns'''
 
 SITREP_SNOOZE_10_TURNS
-'''  10 turn dismissal for this SitRep'''
+'''  Hide this Sitrep for 10 turns'''
 
 SITREP_SNOOZE_INDEFINITE
 '''  Indefinite dismissal for this SitRep'''
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Clear all indefinite SitRep dismissals'''
+'''  Show all SitReps indefinitely dismissed'''
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Clear all SitRep dismissals'''
+'''  Show all hidden or dismissed SitReps'''
 
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
@@ -4673,6 +4673,8 @@ Gaia Terraform
 
 EFFECT_GAIA
 On %planet%: The citizens rejoice as their world is now a [[encyclopedia GAIA_SPECIAL]] paradise.
+EFFECT_GAIA_LABEL
+Gaia Paradise
 
 EFFECT_TERRAFORM
 %planet% has been terraformed.
@@ -7517,7 +7519,7 @@ CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-'''Increases Population capacity by planet size on all habitable planets; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10.
+'''Increases Population capacity by planet size on all habitable planets; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Also increases target [[encyclopedia INFRASTRUCTURE_TITLE]] by 10 on populated.
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -9018,7 +9020,7 @@ Transformer
 BLD_TRANSFORMER_DESC
 '''An versatile and extremely expensive building capable of having the effects many other buildings, currently activated using the focus settings of the planet on which it is built, provided the owner has unlocked the building which the Transformer is mimicking.
 
-This building can be given the effects of a [[buildingtype BLD_PLANET_CLOAK]], a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
+This building can be given the effects of a [[buildingtype BLD_BIOTERROR_PROJECTOR]], a [[buildingtype BLD_STARGATE]], a [[buildingtype BLD_PLANET_DRIVE]], or a [[buildingtype BLD_SPATIAL_DISTORT_GEN]], provided the owner has the appropriate technology.'''
 
 BLD_PLANET_CLOAK
 Planetary Cloaking Device
@@ -9032,7 +9034,7 @@ BLD_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipulates the dimensional properties of adjacent starlanes. Any enemy ships attempting to reach the system containing this building will be redirected back the way they came, or to a random adjacent star. Only ships fast enough to traverse the starlane in one turn are able to avoid these effects. This is activated with the Spatial Distortion focus.
+Manipulates the dimensional properties of adjacent starlanes. Enemy ships moving towards the system containing this building will be pushed back 40uu the way they came after they have moved as long as they have not completed their journey and arrived in system. This is activated with the Spatial Distortion focus.
 
 BLD_STARGATE
 Stargate
