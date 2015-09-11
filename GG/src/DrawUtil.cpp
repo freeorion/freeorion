@@ -678,6 +678,50 @@ namespace GG {
         }
     }
 
+    void Line(Pt pt1, Pt pt2, Clr color, float thick)
+    {
+        GLfloat vertices[4] = {Value(pt1.x), Value(pt1.y), Value(pt2.x), Value(pt2.y)};
+
+        glDisable(GL_TEXTURE_2D);
+        glLineWidth(thick);
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        glVertexPointer(2, GL_FLOAT, 0, vertices);
+        glColor(color);
+        glDrawArrays(GL_LINES, 0, 2);
+
+        glPopClientAttrib();
+        glLineWidth(1.0f);
+        glEnable(GL_TEXTURE_2D);
+    }
+
+    void Triangle(Pt pt1, Pt pt2, Pt pt3, Clr color, Clr border_color, float border_thick)
+    {
+        GLfloat vertices[6] = {Value(pt1.x), Value(pt1.y), Value(pt2.x), Value(pt2.y), Value(pt3.x), Value(pt3.y)};
+
+        glDisable(GL_TEXTURE_2D);
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        glVertexPointer(2, GL_FLOAT, 0, vertices);
+        glColor(color);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        if (border_color != GG::CLR_ZERO) {
+            glLineWidth(border_thick);
+            glColor(border_color);
+
+            glDrawArrays(GL_LINE_LOOP, 0, 3);
+            glLineWidth(1.0f);
+        }
+
+        glPopClientAttrib();
+        glEnable(GL_TEXTURE_2D);
+    }
+
     void FlatRectangle(Pt ul, Pt lr, Clr color, Clr border_color, unsigned int border_thick/* = 2*/)
     { Rectangle(ul, lr, color, border_color, border_color, border_thick, true, true, true, true); }
 

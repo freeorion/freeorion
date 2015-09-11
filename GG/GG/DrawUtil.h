@@ -30,7 +30,7 @@
 #define _GG_DrawUtil_h_
 
 #include <GG/Base.h>
-
+#include <GG/ClrConstants.h>
 
 namespace GG {
 
@@ -99,6 +99,14 @@ namespace GG {
         before the corresponding call to BeginScissorClipping().  \pre There
         must be an outstanding call to BeginStencilClipping(). */
     GG_API void EndStencilClipping();
+
+    /** Renders a line between the two specified points, with the specified
+        color and thickness. */
+    GG_API void Line(Pt pt1, Pt pt2, Clr color, float thick = 1.0f);
+
+    /** Renders a triangle  between the specified points, with the specified
+        color and (if specified) border color and thickness. */
+    GG_API void Triangle(Pt pt1, Pt pt2, Pt pt3, Clr color, Clr border_color = CLR_ZERO, float border_thick = 1.0f);
 
     /** Renders a rectangle starting at ul and ending just before lr, and
         assumes that OpenGL in in a "2D" state.  The border is drawn in the
