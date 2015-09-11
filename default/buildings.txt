@@ -1700,6 +1700,20 @@ BuildingType
     ]
     icon = "icons/tech/n-dimensional_structures.png"
 
+BuildingType
+    name = "BLD_XENORESURRECTION_LAB"
+    description = "BLD_XENORESURRECTION_LAB_DESC"
+    buildcost = 100
+    buildtime = 4
+    location = And [
+        Planet
+        Or [
+            HasSpecial name = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL"
+            HasSpecial name = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL"
+            HasSpecial name = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL"
+        ]
+    ]
+    icon = ""
 
 
 /* Experimentor related variables / macros */
