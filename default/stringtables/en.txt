@@ -5730,6 +5730,12 @@ Derelict
 DERELICT_SPECIAL_DESC
 An ancient, derelict ship from an unknown species. Who knows what it could reveal...
 
+ACCRETION_DISC_SPECIAL
+Accretion Disc
+
+ACCRETION_DISC_SPECIAL_DESC
+An accretion disc is a structure (often a circumstellar disc) formed by diffused material in orbital motion around a massive central body. All planets in the affected system get a [[encyclopedia SUPPLY_TITLE]] penalty of -1.
+
 SUPERNOVA_SPECIAL
 New Supernova
 SUPERNOVA_SPECIAL2
