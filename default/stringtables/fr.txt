@@ -4522,9 +4522,9 @@ SITREP_PLANET_CAPTURED_LABEL
 Planète capturée
 
 SITREP_PLANET_DEPOPULATED
-La colonie établie sur %planet% a été détruite!
+La population de la planète %planet% a été totalement décimée!
 SITREP_PLANET_DEPOPULATED_LABEL
-Colonie détruite
+Planète détruite
 
 SITREP_PLANET_COLONIZED
 La planète %planet% a été colonisée.
@@ -4534,7 +4534,7 @@ Planète colonisée
 SITREP_NEW_COLONY_ESTABLISHED
 Sur %planet% : une nouvelle colonie %species% s'est établie.
 SITREP_NEW_COLONY_ESTABLISHED_LABEL
-Nouvelle Colonie Établie
+Nouvelle colonie établie
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 La flotte %fleet% (%rawtext% astronefs) a atteint le système %system%.
@@ -4612,7 +4612,7 @@ SITREP_POP_THRESHOLD_LABEL
 Seuil de Colonisation
 
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH
-ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés sur la planète %planet%, rôdant près de l'Avant-Poste %species%!
+ALERTE: il semble que %rawtext% %predefinedshipdesign% aient été repérés dans le système %system%, rôdant près de l'Avant-Poste %species%!
 EFFECT_EXPERIMENT_MONSTERS_LAUNCH_LABEL
 Apparition de monstre Expérimentateur
 
@@ -4680,8 +4680,8 @@ EFFECT_TERRAFORM_LABEL
 Terraformation
 
 EFFECT_STARLANE_BORE
-Sur %planet% : une nouvelle Voie spatiale a été ouverte vers un système proche.
-EFFECT_TERRAFORM_LABEL
+Dans %system% : une nouvelle Voie spatiale a été ouverte vers un système proche.
+EFFECT_STARLANE_BORE_LABEL
 Générateur de Voies Spatiales
 
 EFFECT_BLACKHOLE
@@ -4710,7 +4710,7 @@ EFFECT_TAME_MONSTER_MATURED_LABEL
 Mutation de monstre
 
 EFFECT_SENTRY_CREATED
-Sur %planet%: a %predefinedshipdesign% est prêt pour le service.
+Sur %planet% : a %predefinedshipdesign% est prêt pour le service.
 EFFECT_SENTRY_CREATED_LABEL
 Création Factionnaire
 
@@ -4790,12 +4790,12 @@ EFFECT_MINES_SHIP_DESTROYED_LABEL
 Destruction d'astronef par mines
 
 EFFECT_FLEET_MOVED_TOWARDS
-La flotte %fleet% a été repoussée vers le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+Sur %planet% : la [[tech LRN_SPATIAL_DISTORT_GEN]] a repoussé la flotte %fleet% vers le système %system%. Les astronefs la composant se trouvaient initialement à %rawtext% uu.
 EFFECT_FLEET_MOVED_TOWARDS_LABEL
 Flotte repoussée vers
 
 EFFECT_FLEET_MOVED_TO
-La flotte %fleet% a éte renvoyée dans le système %system% par la planète %planet%, dont les astronefs se trouvaient initialement à %rawtext% uu.
+Sur %planet% : la [[tech LRN_SPATIAL_DISTORT_GEN]] a renvoyé la flotte %fleet% dans le système %system%. Les astronefs la composant se trouvaient initialement à %rawtext% uu.
 EFFECT_FLEET_MOVED_TO_LABEL
 Flotte renvoyée dans
 
@@ -7932,7 +7932,7 @@ LRN_STELLAR_TOMOGRAPHY_DESC
 Un réseau de satellites spécialisés peut utiliser des méthodes tomographiques pour cartographier et reconstituer les différentes activités se produisant dans les profondeurs d'une étoile. Ces conditions expérimentales, habituellement coûteuses à mettre en place, sont ici idéales pour une multitude de projets de recherche, les plus grands bénéfices scientifiques découlant de l'étude des types d'étoiles les plus exotiques.'''
 
 LRN_SPATIAL_DISTORT_GEN
-Générateur de Distortion Spatiale
+Distortion Spatiale
 
 LRN_SPATIAL_DISTORT_GEN_DESC
 En manipulant les propriétés dimensionnelles d'une Voie spatiale, il deviendrait alors possible de courber arbitrairement cette dernière. Les astronefs l'empruntant à une faible vitesse seraient alors renvoyés instantanément dans leur système stellaire de départ, tandis que les astronefs les plus rapides seraient considérablement retardés.
