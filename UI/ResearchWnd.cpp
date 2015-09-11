@@ -212,6 +212,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
 
     GG::Connect(m_queue_lb->QueueItemMovedSignal,       &ResearchWnd::QueueItemMoved,               this);
+    GG::Connect(m_queue_lb->QueueItemDeletedSignal,     &ResearchWnd::DeleteQueueItem,               this);
     GG::Connect(m_queue_lb->LeftClickedSignal,          &ResearchWnd::QueueItemClickedSlot,         this);
     GG::Connect(m_queue_lb->DoubleClickedSignal,        &ResearchWnd::QueueItemDoubleClickedSlot,   this);
 
