@@ -81,10 +81,10 @@ public:
     //@}
 
     /** emitted when the indicated named build is indicated by the user */
-    mutable boost::signals2::signal<void (BuildType, const std::string&, int, int)>
+    mutable boost::signals2::signal<void (BuildType, const std::string&, int, int, bool)>
                                             AddNamedBuildToQueueSignal;
     /** emitted when the indicated id'd build is indicated by the user */
-    mutable boost::signals2::signal<void (BuildType, int, int, int)>
+    mutable boost::signals2::signal<void (BuildType, int, int, int, bool)>
                                             AddIDedBuildToQueueSignal;
     /** emitted when the quantity of items in a single build queue item is
       * changed by the user */
@@ -100,8 +100,8 @@ private:
     class BuildSelector;
     int             BuildLocation() const;
 
-    void            BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build);
-    void            BuildItemRequested(BuildType build_type, int design_id, int num_to_build);
+    void            BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build, bool top);
+    void            BuildItemRequested(BuildType build_type, int design_id, int num_to_build, bool top);
     void            BuildQuantityChanged(int queue_idx, int quantity);
     void            SetBuild(int queue_idx);
 

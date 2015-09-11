@@ -421,9 +421,9 @@ public:
     //@}
 
     mutable boost::signals2::signal<void (const BuildingType*)>                DisplayBuildingTypeSignal;
-    mutable boost::signals2::signal<void (BuildType, const std::string&, int)> RequestNamedBuildItemSignal;
+    mutable boost::signals2::signal<void (BuildType, const std::string&, int, bool)> RequestNamedBuildItemSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>                  DisplayShipDesignSignal;
-    mutable boost::signals2::signal<void (BuildType, int, int)>                RequestIDedBuildItemSignal;
+    mutable boost::signals2::signal<void (BuildType, int, int, bool)>                RequestIDedBuildItemSignal;
 
 private:
     static const GG::X TEXT_MARGIN_X;
@@ -437,6 +437,8 @@ private:
     /** Clear and refill list of buildable items, according to current
       * filter settings. */
     void    PopulateList();
+
+    void AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
 
     /** respond to the user single-clicking a producible item in the build selector */
     void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
@@ -846,8 +848,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterat
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it) {
-    //std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
+void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterator it, bool top) {
     if ((*it)->Disabled())
         return;
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
@@ -856,9 +857,14 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
     const ProductionQueue::ProductionItem& item = item_row->Item();
 
     if (item.build_type == BT_BUILDING)
-        RequestNamedBuildItemSignal(BT_BUILDING, item.name, 1);
+        RequestNamedBuildItemSignal(BT_BUILDING, item.name, 1, top);
     else if (item.build_type == BT_SHIP)
-        RequestIDedBuildItemSignal(BT_SHIP, item.design_id, 1);
+        RequestIDedBuildItemSignal(BT_SHIP, item.design_id, 1, top);
+}
+
+void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it) {
+    //std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
+    AddBuildItemToQueue(it, false);
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
@@ -869,14 +875,20 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),   2, false, false));
+
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                         ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
-        case 1: { // move item to top
-            BuildItemDoubleClicked(it);
+        case 1: { // add item to bottom of queue
+            AddBuildItemToQueue(it, false);
+            break;
+        }
+        case 2: { // add item to top of queue
+            AddBuildItemToQueue(it, true);
             break;
         }
         default:
@@ -904,8 +916,8 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 
     GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),                 m_enc_detail_panel);
     GG::Connect(m_build_selector->DisplayShipDesignSignal,      static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),                   m_enc_detail_panel);
-    GG::Connect(m_build_selector->RequestNamedBuildItemSignal,  static_cast<void (BuildDesignatorWnd::*)(BuildType, const std::string&, int)>(&BuildDesignatorWnd::BuildItemRequested), this);
-    GG::Connect(m_build_selector->RequestIDedBuildItemSignal,   static_cast<void (BuildDesignatorWnd::*)(BuildType, int, int)>(&BuildDesignatorWnd::BuildItemRequested),                this);
+    GG::Connect(m_build_selector->RequestNamedBuildItemSignal,  static_cast<void (BuildDesignatorWnd::*)(BuildType, const std::string&, int, bool)>(&BuildDesignatorWnd::BuildItemRequested), this);
+    GG::Connect(m_build_selector->RequestIDedBuildItemSignal,   static_cast<void (BuildDesignatorWnd::*)(BuildType, int, int, bool)>(&BuildDesignatorWnd::BuildItemRequested),                this);
 
     GG::Connect(m_side_panel->PlanetSelectedSignal, PlanetSelectedSignal);
     GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
@@ -1166,21 +1178,21 @@ int BuildDesignatorWnd::BuildLocation() const
 { return m_side_panel->SelectedPlanetID(); }
 
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item,
-                                            int num_to_build)
+                                            int num_to_build, bool top)
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested item name: " << item << std::endl;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->EnqueuableItem(build_type, item, BuildLocation()))
-        AddNamedBuildToQueueSignal(build_type, item, num_to_build, BuildLocation());
+        AddNamedBuildToQueueSignal(build_type, item, num_to_build, BuildLocation(), top);
 }
 
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id,
-                                            int num_to_build)
+                                            int num_to_build, bool top)
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested design id: " << design_id << std::endl;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->ProducibleItem(build_type, design_id, BuildLocation()))
-        AddIDedBuildToQueueSignal(build_type, design_id, num_to_build, BuildLocation());
+        AddIDedBuildToQueueSignal(build_type, design_id, num_to_build, BuildLocation(), top);
 }
 
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)

@@ -900,7 +900,7 @@ ProductionQueueOrder::ProductionQueueOrder() :
     m_new_index(INVALID_INDEX)
 {}
 
-ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location) :
+ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location, bool top) :
     Order(empire),
     m_build_type(build_type),
     m_item_name(item),
@@ -910,14 +910,14 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, con
     m_index(INVALID_INDEX),
     m_new_quantity(INVALID_QUANTITY),
     m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(INVALID_INDEX)
+    m_new_index(top ? 0 : INVALID_INDEX)
 {
     if (m_build_type == BT_SHIP) {
         ErrorLogger() << "Attempted to construct a ProductionQueueOrder for a BT_SHIP with a name, not a design id";
     }
 }
 
-ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int design_id, int number, int location) :
+ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int design_id, int number, int location, bool top) :
     Order(empire),
     m_build_type(build_type),
     m_item_name(""),
@@ -927,7 +927,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int
     m_index(INVALID_INDEX),
     m_new_quantity(INVALID_QUANTITY),
     m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(INVALID_INDEX)
+    m_new_index(top ? 0 : INVALID_INDEX)
 {
     if (m_build_type == BT_BUILDING) {
         ErrorLogger() << "Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name";
@@ -1000,9 +1000,9 @@ void ProductionQueueOrder::ExecuteImpl() const {
     Empire* empire = GetEmpire(EmpireID());
     try {
         if (m_build_type == BT_BUILDING)
-            empire->PlaceBuildInQueue(BT_BUILDING, m_item_name, m_number, m_location);
+            empire->PlaceBuildInQueue(BT_BUILDING, m_item_name, m_number, m_location, m_new_index);
         else if (m_build_type == BT_SHIP)
-            empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
+            empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location, m_new_index);
         else if (m_new_blocksize != INVALID_QUANTITY) {
             DebugLogger() << "ProductionQueueOrder quantity " << m_new_quantity << " Blocksize " << m_new_blocksize;
             empire->SetBuildQuantityAndBlocksize(m_index, m_new_quantity, m_new_blocksize);
