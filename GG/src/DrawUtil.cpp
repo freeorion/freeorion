@@ -114,54 +114,43 @@ namespace { // file-scope constants and functions
         glDisable(GL_TEXTURE_2D);
 
         // all vertices
-        double verts[][2] = {{-0.2, 0.2}, {-0.6, -0.2}, {-0.6, 0.0}, {-0.2, 0.4}, {-0.8, 0.0},
-                             {-0.2, 0.6}, { 0.8, -0.4}, {0.6, -0.4}, {0.8, -0.8}};
+        GLfloat verts[][2] = {{-0.2f,  0.2f}, {-0.6f, -0.2f}, {-0.6f,  0.0f}, {-0.2f,  0.4f}, {-0.8f,  0.0f},
+                             { -0.2f,  0.6f}, { 0.8f, -0.4f}, { 0.6f, -0.4f}, { 0.8f, -0.8f}};
 
         glPushMatrix();
-        const double sf = 1.25; // just a scale factor to make the check look right
+        const float sf = 1.25f;                                                     // scale factor to make the check look right
+        glTranslatef(Value(ul.x + wd / 2.0f), Value(ul.y + ht / 2.0f * sf), 0.0f);  // move origin to the center of the rectangle
+        glScalef(Value(wd / 2.0f * sf), Value(ht / 2.0f * sf), 1.0f);               // map the range [-1,1] to the rectangle in both directions
 
-        // move origin to the center of the rectangle
-        glTranslated(Value(ul.x + wd / 2.0), Value(ul.y + ht / 2.0 * sf), 0.0);
-        // map the range [-1,1] to the rectangle in both directions
-        glScaled(Value(wd / 2.0 * sf), Value(ht / 2.0 * sf), 1.0);
+        static std::size_t indices[22] = { 1,  4,  2,
+                                           8,  0,  3,  7,
+                                           2,  4,  5,  3,  7,  3,  5,  6,
+                                           8,  7,  6,
+                                           0,  1,  2,  3};
+
+        GL2DVertexBuffer vert_buf;
+        vert_buf.reserve(22);
+        for (std::size_t i = 0; i < 22; ++i)
+            vert_buf.store(verts[indices[i]][0], verts[indices[i]][1]);
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        vert_buf.activate();
 
         glColor(color3);
-        glBegin(GL_TRIANGLES);
-        glVertex2dv(verts[1]);
-        glVertex2dv(verts[4]);
-        glVertex2dv(verts[2]);
-        glEnd();
-        glBegin(GL_QUADS);
-        glVertex2dv(verts[8]);
-        glVertex2dv(verts[0]);
-        glVertex2dv(verts[3]);
-        glVertex2dv(verts[7]);
-        glEnd();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_QUADS, 3, 4);
 
         glColor(color2);
-        glBegin(GL_QUADS);
-        glVertex2dv(verts[2]);
-        glVertex2dv(verts[4]);
-        glVertex2dv(verts[5]);
-        glVertex2dv(verts[3]);
-        glVertex2dv(verts[7]);
-        glVertex2dv(verts[3]);
-        glVertex2dv(verts[5]);
-        glVertex2dv(verts[6]);
-        glEnd();
+        glDrawArrays(GL_QUADS, 7, 8);
 
         glColor(color1);
-        glBegin(GL_TRIANGLES);
-        glVertex2dv(verts[8]);
-        glVertex2dv(verts[7]);
-        glVertex2dv(verts[6]);
-        glEnd();
-        glBegin(GL_QUADS);
-        glVertex2dv(verts[0]);
-        glVertex2dv(verts[1]);
-        glVertex2dv(verts[2]);
-        glVertex2dv(verts[3]);
-        glEnd();
+        glDrawArrays(GL_TRIANGLES, 15, 3);
+        glDrawArrays(GL_QUADS, 18, 4);
+
+        glPopClientAttrib();
+
         glPopMatrix();
         glEnable(GL_TEXTURE_2D);
     }
@@ -179,9 +168,9 @@ namespace { // file-scope constants and functions
                               { 0.0f, -0.2f}, { 0.0f,  0.0f}};
 
         glPushMatrix();
-        const double sf = 1.75; // just a scale factor; the check wasn't the right size as drawn originally
-        glTranslatef(Value(ul.x + wd / 2.0), Value(ul.y + ht / 2.0), 0.0); // move origin to the center of the rectangle
-        glScalef(Value(wd / 2.0 * sf), Value(ht / 2.0 * sf), 1.0); // map the range [-1,1] to the rectangle in both directions
+        const float sf = 1.75f;                                                 // scale factor; the check wasn't the right size as drawn originally
+        glTranslatef(Value(ul.x + wd / 2.0f), Value(ul.y + ht / 2.0f), 0.0f);   // move origin to the center of the rectangle
+        glScalef(Value(wd / 2.0f * sf), Value(ht / 2.0f * sf), 1.0f);           // map the range [-1,1] to the rectangle in both directions
 
         static std::size_t indices[44] = {12, 13, 14,
                                           15,  0,  2, 16,  9, 11, 16, 10,
