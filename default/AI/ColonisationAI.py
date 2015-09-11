@@ -916,7 +916,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                          for psize in [-1, planet.size] for bld_type in bld_types)
     planet_supply += sum(AIDependencies.SUPPLY_MOD_SPECIALS[_special].get(int(psize), 0)
                          for psize in [-1, planet.size] for _special in
-                         set(planet.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS))
+                         set(planet.specials).union(system.specials).intersection(AIDependencies.SUPPLY_MOD_SPECIALS))
 
     common_grades = {'NO': 0.0, 'BAD': 0.5, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 4.0}
     ind_tag_mod = common_grades.get(get_ai_tag_grade(tag_list, "INDUSTRY"), 1.0)
