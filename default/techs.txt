@@ -617,6 +617,7 @@ Tech
     researchcost = 36 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
     prerequisites = "LRN_TRANSLING_THT"
+    unlock = Item type = building name = "BLD_XENORESURRECTION_LAB"
     graphic = "icons/tech/xenoarchaeology.png"
 
 Tech

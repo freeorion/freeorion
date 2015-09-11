@@ -6,6 +6,7 @@ import string
 species_list = [
     ("SP_SUPER_TEST", "Super Tester", "icons/species/other-04.png"),
     ("SP_ABADDONI", "Abaddoni", "icons/species/abaddonnian.png"),
+    ("SP_BANFORO", "Banforo", "icons/species/banforo.png"),
     ("SP_CHATO", "Chato", "icons/species/chato-matou-gormoshk.png"),
     ("SP_CRAY", "Cray", "icons/species/cray.png"),
     ("SP_DERTHREAN", "Derthrean", "icons/species/derthrean.png"),
@@ -18,8 +19,10 @@ species_list = [
     ("SP_HAPPY", "Happybirthday", "icons/species/ichthyoid-06.png"),
     ("SP_HHHOH", "Hhhoh", "icons/species/hhhoh.png"),
     ("SP_HUMAN", "Human", "icons/species/human.png"),
+    ("SP_KILANDOW", "Kilandow", "icons/species/insectoid-03.png"),
     ("SP_KOBUNTURA", "Kobuntura", "icons/species/intangible-04.png"),
     ("SP_LAENFA", "Laenfa", "icons/species/laenfa.png"),
+    ("SP_MISIORLA", "Misiorla", "icons/species/misiorla.png"),
     ("SP_MUURSH", "Mu Ursh", "icons/species/muursh.png"),
     ("SP_PHINNERT", "Phinnert", "icons/species/phinnert.png"),
     ("SP_SCYLIOR", "Scylior", "icons/species/scylior.png"),
@@ -115,6 +118,22 @@ t_species_condition = string.Template('''ResourceSupplyConnected empire = Source
             Happiness low = 5
         ]''')
 
+t_species_condition_extinct = string.Template('''ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Or [
+                And [
+                    Species name = "${id}"
+                    Population low = [[MIN_RECOLONIZING_SIZE]]
+                    Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_${name}_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+        ]''')
+
 t_buildtime = string.Template('''${t_factor} * max(5.0, 1.0 +
         (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
             condition = And [
@@ -144,6 +163,42 @@ t_buildtime = string.Template('''${t_factor} * max(5.0, 1.0 +
         )
     )''')
 
+t_buildtime_extinct = string.Template('''${t_factor} * max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            Or [
+               And [
+                   Species name = "${id}"
+                   Population low = [[MIN_RECOLONIZING_SIZE]]
+                   Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_${name}_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
+    )''')
 
 outpath = os.getcwd()
 print ("Output folder: %s" % outpath)
@@ -157,6 +212,11 @@ with open(os.path.join(outpath, "col_buildings.txt"), "w") as f:
         if sp_id == "SP_EXOBOT":
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=70, time=5,
                     species_condition=r"// no existing Exobot colony required!") + "\n\n")
+        elif sp_id == "SP_BANFORO" or sp_id == "SP_KILANDOW" or sp_id == "SP_MISIORLA":
+            this_time_factor = time_factor.get(sp_id, "1.0")
+            f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=50,
+                                      time=t_buildtime_extinct.substitute(id=sp_id, name=sp_name, t_factor=this_time_factor),
+                                      species_condition=t_species_condition_extinct.substitute(id=sp_id, name=sp_name)) + "\n\n")
         else:
             this_time_factor = time_factor.get(sp_id, "1.0")
             f.write(t_main.substitute(id=sp_id, name=sp_name, graphic=sp_graphic, cost=50,

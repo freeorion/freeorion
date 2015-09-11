@@ -310,7 +310,7 @@ Special
             scope = Source
             activation = OwnerHasTech name = "LRN_XENOARCH"
             effects = [
-                AddSpecial name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
+                AddSpecial name = OneOf("ANCIENT_RUINS_DEPLETED_SPECIAL", "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL", "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL", "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL")
                 RemoveSpecial name = "ANCIENT_RUINS_SPECIAL"
             ]
     ]
@@ -858,21 +858,22 @@ Special
 Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
-    stealth = 0
-    spawnrate = 0.0
-    effectsgroups = [
-        EffectsGroup
-            scope = Source
-            effects = SetTexture name = "planets/overlays/ruins.png"
+    [[ANCIENT_RUINS_DEPLETED_CONTENT]]
 
-        EffectsGroup
-            scope = And [
-                Source
-                Focus type = "FOCUS_RESEARCH"
-            ]
-            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
-        ]
-    graphic = "icons/specials_huge/ancient_ruins_excavated.png"
+Special
+    name = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL"
+    description = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL_DESC"
+    [[ANCIENT_RUINS_DEPLETED_CONTENT]]
+
+Special
+    name = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL"
+    description = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL_DESC"
+    [[ANCIENT_RUINS_DEPLETED_CONTENT]]
+
+Special
+    name = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL"
+    description = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL_DESC"
+    [[ANCIENT_RUINS_DEPLETED_CONTENT]]
     
 Special
     name = "KRAKEN_NEST_SPECIAL"
@@ -2030,6 +2031,24 @@ CHANCE_OF_GUARD_1
                 ]
             ]
             effects = CreateShip designname = OneOf("SM_GUARD_0", "SM_GUARD_1")
+'''
+
+ANCIENT_RUINS_DEPLETED_CONTENT
+'''    stealth = 0
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"
+
+        EffectsGroup
+            scope = And [
+                Source
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+        ]
+    graphic = "icons/specials_huge/ancient_ruins_excavated.png"
 '''
 
 // keep this entry at bottom, to best preserve line numbering for debugging
