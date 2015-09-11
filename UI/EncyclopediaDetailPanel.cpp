@@ -468,11 +468,8 @@ namespace {
 std::list <std::pair<std::string, std::string> >            EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string> >(0);
 std::list <std::pair<std::string, std::string> >::iterator  EncyclopediaDetailPanel::m_items_it = m_items.begin();
 
-EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags,
-                                                 const std::string& config_name) :
-    CUIWnd("",
-           flags,
-           config_name, false),
+EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
+    CUIWnd(UserString("MAP_BTN_PEDIA"), flags, config_name, false),
     m_name_text(0),
     m_cost_text(0),
     m_summary_text(0),
@@ -635,6 +632,30 @@ GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const
 { return GG::Wnd::UpperLeft(); }
 
 void EncyclopediaDetailPanel::Render() {
+    CUIWnd::Render();
+
+    // title underline
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(1.0f);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    m_vertex_buffer.activate();
+    if (!m_minimized) {
+        glColor(ClientUI::WndInnerBorderColor());
+        glDrawArrays(GL_LINES,  m_buffer_indices[4].first, m_buffer_indices[4].second);
+    }
+
+    glEnable(GL_TEXTURE_2D);
+    glPopClientAttrib();
+}
+
+void EncyclopediaDetailPanel::InitBuffers() {
+    m_vertex_buffer.clear();
+    m_vertex_buffer.reserve(19);
+    m_buffer_indices.resize(5);
+    std::size_t previous_buffer_size = m_vertex_buffer.size();
+
     const int Y_OFFSET = 22;
 
     GG::Pt ul = UpperLeft();
@@ -643,53 +664,69 @@ void EncyclopediaDetailPanel::Render() {
     GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + Y_OFFSET); // BORDER_BOTTOM is the size of the border at the bottom of a standard CUIWnd
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
-    // draw background and outer border
-    AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
-                          OUTER_EDGE_ANGLE_OFFSET, 1, false, !m_resizable); // show notched bottom-right corner if not resizable, pointed corner if resizable
 
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
+    // within m_vertex_buffer:
+    // [0] is the start and range for minimized background triangle fan and minimized border line loop
+    // [1] is ... the background fan / outer border line loop
+    // [2] is ... the inner border line loop
+    // [3] is ... the resize tab line list
 
-    // extra line to underscore title
-    glBegin(GL_LINES);
-        glColor(ClientUI::WndInnerBorderColor());
-        glVertex(cl_lr.x+2, cl_ul.y - ICON_SIZE - 7 );
-        glVertex(cl_ul.x-2, cl_ul.y - ICON_SIZE - 7 );
-    glEnd();
+    // minimized background fan and border line loop
+    m_vertex_buffer.store(Value(ul.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(lr.y));
+    m_vertex_buffer.store(Value(ul.x),  Value(lr.y));
+    m_buffer_indices[0].first = previous_buffer_size;
+    m_buffer_indices[0].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
 
-    // draw inner border, including extra resize-tab lines
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndInnerBorderColor());
-        glVertex(cl_ul.x, cl_ul.y);
-        glVertex(cl_lr.x, cl_ul.y);
-        if (m_resizable) {
-            glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-            glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-        } else {
-            glVertex(cl_lr.x, cl_lr.y);
-        }
-        glVertex(cl_ul.x, cl_lr.y);
-        glVertex(cl_ul.x, cl_ul.y);
-    glEnd();
-    if (m_resizable) {
-        glBegin(GL_LINES);
-            // draw the extra lines of the resize tab
-            GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
-            glColor(tab_lines_colour);
-
-            glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-            glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-
-            glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-            glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-        glEnd();
+    // outer border, with optional corner cutout
+    m_vertex_buffer.store(Value(ul.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(ul.y));
+    if (!m_resizable) {
+        m_vertex_buffer.store(Value(lr.x),                            Value(lr.y) - OUTER_EDGE_ANGLE_OFFSET);
+        m_vertex_buffer.store(Value(lr.x) - OUTER_EDGE_ANGLE_OFFSET,  Value(lr.y));
+    } else {
+        m_vertex_buffer.store(Value(lr.x),  Value(lr.y));
     }
-    glEnable(GL_TEXTURE_2D);
+    m_vertex_buffer.store(Value(ul.x),      Value(lr.y));
+    m_buffer_indices[1].first = previous_buffer_size;
+    m_buffer_indices[1].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
 
-    glColor(ClientUI::TextColor());
-    boost::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
-    font->RenderText(GG::Pt(ul.x + BORDER_LEFT, ul.y + TITLE_OFFSET), "Pedia");
+    // inner border, with optional corner cutout
+    m_vertex_buffer.store(Value(cl_ul.x),       Value(cl_ul.y));
+    m_vertex_buffer.store(Value(cl_lr.x),       Value(cl_ul.y));
+    if (m_resizable) {
+        m_vertex_buffer.store(Value(cl_lr.x),                             Value(cl_lr.y) - INNER_BORDER_ANGLE_OFFSET);
+        m_vertex_buffer.store(Value(cl_lr.x) - INNER_BORDER_ANGLE_OFFSET, Value(cl_lr.y));
+    } else {
+        m_vertex_buffer.store(Value(cl_lr.x),   Value(cl_lr.y));
+    }
+    m_vertex_buffer.store(Value(cl_ul.x),       Value(cl_lr.y));
+    m_buffer_indices[2].first = previous_buffer_size;
+    m_buffer_indices[2].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    // resize hash marks
+    m_vertex_buffer.store(Value(cl_lr.x),                           Value(cl_lr.y) - RESIZE_HASHMARK1_OFFSET);
+    m_vertex_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK1_OFFSET, Value(cl_lr.y));
+    m_vertex_buffer.store(Value(cl_lr.x),                           Value(cl_lr.y) - RESIZE_HASHMARK2_OFFSET);
+    m_vertex_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK2_OFFSET, Value(cl_lr.y));
+    m_buffer_indices[3].first = previous_buffer_size;
+    m_buffer_indices[3].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    // title underline
+    m_vertex_buffer.store(Value(cl_lr.x) + 2.0f,    Value(cl_ul.y - ICON_SIZE) - 7.0f);
+    m_vertex_buffer.store(Value(cl_ul.x) - 2.0f,    Value(cl_ul.y - ICON_SIZE) - 7.0f);
+    m_buffer_indices[4].first = previous_buffer_size;
+    m_buffer_indices[4].second = m_vertex_buffer.size() - previous_buffer_size;
+    //previous_buffer_size = m_vertex_buffer.size();
+
+    m_vertex_buffer.createServerBuffer();
 }
+
 
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
     using boost::lexical_cast;

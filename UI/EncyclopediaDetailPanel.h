@@ -82,6 +82,9 @@ public:
 
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
+protected:
+    virtual void    InitBuffers();
+
 private:
     void            DoLayout();
 
