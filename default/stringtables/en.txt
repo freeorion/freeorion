@@ -975,7 +975,13 @@ OPTIONS_DB_LIMIT_FPS
 Toggles FPS limiting on or off. Limit is set with Max FPS option.
 
 OPTIONS_DB_MAX_FPS
-Toggles FPS limit, if enabled. Limiting is toggled with Limit FPS.
+Sets FPS limit, if enabled. Limiting is toggled with Limit FPS.
+
+OPTIONS_DB_LIMIT_FPS_NO_FOCUS
+Toggles FPS limiting on or off when the game window does not have focus.
+
+OPTIONS_DB_MAX_FPS_NO_FOCUS
+Sets FPS limit when the game window does not have focus, if enabled.
 
 OPTIONS_DB_UI_SOUND_ENABLED
 Toggles UI sound effects on or off.
@@ -1957,6 +1963,12 @@ Limit FPS
 
 OPTIONS_MAX_FPS
 Max FPS
+
+OPTIONS_LIMIT_FPS_NO_FOCUS
+Limit FPS (Non Focused)
+
+OPTIONS_MAX_FPS_NO_FOCUS
+Max FPS (Non Focused)
 
 OPTIONS_APPLY
 Apply

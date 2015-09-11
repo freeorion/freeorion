@@ -179,7 +179,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     m_single_player_game(true),
     m_game_started(false),
     m_connected(false),
-    m_auto_turns(0)
+    m_auto_turns(0),
+    m_have_window_focus(true)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -880,10 +881,25 @@ void HumanClientApp::HandleWindowClose() {
     Exit(0);
 }
 
-void HumanClientApp::HandleFocusChange() {
-    DebugLogger() << "HumanClientApp::HandleFocusChange()";
+void HumanClientApp::HandleFocusChange(bool gained_focus) {
+    DebugLogger() << "HumanClientApp::HandleFocusChange("
+                  << (gained_focus ? "Gained Focus" : "Lost Focus")
+                  << ")";
 
-    // TODO: Does SDL need some action here?
+    m_have_window_focus = gained_focus;
+
+    // limit rendering frequency when defocused to limit CPU use
+    if (!m_have_window_focus) {
+        if (GetOptionsDB().Get<bool>("limit-fps-no-focus"))
+            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps-no_focus"));
+        else
+            this->SetMaxFPS(0.0);
+    } else {
+        if (GetOptionsDB().Get<bool>("limit-fps"))
+            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps"));
+        else
+            this->SetMaxFPS(0.0);
+    }
 
     CancelDragDrop();
     ClearEventState();
@@ -1104,8 +1120,11 @@ void HumanClientApp::DecAutoTurns(int n) {
         m_auto_turns = 0;
 }
 
-int HumanClientApp::AutoTurnsLeft()
+int HumanClientApp::AutoTurnsLeft() const
 { return m_auto_turns; }
+
+bool HumanClientApp::HaveWindowFocus() const
+{ return m_have_window_focus; }
 
 void HumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("limit-fps")) {

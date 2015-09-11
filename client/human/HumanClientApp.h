@@ -36,7 +36,8 @@ public:
     /** \name Accessors */ //@{
     bool                SinglePlayerGame() const;   ///< returns true iff this game is a single-player game
     bool                CanSaveNow() const;         ///< returns true / false to indicate whether this client can currently safely initiate a game save
-    int                 AutoTurnsLeft();            ///< returns number of turns left to execute automatically
+    int                 AutoTurnsLeft() const;      ///< returns number of turns left to execute automatically
+    bool                HaveWindowFocus() const;    ///< as far as the HCA knows, does the game window have focus?
     //@}
 
     /** \name Mutators */ //@{
@@ -95,7 +96,7 @@ private:
     void            HandleWindowResize(GG::X w, GG::Y h);
     void            HandleWindowClosing();
     void            HandleWindowClose();
-    void            HandleFocusChange();
+    void            HandleFocusChange(bool gained_focus);
 
     void            ConnectKeyboardAcceleratorSignals();///< installs the following 3 global hotkeys: quit, exit, togglefullscreen
     bool            QuitGame();                         ///< quit current game to IntroScreen
@@ -114,6 +115,7 @@ private:
     bool                        m_game_started;         ///< true when a game is currently in progress
     bool                        m_connected;            ///< true if we are in a state in which we are supposed to be connected to the server
     int                         m_auto_turns;           ///< auto turn counter
+    bool                        m_have_window_focus;
 };
 
 #endif // _HumanClientApp_h_

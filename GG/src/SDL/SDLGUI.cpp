@@ -751,22 +751,27 @@ void SDLGUI::HandleSystemEvents()
                     }
                     // If faking resolution change, we need to listen to this event
                     // to size the buffer correctly for the screen.
-                    if(m_fullscreen && m_fake_mode_change){
+                    if (m_fullscreen && m_fake_mode_change) {
                         ResetFramebuffer();
                     }
                 case SDL_WINDOWEVENT_RESIZED:
                     // Alt-tabbing and other things give dubious resize events while in fullscreen mode.
                     // ignore them
                     if (!m_fullscreen) {
-                        WindowResizedSignal (X (event.window.data1), Y (event.window.data2));
+                        WindowResizedSignal(X(event.window.data1), Y(event.window.data2));
                     }
                     break;
                 case SDL_WINDOWEVENT_FOCUS_GAINED:
+                    FocusChangedSignal(true);
+                    break;
                 case SDL_WINDOWEVENT_FOCUS_LOST:
-                    FocusChangedSignal();
+                    FocusChangedSignal(false);
                     break;
                 case SDL_WINDOWEVENT_MOVED:
-                    WindowMovedSignal ( X(event.window.data1), Y(event.window.data2) );
+                    WindowMovedSignal(X(event.window.data1), Y(event.window.data2));
+                    break;
+                case SDL_WINDOWEVENT_CLOSE:
+
                     break;
             }
             break;
@@ -790,7 +795,7 @@ void SDLGUI::HandleNonGGEvent(const SDL_Event& event)
 
 void SDLGUI::RenderBegin()
 {
-    if(m_fake_mode_change && m_fullscreen) {
+    if (m_fake_mode_change && m_fullscreen) {
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_framebuffer->OpenGLId());
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -798,7 +803,7 @@ void SDLGUI::RenderBegin()
 
 void SDLGUI::RenderEnd()
 {
-    if(m_fake_mode_change && m_fullscreen) {
+    if (m_fake_mode_change && m_fullscreen) {
         // Return to rendering on the real screen
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
         // Clear the real screen

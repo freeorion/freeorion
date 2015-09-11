@@ -425,10 +425,12 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add('c', "color-depth",      UserStringNop("OPTIONS_DB_COLOR_DEPTH"),           24,     RangedStepValidator<int>(8, 16, 32));
+        db.Add('c', "color-depth",      UserStringNop("OPTIONS_DB_COLOR_DEPTH"),           24,      RangedStepValidator<int>(8, 16, 32));
         db.Add("show-fps",              UserStringNop("OPTIONS_DB_SHOW_FPS"),              false);
         db.Add("limit-fps",             UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
-        db.Add("max-fps",               UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,   RangedStepValidator<double>(1.0, 10.0, 200.0));
+        db.Add("max-fps",               UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,    RangedStepValidator<double>(1.0, 10.0, 240.0));
+        db.Add("limit-fps-no-focus",    UserStringNop("OPTIONS_DB_LIMIT_FPS_NO_FOCUS"),    true);
+        db.Add("max-fps-no_focus",      UserStringNop("OPTIONS_DB_MAX_FPS_NO_FOCUS"),      15.0,    RangedStepValidator<double>(1.0, 1.0, 30.0));
 
         // sound and music
         db.Add<std::string>("UI.sound.bg-music",                UserStringNop("OPTIONS_DB_BG_MUSIC"),                          (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
