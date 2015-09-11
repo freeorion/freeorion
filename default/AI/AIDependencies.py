@@ -52,7 +52,9 @@ supply_by_size = {fo.planetSize.tiny: 2,
                   fo.planetSize.gasGiant: -1
                   }
 
-SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL': {-1: 1}}
+SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL': {-1: 1},
+                       'ACCRETION_DISC_EFFECTS': {-1: 1},
+                       }
 
 # building supply bonuses are keyed by planet size; key -1 stands for any planet size
 building_supply = {"BLD_IMPERIAL_PALACE": {-1: 2},
