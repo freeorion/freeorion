@@ -145,7 +145,7 @@ const int CUIWnd::TITLE_OFFSET = 3;
 const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 7;
 const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 3;
 
-CUIWnd::CUIWnd(const std::string& t,
+CUIWnd::CUIWnd(const std::string& wnd_name,
                GG::X x, GG::Y y,
                GG::X w, GG::Y h,
                GG::Flags<GG::WndFlag> flags,
@@ -168,18 +168,15 @@ CUIWnd::CUIWnd(const std::string& t,
     m_vertex_buffer(),
     m_buffer_indices()
 {
-    Init(t);
+    Init(wnd_name);
     if (!m_config_name.empty()) {
         // Default position was already supplied
-        GetOptionsDB().Set<bool>("UI.windows."+m_config_name+".initialized", true);
+        GetOptionsDB().Set<bool>("UI.windows." + m_config_name + ".initialized", true);
     }
     ValidatePosition();
 }
 
-CUIWnd::CUIWnd(const std::string& t,
-               GG::Flags<GG::WndFlag> flags,
-               const std::string& config_name,
-               bool visible) :
+CUIWnd::CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags, const std::string& config_name, bool visible) :
     GG::Wnd(INVALID_X, INVALID_Y, GG::X1, GG::Y1, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
@@ -196,10 +193,10 @@ CUIWnd::CUIWnd(const std::string& t,
     m_pin_button(0),
     m_vertex_buffer(),
     m_buffer_indices()
-{ Init(t); }
+{ Init(wnd_name); }
 
-void CUIWnd::Init(const std::string& t) {
-    SetName(t);
+void CUIWnd::Init(const std::string& wnd_name) {
+    SetName(wnd_name);
     InitButtons();
     SetChildClippingMode(ClipToClientAndWindowSeparately);
 
@@ -300,9 +297,6 @@ void CUIWnd::Render() {
     if (m_vertex_buffer.empty())
         InitBuffers();
 
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
     glDisable(GL_TEXTURE_2D);
     glLineWidth(1.0f);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -340,6 +334,8 @@ void CUIWnd::Render() {
     glEnable(GL_TEXTURE_2D);
     glPopClientAttrib();
 
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
     GG::BeginScissorClipping(ul, lr);
     glColor(ClientUI::TextColor());
     boost::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
