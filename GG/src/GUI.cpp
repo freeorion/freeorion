@@ -1163,7 +1163,7 @@ void GUI::WndDying(Wnd* wnd)
 void GUI::EnableFPS(bool b/* = true*/)
 {
     s_impl->m_calc_FPS = b;
-    if (!b) 
+    if (!b)
         s_impl->m_FPS = -1.0f;
 }
 

@@ -93,59 +93,60 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual X AppWidth() const;
-    virtual Y AppHeight() const;
-    virtual unsigned int Ticks() const;
-    virtual bool Fullscreen() const;
-    virtual bool FakeModeChange() const;
-    virtual std::string ClipboardText() const;
+    virtual X               AppWidth() const;
+    virtual Y               AppHeight() const;
+    virtual unsigned int    Ticks() const;
+    virtual bool            Fullscreen() const;
+    virtual bool            FakeModeChange() const;
+    virtual std::string     ClipboardText() const;
     //@}
 
     /** \name Mutators */ ///@{
-    void           operator()();      ///< external interface to Run()
-    virtual void   Exit(int code);
+    void            operator()();      ///< external interface to Run()
+    virtual void    Exit(int code);
 
-    void SetWindowTitle(const std::string& title);
-    void SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change);
-    virtual bool SetClipboardText(const std::string& text);
+    void            SetWindowTitle(const std::string& title);
+    void            SetVideoMode(X width, Y height, bool fullscreen, bool fake_mode_change);
+    virtual bool    SetClipboardText(const std::string& text);
     //@}
 
-    static SDLGUI* GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
-    GG::Key GGKeyFromSDLKey(const SDL_Keysym& key); ///< gives the GGKey equivalent of key
+    static SDLGUI*  GetGUI();                             ///< allows any code to access the gui framework by calling SDLGUI::GetGUI()
+    GG::Key         GGKeyFromSDLKey(const SDL_Keysym& key); ///< gives the GGKey equivalent of key
 
-    virtual void        Enter2DMode();
-    virtual void        Exit2DMode();
+    virtual void    Enter2DMode();
+    virtual void    Exit2DMode();
 
     // \override
     virtual std::vector<std::string> GetSupportedResolutions() const;
+
     // \override
-    virtual Pt GetDefaultResolution (int display_id);
-    static  Pt GetDefaultResolutionStatic(int display_id);
-    virtual bool FramebuffersAvailable() const;
+    virtual Pt      GetDefaultResolution (int display_id);
+    static  Pt      GetDefaultResolutionStatic(int display_id);
+    virtual bool    FramebuffersAvailable() const;
 protected:
     void SetAppSize(const GG::Pt& size);
 
     // these are called at the beginning of the gui's execution
-    virtual void   SDLInit();        ///< initializes SDL, FE, and SDL OpenGL functionality
-    virtual void   GLInit();         ///< allows user to specify OpenGL initialization code; called at the end of SDLInit()
-    virtual void   Initialize() = 0; ///< provides one-time gui initialization
+    virtual void    SDLInit();        ///< initializes SDL, FE, and SDL OpenGL functionality
+    virtual void    GLInit();         ///< allows user to specify OpenGL initialization code; called at the end of SDLInit()
+    virtual void    Initialize() = 0; ///< provides one-time gui initialization
 
-    virtual void   HandleSystemEvents();
-    virtual void   HandleNonGGEvent(const SDL_Event& event); ///< event handler for all SDL events that are not GG-related
+    virtual void    HandleSystemEvents();
+    virtual void    HandleNonGGEvent(const SDL_Event& event); ///< event handler for all SDL events that are not GG-related
 
-    virtual void   RenderBegin();
-    virtual void   RenderEnd();
+    virtual void    RenderBegin();
+    virtual void    RenderEnd();
 
     // these are called at the end of the gui's execution
-    virtual void   FinalCleanup();   ///< provides one-time gui cleanup
-    virtual void   SDLQuit();        ///< cleans up SDL and (if used) FE
+    virtual void    FinalCleanup();   ///< provides one-time gui cleanup
+    virtual void    SDLQuit();        ///< cleans up SDL and (if used) FE
 
-    virtual void   Run();
+    virtual void    Run();
 
-    void ResetFramebuffer(); ///< Resizes or deletes the framebuffer for fake fullscreen.
+    void            ResetFramebuffer(); ///< Resizes or deletes the framebuffer for fake fullscreen.
 
 private:
-    void RelayTextInput (const SDL_TextInputEvent& text, Pt mouse_pos);
+    void            RelayTextInput (const SDL_TextInputEvent& text, Pt mouse_pos);
 
     X         m_app_width;      ///< application width and height (defaults to 1024 x 768)
     Y         m_app_height;
@@ -154,11 +155,11 @@ private:
     bool      m_fullscreen;
     bool      m_fake_mode_change;
     int       m_display_id;
-    SDL_Window* m_window; ///< The sdl window
-    SDL_GLContext m_gl_context; //< The OpenGL context
-    bool m_done; //< Set true true when we should exit.
-    boost::scoped_ptr<Framebuffer> m_framebuffer; //< virtual screen for fake fullscreen. Null if m_fake_mode_change == false
-    std::map<SDL_Keycode, Key> m_key_map; //< a mapping from sdl keycodes to GiGi keys
+    SDL_Window*     m_window; ///< The sdl window
+    SDL_GLContext   m_gl_context; //< The OpenGL context
+    bool            m_done; //< Set true true when we should exit.
+    boost::scoped_ptr<Framebuffer>  m_framebuffer; //< virtual screen for fake fullscreen. Null if m_fake_mode_change == false
+    std::map<SDL_Keycode, Key>      m_key_map; //< a mapping from sdl keycodes to GiGi keys
 };
 
 } // namespace GG
