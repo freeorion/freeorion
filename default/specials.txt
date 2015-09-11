@@ -1470,6 +1470,8 @@ Special
     spawnlimit = 0
     graphic = "icons/specials_huge/nova_boom.png"
 
+//## Growth Specials ##
+
 Special
     name = "PROBIOTIC_SPECIAL"
     description = "PROBIOTIC_SPECIAL_DESC"
@@ -1498,6 +1500,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "PROBIOTIC_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1506,6 +1509,7 @@ Special
                 HasTag name = "ORGANIC"
             ]
             stackinggroup = "PROBIOTIC_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1541,6 +1545,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "FRUIT_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1549,6 +1554,7 @@ Special
                 HasTag name = "ORGANIC"
             ]
             stackinggroup = "FRUIT_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1583,6 +1589,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SPICE_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1591,6 +1598,7 @@ Special
                 HasTag name = "ORGANIC"
             ]
             stackinggroup = "SPICE_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1627,6 +1635,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MONOPOLE_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1635,6 +1644,7 @@ Special
                 HasTag name = "ROBOTIC"
             ]
             stackinggroup = "MONOPOLE_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1671,6 +1681,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "SUPERCONDUCTOR_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1679,6 +1690,7 @@ Special
                 HasTag name = "ROBOTIC"
             ]
             stackinggroup = "SUPERCONDUCTOR_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1716,6 +1728,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "POSITRONIUM_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1724,6 +1737,7 @@ Special
                 HasTag name = "ROBOTIC"
             ]
             stackinggroup = "POSITRONIUM_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1761,6 +1775,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "MINERALS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1769,6 +1784,7 @@ Special
                 HasTag name = "LITHIC"
             ]
             stackinggroup = "MINERALS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1805,6 +1821,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "CRYSTALS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1813,6 +1830,7 @@ Special
                 HasTag name = "LITHIC"
             ]
             stackinggroup = "CRYSTALS_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
@@ -1850,6 +1868,7 @@ Special
             ]
             activation =  Focus type = "FOCUS_GROWTH"
             stackinggroup = "ELERIUM_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble
             
         EffectsGroup
@@ -1858,6 +1877,7 @@ Special
                 HasTag name = "LITHIC"
             ]
             stackinggroup = "ELERIUM_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1 * Target.SizeAsDouble  // Provides the bonus locally, no matter the focus
             
            [[CHANCE_OF_GUARD_1]]
