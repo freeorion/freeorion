@@ -239,118 +239,28 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
 {
     glDisable(GL_TEXTURE_2D);
 
-    GG::X inner_x1 = ul.x + thick;
-    GG::Y inner_y1 = ul.y + thick;
-    GG::X inner_x2 = lr.x - thick;
-    GG::Y inner_y2 = lr.y - thick;
+    GG::GL2DVertexBuffer vert_buf;
+    vert_buf.reserve(200);  // todo: better estimate
+    GG::Pt thick_pt = GG::Pt(GG::X(thick), GG::Y(thick));
+    BufferStoreAngledCornerRectangleVertices(vert_buf, ul + thick_pt, lr - thick_pt, angle_offset,
+                                             upper_left_angled, lower_right_angled, draw_bottom);
 
-    // these are listed in CCW order for convenience
-    GG::X ul_corner_x1 = ul.x + angle_offset;
-    GG::Y ul_corner_y1 = ul.y;
-    GG::X ul_corner_x2 = ul.x;
-    GG::Y ul_corner_y2 = ul.y + angle_offset;
-    GG::X lr_corner_x1 = lr.x - angle_offset;
-    GG::Y lr_corner_y1 = lr.y;
-    GG::X lr_corner_x2 = lr.x;
-    GG::Y lr_corner_y2 = lr.y - angle_offset;
+    //glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-    GG::X inner_ul_corner_x1 = ul_corner_x1 + thick;
-    GG::Y inner_ul_corner_y1 = ul_corner_y1 + thick;
-    GG::X inner_ul_corner_x2 = ul_corner_x2 + thick;
-    GG::Y inner_ul_corner_y2 = ul_corner_y2 + thick;
-    GG::X inner_lr_corner_x1 = lr_corner_x1 - thick;
-    GG::Y inner_lr_corner_y1 = lr_corner_y1 - thick;
-    GG::X inner_lr_corner_x2 = lr_corner_x2 - thick;
-    GG::Y inner_lr_corner_y2 = lr_corner_y2 - thick;
+    vert_buf.activate();
 
-    // draw border
-    if (thick) {
-        glBegin(GL_QUADS);
-        glColor(border);
-
-        // the top
-        glVertex(inner_x2, inner_y1);
-        glVertex(lr.x, ul.y);
-        if (upper_left_angled) {
-            glVertex(ul_corner_x1, ul_corner_y1);
-            glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
-        } else {
-            glVertex(ul.x, ul.y);
-            glVertex(inner_x1, inner_y1);
-        }
-
-        // the upper-left angled side
-        if (upper_left_angled) {
-            glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
-            glVertex(ul_corner_x1, ul_corner_y1);
-            glVertex(ul_corner_x2, ul_corner_y2);
-            glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
-        }
-
-        // the left side
-        if (upper_left_angled) {
-            glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
-            glVertex(ul_corner_x2, ul_corner_y2);
-        } else {
-            glVertex(inner_x1, inner_y1);
-            glVertex(ul.x, ul.y);
-        }
-        glVertex(ul.x, lr.y);
-        glVertex(inner_x1, inner_y2);
-
-        // the bottom
-        if (draw_bottom) {
-            glVertex(inner_x1, inner_y2);
-            glVertex(ul.x, lr.y);
-            if (lower_right_angled) {
-                glVertex(lr_corner_x1, lr_corner_y1);
-                glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
-            } else {
-                glVertex(lr.x, lr.y);
-                glVertex(inner_x2, inner_y2);
-            }
-        }
-
-        // the lower-right angled side
-        if (lower_right_angled) {
-            glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
-            glVertex(lr_corner_x1, lr_corner_y1);
-            glVertex(lr_corner_x2, lr_corner_y2);
-            glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
-        }
-
-        // the right side
-        if (lower_right_angled) {
-            glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
-            glVertex(lr_corner_x2, lr_corner_y2);
-        } else {
-            glVertex(lr.x, lr.y);
-            glVertex(inner_x2, inner_y2);
-        }
-        glVertex(lr.x, ul.y);
-        glVertex(inner_x2, inner_y1);
-
-        glEnd();
-    }
-
-    // draw interior of rectangle
     glColor(color);
-    glBegin(GL_POLYGON);
-    if (upper_left_angled) {
-        glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
-        glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
-    } else {
-        glVertex(inner_x1, inner_y1);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, vert_buf.size());
+    if (thick > 0) {
+        glColor(border);
+        glLineWidth(thick);
+        glDrawArrays(GL_LINE_STRIP, 0, vert_buf.size());
+        glLineWidth(1.0f);
     }
-    glVertex(inner_x1, inner_y2);
-    if (lower_right_angled) {
-        glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
-        glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
-    } else {
-        glVertex(inner_x2, inner_y2);
-    }
-    glVertex(inner_x2, inner_y1);
-    glEnd();
+
+    glPopClientAttrib();
 
     glEnable(GL_TEXTURE_2D);
 }
@@ -383,7 +293,7 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
 }
 
 bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset,
-                        bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/)
+                        bool upper_left_angled/* = true*/, bool lower_right_angled)
 {
     bool retval = false;
     if (retval = (ul <= pt && pt < lr)) {
@@ -396,8 +306,7 @@ bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, in
     return retval;
 }
 
-void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, GG::Clr color, bool border/*= true*/)
-{
+void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, GG::Clr color, bool border) {
     GG::Clr border_clr = color;
     if (border)
         AdjustBrightness(border_clr, 75);
