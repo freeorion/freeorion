@@ -80,6 +80,19 @@ inline bool operator==(const Clr& rhs, const Clr& lhs)
 inline bool operator!=(const Clr& rhs, const Clr& lhs)
 { return !(rhs == lhs); }
 
+/** Returns the input Clr scaned by the input factor \a s. */
+inline Clr operator*(const Clr& lhs, float s)
+{
+    return Clr(static_cast<unsigned char>(lhs.r * s),
+               static_cast<unsigned char>(lhs.g * s),
+               static_cast<unsigned char>(lhs.b * s),
+               static_cast<unsigned char>(lhs.a * s));
+}
+
+/** Returns the component-wise sum of input Clrs. */
+inline Clr operator+(const Clr& lhs, const Clr& rhs)
+{ return Clr(lhs.r + rhs.r, lhs.g + rhs.g, lhs.b + rhs.b, lhs.a + rhs.a); }
+
 /** Clr comparisons */
 inline bool operator<(const Clr& lhs, const Clr& rhs)
 {
