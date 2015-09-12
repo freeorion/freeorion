@@ -91,18 +91,11 @@ class GG_API GL2DVertexBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
     GL2DVertexBuffer();
-    void activate() const;
-};
-
-///////////////////////////////////////////////////////////////////////////
-// GLPtBuffer specialized class for int 2d vertex data
-///////////////////////////////////////////////////////////////////////////
-class GG_API GLPtBuffer : public GLClientAndServerBufferBase<int>
-{
-public:
-    GLPtBuffer();
     void store(const Pt& pt);
     void store(X x, Y y);
+    void store(X x, float y);
+    void store(float x, Y y);
+    void store(float x, float y);
     void activate() const;
 };
 

@@ -633,10 +633,10 @@ bool Font::RenderState::ColorsEmpty() const
 
 // Must be here for scoped_ptr deleter to work
 Font::RenderCache::RenderCache() :
-    vertices(new GG::GLPtBuffer()),
+    vertices(new GG::GL2DVertexBuffer()),
     coordinates(new GG::GLTexCoordBuffer()),
     colors(new GG::GLRGBAColorBuffer()),
-    underline_vertices(new GG::GLPtBuffer()),
+    underline_vertices(new GG::GL2DVertexBuffer()),
     underline_colors(new GG::GLRGBAColorBuffer())
 {}
 

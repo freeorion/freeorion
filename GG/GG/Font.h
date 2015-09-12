@@ -52,7 +52,7 @@ namespace GG {
 
 class GLRGBAColorBuffer;
 class GLTexCoordBuffer;
-class GLPtBuffer;
+class GL2DVertexBuffer;
 
 /** Returns a string of the form "<rgba r g b a>" from a Clr object with color
     channels r, b, g, a. */
@@ -353,11 +353,11 @@ public:
      */
     struct RenderCache
     {
-        boost::scoped_ptr<GLPtBuffer> vertices;
+        boost::scoped_ptr<GL2DVertexBuffer> vertices;
         boost::scoped_ptr<GLTexCoordBuffer> coordinates;
         boost::scoped_ptr<GLRGBAColorBuffer> colors;
 
-        boost::scoped_ptr<GLPtBuffer> underline_vertices;
+        boost::scoped_ptr<GL2DVertexBuffer> underline_vertices;
         boost::scoped_ptr<GLRGBAColorBuffer> underline_colors;
 
         RenderCache();

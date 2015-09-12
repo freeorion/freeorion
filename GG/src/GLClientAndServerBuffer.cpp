@@ -149,6 +149,21 @@ GL2DVertexBuffer::GL2DVertexBuffer() :
     GLClientAndServerBufferBase<float>(2)
 {}
 
+void GL2DVertexBuffer::store(const Pt& pt)
+{ store(pt.x, pt.y); }
+
+void GL2DVertexBuffer::store(X x, Y y)
+{ GLClientAndServerBufferBase::store(Value(x), Value(y)); }
+
+void GL2DVertexBuffer::store(X x, float y)
+{ GLClientAndServerBufferBase::store(Value(x), y); }
+
+void GL2DVertexBuffer::store(float x, Y y)
+{ GLClientAndServerBufferBase::store(x, Value(y)); }
+
+void GL2DVertexBuffer::store(float x, float y)
+{ GLClientAndServerBufferBase::store(x, y); }
+
 void GL2DVertexBuffer::activate() const
 {
     if (b_name) {
@@ -160,31 +175,6 @@ void GL2DVertexBuffer::activate() const
     }
 }
 
-///////////////////////////////////////////////////////////////////////////
-// implementation for GLPtBuffer
-///////////////////////////////////////////////////////////////////////////
-template class GLClientAndServerBufferBase<int>;
-
-GLPtBuffer::GLPtBuffer () :
-    GLClientAndServerBufferBase<int>(2)
-{}
-
-void GLPtBuffer::store(const Pt& pt)
-{ store(pt.x, pt.y); }
-
-void GLPtBuffer::store(X x, Y y)
-{ GLClientAndServerBufferBase::store(Value(x), Value(y)); }
-
-void GLPtBuffer::activate() const
-{
-    if (b_name) {
-        glBindBuffer(GL_ARRAY_BUFFER, b_name);
-        glVertexPointer(2, GL_INT, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    } else {
-        glVertexPointer(2, GL_INT, 0, &b_data[0]);
-    }
-}
 
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GLTexCoordBuffer
@@ -203,5 +193,4 @@ void GLTexCoordBuffer::activate() const
         glTexCoordPointer(2, GL_FLOAT, 0, &b_data[0]);
     }
 }
-
 }
