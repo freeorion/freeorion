@@ -242,22 +242,23 @@ void DropDownList::InitBuffer()
     GG::Pt inner_lr = lr - inner_ul;
 
     // outer border
-    m_buffer.store(0.0f,        0.0f);
-    m_buffer.store(Value(lr.x), 0.0f);
-    m_buffer.store(Value(lr.x), Value(lr.y));
-    m_buffer.store(0.0f,        Value(lr.y));
+    m_buffer.store(0.0f,    0.0f);
+    m_buffer.store(lr.x,    0.0f);
+    m_buffer.store(lr.x,    lr.y);
+    m_buffer.store(0.0f,    lr.y);
 
     // inner bevel quad strip
-    m_buffer.store(Value(inner_lr.x),   Value(inner_ul.y));
-    m_buffer.store(Value(lr.x),         0.0f);
-    m_buffer.store(Value(inner_ul.x),   Value(inner_ul.y));
-    m_buffer.store(0.0f,                0.0f);
-    m_buffer.store(Value(inner_ul.x),   Value(inner_lr.y));
-    m_buffer.store(0.0f,                Value(lr.y));
-    m_buffer.store(Value(inner_lr.x),   Value(inner_lr.y));
-    m_buffer.store(Value(lr.x),         Value(lr.y));
-    m_buffer.store(Value(inner_lr.x),   Value(inner_ul.y));
-    m_buffer.store(Value(lr.x),         0.0f);
+    m_buffer.store(inner_lr.x,  inner_ul.y);
+    m_buffer.store(lr.x,        0.0f);
+    m_buffer.store(inner_ul.x,  inner_ul.y);
+    m_buffer.store(0.0f,        0.0f);
+    m_buffer.store(inner_ul.x,  inner_lr.y);
+    m_buffer.store(0.0f,        lr.y);
+    m_buffer.store(inner_lr.x,  inner_lr.y);
+    m_buffer.store(lr.x,        lr.y);
+    m_buffer.store(inner_lr.x,  inner_ul.y);
+    m_buffer.store(lr.x,        0.0f);
+
     m_buffer.createServerBuffer();
 }
 
