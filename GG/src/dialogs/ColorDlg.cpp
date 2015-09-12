@@ -284,29 +284,62 @@ ValuePicker::ValuePicker(X x, Y y, X w, Y h, Clr arrow_color) :
 
 void ValuePicker::Render()
 {
-    Pt eff_ul = UpperLeft(), eff_lr = LowerRight() - Pt(X(4), Y0);
+    Pt eff_ul = UpperLeft() + Pt(X(3), Y0), eff_lr = LowerRight() - Pt(X(4), Y0);
     Y h = Height();
     glDisable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS);
-    glColor(Convert(HSVClr(m_hue, m_saturation, 1.0)));
-    glVertex(eff_lr.x, eff_ul.y);
-    glVertex(eff_ul.x, eff_ul.y);
-    glColor(Convert(HSVClr(m_hue, m_saturation, 0.0)));
-    glVertex(eff_ul.x, eff_lr.y);
-    glVertex(eff_lr.x, eff_lr.y);
-    glEnd();
+
+    GL2DVertexBuffer vert_buf;
+    vert_buf.reserve(12);
+    GLRGBAColorBuffer colour_buf;   // need to give each vertex in lightness bar its own colour so can't just use a glColor call
+    colour_buf.reserve(12);
+
+    // bar for picking lightness
+    vert_buf.store(Value(eff_lr.x),    Value(eff_ul.y));
+    colour_buf.store(Convert(HSVClr(m_hue, m_saturation, 1.0)));
+    vert_buf.store(Value(eff_ul.x),    Value(eff_ul.y));
+    colour_buf.store(Convert(HSVClr(m_hue, m_saturation, 1.0)));
+
+    vert_buf.store(Value(eff_ul.x),    Value(eff_lr.y));
+    colour_buf.store(Convert(HSVClr(m_hue, m_saturation, 0.0)));
+    vert_buf.store(Value(eff_lr.x),    Value(eff_lr.y));
+    colour_buf.store(Convert(HSVClr(m_hue, m_saturation, 0.0)));
+
+    // line indicating currently-selected lightness
     Y color_position(eff_ul.y + h * (1.0 - m_value));
-    glColor(CLR_SHADOW);
-    glBegin(GL_LINES);
-    glVertex(eff_ul.x, color_position);
-    glVertex(eff_lr.x, color_position);
-    glEnd();
-    glColor(m_arrow_color);
-    glBegin(GL_TRIANGLES);
-    glVertex(eff_lr.x + 4, color_position - 3);
-    glVertex(eff_lr.x + 1, color_position);
-    glVertex(eff_lr.x + 4, color_position + 3);
-    glEnd();
+    vert_buf.store(Value(eff_ul.x),    Value(color_position));
+    colour_buf.store(CLR_SHADOW);
+    vert_buf.store(Value(eff_lr.x),    Value(color_position));
+    colour_buf.store(CLR_SHADOW);
+
+    // arrows marking lightness position
+    vert_buf.store(Value(eff_lr.x + 5),Value(color_position - 4));
+    colour_buf.store(m_arrow_color);
+    vert_buf.store(Value(eff_lr.x + 1),Value(color_position));
+    colour_buf.store(m_arrow_color);
+    vert_buf.store(Value(eff_lr.x + 5),Value(color_position + 4));
+    colour_buf.store(m_arrow_color);
+    vert_buf.store(Value(eff_ul.x - 5),Value(color_position - 4));
+    colour_buf.store(m_arrow_color);
+    vert_buf.store(Value(eff_ul.x),    Value(color_position));
+    colour_buf.store(m_arrow_color);
+    vert_buf.store(Value(eff_ul.x - 5),Value(color_position + 4));
+    colour_buf.store(m_arrow_color);
+
+
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    vert_buf.activate();
+    colour_buf.activate();
+    glDrawArrays(GL_QUADS, 0, 4);
+    glLineWidth(1.5f);
+    glDrawArrays(GL_LINES, 4, 2);
+    glLineWidth(1.0f);
+    glDrawArrays(GL_TRIANGLES, 6, 6);
+
+    glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -559,7 +592,7 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     m_pickers_layout = new Layout(X0, Y0, X(HUE_SATURATION_PICKER_SIZE + 30), Y(HUE_SATURATION_PICKER_SIZE),
                                   1, 2, 0, 5);
     m_pickers_layout->SetColumnStretch(0, 1);
-    m_pickers_layout->SetMinimumColumnWidth(1, X(20));
+    m_pickers_layout->SetMinimumColumnWidth(1, X(24));
     m_pickers_layout->Add(m_hue_saturation_picker, 0, 0);
     m_pickers_layout->Add(m_value_picker, 0, 1);
 
