@@ -478,71 +478,101 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_r
             CircleArc(GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, true);
         if (lr_round)
             CircleArc(GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, true);
-        glBegin(GL_QUADS);
-        glVertex(lr.x, ul.y + radius);
-        glVertex(ul.x, ul.y + radius);
-        glVertex(ul.x, lr.y - radius);
-        glVertex(lr.x, lr.y - radius);
-        glVertex(lr.x - radius, ul.y);
-        glVertex(ul.x + radius, ul.y);
-        glVertex(ul.x + radius, ul.y + radius);
-        glVertex(lr.x - radius, ul.y + radius);
-        glVertex(lr.x - radius, lr.y - radius);
-        glVertex(ul.x + radius, lr.y - radius);
-        glVertex(ul.x + radius, lr.y);
-        glVertex(lr.x - radius, lr.y);
+
+        GG::GL2DVertexBuffer vert_buf;
+        vert_buf.reserve(28);
+
+        vert_buf.store(lr.x,            ul.y + radius);
+        vert_buf.store(ul.x,            ul.y + radius);
+        vert_buf.store(ul.x,            lr.y - radius);
+        vert_buf.store(lr.x,            lr.y - radius);
+        vert_buf.store(lr.x - radius,   ul.y);
+        vert_buf.store(ul.x + radius,   ul.y);
+        vert_buf.store(ul.x + radius,   ul.y + radius);
+        vert_buf.store(lr.x - radius,   ul.y + radius);
+        vert_buf.store(lr.x - radius,   lr.y - radius);
+        vert_buf.store(ul.x + radius,   lr.y - radius);
+        vert_buf.store(ul.x + radius,   lr.y);
+        vert_buf.store(lr.x - radius,   lr.y);
+
         if (!ur_round) {
-            glVertex(lr.x, ul.y);
-            glVertex(lr.x - radius, ul.y);
-            glVertex(lr.x - radius, ul.y + radius);
-            glVertex(lr.x, ul.y + radius);
+            vert_buf.store(lr.x,            ul.y);
+            vert_buf.store(lr.x - radius,   ul.y);
+            vert_buf.store(lr.x - radius,   ul.y + radius);
+            vert_buf.store(lr.x,            ul.y + radius);
         }
         if (!ul_round) {
-            glVertex(ul.x + radius, ul.y);
-            glVertex(ul.x, ul.y);
-            glVertex(ul.x, ul.y + radius);
-            glVertex(ul.x + radius, ul.y + radius);
+            vert_buf.store(ul.x + radius,   ul.y);
+            vert_buf.store(ul.x,            ul.y);
+            vert_buf.store(ul.x,            ul.y + radius);
+            vert_buf.store(ul.x + radius,   ul.y + radius);
         }
         if (!ll_round) {
-            glVertex(ul.x + radius, lr.y - radius);
-            glVertex(ul.x, lr.y - radius);
-            glVertex(ul.x, lr.y);
-            glVertex(ul.x + radius, lr.y);
+            vert_buf.store(ul.x + radius,   lr.y - radius);
+            vert_buf.store(ul.x,            lr.y - radius);
+            vert_buf.store(ul.x,            lr.y);
+            vert_buf.store(ul.x + radius,   lr.y);
         }
         if (!lr_round) {
-            glVertex(lr.x, lr.y - radius);
-            glVertex(lr.x - radius, lr.y - radius);
-            glVertex(lr.x - radius, lr.y);
-            glVertex(lr.x, lr.y);
+            vert_buf.store(lr.x,            lr.y - radius);
+            vert_buf.store(lr.x - radius,   lr.y - radius);
+            vert_buf.store(lr.x - radius,   lr.y);
+            vert_buf.store(lr.x,            lr.y);
         }
-        glEnd();
-    } else {
-        glBegin(GL_LINE_STRIP);
 
-        glVertex(lr.x, ul.y + radius);
+        //glDisable(GL_TEXTURE_2D);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        vert_buf.activate();
+        glDrawArrays(GL_QUADS, 0, vert_buf.size());
+
+        glPopClientAttrib();
+        //glEnable(GL_TEXTURE_2D);
+
+
+    } else {
+        GG::GL2DVertexBuffer vert_buf;
+        vert_buf.reserve(202);
+
+        vert_buf.store(lr.x,        ul.y + radius);
 
         if (ur_round)
-            CircleArcVertices(GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, false);
+            BufferStoreCircleArcVertices(vert_buf, GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius),
+                                         0.0, PI / 2.0, false, 0, true);
         else
-            glVertex(lr.x, ul.y);
+            vert_buf.store(lr.x,    ul.y);
 
         if (ul_round)
-            CircleArcVertices(ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, false);
+            BufferStoreCircleArcVertices(vert_buf, ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius),
+                                         PI / 2.0, PI, false, 0, true);
         else
-            glVertex(ul.x, ul.y);
+            vert_buf.store(ul.x,    ul.y);
 
         if (ll_round)
-            CircleArcVertices(GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, false);
+            BufferStoreCircleArcVertices(vert_buf, GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y),
+                                         PI, 3.0 * PI / 2.0, false, 0, true);
         else
-            glVertex(ul.x, lr.y);
+            vert_buf.store(ul.x,    lr.y);
 
         if (lr_round)
-            CircleArcVertices(GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, false);
+            BufferStoreCircleArcVertices(vert_buf, GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr,
+                                         3.0 * PI / 2.0, 0.0, false, 0, true);
         else
-            glVertex(lr.x, lr.y);
+            vert_buf.store(lr.x,    lr.y);
 
-        glVertex(lr.x, ul.y + radius);
-        glEnd();
+        vert_buf.store(lr.x,        ul.y + radius);
+
+
+        //glDisable(GL_TEXTURE_2D);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        vert_buf.activate();
+        glDrawArrays(GL_LINE_STRIP, 0, vert_buf.size());
+
+        glPopClientAttrib();
+        //glEnable(GL_TEXTURE_2D);
     }
 }
 
@@ -551,28 +581,28 @@ void BufferStorePartlyRoundedRectVertices(GG::GL2DVertexBuffer& buffer, const GG
 {
     const double PI = 3.141594;
 
-    buffer.store(Value(lr.x), Value(ul.y) + radius);
+    buffer.store(lr.x, ul.y + radius);
 
     if (ur_round)
         BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, false);
     else
-        buffer.store(Value(lr.x), Value(ul.y));
+        buffer.store(lr.x, ul.y);
 
     if (ul_round)
         BufferStoreCircleArcVertices(buffer, ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, false);
     else
-        buffer.store(Value(ul.x), Value(ul.y));
+        buffer.store(ul.x, ul.y);
 
     if (ll_round)
         BufferStoreCircleArcVertices(buffer, GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, false);
     else
-        buffer.store(Value(ul.x), Value(lr.y));
+        buffer.store(ul.x, lr.y);
 
     if (lr_round)
         BufferStoreCircleArcVertices(buffer, GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, false);
     else
-        buffer.store(Value(lr.x), Value(lr.y));
+        buffer.store(lr.x, lr.y);
 
-    buffer.store(Value(lr.x), Value(ul.y) + radius);
+    buffer.store(lr.x, ul.y + radius);
 }
 
