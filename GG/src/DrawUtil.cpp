@@ -63,21 +63,21 @@ namespace { // file-scope constants and functions
 
         GL2DVertexBuffer verts;
         verts.reserve(14);
-        verts.store(Value(inner_x2),    Value(inner_y1));
-        verts.store(Value(lr.x),        Value(ul.y));
-        verts.store(Value(inner_x1),    Value(inner_y1));
-        verts.store(Value(ul.x),        Value(ul.y));
-        verts.store(Value(inner_x1),    Value(inner_y2));
-        verts.store(Value(ul.x),        Value(lr.y));
-        verts.store(Value(inner_x2),    Value(inner_y2));
-        verts.store(Value(lr.x),        Value(lr.y));
-        verts.store(Value(inner_x2),    Value(inner_y1));
-        verts.store(Value(lr.x),        Value(ul.y));
+        verts.store(inner_x2,   inner_y1);
+        verts.store(lr.x,       ul.y);
+        verts.store(inner_x1,   inner_y1);
+        verts.store(ul.x,       ul.y);
+        verts.store(inner_x1,   inner_y2);
+        verts.store(ul.x,       lr.y);
+        verts.store(inner_x2,   inner_y2);
+        verts.store(lr.x,       lr.y);
+        verts.store(inner_x2,   inner_y1);
+        verts.store(lr.x,       ul.y);
 
-        verts.store(Value(inner_x2),    Value(inner_y1));
-        verts.store(Value(inner_x1),    Value(inner_y1));
-        verts.store(Value(inner_x1),    Value(inner_y2));
-        verts.store(Value(inner_x2),    Value(inner_y2));
+        verts.store(inner_x2,   inner_y1);
+        verts.store(inner_x1,   inner_y1);
+        verts.store(inner_x1,   inner_y2);
+        verts.store(inner_x2,   inner_y2);
 
         verts.activate();
 
@@ -400,19 +400,20 @@ namespace { // file-scope constants and functions
         GLRGBAColorBuffer colour_buf;   // need to give each vertex in lightness bar its own colour so can't just use a glColor call
         colour_buf.reserve(28);
 
+        int rad = static_cast<int>(corner_radius);
 
         double color_scale_factor = (SQRT2OVER2 * (0 + 1) + 1) / 2;
         GG::Clr clr = border_color2 * (1 - color_scale_factor) + border_color1 * color_scale_factor;
         // top
-        vert_buf.store(Value(lr.x) - corner_radius, Value(ul.y));
-        vert_buf.store(Value(ul.x) + corner_radius, Value(ul.y));
-        vert_buf.store(Value(ul.x) + corner_radius, Value(ul.y) + thick);
-        vert_buf.store(Value(lr.x) - corner_radius, Value(ul.y) + thick);
+        vert_buf.store(lr.x - rad,      ul.y);
+        vert_buf.store(ul.x + rad,      ul.y);
+        vert_buf.store(ul.x + rad,      ul.y + thick);
+        vert_buf.store(lr.x - rad,      ul.y + thick);
         // left
-        vert_buf.store(Value(ul.x) + thick,         Value(ul.y) + corner_radius);
-        vert_buf.store(Value(ul.x),                 Value(ul.y) + corner_radius);
-        vert_buf.store(Value(ul.x),                 Value(lr.y) - corner_radius);
-        vert_buf.store(Value(ul.x) + thick,         Value(lr.y) - corner_radius);
+        vert_buf.store(ul.x + thick,    ul.y + rad);
+        vert_buf.store(ul.x,            ul.y + rad);
+        vert_buf.store(ul.x,            lr.y - rad);
+        vert_buf.store(ul.x + thick,    lr.y - rad);
         for (unsigned int i = 0; i < 8; ++i)
             colour_buf.store(clr);
 
@@ -420,34 +421,34 @@ namespace { // file-scope constants and functions
         color_scale_factor = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
         clr = border_color2 * (1 - color_scale_factor) + border_color1 * color_scale_factor;
         // right
-        vert_buf.store(Value(lr.x),                 Value(ul.y) + corner_radius);
-        vert_buf.store(Value(lr.x) - thick,         Value(ul.y) + corner_radius);
-        vert_buf.store(Value(lr.x) - thick,         Value(lr.y) - corner_radius);
-        vert_buf.store(Value(lr.x),                 Value(lr.y) - corner_radius);
+        vert_buf.store(lr.x,            ul.y + rad);
+        vert_buf.store(lr.x - thick,    ul.y + rad);
+        vert_buf.store(lr.x - thick,    lr.y - rad);
+        vert_buf.store(lr.x,            lr.y - rad);
         // bottom (uses color scale factor (SQRT2OVER2 * (0 + -1) + 1) / 2, which equals that of right
-        vert_buf.store(Value(lr.x) - corner_radius, Value(lr.y) - thick);
-        vert_buf.store(Value(ul.x) + corner_radius, Value(lr.y) - thick);
-        vert_buf.store(Value(ul.x) + corner_radius, Value(lr.y));
-        vert_buf.store(Value(lr.x) - corner_radius, Value(lr.y));
+        vert_buf.store(lr.x - rad,      lr.y - thick);
+        vert_buf.store(ul.x + rad,      lr.y - thick);
+        vert_buf.store(ul.x + rad,      lr.y);
+        vert_buf.store(lr.x - rad,      lr.y);
         for (unsigned int i = 0; i < 8; ++i)
             colour_buf.store(clr);
 
 
         // middle
-        vert_buf.store(Value(lr.x) - corner_radius, Value(ul.y) + thick);
-        vert_buf.store(Value(ul.x) + corner_radius, Value(ul.y) + thick);
-        vert_buf.store(Value(ul.x) + corner_radius, Value(lr.y) - thick);
-        vert_buf.store(Value(lr.x) - corner_radius, Value(lr.y) - thick);
+        vert_buf.store(lr.x - rad,      ul.y + thick);
+        vert_buf.store(ul.x + rad,      ul.y + thick);
+        vert_buf.store(ul.x + rad,      lr.y - thick);
+        vert_buf.store(lr.x - rad,      lr.y - thick);
 
-        vert_buf.store(Value(lr.x) - thick,         Value(ul.y) + corner_radius);
-        vert_buf.store(Value(lr.x) - corner_radius, Value(ul.y) + corner_radius);
-        vert_buf.store(Value(lr.x) - corner_radius, Value(lr.y) - corner_radius);
-        vert_buf.store(Value(lr.x) - thick,         Value(lr.y) - corner_radius);
+        vert_buf.store(lr.x - thick,    ul.y + rad);
+        vert_buf.store(lr.x - rad,      ul.y + rad);
+        vert_buf.store(lr.x - rad,      lr.y - rad);
+        vert_buf.store(lr.x - thick,    lr.y - rad);
 
-        vert_buf.store(Value(ul.x) + thick,         Value(ul.y) + corner_radius);
-        vert_buf.store(Value(ul.x) + corner_radius, Value(ul.y) + corner_radius);
-        vert_buf.store(Value(ul.x) + corner_radius, Value(lr.y) - corner_radius);
-        vert_buf.store(Value(ul.x) + thick,         Value(lr.y) - corner_radius);
+        vert_buf.store(ul.x + thick,    ul.y + rad);
+        vert_buf.store(ul.x + rad,      ul.y + rad);
+        vert_buf.store(ul.x + rad,      lr.y - rad);
+        vert_buf.store(ul.x + thick,    lr.y - rad);
         for (unsigned int i = 0; i < 12; ++i)
             colour_buf.store(color);
 
@@ -460,7 +461,7 @@ namespace { // file-scope constants and functions
         vert_buf.activate();
         colour_buf.activate();
 
-        glDrawArrays(GL_QUADS, 0, 28);  // 7 quads = 28 vertices
+        glDrawArrays(GL_QUADS, 0, vert_buf.size());
 
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
@@ -476,6 +477,8 @@ namespace { // file-scope constants and functions
 
         glDisable(GL_TEXTURE_2D);
 
+        int rad = static_cast<int>(corner_radius);
+
         // top
         double color_scale_factor = (SQRT2OVER2 * (0 + 1) + 1) / 2;
         Clr scaled_color(GLubyte(color3.r * (1 - color_scale_factor) + color2.r * color_scale_factor),
@@ -484,21 +487,21 @@ namespace { // file-scope constants and functions
                          GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
         glBegin(GL_QUADS);
         glColor(scaled_color);
-        glVertex(lr.x - static_cast<int>(corner_radius), ul.y);
-        glVertex(ul.x + static_cast<int>(corner_radius), ul.y);
+        glVertex(lr.x - rad, ul.y);
+        glVertex(ul.x + rad, ul.y);
         glColor(color1);
-        glVertex(ul.x + static_cast<int>(corner_radius), ul.y + static_cast<int>(corner_radius));
-        glVertex(lr.x - static_cast<int>(corner_radius), ul.y + static_cast<int>(corner_radius));
+        glVertex(ul.x + rad, ul.y + rad);
+        glVertex(lr.x - rad, ul.y + rad);
         glEnd();
 
         // left (uses color scale factor (SQRT2OVER2 * (1 + 0) + 1) / 2, which equals that of top
         glBegin(GL_QUADS);
         glColor(scaled_color);
-        glVertex(ul.x, ul.y + static_cast<int>(corner_radius));
-        glVertex(ul.x, lr.y - static_cast<int>(corner_radius));
+        glVertex(ul.x, ul.y + rad);
+        glVertex(ul.x, lr.y - rad);
         glColor(color1);
-        glVertex(ul.x + static_cast<int>(corner_radius), lr.y - static_cast<int>(corner_radius));
-        glVertex(ul.x + static_cast<int>(corner_radius), ul.y + static_cast<int>(corner_radius));
+        glVertex(ul.x + rad, lr.y - rad);
+        glVertex(ul.x + rad, ul.y + rad);
         glEnd();
 
         // right
@@ -509,30 +512,30 @@ namespace { // file-scope constants and functions
                            GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
         glBegin(GL_QUADS);
         glColor(color1);
-        glVertex(lr.x - static_cast<int>(corner_radius), ul.y + static_cast<int>(corner_radius));
-        glVertex(lr.x - static_cast<int>(corner_radius), lr.y - static_cast<int>(corner_radius));
+        glVertex(lr.x - rad, ul.y + rad);
+        glVertex(lr.x - rad, lr.y - rad);
         glColor(scaled_color);
-        glVertex(lr.x, lr.y - static_cast<int>(corner_radius));
-        glVertex(lr.x, ul.y + static_cast<int>(corner_radius));
+        glVertex(lr.x, lr.y - rad);
+        glVertex(lr.x, ul.y + rad);
         glEnd();
 
         // bottom (uses color scale factor (SQRT2OVER2 * (0 + -1) + 1) / 2, which equals that of left
         glBegin(GL_QUADS);
         glColor(color1);
-        glVertex(lr.x - static_cast<int>(corner_radius), lr.y - static_cast<int>(corner_radius));
-        glVertex(ul.x + static_cast<int>(corner_radius), lr.y - static_cast<int>(corner_radius));
+        glVertex(lr.x - rad, lr.y - rad);
+        glVertex(ul.x + rad, lr.y - rad);
         glColor(scaled_color);
-        glVertex(ul.x + static_cast<int>(corner_radius), lr.y);
-        glVertex(lr.x - static_cast<int>(corner_radius), lr.y);
+        glVertex(ul.x + rad, lr.y);
+        glVertex(lr.x - rad, lr.y);
         glEnd();
 
         // middle
         glBegin(GL_QUADS);
         glColor(color1);
-        glVertex(lr.x - static_cast<int>(corner_radius), ul.y + static_cast<int>(corner_radius));
-        glVertex(ul.x + static_cast<int>(corner_radius), ul.y + static_cast<int>(corner_radius));
-        glVertex(ul.x + static_cast<int>(corner_radius), lr.y - static_cast<int>(corner_radius));
-        glVertex(lr.x - static_cast<int>(corner_radius), lr.y - static_cast<int>(corner_radius));
+        glVertex(lr.x - rad, ul.y + rad);
+        glVertex(ul.x + rad, ul.y + rad);
+        glVertex(ul.x + rad, lr.y - rad);
+        glVertex(lr.x - rad, lr.y - rad);
         glEnd();
         glEnable(GL_TEXTURE_2D);
     }
