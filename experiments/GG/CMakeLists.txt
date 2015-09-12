@@ -2,17 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 
 message("-- Configuring GG Tests")
 
-find_package(OpenAL REQUIRED)
-find_package(Ogg REQUIRED)
-find_package(Vorbis REQUIRED)
-find_package(Bullet REQUIRED)
 find_package(GLEW REQUIRED)
 include_directories(
     ${OPENGL_INCLUDE_DIR}
-    ${OPENAL_INCLUDE_DIR}
-    ${OGG_INCLUDE_DIR}
-    ${VORBIS_INCLUDE_DIR}
-    ${BULLET_INCLUDE_DIRS}
 )
 
 set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
@@ -28,11 +20,7 @@ set(gg_test_LINK_LIBS
     GiGiSDL
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
-    ${OPENAL_LIBRARY}
     ${Boost_LIBRARIES}
-    ${OGG_LIBRARY}
-    ${VORBIS_LIBRARIES}
-    ${BULLET_LIBRARIES}
     ${ZLIB_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
     ${GLEW_LIBRARIES}
