@@ -156,7 +156,11 @@ FieldType
         EffectsGroup    // dissipate when small
             scope = Source
             activation = Size high = 5
-            effects = Destroy
+            effects = [
+                Destroy
+                CreateField type = "FLD_ACCRETION_DISC" size = 20
+                AddSpecial name = "ACCRETION_DISC_SPECIAL"
+            ]
     ]
     graphic = "nebulae/nebula12.png"
     
@@ -208,7 +212,11 @@ FieldType
         EffectsGroup    // dissipate when small
             scope = Source
             activation = Size high = 5
-            effects = Destroy
+            effects = [
+                Destroy
+                CreateField type = "FLD_ACCRETION_DISC" size = 20
+                AddSpecial name = "ACCRETION_DISC_SPECIAL"
+            ]
     ]
     graphic = "nebulae/nebula15.png"
 
@@ -262,3 +270,9 @@ FieldType
             effects = Destroy
     ]
     graphic = "nebulae/nebula9.png"
+
+FieldType
+    name = "FLD_ACCRETION_DISC"
+    description = "FLD_ACCRETION_DISC_DESC"
+    stealth = 0.01
+    graphic = "nebulae/nebula20.png"
