@@ -2777,6 +2777,7 @@ namespace {
                     break;
                 } else if (!GetTech(it->name)) {
                     queue.erase(it);    // remove invalid tech, end inner loop without marking as finished
+                    DebugLogger() << "SanitizeResearchQueue for empire " << queue.EmpireID() << " removed invalid tech: " << it->name;
                     break;
                 } else {
                     ++it;               // check next element
