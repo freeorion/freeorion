@@ -90,6 +90,7 @@ supply_by_size = {fo.planetSize.tiny: 2,
 
 SUPPLY_MOD_SPECIALS = {'WORLDTREE_SPECIAL': {-1: 1},
                        'ECCENTRIC_ORBIT_SPECIAL': {-1: -2},
+                       'ACCRETION_DISC_SPECIAL': {-1: -1},
                        }
 
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
