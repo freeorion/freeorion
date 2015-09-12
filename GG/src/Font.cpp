@@ -908,12 +908,8 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
 
 void Font::RenderCachedText(RenderCache& cache) const
 {
-    double orig_color[4];
-    glGetDoublev(GL_CURRENT_COLOR, orig_color);
-
-
-    //RenderStoredGlyph(it->second, running_index, *cache.vertices, *cache.coordinates);
     glBindTexture(GL_TEXTURE_2D, m_texture->OpenGLId());
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
@@ -932,7 +928,6 @@ void Font::RenderCachedText(RenderCache& cache) const
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-    glColor4dv(orig_color);
 }
 
 void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState& render_state,
