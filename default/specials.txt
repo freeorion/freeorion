@@ -569,7 +569,7 @@ Special
     name = "HONEYCOMB_SPECIAL"
     description = "HONEYCOMB_SPECIAL_DESC"
     stealth = 0
-    spawnrate = 5.0
+    spawnrate = 9.0
     spawnlimit = 1
     location = And [
         Planet
@@ -579,6 +579,16 @@ Special
             Contains And [
                 Planet
                 OwnedBy affiliation = AnyEmpire
+            ]
+        ]
+        Not WithinStarlaneJumps jumps = 2 condition = And [
+            System
+            Contains And [
+                Planet
+                Or [
+                    Species
+                    HasSpecial
+                ]
             ]
         ]
     ]
@@ -789,7 +799,7 @@ Special
     spawnlimit = 1
     location = And [
         Planet
-        Not Planet type = [Asteroids GasGiant]
+        Not Planet type = [Asteroids GasGiant Inferno]
         Not Planet size = [tiny huge]
         Not WithinStarlaneJumps jumps = 2 condition = And [
             System
