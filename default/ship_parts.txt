@@ -8,7 +8,10 @@ Part
     buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     tags = "COMFORTABLE"
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        OwnedBy empire = Source.Owner
+        Not HasTag name = "AI_TAG_NO_ATTACKTROOPS"
+    ]
     icon = "icons/ship_parts/troops.png"
 
 Part
@@ -19,7 +22,10 @@ Part
     mountableSlotTypes = [External Internal]
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    location = OwnedBy empire = Source.Owner
+    location = And [
+        OwnedBy empire = Source.Owner
+        Not HasTag name = "AI_TAG_NO_ATTACKTROOPS"
+    ]
     icon = "icons/meter/rebels.png"
 
 Part
