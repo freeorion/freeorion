@@ -382,7 +382,7 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
     buffer.store(Value(ul.x),                       Value(lr.y));
 }
 
-bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset, 
+bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset,
                         bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/)
 {
     bool retval = false;
@@ -398,33 +398,16 @@ bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, in
 
 void Triangle(double x1, double y1, double x2, double y2, double x3, double y3, GG::Clr color, bool border/*= true*/)
 {
-    glDisable(GL_TEXTURE_2D);
-    glColor(color);
-    glBegin(GL_TRIANGLES);
-    glVertex2d(x1, y1);
-    glVertex2d(x2, y2);
-    glVertex2d(x3, y3);
-    glEnd();
-    if (border) {
-        AdjustBrightness(color, 75);
-        // trace the lines both ways, to ensure that this small polygon looks symmetrical
-        glColor(color);
-        glBegin(GL_LINE_LOOP);
-        glVertex2d(x3, y3);
-        glVertex2d(x2, y2);
-        glVertex2d(x1, y1);
-        glEnd();
-        glBegin(GL_LINE_LOOP);
-        glVertex2d(x1, y1);
-        glVertex2d(x2, y2);
-        glVertex2d(x3, y3);
-        glEnd();
-    }
-    glEnable(GL_TEXTURE_2D);
+    GG::Clr border_clr = color;
+    if (border)
+        AdjustBrightness(border_clr, 75);
+    GG::Triangle(GG::Pt(GG::X(x1), GG::Y(y1)),
+                 GG::Pt(GG::X(x2), GG::Y(y2)),
+                 GG::Pt(GG::X(x3), GG::Y(y3)),
+                 color, border ? border_clr : GG::CLR_ZERO);
 }
 
-bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, double x3, double y3)
-{
+bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, double x3, double y3) {
     double vec_A_x = x2 - x1; // side A is the vector from pt1 to pt2
     double vec_A_y = y2 - y1; // side A is the vector from pt1 to pt2
     double vec_B_x = x3 - x2; // side B is the vector from pt2 to pt3
@@ -441,8 +424,7 @@ bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, do
     return (sum == 3 || sum == 0);
 }
 
-void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation, GG::Clr color, bool border/* = true*/)
-{
+void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation, GG::Clr color, bool border) {
     double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     Triangle(x1_, y1_, x2_, y2_, x3_, y3_, color, border);
@@ -456,23 +438,31 @@ void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
     buffer.store(x3_,   y3_);
 }
 
-bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation)
-{
+bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation) {
     double x1_, y1_, x2_, y2_, x3_, y3_;
     FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }
 
-void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape)
-{
+void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape) {
+    GG::GL2DVertexBuffer vert_buf;
+    vert_buf.reserve(50);   // max number that BufferStoreCircleArcVertices might add
+
+    BufferStoreCircleArcVertices(vert_buf, ul, lr, theta1, theta2, filled_shape, 0, true);
+
+    //glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    vert_buf.activate();
+
     if (filled_shape)
-        glBegin(GL_TRIANGLE_FAN);
+        glDrawArrays(GL_TRIANGLE_FAN, 0, vert_buf.size());
     else
-        glBegin(GL_LINE_STRIP);
+        glDrawArrays(GL_LINE_STRIP, 0, vert_buf.size());
 
-    CircleArcVertices(ul, lr, theta1, theta2, filled_shape);
-
-    glEnd();
+    glPopClientAttrib();
+    //glEnable(GL_TEXTURE_2D);
 }
 
 void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_round, bool ul_round,
