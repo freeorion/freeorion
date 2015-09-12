@@ -5529,7 +5529,7 @@ SP_BANFORO_DESC
 A Banfo looks like a teddy bear made of white stone with two large black crystal eyes. It's likely that the Banforo species was artificially created, but information that could show proof was lost in history. The eyes are their most important organs, not only do they serve for perception, but also for communication by showing light patterns around their frames. Banforo can distinguish colors and patterns of even very dim light, as well as focus on light sources far away. Very bright light on the other hand is very hard on their eyes and disturbs their communication. Thus the evening is the favorite time for the Banforo and a defining ritual of their civilization is collectively gazing at the stars once the sun has set.
 
 Social Structure:
-The Banforo are very social towards each other and share strong bonds. Ressources are always shared and private ownership doesn't exist for goods with material value. The form of government can be called communistic.
+The Banforo are very social towards each other and share strong bonds. Resources are always shared and private ownership doesn't exist for goods with material value. The form of government can be called communistic.
 
 Reason for Extinction:
 It hasn't been sufficiently clarified, but scientists suspect that a cosmic event made the environment unbearable for the Banforo for a time so long that their numbers were dwindling to ultimately zero.
@@ -9175,7 +9175,7 @@ BLD_XENORESURRECTION_LAB
 Xenoresurrection Lab
 
 BLD_XENORESURRECTION_LAB_DESC
-The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of supply connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can be build on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an exstinct species.
+The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of supply connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can only be build on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an extinct species.
 
 BLD_COLONY_BASE
 Colony Base
@@ -10639,7 +10639,7 @@ BAD_FUEL
 −	Bad maximum [[encyclopedia FUEL_TITLE]]: - 1
 
 GREAT_ASTEROID_INDUSTRY
-+	Good Asteroid Miners: + 0.2 [[encyclopedia INDUSTRY_TITLE]] per population when Industry Focused in systems with asteroid belts.
++	Good Asteroid Miners: + 0.2 [[encyclopedia INDUSTRY_TITLE]] per population when Industry Focused in systems with owned asteroid belts.
 
 LIGHT_SENSITIVE
 −	Light Sensitive: Population is reduced in systems with blue and to a lesser extend white stars.
