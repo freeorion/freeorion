@@ -2222,7 +2222,7 @@ BASIC_POPULATION
         [[PHOTOTROPHIC_BONUS]]
         [[HOMEWORLD_GROWTH_FOCUS_BOOST]]
         [[GAIA_POP_MODIFIER]]
-        [[WORLDTREE_POP_MODIFIER]]
+        [[SPECIALS_POP_MODIFIER]]
         [[GRO_HAB_MODIFIER]]
         [[POPULATION_TECHS]]
         
@@ -2545,8 +2545,17 @@ GAIA_POP_MODIFIER
             ]
 '''
 
-WORLDTREE_POP_MODIFIER
+SPECIALS_POP_MODIFIER
 '''     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "TIDAL_LOCK_SPECIAL"
+            ]
+            accountinglabel = "TIDAL_LOCK_LABEL"
+            effects = SetTargetPopulation value = Value - 1 * Target.SizeAsDouble
+
+     EffectsGroup
             scope = Source
             activation = AND [
                 Planet
