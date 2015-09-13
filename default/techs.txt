@@ -1303,6 +1303,7 @@ Tech
                 ]
                 Focus type = "FOCUS_INDUSTRY"
             ]
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + 5
     ]
     graphic = "icons/tech/microgravity_manufacturing.png"
@@ -1322,6 +1323,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
             ]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
         ]
     graphic = "icons/tech/robotic_production.png"
@@ -1355,6 +1357,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
             ]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
     ]
     graphic = "icons/tech/fusion_generation.png"
@@ -1404,6 +1407,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 NOT TargetPopulation low = 0 high = 0
              ]
+            priority = [[VERY_LATE_PRIORITY]]
              effects = SetTargetIndustry value = Value + 5
     ]
     graphic = "icons/tech/basic_autofactories.png"

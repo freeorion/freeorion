@@ -627,6 +627,7 @@ Special
             ]
             activation = Focus type = "FOCUS_INDUSTRY"
             stackinggroup = "HONEYCOMB_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
         
     ]
@@ -1902,6 +1903,7 @@ STANDARD_INDUSTRY_BOOST
 '''EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
 '''
