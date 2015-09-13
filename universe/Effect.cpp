@@ -1626,13 +1626,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
 
     ship->ResetTargetMaxUnpairedMeters();
     ship->ResetPairedActiveMeters();
-
-    ship->GetMeter(METER_MAX_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_MAX_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_MAX_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-    ship->GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+    ship->SetShipMetersToMax();
 
     ship->BackPropegateMeters();
 
