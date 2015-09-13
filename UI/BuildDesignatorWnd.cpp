@@ -438,7 +438,7 @@ private:
       * filter settings. */
     void    PopulateList();
 
-    void AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
+    void    AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
 
     /** respond to the user single-clicking a producible item in the build selector */
     void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
