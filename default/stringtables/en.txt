@@ -4645,6 +4645,16 @@ Rumors spread through the galaxy that %tech% was revealed to a xenoarcheology ex
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Ancient Ruins Tech Rumors
 
+EFFECT_ANCIENT_EXTINCT_SPECIES
+On %planet%: Well preserved bodies of the extinct species %species% were found in Ancient Ruins!
+EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL
+Ancient Ruins Extinct Species
+
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS
+Rumors spread through the galaxy that well preserved bodies of the extinct species %species% were found in Ancient Ruins!
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL
+Ancient Ruins Extinct Species Rumors
+
 EFFECT_ANCIENT_RUINS_EMPTY
 On %planet%: Ancient Ruins were excavated, but only tantalizing hints of ancient technology were found.
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
@@ -5654,29 +5664,23 @@ ANCIENT_RUINS_SPECIAL_DESCRIPTION
 
 This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship. There's also a good chance that well preserved bodies of an extinct species will be found.'''
 
-ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL
-Ancient Ruins (Excavated) (Banforo)
+EXTINCT_BANFORO_SPECIAL
+Banforo Remains
 
-ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL_DESC
-'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
+EXTINCT_BANFORO_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on supply connected planets.'''
 
-This planet holds the ruins of the extinct [[species SP_BANFORO]] civilisation. Well preserved bodies were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build [[buildingtype BLD_COL_BANFORO]] on supply connected planets.'''
+EXTINCT_KILANDOW_SPECIAL
+Kilandow Remains
 
-ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL
-Ancient Ruins (Excavated) (Kilandow)
+EXTINCT_KILANDOW_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on supply connected planets.'''
 
-ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL_DESC
-'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
+EXTINCT_MISIORLA_SPECIAL
+Misiorla Remains
 
-This planet holds the ruins of the extinct [[species SP_KILANDOW]] civilisation. Well preserved bodies were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build [[buildingtype BLD_COL_KILANDOW]] on supply connected planets.'''
-
-ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL
-Ancient Ruins (Excavated) (Misiorla)
-
-ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL_DESC
-'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
-
-This planet holds the ruins of the extinct [[species SP_MISIORLA]] civilisation. Well preserved bodies were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build [[buildingtype BLD_COL_MISIORLA]] on supply connected planets.'''
+EXTINCT_MISIORLA_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on supply connected planets.'''
 
 PANOPTICON_SPECIAL
 Panopticon Complex
