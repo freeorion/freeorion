@@ -108,6 +108,7 @@ building_supply = {"BLD_IMPERIAL_PALACE": {-1: 2},
 
 #
 # tech names etc.
+GRO_LIFE_CYCLE = "GRO_LIFECYCLE_MAN"
 PRO_ORBITAL_GEN = "PRO_ORBITAL_GEN"
 PRO_SOL_ORB_GEN = "PRO_SOL_ORB_GEN"
 PRO_MICROGRAV_MAN = "PRO_MICROGRAV_MAN"
@@ -133,7 +134,6 @@ DEFENSE_SHIELDS_TECHS = ["LRN_FORCE_FIELD", "DEF_PLAN_BARRIER_SHLD_1", "DEF_PLAN
 
 PROT_FOCUS_MULTIPLIER = 2.0
 
-GRO_LIFE_CYCLE = "GRO_LIFECYCLE_MAN"
 
 
 # ship facilities info, dict keyed by building name, value is (min_aggression, prereq_bldg, base_cost, time)
