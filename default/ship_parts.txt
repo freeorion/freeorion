@@ -10,7 +10,7 @@ Part
     tags = "COMFORTABLE"
     location = And [
         OwnedBy empire = Source.Owner
-        Not HasTag name = "AI_TAG_NO_ATTACKTROOPS"
+        Not HasTag name = "NO_ATTACKTROOPS"
     ]
     icon = "icons/ship_parts/troops.png"
 
@@ -24,7 +24,7 @@ Part
     buildtime = 1
     location = And [
         OwnedBy empire = Source.Owner
-        Not HasTag name = "AI_TAG_NO_ATTACKTROOPS"
+        Not HasTag name = "NO_ATTACKTROOPS"
     ]
     icon = "icons/meter/rebels.png"
 
