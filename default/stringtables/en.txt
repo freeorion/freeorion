@@ -10469,19 +10469,19 @@ ULTIMATE_DETECTION
 +++	Ultimate [[encyclopedia DETECTION_RANGE_TITLE]]: +100 bonus.
 
 BAD_STEALTH
-−	Bad [[encyclopedia STEALTH_TITLE]]: −15 malus.
+−	Bad Planetary [[encyclopedia STEALTH_TITLE]]: −20 malus.
 
 AVERAGE_STEALTH
-'''	Average [[encyclopedia STEALTH_TITLE]].'''
+'''	Average Planetary [[encyclopedia STEALTH_TITLE]].'''
 
 GOOD_STEALTH
-+	Good [[encyclopedia STEALTH_TITLE]]: +15 bonus.
++	Good Planetary [[encyclopedia STEALTH_TITLE]]: +20 bonus.
 
 GREAT_STEALTH
-++	Great [[encyclopedia STEALTH_TITLE]]: +40 bonus.
+++	Great Planetary [[encyclopedia STEALTH_TITLE]]: +40 bonus.
 
 ULTIMATE_STEALTH
-+++	Ultimate [[encyclopedia STEALTH_TITLE]]: +60 bonus.
++++	Ultimate Planetary [[encyclopedia STEALTH_TITLE]]: +60 bonus.
 
 BAD_WEAPONS
 −	Bad Pilots: 25% less damage.
