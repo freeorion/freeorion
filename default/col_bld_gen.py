@@ -19,7 +19,7 @@ species_list = [
     ("SP_HAPPY", "Happybirthday", "icons/species/ichthyoid-06.png"),
     ("SP_HHHOH", "Hhhoh", "icons/species/hhhoh.png"),
     ("SP_HUMAN", "Human", "icons/species/human.png"),
-    ("SP_KILANDOW", "Kilandow", "icons/species/insectoid-03.png"),
+    ("SP_KILANDOW", "Kilandow", "icons/species/kilandow.png"),
     ("SP_KOBUNTURA", "Kobuntura", "icons/species/intangible-04.png"),
     ("SP_LAENFA", "Laenfa", "icons/species/laenfa.png"),
     ("SP_MISIORLA", "Misiorla", "icons/species/misiorla.png"),
@@ -128,7 +128,7 @@ t_species_condition_extinct = string.Template('''ResourceSupplyConnected empire 
                     Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_${name}_SPECIAL"
+                    HasSpecial name = "EXTINCT_${name}_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -175,7 +175,7 @@ t_buildtime_extinct = string.Template('''${t_factor} * max(5.0, 1.0 +
                    Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_${name}_SPECIAL"
+                    HasSpecial name = "EXTINCT_${name}_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]

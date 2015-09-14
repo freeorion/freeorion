@@ -286,11 +286,74 @@ Special
                     empire = Source.Owner
             ]
 
+        // Find extinct species
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = 0.75
+                OwnerHasTech name = "LRN_XENOARCH"
+            ]
+            effects = [
+                If condition = Random probability = 0.33
+                    effects = [ 
+                        AddSpecial name = "EXTINCT_BANFORO_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            icon = "icons/specials_huge/extinct_banforo.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_BANFORO"
+                            ]
+                            empire = Source.Owner
+                         GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            icon = "icons/specials_huge/extinct_banforo.png"
+                            parameters = [
+                                tag = "species" data = "SP_BANFORO"
+                            ]
+                    ]
+                else = If condition = Random probability = 0.5
+                    effects = [ 
+                        AddSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            icon = "icons/specials_huge/extinct_kilandow.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_KILANDOW"
+                            ]
+                            empire = Source.Owner
+                         GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            icon = "icons/specials_huge/extinct_kilandow.png"
+                            parameters = [
+                                tag = "species" data = "SP_KILANDOW"
+                            ]
+                    ]
+                    else = [
+                        AddSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES"
+                            icon = "icons/specials_huge/extinct_misiorla.png"
+                            parameters = [
+                                tag = "planet" data = Source.ID
+                                tag = "species" data = "SP_MISIORLA"
+                            ]
+                            empire = Source.Owner
+                        GenerateSitRepMessage
+                            message = "EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS"
+                            icon = "icons/specials_huge/extinct_misiorla.png"
+                            parameters = [
+                                tag = "species" data = "SP_MISIORLA"
+                            ]
+                     ]
+            ]
+
         EffectsGroup
             scope = Source
             activation = OwnerHasTech name = "LRN_XENOARCH"
             effects = [
-                AddSpecial name = OneOf("ANCIENT_RUINS_DEPLETED_SPECIAL", "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL", "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL", "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL")
+                AddSpecial name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
                 RemoveSpecial name = "ANCIENT_RUINS_SPECIAL"
             ]
     ]
@@ -822,22 +885,38 @@ Special
 Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
-    [[ANCIENT_RUINS_DEPLETED_CONTENT]]
+    spawnrate = 0.0
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            effects = SetTexture name = "planets/overlays/ruins.png"
+
+        EffectsGroup
+            scope = And [
+                Source
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
+        ]
+    graphic = "icons/specials_huge/ancient_ruins_excavated.png"
 
 Special
-    name = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL"
-    description = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL_DESC"
-    [[ANCIENT_RUINS_DEPLETED_CONTENT]]
+    name = "EXTINCT_BANFORO_SPECIAL"
+    description = "EXTINCT_BANFORO_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/specials_huge/extinct_banforo.png"
 
 Special
-    name = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL"
-    description = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL_DESC"
-    [[ANCIENT_RUINS_DEPLETED_CONTENT]]
+    name = "EXTINCT_KILANDOW_SPECIAL"
+    description = "EXTINCT_KILANDOW_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/specials_huge/extinct_kilandow.png"
 
 Special
-    name = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL"
-    description = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL_DESC"
-    [[ANCIENT_RUINS_DEPLETED_CONTENT]]
+    name = "EXTINCT_MISIORLA_SPECIAL"
+    description = "EXTINCT_MISIORLA_SPECIAL_DESC"
+    spawnrate = 0.0
+    graphic = "icons/specials_huge/extinct_misiorla.png"
     
 Special
     name = "KRAKEN_NEST_SPECIAL"

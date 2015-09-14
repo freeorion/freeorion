@@ -964,7 +964,7 @@ Species
     
     [[RADIATED_STANDARD_EP]]
 
-    graphic = "icons/species/insectoid-03.png"
+    graphic = "icons/species/kilandow.png"
 
 
 Species

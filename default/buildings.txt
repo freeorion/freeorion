@@ -1708,9 +1708,9 @@ BuildingType
     location = And [
         Planet
         Or [
-            HasSpecial name = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL"
-            HasSpecial name = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL"
-            HasSpecial name = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL"
+            HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
+            HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+            HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
         ]
     ]
     icon = ""

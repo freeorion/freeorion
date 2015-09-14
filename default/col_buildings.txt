@@ -236,7 +236,7 @@ BuildingType
                    Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL"
+                    HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -276,7 +276,7 @@ BuildingType
                     Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL"
+                    HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -299,7 +299,7 @@ BuildingType
                     Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_BANFORO_SPECIAL"
+                    HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -1703,7 +1703,7 @@ BuildingType
                    Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL"
+                    HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -1743,7 +1743,7 @@ BuildingType
                     Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL"
+                    HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -1766,7 +1766,7 @@ BuildingType
                     Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_KILANDOW_SPECIAL"
+                    HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -1808,7 +1808,7 @@ BuildingType
             effects = [
                 GenerateSitRepMessage
                     message = "SITREP_NEW_COLONY_ESTABLISHED"
-                    icon = "icons/species/insectoid-03.png"
+                    icon = "icons/species/kilandow.png"
                     parameters = [
                         tag = "species" data = "SP_KILANDOW"
                         tag = "planet" data = Target.ID
@@ -1820,7 +1820,7 @@ BuildingType
             activation = Turn low = Source.CreationTurn + 2
             effects = Destroy
     ]
-    icon = "icons/species/insectoid-03.png"
+    icon = "icons/species/kilandow.png"
 
 BuildingType
     name = "BLD_COL_KOBUNTURA"
@@ -2060,7 +2060,7 @@ BuildingType
                    Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL"
+                    HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -2100,7 +2100,7 @@ BuildingType
                     Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL"
+                    HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
@@ -2123,7 +2123,7 @@ BuildingType
                     Happiness low = 5
                 ]
                 And [
-                    HasSpecial name = "ANCIENT_RUINS_DEPLETED_MISIORLA_SPECIAL"
+                    HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
             ]
