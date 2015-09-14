@@ -2799,8 +2799,9 @@ void Empire::CheckResearchProgress() {
         }
         float& progress = m_research_progress[it->name];
         progress += it->allocated_rp;
-        if (tech->ResearchCost(m_id) - EPSILON <= progress) {
+        if (tech->ResearchCost(m_id) - EPSILON <= progress)
             AddTech(it->name);
+        if (GetTechStatus(it->name) == TS_COMPLETE) {
             m_research_progress.erase(it->name);
             to_erase.push_back(it->name);
         }
