@@ -31,8 +31,8 @@ def execute_turn_events():
         if fo.create_field(field_type, x, y, size) == fo.invalid_object():
             print >> sys.stderr, "Turn events: couldn't create new field"
 
-    gsd = fo.get_galaxy_setup_data()
     # creating monsters
+    gsd = fo.get_galaxy_setup_data()
     monster_freq = fo.monster_frequency(gsd.monsterFrequency)
     # monster freq ranges from 30 (= one monster per 30 systems) to 3 (= one monster per 3 systems)
     # (example: low monsters and 150 Systems results in 150 / 30 * 0.001 = 0.005)
@@ -45,21 +45,21 @@ def execute_turn_events():
 
         # search for systems without planets or fleets
         candidates = [s for s in systems if len(fo.sys_get_planets(s)) <= 0 and len(fo.sys_get_fleets(s)) <= 0]
-        system = choice(candidates)
-        # if system selection fails, report an error
-        if system == fo.invalid_object():
-            print "Python execute_turn_events: unable to find system for monster spawn"
+        if not candidates:
+            print >> sys.stderr, "Turn events: unable to find system for monster spawn"
         else:
-            print "...creating new", monster_type, "at", system
+            system = choice(candidates)
+            print "...creating new", monster_type, "at", fo.get_name(system)
+
             # create monster fleet
             monster_fleet = fo.create_monster_fleet(system)
             # if fleet creation fails, report an error
             if monster_fleet == fo.invalid_object():
-                print "Python execute_turn_events: unable to create new monster fleet at", system
+                print >> sys.stderr, "Turn events: unable to create new monster fleet"
             else:
                 # create monster, if creation fails, report an error
                 monster = fo.create_monster(monster_type, monster_fleet)
                 if monster == fo.invalid_object():
-                    print "Python execute_turn_events: unable to create monster", monster_type
+                    print >> sys.stderr, "Turn events: unable to create monster in fleet"
 
     return True
