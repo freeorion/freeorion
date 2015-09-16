@@ -376,7 +376,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     GG::X texture_width = texture->DefaultWidth();
     GG::Y texture_height = texture->DefaultHeight();
     m_selection_indicator = new RotatingGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorFPS());
+    m_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
     AttachChild(m_selection_indicator);
     m_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
 
@@ -385,7 +385,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     texture_width = tiny_texture->DefaultWidth();
     texture_height = tiny_texture->DefaultHeight();
     m_tiny_selection_indicator = new RotatingGraphic(tiny_texture, GG::GRAPHIC_NONE);
-    m_tiny_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorFPS());
+    m_tiny_selection_indicator->SetRPM(ClientUI::SystemSelectionIndicatorRPM());
     AttachChild(m_tiny_selection_indicator);
     m_tiny_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
 

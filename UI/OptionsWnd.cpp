@@ -510,7 +510,7 @@ OptionsWnd::OptionsWnd():
     BoolOption(current_page,   0, "UI.system-circles",                  UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
     DoubleOption(current_page, 0, "UI.system-circle-size",              UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
     DoubleOption(current_page, 0, "UI.system-selection-indicator-size", UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
-    IntOption(current_page,    0, "UI.system-selection-indicator-fps",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
+    IntOption(current_page,    0, "UI.system-selection-indicator-rpm",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
     IntOption(current_page,    0, "UI.system-tiny-icon-size-threshold", UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
     ColorOption(current_page,  0, "UI.system-name-unowned-color",       UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
     BoolOption(current_page,   0, "UI.system-fog-of-war",               UserString("OPTIONS_UI_SYSTEM_FOG"));

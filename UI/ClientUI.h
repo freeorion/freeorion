@@ -163,7 +163,7 @@ public:
     static int          SystemTinyIconSizeThreshold();      //!< the width/height of a system icon below which the tiny system icons should be used
     static int          SystemCircleSize();                 //!< the width/height of the system-enclosing circle
     static int          SystemSelectionIndicatorSize();     //!< the width/height of a system selection indicator
-    static int          SystemSelectionIndicatorFPS();      //!< frames per second to animate system selection indicator
+    static int          SystemSelectionIndicatorRPM();      //!< revolutions per minute to rotate system selection indicator
 
     static GG::Clr      SystemNameTextColor();              //!< the colour of system names that aren't owned by any player (as far as this client knows)
 

@@ -97,7 +97,7 @@ int         ClientUI::SystemIconSize()                  { return GetOptionsDB().
 int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold"); }
 int         ClientUI::SystemCircleSize()                { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-circle-size")); }
 int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-selection-indicator-size")); }
-int         ClientUI::SystemSelectionIndicatorFPS()     { return GetOptionsDB().Get<int>("UI.system-selection-indicator-fps"); }
+int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("UI.system-selection-indicator-rpm"); }
 
 GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unowned-color").ToClr(); }
 
