@@ -74,7 +74,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #ifndef FREEORION_MACOSX
     // did the player request help output?
     if (GetOptionsDB().Get<bool>("help")) {
-        GetOptionsDB().GetUsage(std::cerr);
+        GetOptionsDB().GetUsage(std::cout);
         return 0;   // quit without actually starting game
     }
 
