@@ -4770,7 +4770,7 @@ EFFECT_DERELICT_FUEL_LABEL
 Derelict Fuel
 
 EFFECT_BIOWEAPON
-%planet% has lost %rawtext% population due to a bioweapon attack.
+%planet% has lost %rawtext% population due to a %shippart% attack.
 EFFECT_BIOWEAPON_LABEL
 Bioweapon Attack
 

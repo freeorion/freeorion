@@ -884,7 +884,7 @@ Part
                     parameters = [
                         tag = "planet" data = Target.ID
 						tag = "rawtext" data = "0.5"
-						tag = "ship_parts" data = "SP_DEATH_SPORE"
+						tag = "shippart" data = "SP_DEATH_SPORE"
                     ]
                     empire = Target.Owner
             ]
@@ -909,7 +909,7 @@ Part
                     parameters = [
                         tag = "planet" data = Target.ID
 						tag = "rawtext" data = "0.5"
-						tag = "ship_parts" data = "SP_DEATH_SPORE"
+						tag = "shippart" data = "SP_DEATH_SPORE"
                     ]
                     empire = Target.Owner
             ]
@@ -945,7 +945,7 @@ Part
                     parameters = [
                         tag = "planet" data = Target.ID
 						tag = "rawtext" data = "1"
-						tag = "ship_parts" data = "SP_BIOTERM"
+						tag = "shippart" data = "SP_BIOTERM"
                     ]
                     empire = Target.Owner
             ]
@@ -970,7 +970,7 @@ Part
                     parameters = [
                         tag = "planet" data = Target.ID
 						tag = "rawtext" data = "1"
-						tag = "ship_parts" data = "SP_BIOTERM"
+						tag = "shippart" data = "SP_BIOTERM"
                     ]
                     empire = Target.Owner
             ]
