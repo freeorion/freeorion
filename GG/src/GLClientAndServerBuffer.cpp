@@ -193,4 +193,29 @@ void GLTexCoordBuffer::activate() const
         glTexCoordPointer(2, GL_FLOAT, 0, &b_data[0]);
     }
 }
+
+
+///////////////////////////////////////////////////////////////////////////
+// implementation for GL3DVertexBuffer
+///////////////////////////////////////////////////////////////////////////
+template class GLClientAndServerBufferBase<float>;
+
+GL3DVertexBuffer::GL3DVertexBuffer() :
+    GLClientAndServerBufferBase<float>(3)
+{}
+
+void GL3DVertexBuffer::store(float x, float y, float z)
+{ GLClientAndServerBufferBase::store(x, y, z); }
+
+void GL3DVertexBuffer::activate() const
+{
+    if (b_name) {
+        glBindBuffer(GL_ARRAY_BUFFER, b_name);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    } else {
+        glVertexPointer(3, GL_FLOAT, 0, &b_data[0]);
+    }
+}
+
 }

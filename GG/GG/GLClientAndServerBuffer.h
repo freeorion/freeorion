@@ -109,6 +109,18 @@ public:
     void activate() const;
 };
 
+///////////////////////////////////////////////////////////////////////////
+// GL3DVertexBuffer specialized class for 3d vertex data
+///////////////////////////////////////////////////////////////////////////
+class GG_API GL3DVertexBuffer : public GLClientAndServerBufferBase<float>
+{
+public:
+    GL3DVertexBuffer();
+    void store(float x, float y, float z);
+    void activate() const;
+};
+
+
 }
 
 #endif
