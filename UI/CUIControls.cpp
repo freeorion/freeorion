@@ -1129,7 +1129,7 @@ bool CUIToolBar::InWindow(const GG::Pt& pt) const {
 
 void CUIToolBar::Render() {
     GG::Pt ul(UpperLeft() - GG::Pt(GG::X1, GG::Y1));
-    GG::Pt lr(LowerRight() + GG::Pt(GG::X(1), GG::Y0));
+    GG::Pt lr(LowerRight() + GG::Pt(GG::X1, GG::Y0));
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 

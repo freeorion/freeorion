@@ -734,12 +734,13 @@ void HumanClientApp::Reinitialize() {
     GG::X old_width = AppWidth();
     GG::Y old_height = AppHeight();
 
-    SetVideoMode(GG::X (size.first), GG::Y (size.second), fullscreen, fake_mode_change);
+    SetVideoMode(GG::X(size.first), GG::Y(size.second), fullscreen, fake_mode_change);
     if (fullscreen_transition) {
         FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
     } else if (fullscreen &&
                (old_width != size.first || old_height != size.second) &&
-               GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
+               GetOptionsDB().Get<bool>("UI.auto-reposition-windows"))
+    {
         // Reposition windows if in fullscreen mode... handled here instead of
         // HandleWindowResize() because the prev. fullscreen resolution is only
         // available here.
@@ -868,6 +869,8 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
         GetOptionsDB().Set<int>("app-width-windowed", Value(w));
         GetOptionsDB().Set<int>("app-height-windowed", Value(h));
     }
+
+    glViewport(0, 0, Value(w), Value(h));
 
     GetOptionsDB().Commit();
 }
