@@ -67,7 +67,7 @@
 namespace {
     const double    ZOOM_STEP_SIZE = std::pow(2.0, 1.0/4.0);
     const double    ZOOM_IN_MAX_STEPS = 12.0;
-    const double    ZOOM_IN_MIN_STEPS = -7.0;   // negative zoom steps indicates zooming out
+    const double    ZOOM_IN_MIN_STEPS = -10.0;//-7.0;   // negative zoom steps indicates zooming out
     const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
     const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
 
@@ -127,7 +127,7 @@ namespace {
 
         db.Add("UI.system-tiny-icon-size-threshold",UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"), 10,         RangedValidator<int>(1, 16));
         db.Add("UI.system-selection-indicator-size",UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"), 1.625,      RangedStepValidator<double>(0.125, 0.5, 5));
-        db.Add("UI.system-selection-indicator-fps", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),  12,         RangedValidator<int>(1, 60));
+        db.Add("UI.system-selection-indicator-rpm", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),  12,         RangedValidator<int>(1, 60));
 
         db.Add("UI.system-name-unowned-color",      UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
 
@@ -694,6 +694,8 @@ MapWnd::MapWnd() :
     m_visibility_radii_border_colors(),
     m_radii_radii_vertices_indices_runs(),
     m_scale_circle_vertices(),
+    m_starfield_verts(),
+    m_starfield_colours(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
     m_btn_turn(0),
@@ -1408,20 +1410,17 @@ void MapWnd::Render() {
     if (m_research_wnd->Visible())
         return;
 
-    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-
-    RenderStarfields();
-
-    GG::Pt origin_offset = UpperLeft() + GG::Pt(AppWidth(), AppHeight());
-
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
-    glScalef(static_cast<GLfloat>(ZoomFactor()), static_cast<GLfloat>(ZoomFactor()), 1.0f);
-    glTranslatef(static_cast<GLfloat>(Value(origin_offset.x / ZoomFactor())),
-                 static_cast<GLfloat>(Value(origin_offset.y / ZoomFactor())),
-                 0.0f);
+    GG::Pt origin_offset = UpperLeft() + GG::Pt(AppWidth(), AppHeight());
+    glTranslatef(Value(origin_offset.x), Value(origin_offset.y), 0.0f);
+    glScalef(ZoomFactor(), ZoomFactor(), 1.0f);
 
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+
+    RenderStarfields();
     RenderGalaxyGas();
     RenderVisibilityRadii();
     RenderFields();
@@ -1430,57 +1429,92 @@ void MapWnd::Render() {
     RenderSystems();
     RenderFleetMovementLines();
 
-    glPopMatrix();
     glPopClientAttrib();
+    glPopMatrix();
 }
 
 void MapWnd::RenderStarfields() {
     if (!GetOptionsDB().Get<bool>("UI.galaxy-starfields"))
         return;
 
-    glColor3d(1.0, 1.0, 1.0);
+    double starfield_width = GetUniverse().UniverseWidth();
+    if (m_starfield_verts.empty()) {
+        m_starfield_colours.clear();
+        std::size_t NUM_STARS = std::pow(2, 12);
 
-    GG::Pt origin_offset =
-        UpperLeft() + GG::Pt(AppWidth(), AppHeight());
-    glMatrixMode(GL_TEXTURE);
+        m_starfield_verts.reserve(NUM_STARS);
+        m_starfield_colours.reserve(NUM_STARS);
+        for (std::size_t i = 0; i < NUM_STARS; ++i) {
+            float x = RandGaussian(starfield_width/2, starfield_width/4);   // RandDouble(0, starfield_width);
+            float y = RandGaussian(starfield_width/2, starfield_width/4);   // RandDouble(0, starfield_width);
+            float r2 = (x - starfield_width/2)*(x - starfield_width/2) + (y-starfield_width/2)*(y-starfield_width/2);
+            float z = RandDouble(-100, 100);    // RandGaussian(0.0, 150.0 * std::exp(-r2/(starfield_width*starfield_width/4)));
+            m_starfield_verts.store(x, y, z);
 
-    GG::GL2DVertexBuffer verts; verts.reserve(4);
-    GG::GLTexCoordBuffer tex;   tex.reserve(4);
-
-    tex.store(0.0f, 0.0f);
-    verts.store(0, 0);
-    tex.store(0.0f, 1.0f);
-    verts.store(0, Value(Height()));
-    tex.store(1.0f, 1.0f);
-    verts.store(Value(Width()), Value(Height()));
-    tex.store(1.0f, 0.0f);
-    verts.store(Value(Width()), 0);
-
-    glPushClientAttrib(GL_ALL_ATTRIB_BITS);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    verts.activate();
-    tex.activate();
-
-    for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
-        float texture_coords_per_pixel_x = 1.0f / Value(m_backgrounds[i]->Width());
-        float texture_coords_per_pixel_y = 1.0f / Value(m_backgrounds[i]->Height());
-        glScalef(static_cast<GLfloat>(Value(texture_coords_per_pixel_x * Width())),
-                 static_cast<GLfloat>(Value(texture_coords_per_pixel_y * Height())),
-                 1.0f);
-        glTranslatef(static_cast<GLfloat>(Value(-texture_coords_per_pixel_x * origin_offset.x / 16.0f * m_bg_scroll_rate[i])),
-                     static_cast<GLfloat>(Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0f * m_bg_scroll_rate[i])),
-                     0.0f);
-        glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
-        glDrawArrays(GL_QUADS, 0, verts.size());
-
-        glLoadIdentity();
+            float brightness = 1.0f - std::pow(RandZeroToOne(), 2);
+            m_starfield_colours.store(GG::CLR_WHITE * brightness);
+        }
+        m_starfield_verts.createServerBuffer();
+        m_starfield_colours.createServerBuffer();
     }
 
-    glPopClientAttrib();
+
+    GLfloat window_width = Value(AppWidth());
+    GLfloat window_height = std::max(1, Value(AppHeight()));
+    glViewport(0, 0, window_width, window_height);
+
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+
+    GLfloat aspect_ratio = window_width / window_height;
+    GLfloat zclip_near = window_height/4;
+    GLfloat zclip_far = 3*zclip_near;
+    GLfloat fov_height = zclip_near;
+    GLfloat fov_width = fov_height * aspect_ratio;
+    GLfloat zpos_1to1 = -2*zclip_near;  // stars rendered at -viewport_size units should be 1:1 with ortho projected stuff
+
+    glFrustum(-fov_width,   fov_width,
+               fov_height, -fov_height,
+               zclip_near,  zclip_far);
+    glTranslatef(-window_width/2, -window_height/2, 0.0f);
+
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glTranslatef(0.0, 0.0, zpos_1to1);
+    GG::Pt origin_offset = UpperLeft() + GG::Pt(AppWidth(), AppHeight());
+    glTranslatef(Value(origin_offset.x), Value(origin_offset.y), 0.0f);
+    glScalef(ZoomFactor(), ZoomFactor(), 1.0f);
+
+
+    glPointSize(std::min(1.5, 1.0 * ZoomFactor() * ZoomFactor()));
+    glEnable(GL_POINT_SMOOTH);
+    glDisable(GL_TEXTURE_2D);
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    m_starfield_verts.activate();
+    m_starfield_colours.activate();
+    glDrawArrays(GL_POINTS, 0, m_starfield_verts.size());
+    glPopClientAttrib();
+
+    glEnable(GL_TEXTURE_2D);
+    glPointSize(1.0f);
+
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    glViewport(0, 0, window_width, window_height);
 }
 
 void MapWnd::RenderFields() {
@@ -2486,6 +2520,11 @@ void MapWnd::InitTurnRendering() {
         GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
         GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
     }
+
+    // temp: reset starfield each turn
+    m_starfield_verts.clear();
+    m_starfield_colours.clear();
+    // end temp
 
     // create buffers for system icon and galaxy gas rendering, and starlane rendering
     InitSystemRenderingBuffers();
@@ -4400,7 +4439,7 @@ void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
     GG::X contents_width(static_cast<int>(ZoomFactor() * GetUniverse().UniverseWidth()));
     GG::X app_width =  AppWidth();
     GG::Y app_height = AppHeight();
-    GG::X map_margin_width(app_width / 2.0);
+    GG::X map_margin_width(app_width);
 
     //std::cout << "MapWnd::CorrectMapPosition appwidth: " << Value(app_width) << " appheight: " << Value(app_height)
     //          << " to_x: " << Value(move_to_pt.x) << " to_y: " << Value(move_to_pt.y) << std::endl;;
@@ -4985,6 +5024,11 @@ void MapWnd::Sanitize() {
     ResetEmpireShown();
 
     SelectSystem(INVALID_OBJECT_ID);
+
+    // temp
+    m_starfield_verts.clear();
+    m_starfield_colours.clear();
+    // end temp
 
     ClearSystemRenderingBuffers();
     ClearStarlaneRenderingBuffers();
