@@ -71,6 +71,6 @@ FO_COMMON_API double RandDouble(double min, double max);
 
 /** returns a double from a Gaussian (normal) distribution of doubles centered around \a mean, 
     with standard deviation \a sigma */
-double RandGaussian(double mean, double sigma);
+FO_COMMON_API double RandGaussian(double mean, double sigma);
 
 #endif // _Random_h_
