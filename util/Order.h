@@ -4,6 +4,7 @@
 
 #include "../universe/Enums.h"
 #include "Export.h"
+#include "../Empire/Empire.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -457,7 +458,7 @@ private:
 // ProductionQueueOrder
 /////////////////////////////////////////////////////
 /** The Order subclass that represents changing an empire's production queue.
-  * The 5/6-arg ctors add the build to the beginning or end of \a empire's queue, the 3-arg
+  * The ProductionItem ctor adds the build to the beginning or end of \a empire's queue, the 3-arg
   * ctor moves an existing build from its current location at \a index to a new
   * one at \a new_index, and the 2-arg ctor removes the build at \a index from
   * \a empire's queue. */
@@ -465,8 +466,7 @@ class FO_COMMON_API ProductionQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
     ProductionQueueOrder();
-    ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location, bool top = false);
-    ProductionQueueOrder(int empire, BuildType build_type, int design_id, int number, int location, bool top = false);
+    ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, bool top = false);
     ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
     ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize);
     ProductionQueueOrder(int empire, int index, int new_index);
@@ -476,9 +476,7 @@ public:
 private:
     virtual void ExecuteImpl() const;
 
-    BuildType   m_build_type;
-    std::string m_item_name;
-    int         m_design_id;
+    ProductionQueue::ProductionItem m_item;
     int         m_number;
     int         m_location;
     int         m_index;
