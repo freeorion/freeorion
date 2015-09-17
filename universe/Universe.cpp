@@ -1305,11 +1305,12 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
     m_effect_discrepancy_map.clear();
     m_effect_accounting_map.clear();
 
-    //DebugLogger() << "Universe::InitMeterEstimatesAndDiscrepancies";
+    DebugLogger() << "IMEAD: updating meter estimates";
 
     // generate new estimates (normally uses discrepancies, but in this case will find none)
     UpdateMeterEstimates();
 
+    DebugLogger() << "IMEAD: determining discrepancies";
     // determine meter max discrepancies
     for (Effect::AccountingMap::iterator obj_it = m_effect_accounting_map.begin();
          obj_it != m_effect_accounting_map.end(); ++obj_it)
