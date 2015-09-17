@@ -421,6 +421,7 @@ Special
                         Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
                 Or [
                     OwnedBy affiliation = EnemyOf empire = Source.Owner
                     Unowned
@@ -438,6 +439,7 @@ Special
                         Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
                 OwnedBy affiliation = EnemyOf empire = Source.Owner
             ]
             effects = [
@@ -463,7 +465,11 @@ Special
                         Not OwnerHasTech name = "DEF_SYST_DEF_MINE_2"
                     ]
                 ]
-                OwnedBy affiliation = EnemyOf empire = Source.Owner
+                (RootCandidate.Owner != Source.Owner)  // particularly to exclude an unowned Fotress with unowned monsters
+                Or [
+                    OwnedBy affiliation = EnemyOf empire = Source.Owner
+                    Unowned
+                ]
                 Structure high = 3
             ]
             effects = [
