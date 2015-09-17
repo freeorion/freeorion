@@ -236,6 +236,7 @@ private:
     void            ClearVisibilityRadiiRenderingBuffers();
     void            InitScaleCircleRenderingBuffer();
     void            ClearScaleCircleRenderingBuffer();
+    void            ClearStarfieldRenderingBuffers();
 
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
@@ -379,9 +380,6 @@ private:
     void            SelectedShipsChanged();
 
     void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
-
-    std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
-    std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
     std::set<int>               m_selected_fleet_ids;
     std::set<int>               m_selected_ship_ids;

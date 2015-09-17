@@ -188,23 +188,6 @@ namespace {
     std::pair<int, int> UnorderedIntPair(int one, int two)
     { return std::make_pair(std::min(one, two), std::max(one, two)); }
 
-    /* Loads background starfield textures int \a background_textures  */
-    void InitBackgrounds(std::vector<boost::shared_ptr<GG::Texture> >& background_textures, std::vector<double>& scroll_rates) {
-        if (!background_textures.empty())
-            return;
-
-        std::vector<boost::shared_ptr<GG::Texture> > starfield_textures = ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir(), "starfield", false);
-        double scroll_rate = 1.0;
-        for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = starfield_textures.begin(); it != starfield_textures.end(); ++it) {
-            scroll_rate *= 0.5;
-            background_textures.push_back(*it);
-            scroll_rates.push_back(scroll_rate);
-            glBindTexture(GL_TEXTURE_2D, (*it)->OpenGLId());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        }
-    }
-
     /* Returns fractional distance along line segment between two points that a
      * third point between them is.assumes the "mid" point is between the
      * "start" and "end" points, in which case the returned fraction is between
@@ -651,8 +634,6 @@ MapWnd::MapWnd() :
             static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
             static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5),
             GG::INTERACTIVE | GG::DRAGABLE),
-    m_backgrounds(),
-    m_bg_scroll_rate(),
     m_selected_fleet_ids(),
     m_selected_ship_ids(),
     m_zoom_steps_in(0.0),
@@ -1257,9 +1238,6 @@ MapWnd::MapWnd() :
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
 
-    //clear background images
-    m_backgrounds.clear();
-    m_bg_scroll_rate.clear();
 
 
     //////////////////
@@ -1439,6 +1417,7 @@ void MapWnd::RenderStarfields() {
 
     double starfield_width = GetUniverse().UniverseWidth();
     if (m_starfield_verts.empty()) {
+        ClearStarfieldRenderingBuffers();
         Seed(static_cast<int>(starfield_width));
         m_starfield_colours.clear();
         std::size_t NUM_STARS = std::pow(2, 12);
@@ -1484,10 +1463,6 @@ void MapWnd::RenderStarfields() {
         glTranslatef(-window_width/2, -window_height/2, 0.0f);
     }
 
-    float ticks = GG::GUI::GetGUI()->Ticks();
-    //float tdsf = 1.0f + 0.2f*std::sin(ticks/4000*2*3.14159265);
-    //std::cout << "z scalefactor: " << tdsf << std::endl;
-
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -1503,6 +1478,7 @@ void MapWnd::RenderStarfields() {
     // first: starfield manipulations
     bool rotate_starfield = false;
     if (rotate_starfield) {
+        float ticks = GG::GUI::GetGUI()->Ticks();
         glTranslatef(starfield_width/2, starfield_width/2, 0.0f);   // move back to original position
         glRotatef(ticks/10, 0.0f, 0.0f, 1.0f);                      // rotate about centre of starfield
         glTranslatef(-starfield_width/2, -starfield_width/2, 0.0f); // move centre of starfield to origin
@@ -2493,10 +2469,6 @@ void MapWnd::InitTurnRendering() {
                   static_cast<GG::Y>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5)));
 
 
-    // set up backgrounds on first turn.  if m_backgrounds already contains textures, does nothing
-    InitBackgrounds(m_backgrounds, m_bg_scroll_rate);
-
-
     // remove any existing fleet movement lines or projected movement lines.  this gets cleared
     // here instead of with the movement line stuff because that would clear some movement lines
     // that come from the SystemIcons
@@ -3402,6 +3374,11 @@ void MapWnd::InitScaleCircleRenderingBuffer() {
 
 void MapWnd::ClearScaleCircleRenderingBuffer()
 { m_scale_circle_vertices.clear(); }
+
+void MapWnd::ClearStarfieldRenderingBuffers() {
+    m_starfield_verts.clear();
+    m_starfield_colours.clear();
+}
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data) {
     m_zoom_steps_in = data.map_zoom_steps_in;
@@ -5055,6 +5032,8 @@ void MapWnd::Sanitize() {
     ClearFieldRenderingBuffers();
     ClearVisibilityRadiiRenderingBuffers();
     ClearScaleCircleRenderingBuffer();
+    ClearStarfieldRenderingBuffers();
+
 
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         // clearing of message window commented out because scrollbar has quirks
