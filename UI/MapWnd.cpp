@@ -1439,16 +1439,17 @@ void MapWnd::RenderStarfields() {
 
     double starfield_width = GetUniverse().UniverseWidth();
     if (m_starfield_verts.empty()) {
+        Seed(static_cast<int>(starfield_width));
         m_starfield_colours.clear();
         std::size_t NUM_STARS = std::pow(2, 12);
 
         m_starfield_verts.reserve(NUM_STARS);
         m_starfield_colours.reserve(NUM_STARS);
         for (std::size_t i = 0; i < NUM_STARS; ++i) {
-            float x = RandGaussian(starfield_width/2, starfield_width/4);   // RandDouble(0, starfield_width);
-            float y = RandGaussian(starfield_width/2, starfield_width/4);   // RandDouble(0, starfield_width);
+            float x = RandGaussian(starfield_width/2, starfield_width/3);   // RandDouble(0, starfield_width);
+            float y = RandGaussian(starfield_width/2, starfield_width/3);   // RandDouble(0, starfield_width);
             float r2 = (x - starfield_width/2)*(x - starfield_width/2) + (y-starfield_width/2)*(y-starfield_width/2);
-            float z = RandDouble(-100, 100);    // RandGaussian(0.0, 150.0 * std::exp(-r2/(starfield_width*starfield_width/4)));
+            float z = RandDouble(-100, 100)*std::exp(-r2/(starfield_width*starfield_width/4));
             m_starfield_verts.store(x, y, z);
 
             float brightness = 1.0f - std::pow(RandZeroToOne(), 2);
@@ -1463,35 +1464,52 @@ void MapWnd::RenderStarfields() {
     GLfloat window_height = std::max(1, Value(AppHeight()));
     glViewport(0, 0, window_width, window_height);
 
+    bool perspective_starfield = true;
+    GLfloat zpos_1to1 = 0.0f;
+    if (perspective_starfield) {
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
+        GLfloat aspect_ratio = window_width / window_height;
+        GLfloat zclip_near = window_height/4;
+        GLfloat zclip_far = 3*zclip_near;
+        GLfloat fov_height = zclip_near;
+        GLfloat fov_width = fov_height * aspect_ratio;
+        zpos_1to1 = -2*zclip_near;  // stars rendered at -viewport_size units should be 1:1 with ortho projected stuff
 
-    GLfloat aspect_ratio = window_width / window_height;
-    GLfloat zclip_near = window_height/4;
-    GLfloat zclip_far = 3*zclip_near;
-    GLfloat fov_height = zclip_near;
-    GLfloat fov_width = fov_height * aspect_ratio;
-    GLfloat zpos_1to1 = -2*zclip_near;  // stars rendered at -viewport_size units should be 1:1 with ortho projected stuff
+        glFrustum(-fov_width,   fov_width,
+                   fov_height, -fov_height,
+                   zclip_near,  zclip_far);
+        glTranslatef(-window_width/2, -window_height/2, 0.0f);
+    }
 
-    glFrustum(-fov_width,   fov_width,
-               fov_height, -fov_height,
-               zclip_near,  zclip_far);
-    glTranslatef(-window_width/2, -window_height/2, 0.0f);
+    float ticks = GG::GUI::GetGUI()->Ticks();
+    //float tdsf = 1.0f + 0.2f*std::sin(ticks/4000*2*3.14159265);
+    //std::cout << "z scalefactor: " << tdsf << std::endl;
 
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
 
-    glTranslatef(0.0, 0.0, zpos_1to1);
+    // last: standard map panning
     GG::Pt origin_offset = UpperLeft() + GG::Pt(AppWidth(), AppHeight());
     glTranslatef(Value(origin_offset.x), Value(origin_offset.y), 0.0f);
     glScalef(ZoomFactor(), ZoomFactor(), 1.0f);
+    glTranslatef(0.0, 0.0, zpos_1to1);
+    glScalef(1.0f, 1.0f, ZoomFactor());
+
+    // first: starfield manipulations
+    bool rotate_starfield = false;
+    if (rotate_starfield) {
+        glTranslatef(starfield_width/2, starfield_width/2, 0.0f);   // move back to original position
+        glRotatef(ticks/10, 0.0f, 0.0f, 1.0f);                      // rotate about centre of starfield
+        glTranslatef(-starfield_width/2, -starfield_width/2, 0.0f); // move centre of starfield to origin
+    }
 
 
-    glPointSize(std::min(1.5, 1.0 * ZoomFactor() * ZoomFactor()));
+    glPointSize(std::min(3.0, 3.0 * ZoomFactor() * ZoomFactor()));
     glEnable(GL_POINT_SMOOTH);
     glDisable(GL_TEXTURE_2D);
 
@@ -1507,8 +1525,10 @@ void MapWnd::RenderStarfields() {
     glPointSize(1.0f);
 
 
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
+    if (perspective_starfield) {
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+    }
 
 
     glMatrixMode(GL_MODELVIEW);
