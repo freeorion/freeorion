@@ -14,7 +14,6 @@
 
 class ShipDesign;
 
-
 /////////////////////////////////////////////////////
 // Order
 /////////////////////////////////////////////////////
@@ -466,7 +465,7 @@ class FO_COMMON_API ProductionQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
     ProductionQueueOrder();
-    ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, bool top = false);
+    ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
     ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
     ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize);
     ProductionQueueOrder(int empire, int index, int new_index);

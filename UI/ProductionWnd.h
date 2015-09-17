@@ -83,7 +83,7 @@ private:
     void    UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
     void    UpdateInfoPanel(); ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)
 
-    void    AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item, int number, int location, bool top);
+    void    AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item, int number, int location, int pos);
 
     void    ChangeBuildQuantitySlot(int queue_idx, int quantity);
     void    ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, int blocksize);

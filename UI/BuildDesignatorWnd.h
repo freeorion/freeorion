@@ -82,7 +82,7 @@ public:
     //@}
 
     /** emitted when the indicated build is indicated by the user */
-    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int, bool)>
+    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int, int)>
                                             AddBuildToQueueSignal;
     /** emitted when the quantity of items in a single build queue item is
       * changed by the user */
@@ -98,7 +98,7 @@ private:
     class BuildSelector;
     int             BuildLocation() const;
 
-    void            BuildItemRequested(const ProductionQueue::ProductionItem& item, int num_to_build, bool top);
+    void            BuildItemRequested(const ProductionQueue::ProductionItem& item, int num_to_build, int pos);
     void            BuildQuantityChanged(int queue_idx, int quantity);
     void            SetBuild(int queue_idx);
 

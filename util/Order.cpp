@@ -898,7 +898,7 @@ ProductionQueueOrder::ProductionQueueOrder() :
     m_new_index(INVALID_INDEX)
 {}
 
-ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, bool top) :
+ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, int pos) :
     Order(empire),
     m_item(item),
     m_number(number),
@@ -906,7 +906,7 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::Pr
     m_index(INVALID_INDEX),
     m_new_quantity(INVALID_QUANTITY),
     m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(top ? 0 : INVALID_INDEX)
+    m_new_index(pos)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize) :

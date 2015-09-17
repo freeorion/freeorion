@@ -884,7 +884,7 @@ void ProductionWnd::UpdateInfoPanel() {
     }
 }
 
-void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item, int number, int location, bool top) {
+void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item, int number, int location, int pos) {
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -893,10 +893,10 @@ void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& i
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-        new ProductionQueueOrder(client_empire_id, item, number, location, top)));
+        new ProductionQueueOrder(client_empire_id, item, number, location, pos)));
 
     empire->UpdateProductionQueue();
-    m_build_designator_wnd->CenterOnBuild(top ? 0 : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
+    m_build_designator_wnd->CenterOnBuild(pos >= 0 ? pos : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
 }
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {

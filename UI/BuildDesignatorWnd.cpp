@@ -422,7 +422,7 @@ public:
 
     mutable boost::signals2::signal<void (const BuildingType*)>                DisplayBuildingTypeSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>                  DisplayShipDesignSignal;
-    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, bool)> RequestBuildItemSignal;
+    mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int)> RequestBuildItemSignal;
 
 private:
     static const GG::X TEXT_MARGIN_X;
@@ -855,7 +855,7 @@ void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterato
         return;
     const ProductionQueue::ProductionItem& item = item_row->Item();
 
-    RequestBuildItemSignal(item, 1, top);
+    RequestBuildItemSignal(item, 1, top ? 0 : -1);
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it) {
@@ -1174,11 +1174,11 @@ int BuildDesignatorWnd::BuildLocation() const
 { return m_side_panel->SelectedPlanetID(); }
 
 void BuildDesignatorWnd::BuildItemRequested(const ProductionQueue::ProductionItem& item,
-                                            int num_to_build, bool top)
+                                            int num_to_build, int pos)
 {
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->EnqueuableItem(item, BuildLocation()))
-        AddBuildToQueueSignal(item, num_to_build, BuildLocation(), top);
+        AddBuildToQueueSignal(item, num_to_build, BuildLocation(), pos);
 }
 
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
