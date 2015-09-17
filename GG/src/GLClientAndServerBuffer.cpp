@@ -198,8 +198,6 @@ void GLTexCoordBuffer::activate() const
 ///////////////////////////////////////////////////////////////////////////
 // implementation for GL3DVertexBuffer
 ///////////////////////////////////////////////////////////////////////////
-template class GLClientAndServerBufferBase<float>;
-
 GL3DVertexBuffer::GL3DVertexBuffer() :
     GLClientAndServerBufferBase<float>(3)
 {}
