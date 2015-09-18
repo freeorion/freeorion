@@ -96,14 +96,17 @@ struct GG_API Rect
     //@}
 
     /** \name Accessors */ ///@{
-    X  Left() const         { return ul.x; }        ///< returns the left boundary of the Rect
-    X  Right() const        { return lr.x; }        ///< returns the right boundary of the Rect
-    Y  Top() const          { return ul.y; }        ///< returns the top boundary of the Rect
-    Y  Bottom() const       { return lr.y; }        ///< returns the bottom boundary of the Rect
-    Pt UpperLeft() const    { return ul; }          ///< returns the upper-left corner of the Rect
-    Pt LowerRight() const   { return lr; }          ///< returns the lower-right corner of the Rect
-    X  Width() const        { return lr.x - ul.x; } ///< returns the width of the Rect
-    Y  Height() const       { return lr.y - ul.y; } ///< returns the height of the Rect
+    X   Left() const        { return ul.x; }            ///< returns the left boundary of the Rect
+    X   Right() const       { return lr.x; }            ///< returns the right boundary of the Rect
+    Y   Top() const         { return ul.y; }            ///< returns the top boundary of the Rect
+    Y   Bottom() const      { return lr.y; }            ///< returns the bottom boundary of the Rect
+    Pt  UpperLeft() const   { return ul; }              ///< returns the upper-left corner of the Rect
+    Pt  LowerRight() const  { return lr; }              ///< returns the lower-right corner of the Rect
+    X   Width() const       { return lr.x - ul.x; }     ///< returns the width of the Rect
+    Y   Height() const      { return lr.y - ul.y; }     ///< returns the height of the Rect
+    X   MidX() const        { return (lr.x + ul.x)/2; } ///< returns the horizontal mid-point of the Rect
+    Y   MidY() const        { return (lr.y + ul.y)/2; } ///< returns the vertical mid-point of the Rect
+
 
     bool  Contains(const Pt& pt) const; ///< returns true iff \a pt falls inside the Rect
     //@}
