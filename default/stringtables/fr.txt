@@ -720,6 +720,12 @@ Faille Dimensionnelle
 FLD_SUBSPACE_RIFT_DESC
 Une violente et dévastatrice déchirure de l'espace-temps se refermant aussi rapidement qu'elle est apparue. Attire et dévore les astronefs, planètes, et systèmes se situant dans son champ gravitationnel. Toutefois, les astronefs disposant d'une vitesse suffisante sont éventuellement capables d'y échapper.
 
+FLD_ACCRETION_DISC
+Disque d'Accrétion
+
+FLD_ACCRETION_DISC_DESC
+Un disque d'accrétion est une structure astrophysique (la plupart du temps un disque circumstellaire) composée de matière diffuse en orbite autour d'un corps massif central. Toutes les planètes d'un système se situant dans la zone d'influence d'un disque d'accrétion ont un malus d'[[encyclopedia SUPPLY_TITLE]] de -1.
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
@@ -972,10 +978,16 @@ OPTIONS_DB_SHOW_FPS
 Affiche/Cache le nombre d'images par seconde.
 
 OPTIONS_DB_LIMIT_FPS
-Active/Désactive la limitation du Ni/s (nombre d'images par secondes). La limite est définie avec l'option Ni/s Maximal.
+Active/Désactive la limitation du Ni/s (nombre d'images par seconde). La limite est définie avec l'option Ni/s Maximal.
 
 OPTIONS_DB_MAX_FPS
 Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque sa limitation est activée avec l'option Limitation Ni/s.
+
+OPTIONS_DB_LIMIT_FPS_NO_FOCUS
+Active/désactive la limitation du Ni/s lorsque la fenêtre principale de jeu n'est pas sélectionnée. La limite est définie avec l'option Ni/s Maximal (hors-fenêtre).
+
+OPTIONS_DB_MAX_FPS_NO_FOCUS
+Fixe la valeur limite du Ni/s (nombre d'images par seconde) lorsque la fenêtre principale de jeu n'est pas sélectionnée, si la limitation est activée avec l'option Limitation Ni/s (hors-fenêtre).
 
 OPTIONS_DB_UI_SOUND_ENABLED
 Active/Désactive les effets sonores de l'interface utilisateur.
@@ -1158,7 +1170,7 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de système stellaire sélectionnées, relativement à celle de ces dernières.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
-Fixe la vitesse d'animation des cercles entourant les icônes de systèmes stellaire sélectionnés.
+Fixe la vitesse de rotation (en tours par minute) des cercles entourant les icônes de systèmes stellaire sélectionnés.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Fixe la taille des icônes de système stellaire au-dessous de laquelle les icônes minimales affichées auront une taille fixe.
@@ -1899,16 +1911,16 @@ OPTIONS_TOOLTIP_DELAY
 Délai avant infobulle (ms)
 
 OPTIONS_KEYPRESS_REPEAT_DELAY
-Délai avant répétition touche maintenue
+Délai avant répétition touche maintenue (ms)
 
 OPTIONS_KEYPRESS_REPEAT_INTERVAL
-Intervalle répétion touche maintenue
+Intervalle répétion touche maintenue (ms)
 
 OPTIONS_MOUSE_REPEAT_DELAY
-Délai avant répétition bouton de souris maintenu
+Délai avant répétition bouton de souris maintenu (ms)
 
 OPTIONS_MOUSE_REPEAT_INTERVAL
-Intervalle répétition bouton de souris maintenu
+Intervalle répétition bouton de souris maintenu (ms)
 
 OPTIONS_SWAP_MOUSE_LR
 Inverser les clics droits et gauches de la souris.
@@ -1958,6 +1970,12 @@ Limitation du Ni/s
 OPTIONS_MAX_FPS
 Ni/s Maximal
 
+OPTIONS_LIMIT_FPS_NO_FOCUS
+Limitation du Ni/s (hors-fenêtre)
+
+OPTIONS_MAX_FPS_NO_FOCUS
+Ni/s Maximal (hors-fenêtre)
+
 OPTIONS_APPLY
 Appliquer
 
@@ -2004,7 +2022,7 @@ OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Taille relative du sélecteur de systèmes
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
-Ni/s de l'animation de sélection d'un système
+Vitesse d'animation de sélection d'un système (rpm)
 
 OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Seuil de taille de l'icône minimale d'un système
@@ -4356,19 +4374,19 @@ FILTERS
 Filtres
 
 SITREP_SNOOZE_5_TURNS
-'''  Retrait de ce SitRep pour 5 tours'''
+'''  Masquer ce SitRep pour 5 tours'''
 
 SITREP_SNOOZE_10_TURNS
-'''  Retrait de ce SitRep pour 10 tours'''
+'''  Masquer ce SitRep pour 10 tours'''
 
 SITREP_SNOOZE_INDEFINITE
-'''  Retrait indéfini pour ce SitRep'''
+'''  Désactiver indéfiniment ce SitRep'''
 
 SITREP_SNOOZE_CLEAR_INDEFINITE
-'''  Réinitialiser tous les retraits indéfinis de SitRep'''
+'''  Réafficher tous les SitReps désactivés indéfiniment'''
 
 SITREP_SNOOZE_CLEAR_ALL
-'''  Réinitialiser tous les retraits de SitRep'''
+'''  Réafficher tous les SitReps masqués ou désactivés'''
 
 ## SitRep Format: Ideally always start with Location: with ship/fleet names near the end.
 
@@ -4673,6 +4691,8 @@ Terraformation Gaia
 
 EFFECT_GAIA
 Sur %planet% : les habitants jouissent désormais d'un monde devenu un paradis [[encyclopedia GAIA_SPECIAL]].
+EFFECT_GAIA_LABEL
+Paradis Gaia
 
 EFFECT_TERRAFORM
 La planète %planet% a été terraformée.
@@ -4750,7 +4770,7 @@ EFFECT_DERELICT_FUEL_LABEL
 Découverte de carburant
 
 EFFECT_BIOWEAPON
-Le système %system% a perdu sa population suite à une attaque biologique.
+La planète %planet% a perdu une population de %rawtext% suite à une attaque de %shippart%.
 EFFECT_BIOWEAPON_LABEL
 Attaque par armes biologiques
 
@@ -5602,9 +5622,17 @@ ECCENTRIC_ORBIT_SPECIAL
 Orbite Excentrissime
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-'''Réduit de 3 la Population de la planète, mais augmente de 3 sa [[encyclopedia RESEARCH_TITLE]].
+'''Augmente de 3 la [[encyclopedia RESEARCH_TITLE]], mais réduit de 2 l'[[encyclopedia SUPPLY_TITLE]].
 
-L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Cette variation conséquente ralentit la croissance de la population, mais ces répercussions sont un terrain exaltant pour la recherche scientifique.'''
+L'orbite de la planète autour de son étoile est très excentrique : la distance de son aphélie est un très grand multiple de la distance de son périhélie. L'intensité de l'ensoleillement varie ainsi énormément au cours de l'année. Ces conditions variables ralentissent la gestion de l'approvisionnement sur la planète, mais s'avèrent un terrain exaltant pour la recherche scientifique.'''
+
+TIDAL_LOCK_SPECIAL
+Rotation Synchrone
+
+TIDAL_LOCK_SPECIAL_DESC
+'''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de la planète de 0.2 par Population si le Focus [[encyclopedia INDUSTRY_TITLE]] est activé, mais la Population est réduite selon la taille de la planète : Minuscule -1 ; Petite -2 ; Moyenne -3 ; Grande -4 ; Immense -5.
+
+Cette planète est en rotation synchrone lors de son orbite autour de son étoile. Les durées du jour et de l'année sont rigoureusement égales, ce qui signifie qu'une face de la planète est perpétuellement diurne tandis que l'autre est perpétuellement nocturne. La croissance de la population s'en trouve impactée, mais l'industrie tire profit des conditions stables à la surface de la planète.'''
 
 RESONANT_MOON_SPECIAL
 Lune Synchrone
@@ -5612,7 +5640,7 @@ Lune Synchrone
 RESONANT_MOON_SPECIAL_DESC
 '''Augmente de 10 la [[encyclopedia STEALTH_TITLE]] des structures de la planète, ainsi que celle des astronefs de l'empire stationnés dans le même système stellaire.
 
-La planète possède un satellite naturel dont la période de révolution est synchrone avec sa période de rotation, ce qui signifie que le satellite, vu de l'extérieur, a toujours une "face cachée" faisant face à la planète. Cette "face cachée" est le lieu idéal pour les aménagements clandestins, tandis que l'espace entre la planète et sa lune peut servir à dissimuler structures et flottes à la vue des autres empires.'''
+La planète possède un satellite naturel dont la période de révolution est synchrone avec sa période de rotation, ce qui signifie que le satellite, vu de l'extérieur, a toujours une "face cachée" ne se présentant jamais à la planète. Cette "face cachée" est le lieu idéal pour les aménagements clandestins, tandis que l'espace entre la planète et sa lune peut servir à dissimuler structures et flottes à la vue des autres empires.'''
 
 COMPUTRONIUM_SPECIAL
 Lune Ordinatrice
@@ -5731,6 +5759,12 @@ DERELICT_SPECIAL_REMOVE
 Épave
 DERELICT_SPECIAL_DESC
 Une épave ancestrale abandonnée par une espèce inconnue. Qui sait ce qu'elle pourrait révéler...
+
+ACCRETION_DISC_SPECIAL
+Disque d'Accrétion
+
+ACCRETION_DISC_SPECIAL_DESC
+Un disque d'accrétion est une structure astrophysique (la plupart du temps un disque circumstellaire) composée de matière diffuse en orbite autour d'un corps massif central. Toutes les planètes d'un système se situant dans la zone d'influence d'un disque d'accrétion ont un malus d'[[encyclopedia SUPPLY_TITLE]] de -1.
 
 SUPERNOVA_SPECIAL
 Supernova Naissante
@@ -7517,7 +7551,7 @@ CON_NDIM_STRC
 Structures Multidimensionnelles
 
 CON_NDIM_STRC_DESC
-'''Accroît le plafond de Population de toutes les planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10.
+'''Accroît le plafond de Population de toutes les planètes habitables selon leur taille : Minuscule +2 ; Petite +4 ; Moyenne +6 ; Grande +8 ; Immense +10. Augmente également de 10 l'[[encyclopedia INFRASTRUCTURE_TITLE]] de la planète hôte si celle-ci est habitée. 
 
 Les facteurs principaux limitant la capacité de population d'une planète ne sont autres que les milieux environnementaux et l'espace disponible. En répartissant le développement des infrastructures de base sur de multiples dimensions, les limitations spatiales disparaissent, et dans des conditions environnementales idéales, le maximum de population d'une planète peut être considérablement accru.
 
@@ -9018,7 +9052,7 @@ Transformeur
 BLD_TRANSFORMER_DESC
 '''Une structure très coûteuse mais d'une polyvalence à toute épreuve permettant d'obtenir les mêmes effets qu'un bon nombre d'autres structures. Le Transformeur s'active en réglant sur le Focus approprié la planète sur laquelle il est construite, et à condition que l'empire ait déjà débloqué la structure que le Transformeur doit imiter.
 
-Cette structure peut reproduire les effets d'un [[buildingtype BLD_PLANET_CLOAK]], d'une [[buildingtype BLD_BIOTERROR_PROJECTOR]], d'un [[buildingtype BLD_STARGATE]], d'un [[buildingtype BLD_PLANET_DRIVE]], ou d'un [[buildingtype BLD_SPATIAL_DISTORT_GEN]], à condition que l'empire ait déjà assimilé la technologie appropriée.'''
+Cette structure peut reproduire les effets d'une [[buildingtype BLD_BIOTERROR_PROJECTOR]], d'un [[buildingtype BLD_STARGATE]], d'un [[buildingtype BLD_PLANET_DRIVE]], ou d'un [[buildingtype BLD_SPATIAL_DISTORT_GEN]], à condition que l'empire ait déjà assimilé la technologie appropriée.'''
 
 BLD_PLANET_CLOAK
 Dispositif de Camouflage Planétaire
@@ -9032,7 +9066,7 @@ BLD_SPATIAL_DISTORT_GEN
 Générateur de Distortion Spatiale
 
 BLD_SPATIAL_DISTORT_GEN_DESC
-Manipule les propriétés dimensionnelles des Voies spatiales attenantes. Tout astronef ennemi tentant d'atteindre le système abritant cette structure sera renvoyé à son point de départ, ou aléatoirement vers une autre étoile proche. Seuls les astronefs assez rapides pour parcourir la Voie spatiale en un seul tour seront insensibles à ces effets de distortion. Le Générateur s'active si la planète sur laquelle il est construit est réglée sur le Focus Distortion Spatiale.
+Manipule les propriétés dimensionnelles des Voies spatiales attenantes. Tout astronef ennemi se dirigeant vers le système abritant cette structure sera repoussé à une distance de 40uu sur la même route qu'il a emprunté, tant que l'astronef en question ne parcourt pas la distance suffisante pour compléter son voyage et ainsi atteindre le système visé. Le Générateur s'active si la planète sur laquelle il est construit est réglée sur le Focus Distortion Spatiale.
 
 BLD_STARGATE  # translated
 Stargate
@@ -10435,19 +10469,19 @@ ULTIMATE_DETECTION
 +++	Parfait [[encyclopedia DETECTION_RANGE_TITLE]] : +100 bonus
 
 BAD_STEALTH
-−	Mauvais en [[encyclopedia STEALTH_TITLE]] : −15 malus
+−	Mauvais en [[encyclopedia STEALTH_TITLE]] Planétaire : −20 malus
 
 AVERAGE_STEALTH
-'''	Normal en [[encyclopedia STEALTH_TITLE]]'''
+'''	Normal en [[encyclopedia STEALTH_TITLE]] Planétaire'''
 
 GOOD_STEALTH
-+	Bon en [[encyclopedia STEALTH_TITLE]] : +15 bonus
++	Bon en [[encyclopedia STEALTH_TITLE]] Planétaire : +20 bonus
 
 GREAT_STEALTH
-++	Excellent en [[encyclopedia STEALTH_TITLE]] : +40 bonus
+++	Excellent en [[encyclopedia STEALTH_TITLE]] Planétaire : +40 bonus
 
 ULTIMATE_STEALTH
-+++	Parfait en [[encyclopedia STEALTH_TITLE]] : +60 bonus
++++	Parfait en [[encyclopedia STEALTH_TITLE]] Planétaire : +60 bonus
 
 BAD_WEAPONS
 −	Mauvais Pilotes : -25% de dommages.
@@ -10539,6 +10573,9 @@ Bonus Gaia
 
 WORLDTREE_LABEL
 Bonus Arbre Planétaire
+
+TIDAL_LOCK_LABEL
+Rotation Synchrone
 
 HOMEWORLD_LABEL
 Planète Natale
