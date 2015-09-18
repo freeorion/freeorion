@@ -875,6 +875,13 @@ namespace {
         fleet->SetAggressive(fleet->HasArmedShips());
         ship->SetFleetID(fleet->ID());
 
+        // set the meters of the ship to max values
+        ship->ResetTargetMaxUnpairedMeters();
+        ship->ResetPairedActiveMeters();
+        ship->SetShipMetersToMax();
+
+        ship->BackPropegateMeters();
+
         //return the new ships id
         return ship->ID();
     }
@@ -1017,6 +1024,20 @@ namespace {
              it != planets.end(); ++it)
         { py_planets.append(*it); }
         return py_planets;
+    }
+
+    list SystemGetFleets(int system_id) {
+        list py_fleets;
+        TemporaryPtr<System> system = GetSystem(system_id);
+        if (!system) {
+            ErrorLogger() << "PythonUniverseGenerator::SystemGetFleets : Couldn't get system with ID " << system_id;
+            return py_fleets;
+        }
+        const std::set<int>& fleets = system->FleetIDs();
+        for (std::set<int>::const_iterator it = fleets.begin();
+             it != fleets.end(); ++it)
+        { py_fleets.append(*it); }
+        return py_fleets;
     }
 
     list SystemGetStarlanes(int system_id) {
@@ -1344,6 +1365,7 @@ void WrapServerAPI() {
     def("sys_orbit_occupied",                   SystemOrbitOccupied);
     def("sys_orbit_of_planet",                  SystemOrbitOfPlanet);
     def("sys_get_planets",                      SystemGetPlanets);
+    def("sys_get_fleets",                       SystemGetFleets);
     def("sys_get_starlanes",                    SystemGetStarlanes);
     def("sys_add_starlane",                     SystemAddStarlane);
     def("sys_remove_starlane",                  SystemRemoveStarlane);

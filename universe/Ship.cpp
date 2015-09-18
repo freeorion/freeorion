@@ -538,6 +538,15 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     { it->second.ResetCurrent(); }
 }
 
+void Ship::SetShipMetersToMax() {
+    UniverseObject::GetMeter(METER_MAX_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+    UniverseObject::GetMeter(METER_MAX_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+    UniverseObject::GetMeter(METER_MAX_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+    UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+    UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+    UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+}
+
 void Ship::PopGrowthProductionResearchPhase() {
     UniverseObject::PopGrowthProductionResearchPhase();
 
