@@ -6,14 +6,18 @@
 #include <GG/PtRect.h>
 #include <GG/GLClientAndServerBuffer.h>
 
-/** adjusts the intensity of the color up or down by \a amount units per color channel; leaves alpha unchanged 
-  * if \a jointly_capped is true then, if the original \a amount would out any of the rgb channel values above 255, 
-  * \a amount for all channels is reduced so that the highest resulting rgb channel value is 255.   */
+/** adjusts the intensity of the color up or down by \a amount units per color
+  * channel; leaves alpha unchanged if \a jointly_capped is true then, if the
+  * original \a amount would out any of the rgb channel values above 255,
+  * \a amount for all channels is reduced so that the highest resulting rgb
+  * channel value is 255. */
 void AdjustBrightness(GG::Clr& color, int amount, bool jointly_capped=false);
 
-/** adjusts the intensity of the color up or down by multiplying the non-alpa channels by \a amount  
-  * if \a jointly_capped is true then, if the original \a amount would out any of the rgb channel values above 255, 
-  * \a amount for all channels is reduced so that the highest resulting rgb channel value is 255.   */
+/** adjusts the intensity of the color up or down by multiplying the non-alpa
+  * channels by \a amount if \a jointly_capped is true then, if the original
+  * \a amount would out any of the rgb channel values above 255,
+  * \a amount for all channels is reduced so that the highest resulting rgb
+  * channel value is 255. */
 void AdjustBrightness(GG::Clr& color, double amount, bool jointly_capped=false);
 
 /** returns fully opaque (max alpha channel) version of the color */
@@ -31,13 +35,14 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
                                               int angle_offset, bool upper_left_angled = true,
                                               bool lower_right_angled = true, bool connect_bottom_line = true);
 
-/** returns true iff \a pt falls within \a rect, with the missing bits of the angled corners not catching the point. 
-    If \a upper_left_angled == false, the upper left corner is treated as a normal corner. */
+/** returns true iff \a pt falls within \a rect, with the missing bits of the
+  * angled corners not catching the point. If \a upper_left_angled == false,
+  * the upper left corner is treated as a normal corner. */
 bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset,
                         bool upper_left_angled = true, bool lower_right_angled = true);
 
-/** the orientations used to render some shapes used in the UI; the orientations usually refer to the direction
-    in which the shape is pointing */
+/** the orientations used to render some shapes used in the UI; the orientations
+  * usually refer to the direction in which the shape is pointing */
 enum ShapeOrientation {SHAPE_UP, SHAPE_DOWN, SHAPE_LEFT, SHAPE_RIGHT};
 
 /** renders a triangle of arbitrary size and shape, having an optional 1-pixel-thick border */
@@ -46,8 +51,10 @@ void Triangle(const GG::Pt& pt1, const GG::Pt pt2, const GG::Pt pt3, GG::Clr col
 /** returns true iff \a pt lies within the triangle described by the other parameters */
 bool InTriangle(const GG::Pt& pt, const GG::Pt& pt1, const GG::Pt pt2, const GG::Pt pt3);
 
-/** renders a triangle with two equal-length sides, oriented in the desired direction.  The triangle will have a base length
-    of one of (<i>x2</i> - <i>x1</i>) and (<i>y2</i> - <i>y1</i>), depending on \a orientation, and a height of the other. */
+/** renders a triangle with two equal-length sides, oriented in the desired
+  * direction.  The triangle will have a base length of one of
+  * (<i>x2</i> - <i>x1</i>) and (<i>y2</i> - <i>y1</i>),
+  * depending on \a orientation, and a height of the other. */
 void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation, GG::Clr color, bool border = true);
 
 /** Stores, in \a buffer, vertices in CCW order that outline an isosceles triangle. */
@@ -56,13 +63,13 @@ void BufferStoreIsoscelesTriangle(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
 /** returns true iff \a pt falls within the isosceles triangle described by the other parameters */
 bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation);
 
-/** Draws a filled portion of a circle when \a filled_shape is true (calling glBegin(GL_TRIANGLE_FAN); glVertex2f() ...; glEnd();),
-    or an unfilled portion when \a filled_shape is false. (glBegin(GL_LINE_STRIP); glVertex2f() ...; glEnd();). */
+/** Draws a filled portion of a circle when \a filled_shape is true or an
+  * unfilled portion when \a filled_shape is false. */
 void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape);
 
 /** Stores, in \a buffer vertices in CCW order that outline a circular arc or
   * \a num_slices indicates how many triangles to use to compose the circle, or
-  * if 0, indicates that the function should auto-determine how many slices. 
+  * if 0, indicates that the function should auto-determine how many slices.
   * if \a fan is true, the vertices are stored as a triangle fan- compatible
   * list, while false indicates a triangle list (where each triangle has all
   * 3 vertices specified explicitly. \a filled_shape indicates that a vertex
