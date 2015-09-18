@@ -114,7 +114,7 @@ public:
         GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
         glColor(color_to_use);
 
-        int ticks = GG::GUI::GetGUI()->Ticks();
+        int ticks = GG::GUI::GetGUI()->Ticks();     // in ms
         float minutes = ticks / 1000.0f / 60.0f;
 
         const GG::Texture* texture = GetTexture().GetTexture();
@@ -124,51 +124,37 @@ public:
 
         glPushMatrix();
 
-        // rotate around centre of rendered texture...
+        // rotate around centre of rendered area
         GG::Rect rendered_area = RenderedArea();
-        float width = Value(rendered_area.Width());
-        float height = Value(rendered_area.Height());
-        float mid_x = Value(rendered_area.Left()) + width / 2.0f;
-        float mid_y = Value(rendered_area.Top()) + height / 2.0f;
-        float angle = 2*PI*minutes * m_rpm;
+        float angle = 360 * minutes * m_rpm;  // in degrees
+        glTranslatef(Value(rendered_area.MidX()), Value(rendered_area.MidY()), 0.0f);   // tx back into position
+        glRotatef(angle, 0.0f, 0.0f, 1.0f);                                             // rotate about centre
+        glTranslatef(-Value(rendered_area.MidX()), -Value(rendered_area.MidY()), 0.0f); // tx to be centred on 0, 0
 
-        const float COS_THETA = std::cos(angle);
-        const float SIN_THETA = std::sin(angle);
-
-            // Components of corner points of a quad
-        const float X1 =  width/2, Y1 =  height/2;  // upper right corner (X1, Y1)
-        const float X2 = -width/2, Y2 =  height/2;  // upper left corner  (X2, Y2)
-        const float X3 = -width/2, Y3 = -height/2;  // lower left corner  (X3, Y3)
-        const float X4 =  width/2, Y4 = -height/2;  // lower right corner (X4, Y4)
-
-        // Calculate rotated corner point components after CCW ROTATION radians around origin.
-        const float X1r =  COS_THETA*X1 + SIN_THETA*Y1;
-        const float Y1r = -SIN_THETA*X1 + COS_THETA*Y1;
-        const float X2r =  COS_THETA*X2 + SIN_THETA*Y2;
-        const float Y2r = -SIN_THETA*X2 + COS_THETA*Y2;
-        const float X3r =  COS_THETA*X3 + SIN_THETA*Y3;
-        const float Y3r = -SIN_THETA*X3 + COS_THETA*Y3;
-        const float X4r =  COS_THETA*X4 + SIN_THETA*Y4;
-        const float Y4r = -SIN_THETA*X4 + COS_THETA*Y4;
-
-        // add to system position to get translated scaled rotated quad corner
+        // set up vertices for translated scaled quad corners
         GG::GL2DVertexBuffer verts;
-        verts.store(mid_x + X2r, mid_y + Y2r); // rotated upper left
-        verts.store(mid_x + X1r, mid_y + Y1r); // rotated upper right
-        verts.store(mid_x + X3r, mid_y + Y3r); // rotated lower left
-        verts.store(mid_x + X4r, mid_y + Y4r); // rotated lower right
+        verts.store(rendered_area.UpperLeft());                     // upper left
+        verts.store(rendered_area.Right(), rendered_area.Top());    // upper right
+        verts.store(rendered_area.Left(),  rendered_area.Bottom()); // lower left
+        verts.store(rendered_area.LowerRight());                    // lower right
 
-        GLfloat texture_coordinate_data[8];
-        const GLfloat* tex_coords = GetTexture().TexCoords();
 
-        texture_coordinate_data[2*0] =      tex_coords[0];
-        texture_coordinate_data[2*0 + 1] =  tex_coords[1];
-        texture_coordinate_data[2*1] =      tex_coords[2];
-        texture_coordinate_data[2*1 + 1] =  tex_coords[1];
-        texture_coordinate_data[2*2] =      tex_coords[0];
-        texture_coordinate_data[2*2 + 1] =  tex_coords[3];
-        texture_coordinate_data[2*3] =      tex_coords[2];
-        texture_coordinate_data[2*3 + 1] =  tex_coords[3];
+        // shared texture coords; don't depend on rendered area details, so can be reused
+        static GLfloat texture_coordinate_data[8];
+        static bool first = true;
+        if (first) {
+            first = false;
+            const GLfloat* tex_coords = GetTexture().TexCoords();
+
+            texture_coordinate_data[2*0] =      tex_coords[0];
+            texture_coordinate_data[2*0 + 1] =  tex_coords[1];
+            texture_coordinate_data[2*1] =      tex_coords[2];
+            texture_coordinate_data[2*1 + 1] =  tex_coords[1];
+            texture_coordinate_data[2*2] =      tex_coords[0];
+            texture_coordinate_data[2*2 + 1] =  tex_coords[3];
+            texture_coordinate_data[2*3] =      tex_coords[2];
+            texture_coordinate_data[2*3 + 1] =  tex_coords[3];
+        }
 
 
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
