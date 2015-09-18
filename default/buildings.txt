@@ -65,6 +65,7 @@ BuildingType
             effects = [
                 SetTargetResearch value = Value + 5
                 SetTargetIndustry value = Value + Target.Population / 2
+                //SetDetection value = Value + 10000
             ]
             
         EffectsGroup

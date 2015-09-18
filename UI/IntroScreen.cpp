@@ -59,9 +59,9 @@ private:
     XMLElement                  m_credits;
     int                         m_cx, m_cy, m_cw, m_ch, m_co;
     int                         m_start_time;
-    int                         m_bRender;
-    int                         m_displayListID;
-    int                         m_creditsHeight;
+    int                         m_render;
+    int                         m_display_list_id;
+    int                         m_credits_height;
     boost::shared_ptr<GG::Font> m_font;
 };
 
@@ -74,23 +74,23 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &cre
     m_ch(ch),
     m_co(co),
     m_start_time(GG::GUI::GetGUI()->Ticks()),
-    m_bRender(true),
-    m_displayListID(0),
-    m_creditsHeight(0)
+    m_render(true),
+    m_display_list_id(0),
+    m_credits_height(0)
 {
     m_font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
 }
 
 CreditsWnd::~CreditsWnd() {
-    if (m_displayListID != 0)
-        glDeleteLists(m_displayListID, 1);
+    if (m_display_list_id != 0)
+        glDeleteLists(m_display_list_id, 1);
 }
 
 void CreditsWnd::StopRendering() {
-    m_bRender = false;
-    if (m_displayListID != 0) {
-        glDeleteLists(m_displayListID, 1);
-        m_displayListID = 0;
+    m_render = false;
+    if (m_display_list_id != 0) {
+        glDeleteLists(m_display_list_id, 1);
+        m_display_list_id = 0;
     }
 }
 
@@ -123,7 +123,7 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
                         credit += person.Attribute("task");
                         credit += "</rgba>";
                     }
-                    m_font->RenderText(GG::Pt(x1, y1+offset), GG::Pt(x2, y2), credit, format, 0);
+                    m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), credit, format, 0);
                     offset += m_font->TextExtent(credit, format).y + 2;
                 }
             }
@@ -131,50 +131,50 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
         }
     }
     //store complete height for self destruction
-    m_creditsHeight = Value(offset);
+    m_credits_height = Value(offset);
 }
 
 void CreditsWnd::Render() {
-    if (!m_bRender)
+    if (!m_render)
         return;
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    if (m_displayListID == 0) {
+    if (m_display_list_id == 0) {
         // compile credits
-        m_displayListID = glGenLists(1);
-        glNewList(m_displayListID, GL_COMPILE);
-        DrawCredits(ul.x+m_cx, ul.y+m_cy, ul.x+m_cx+m_cw, ul.y+m_cy+m_ch, 255);
+        m_display_list_id = glGenLists(1);
+        glNewList(m_display_list_id, GL_COMPILE);
+        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch, 255);
         glEndList();
     }
     //time passed
-    int passedTicks = GG::GUI::GetGUI()->Ticks() - m_start_time;
+    int ticks_delta = GG::GUI::GetGUI()->Ticks() - m_start_time;
 
     //draw background
-    GG::FlatRectangle(ul, lr, GG::FloatClr(0.0, 0.0, 0.0, 0.5), GG::CLR_ZERO,0);
+    GG::FlatRectangle(ul, lr, GG::FloatClr(0.0f, 0.0f, 0.0f, 0.5f), GG::CLR_ZERO, 0);
 
-    glPushAttrib(GL_ALL_ATTRIB_BITS );
+    glPushAttrib(GL_ALL_ATTRIB_BITS);
     glPushMatrix();
 
     // define clip area
     glEnable(GL_SCISSOR_TEST);
-    glScissor(Value(ul.x+m_cx), Value(GG::GUI::GetGUI()->AppHeight()- lr.y), m_cw, m_ch);
+    glScissor(Value(ul.x + m_cx), Value(GG::GUI::GetGUI()->AppHeight() - lr.y), m_cw, m_ch);
 
     // move credits
-    glTranslatef(0, m_co + passedTicks / -40.0f, 0);
+    glTranslatef(0, m_co - ticks_delta/40, 0);
 
-    if (m_displayListID != 0) {
+    if (m_display_list_id != 0) {
         // draw credits using prepared display list
         // !!! in order for the display list to be valid, the font object (m_font) may not be destroyed !!!
-        glCallList(m_displayListID);
+        glCallList(m_display_list_id);
     } else {
         // draw credits directly
-        DrawCredits(ul.x+m_cx, ul.y+m_cy, ul.x+m_cx+m_cw, ul.y+m_cy+m_ch, 255);
+        DrawCredits(ul.x + m_cx, ul.y + m_cy, ul.x + m_cx + m_cw, ul.y + m_cy + m_ch, 255);
     }
 
     glPopMatrix();
     glPopAttrib();
 
     //check if we are done
-    if (m_creditsHeight + m_ch < m_co + passedTicks / 40.0)
+    if (m_credits_height + m_ch < m_co + ticks_delta/40)
         StopRendering();
 }
 
