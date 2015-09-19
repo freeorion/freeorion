@@ -162,12 +162,7 @@ void Edit::Render()
         GetFont()->RenderText(Pt(client_ul.x, text_y_pos), Text().substr(Value(INDEX_0), Value(INDEX_END - INDEX_0)));
         if (GUI::GetGUI()->FocusWnd() == this) { // if we have focus, draw the caret as a simple vertical line
             X caret_x = ScreenPosOfChar(m_cursor_pos.second);
-            glDisable(GL_TEXTURE_2D);
-            glBegin(GL_LINES);
-            glVertex(caret_x, client_ul.y);
-            glVertex(caret_x, client_lr.y);
-            glEnd();
-            glEnable(GL_TEXTURE_2D);
+            Line(Pt(caret_x, client_ul.y), Pt(caret_x, client_lr.y), text_color_to_use);
         }
     }
 
