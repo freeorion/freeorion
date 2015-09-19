@@ -61,15 +61,20 @@ void TextureCursor::Render(const Pt& pt)
     Pt ul = pt - m_hotspot;
     if (OUTLINE_CURSOR) {
         Pt lr = ul + Pt(m_texture->DefaultWidth(), m_texture->DefaultHeight());
+        int verts[8] = {
+            Value(lr.x), Value(ul.y),
+            Value(ul.x), Value(ul.y),
+            Value(ul.x), Value(lr.y),
+            Value(lr.x), Value(lr.y)
+        };
+        glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glVertexPointer(2, GL_INT, 0, verts);
         glDisable(GL_TEXTURE_2D);
-        glBegin(GL_LINE_LOOP);
         glColor3ub(255, 0, 0);
-        glVertex(lr.x, ul.y);
-        glVertex(ul.x, ul.y);
-        glVertex(ul.x, lr.y);
-        glVertex(lr.x, lr.y);
-        glEnd();
+        glDrawArrays(GL_LINE_LOOP, 0, 4);
         glEnable(GL_TEXTURE_2D);
+        glPopClientAttrib();
     }
     glColor3ub(255, 255, 255);
     m_texture->OrthoBlit(ul);
