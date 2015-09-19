@@ -522,14 +522,8 @@ void PopupMenu::Render()
                     m_font->RenderText(line_rect.ul, line_rect.lr, menu.next_level[j].label, fmt);
 
                 } else {
-                    glDisable(GL_TEXTURE_2D);
-                    glBegin(GL_LINES);
-                    glVertex(line_rect.ul.x + HORIZONTAL_MARGIN,
-                             line_rect.ul.y + Value(INDICATOR_HEIGHT / 2.0) + INDICATOR_VERTICAL_MARGIN);
-                    glVertex(line_rect.lr.x - HORIZONTAL_MARGIN,
-                             line_rect.ul.y + Value(INDICATOR_HEIGHT / 2.0) + INDICATOR_VERTICAL_MARGIN);
-                    glEnd();
-                    glEnable(GL_TEXTURE_2D);
+                    Line(line_rect.ul.x + HORIZONTAL_MARGIN, line_rect.ul.y + INDICATOR_HEIGHT/2 + INDICATOR_VERTICAL_MARGIN,
+                         line_rect.lr.x - HORIZONTAL_MARGIN, line_rect.ul.y + INDICATOR_HEIGHT/2 + INDICATOR_VERTICAL_MARGIN);
                 }
 
                 if (menu.next_level[j].checked) {
@@ -540,14 +534,12 @@ void PopupMenu::Render()
 
                 // submenu indicator arrow
                 if (menu.next_level[j].next_level.size() > 0u) {
-                    glDisable(GL_TEXTURE_2D);
-                    glBegin(GL_TRIANGLES);
-                    glVertex(line_rect.lr.x - Value(INDICATOR_HEIGHT / 2.0) - HORIZONTAL_MARGIN,
-                             line_rect.ul.y + INDICATOR_VERTICAL_MARGIN);
-                    glVertex(line_rect.lr.x - Value(INDICATOR_HEIGHT / 2.0) - HORIZONTAL_MARGIN,
-                             line_rect.ul.y + m_font->Lineskip() - INDICATOR_VERTICAL_MARGIN);
-                    glVertex(line_rect.lr.x - HORIZONTAL_MARGIN,
-                             line_rect.ul.y + m_font->Lineskip() / 2.0);
+                    Triangle(line_rect.lr.x - Value(INDICATOR_HEIGHT/2) - HORIZONTAL_MARGIN,
+                             line_rect.ul.y + INDICATOR_VERTICAL_MARGIN,
+                             line_rect.lr.x - Value(INDICATOR_HEIGHT/2) - HORIZONTAL_MARGIN,
+                             line_rect.ul.y + m_font->Lineskip() - INDICATOR_VERTICAL_MARGIN,
+                             line_rect.lr.x - HORIZONTAL_MARGIN,
+                             line_rect.ul.y + m_font->Lineskip()/2);
                     glEnd();
                     glEnable(GL_TEXTURE_2D);
                 }
