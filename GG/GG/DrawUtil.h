@@ -104,9 +104,15 @@ namespace GG {
         color and thickness. */
     GG_API void Line(Pt pt1, Pt pt2, Clr color, float thick = 1.0f);
 
-    /** Renders a triangle  between the specified points, with the specified
+    /** Renders line between specified coordinates. */
+    GG_API void Line(X x1, Y y1, X x2, Y y2);
+
+    /** Renders a triangle between the specified points, with the specified
         color and (if specified) border color and thickness. */
     GG_API void Triangle(Pt pt1, Pt pt2, Pt pt3, Clr color, Clr border_color = CLR_ZERO, float border_thick = 1.0f);
+
+    /** Renders triangle between the specified coordinates. */
+    GG_API void Triangle(X x1, Y y1, X x2, Y y2, X x3, Y y3, bool filled = false);
 
     /** Renders a rectangle starting at ul and ending just before lr, and
         assumes that OpenGL in in a "2D" state.  The border is drawn in the

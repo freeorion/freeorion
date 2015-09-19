@@ -695,16 +695,21 @@ namespace GG {
 
     void Line(Pt pt1, Pt pt2, Clr color, float thick)
     {
-        GLfloat vertices[4] = {Value(pt1.x), Value(pt1.y), Value(pt2.x), Value(pt2.y)};
+        glLineWidth(thick);
+        glColor(color);
+        Line(pt1.x, pt1.y, pt2.x, pt2.y);
+    }
+
+    void Line(X x1, Y y1, X x2, Y y2)
+    {
+        GLfloat vertices[4] = {Value(x1), Value(y1), Value(x2), Value(y2)};
 
         glDisable(GL_TEXTURE_2D);
-        glLineWidth(thick);
 
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
 
         glVertexPointer(2, GL_FLOAT, 0, vertices);
-        glColor(color);
         glDrawArrays(GL_LINES, 0, 2);
 
         glPopClientAttrib();
@@ -732,6 +737,26 @@ namespace GG {
             glDrawArrays(GL_LINE_LOOP, 0, 3);
             glLineWidth(1.0f);
         }
+
+        glPopClientAttrib();
+        glEnable(GL_TEXTURE_2D);
+    }
+
+    void Triangle(X x1, Y y1, X x2, Y y2, X x3, Y y3, bool filled)
+    {
+        GLfloat vertices[6] = {Value(x1), Value(y1), Value(x2), Value(y2), Value(x3), Value(y3)};
+
+        glDisable(GL_TEXTURE_2D);
+
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        glVertexPointer(2, GL_FLOAT, 0, vertices);
+
+        if (filled)
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 3);
+        else
+            glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
