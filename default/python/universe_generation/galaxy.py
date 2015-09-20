@@ -9,7 +9,7 @@ import util
 # tuple of galaxy shapes to randomly choose from when shape is "random"
 shapes = (fo.galaxyShape.spiral2,    fo.galaxyShape.spiral3,     fo.galaxyShape.spiral4,
           fo.galaxyShape.cluster,    fo.galaxyShape.elliptical,  fo.galaxyShape.ring,
-          fo.galaxyShape.irregular1, fo.galaxyShape.irregular2)
+          fo.galaxyShape.box,        fo.galaxyShape.irregular)
 
 
 class AdjacencyGrid:
@@ -281,9 +281,9 @@ def ring_galaxy_calc_positions(positions, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
-def irregular_galaxy_calc_positions(positions, size, width):
+def box_galaxy_calc_positions(positions, size, width):
     """
-    Calculate positions for the irregular galaxy shape.
+    Calculate positions for the box galaxy shape.
     """
     adjacency_grid = AdjacencyGrid(width)
 
@@ -309,17 +309,17 @@ def irregular_galaxy_calc_positions(positions, size, width):
             break
 
         if not attempts:
-            print "Irregular galaxy shape: giving up on placing star", i,\
+            print "Box galaxy shape: giving up on placing star", i,\
                   ", can't find position sufficiently far from other systems"
 
 
-def irregular2_galaxy_calc_positions(positions, size, width):
+def irregular_galaxy_calc_positions(positions, size, width):
     """
-    Calculate positions for the irregular2 galaxy shape.
+    Calculate positions for the irregular galaxy shape.
     """
     adjacency_grid = AdjacencyGrid(width)
     max_delta = max(min(float(fo.max_starlane_length()), width / 10.0), adjacency_grid.min_dist * 2.0)
-    print "Irregular2 galaxy shape: max delta distance =", max_delta
+    print "Irregular galaxy shape: max delta distance =", max_delta
     origin_x, origin_y = width / 2.0, width / 2.0
     prev_x, prev_y = origin_x, origin_y
     reset_to_origin = 0
@@ -399,7 +399,7 @@ def calc_star_system_positions(shape, size):
 
     # calculate typical width for universe based on number of systems
     width = fo.calc_typical_universe_width(size)
-    if shape == fo.galaxyShape.irregular2:
+    if shape == fo.galaxyShape.irregular:
         width *= 1.4
     if shape == fo.galaxyShape.elliptical:
         width *= 1.4
@@ -430,13 +430,13 @@ def calc_star_system_positions(shape, size):
             cluster_galaxy_calc_positions(positions, clusters, size, width)
     elif shape == fo.galaxyShape.ring:
         ring_galaxy_calc_positions(positions, size, width)
-    elif shape == fo.galaxyShape.irregular2:
-        irregular2_galaxy_calc_positions(positions, size, width)
+    elif shape == fo.galaxyShape.irregular:
+        irregular_galaxy_calc_positions(positions, size, width)
 
     # Check if any positions have been calculated...
     if not positions:
-        # ...if not, fall back on irregular1 shape
-        irregular_galaxy_calc_positions(positions, size, width)
+        # ...if not, fall back on box shape
+        box_galaxy_calc_positions(positions, size, width)
 
     # to avoid having too much "extra space" around the system positions of our galaxy map, recalculate the universe
     # width and shift all positions accordingly

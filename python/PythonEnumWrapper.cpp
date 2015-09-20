@@ -185,8 +185,8 @@ namespace FreeOrionPython {
             .value("spiral4",       SPIRAL_4)
             .value("cluster",       CLUSTER)
             .value("elliptical",    ELLIPTICAL)
-            .value("irregular1",    IRREGULAR1)
-            .value("irregular2",    IRREGULAR2)
+            .value("box",           BOX)
+            .value("irregular",     IRREGULAR)
             .value("ring",          RING)
             .value("random",        RANDOM)
         ;
