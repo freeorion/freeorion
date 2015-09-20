@@ -8,8 +8,8 @@ import util
 
 # tuple of galaxy shapes to randomly choose from when shape is "random"
 shapes = (fo.galaxyShape.spiral2,    fo.galaxyShape.spiral3,     fo.galaxyShape.spiral4,
-          fo.galaxyShape.cluster,    fo.galaxyShape.elliptical,  fo.galaxyShape.ring,
-          fo.galaxyShape.box,        fo.galaxyShape.irregular)
+          fo.galaxyShape.cluster,    fo.galaxyShape.elliptical,  fo.galaxyShape.disc,
+          fo.galaxyShape.ring,       fo.galaxyShape.box,         fo.galaxyShape.irregular)
 
 
 class AdjacencyGrid:
@@ -159,6 +159,41 @@ def elliptical_galaxy_calc_positions(positions, size, width):
 
         if not attempts:
             print "Elliptical galaxy shape: giving up on placing star", i,\
+                  ", can't find position sufficiently far from other systems"
+
+
+def disc_galaxy_calc_positions(positions, size, width):
+    """
+    Calculate positions for the disc galaxy shape.
+    """
+    adjacency_grid = AdjacencyGrid(width)
+    center_x, center_y = width / 2.0, width / 2.0
+
+    for i in range(size):
+        attempts = 100
+        while attempts > 0:
+            radius = uniform(0.0, width / 2.0)
+            angle = uniform (0.0, 2.0 * pi)
+            x = center_x + radius * cos(angle)
+            y = center_y + radius * sin(angle)
+
+            if (x < 0) or (width <= x) or (y < 0) or (width <= y):
+                attempts -= 1
+                continue
+
+            # see if new star is too close to any existing star; if so, we try again
+            if adjacency_grid.too_close_to_other_positions(x, y):
+                attempts -= 1
+                continue
+
+            # add the new star location
+            pos = fo.SystemPosition(x, y)
+            adjacency_grid.insert_pos(pos)
+            positions.append(pos)
+            break
+
+        if not attempts:
+            print "Disc galaxy shape: giving up on placing star", i,\
                   ", can't find position sufficiently far from other systems"
 
 
@@ -399,10 +434,10 @@ def calc_star_system_positions(shape, size):
 
     # calculate typical width for universe based on number of systems
     width = fo.calc_typical_universe_width(size)
-    if shape == fo.galaxyShape.irregular:
+    if shape in [fo.galaxyShape.elliptical, fo.galaxyShape.irregular]:
         width *= 1.4
-    if shape == fo.galaxyShape.elliptical:
-        width *= 1.4
+    elif shape == fo.galaxyShape.disc:
+        width *= 1.2
     print "Set universe width to", width
     fo.set_universe_width(width)
 
@@ -419,6 +454,8 @@ def calc_star_system_positions(shape, size):
         spiral_galaxy_calc_positions(positions, 4, size, width)
     elif shape == fo.galaxyShape.elliptical:
         elliptical_galaxy_calc_positions(positions, size, width)
+    elif shape == fo.galaxyShape.disc:
+        disc_galaxy_calc_positions(positions, size, width)
     elif shape == fo.galaxyShape.cluster:
         # Typically a galaxy with 100 systems should have ~5 clusters
         avg_clusters = size / 20

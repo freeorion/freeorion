@@ -46,6 +46,7 @@ SPIRAL_3                        0           0           0       0       0       
 SPIRAL_4                        0           0           0       0       0       0       0               0
 CLUSTER                         0           0           0       0       0       0       0               0
 ELLIPTICAL                      0           0           0       0       0       0       0               0
+DISC                            0           0           0       0       0       0       0               0
 BOX                             0           0           0       0       0       0       0               0
 IRREGULAR                       0           0           0       0       0       0       0               0
 RING                            0           0           0       0       0       0       0               0

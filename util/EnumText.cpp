@@ -23,6 +23,7 @@ const std::string& TextForGalaxyShape(Shape shape) {
         case SPIRAL_4:      return UserString("GSETUP_4ARM");
         case CLUSTER:       return UserString("GSETUP_CLUSTER");
         case ELLIPTICAL:    return UserString("GSETUP_ELLIPTICAL");
+        case DISC:          return UserString("GSETUP_DISC");
         case BOX:           return UserString("GSETUP_BOX");
         case IRREGULAR:     return UserString("GSETUP_IRREGULAR");
         case RING:          return UserString("GSETUP_RING");
