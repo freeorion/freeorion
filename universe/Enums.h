@@ -134,6 +134,7 @@ GG_ENUM(Shape,
     SPIRAL_4,       ///< a four-armed spiral galaxy
     CLUSTER,        ///< a cluster galaxy
     ELLIPTICAL,     ///< an elliptical galaxy
+    DISC,           ///< a disc shaped galaxy
     BOX,            ///< a rectangular shaped galaxy
     IRREGULAR,      ///< an irregular galaxy
     RING,           ///< a ring galaxy
