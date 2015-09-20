@@ -1420,7 +1420,7 @@ void MapWnd::RenderStarfields() {
         ClearStarfieldRenderingBuffers();
         Seed(static_cast<int>(starfield_width));
         m_starfield_colours.clear();
-        std::size_t NUM_STARS = std::pow(2, 12);
+        std::size_t NUM_STARS = std::pow(2.0, 12.0);
 
         m_starfield_verts.reserve(NUM_STARS);
         m_starfield_colours.reserve(NUM_STARS);
