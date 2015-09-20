@@ -1,5 +1,6 @@
+import sys
 from random import random, uniform, randint, gauss, choice
-from math import pi, sin, cos
+from math import pi, sin, cos, sqrt
 
 import freeorion as fo
 import util
@@ -161,6 +162,85 @@ def elliptical_galaxy_calc_positions(positions, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
+def cluster_galaxy_calc_positions(positions, clusters, size, width):
+    """
+    Calculate positions for the cluster galaxy shape.
+    """
+    if size < 1:
+        print >> sys.stderr, "Cluster galaxy requested for 0 stars"
+        return
+    if clusters < 1:
+        print >> sys.stderr, "Cluster galaxy requested for 0 clusters, defaulting to 1"
+        clusters = 1
+
+    adjacency_grid = AdjacencyGrid(width)
+
+    # probability of systems which don't belong to a cluster
+    system_noise = 0.15
+    ellipse_width_vs_height = uniform(0.2,0.5)
+    # a list of tuples of tuples: first tuple holds cluster position,
+    # second tuple stores help values for cluster rotation (sin,cos)
+    clusters_position = []
+
+    random_angle = lambda: uniform(0.0, 2.0*pi)
+
+    for i in range(clusters):
+        attempts = 100
+        while attempts > 0:
+            # prevent cluster position near borders (and on border)
+            x = ((random() * 2.0 - 1.0) / (clusters + 1.0)) * clusters
+            y = ((random() * 2.0 - 1.0) / (clusters + 1.0)) * clusters
+            # ensure all clusters have a min separation to each other (search isn't optimized, not worth the effort)
+            if all(((cp[0][0] - x) * (cp[0][0] - x) + (cp[0][1] - y) * (cp[0][1] - y)) > (2.0/clusters)
+                   for cp in clusters_position):
+                break
+            attempts -= 1
+        rotation = uniform(0.0, pi)
+        clusters_position.append(((x, y), (sin(rotation),cos(rotation))))
+
+    for i in range(size):
+        attempts = 100
+        while attempts > 0:
+            if random() < system_noise:
+                x = random() * 2.0 - 1.0
+                y = random() * 2.0 - 1.0
+            else:
+                cluster = clusters_position[i % len(clusters_position)]
+                radius = random()
+                angle = random_angle()
+
+                x1 = radius * cos(angle)
+                y1 = radius * sin(angle) * ellipse_width_vs_height
+
+                x = x1 * cluster[1][1] + y1 * cluster[1][0]
+                y = (-x1) * cluster[1][0] + y1 * cluster[1][1]
+
+                x = x / sqrt(float(clusters)) + cluster[0][0]
+                y = y / sqrt(float(clusters)) + cluster[0][1]
+
+            x = (x + 1) * width / 2.0
+            y = (y + 1) * width / 2.0
+
+            if (x < 0) or (width <= x) or (y < 0) or (width <= y):
+                attempts -= 1
+                continue
+
+            # see if new star is too close to any existing star; if so, we try again
+            if adjacency_grid.too_close_to_other_positions(x, y):
+                attempts -= 1
+                continue
+
+            # add the new star location
+            pos = fo.SystemPosition(x, y)
+            adjacency_grid.insert_pos(pos)
+            positions.append(pos)
+            break
+
+        if not attempts:
+            print "Cluster galaxy shape: giving up on placing star", i,\
+                  ", can't find position sufficiently far from other systems"
+
+
 def irregular2_galaxy_calc_positions(positions, size, width):
     """
     Calculate positions for the irregular2 galaxy shape
@@ -275,7 +355,7 @@ def calc_star_system_positions(shape, size):
         # Add a bit of random variation (+/- 20%)
         clusters = randint((avg_clusters * 8) / 10, (avg_clusters * 12) / 10)
         if clusters >= 2:
-            fo.cluster_galaxy_calc_positions(positions, clusters, size, width, width)
+            cluster_galaxy_calc_positions(positions, clusters, size, width)
     elif shape == fo.galaxyShape.ring:
         fo.ring_galaxy_calc_positions(positions, size, width, width)
     elif shape == fo.galaxyShape.irregular2:
