@@ -241,9 +241,49 @@ def cluster_galaxy_calc_positions(positions, clusters, size, width):
                   ", can't find position sufficiently far from other systems"
 
 
+def ring_galaxy_calc_positions(positions, size, width):
+    """
+    Calculate positions for the ring galaxy shape.
+    """
+    adjacency_grid = AdjacencyGrid(width)
+    ring_width = width / 4.0
+    ring_radius = (width - ring_width) / 2.0
+
+    theta_dist = lambda: uniform(0.0, 2.0 * pi)
+    radius_dist = lambda: gauss(ring_radius, ring_width / 3.0)
+
+    for i in range(size):
+        attempts = 100
+        while attempts > 0:
+            theta = theta_dist()
+            radius = radius_dist()
+
+            x = width / 2.0 + radius * cos(theta)
+            y = width / 2.0 + radius * sin(theta)
+
+            if (x < 0) or (width <= x) or (y < 0) or (width <= y):
+                attempts -= 1
+                continue
+
+            # see if new star is too close to any existing star; if so, we try again
+            if adjacency_grid.too_close_to_other_positions(x, y):
+                attempts -= 1
+                continue
+
+            # add the new star location
+            pos = fo.SystemPosition(x, y)
+            adjacency_grid.insert_pos(pos)
+            positions.append(pos)
+            break
+
+        if not attempts:
+            print "Ring galaxy shape: giving up on placing star", i,\
+                  ", can't find position sufficiently far from other systems"
+
+
 def irregular2_galaxy_calc_positions(positions, size, width):
     """
-    Calculate positions for the irregular2 galaxy shape
+    Calculate positions for the irregular2 galaxy shape.
     """
     adjacency_grid = AdjacencyGrid(width)
     max_delta = max(min(float(fo.max_starlane_length()), width / 10.0), adjacency_grid.min_dist * 2.0)
@@ -357,7 +397,7 @@ def calc_star_system_positions(shape, size):
         if clusters >= 2:
             cluster_galaxy_calc_positions(positions, clusters, size, width)
     elif shape == fo.galaxyShape.ring:
-        fo.ring_galaxy_calc_positions(positions, size, width, width)
+        ring_galaxy_calc_positions(positions, size, width)
     elif shape == fo.galaxyShape.irregular2:
         irregular2_galaxy_calc_positions(positions, size, width)
 
