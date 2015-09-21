@@ -93,20 +93,6 @@ DataTableMap& UniverseDataTables();
 // A 150 star universe should be 1000 units across
 double CalcTypicalUniverseWidth(int size);
 
-// Helper functions that calculate system positions for various
-// predefined galaxy shapes
-void EllipticalGalaxyCalcPositions(std::vector<SystemPosition>& positions,
-                                   unsigned int stars, double width, double height);
-
-void ClusterGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned int clusters,
-                                unsigned int stars, double width, double height);
-
-void RingGalaxyCalcPositions(std::vector<SystemPosition>& positions, unsigned int stars,
-                             double width, double height);
-
-void IrregularGalaxyPositions(std::vector<SystemPosition>& positions, unsigned int stars,
-                              double width, double height);
-
 /** Set active meter current values equal to target/max meter current
  * values.  Useful when creating new object after applying effects. */
 void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);

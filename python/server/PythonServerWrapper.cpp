@@ -1297,11 +1297,6 @@ void WrapServerAPI() {
     def("monster_frequency",                    MonsterFrequency);
     def("specials_frequency",                   SpecialsFrequency);
     def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
-
-    def("elliptical_galaxy_calc_positions",     EllipticalGalaxyCalcPositions);
-    def("cluster_galaxy_calc_positions",        ClusterGalaxyCalcPositions);
-    def("ring_galaxy_calc_positions",           RingGalaxyCalcPositions);
-    def("irregular_galaxy_positions",           IrregularGalaxyPositions);
     def("generate_starlanes",                   GenerateStarlanes);
 
     def("species_preferred_focus",              SpeciesPreferredFocus);
