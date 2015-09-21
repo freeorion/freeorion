@@ -61,6 +61,35 @@ PHOTO_MAP = {fo.starType.blue: 3, fo.starType.white: 1.5, fo.starType.red: -1, f
              fo.starType.blackHole: -10, fo.starType.noStar: -10}
 
 
+def get_medium_pilot_rating():
+    return curMidPilotRating
+
+
+def get_best_pilot_rating():
+    return cur_best_pilot_rating
+
+
+def have_computronium():
+    return got_computronium
+
+
+def have_asteroids():
+    return got_ast
+
+
+def have_gas_giant():
+    return got_gg
+
+
+def have_ruins():
+    return gotRuins
+
+
+def have_nest():
+    return got_nest
+
+
+
 # mods per environ uninhab hostile poor adequate good
 POP_SIZE_MOD_MAP = {
     "environment_bonus": [0, -4, -2, 0, 3],
@@ -850,7 +879,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     pilot_val = pilot_rating = 0
     if species and species.canProduceShips:
         pilot_val = pilot_rating = rate_piloting_tag(species.tags)
-        if pilot_val > cur_best_pilot_rating:
+        if pilot_val > get_best_pilot_rating():
             pilot_val *= 2
         if pilot_val > 2:
             retval += discount_multiplier * 5 * pilot_val
@@ -980,7 +1009,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if "PHOTOTROPHIC" in tag_list:
             star_pop_mod = PHOTO_MAP.get(system.starType, 0)
             detail.append("PHOTOTROPHIC popMod %.1f" % star_pop_mod)
-        elif pilot_rating >= cur_best_pilot_rating:
+        elif pilot_rating >= get_best_pilot_rating():
             if system.starType == fo.starType.red and tech_is_complete("LRN_STELLAR_TOMOGRAPHY"):
                 star_bonus += 40 * discount_multiplier # can be used for artif'l black hole and solar hull
                 detail.append("Red Star for Art Black Hole for solar hull %.1f" % (40 * discount_multiplier))
@@ -1347,7 +1376,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
                               AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * empire_status['researchers'] *
                               discount_multiplier)
-                if got_computronium:
+                if have_computronium():
                     comp_bonus *= backup_factor
                 research_bonus += comp_bonus
                 detail.append("COMPUTRONIUM_SPECIAL")

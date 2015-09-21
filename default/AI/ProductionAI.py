@@ -363,9 +363,9 @@ def generateProductionOrders():
 #TODO: add totalPP checks below, so don't overload queue
 
     best_pilot_locs = sorted([(rating, pid) for pid, rating in ColonisationAI.pilot_ratings.items()
-                              if rating == ColonisationAI.cur_best_pilot_rating], reverse = True)
+                              if rating == ColonisationAI.get_best_pilot_rating()], reverse=True)
     best_pilot_facilities = ColonisationAI.facilities_by_species_grade.get(
-        "WEAPONS_%.1f"%ColonisationAI.cur_best_pilot_rating, {})
+        "WEAPONS_%.1f"%ColonisationAI.get_best_pilot_rating(), {})
 
     print "best_pilot_facilities: \n %s" % best_pilot_facilities
 
@@ -460,7 +460,7 @@ def generateProductionOrders():
 
     top_pilot_systems={}
     for pid, rating in ColonisationAI.pilot_ratings.items() :
-        if (rating <= ColonisationAI.curMidPilotRating) and (rating < ColonisationAI.GREAT_PILOT_RATING):
+        if (rating <= ColonisationAI.get_medium_pilot_rating()) and (rating < ColonisationAI.GREAT_PILOT_RATING):
             continue
         top_pilot_systems.setdefault( universe.getPlanet(pid).systemID, [] ).append( (pid, rating) )
         if (pid in queuedShipyardLocs ) or not bldType.canBeProduced(empire.empireID, pid) :
@@ -476,15 +476,15 @@ def generateProductionOrders():
     red_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in popCtrs
                           if colonySystems.get(pid, -1) in AIstate.empireStars.get(fo.starType.red, [])],
                          reverse = True)
-    red_pilots = [pid for rating, pid in red_popctrs if rating == ColonisationAI.cur_best_pilot_rating]
+    red_pilots = [pid for rating, pid in red_popctrs if rating == ColonisationAI.get_best_pilot_rating()]
     blue_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in popCtrs
                            if colonySystems.get(pid, -1) in AIstate.empireStars.get(fo.starType.blue, [])],
                           reverse = True)
-    blue_pilots = [pid for rating, pid in blue_popctrs if rating == ColonisationAI.cur_best_pilot_rating]
+    blue_pilots = [pid for rating, pid in blue_popctrs if rating == ColonisationAI.get_best_pilot_rating()]
     bh_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in popCtrs
                          if colonySystems.get(pid, -1) in AIstate.empireStars.get(fo.starType.blackHole, [])],
                         reverse = True)
-    bh_pilots = [pid for rating, pid in bh_popctrs if rating == ColonisationAI.cur_best_pilot_rating]
+    bh_pilots = [pid for rating, pid in bh_popctrs if rating == ColonisationAI.get_best_pilot_rating()]
     enrgyShipyardLocs={}
     for bldName in [ "BLD_SHIPYARD_ENRG_COMP"  ]:
         if empire.buildingTypeAvailable(bldName):
@@ -1371,14 +1371,14 @@ def generateProductionOrders():
             perTurnCost = (float(bestDesign.productionCost(empire.empireID, loc)) / bestDesign.productionTime(empire.empireID, loc))
             if thisPriority == EnumsAI.AIPriorityType.PRIORITY_PRODUCTION_MILITARY:
                 thisRating = ColonisationAI.pilot_ratings.get(loc, 0)
-                ratingRatio = float(thisRating) / ColonisationAI.cur_best_pilot_rating
+                ratingRatio = float(thisRating) / ColonisationAI.get_best_pilot_rating()
                 pname = ""
                 if ratingRatio < 0.1:
                     locPlanet = universe.getPlanet(loc)
                     if locPlanet:
                         pname = locPlanet.name
                         thisRating = ColonisationAI.rate_planetary_piloting(loc)
-                        ratingRatio = float(thisRating) / ColonisationAI.cur_best_pilot_rating
+                        ratingRatio = float(thisRating) / ColonisationAI.get_best_pilot_rating()
                         qualifier = ["", "suboptimal"][ratingRatio < 1.0]
                         print "Building mil ship at loc %d (%s) with %s pilot Rating: %.1f; ratio to empire best is %.1f"%(loc, pname, qualifier, thisRating, ratingRatio)
                 while totalPP > 40*perTurnCost:
