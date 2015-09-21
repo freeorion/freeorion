@@ -672,6 +672,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
     GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal,   &ProductionWnd::QueueItemMoved, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal, &ProductionWnd::DeleteQueueItem, this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,      &ProductionWnd::QueueItemClickedSlot, this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,    &ProductionWnd::QueueItemDoubleClickedSlot, this);
 
@@ -762,8 +763,8 @@ void ProductionWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_t
 void ProductionWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_build_designator_wnd->ShowShipDesignInEncyclopedia(design_id); }
 
-void ProductionWnd::CenterOnBuild(int queue_idx)
-{ m_build_designator_wnd->CenterOnBuild(queue_idx); }
+void ProductionWnd::CenterOnBuild(int queue_idx, bool open)
+{ m_build_designator_wnd->CenterOnBuild(queue_idx, open); }
 
 void ProductionWnd::SelectPlanet(int planet_id)
 { m_build_designator_wnd->SelectPlanet(planet_id); }
@@ -949,7 +950,7 @@ void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt&
 
 void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
-        DeleteQueueItem(it);
+        m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it), true);
     }
 }
 

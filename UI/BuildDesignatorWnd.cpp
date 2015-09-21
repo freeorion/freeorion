@@ -962,7 +962,7 @@ void BuildDesignatorWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
+void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     SetBuild(queue_idx);
 
     const ObjectMap& objects = GetUniverse().Objects();
@@ -982,6 +982,10 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx) {
             int system_id = build_location->SystemID();
             MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
             map->CenterOnObject(system_id);
+            if (open) {
+                SelectSystem(system_id);
+                SelectPlanet(location_id);
+            }
         }
     }
 }

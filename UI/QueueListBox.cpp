@@ -167,10 +167,6 @@ void QueueListBox::Clear() {
 }
 
 void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
-    // Create popup menu with a Delete Item command to provide same functionality as
-    // DoubleClick since under laggy conditions it DoubleClick can have trouble
-    // being interpreted correctly (can instead be treated as simply two unrelated left clicks)
-
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
     menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
@@ -192,7 +188,7 @@ void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
             break;
         }
         case 3: { // delete item
-            DoubleClickedSignal(it);
+            QueueItemDeletedSignal(it);
             break;
         }
 

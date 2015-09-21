@@ -32,6 +32,7 @@ public:
     virtual void    Render();
 
     boost::signals2::signal<void (GG::ListBox::Row*, std::size_t)>  QueueItemMovedSignal;
+    boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
 
 private:
     void    ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
