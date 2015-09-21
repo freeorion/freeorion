@@ -668,8 +668,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 
     SetChildClippingMode(ClipToClient);
 
-    GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal,     static_cast<void (ProductionWnd::*)(BuildType, const std::string&, int, int)>(&ProductionWnd::AddBuildToQueueSlot), this);
-    GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal,      static_cast<void (ProductionWnd::*)(BuildType, int, int, int)>(&ProductionWnd::AddBuildToQueueSlot), this);
+    GG::Connect(m_build_designator_wnd->AddBuildToQueueSignal,          &ProductionWnd::AddBuildToQueueSlot, this);
     GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
     GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal,   &ProductionWnd::QueueItemMoved, this);
@@ -885,7 +884,7 @@ void ProductionWnd::UpdateInfoPanel() {
     }
 }
 
-void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location) {
+void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& item, int number, int location, int pos) {
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -894,25 +893,10 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string&
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-        new ProductionQueueOrder(client_empire_id, build_type, name, number, location)));
+        new ProductionQueueOrder(client_empire_id, item, number, location, pos)));
 
     empire->UpdateProductionQueue();
-    m_build_designator_wnd->CenterOnBuild(m_queue_wnd->GetQueueListBox()->NumRows() - 1);
-}
-
-void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location) {
-    if (!m_order_issuing_enabled)
-        return;
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    Empire* empire = GetEmpire(client_empire_id);
-    if (!empire)
-        return;
-
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-        new ProductionQueueOrder(client_empire_id, build_type, design_id, number, location)));
-
-    empire->UpdateProductionQueue();
-    m_build_designator_wnd->CenterOnBuild(m_queue_wnd->GetQueueListBox()->NumRows() - 1);
+    m_build_designator_wnd->CenterOnBuild(pos >= 0 ? pos : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
 }
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {

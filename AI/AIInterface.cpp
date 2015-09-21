@@ -740,7 +740,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ProductionQueueOrder(empire_id, BT_BUILDING, item_name, 1, location_id)));
+            new ProductionQueueOrder(empire_id, ProductionQueue::ProductionItem(BT_BUILDING, item_name), 1, location_id)));
 
         return 1;
     }
@@ -755,7 +755,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ProductionQueueOrder(empire_id, BT_SHIP, design_id, 1, location_id)));
+            new ProductionQueueOrder(empire_id, ProductionQueue::ProductionItem(BT_SHIP, design_id), 1, location_id)));
 
         return 1;
     }

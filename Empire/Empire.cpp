@@ -1677,6 +1677,17 @@ bool Empire::EnqueuableItem(BuildType build_type, const std::string& name, int l
     return building_type->EnqueueLocation(m_id, location);
 }
 
+bool Empire::EnqueuableItem(const ProductionQueue::ProductionItem& item, int location) const {
+    if (item.build_type == BT_BUILDING)
+        return EnqueuableItem(item.build_type, item.name, location);
+    // ships don't have a distinction between enqueuable and producible
+    else if (item.build_type == BT_SHIP)
+        return ProducibleItem(item.build_type, item.design_id, location);
+    else
+        throw std::invalid_argument("Empire::ProducibleItem was passed a ProductionItem with an invalid BuildType");
+    return false;
+}
+
 int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
     if (turn == INVALID_GAME_TURN)
         return m_sitrep_entries.size();

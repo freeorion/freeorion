@@ -133,9 +133,7 @@ template <class Archive>
 void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
-        & BOOST_SERIALIZATION_NVP(m_build_type)
-        & BOOST_SERIALIZATION_NVP(m_item_name)
-        & BOOST_SERIALIZATION_NVP(m_design_id)
+        & BOOST_SERIALIZATION_NVP(m_item)
         & BOOST_SERIALIZATION_NVP(m_number)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_index)
