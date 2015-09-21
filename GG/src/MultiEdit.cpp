@@ -230,13 +230,8 @@ void MultiEdit::Render()
             !(m_style & MULTI_READ_ONLY))
         {
             X caret_x = CharXOffset(m_cursor_begin.first, m_cursor_begin.second) + initial_text_x_pos;
-            glDisable(GL_TEXTURE_2D);
             glColor(text_color_to_use);
-            glBegin(GL_LINES);
-            glVertex(caret_x, row_y_pos);
-            glVertex(caret_x, row_y_pos + GetFont()->Lineskip());
-            glEnd();
-            glEnable(GL_TEXTURE_2D);
+            Line(caret_x, row_y_pos, caret_x, row_y_pos + GetFont()->Lineskip());
         }
     }
 
