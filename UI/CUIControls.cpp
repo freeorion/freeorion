@@ -1660,17 +1660,34 @@ void MultiTurnProgressBar::Render() {
     }
     // draw segment separators
     if (segmented) {
-        glColor(GG::DarkColor(m_bar_color));
-        glDisable(GL_TEXTURE_2D);
-        glBegin(GL_LINES);
+        GG::GL2DVertexBuffer verts;
+        GG::GLRGBAColorBuffer colours;
+        verts.reserve(2*m_total_turns);
+        colours.reserve(2*m_total_turns);
+
+        GG::Clr current_colour = GG::DarkColor(m_bar_color);
+
         for (int n = 1; n < m_total_turns; ++n) {
             GG::X separator_x = ul.x + Width() * n / m_total_turns;
             if (separator_x > ul.x + completed_bar_width)
-                glColor(GG::LightColor(m_background));            
-            glVertex(separator_x, ul.y);
-            glVertex(separator_x, lr.y);
+                current_colour = GG::LightColor(m_background);
+            verts.store(separator_x, ul.y);
+            verts.store(separator_x, lr.y);
+            colours.store(current_colour);
+            colours.store(current_colour);
         }
-        glEnd();
+
+        verts.activate();
+        colours.activate();
+
+        glDisable(GL_TEXTURE_2D);
+        glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        glDrawArrays(GL_LINES, 0, verts.size());
+
+        glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
 }
@@ -1702,7 +1719,7 @@ void FPSIndicator::UpdateEnabled()
 //////////////////////////////////////////////////
 /** creates a MultiTextureStaticGraphic from multiple pre-existing Textures which are rendered back-to-front in the
   * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
-  * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
+  * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without
   * associated styles use the style GRAPHIC_NONE. */
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<boost::shared_ptr<GG::Texture> >& textures,
                                                      const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
