@@ -944,7 +944,10 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
 
 void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
-        m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it));
+        if (modkeys & GG::MOD_KEY_CTRL)
+            DeleteQueueItem(it);
+        else
+            m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_wnd->GetQueueListBox()->begin(), it));
     }
 }
 
