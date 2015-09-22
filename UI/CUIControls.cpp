@@ -339,30 +339,43 @@ void CUIStateButton::Render() {
                 bn_ul += GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
                 bn_lr -= GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
                 const int OFFSET = Value(bn_lr.y - bn_ul.y) / 2;
+
+                GG::GL2DVertexBuffer verts;
+                verts.reserve(16);
+
+                verts.store(bn_lr.x, bn_ul.y);
+                verts.store(bn_ul.x + OFFSET, bn_ul.y);
+                verts.store(bn_ul.x, bn_ul.y + OFFSET);
+                verts.store(bn_ul.x, bn_lr.y);
+                verts.store(bn_ul.x, bn_lr.y);
+                verts.store(bn_lr.x - OFFSET, bn_lr.y);
+                verts.store(bn_lr.x, bn_lr.y - OFFSET);
+
+                verts.store(bn_lr.x, bn_ul.y);
+                verts.store(bn_ul.x + OFFSET, bn_ul.y);
+                verts.store(bn_ul.x, bn_ul.y + OFFSET);
+                verts.store(bn_ul.x, bn_lr.y);
+                verts.store(bn_ul.x, bn_lr.y);
+                verts.store(bn_lr.x - OFFSET, bn_lr.y);
+                verts.store(bn_lr.x, bn_lr.y - OFFSET);
+                verts.store(bn_lr.x, bn_ul.y);
+                verts.store(bn_lr.x, bn_ul.y);
+
+                verts.activate();
+
                 glDisable(GL_TEXTURE_2D);
+                glPushAttrib(GL_ALL_ATTRIB_BITS);
+                glEnableClientState(GL_VERTEX_ARRAY);
+
                 glColor(inside_color);
-                glBegin(GL_QUADS);
-                glVertex(bn_lr.x, bn_ul.y);
-                glVertex(bn_ul.x + OFFSET, bn_ul.y);
-                glVertex(bn_ul.x, bn_ul.y + OFFSET);
-                glVertex(bn_ul.x, bn_lr.y);
-                glVertex(bn_ul.x, bn_lr.y);
-                glVertex(bn_lr.x - OFFSET, bn_lr.y);
-                glVertex(bn_lr.x, bn_lr.y - OFFSET);
-                glVertex(bn_lr.x, bn_ul.y);
-                glEnd();
+                glDrawArrays(GL_QUADS, 0, 8);
+
                 glColor(outside_color);
-                glBegin(GL_LINE_STRIP);
-                glVertex(bn_lr.x, bn_ul.y);
-                glVertex(bn_ul.x + OFFSET, bn_ul.y);
-                glVertex(bn_ul.x, bn_ul.y + OFFSET);
-                glVertex(bn_ul.x, bn_lr.y);
-                glVertex(bn_ul.x, bn_lr.y);
-                glVertex(bn_lr.x - OFFSET, bn_lr.y);
-                glVertex(bn_lr.x, bn_lr.y - OFFSET);
-                glVertex(bn_lr.x, bn_ul.y);
-                glEnd();
+                glDrawArrays(GL_LINE_STRIP, 8, 8);
+
+                glPopClientAttrib();
                 glEnable(GL_TEXTURE_2D);
+
             } else {
                 GG::Clr inside_color = border_color_to_use;
                 AdjustBrightness(inside_color, -75);
@@ -378,6 +391,7 @@ void CUIStateButton::Render() {
                 glScaled(-1.0, 1.0, 1.0);
                 glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
             }
+
         } else if (static_cast<int>(Style()) == GG::SBSTYLE_3D_RADIO) {
             const int MARGIN = 2;
             FlatCircle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
@@ -391,6 +405,7 @@ void CUIStateButton::Render() {
                 FlatCircle(GG::Pt(bn_ul.x + MARGIN + 1, bn_ul.y + MARGIN + 1),
                            GG::Pt(bn_lr.x - MARGIN - 1, bn_lr.y - MARGIN - 1), 
                            inside_color, outside_color, 1);
+
             } else {
                 GG::Clr inside_color = border_color_to_use;
                 AdjustBrightness(inside_color, -75);
