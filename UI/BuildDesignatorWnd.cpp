@@ -862,7 +862,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
                                                                const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     //std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
-    AddBuildItemToQueue(it, false);
+    AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL);
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
