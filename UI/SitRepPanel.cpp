@@ -565,7 +565,7 @@ void SitRepPanel::FilterClicked() {
     Update();
 }
 
-void SitRepPanel::DismissSitRep(GG::ListBox::iterator it) {
+void SitRepPanel::DismissSitRep(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
     SitRepRow* sitrep_row = dynamic_cast<SitRepRow*>(*it);
     if (!sitrep_row) {
         return;
@@ -578,7 +578,7 @@ void SitRepPanel::DismissSitRep(GG::ListBox::iterator it) {
     Update();
 }
 
-void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt) {
+void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& mod) {
 
     GG::MenuItem menu_contents;
     std::string sitrep_text;

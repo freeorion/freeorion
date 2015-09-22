@@ -35,7 +35,7 @@ public:
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
 
 private:
-    void    ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     void    EnsurePromptHiddenSlot(iterator it);
     void    ShowPromptSlot();

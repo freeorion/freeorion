@@ -64,7 +64,7 @@ namespace {
         }
         void operator()(ListBox::const_iterator it)
         { std::cerr << "GG SIGNAL : " << m_name << "(row=" << RowIndex(it) << ")" << std::endl; }
-        void operator()(ListBox::const_iterator it, const Pt& pt)
+        void operator()(ListBox::const_iterator it, const Pt& pt, const Flags<ModKey>& mod_keys)
         {
             std::cerr << "GG SIGNAL : " << m_name
                         << "(row=" << RowIndex(it) << " pt=" << pt << ")" << std::endl;
@@ -1398,7 +1398,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
                 else
                     ClickAtRow(sel_row, mod_keys);
                 m_lclick_row = sel_row;
-                LeftClickedSignal(sel_row, pt);
+                LeftClickedSignal(sel_row, pt, mod_keys);
             }
         }
         break;
@@ -1407,7 +1407,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::LDoubleClick: {
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_lclick_row && InClient(pt)) {
-            DoubleClickedSignal(row);
+            DoubleClickedSignal(row, pt, mod_keys);
             m_old_sel_row = m_rows.end();
         } else {
             LClick(pt, mod_keys);
@@ -1428,7 +1428,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_old_rdown_row && InClient(pt)) {
             m_rclick_row = row;
-            RightClickedSignal(row, pt);
+            RightClickedSignal(row, pt, mod_keys);
         }
         m_old_rdown_row = m_rows.end();
         break;

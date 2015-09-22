@@ -2243,7 +2243,7 @@ private:
     void            UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj);
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            ShipBrowsed(GG::ListBox::iterator it);
-    void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int             ShipInRow(GG::ListBox::iterator it) const;
 
     int                         m_fleet_id;
@@ -2427,7 +2427,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
 void FleetDetailPanel::ShipBrowsed(GG::ListBox::iterator it)
 {}
 
-void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // get ship that was clicked, aborting if problems arise doing so
     ShipRow* ship_row = dynamic_cast<ShipRow*>(*it);
     if (!ship_row)
@@ -3092,7 +3092,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     SelectedFleetsChangedSignal();
 }
 
-void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     TemporaryPtr<Fleet> fleet = GetFleet(FleetInRow(it));
@@ -3400,10 +3400,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     }
 }
 
-void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt)
+void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 { ClickedSignal(this); }
 
-void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it)
+void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 { ClickedSignal(this); }
 
 int FleetWnd::FleetInRow(GG::ListBox::iterator it) const {

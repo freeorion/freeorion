@@ -595,13 +595,13 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedPlayersChangedSignal();
 }
 
-void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it) {
+void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int player_id = PlayerInRow(it);
     if (player_id != Networking::INVALID_PLAYER_ID)
         PlayerDoubleClickedSignal(player_id);
 }
 
-void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // check that a valid player was clicked and that it wasn't this client's own player
     int clicked_player_id = PlayerInRow(it);
     if (clicked_player_id == Networking::INVALID_PLAYER_ID)

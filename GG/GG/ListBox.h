@@ -212,15 +212,15 @@ public:
 
     /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */
-    typedef boost::signals2::signal<void ()>                    ClearedSignalType;
+    typedef boost::signals2::signal<void ()>                                                ClearedSignalType;
     /** emitted when one or more rows are selected or deselected */
-    typedef boost::signals2::signal<void (const SelectionSet&)> SelChangedSignalType;
+    typedef boost::signals2::signal<void (const SelectionSet&)>                             SelChangedSignalType;
     /** the signature of row-change-notification signals */
-    typedef boost::signals2::signal<void (iterator)>            RowSignalType;
+    typedef boost::signals2::signal<void (iterator)>                                        RowSignalType;
     /** the signature of const row-change-notification signals */
-    typedef boost::signals2::signal<void (const_iterator)>      ConstRowSignalType;
+    typedef boost::signals2::signal<void (const_iterator)>                                  ConstRowSignalType;
     /** the signature of row-click-notification signals */
-    typedef boost::signals2::signal<void (iterator, const Pt&)> RowClickSignalType;
+    typedef boost::signals2::signal<void(iterator, const Pt&,const GG::Flags<GG::ModKey>&)> RowClickSignalType;
 
     typedef RowSignalType      BeforeInsertSignalType;   ///< emitted before a row is inserted into the list box
     typedef RowSignalType      AfterInsertSignalType;    ///< emitted after a row is inserted into the list box
@@ -228,7 +228,7 @@ public:
     typedef ConstRowSignalType DropAcceptableSignalType; ///< emitted when a row may be inserted into the list box via drag-and-drop
     typedef RowClickSignalType LeftClickedSignalType;    ///< emitted when a row in the listbox is left-clicked; provides the row left-clicked and the clicked point
     typedef RowClickSignalType RightClickedSignalType;   ///< emitted when a row in the listbox is right-clicked; provides the row right-clicked and the clicked point
-    typedef RowSignalType      DoubleClickedSignalType;  ///< emitted when a row in the listbox is left-double-clicked
+    typedef RowClickSignalType DoubleClickedSignalType;  ///< emitted when a row in the listbox is left-double-clicked
     typedef RowSignalType      BeforeEraseSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
     typedef RowSignalType      AfterEraseSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
     typedef RowSignalType      BrowsedSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row

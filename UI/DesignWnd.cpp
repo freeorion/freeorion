@@ -1285,9 +1285,9 @@ public:
     };
 
 private:
-    void    BaseDoubleClicked(GG::ListBox::iterator it);
-    void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     GG::Pt  ListRowSize();
     void    InitRowSizes();
@@ -1736,7 +1736,7 @@ void BasesListBox::PopulateWithMonsters() {
     }
 }
 
-void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
 
     CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
@@ -1767,7 +1767,7 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     }
 }
 
-void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
 
     if (CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it)) {
@@ -1876,7 +1876,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) 
     }
 }
 
-void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it) {
+void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
 
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
