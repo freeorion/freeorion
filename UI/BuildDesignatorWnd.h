@@ -34,7 +34,8 @@ public:
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window
-      * If \a open is true, the location is set as the selected planet. */
+      * If \a open is true, the sidepanel for that planet is opened and 
+      * it is set as the selected location (so items queued will be built there). */
     void            CenterOnBuild(int queue_idx, bool open = false);
 
     /** Programatically sets this Wnd's selected system.
