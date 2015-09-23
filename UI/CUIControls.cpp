@@ -1653,7 +1653,7 @@ void MultiTurnProgressBar::Render() {
         colours.activate();
 
         glDisable(GL_TEXTURE_2D);
-        glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 

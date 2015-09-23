@@ -326,7 +326,7 @@ public:
         glLineWidth(2.0);
 
         glDisable(GL_TEXTURE_2D);
-        glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         verts.activate();
         glDrawArrays(GL_LINES, 0, verts.size());

@@ -124,7 +124,7 @@ void MultiMeterStatusBar::Render() {
 
     glColor(HALF_GREY);
     glDisable(GL_TEXTURE_2D);
-    glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glDrawArrays(GL_LINES, 0, bar_verts.size());
     glPopClientAttrib();

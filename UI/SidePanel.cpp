@@ -1993,7 +1993,7 @@ void SidePanel::PlanetPanel::Render() {
     verts.activate();
 
     glDisable(GL_TEXTURE_2D);
-    glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
 
     // standard WndColor background for whole panel

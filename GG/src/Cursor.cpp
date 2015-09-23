@@ -67,7 +67,7 @@ void TextureCursor::Render(const Pt& pt)
             Value(ul.x), Value(lr.y),
             Value(lr.x), Value(lr.y)
         };
-        glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(2, GL_INT, 0, verts);
         glDisable(GL_TEXTURE_2D);
