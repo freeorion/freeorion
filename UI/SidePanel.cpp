@@ -1965,74 +1965,59 @@ void SidePanel::PlanetPanel::Render() {
     GG::Clr border_colour = (m_selected ? m_empire_colour : ClientUI::WndOuterBorderColor());
 
 
-    const int OFFSET = 15;          // size of corners cut off sticky-out bit of background around planet render
+    static const int OFFSET = 15;   // size of corners cut off sticky-out bit of background around planet render
+
+    GG::GL2DVertexBuffer verts;
+    verts.reserve(12);
+
+    // title box background
+    verts.store(name_lr.x,              name_ul.y);
+    verts.store(name_ul.x,              name_ul.y);
+    verts.store(name_ul.x,              name_lr.y);
+    verts.store(name_lr.x,              name_lr.y);
+
+    // main border / background
+    verts.store(lr.x,                   ul.y);                      // top right corner
+    if (show_planet_box) {
+        verts.store(ul.x + OFFSET,      ul.y);                      // top left, offset right to cut off corner
+        verts.store(ul.x,               ul.y + OFFSET);             // top left, offset down to cut off corner
+        verts.store(ul.x,               planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
+        verts.store(ul.x + OFFSET,      planet_box_lr.y);           // bottom left, offset right to cut off corner
+        verts.store(planet_box_lr.x,    planet_box_lr.y);           // inner corner between planet box and rest of panel
+    } else {
+        verts.store(planet_box_lr.x,    ul.y);                      // top left of main panel, excluding planet box
+    }
+    verts.store(planet_box_lr.x,        lr.y);                      // bottom left of main panel
+    verts.store(lr.x,                   lr.y);                      // bottom right
+
+    verts.activate();
+
     glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
     // standard WndColor background for whole panel
     glColor(background_colour);
-    glBegin(GL_TRIANGLE_FAN);
-        glVertex(lr.x,                  ul.y);                  // top right corner
-        if (show_planet_box) {
-            glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
-            glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
-            glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
-            glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
-            glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
-        } else {
-            glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
-        }
-        glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
-        glVertex(lr.x,              lr.y);                      // bottom right
-    glEnd();
+    glDrawArrays(GL_TRIANGLE_FAN, 4, verts.size() - 4);
 
     // title background box
     glColor(title_background_colour);
-    glBegin(GL_QUAD_STRIP);
-        glVertex(name_lr.x,             name_ul.y);
-        glVertex(name_ul.x,             name_ul.y);
-        glVertex(name_lr.x,             name_lr.y);
-        glVertex(name_ul.x,             name_lr.y);
-    glEnd();
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 
     // border
     glColor(border_colour);
-    glLineWidth(1.5);
-    glBegin(GL_LINE_LOOP);
-        glVertex(lr.x,                  ul.y);                  // top right corner
-        if (show_planet_box) {
-            glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
-            glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
-            glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
-            glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
-            glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
-        } else {
-            glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
-        }
-        glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
-        glVertex(lr.x,              lr.y);                      // bottom right
-    glEnd();
-    glLineWidth(1.0);
+    glLineWidth(1.5f);
+    glDrawArrays(GL_LINE_LOOP, 4, verts.size() - 4);
+    glLineWidth(1.0f);
 
     // disable greyover
-    const GG::Clr HALF_GREY(128, 128, 128, 128);
+    static const GG::Clr HALF_GREY(128, 128, 128, 128);
     if (Disabled()) {
         glColor(HALF_GREY);
-        glBegin(GL_TRIANGLE_FAN);
-            glVertex(lr.x,                  ul.y);                  // top right corner
-            if (show_planet_box) {
-                glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
-                glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
-                glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
-                glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
-                glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
-            } else {
-                glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
-            }
-            glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
-            glVertex(lr.x,              lr.y);                      // bottom right
-        glEnd();
+        glDrawArrays(GL_TRIANGLE_FAN, 4, verts.size() - 4);
     }
 
+    glPopClientAttrib();
     glEnable(GL_TEXTURE_2D);
 }
 
