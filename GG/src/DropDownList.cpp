@@ -55,7 +55,7 @@ public:
 private:
     void LBSelChangedSlot(const ListBox::SelectionSet& rows);
 
-    void LBLeftClickSlot(ListBox::iterator it, const Pt&);
+    void LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     ListBox*    m_lb_wnd;
     const Wnd*  m_relative_to_wnd;
@@ -131,7 +131,7 @@ void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
     m_done = true;
 }
 
-void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const Pt&)
+void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     Hide();
     m_done = true;

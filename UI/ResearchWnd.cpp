@@ -400,7 +400,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
         empire->UpdateResearchQueue();
 }
 
-void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt) {
+void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_lb->DisplayingValidQueueItems()) {
         QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
         if (!queue_row)
@@ -409,7 +409,7 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
     }
 }
 
-void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it) {
+void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_lb->DisplayingValidQueueItems()) {
         DeleteQueueItem(it);
     }

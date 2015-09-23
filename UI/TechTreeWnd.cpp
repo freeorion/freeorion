@@ -1346,9 +1346,9 @@ private:
     };
 
     void    Populate();
-    void    TechDoubleClicked(GG::ListBox::iterator it);
-    void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     std::set<std::string>                   m_categories_shown;
     std::set<TechStatus>                    m_tech_statuses_shown;
@@ -1574,13 +1574,13 @@ void TechTreeWnd::TechListBox::HideStatus(TechStatus status) {
     }
 }
 
-void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void TechTreeWnd::TechListBox::TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
     if (TechRow* tech_row = dynamic_cast<TechRow*>(*it))
         TechLeftClickedSignal(tech_row->GetTech(), GG::Flags<GG::ModKey>());
 }
 
-void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if ((*it)->Disabled())
         return;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
@@ -1608,7 +1608,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: {
-            TechDoubleClicked(it);
+            TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>());
             break;
         }
         default:
@@ -1617,7 +1617,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     }
 }
 
-void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it) {
+void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // determine type of row that was clicked, and emit appropriate signal
     TechRow* tech_row = dynamic_cast<TechRow*>(*it);
     if (tech_row)

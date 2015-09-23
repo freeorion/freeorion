@@ -2311,7 +2311,7 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
     SelectedObjectsChangedSignal();
 }
 
-void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it) {
+void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int object_id = ObjectInRow(it);
     if (object_id != INVALID_OBJECT_ID)
         ObjectDoubleClickedSignal(object_id);
@@ -2346,7 +2346,7 @@ void ObjectListWnd::SetSelectedObjects(std::set<int> sel_ids) {
     }
 }
 
-void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     int object_id = ObjectInRow(it);
     if (object_id == INVALID_OBJECT_ID)
         return;

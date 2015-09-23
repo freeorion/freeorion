@@ -458,7 +458,7 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
         m_ok_button->SetText(m_open_str);
 }
 
-void FileDlg::FileDoubleClicked(DropDownList::iterator it)
+void FileDlg::FileDoubleClicked(DropDownList::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     m_files_list->DeselectAll();
     m_files_list->SelectRow(it);

@@ -166,7 +166,7 @@ void QueueListBox::Clear() {
     DragDropLeave();
 }
 
-void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
     menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));

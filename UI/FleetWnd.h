@@ -153,9 +153,9 @@ private:
     void            RemoveFleet(int fleet_id);  ///< removes fleet row and updates internal bookkeeping
 
     void            FleetSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    void            FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    void            FleetDoubleClicked(GG::ListBox::iterator it);
+    void            FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void            FleetDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     int             FleetInRow(GG::ListBox::iterator it) const;
     std::string     TitleText() const;

@@ -440,13 +440,13 @@ private:
     void    AddBuildItemToQueue(GG::ListBox::iterator it, bool top);
 
     /** respond to the user single-clicking a producible item in the build selector */
-    void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    BuildItemLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     /** respond to the user double-clicking a producible item in the build selector */
-    void    BuildItemDoubleClicked(GG::ListBox::iterator it);
+    void    BuildItemDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     /** respond to the user right-clicking a producible item in the build selector */
-    void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    BuildItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     std::map<BuildType, CUIButton*>         m_build_type_buttons;
     std::vector<CUIButton*>                 m_availability_buttons;
@@ -820,7 +820,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked(GG::ListBox::iterator it,
-                                                             const GG::Pt& pt)
+                                                             const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     ProductionItemRow* item_row = dynamic_cast<ProductionItemRow*>(*it);
     if (!item_row)
@@ -858,13 +858,15 @@ void BuildDesignatorWnd::BuildSelector::AddBuildItemToQueue(GG::ListBox::iterato
     RequestBuildItemSignal(item, 1, top ? 0 : -1);
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it) {
+void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it,
+                                                               const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+{
     //std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
-    AddBuildItemToQueue(it, false);
+    AddBuildItemToQueue(it, modkeys & GG::MOD_KEY_CTRL);
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::iterator it,
-                                                              const GG::Pt& pt)
+                                                              const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 {
     if ((*it)->Disabled())
         return;
