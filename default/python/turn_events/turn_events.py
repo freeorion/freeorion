@@ -3,6 +3,7 @@ from random import random, uniform, choice
 from math import sin, cos, pi, hypot
 
 import freeorion as fo
+from universe_tables import MONSTER_FREQUENCY
 
 
 def execute_turn_events():
@@ -33,7 +34,7 @@ def execute_turn_events():
 
     # creating monsters
     gsd = fo.get_galaxy_setup_data()
-    monster_freq = fo.monster_frequency(gsd.monsterFrequency)
+    monster_freq = MONSTER_FREQUENCY[gsd.monsterFrequency]
     # monster freq ranges from 30 (= one monster per 30 systems) to 3 (= one monster per 3 systems)
     # (example: low monsters and 150 Systems results in 150 / 30 * 0.001 = 0.005)
     if monster_freq > 0 and random() < len(systems) / monster_freq * 0.001:

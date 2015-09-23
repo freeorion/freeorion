@@ -1,5 +1,6 @@
 import freeorion as fo
 
+
 #################################
 # Galaxy Generation Data Tables #
 #################################
@@ -96,8 +97,9 @@ GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST = {
     fo.galaxyShape.spiral4:    (   0,    0,     0,      0,     0,    0,         0,         0),
     fo.galaxyShape.cluster:    (   0,    0,     0,      0,     0,    0,         0,         0),
     fo.galaxyShape.elliptical: (   0,    0,     0,      0,     0,    0,         0,         0),
-    fo.galaxyShape.irregular1: (   0,    0,     0,      0,     0,    0,         0,         0),
-    fo.galaxyShape.irregular2: (   0,    0,     0,      0,     0,    0,         0,         0),
+    fo.galaxyShape.disc:       (   0,    0,     0,      0,     0,    0,         0,         0),
+    fo.galaxyShape.box:        (   0,    0,     0,      0,     0,    0,         0,         0),
+    fo.galaxyShape.irregular:  (   0,    0,     0,      0,     0,    0,         0,         0),
     fo.galaxyShape.ring:       (   0,    0,     0,      0,     0,    0,         0,         0),
 }
 
