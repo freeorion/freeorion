@@ -190,7 +190,7 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
     BufferStoreAngledCornerRectangleVertices(vert_buf, ul + thick_pt, lr - thick_pt, angle_offset,
                                              upper_left_angled, lower_right_angled, draw_bottom);
 
-    //glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
 

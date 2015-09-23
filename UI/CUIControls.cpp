@@ -363,7 +363,7 @@ void CUIStateButton::Render() {
                 verts.activate();
 
                 glDisable(GL_TEXTURE_2D);
-                glPushAttrib(GL_ALL_ATTRIB_BITS);
+                glPushClientAttrib(GL_ALL_ATTRIB_BITS);
                 glEnableClientState(GL_VERTEX_ARRAY);
 
                 glColor(inside_color);
