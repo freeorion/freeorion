@@ -49,7 +49,6 @@ namespace {
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
-    const double TAB_BRIGHTENING_SCALE_FACTOR = 1.25;
 }
 
 
@@ -166,9 +165,9 @@ void CUIButton::RenderRollover() {
         if (Disabled()) {
             background_clr = DisabledColor(background_clr);
             border_clr     = DisabledColor(border_clr);
-        }
-        else
+        } else {
             AdjustBrightness(border_clr, 100);
+        }
 
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
@@ -385,7 +384,7 @@ void CUIStateButton::Render() {
                 glScaled(-1.0, 1.0, 1.0);
                 glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
                 AngledCornerRectangle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
-                                      GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN), 
+                                      GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
                                       inside_color, outside_color, Value(bn_lr.y - bn_ul.y - 2 * MARGIN) / 2, 1);
                 glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
                 glScaled(-1.0, 1.0, 1.0);
@@ -471,17 +470,10 @@ void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_b
 
 
 ///////////////////////////////////////
-// class CUIScroll
-///////////////////////////////////////
-namespace {
-    const int CUISCROLL_ANGLE_OFFSET = 3;
-}
-
-///////////////////////////////////////
 // class CUIScroll::ScrollTab
 ///////////////////////////////////////
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color,
-                                GG::Clr border_color) : 
+                                GG::Clr border_color) :
     Button("", boost::shared_ptr<GG::Font>(), color),
     m_border_color(border_color),
     m_orientation(orientation),
@@ -502,59 +494,23 @@ void CUIScroll::ScrollTab::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     if (m_orientation == GG::VERTICAL) {
-        ul.x += 3;
-        lr.x -= 3;
+        ul.x += 1;
+        lr.x -= 2;
     } else {
-        ul.y += 3;
-        lr.y -= 3;
+        ul.y += 1;
+        lr.y -= 2;
     }
 
-    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
+    GG::Clr background_color = Disabled() ? DisabledColor(Color()) : Color();
+    GG::Clr border_color = Disabled() ? DisabledColor(m_border_color) : m_border_color;
     if (!Disabled() && m_mouse_here) {
-        AdjustBrightness(color_to_use, TAB_BRIGHTENING_SCALE_FACTOR);
-        AdjustBrightness(border_color_to_use, TAB_BRIGHTENING_SCALE_FACTOR);
+        AdjustBrightness(background_color, 100);
+        AdjustBrightness(border_color,     100);
     }
 
-    // basic shape, no border
-    AngledCornerRectangle(ul, lr, color_to_use, GG::CLR_ZERO, CUISCROLL_ANGLE_OFFSET, 0);
-    // upper left diagonal stripe
-    GG::Clr light_color = Color();
-    AdjustBrightness(light_color, 35);
-    if (!Disabled() && m_mouse_here)
-        AdjustBrightness(light_color, TAB_BRIGHTENING_SCALE_FACTOR);
-    glColor(light_color);
-    glDisable(GL_TEXTURE_2D);
-    glBegin(GL_POLYGON);
-    if (m_orientation == GG::VERTICAL) {
-        glVertex(lr.x, ul.y);
-        glVertex(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
-        glVertex(ul.x, ul.y + CUISCROLL_ANGLE_OFFSET);
-        glVertex(ul.x, ul.y + std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)));
-    } else {
-        glVertex(ul.x + std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)), ul.y);
-        glVertex(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
-        glVertex(ul.x, lr.y - CUISCROLL_ANGLE_OFFSET);
-        glVertex(ul.x, lr.y);
-    }
-    glEnd();
-    // lower right diagonal stripe
-    glBegin(GL_POLYGON);
-    if (m_orientation == GG::VERTICAL) {
-        glVertex(lr.x, lr.y - std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)));
-        glVertex(ul.x, lr.y);
-        glVertex(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
-        glVertex(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
-    } else {
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x - std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)), lr.y);
-        glVertex(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
-        glVertex(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
-    }
-    glEnd();
-    glEnable(GL_TEXTURE_2D);
-    // border
-    AngledCornerRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, CUISCROLL_ANGLE_OFFSET, 1);
+    const int CUISCROLL_ANGLE_OFFSET = 3;
+
+    AngledCornerRectangle(ul, lr, background_color, border_color, CUISCROLL_ANGLE_OFFSET, 1);
 }
 
 void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -822,6 +778,7 @@ void CUIMultiEdit::Render() {
     MultiEdit::Render();
     SetColor(color);
 }
+
 
 ///////////////////////////////////////
 // class CUILinkTextMultiEdit

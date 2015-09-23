@@ -185,7 +185,7 @@ void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG
     glDisable(GL_TEXTURE_2D);
 
     GG::GL2DVertexBuffer vert_buf;
-    vert_buf.reserve(200);  // todo: better estimate
+    vert_buf.reserve(14);
     GG::Pt thick_pt = GG::Pt(GG::X(thick), GG::Y(thick));
     BufferStoreAngledCornerRectangleVertices(vert_buf, ul + thick_pt, lr - thick_pt, angle_offset,
                                              upper_left_angled, lower_right_angled, draw_bottom);
@@ -219,8 +219,8 @@ void BufferStoreAngledCornerRectangleVertices(GG::GL2DVertexBuffer& buffer, cons
         buffer.store(Value(ul.x),                   Value(lr.y));
 
     if (lower_right_angled) {
-        buffer.store(Value(lr.x) - angle_offset,    Value(lr.y));
-        buffer.store(Value(lr.x),                   Value(lr.y) - angle_offset);
+        buffer.store(Value(lr.x) - angle_offset - 3,Value(lr.y));   // don't know why, but - 3 here and the next line seem to make things symmetric top-left and bottom-right
+        buffer.store(Value(lr.x),                   Value(lr.y) - angle_offset - 3);
     } else {
         buffer.store(Value(lr.x),                   Value(lr.y));
     }
