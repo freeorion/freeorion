@@ -55,13 +55,8 @@ void CUI_MinRestoreButton::Render() {
     if (m_mode == MIN_BUTTON) {
         // draw a dash to signify the minimize command
         GG::Y middle_y = (lr.y + ul.y) / 2;
-        glDisable(GL_TEXTURE_2D);
         glColor(color_to_use);
-        glBegin(GL_LINES);
-        glVertex(ul.x, middle_y);
-        glVertex(lr.x, middle_y);
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
+        GG::Line(ul.x, middle_y, lr.x, middle_y);
     } else {
         // draw a square to signify the restore command
         GG::FlatRectangle(ul, lr, GG::CLR_ZERO, ClientUI::WndInnerBorderColor(), 1);
