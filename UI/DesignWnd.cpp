@@ -3241,25 +3241,8 @@ void DesignWnd::Reset() {
 void DesignWnd::Sanitize()
 { m_main_panel->Sanitize(); }
 
-void DesignWnd::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
-}
+void DesignWnd::Render()
+{ GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), GG::CLR_ZERO, 0); }
 
 void DesignWnd::InitializeWindows() {
     const GG::X selector_width = GG::X(250);
