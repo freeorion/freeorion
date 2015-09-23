@@ -2565,6 +2565,16 @@ SPECIALS_POP_MODIFIER
             accountinglabel = "WORLDTREE_LABEL"
             priority = [[LATE_PRIORITY]]
             effects = SetTargetPopulation value = Value + 1
+
+     EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                HasSpecial name = "TEMPORAL_ANOMALY_SPECIAL"
+            ]
+            accountinglabel = "TEMPORAL_ANOMALY_SPECIAL"
+            priority = [[LATE_PRIORITY]]
+            effects = SetTargetPopulation value = Value - 5 * Target.SizeAsDouble
 '''
 
 POPULATION_TECHS

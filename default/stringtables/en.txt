@@ -5639,6 +5639,15 @@ TIDAL_LOCK_SPECIAL_DESC
 
 This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night. Population growth is hampered, though industrial capacity benefits from the locally stable surface conditions.'''
 
+TEMPORAL_ANOMALY_SPECIAL
+Temporal Anomaly
+
+TEMPORAL_ANOMALY_SPECIAL_DESC
+'''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 5 per Population when Focus is set to [[encyclopedia RESEARCH_TITLE]], but population is decreased: Tiny: -5, Small: -10, Medium: -15, Large: -20, Huge: -25.
+
+The flow of time on this planet is gravely disturbed. Seemingly random local occurences of increases and decreases of the pace of time, induces grave disarrangement in any living being. A social or productive life is nearly impossible. Extreme adaptability and precaution is needed to establish a colony on this planet.
+On the other hand the temporal anomaly has a huge potential for scientific experiments beyond what is possible on normal planets.'''
+
 RESONANT_MOON_SPECIAL
 Resonant Moon
 

@@ -1343,6 +1343,9 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
             if "ANCIENT_RUINS_SPECIAL" in planet.specials or "ANCIENT_RUINS_DEPLETED_SPECIAL" in planet.specials:
                 research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 5
                 detail.append("Ruins Research")
+            if "TEMPORAL_ANOMALY_SPECIAL" in planet.specials:
+                research_bonus += discount_multiplier * 2 * base_pop_res * max_pop_size * 25
+                detail.append("Temporal Anomaly Research")
             if "COMPUTRONIUM_SPECIAL" in planet.specials:
                 comp_bonus = (0.5 * AIDependencies.TECH_COST_MULTIPLIER * AIDependencies.RESEARCH_PER_POP *
                               AIDependencies.COMPUTRONIUM_RES_MULTIPLIER * empire_status['researchers'] *
