@@ -3,6 +3,7 @@
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
 #include <GG/Texture.h>
+#include <GG/GLClientAndServerBuffer.h>
 
 #include "../util/Logger.h"
 #include "../universe/Meter.h"
@@ -109,20 +110,25 @@ void MultiMeterStatusBar::Render() {
 
 
     // lines for 20, 40, 60, 80
-    glDisable(GL_TEXTURE_2D);
-    glColor(HALF_GREY);
-    glBegin(GL_LINES);
-        glVertex(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
-        glVertex(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
-        glVertex(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
-        glVertex(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
-        glVertex(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
-        glVertex(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
-        glVertex(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
-        glVertex(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    glEnd();
-    glEnable(GL_TEXTURE_2D);
+    GG::GL2DVertexBuffer bar_verts;
+    bar_verts.reserve(8);
+    bar_verts.store(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
+    bar_verts.store(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
+    bar_verts.store(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
+    bar_verts.store(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    bar_verts.store(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
+    bar_verts.store(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    bar_verts.store(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
+    bar_verts.store(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    bar_verts.activate();
 
+    glColor(HALF_GREY);
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDrawArrays(GL_LINES, 0, bar_verts.size());
+    glPopClientAttrib();
+    glEnable(GL_TEXTURE_2D);
 
     // current, initial, and target/max horizontal bars for each pair of MeterType
     y = TOP;
