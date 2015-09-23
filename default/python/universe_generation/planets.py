@@ -67,6 +67,8 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
 def calc_planet_type(star_type, orbit, planet_size):
     """
     Calculate planet type randomly for a potential new planet.
+
+    TODO: take into account star type and orbit number for determining planet type.
     """
 
     # check specified planet size to determine if we want a planet at all
