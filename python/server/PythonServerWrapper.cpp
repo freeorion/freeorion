@@ -131,46 +131,6 @@ namespace {
                          const std::string& icon)
     { GenerateSitRep(empire_id, template_string, dict(), icon); }
 
-    // Functions exposed to Python to access the universe tables
-    int BaseStarTypeDist(StarType star_type)
-    { return UniverseDataTables()["BaseStarTypeDist"][0][star_type]; }
-
-    int UniverseAgeModToStarTypeDist(GalaxySetupOption age, StarType star_type)
-    { return UniverseDataTables()["UniverseAgeModToStarTypeDist"][age][star_type]; }
-
-    int DensityModToPlanetSizeDist(GalaxySetupOption density, PlanetSize size)
-    { return UniverseDataTables()["DensityModToPlanetSizeDist"][density][size]; }
-
-    int StarTypeModToPlanetSizeDist(StarType star_type, PlanetSize size)
-    { return UniverseDataTables()["StarTypeModToPlanetSizeDist"][star_type][size]; }
-
-    int GalaxyShapeModToPlanetSizeDist(Shape shape, PlanetSize size)
-    { return UniverseDataTables()["GalaxyShapeModToPlanetSizeDist"][shape][size]; }
-
-    int OrbitModToPlanetSizeDist(int orbit, PlanetSize size)
-    { return UniverseDataTables()["OrbitModToPlanetSizeDist"][orbit][size]; }
-
-    int PlanetSizeModToPlanetTypeDist(PlanetSize size, PlanetType planet_type)
-    { return UniverseDataTables()["PlanetSizeModToPlanetTypeDist"][size][planet_type]; }
-
-    int OrbitModToPlanetTypeDist(int orbit, PlanetType planet_type)
-    { return UniverseDataTables()["OrbitModToPlanetTypeDist"][orbit][planet_type]; }
-
-    int StarTypeModToPlanetTypeDist(StarType star_type, PlanetType planet_type)
-    { return UniverseDataTables()["StarTypeModToPlanetTypeDist"][star_type][planet_type]; }
-
-    int MaxStarlaneLength()
-    { return UniverseDataTables()["MaxStarlaneLength"][0][0]; }
-
-    int NativeFrequency(GalaxySetupOption freq)
-    { return UniverseDataTables()["NativeFrequency"][0][freq]; }
-
-    int MonsterFrequency(GalaxySetupOption freq)
-    { return UniverseDataTables()["MonsterFrequency"][0][freq]; }
-
-    int SpecialsFrequency(GalaxySetupOption freq)
-    { return UniverseDataTables()["SpecialsFrequency"][0][freq]; }
-
     // Wrappers for Species / SpeciesManager class (member) functions
     object SpeciesPreferredFocus(const std::string& species_name) {
         const Species* species = GetSpecies(species_name);
@@ -1283,19 +1243,6 @@ void WrapServerAPI() {
     def("generate_sitrep",                      GenerateSitRep);
     def("generate_sitrep",                      GenerateSitRep1);
 
-    def("base_star_type_dist",                  BaseStarTypeDist);
-    def("universe_age_mod_to_star_type_dist",   UniverseAgeModToStarTypeDist);
-    def("density_mod_to_planet_size_dist",      DensityModToPlanetSizeDist);
-    def("star_type_mod_to_planet_size_dist",    StarTypeModToPlanetSizeDist);
-    def("galaxy_shape_mod_to_planet_size_dist", GalaxyShapeModToPlanetSizeDist);
-    def("orbit_mod_to_planet_size_dist",        OrbitModToPlanetSizeDist);
-    def("planet_size_mod_to_planet_type_dist",  PlanetSizeModToPlanetTypeDist);
-    def("orbit_mod_to_planet_type_dist",        OrbitModToPlanetTypeDist);
-    def("star_type_mod_to_planet_type_dist",    StarTypeModToPlanetTypeDist);
-    def("max_starlane_length",                  MaxStarlaneLength);
-    def("native_frequency",                     NativeFrequency);
-    def("monster_frequency",                    MonsterFrequency);
-    def("specials_frequency",                   SpecialsFrequency);
     def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
     def("generate_starlanes",                   GenerateStarlanes);
 

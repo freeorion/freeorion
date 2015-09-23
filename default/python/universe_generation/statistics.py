@@ -1,6 +1,7 @@
 import freeorion as fo
 import planets
 import natives
+import universe_tables
 
 
 species_summary = {species: 0 for species in fo.get_native_species()}
@@ -59,13 +60,12 @@ def log_species_summary():
         if count:
             print "%-16s : %3d -- %5.1f%%" % (species, count, 100.0 * count / num_empires)
     print
-    inverse_native_chance = fo.native_frequency(fo.get_galaxy_setup_data().nativeFrequency)
-    native_chance = 1.0 / (1e-5 + inverse_native_chance)
-    print "Natives Placement Summary (native frequency: %.1f%%)" % (inverse_native_chance and (100 * native_chance))
+    native_chance = universe_tables.NATIVE_FREQUENCY[fo.get_galaxy_setup_data().nativeFrequency]
     # as the value in the universe table is higher for a lower frequency, we have to invert it
-    # exception: a value of 0 means no natives, in this case return immediately
-    if inverse_native_chance <= 0:
+    # a value of 0 means no natives, in this case return immediately
+    if native_chance <= 0:
         return
+    print "Natives Placement Summary (native frequency: %.1f%%)" % (100 * native_chance)
     native_potential_planet_total = sum(potential_native_planet_summary.values())
     for species in species_summary:
         if species_summary[species] > 0:
@@ -80,7 +80,7 @@ def log_species_summary():
                  100.0 * species_summary[species] / (1E-10 + settleable_planets), expectation, [str(p_t) for p_t in natives.planet_types_for_natives[species]])
     print
     native_settled_planet_total = sum(settled_native_planet_summary.values())
-    print "Planet Type Summary for Native Planets (native frequency: %.1f%%)" % (inverse_native_chance and (100 * native_chance))
+    print "Planet Type Summary for Native Planets (native frequency: %.1f%%)" % (100 * native_chance)
     print "%19s : %-s" % ("Potential (% of tot)", "Settled (% of potential)")
     print "%-13s %5d : %5d" % ("Totals", native_potential_planet_total, native_settled_planet_total)
     for planet_type, planet_count in potential_native_planet_summary.items():
@@ -95,8 +95,7 @@ def log_monsters_summary():
         if counter > 0:
             print "Placed space monster", monster, counter, "times"
     print
-    inverse_monster_chance = fo.monster_frequency(fo.get_galaxy_setup_data().monsterFrequency)
-    monster_chance = 1.0 / (1e-5 + inverse_monster_chance)
+    monster_chance = universe_tables.MONSTER_FREQUENCY[fo.get_galaxy_setup_data().monsterFrequency]
     # the following loop depends on name mapping done in monsters.py
     print "Tracked Monster and Nest Summary (base monster freq: %4.1f%%)" % (100 * monster_chance)
     print "%-18s | %8s | %8s | %8s | %12s | %s" %\

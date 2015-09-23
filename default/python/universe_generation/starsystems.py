@@ -3,6 +3,7 @@ import random
 import freeorion as fo
 import planets
 import util
+import universe_tables
 
 
 # tuple of available star types
@@ -26,8 +27,8 @@ def pick_star_type(galaxy_age):
         max_roll = 0
         for candidate in star_types:
             roll = random.randint(1, 100) \
-                + fo.universe_age_mod_to_star_type_dist(galaxy_age, candidate) \
-                + fo.base_star_type_dist(candidate)
+                + universe_tables.UNIVERSE_AGE_MOD_TO_STAR_TYPE_DIST[galaxy_age][candidate] \
+                + universe_tables.BASE_STAR_TYPE_DIST[candidate]
             if max_roll < roll:
                 max_roll = roll
                 star_type = candidate
