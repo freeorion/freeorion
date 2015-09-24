@@ -5,7 +5,6 @@
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../parse/Parse.h"
-#include "../python/server/PythonServerFramework.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
