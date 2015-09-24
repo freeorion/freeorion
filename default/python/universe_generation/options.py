@@ -50,7 +50,7 @@ HS_MAX_JUMP_DISTANCE_LIMIT = 10
 # As long as the jump distance limit which home systems must at least be apart does not get reduced below this limit
 # during the home system selection process, the minimum systems in home system vicinity requirement takes
 # precedence over the jump distance limit. If the jump distance limit drops below this minimum jump distance limit,
-# the process is restarted giving th jump distance limit precedence.
+# the process is restarted giving the jump distance limit precedence.
 HS_MIN_DISTANCE_PRIORITY_LIMIT = 5
 
 # These two options define which types of planets are counted when determining the number of planets in the near
