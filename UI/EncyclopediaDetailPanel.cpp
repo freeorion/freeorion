@@ -727,7 +727,6 @@ void EncyclopediaDetailPanel::InitBuffers() {
     m_vertex_buffer.createServerBuffer();
 }
 
-
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
     using boost::lexical_cast;
     try {
