@@ -96,6 +96,9 @@ public:
     /** emitted when a building is right clicked */
     static boost::signals2::signal<void (int)>    BuildingRightClickedSignal;
 
+protected:
+    virtual void        InitBuffers();
+
 private:
     class PlanetPanelContainer;
 

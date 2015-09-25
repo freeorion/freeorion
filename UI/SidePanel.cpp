@@ -2575,9 +2575,7 @@ boost::signals2::signal<void (int)>        SidePanel::SystemSelectedSignal;
 
 
 SidePanel::SidePanel(const std::string& config_name) :
-    CUIWnd("SidePanel",
-           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP,
-           config_name),
+    CUIWnd("", GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP, config_name),
     m_system_name(0),
     m_star_type_text(0),
     m_button_prev(0),
@@ -2608,8 +2606,6 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_star_type_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor());
 
     Sound::TempUISoundDisabler sound_disabler;
-
-    SetName(UserString("SIDE_PANEL"));
 
     m_system_name->DisableDropArrow();
     m_system_name->SetStyle(GG::LIST_CENTER);
@@ -2668,48 +2664,74 @@ bool SidePanel::InWindow(const GG::Pt& pt) const {
 GG::Pt SidePanel::ClientUpperLeft() const
 { return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM); }
 
-void SidePanel::Render() {
+void SidePanel::Render()
+{ CUIWnd::Render(); }
+
+void SidePanel::InitBuffers() {
+    m_vertex_buffer.clear();
+    m_vertex_buffer.reserve(19);
+    m_buffer_indices.resize(4);
+    std::size_t previous_buffer_size = m_vertex_buffer.size();
+
     GG::Pt ul = UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), GG::Y0);
     GG::Pt lr = LowerRight();
     GG::Pt cl_ul = ClientUpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), PLANET_PANEL_TOP);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
-    AngledCornerRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
-                            OUTER_EDGE_ANGLE_OFFSET, 1, false, !m_resizable); // show notched bottom-right corner if not resizable, pointed corner if resizable
 
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
+    // within m_vertex_buffer:
+    // [0] is the start and range for minimized background triangle fan and minimized border line loop (probably not actually used for sidepanel, but to be consistent will leave in)
+    // [1] is ... the background fan / outer border line loop
+    // [2] is ... the inner border line loop
+    // [3] is ... the resize tab line list
 
-    // draw inner border, including extra resize-tab lines
-    if (cl_ul.y < cl_lr.y) {
-        glBegin(GL_LINE_STRIP);
-            glColor(ClientUI::WndInnerBorderColor());
-            glVertex(cl_ul.x, cl_ul.y);
-            glVertex(cl_lr.x, cl_ul.y);
-            if (m_resizable) {
-                glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-                glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-            } else {
-                glVertex(cl_lr.x, cl_lr.y);
-            }
-            glVertex(cl_ul.x, cl_lr.y);
-            glVertex(cl_ul.x, cl_ul.y);
-        glEnd();
+    // minimized background fan and border line loop
+    m_vertex_buffer.store(Value(ul.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(lr.y));
+    m_vertex_buffer.store(Value(ul.x),  Value(lr.y));
+    m_buffer_indices[0].first = previous_buffer_size;
+    m_buffer_indices[0].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    // outer border, with optional corner cutout
+    m_vertex_buffer.store(Value(ul.x),  Value(ul.y));
+    m_vertex_buffer.store(Value(lr.x),  Value(ul.y));
+    if (!m_resizable) {
+        m_vertex_buffer.store(Value(lr.x),                            Value(lr.y) - OUTER_EDGE_ANGLE_OFFSET);
+        m_vertex_buffer.store(Value(lr.x) - OUTER_EDGE_ANGLE_OFFSET,  Value(lr.y));
+    } else {
+        m_vertex_buffer.store(Value(lr.x),  Value(lr.y));
     }
+    m_vertex_buffer.store(Value(ul.x),      Value(lr.y));
+    m_buffer_indices[1].first = previous_buffer_size;
+    m_buffer_indices[1].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    // inner border, with optional corner cutout
+    m_vertex_buffer.store(Value(cl_ul.x),       Value(cl_ul.y));
+    m_vertex_buffer.store(Value(cl_lr.x),       Value(cl_ul.y));
     if (m_resizable) {
-        glBegin(GL_LINES);
-            // draw the extra lines of the resize tab
-            GG::Clr tab_lines_colour = m_mouse_in_resize_tab ? ClientUI::WndInnerBorderColor() : ClientUI::WndOuterBorderColor();
-            glColor(tab_lines_colour);
-
-            glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-            glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-
-            glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-            glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-        glEnd();
+        m_vertex_buffer.store(Value(cl_lr.x),                             Value(cl_lr.y) - INNER_BORDER_ANGLE_OFFSET);
+        m_vertex_buffer.store(Value(cl_lr.x) - INNER_BORDER_ANGLE_OFFSET, Value(cl_lr.y));
+    } else {
+        m_vertex_buffer.store(Value(cl_lr.x),   Value(cl_lr.y));
     }
-    glEnable(GL_TEXTURE_2D);
+    m_vertex_buffer.store(Value(cl_ul.x),       Value(cl_lr.y));
+    m_buffer_indices[2].first = previous_buffer_size;
+    m_buffer_indices[2].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    // resize hash marks
+    m_vertex_buffer.store(Value(cl_lr.x),                           Value(cl_lr.y) - RESIZE_HASHMARK1_OFFSET);
+    m_vertex_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK1_OFFSET, Value(cl_lr.y));
+    m_vertex_buffer.store(Value(cl_lr.x),                           Value(cl_lr.y) - RESIZE_HASHMARK2_OFFSET);
+    m_vertex_buffer.store(Value(cl_lr.x) - RESIZE_HASHMARK2_OFFSET, Value(cl_lr.y));
+    m_buffer_indices[3].first = previous_buffer_size;
+    m_buffer_indices[3].second = m_vertex_buffer.size() - previous_buffer_size;
+    previous_buffer_size = m_vertex_buffer.size();
+
+    m_vertex_buffer.createServerBuffer();
 }
 
 void SidePanel::Update() {
