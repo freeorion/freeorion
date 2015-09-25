@@ -443,6 +443,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_auto_scrolling_right(false),
     m_auto_scroll_timer(250),
     m_normalize_rows_on_insert(true),
+    m_add_padding_at_end(true),
     m_iterator_being_erased(0)
 {
     Control::SetColor(color);
@@ -1111,6 +1112,9 @@ void ListBox::SetRowAlignment(iterator it, Alignment align)
 
 void ListBox::NormalizeRowsOnInsert(bool enable)
 { m_normalize_rows_on_insert = enable; }
+
+void ListBox::AddPaddingAtEnd(bool enable)
+{ m_add_padding_at_end = enable; }
 
 void ListBox::AllowDropType(const std::string& str)
 { m_allowed_drop_types.insert(str); }
@@ -1863,15 +1867,20 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
                           (cl_sz.x < total_x_extent - SCROLL_WIDTH &&
                            cl_sz.y < total_y_extent - SCROLL_WIDTH));
 
-    // This probably looks a little odd.  We only want to show scrolls if they
-    // are needed, that is if the data shown exceed the bounds of the client
-    // area.  However, if we are going to show scrolls, we want to allow them
-    // to range such that the first row/column shown can be any of the N
-    // rows/columns.  Dead space after the last row/column is fine.
-    if (!m_col_widths.empty() && m_col_widths.back() < cl_sz.x)
-        total_x_extent += cl_sz.x - m_col_widths.back();
-    if (!m_rows.empty() && m_rows.back()->Height() < cl_sz.y)
-        total_y_extent += cl_sz.y - m_rows.back()->Height();
+
+    if (m_add_padding_at_end) {
+        // This probably looks a little odd. We only want to show scrolls if they
+        // are needed, that is if the data shown exceed the bounds of the client
+        // area. However, if we are going to show scrolls, we want to allow them
+        // to range such that the first row/column shown can be any of the N
+        // rows/columns. This is necessary since otherwise the bottom row may get
+        // cut off. Dead space after the last row/column is the result, even if it
+        // may look slightly ugly.
+        if (!m_col_widths.empty() && m_col_widths.back() < cl_sz.x)
+            total_x_extent += cl_sz.x - m_col_widths.back();
+        if (!m_rows.empty() && m_rows.back()->Height() < cl_sz.y)
+            total_y_extent += cl_sz.y - m_rows.back()->Height();
+    }
 
     boost::shared_ptr<StyleFactory> style = GetStyleFactory();
 
