@@ -1,20 +1,25 @@
 #include "CUILinkTextBlock.h"
 
 #include "../util/VarText.h"
+#include "CUIControls.h"
 
 CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const boost::shared_ptr<GG::Font>& font,
                                    GG::Flags<GG::TextFormat> format, const GG::Clr& color,
                                    GG::Flags<GG::WndFlag> flags)
 : GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
-  m_link_text(new LinkText(GG::X0, GG::Y0, GG::X1, str, font, format, color))
+m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT | GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL | GG::MULTI_NO_VSCROLL))
 {
     AttachChild(m_link_text);
+
+    m_link_text->SetColor(GG::CLR_ZERO);
+    m_link_text->SetInteriorColor(GG::CLR_ZERO);
 }
 
 GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width)
 {
     m_link_text->Resize(GG::Pt(width, GG::Y1));
     GG::Pt size = m_link_text->TextLowerRight() - m_link_text->TextUpperLeft();
+    size.x = width;
 
     // Only resize when changed.
     if (size != m_link_text->Size())
@@ -26,7 +31,7 @@ GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width)
     return size;
 }
 
-LinkText& CUILinkTextBlock::Text() {
+CUILinkTextMultiEdit& CUILinkTextBlock::Text() {
     return *m_link_text;
 }
 

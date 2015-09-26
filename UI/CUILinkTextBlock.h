@@ -5,6 +5,8 @@
 #include <GG/RichText/RichText.h>
 #include "LinkText.h"
 
+class CUILinkTextMultiEdit;
+
 class CUILinkTextBlock : public GG::BlockControl
 {
 public:
@@ -16,7 +18,7 @@ public:
 
     virtual GG::Pt SetMaxWidth( GG::X width );
 
-    LinkText& Text();
+    CUILinkTextMultiEdit& Text();
 
     virtual void Render(){}
 
@@ -38,7 +40,7 @@ public:
     private:
     };
 private:
-    LinkText* m_link_text;
+    CUILinkTextMultiEdit* m_link_text;
 };
 
 #endif // CUILINKTEXTBLOCK_H
