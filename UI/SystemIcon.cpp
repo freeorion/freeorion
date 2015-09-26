@@ -138,25 +138,26 @@ public:
         verts.store(rendered_area.Left(),  rendered_area.Bottom()); // lower left
         verts.store(rendered_area.LowerRight());                    // lower right
 
+        // set up texture coordinates for vertices
+        GLfloat texture_coordinate_data[8];
+        const GLfloat* tex_coords = texture->DefaultTexCoords();
+        texture_coordinate_data[2*0] =      tex_coords[0];
+        texture_coordinate_data[2*0 + 1] =  tex_coords[1];
+        texture_coordinate_data[2*1] =      tex_coords[2];
+        texture_coordinate_data[2*1 + 1] =  tex_coords[1];
+        texture_coordinate_data[2*2] =      tex_coords[0];
+        texture_coordinate_data[2*2 + 1] =  tex_coords[3];
+        texture_coordinate_data[2*3] =      tex_coords[2];
+        texture_coordinate_data[2*3 + 1] =  tex_coords[3];
 
-        // shared texture coords; don't depend on rendered area details, so can be reused
-        static GLfloat texture_coordinate_data[8];
-        static bool first = true;
-        if (first) {
-            first = false;
-            const GLfloat* tex_coords = GetTexture().TexCoords();
+        //// debug
+        //std::cout << "rendered area: " << rendered_area << "  ul: " << UpperLeft() << "  sz: " << Size() << std::endl;
+        //std::cout << "tex coords: " << tex_coords[0] << ", " << tex_coords[1] << ";  "
+        //                            << tex_coords[2] << ", " << tex_coords[3]
+        //                            << std::endl;
+        //// end debug
 
-            texture_coordinate_data[2*0] =      tex_coords[0];
-            texture_coordinate_data[2*0 + 1] =  tex_coords[1];
-            texture_coordinate_data[2*1] =      tex_coords[2];
-            texture_coordinate_data[2*1 + 1] =  tex_coords[1];
-            texture_coordinate_data[2*2] =      tex_coords[0];
-            texture_coordinate_data[2*2 + 1] =  tex_coords[3];
-            texture_coordinate_data[2*3] =      tex_coords[2];
-            texture_coordinate_data[2*3 + 1] =  tex_coords[3];
-        }
-
-
+        // render textured quad
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -165,11 +166,12 @@ public:
         glTexCoordPointer(2, GL_FLOAT, 0, texture_coordinate_data);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
 
-        //// testing: triangle lines rendering
+        //// debug: triangle lines rendering
         //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         //glBindTexture(GL_TEXTURE_2D, 0);
         //glColor(GG::CLR_WHITE);
         //glDrawArrays(GL_LINE_LOOP, 0, verts.size());
+        //// end debug
 
         glPopClientAttrib();
         glPopMatrix();
@@ -533,7 +535,9 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     // tiny graphic?
     if (m_tiny_graphic && USE_TINY_GRAPHICS) {
-        GG::Pt tiny_size = m_tiny_graphic->Size();
+        const GG::SubTexture& tiny_texture = m_tiny_graphic->GetTexture();
+        const GG::Texture* tiny_texture2 = tiny_texture.GetTexture();
+        GG::Pt tiny_size = GG::Pt(tiny_texture2->DefaultWidth(), tiny_texture2->DefaultHeight());
         GG::Pt tiny_ul(static_cast<GG::X>(middle.x - tiny_size.x / 2.0),
                        static_cast<GG::Y>(middle.y - tiny_size.y / 2.0));
         m_tiny_graphic->SizeMove(tiny_ul, tiny_ul + tiny_size);
@@ -546,7 +550,9 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     // tiny selection indicator
     if (m_selected && m_tiny_selection_indicator && USE_TINY_GRAPHICS) {
-        GG::Pt tiny_sel_ind_size = m_tiny_selection_indicator->Size();
+        const GG::SubTexture& tiny_texture = m_tiny_selection_indicator->GetTexture();
+        const GG::Texture* tiny_texture2 = tiny_texture.GetTexture();
+        GG::Pt tiny_sel_ind_size = GG::Pt(tiny_texture2->DefaultWidth(), tiny_texture2->DefaultHeight());
         GG::Pt tiny_sel_ind_ul(static_cast<GG::X>(middle.x - tiny_sel_ind_size.x / 2.0),
                                static_cast<GG::Y>(middle.y - tiny_sel_ind_size.y / 2.0));
         m_tiny_selection_indicator->SizeMove(tiny_sel_ind_ul, tiny_sel_ind_ul + tiny_sel_ind_size);
