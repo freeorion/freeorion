@@ -7,7 +7,8 @@ CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const boost::shared_p
                                    GG::Flags<GG::TextFormat> format, const GG::Clr& color,
                                    GG::Flags<GG::WndFlag> flags)
 : GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
-m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT | GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL | GG::MULTI_NO_VSCROLL))
+m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY |
+    GG::MULTI_LEFT | GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL | GG::MULTI_NO_VSCROLL))
 {
     AttachChild(m_link_text);
 
