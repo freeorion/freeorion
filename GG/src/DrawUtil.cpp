@@ -563,21 +563,6 @@ namespace GG {
     void glColor(Clr clr)
     { glColor4ub(clr.r, clr.g, clr.b, clr.a); }
 
-    void glVertex(const Pt& pt)
-    { glVertex2i(Value(pt.x), Value(pt.y)); }
-
-    void glVertex(X x, Y y)
-    { glVertex2i(Value(x), Value(y)); }
-
-    void glVertex(X_d x, Y_d y)
-    { glVertex2d(Value(x), Value(y)); }
-
-    void glVertex(X x, Y_d y)
-    { glVertex2d(Value(x), Value(y)); }
-
-    void glVertex(X_d x, Y y)
-    { glVertex2d(Value(x), Value(y)); }
-
     Clr LightColor(Clr clr)
     {
         const double scale_factor = 2.0;   // factor by which the color is lightened

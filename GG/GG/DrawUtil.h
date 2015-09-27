@@ -33,32 +33,16 @@
 #include <GG/ClrConstants.h>
 
 namespace GG {
-
     /** Calls the appropriate version of glColor*() with \a clr. */
     GG_API void glColor(Clr clr);
 
-    /** Calls the appropriate version of glVertex*() with \a pt. */
-    GG_API void glVertex(const Pt& pt);
-
-    /** Calls the appropriate version of glVertex*() with \a x and \a y. */
-    GG_API void glVertex(X x, Y y);
-
-    /** Calls the appropriate version of glVertex*() with \a x and \a y. */
-    GG_API void glVertex(X_d x, Y_d y);
-
-    /** Calls the appropriate version of glVertex*() with \a x and \a y. */
-    GG_API void glVertex(X x, Y_d y);
-
-    /** Calls the appropriate version of glVertex*() with \a x and \a y. */
-    GG_API void glVertex(X_d x, Y y);
-
     /** Returns the lightened version of color clr.  LightColor leaves the
-        alpha channel unchanged, and multiplies the other channels by a some
+        alpha channel unchanged, and multiplies the other channels by some
         factor.  (The factor is defined within LightColor().) */
     GG_API Clr LightColor(Clr clr);
 
     /** Returns the darkened version of color clr.  DarkColor leaves the alpha
-        channel unchanged, and divides the other channels by a some factor.
+        channel unchanged, and divides the other channels by some factor.
         (The factor is defined within DarkColor().) */
     GG_API Clr DarkColor(Clr clr);
 
