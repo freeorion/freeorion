@@ -759,8 +759,10 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 
 void MultiEdit::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
-    if (Disabled() || !m_vscroll)
+    if (Disabled() || !m_vscroll) {
+        ForwardEventToParent();
         return;
+    }
     m_vscroll->ScrollLineIncr(-move);
     SignalScroll(*m_vscroll, true);
 }
