@@ -1579,6 +1579,7 @@ namespace {
         static boost::shared_ptr<GG::Texture> gas_texture;
         if (!gas_texture) {
             gas_texture = ClientUI::GetClientUI()->GetTexture(ClientUI::ArtDir() / "galaxy_decoration" / "gaseous_array.png");
+            gas_texture->SetFilters(GL_NEAREST, GL_NEAREST);
             glBindTexture(GL_TEXTURE_2D, gas_texture->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
