@@ -378,6 +378,8 @@ void TechTreeWnd::TechTreeControls::Render() {
     GG::Pt cl_ul = ClientUpperLeft();
     GG::Pt cl_lr = ClientLowerRight();
 
+    glColor(ClientUI::WndOuterBorderColor());
+
     GG::Y category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
     GG::Line(cl_ul.x, category_bottom, cl_lr.x - 1, category_bottom);
 
