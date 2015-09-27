@@ -375,37 +375,21 @@ void TechTreeWnd::TechTreeControls::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 void TechTreeWnd::TechTreeControls::Render() {
     CUIWnd::Render();
 
-    //GG::Pt ul = UpperLeft();
-    //GG::Pt lr = LowerRight();
     GG::Pt cl_ul = ClientUpperLeft();
     GG::Pt cl_lr = ClientLowerRight();
 
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
+    GG::Y category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
+    GG::Line(cl_ul.x, category_bottom, cl_lr.x - 1, category_bottom);
 
-    glBegin(GL_LINES);
-        glColor(ClientUI::WndOuterBorderColor());
-
-        GG::Y category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
-
-        glVertex(cl_ul.x, category_bottom);
-        glVertex(cl_lr.x - 1, category_bottom);
-
-        if (m_buttons_per_row >= 6) {
-            // all six status and type buttons are on one row, and need a vertical separator between them
-            GG::X middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
-            glVertex(middle, category_bottom);
-            glVertex(middle, cl_lr.y - 1);
-
-        } else {
-            // the status and type buttons are split into separate vertical groups, and need a horiztonal separator between them
-            GG::Y status_bottom = category_bottom + m_status_button_rows*m_row_offset;
-            glVertex(cl_ul.x, status_bottom);
-            glVertex(cl_lr.x - 1, status_bottom);
-        }
-    glEnd();
-
-    glEnable(GL_TEXTURE_2D);
+    if (m_buttons_per_row >= 6) {
+        // all six status and type buttons are on one row, and need a vertical separator between them
+        GG::X middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
+        GG::Line(middle, category_bottom, middle, cl_lr.y - 1);
+    } else {
+        // the status and type buttons are split into separate vertical groups, and need a horiztonal separator between them
+        GG::Y status_bottom = category_bottom + m_status_button_rows*m_row_offset;
+        GG::Line(cl_ul.x, status_bottom, cl_lr.x - 1, status_bottom);
+    }
 }
 
 void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
@@ -923,20 +907,7 @@ std::set<TechStatus> TechTreeWnd::LayoutPanel::GetTechStatusesShown() const
 { return m_tech_statuses_shown; }
 
 void TechTreeWnd::LayoutPanel::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    glDisable(GL_TEXTURE_2D);
-
-    // draw background
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::CtrlColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
+    GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::CtrlColor(), GG::CLR_ZERO);
 
     BeginClipping();
     glEnable(GL_LINE_SMOOTH);
