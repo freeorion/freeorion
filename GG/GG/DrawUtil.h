@@ -76,8 +76,7 @@ namespace GG {
         no more than GL_STENCIL_BITS - 1 nested calls to
         BeginStencilClipping() currently outstanding (each nested call uses a
         separate bit in the stencil buffer). */
-    GG_API void BeginStencilClipping(Pt inner_ul, Pt inner_lr,
-                                     Pt outer_ul, Pt outer_lr);
+    GG_API void BeginStencilClipping(Pt inner_ul, Pt inner_lr, Pt outer_ul, Pt outer_lr);
 
     /** Ends the current GL stencil, restoring GL stencil state to what it was
         before the corresponding call to BeginScissorClipping().  \pre There
@@ -153,7 +152,6 @@ namespace GG {
     /** Using the same techniques as in Bubble(), creates a rounded, bubbly
         rectangle. */
     GG_API void BubbleRectangle(Pt ul, Pt lr, Clr color, bool up, unsigned int corner_radius = 5);
-
 }
 
 #endif
