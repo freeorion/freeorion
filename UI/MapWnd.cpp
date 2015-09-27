@@ -660,6 +660,7 @@ MapWnd::MapWnd() :
     m_star_core_quad_vertices(),
     m_star_halo_quad_vertices(),
     m_galaxy_gas_quad_vertices(),
+    m_galaxy_gas_texture_coords(),
     m_star_texture_coords(),
     m_star_circle_vertices(),
     m_starlane_vertices(),
@@ -1573,26 +1574,36 @@ void MapWnd::RenderFields() {
     glPopClientAttrib();
 }
 
+namespace {
+    boost::shared_ptr<GG::Texture> GetGasTexture() {
+        static boost::shared_ptr<GG::Texture> gas_texture;
+        if (!gas_texture) {
+            gas_texture = ClientUI::GetClientUI()->GetTexture(ClientUI::ArtDir() / "galaxy_decoration" / "gaseous_array.png");
+            glBindTexture(GL_TEXTURE_2D, gas_texture->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        }
+        return gas_texture;
+    }
+}
+
 void MapWnd::RenderGalaxyGas() {
     if (!GetOptionsDB().Get<bool>("UI.galaxy-gas-background"))
         return;
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
+    if (m_galaxy_gas_quad_vertices.empty())
+        return;
+
     glEnable(GL_TEXTURE_2D);
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    m_star_texture_coords.activate();
+    m_galaxy_gas_quad_vertices.activate();
+    m_galaxy_gas_texture_coords.activate();
 
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::const_iterator it =
-         m_galaxy_gas_quad_vertices.begin(); it != m_galaxy_gas_quad_vertices.end(); ++it)
-    {
-        if (it->second.empty())
-            continue;
-        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-        it->second.activate();
-        glDrawArrays(GL_QUADS, 0, it->second.size());
-    }
+    glBindTexture(GL_TEXTURE_2D, GetGasTexture()->OpenGLId());
+    glDrawArrays(GL_QUADS, 0, m_galaxy_gas_quad_vertices.size());
 
     glPopClientAttrib();
 }
@@ -2584,10 +2595,10 @@ void MapWnd::InitSystemRenderingBuffers() {
     // though the star-halo textures must be rendered at sizes as much as twice
     // as large as the star-disc textures.
     for (std::size_t i = 0; i < m_system_icons.size(); ++i) {
-        m_star_texture_coords.store(1.5,-0.5);
+        m_star_texture_coords.store( 1.5,-0.5);
         m_star_texture_coords.store(-0.5,-0.5);
-        m_star_texture_coords.store(-0.5,1.5);
-        m_star_texture_coords.store(1.5,1.5);
+        m_star_texture_coords.store(-0.5, 1.5);
+        m_star_texture_coords.store( 1.5, 1.5);
     }
 
 
@@ -2626,7 +2637,7 @@ void MapWnd::InitSystemRenderingBuffers() {
 
 
         // add (rotated) gaseous substance around system
-        if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", system_id)) {
+        if (boost::shared_ptr<GG::Texture> gas_texture = GetGasTexture()) {
             const float GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
             const float ROTATION = system_id * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const float COS_THETA = std::cos(ROTATION);
@@ -2660,12 +2671,32 @@ void MapWnd::InitSystemRenderingBuffers() {
             const float GAS_X4 = system->X() + X4r;
             const float GAS_Y4 = system->Y() + Y4r;
 
-            GG::GL2DVertexBuffer& gas_vertices = m_galaxy_gas_quad_vertices[gaseous_texture];
+            m_galaxy_gas_quad_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
+            m_galaxy_gas_quad_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
+            m_galaxy_gas_quad_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
+            m_galaxy_gas_quad_vertices.store(GAS_X4,GAS_Y4); // rotated lower right
 
-            gas_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
-            gas_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
-            gas_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
-            gas_vertices.store(GAS_X4,GAS_Y4); // rotated lower right
+            unsigned int subtexture_index = system_id % 12;                             //  0  1  2  3  4  5  6  7  8  9 10 11
+            unsigned int subtexture_x_index = subtexture_index / 3;                     //  0  0  0  0  1  1  1  1  2  2  2  2
+            unsigned int subtexture_y_index = subtexture_index - 4*subtexture_x_index;  //  0  1  2  3  0  1  2  3  0  1  2  3
+
+            const GLfloat* default_tex_coords = gas_texture->DefaultTexCoords();
+            const GLfloat tex_coord_min_x = default_tex_coords[0];
+            const GLfloat tex_coord_min_y = default_tex_coords[1];
+            const GLfloat tex_coord_max_x = default_tex_coords[2];
+            const GLfloat tex_coord_max_y = default_tex_coords[3];
+
+            // gas texture is expected to be a 4 wide by 3 high grid
+            // also add a bit of padding to hopefully avoid artifacts of texture edges
+            const GLfloat tx_low_x = tex_coord_min_x  + (subtexture_x_index + 0)*(tex_coord_max_x - tex_coord_min_x)/4;
+            const GLfloat tx_high_x = tex_coord_min_x + (subtexture_x_index + 1)*(tex_coord_max_x - tex_coord_min_x)/4;
+            const GLfloat tx_low_y = tex_coord_min_y  + (subtexture_y_index + 0)*(tex_coord_max_y - tex_coord_min_y)/3;
+            const GLfloat tx_high_y = tex_coord_min_y + (subtexture_y_index + 1)*(tex_coord_max_y - tex_coord_min_y)/3;
+
+            m_galaxy_gas_texture_coords.store(tx_high_x, tx_low_y);
+            m_galaxy_gas_texture_coords.store(tx_low_x,  tx_low_y);
+            m_galaxy_gas_texture_coords.store(tx_low_x,  tx_high_y);
+            m_galaxy_gas_texture_coords.store(tx_high_x, tx_high_y);
         }
     }
 
@@ -2693,24 +2724,16 @@ void MapWnd::InitSystemRenderingBuffers() {
         it->second.createServerBuffer();
     }
 
-    // galaxy gas
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::iterator it = m_galaxy_gas_quad_vertices.begin();
-         it != m_galaxy_gas_quad_vertices.end(); ++it)
-    {
-        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-        it->second.createServerBuffer();
-    }
-    // fill buffers with star textures
     m_star_texture_coords.createServerBuffer();
+    m_galaxy_gas_quad_vertices.createServerBuffer();
+    m_galaxy_gas_texture_coords.createServerBuffer();
 }
 
 void MapWnd::ClearSystemRenderingBuffers() {
     m_star_core_quad_vertices.clear();
     m_star_halo_quad_vertices.clear();
     m_galaxy_gas_quad_vertices.clear();
+    m_galaxy_gas_texture_coords.clear();
     m_star_texture_coords.clear();
     m_star_circle_vertices.clear();
 }
