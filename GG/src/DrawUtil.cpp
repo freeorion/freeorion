@@ -475,8 +475,6 @@ namespace { // file-scope constants and functions
         BubbleArc(Pt(ul.x, lr.y - circle_diameter), Pt(ul.x + circle_diameter, lr.y), color1, color3, color2, PI, 1.5 * PI); // ll corner
         BubbleArc(Pt(lr.x - circle_diameter, lr.y - circle_diameter), Pt(lr.x, lr.y), color1, color3, color2, 1.5 * PI, 0);  // lr corner
 
-        glDisable(GL_TEXTURE_2D);
-
         int rad = static_cast<int>(corner_radius);
 
         // top
@@ -485,24 +483,30 @@ namespace { // file-scope constants and functions
                          GLubyte(color3.g * (1 - color_scale_factor) + color2.g * color_scale_factor),
                          GLubyte(color3.b * (1 - color_scale_factor) + color2.b * color_scale_factor),
                          GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
-        glBegin(GL_QUADS);
-        glColor(scaled_color);
-        glVertex(lr.x - rad, ul.y);
-        glVertex(ul.x + rad, ul.y);
-        glColor(color1);
-        glVertex(ul.x + rad, ul.y + rad);
-        glVertex(lr.x - rad, ul.y + rad);
-        glEnd();
+
+        GL2DVertexBuffer verts;
+        verts.reserve(20);
+        GLRGBAColorBuffer colours;
+        colours.reserve(20);
+
+        colours.store(scaled_color);
+        colours.store(scaled_color);
+        verts.store(lr.x - rad, ul.y);
+        verts.store(ul.x + rad, ul.y);
+        colours.store(color1);
+        colours.store(color1);
+        verts.store(ul.x + rad, ul.y + rad);
+        verts.store(lr.x - rad, ul.y + rad);
 
         // left (uses color scale factor (SQRT2OVER2 * (1 + 0) + 1) / 2, which equals that of top
-        glBegin(GL_QUADS);
-        glColor(scaled_color);
-        glVertex(ul.x, ul.y + rad);
-        glVertex(ul.x, lr.y - rad);
-        glColor(color1);
-        glVertex(ul.x + rad, lr.y - rad);
-        glVertex(ul.x + rad, ul.y + rad);
-        glEnd();
+        colours.store(scaled_color);
+        colours.store(scaled_color);
+        verts.store(ul.x, ul.y + rad);
+        verts.store(ul.x, lr.y - rad);
+        colours.store(color1);
+        colours.store(color1);
+        verts.store(ul.x + rad, lr.y - rad);
+        verts.store(ul.x + rad, ul.y + rad);
 
         // right
         color_scale_factor = (SQRT2OVER2 * (-1 + 0) + 1) / 2;
@@ -510,33 +514,46 @@ namespace { // file-scope constants and functions
                            GLubyte(color3.g * (1 - color_scale_factor) + color2.g * color_scale_factor),
                            GLubyte(color3.b * (1 - color_scale_factor) + color2.b * color_scale_factor),
                            GLubyte(color3.a * (1 - color_scale_factor) + color2.a * color_scale_factor));
-        glBegin(GL_QUADS);
-        glColor(color1);
-        glVertex(lr.x - rad, ul.y + rad);
-        glVertex(lr.x - rad, lr.y - rad);
-        glColor(scaled_color);
-        glVertex(lr.x, lr.y - rad);
-        glVertex(lr.x, ul.y + rad);
-        glEnd();
+        colours.store(color1);
+        colours.store(color1);
+        verts.store(lr.x - rad, ul.y + rad);
+        verts.store(lr.x - rad, lr.y - rad);
+        colours.store(scaled_color);
+        colours.store(scaled_color);
+        verts.store(lr.x, lr.y - rad);
+        verts.store(lr.x, ul.y + rad);
 
         // bottom (uses color scale factor (SQRT2OVER2 * (0 + -1) + 1) / 2, which equals that of left
-        glBegin(GL_QUADS);
-        glColor(color1);
-        glVertex(lr.x - rad, lr.y - rad);
-        glVertex(ul.x + rad, lr.y - rad);
-        glColor(scaled_color);
-        glVertex(ul.x + rad, lr.y);
-        glVertex(lr.x - rad, lr.y);
-        glEnd();
+        colours.store(color1);
+        colours.store(color1);
+        verts.store(lr.x - rad, lr.y - rad);
+        verts.store(ul.x + rad, lr.y - rad);
+        colours.store(scaled_color);
+        colours.store(scaled_color);
+        verts.store(ul.x + rad, lr.y);
+        verts.store(lr.x - rad, lr.y);
 
         // middle
-        glBegin(GL_QUADS);
-        glColor(color1);
-        glVertex(lr.x - rad, ul.y + rad);
-        glVertex(ul.x + rad, ul.y + rad);
-        glVertex(ul.x + rad, lr.y - rad);
-        glVertex(lr.x - rad, lr.y - rad);
-        glEnd();
+        colours.store(color1);
+        colours.store(color1);
+        verts.store(lr.x - rad, ul.y + rad);
+        verts.store(ul.x + rad, ul.y + rad);
+        colours.store(color1);
+        colours.store(color1);
+        verts.store(ul.x + rad, lr.y - rad);
+        verts.store(lr.x - rad, lr.y - rad);
+
+
+        glDisable(GL_TEXTURE_2D);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnable(GL_VERTEX_ARRAY);
+        glEnable(GL_COLOR_ARRAY);
+
+        verts.activate();
+        colours.activate();
+        glDrawArrays(GL_QUADS, 0, verts.size());
+
+        glPopClientAttrib();
         glEnable(GL_TEXTURE_2D);
     }
 } // namespace
