@@ -2639,7 +2639,7 @@ void MapWnd::InitSystemRenderingBuffers() {
 
         // add (rotated) gaseous substance around system
         if (boost::shared_ptr<GG::Texture> gas_texture = GetGasTexture()) {
-            const float GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
+            const float GAS_SIZE = ClientUI::SystemIconSize() * 6.0;
             const float ROTATION = system_id * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const float COS_THETA = std::cos(ROTATION);
             const float SIN_THETA = std::sin(ROTATION);
