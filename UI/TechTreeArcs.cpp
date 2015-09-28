@@ -36,7 +36,9 @@ public:
         // redraw thicker highlight arcs
         GG::Clr arc_highlight_colour = GG::CLR_WHITE;   arc_highlight_colour.a = 127;
 
-
+        glEnable(GL_LINE_SMOOTH);
+        glDisable(GL_TEXTURE_2D);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
 
         // First draw transparent wide lines
@@ -70,7 +72,8 @@ public:
         glDrawArrays(GL_LINES, 0, m_highlight_buffer.size());
 
         glLineWidth(1.0);
-        glDisableClientState(GL_VERTEX_ARRAY);
+        glPopClientAttrib();
+        glEnable(GL_TEXTURE_2D);
     }
 
     // Fill m_highlight_buffer with the lines that should be highlighted

@@ -912,14 +912,12 @@ void TechTreeWnd::LayoutPanel::Render() {
     GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::CtrlColor(), GG::CLR_ZERO);
 
     BeginClipping();
-    glEnable(GL_LINE_SMOOTH);
 
     // render dependency arcs
     DoZoom(ClientUpperLeft());
 
     m_dependency_arcs.Render(m_scale);
 
-    glEnable(GL_TEXTURE_2D);
     EndClipping();
 
     UndoZoom();
