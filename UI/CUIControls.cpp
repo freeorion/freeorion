@@ -1689,10 +1689,6 @@ void FPSIndicator::UpdateEnabled()
 //////////////////////////////////////////////////
 // MultiTextureStaticGraphic
 //////////////////////////////////////////////////
-/** creates a MultiTextureStaticGraphic from multiple pre-existing Textures which are rendered back-to-front in the
-  * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
-  * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without
-  * associated styles use the style GRAPHIC_NONE. */
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<boost::shared_ptr<GG::Texture> >& textures,
                                                      const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
@@ -1817,4 +1813,85 @@ void MultiTextureStaticGraphic::ValidateStyles() {
             style |= GG::GRAPHIC_SHRINKFIT;
         }
     }
+}
+
+
+////////////////////////////////////////////////
+// RotatingGraphic
+////////////////////////////////////////////////
+RotatingGraphic::RotatingGraphic(const boost::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style,
+                GG::Flags<GG::WndFlag> flags) :
+    GG::StaticGraphic(texture, style, flags),
+    m_rpm(20.0f),
+    m_phase_offset(0.0f)
+{}
+
+void RotatingGraphic::Render() {
+    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+    glColor(color_to_use);
+
+    const GG::Texture* texture = GetTexture().GetTexture();
+    if (!texture)
+        return;
+    glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
+
+
+    int ticks = GG::GUI::GetGUI()->Ticks();     // in ms
+    float minutes = ticks / 1000.0f / 60.0f;
+
+    // rotate around centre of rendered area
+    GG::Rect rendered_area = RenderedArea();
+    float angle = 360 * minutes * m_rpm + m_phase_offset;   // in degrees
+
+
+    glPushMatrix();
+
+    glTranslatef(Value(rendered_area.MidX()), Value(rendered_area.MidY()), 0.0f);   // tx back into position
+    glRotatef(angle, 0.0f, 0.0f, 1.0f);                                             // rotate about centre
+    glTranslatef(-Value(rendered_area.MidX()), -Value(rendered_area.MidY()), 0.0f); // tx to be centred on 0, 0
+
+    // set up vertices for translated scaled quad corners
+    GG::GL2DVertexBuffer verts;
+    verts.store(rendered_area.UpperLeft());                     // upper left
+    verts.store(rendered_area.Right(), rendered_area.Top());    // upper right
+    verts.store(rendered_area.Left(),  rendered_area.Bottom()); // lower left
+    verts.store(rendered_area.LowerRight());                    // lower right
+
+    // set up texture coordinates for vertices
+    GLfloat texture_coordinate_data[8];
+    const GLfloat* tex_coords = texture->DefaultTexCoords();
+    texture_coordinate_data[2*0] =      tex_coords[0];
+    texture_coordinate_data[2*0 + 1] =  tex_coords[1];
+    texture_coordinate_data[2*1] =      tex_coords[2];
+    texture_coordinate_data[2*1 + 1] =  tex_coords[1];
+    texture_coordinate_data[2*2] =      tex_coords[0];
+    texture_coordinate_data[2*2 + 1] =  tex_coords[3];
+    texture_coordinate_data[2*3] =      tex_coords[2];
+    texture_coordinate_data[2*3 + 1] =  tex_coords[3];
+
+    //// debug
+    //std::cout << "rendered area: " << rendered_area << "  ul: " << UpperLeft() << "  sz: " << Size() << std::endl;
+    //std::cout << "tex coords: " << tex_coords[0] << ", " << tex_coords[1] << ";  "
+    //                            << tex_coords[2] << ", " << tex_coords[3]
+    //                            << std::endl;
+    //// end debug
+
+    // render textured quad
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    verts.activate();
+    glTexCoordPointer(2, GL_FLOAT, 0, texture_coordinate_data);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, verts.size());
+
+    //// debug: triangle lines rendering
+    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    //glBindTexture(GL_TEXTURE_2D, 0);
+    //glColor(GG::CLR_WHITE);
+    //glDrawArrays(GL_LINE_LOOP, 0, verts.size());
+    //// end debug
+
+    glPopClientAttrib();
+    glPopMatrix();
 }

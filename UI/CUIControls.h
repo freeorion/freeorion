@@ -515,8 +515,8 @@ private:
     bool m_enabled;
 };
 
-/** Functions like a StaticGraphic, except can have multiple textures that are rendered bottom to top
-  * in the order, rather than a single texture. */
+/** Functions like a StaticGraphic, except can have multiple textures rendered
+  * on top of eachother, rather than just a single texture. */
 class MultiTextureStaticGraphic : public GG::Control {
 public:
     /** \name Structors */ ///@{
@@ -554,6 +554,26 @@ private:
 
     std::vector<GG::SubTexture>                 m_graphics;
     std::vector<GG::Flags<GG::GraphicStyle> >   m_styles;   ///< position of texture wrt the window area
+};
+
+/** Functions like a StaticGraphic, except can be rotated with a fixed phase
+  * and/or at a continuous angular rate. */
+class RotatingGraphic : public GG::StaticGraphic {
+public:
+    /** \name Structors */ ///@{
+    RotatingGraphic(const boost::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
+                    GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
+    //@}
+
+    /** \name Mutators */ ///@{
+    void            SetRPM(float rpm)               { m_rpm = std::max(-3600.0f, std::min(3600.0f, rpm)); }
+    void            SetPhaseOffset(float degrees)   { m_phase_offset = degrees; }
+    virtual void    Render();
+    //@}
+
+private:
+    float   m_rpm;
+    float   m_phase_offset;
 };
 
 #endif // _CUIControls_h_
