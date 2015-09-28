@@ -48,6 +48,7 @@ add_library(GiGi
     MultiEdit.cpp
     PtRect.cpp
     Scroll.cpp
+    ScrollPanel.cpp
     StaticGraphic.cpp
     StyleFactory.cpp
     TabWnd.cpp
@@ -62,6 +63,12 @@ add_library(GiGi
     dialogs/ColorDlg.cpp
     dialogs/FileDlg.cpp
     dialogs/ThreeButtonDlg.cpp
+
+    RichText/RichText.cpp
+    RichText/TagParser.cpp
+    RichText/ImageBlock.cpp
+    RichText/TextBlock.cpp
+    RichText/BlockControl.cpp
 )
 
 if (USE_STATIC_LIBS)

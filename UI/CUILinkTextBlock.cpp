@@ -1,0 +1,55 @@
+#include "CUILinkTextBlock.h"
+
+#include "../util/VarText.h"
+#include "CUIControls.h"
+
+CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                                   GG::Flags<GG::TextFormat> format, const GG::Clr& color,
+                                   GG::Flags<GG::WndFlag> flags)
+: GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
+m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY |
+    GG::MULTI_LEFT | GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL | GG::MULTI_NO_VSCROLL))
+{
+    AttachChild(m_link_text);
+
+    m_link_text->SetColor(GG::CLR_ZERO);
+    m_link_text->SetInteriorColor(GG::CLR_ZERO);
+}
+
+GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width)
+{
+    m_link_text->Resize(GG::Pt(width, GG::Y1));
+    GG::Pt size = m_link_text->TextLowerRight() - m_link_text->TextUpperLeft();
+    size.x = width;
+
+    // Only resize when changed.
+    if (size != m_link_text->Size())
+        m_link_text->Resize(size);
+
+    if (size != Size())
+        Resize(size);
+
+    return size;
+}
+
+CUILinkTextMultiEdit& CUILinkTextBlock::Text() {
+    return *m_link_text;
+}
+
+GG::BlockControl* CUILinkTextBlock::Factory::CreateFromTag(
+    const std::string& tag, const GG::RichText::TAG_PARAMS& params, const std::string& content,
+    const boost::shared_ptr<GG::Font>& font, const GG::Clr& color, GG::Flags<GG::TextFormat> format)
+{
+    CUILinkTextBlock* block = new CUILinkTextBlock(content, font, format, color, GG::NO_WND_FLAGS);
+
+    // Wire the block's signals to come through us.
+    GG::Connect(block->m_link_text->LinkClickedSignal, this->LinkClickedSignal);
+    GG::Connect(block->m_link_text->LinkDoubleClickedSignal, this->LinkDoubleClickedSignal);
+    GG::Connect(block->m_link_text->LinkRightClickedSignal, this->LinkRightClickedSignal);
+
+    // Color ships and planets by their owner empires.
+    block->m_link_text->SetDecorator(VarText::SHIP_ID_TAG, new ColorByOwner());
+    block->m_link_text->SetDecorator(VarText::PLANET_ID_TAG, new ColorByOwner());
+
+    return block;
+}

@@ -600,9 +600,6 @@ private:
     X                    m_space_width; ///< The width of the glyph for the space character
     GlyphMap             m_glyphs;      ///< The locations of the images of each glyph within the textures
     boost::shared_ptr<Texture> m_texture;    ///< The OpenGL texture object in which the glyphs can be found
-
-    static std::set<std::string>   s_action_tags; ///< Embedded tags that Font must act upon when rendering are stored here
-    static std::set<std::string>   s_known_tags;  ///< Embedded tags that Font knows about but should not act upon are stored here
 };
 
 /** Stream output operator for Font::Substring. */

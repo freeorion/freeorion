@@ -18,6 +18,12 @@
     <Filter Include="Source Files\dialogs">
       <UniqueIdentifier>{da832563-336b-4496-97a4-5879597261b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\RichText">
+      <UniqueIdentifier>{4068c62f-619e-406c-9386-446f5b870f59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\RichText">
+      <UniqueIdentifier>{d4c017e8-2997-4a5c-90e9-83bb0aea86be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\GG\GG\SignalsAndSlots.h">
@@ -200,6 +206,18 @@
     <ClInclude Include="..\..\GG\GG\GLClientAndServerBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\GG\GG\ScrollPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GG\GG\RichText\BlockControl.h">
+      <Filter>Header Files\RichText</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GG\GG\RichText\ImageBlock.h">
+      <Filter>Header Files\RichText</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GG\GG\RichText\RichText.h">
+      <Filter>Header Files\RichText</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp">
@@ -305,6 +323,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\GLClientAndServerBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>  
+    <ClCompile Include="..\..\GG\src\RichText\BlockControl.cpp">
+      <Filter>Source Files\RichText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\RichText\ImageBlock.cpp">
+      <Filter>Source Files\RichText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\RichText\RichText.cpp">
+      <Filter>Source Files\RichText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\RichText\TagParser.cpp">
+      <Filter>Source Files\RichText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\RichText\TextBlock.cpp">
+      <Filter>Source Files\RichText</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\ScrollPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

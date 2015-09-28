@@ -102,7 +102,8 @@ private:
     GG::Label*          m_name_text;        // name
     GG::Label*          m_cost_text;        // cost and time to build or research
     GG::Label*          m_summary_text;     // general purpose item
-    GG::MultiEdit*      m_description_box;  // detailed and lengthy description
+    GG::RichText*       m_description_box;  // detailed and lengthy description
+    GG::ScrollPanel* m_description_panel;   // scroller for m_description_box
     GG::StaticGraphic*  m_icon;
     GG::Button*         m_index_button;
     GG::Button*         m_back_button;

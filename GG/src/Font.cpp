@@ -684,12 +684,47 @@ Font::Glyph::Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, cons
     width(ul.x - lr.x)
 {}
 
+namespace {
+
+    // Global set of tags requiring action fron Font. Wrapped in a function for deterministic static initialization order.
+    std::set<std::string>& ActionTags()
+    {
+        static std::set<std::string> action_tags;
+        return action_tags;
+    }
+
+    // Global set of known tags. Wrapped in a function for deterministic static initialization order.
+    std::set<std::string>& KnownTags()
+    {
+        static std::set<std::string> known_tags;
+        return known_tags;
+    }
+
+    // Registers the default action and known tags.
+    int RegisterDefaultTags(){
+        ActionTags().insert("i");
+        ActionTags().insert("s");
+        ActionTags().insert("u");
+        ActionTags().insert("rgba");
+        ActionTags().insert(ALIGN_LEFT_TAG);
+        ActionTags().insert(ALIGN_CENTER_TAG);
+        ActionTags().insert(ALIGN_RIGHT_TAG);
+        ActionTags().insert(PRE_TAG);
+
+        // Always know the action tags.
+        KnownTags().insert(ActionTags().begin(), ActionTags().end());
+
+        // Must have return value to call at static initialization time.
+        return 0;
+    }
+
+    // Register the default tags at static initialization time.
+    int register_tags_dummy = RegisterDefaultTags();
+}
 
 ///////////////////////////////////////
 // class GG::Font
 ///////////////////////////////////////
-std::set<std::string> Font::s_action_tags;
-std::set<std::string> Font::s_known_tags;
 
 Font::Font() :
     m_pt_sz(0),
@@ -990,26 +1025,21 @@ Pt Font::TextExtent(const std::string& text, const std::vector<LineData>& line_d
 }
 
 void Font::RegisterKnownTag(const std::string& tag)
-{ s_known_tags.insert(tag); }
+{ KnownTags().insert(tag); }
 
 void Font::RemoveKnownTag(const std::string& tag)
 {
-    if (s_action_tags.find(tag) == s_action_tags.end())
-        s_known_tags.erase(tag);
+    if (KnownTags().find(tag) == KnownTags().end())
+        KnownTags().erase(tag);
 }
 
 void Font::ClearKnownTags()
 {
-    s_action_tags.clear();
-    s_action_tags.insert("i");
-    s_action_tags.insert("s");
-    s_action_tags.insert("u");
-    s_action_tags.insert("rgba");
-    s_action_tags.insert(ALIGN_LEFT_TAG);
-    s_action_tags.insert(ALIGN_CENTER_TAG);
-    s_action_tags.insert(ALIGN_RIGHT_TAG);
-    s_action_tags.insert(PRE_TAG);
-    s_known_tags = s_action_tags;
+    // Clear known tags.
+    KnownTags().clear();
+
+    // Always know the default tags.
+    RegisterDefaultTags();
 }
 
 void Font::ThrowBadGlyph(const std::string& format_str, boost::uint32_t c)
@@ -1042,7 +1072,7 @@ Pt Font::DetermineLinesImpl(const std::string& text,
 
         std::stack<Substring> tag_stack;
         bool ignore_tags = format & FORMAT_IGNORETAGS;
-        MatchesKnownTag matches_known_tag(s_known_tags, ignore_tags);
+        MatchesKnownTag matches_known_tag(KnownTags(), ignore_tags);
         MatchesTopOfStack matches_tag_stack(tag_stack, ignore_tags);
 
         mark_tag tag_name_tag(1);
@@ -1432,9 +1462,6 @@ void Font::CheckFace(FT_Face face, FT_Error error)
 
 void Font::Init(FT_Face& face)
 {
-    if (s_action_tags.empty()) // if this is the first Font to get initialized, it needs to initialize some static members
-        ClearKnownTags();
-
     FT_Fixed scale;
 
     if (!m_pt_sz) {

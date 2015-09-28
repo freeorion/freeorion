@@ -287,6 +287,8 @@
     <ClCompile Include="..\..\UI\CombatReport\GraphicalSummary.cpp" />
     <ClCompile Include="..\..\UI\CUIControls.cpp" />
     <ClCompile Include="..\..\UI\CUIDrawUtil.cpp" />
+	<ClCompile Include="..\..\UI\CUILinkTextBlock.cpp" />
+	<ClInclude Include="..\..\UI\CUILinkTextBlock.h" />
     <ClCompile Include="..\..\UI\CUIStyle.cpp" />
     <ClCompile Include="..\..\UI\CUIWnd.cpp" />
     <ClCompile Include="..\..\UI\DesignWnd.cpp" />

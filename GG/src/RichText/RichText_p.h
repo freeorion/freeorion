@@ -1,0 +1,6 @@
+#ifndef RICHTEXTPRIVATE_H
+#define RICHTEXTPRIVATE_H
+
+
+
+#endif // RICHTEXTPRIVATE_H

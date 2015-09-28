@@ -34,11 +34,13 @@ namespace GG {
     class MultiEdit;
     class RadioButtonGroup;
     class Scroll;
+    class ScrollPanel;
     class StaticGraphic;
     class SubTexture;
     class TabWnd;
     class Texture;
     class TextControl;
+    class RichText;
     struct Clr;
 
     typedef TextControl Label;

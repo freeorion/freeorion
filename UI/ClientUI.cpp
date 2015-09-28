@@ -34,6 +34,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/UnicodeCharsets.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
+#include <GG/RichText/ImageBlock.h>
 
 #include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -588,6 +589,9 @@ ClientUI::ClientUI() :
     ConditionalConnectOption("UI.auto-reposition-windows",
                              HumanClientApp::GetApp()->RepositionWindowsSignal,
                              true, std::equal_to<bool>());
+
+    // Set the root path for image tags in rich text.
+    GG::ImageBlock::SetDefaultImagePath(ArtDir().string());
 }
 
 ClientUI::~ClientUI() {

@@ -3248,6 +3248,11 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 
 '''
 
+ENC_SUITABILITY_REPORT_WHEEL_INTRO
+'''
+Suitability is determined by distance from the preferred type in this wheel:
+'''
+
 # types of things that can be shown in encyclopedia
 ENC_TEST
 Test
