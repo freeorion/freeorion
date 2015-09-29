@@ -186,58 +186,59 @@ Y Texture::DefaultHeight() const
 
 void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords/* = 0*/) const
 {
-    if (m_opengl_id) {
-        if (!tex_coords) // use default texture coords when not given any others
-            tex_coords = m_tex_coords;
+    if (m_opengl_id == 0)
+        return;
 
-        glBindTexture(GL_TEXTURE_2D, m_opengl_id);
+    if (!tex_coords) // use default texture coords when not given any others
+        tex_coords = m_tex_coords;
 
-        // HACK! This code ensures that unscaled textures are reproduced exactly, even
-        // though they theoretically should be even when using non-GL_NEAREST* scaling.
-        bool render_scaled = (pt2.x - pt1.x) != m_default_width || (pt2.y - pt1.y) != m_default_height;
-        bool need_min_filter_change = !render_scaled && m_min_filter != GL_NEAREST;
-        bool need_mag_filter_change = !render_scaled && m_mag_filter != GL_NEAREST;
-        if (need_min_filter_change)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        if (need_mag_filter_change)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_2D, m_opengl_id);
 
-        // render texture
+    // HACK! This code ensures that unscaled textures are reproduced exactly, even
+    // though they theoretically should be even when using non-GL_NEAREST* scaling.
+    bool render_scaled = (pt2.x - pt1.x) != m_default_width || (pt2.y - pt1.y) != m_default_height;
+    bool need_min_filter_change = !render_scaled && m_min_filter != GL_NEAREST;
+    bool need_mag_filter_change = !render_scaled && m_mag_filter != GL_NEAREST;
+    if (need_min_filter_change)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    if (need_mag_filter_change)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        GG::Pt position_data[4];
-        GLfloat texture_coordinate_data[8];
+    // render texture
 
-        texture_coordinate_data[2*0] = tex_coords[0];
-        texture_coordinate_data[2*0 + 1] = tex_coords[1];
-        position_data[0] = pt1;
+    GG::Pt position_data[4];
+    GLfloat texture_coordinate_data[8];
 
-        texture_coordinate_data[2*1] = tex_coords[2];
-        texture_coordinate_data[2*1 + 1] = tex_coords[1];
-        position_data[1].x = pt2.x;
-        position_data[1].y = pt1.y;
+    texture_coordinate_data[2*0] = tex_coords[0];
+    texture_coordinate_data[2*0 + 1] = tex_coords[1];
+    position_data[0] = pt1;
 
-        texture_coordinate_data[2*2] = tex_coords[0];
-        texture_coordinate_data[2*2 + 1] = tex_coords[3];
-        position_data[2].x = pt1.x;
-        position_data[2].y = pt2.y;
+    texture_coordinate_data[2*1] = tex_coords[2];
+    texture_coordinate_data[2*1 + 1] = tex_coords[1];
+    position_data[1].x = pt2.x;
+    position_data[1].y = pt1.y;
 
-        texture_coordinate_data[2*3] = tex_coords[2];
-        texture_coordinate_data[2*3 + 1] = tex_coords[3];
-        position_data[3] = pt2;
+    texture_coordinate_data[2*2] = tex_coords[0];
+    texture_coordinate_data[2*2 + 1] = tex_coords[3];
+    position_data[2].x = pt1.x;
+    position_data[2].y = pt2.y;
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glVertexPointer(2, GL_INT, sizeof (GLint)*2, &position_data);
-        glTexCoordPointer(2, GL_FLOAT, 0, &texture_coordinate_data);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    texture_coordinate_data[2*3] = tex_coords[2];
+    texture_coordinate_data[2*3 + 1] = tex_coords[3];
+    position_data[3] = pt2;
 
-        if (need_min_filter_change)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);
-        if (need_mag_filter_change)
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_mag_filter);
-    }
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glVertexPointer(2, GL_INT, sizeof (GLint)*2, &position_data);
+    glTexCoordPointer(2, GL_FLOAT, 0, &texture_coordinate_data);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    if (need_min_filter_change)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_min_filter);
+    if (need_mag_filter_change)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_mag_filter);
 }
 
 void Texture::OrthoBlit(const Pt& pt) const
