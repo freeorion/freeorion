@@ -81,7 +81,7 @@ class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<unsigned cha
 public:
     GLRGBAColorBuffer();
     void store(const Clr& color);
-    void activate() const;
+    virtual void activate() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ public:
     void store(X x, float y);
     void store(float x, Y y);
     void store(float x, float y);
-    void activate() const;
+    virtual void activate() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ class GG_API GLTexCoordBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
     GLTexCoordBuffer();
-    void activate() const;
+    virtual void activate() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -117,9 +117,19 @@ class GG_API GL3DVertexBuffer : public GLClientAndServerBufferBase<float>
 public:
     GL3DVertexBuffer();
     void store(float x, float y, float z);
-    void activate() const;
+    virtual void activate() const;
 };
 
+///////////////////////////////////////////////////////////////////////////
+// GLNormalBuffer specialized class for 3d normal data
+///////////////////////////////////////////////////////////////////////////
+class GG_API GLNormalBuffer : public GLClientAndServerBufferBase<float>
+{
+public:
+    GLNormalBuffer();
+    void store(float x, float y, float z);
+    virtual void activate() const;
+};
 
 }
 
