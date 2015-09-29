@@ -54,8 +54,6 @@ namespace { // file-scope constants and functions
     void Rectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2, unsigned int bevel_thick,
                    bool bevel_left, bool bevel_top, bool bevel_right, bool bevel_bottom)
     {
-        glDisable(GL_TEXTURE_2D);
-
         X inner_x1 = ul.x + (bevel_left ? static_cast<int>(bevel_thick) : 0);
         Y inner_y1 = ul.y + (bevel_top ? static_cast<int>(bevel_thick) : 0);
         X inner_x2 = lr.x - (bevel_right ? static_cast<int>(bevel_thick) : 0);
@@ -81,7 +79,7 @@ namespace { // file-scope constants and functions
 
         verts.activate();
 
-
+        glDisable(GL_TEXTURE_2D);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -111,7 +109,6 @@ namespace { // file-scope constants and functions
     {
         X wd = lr.x - ul.x;
         Y ht = lr.y - ul.y;
-        glDisable(GL_TEXTURE_2D);
 
         // all vertices
         GLfloat verts[][2] = {{-0.2f,  0.2f}, {-0.6f, -0.2f}, {-0.6f,  0.0f}, {-0.2f,  0.4f}, {-0.8f,  0.0f},
@@ -133,6 +130,7 @@ namespace { // file-scope constants and functions
         for (std::size_t i = 0; i < 22; ++i)
             vert_buf.store(verts[indices[i]][0], verts[indices[i]][1]);
 
+        glDisable(GL_TEXTURE_2D);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
         glEnableClientState(GL_VERTEX_ARRAY);
 
