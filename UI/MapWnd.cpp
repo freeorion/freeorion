@@ -88,6 +88,8 @@ namespace {
     const int       LAYOUT_MARGIN = 5;
     const GG::Y     TOOLBAR_HEIGHT(32);
 
+    const double    TWO_PI = 2.0*3.1415926536;
+
     double ZoomScaleFactor(double steps_in) {
         if (steps_in > ZOOM_IN_MAX_STEPS) {
             ErrorLogger() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
@@ -1679,7 +1681,6 @@ void MapWnd::RenderSystems() {
 
     RenderScaleCircle();
 
-    const double TWO_PI = 2.0*3.14159;
     if (fog_scanlines || circles) {
         glPushMatrix();
         glLoadIdentity();
@@ -1960,7 +1961,6 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
     const double MARKER_HALF_SIZE = 9;
     const int MARKER_PTS = ClientUI::Pts();
     boost::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(MARKER_PTS);
-    const double TWO_PI = 2.0*3.1415926536;
     GG::Flags<GG::TextFormat> flags = GG::FORMAT_CENTER | GG::FORMAT_VCENTER;
 
     glPushMatrix();
@@ -3161,10 +3161,9 @@ void MapWnd::InitFieldRenderingBuffers() {
 
         // also add circles to render scanlines for not-visible fields
         if (!current_field_visible) {
-            const double PI = 3.141594;
             GG::Pt circle_ul = GG::Pt(GG::X(field->X() - FIELD_SIZE), GG::Y(field->Y() - FIELD_SIZE));
             GG::Pt circle_lr = GG::Pt(GG::X(field->X() + FIELD_SIZE), GG::Y(field->Y() + FIELD_SIZE));
-            BufferStoreCircleArcVertices(m_field_scanline_circles, circle_ul, circle_lr, 0, 2*PI, true, 0, false);
+            BufferStoreCircleArcVertices(m_field_scanline_circles, circle_ul, circle_lr, 0, TWO_PI, true, 0, false);
         }
     }
     m_field_scanline_circles.createServerBuffer();
@@ -3304,7 +3303,6 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     }
 
 
-    const double TWO_PI = 2.0*3.1415926536;
     const GG::Pt BORDER_INSET(GG::X(1.0f), GG::Y(1.0f));
 
     // loop over colours / empires, adding a batch of triangles to buffers for
@@ -3388,8 +3386,6 @@ void MapWnd::InitScaleCircleRenderingBuffer() {
     GG::Pt circle_centre = GG::Pt(GG::X(selected_system->X()), GG::Y(selected_system->Y()));
     GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
     GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
-
-    const double TWO_PI = 2.0*3.1415926536;
 
     BufferStoreCircleArcVertices(m_scale_circle_vertices, ul, lr, 0, TWO_PI, false, 0, true);
 
@@ -5152,17 +5148,31 @@ bool MapWnd::ReturnToMap() {
         some_subscreen_was_visible = true;
     }
 
-    if (!some_subscreen_was_visible) {
-        // close fleets window if open
-        FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
-        GG::Wnd* active_fleet_wnd = fm.ActiveFleetWnd();
-        if (active_fleet_wnd) {
-            fm.CloseAll();
-        } else {
-            // else close sidepanel if open
-            SelectSystem(INVALID_OBJECT_ID);
-        }
+    if (some_subscreen_was_visible)
+        return true;
+
+    if (m_pedia_panel->Visible()) {
+        TogglePedia();
+        return true;
     }
+
+    // close fleets window if open
+    FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
+    GG::Wnd* active_fleet_wnd = fm.ActiveFleetWnd();
+    if (active_fleet_wnd) {
+        fm.CloseAll();
+        return true;
+    }
+
+    // close sidepanel if open
+    if (SidePanel::SystemID() != INVALID_OBJECT_ID) {
+       SelectSystem(INVALID_OBJECT_ID);
+       return true;
+    }
+
+    // close empire/player list and messages windows if nothing else was open...
+    HideEmpires();
+    HideMessages();
 
     return true;
 }
