@@ -338,15 +338,17 @@ namespace {
         glLightfv(GL_LIGHT0, GL_SPECULAR, &colour[0]);
         glEnable(GL_TEXTURE_2D);
 
-        glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));
-        glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
-        glRotated(axial_tilt, 0.0, 1.0, 0.0);  // axial tilt
+        glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));// relocate to locatin on screen where planet is to be rendered
+        glRotated(95.0, -1.0, 0.0, 0.0);                                    // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
+        glRotated(axial_tilt, 0.0, 1.0, 0.0);                               // axial tilt
+
         float intensity = static_cast<float>(GetRotatingPlanetAmbientIntensity());
         GG::Clr ambient = GG::FloatClr(intensity, intensity, intensity, 1.0f);
         intensity = static_cast<float>(GetRotatingPlanetDiffuseIntensity());
         GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
 
         RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
+
         if (overlay_texture) {
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
