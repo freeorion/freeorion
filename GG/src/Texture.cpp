@@ -227,6 +227,7 @@ void Texture::OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords/
     texture_coordinate_data[2*3 + 1] = tex_coords[3];
     position_data[3] = pt2;
 
+    glEnable(GL_TEXTURE_2D);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glVertexPointer(2, GL_INT, sizeof (GLint)*2, &position_data);
