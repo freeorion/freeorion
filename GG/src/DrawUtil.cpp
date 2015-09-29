@@ -546,8 +546,8 @@ namespace { // file-scope constants and functions
 
         glDisable(GL_TEXTURE_2D);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        glEnable(GL_VERTEX_ARRAY);
-        glEnable(GL_COLOR_ARRAY);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
 
         verts.activate();
         colours.activate();
