@@ -38,6 +38,19 @@ class AdjacencyGrid:
                    for cy in range(upper_left_y, lower_right_y + 1) for pos in self.grid[cx][cy])
 
 
+def calc_universe_width(shape, size):
+    """
+    Calculates typical universe width based on galaxy shape and number of star systems.
+    A 150 star universe should be 1000 units across.
+    """
+    width = (1000.0 / sqrt(150.0)) * sqrt(float(size))
+    if shape in [fo.galaxyShape.elliptical, fo.galaxyShape.irregular]:
+        width *= 1.4
+    elif shape == fo.galaxyShape.disc:
+        width *= 1.2
+    return width
+
+
 def get_systems_within_jumps(origin_system, jumps):
     """
     Returns all systems within jumps jumps of system origin_system (including origin_system).
@@ -434,11 +447,7 @@ def calc_star_system_positions(shape, size):
     """
 
     # calculate typical width for universe based on number of systems
-    width = fo.calc_typical_universe_width(size)
-    if shape in [fo.galaxyShape.elliptical, fo.galaxyShape.irregular]:
-        width *= 1.4
-    elif shape == fo.galaxyShape.disc:
-        width *= 1.2
+    width = calc_universe_width(shape, size)
     print "Set universe width to", width
     fo.set_universe_width(width)
 

@@ -84,10 +84,6 @@ protected:
     const Condition::ConditionBase* m_location;
 };
 
-// Calculates typical universe width based on number of systems
-// A 150 star universe should be 1000 units across
-double CalcTypicalUniverseWidth(int size);
-
 /** Set active meter current values equal to target/max meter current
  * values.  Useful when creating new object after applying effects. */
 void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map);

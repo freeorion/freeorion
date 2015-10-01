@@ -1242,8 +1242,6 @@ void WrapServerAPI() {
     def("current_turn",                         CurrentTurn);
     def("generate_sitrep",                      GenerateSitRep);
     def("generate_sitrep",                      GenerateSitRep1);
-
-    def("calc_typical_universe_width",          CalcTypicalUniverseWidth);
     def("generate_starlanes",                   GenerateStarlanes);
 
     def("species_preferred_focus",              SpeciesPreferredFocus);

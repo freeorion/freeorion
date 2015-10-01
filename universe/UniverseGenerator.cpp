@@ -17,9 +17,6 @@
 //  Universe Setup Functions            //
 //////////////////////////////////////////
 
-double CalcTypicalUniverseWidth(int size)
-{ return (1000.0 / std::sqrt(150.0)) * std::sqrt(static_cast<double>(size)); }
-
 namespace Delauney {
     /** simple 2D point.  would have used array of systems, but System
       * class has limits on the range of positions that would interfere
