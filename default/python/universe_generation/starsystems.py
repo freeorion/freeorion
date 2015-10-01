@@ -77,11 +77,11 @@ def generate_systems(pos_list, gsd):
     sys_list = []
     for position in pos_list:
         star_type = pick_star_type(gsd.age)
-        system = fo.create_system(star_type, "", position.x, position.y)
+        system = fo.create_system(star_type, "", position[0], position[1])
         if system == fo.invalid_object():
             # create system failed, report an error and try to continue with next position
             util.report_error("Python generate_systems: create system at position (%f, %f) failed"
-                              % (position.x, position.y))
+                              % (position[0], position[1]))
             continue
         sys_list.append(system)
         for orbit in range(fo.sys_get_num_orbits(system)):

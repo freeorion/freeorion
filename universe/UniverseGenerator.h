@@ -10,21 +10,6 @@
 
 struct PlayerSetupData;
 
-// Class representing a position on the galaxy map, used
-// to store the positions at which systems shall be created
-struct SystemPosition {
-    double x;
-    double y;
-
-    SystemPosition(double pos_x, double pos_y) :
-        x(pos_x),
-        y(pos_y)
-    {}
-    
-    bool operator == (const SystemPosition &p)
-    { return ((x == p.x) && (y == p.y)); }
-};
-
 /** A combination of names of ShipDesign that can be put together to make a
  * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt
  * ShipDesign names refer to designs listed in premade_ship_designs.txt.

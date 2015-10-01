@@ -1197,13 +1197,6 @@ namespace {
 }
 
 void WrapServerAPI() {
-    class_<SystemPosition>("SystemPosition", init<double, double>())
-        .def_readwrite("x", &SystemPosition::x)
-        .def_readwrite("y", &SystemPosition::y);
-
-    class_<std::vector<SystemPosition> >("SystemPositionVec")
-        .def(vector_indexing_suite<std::vector<SystemPosition>, true>());
-
     class_<PlayerSetupData>("PlayerSetupData")
         .def_readonly("player_name",        &PlayerSetupData::m_player_name)
         .def_readonly("empire_name",        &PlayerSetupData::m_empire_name)

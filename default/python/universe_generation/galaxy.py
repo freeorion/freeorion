@@ -22,7 +22,7 @@ class AdjacencyGrid:
         print "Adjacency Grid: width", self.width, ", cell size", self.cell_size
 
     def insert_pos(self, pos):
-        self.grid[int(pos.x / self.cell_size)][int(pos.y / self.cell_size)].append(pos)
+        self.grid[int(pos[0] / self.cell_size)][int(pos[1] / self.cell_size)].append(pos)
 
     def too_close_to_other_positions(self, x, y):
         """
@@ -34,7 +34,7 @@ class AdjacencyGrid:
         upper_left_y = max(0, cell_y - 1)
         lower_right_x = min(self.width - 1, cell_x + 1)
         lower_right_y = min(self.width - 1, cell_y + 1)
-        return any(util.distance(pos.x, pos.y, x, y) < self.min_dist for cx in range(upper_left_x, lower_right_x + 1)
+        return any(util.distance(pos[0], pos[1], x, y) < self.min_dist for cx in range(upper_left_x, lower_right_x + 1)
                    for cy in range(upper_left_y, lower_right_y + 1) for pos in self.grid[cx][cy])
 
 
@@ -109,7 +109,7 @@ def spiral_galaxy_calc_positions(positions, arms, size, width):
                 continue
 
             # add the new star location
-            pos = fo.SystemPosition(x, y)
+            pos = (x, y)
             adjacency_grid.insert_pos(pos)
             positions.append(pos)
             break
@@ -166,7 +166,7 @@ def elliptical_galaxy_calc_positions(positions, size, width):
                 continue
 
             # add the new star location
-            pos = fo.SystemPosition(x, y)
+            pos = (x, y)
             adjacency_grid.insert_pos(pos)
             positions.append(pos)
             break
@@ -201,7 +201,7 @@ def disc_galaxy_calc_positions(positions, size, width):
                 continue
 
             # add the new star location
-            pos = fo.SystemPosition(x, y)
+            pos = (x, y)
             adjacency_grid.insert_pos(pos)
             positions.append(pos)
             break
@@ -280,7 +280,7 @@ def cluster_galaxy_calc_positions(positions, clusters, size, width):
                 continue
 
             # add the new star location
-            pos = fo.SystemPosition(x, y)
+            pos = (x, y)
             adjacency_grid.insert_pos(pos)
             positions.append(pos)
             break
@@ -320,7 +320,7 @@ def ring_galaxy_calc_positions(positions, size, width):
                 continue
 
             # add the new star location
-            pos = fo.SystemPosition(x, y)
+            pos = (x, y)
             adjacency_grid.insert_pos(pos)
             positions.append(pos)
             break
@@ -352,7 +352,7 @@ def box_galaxy_calc_positions(positions, size, width):
                 continue
 
             # add the new star location
-            pos = fo.SystemPosition(x, y)
+            pos = (x, y)
             adjacency_grid.insert_pos(pos)
             positions.append(pos)
             break
@@ -387,7 +387,7 @@ def irregular_galaxy_calc_positions(positions, size, width):
             if attempts % 10:
                 prev_x, prev_y = x, y
         if found:
-            pos = fo.SystemPosition(x, y)
+            pos = (x, y)
             adjacency_grid.insert_pos(pos)
             positions.append(pos)
         prev_x, prev_y = x, y
@@ -405,10 +405,10 @@ def recalc_universe_width(positions):
     print "Recalculating universe width..."
     # first, get the uppermost, lowermost, leftmost and rightmost positions
     # (these are those with their x or y coordinate closest to or farthest away from the x or y axis)
-    min_x = min(positions, key=lambda p: p.x).x
-    max_x = max(positions, key=lambda p: p.x).x
-    min_y = min(positions, key=lambda p: p.y).y
-    max_y = max(positions, key=lambda p: p.y).y
+    min_x = min(positions, key=lambda p: p[0])[0]
+    min_y = min(positions, key=lambda p: p[1])[1]
+    max_x = max(positions, key=lambda p: p[0])[0]
+    max_y = max(positions, key=lambda p: p[1])[1]
     print "...the leftmost system position is at x coordinate", min_x
     print "...the uppermost system position is at y coordinate", min_y
     print "...the rightmost system position is at x coordinate", max_x
@@ -427,14 +427,12 @@ def recalc_universe_width(positions):
     delta_x = ((actual_width - width) / 2) - min_x
     delta_y = ((actual_width - height) / 2) - min_y
     print "...shifting all system positions by", delta_x, "/", delta_y
-    new_positions = fo.SystemPositionVec()
-    for position in positions:
-        new_positions.append(fo.SystemPosition(position.x + delta_x, position.y + delta_y))
+    new_positions = [(p[0] + delta_x, p[1] + delta_y) for p in positions]
 
-    print "...the leftmost system position is now at x coordinate", min(new_positions, key=lambda p: p.x).x
-    print "...the uppermost system position is now at y coordinate", min(new_positions, key=lambda p: p.y).y
-    print "...the rightmost system position is now at x coordinate", max(new_positions, key=lambda p: p.x).x
-    print "...the lowermost system position is now at y coordinate", max(new_positions, key=lambda p: p.y).y
+    print "...the leftmost system position is now at x coordinate", min(new_positions, key=lambda p: p[0])[0]
+    print "...the uppermost system position is now at y coordinate", min(new_positions, key=lambda p: p[1])[1]
+    print "...the rightmost system position is now at x coordinate", max(new_positions, key=lambda p: p[0])[0]
+    print "...the lowermost system position is now at y coordinate", max(new_positions, key=lambda p: p[1])[1]
 
     return actual_width, new_positions
 
@@ -445,15 +443,16 @@ def calc_star_system_positions(shape, size):
     number of systems and width
     Uses universe generator helper functions provided by the API
     """
+    # if shape is "random", randomly pick a galaxy shape
+    if shape == fo.galaxyShape.random:
+        shape = choice(shapes)
 
     # calculate typical width for universe based on number of systems
     width = calc_universe_width(shape, size)
     print "Set universe width to", width
     fo.set_universe_width(width)
 
-    positions = fo.SystemPositionVec()
-    if shape == fo.galaxyShape.random:
-        shape = choice(shapes)
+    positions = []
 
     print "Creating", shape, "galaxy shape"
     if shape == fo.galaxyShape.spiral2:
