@@ -28,13 +28,13 @@ namespace {
         db.Add("UI.sitrep-font-size", UserStringNop("OPTIONS_DB_UI_SITREP_FONTSIZE"), 12, RangedValidator<int>(10, 48));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
-    
+
     GG::X GetIconSize()
     { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-icon-size")); }
 
     GG::X GetFontSize()
     { return GG::X(GetOptionsDB().Get<int>("UI.sitrep-font-size")); }
-    
+
     std::map<std::string, std::string> label_display_map;
     std::map<int, std::set<std::string> > snoozed_sitreps;
     std::set<std::string> permanently_snoozed_sitreps;
@@ -43,7 +43,7 @@ namespace {
         for (int turn=start_turn; turn < start_turn + num_turns; turn++)
             snoozed_sitreps[turn].insert(sitrep_text);
     }
-    
+
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
         try {
@@ -231,10 +231,10 @@ namespace {
                 int text_size = Value((m_link_text->TextLowerRight() - m_link_text->TextUpperLeft()).y);
                 int icon_size = Value(GetIconSize());
                 int max_panel_size = std::max(text_size, icon_size);
-                max_panel_size += Value(ITEM_VERTICAL_PADDING);
+                max_panel_size += Value(2*ITEM_VERTICAL_PADDING);
 
                 GG::Pt panel_size = GG::Pt(GG::X(lr.x - ul.x), GG::Y(max_panel_size));
-                GG::Control::SizeMove(ul, ul + panel_size );
+                GG::Control::SizeMove(ul, ul + panel_size);
                 DoLayout();
             }
         }
@@ -248,12 +248,12 @@ namespace {
             GG::Y ICON_HEIGHT(Value(GetIconSize()));
 
             GG::X left(GG::X0);
-            GG::Y bottom(ClientHeight());
+            GG::Y bottom(ClientHeight() - ITEM_VERTICAL_PADDING);
 
             m_icon->SizeMove(GG::Pt(left, bottom/2 - ICON_HEIGHT/2), GG::Pt(left + GetIconSize(), bottom/2 + ICON_HEIGHT/2));
             left += GetIconSize() + ICON_RIGHT_MARGIN;
 
-            m_link_text->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(ClientWidth(), bottom));
+            m_link_text->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(ClientWidth() - 3, bottom));
         }
 
         void            Init() {
@@ -307,7 +307,7 @@ namespace {
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
             GG::Pt new_size = lr - ul;
-            new_size.x -= 7; // Avoid allowing the scrollbar to hide the very rightmost pixels.
+            new_size.x -= 9; // Avoid allowing the scrollbar to hide the very rightmost pixels.
             if (!empty() && m_panel && old_size != new_size) {
                 m_panel->Resize(new_size);
                 new_size = m_panel->Size();
@@ -684,7 +684,7 @@ void SitRepPanel::Update() {
     { orderedSitreps.push_back(*sitrep_it); }
 
     // create UI rows for all sitrps
-    GG::X width = m_sitreps_lb->Width() - 8 - ClientUI::ScrollWidth();
+    GG::X width = m_sitreps_lb->Width() - ClientUI::ScrollWidth();
     for (std::vector<SitRepEntry>::iterator sitrep_it = orderedSitreps.begin();
          sitrep_it != orderedSitreps.end(); sitrep_it++)
     { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it)); }
@@ -722,5 +722,4 @@ int SitRepPanel::NumVisibleSitrepsThisTurn() const {
     std::map<int, std::list<SitRepEntry> > turns = GetSitRepsSortedByTurn(HumanClientApp::GetApp()->EmpireID(), m_hidden_sitrep_templates);
     return turns[CurrentTurn()].size();
 }
-
 
