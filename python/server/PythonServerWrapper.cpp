@@ -83,9 +83,6 @@ namespace {
     int     InvalidObjectID()
     { return INVALID_OBJECT_ID; }
 
-    double  MinSystemSeparation()
-    { return MIN_SYSTEM_SEPARATION; }
-
     float   LargeMeterValue()
     { return Meter::LARGE_VALUE; }
 
@@ -1234,7 +1231,6 @@ void WrapServerAPI() {
 
     def("all_empires",                          AllEmpires);
     def("invalid_object",                       InvalidObjectID);
-    def("min_system_separation",                MinSystemSeparation);
     def("large_meter_value",                    LargeMeterValue);
     def("invalid_position",                     InvalidPosition);
 
