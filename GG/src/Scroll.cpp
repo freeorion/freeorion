@@ -455,7 +455,7 @@ void Scroll::ScrollLineIncrDecrImpl(bool signal, int lines)
         if (static_cast<int>(m_posn + move) <= static_cast<int>(m_range_max - m_page_sz))
             m_posn += move;
         else
-            m_posn = m_range_max - (m_page_sz - 1);
+            m_posn = m_range_max - m_page_sz;
     } else {
         if (static_cast<int>(m_posn + move) >= m_range_min)
             m_posn += move;
