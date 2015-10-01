@@ -1969,17 +1969,27 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
 void ListBox::VScrolled(int tab_low, int tab_high, int low, int high)
 {
     m_first_row_shown = m_rows.empty() ? m_rows.end() : m_rows.begin();
-    Y accum(0);
     Y position(0);
+
+    // scan through list of rows until the tab position is less than one of the rows' centres
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
+        // first shown row is at least the current row, and position is at least the top of the current row
+        m_first_row_shown = it;
         Y row_height = (*it)->Height();
-        if (tab_low < accum + row_height / 2) {
-            m_first_row_shown = it;
-            position = -accum;
+
+        // if this is the last row, abort
+        iterator next_it = it;  ++next_it;
+        if (next_it == m_rows.end())
             break;
-        }
-        accum += row_height;
+
+        // current row is too far for the tab position to be moved to its end. current row remains the first one shown.
+        if (tab_low < (-position) + row_height / 2)
+            break;
+
+        // position is at least at the bottom of the current row
+        position = position - row_height;
     }
+
     X initial_x = m_rows.empty() ? X0 : (*m_rows.begin())->RelativeUpperLeft().x;
     for (iterator it = m_rows.begin(); it != m_rows.end(); ++it) {
         (*it)->MoveTo(Pt(initial_x, position));
