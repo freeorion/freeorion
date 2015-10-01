@@ -684,7 +684,7 @@ void SitRepPanel::Update() {
     { orderedSitreps.push_back(*sitrep_it); }
 
     // create UI rows for all sitrps
-    GG::X width = m_sitreps_lb->Width() - 8;
+    GG::X width = m_sitreps_lb->Width() - 8 - ClientUI::ScrollWidth();
     for (std::vector<SitRepEntry>::iterator sitrep_it = orderedSitreps.begin();
          sitrep_it != orderedSitreps.end(); sitrep_it++)
     { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), *sitrep_it)); }
