@@ -4731,12 +4731,12 @@ EFFECT_DERELICT_MINERALS_LABEL
 Derelict Minerals
 
 EFFECT_DERELICT_MAP
-At %system%: information on the area was obtained from an abandoned derelict.
+At %system%: information on the area was obtained from an abandoned %special%.
 EFFECT_DERELICT_MAP_LABEL
 Derelict Map
 
 EFFECT_DERELICT_FUEL
-At %system%: ships were refueled from the residual supply found in an abandoned derelict.
+At %system%: ships were refueled from the residual supply found in an abandoned %special%.
 EFFECT_DERELICT_FUEL_LABEL
 Derelict Fuel
 
@@ -5734,9 +5734,9 @@ This planet exists partially in this universe and partially in the void, increas
 DERELICT_SPECIAL
 Derelict
 DERELICT_SPECIAL2
-Derelict
+Derelict Scout
 DERELICT_SPECIAL3
-Derelict
+Derelict Tanker
 DERELICT_SPECIAL_REMOVE
 Derelict
 DERELICT_SPECIAL_DESC
