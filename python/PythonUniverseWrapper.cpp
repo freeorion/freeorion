@@ -657,16 +657,16 @@ namespace FreeOrionPython {
     }
 
     void WrapGalaxySetupData() {
-        class_<GalaxySetupData>("galaxySetupData")
-            .def_readonly ("seed",              &GalaxySetupData::m_seed)
-            .def_readwrite("size",              &GalaxySetupData::m_size)
-            .def_readwrite("shape",             &GalaxySetupData::m_shape)
-            .def_readonly ("age",               &GalaxySetupData::m_age)
-            .def_readonly ("starlaneFrequency", &GalaxySetupData::m_starlane_freq)
-            .def_readonly ("planetDensity",     &GalaxySetupData::m_planet_density)
-            .def_readonly ("specialsFrequency", &GalaxySetupData::m_specials_freq)
-            .def_readonly ("monsterFrequency",  &GalaxySetupData::m_monster_freq)
-            .def_readonly ("nativeFrequency",   &GalaxySetupData::m_native_freq)
-            .def_readonly ("maxAIAggression",   &GalaxySetupData::m_ai_aggr);
+        class_<GalaxySetupData>("GalaxySetupData")
+            .def_readonly("seed",               &GalaxySetupData::m_seed)
+            .def_readonly("size",               &GalaxySetupData::m_size)
+            .def_readonly("shape",              &GalaxySetupData::m_shape)
+            .def_readonly("age",                &GalaxySetupData::m_age)
+            .def_readonly("starlaneFrequency",  &GalaxySetupData::m_starlane_freq)
+            .def_readonly("planetDensity",      &GalaxySetupData::m_planet_density)
+            .def_readonly("specialsFrequency",  &GalaxySetupData::m_specials_freq)
+            .def_readonly("monsterFrequency",   &GalaxySetupData::m_monster_freq)
+            .def_readonly("nativeFrequency",    &GalaxySetupData::m_native_freq)
+            .def_readonly("maxAIAggression",    &GalaxySetupData::m_ai_aggr);
     }
 }
