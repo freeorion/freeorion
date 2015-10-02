@@ -157,12 +157,11 @@ def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_dista
     return []
 
 
-def add_planets_to_vicinity(vicinity, num_planets):
+def add_planets_to_vicinity(vicinity, num_planets, gsd):
     """
     Adds the specified number of planets to the specified systems.
     """
     print "Adding", num_planets, "planets to the following systems:", vicinity
-    gsd = fo.get_galaxy_setup_data()  # get galaxy setup data, we will need that later
 
     # first, compile a list containing all the free orbits in the specified systems
     # begin with adding the free orbits of all systems that have a real star (that is, no neutron star, black hole,
@@ -240,7 +239,7 @@ def add_planets_to_vicinity(vicinity, num_planets):
         num_planets -= 1
 
 
-def compile_home_system_list(num_home_systems, systems):
+def compile_home_system_list(num_home_systems, systems, gsd):
     """
     Compiles a list with a requested number of home systems.
     """
@@ -359,7 +358,7 @@ def compile_home_system_list(num_home_systems, systems):
             "planets in the near vicinity, required minimum:", min_planets_in_vicinity_limit(num_systems_in_vicinity)
         if num_planets_to_add > 0:
             systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
-            add_planets_to_vicinity(systems_in_vicinity, num_planets_to_add)
+            add_planets_to_vicinity(systems_in_vicinity, num_planets_to_add, gsd)
 
     # as we've sorted the home system list before, lets shuffle it to ensure random order and return
     random.shuffle(home_systems)

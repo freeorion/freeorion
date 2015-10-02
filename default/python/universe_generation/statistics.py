@@ -49,7 +49,7 @@ def log_planet_type_summary(sys_list):
         print "%-12s %4.1f%%" % (planet_type.name, 100.0 * planet_count / planet_total)
 
 
-def log_species_summary():
+def log_species_summary(native_freq):
     num_empires = sum(empire_species.values())
     num_species = len(fo.get_playable_species())
     exp_count = num_empires // num_species
@@ -60,7 +60,7 @@ def log_species_summary():
         if count:
             print "%-16s : %3d -- %5.1f%%" % (species, count, 100.0 * count / num_empires)
     print
-    native_chance = universe_tables.NATIVE_FREQUENCY[fo.get_galaxy_setup_data().nativeFrequency]
+    native_chance = universe_tables.NATIVE_FREQUENCY[native_freq]
     # as the value in the universe table is higher for a lower frequency, we have to invert it
     # a value of 0 means no natives, in this case return immediately
     if native_chance <= 0:
@@ -89,13 +89,13 @@ def log_species_summary():
         settled_percent = 100.0 * settled_planet_count / (1E-10 + planet_count)
         print "%-12s %5.1f%% : %5.1f%%" % (planet_type.name, potential_percent, settled_percent)
 
-def log_monsters_summary():
+def log_monsters_summary(monster_freq):
     print "Space Monsters Placement Summary"
     for monster, counter in monsters_summary:
         if counter > 0:
             print "Placed space monster", monster, counter, "times"
     print
-    monster_chance = universe_tables.MONSTER_FREQUENCY[fo.get_galaxy_setup_data().monsterFrequency]
+    monster_chance = universe_tables.MONSTER_FREQUENCY[monster_freq]
     # the following loop depends on name mapping done in monsters.py
     print "Tracked Monster and Nest Summary (base monster freq: %4.1f%%)" % (100 * monster_chance)
     print "%-18s | %8s | %8s | %8s | %12s | %s" %\

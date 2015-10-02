@@ -15,6 +15,25 @@ from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 import statistics
 
 
+class PyGalaxySetupData:
+    """
+    Class used to store and manage a copy of the galaxy setup data provided by the FreeOrion interface.
+    This data can then be modified when needed during the universe generation process, without having to
+    change the original data structure.
+    """
+    def __init__(self, galaxy_setup_data):
+        self.seed = galaxy_setup_data.seed
+        self.size = galaxy_setup_data.size
+        self.shape = galaxy_setup_data.shape
+        self.age = galaxy_setup_data.age
+        self.starlane_frequency = galaxy_setup_data.starlaneFrequency
+        self.planet_density = galaxy_setup_data.planetDensity
+        self.specials_frequency = galaxy_setup_data.specialsFrequency
+        self.monster_frequency = galaxy_setup_data.monsterFrequency
+        self.native_frequency = galaxy_setup_data.nativeFrequency
+        self.max_ai_aggression = galaxy_setup_data.maxAIAggression
+
+
 def error_report():
     """
     Can be called from C++ to retrieve a list of errors that occurred during universe generation
@@ -29,7 +48,7 @@ def create_universe(psd_map):
     print "Python Universe Generator"
 
     # fetch universe and player setup data
-    gsd = fo.get_galaxy_setup_data()
+    gsd = PyGalaxySetupData(fo.get_galaxy_setup_data())
     total_players = len(psd_map)
 
     # initialize RNG
@@ -60,12 +79,12 @@ def create_universe(psd_map):
 
     # generate Starlanes
     seed_rng(seed_pool.pop())
-    fo.generate_starlanes(MAX_JUMPS_BETWEEN_SYSTEMS[gsd.starlaneFrequency], MAX_STARLANE_LENGTH)
+    fo.generate_starlanes(MAX_JUMPS_BETWEEN_SYSTEMS[gsd.starlane_frequency], MAX_STARLANE_LENGTH)
     print "Starlanes generated"
 
     print "Compile list of home systems..."
     seed_rng(seed_pool.pop())
-    home_systems = compile_home_system_list(total_players, systems)
+    home_systems = compile_home_system_list(total_players, systems, gsd)
     if not home_systems:
         err_msg = "Python create_universe: couldn't get any home systems, ABORTING!"
         report_error(err_msg)
@@ -95,15 +114,15 @@ def create_universe(psd_map):
 
     print "Generating Natives"
     seed_rng(seed_pool.pop())
-    generate_natives(gsd.nativeFrequency, systems, home_systems)
+    generate_natives(gsd.native_frequency, systems, home_systems)
 
     print "Generating Space Monsters"
     seed_rng(seed_pool.pop())
-    generate_monsters(gsd.monsterFrequency, systems)
+    generate_monsters(gsd.monster_frequency, systems)
 
     print "Distributing Starting Specials"
     seed_rng(seed_pool.pop())
-    distribute_specials(gsd.specialsFrequency, fo.get_all_objects())
+    distribute_specials(gsd.specials_frequency, fo.get_all_objects())
 
     # finally, write some statistics to the log file
     print "############################################################"
@@ -113,9 +132,9 @@ def create_universe(psd_map):
     print "############################################################"
     statistics.log_planet_type_summary(systems)
     print "############################################################"
-    statistics.log_species_summary()
+    statistics.log_species_summary(gsd.native_frequency)
     print "############################################################"
-    statistics.log_monsters_summary()
+    statistics.log_monsters_summary(gsd.monster_frequency)
     print "############################################################"
     statistics.log_specials_summary()
     print "############################################################"
