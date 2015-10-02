@@ -115,7 +115,14 @@ TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, 
 { return new TabBar(font, color, text_color, style, INTERACTIVE); }
 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
-{ return NewListBox(color, interior); }
+{
+    ListBox* lb = NewListBox(color, interior);
+    // Because the rows of DropDownLists must be the same size, there's
+    // no need to worry that the bottom entry will get cut off if the
+    // scrollbar ends exactly at the list's end.
+    lb->AddPaddingAtEnd(false);
+    return lb;
+}
 
 Scroll* StyleFactory::NewListBoxVScroll(Clr color, Clr interior) const
 { return NewScroll(VERTICAL, color, interior); }

@@ -408,6 +408,11 @@ public:
       * they are. */
     void            NormalizeRowsOnInsert(bool enable = true);
 
+    /** Sets whether to add padding at the end of the scrolls when the ListBox is
+     *  bigger than the client area, so that any row can be scrolled all the way to
+     *  the top (true), or only use as much space as it needs. */
+    void            AddPaddingAtEnd(bool enable = true);
+
     /** Allows Rows with data type \a str to be dropped over this ListBox when
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
     void            AllowDropType(const std::string& str);
@@ -554,6 +559,8 @@ private:
     Timer           m_auto_scroll_timer;
 
     bool            m_normalize_rows_on_insert;
+
+    bool            m_add_padding_at_end;
 
     iterator*       m_iterator_being_erased;
 

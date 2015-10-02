@@ -722,10 +722,6 @@ namespace {
         return ClientUI::Pts()*1.5;
     }
 
-    GG::Y SystemNameTextControlHeight() {
-        return GG::Y(SystemNameFontSize()*4/3);
-    }
-
     class SystemRow : public GG::ListBox::Row {
     public:
         SystemRow(int system_id) :
@@ -771,14 +767,6 @@ namespace {
     }
 
     const GG::Y PLANET_PANEL_TOP = GG::Y(140);
-
-    GG::X ButtonWidth() {
-        return GG::X(Value(SystemNameTextControlHeight()));
-    }
-
-    GG::Y ButtonHeight() {
-        return SystemNameTextControlHeight();
-    }
 }
 
 ////////////////////////////////////////////////
@@ -2952,28 +2940,34 @@ void SidePanel::RefreshImpl() {
 }
 
 void SidePanel::DoLayout() {
+    if (m_system_name->CurrentItem() == m_system_name->end()) // no system to render
+        return;
+
+    const GG::Y name_height((*m_system_name->CurrentItem())->Height());
+    const GG::X button_width(Value(name_height));
+
     // left button
-    GG::Pt ul(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, GG::Y(EDGE_PAD));
-    GG::Pt lr(ul + GG::Pt(ButtonWidth(), ButtonHeight()));
+    GG::Pt ul(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, GG::Y0);
+    GG::Pt lr(ul + GG::Pt(button_width, name_height));
     m_button_prev->SizeMove(ul, lr);
 
     // right button
-    ul = GG::Pt(ClientWidth() - ButtonWidth() - 2*EDGE_PAD, GG::Y(EDGE_PAD));
-    lr = ul + GG::Pt(ButtonWidth(), ButtonHeight());
+    ul = GG::Pt(ClientWidth() - button_width - 2*EDGE_PAD, GG::Y0);
+    lr = ul + GG::Pt(button_width, name_height);
     m_button_next->SizeMove(ul, lr);
 
     // system name / droplist
     ul = GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0);
-    lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), SystemNameTextControlHeight());
+    lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), name_height);
     m_system_name->SizeMove(ul, lr);
 
     // system name droplist rows
-    GG::Pt row_size(ListRowSize());
+    const GG::X row_width(m_system_name->Width() - ClientUI::ScrollWidth() - 5);
     for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it)
-        (*it)->Resize(row_size);
+        (*it)->Resize(GG::Pt(row_width, (*it)->Height()));
 
     // star type text
-    ul = GG::Pt(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, m_system_name->Height() + EDGE_PAD*4);
+    ul = GG::Pt(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, name_height + EDGE_PAD*4);
     lr = GG::Pt(ClientWidth() - 1, ul.y + m_star_type_text->Height());
     m_star_type_text->SizeMove(ul, lr);
 
@@ -2989,9 +2983,6 @@ void SidePanel::DoLayout() {
         m_system_resource_summary->SizeMove(ul, lr);
     }
 }
-
-GG::Pt SidePanel::ListRowSize() const
-{ return GG::Pt(m_system_name->Width() - ClientUI::ScrollWidth() - 5, m_system_name->Height()); }
 
 void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::Size();
