@@ -50,7 +50,7 @@ class WndEvent;
     drag a tab to a desired setting; it is somewhat like a Scroll.  Sliders
     can be either vertical or horizontal, but cannot switch between the two.
     Unlike vertical Scrolls, whose values increase downward, vertical Sliders
-    increase upward by default.  Note that it is acceptible to define a range
+    increase upward by default.  Note that it is acceptable to define a range
     that increases from min to max, or one that decreases from min to max;
     both are legal. */
 template <class T>

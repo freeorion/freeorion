@@ -1300,15 +1300,15 @@ void ListBox::DragDropHere(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnd
         m_auto_scrolling_left = pt.x < client_no_scroll_hole.ul.x;
         m_auto_scrolling_right = client_no_scroll_hole.lr.x < pt.x;
         if (m_auto_scrolling_up || m_auto_scrolling_down || m_auto_scrolling_left || m_auto_scrolling_right) {
-            bool acceptible_drop = false;
+            bool acceptable_drop = false;
             for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
                 if (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
                     m_allowed_drop_types.find(it->first->DragDropDataType()) != m_allowed_drop_types.end()) {
-                    acceptible_drop = true;
+                    acceptable_drop = true;
                     break;
                 }
             }
-            if (acceptible_drop) {
+            if (acceptable_drop) {
                 if (!m_auto_scroll_timer.Running()) {
                     m_auto_scroll_timer.Reset(GUI::GetGUI()->Ticks());
                     m_auto_scroll_timer.Start();
