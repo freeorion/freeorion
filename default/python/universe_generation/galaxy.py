@@ -437,52 +437,52 @@ def recalc_universe_width(positions):
     return actual_width, new_positions
 
 
-def calc_star_system_positions(shape, size):
+def calc_star_system_positions(gsd):
     """
     Calculates list of positions (x, y) for a given galaxy shape,
     number of systems and width
     Uses universe generator helper functions provided by the API
     """
     # if shape is "random", randomly pick a galaxy shape
-    if shape == fo.galaxyShape.random:
-        shape = choice(shapes)
+    if gsd.shape == fo.galaxyShape.random:
+        gsd.shape = choice(shapes)
 
     # calculate typical width for universe based on number of systems
-    width = calc_universe_width(shape, size)
+    width = calc_universe_width(gsd.shape, gsd.size)
     print "Set universe width to", width
     fo.set_universe_width(width)
 
     positions = []
 
-    print "Creating", shape, "galaxy shape"
-    if shape == fo.galaxyShape.spiral2:
-        spiral_galaxy_calc_positions(positions, 2, size, width)
-    elif shape == fo.galaxyShape.spiral3:
-        spiral_galaxy_calc_positions(positions, 3, size, width)
-    elif shape == fo.galaxyShape.spiral4:
-        spiral_galaxy_calc_positions(positions, 4, size, width)
-    elif shape == fo.galaxyShape.elliptical:
-        elliptical_galaxy_calc_positions(positions, size, width)
-    elif shape == fo.galaxyShape.disc:
-        disc_galaxy_calc_positions(positions, size, width)
-    elif shape == fo.galaxyShape.cluster:
+    print "Creating", gsd.shape, "galaxy shape"
+    if gsd.shape == fo.galaxyShape.spiral2:
+        spiral_galaxy_calc_positions(positions, 2, gsd.size, width)
+    elif gsd.shape == fo.galaxyShape.spiral3:
+        spiral_galaxy_calc_positions(positions, 3, gsd.size, width)
+    elif gsd.shape == fo.galaxyShape.spiral4:
+        spiral_galaxy_calc_positions(positions, 4, gsd.size, width)
+    elif gsd.shape == fo.galaxyShape.elliptical:
+        elliptical_galaxy_calc_positions(positions, gsd.size, width)
+    elif gsd.shape == fo.galaxyShape.disc:
+        disc_galaxy_calc_positions(positions, gsd.size, width)
+    elif gsd.shape == fo.galaxyShape.cluster:
         # Typically a galaxy with 100 systems should have ~5 clusters
-        avg_clusters = size / 20
+        avg_clusters = gsd.size / 20
         if avg_clusters < 2:
             avg_clusters = 2
         # Add a bit of random variation (+/- 20%)
         clusters = randint((avg_clusters * 8) / 10, (avg_clusters * 12) / 10)
         if clusters >= 2:
-            cluster_galaxy_calc_positions(positions, clusters, size, width)
-    elif shape == fo.galaxyShape.ring:
-        ring_galaxy_calc_positions(positions, size, width)
-    elif shape == fo.galaxyShape.irregular:
-        irregular_galaxy_calc_positions(positions, size, width)
+            cluster_galaxy_calc_positions(positions, clusters, gsd.size, width)
+    elif gsd.shape == fo.galaxyShape.ring:
+        ring_galaxy_calc_positions(positions, gsd.size, width)
+    elif gsd.shape == fo.galaxyShape.irregular:
+        irregular_galaxy_calc_positions(positions, gsd.size, width)
 
     # Check if any positions have been calculated...
     if not positions:
         # ...if not, fall back on box shape
-        box_galaxy_calc_positions(positions, size, width)
+        box_galaxy_calc_positions(positions, gsd.size, width)
 
     # to avoid having too much "extra space" around the system positions of our galaxy map, recalculate the universe
     # width and shift all positions accordingly

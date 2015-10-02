@@ -60,15 +60,15 @@ def create_universe(psd_map):
 
     # make sure there are enough systems for the given number of players
     print "Universe creation requested with %d systems for %d players" % (gsd.size, total_players)
-    size = max(gsd.size, (total_players * 3))
-    if size > gsd.size:
-        # gsd.size = size
+    min_size = total_players * 3
+    if min_size > gsd.size:
+        gsd.size = min_size
         print "Too few systems for the requested number of players, number of systems adjusted accordingly"
-    print "Creating universe with %d systems for %d players" % (size, total_players)
+    print "Creating universe with %d systems for %d players" % (gsd.size, total_players)
 
     # calculate star system positions
     seed_rng(seed_pool.pop())
-    system_positions = calc_star_system_positions(gsd.shape, size)
+    system_positions = calc_star_system_positions(gsd)
     size = len(system_positions)
     print gsd.shape, "Star system positions calculated, final number of systems:", size
 
