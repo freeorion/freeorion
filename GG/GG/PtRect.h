@@ -72,9 +72,11 @@ struct GG_API Pt
     //@}
 
     /** \name Mutators */ ///@{
-    void  operator+=(const Pt& rhs)      { x += rhs.x; y += rhs.y; } ///< Adds \a rhs to Pt.
-    void  operator-=(const Pt& rhs)      { x -= rhs.x; y -= rhs.y; } ///< Subtracts \a rhs to Pt.
-    Pt    operator-() const              { return Pt(-x, -y); }      ///< Negates Pt.
+    void  operator+=(const Pt& rhs)     { x += rhs.x; y += rhs.y; }     ///< Adds \a rhs to Pt.
+    void  operator-=(const Pt& rhs)     { x -= rhs.x; y -= rhs.y; }     ///< Subtracts \a rhs from Pt.
+    Pt    operator-() const             { return Pt(-x, -y); }          ///< Negates Pt.
+    Pt    operator/=(const double rhs)  { return Pt(x / rhs, y / rhs); }///< Devides components of Pt by \a rhs
+    Pt    operator*=(const double rhs)  { return Pt(x * rhs, y * rhs); }///< Devides components of Pt by \a rhs
     //@}
 
     X x; ///< The x component.
@@ -128,6 +130,8 @@ GG_API inline bool operator<=(const Pt& lhs, const Pt& rhs) { return lhs.x <= rh
 GG_API inline bool operator>=(const Pt& lhs, const Pt& rhs) { return lhs.x >= rhs.x && lhs.y >= rhs.y; } ///< returns true if \a lhs.x and \a lhs.y are both greater than or equal to the corresponding components of \a rhs
 GG_API inline Pt   operator+(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x + rhs.x, lhs.y + rhs.y); } ///< returns the vector sum of \a lhs and \a rhs
 GG_API inline Pt   operator-(const Pt& lhs, const Pt& rhs)  { return Pt(lhs.x - rhs.x, lhs.y - rhs.y); } ///< returns the vector difference of \a lhs and \a rhs
+GG_API inline Pt   operator*(const Pt& lhs, double rhs)     { return Pt(lhs.x * rhs, lhs.y * rhs); }     ///< returns the vector with components multiplied by \a rhs
+GG_API inline Pt   operator/(const Pt& lhs, double rhs)     { return Pt(lhs.x / rhs, lhs.y / rhs); }     ///< returns the vector with components divided by \a rhs
 
 GG_API std::ostream& operator<<(std::ostream& os, const Pt& pt); ///< Pt stream-output operator for debug output
 
