@@ -728,13 +728,17 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     m_icon->Render();
 
-    if (font_pts > 10) {
-        GG::Pt text_ul(text_left + 4, text_top);
-        GG::Pt text_size(text_width + PAD, text_height);
-        m_name_label->SizeMove(text_ul, text_ul + text_size);
-        /// Need to render children too
-        GG::GUI::GetGUI()->RenderWindow(m_name_label);
-    }
+    // small text: remove black shadow
+    if (font_pts < 10)
+        m_name_label->SetText(m_name_text);
+    else
+        m_name_label->SetText("<s>" + m_name_text + "</s>");
+
+    GG::Pt text_ul(text_left + 4, text_top);
+    GG::Pt text_size(text_width + PAD, text_height);
+    m_name_label->SizeMove(text_ul, text_ul + text_size);
+    /// Need to render children too
+    GG::GUI::GetGUI()->RenderWindow(m_name_label);
 
     m_layout_panel->UndoZoom();
 }
