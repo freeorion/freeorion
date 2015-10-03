@@ -613,42 +613,6 @@ Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& 
     return Message(Message::DIPLOMATIC_STATUS, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
-Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat,
-                             const std::string& reason_string, int empire_id)
-{
-    std::ostringstream os;
-    {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(victory_or_defeat)
-               << BOOST_SERIALIZATION_NVP(reason_string)
-               << BOOST_SERIALIZATION_NVP(empire_id);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(victory_or_defeat)
-               << BOOST_SERIALIZATION_NVP(reason_string)
-               << BOOST_SERIALIZATION_NVP(empire_id);
-        }
-    }
-    return Message(Message::VICTORY_DEFEAT, Networking::INVALID_PLAYER_ID, receiver, os.str());
-}
-
-Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name) {
-    std::ostringstream os;
-    {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(empire_id)
-               << BOOST_SERIALIZATION_NVP(empire_name);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(empire_id)
-               << BOOST_SERIALIZATION_NVP(empire_name);
-        }
-    }
-    return Message(Message::PLAYER_ELIMINATED, Networking::INVALID_PLAYER_ID, receiver, os.str());
-}
-
 Message EndGameMessage(int receiver, Message::EndGameReason reason,
                        const std::string& reason_player_name/* = ""*/)
 {
@@ -1188,32 +1152,6 @@ void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_up
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticStatusUpdate& "
                       << "diplo_update) failed!  Message:\n"
-                      << msg.Text() << "\n"
-                      << "Error: " << err.what();
-        throw err;
-    }
-}
-
-void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
-                        std::string& reason_string, int& empire_id)
-{
-    try {
-        std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(victory_or_defeat)
-               >> BOOST_SERIALIZATION_NVP(reason_string)
-               >> BOOST_SERIALIZATION_NVP(empire_id);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(victory_or_defeat)
-               >> BOOST_SERIALIZATION_NVP(reason_string)
-               >> BOOST_SERIALIZATION_NVP(empire_id);
-        }
-    } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
-                      << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
-                      << "Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;

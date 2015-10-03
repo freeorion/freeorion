@@ -3126,7 +3126,10 @@ void Victory::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "Victory::Execute given no target object";
         return;
     }
-    GetUniverse().EffectVictory(context.effect_target->ID(), m_reason_string);
+    if (Empire* empire = GetEmpire(context.effect_target->Owner()))
+        empire->Win(m_reason_string);
+    else
+        ErrorLogger() << "Trying to grant victory to a missing empire!";
 }
 
 std::string Victory::Description() const

@@ -42,10 +42,9 @@ private:
     the universe */
 struct ServerSaveGameData {
     ServerSaveGameData();                               ///< default ctor
-    ServerSaveGameData(int current_turn, const std::map<int, std::set<std::string> >& victors);
+    ServerSaveGameData(int current_turn);
 
     int                                     m_current_turn;
-    std::map<int, std::set<std::string> >   m_victors;  ///< for each empire id, the victory types that player has achived
 
 private:
     friend class boost::serialization::access;
@@ -130,9 +129,8 @@ public:
 
     /** Determines if any empires are eliminated (for the first time this turn,
       * skipping any which were also eliminated previously) and if any empires
-      * are victorious.  Informs players of victories or eliminations, and
-      * disconnects eliminated players. */
-    void    CheckForEmpireEliminationOrVictory();
+      * are thereby victorious. */
+    void    CheckForEmpireElimination();
 
     /** Intializes single player game universe, sends out initial game state to
       * clients, and signals clients to start first turn */
@@ -256,9 +254,6 @@ private:
       * that turn. */
     std::map<int, OrderSet*>                m_turn_sequence;
 
-    std::map<int, std::set<std::string> >   m_victors;              ///< for each player id, the victory types that player has achived
-    std::set<int>                           m_eliminated_players;   ///< ids of players whose connections have been severed by the server after they were eliminated
-
     // Give FSM and its states direct access.  We are using the FSM code as a
     // control-flow mechanism; it is all notionally part of this class.
     friend struct ServerFSM;
@@ -288,8 +283,7 @@ void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void ServerSaveGameData::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_current_turn)
-        & BOOST_SERIALIZATION_NVP(m_victors);
+    ar  & BOOST_SERIALIZATION_NVP(m_current_turn);
 }
 
 #endif // _ServerApp_h_

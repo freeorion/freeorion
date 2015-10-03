@@ -353,6 +353,9 @@ public:
 
     bool                    HasExploredSystem(int ID) const;                            ///< returns  true if the given item is in the appropriate list, false if it is not.
 
+    bool                    Eliminated() const;                                         ///< whether this empire has lost the game
+    bool                    Won() const;                                                ///< whether this empire has won the game
+
     int                     NumSitRepEntries(int turn = INVALID_GAME_TURN) const;       ///< number of entries in the SitRep.
 
     /** Returns distance in jumps away from each system that this empire can
@@ -455,7 +458,8 @@ public:
     int         AddShipDesign(ShipDesign* ship_design);     ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
 
     std::string NewShipName();                              ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
-    void        EliminationCleanup();                       ///< Cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
+    void        Eliminate();                                ///< Marks empire as eliminated and cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
+    void        Win(const std::string& reason);             ///< Marks this empire as having won for this reason, and sends the appropriate sitreps
 
     /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
      *  \warning When you call this method, you are transferring ownership
@@ -609,6 +613,9 @@ private:
     std::string                     m_player_name;              ///< Empire's Player's name
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_capital_id;               ///< the ID of the empire's capital planet
+
+    bool                            m_eliminated;               ///< Whether the empire has lost
+    std::set<std::string>           m_victories;                ///< The ways that the empire has won, if any
 
     std::set<std::string>           m_techs;                    ///< list of acquired technologies.  These are string names referencing Tech objects
 

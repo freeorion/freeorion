@@ -50,10 +50,6 @@ public:
 
     int                 NumEmpires() const;
 
-    /** Returns whether the empire with ID \a id has been eliminated, or false
-      * if no such empire exists. */
-    bool                Eliminated(int id) const;
-
     DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
     bool                        DiplomaticMessageAvailable(int empire1, int empire2) const;
     const DiplomaticMessage&    GetDiplomaticMessage(int empire1, int empire2) const;
@@ -69,12 +65,6 @@ public:
     iterator    end();
 
     void        BackPropegateMeters();
-
-    /** Marks the empire with ID \a id as eliminated, and cleans up that empire
-      * if it exists (or does nothing if that empire doesn't exist).  Cleanup
-      * involves clearing queues, resetting the capital, and cleaning up other
-      * state info not relevant to an eliminated empire. */
-    void        EliminateEmpire(int id);
 
     void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
     void        HandleDiplomaticMessage(const DiplomaticMessage& message);
@@ -108,7 +98,6 @@ private:
                                                  int encoding_empire) const;
 
     std::map<int, Empire*>                          m_empire_map;
-    std::set<int>                                   m_eliminated_empires;
     std::map<std::pair<int, int>, DiplomaticStatus> m_empire_diplomatic_statuses;
     std::map<std::pair<int, int>, DiplomaticMessage>m_diplomatic_messages;
 

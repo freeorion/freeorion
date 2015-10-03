@@ -818,8 +818,6 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::PLAYER_CHAT:          m_fsm->process_event(PlayerChat(msg));              break;
     case Message::DIPLOMACY:            m_fsm->process_event(Diplomacy(msg));               break;
     case Message::DIPLOMATIC_STATUS:    m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
-    case Message::VICTORY_DEFEAT :      m_fsm->process_event(VictoryDefeat(msg));           break;
-    case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg));        break;
     case Message::END_GAME:             m_fsm->process_event(::EndGame(msg));               break;
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \""

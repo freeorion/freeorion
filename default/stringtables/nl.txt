@@ -76,12 +76,6 @@ De server zond een bericht dat het spel afgelopen is.
 PLAYER_DISCONNECTED
 Speler %1% heeft geen verbinding met de server meer.
 
-PLAYER_DEFEATED
-Je bent verslagen.
-
-EMPIRE_DEFEATED
-Het %1% rijk is niet meer.
-
 ######################################
 # Command Line and OptionsDB Options #
 ######################################

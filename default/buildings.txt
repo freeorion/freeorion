@@ -1801,10 +1801,7 @@ BuildingType
                 Species name = "SP_EXPERIMENTOR" 
             ]
             effects = [
-                GenerateSitRepMessage
-                    message = "SITREP_VICTORY_CAPTURE"
-                    icon = "icons/sitrep/victory.png"
-                    empire = Source.Owner
+                Victory reason = "VICTORY_EXPERIMENTOR_CAPTURE"
                 [[EXPERIMENTOR_ADD_STARLANE]]
                 [[EXPERIMENTOR_ADD_STARLANE]]
                 [[EXPERIMENTOR_ADD_STARLANE]]

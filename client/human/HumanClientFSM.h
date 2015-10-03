@@ -214,8 +214,6 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
         boost::statechart::custom_reaction<PlayerStatus>,
         boost::statechart::custom_reaction<Diplomacy>,
         boost::statechart::custom_reaction<DiplomaticStatusUpdate>,
-        boost::statechart::custom_reaction<VictoryDefeat>,
-        boost::statechart::custom_reaction<PlayerEliminated>,
         boost::statechart::custom_reaction<EndGame>,
         boost::statechart::custom_reaction<ResetToIntroMenu>,
         boost::statechart::custom_reaction<Error>,
@@ -232,8 +230,6 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
     boost::statechart::result react(const PlayerStatus& msg);
     boost::statechart::result react(const Diplomacy& d);
     boost::statechart::result react(const DiplomaticStatusUpdate& u);
-    boost::statechart::result react(const VictoryDefeat& msg);
-    boost::statechart::result react(const PlayerEliminated& msg);
     boost::statechart::result react(const EndGame& msg);
     boost::statechart::result react(const ResetToIntroMenu& msg);
     boost::statechart::result react(const Error& msg);

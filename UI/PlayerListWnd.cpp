@@ -34,6 +34,8 @@ namespace {
     boost::shared_ptr<GG::Texture> ShipIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"); }
     boost::shared_ptr<GG::Texture> ProductionIcon() { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "industry.png"); }
     boost::shared_ptr<GG::Texture> ResearchIcon()   { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "research.png"); }
+    boost::shared_ptr<GG::Texture> WonIcon()        { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "victory.png"); }
+    boost::shared_ptr<GG::Texture> LostIcon()       { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "empire_eliminated.png"); }
 
 
     ////////////////////////////////////////////////
@@ -56,6 +58,7 @@ namespace {
             m_player_status(Message::WAITING),
             m_player_type(Networking::INVALID_CLIENT_TYPE),
             m_host(false),
+            m_win_status(NEITHER),
             m_selected(false)
         {
             SetChildClippingMode(ClipToClient);
@@ -145,6 +148,14 @@ namespace {
  
             if (m_host)
                 HostIcon()->OrthoBlit(UpperLeft() + m_host_icon_ul, UpperLeft() + m_host_icon_ul + ICON_SIZE);
+
+
+            switch (m_win_status)
+            {
+            case WON:     WonIcon()->OrthoBlit(UpperLeft() + m_win_status_icon_ul, UpperLeft() + m_win_status_icon_ul + ICON_SIZE); break;
+            case LOST:    LostIcon()->OrthoBlit(UpperLeft() + m_win_status_icon_ul, UpperLeft() + m_win_status_icon_ul + ICON_SIZE); break;
+            case NEITHER: break;
+            }
         }
 
         void            Select(bool b)
@@ -184,6 +195,12 @@ namespace {
                     m_diplo_status = INVALID_DIPLOMATIC_STATUS;
                 else
                     m_diplo_status = Empires().GetDiplomaticStatus(player_info.empire_id, app->EmpireID());
+                if (empire->Won())
+                    m_win_status = WON; // even if you later get eliminated, you still won
+                else if (empire->Eliminated())
+                    m_win_status = LOST;
+                else
+                    m_win_status = NEITHER;
             }
 
             //m_player_name_text->SetTextColor(empire_color);
@@ -322,6 +339,9 @@ namespace {
 
             m_host_icon_ul = GG::Pt(left, top);
             left += GG::X(IconSize()) + PAD;
+
+            m_win_status_icon_ul = GG::Pt(left, top);
+            left += GG::X(IconSize()) + PAD;
         }
 
         int                     m_player_id;
@@ -340,11 +360,17 @@ namespace {
         GG::Pt                  m_player_status_icon_ul;
         GG::Pt                  m_player_type_icon_ul;
         GG::Pt                  m_host_icon_ul;
+        GG::Pt                  m_win_status_icon_ul;
 
         DiplomaticStatus        m_diplo_status;
         Message::PlayerStatus   m_player_status;
         Networking::ClientType  m_player_type;
         bool                    m_host;
+        enum {
+            WON,
+            LOST,
+            NEITHER
+        }                       m_win_status;
 
         bool                    m_selected;
     };

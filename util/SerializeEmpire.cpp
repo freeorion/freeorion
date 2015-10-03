@@ -95,6 +95,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_color)
         & BOOST_SERIALIZATION_NVP(m_capital_id)
+        & BOOST_SERIALIZATION_NVP(m_eliminated)
+        & BOOST_SERIALIZATION_NVP(m_victories)
         & BOOST_SERIALIZATION_NVP(m_techs)
         & BOOST_SERIALIZATION_NVP(m_meters)
         & BOOST_SERIALIZATION_NVP(m_research_queue)
@@ -166,7 +168,6 @@ void EmpireManager::serialize(Archive& ar, const unsigned int version)
         GetDiplomaticMessagesToSerialize(messages, GetUniverse().EncodingEmpire());
 
     ar  & BOOST_SERIALIZATION_NVP(m_empire_map)
-        & BOOST_SERIALIZATION_NVP(m_eliminated_empires)
         & BOOST_SERIALIZATION_NVP(m_empire_diplomatic_statuses)
         & BOOST_SERIALIZATION_NVP(messages);
 

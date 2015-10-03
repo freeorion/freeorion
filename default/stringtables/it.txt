@@ -264,17 +264,8 @@ Il server ha inviato un messaggio di fine partita. Buh-bye.
 PLAYER_DISCONNECTED
 Il giocatore %1% si è disconnesso.
 
-PLAYER_DEFEATED
-Sei stato sconfitto.
-
-EMPIRE_DEFEATED
-L'impero %1% non esiste più.
-
 UNKNOWN_EMPIRE
 Impero Sconosciuto
-
-LAST_OPPONENT_DEFEATED_VICTORY
-L'ultimo avversario è stato sconfitto ed hai vinto!
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Il server ha ricevuto dal client dei dati di salvataggio non validi. Alcuni possono essere ignorati.
@@ -2685,14 +2676,6 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Arrivata Flotta Straniera
 
-SITREP_EMPIRE_ELIMINATED
-%empire% è stato eliminato.
-SITREP_EMPIRE_ELIMINATED_LABEL
-Impero Eliminato
-
-SITREP_VICTORY_LABEL
-Vittoria
-
 EFFECT_DERELICT_MAP
 Informazioni sull'area sono state ottenute da un relitto abbandonato su %system%.
 EFFECT_DERELICT_MAP_LABEL
@@ -2730,11 +2713,19 @@ Mine di Sistema
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-%1% ha ottenuto una vittoria tecnologica.
+VICTORY_TECH
+%empire% ha ottenuto una vittoria tecnologica.
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-ha ottenuto una vittoria di sopravvivenza.
+VICTORY_ALL_ENEMIES_ELIMINATED
+%empire% ha ottenuto una vittoria di sopravvivenza.
+
+SITREP_VICTORY_LABEL
+Vittoria
+
+SITREP_EMPIRE_ELIMINATED
+%empire% è stato eliminato.
+SITREP_EMPIRE_ELIMINATED_LABEL
+Impero Eliminato
 
 #############################################################
 ####                    S P E C I E S                    ####
