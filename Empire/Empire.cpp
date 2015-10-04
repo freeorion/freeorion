@@ -569,7 +569,10 @@ void ResearchQueue::clear() {
 /////////////////////////////////////
 // ProductionQueue::ProductionItem //
 /////////////////////////////////////
-ProductionQueue::ProductionItem::ProductionItem()
+ProductionQueue::ProductionItem::ProductionItem() :
+    build_type(INVALID_BUILD_TYPE),
+    name(),
+    design_id(ShipDesign::INVALID_DESIGN_ID)
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
