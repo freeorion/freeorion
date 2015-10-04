@@ -3239,6 +3239,11 @@ ENC_SUITABILITY_REPORT_NEGATIVE_HEADER
 
 '''
 
+ENC_SUITABILITY_REPORT_WHEEL_INTRO
+'''
+L'Habitabilité est définie par la distance au type d'environnement favori sur cette représentation circulaire:
+'''
+
 # types of things that can be shown in encyclopedia
 ENC_TEST  # translated
 Test
@@ -4813,18 +4818,21 @@ Custom_4
 #############################################################
 
 VICTORY_TECH
-%empire% a remporté une victoire technologique.
+L'empire %empire% a remporté une victoire technologique!
 
 VICTORY_ALL_ENEMIES_ELIMINATED
-%empire% a remporté une victoire comme dernier survivant.
+L'empire %empire% a remporté une victoire en tant que dernier survivant!
+
+VICTORY_EXPERIMENTOR_CAPTURE
+L'empire %empire% a remporté la victoire en capturant les puissants Expérimentateurs, mettant ainsi un terme à l'effroyable fléau menaçant la galaxie!
 
 SITREP_VICTORY_LABEL
 Victoire
 
 SITREP_EMPIRE_ELIMINATED
-L'empire %empire% a été détruit!
+L'empire %empire% a été vaincu!
 SITREP_EMPIRE_ELIMINATED_LABEL
-Empire détruit
+Empire vaincu
 
 #############################################################
 ####                    S P E C I E S                    ####
