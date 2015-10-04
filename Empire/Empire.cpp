@@ -2404,17 +2404,21 @@ const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
     if (!EnqueuableItem(build_type, name, location)) {
-        DebugLogger() << "Empire::PlaceBuildInQueue() : Attempted to place non-enqueuable item in queue";
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Attempted to place non-enqueuable item in queue: build_type: "
+                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
-        DebugLogger() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
         return;
     }
 
-    if (!ProducibleItem(build_type, name, location))
-        DebugLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
+    if (!ProducibleItem(build_type, name, location)) {
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue: build_type: "
+                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
+        return;
+    }
 
     ProductionQueue::Element build(build_type, name, m_id, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
@@ -2424,11 +2428,18 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
 }
 
 void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
-    if (!ProducibleItem(build_type, design_id, location))
-        DebugLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
+    // ship designs don't have a distinction between enqueuable and producible...
 
-    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
+    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
         return;
+    }
+
+    if (!ProducibleItem(build_type, design_id, location)) {
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue: build_type: "
+                      << boost::lexical_cast<std::string>(build_type) << "  design_id: " << design_id << "  location: " << location;
+        return;
+    }
 
     ProductionQueue::Element build(build_type, design_id, m_id, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
