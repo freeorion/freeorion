@@ -1,4 +1,4 @@
-#include "AIInterface.h"
+#include "../../AI/AIInterface.h"
 
 #include <string>
 

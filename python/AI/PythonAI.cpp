@@ -1,16 +1,16 @@
 #include "PythonAI.h"
 
-#include "../universe/Universe.h"
-#include "../util/Directories.h"
-#include "../util/Logger.h"
-#include "../util/i18n.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/OptionsDB.h"
-#include "../Empire/Empire.h"
-#include "../Empire/EmpireManager.h"
-#include "../Empire/Diplomacy.h"
-#include "../python/PythonSetWrapper.h"
-#include "../python/PythonWrappers.h"
+#include "../../universe/Universe.h"
+#include "../../util/Directories.h"
+#include "../../util/Logger.h"
+#include "../../util/i18n.h"
+#include "../../util/MultiplayerCommon.h"
+#include "../../util/OptionsDB.h"
+#include "../../Empire/Empire.h"
+#include "../../Empire/EmpireManager.h"
+#include "../../Empire/Diplomacy.h"
+#include "../PythonSetWrapper.h"
+#include "../PythonWrappers.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>

@@ -60,6 +60,7 @@
 		34972BEE0F49CBF90015C864 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34972BEC0F49CBF90015C864 /* Sound.cpp */; };
 		34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA4BE0FFFD2DB00500F40 /* chmain.mm */; };
 		34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C620A98A3F900DA9C21 /* chmain.cpp */; };
+		34C4495E1182716E0071E09A /* Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44954118271590071E09A /* Math.cpp */; };
 		34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44957118271590071E09A /* SerializeEmpire.cpp */; };
 		34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */; };
 		34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44959118271590071E09A /* SerializeOrderSet.cpp */; };
@@ -162,7 +163,6 @@
 		471032460CEF6A8B00A7DF2B /* vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* vorbis.framework */; };
 		471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA80CEF565700A7DF2B /* ServerNetworking.cpp */; };
 		471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030470CEF569200A7DF2B /* ServerFSM.cpp */; };
-		471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA00CEF562700A7DF2B /* PythonAI.cpp */; };
 		4710338A0CEF723900A7DF2B /* AIInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F9E0CEF562700A7DF2B /* AIInterface.cpp */; };
 		47103BF20CF04E5900A7DF2B /* MultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */; };
 		47103BF30CF04E5900A7DF2B /* OptionsDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D290A98A3F900DA9C21 /* OptionsDB.cpp */; };
@@ -326,7 +326,6 @@
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		CE5C92C91B81FE9C002346C0 /* main.xib in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
-		CE6098A01C64F8BB0085A4DC /* ResourceBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE60989E1C64F8BB0085A4DC /* ResourceBrowseWnd.cpp */; };
 		CE6183A61BB80D2E00952BEA /* BlockControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839D1BB80D2E00952BEA /* BlockControl.cpp */; };
 		CE6183A71BB80D2E00952BEA /* ImageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */; };
 		CE6183A81BB80D2E00952BEA /* RichText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839F1BB80D2E00952BEA /* RichText.cpp */; };
@@ -334,7 +333,7 @@
 		CE6183AA1BB80D2E00952BEA /* TextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A31BB80D2E00952BEA /* TextBlock.cpp */; };
 		CE6183AB1BB80D2E00952BEA /* ScrollPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */; };
 		CE6183AE1BB80D4900952BEA /* CUILinkTextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */; };
-		CE89D2BD1C5FDA270085A4DC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
+		CEC4ADC11BC13741000DFA9B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */; };
 		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 /* End PBXBuildFile section */
 
@@ -553,6 +552,8 @@
 		34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultFont.h; sourceTree = "<group>"; };
 		34BAB0C20FC5CDC400EF792E /* FontFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontFwd.h; sourceTree = "<group>"; };
 		34BAB0C30FC5CDC400EF792E /* MultiEditFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiEditFwd.h; sourceTree = "<group>"; };
+		34C44954118271590071E09A /* Math.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Math.cpp; sourceTree = "<group>"; };
+		34C44955118271590071E09A /* Math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Math.h; sourceTree = "<group>"; };
 		34C44956118271590071E09A /* Serialize.ipp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Serialize.ipp; sourceTree = "<group>"; };
 		34C44957118271590071E09A /* SerializeEmpire.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeEmpire.cpp; sourceTree = "<group>"; };
 		34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeMultiplayerCommon.cpp; sourceTree = "<group>"; };
@@ -661,8 +662,6 @@
 		47102F8A0CEF55F700A7DF2B /* ClientFSMEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientFSMEvents.h; sourceTree = "<group>"; };
 		47102F9E0CEF562700A7DF2B /* AIInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AIInterface.cpp; sourceTree = "<group>"; };
 		47102F9F0CEF562700A7DF2B /* AIInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIInterface.h; sourceTree = "<group>"; };
-		47102FA00CEF562700A7DF2B /* PythonAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonAI.cpp; sourceTree = "<group>"; };
-		47102FA10CEF562700A7DF2B /* PythonAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonAI.h; sourceTree = "<group>"; };
 		47102FA40CEF565700A7DF2B /* MessageQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageQueue.cpp; sourceTree = "<group>"; };
 		47102FA50CEF565700A7DF2B /* MessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageQueue.h; sourceTree = "<group>"; };
 		47102FA60CEF565700A7DF2B /* Networking.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Networking.cpp; sourceTree = "<group>"; };
@@ -1085,8 +1084,6 @@
 		9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_signals.a; sourceTree = "<group>"; };
 		9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
 		9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
-		CE60989E1C64F8BB0085A4DC /* ResourceBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceBrowseWnd.cpp; sourceTree = "<group>"; };
-		CE60989F1C64F8BB0085A4DC /* ResourceBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceBrowseWnd.h; sourceTree = "<group>"; };
 		CE6183961BB80D1300952BEA /* GGFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGFwd.h; sourceTree = "<group>"; };
 		CE6183981BB80D1300952BEA /* BlockControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockControl.h; sourceTree = "<group>"; };
 		CE6183991BB80D1300952BEA /* ImageBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBlock.h; sourceTree = "<group>"; };
@@ -1103,6 +1100,8 @@
 		CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPanel.cpp; sourceTree = "<group>"; };
 		CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUILinkTextBlock.cpp; sourceTree = "<group>"; };
 		CE6183AD1BB80D4900952BEA /* CUILinkTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUILinkTextBlock.h; sourceTree = "<group>"; };
+		CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonAI.cpp; sourceTree = "<group>"; };
+		CEC4ADC01BC13741000DFA9B /* PythonAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonAI.h; sourceTree = "<group>"; };
 		CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyVersions.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1143,7 +1142,6 @@
 				478417730CF0589200BE4710 /* freeorioncommon.dylib in Frameworks */,
 				82BB623E19BEDF1700A0E281 /* freeorionparse.dylib in Frameworks */,
 				8280AC5E19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */,
-				CE89D2BD1C5FDA270085A4DC /* libz.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1244,6 +1242,7 @@
 		343EC6730F3F61D000782AD3 /* python */ = {
 			isa = PBXGroup;
 			children = (
+				CEC4ADBE1BC13741000DFA9B /* AI */,
 				824CE19D1AA0C28A00111CD9 /* server */,
 				343EC6740F3F61D000782AD3 /* PythonEmpireWrapper.cpp */,
 				343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */,
@@ -1438,8 +1437,6 @@
 			children = (
 				47102F9E0CEF562700A7DF2B /* AIInterface.cpp */,
 				47102F9F0CEF562700A7DF2B /* AIInterface.h */,
-				47102FA00CEF562700A7DF2B /* PythonAI.cpp */,
-				47102FA10CEF562700A7DF2B /* PythonAI.h */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -1686,8 +1683,6 @@
 				343EC6620F3F5C7C00782AD3 /* QueueListBox.h */,
 				471D5CD20A98A3F900DA9C21 /* ResearchWnd.cpp */,
 				471D5CD30A98A3F900DA9C21 /* ResearchWnd.h */,
-				CE60989E1C64F8BB0085A4DC /* ResourceBrowseWnd.cpp */,
-				CE60989F1C64F8BB0085A4DC /* ResourceBrowseWnd.h */,
 				8275F3EF1AD31381003568FF /* ResourcePanel.cpp */,
 				8275F3F01AD31381003568FF /* ResourcePanel.h */,
 				8298A1AC18F9BB980001D3DA /* SaveFileDialog.cpp */,
@@ -1815,6 +1810,8 @@
 				3A5105531748D68B00DC258B /* i18n.h */,
 				3A5105551748D6A600DC258B /* Logger.cpp */,
 				3A5105561748D6A700DC258B /* Logger.h */,
+				34C44954118271590071E09A /* Math.cpp */,
+				34C44955118271590071E09A /* Math.h */,
 				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
 				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
 				471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */,
@@ -2148,6 +2145,15 @@
 			path = RichText;
 			sourceTree = "<group>";
 		};
+		CEC4ADBE1BC13741000DFA9B /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */,
+				CEC4ADC01BC13741000DFA9B /* PythonAI.h */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2403,6 +2409,7 @@
 			files = (
 				3A01E1E31749F93500EC9110 /* AppInterface.cpp in Sources */,
 				34D3CE8C11D7DA11007C1E78 /* Species.cpp in Sources */,
+				34C4495E1182716E0071E09A /* Math.cpp in Sources */,
 				34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */,
 				34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */,
 				34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */,
@@ -2537,8 +2544,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */,
+				CEC4ADC11BC13741000DFA9B /* PythonAI.cpp in Sources */,
 				471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */,
-				471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */,
 				4710338A0CEF723900A7DF2B /* AIInterface.cpp in Sources */,
 				343EC67A0F3F61D000782AD3 /* PythonEmpireWrapper.cpp in Sources */,
 				343EC67B0F3F61D000782AD3 /* PythonEnumWrapper.cpp in Sources */,
@@ -2624,7 +2631,6 @@
 				34972BEA0F49CBE80015C864 /* ChatWnd.cpp in Sources */,
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */,
-				CE6098A01C64F8BB0085A4DC /* ResourceBrowseWnd.cpp in Sources */,
 				471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */,
 				82B9AEA21AA71CCC00486B2A /* CombatReportData.cpp in Sources */,
 				471D5E100A98A97300DA9C21 /* ClientUI.cpp in Sources */,
@@ -2889,10 +2895,6 @@
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
 				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/dep/lib",
-				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
@@ -3018,10 +3020,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/dep/lib",
 				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;
@@ -3166,10 +3164,6 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/dep/lib",
 				);
 				OTHER_LDFLAGS = "-fvisibility=hidden";
 				PRODUCT_NAME = freeoriond;

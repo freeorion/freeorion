@@ -1,6 +1,6 @@
 #include "AIClientApp.h"
 
-#include "../../AI/PythonAI.h"
+#include "../../python/AI/PythonAI.h"
 #include "../../util/Logger.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
