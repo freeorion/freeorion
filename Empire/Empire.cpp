@@ -1685,8 +1685,7 @@ bool Empire::EnqueuableItem(BuildType build_type, const std::string& name, int l
 bool Empire::EnqueuableItem(const ProductionQueue::ProductionItem& item, int location) const {
     if (item.build_type == BT_BUILDING)
         return EnqueuableItem(item.build_type, item.name, location);
-    // ships don't have a distinction between enqueuable and producible
-    else if (item.build_type == BT_SHIP)
+    else if (item.build_type == BT_SHIP)    // ships don't have a distinction between enqueuable and producible
         return ProducibleItem(item.build_type, item.design_id, location);
     else
         throw std::invalid_argument("Empire::ProducibleItem was passed a ProductionItem with an invalid BuildType");
@@ -2917,12 +2916,16 @@ void Empire::CheckProductionProgress() {
         std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
 
         boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+        if (item_cost < 0.01f || build_turns < 1) {
+            ErrorLogger() << "Empire::CheckProductionProgress got strang cost/time: " << item_cost << " / " << build_turns;
+            break;
+        }
 
         item_cost *= elem.blocksize;
         elem.progress += elem.allocated_pp;   // add allocated PP to queue item
         elem.progress_memory = elem.progress;
         elem.blocksize_memory = elem.blocksize;
-        
+
         std::string build_description;
         switch (elem.item.build_type) {
             case BT_BUILDING: {
@@ -3066,7 +3069,7 @@ void Empire::CheckProductionProgress() {
             }
 
             default:
-                DebugLogger() << "Build item of unknown build type finished on production queue.";
+                ErrorLogger() << "Build item of unknown build type finished on production queue.";
                 break;
             }
 
