@@ -1,16 +1,28 @@
 #include "PythonServer.h"
 
 #include "../../universe/ShipDesign.h"
+#include "../../universe/UniverseGenerator.h"
 #include "../../server/ServerApp.h"
 #include "../../util/Logger.h"
 #include "../../util/Random.h"
 #include "../../util/OptionsDB.h"
 
-#include "PythonServerFramework.h"
-
 #include <boost/lexical_cast.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 
+
+namespace {
+    // global server Python interface instance
+    static PythonServer s_python_server;
+}
+
+bool PythonInit() {
+    return s_python_server.Initialize();
+}
+
+void PythonCleanup() {
+    s_python_server.Finalize();
+}
 
 void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     Universe& universe = GetUniverse();
@@ -33,7 +45,7 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
         std::string new_seed = boost::posix_time::to_simple_string(ltime);
         boost::hash<std::string> string_hash;
         std::size_t h = string_hash(new_seed);
-        DebugLogger() << "CreateUniverse:: using clock for Seed:" << new_seed;
+        DebugLogger() << "GenerateUniverse using clock for seed:" << new_seed;
         seed = static_cast<unsigned int>(h);
         // store seed in galaxy setup data
         ServerApp::GetApp()->GetGalaxySetupData().m_seed = boost::lexical_cast<std::string>(seed);
@@ -49,9 +61,9 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
     InitEmpires(player_setup_data);
     // Set Python current work directory to directory containing
     // the universe generation Python scripts
-    PythonSetCurrentDir(GetPythonUniverseGeneratorDir());
+    s_python_server.SetCurrentDir(GetPythonUniverseGeneratorDir());
     // Call the main Python universe generator function
-    if (!PythonCreateUniverse(player_setup_data)) {
+    if (!(s_python_server.CreateUniverse(player_setup_data))) {
         ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
     }
 
@@ -86,9 +98,9 @@ void GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
 }
 
 void ExecuteScriptedTurnEvents() {
-    PythonSetCurrentDir(GetPythonTurnEventsDir());
+    s_python_server.SetCurrentDir(GetPythonTurnEventsDir());
     // Call the main Python turn events function
-    if (!PythonExecuteTurnEvents()) {
+    if (!(s_python_server.ExecuteTurnEvents())) {
         ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_TURN_EVENTS_ERRORS", false));
     }
 }

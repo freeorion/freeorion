@@ -5,6 +5,12 @@
 #include "PythonServerFramework.h"
 
 
+// Initializes the server Python interface
+bool PythonInit();
+
+// Shuts down and cleans up the server Python interface
+void PythonCleanup();
+
 // Calls Python universe generator script.
 // Supposed to be called to create a new universe so it can be used by content
 // scripters to customize universe generation.
