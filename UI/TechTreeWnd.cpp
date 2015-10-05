@@ -651,6 +651,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
 
     GG::Pt ul = GG::Pt(text_left, text_top);
     GG::Pt lr = ul + GG::Pt(text_width + PAD, text_height);
+    GG::Clr border_colour = GG::CLR_WHITE;
 
     m_layout_panel->DoZoom(UpperLeft());
 
@@ -658,33 +659,89 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     glEnable(GL_LINE_SMOOTH);
     glLineWidth(2.0);
 
-    // black out dependency lines under panel
-    glColor(GG::CLR_BLACK);
-    PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
-
-    // background of panel
-    glColor(m_colour);
-    PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
-
-    // tech name
+    // size of tech name text
     int font_pts = static_cast<int>(FontSize() * m_layout_panel->Scale() + 0.5);
 
+    // cancel out dependency line under tech icon
+    glColor(ClientUI::CtrlColor());
+    PartlyRoundedRect(m_icon->UpperLeft(), m_icon->LowerRight(), PAD, true, true, true, true, true);
 
-    // panel border
-    GG::Clr border_colour;
-    if (m_browse_highlight) {
-        border_colour = GG::CLR_WHITE;
-        glColor(border_colour);
-        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
-    } else if (m_status == TS_COMPLETE || m_status == TS_RESEARCHABLE) {
-        border_colour = m_colour;
-        border_colour.a = 255;
-        glColor(border_colour);
-        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
-    } else {
-        border_colour = m_colour;
-        border_colour.a = 127;
-        // don't render border
+    // Render text part of tech panel, but only if zoomed in so the text is legible
+    if (font_pts > 6) {
+
+        // background of panel (also cancels out dependency lines)
+        glColor(m_colour);
+        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
+
+        // panel border
+        if (m_browse_highlight) {
+            glColor(border_colour);
+            PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
+        }
+        else if (m_status == TS_COMPLETE || m_status == TS_RESEARCHABLE) {
+            border_colour = m_colour;
+            border_colour.a = 255;
+            glColor(border_colour);
+            PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, false);
+        }
+        else {
+            border_colour = m_colour;
+            border_colour.a = 127;
+            // don't render border
+        }
+
+        // render tech panel text; for small font sizes, remove shadow
+        glEnable(GL_TEXTURE_2D);
+
+        if (font_pts < 10)
+            m_name_label->SetText(m_name_text);
+        else
+            m_name_label->SetText("<s>" + m_name_text + "</s>");
+
+        GG::Pt text_ul(text_left + 4, text_top);
+        GG::Pt text_size(text_width + PAD, text_height);
+        m_name_label->SizeMove(text_ul, text_ul + text_size);
+        /// Need to render children too
+        GG::GUI::GetGUI()->RenderWindow(m_name_label);
+
+        // box around whole panel to indicate enqueue
+        if (m_enqueued) {
+            glColor(GG::CLR_WHITE);
+            GG::Pt gap = GG::Pt(GG::X(2 * PAD), GG::Y(2 * PAD));
+            GG::Pt enc_ul(-gap);
+            GG::Pt enc_lr(lr + gap);
+            PartlyRoundedRect(enc_ul, enc_lr, PAD + 6, true, true, true, true, false);
+        }
+
+        // ETA background and text
+        if (m_eta != -1 && font_pts > 10) {
+            GG::Pt panel_size = lr - ul;
+            GG::Pt eta_ul = ul + GG::Pt(panel_size.x * 3 / 4, panel_size.y * 3 / 4) - GG::Pt(GG::X(2), GG::Y(2));
+            GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x / 2, panel_size.y / 2) + GG::Pt(GG::X(2), GG::Y(2));
+
+            glColor(GG::CLR_BLACK);
+            CircleArc(eta_ul, eta_lr, 0, 2 * PI, true);
+            glColor(border_colour);
+            CircleArc(eta_ul, eta_lr, 0, 2 * PI, true);
+
+            glEnable(GL_TEXTURE_2D);
+
+            m_eta_label->SizeMove(eta_ul, eta_lr);
+
+            /// Need to render text too
+            GG::GUI::GetGUI()->RenderWindow(m_eta_label);
+            glDisable(GL_TEXTURE_2D);
+        }
+    }
+    else {
+        // box only around icon to indicate enqueue (when zoomed far out)
+        if (m_enqueued) {
+            glColor(GG::CLR_WHITE);
+            GG::Pt gap = GG::Pt(GG::X(2 * PAD), GG::Y(2 * PAD));
+            GG::Pt enc_ul(-gap);
+            GG::Pt enc_lr(m_icon->LowerRight() + gap);
+            PartlyRoundedRect(enc_ul, enc_lr, PAD + 6, true, true, true, true, false);
+        }
     }
 
     // selection indicator
@@ -692,53 +749,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
         // nothing!
     }
 
-    // ETA background and text
-    if (m_eta != -1  &&  font_pts > 10) {
-        GG::Pt panel_size = lr - ul;
-        GG::Pt eta_ul = ul + GG::Pt(panel_size.x*3/4, panel_size.y*3/4) - GG::Pt(GG::X(2), GG::Y(2));
-        GG::Pt eta_lr = eta_ul + GG::Pt(panel_size.x/2, panel_size.y/2) + GG::Pt(GG::X(2), GG::Y(2));
-
-        glColor(GG::CLR_BLACK);
-        CircleArc(eta_ul, eta_lr, 0, 2*PI, true);
-        glColor(border_colour);
-        CircleArc(eta_ul, eta_lr, 0, 2*PI, true);
-
-        glEnable(GL_TEXTURE_2D);
-
-        m_eta_label->SizeMove(eta_ul, eta_lr);
-
-        /// Need to render text too
-        GG::GUI::GetGUI()->RenderWindow(m_eta_label);
-
-        glDisable(GL_TEXTURE_2D);
-    }
-
-    // box around whole panel to indicate enqueue
-    if (m_enqueued) {
-        glColor(GG::CLR_WHITE);
-        GG::Pt gap = GG::Pt(GG::X(2*PAD), GG::Y(2*PAD));
-        GG::Pt enc_ul(-gap);
-        GG::Pt enc_lr(lr + gap);
-        PartlyRoundedRect(enc_ul, enc_lr, PAD + 6, true, true, true, true, false);
-    }
-
-    glLineWidth(1.0);
+    // render tech icon
     glDisable(GL_LINE_SMOOTH);
     glEnable(GL_TEXTURE_2D);
-
     m_icon->Render();
-
-    // small text: remove black shadow
-    if (font_pts < 10)
-        m_name_label->SetText(m_name_text);
-    else
-        m_name_label->SetText("<s>" + m_name_text + "</s>");
-
-    GG::Pt text_ul(text_left + 4, text_top);
-    GG::Pt text_size(text_width + PAD, text_height);
-    m_name_label->SizeMove(text_ul, text_ul + text_size);
-    /// Need to render children too
-    GG::GUI::GetGUI()->RenderWindow(m_name_label);
 
     m_layout_panel->UndoZoom();
 }
