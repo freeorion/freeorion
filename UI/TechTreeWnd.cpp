@@ -669,7 +669,11 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render() {
     // Render text part of tech panel, but only if zoomed in so the text is legible
     if (font_pts > 6) {
 
-        // background of panel (also cancels out dependency lines)
+        // black out dependency lines under panel
+        glColor(GG::CLR_BLACK);
+        PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
+
+        // background of panel
         glColor(m_colour);
         PartlyRoundedRect(ul, lr + GG::Pt(GG::X(4), GG::Y0), PAD, true, true, true, true, true);
 
