@@ -191,17 +191,8 @@ El servidor envío un mensaje de fin del juego. Hasta Luego.
 PLAYER_DISCONNECTED
 El jugador %1% se ha desconectado del servidor.
 
-PLAYER_DEFEATED
-Has sido derrotado.
-
-EMPIRE_DEFEATED
-El imperio %1% ya no existe.
-
 UNKNOWN_EMPIRE
 Imperio Desconocido
-
-LAST_OPPONENT_DEFEATED_VICTORY
-Tu último oponente ha sido derrotado. ¡Te alzaste con la victoria!
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 El servidor recibió datos inválidos del cliente.  Algunos serán ignorados.
@@ -1860,18 +1851,18 @@ SITREP_PLANET_COLONIZED
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% ha llegado al sistema %system% y espera ordenes.
 
-SITREP_EMPIRE_ELIMINATED
-El imperio %empire% ha sido eliminado
-
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-ha alcanzado una victoria tecnológica.
+VICTORY_TECH
+El imperio %empire% ha alcanzado una victoria tecnológica.
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-ha alcanzado una victoria como único superviviente.
+VICTORY_ALL_ENEMIES_ELIMINATED
+El imperio %empire% ha alcanzado una victoria como único superviviente.
+
+SITREP_EMPIRE_ELIMINATED
+El imperio %empire% ha sido eliminado.
 
 #############################################################
 ####                    S P E C I E S                    ####

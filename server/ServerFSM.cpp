@@ -195,8 +195,9 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
             m_server.SelectNewHost();
 
     } else if ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) &&
-                m_server.m_eliminated_players.find(id) == m_server.m_eliminated_players.end())
+               player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
+               // eliminated players can leave safely
+               && !GetEmpire(m_server.PlayerEmpireID(id))->Eliminated())
     {
         // player abnormally disconnected during a regular game
         DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id)
@@ -1389,7 +1390,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // if all players have responded, proceed with save and continue game
     m_players_responded.insert(message.SendingPlayer());
     if (m_players_responded == m_needed_reponses) {
-        ServerSaveGameData server_data(server.m_current_turn, server.m_victors);
+        ServerSaveGameData server_data(server.m_current_turn);
 
         // retreive requested save name from Base state, which should have been
         // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)

@@ -73,11 +73,6 @@ public:
         Can return INVALID_OBJECT_ID if an ID cannot be created. */
     int                     GetNewDesignID();
 
-    /** Emitted when a player is eliminated; in many places in the code, empires
-        are refered to by ID.  This allows such places to listen for
-        notification that one of these IDs has become invalidated.*/
-    mutable boost::signals2::signal<void (int)> EmpireEliminatedSignal;
-
     static ClientApp*       GetApp(); ///< returns the singleton ClientApp object
 
 protected:

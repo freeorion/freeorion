@@ -1348,8 +1348,10 @@ Special
                 AddSpecial name = "DERELICT_SPECIAL2"
                 GenerateSitRepMessage
                     message = "EFFECT_DERELICT_MAP"
+                    icon = "icons/specials_huge/derelict.png"
                     parameters = [
                         tag = "system" data = Source.ID
+                        tag = "special" data = "DERELICT_SPECIAL2"
                     ]
                     empire = Target.Owner
             ]
@@ -1403,6 +1405,7 @@ Special
                     icon = "icons/meter/fuel.png"
                     parameters = [
                         tag = "system" data = Source.ID
+                        tag = "special" data = "DERELICT_SPECIAL3"
                     ]
                     empire = Target.Owner
             ]

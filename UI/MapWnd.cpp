@@ -1247,7 +1247,6 @@ MapWnd::MapWnd() :
     // General Gamestate response signals
     //////////////////
     FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
-    Connect(ClientApp::GetApp()->EmpireEliminatedSignal,    &MapWnd::HandleEmpireElimination,   this);
     Connect(fm.ActiveFleetWndChangedSignal,                 &MapWnd::SelectedFleetsChanged,     this);
     Connect(fm.ActiveFleetWndSelectedFleetsChangedSignal,   &MapWnd::SelectedFleetsChanged,     this);
     Connect(fm.ActiveFleetWndSelectedShipsChangedSignal,    &MapWnd::SelectedShipsChanged,      this);
@@ -4968,9 +4967,6 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
             button_it->second->SetSelected(true);
     }
 }
-
-void MapWnd::HandleEmpireElimination(int empire_id)
-{}
 
 void MapWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
     if (obj)

@@ -972,11 +972,7 @@ Tech
         EffectsGroup
             scope = Source
             effects = [
-                GenerateSitRepMessage
-                    message = "SITREP_VICTORY_TECH"
-                    icon = "icons/sitrep/victory.png"
-                    empire = Source.Owner
-                Victory reason = "TECH_VICTORY"
+                Victory reason = "VICTORY_TECH"
             ]
     graphic = "icons/tech/singularity_of_transcendence.png"
 

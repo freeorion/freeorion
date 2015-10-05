@@ -451,17 +451,8 @@ Der Server hat das Spiel beendet.
 PLAYER_DISCONNECTED
 Spieler %1% ist nicht länger mit dem Server verbunden.
 
-PLAYER_DEFEATED
-Sie wurden besiegt.
-
-EMPIRE_DEFEATED
-Das Imperium %1% existiert nicht mehr.
-
 UNKNOWN_EMPIRE
 Unbekanntes Imperium
-
-LAST_OPPONENT_DEFEATED_VICTORY
-Ihr letzter Gegner ist geschlagen und Sie sind siegreich!
 
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 Der Server hat ungültige Speicherstanddaten vom Client erhalten. Teile davon können ignoriert werden.
@@ -3021,14 +3012,6 @@ SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION
 SITREP_FOREIGN_FLEET_ARRIVED_AT_DESTINATION_LABEL
 Fremde Flotte ist angekommen
 
-SITREP_EMPIRE_ELIMINATED
-%empire% wurde ausgelöscht.
-SITREP_EMPIRE_ELIMINATED_LABEL
-Imperium ausgeloescht
-
-SITREP_VICTORY_LABEL
-Sieg
-
 EFFECT_DRYDOCK_SHIP_REPAIR
 %ship% ist im %building% auf %planet% repariert worden.
 EFFECT_DRYDOCK_SHIP_REPAIR_LABEL
@@ -3116,11 +3099,19 @@ Systemminem zerstörten Schiff
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-Das %1% Imperium hat den technologischen Sieg errungen.
+VICTORY_TECH
+Das %empire% Imperium hat den technologischen Sieg errungen.
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-Das %1% Imperium hat den Sieg als letztes bestehendes Imperium erreicht.
+VICTORY_ALL_ENEMIES_ELIMINATED
+Das %empire% Imperium hat den Sieg als letztes bestehendes Imperium erreicht.
+
+SITREP_VICTORY_LABEL
+Sieg
+
+SITREP_EMPIRE_ELIMINATED
+%empire% wurde ausgelöscht.
+SITREP_EMPIRE_ELIMINATED_LABEL
+Imperium ausgeloescht
 
 #############################################################
 ####                    S P E C I E S                    ####

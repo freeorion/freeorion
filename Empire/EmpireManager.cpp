@@ -59,9 +59,6 @@ EmpireManager::const_iterator EmpireManager::end() const
 int EmpireManager::NumEmpires() const
 { return m_empire_map.size(); }
 
-bool EmpireManager::Eliminated(int id) const
-{ return m_eliminated_empires.find(id) != m_eliminated_empires.end(); }
-
 std::string EmpireManager::Dump() const {
     std::string retval = "Empires:\n";
     for (const_iterator it = begin(); it != end(); ++it)
@@ -101,15 +98,6 @@ void EmpireManager::BackPropegateMeters() {
         it->second->BackPropegateMeters();
 }
 
-void EmpireManager::EliminateEmpire(int id) {
-    if (Empire* emp = GetEmpire(id)) {
-        emp->EliminationCleanup();
-        m_eliminated_empires.insert(id);
-    } else {
-        ErrorLogger() << "Tried to eliminate nonexistant empire with ID " << id;
-    }
-}
-
 Empire* EmpireManager::CreateEmpire(int empire_id, const std::string& name,
                                     const std::string& player_name,
                                     const GG::Clr& color)
@@ -139,7 +127,6 @@ void EmpireManager::Clear() {
     for (EmpireManager::iterator it = begin(); it != end(); ++it)
         delete it->second;
     m_empire_map.clear();
-    m_eliminated_empires.clear();
     m_empire_diplomatic_statuses.clear();
 }
 

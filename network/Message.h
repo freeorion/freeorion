@@ -81,8 +81,6 @@ public:
         DISPATCH_NEW_OBJECT_ID, ///< sent by server to client with the new object ID.
         REQUEST_NEW_DESIGN_ID,  ///< sent by client to server requesting a new design ID.
         DISPATCH_NEW_DESIGN_ID, ///< sent by server to client with the new design ID.
-        VICTORY_DEFEAT,         ///< sent by server to all clients when one or more players have met victory or defeat conditions
-        PLAYER_ELIMINATED,      ///< sent by server to all clients (except the eliminated player) when a player is eliminated
         END_GAME,               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
         MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
         SHUT_DOWN_SERVER,       ///< sent by host client to server to kill the server process
@@ -112,12 +110,6 @@ public:
     GG_CLASS_ENUM(EndGameReason,
         LOCAL_CLIENT_DISCONNECT,///< the local player's client networking detected a disconnection from the server
         PLAYER_DISCONNECT,      ///< an active player (not an observer) was disconnected
-        YOU_ARE_ELIMINATED      ///< the receiving player is eliminated from the game
-    )
-
-    GG_CLASS_ENUM(VictoryOrDefeat,
-        VICTORY,                ///< a player or players have met a victory condition
-        DEFEAT                  ///< a player or players have met a defeat condition
     )
 
     /** \name Structors */ //@{
@@ -298,23 +290,6 @@ FO_COMMON_API Message DiplomacyMessage(int sender, int receiver, const Diplomati
   * update them on diplomatic status changes between players. */
 FO_COMMON_API Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update);
 
-/** creates a VICTORY_DEFEAT message indicating that the recipient has won the
-  * game by meeting a victory condition.
-  * The \a reason_string should be a stringtable entry name, not a human-
-  * readable string, so that each player's client can look up and display a
-  * victory message in the player's selected language.  The \a winner_empire_ids
-  * and \a winner_empire_names should contain the names and ids of all empires
-  * that have won; this will contain only a single empire if it has won alone,
-  * but could contain multiple empires if an allied victory has occured.  This
-  * message should only be sent by the server.*/
-Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat,
-                             const std::string& reason_string, int empire_id);
-
-/** creates a PLAYER_ELIMINATED message, which is sent to all clients when a
-  * client is eliminated from play. This message should only be sent by the
-  * server.*/
-Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name);
-
 /** creates an END_GAME message used to terminate an active game. */
 FO_COMMON_API Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
 
@@ -400,9 +375,6 @@ FO_COMMON_API void ExtractMessageData(const Message& msg, int& empire_id, std::s
 FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update);
-
-FO_COMMON_API void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
-                        std::string& reason_string, int& empire_id);
 
 FO_COMMON_API void ExtractMessageData(const Message& msg, std::string& directory);
 

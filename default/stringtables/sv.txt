@@ -76,12 +76,6 @@ Servern har meddelat att spelet är slut. Hejsvejs.
 PLAYER_DISCONNECTED
 Spelare %1% har inte längre förbindelse med servern.
 
-PLAYER_DEFEATED
-Du har blivit besegrad.
-
-EMPIRE_DEFEATED
-%1%-imperiet har gått under.
-
 ######################################
 # Command Line and OptionsDB Options #
 ######################################

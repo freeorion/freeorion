@@ -145,17 +145,8 @@ Server ukončil hru...
 PLAYER_DISCONNECTED
 Hráč č. %1% se odpojil.
 
-PLAYER_DEFEATED
-Byl si poražen.
-
-EMPIRE_DEFEATED
-Impérium rasy %1%  přestalo existovat.
-
 UNKNOWN_EMPIRE
 Neznámá říše
-
-LAST_OPPONENT_DEFEATED_VICTORY
-Tvůj poslední protivník byl poražen a tak se stáváš VÍTĚZEM !
 
 UNABLE_TO_WRITE_CONFIG_XML
 Nemohu zapisovat do souboru config.xml
@@ -1087,18 +1078,18 @@ Planeta "%planet%" byla kolonizována.
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 Loďstvo "%fleet%" odletělo do systému "%system%".
 
-SITREP_EMPIRE_ELIMINATED
-Říše "%empire%" byla zničena.
-
 #############################################################
 ####           V I C T O R Y   /   D E F E A T           ####
 #############################################################
 
-TECH_VICTORY
-Říše %1% dosáhla technologického vítězství.
+VICTORY_TECH
+Říše %empire% dosáhla technologického vítězství.
 
-ALL_ENEMIES_ELIMINATED_VICTORY
-Říše %1% jako jediná přežila a vítězí.
+VICTORY_ALL_ENEMIES_ELIMINATED
+Říše %empire% jako jediná přežila a vítězí.
+
+SITREP_EMPIRE_ELIMINATED
+Říše "%empire%" byla zničena.
 
 #############################################################
 ####                   S P E C I A L S                   ####

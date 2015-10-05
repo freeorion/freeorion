@@ -463,24 +463,26 @@ class AIstate(object):
             if max(sys_status.get('totalThreat', 0), pattack*phealth) >= 0.6 * lost_fleet_rating:  # previous threat assessment could account for losses, ignore the losses now
                 lost_fleet_rating = 0
 
+            # TODO use sitrep combat info rather than estimating stealthed enemies by fleets lost to them
+            # TODO also only consider past stealthed fleet threat to still be present if the system is still obstructed
             # TODO: track visibility across turns in order to distinguish the blip of visibility in (losing) combat,
             # which FO currently treats as being for the previous turn, partially superseding the previous visibility for that turn
             if not partial_vis_turn == current_turn:  # (universe.getVisibility(sys_id, self.empire_id) >= fo.visibility.partial):
                 print "System %s currently not visible" % system
                 sys_status.setdefault('local_fleet_threats', set())
                 # print "Stale visibility for system %d ( %s ) -- last seen %d, current Turn %d -- basing threat assessment on old info and lost ships"%(sys_id, sys_status.get('name', "name unknown"), partial_vis_turn, currentTurn)
-                sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 0.98*sys_status.get('fleetThreat', 0), 1.1 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
+                sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 0.98*sys_status.get('fleetThreat', 0), 2.0 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
                 sys_status['enemy_threat'] = int(max(enemy_rating, 0.98*sys_status.get('enemy_threat', 0), 1.1 * lost_fleet_rating - max(sys_status.get('monsterThreat', 0), monster_rating)))
                 sys_status['monsterThreat'] = int(max(monster_rating, 0.98*sys_status.get('monsterThreat', 0)))
                 # sys_status['totalThreat'] = ((pattack + enemy_attack + monster_attack) ** 0.8) * ((phealth + enemy_health + monster_health)** 0.6)  # reevaluate this
-                sys_status['totalThreat'] = max(FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]), lost_fleet_rating)
+                sys_status['totalThreat'] = max(FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth]), 2*lost_fleet_rating, 0.98*sys_status.get('totalThreat', 0))
             else:  # system considered visible #TODO: reevaluate as visibility rules change
                 print "System %s currently visible" % system
                 sys_status['local_fleet_threats'] = set(mobile_fleets)
-                sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), lost_fleet_rating - monster_rating))  # includes mobile monsters
+                sys_status['fleetThreat'] = int(max(FleetUtilsAI.combine_ratings(enemy_rating, mob_rating), 2*lost_fleet_rating - monster_rating))  # includes mobile monsters
                 if verbose:
                     print "enemy threat calc parts: enemy rating %.1f, lost fleet rating %.1f, monster_rating %.1f" % (enemy_rating, lost_fleet_rating,  monster_rating)
-                sys_status['enemy_threat'] = int(max(enemy_rating, lost_fleet_rating - monster_rating))  # does NOT include mobile monsters
+                sys_status['enemy_threat'] = int(max(enemy_rating, 2*lost_fleet_rating - monster_rating))  # does NOT include mobile monsters
                 sys_status['monsterThreat'] = monster_rating
                 sys_status['totalThreat'] = FleetUtilsAI.combine_ratings_list([enemy_rating, mob_rating, monster_rating, pattack * phealth])
             sys_status['regional_fleet_threats'] = sys_status['local_fleet_threats'].copy()

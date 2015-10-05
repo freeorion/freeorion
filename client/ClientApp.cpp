@@ -18,9 +18,6 @@ ClientApp::ClientApp() :
     m_empire_id(ALL_EMPIRES),
     m_current_turn(INVALID_GAME_TURN)
 {
-#ifdef FREEORION_BUILD_HUMAN
-    EmpireEliminatedSignal.connect(boost::bind(&Universe::HandleEmpireElimination, &m_universe, _1));
-#endif
 }
 
 ClientApp::~ClientApp()

@@ -569,7 +569,10 @@ void ResearchQueue::clear() {
 /////////////////////////////////////
 // ProductionQueue::ProductionItem //
 /////////////////////////////////////
-ProductionQueue::ProductionItem::ProductionItem()
+ProductionQueue::ProductionItem::ProductionItem() :
+    build_type(INVALID_BUILD_TYPE),
+    name(),
+    design_id(ShipDesign::INVALID_DESIGN_ID)
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
@@ -1262,6 +1265,8 @@ void Empire::Init() {
     m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
 
+    m_eliminated = false;
+
     //// Add alignment meters to empire
     //const AlignmentManager& alignment_manager = GetAlignmentManager();
     //const std::vector<Alignment>& alignments = alignment_manager.Alignments();
@@ -1680,8 +1685,7 @@ bool Empire::EnqueuableItem(BuildType build_type, const std::string& name, int l
 bool Empire::EnqueuableItem(const ProductionQueue::ProductionItem& item, int location) const {
     if (item.build_type == BT_BUILDING)
         return EnqueuableItem(item.build_type, item.name, location);
-    // ships don't have a distinction between enqueuable and producible
-    else if (item.build_type == BT_SHIP)
+    else if (item.build_type == BT_SHIP)    // ships don't have a distinction between enqueuable and producible
         return ProducibleItem(item.build_type, item.design_id, location);
     else
         throw std::invalid_argument("Empire::ProducibleItem was passed a ProductionItem with an invalid BuildType");
@@ -1698,7 +1702,16 @@ int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
     return count;
 }
 
-void Empire::EliminationCleanup() {
+bool Empire::Eliminated() const {
+    return m_eliminated;
+}
+
+void Empire::Eliminate() {
+    m_eliminated = true;
+
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it)
+        it->second->AddSitRepEntry(CreateEmpireEliminatedSitRep(EmpireID()));
+
     // some Empire data not cleared when eliminating since it might be useful
     // to remember later, and having it doesn't hurt anything (as opposed to
     // the production queue that might actually cause some problems if left
@@ -1729,6 +1742,18 @@ void Empire::EliminationCleanup() {
     m_supply_starlane_obstructed_traversals.clear();
     m_fleet_supplyable_system_ids.clear();
     m_resource_supply_groups.clear();
+}
+
+bool Empire::Won() const {
+    return !m_victories.empty();
+}
+
+void Empire::Win(const std::string& reason) {
+    if (m_victories.insert(reason).second) {
+        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+            it->second->AddSitRepEntry(CreateVictorySitRep(reason, EmpireID()));
+        }
+    }
 }
 
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
@@ -2381,17 +2406,21 @@ const unsigned int MAX_PROD_QUEUE_SIZE = 500;
 
 void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/) {
     if (!EnqueuableItem(build_type, name, location)) {
-        DebugLogger() << "Empire::PlaceBuildInQueue() : Attempted to place non-enqueuable item in queue";
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Attempted to place non-enqueuable item in queue: build_type: "
+                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
         return;
     }
 
     if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
-        DebugLogger() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
         return;
     }
 
-    if (!ProducibleItem(build_type, name, location))
-        DebugLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
+    if (!ProducibleItem(build_type, name, location)) {
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue: build_type: "
+                      << boost::lexical_cast<std::string>(build_type) << "  name: " << name << "  location: " << location;
+        return;
+    }
 
     ProductionQueue::Element build(build_type, name, m_id, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
@@ -2401,11 +2430,18 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
 }
 
 void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/) {
-    if (!ProducibleItem(build_type, design_id, location))
-        DebugLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue...";
+    // ship designs don't have a distinction between enqueuable and producible...
 
-    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE)
+    if (m_production_queue.size() >= MAX_PROD_QUEUE_SIZE) {
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Maximum queue size reached. Aborting enqueue";
         return;
+    }
+
+    if (!ProducibleItem(build_type, design_id, location)) {
+        ErrorLogger() << "Empire::PlaceBuildInQueue() : Placed a non-buildable item in queue: build_type: "
+                      << boost::lexical_cast<std::string>(build_type) << "  design_id: " << design_id << "  location: " << location;
+        return;
+    }
 
     ProductionQueue::Element build(build_type, design_id, m_id, number, number, location);
     if (pos < 0 || static_cast<int>(m_production_queue.size()) <= pos)
@@ -2880,12 +2916,16 @@ void Empire::CheckProductionProgress() {
         std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
 
         boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+        if (item_cost < 0.01f || build_turns < 1) {
+            ErrorLogger() << "Empire::CheckProductionProgress got strang cost/time: " << item_cost << " / " << build_turns;
+            break;
+        }
 
         item_cost *= elem.blocksize;
         elem.progress += elem.allocated_pp;   // add allocated PP to queue item
         elem.progress_memory = elem.progress;
         elem.blocksize_memory = elem.blocksize;
-        
+
         std::string build_description;
         switch (elem.item.build_type) {
             case BT_BUILDING: {
@@ -3029,7 +3069,7 @@ void Empire::CheckProductionProgress() {
             }
 
             default:
-                DebugLogger() << "Build item of unknown build type finished on production queue.";
+                ErrorLogger() << "Build item of unknown build type finished on production queue.";
                 break;
             }
 

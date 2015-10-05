@@ -430,7 +430,7 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = "icons/building/shipyard-7.png"
+    icon = "icons/building/orbital-incubator.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -452,7 +452,7 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = "icons/building/shipyard-8.png"
+    icon = "icons/building/cellular-growth-chamber.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -474,7 +474,7 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = "icons/building/shipyard-9.png"
+    icon = "icons/building/xeno-coordination-facility.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ENRG_COMP"
@@ -1801,10 +1801,7 @@ BuildingType
                 Species name = "SP_EXPERIMENTOR" 
             ]
             effects = [
-                GenerateSitRepMessage
-                    message = "SITREP_VICTORY_CAPTURE"
-                    icon = "icons/sitrep/victory.png"
-                    empire = Source.Owner
+                Victory reason = "VICTORY_EXPERIMENTOR_CAPTURE"
                 [[EXPERIMENTOR_ADD_STARLANE]]
                 [[EXPERIMENTOR_ADD_STARLANE]]
                 [[EXPERIMENTOR_ADD_STARLANE]]
