@@ -231,7 +231,6 @@ BuildingType
                 Planet 
                 Object id = Source.PlanetID
             ]
-            effects = SetTargetConstruction value = Value - 10
     ]
     icon = "icons/building/lighthouse.png"
 */
@@ -249,13 +248,6 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    effectsgroups =
-        EffectsGroup
-            scope = And [ 
-                Object id = Source.PlanetID
-                Planet
-            ]
-            effects = SetTargetConstruction value = Value - 10
     icon = "icons/building/shipyard.png"
 
 BuildingType
@@ -274,7 +266,7 @@ BuildingType
         OwnedBy empire = Source.Owner
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = And [
                 Ship
@@ -296,14 +288,6 @@ BuildingType
                     ]
                     empire = Source.Owner
             ]
-            
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-            ]
-            effects = SetTargetConstruction value = Value - 15
-        ]
     icon = "icons/building/shipyard-1.png"
 
 BuildingType
@@ -611,44 +595,42 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-        EffectsGroup
+	    EffectsGroup
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Focus type = "FOCUS_INDUSTRY"
-            ]
-            activation = And [
-                OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"
-                Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
-            ]
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy empire = Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Focus type = "FOCUS_INDUSTRY"
-            ]
-            activation = And [
-                OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
-                Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
-            ]
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
-
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy empire = Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Focus type = "FOCUS_INDUSTRY"
+				Construction low = 30
             ]
             activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             stackinggroup = "INDUSTRY_CENTER_STACK"
             effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
+			
+		EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+				Construction low = 20
+            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+			
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+				Construction low = 10
+            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
+
     ]
     icon = "icons/tech/industrial_centre_ii.png"
 
@@ -686,6 +668,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 TargetPopulation low = 1
+				Construction low = 30
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
@@ -941,6 +924,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+				Construction low = 30
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
@@ -952,6 +936,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+				Construction low = 30
             ]
             activation = And [
                 Star type = [Yellow Orange]
@@ -970,6 +955,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+				Construction low = 30
             ]
             activation = And [
                 Star type = Red
@@ -1263,6 +1249,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+				Construction low = 40
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
@@ -1617,6 +1604,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 NOT Population high = 0
                 OwnedBy empire = Source.Owner
+				Construction low = 20 
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
             effects = SetTargetIndustry value = Value + 10
