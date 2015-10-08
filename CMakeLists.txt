@@ -230,6 +230,7 @@ set (freeorioncommon_SOURCE
     universe/UniverseObject.cpp
     universe/ValueRef.cpp
     util/AppInterface.cpp
+    util/DependencyVersions.cpp
     util/Directories.cpp
     util/EnumText.cpp
     util/i18n.cpp

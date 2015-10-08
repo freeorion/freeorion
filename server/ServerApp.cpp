@@ -28,6 +28,7 @@
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/SitRepEntry.h"
 #include "../util/ScopedTimer.h"
+#include "../util/Version.h"
 
 #include <GG/SignalsAndSlots.h>
 
@@ -128,6 +129,8 @@ ServerApp::ServerApp() :
     const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").string());
 
     InitLogger(SERVER_LOG_FILENAME, "Server");
+
+    LogDependencyVersions();
 
     m_fsm->initiate();
 

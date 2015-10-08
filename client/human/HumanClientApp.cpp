@@ -26,6 +26,7 @@
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
+#include "../../util/Version.h"
 #include "../../universe/Planet.h"
 #include "../../universe/Species.h"
 #include "../../Empire/Empire.h"
@@ -199,6 +200,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     } catch (...) {
         ErrorLogger() << "Unable to get GL Version String?";
     }
+
+    LogDependencyVersions();
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
