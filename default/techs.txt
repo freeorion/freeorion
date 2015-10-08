@@ -1565,6 +1565,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             effects = SetMaxSupply value = Value + 1
+    graphic = "icons/tech/galactic_infrastructure.png"
 
 Tech
     name = "CON_FRC_ENRG_STRC"
