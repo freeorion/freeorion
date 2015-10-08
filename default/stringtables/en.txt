@@ -4058,6 +4058,10 @@ Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]] and the recen
 AI_ERROR_MSG
 AI_Error: AI script error
 
+SERVER_MESSAGE_NOT_UNDERSTOOD
+The server sent a message that could not be understood.
+
+
 ####################
 # Combat Messages  #
 ####################

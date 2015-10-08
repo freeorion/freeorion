@@ -14,6 +14,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 #include "../util/ScopedTimer.h"
+#include "../util/i18n.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -725,11 +726,11 @@ void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
                >> BOOST_SERIALIZATION_NVP(fatal);
         }
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  "
-                      << "Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
-        throw err;
+        problem = UserStringNop("SERVER_MESSAGE_NOT_UNDERSTOOD");
+        fatal = false;
     }
 }
 
