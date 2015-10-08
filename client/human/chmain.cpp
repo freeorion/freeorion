@@ -233,7 +233,8 @@ int mainSetupAndRun() {
 #endif
 
         parse::init();
-        HumanClientApp app(width_height.first, width_height.second, true, "FreeOrion " + FreeOrionVersionString(), left, top, fullscreen, fake_mode_change);
+        HumanClientApp app(width_height.first, width_height.second, true, "FreeOrion " + FreeOrionVersionString(),
+                           left, top, fullscreen, fake_mode_change);
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
             // immediately start the server, establish network connections, and
