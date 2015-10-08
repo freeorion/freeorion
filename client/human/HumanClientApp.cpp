@@ -675,7 +675,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     Message response;
     m_networking.SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
-    if(response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
+    if (response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
         ExtractMessageData(response, previews);
         DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
     }else{
