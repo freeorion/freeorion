@@ -162,15 +162,9 @@ void HeaderToBuffer(const Message& message, int* header_buf) {
 Message ErrorMessage(const std::string& problem, bool fatal/* = true*/) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(problem)
-               << BOOST_SERIALIZATION_NVP(fatal);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(problem)
-               << BOOST_SERIALIZATION_NVP(fatal);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(problem)
+           << BOOST_SERIALIZATION_NVP(fatal);
     }
     return Message(Message::ERROR_MSG, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -178,15 +172,9 @@ Message ErrorMessage(const std::string& problem, bool fatal/* = true*/) {
 Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = true*/) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(problem)
-               << BOOST_SERIALIZATION_NVP(fatal);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(problem)
-               << BOOST_SERIALIZATION_NVP(fatal);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(problem)
+           << BOOST_SERIALIZATION_NVP(fatal);
     }
     return Message(Message::ERROR_MSG, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
@@ -194,13 +182,8 @@ Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = t
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(setup_data);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(setup_data);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(setup_data);
     }
     return Message(Message::HOST_SP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -211,15 +194,9 @@ Message HostMPGameMessage(const std::string& host_player_name)
 Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(player_name)
-               << BOOST_SERIALIZATION_NVP(client_type);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(player_name)
-               << BOOST_SERIALIZATION_NVP(client_type);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(player_name)
+           << BOOST_SERIALIZATION_NVP(client_type);
     }
     return Message(Message::JOIN_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -397,13 +374,8 @@ Message JoinAckMessage(int player_id)
 Message TurnOrdersMessage(int sender, const OrderSet& orders) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            Serialize(oa, orders);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            Serialize(oa, orders);
-        }
+        freeorion_xml_oarchive oa(os);
+        Serialize(oa, orders);
     }
     return Message(Message::TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -411,13 +383,8 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders) {
 Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(phase_id);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(phase_id);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(phase_id);
     }
     return Message(Message::TURN_PROGRESS, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
@@ -425,15 +392,9 @@ Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id) 
 Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(about_player_id)
-               << BOOST_SERIALIZATION_NVP(player_status);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(about_player_id)
-               << BOOST_SERIALIZATION_NVP(player_status);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(about_player_id)
+           << BOOST_SERIALIZATION_NVP(player_status);
     }
     return Message(Message::PLAYER_STATUS, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
@@ -487,23 +448,13 @@ Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& u
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            Serialize(oa, orders);
-            bool ui_data_available = true;
-            bool save_state_string_available = false;
-            oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-               << BOOST_SERIALIZATION_NVP(ui_data)
-               << BOOST_SERIALIZATION_NVP(save_state_string_available);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            Serialize(oa, orders);
-            bool ui_data_available = true;
-            bool save_state_string_available = false;
-            oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-               << BOOST_SERIALIZATION_NVP(ui_data)
-               << BOOST_SERIALIZATION_NVP(save_state_string_available);
-        }
+        freeorion_xml_oarchive oa(os);
+        Serialize(oa, orders);
+        bool ui_data_available = true;
+        bool save_state_string_available = false;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
+           << BOOST_SERIALIZATION_NVP(ui_data)
+           << BOOST_SERIALIZATION_NVP(save_state_string_available);
     }
     return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -511,45 +462,26 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGame
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            Serialize(oa, orders);
-            bool ui_data_available = false;
-            bool save_state_string_available = true;
-            oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-               << BOOST_SERIALIZATION_NVP(save_state_string_available)
-               << BOOST_SERIALIZATION_NVP(save_state_string);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            Serialize(oa, orders);
-            bool ui_data_available = false;
-            bool save_state_string_available = true;
-            oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-               << BOOST_SERIALIZATION_NVP(save_state_string_available)
-               << BOOST_SERIALIZATION_NVP(save_state_string);
-        }
-    }
+        freeorion_xml_oarchive oa(os);
+        Serialize(oa, orders);
+        bool ui_data_available = false;
+        bool save_state_string_available = true;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
+           << BOOST_SERIALIZATION_NVP(save_state_string_available)
+           << BOOST_SERIALIZATION_NVP(save_state_string);
+}
     return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            Serialize(oa, orders);
-            bool ui_data_available = false;
-            bool save_state_string_available = false;
-            oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-               << BOOST_SERIALIZATION_NVP(save_state_string_available);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            Serialize(oa, orders);
-            bool ui_data_available = false;
-            bool save_state_string_available = false;
-            oa << BOOST_SERIALIZATION_NVP(ui_data_available)
-               << BOOST_SERIALIZATION_NVP(save_state_string_available);
-        }
+        freeorion_xml_oarchive oa(os);
+        Serialize(oa, orders);
+        bool ui_data_available = false;
+        bool save_state_string_available = false;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available)
+           << BOOST_SERIALIZATION_NVP(save_state_string_available);
     }
     return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -585,13 +517,8 @@ Message SingleRecipientChatMessage(int sender, int receiver, const std::string& 
 Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(diplo_message);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(diplo_message);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(diplo_message);
     }
     return Message(Message::DIPLOMACY, sender, receiver, os.str());
 }
@@ -599,17 +526,10 @@ Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& dipl
 Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
-               << BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
-               << BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
-               << BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
-               << BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
+           << BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
+           << BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
     }
     return Message(Message::DIPLOMATIC_STATUS, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
@@ -619,15 +539,9 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
 {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(reason)
-               << BOOST_SERIALIZATION_NVP(reason_player_name);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(reason)
-               << BOOST_SERIALIZATION_NVP(reason_player_name);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(reason)
+           << BOOST_SERIALIZATION_NVP(reason_player_name);
     }
     return Message(Message::END_GAME, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
@@ -636,13 +550,8 @@ Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& act
     std::ostringstream os;
     {
         const Moderator::ModeratorAction* mod_action = &action;
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(mod_action);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(mod_action);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(mod_action);
     }
     return Message(Message::MODERATOR_ACTION, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -658,13 +567,8 @@ Message RequestSavePreviewsMessage(int sender, std::string directory)
 Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& previews) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(previews);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(previews);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(previews);
     }
     return Message(Message::DISPATCH_SAVE_PREVIEWS, Networking::INVALID_PLAYER_ID, receiver, os.str(), true);
 }
@@ -675,13 +579,8 @@ Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& prev
 Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(lobby_data);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(lobby_data);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(lobby_data);
     }
     return Message(Message::LOBBY_UPDATE, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -689,13 +588,8 @@ Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data) {
 Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(lobby_data);
-        } else {
-            freeorion_xml_oarchive oa(os);
-            oa << BOOST_SERIALIZATION_NVP(lobby_data);
-        }
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(lobby_data);
     }
     return Message(Message::LOBBY_UPDATE, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
@@ -716,15 +610,9 @@ Message StartMPGameMessage(int player_id)
 void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(problem)
-               >> BOOST_SERIALIZATION_NVP(fatal);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(problem)
-               >> BOOST_SERIALIZATION_NVP(fatal);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(problem)
+           >> BOOST_SERIALIZATION_NVP(fatal);
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  Message:\n"
                       << msg.Text() << "\n"
@@ -737,33 +625,27 @@ void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(lobby_data);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(lobby_data);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(lobby_data);
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& "
-                      << "lobby_data) failed!  Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
     }
 }
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id,
-                        int& current_turn, EmpireManager& empires, Universe& universe,
-                        SpeciesManager& species, CombatLogManager& combat_logs,
-                        std::map<int, PlayerInfo>& players, OrderSet& orders,
-                        bool& loaded_game_data, bool& ui_data_available,
-                        SaveGameUIData& ui_data, bool& save_state_string_available,
-                        std::string& save_state_string, GalaxySetupData& galaxy_setup_data)
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
+                        EmpireManager& empires, Universe& universe, SpeciesManager& species, CombatLogManager& combat_logs,
+                        std::map<int, PlayerInfo>& players, OrderSet& orders, bool& loaded_game_data, bool& ui_data_available,
+                        SaveGameUIData& ui_data, bool& save_state_string_available, std::string& save_state_string,
+                        GalaxySetupData& galaxy_setup_data)
 {
     try {
-        std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
+        try {
+            // first attempt binary deserialziation
+            std::istringstream is(msg.Text());
+
             freeorion_bin_iarchive ia(is);
             ia >> BOOST_SERIALIZATION_NVP(single_player_game)
                >> BOOST_SERIALIZATION_NVP(empire_id)
@@ -797,7 +679,11 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
                 save_state_string_available = false;
             }
             ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-        } else {
+
+        } catch (...) {
+            // if binary deserialization failed, try more-portable XML deserialization
+            std::istringstream is(msg.Text());
+
             freeorion_xml_iarchive ia(is);
             ia >> BOOST_SERIALIZATION_NVP(single_player_game)
                >> BOOST_SERIALIZATION_NVP(empire_id)
@@ -834,13 +720,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
         }
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
-                      << "int& current_turn, EmpireManager& empires, Universe& universe, "
-                      << "std::map<int, PlayerInfo>& players, OrderSet& orders, "
-                      << "bool& loaded_game_data, bool& ui_data_available, "
-                      << "SaveGameUIData& ui_data, bool& save_state_string_available, "
-                      << "std::string& save_state_string) failed!  Message:\n"
-                      << msg.Text() << "\n"
+        ErrorLogger() << "ExtractMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
@@ -850,15 +730,10 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
     DebugLogger() << "ExtractMessageData() from " << player_name << " client type " << client_type;
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(player_name)
-               >> BOOST_SERIALIZATION_NVP(client_type);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(player_name)
-               >> BOOST_SERIALIZATION_NVP(client_type);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(player_name)
+           >> BOOST_SERIALIZATION_NVP(client_type);
+
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& player_name, "
                       << "Networking::ClientType client_type) failed!  Message:\n"
@@ -871,16 +746,11 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
 void ExtractMessageData(const Message& msg, OrderSet& orders) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            Deserialize(ia, orders);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            Deserialize(ia, orders);
-        }
+        freeorion_xml_iarchive ia(is);
+        Deserialize(ia, orders);
+
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  "
-                      << "Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
@@ -894,8 +764,10 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
 {
     try {
         ScopedTimer timer("Turn Update Unpacking", true);
-        std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
+
+        try {
+            // first attempt binary deserialization
+            std::istringstream is(msg.Text());
             freeorion_bin_iarchive ia(is);
             GetUniverse().EncodingEmpire() = empire_id;
             ia >> BOOST_SERIALIZATION_NVP(current_turn)
@@ -904,7 +776,10 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
                >> BOOST_SERIALIZATION_NVP(combat_logs);
             Deserialize(ia, universe);
             ia >> BOOST_SERIALIZATION_NVP(players);
-        } else {
+
+        } catch (...) {
+            // try again with more-portable XML deserialization
+            std::istringstream is(msg.Text());
             freeorion_xml_iarchive ia(is);
             GetUniverse().EncodingEmpire() = empire_id;
             ia >> BOOST_SERIALIZATION_NVP(current_turn)
@@ -914,11 +789,9 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
             Deserialize(ia, universe);
             ia >> BOOST_SERIALIZATION_NVP(players);
         }
+
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, int& "
-                      << "current_turn, EmpireManager& empires, Universe& universe, "
-                      << "std::map<int, PlayerInfo>& players) failed!  Message:\n"
-                      << msg.Text() << "\n"
+        ErrorLogger() << "ExtractMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
@@ -927,20 +800,24 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
 void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
     try {
         ScopedTimer timer("Mid Turn Update Unpacking", true);
-        std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
+
+        try {
+            // first attempt binary deserialization
+            std::istringstream is(msg.Text());
             freeorion_bin_iarchive ia(is);
             GetUniverse().EncodingEmpire() = empire_id;
             Deserialize(ia, universe);
-        } else {
+
+        } catch (...) {
+            // try again with more-portable XML deserialization
+            std::istringstream is(msg.Text());
             freeorion_xml_iarchive ia(is);
             GetUniverse().EncodingEmpire() = empire_id;
             Deserialize(ia, universe);
         }
+
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, "
-                      << "Universe& universe) failed!  Message:\n"
-                      << msg.Text() << "\n"
+        ErrorLogger() << "ExtractMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
@@ -952,45 +829,24 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
 {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            DebugLogger() << "deserializing orders";
-            Deserialize(ia, orders);
-            DebugLogger() << "checking for ui data";
-            ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
-            if (ui_data_available) {
-                DebugLogger() << "deserializing UI data";
-                ia >> BOOST_SERIALIZATION_NVP(ui_data);
-            }
-            DebugLogger() << "checking for save state string";
-            ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
-            if (save_state_string_available) {
-                DebugLogger() << "deserializing save state string";
-                ia >> BOOST_SERIALIZATION_NVP(save_state_string);
-            }
-        } else {
-            freeorion_xml_iarchive ia(is);
-            DebugLogger() << "deserializing orders";
-            Deserialize(ia, orders);
-            DebugLogger() << "checking for ui data";
-            ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
-            if (ui_data_available) {
-                DebugLogger() << "deserializing UI data";
-                ia >> BOOST_SERIALIZATION_NVP(ui_data);
-            }
-            DebugLogger() << "checking for save state string";
-            ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
-            if (save_state_string_available) {
-                DebugLogger() << "deserializing save state string";
-                ia >> BOOST_SERIALIZATION_NVP(save_state_string);
-            }
+        freeorion_xml_iarchive ia(is);
+        DebugLogger() << "deserializing orders";
+        Deserialize(ia, orders);
+        DebugLogger() << "checking for ui data";
+        ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
+        if (ui_data_available) {
+            DebugLogger() << "deserializing UI data";
+            ia >> BOOST_SERIALIZATION_NVP(ui_data);
         }
+        DebugLogger() << "checking for save state string";
+        ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
+        if (save_state_string_available) {
+            DebugLogger() << "deserializing save state string";
+            ia >> BOOST_SERIALIZATION_NVP(save_state_string);
+        }
+
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, OrderSet& orders, "
-                      << "bool& ui_data_available, SaveGameUIData& ui_data, "
-                      << "bool& save_state_string_available, std::string& save_state_string) "
-                      << "failed!  Message:\n"
-                      << msg.Text() << "\n"
+        ErrorLogger() << "ExtractMessageData(...) failed!  Message probably long, so not outputting to log.\n"
                       << "Error: " << err.what();
         throw err;
     }
@@ -999,16 +855,11 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
 void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(phase_id);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(phase_id);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(phase_id);
+
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
-                      << "phase_id) failed!  Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
@@ -1018,18 +869,12 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
 void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(about_player_id)
-               >> BOOST_SERIALIZATION_NVP(status);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(about_player_id)
-               >> BOOST_SERIALIZATION_NVP(status);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(about_player_id)
+           >> BOOST_SERIALIZATION_NVP(status);
+ 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, int& about_player_id "
-                      << "Message::PlayerStatus&) failed!  Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus&) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
@@ -1039,16 +884,11 @@ void ExtractMessageData(const Message& msg, int& about_player_id, Message::Playe
 void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(setup_data);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(setup_data);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(setup_data);
+
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& "
-                      << "setup_data) failed!  Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
@@ -1060,15 +900,10 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
 {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(reason)
-               >> BOOST_SERIALIZATION_NVP(reason_player_name);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(reason)
-               >> BOOST_SERIALIZATION_NVP(reason_player_name);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(reason)
+           >> BOOST_SERIALIZATION_NVP(reason_player_name);
+
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, "
                       << "std::string& reason_player_name) failed!  Message:\n"
@@ -1081,13 +916,9 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
 void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_action) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(mod_action);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(mod_action);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(mod_action);
+
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, Moderator::ModeratorAction& mod_act) "
                       << "failed!  Message:\n"
@@ -1099,15 +930,10 @@ void ExtractMessageData(const Message& msg, Moderator::ModeratorAction*& mod_act
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(empire_id)
-               >> BOOST_SERIALIZATION_NVP(empire_name);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(empire_id)
-               >> BOOST_SERIALIZATION_NVP(empire_name);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(empire_id)
+           >> BOOST_SERIALIZATION_NVP(empire_name);
+
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
                       << "empire_name) failed!  Message:\n"
@@ -1120,13 +946,9 @@ void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_
 void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(diplo_message);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(diplo_message);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(diplo_message);
+
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticMessage& "
                       << "diplo_message) failed!  Message:\n"
@@ -1139,20 +961,13 @@ void ExtractMessageData(const Message& msg, DiplomaticMessage& diplo_message) {
 void ExtractMessageData(const Message& msg, DiplomaticStatusUpdateInfo& diplo_update) {
     try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
-               >> BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
-               >> BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
-               >> BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
-               >> BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(diplo_update.empire1_id)
+           >> BOOST_SERIALIZATION_NVP(diplo_update.empire2_id)
+           >> BOOST_SERIALIZATION_NVP(diplo_update.diplo_status);
+
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticStatusUpdate& "
-                      << "diplo_update) failed!  Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, DiplomaticStatusUpdate& diplo_update) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
@@ -1163,18 +978,13 @@ void ExtractMessageData(const Message& msg, std::string& directory)
 { directory = msg.Text(); }
 
 void ExtractMessageData(const Message& msg, PreviewInformation& previews) {
-    try{
+    try {
         std::istringstream is(msg.Text());
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
-            freeorion_bin_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(previews);
-        } else {
-            freeorion_xml_iarchive ia(is);
-            ia >> BOOST_SERIALIZATION_NVP(previews);
-        }
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(previews);
+
     } catch(const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, PreviewInformation& previews"
-                      << ") failed!  Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, PreviewInformation& previews) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
