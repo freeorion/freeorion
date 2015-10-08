@@ -1829,6 +1829,7 @@ Tech
         Item type = Building name = "BLD_PLANET_DRIVE"
         Item type = Building name = "BLD_PLANET_BEACON"
     ]
+    graphic = "icons/tech/planetary_stardrive.png"
 
 Tech
     name = "CON_STARGATE"
