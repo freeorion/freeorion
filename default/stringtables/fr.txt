@@ -1351,7 +1351,7 @@ OPTIONS_DB_AUTO_QUIT
 Quitter automatiquement une fois au tour spécifié par --auto-advance-n-turns (valeur défaut à zéro), utile pour le débogage notamment avec --quickstart ou --load.
 
 OPTIONS_DB_BINARY_SERIALIZATION
-Utilise la sérialisation binaire pour les fichiers de sauvegarde et les communications serveur-client (plus compact et rapide mais peut causer des problèmes de compatibilité cross-platform); si désactivé, la sérialisation texte XML est utilisée. Il est conseillé de redémarrer après modification de ce réglage.
+Utilise la sérialisation binaire pour les fichiers de sauvegarde. La sérialisation binaire est plus rapide lors de la sauvegarde et du chargement, mais peut rencontrer des problèmes de compatibilité si le fichier de sauvegarde est utilisé sur un système d'exploitation différent.
 
 OPTIONS_DB_UI_WINDOWS_EXISTS
 Vrai si une fenêtre avec ce nom spécifique existe, faux si une fenêtre a été créée puis effacée, n'existe pas si une fenêtre n'a pas encore été créée avec ce nom.
@@ -1543,10 +1543,10 @@ Nom du joueur
 #Button names####
 
 HOST_GAME_BN
-Héberger une partie
+Héberger une partie (sérialisation XML conseillée)
 
 JOIN_GAME_BN
-Rejoindre une partie
+Rejoindre une partie (Cf. Options/Autres)
 
 REFRESH_LIST_BN
 Rafraîchir
@@ -2309,7 +2309,7 @@ OPTIONS_ADD_SAVED_DESIGNS
 Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
 OPTIONS_USE_BINARY_SERIALIZATION
-Sérialisation binaire
+Utiliser des fichiers de sauvegarde binaire
 
 #################
 # Main Map      #
@@ -4058,6 +4058,10 @@ Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_
 AI_ERROR_MSG
 Erreur_IA : Erreur de script d'IA
 
+SERVER_MESSAGE_NOT_UNDERSTOOD
+Le serveur a envoyé un message ne pouvant être interprété.
+
+
 ####################
 # Combat Messages  #
 ####################
@@ -4696,12 +4700,12 @@ EFFECT_TAME_MONSTER_HATCHED_LABEL
 Éclosion de monstre
 
 EFFECT_TAME_MONSTER_MATURED
-Un %predefinedshipdesign% apprivoisé a évolué vers une forme plus puissante dans le système %system%.
+Dans %system% : un %predefinedshipdesign% apprivoisé a évolué en une forme plus puissante.
 EFFECT_TAME_MONSTER_MATURED_LABEL
 Mutation de monstre
 
 EFFECT_SENTRY_CREATED
-Sur %planet% : a %predefinedshipdesign% est prêt pour le service.
+Sur %planet% : un %predefinedshipdesign% est prêt pour le service.
 EFFECT_SENTRY_CREATED_LABEL
 Création Factionnaire
 
@@ -4726,17 +4730,17 @@ EFFECT_TREE_LABEL
 Forêt Dyson
 
 EFFECT_DERELICT_MINERALS
-20 unités de minerai ont été récupérées sur une épave abandonnée dans le système %system%.
+Dans %system% : 20 unités de minerai ont été récupérées sur une épave abandonnée.
 EFFECT_DERELICT_MINERALS_LABEL
 Découverte de minerai
 
 EFFECT_DERELICT_MAP
-Des informations sur la région de %system% ont été découvertes sur une épave abandonnée.
+Dans %system% : des informations sur la région de %system% ont été découvertes sur une %special% abandonnée.
 EFFECT_DERELICT_MAP_LABEL
 Découverte de carte
 
 EFFECT_DERELICT_FUEL
-Les astronefs ont été réapprovisionnés grâce à des réserves de carburant trouvées sur une épave abandonnée dans le système %system%.
+Dans %system% : les astronefs ont été réapprovisionnés grâce à des réserves de carburant trouvées sur une %special% abandonnée.
 EFFECT_DERELICT_FUEL_LABEL
 Découverte de carburant
 
@@ -4751,7 +4755,7 @@ EFFECT_EVACUEES_LABEL
 Évacués
 
 EFFECT_STARGATE
-La flotte %fleet% a atteint le système %system% via Stargate.
+La flotte %fleet% a atteint le système %system% via un Stargate.
 EFFECT_STARGATE_LABEL
 Utilisation Stargate
 
@@ -5734,9 +5738,9 @@ Cette planète existe en partie dans cet univers et en partie dans le Vide, ce q
 DERELICT_SPECIAL
 Épave
 DERELICT_SPECIAL2
-Épave
+Épave d'Éclaireur
 DERELICT_SPECIAL3
-Épave
+Épave de Ravitailleur
 DERELICT_SPECIAL_REMOVE
 Épave
 DERELICT_SPECIAL_DESC
