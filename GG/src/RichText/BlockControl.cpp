@@ -5,10 +5,9 @@
 
 namespace GG {
 
-    BlockControl::BlockControl(X x, Y y, X w, GG::Flags<GG::WndFlag> flags)
-    : Control(x, y, w, Y0, flags)
-    {
-    }
+    BlockControl::BlockControl(X x, Y y, X w, GG::Flags<GG::WndFlag> flags):
+        Control(x, y, w, Y0, flags)
+    {}
 
     void BlockControl::SizeMove(const Pt& ul, const Pt& lr)
     {
