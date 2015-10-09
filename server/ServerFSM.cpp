@@ -1111,8 +1111,13 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     int player_id = message.SendingPlayer();
     ServerApp& server = Server();
 
-    // TODO: Check that sender is a moderator
-    //if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    Networking::ClientType client_type = player_connection->GetClientType();
+
+    if (client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
+        ErrorLogger() << "PlayingGame::react(ModeratorAct): Non-moderator player sent moderator action, ignorning";
+        return discard_event();
+    }
 
     Moderator::ModeratorAction* action = 0;
     ExtractMessageData(message, action);
@@ -1124,10 +1129,10 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
         action->Execute();
 
         // update player(s) of changed gamestate as result of action
+        bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
         server.m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING, player_id));
-        server.m_networking.SendMessage(TurnPartialUpdateMessage(player_id,
-                                                                 server.PlayerEmpireID(player_id),
-                                                                 GetUniverse()));
+        server.m_networking.SendMessage(TurnPartialUpdateMessage(player_id, server.PlayerEmpireID(player_id),
+                                                                 GetUniverse(), use_binary_serialization));
     }
 
     delete action;

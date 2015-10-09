@@ -225,11 +225,12 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          const Universe& universe, const SpeciesManager& species,
                          const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players,
-                         const GalaxySetupData& galaxy_setup_data)
+                         const GalaxySetupData& galaxy_setup_data,
+                         bool use_binary_serialization)
 {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
+        if (use_binary_serialization) {
             freeorion_bin_oarchive oa(os);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
@@ -268,11 +269,12 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const SaveGameUIData* ui_data,
-                         const GalaxySetupData& galaxy_setup_data)
+                         const GalaxySetupData& galaxy_setup_data,
+                         bool use_binary_serialization)
 {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
+        if (use_binary_serialization) {
             freeorion_bin_oarchive oa(os);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
@@ -325,11 +327,12 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          const CombatLogManager& combat_logs,
                          const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const std::string* save_state_string,
-                         const GalaxySetupData& galaxy_setup_data)
+                         const GalaxySetupData& galaxy_setup_data,
+                         bool use_binary_serialization)
 {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
+        if (use_binary_serialization) {
             freeorion_bin_oarchive oa(os);
             oa << BOOST_SERIALIZATION_NVP(single_player_game)
                << BOOST_SERIALIZATION_NVP(empire_id)
@@ -416,11 +419,12 @@ Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerS
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
                           const EmpireManager& empires, const Universe& universe,
                           const SpeciesManager& species, const CombatLogManager& combat_logs,
-                          const std::map<int, PlayerInfo>& players)
+                          const std::map<int, PlayerInfo>& players,
+                          bool use_binary_serialization)
 {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
+        if (use_binary_serialization) {
             freeorion_bin_oarchive oa(os);
             GetUniverse().EncodingEmpire() = empire_id;
             oa << BOOST_SERIALIZATION_NVP(current_turn)
@@ -443,10 +447,11 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
     return Message(Message::TURN_UPDATE, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
-Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe) {
+Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe,
+                                 bool use_binary_serialization) {
     std::ostringstream os;
     {
-        if (GetOptionsDB().Get<bool>("binary-serialization")) {
+        if (use_binary_serialization) {
             freeorion_bin_oarchive oa(os);
             GetUniverse().EncodingEmpire() = empire_id;
             Serialize(oa, universe);

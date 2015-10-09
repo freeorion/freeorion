@@ -190,7 +190,7 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
                                        const EmpireManager& empires, const Universe& universe,
                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
                                        const std::map<int, PlayerInfo>& players,
-                                       const GalaxySetupData& galaxy_setup_data);
+                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * player \a player_id.  Also includes data loaded from a saved game. */
@@ -199,7 +199,7 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
                                        const std::map<int, PlayerInfo>& players, const OrderSet& orders,
                                        const SaveGameUIData* ui_data,
-                                       const GalaxySetupData& galaxy_setup_data);
+                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
   * player \a player_id.  Also includes state string loaded from a saved game. */
@@ -208,7 +208,7 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
                                        const std::map<int, PlayerInfo>& players, const OrderSet& orders,
                                        const std::string* save_state_string,
-                                       const GalaxySetupData& galaxy_setup_data);
+                                       const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID
   * of the receiving player.  This message should only be sent by the server.*/
@@ -234,12 +234,12 @@ FO_COMMON_API Message PlayerStatusMessage(int player_id, int about_player_id, Me
 /** creates a TURN_UPDATE message. */
 FO_COMMON_API Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
                                         const EmpireManager& empires, const Universe& universe,
-                                        const SpeciesManager& species,
-                                        const CombatLogManager& combat_logs,
-                                        const std::map<int, PlayerInfo>& players);
+                                        const SpeciesManager& species, const CombatLogManager& combat_logs,
+                                        const std::map<int, PlayerInfo>& players, bool use_binary_serialization);
 
 /** create a TURN_PARTIAL_UPDATE message. */
-FO_COMMON_API Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe);
+FO_COMMON_API Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe,
+                                               bool use_binary_serialization);
 
 /** creates a CLIENT_SAVE_DATA message, including UI data but without a state string. */
 FO_COMMON_API Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
