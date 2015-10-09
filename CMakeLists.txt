@@ -114,11 +114,13 @@ set(LIB_SUFFIX ${OLD_LIB_SUFFIX})
 ########################################
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex serialization signals system thread log REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(Freetype REQUIRED)
 
 include_directories(
     ${Boost_INCLUDE_DIRS}
     ${ZLIB_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}
+    ${FREETYPE_INCLUDE_DIRS}
     GG
 )
 
