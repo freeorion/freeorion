@@ -372,8 +372,8 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
 void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
         ErrorLogger() << "ServerApp::HandleMessage : Received an message with a sender ID ("
-                               << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
-                               << player_connection->PlayerID() << ".  Ignoring.";
+                      << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
+                      << player_connection->PlayerID() << ".  Ignoring.";
         return;
     }
 
@@ -399,7 +399,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
-    
+
     default:
         ErrorLogger() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
         m_networking.Disconnect(player_connection);
