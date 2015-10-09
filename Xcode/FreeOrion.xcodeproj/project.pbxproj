@@ -335,6 +335,7 @@
 		CE6183AA1BB80D2E00952BEA /* TextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A31BB80D2E00952BEA /* TextBlock.cpp */; };
 		CE6183AB1BB80D2E00952BEA /* ScrollPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */; };
 		CE6183AE1BB80D4900952BEA /* CUILinkTextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */; };
+		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1103,6 +1104,7 @@
 		CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPanel.cpp; sourceTree = "<group>"; };
 		CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUILinkTextBlock.cpp; sourceTree = "<group>"; };
 		CE6183AD1BB80D4900952BEA /* CUILinkTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUILinkTextBlock.h; sourceTree = "<group>"; };
+		CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyVersions.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1801,6 +1803,7 @@
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
 				471D5D1B0A98A3F900DA9C21 /* binreloc.h */,
 				471D5CF60A98A3F900DA9C21 /* blocking_combiner.h */,
+				CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */,
 				471D5D1E0A98A3F900DA9C21 /* Directories.cpp */,
 				471D5D1F0A98A3F900DA9C21 /* Directories.h */,
 				471D5D200A98A3F900DA9C21 /* doc */,
@@ -2435,6 +2438,7 @@
 				47103C100CF04E5900A7DF2B /* UniverseObject.cpp in Sources */,
 				47103C110CF04E5900A7DF2B /* ValueRef.cpp in Sources */,
 				47103C150CF04E5900A7DF2B /* Message.cpp in Sources */,
+				CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */,
 				47103C160CF04E5900A7DF2B /* Empire.cpp in Sources */,
 				47103C170CF04E5900A7DF2B /* EmpireManager.cpp in Sources */,
 				47103C180CF04E5900A7DF2B /* ResourcePool.cpp in Sources */,
