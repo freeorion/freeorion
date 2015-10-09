@@ -237,7 +237,10 @@ sc::result Idle::react(const HostMPGame& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    std::string host_player_name = message.Text();
+    std::string host_player_name;
+    std::string client_version_string;
+    ExtractMessageData(message, host_player_name, client_version_string);
+
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
         ErrorLogger() << "Idle::react(const HostMPGame& msg) got an empty host player name";
@@ -247,7 +250,7 @@ sc::result Idle::react(const HostMPGame& msg) {
     DebugLogger() << "Idle::react(HostMPGame) about to establish host";
 
     int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER);
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
 
     DebugLogger() << "Idle::react(HostMPGame) about to send acknowledgement to host";
@@ -267,7 +270,8 @@ sc::result Idle::react(const HostSPGame& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
-    ExtractMessageData(message, *single_player_setup_data);
+    std::string client_version_string;
+    ExtractMessageData(message, *single_player_setup_data, client_version_string);
 
 
     // get host player's name from setup data or saved file
@@ -287,7 +291,7 @@ sc::result Idle::react(const HostSPGame& msg) {
 
 
     int host_player_id = server.m_networking.NewPlayerID();
-    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER);
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER, client_version_string);
     server.m_networking.SetHostPlayerID(host_player_id);
     player_connection->SendMessage(HostSPAckMessage(host_player_id));
 
@@ -425,14 +429,15 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     std::string player_name;
     Networking::ClientType client_type;
-    ExtractMessageData(message, player_name, client_type);
+    std::string client_version_string;
+    ExtractMessageData(message, player_name, client_type, client_version_string);
     // TODO: check if player name is unique.  If not, modify it slightly to be unique.
 
     // assign unique player ID to newly connected player
     int player_id = server.m_networking.NewPlayerID();
 
     // establish player with requested client type and acknowldge via connection
-    player_connection->EstablishPlayer(player_id, player_name, client_type);
+    player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
     player_connection->SendMessage(JoinAckMessage(player_id));
 
     // inform player of host
@@ -873,7 +878,8 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
 
     std::string player_name("Default_Player_Name_in_WaitingForSPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
-    ExtractMessageData(message, player_name, client_type);
+    std::string client_version_string;
+    ExtractMessageData(message, player_name, client_type, client_version_string);
 
     int player_id = server.m_networking.NewPlayerID();
 
@@ -887,7 +893,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(player_id, player_name, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
 
             // remove name from expected names list, so as to only allow one connection per AI
@@ -904,7 +910,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected human player
-            player_connection->EstablishPlayer(player_id, player_name, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {
@@ -998,7 +1004,8 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
     std::string player_name("Default_Player_Name_in_WaitingForMPGameJoiners::react(const JoinGame& msg)");
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
-    ExtractMessageData(message, player_name, client_type);
+    std::string client_version_string;
+    ExtractMessageData(message, player_name, client_type, client_version_string);
 
     int player_id = server.m_networking.NewPlayerID();
 
@@ -1012,7 +1019,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(player_id, player_name, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
 
             // remove name from expected names list, so as to only allow one connection per AI
@@ -1021,15 +1028,14 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_names.size() +
-                                        server.m_networking.NumEstablishedPlayers();
+        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
             ErrorLogger() << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected human player
-            player_connection->EstablishPlayer(player_id, player_name, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {

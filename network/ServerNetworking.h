@@ -184,6 +184,13 @@ public:
       * human client, ...) */
     Networking::ClientType GetClientType() const;
 
+    /** Returns the version string the client provided when joining. */
+    const std::string& ClientVersionString() const;
+
+    /** Returns true iff the client's specified version string matches the
+      * version string of this server process. */
+    bool ClientVersionStringMatchesThisServer() const;
+
     /** Checks if client associated with this connection runs on the same
         physical machine as the server */
     bool IsLocalConnection() const;
@@ -198,9 +205,11 @@ public:
 
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */
-    void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type);
+    void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
+                         const std::string& client_version_string);
 
-    /** Sets this connection's client type. */
+    /** Sets this connection's client type. Useful for already-connected players
+      * changing type such as in the multiplayer lobby. */
     void SetClientType(Networking::ClientType client_type);
     //@}
 
@@ -208,22 +217,16 @@ public:
 
     /** Creates a new PlayerConnection and returns it as a shared_ptr. */
     static PlayerConnectionPtr
-    NewConnection(boost::asio::io_service& io_service,
-                  MessageAndConnectionFn nonplayer_message_callback,
-                  MessageAndConnectionFn player_message_callback,
-                  ConnectionFn disconnected_callback);
+    NewConnection(boost::asio::io_service& io_service, MessageAndConnectionFn nonplayer_message_callback,
+                  MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
 
 private:
     typedef boost::array<int, 5> MessageHeaderBuffer;
 
-    PlayerConnection(boost::asio::io_service& io_service,
-                     MessageAndConnectionFn nonplayer_message_callback,
-                     MessageAndConnectionFn player_message_callback,
-                     ConnectionFn disconnected_callback);
-    void HandleMessageBodyRead(boost::system::error_code error,
-                               std::size_t bytes_transferred);
-    void HandleMessageHeaderRead(boost::system::error_code error,
-                                 std::size_t bytes_transferred);
+    PlayerConnection(boost::asio::io_service& io_service, MessageAndConnectionFn nonplayer_message_callback,
+                     MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
+    void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
+    void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();
 
     boost::asio::ip::tcp::socket    m_socket;
@@ -233,10 +236,11 @@ private:
     std::string                     m_player_name;
     bool                            m_new_connection;
     Networking::ClientType          m_client_type;
+    std::string                     m_client_version_string;
 
-    MessageAndConnectionFn m_nonplayer_message_callback;
-    MessageAndConnectionFn m_player_message_callback;
-    ConnectionFn           m_disconnected_callback;
+    MessageAndConnectionFn          m_nonplayer_message_callback;
+    MessageAndConnectionFn          m_player_message_callback;
+    ConnectionFn                    m_disconnected_callback;
 
     enum {
         HEADER_SIZE =

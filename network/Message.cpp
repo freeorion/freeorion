@@ -15,6 +15,7 @@
 #include "../util/Serialize.h"
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
+#include "../util/Version.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -182,21 +183,34 @@ Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = t
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data) {
     std::ostringstream os;
     {
+        std::string client_version_string = FreeOrionVersionString();
         freeorion_xml_oarchive oa(os);
-        oa << BOOST_SERIALIZATION_NVP(setup_data);
+        oa << BOOST_SERIALIZATION_NVP(setup_data)
+           << BOOST_SERIALIZATION_NVP(client_version_string);
     }
     return Message(Message::HOST_SP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message HostMPGameMessage(const std::string& host_player_name)
-{ return Message(Message::HOST_MP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, host_player_name); }
+{
+    std::ostringstream os;
+    {
+        std::string client_version_string = FreeOrionVersionString();
+        freeorion_xml_oarchive oa(os);
+        oa << BOOST_SERIALIZATION_NVP(host_player_name)
+           << BOOST_SERIALIZATION_NVP(client_version_string);
+    }
+    return Message(Message::HOST_MP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
+}
 
 Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
+        std::string client_version_string = FreeOrionVersionString();
         oa << BOOST_SERIALIZATION_NVP(player_name)
-           << BOOST_SERIALIZATION_NVP(client_type);
+           << BOOST_SERIALIZATION_NVP(client_type)
+           << BOOST_SERIALIZATION_NVP(client_version_string);
     }
     return Message(Message::JOIN_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
@@ -622,11 +636,27 @@ void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) {
     }
 }
 
+void ExtractMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) {
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(host_player_name)
+           >> BOOST_SERIALIZATION_NVP(client_version_string);
+
+    } catch (const std::exception& err) {
+        ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& host_player_name, std::string& client_version_string) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+}
+
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(lobby_data);
+
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data) failed!  Message:\n"
                       << msg.Text() << "\n"
@@ -726,17 +756,20 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
     }
 }
 
-void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type) {
+void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type,
+                        std::string& version_string)
+{
     DebugLogger() << "ExtractMessageData() from " << player_name << " client type " << client_type;
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
         ia >> BOOST_SERIALIZATION_NVP(player_name)
-           >> BOOST_SERIALIZATION_NVP(client_type);
+           >> BOOST_SERIALIZATION_NVP(client_type)
+           >> BOOST_SERIALIZATION_NVP(version_string);
 
     } catch (const std::exception& err) {
         ErrorLogger() << "ExtractMessageData(const Message& msg, std::string& player_name, "
-                      << "Networking::ClientType client_type) failed!  Message:\n"
+                      << "Networking::ClientType client_type, std::string& version_string) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;
@@ -881,14 +914,15 @@ void ExtractMessageData(const Message& msg, int& about_player_id, Message::Playe
     }
 }
 
-void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data) {
+void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(setup_data);
+        ia >> BOOST_SERIALIZATION_NVP(setup_data)
+           >> BOOST_SERIALIZATION_NVP(client_version_string);
 
     } catch (const std::exception& err) {
-        ErrorLogger() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data) failed!  Message:\n"
+        ErrorLogger() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data, std::string& client_version_string) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;

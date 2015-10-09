@@ -1,6 +1,7 @@
 #include "ServerNetworking.h"
 
 #include "../util/Logger.h"
+#include "../util/Version.h"
 
 #include <GG/SignalsAndSlots.h>
 
@@ -42,9 +43,13 @@ namespace {
     }
 
     struct PlayerID {
-        PlayerID(int id) : m_id(id) {}
+        PlayerID(int id) :
+            m_id(id)
+        {}
+
         bool operator()(const PlayerConnectionPtr& player_connection)
-            { return player_connection->PlayerID() == m_id; }
+        { return player_connection->PlayerID() == m_id; }
+
     private:
         int m_id;
     };
@@ -87,19 +92,17 @@ bool PlayerConnection::IsLocalConnection() const
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
-void PlayerConnection::SendMessage(const Message& message) {
-    /*if (TRACE_EXECUTION)
-        DebugLogger() << "ServerNetworking::SendMessage : sending message "
-                               << message;*/
-    WriteMessage(m_socket, message);
-}
+void PlayerConnection::SendMessage(const Message& message)
+{ WriteMessage(m_socket, message); }
 
-void PlayerConnection::EstablishPlayer(int id, const std::string& player_name,
-                                       Networking::ClientType client_type)
+void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
+                                       const std::string& client_version_string)
 {
     if (TRACE_EXECUTION)
         DebugLogger() << "PlayerConnection(@ " << this << ")::EstablishPlayer("
-                               << id << ", " << player_name << ", " << client_type << ")";
+                               << id << ", " << player_name << ", " << client_type << ","
+                               << client_version_string << ")";
+
     // ensure that this connection isn't already established
     if (m_ID != INVALID_PLAYER_ID || !m_player_name.empty() || m_client_type != Networking::INVALID_CLIENT_TYPE) {
         ErrorLogger() << "PlayerConnection::EstablishPlayer attempting to re-establish an already established connection.";
@@ -123,6 +126,7 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name,
     m_ID = id;
     m_player_name = player_name;
     m_client_type = client_type;
+    m_client_version_string = client_version_string;
 }
 
 void PlayerConnection::SetClientType(Networking::ClientType client_type) {
@@ -131,16 +135,19 @@ void PlayerConnection::SetClientType(Networking::ClientType client_type) {
         ErrorLogger() << "PlayerConnection client type set to INVALID_CLIENT_TYPE...?";
 }
 
-PlayerConnectionPtr
-PlayerConnection::NewConnection(boost::asio::io_service& io_service,
-                                MessageAndConnectionFn nonplayer_message_callback,
-                                MessageAndConnectionFn player_message_callback,
-                                ConnectionFn disconnected_callback)
+const std::string& PlayerConnection::ClientVersionString() const
+{ return m_client_version_string; }
+
+bool PlayerConnection::ClientVersionStringMatchesThisServer() const
+{ return !m_client_version_string.empty() && m_client_version_string == FreeOrionVersionString(); }
+
+PlayerConnectionPtr PlayerConnection::NewConnection(boost::asio::io_service& io_service,
+                                                    MessageAndConnectionFn nonplayer_message_callback,
+                                                    MessageAndConnectionFn player_message_callback,
+                                                    ConnectionFn disconnected_callback)
 {
     return PlayerConnectionPtr(
-        new PlayerConnection(io_service,
-                             nonplayer_message_callback,
-                             player_message_callback,
+        new PlayerConnection(io_service, nonplayer_message_callback, player_message_callback,
                              disconnected_callback));
 }
 
