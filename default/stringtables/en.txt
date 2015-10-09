@@ -1351,7 +1351,7 @@ OPTIONS_DB_AUTO_QUIT
 Automatically quits once any turns specified by --auto-advance-n-turns are completed (defaults to zero), useful for various testing particularly with --quickstart or --load.
 
 OPTIONS_DB_BINARY_SERIALIZATION
-Use Binary serialization for savegames and client-server communications, which is compact & faster but has cross-platform compatibility issues—if unchecked text XML serialization is used. Restart after changing is recommended.
+Use Binary serialization for saving games. Binary serialization is faster to save and load, but may not be possible to load on a different operating system.
 
 OPTIONS_DB_UI_WINDOWS_EXISTS
 True if the window with a given config name currently exists, false if one was created and deleted, doesn't exist if no window has yet been created with that name.
@@ -2309,7 +2309,7 @@ OPTIONS_ADD_SAVED_DESIGNS
 Add All Saved Ship Designs at Game Start
 
 OPTIONS_USE_BINARY_SERIALIZATION
-Use Binary serialization
+Create Binary Save Files
 
 #################
 # Main Map      #
