@@ -1034,6 +1034,7 @@ Tech
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = "GRO_SUBTER_HAB"
+    graphic = "icons/tech/advanced_eco_man.png"
 
 Tech
     name = "GRO_XENO_GENETICS"
