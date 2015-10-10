@@ -6,14 +6,11 @@
 #include <zlib.h>
 #include <png.h>
 #include <python2.7/patchlevel.h>
-//#include <vorbis/codec.h>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-//#include <boost/lexical_cast.hpp>
 #include <boost/version.hpp>
-
 #include <sstream>
 
 namespace {
@@ -72,5 +69,8 @@ void LogDependencyVersions() {
     DebugLogger() << "Dependency versions from headers:";
     for (std::map<std::string, std::string>::const_iterator it = vers.begin();
          it != vers.end(); ++it)
-    { DebugLogger() << it->first << ": " << it->second; }
+    {
+        if (!it->second.empty())
+            DebugLogger() << it->first << ": " << it->second;
+    }
 }
