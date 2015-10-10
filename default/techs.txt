@@ -1605,7 +1605,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Industry high = RootCandidate.TargetIndustry - 3
-                Construction low = 30
             ]
             effects = SetIndustry value = Value + 2
 
@@ -1614,7 +1613,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Research high = RootCandidate.TargetResearch - 3
-                Construction low = 30
             ]
             effects = SetResearch value = Value + 2
 
@@ -1623,7 +1621,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Construction high = RootCandidate.TargetConstruction - 3
-                Construction low = 30
             ]
             effects = SetConstruction value = Value + 2
 
@@ -1632,7 +1629,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Industry low = RootCandidate.TargetIndustry - 3 high = RootCandidate.TargetIndustry
-                Construction low = 30
             ]
             effects = SetIndustry value = Target.TargetIndustry
 
@@ -1641,7 +1637,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Research low = RootCandidate.TargetResearch - 3 high = RootCandidate.TargetResearch
-                Construction low = 30
             ]
             effects = SetResearch value = Target.TargetResearch
 
@@ -1650,7 +1645,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Construction low = RootCandidate.TargetConstruction - 3 high = RootCandidate.TargetConstruction
-                Construction low = 30
             ]
             effects = SetConstruction value = Target.TargetConstruction
 
@@ -1659,7 +1653,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Industry low = RootCandidate.TargetIndustry + 5
-                Construction low = 30
             ]
             effects = SetIndustry value = Value - 3
 
@@ -1668,7 +1661,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Research low = RootCandidate.TargetResearch + 5
-                Construction low = 30
             ]
             effects = SetResearch value = Value - 3
 
@@ -1677,7 +1669,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Construction low = RootCandidate.TargetConstruction + 5
-                Construction low = 30
             ]
             effects = SetConstruction value = Value - 3
 
@@ -1686,7 +1677,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 5
-                Construction low = 30
             ]
             effects = SetIndustry value = Target.TargetIndustry
 
@@ -1695,7 +1685,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 5
-                Construction low = 30
             ]
             effects = SetResearch value = Target.TargetResearch
 
@@ -1704,7 +1693,6 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Construction low = RootCandidate.TargetConstruction high = RootCandidate.TargetConstruction + 5
-                Construction low = 30
             ]
             effects = SetConstruction value = Target.TargetConstruction
     ]
