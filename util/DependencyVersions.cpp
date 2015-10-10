@@ -3,8 +3,8 @@
 #include "Logger.h"
 
 #include <SDL2/SDL_version.h>
-#include <zlib/zlib.h>
-#include <png/png.h>
+#include <zlib.h>
+#include <png.h>
 #include <python2.7/patchlevel.h>
 //#include <vorbis/codec.h>
 
