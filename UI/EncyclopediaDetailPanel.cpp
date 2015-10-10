@@ -2236,6 +2236,10 @@ namespace {
         int planet_id = boost::lexical_cast<int>(item_name);
         TemporaryPtr<Planet> planet = GetPlanet(planet_id);
 
+        // show image of planet environment at the top of the suitability report
+        std::string planet_type = boost::lexical_cast<std::string>(planet->Type());
+        detailed_description += "<img src=\"encyclopedia/planet_environments/" + planet_type + ".png\"></img>";
+
         std::string original_planet_species = planet->SpeciesName();
         int original_owner_id = planet->Owner();
         float orig_initial_target_pop = planet->GetMeter(METER_TARGET_POPULATION)->Initial();
