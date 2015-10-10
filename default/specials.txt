@@ -1313,7 +1313,7 @@ Special
                 Ship
             ]
             effects = [
-                SetDetection value = Min(Target.Construction / 30, 1) * Value + 60
+                SetDetection value = Value + 60
                 RemoveSpecial name = "DERELICT_SPECIAL2"
             ]
 
