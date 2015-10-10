@@ -15,13 +15,14 @@ namespace GG {
     const std::string ImageBlock::IMAGE_TAG("img");
 
     ImageBlock::ImageBlock(const std::string& image_path, X x, Y y, X w,
-                           GG::Flags<GG::WndFlag> flags)
-    : BlockControl(x, y, w, flags), m_graphic(0)
+                           GG::Flags<GG::WndFlag> flags) :
+        BlockControl(x, y, w, flags),
+        m_graphic(0)
     {
         try {
             boost::shared_ptr<Texture> texture = GetTextureManager().GetTexture(image_path);
-            m_graphic =
-                new StaticGraphic(texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
+            m_graphic = new StaticGraphic(texture,
+                                          GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
             AttachChild(m_graphic);
         } catch (GG::Texture::BadFile& errBadFile) {
             // No can do inside GiGi.
@@ -30,7 +31,6 @@ namespace GG {
 
     Pt ImageBlock::SetMaxWidth(X width)
     {
-
         if (m_graphic != 0) {
             // Give the graphic the set width and give it liberty with the height.
             m_graphic->Resize(Pt(width, Y(INT_MAX)));
@@ -73,7 +73,7 @@ namespace GG {
 
     // A factory for creating image blocks from tags.
     class ImageBlockFactory : public RichText::IBlockControlFactory {
-      public:
+    public:
         ImageBlockFactory() : m_root_path(".") {}
 
         //! Create a Text block from a plain text tag.
@@ -94,7 +94,7 @@ namespace GG {
         // Sets the root of image search path.
         void SetRootPath(const std::string& path) { m_root_path = FileDlg::StringToPath(path); }
 
-      private:
+    private:
         boost::filesystem::path m_root_path;
 
         // Extracts the path from the given params.

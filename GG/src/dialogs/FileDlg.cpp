@@ -217,14 +217,14 @@ const fs::path& FileDlg::WorkingDirectory()
 { return s_working_dir; }
 
 const boost::filesystem::path FileDlg::StringToPath(const std::string& str) {
-    #if defined(_WIN32)
+#if defined(_WIN32)
     // convert UTF-8 path string to UTF-16
     boost::filesystem::path::string_type str_native;
     utf8::utf8to16(str.begin(), str.end(), std::back_inserter(str_native));
     return fs::path(str_native);
-    #else
+#else
     return fs::path(str);
-    #endif
+#endif
 }
 
 

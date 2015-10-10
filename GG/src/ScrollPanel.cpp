@@ -32,14 +32,22 @@ namespace GG {
         DoLayout();
     }
 
-    void ScrollPanel::Render() {
+    void ScrollPanel::Render()
+    {
         FlatRectangle(UpperLeft(), LowerRight(), m_background_color, CLR_ZERO, 0);
     }
 
-    ScrollPanel::ScrollPanel() : m_vscroll(0), m_content(0), m_background_color(CLR_ZERO) {}
+    ScrollPanel::ScrollPanel():
+        m_vscroll(0),
+        m_content(0),
+        m_background_color(CLR_ZERO)
+    {}
 
-    ScrollPanel::ScrollPanel(X x, Y y, X w, Y h, Wnd* content)
-    : Wnd(x, y, w, h, INTERACTIVE), m_vscroll(0), m_content(content), m_background_color(CLR_ZERO)
+    ScrollPanel::ScrollPanel(X x, Y y, X w, Y h, Wnd* content):
+        Wnd(x, y, w, h, INTERACTIVE),
+        m_vscroll(0),
+        m_content(content),
+        m_background_color(CLR_ZERO)
     {
         // Very important to clip the content of this panel,
         // to actually only show the currently viewed part.
@@ -68,7 +76,10 @@ namespace GG {
         SignalScroll(*m_vscroll, true);
     }
 
-    void ScrollPanel::SetBackgroundColor(const Clr& color) { m_background_color = color; }
+    void ScrollPanel::SetBackgroundColor(const Clr& color)
+    {
+        m_background_color = color;
+    }
 
     void ScrollPanel::MouseWheel(const Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
     {
@@ -76,7 +87,8 @@ namespace GG {
         SignalScroll(*m_vscroll, true);
     }
 
-    void ScrollPanel::DoLayout() {
+    void ScrollPanel::DoLayout()
+    {
         // Position the scroll bar to the right edge of the panel.
         Pt scroll_ul(Width() - m_vscroll->Width(), Y0);
         Pt scroll_lr(Width(), Height() - 1);
