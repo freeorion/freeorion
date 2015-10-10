@@ -641,7 +641,7 @@ Tech
     researchturns = 5
     prerequisites = "LRN_ARTIF_MINDS"
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
-    graphic = "icons/ship_parts/defense_grid.png"
+    graphic = "icons/tech/forcefield_harmonics.png"
 
 Tech
     name = "LRN_EVERYTHING"
