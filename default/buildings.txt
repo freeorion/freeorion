@@ -595,37 +595,37 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-	    EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy empire = Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Focus type = "FOCUS_INDUSTRY"
-				Construction low = 30
-            ]
-            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
-			
-		EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy empire = Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Focus type = "FOCUS_INDUSTRY"
-				Construction low = 20
-            ]
-            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
-			
         EffectsGroup
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Focus type = "FOCUS_INDUSTRY"
-				Construction low = 10
+                Construction low = 30
+            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
+            
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+                Construction low = 20
+            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+            
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+                Construction low = 10
             ]
             activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"
             stackinggroup = "INDUSTRY_CENTER_STACK"
@@ -668,7 +668,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 TargetPopulation low = 1
-				Construction low = 30
+                Construction low = 30
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
@@ -924,7 +924,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-				Construction low = 30
+                Construction low = 30
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
@@ -936,7 +936,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-				Construction low = 30
+                Construction low = 30
             ]
             activation = And [
                 Star type = [Yellow Orange]
@@ -955,7 +955,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-				Construction low = 30
+                Construction low = 30
             ]
             activation = And [
                 Star type = Red
@@ -1249,7 +1249,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-				Construction low = 40
+                Construction low = 40
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
@@ -1604,7 +1604,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 NOT Population high = 0
                 OwnedBy empire = Source.Owner
-				Construction low = 20 
+                Construction low = 20 
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
             effects = SetTargetIndustry value = Value + 10
