@@ -1932,7 +1932,10 @@ Hull
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
-            activation = InSystem
+            activation = And [
+                Turn low = 30
+                InSystem
+            ]
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = CreateShip designname = "SM_KRILL_2"
 
@@ -1949,7 +1952,10 @@ Hull
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
             ]
-            activation = InSystem
+            activation = And [
+                Turn low = 30
+                InSystem
+            ]
             effects = Destroy
 
         EffectsGroup    // mature into medium krill
@@ -1960,7 +1966,11 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = 0.1
+            activation = And [
+                Turn low = 30
+                Random probability = 0.1
+                InSystem
+            ]
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_2"
@@ -2023,8 +2033,11 @@ Hull
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
-            activation = InSystem
-           stackinggroup = "KRILL_2_ACTION_STACK"
+            activation = And [
+                Turn low = 60
+                InSystem
+            ]
+            stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_3"
                 /*
@@ -2049,8 +2062,11 @@ Hull
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
             ]
-            activation = InSystem
-            effects = Destroy
+            activation = And [
+                Turn low = 60
+                InSystem
+            ]
+           effects = Destroy
 
         EffectsGroup
             scope = And [
@@ -2060,7 +2076,11 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = 0.15
+            activation = And [
+                Turn low = 60
+                Random probability = 0.15
+                InSystem
+            ]
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_1"
@@ -2123,7 +2143,10 @@ Hull
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
-            activation = InSystem
+            activation = And [
+                Turn low = 90
+                InSystem
+            ]
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_4"
@@ -2149,7 +2172,10 @@ Hull
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
             ]
-            activation = InSystem
+            activation = And [
+                Turn low = 90
+                InSystem
+            ]
             effects = Destroy
 
         EffectsGroup
@@ -2160,7 +2186,11 @@ Hull
                     Contains Planet type = Asteroids
                 ]
             ]
-            activation = Random probability = 0.08
+            activation = And [
+                Turn low = 90
+                Random probability = 0.08
+                InSystem
+            ]
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
                 CreateShip designname = "SM_KRILL_1"

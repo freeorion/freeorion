@@ -35,9 +35,9 @@ def execute_turn_events():
     # creating monsters
     gsd = fo.get_galaxy_setup_data()
     monster_freq = MONSTER_FREQUENCY[gsd.monsterFrequency]
-    # monster freq ranges from 30 (= one monster per 30 systems) to 3 (= one monster per 3 systems)
-    # (example: low monsters and 150 Systems results in 150 / 30 * 0.001 = 0.005)
-    if monster_freq > 0 and random() < len(systems) / monster_freq * 0.001:
+    # monster freq ranges from 1/30 (= one monster per 30 systems) to 1/3 (= one monster per 3 systems)
+    # (example: low monsters and 150 Systems results in 150 / 30 * 0.01 = 0.05)
+    if monster_freq > 0 and random() < len(systems) * monster_freq * 0.01:
         #only spawn Krill at the moment, other monsters can follow in the future
         if random() < 1:
             monster_type = "SM_KRILL_1"
