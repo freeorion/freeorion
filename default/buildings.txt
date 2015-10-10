@@ -67,7 +67,7 @@ BuildingType
                 SetTargetIndustry value = Value + Target.Population / 2
                 //SetDetection value = Value + 10000
             ]
-            
+
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -75,14 +75,14 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 Not HasSpecial name = "HEAD_ON_A_SPIKE_SPECIAL"
             ]
-            activation = Not ProducedByEmpire empire = Source.Owner                
+            activation = Not ProducedByEmpire empire = Source.Owner
             effects = [
                 AddSpecial name = "HEAD_ON_A_SPIKE_SPECIAL"
                 GenerateSitRepMessage
                     message = "HEAD_ON_A_SPIKE_MESSAGE"
                     icon = "icons/sitrep/empire_eliminated.png"
                     parameters = [
-                        tag = "empire" data = Source.ProducedByEmpireID                        
+                        tag = "empire" data = Source.ProducedByEmpireID
                     ]
             ]
     ]
@@ -134,20 +134,20 @@ BuildingType
         // must own production location planet
         Planet
         OwnedBy empire = Source.Owner
-        
+
         // can't build where another palace exists (even if not owned by this empire)
         Not Contains Building name = "BLD_IMPERIAL_PALACE"
-        
+
         // must have a non-trivial population
         TargetPopulation low = 1
-        
+
         // can't enqueue if already own a self-built palace
         Number low = 0 high = 0 condition = And [
             Building name = "BLD_IMPERIAL_PALACE"
             OwnedBy empire = Source.Owner
             ProducedByEmpire empire = Source.Owner
         ]
-        
+
         // can't enqueue if already have an enqueued palace anywhere
         Number low = 0 high = 0 condition = And [
             Planet
@@ -225,10 +225,10 @@ BuildingType
         EffectsGroup
             scope = NumberOf number = 1 condition = System
             effects = SetStealth value = Value - 1
-            
+
         EffectsGroup
-            scope = And [ 
-                Planet 
+            scope = And [
+                Planet
                 Object id = Source.PlanetID
             ]
     ]
@@ -366,7 +366,7 @@ BuildingType
         Not Contains Building name = "BLD_SHIPYARD_AST"
         Planet type = Asteroids
         OwnedBy empire = Source.Owner
-        
+
         /* TODO: Check that one, seems to be weird */
         Not Contains And [
             Building name = "BLD_SHIPYARD_AST"
@@ -595,37 +595,37 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-	    EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy empire = Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Focus type = "FOCUS_INDUSTRY"
-				Construction low = 30
-            ]
-            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
-			
-		EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy empire = Source.Owner
-                ResourceSupplyConnected empire = Source.Owner condition = Source
-                Focus type = "FOCUS_INDUSTRY"
-				Construction low = 20
-            ]
-            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
-            stackinggroup = "INDUSTRY_CENTER_STACK"
-            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
-			
         EffectsGroup
             scope = And [
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
                 Focus type = "FOCUS_INDUSTRY"
-				Construction low = 10
+                Construction low = 30
+            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+                Construction low = 20
+            ]
+            activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
+            stackinggroup = "INDUSTRY_CENTER_STACK"
+            effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy empire = Source.Owner
+                ResourceSupplyConnected empire = Source.Owner condition = Source
+                Focus type = "FOCUS_INDUSTRY"
+                Construction low = 10
             ]
             activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_I"
             stackinggroup = "INDUSTRY_CENTER_STACK"
@@ -668,7 +668,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
                 TargetPopulation low = 1
-				Construction low = 30
+                Construction low = 30
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
@@ -831,7 +831,7 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/specials_huge/gaia.png"
-    
+
 BuildingType
     name = "BLD_ART_BLACK_HOLE"
     description = "BLD_ART_BLACK_HOLE_DESC"
@@ -924,7 +924,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-				Construction low = 30
+                Construction low = 30
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
@@ -936,7 +936,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-				Construction low = 30
+                Construction low = 30
             ]
             activation = And [
                 Star type = [Yellow Orange]
@@ -955,7 +955,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-				Construction low = 30
+                Construction low = 30
             ]
             activation = And [
                 Star type = Red
@@ -1223,7 +1223,7 @@ BuildingType
             activation =  ContainedBy AND [
                 Not HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
                 Not HasSpecial name = "CONC_CAMP_SLAVE_SPECIAL"
-                Industry High = Source.Planet.TargetIndustry + 2 
+                Industry High = Source.Planet.TargetIndustry + 2
             ]
             effects = Destroy
     ]
@@ -1249,7 +1249,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
-				Construction low = 40
+                Construction low = 40
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
@@ -1604,7 +1604,7 @@ BuildingType
                 Focus type = "FOCUS_INDUSTRY"
                 NOT Population high = 0
                 OwnedBy empire = Source.Owner
-				Construction low = 20 
+                Construction low = 20
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
             effects = SetTargetIndustry value = Value + 10
@@ -1714,9 +1714,9 @@ EXPERIMENTOR_SPAWN_START_TURN
 '''( [[EXPERIMENTOR_SPAWN_CALC_A]] * ((1.2 - ( GalaxyPlanetDensity / 10 ))) * ((Max(1, GalaxySize / 200))^0.4))'''
 
 EXPERIMENTOR_ADD_STARLANE
-'''AddStarlanes endpoint = NumberOf number = 1 
+'''AddStarlanes endpoint = NumberOf number = 1
                                     condition = And [
-                                        MinimumNumberOf number = 5 
+                                        MinimumNumberOf number = 5
                                                         sortkey = DirectDistanceBetween object = Source.ID
                                                                                         object = LocalCandidate.ID
                                                         condition = System
@@ -1786,7 +1786,7 @@ BuildingType
             scope = And [
                 Source
                 OwnedBy affiliation = AnyEmpire
-                Species name = "SP_EXPERIMENTOR" 
+                Species name = "SP_EXPERIMENTOR"
             ]
             effects = [
                 Victory reason = "VICTORY_EXPERIMENTOR_CAPTURE"
@@ -2026,7 +2026,7 @@ BuildingType
         EffectsGroup            // remove population from location
             scope = And [
                 Object id = Source.PlanetID
-                Planet            
+                Planet
             ]
             activation = ContainedBy And [
                 PopulationCenter
@@ -2074,7 +2074,7 @@ BuildingType
             SetSpecies name = "SP_SUPER_TEST"
             SetPopulation value = max(Target.Population, 1)
         ]
-        
+
         EffectsGroup            // remove building when done
             scope = Source
             activation = Species name = "SP_SUPER_TEST"
