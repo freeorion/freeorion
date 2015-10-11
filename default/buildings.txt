@@ -225,12 +225,6 @@ BuildingType
         EffectsGroup
             scope = NumberOf number = 1 condition = System
             effects = SetStealth value = Value - 1
-            
-        EffectsGroup
-            scope = And [ 
-                Planet 
-                Object id = Source.PlanetID
-            ]
     ]
     icon = "icons/building/lighthouse.png"
 */
