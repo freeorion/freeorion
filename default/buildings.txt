@@ -1294,7 +1294,7 @@ BuildingType
         Not Planet type = Asteroids
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = "icons/building/shipyard-11.png"
+    icon = "icons/building/planetary_stardrive.png"
 
 BuildingType
     name = "BLD_PLANET_BEACON"
