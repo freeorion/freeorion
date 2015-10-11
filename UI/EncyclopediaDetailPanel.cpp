@@ -1913,7 +1913,7 @@ namespace {
             % ship->CurrentMeterValue(METER_SPEED)
             % ship->CurrentMeterValue(METER_MAX_FUEL)
             % design->ColonyCapacity()
-            % design->TroopCapacity()
+            % ship->TroopCapacity()
             % attack
             % species
             % strength % (strength / cost)
