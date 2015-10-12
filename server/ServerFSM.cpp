@@ -1412,19 +1412,18 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
             SaveGame(save_filename,     server_data,    m_player_save_game_data,
                      GetUniverse(),     Empires(),      GetSpeciesManager(),
                      GetCombatLogManager(),             server.m_galaxy_setup_data,
-                     !server.m_single_player_game
-                    );
+                     !server.m_single_player_game);
 
         } catch (const std::exception&) {
             DebugLogger() << "Catch std::exception&";
             SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
         }
-        
+
         DebugLogger() << "Finished ClientSaveData from within if.";
         context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();
     }
-    
+
     DebugLogger() << "Finished ClientSaveData from outside of if.";
     return discard_event();
 }

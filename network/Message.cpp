@@ -76,11 +76,8 @@ Message::Message() :
     m_message_text()
 {}
 
-Message::Message(MessageType type,
-                 int sending_player,
-                 int receiving_player,
-                 const std::string& text,
-                 bool synchronous_response/* = false*/) :
+Message::Message(MessageType type, int sending_player, int receiving_player,
+                 const std::string& text, bool synchronous_response/* = false*/) :
     m_type(type),
     m_sending_player(sending_player),
     m_receiving_player(receiving_player),
@@ -795,10 +792,8 @@ void ExtractMessageData(const Message& msg, OrderSet& orders) {
     }
 }
 
-void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
-                        EmpireManager& empires, Universe& universe,
-                        SpeciesManager& species, CombatLogManager& combat_logs,
-                        std::map<int, PlayerInfo>& players)
+void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe,
+                        SpeciesManager& species, CombatLogManager& combat_logs, std::map<int, PlayerInfo>& players)
 {
     try {
         ScopedTimer timer("Turn Update Unpacking", true);
@@ -861,9 +856,8 @@ void ExtractMessageData(const Message& msg, int empire_id, Universe& universe) {
     }
 }
 
-void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
-                        SaveGameUIData& ui_data, bool& save_state_string_available,
-                        std::string& save_state_string)
+void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available, SaveGameUIData& ui_data,
+                        bool& save_state_string_available, std::string& save_state_string)
 {
     try {
         std::istringstream is(msg.Text());
@@ -934,9 +928,7 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data, s
     }
 }
 
-void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
-                        std::string& reason_player_name)
-{
+void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name) {
     try {
         std::istringstream is(msg.Text());
         freeorion_xml_iarchive ia(is);
