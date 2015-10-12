@@ -327,7 +327,6 @@
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		CE5C92C91B81FE9C002346C0 /* main.xib in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
-		CE5C92CB1B8201E2002346C0 /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = CE5C92CA1B8201A8002346C0 /* main.nib */; };
 		CE6183A61BB80D2E00952BEA /* BlockControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839D1BB80D2E00952BEA /* BlockControl.cpp */; };
 		CE6183A71BB80D2E00952BEA /* ImageBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */; };
 		CE6183A81BB80D2E00952BEA /* RichText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE61839F1BB80D2E00952BEA /* RichText.cpp */; };
@@ -1087,7 +1086,6 @@
 		9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_signals.a; sourceTree = "<group>"; };
 		9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
 		9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
-		CE5C92CA1B8201A8002346C0 /* main.nib */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = main.nib; sourceTree = "<group>"; };
 		CE6183961BB80D1300952BEA /* GGFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGFwd.h; sourceTree = "<group>"; };
 		CE6183981BB80D1300952BEA /* BlockControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockControl.h; sourceTree = "<group>"; };
 		CE6183991BB80D1300952BEA /* ImageBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBlock.h; sourceTree = "<group>"; };
@@ -1262,7 +1260,6 @@
 				825E7258196EC28A00F8114D /* default */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
 				34ACA40C0FFFABE600500F40 /* main.xib */,
-				CE5C92CA1B8201A8002346C0 /* main.nib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2343,7 +2340,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CE5C92CB1B8201E2002346C0 /* main.nib in Resources */,
 				825E7259196EC28A00F8114D /* default in Resources */,
 				3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */,
 				8273F49515DD774C000F6A09 /* changelog.txt in Resources */,
@@ -2365,7 +2361,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Deleting ${BUILT_PRODUCTS_DIR}/FreeOrion.app\"\nrm -rf ${BUILT_PRODUCTS_DIR}/FreeOrion.app";
+			shellScript = "echo \"Deleting ${BUILT_PRODUCTS_DIR}/FreeOrion.app\"\nrm -rf ${BUILT_PRODUCTS_DIR}/FreeOrion.app\ntouch ${SRCROOT}/main.xib";
 		};
 		829C76341689EFD4005881B4 /* Version.cpp */ = {
 			isa = PBXShellScriptBuildPhase;
