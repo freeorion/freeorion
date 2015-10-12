@@ -6098,9 +6098,10 @@ namespace { //helper function for DispatchFleetsExploring
         frontier.insert(system_id);
         int distance = 0;
         bool found = false;
-        while(distance < 50 && !found){ //assume 50 is an upperbound an the max fuel limit or the distance to a supply system. TODO : #define it
-            for(std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; sys ++){
-                if(supplyable_systems.count(*sys) > 0){
+
+        while (distance < 50 && !found) { //assume 50 is an upperbound an the max fuel limit or the distance to a supply system. TODO : #define it
+            for (std::set<int>::iterator sys = frontier.begin(); sys != frontier.end() && !found; sys ++) {
+                if (supplyable_systems.count(*sys) > 0) {
                     //we found a route to a supplyable system
                     return std::pair<int, int>(*sys, distance);
                 }
