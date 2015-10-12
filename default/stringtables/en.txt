@@ -79,6 +79,12 @@ Moderator
 NO_PLAYER
 None
 
+NO_PLAYERS
+No Players
+
+NO_EMPIRE
+No Empire
+
 DROP_PLAYER
 Drop
 

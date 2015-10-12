@@ -21,12 +21,15 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/graph/graph_concepts.hpp>
+#include <boost/iostreams/filter/zlib.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+
 #include <fstream>
 
 namespace fs = boost::filesystem;
 
 namespace {
-
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
 
     /// Splits time and date on separate lines for an ISO datetime string
@@ -41,7 +44,7 @@ namespace {
 
     /// Populates a SaveGamePreviewData from a given file
     /// returns true on success, false if preview data could not be found
-    bool LoadSaveGamePreviewData(const fs::path& path, FullPreview& full, bool alternate_serialization) {
+    bool LoadSaveGamePreviewData(const fs::path& path, FullPreview& full) {
         if (!fs::exists(path)) {
             DebugLogger() << "LoadSaveGamePreviewData: Save file note found: " << path.string();
             return false;
@@ -53,28 +56,45 @@ namespace {
 
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
-        bool use_binary = GetOptionsDB().Get<bool>("binary-serialization") ^ alternate_serialization;
+
+
+        DebugLogger() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
         try {
-            if (use_binary) {
+            try {
+                // first attempt binary deserialziation
                 freeorion_bin_iarchive ia(ifs);
-                DebugLogger() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
+
                 ia >> BOOST_SERIALIZATION_NVP(full.preview);
                 ia >> BOOST_SERIALIZATION_NVP(full.galaxy);
-            } else {
-                freeorion_xml_iarchive ia(ifs);
-                DebugLogger() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
+
+            } catch (...) {
+                // if binary deserialization failed, try more-portable XML deserialization
+
+                // reset to start of stream (attempted binary serialization will have consumed some input...)
+                boost::iostreams::seek(ifs, 0, std::ios_base::beg);
+
+
+                // set up filter to decompress data
+                boost::iostreams::filtering_istreambuf i;
+                i.push(boost::iostreams::zlib_decompressor());
+                i.push(ifs);
+
+                // pass decompressed xml into stringstream storage that the iarchve requires...
+                std::stringstream ss;
+                boost::iostreams::copy(i, ss);
+
+                // extract xml data from stringstream
+                freeorion_xml_iarchive ia(ss);
+
                 ia >> BOOST_SERIALIZATION_NVP(full.preview);
                 ia >> BOOST_SERIALIZATION_NVP(full.galaxy);
             }
+
         } catch (const std::exception& e) {
-            if (alternate_serialization) {
-                ErrorLogger() << "LoadSaveGamePreviewData: Failed to read preview of " << path.string() << " because: " << e.what();
-                return false;
-            } else {
-                DebugLogger() << "LoadSaveGamePreviewData trying alternate_serialization";
-                return LoadSaveGamePreviewData(path, full, true);
-            }
+            ErrorLogger() << "LoadSaveGamePreviewData: Failed to read preview of " << path.string() << " because: " << e.what();
+            return false;
         }
+
         if (full.preview.Valid()) {
             DebugLogger() << "LoadSaveGamePreviewData: Successfully loaded preview from:" << path.string();
             return true;
@@ -83,15 +103,10 @@ namespace {
             return false;
         }
     }
-
-    bool LoadSaveGamePreviewData(const fs::path& path, FullPreview& full)
-        { return LoadSaveGamePreviewData(path, full, false); }
-
-
 }
 
 
-SaveGamePreviewData::SaveGamePreviewData():
+SaveGamePreviewData::SaveGamePreviewData() :
     magic_number(PREVIEW_PRESENT_MARKER),
     main_player_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
@@ -108,14 +123,14 @@ template<class Archive>
 void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(magic_number)
-    & BOOST_SERIALIZATION_NVP(main_player_name)
-    & BOOST_SERIALIZATION_NVP(main_player_empire_name)
-    & BOOST_SERIALIZATION_NVP(main_player_empire_colour)
-    & BOOST_SERIALIZATION_NVP(save_time)
-    & BOOST_SERIALIZATION_NVP(current_turn);
-    if(version > 0){
+       & BOOST_SERIALIZATION_NVP(main_player_name)
+       & BOOST_SERIALIZATION_NVP(main_player_empire_name)
+       & BOOST_SERIALIZATION_NVP(main_player_empire_colour)
+       & BOOST_SERIALIZATION_NVP(save_time)
+       & BOOST_SERIALIZATION_NVP(current_turn);
+    if (version > 0) {
         ar & BOOST_SERIALIZATION_NVP(number_of_empires)
-        & BOOST_SERIALIZATION_NVP(number_of_human_players);
+           & BOOST_SERIALIZATION_NVP(number_of_human_players);
     }
 }
 
@@ -128,8 +143,8 @@ template<class Archive>
 void FullPreview::serialize(Archive& ar, unsigned int version)
 {
     ar & BOOST_SERIALIZATION_NVP(filename)
-    & BOOST_SERIALIZATION_NVP(preview)
-    & BOOST_SERIALIZATION_NVP(galaxy);
+       & BOOST_SERIALIZATION_NVP(preview)
+       & BOOST_SERIALIZATION_NVP(galaxy);
 }
 
 template void FullPreview::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, unsigned int);
@@ -195,16 +210,13 @@ std::string ColumnInPreview(const FullPreview& full, const std::string& name, bo
     }
 }
 
-/// Loads preview data on all save files in a directory specidifed by path.
-/// @param [in] path The path of the directory
-/// @param [out] previews The preview datas indexed by file names
 void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extension, std::vector<FullPreview>& previews) {
     FullPreview data;
     fs::directory_iterator end_it;
-    
+
     fs::path path = orig_path;
     // Relative path relative to the save directory
-    if(path.is_relative()){
+    if (path.is_relative()) {
         path = GetSaveDir() / path;
     }
 
@@ -232,18 +244,18 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
     }
 }
 
-bool IsInside(const fs::path& path, const fs::path& directory){
+bool IsInside(const fs::path& path, const fs::path& directory) {
     const fs::path target = fs::canonical(directory);
-    
-    if(!path.has_parent_path()){
+
+    if (!path.has_parent_path()) {
         return false;
     }
-    
+
     fs::path cur = path.parent_path();
-    while(cur.has_parent_path()){
-        if(cur == target){
+    while (cur.has_parent_path()) {
+        if (cur == target) {
             return true;
-        }else{
+        } else {
             cur = cur.parent_path();
         }
     }
