@@ -163,7 +163,8 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
             o.push(ofs);
 
             // pass xml to compressed output file
-            boost::iostreams::copy(std::istringstream(ss.str()), o);
+            std::istringstream iss(ss.str());
+            boost::iostreams::copy(iss, o);
         }
 
 
