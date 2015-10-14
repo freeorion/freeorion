@@ -4645,6 +4645,16 @@ Rumors spread through the galaxy that %tech% was revealed to a xenoarcheology ex
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Ancient Ruins Tech Rumors
 
+EFFECT_ANCIENT_EXTINCT_SPECIES
+On %planet%: Well preserved bodies of the extinct species %species% were found in Ancient Ruins!
+EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL
+Ancient Ruins Extinct Species
+
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS
+Rumors spread through the galaxy that well preserved bodies of the extinct species %species% were found in Ancient Ruins!
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL
+Ancient Ruins Extinct Species Rumors
+
 EFFECT_ANCIENT_RUINS_EMPTY
 On %planet%: Ancient Ruins were excavated, but only tantalizing hints of ancient technology were found.
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
@@ -5516,6 +5526,64 @@ Reason for Staying:
 The Furthest generally consider space travel far too dangerous for a sane being, but some who consider their homeworld too dangerous may consider relocating to another world.
 '''
 
+SP_BANFORO
+Banforo
+SP_BANFORO_GAMEPLAY_DESC
+'''Cute, sedulous star gazers.
+Prefer Barren planets.
+[[encyclopedia LITHIC_SPECIES_TITLE]]
+'''
+
+SP_BANFORO_DESC
+'''Description:
+A Banfo looks like a teddy bear made of white stone with two large black crystal eyes. It's likely that the Banforo species was artificially created, but information that could show proof was lost in history. The eyes are their most important organs, not only do they serve for perception, but also for communication by showing light patterns around their frames. Banforo can distinguish colors and patterns of even very dim light, as well as focus on light sources far away. Very bright light on the other hand is very hard on their eyes and disturbs their communication. Thus the evening is the favorite time for the Banforo and a defining ritual of their civilization is collectively gazing at the stars once the sun has set.
+
+Social Structure:
+The Banforo are very social towards each other and share strong bonds. Resources are always shared and private ownership doesn't exist for goods with material value. The form of government can be called communistic.
+
+Reason for Extinction:
+It hasn't been sufficiently clarified, but scientists suspect that a cosmic event made the environment unbearable for the Banforo for a time so long that their numbers were dwindling to ultimately zero.
+'''
+
+SP_KILANDOW
+Kilandow
+SP_KILANDOW_GAMEPLAY_DESC
+'''Radiation-absorbing, prickly, unhurried experimenters.
+Prefer Radiated planets.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+'''
+
+SP_KILANDOW_DESC
+'''Description:
+The Kilandow have four limbs ending in several claws. Walking upright on the two short ones, they measure a little more than 1 m in height. Their head, a three eyed beak, is used like a pickaxe to pick rocks in the hope of finding rare metals and noble earths, which they knead into a paste. After applying the paste to their spiny backs, the Kilandow search for a spot with high radiation of UV and gamma-rays to absorb the charged molecules. Statuelike a Kilandow can cower in one spot for hours or even days after which it is fully charged. Because they feed on radiation their bodies also emit abnormally large amounts of radiation, which makes them easy to detect, but also dangerous for other species to come into contact with.
+Kilandow are very patient and love to conduct chemical and physical experiments. Because of their long lifespan they have no problem with some of their experiments to take hundreds of years to finish. Another important activity for them is mining, especially on Asteroids, because for them it's researching, treasure hunting and finding food at the same time.
+
+Social Structure:
+Based on documents found in Ancient Ruins the Kilandow were democratic and law-abiding, but cared much more for experiments than their society.
+
+Reason for Extinction:
+The reasons are believed to be their peaceful nature and their low reproduction rate.
+'''
+
+SP_MISIORLA
+Misiorla
+SP_MISIORLA_GAMEPLAY_DESC
+'''Chaotic, liberal, born pilots.
+Prefer Toxic planets.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_MISIORLA_DESC
+'''Description:
+A Misiorla is a mollusc with four flexible tentacles and two pairs of four eyes each. Perfectly adapted to their homeworld they were able to swim through seas of acid fluids and float through clouds of thick heavy mists. They were considered to be a fairly mediocre species, barely worth the uplift they were given by a friendly civilization, neither smart nor productive and not talented in any way. That quickly changed when the first Misiorla were given control of a space ship. Word spread like a wildfire through the galaxy about the best combat pilots in the universe. The first Misiorla mercenaries were hired to pilote fighters, the next were given command of cruisers, but their full potential was realized when an outdated battleship manned with only Misiorla single-handily wiped out the whole space fleet of a far superior empire.
+
+Social Structure:
+The whole life of Misiorlas is wrapped around piloting space vessels. Piloting is their job, it's their sport, it's their love. The society is totaly dependend on other species because they become lethargic and unorganized when doing anything else. Misiorla can be hired by almost anyone who offers something interesting to fly and the fuel to do so.
+
+Reason for Extinction:
+At one point in history the Final Ones, one of the Precursor civilizations, decided that the Misiorla could be a threat to their ultimate goal.
+'''
+
 SP_EXOBOT
 Exobot
 SP_EXOBOT_GAMEPLAY_DESC
@@ -5594,7 +5662,25 @@ Ancient Ruins
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 '''Increases [[encyclopedia RESEARCH_TITLE]] on this planet by 1 per Population when Focus is set to Research.
 
-This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship.'''
+This planet holds the ruins of an unknown, advanced ancient race. The first empire with the tech [[tech LRN_XENOARCH]] to possess this planet receives one free advanced tech or uncovers a powerful building or ship. There's also a good chance that well preserved bodies of an extinct species will be found.'''
+
+EXTINCT_BANFORO_SPECIAL
+Banforo Remains
+
+EXTINCT_BANFORO_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_BANFORO]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_BANFORO]] on supply connected planets.'''
+
+EXTINCT_KILANDOW_SPECIAL
+Kilandow Remains
+
+EXTINCT_KILANDOW_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_KILANDOW]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_KILANDOW]] on supply connected planets.'''
+
+EXTINCT_MISIORLA_SPECIAL
+Misiorla Remains
+
+EXTINCT_MISIORLA_SPECIAL_DESC
+'''On this planet well preserved bodies of the extinct species [[species SP_MISIORLA]] were found. Building a [[buildingtype BLD_XENORESURRECTION_LAB]] here will allow you to build a [[buildingtype BLD_COL_MISIORLA]] on supply connected planets.'''
 
 PANOPTICON_SPECIAL
 Panopticon Complex
@@ -9089,6 +9175,12 @@ Starlane Nexus
 BLD_STARLANE_NEXUS_DESC
 Generates new starlanes to other star systems that can be connected without crossing existing starlanes or passing too close to another system.
 
+BLD_XENORESURRECTION_LAB
+Xenoresurrection Lab
+
+BLD_XENORESURRECTION_LAB_DESC
+The Xenoresurrection Lab restores living samples of extinct species, allowing colonization of supply connected planets with the extinct species found in [[special ANCIENT_RUINS_SPECIAL]]. It can only be build on planets where the excavations of [[special ANCIENT_RUINS_SPECIAL]] have found well preserved bodies of an extinct species.
+
 BLD_COLONY_BASE
 Colony Base
 
@@ -9119,6 +9211,12 @@ Abaddoni Colony
 
 BLD_COL_ABADDONI_DESC
 [[BLD_COL_PART_1]] [[species SP_ABADDONI]] colony. [[BLD_COL_PART_2]] Abaddoni colony [[BLD_COL_PART_3]].
+
+BLD_COL_BANFORO
+Banforo Colony
+
+BLD_COL_BANFORO_DESC
+[[BLD_COL_PART_1]] [[species SP_BANFORO]] colony. [[BLD_COL_PART_2]] Banforo colony [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
 Chato Colony
@@ -9192,6 +9290,12 @@ Human Colony
 BLD_COL_HUMAN_DESC
 [[BLD_COL_PART_1]] [[species SP_HUMAN]] colony. [[BLD_COL_PART_2]] Human colony [[BLD_COL_PART_3]].
 
+BLD_COL_KILANDOW
+Kilandow Colony
+
+BLD_COL_KILANDOW_DESC
+[[BLD_COL_PART_1]] [[species SP_KILANDOW]] colony. [[BLD_COL_PART_2]] Kilandow colony [[BLD_COL_PART_3]].
+
 BLD_COL_KOBUNTURA
 Kobuntura Colony
 
@@ -9203,6 +9307,12 @@ Laenfa Colony
 
 BLD_COL_LAENFA_DESC
 [[BLD_COL_PART_1]] [[species SP_LAENFA]] colony. [[BLD_COL_PART_2]] Laenfa colony [[BLD_COL_PART_3]].
+
+BLD_COL_MISIORLA
+Misiorla Colony
+
+BLD_COL_MISIORLA_DESC
+[[BLD_COL_PART_1]] [[species SP_MISIORLA]] colony. [[BLD_COL_PART_2]] Misiorla colony [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
 Mu Ursh Colony
@@ -10529,6 +10639,14 @@ FAST_COLONIZATION
 SLOW_COLONIZATION
 −	Slow Colonization: +20% time to build colonies
 
+BAD_FUEL
+−	Bad maximum [[encyclopedia FUEL_TITLE]]: - 1
+
+GREAT_ASTEROID_INDUSTRY
++	Good Asteroid Miners: + 0.2 [[encyclopedia INDUSTRY_TITLE]] per population when Industry Focused in systems with owned asteroid belts.
+
+LIGHT_SENSITIVE
+−	Light Sensitive: Population is reduced in systems with blue and to a lesser extend white stars.
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################

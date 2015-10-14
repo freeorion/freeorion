@@ -221,6 +221,141 @@ BuildingType
     icon = "icons/species/abaddonnian.png"
 
 BuildingType
+    name = "BLD_COL_BANFORO"
+    description = "BLD_COL_BANFORO_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1.0 * max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            Or [
+               And [
+                   Species name = "SP_BANFORO"
+                   Population low = [[MIN_RECOLONIZING_SIZE]]
+                   Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_BANFORO"
+        Not Contains Building name = "BLD_COL_BANFORO"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Or [
+                And [
+                    Species name = "SP_BANFORO"
+                    Population low = [[MIN_RECOLONIZING_SIZE]]
+                    Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_BANFORO"
+        Not Contains Building name = "BLD_COL_BANFORO"
+        Not Enqueued type = Building name = "BLD_COL_BANFORO"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Or [
+                And [
+                    Species name = "SP_BANFORO"
+                    Population low = [[MIN_RECOLONIZING_SIZE]]
+                    Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_BANFORO"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_BANFORO"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/banforo.png"
+                    parameters = [
+                        tag = "species" data = "SP_BANFORO"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/species/banforo.png"
+
+BuildingType
     name = "BLD_COL_CHATO"
     description = "BLD_COL_CHATO_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
@@ -1553,6 +1688,141 @@ BuildingType
     icon = "icons/species/human.png"
 
 BuildingType
+    name = "BLD_COL_KILANDOW"
+    description = "BLD_COL_KILANDOW_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1.0 * max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            Or [
+               And [
+                   Species name = "SP_KILANDOW"
+                   Population low = [[MIN_RECOLONIZING_SIZE]]
+                   Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_KILANDOW"
+        Not Contains Building name = "BLD_COL_KILANDOW"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Or [
+                And [
+                    Species name = "SP_KILANDOW"
+                    Population low = [[MIN_RECOLONIZING_SIZE]]
+                    Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_KILANDOW"
+        Not Contains Building name = "BLD_COL_KILANDOW"
+        Not Enqueued type = Building name = "BLD_COL_KILANDOW"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Or [
+                And [
+                    Species name = "SP_KILANDOW"
+                    Population low = [[MIN_RECOLONIZING_SIZE]]
+                    Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_KILANDOW_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_KILANDOW"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_KILANDOW"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/kilandow.png"
+                    parameters = [
+                        tag = "species" data = "SP_KILANDOW"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/species/kilandow.png"
+
+BuildingType
     name = "BLD_COL_KOBUNTURA"
     description = "BLD_COL_KOBUNTURA_DESC"
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
@@ -1773,6 +2043,141 @@ BuildingType
             effects = Destroy
     ]
     icon = "icons/species/laenfa.png"
+
+BuildingType
+    name = "BLD_COL_MISIORLA"
+    description = "BLD_COL_MISIORLA_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1.0 * max(5.0, 1.0 +
+        (min value = ShortestPath object = Target.SystemID object = LocalCandidate.SystemID
+            condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+            Or [
+               And [
+                   Species name = "SP_MISIORLA"
+                   Population low = [[MIN_RECOLONIZING_SIZE]]
+                   Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+        ) / (60
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (If condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (If condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (If condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (If condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (If condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
+    )
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_MISIORLA"
+        Not Contains Building name = "BLD_COL_MISIORLA"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Or [
+                And [
+                    Species name = "SP_MISIORLA"
+                    Population low = [[MIN_RECOLONIZING_SIZE]]
+                    Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_MISIORLA"
+        Not Contains Building name = "BLD_COL_MISIORLA"
+        Not Enqueued type = Building name = "BLD_COL_MISIORLA"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Or [
+                And [
+                    Species name = "SP_MISIORLA"
+                    Population low = [[MIN_RECOLONIZING_SIZE]]
+                    Happiness low = 5
+                ]
+                And [
+                    HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
+                    Contains Building name = "BLD_XENORESURRECTION_LAB"
+                ]
+            ]
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_MISIORLA"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_MISIORLA"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    icon = "icons/species/misiorla.png"
+                    parameters = [
+                        tag = "species" data = "SP_MISIORLA"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/species/misiorla.png"
 
 BuildingType
     name = "BLD_COL_MUURSH"
