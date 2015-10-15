@@ -44,6 +44,14 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 
     InitLogger(AICLIENT_LOG_FILENAME, "AI");
     DebugLogger() << PlayerName() + " logger initialized.";
+
+    PythonAI* python_ai = new PythonAI();
+    if (!(python_ai->Initialize())) {
+        const std::string err_msg = "AIClientApp::AIClientApp : Failed to initialize Python AI.  Exiting.";
+        ErrorLogger() << err_msg;
+        throw std::runtime_error(err_msg);
+    }
+    m_AI = python_ai;
 }
 
 AIClientApp::~AIClientApp() {
@@ -66,8 +74,6 @@ const AIBase* AIClientApp::GetAI()
 { return m_AI; }
 
 void AIClientApp::Run() {
-    m_AI = new PythonAI();
-
     // connect
     const int MAX_TRIES = 10;
     int tries = 0;
@@ -84,7 +90,7 @@ void AIClientApp::Run() {
         ++tries;
     }
     if (!connected) {
-        DebugLogger() << "AIClientApp::Initialize : Failed to connect to localhost server after " << MAX_TRIES << " tries.  Exiting.";
+        ErrorLogger() << "AIClientApp::Run : Failed to connect to localhost server after " << MAX_TRIES << " tries.  Exiting.";
         Exit(1);
     }
 

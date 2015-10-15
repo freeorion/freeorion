@@ -1,13 +1,12 @@
+#include "../CommonFramework.h"
 #include "../../AI/AIInterface.h"
 
 #include <string>
 
-class PythonAI : public AIBase {
+class PythonAI : public PythonBase, public AIBase {
 public:
-    /** \name structors */ //@{
-    PythonAI();
-    ~PythonAI();
-    //@}
+    bool Initialize();
+    bool InitModules() override; // Initializes AI Python modules
 
     virtual void                GenerateOrders();
     virtual void                HandleChatMessage(int sender_id, const std::string& msg);
@@ -16,4 +15,8 @@ public:
     virtual void                StartNewGame();
     virtual void                ResumeLoadedGame(const std::string& save_state_string);
     virtual const std::string&  GetSaveStateString();
+
+private:
+    // reference to imported Python AI module
+    boost::python::object m_python_module_ai;
 };
