@@ -3,8 +3,9 @@ English
 #This is the English String Table file for FreeOrion
 #Translate this file to other languages.
 
-# Note: to avoid potential conflict with functional keys in other files, do not make
+# Notes: to avoid potential conflict with functional keys in other files, do not make
 # any stringtable keys beginning with "FUNCTIONAL_"
+# New Sitreps priorities should be added to default/customizations/common_user_customizations.txt
 
 #################
 #    Common     #

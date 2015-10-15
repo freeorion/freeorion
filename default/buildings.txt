@@ -1714,7 +1714,7 @@ BuildingType
             HasSpecial name = "EXTINCT_MISIORLA_SPECIAL"
         ]
     ]
-    icon = ""
+    icon = "icons/building/the_caducean_institute.png"
 
 
 /* Experimentor related variables / macros */
