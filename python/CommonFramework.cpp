@@ -4,22 +4,14 @@
 #include "../util/Logger.h"
 #include "PythonWrappers.h"
 
-// #include <boost/filesystem.hpp>
-// #include <boost/lexical_cast.hpp>
-// #include <boost/date_time/posix_time/time_formatters.hpp>
-
 using boost::python::object;
 using boost::python::import;
 using boost::python::error_already_set;
 using boost::python::exec;
 using boost::python::dict;
 using boost::python::list;
-// using boost::python::tuple;
-// using boost::python::make_tuple;
 using boost::python::extract;
-// using boost::python::len;
 
-// namespace fs = boost::filesystem;
 
 // Python module for logging functions
 BOOST_PYTHON_MODULE(freeorion_logger) {

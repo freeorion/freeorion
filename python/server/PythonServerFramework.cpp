@@ -3,31 +3,19 @@
 #include "PythonServerWrapper.h"
 #include "../PythonWrappers.h"
 
-// #include "../../util/Directories.h"
 #include "../../util/Logger.h"
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
 
 #include <boost/filesystem.hpp>
-// #include <boost/lexical_cast.hpp>
 #include <boost/python.hpp>
-// #include <boost/python/list.hpp>
-// #include <boost/python/tuple.hpp>
-// #include <boost/python/extract.hpp>
-// #include <boost/date_time/posix_time/time_formatters.hpp>
 
 #include <stdexcept>
 
 using boost::python::object;
 using boost::python::import;
 using boost::python::error_already_set;
-// using boost::python::exec;
 using boost::python::dict;
-// using boost::python::list;
-// using boost::python::tuple;
-// using boost::python::make_tuple;
-// using boost::python::extract;
-// using boost::python::len;
 
 namespace fs = boost::filesystem;
 

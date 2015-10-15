@@ -36,8 +36,6 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/extract.hpp>
@@ -57,9 +55,6 @@ using boost::python::copy_const_reference;
 using boost::python::reference_existing_object;
 using boost::python::return_by_value;
 using boost::python::return_internal_reference;
-
-using boost::python::vector_indexing_suite;
-using boost::python::map_indexing_suite;
 
 using boost::python::object;
 using boost::python::import;
