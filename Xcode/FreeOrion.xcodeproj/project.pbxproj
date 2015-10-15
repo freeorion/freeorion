@@ -240,7 +240,6 @@
 		822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822EB0FD170832240083EB38 /* CombatLogManager.cpp */; };
 		8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */; };
 		8246FED0194D8F83008C07B5 /* IntComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8246FECF194D8F83008C07B5 /* IntComplexValueRefParser.cpp */; };
-		824CE1A01AA0C28A00111CD9 /* PythonServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 824CE19E1AA0C28A00111CD9 /* PythonServer.cpp */; };
 		8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8250FDE315FCEFDD00523C1C /* Field.cpp */; };
 		8257A8D71A90BA610006777D /* GLClientAndServerBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8257A8D61A90BA610006777D /* GLClientAndServerBuffer.cpp */; };
 		82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82592EEF147E381B00B840A5 /* EffectAccounting.cpp */; };
@@ -335,8 +334,8 @@
 		CE6183AE1BB80D4900952BEA /* CUILinkTextBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */; };
 		CE6730B01BC29F23004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
 		CE6730B11BC29F25004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
-		CEC4ADC11BC13741000DFA9B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */; };
 		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
+		CEC4ADC11BC13741000DFA9B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -846,8 +845,6 @@
 		82483B7A15F4F24100D27614 /* libboost_date_time.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_date_time.a; sourceTree = "<group>"; };
 		82483B7B15F4F26200D27614 /* libFreeImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage.a; sourceTree = "<group>"; };
 		824C0B7C15F61C45002081C2 /* libboost_chrono.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_chrono.a; sourceTree = "<group>"; };
-		824CE19E1AA0C28A00111CD9 /* PythonServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonServer.cpp; sourceTree = "<group>"; };
-		824CE19F1AA0C28A00111CD9 /* PythonServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonServer.h; sourceTree = "<group>"; };
 		8250FDE115FCEFC400523C1C /* ConditionParser4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser4.cpp; sourceTree = "<group>"; };
 		8250FDE215FCEFC400523C1C /* FieldsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldsParser.cpp; sourceTree = "<group>"; };
 		8250FDE315FCEFDD00523C1C /* Field.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Field.cpp; sourceTree = "<group>"; };
@@ -1102,11 +1099,11 @@
 		CE6183A51BB80D2E00952BEA /* ScrollPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollPanel.cpp; sourceTree = "<group>"; };
 		CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUILinkTextBlock.cpp; sourceTree = "<group>"; };
 		CE6183AD1BB80D4900952BEA /* CUILinkTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUILinkTextBlock.h; sourceTree = "<group>"; };
+		CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyVersions.cpp; sourceTree = "<group>"; };
 		CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonAI.cpp; sourceTree = "<group>"; };
 		CEC4ADC01BC13741000DFA9B /* PythonAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonAI.h; sourceTree = "<group>"; };
 		CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonFramework.cpp; sourceTree = "<group>"; };
 		CEC4ADC31BC15195000DFA9B /* CommonFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonFramework.h; sourceTree = "<group>"; };
-		CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyVersions.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1918,8 +1915,6 @@
 				82D7B5A21AA37C9000A85842 /* PythonServerFramework.h */,
 				82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */,
 				82D7B59F1AA3666F00A85842 /* PythonServerWrapper.h */,
-				824CE19E1AA0C28A00111CD9 /* PythonServer.cpp */,
-				824CE19F1AA0C28A00111CD9 /* PythonServer.h */,
 			);
 			path = server;
 			sourceTree = "<group>";
@@ -2541,7 +2536,6 @@
 				82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */,
 				CE6730B01BC29F23004179D1 /* CommonFramework.cpp in Sources */,
 				82182CFA185B506200D70FF2 /* PythonUniverseWrapper.cpp in Sources */,
-				824CE1A01AA0C28A00111CD9 /* PythonServer.cpp in Sources */,
 				82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

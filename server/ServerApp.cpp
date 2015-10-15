@@ -15,9 +15,8 @@
 #include "../universe/Special.h"
 #include "../universe/System.h"
 #include "../universe/Species.h"
+#include "../universe/UniverseGenerator.h"
 #include "../Empire/Empire.h"
-#include "../python/server/PythonServerFramework.h"
-#include "../python/server/PythonServer.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -38,6 +37,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/date_time/posix_time/time_formatters.hpp>
 
 
 #include <ctime>
@@ -150,14 +150,14 @@ ServerApp::ServerApp() :
     GG::Connect(Empires().DiplomaticStatusChangedSignal,  &ServerApp::HandleDiplomaticStatusChange, this);
     GG::Connect(Empires().DiplomaticMessageChangedSignal, &ServerApp::HandleDiplomaticMessageChange,this);
 
-    PythonInit();
+    m_python_server.Initialize();
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
 }
 
 ServerApp::~ServerApp() {
     DebugLogger() << "ServerApp::~ServerApp";
-    PythonCleanup();
+    m_python_server.Finalize();
     CleanupAIs();
     delete m_fsm;
 }
@@ -1190,6 +1190,87 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         } else {
             ErrorLogger() << "ServerApp::CommonGameInit unsupported client type: skipping game start message.";
         }
+    }
+}
+
+void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data) {
+    Universe& universe = GetUniverse();
+
+    // Initialize RNG with provided seed to get reproducible universes
+    int seed = 0;
+    try {
+        seed = boost::lexical_cast<unsigned int>(GetGalaxySetupData().m_seed);
+    } catch (...) {
+        try {
+            boost::hash<std::string> string_hash;
+            std::size_t h = string_hash(GetGalaxySetupData().m_seed);
+            seed = static_cast<unsigned int>(h);
+        } catch (...) {}
+    }
+    if (GetGalaxySetupData().m_seed.empty()) {
+        //ClockSeed();
+        // replicate ClockSeed code here so can log the seed used
+        boost::posix_time::ptime ltime = boost::posix_time::microsec_clock::local_time();
+        std::string new_seed = boost::posix_time::to_simple_string(ltime);
+        boost::hash<std::string> string_hash;
+        std::size_t h = string_hash(new_seed);
+        DebugLogger() << "GenerateUniverse using clock for seed:" << new_seed;
+        seed = static_cast<unsigned int>(h);
+        // store seed in galaxy setup data
+        ServerApp::GetApp()->GetGalaxySetupData().m_seed = boost::lexical_cast<std::string>(seed);
+    }
+    Seed(seed);
+    DebugLogger() << "GenerateUniverse with seed: " << seed;
+
+    // Reset the universe object for a new universe
+    universe.ResetUniverse();
+    // Add predefined ship designs to universe
+    GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
+    // Initialize empire objects for each player
+    InitEmpires(player_setup_data);
+    // Set Python current work directory to directory containing
+    // the universe generation Python scripts
+    m_python_server.SetCurrentDir(GetPythonUniverseGeneratorDir());
+    // Call the main Python universe generator function
+    if (!(m_python_server.CreateUniverse(player_setup_data))) {
+        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_UNIVERSE_GENERATION_ERRORS", false));
+    }
+
+    DebugLogger() << "Applying first turn effects and updating meters";
+
+    // Apply effects for 1st turn.
+    universe.ApplyAllEffectsAndUpdateMeters();
+    // Set active meters to targets or maxes after first meter effects application
+    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+    universe.BackPropegateObjectMeters();
+    Empires().BackPropegateMeters();
+
+    DebugLogger() << "Re-applying first turn meter effects and updating meters";
+
+    // Re-apply meter effects, so that results depending on meter values can be
+    // re-checked after initial setting of those meter values
+    universe.ApplyMeterEffectsAndUpdateMeters(false);
+    // Re-set active meters to targets after re-application of effects
+    SetActiveMetersToTargetMaxCurrentValues(universe.Objects());
+    // Set the population of unowned planets to a random fraction of their target values.
+    SetNativePopulationValues(universe.Objects());
+
+    universe.BackPropegateObjectMeters();
+    Empires().BackPropegateMeters();
+
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        DebugLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
+        DebugLogger() << universe.Objects().Dump();
+    }
+
+    universe.UpdateEmpireObjectVisibilities();
+}
+
+void ServerApp::ExecuteScriptedTurnEvents() {
+    m_python_server.SetCurrentDir(GetPythonTurnEventsDir());
+    // Call the main Python turn events function
+    if (!(m_python_server.ExecuteTurnEvents())) {
+        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage("SERVER_TURN_EVENTS_ERRORS", false));
     }
 }
 

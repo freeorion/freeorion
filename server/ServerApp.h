@@ -4,6 +4,7 @@
 
 #include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
+#include "../python/server/PythonServerFramework.h"
 #include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
 #include "../util/AppInterface.h"
@@ -213,6 +214,16 @@ private:
                          const std::vector<std::pair<int, int> >& player_id_to_save_game_data_index,
                          boost::shared_ptr<ServerSaveGameData> server_save_game_data);
 
+    /** Calls Python universe generator script.
+      * Supposed to be called to create a new universe so it can be used by content
+      * scripters to customize universe generation. */
+    void    GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_data);
+
+    /** Calls Python turn events script.
+      * Supposed to be called every turn so it can be used by content scripters to
+      * implement user customizable turn events. */
+    void    ExecuteScriptedTurnEvents();
+
     void    CleanupAIs();   ///< cleans up AI processes: kills the process and empties the container of AI processes
 
     /** Sets the priority for all AI processes */
@@ -254,6 +265,7 @@ private:
     EmpireManager           m_empires;
     ServerNetworking        m_networking;
     ServerFSM*              m_fsm;
+    PythonServer            m_python_server;
     std::map<int, int>      m_player_empire_ids;    ///< map from player id to empire id that the player controls.
     int                     m_current_turn;         ///< current turn number
     std::vector<Process>    m_ai_client_processes;  ///< AI client child processes
