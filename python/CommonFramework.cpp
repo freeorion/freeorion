@@ -2,7 +2,7 @@
 
 #include "../util/Directories.h"
 #include "../util/Logger.h"
-#include "PythonWrappers.h"
+#include "CommonWrappers.h"
 
 using boost::python::object;
 using boost::python::import;

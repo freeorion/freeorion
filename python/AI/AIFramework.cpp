@@ -1,4 +1,4 @@
-#include "PythonAI.h"
+#include "AIFramework.h"
 
 #include "../../universe/Universe.h"
 #include "../../util/Directories.h"
@@ -10,8 +10,8 @@
 #include "../../Empire/EmpireManager.h"
 #include "../../Empire/Diplomacy.h"
 #include "../CommonFramework.h"
-#include "../PythonSetWrapper.h"
-#include "../PythonWrappers.h"
+#include "../SetWrapper.h"
+#include "../CommonWrappers.h"
 #include "AIWrapper.h"
 
 #include <boost/python.hpp>

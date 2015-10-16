@@ -10,8 +10,8 @@
 #include "../../Empire/Empire.h"
 #include "../../Empire/EmpireManager.h"
 #include "../../Empire/Diplomacy.h"
-#include "../PythonSetWrapper.h"
-#include "../PythonWrappers.h"
+#include "../SetWrapper.h"
+#include "../CommonWrappers.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>

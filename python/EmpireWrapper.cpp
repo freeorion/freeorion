@@ -7,6 +7,7 @@
 #include "../universe/Tech.h"
 #include "../util/SitRepEntry.h"
 #include "../util/AppInterface.h"
+#include "SetWrapper.h"
 
 #include <GG/Clr.h>
 
@@ -15,7 +16,6 @@
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include "PythonSetWrapper.h"
 #include <boost/python/tuple.hpp>
 #include <boost/python/to_python_converter.hpp>
 #include <boost/shared_ptr.hpp>

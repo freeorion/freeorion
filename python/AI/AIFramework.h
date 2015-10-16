@@ -1,3 +1,6 @@
+#ifndef __FreeOrion__Python__AIFramework__
+#define __FreeOrion__Python__AIFramework__
+
 #include "../CommonFramework.h"
 #include "../../AI/AIInterface.h"
 
@@ -20,3 +23,5 @@ private:
     // reference to imported Python AI module
     boost::python::object m_python_module_ai;
 };
+
+#endif // __FreeOrion__Python__AIFramework__

@@ -51,10 +51,10 @@
 		343EC6640F3F5C7C00782AD3 /* MarkupBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65F0F3F5C7C00782AD3 /* MarkupBox.cpp */; };
 		343EC6650F3F5C7C00782AD3 /* QueueListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6610F3F5C7C00782AD3 /* QueueListBox.cpp */; };
 		343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6590F3F5B5300782AD3 /* DesignWnd.cpp */; };
-		343EC67A0F3F61D000782AD3 /* PythonEmpireWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6740F3F61D000782AD3 /* PythonEmpireWrapper.cpp */; };
-		343EC67B0F3F61D000782AD3 /* PythonEnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */; };
-		343EC67C0F3F61D000782AD3 /* PythonLoggingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6760F3F61D000782AD3 /* PythonLoggingWrapper.cpp */; };
-		343EC67D0F3F61D000782AD3 /* PythonUniverseWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */; };
+		343EC67A0F3F61D000782AD3 /* EmpireWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6740F3F61D000782AD3 /* EmpireWrapper.cpp */; };
+		343EC67B0F3F61D000782AD3 /* EnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* EnumWrapper.cpp */; };
+		343EC67C0F3F61D000782AD3 /* LoggingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6760F3F61D000782AD3 /* LoggingWrapper.cpp */; };
+		343EC67D0F3F61D000782AD3 /* UniverseWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6780F3F61D000782AD3 /* UniverseWrapper.cpp */; };
 		346D87EF0FC5F6080095593E /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87ED0FC5F6080095593E /* ShaderProgram.cpp */; };
 		34972BEA0F49CBE80015C864 /* ChatWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34972BE60F49CBE80015C864 /* ChatWnd.cpp */; };
 		34972BEE0F49CBF90015C864 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34972BEC0F49CBF90015C864 /* Sound.cpp */; };
@@ -235,7 +235,7 @@
 		47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA20A98A3F900DA9C21 /* ServerApp.cpp */; };
 		820BDECD1848A93E009BC457 /* Hotkeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 820BDECB1848A93E009BC457 /* Hotkeys.cpp */; };
 		82132C2F15DA2BBC00F5B537 /* ObjectListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82132C2D15DA2BBC00F5B537 /* ObjectListWnd.cpp */; };
-		82182CFA185B506200D70FF2 /* PythonUniverseWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */; };
+		82182CFA185B506200D70FF2 /* UniverseWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6780F3F61D000782AD3 /* UniverseWrapper.cpp */; };
 		822E325C19BEEE5E00A7B707 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
 		822EB0FF170832240083EB38 /* CombatLogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 822EB0FD170832240083EB38 /* CombatLogManager.cpp */; };
 		8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8242C81A176B0C8E001E1CF2 /* ScopedTimer.cpp */; };
@@ -271,8 +271,8 @@
 		8280AC6019C0741C00ADDB65 /* libboost_iostreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8280AC5C19C0741B00ADDB65 /* libboost_iostreams.a */; };
 		8288432E1850A1770023C4D7 /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		8288432F1850A1960023C4D7 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
-		828843341850A2550023C4D7 /* PythonLoggingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6760F3F61D000782AD3 /* PythonLoggingWrapper.cpp */; };
-		82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */; };
+		828843341850A2550023C4D7 /* LoggingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6760F3F61D000782AD3 /* LoggingWrapper.cpp */; };
+		82884C4B1850B0E60023C4D7 /* EnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* EnumWrapper.cpp */; };
 		8289A72919BDB307001256C1 /* SDLGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023BA0CEF3AAC00A7DF2B /* SDLGUI.cpp */; };
 		8289A72B19BDB3EF001256C1 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 8289A72A19BDB3D8001256C1 /* SDL2.framework */; };
 		8289A72C19BDB45C001256C1 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8289A72A19BDB3D8001256C1 /* SDL2.framework */; };
@@ -302,8 +302,8 @@
 		82D2D9A31838C8340011C212 /* ConditionParser5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A11838C8340011C212 /* ConditionParser5.cpp */; };
 		82D2D9A41838C8340011C212 /* ConditionParser6.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D2D9A21838C8340011C212 /* ConditionParser6.cpp */; };
 		82D563D71A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */; };
-		82D7B5A01AA3666F00A85842 /* PythonServerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */; };
-		82D7B5A31AA37C9000A85842 /* PythonServerFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B5A11AA37C9000A85842 /* PythonServerFramework.cpp */; };
+		82D7B5A01AA3666F00A85842 /* ServerWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B59E1AA3666F00A85842 /* ServerWrapper.cpp */; };
+		82D7B5A31AA37C9000A85842 /* ServerFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82D7B5A11AA37C9000A85842 /* ServerFramework.cpp */; };
 		82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E5238E192FE8CE001E2374 /* AppKit.framework */; };
 		82E52391192FE90F001E2374 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52390192FE90F001E2374 /* IOKit.framework */; };
 		82E52398192FE99D001E2374 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E52392192FE99C001E2374 /* Carbon.framework */; };
@@ -336,7 +336,7 @@
 		CE6730B01BC29F23004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
 		CE6730B11BC29F25004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
 		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
-		CEC4ADC11BC13741000DFA9B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */; };
+		CEC4ADC11BC13741000DFA9B /* AIFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -535,12 +535,12 @@
 		343EC6610F3F5C7C00782AD3 /* QueueListBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueueListBox.cpp; sourceTree = "<group>"; };
 		343EC6620F3F5C7C00782AD3 /* QueueListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueueListBox.h; sourceTree = "<group>"; };
 		343EC66D0F3F600800782AD3 /* StrongTypedef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrongTypedef.h; sourceTree = "<group>"; };
-		343EC6740F3F61D000782AD3 /* PythonEmpireWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonEmpireWrapper.cpp; sourceTree = "<group>"; };
-		343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonEnumWrapper.cpp; sourceTree = "<group>"; };
-		343EC6760F3F61D000782AD3 /* PythonLoggingWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonLoggingWrapper.cpp; sourceTree = "<group>"; };
-		343EC6770F3F61D000782AD3 /* PythonSetWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonSetWrapper.h; sourceTree = "<group>"; };
-		343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonUniverseWrapper.cpp; sourceTree = "<group>"; };
-		343EC6790F3F61D000782AD3 /* PythonWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonWrappers.h; sourceTree = "<group>"; };
+		343EC6740F3F61D000782AD3 /* EmpireWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmpireWrapper.cpp; sourceTree = "<group>"; };
+		343EC6750F3F61D000782AD3 /* EnumWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumWrapper.cpp; sourceTree = "<group>"; };
+		343EC6760F3F61D000782AD3 /* LoggingWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoggingWrapper.cpp; sourceTree = "<group>"; };
+		343EC6770F3F61D000782AD3 /* SetWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetWrapper.h; sourceTree = "<group>"; };
+		343EC6780F3F61D000782AD3 /* UniverseWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniverseWrapper.cpp; sourceTree = "<group>"; };
+		343EC6790F3F61D000782AD3 /* CommonWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonWrappers.h; sourceTree = "<group>"; };
 		346D87ED0FC5F6080095593E /* ShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
 		346D87EE0FC5F6080095593E /* ShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProgram.h; sourceTree = "<group>"; };
 		34972BE60F49CBE80015C864 /* ChatWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChatWnd.cpp; sourceTree = "<group>"; };
@@ -1048,10 +1048,10 @@
 		82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DoubleComplexValueRefParser.cpp; sourceTree = "<group>"; };
 		82D68C6C15F4F720006B772D /* KeymapParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeymapParser.cpp; sourceTree = "<group>"; };
 		82D68C6E15F4F720006B772D /* ShipPartStatsParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShipPartStatsParser.h; sourceTree = "<group>"; };
-		82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonServerWrapper.cpp; sourceTree = "<group>"; };
-		82D7B59F1AA3666F00A85842 /* PythonServerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonServerWrapper.h; sourceTree = "<group>"; };
-		82D7B5A11AA37C9000A85842 /* PythonServerFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonServerFramework.cpp; sourceTree = "<group>"; };
-		82D7B5A21AA37C9000A85842 /* PythonServerFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonServerFramework.h; sourceTree = "<group>"; };
+		82D7B59E1AA3666F00A85842 /* ServerWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerWrapper.cpp; sourceTree = "<group>"; };
+		82D7B59F1AA3666F00A85842 /* ServerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerWrapper.h; sourceTree = "<group>"; };
+		82D7B5A11AA37C9000A85842 /* ServerFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerFramework.cpp; sourceTree = "<group>"; };
+		82D7B5A21AA37C9000A85842 /* ServerFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerFramework.h; sourceTree = "<group>"; };
 		82E250AD19C2317700F0E2F2 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGLEW.a; sourceTree = "<group>"; };
 		82E5238E192FE8CE001E2374 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		82E52390192FE90F001E2374 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
@@ -1103,8 +1103,8 @@
 		CE6183AC1BB80D4900952BEA /* CUILinkTextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUILinkTextBlock.cpp; sourceTree = "<group>"; };
 		CE6183AD1BB80D4900952BEA /* CUILinkTextBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUILinkTextBlock.h; sourceTree = "<group>"; };
 		CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DependencyVersions.cpp; sourceTree = "<group>"; };
-		CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonAI.cpp; sourceTree = "<group>"; };
-		CEC4ADC01BC13741000DFA9B /* PythonAI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonAI.h; sourceTree = "<group>"; };
+		CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AIFramework.cpp; sourceTree = "<group>"; };
+		CEC4ADC01BC13741000DFA9B /* AIFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIFramework.h; sourceTree = "<group>"; };
 		CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonFramework.cpp; sourceTree = "<group>"; };
 		CEC4ADC31BC15195000DFA9B /* CommonFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonFramework.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1249,13 +1249,13 @@
 				CEC4ADBE1BC13741000DFA9B /* AI */,
 				CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */,
 				CEC4ADC31BC15195000DFA9B /* CommonFramework.h */,
-				343EC6740F3F61D000782AD3 /* PythonEmpireWrapper.cpp */,
-				343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */,
-				343EC6760F3F61D000782AD3 /* PythonLoggingWrapper.cpp */,
-				343EC6770F3F61D000782AD3 /* PythonSetWrapper.h */,
-				343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */,
-				343EC6790F3F61D000782AD3 /* PythonWrappers.h */,
+				343EC6790F3F61D000782AD3 /* CommonWrappers.h */,
+				343EC6740F3F61D000782AD3 /* EmpireWrapper.cpp */,
+				343EC6750F3F61D000782AD3 /* EnumWrapper.cpp */,
+				343EC6760F3F61D000782AD3 /* LoggingWrapper.cpp */,
 				824CE19D1AA0C28A00111CD9 /* server */,
+				343EC6770F3F61D000782AD3 /* SetWrapper.h */,
+				343EC6780F3F61D000782AD3 /* UniverseWrapper.cpp */,
 			);
 			path = python;
 			sourceTree = "<group>";
@@ -1584,14 +1584,14 @@
 		471D5C9E0A98A3F900DA9C21 /* server */ = {
 			isa = PBXGroup;
 			children = (
-				471030490CEF569900A7DF2B /* SaveLoad.cpp */,
-				4710304A0CEF569900A7DF2B /* SaveLoad.h */,
-				471030470CEF569200A7DF2B /* ServerFSM.cpp */,
-				471030480CEF569200A7DF2B /* ServerFSM.h */,
 				471D5C9F0A98A3F900DA9C21 /* dmain.cpp */,
 				471D5CA00A98A3F900DA9C21 /* doc */,
+				471030490CEF569900A7DF2B /* SaveLoad.cpp */,
+				4710304A0CEF569900A7DF2B /* SaveLoad.h */,
 				471D5CA20A98A3F900DA9C21 /* ServerApp.cpp */,
 				471D5CA30A98A3F900DA9C21 /* ServerApp.h */,
+				471030470CEF569200A7DF2B /* ServerFSM.cpp */,
+				471030480CEF569200A7DF2B /* ServerFSM.h */,
 			);
 			path = server;
 			sourceTree = "<group>";
@@ -1914,10 +1914,10 @@
 		824CE19D1AA0C28A00111CD9 /* server */ = {
 			isa = PBXGroup;
 			children = (
-				82D7B5A11AA37C9000A85842 /* PythonServerFramework.cpp */,
-				82D7B5A21AA37C9000A85842 /* PythonServerFramework.h */,
-				82D7B59E1AA3666F00A85842 /* PythonServerWrapper.cpp */,
-				82D7B59F1AA3666F00A85842 /* PythonServerWrapper.h */,
+				82D7B5A11AA37C9000A85842 /* ServerFramework.cpp */,
+				82D7B5A21AA37C9000A85842 /* ServerFramework.h */,
+				82D7B59E1AA3666F00A85842 /* ServerWrapper.cpp */,
+				82D7B59F1AA3666F00A85842 /* ServerWrapper.h */,
 			);
 			path = server;
 			sourceTree = "<group>";
@@ -2152,10 +2152,10 @@
 		CEC4ADBE1BC13741000DFA9B /* AI */ = {
 			isa = PBXGroup;
 			children = (
+				CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */,
+				CEC4ADC01BC13741000DFA9B /* AIFramework.h */,
 				CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */,
 				CE0ED5F81BCFE16E00375001 /* AIWrapper.h */,
-				CEC4ADBF1BC13741000DFA9B /* PythonAI.cpp */,
-				CEC4ADC01BC13741000DFA9B /* PythonAI.h */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -2529,18 +2529,18 @@
 				47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */,
 				47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */,
 				471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */,
-				82D7B5A01AA3666F00A85842 /* PythonServerWrapper.cpp in Sources */,
-				82D7B5A31AA37C9000A85842 /* PythonServerFramework.cpp in Sources */,
+				82D7B5A01AA3666F00A85842 /* ServerWrapper.cpp in Sources */,
+				82D7B5A31AA37C9000A85842 /* ServerFramework.cpp in Sources */,
 				471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */,
 				2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */,
 				2F6096CE12EF046500F58913 /* ClientApp.cpp in Sources */,
 				2F6096CF12EF046B00F58913 /* ClientNetworking.cpp in Sources */,
 				82B4313414A74E07003EEE42 /* UniverseGenerator.cpp in Sources */,
 				82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */,
-				828843341850A2550023C4D7 /* PythonLoggingWrapper.cpp in Sources */,
-				82884C4B1850B0E60023C4D7 /* PythonEnumWrapper.cpp in Sources */,
+				828843341850A2550023C4D7 /* LoggingWrapper.cpp in Sources */,
+				82884C4B1850B0E60023C4D7 /* EnumWrapper.cpp in Sources */,
 				CE6730B01BC29F23004179D1 /* CommonFramework.cpp in Sources */,
-				82182CFA185B506200D70FF2 /* PythonUniverseWrapper.cpp in Sources */,
+				82182CFA185B506200D70FF2 /* UniverseWrapper.cpp in Sources */,
 				82E958D3188EC86A00479B77 /* SaveLoad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2551,14 +2551,14 @@
 			files = (
 				471FEFDE0A9A631C00C36AA3 /* AIClientApp.cpp in Sources */,
 				CE6730B11BC29F25004179D1 /* CommonFramework.cpp in Sources */,
-				CEC4ADC11BC13741000DFA9B /* PythonAI.cpp in Sources */,
+				CEC4ADC11BC13741000DFA9B /* AIFramework.cpp in Sources */,
 				471FEFDF0A9A632000C36AA3 /* camain.cpp in Sources */,
 				4710338A0CEF723900A7DF2B /* AIInterface.cpp in Sources */,
 				CE0ED5F91BCFE16E00375001 /* AIWrapper.cpp in Sources */,
-				343EC67A0F3F61D000782AD3 /* PythonEmpireWrapper.cpp in Sources */,
-				343EC67B0F3F61D000782AD3 /* PythonEnumWrapper.cpp in Sources */,
-				343EC67C0F3F61D000782AD3 /* PythonLoggingWrapper.cpp in Sources */,
-				343EC67D0F3F61D000782AD3 /* PythonUniverseWrapper.cpp in Sources */,
+				343EC67A0F3F61D000782AD3 /* EmpireWrapper.cpp in Sources */,
+				343EC67B0F3F61D000782AD3 /* EnumWrapper.cpp in Sources */,
+				343EC67C0F3F61D000782AD3 /* LoggingWrapper.cpp in Sources */,
+				343EC67D0F3F61D000782AD3 /* UniverseWrapper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

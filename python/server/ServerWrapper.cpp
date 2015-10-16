@@ -1,4 +1,4 @@
-#include "PythonServerWrapper.h"
+#include "ServerWrapper.h"
 
 #include "../../universe/Condition.h"
 #include "../../universe/Species.h"
@@ -26,8 +26,8 @@
 #include "../../Empire/Empire.h"
 #include "../../Empire/EmpireManager.h"
 
-#include "../PythonSetWrapper.h"
-#include "../PythonWrappers.h"
+#include "../SetWrapper.h"
+#include "../CommonWrappers.h"
 
 #include <vector>
 #include <map>

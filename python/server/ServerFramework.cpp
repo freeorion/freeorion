@@ -1,7 +1,7 @@
-#include "PythonServerFramework.h"
+#include "ServerFramework.h"
 
-#include "PythonServerWrapper.h"
-#include "../PythonWrappers.h"
+#include "ServerWrapper.h"
+#include "../CommonWrappers.h"
 
 #include "../../util/Logger.h"
 #include "../../universe/Universe.h"
