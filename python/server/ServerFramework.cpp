@@ -20,9 +20,9 @@ using boost::python::dict;
 namespace fs = boost::filesystem;
 
 BOOST_PYTHON_MODULE(freeorion) {
+    FreeOrionPython::WrapServer();
     FreeOrionPython::WrapGameStateEnums();
     FreeOrionPython::WrapGalaxySetupData();
-    WrapServerAPI();
 }
 
 namespace {
