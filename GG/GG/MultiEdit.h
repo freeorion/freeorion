@@ -72,6 +72,9 @@ public:
 
     /** \name Accessors */ ///@{
     virtual Pt MinUsableSize() const;
+
+    /** Returns the size to show the whole text without scrollbars. */
+    Pt FullSize() const;
     virtual Pt ClientLowerRight() const;
 
     /** Returns the style flags for this MultiEdit. */

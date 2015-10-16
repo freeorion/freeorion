@@ -135,6 +135,11 @@ Pt MultiEdit::MinUsableSize() const
               Y(4 * SCROLL_WIDTH + 2 * BORDER_THICK));
 }
 
+Pt MultiEdit::FullSize() const
+{
+  return Pt(Width(), m_contents_sz.y + Y(PIXEL_MARGIN) * 2);
+}
+
 Pt MultiEdit::ClientLowerRight() const
 { return Edit::ClientLowerRight() - Pt(RightMargin(), BottomMargin()); }
 

@@ -19,8 +19,8 @@ m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_O
 GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width)
 {
     m_link_text->Resize(GG::Pt(width, GG::Y1));
-    GG::Pt size = m_link_text->TextLowerRight() - m_link_text->TextUpperLeft();
-    size.x = width;
+    // Resize to have enough place to show the whole text.
+    GG::Pt size = m_link_text->FullSize();
 
     // Only resize when changed.
     if (size != m_link_text->Size())
