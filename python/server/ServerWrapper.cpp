@@ -88,6 +88,14 @@ namespace {
     object GetResourceDirWrapper()
     { return object(PathString(GetResourceDir())); }
 
+    // Wrapper for getting empire objects
+    list GetAllEmpires() {
+        list empire_list;
+        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it)
+            empire_list.append(it->second->EmpireID());
+        return empire_list;
+    }
+
     // Wrappers for generating sitrep messages
     void GenerateSitRep(int empire_id, const std::string& template_string,
                         const dict& py_params, const std::string& icon)
@@ -1221,6 +1229,10 @@ namespace FreeOrionPython {
             .def("spawn_rate",      &MonsterFleetPlanWrapper::SpawnRate)
             .def("spawn_limit",     &MonsterFleetPlanWrapper::SpawnLimit)
             .def("location",        &MonsterFleetPlanWrapper::Location);
+
+        def("get_universe",                         GetUniverse,                    return_value_policy<reference_existing_object>());
+        def("get_all_empires",                      GetAllEmpires);
+        def("get_empire",                           GetEmpire,                      return_value_policy<reference_existing_object>());
 
         def("user_string",                          make_function(&UserString,      return_value_policy<copy_const_reference>()));
         def("roman_number",                         RomanNumber);

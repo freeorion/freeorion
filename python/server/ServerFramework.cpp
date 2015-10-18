@@ -23,6 +23,8 @@ BOOST_PYTHON_MODULE(freeorion) {
     FreeOrionPython::WrapServer();
     FreeOrionPython::WrapGameStateEnums();
     FreeOrionPython::WrapGalaxySetupData();
+    FreeOrionPython::WrapEmpire();
+    FreeOrionPython::WrapUniverseClasses();
 }
 
 namespace {

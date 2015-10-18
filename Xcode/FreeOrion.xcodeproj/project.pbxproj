@@ -337,6 +337,7 @@
 		CE6730B11BC29F25004179D1 /* CommonFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADC21BC15195000DFA9B /* CommonFramework.cpp */; };
 		CE97F70B1BC7D7670002988B /* DependencyVersions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE97F70A1BC7D74D0002988B /* DependencyVersions.cpp */; };
 		CEC4ADC11BC13741000DFA9B /* AIFramework.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEC4ADBF1BC13741000DFA9B /* AIFramework.cpp */; };
+		CEDC4AEF1BD3E361009BB38D /* EmpireWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6740F3F61D000782AD3 /* EmpireWrapper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2530,6 +2531,7 @@
 				47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */,
 				471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */,
 				82D7B5A01AA3666F00A85842 /* ServerWrapper.cpp in Sources */,
+				CEDC4AEF1BD3E361009BB38D /* EmpireWrapper.cpp in Sources */,
 				82D7B5A31AA37C9000A85842 /* ServerFramework.cpp in Sources */,
 				471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */,
 				2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */,
