@@ -755,8 +755,16 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        // Insert fleet into specified system and return fleet ID
+        // Insert fleet into specified system
         system->Insert(fleet);
+
+        // check if we got a fleet name...
+        if (name.empty()) {
+            // ...no name has been specified, so we have to generate one using the new fleet id
+            fleet->Rename(UserString("OBJ_FLEET") + " " + boost::lexical_cast<std::string>(fleet->ID()));
+        }
+
+        // return fleet ID
         return fleet->ID();
     }
 
