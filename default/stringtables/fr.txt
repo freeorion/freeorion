@@ -3,8 +3,9 @@ Français
 #This is the French String Table file for FreeOrion.
 #Traduction par alchemy, shivu, zareif, nilstilar et Ouaz. Traduction terminée le 12 Juillet 2015 et couramment maintenue/améliorée par Ouaz (http://github.com/Ouaz/freeorion).
 
-# Note: to avoid potential conflict with functional keys in other files, do not make
+# Notes: to avoid potential conflict with functional keys in other files, do not make
 # any stringtable keys beginning with "FUNCTIONAL_"
+# New Sitreps priorities should be added to default/customizations/common_user_customizations.txt
 
 #################
 #    Common     #
@@ -78,6 +79,12 @@ Modérateur
 
 NO_PLAYER
 Aucun
+
+NO_PLAYERS
+Aucun joueur
+
+NO_EMPIRE
+Aucun empire
 
 DROP_PLAYER
 Ôter
@@ -4639,6 +4646,16 @@ Une rumeur se propageant dans toute la galaxie prétend qu'une technologie %tech
 EFFECT_ANCIENT_TECH_RUMORS_LABEL
 Rumeur de technologie ancestrale
 
+EFFECT_ANCIENT_EXTINCT_SPECIES
+Sur %planet% : des corps parfaitement conservés de l'espèce éteinte %species% ont été découverts au sein de Ruines Ancestrales!
+EFFECT_ANCIENT_EXTINCT_SPECIES_LABEL
+Découverte d'une espèce éteinte
+
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS
+Une rumeur se propageant dans toute la galaxie prétend que des corps parfaitement conservés de l'espèce éteinte %species% ont été découverts au sein de Ruines Ancestrales!
+EFFECT_ANCIENT_EXTINCT_SPECIES_RUMORS_LABEL
+Rumeur d'une espèce éteinte redécouverte
+
 EFFECT_ANCIENT_RUINS_EMPTY
 Sur %planet% : des Ruines Ancestrales ont été excavées, mais ne révélant que de faibles traces d'une technologie ancestrale.
 EFFECT_ANCIENT_RUINS_EMPTY_LABEL
@@ -5510,6 +5527,64 @@ Raison de la sédentarité:
 Les Furthest considèrent le voyage spatial comme bien trop dangereux pour un être sensé, mais certains d'entre eux considérant leur planète natale comme tout aussi dangereuse, pourraient bien envisager de coloniser un autre monde.
 '''
 
+SP_BANFORO  # translated
+Banforo
+SP_BANFORO_GAMEPLAY_DESC
+'''Êtres adorables et contemplateurs d'étoiles.
+Préfèrent les Planètes stériles.
+[[encyclopedia LITHIC_SPECIES_TITLE]]
+'''
+
+SP_BANFORO_DESC
+'''Description:
+Un Banfo ressemble à un ours en peluche fait de marbre immaculé et muni de deux grands yeux noirs à l'éclat cristallin. Cette apparence singulière amène à penser que les Banforo furent une espèce créée artificiellement, mais les indices en mesure de corroborer cette thèse semblent avoir disparu à jamais. Leurs yeux constituent le plus important de leurs organes, non seulement pour la vision, mais également pour la communication, grâce à la perception de différentes fréquences de lumière autour de leurs semblables. En effet, les Banforo peuvent distinguer la couleur et la fréquence de toute lumière, même la plus faible et la plus éloignée. Par contre, leurs yeux supportent très mal les lumières puissantes, ces dernières perturbant également leur communication. Par conséquent, la lumière crépusculaire du soir est la période favorite des Banforo, car une fois le soleil couché, ils se rassemblent en nombre pour un rite de civilisation consistant à contempler les étoiles en parfaite harmonie.
+
+Structure sociale:
+Les Banforo sont très sociables et tissent des liens très forts entre eux. Les ressources sont toujours partagées et la propriété privée n'existe pas pour les biens ayant une valeur matérielle. Le gouvernement s'apparente à une forme de communauté globale et ouverte à chacun.
+
+Raison de l'extinction:
+La raison de leur disparition n'a pas été clairement établie, mais la thèse scientifique opte pour un événement cosmique ayant rendu les conditions environnementales invivables pour les Banforo, sur une période de temps assez longue pour que leur nombre décline et que leur espèce finisse par s'éteindre.
+'''
+
+SP_KILANDOW  # translated
+Kilandow
+SP_KILANDOW_GAMEPLAY_DESC
+'''Expérimentateurs nocifs et patentés, absorbant toutes formes de radiation.
+Préfèrent les Planètes irradiées.
+[[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]
+'''
+
+SP_KILANDOW_DESC
+'''Description:
+Les Kilandow disposent de quatre membres dotés chacun à l'extrémité de plusieurs pinces. Se déplaçant redressés sur leurs deux membres les plus courts, les Kilandow mesurent un peu plus de 1m de hauteur. Leur tête, un bec surmonté de trois yeux, est utilisée comme une pioche afin de briser les roches à la recherche de métaux précieux et de terres rares, qu'ils agglomèrent sous forme de pâte. Après avoir appliqué cette dernière sur leurs dos épineux, les Kilandow cherchent un endroit émettant un fort taux de radiation UV et de rayons Gamma, afin d'absorber les molécules ainsi chargées. Telle une statue, un Kilandow peut rester inactif des heures, voire des jours entiers, jusqu'à ce qu'il soit complètement chargé. Se nourrissant de radiation, le corps des Kilandow émet par conséquent des grandes quantités de radiation, rendant ces derniers très faciles à détecter, mais également très dangereux pour toute autre espèce pouvant éventuellement entrer en contact avec eux.
+Les Kilandow sont très patients et sont friands d'expériences chimiques et physiques. Compte tenu de leur très longue durée de vie, ils ne rencontrent  aucun problème à mener des expériences sur plusieurs centaines d'années. L'exploitation minière est leur autre activité favorite, en particulier sur les Astéroïdes, où ils peuvent combiner la recherche, la chasse aux trésors et l'approvisionnement en nourriture.
+
+Structure sociale:
+D'après les documents découverts dans les Ruines Ancestrales, les Kilandow étaient organisés en démocratie et très respecteux des lois, mais s'avéraient davantage préocuppés par leurs expériences plutôt que par le développement de leur société.
+
+Raison de l'extinction:
+La disparition des Kilandow semble résulter de leur nature très paisible ainsi que de leur très faible taux de reproduction.
+'''
+
+SP_MISIORLA  # translated
+Misiorla
+SP_MISIORLA_GAMEPLAY_DESC
+'''Pilotes de grand talent, chaotiques et fougueux.
+Préfèrent les Planètes toxiques.
+[[encyclopedia ORGANIC_SPECIES_TITLE]]
+'''
+
+SP_MISIORLA_DESC
+'''Description:
+Un Misiorla est un mollusque doté de quatre tentacules flexibles et de deux paires de quatre yeux. Parfaitement adaptés à leur environnement natal, les Misiorla étaient capables de se mouvoir dans des mers de fluides acides et de flotter au sein d'épais nuages de brume. Ils étaient cependant considérés comme une espèce aux capacités très limitées, à peine digne de l'attention que leur portait une civilisation amie, du fait de leur absence totale de talent, que ce soit en terme de recherche ou d'industrie. Cet état de fait changea diamétralement lorsque qu'un Misiorla fut placé pour la première fois aux commandes d'un astronef. La nouvelle se répandit comme une traînée de poudre à travers toutes la galaxie: les Misiorla s'avéraient être les meilleurs pilotes de combat de l'univers. Les premiers mercenaires Misiorla furent recrutés pour piloter des chasseurs, les suivants se virent confier les commandes de croiseurs, mais leur potentiel réel se révéla entièrement lorsqu'un vaisseau amiral à la technologie dépassée, mais dirigé par un Misiorla, anéantit à lui seul toute la flotte d'un empire ennemi à la puissance pourtant bien supérieure.
+
+Structure sociale:
+Les Misiorlas vouent leur existence au pilotage d'astronef. Piloter est leur métier, leur sport, leur activité favorite. Leur société devient alors totalement dépendante des autres espèces, car ils sont incapables de s'organiser dès qu'il sagit d'une autre activité. Un Misiorla peut être recruté par quiconque offrant quelque chose à piloter ainsi que le carburant nécessaire.
+
+Raison de l'extinction:
+Dans une période trouble et peu référencée de l'Histoire, les Ultimes, une des civilisations de Précurseurs, décidèrent que les Misiorla pouvaient être une menace pour l'accomplissement du But Ultime.
+'''
+
 SP_EXOBOT  # translated
 Exobot
 SP_EXOBOT_GAMEPLAY_DESC
@@ -5588,7 +5663,25 @@ Ruines Ancestrales
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 '''Augmente la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 1 par Population, si le Focus Recherche est sélectionné.
 
-Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Le premier empire prenant pied sur la planète et maîtrisant la [[tech LRN_XENOARCH]], acquiert gratuitement la maîtrise d'une technologie avancée, ou bien découvre une structure ou un astronef aux puissantes caractéristiques.'''
+Cette planète abrite les ruines d'une puissante civilisation ancestrale et oubliée... Le premier empire prenant pied sur la planète et maîtrisant la [[tech LRN_XENOARCH]], acquiert gratuitement la maîtrise d'une technologie avancée, ou bien découvre une structure ou un astronef aux puissantes caractéristiques. La découverte de corps parfaitement conservés d'une espèce éteinte est également envisageable.'''
+
+EXTINCT_BANFORO_SPECIAL
+Restes Banforo
+
+EXTINCT_BANFORO_SPECIAL_DESC
+'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_BANFORO]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_BANFORO]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+
+EXTINCT_KILANDOW_SPECIAL
+Restes Kilandow
+
+EXTINCT_KILANDOW_SPECIAL_DESC
+'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_KILANDOW]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_KILANDOW]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
+
+EXTINCT_MISIORLA_SPECIAL
+Restes Misiorla
+
+EXTINCT_MISIORLA_SPECIAL_DESC
+'''Sur cette planète, des corps parfaitement conservés de l'espèce éteinte [[species SP_MISIORLA]] ont été découverts. La construction d'un [[buildingtype BLD_XENORESURRECTION_LAB]] à cet emplacement permettra d'établir une [[buildingtype BLD_COL_MISIORLA]] sur les planètes connectées par ligne d'[[encyclopedia SUPPLY_TITLE]].'''
 
 PANOPTICON_SPECIAL
 Complexe Panoptique
@@ -9083,6 +9176,12 @@ Générateur Avancé de Voies Spatiales
 BLD_STARLANE_NEXUS_DESC
 Génère de nouvelles Voies spatiales vers d'autres systèmes stellaires en évitant le croisement avec des Voies spatiales déjà existantes ou le passage à trop grande proximité d'un autre système.
 
+BLD_XENORESURRECTION_LAB
+Laboratoire de Xénorésurrection
+
+BLD_XENORESURRECTION_LAB_DESC
+Le Laboratoire de Xénorésurrection répare et recompose les échantillons organiques d'une espèce éteinte, permettant ainsi la colonisation de planètes reliées par ligne d'[[encyclopedia SUPPLY_TITLE]] par une espèce éteinte découverte au sein de [[special ANCIENT_RUINS_SPECIAL]]. Ne peut être construit que sur les planètes où les fouilles de [[special ANCIENT_RUINS_SPECIAL]] ont révélé les corps parfaitement conservés d'une espèce éteinte.
+
 BLD_COLONY_BASE
 Colonisateur Stellaire
 
@@ -9113,6 +9212,12 @@ Colonie Abaddoni
 
 BLD_COL_ABADDONI_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_ABADDONI]]. [[BLD_COL_PART_2]] colonie Abaddoni [[BLD_COL_PART_3]].
+
+BLD_COL_BANFORO
+Colonie Banforo
+
+BLD_COL_BANFORO_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_BANFORO]]. [[BLD_COL_PART_2]] colonie Banforo [[BLD_COL_PART_3]].
 
 BLD_COL_CHATO
 Colonie Chato
@@ -9186,6 +9291,12 @@ Colonie Humaine
 BLD_COL_HUMAN_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_HUMAN]]e. [[BLD_COL_PART_2]] colonie Humaine [[BLD_COL_PART_3]].
 
+BLD_COL_KILANDOW
+Colonie Kilandow
+
+BLD_COL_KILANDOW_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_KILANDOW]]. [[BLD_COL_PART_2]] colonie Kilandow [[BLD_COL_PART_3]].
+
 BLD_COL_KOBUNTURA
 Colonie Kobuntura
 
@@ -9197,6 +9308,12 @@ Colonie Laenfa
 
 BLD_COL_LAENFA_DESC
 [[BLD_COL_PART_1]] colonie [[species SP_LAENFA]]. [[BLD_COL_PART_2]] colonie Laenfa [[BLD_COL_PART_3]].
+
+BLD_COL_MISIORLA
+Colonie Misiorla
+
+BLD_COL_MISIORLA_DESC
+[[BLD_COL_PART_1]] colonie [[species SP_MISIORLA]]. [[BLD_COL_PART_2]] colonie Misiorla [[BLD_COL_PART_3]].
 
 BLD_COL_MUURSH
 Colonie Mu Ursh
@@ -10523,6 +10640,14 @@ FAST_COLONIZATION
 SLOW_COLONIZATION
 −	Colonisation lente : +20% de délai pour bâtir une colonie.
 
+BAD_FUEL
+−	Mauvais en [[encyclopedia FUEL_TITLE]] max : - 1
+
+GREAT_ASTEROID_INDUSTRY
++	Bons Mineurs sur Astéroïdes: + 0.2 en [[encyclopedia INDUSTRY_TITLE]] par Population lorsque que le Focus Industrie est activé dans les systèmes abritant une ceinture d'astéroïdes colonisée par l'empire.
+
+LIGHT_SENSITIVE
+−	Sensibilité à la lumière: la Population est réduite dans les systèmes  abritant une Étoile Bleue, et dans une moindre mesure, une Étoile Blanche.
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
