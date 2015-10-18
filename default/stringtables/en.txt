@@ -10306,7 +10306,7 @@ SH_XENTRONIUM
 Xentronium Hull
 
 SH_XENTRONIUM_DESC
-A hull constructed primarily with xentronium. Though small, it has extremely high max [[encyclopedia STRUCTURE_TITLE]]. It has four external slots and one internal slot.
+A hull constructed primarily with xentronium. Though small, it has extremely high max [[encyclopedia STRUCTURE_TITLE]]. It has four external slots and one core slot.
 
 SH_COLONY_BASE
 Colony Base Hull
