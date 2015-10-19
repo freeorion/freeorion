@@ -635,9 +635,12 @@ bool ClientUI::ZoomToObject(int id) {
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
-    // this just zooms to the appropriate system, until we create a planet window of some kind
-    if (TemporaryPtr<const Planet> planet = GetPlanet(id))
-        return ZoomToSystem(planet->SystemID());
+    if (TemporaryPtr<const Planet> planet = GetPlanet(id)) {
+        m_map_wnd->CenterOnObject(planet->SystemID());
+        m_map_wnd->SelectSystem(planet->SystemID());
+        m_map_wnd->SelectPlanet(id);
+        return true;
+    }        
     return false;
 }
 

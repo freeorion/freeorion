@@ -58,7 +58,7 @@ public:
 
     bool    ZoomToObject(const std::string& name);
     bool    ZoomToObject(int id);
-    bool    ZoomToPlanet(int id);                                       //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it
+    bool    ZoomToPlanet(int id);                                       //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it, or if production screen is open selects it
     bool    ZoomToPlanetPedia(int id);                                  //!< Opens the encyclodedia window and presents the entry for the given planet
     bool    ZoomToSystem(int id);                                       //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
     bool    ZoomToFleet(int id);                                        //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
