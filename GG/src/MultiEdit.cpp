@@ -1013,7 +1013,7 @@ void MultiEdit::ValidateStyle()
     if (m_style & MULTI_RIGHT) ++dup_ct;
     if (m_style & MULTI_CENTER) ++dup_ct;
     if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use MULTI_LEFT by default
-        m_style &= ~(MULTI_RIGHT | MULTI_LEFT);
+        m_style &= ~(MULTI_RIGHT | MULTI_CENTER);
         m_style |= MULTI_LEFT;
     }
 
