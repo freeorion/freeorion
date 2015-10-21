@@ -245,7 +245,7 @@ namespace GG {
 
             // Update the sizes of all blocks.
             void DoLayout() {
-                X width = m_owner->ClientWidth() - X(m_padding);
+                X width = m_owner->ClientWidth() - X(m_padding)*2;
                 Pt pos = Pt(X(m_padding), Y(m_padding));
 
                 // The contract between RichText and block controls is this:

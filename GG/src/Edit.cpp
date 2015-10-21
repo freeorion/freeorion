@@ -141,7 +141,7 @@ void Edit::Render()
         const StrSize INDEX_2 = StringIndexOf(0, std::min(high_cursor_pos, last_visible_char), GetLineData());
 
         // draw text
-        X text_x_pos = ul.x + PIXEL_MARGIN;
+        X text_x_pos = client_ul.x;
         glColor(text_color_to_use);
 
         // TODO: Use subrange RenderTex()
@@ -287,7 +287,7 @@ X Edit::FirstCharOffset() const
 X Edit::ScreenPosOfChar(CPSize idx) const
 {
     X first_char_offset = FirstCharOffset();
-    return Left() + PIXEL_MARGIN + ((idx ? GetLineData()[0].char_data[Value(idx - 1)].extent : X0) - first_char_offset);
+    return ClientUpperLeft().x + ((idx ? GetLineData()[0].char_data[Value(idx - 1)].extent : X0) - first_char_offset);
 }
 
 CPSize Edit::LastVisibleChar() const
@@ -295,7 +295,7 @@ CPSize Edit::LastVisibleChar() const
     X first_char_offset = FirstCharOffset();
     CPSize retval = m_first_char_shown;
     for ( ; retval < Length(); ++retval) {
-        if (Size().x - 2 * PIXEL_MARGIN <= (retval ? GetLineData()[0].char_data[Value(retval - 1)].extent : X0) - first_char_offset)
+        if (ClientSize().x <= (retval ? GetLineData()[0].char_data[Value(retval - 1)].extent : X0) - first_char_offset)
             break;
     }
     return retval;
@@ -315,7 +315,7 @@ void Edit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     if (Disabled())
         return;
     //std::cout << "Edit::LButtonDown start" << std::endl;
-    X click_xpos = ScreenToWindow(pt).x - PIXEL_MARGIN; // x coord of click within text space
+    X click_xpos = ScreenToClient(pt).x; // x coord of click within text space
     CPSize idx = CharIndexOf(click_xpos);
     //std::cout << "Edit::LButtonDown got idx: " << idx << std::endl;
     m_cursor_pos.first = m_cursor_pos.second = idx;
@@ -330,7 +330,7 @@ void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     if (Disabled())
         return;
 
-    X xpos = ScreenToWindow(pt).x - PIXEL_MARGIN; // x coord for mouse position within text space
+    X xpos = ScreenToClient(pt).x; // x coord for mouse position within text space
     CPSize idx = CharIndexOf(xpos);
     if (m_in_double_click_mode) {
         std::pair<CPSize, CPSize> word_indices =
@@ -357,7 +357,7 @@ void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     } else {
         // when a single-click drag occurs, move m_cursor_pos.second to where the mouse is, which selects a range of characters
         m_cursor_pos.second = idx;
-        if (xpos < 0 || Size().x - 2 * PIXEL_MARGIN < xpos) // if we're dragging past the currently visible text
+        if (xpos < 0 || ClientSize().x < xpos) // if we're dragging past the currently visible text
             AdjustView();
     }
 }
@@ -546,7 +546,7 @@ void Edit::ClearSelected()
 
 void Edit::AdjustView()
 {
-    X text_space = Size().x - 2 * PIXEL_MARGIN;
+    X text_space = ClientSize().x;
     X first_char_offset = FirstCharOffset();
     if (m_cursor_pos.second < m_first_char_shown) { // if the caret is at a place left of the current visible area
         if (m_first_char_shown - m_cursor_pos.second < 5) // if the caret is less than five characters before m_first_char_shown

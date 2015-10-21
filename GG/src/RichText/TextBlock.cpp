@@ -19,12 +19,8 @@ namespace GG {
 
     Pt TextBlock::SetMaxWidth(X width)
     {
-        // Reflow the text to the given width.
-        // We will actually listen to the height
-        // the text wants to be instead of forcing it to a given height,
-        // but the text layout code seems to get confused if you give it a height
-        // less than the height of the font so we use that.
-        m_text->Resize(GG::Pt(width, m_text->GetFont()->Height()));
+        // Reflow the text to the given width. Height is ignored.
+        m_text->Resize(GG::Pt(width, Y0));
 
         // Use the size the text requires.
         Pt text_size = m_text->MinUsableSize();
