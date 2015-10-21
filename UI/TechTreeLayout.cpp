@@ -726,7 +726,7 @@ void TechTreeLayout::Node::CreateEdges(double x_margin, double column_width, dou
         next = m_children[i];
         Edge* edge = new Edge(m_tech, to);
         //from, line start
-        edge->AddPoint(m_x + m_width / 2, m_y + m_height / 2); // start in the middle of the node
+        edge->AddPoint(m_x, m_y + m_height / 2); // start on the left side of the node
         edge->AddPoint(m_x + m_width + x_margin, m_y + m_height / 2);
         //draw line until a real tech is reached
         while (next->m_place_holder) {
