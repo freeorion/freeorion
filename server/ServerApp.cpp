@@ -240,8 +240,6 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
-        args.push_back("--binary-serialization");
-        args.push_back(GetOptionsDB().GetValueString("binary-serialization"));
         args.push_back("--ai-path");
         args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
         DebugLogger() << "starting " << AI_CLIENT_EXE << " with GameSetup.ai-aggression set to " << max_aggression;
@@ -288,7 +286,7 @@ ServerNetworking& ServerApp::Networking()
 { return m_networking; }
 
 std::string ServerApp::GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) {
-    if(!object) {
+    if (!object) {
         ErrorLogger() << "ServerApp::GetVisibleObjectName(): expected non null object pointer.";
         return std::string();
     }
@@ -449,7 +447,7 @@ void ServerApp::SelectNewHost() {
 
     // scan through players for a human to host
     for (ServerNetworking::established_iterator players_it = m_networking.established_begin();
-            players_it != m_networking.established_end(); ++players_it)
+         players_it != m_networking.established_end(); ++players_it)
     {
         PlayerConnectionPtr player_connection = *players_it;
         if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
@@ -708,7 +706,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
     // update visibility information to ensure data sent out is up-to-date
     DebugLogger() << "ServerApp::NewGameInit: Updating first-turn Empire stuff";
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
-    
+
     // initialize empire owned object counters
     EmpireManager& empires = Empires();
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it)
@@ -796,7 +794,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     ExtractMessageData(msg, directory_name);
 
     DebugLogger() << "ServerApp::UpdateSavePreviews: Got preview request for directory: " << directory_name;
-    
+
     fs::path directory = GetSaveDir() / directory_name;
     // Do not allow a relative path to lead outside the save directory.
     if(!IsInside(directory, GetSaveDir())) {
@@ -807,7 +805,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
         directory = GetSaveDir();
         directory_name = ".";
     }
-    
+
     PreviewInformation preview_information;
     preview_information.folder = directory_name;
     ListSaveSubdirectories( preview_information.subdirectories);
