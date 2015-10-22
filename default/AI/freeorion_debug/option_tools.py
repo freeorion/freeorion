@@ -55,7 +55,7 @@ def _parse_options():
         config = SafeConfigParser()
         config.read([default_file])
     else:
-        if platform.system != "Linux":
+        if platform.system() != "Linux":
             default_file = ""
         try:
             config = _create_default_config_file(default_file)
