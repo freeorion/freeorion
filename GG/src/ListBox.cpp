@@ -1675,65 +1675,68 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
 
 ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
 {
-    if (it != m_rows.end()) {
-        if (m_iterator_being_erased) {
-            *m_iterator_being_erased = m_rows.end();
-            return 0;
-        }
+    if (it == m_rows.end())
+        return 0;
 
-        Row* row = *it;
-        Y row_height = row->Height();
-        if (!removing_duplicate) {
-            DetachChild(row);
-            row->RemoveEventFilter(this);
-        }
-
-        for (iterator it2 = boost::next(it); it2 != m_rows.end(); ++it2) {
-            (*it2)->OffsetMove(Pt(X0, -row_height));
-        }
-
-        ResetIfEqual(m_old_sel_row, it, m_rows.end());
-        ResetIfEqual(m_old_rdown_row, it, m_rows.end());
-        ResetIfEqual(m_lclick_row, it, m_rows.end());
-        ResetIfEqual(m_rclick_row, it, m_rows.end());
-        ResetIfEqual(m_last_row_browsed, it, m_rows.end());
-
-        bool check_first_row_and_caret_for_end = false;
-        if (m_first_row_shown == it) {
-            ++m_first_row_shown;
-            check_first_row_and_caret_for_end = true;
-        }
-        if (m_caret == it) {
-            ++m_caret;
-            check_first_row_and_caret_for_end = true;
-        }
-
-        // Tracking this iterator is necessary because the signal may indirectly
-        // cause the iterator to be invalidated.
-        ScopedSet scoped_set(m_iterator_being_erased, &it);
-
-        if (signal && !removing_duplicate)
-            BeforeEraseSignal(it);
-
-        if (it != m_rows.end()) {
-            m_selections.erase(it);
-            m_rows.erase(it);
-        }
-
-        if (check_first_row_and_caret_for_end && m_first_row_shown == m_rows.end() && !m_rows.empty())
-            --m_first_row_shown;
-        if (check_first_row_and_caret_for_end && m_caret == m_rows.end() && !m_rows.empty())
-            --m_caret;
-
-        AdjustScrolls(false);
-
-        if (signal && !removing_duplicate)
-            AfterEraseSignal(it);
-
-        return row;
-    } else {
+    if (m_iterator_being_erased) {
+        *m_iterator_being_erased = m_rows.end();
         return 0;
     }
+
+    iterator next_it = boost::next(it);
+
+    Row* row = *it;
+    Y row_height = row->Height();
+    if (!removing_duplicate) {
+        DetachChild(row);
+        row->RemoveEventFilter(this);
+    }
+
+    ResetIfEqual(m_old_sel_row,     it, m_rows.end());
+    ResetIfEqual(m_old_rdown_row,   it, m_rows.end());
+    ResetIfEqual(m_lclick_row,      it, m_rows.end());
+    ResetIfEqual(m_rclick_row,      it, m_rows.end());
+    ResetIfEqual(m_last_row_browsed,it, m_rows.end());
+
+    bool check_first_row_and_caret_for_end = false;
+    if (m_first_row_shown == it) {
+        ++m_first_row_shown;
+        check_first_row_and_caret_for_end = true;
+    }
+    if (m_caret == it) {
+        ++m_caret;
+        check_first_row_and_caret_for_end = true;
+    }
+
+    //// Tracking this iterator is necessary because the signal may indirectly
+    //// cause the iterator to be invalidated.
+    //ScopedSet scoped_set(m_iterator_being_erased, &it);
+
+    //if (signal && !removing_duplicate)
+    //    BeforeEraseSignal(it);
+
+    // remove row from selections and contained rows.
+    if (it != m_rows.end()) {
+        m_selections.erase(it);
+        m_rows.erase(it);
+    }
+
+    if (check_first_row_and_caret_for_end && m_first_row_shown == m_rows.end() && !m_rows.empty())
+        --m_first_row_shown;
+    if (check_first_row_and_caret_for_end && m_caret == m_rows.end() && !m_rows.empty())
+        --m_caret;
+
+    // reposition rows after erased row, to fill gap it leaves
+    for (iterator it2 = next_it; it2 != m_rows.end(); ++it2) {
+        (*it2)->OffsetMove(Pt(X0, -row_height));
+    }
+
+    AdjustScrolls(false);
+
+    //if (signal && !removing_duplicate)
+    //    AfterEraseSignal(*m_iterator_being_erased);
+
+    return row;
 }
 
 void ListBox::BringCaretIntoView()
