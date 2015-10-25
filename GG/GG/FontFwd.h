@@ -51,6 +51,10 @@ extern GG_API const TextFormat FORMAT_WORDBREAK;   ///< Breaks words. Lines are 
 extern GG_API const TextFormat FORMAT_LINEWRAP;    ///< Lines are automatically broken when the next glyph would be drawn outside the the text rectangle.  As always, a '\\n' also breaks the line.
 extern GG_API const TextFormat FORMAT_IGNORETAGS;  ///< Text formatting tags (e.g. <rgba 0 0 0 255>) are treated as regular text.
 
+#ifdef _MSC_VER
+ #pragma warning(push)
+ #pragma warning(disable: 4146) // unary minus operator applied to unsigned type, result still unsigned (triggered by defining - on a size_t wrapper)
+#endif
 /** \class GG::StrSize
     \brief The string size and index value type.
 
@@ -65,6 +69,9 @@ GG_STRONG_SIZE_TYPEDEF(StrSize);
     indices into underlying UTF-8 encoded strings.  \see
     GG_STRONG_SIZE_TYPEDEF */
 GG_STRONG_SIZE_TYPEDEF(CPSize);
+#ifdef _MSC_VER
+ #pragma warning(pop)
+#endif
 
 // some useful size constants
 extern GG_API const StrSize S0;

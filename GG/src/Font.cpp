@@ -1509,8 +1509,9 @@ void Font::Init(FT_Face& face)
     }
 
     //Get maximum texture size
-    GLint TEX_MAX_SIZE;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &TEX_MAX_SIZE);
+    GLint GL_TEX_MAX_SIZE;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &GL_TEX_MAX_SIZE);
+    const std::size_t TEX_MAX_SIZE = GL_TEX_MAX_SIZE;
 
     std::map<boost::uint32_t, TempGlyphData> temp_glyph_data;
 
@@ -1546,7 +1547,7 @@ void Font::Init(FT_Face& face)
                     // We cannot make the texture any larger. The font does not fit.
                     ThrowBadGlyph("GG::Font::Init : Face too large for buffer. First glyph to no longer fit: '%1%'", c);
                 }
-                if (Value(y) + glyph_bitmap.rows > Value(max_y)) {
+                if (y + Y(glyph_bitmap.rows) > max_y) {
                     max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
                 }
 
@@ -1554,11 +1555,11 @@ void Font::Init(FT_Face& face)
                 // Resize buffer to fit new data
                 buffer.at(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)) = 0;
 
-                for (int row = 0; row < glyph_bitmap.rows; ++row) {
+                for (unsigned int row = 0; row < glyph_bitmap.rows; ++row) {
                     boost::uint8_t*  src = src_start + row * glyph_bitmap.pitch;
-                    boost::uint16_t* dst = &buffer.get(x, Y(y + row));
+                    boost::uint16_t* dst = &buffer.get(x, y + Y(row));
                     // Rows are always contiguous, so we can copy along a row using simple incrementation
-                    for (int col = 0; col < glyph_bitmap.width; ++col) {
+                    for (unsigned int col = 0; col < glyph_bitmap.width; ++col) {
 #ifdef __BIG_ENDIAN__
                         *dst++ = *src++ | (255 << 8); // big-endian uses different byte ordering
 #else
