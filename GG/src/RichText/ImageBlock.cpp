@@ -24,7 +24,7 @@ namespace GG {
             m_graphic = new StaticGraphic(texture,
                                           GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
             AttachChild(m_graphic);
-        } catch (GG::Texture::BadFile& errBadFile) {
+        } catch (GG::Texture::BadFile&) {
             // No can do inside GiGi.
         }
     }
