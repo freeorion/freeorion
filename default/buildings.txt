@@ -1271,18 +1271,6 @@ BuildingType
     icon = "icons/building/blackhole.png"
 
 BuildingType
-    name = "BLD_REPLICATORS"
-    description = "BLD_REPLICATORS_DESC"
-    buildcost = 125
-    buildtime = 4
-    location = AND [
-        Not Contains Building name = "BLD_REPLICATORS"
-        OwnedBy empire = Source.Owner
-    ]
-    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
-    icon = ""
-
-BuildingType
     name = "BLD_PLANET_DRIVE"
     description = "BLD_PLANET_DRIVE_DESC"
     buildcost = 125

@@ -6029,9 +6029,6 @@ BLD_BLACK_HOLE_POW_GEN
 BLD_BLACK_HOLE_POW_GEN_DESC
 Увеличивает [[encyclopedia INDUSTRY_TITLE]] на всех промышленно-ориентированных планетах, соединенных [[encyclopedia SUPPLY_TITLE]] на 1.2 * Население. Может быть построено на аванпостах.
 
-BLD_REPLICATORS
-Репликаторы
-
 BLD_PLANET_DRIVE
 Планетарный Межзвездный двигатель
 

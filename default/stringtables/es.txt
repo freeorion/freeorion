@@ -3751,14 +3751,6 @@ Generador de Energía de Agujero Negro
 BLD_BLACK_HOLE_POW_GEN_DESC
 Este edificio proporciona una bonificación a la indústria máxima del doble de la población del planeta para todos los planetas en el imperio con enfoque en Indústria.  Este edificio puede ser construido en un puesto de avanzada.
 
-BLD_REPLICATORS
-Replicadores
-
-BLD_REPLICATORS_DESC
-'''Cuando se activan, la mitad de la producción industrial en el imperio se gasta en replicar alimento y minerales extra a un ratio de 2:1.  Si el planeta en el que se construye tiene enfoque en Replicación de Alimento, el alimento producido a expensas de la indústria.  Cuando el enfoque se establezca en Replicación de Mineral, los minerales serán producidos a costa de la indústria.
-
-Solo un enfoque de replicación puede tener efecto en el imperio a la vez.'''
-
 BLD_PLANET_DRIVE
 Motor Planetario de Línea Estelar
 
