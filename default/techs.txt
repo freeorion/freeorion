@@ -2703,6 +2703,7 @@ Tech
     prerequisites = 
         "GRO_ADV_ECOMAN"
     unlock = Item type = ShipPart name = "SP_DEATH_SPORE"
+    graphic = "icons/ship_parts/death-spore.png"
 
 Tech
     name = "SHP_BIOTERM"
@@ -2717,6 +2718,7 @@ Tech
         "GRO_BIOTERROR"
     ]
     unlock = Item type = ShipPart name = "SP_BIOTERM"
+    graphic = "icons/ship_parts/bioterm.png"
 
 //#
 //#     SHIPS SHIELDS
@@ -3228,6 +3230,7 @@ Tech
     researchturns = 4
     prerequisites = "LRN_EVERYTHING"
     unlock = Item type = ShipPart name = "SP_DISTORTION_MODULATOR"
+    graphic = "icons/ship_parts/distortion_modulator.png"
     
 Tech
     name = "SPY_LIGHTHOUSE"
