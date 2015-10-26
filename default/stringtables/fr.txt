@@ -9067,14 +9067,6 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 
 Cette structure peut être construite sur un [[encyclopedia OUTPOSTS_TITLE]], mais doit se trouver dans un système abritant un Trou Noir.'''
 
-BLD_REPLICATORS
-Réplicateurs
-
-BLD_REPLICATORS_DESC
-'''Une fois activés, la moitié de toute la production industrielle de l'empire est utilisée pour la réplication de nourriture ou de minéraux supplémentaires à un taux de conversion de 2 pour 1. Si la planète sur laquelle est construite la structure est réglée sur le Focus Réplication Nourriture, la nourriture sera produite aux dépens de l'industrie. Lorsque le Focus est réglé sur Réplication Minéraux, des minéraux supplémentaires seront produits aux dépens de l'industrie.
-
-Un seul type de Focus de Réplication peut être activé simultanément à travers tout l'empire.'''
-
 BLD_PLANET_DRIVE
 Navigateur Planétaire
 

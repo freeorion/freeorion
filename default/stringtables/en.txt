@@ -9067,14 +9067,6 @@ BLD_BLACK_HOLE_POW_GEN_DESC
 
 This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but must be in a black hole system.'''
 
-BLD_REPLICATORS
-Replicators
-
-BLD_REPLICATORS_DESC
-'''When activated, half of all industrial production in the empire goes towards replicating extra food or minerals at a 2:1 ratio. If the planet on which it is built has focus set to Food Replication, food will be produced at the expense of industry. When the focus is set to Mineral Replication, minerals will be produced at the expense of industry.
-
-Only one replication focus can take effect in the empire at one time.'''
-
 BLD_PLANET_DRIVE
 Planetary Starlane Drive
 
