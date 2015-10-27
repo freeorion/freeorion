@@ -2328,7 +2328,7 @@ STANDARD_CONSTRUCTION
             scope = Source
             activation = Planet
             accountinglabel = "STANDARD_CONSTRUCTION_LABEL"
-            effects = SetTargetConstruction value = Value + 20
+            effects = SetTargetConstruction value = Value + 30
 '''
 
 NO_SUPPLY
@@ -2680,6 +2680,7 @@ GRO_HAB_MODIFIER
             activation = And [
                 Planet
                 OwnerHasTech name = "GRO_SUBTER_HAB"
+                Construction low = 10 
                 //TargetPopulation low = 0
             ]
             accountinglabel = "GRO_SUBTER_HAB"
@@ -2732,6 +2733,7 @@ POPULATION_TECHS
             activation = AND [
                 Planet
                 OwnerHasTech name = "CON_NDIM_STRC"
+                Construction low = 50 
                 //TargetPopulation low = 0
             ]
             accountinglabel = "NDIM_STRC_LABEL"
@@ -2743,6 +2745,7 @@ POPULATION_TECHS
             activation = AND [
                 Planet
                 OwnerHasTech name = "CON_ORBITAL_HAB"
+                Construction low = 20 
                 //TargetPopulation low = 0
             ]
             accountinglabel = "ORBITAL_HAB_LABEL"
@@ -2967,14 +2970,14 @@ ADVANCED_FOCUS_EFFECTS
                         OwnedBy empire = Source.Owner
                     ]
                 ]
-            	GenerateSitRepMessage
-            		message = "EFFECT_PLANET_DRIVE"
+                GenerateSitRepMessage
+                    message = "EFFECT_PLANET_DRIVE"
                     icon = "icons/focus/planet_drive.png"
-            		parameters = [
-            			tag = "planet" data = Source.ID
-            			tag = "system" data = Source.SystemID
-            		]
-            		empire = Source.Owner
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "system" data = Source.SystemID
+                    ]
+                    empire = Source.Owner
                 SetPopulation value = Value / 2
             ]
 
@@ -2988,15 +2991,15 @@ ADVANCED_FOCUS_EFFECTS
                 Not WithinDistance distance = 200 condition = Building name = "BLD_LIGHTHOUSE"
             ]
             effects = [
-            	GenerateSitRepMessage
-            		message = "SITREP_PLANET_DRIVE_FAILURE"
+                GenerateSitRepMessage
+                    message = "SITREP_PLANET_DRIVE_FAILURE"
                     icon = "icons/sitrep/colony_destroyed.png"
-            		parameters = [
-            			tag = "planet" data = Source.ID
-            			tag = "system" data = Source.SystemID
-            		]
-            		empire = Source.Owner
-            	Destroy
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "system" data = Source.SystemID
+                    ]
+                    empire = Source.Owner
+                Destroy
             ]
 
         EffectsGroup

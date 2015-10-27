@@ -402,7 +402,7 @@ Special
             scope = Source
             activation = OwnedBy affiliation = AnyEmpire
             effects = [
-                SetDetection value = Value + 75
+                SetDetection value = Value + Min(Target.Construction / 30, 1) * 75
                 SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
             ]
         EffectsGroup
@@ -643,6 +643,7 @@ Special
                 Planet
                 Focus type = "FOCUS_RESEARCH"
                 OwnedBy empire = Source.Owner
+                Construction low = 10
             ]
             activation = Focus type = "FOCUS_RESEARCH"
             stackinggroup = "COMPUTRONIUM_STACK"
@@ -723,6 +724,7 @@ Special
                 Focus type = "FOCUS_INDUSTRY"
                 OwnedBy empire = Source.Owner
                 ResourceSupplyConnected empire = Source.Owner condition = Source
+                Construction low = 10
             ]
             activation = Focus type = "FOCUS_INDUSTRY"
             stackinggroup = "HONEYCOMB_STACK"

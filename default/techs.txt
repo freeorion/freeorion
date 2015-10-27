@@ -704,6 +704,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 NOT TargetPopulation low = 0 high = 0
+                Construction low = 10 
             ]
             effects = SetTargetResearch value = Value + 10 * [[RESEARCH_PER_POP]]
     ]
@@ -724,6 +725,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 // Focus type = "FOCUS_RESEARCH"  //Does not require research Focus
+                Construction low = 10 
             ]
             effects = SetTargetResearch value = Value + Target.Population * 0.5 * [[RESEARCH_PER_POP]]
     ]
@@ -784,6 +786,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_RESEARCH"
+                Construction low = 20 
             ]
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
@@ -804,6 +807,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Star type = BlackHole
                 Focus type = "FOCUS_RESEARCH"
+                Construction low = 30 
             ]
             effects = SetTargetResearch value = Value + Target.Population * 5 * [[RESEARCH_PER_POP]]
 
@@ -813,6 +817,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Star type = Neutron
                 Focus type = "FOCUS_RESEARCH"
+                Construction low = 30 
             ]
             effects = SetTargetResearch value = Value + Target.Population * 3.75 * [[RESEARCH_PER_POP]]
 
@@ -822,6 +827,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Star type = [Blue White]
                 Focus type = "FOCUS_RESEARCH"
+                Construction low = 30 
             ]
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
 
@@ -831,6 +837,7 @@ Tech
                 OwnedBy empire = Source.Owner
                 Star type = [Red Orange Yellow]
                 Focus type = "FOCUS_RESEARCH"
+                Construction low = 30 
             ]
             effects = SetTargetResearch value = Value + Target.Population * 1 * [[RESEARCH_PER_POP]]
     ]
@@ -895,6 +902,7 @@ Tech
                         OwnedBy empire = Source.Owner
                         HasTag name = "TELEPATHIC"
                         Focus type = "FOCUS_DOMINATION"
+                        Construction low = 30 
                     ]
                 ]
             ]
@@ -1300,6 +1308,7 @@ Tech
                     ]
                 ]
                 Focus type = "FOCUS_INDUSTRY"
+                Construction low = 10
             ]
             effects = SetTargetIndustry value = Value + 5
     ]
@@ -1319,6 +1328,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
+                Construction low = 10
             ]
             effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
         ]
@@ -1352,6 +1362,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 Focus type = "FOCUS_INDUSTRY"
+                Construction low = 10
             ]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
     ]
@@ -1401,6 +1412,7 @@ Tech
                 ProductionCenter
                 OwnedBy empire = Source.Owner
                 NOT TargetPopulation low = 0 high = 0
+                Construction low = 20
              ]
              effects = SetTargetIndustry value = Value + 5
     ]
@@ -1431,6 +1443,15 @@ Tech
         "PRO_SOL_ORB_GEN"
     ]
     unlock = Item type = Building name = "BLD_BLACK_HOLE_POW_GEN"
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                        Species
+                        OwnedBy empire = Source.Owner
+                    ]
+            stackinggroup = "INFRA_TECH_STACK"
+            effects = SetTargetConstruction value = Value + 10
+    ]
     graphic = "icons/tech/artificial_black_hole.png"
 
 Tech
@@ -1703,13 +1724,15 @@ Tech
         "CON_FRC_ENRG_STRC"
         "LRN_NDIM_SUBSPACE"
     ]
-    effectsgroups = 
+    effectsgroups = [
         EffectsGroup
             scope = And [
                         Species
                         OwnedBy empire = Source.Owner
                     ]
-            effects = SetTargetConstruction value = Value + 10
+            stackinggroup = "INFRA_TECH_STACK"
+            effects = SetTargetConstruction value = Value + 20
+    ]
     graphic = "icons/tech/n-dimensional_structures.png"
 
 Tech
@@ -1756,6 +1779,7 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                Construction low = 20
             ]
             effects = SetMaxSupply value = Value + 1
     graphic = "icons/tech/controlled_gravity_architecture.png"
@@ -1785,6 +1809,7 @@ Tech
             scope = And [
                 Planet
                 OwnedBy empire = Source.Owner
+                Construction low = 10
             ]
             effects = SetMaxSupply value = Value + 1
     graphic = "icons/tech/orbital_construction.png"
@@ -3092,7 +3117,7 @@ Tech
                 Not OwnerHasTech name = "SPY_DETECT_4"
                 Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetDetection value = Value + 50
+            effects = SetDetection value = Value + Min(Target.Construction / 30, 1) * 50
 
         EffectsGroup
             scope = Source
@@ -3129,7 +3154,7 @@ Tech
                 Not OwnerHasTech name = "SPY_DETECT_4"
                 Not OwnerHasTech name = "SPY_DETECT_5"
             ]
-            effects = SetDetection value = Value + 75
+            effects = SetDetection value = Value + Min(Target.Construction / 30, 1) * 75
 
         EffectsGroup
             scope = Source
@@ -3162,7 +3187,7 @@ Tech
                 Not OwnerHasTech name = "SPY_DETECT_4"
                 Not OwnerHasTech name = "SPY_DETECT_5"
                 ]
-            effects = SetDetection value = Value + 150
+            effects = SetDetection value = Value + Min(Target.Construction / 30, 1) * 150
 
         EffectsGroup
             scope = Source
@@ -3190,7 +3215,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             activation = Not OwnerHasTech name = "SPY_DETECT_5"
-            effects = SetDetection value = Value + 200
+            effects = SetDetection value = Value + Min(Target.Construction / 30, 1) * 200
 
         EffectsGroup
             scope = Source
@@ -3213,7 +3238,7 @@ Tech
                 Planet
                 OwnedBy empire = Source.Owner
             ]
-            effects = SetDetection value = Value + 300
+            effects = SetDetection value = Value + Min(Target.Construction / 30, 1) * 300
 
         EffectsGroup
             scope = Source

@@ -5724,14 +5724,14 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 COMPUTRONIUM_SPECIAL
 Computronium Moon
 COMPUTRONIUM_SPECIAL_DESC
-'''When a planet with a Computronium Moon is focused on [[encyclopedia RESEARCH_TITLE]], all research focused planets in the empire gain 0.2 [[encyclopedia RESEARCH_TITLE]] per Population.
+'''When a planet with a Computronium Moon is focused on [[encyclopedia RESEARCH_TITLE]], all research focused planets with at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]] in the empire gain 0.2 [[encyclopedia RESEARCH_TITLE]] per Population.
 
 Left by some vanished civilization, the entire moon - from surface to core - is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.'''
 
 HONEYCOMB_SPECIAL
 Honeycomb
 HONEYCOMB_SPECIAL_DESC
-'''When a planet with a Honeycomb is focused on [[encyclopedia INDUSTRY_TITLE]], all industry focused [[encyclopedia SUPPLY_TITLE]] connected planets gain 0.5 [[encyclopedia INDUSTRY_TITLE]] per Population.
+'''When a planet with a Honeycomb is focused on [[encyclopedia INDUSTRY_TITLE]], all industry focused [[encyclopedia SUPPLY_TITLE]] connected planets with at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]] gain 0.5 [[encyclopedia INDUSTRY_TITLE]] per Population.
 
 The Honeycomb is a planet that was prepared as a stash by the Builders in ancient times. Almost all other planets in surrounding systems were stripped of valuable materials and then dismantled. The materials were sorted and stored separately in gigantic tubes embedded into the planets crust. The sprectrum ranges from rare and valuable elementals to hard to produce molecules and a vast array of energy sources. What the Builders wanted to create with this treasure or why they didn't use it in the end, is unclear.'''
 
@@ -7239,7 +7239,7 @@ LRN_ARTIF_MINDS
 Nascent Artificial Intelligence
 
 LRN_ARTIF_MINDS_DESC
-'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 2.
+'''Increases Target [[encyclopedia RESEARCH_TITLE]] on all planets by 2. Requires the planet to have at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience. While these traits remain elusive, reasonable facsimiles may be produced. These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
 
@@ -7308,7 +7308,7 @@ LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with the Research focus by 0.5 per Population. Require the planet to have at least 20 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes. This advancement greatly facilitates research throughout the empire.
 
@@ -7441,7 +7441,7 @@ PRO_MICROGRAV_MAN
 Microgravity Industry
 
 PRO_MICROGRAV_MAN_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit.
+'''Increases [[encyclopedia INDUSTRY_TITLE]] by +5 on all Industry-focused colonies in system with an asteroid belt outposts or colonies. Additional claimed asteroid belts do not provide additional benefit. Require the planet to have at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 Mineral resource extraction from sub-planetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets. Lacking sufficient mass to self-liquefy and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient. Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities. As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
 
@@ -7461,7 +7461,7 @@ PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.1 per Population.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets with the Industry focus by 0.1 per Population. Require the planet to have at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry. Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
 
@@ -7482,7 +7482,7 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.2 per Population.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on planets with the Industry focus by 0.2 per Population. Require the planet to have at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
 
@@ -7506,7 +7506,7 @@ PRO_SENTIENT_AUTOMATION
 Adaptive Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets by 5.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on all planets by 5. Require the planet to have at least 20 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility. These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
 
@@ -7530,7 +7530,9 @@ PRO_SINGULAR_GEN
 Singularity Generation
 
 PRO_SINGULAR_GEN_DESC
-'''Harnessing energy from a black hole is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains. By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
+'''Increase planet target infrastructure by 10, not stackable with [[tech CON_NDIM_STRC]].
+
+Harnessing energy from a black hole is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains. By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
 
 As matter is drawn towards a singularity by the intense space-time curvature, or gravitational field, the matter forms a greatly compressed and heated accretion disc. High energy radiation emitted from the disc may be captured and harnessed for power generation. The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity. This method of power generation is significantly more delicate and unstable than the accretion disc method, but can produce an even greater output.'''
 
@@ -7590,7 +7592,7 @@ CON_CONTGRAV_ARCH
 Gravitic Architecture
 
 CON_CONTGRAV_ARCH_DESC
-'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies and outposts by 1.
+'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies by 1. Require the planet to have at least 20 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
@@ -7624,13 +7626,13 @@ CON_ORBITAL_HAB
 Orbital Habitation
 
 CON_ORBITAL_HAB_DESC
-Increases Population capacity by planet size on all habitable planets; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+Increases Population capacity by planet size on all habitable planets; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5. Require the planet to have at least 20 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-'''Increases Population capacity by planet size on all habitable planets; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Also increases target [[encyclopedia INFRASTRUCTURE_TITLE]] by 10 on populated.
+'''Increases Population capacity by planet size on all habitable planets; Tiny: +2, Small: +4, Medium: +6, Large: +8, Huge: +10. Also increases target [[encyclopedia INFRASTRUCTURE_TITLE]] by 20 on populated, superceding bonus given by [[tech PRO_SINGULAR_GEN]]. Require the planet to have at least 50 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 The primary limiting factors on a planets population capacity are environmental desirability and space. By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
 
@@ -7913,7 +7915,7 @@ CON_ORBITAL_CON
 Orbital Construction
 
 CON_ORBITAL_CON_DESC
-'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies and outposts by 1.
+'''Increases the [[encyclopedia SUPPLY_TITLE]] line range of all colonies by 1. Require the planet to have at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 On a planet, there is always a fixed reference direction: "up". Microgravity is effectively isotropic. This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment. As well, the interior configuration of spaces in orbit must be rethought. However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces. Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
@@ -7961,7 +7963,7 @@ GRO_SUBTER_HAB
 Subterranean Habitation
 
 GRO_SUBTER_HAB_DESC
-Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5.
+Increases the max population on all planets by planet size; Tiny: +1, Small: +2, Medium: +3, Large: +4, Huge: +5. Require the planet to have at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 GRO_GENOME_BANK
 Genome Bank
@@ -8032,7 +8034,7 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with any focus by 0.1 per Population.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on all planets with any focus by 0.1 per Population. Require the planet to have at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
@@ -8040,7 +8042,7 @@ LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus per Population by 1, 0.75, 0.5, or 0.2 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
+'''Increases target [[encyclopedia RESEARCH_TITLE]] on planets with the Research focus per Population by 1, 0.75, 0.5, or 0.2 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively. Require the planet to have at least 30 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star. These otherwise costly-to-produce conditions are ideal for a variety of research endeavors, with larger benefits for more exotic star types.'''
 
@@ -8072,7 +8074,7 @@ LRN_PSY_DOM
 Psychogenic Domination
 
 LRN_PSY_DOM_DESC
-'''Has a 10% chance of taking control of enemy ships with non-telepathic crews in the same system as a planet with domination focus, unless the enemy empire also knows the [[tech LRN_PSY_DOM]].
+'''Has a 10% chance of taking control of enemy ships with non-telepathic crews in the same system as a planet with domination focus, unless the enemy empire also knows the [[tech LRN_PSY_DOM]]. Require the planet to have at least 30 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
 It is difficult to force a conscious individual to submit to the total mental control of another entity against its will. By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
 
@@ -8890,18 +8892,18 @@ BLD_INDUSTRY_CENTER
 Industrial Center
 
 BLD_INDUSTRY_CENTER_DESC
-'''Initially provides a bonus to [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus by 0.2 per Population.
+'''Initially provides a bonus to [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with Industry focus by 0.2 per Population. Require the planet to have at least 10 [[encyclopedia INFRASTRUCTURE_TITLE]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
-[[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus.
+[[tech PRO_INDUSTRY_CENTER_II]] refinement doubles the bonus, if the planet has at least 20 [[encyclopedia INFRASTRUCTURE_TITLE]].
 
-[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus.'''
+[[tech PRO_INDUSTRY_CENTER_III]] refinement further increases the bonus to triple the base bonus, if the planet has at least 30 [[encyclopedia INFRASTRUCTURE_TITLE]].'''
 
 BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-'''This building may only be built in the owner empire's capital, where it further adds to the splendor of the [[buildingtype BLD_IMPERIAL_PALACE]]. All resource meters for the planet on which it is built are able to reach target in a single turn. This planet also receives an increase of 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Populated planets in the owning empire receive an increase of 1 to [[encyclopedia SUPPLY_TITLE]] line range. Populated planets within two starlane jumps have their [[encyclopedia TROOP_TITLE]] increased by 10.
+'''This building may only be built in the owner empire's capital, where it further adds to the splendor of the [[buildingtype BLD_IMPERIAL_PALACE]]. All resource meters for the planet on which it is built are able to reach target in a single turn. This planet also receives an increase of 30 to [[encyclopedia INFRASTRUCTURE_TITLE]]. Populated planets in the owning empire receive an increase of 1 to [[encyclopedia SUPPLY_TITLE]] line range if the planet has at least 30 [[encyclopedia INFRASTRUCTURE_TITLE]]. Populated planets within two starlane jumps have their [[encyclopedia TROOP_TITLE]] increased by 10.
 
 The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.'''
 
@@ -8986,7 +8988,7 @@ BLD_SOL_ORB_GEN
 Solar Orbital Generator
 
 BLD_SOL_ORB_GEN_DESC
-'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population when built in systems with Blue/White, Yellow/Orange, or Red stars, respectively.
+'''Increases target [[encyclopedia INDUSTRY_TITLE]] on [[encyclopedia SUPPLY_TITLE]] line connected planets by 0.4, 0.2 or 0.1 per Population when built in systems with Blue/White, Yellow/Orange, or Red stars, respectively, if the planet has at least 30 [[encyclopedia INFRASTRUCTURE_TITLE]].
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]] The best bonus applies.
 
 A power generator in low solar orbit designed to tap directly into the star's energy. Since different star types produce different amounts of energy, the system-wide industry bonus is dependent on star type. This building can be built at an [[encyclopedia OUTPOSTS_TITLE]].'''
@@ -9062,7 +9064,7 @@ BLD_BLACK_HOLE_POW_GEN
 Black Hole Power Generator
 
 BLD_BLACK_HOLE_POW_GEN_DESC
-'''Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population. 
+'''Increases [[encyclopedia INDUSTRY_TITLE]] on all [[encyclopedia SUPPLY_TITLE]] line connected planets with the Industry focus by 1.2 per Population, if the planet has at least 40 [[encyclopedia INFRASTRUCTURE_TITLE]]. 
 [[NO_STACK_SUPPLY_CONNECTION_TEXT]]
 
 This building can be built at an [[encyclopedia OUTPOSTS_TITLE]], but must be in a black hole system.'''
@@ -9151,7 +9153,7 @@ BLD_GAS_GIANT_GEN
 Gas Giant Generator
 
 BLD_GAS_GIANT_GEN_DESC
-'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system.
+'''This building can only be constructed at a gas giant and gives a +10 [[encyclopedia INDUSTRY_TITLE]] bonus to planets with the Industry focus in the same system. Requires the planet to have at least 20 [[encyclopedia INFRASTRUCTURE_TITLE]].
 Multiple copies in the same system do not stack.
 
 A power generator designed to harvest the energy of a Gas Giant.'''
