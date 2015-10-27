@@ -15,13 +15,15 @@ required_boost_libraries = [
     "boost_chrono",
     "boost_date_time",
     "boost_filesystem",
+    "boost_iostreams",
     "boost_log",
     "boost_python",
     "boost_regex",
     "boost_serialization",
     "boost_signals",
     "boost_system",
-    "boost_thread"
+    "boost_thread",
+    "boost_zlib"
 ]
 
 
