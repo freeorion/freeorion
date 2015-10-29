@@ -1418,7 +1418,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    icon = "icons/tech/paradise_planet.png"
+    icon = "icons/building/paradise_planet.png"
 
 BuildingType
     name = "BLD_ART_MOON"
