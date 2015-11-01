@@ -2426,7 +2426,7 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 160 * [[TECH_COST_MULTIPLIER]]
+    researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
     prerequisites = [
         "LRN_FORCE_FIELD"
@@ -2443,8 +2443,8 @@ Tech
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
-    researchturns = 5
+    researchcost = 120 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 4
     prerequisites = [
         "SHP_FRC_ENRG_COMP"
     ]
