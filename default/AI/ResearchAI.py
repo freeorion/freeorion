@@ -1,6 +1,5 @@
 from functools import partial
 import math
-from operator import attrgetter
 import random
 import traceback
 
@@ -52,12 +51,6 @@ COLONY_IDX = 2
 ZERO = 0.0
 LOW = 0.1
 DEFAULT_PRIORITY = 0.5
-
-# TODO: Move this functions to ColonisationAI
-have_asteroids = partial(attrgetter('got_ast'), ColonisationAI)
-have_gas_giant = partial(attrgetter('got_gg'), ColonisationAI)
-have_ruins = partial(attrgetter('gotRuins'), ColonisationAI)
-have_nest = partial(attrgetter('got_nest'), ColonisationAI)
 
 
 # TODO research AI no longer use this method, rename and move this method elsewhere
@@ -367,15 +360,15 @@ def init():
     ]
 
     tech_handlers = (
-        (Dep.PRO_MICROGRAV_MAN, conditional_priority(3.5, LOW, have_asteroids)),
-        (Dep.PRO_ORBITAL_GEN, conditional_priority(3.0, LOW, have_gas_giant)),
+        (Dep.PRO_MICROGRAV_MAN, conditional_priority(3.5, LOW, ColonisationAI.have_asteroids)),
+        (Dep.PRO_ORBITAL_GEN, conditional_priority(3.0, LOW, ColonisationAI.have_gas_giant)),
         (Dep.PRO_SINGULAR_GEN, conditional_priority(3.0, LOW, partial(has_star, fo.starType.blackHole))),
         (Dep.GRO_XENO_GENETICS, get_xeno_genetics_priority),
-        (Dep.LRN_XENOARCH, conditional_priority(LOW, conditional_priority(5.0, LOW, have_ruins), has_low_aggression)),
+        (Dep.LRN_XENOARCH, conditional_priority(LOW, conditional_priority(5.0, LOW, ColonisationAI.have_ruins), has_low_aggression)),
         (Dep.LRN_ART_BLACK_HOLE, get_artificial_black_hole_priority),
         (Dep.GRO_GENOME_BANK, LOW),
         (Dep.CON_CONC_CAMP, ZERO),
-        (Dep.NEST_DOMESTICATION_TECH, conditional_priority(ZERO, conditional_priority(3.0, LOW, have_nest), has_low_aggression)),
+        (Dep.NEST_DOMESTICATION_TECH, conditional_priority(ZERO, conditional_priority(3.0, LOW, ColonisationAI.have_nest), has_low_aggression)),
         (Dep.UNRESEARCHABLE_TECHS, -1.0),
         (Dep.UNUSED_TECHS, ZERO),
         (Dep.THEORY_TECHS, ZERO),
