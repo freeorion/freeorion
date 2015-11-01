@@ -1075,8 +1075,21 @@ def generate_classic_research_orders():
         else:
             print "Tech %s gives access to new parts or hulls but there seems to be no military advantage." % tech
 
+
 def use_classic_research_approach():
-    # TODO: make research approach dependent on AI Config
-    return True
+    """
+    Returns flag if old research approach should be used.
 
+    By default return True
 
+    If need to run game in new research approach:
+
+    1) create config file:
+
+    [main]
+    new_research=True
+
+    2) run game with flag  --ai-config=<path to config file>
+    """
+    from freeorion_debug.option_tools import get_option_dict
+    return not get_option_dict().get('new_research', False)
