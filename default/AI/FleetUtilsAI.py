@@ -12,11 +12,13 @@ __AIFleetMissionTypeNames = AIFleetMissionType()
 def combine_ratings(rating1, rating2):
     return rating1 + rating2 + 2 * (rating1 * rating2)**0.5
 
+
 def combine_ratings_list(ratings_list):
     tally = 0
     for rating in ratings_list:
         tally = combine_ratings(tally, rating)
     return tally
+
 
 def rating_needed(target, current=0):
     if current >= target or target <= 0:
@@ -86,27 +88,40 @@ def get_targeted_planet_ids(planet_ids, mission_type):
     return targeted_planets
 
 
-def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check, systems_checked, fleet_pool_set, fleet_list,
-                                                            take_any=False, extend_search=True, tried_fleets=None, verbose=False, depth=0):
-    """Implements breadth-first search through systems
-    mutates cur_stats with running status, systems_to_check and systems_checked as systems are checked, fleet_pool_set as fleets are checked
-    also mutates fleet_list as running list of selected fleets; this list will be returned as the function return value if the target stats
-    are met or if upon exhausting systems_to_check both take_any is true and the min stats are met. Otherwise, an empty list is returned by the function,
-    in which case the caller can make an evaluation of an emergency use of the found fleets in fleet_list; if not to be used they should be added back to the main pool."""
+def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check, systems_checked,
+                           fleet_pool_set, fleet_list, take_any=False, extend_search=True, tried_fleets=None,
+                           verbose=False, depth=0):
+    """
+    Implements breadth-first search through systems
+    mutates cur_stats with running status, systems_to_check and systems_checked as systems are checked,
+    fleet_pool_set as fleets are checked also mutates fleet_list as running list of selected fleets;
+    this list will be returned as the function return value if the target statsare met or if upon exhausting
+    systems_to_check both take_any is true and the min stats are met.
+    Otherwise, an empty list is returned by the function, in which case the caller can make an evaluation of
+    an emergency use of the found fleets in fleet_list; if not to be used they should be added back to the main pool.
+    """
     if verbose:
-        print "get_fleets_for_mission: (nships:%1d, targetStats:%s, minStats:%s, curStats:%s, species:%6s, systemsToCheck:%8s, systemsChecked:%8s, fleetPoolSet:%8s, fleetList:%8s) " % (
-                                                                                                                                        nships, target_stats, min_stats, cur_stats, species, systems_to_check, systems_checked, fleet_pool_set, fleet_list)
+        print ("get_fleets_for_mission: (nships:%1d, targetStats:%s, minStats:%s, "
+               "curStats:%s, species:%6s, systemsToCheck:%8s, systemsChecked:%8s, "
+               "fleetPoolSet:%8s, fleetList:%8s) ") % (nships, target_stats, min_stats, cur_stats, species,
+                                                       systems_to_check, systems_checked, fleet_pool_set, fleet_list)
     universe = fo.getUniverse()
     if not (systems_to_check and fleet_pool_set):
         if verbose:
             print "no more systems or fleets to check"
-        if take_any or (stats_meet_reqs(cur_stats, min_stats) and (sum([len(universe.getFleet(fid).shipIDs) for fid in fleet_list]) >= nships)):
+        if take_any:
+            return fleet_list
+        elif (stats_meet_reqs(cur_stats, min_stats)
+              and sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= nships):
             return fleet_list
         else:
             return []
     this_system_id = systems_to_check.pop(0)  # take the head of the line
     systems_checked.append(this_system_id)
-    fleets_here = [fid for fid in foAI.foAIstate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', []) if fid in fleet_pool_set]
+
+    accessible_fleets = foAI.foAIstate.systemStatus.get(this_system_id, {}).get('myFleetsAccessible', [])
+    fleets_here = [fid for fid in accessible_fleets if fid in fleet_pool_set]
+
     if verbose:
         print "found fleetPool Fleets %s" % fleets_here
     while fleets_here:
@@ -125,9 +140,12 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
         if species != "":
             needs_species = True
         has_species = ""
+
+        colonization_roles = (AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION,
+                              AIShipRoleType.SHIP_ROLE_BASE_COLONISATION)
         for shipID in fleet.shipIDs:
             ship = universe.getShip(shipID)
-            if foAI.foAIstate.get_ship_role(ship.design.id) in [AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION, AIShipRoleType.SHIP_ROLE_BASE_COLONISATION]:
+            if foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles:
                 has_species = ship.speciesName
                 if has_species == species:
                     meets_species_req = True
@@ -147,7 +165,8 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
             cur_stats['health'] = cur_stats.get('health', 0) + this_rating['health']
             cur_stats['rating'] = cur_stats['attack'] * cur_stats['health']
             if 'troopCapacity' in target_stats:
-                cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + count_troops_in_fleet(fleet_id)  # ToDo: Check if replacable by troop_capacity
+                # ToDo: Check if replaceable by troop_capacity
+                cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + count_troops_in_fleet(fleet_id)
             if (sum([len(universe.getFleet(fid).shipIDs) for fid in fleet_list]) >= nships)\
                     and stats_meet_reqs(cur_stats, target_stats):
                 if verbose:
@@ -155,18 +174,21 @@ def get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, 
                 return fleet_list
     # finished loop without meeting reqs
     if extend_search:
-        for neighborID in [el.key() for el in universe.getSystemNeighborsMap(this_system_id, foAI.foAIstate.empireID)]:
-            if neighborID not in systems_checked and neighborID not in systems_to_check and neighborID in foAI.foAIstate.exploredSystemIDs:
-                systems_to_check.append(neighborID)
+        for neighbor_id in [el.key() for el in universe.getSystemNeighborsMap(this_system_id, foAI.foAIstate.empireID)]:
+            if (neighbor_id not in systems_checked and neighbor_id not in systems_to_check
+                and neighbor_id in foAI.foAIstate.exploredSystemIDs):
+                systems_to_check.append(neighbor_id)
     try:
-        return get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check, systems_checked, fleet_pool_set, fleet_list, take_any, extend_search, verbose, depth=depth+1)
+        return get_fleets_for_mission(nships, target_stats, min_stats, cur_stats, species, systems_to_check,
+                                      systems_checked, fleet_pool_set, fleet_list, take_any=take_any,
+                                      extend_search=extend_search, verbose=verbose, depth=depth+1)
     except:
         s1 = len(systems_to_check)
         s2 = len(systems_checked)
         s3 = len(set(systems_to_check + systems_checked))
-        print "Error: exception triggered in 'getFleetsForMissions' and caught at depth %d w/s1/s2/s3 (%d/%d/%d): " % (depth+2, s1, s2, s3), traceback.format_exc()
-        #print ("Error: call parameters were targetStats: %s, curStats: %s, species: '%s', systemsToCheck: %s, systemsChecked: %s, fleetPoolSet: %s, fleetList: %s"%(
-        # targetStats, curStats, species, systemsToCheck, systemsChecked, fleetPoolSet, fleetList))
+        print "Error: exception triggered in 'getFleetsForMissions' and caught at depth %d w/s1/s2/s3 (%d/%d/%d): " % (
+            depth+2, s1, s2, s3)
+        print traceback.format_exc()
         return []
 
 
@@ -236,17 +258,18 @@ def merge_fleet_a_into_b(fleet_a_id, fleet_b_id, leave_rating=0, need_rating=0, 
         this_rating = stats['attack'] * (stats['structure'] + stats['shields'])
         if (remaining_rating['attack'] - stats['attack']) * (remaining_rating['health'] - (stats['structure'] + stats['shields'])) < leave_rating:
             continue
-        #remaining_rating -= this_rating
+        # remaining_rating -= this_rating
         remaining_rating['attack'] -= stats['attack']
         remaining_rating['health'] -= stats['structure'] + stats['shields']
-        this_success = fo.issueFleetTransferOrder(ship_id, fleet_b_id)
-        if this_success:
+        transferred = fo.issueFleetTransferOrder(ship_id, fleet_b_id)
+        if transferred:
             transferred_rating += this_rating
             transferred_attack += stats['attack']
             transferred_health += stats['structure'] + stats['shields']
         else:
-            print "\t\t\t\t *** attempted transfer of ship %4d, formerly of fleet %4d, into fleet %4d with result %d; %s" % (ship_id, fleet_a_id, fleet_b_id, this_success, [" context is %s" % context, ""][context == ""])
-        success = success and this_success
+            print "  *** attempted transfer of ship %4d, formerly of fleet %4d, into fleet %4d with result %d; %s" % (
+                ship_id, fleet_a_id, fleet_b_id, transferred, [" context is %s" % context, ""][context == ""])
+        success = success and transferred
         if need_rating != 0 and need_rating <= transferred_attack*transferred_health:  # transferred_rating:
             break
     fleet_a = universe.getFleet(fleet_a_id)
@@ -319,7 +342,10 @@ def extract_fleet_ids_without_mission_types(fleets_ids):
 
 
 def assess_fleet_role(fleet_id):
-    """Assesses ShipRoles represented in a fleet and returns a corresponding overall fleetRole (of type AIFleetMissionType)."""
+    """
+    Assesses ShipRoles represented in a fleet and
+    returns a corresponding overall fleetRole (of type AIFleetMissionType).
+    """
     universe = fo.getUniverse()
     ship_roles = {}
     fleet = universe.getFleet(fleet_id)
@@ -522,7 +548,8 @@ def issue_fleet_orders_for_fleet_missions():
         for mission in fleet_missions:
             fleet_id = mission.fleet.id
             fleet = mission.fleet.get_object()
-            if not fleet or not fleet.shipIDs or fleet_id in universe.destroyedObjectIDs(fo.empireID()):  # in case fleet was merged into another previously during this turn
+            # check that fleet was merged into another previously during this turn
+            if not fleet or not fleet.shipIDs or fleet_id in universe.destroyedObjectIDs(fo.empireID()):
                 continue
             mission.issue_fleet_orders()
         fleet_missions = foAI.foAIstate.misc.get('ReassignedFleetMissions', [])
