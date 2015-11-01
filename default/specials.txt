@@ -116,6 +116,27 @@ Special
     graphic = "icons/specials_huge/tidal_lock.png"
 
 Special
+    name = "TEMPORAL_ANOMALY_SPECIAL"
+    description = "TEMPORAL_ANOMALY_SPECIAL_DESC"
+    stealth = 0
+    spawnrate = 0.3
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Species
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Source
+                Focus type = "FOCUS_RESEARCH"
+            ]
+            effects = SetTargetResearch value = Value + Target.Population * 25 * [[RESEARCH_PER_POP]]
+    ]
+    graphic = "icons/specials_huge/temporal_anomaly.png"
+
+Special
     name = "ANCIENT_RUINS_SPECIAL"
     description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
     stealth = 0
