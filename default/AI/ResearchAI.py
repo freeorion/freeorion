@@ -2,6 +2,7 @@ from functools import partial
 import math
 from operator import attrgetter
 import random
+import traceback
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -10,7 +11,7 @@ import AIstate
 import ColonisationAI
 import ShipDesignAI
 import TechsListsAI
-from freeorion_tools import tech_is_complete, get_ai_tag_grade
+from freeorion_tools import tech_is_complete, get_ai_tag_grade, chat_human
 
 AIDependencies = Dep  # TODO: fix remaining references and remove this line
 
