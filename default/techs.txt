@@ -768,6 +768,7 @@ Tech
     researchturns = 5
     prerequisites = "LRN_NDIM_SUBSPACE"
     unlock = Item type = Building name = "BLD_SPATIAL_DISTORT_GEN"
+    graphic = "icons/tech/controlled_gravity_wells.png"
 
 Tech
     name = "LRN_QUANT_NET"
@@ -787,6 +788,7 @@ Tech
             ]
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
+    graphic = "icons/tech/quantum_networking.png"
 
 Tech
     name = "LRN_STELLAR_TOMOGRAPHY"
@@ -928,6 +930,7 @@ Tech
     researchturns = 8
     prerequisites = "LRN_TIME_MECH"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
+    graphic = "icons/tech/artificial_black_hole.png"
 
 Tech
     name = "LRN_COLLAPSER"
@@ -939,6 +942,7 @@ Tech
     researchturns = 8
     prerequisites = ["LRN_ART_BLACK_HOLE" "LRN_STELLAR_TOMOGRAPHY" "LRN_SPATIAL_DISTORT_GEN"]
     unlock = Item type = Building name = "BLD_BLACK_HOLE_COLLAPSER"
+    graphic = "icons/tech/black_hole_collapse.png"
 
 Tech
     name = "LRN_UNIF_CONC"
@@ -1088,6 +1092,7 @@ Tech
     researchturns = 10
     prerequisites = "GRO_NANO_CYBERNET"
     // Effects are located in species.txt
+    graphic = "icons/tech/cyborgs.png"
 
 Tech
     name = "GRO_GENETIC_MED"
@@ -1431,7 +1436,7 @@ Tech
         "PRO_SOL_ORB_GEN"
     ]
     unlock = Item type = Building name = "BLD_BLACK_HOLE_POW_GEN"
-    graphic = "icons/tech/artificial_black_hole.png"
+    graphic = "icons/tech/singularity_generation.png"
 
 Tech
     name = "PRO_ZERO_GEN"
@@ -2500,6 +2505,7 @@ Tech
                 OwnedBy empire = Source.Owner
             ]
             effects = SetMaxStructure value = Value + 5
+    graphic = "icons/tech/structural_integrity_fields.png"
 
 Tech
     name = "SHP_BASIC_DAM_CONT"
@@ -2843,7 +2849,7 @@ Tech
         Item type = ShipPart name = "SR_WEAPON_1_1"
         Item type = ShipPart name = "GT_TROOP_POD"
     ]
-    graphic = ""
+    graphic = "icons/tech/planetary_colonialism.png"
 
 Tech
     name = "SHP_WEAPON_1_2"

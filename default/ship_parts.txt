@@ -658,7 +658,7 @@ Part
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy empire = Source.Owner
-    icon = "icons/tech/habitation_domes.png"
+    icon = "icons/ship_parts/habitation_domes.png"
     
 Part
     name = "SP_DISTORTION_MODULATOR"

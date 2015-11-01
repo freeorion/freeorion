@@ -185,7 +185,7 @@ Article
     category = "CATEGORY_GAME_CONCEPTS"
     short_description = "OUTPOSTS_ARTICLE_SHORT_DESC"
     description = "OUTPOSTS_TEXT"
-    icon = "icons/tech/habitation_domes.png"
+    icon = "icons/ship_parts/habitation_domes.png"
 
 Article
     name = "EVACUATION_TITLE"
