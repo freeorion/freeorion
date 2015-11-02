@@ -5579,7 +5579,7 @@ SP_MISIORLA_DESC
 Un Misiorla est un mollusque doté de quatre tentacules flexibles et de deux paires de quatre yeux. Parfaitement adaptés à leur environnement natal, les Misiorla étaient capables de se mouvoir dans des mers de fluides acides et de flotter au sein d'épais nuages de brume. Ils étaient cependant considérés comme une espèce aux capacités très limitées, à peine digne de l'attention que leur portait une civilisation amie, du fait de leur absence totale de talent, que ce soit en terme de recherche ou d'industrie. Cet état de fait changea diamétralement lorsque qu'un Misiorla fut placé pour la première fois aux commandes d'un astronef. La nouvelle se répandit comme une traînée de poudre à travers toutes la galaxie: les Misiorla s'avéraient être les meilleurs pilotes de combat de l'univers. Les premiers mercenaires Misiorla furent recrutés pour piloter des chasseurs, les suivants se virent confier les commandes de croiseurs, mais leur potentiel réel se révéla entièrement lorsqu'un vaisseau amiral à la technologie dépassée, mais dirigé par un Misiorla, anéantit à lui seul toute la flotte d'un empire ennemi à la puissance pourtant bien supérieure.
 
 Structure sociale:
-Les Misiorlas vouent leur existence au pilotage d'astronef. Piloter est leur métier, leur sport, leur activité favorite. Leur société devient alors totalement dépendante des autres espèces, car ils sont incapables de s'organiser dès qu'il sagit d'une autre activité. Un Misiorla peut être recruté par quiconque offrant quelque chose à piloter ainsi que le carburant nécessaire.
+Les Misiorla vouent leur existence au pilotage d'astronef. Piloter est leur métier, leur sport, leur activité favorite. Leur société devient alors totalement dépendante des autres espèces, car ils sont incapables de s'organiser dès qu'il sagit d'une autre activité. Un Misiorla peut être recruté par quiconque offrant quelque chose à piloter ainsi que le carburant nécessaire.
 
 Raison de l'extinction:
 Dans une période trouble et peu référencée de l'Histoire, les Ultimes, une des civilisations de Précurseurs, décidèrent que les Misiorla pouvaient être une menace pour l'accomplissement du But Ultime.
@@ -5712,6 +5712,15 @@ TIDAL_LOCK_SPECIAL_DESC
 '''Augmente l'[[encyclopedia INDUSTRY_TITLE]] de la planète de 0.2 par Population si le Focus [[encyclopedia INDUSTRY_TITLE]] est activé, mais la Population est réduite selon la taille de la planète : Minuscule -1 ; Petite -2 ; Moyenne -3 ; Grande -4 ; Immense -5.
 
 Cette planète est en rotation synchrone lors de son orbite autour de son étoile. Les durées du jour et de l'année sont rigoureusement égales, ce qui signifie qu'une face de la planète est perpétuellement diurne tandis que l'autre est perpétuellement nocturne. La croissance de la population s'en trouve impactée, mais l'industrie tire profit des conditions stables à la surface de la planète.'''
+
+TEMPORAL_ANOMALY_SPECIAL
+Anomalie Temporelle
+
+TEMPORAL_ANOMALY_SPECIAL_DESC
+'''Augmente la [[encyclopedia RESEARCH_TITLE]] sur cette planète de 5 par Population si le Focus [[encyclopedia RESEARCH_TITLE]] est activé, mais la Population est réduite selon la taille de la planète : Minuscule -1 ; Petite -10 ; Moyenne -15 ; Grande -20 ; Immense -25.
+
+L'écoulement du temps sur cette planète est fortement perturbé. Des événements apparemment aléatoires provoquent soit une accélération soit un ralentissement de la vitesse du temps, troublant profondément le rythme biologique de tout être vivant et rendant quasiment impossible toute organisation sociale et productive. Une adaptabilité extrême et de grandes précautions sont requises afin d'établir une colonie sur cette planète.
+Cependant, une anomalie temporelle présente un fort potentiel pour la recherche scientifique, bien au-delà de ce qu'il est possible d'entreprendre sur les planètes conventionnelles.'''
 
 RESONANT_MOON_SPECIAL
 Lune Synchrone
@@ -10639,7 +10648,7 @@ GREAT_ASTEROID_INDUSTRY
 +	Bons Mineurs sur Astéroïdes: + 0.2 en [[encyclopedia INDUSTRY_TITLE]] par Population lorsque que le Focus Industrie est activé dans les systèmes abritant une ceinture d'astéroïdes colonisée par l'empire.
 
 LIGHT_SENSITIVE
-−	Sensibilité à la lumière: la Population est réduite dans les systèmes  abritant une Étoile Bleue, et dans une moindre mesure, une Étoile Blanche.
+−	Sensibilité à la lumière: la Population est réduite dans les systèmes abritant une Étoile Bleue, et dans une moindre mesure, une Étoile Blanche.
 #############################################################
 ####          A C C O U N T I N G    L A B E L S         ####
 #############################################################
