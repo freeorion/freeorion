@@ -62,6 +62,7 @@ BuildingType
                 Planet
                 OwnedBy empire = Source.Owner
             ]
+            priority = [[VERY_LATE_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value + 5
                 SetTargetIndustry value = Value + Target.Population / 2
@@ -101,6 +102,7 @@ BuildingType
                 Object id = Source.PlanetID
                 Planet
             ]
+            priority = [[EARLY_PRIORITY]]
             effects = SetTargetResearch value = Value + 5
 
         EffectsGroup    // Destroy cultural library when the species is no longer present
@@ -623,6 +625,7 @@ BuildingType
                 Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_II"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -637,6 +640,7 @@ BuildingType
                 Not OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             ]
             stackinggroup = "INDUSTRY_CENTER_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -648,6 +652,7 @@ BuildingType
             ]
             activation = OwnerHasTech name = "PRO_INDUSTRY_CENTER_III"
             stackinggroup = "INDUSTRY_CENTER_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 3 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/tech/industrial_centre_ii.png"
@@ -717,6 +722,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_INDUSTRY_EFFECT"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2.5 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -730,6 +736,7 @@ BuildingType
                 Not Stationary
             ]
             stackinggroup = "BLD_COLLECTIVE_NET_RESEARCH_EFFECT"
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetResearch value = Value + Target.Population * 2.5 * [[RESEARCH_PER_POP]]
     ]
     icon = "icons/building/psi-corps.png"
@@ -907,6 +914,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -944,6 +952,7 @@ BuildingType
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 2 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -962,6 +971,7 @@ BuildingType
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 1.0 * [[INDUSTRY_PER_POP]]
 
         EffectsGroup
@@ -980,6 +990,7 @@ BuildingType
                 ]
             ]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 0.5 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/miniature_sun.png"
@@ -1167,6 +1178,7 @@ BuildingType
                 PopulationCenter
                 OwnedBy empire = Source.Owner
             ]
+            priority = [[LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + Target.Population * 10 * [[INDUSTRY_PER_POP]]
         EffectsGroup
             scope = And [
@@ -1204,6 +1216,7 @@ BuildingType
                 OwnedBy empire = Source.Owner
                 HasSpecial name = "CONC_CAMP_MASTER_SPECIAL"
             ]
+            priority = 150 //after everything else is resolved
             effects = [
                 [[NEXT_TURN_POPULATION_REDUCE_BY(3)]]
                 SetIndustry value = Target.TargetIndustry
@@ -1266,7 +1279,8 @@ BuildingType
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
-            effects = SetTargetIndustry value = Value + Target.Population * 6 * [[INDUSTRY_PER_POP]]
+            priority = [[VERY_LATE_PRIORITY]]
+            effects = SetTargetIndustry value = Value + Target.Population * 5 * [[INDUSTRY_PER_POP]]
     ]
     icon = "icons/building/blackhole.png"
 
@@ -1607,6 +1621,7 @@ BuildingType
                 OwnedBy empire = Source.Owner
             ]
             stackinggroup = "GAS_GIANT_GEN_STACK"
+            priority = [[VERY_LATE_PRIORITY]]
             effects = SetTargetIndustry value = Value + 10
         EffectsGroup
             scope = Source
