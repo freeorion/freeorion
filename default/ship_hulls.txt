@@ -462,6 +462,7 @@ Hull
     icon = "icons/ship_hulls/logistics_facilitator_hull_small.png"
     graphic = "hulls_design/logistics_facilitator_hull.png"
 
+    
 Hull
     name = "SH_ASTEROID"
     description = "SH_ASTEROID_DESC"
@@ -495,14 +496,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -539,14 +533,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -590,14 +577,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -642,6 +622,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
+            accountinglabel = "ASTEROID_FIELD_STEALTH"
             effects = SetStealth value = Value + 40
 
         [[REGULAR_HULL_DETECTION]]
@@ -680,14 +661,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -801,14 +775,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-            
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         EffectsGroup
             scope = Source
             activation = Source
@@ -881,6 +848,7 @@ Hull
                 System 
                 Contains Planet type = Asteroids
             ]
+            accountinglabel = "ASTEROID_FIELD_STEALTH"
             effects = SetStealth value = Value + 40
 
         EffectsGroup
@@ -943,14 +911,7 @@ Hull
         ]
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = ContainedBy And [
-                System 
-                Contains Planet type = Asteroids
-            ]
-            effects = SetStealth value = Value + 20
-
+        [[ASTEROID_FIELD_STEALTH_BONUS]]
         [[REGULAR_HULL_DETECTION]]
         [[SCAVANGE_FUEL_UNOWNED]]
         [[UNOWNED_GOOD_VISION]]
@@ -3003,6 +2964,17 @@ Hull
     ]
     icon = ""
     graphic = ""
+    
+ASTEROID_FIELD_STEALTH_BONUS
+'''EffectsGroup
+            scope = Source
+            activation = ContainedBy And [
+                System 
+                Contains Planet type = Asteroids
+            ]
+            accountinglabel = "ASTEROID_FIELD_STEALTH"
+            effects = SetStealth value = Value + 20
+'''
 
 REGULAR_HULL_DETECTION
 '''EffectsGroup
