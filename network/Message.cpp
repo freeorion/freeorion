@@ -518,11 +518,16 @@ Message DispatchDesignIDMessage(int player_id, int new_id) {
                    boost::lexical_cast<std::string>(new_id), true);
 }
 
-Message HostSaveGameMessage(int sender, const std::string& filename)
-{ return Message(Message::SAVE_GAME, sender, Networking::INVALID_PLAYER_ID, filename); }
+Message HostSaveGameInitiateMessage(int sender, const std::string& filename)
+{ return Message(Message::SAVE_GAME_INITIATE, sender, Networking::INVALID_PLAYER_ID, filename); }
 
-Message ServerSaveGameMessage(int receiver, bool synchronous_response)
-{ return Message(Message::SAVE_GAME, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE, synchronous_response); }
+Message ServerSaveGameDataRequestMessage(int receiver, bool synchronous_response) {
+    return Message(Message::SAVE_GAME_DATA_REQUEST, Networking::INVALID_PLAYER_ID,
+                   receiver, DUMMY_EMPTY_MESSAGE, synchronous_response);
+}
+
+Message ServerSaveGameCompleteMessage(int receiver)
+{ return Message(Message::SAVE_GAME_COMPLETE, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE); }
 
 Message GlobalChatMessage(int sender, const std::string& msg)
 { return Message(Message::PLAYER_CHAT, sender, Networking::INVALID_PLAYER_ID, msg); }

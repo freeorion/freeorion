@@ -165,8 +165,7 @@ bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
     boost::posix_time::seconds timeout/* = boost::posix_time::seconds(5)*/)
 {
-    DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at "
-                           << ip_address;
+    DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
 
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
@@ -179,8 +178,8 @@ bool ClientNetworking::ConnectToServer(
     try {
         for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
             DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
-                                   << "  address: " << it->endpoint().address()
-                                   << "  port: " << it->endpoint().port();
+                          << "  address: " << it->endpoint().address()
+                          << "  port: " << it->endpoint().port();
 
             m_socket.close();
             boost::asio::deadline_timer timer(m_io_service);
@@ -214,7 +213,7 @@ bool ClientNetworking::ConnectToServer(
 
     } catch (const std::exception& e) {
         ErrorLogger() << "ClientNetworking::ConnectToServer unable to connect to server at "
-                               << ip_address << " due to exception: " << e.what();
+                      << ip_address << " due to exception: " << e.what();
     }
     return Connected();
 }
@@ -257,8 +256,7 @@ void ClientNetworking::SendMessage(Message message) {
         return;
     }
     if (TRACE_EXECUTION)
-        DebugLogger() << "ClientNetworking::SendMessage() : "
-                      << "sending message " << message;
+        DebugLogger() << "ClientNetworking::SendMessage() : sending message " << message;
     m_io_service.post(boost::bind(&ClientNetworking::SendMessageImpl, this, message));
 }
 
@@ -292,8 +290,7 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
     if (error) {
         if (!m_cancel_retries) {
             if (TRACE_EXECUTION)
-                DebugLogger() << "ClientNetworking::HandleConnection : connection "
-                                       << "error ... retrying";
+                DebugLogger() << "ClientNetworking::HandleConnection : connection error ... retrying";
             m_socket.async_connect(**it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                      it,
                                                      timer,
@@ -314,14 +311,13 @@ void ClientNetworking::CancelRetries()
 void ClientNetworking::HandleException(const boost::system::system_error& error) {
     if (error.code() == boost::asio::error::eof ||
         error.code() == boost::asio::error::connection_reset ||
-        error.code() == boost::asio::error::operation_aborted) {
-        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread "
-                               << "will be terminated due to disconnect exception \""
-                               << error.what() << "\"";
+        error.code() == boost::asio::error::operation_aborted)
+    {
+        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
+                      << "due to disconnect exception \"" << error.what() << "\"";
     } else {
-        ErrorLogger() << "ClientNetworking::NetworkingThread() : Networking thread "
-                               << "will be terminated due to unhandled exception \""
-                               << error.what() << "\"";
+        ErrorLogger() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
+                      << "due to unhandled exception \"" << error.what() << "\"";
     }
 }
 
@@ -348,8 +344,7 @@ void ClientNetworking::NetworkingThread() {
     boost::mutex::scoped_lock lock(m_mutex);
     m_connected = false;
     if (TRACE_EXECUTION)
-        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread "
-                               << "terminated.";
+        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
 
 void ClientNetworking::HandleMessageBodyRead(boost::system::error_code error,
@@ -366,25 +361,24 @@ void ClientNetworking::HandleMessageBodyRead(boost::system::error_code error,
     }
 }
 
-void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error,
-                                               std::size_t bytes_transferred)
-{
+void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred) {
     if (error) {
         throw boost::system::system_error(error);
-    } else {
-        assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE);
-        if (static_cast<int>(bytes_transferred) == HEADER_SIZE) {
-            BufferToHeader(m_incoming_header.c_array(), m_incoming_message);
-            m_incoming_message.Resize(m_incoming_header[4]);
-            boost::asio::async_read(
-                m_socket,
-                boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
-                boost::bind(&ClientNetworking::HandleMessageBodyRead,
-                            this,
-                            boost::asio::placeholders::error,
-                            boost::asio::placeholders::bytes_transferred));
-        }
+        return;
     }
+    assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE);
+    if (static_cast<int>(bytes_transferred) != HEADER_SIZE)
+        return;
+
+    BufferToHeader(m_incoming_header.c_array(), m_incoming_message);
+    m_incoming_message.Resize(m_incoming_header[4]);
+    boost::asio::async_read(
+        m_socket,
+        boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
+        boost::bind(&ClientNetworking::HandleMessageBodyRead,
+                    this,
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
 }
 
 void ClientNetworking::AsyncReadMessage() {
@@ -394,19 +388,19 @@ void ClientNetworking::AsyncReadMessage() {
                                         boost::asio::placeholders::bytes_transferred));
 }
 
-void ClientNetworking::HandleMessageWrite(boost::system::error_code error,
-                                          std::size_t bytes_transferred)
-{
+void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::size_t bytes_transferred) {
     if (error) {
         throw boost::system::system_error(error);
-    } else {
-        assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE + m_outgoing_header[4]);
-        if (static_cast<int>(bytes_transferred) == HEADER_SIZE + m_outgoing_header[4]) {
-            m_outgoing_messages.pop_front();
-            if (!m_outgoing_messages.empty())
-                AsyncWriteMessage();
-        }
+        return;
     }
+
+    assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE + m_outgoing_header[4]);
+    if (static_cast<int>(bytes_transferred) != HEADER_SIZE + m_outgoing_header[4])
+        return;
+
+    m_outgoing_messages.pop_front();
+    if (!m_outgoing_messages.empty())
+        AsyncWriteMessage();
 }
 
 void ClientNetworking::AsyncWriteMessage() {

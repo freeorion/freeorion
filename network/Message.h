@@ -65,7 +65,9 @@ public:
         LOBBY_CHAT,             ///< used to send chat messages in the multiplayer lobby
         LOBBY_EXIT,             ///< sent to server by clients when a player leaves the multiplayer lobby, or by server to clients when a player leaves the multiplayer lobby
         START_MP_GAME,          ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
-        SAVE_GAME,              ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
+        SAVE_GAME_INITIATE,     ///< sent to server (by the "host" client only) when a game is to be saved
+        SAVE_GAME_DATA_REQUEST, ///< sent to clients by the server when the game is being saved and the server needs save state info from clients
+        SAVE_GAME_COMPLETE,     ///< sent to clients (by the "host" client only) when a game has been saved and written to disk
         LOAD_GAME,              ///< sent to server (by the "host" client only) when a game is to be loaded
         GAME_START,             ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
         TURN_UPDATE,            ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
@@ -266,13 +268,19 @@ FO_COMMON_API Message RequestNewDesignIDMessage(int sender);
   * client who is waiting for a new design ID */
 FO_COMMON_API Message DispatchDesignIDMessage(int player_id, int new_id);
 
-/** creates a SAVE_GAME request message.  This message should only be sent by
+/** creates a SAVE_GAME_INITIATE request message.  This message should only be sent by
   * the host player.*/
-FO_COMMON_API Message HostSaveGameMessage(int sender, const std::string& filename);
+FO_COMMON_API Message HostSaveGameInitiateMessage(int sender, const std::string& filename);
 
-/** creates a SAVE_GAME data request message.  This message should only be
-    sent by the server to get game data from a client.*/
-FO_COMMON_API Message ServerSaveGameMessage(int receiver, bool synchronous_response);
+/** creates a SAVE_GAME_DATA_REQUEST data request message.  This message should
+    only be sent by the server to get game data from a client, or to respond to
+    the host player requesting a save be initiated. */
+FO_COMMON_API Message ServerSaveGameDataRequestMessage(int receiver, bool synchronous_response);
+
+/** creates a SAVE_GAME_COMPLETE complete message.  This message should only be
+    sent by the server to inform clients that the last initiated save has been
+    completed successfully. */
+FO_COMMON_API Message ServerSaveGameCompleteMessage(int receiver);
 
 /** creates a PLAYER_CHAT, which is sent to the server, and then from the server
   * to all players, including the originating player.*/

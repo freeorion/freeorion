@@ -143,7 +143,7 @@ namespace {
 }
 
 ////////////////////////////////////////////////////////////
-// MessageEventBase
+// Disconnection
 ////////////////////////////////////////////////////////////
 Disconnection::Disconnection(PlayerConnectionPtr& player_connection) :
     m_player_connection(player_connection)
@@ -1307,9 +1307,8 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (!server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
-        return discard_event();
         ErrorLogger() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << message.SendingPlayer()
-                               << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
+                      << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
         player_connection->SendMessage(ErrorMessage(UserStringNop("NON_HOST_SAVE_REQUEST_IGNORED"), false));
         return discard_event();
     }
@@ -1335,7 +1334,11 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
         bool host = server.m_networking.PlayerIsHost(player_id);
-        player->SendMessage(ServerSaveGameMessage(player_id, host));
+        player->SendMessage(ServerSaveGameDataRequestMessage(player_id, host));
+        if (host) {
+            // resend non-synchronous response to get normal response with actual save info in reply
+            player->SendMessage(ServerSaveGameDataRequestMessage(player_id, false));
+        }
         m_needed_reponses.insert(player_id);
     }
 }
@@ -1418,6 +1421,9 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
             DebugLogger() << "Catch std::exception&";
             SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_WRITE_SAVE_FILE"), false));
         }
+
+        // inform players that save is complete
+        //SendMessageToAllPlayers // todo: this
 
         DebugLogger() << "Finished ClientSaveData from within if.";
         context<WaitingForTurnEnd>().m_save_filename = "";
