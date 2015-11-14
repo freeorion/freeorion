@@ -153,13 +153,6 @@ namespace {
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Effect::EffectBase* (),
-            qi::locals<ValueRef::ValueRefBase< ::PlanetType>*>,
-            parse::skipper_type
-        > create_planet_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Effect::EffectBase* (),
             qi::locals<
                 std::string,
                 ValueRef::ValueRefBase<int>*,
