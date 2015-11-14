@@ -2097,7 +2097,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             ErrorLogger() << "GetEffectsAndTargets couldn't get HullType";
             continue;
         }
-        
+
         ships_by_hull_type[hull_type->Name()].push_back(ship);
 
         const std::vector<std::string>& parts = ship_design->Parts();
@@ -2110,7 +2110,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
                 ErrorLogger() << "GetEffectsAndTargets couldn't get PartType";
                 continue;
             }
-            
+
             ships_by_part_type[part].push_back(ship);
         }
     }
@@ -2330,11 +2330,11 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,
-                update_effect_accounting ? &m_effect_accounting_map : NULL,
-                only_meter_effects,
-                only_appearance_effects,
-                include_empire_meter_effects,
-                only_generate_sitrep_effects);
+                                   update_effect_accounting ? &m_effect_accounting_map : 0,
+                                   only_meter_effects,
+                                   only_appearance_effects,
+                                   include_empire_meter_effects,
+                                   only_generate_sitrep_effects);
         }
     }
 
