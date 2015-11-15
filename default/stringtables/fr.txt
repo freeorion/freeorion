@@ -10860,6 +10860,9 @@ Harcèlement xénophobe: Eaxaw
 ORGANIC_GROWTH
 Croissance Organique
 
+ASTEROID_FIELD_STEALTH
+Dissimulation Astéroïdale
+
 AGE_BONUS
 Âge
 
