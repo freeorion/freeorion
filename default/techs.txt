@@ -41,7 +41,7 @@ Category
 //CORRESPONDING MAX TROOP, DEFENSE, & SHIELD VALUES ARE SPECIFIED IN SPECIES.TXT
 
 Tech
-    Name = "DEF_ROOT_DEFENSE"
+    name = "DEF_ROOT_DEFENSE"
     description = "DEF_ROOT_DEFENSE_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
@@ -54,7 +54,7 @@ Tech
 CANDIDATE_BATTLE_CHECK
 '''Turn low = LocalCandidate.System.LastTurnBattleHere + 1'''
 Tech
-    Name = "DEF_GARRISON_1"
+    name = "DEF_GARRISON_1"
     description = "DEF_GARRISON_1_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Application
@@ -65,7 +65,7 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name = "DEF_GARRISON_2"
+    name = "DEF_GARRISON_2"
     description = "DEF_GARRISON_2_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Refinement
@@ -84,7 +84,7 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name = "DEF_GARRISON_3"
+    name = "DEF_GARRISON_3"
     description = "DEF_GARRISON_3_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Refinement
@@ -103,7 +103,7 @@ Tech
     graphic = "icons/tech/troops.png"
     
 Tech
-    Name = "DEF_GARRISON_4"
+    name = "DEF_GARRISON_4"
     description = "DEF_GARRISON_4_DESC"
     short_description = "TROOPS_SHORT_DESC"
     techtype = Refinement
@@ -2402,7 +2402,8 @@ Tech
     graphic = "icons/ship_hulls/ravenous_hull_small.png"
     
         
-Tech    name = "SHP_SENT_HULL"
+Tech
+    name = "SHP_SENT_HULL"
     description = "SHP_SENT_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
     techtype = Application
@@ -2838,7 +2839,7 @@ Tech
 //#
 
 Tech
-    Name ="SHP_ROOT_AGGRESSION"
+    name = "SHP_ROOT_AGGRESSION"
     description = "SHP_ROOT_AGGRESSION_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
