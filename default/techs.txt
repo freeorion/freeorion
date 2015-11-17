@@ -53,6 +53,8 @@ Tech
 
 CANDIDATE_BATTLE_CHECK
 '''Turn low = LocalCandidate.System.LastTurnBattleHere + 1'''
+
+
 Tech
     name = "DEF_GARRISON_1"
     description = "DEF_GARRISON_1_DESC"
