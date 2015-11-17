@@ -111,6 +111,8 @@ public:
     /** Sets how much to scroll when scrolled using the mousewheel. */
     void           SetVScrollWheelIncrement(unsigned int increment);
     void           SetHScrollWheelIncrement(unsigned int increment);
+
+    virtual void   AcceptPastedText(const std::string& text);
     //@}
 
     /** A sentinel value that indicates that there is no limit on the number

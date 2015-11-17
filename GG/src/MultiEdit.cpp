@@ -1270,3 +1270,13 @@ void MultiEdit::VScrolled(int upper, int lower, int range_upper, int range_lower
 
 void MultiEdit::HScrolled(int upper, int lower, int range_upper, int range_lower)
 { m_first_col_shown = X(upper); }
+
+void MultiEdit::AcceptPastedText(const std::string& text)
+{
+    // Edit doesn't know about the MultiEdit style, in which read-only is
+    // encoded, so check it here before passing to the default behaviour
+    if (m_style & MULTI_READ_ONLY)
+        return;
+    Edit::AcceptPastedText(text);
+}
+
