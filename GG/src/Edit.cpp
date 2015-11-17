@@ -197,6 +197,7 @@ void Edit::DeselectAll()
 
 void Edit::SelectRange(CPSize from, CPSize to)
 {
+    //std::cout << "Selecting range from: " << from << "  to: " << to << std::endl << std::flush;
     if (from < to) {
         m_cursor_pos.first = std::max(CP0, from);
         m_cursor_pos.second = std::min(to, Length());
@@ -332,9 +333,11 @@ void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 
     X xpos = ScreenToClient(pt).x; // x coord for mouse position within text space
     CPSize idx = CharIndexOf(xpos);
+    //std::cout << "CharIndexOf mouse x-pos: " << xpos << std::endl << std::flush;
+
     if (m_in_double_click_mode) {
-        std::pair<CPSize, CPSize> word_indices =
-            GetDoubleButtonDownDragWordIndices(idx);
+        std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownDragWordIndices(idx);
+
         if (word_indices.first == word_indices.second) {
             if (idx < m_double_click_cursor_pos.first) {
                 m_cursor_pos.second = idx;
@@ -360,6 +363,8 @@ void Edit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
         if (xpos < 0 || ClientSize().x < xpos) // if we're dragging past the currently visible text
             AdjustView();
     }
+
+    //std::cout << "LDrag selected from: " << m_cursor_pos.first << "  to: " << m_cursor_pos.second << std::endl << std::flush;
 }
 
 void Edit::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)

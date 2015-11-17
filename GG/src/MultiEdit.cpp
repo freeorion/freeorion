@@ -508,16 +508,15 @@ CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
     if (lines[row].Empty())
         return CPSize(lines[row-1].char_data.back().code_point_index);
 
-    // if at start of line, just go with that
+    // if at start of (non-empty) line, return first character of that line
     if (char_idx == CP0)
-        return CP0;
+        return CPSize(lines[row].char_data.front().code_point_index);
 
     const Font::LineData& line = lines[row];
 
     // if at end of line, just go with that
-    if (char_idx >= line.char_data.size()) {
+    if (char_idx >= line.char_data.size())
         return line.char_data.back().code_point_index;
-    }
 
     // "rewind" the first position to encompass all tag text that is
     // associated with that position
@@ -720,6 +719,8 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     Pt click_pos = ScreenToClient(pt);
     m_cursor_end = CharAt(click_pos);
 
+    //std::cout << "MultiEdit::LDrag at row: " << m_cursor_end.first << ", col: " << m_cursor_end.second << std::endl << std::flush;
+
     if (m_in_double_click_mode) {
         // if drag-selecting after a double click, select full words
         std::pair<CPSize, CPSize> initial_indices = DoubleButtonDownCursorPos();
@@ -753,6 +754,9 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
+
+    //std::cout << "MultiEdit::LDrag cursor covers code points: " << begin_cursor_pos << " to " << end_cursor_pos << std::endl << std::flush;
+
     this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
 
     // if dragging past the currently visible text, adjust
