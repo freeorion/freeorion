@@ -69,6 +69,8 @@ std::string TextControl::Text(CPSize from, CPSize to) const
     CPSize low = std::max(CP0, std::min(from, to));
     CPSize high = std::min(Length(), std::max(from, to));
 
+    //std::cout << "low: " << low << "  high: " << high << std::endl << std::flush;
+
     std::pair<std::size_t, CPSize> low_pos = LinePositionOf(low, GetLineData());
     std::pair<std::size_t, CPSize> high_pos = LinePositionOf(high, GetLineData());
 
@@ -78,7 +80,15 @@ std::string TextControl::Text(CPSize from, CPSize to) const
     std::string::const_iterator low_it = m_text.begin() + Value(low_string_idx);
     std::string::const_iterator high_it = m_text.begin() + Value(high_string_idx);
 
-    return std::string(low_it, high_it);
+    try {
+        //std::cout << "dist begin to low: " << std::distance(m_text.begin(), low_it) << std::endl << std::flush;
+        //std::cout << "dist low to high: " << std::distance(low_it, high_it) << std::endl << std::flush;
+        //std::cout << "dist high to end: " << std::distance(high_it, m_text.end()) << std::endl << std::flush;
+
+        return std::string(low_it, high_it);
+    } catch (...) {
+        return "";
+    }
 }
 
 Flags<TextFormat> TextControl::GetTextFormat() const
