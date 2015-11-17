@@ -561,7 +561,7 @@ void Ship::ResetTargetMaxUnpairedMeters() {
 
     UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
     UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
-    UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
+    UniverseObject::GetMeter(METER_STEALTH)->ResetCurrent();
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
        if (it->first.first == METER_CAPACITY) {
