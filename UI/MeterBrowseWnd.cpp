@@ -478,7 +478,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     std::string     name = ship->Name();
     const std::string& label_template = UserString("TT_SHIP_PART");
-    
+
     // for each weapon part, get its damage meter value
     for (std::vector<std::string>::const_iterator part_it = parts.begin();
          part_it != parts.end(); ++part_it)
@@ -488,7 +488,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
-        if (!(part_class == PC_SHORT_RANGE || part_class == PC_POINT_DEFENSE || part_class == PC_MISSILES || part_class == PC_FIGHTERS))
+        if (!(part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTERS))
             continue;
 
         // get the attack power for each weapon part
@@ -496,7 +496,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         std::string text = boost::io::str(FlexibleFormat(label_template)
                                 % name
                                 % UserString(part_name));
-        
+
         GG::Label* label = new CUILabel(text, GG::FORMAT_RIGHT);
         label->MoveTo(GG::Pt(GG::X0, top));
         label->Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH, m_row_height));

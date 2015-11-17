@@ -184,7 +184,7 @@ namespace {
         std::vector<int> results;
         for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); part_it++){
             const PartType* part = GetPartType(*part_it);
-            if (part && part->Class() == PC_SHORT_RANGE) { // TODO: handle other weapon classes when they are implemented
+            if (part && part->Class() == PC_DIRECT_WEAPON) { // TODO: handle other weapon classes when they are implemented
                 results.push_back(part->Capacity());
             }
         }

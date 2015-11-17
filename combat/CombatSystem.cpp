@@ -526,11 +526,8 @@ namespace {
             // get the attack power for each weapon part
             float part_attack = 0.0f;
 
-            if (part_class == PC_SHORT_RANGE    || part_class == PC_POINT_DEFENSE ||
-                part_class == PC_MISSILES       || part_class == PC_FIGHTERS)
-            {
+            if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTERS)
                 part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
-            }
 
             if (part_attack > 0.0f)
                 retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
@@ -932,7 +929,7 @@ namespace {
                 }
             }
         } else if (attack_planet) { // treat planet defenses as short range
-            weapons.push_back(PartAttackInfo(PC_SHORT_RANGE, "", attack_planet->CurrentMeterValue(METER_DEFENSE)));
+            weapons.push_back(PartAttackInfo(PC_DIRECT_WEAPON, "", attack_planet->CurrentMeterValue(METER_DEFENSE)));
         }
         return weapons;
     }

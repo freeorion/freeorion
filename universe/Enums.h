@@ -235,10 +235,8 @@ GG_ENUM(ResourceType,
 /** Types "classes" of ship parts */
 GG_ENUM(ShipPartClass,
     INVALID_SHIP_PART_CLASS = -1,
-    PC_SHORT_RANGE,         ///< short range direct weapons, good against ships, bad against fighters
-    PC_MISSILES,            ///< long range indirect weapons, good against ships, bad against fighters
-    PC_FIGHTERS,            ///< self-propelled long-range weapon platforms, good against fighters and/or ships
-    PC_POINT_DEFENSE,       ///< short range direct weapons, good against fighters or incoming missiles, bad against ships
+    PC_DIRECT_WEAPON,       ///< direct-fire weapons
+    PC_FIGHTERS,            ///< self-propelled platforms that function independently of ships in combat, but don't exist on the main game map
     PC_SHIELD,              ///< energy-based defense
     PC_ARMOUR,              ///< defensive material on hull of ship
     PC_TROOPS,              ///< ground troops, used to conquer planets

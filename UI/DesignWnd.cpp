@@ -87,10 +87,7 @@ namespace {
         if (!part_type)
             return 0.0f;
         switch (part_type->Class()) {
-            case PC_SHORT_RANGE:
-            case PC_POINT_DEFENSE:
-            case PC_MISSILES:
-            case PC_FIGHTERS:
+            case PC_DIRECT_WEAPON:
             case PC_SHIELD:
             case PC_DETECTION:
             case PC_STEALTH:
@@ -102,6 +99,9 @@ namespace {
             case PC_RESEARCH:
             case PC_INDUSTRY:
             case PC_TRADE:
+                return part_type->Capacity();
+                break;
+            case PC_FIGHTERS:   // fighters may have additional stats, so might need to do something special for their "main" stat that just capacity...
                 return part_type->Capacity();
                 break;
             case PC_GENERAL:

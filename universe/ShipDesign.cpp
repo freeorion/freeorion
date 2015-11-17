@@ -184,14 +184,15 @@ namespace {
 void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
     if (m_capacity != 0) {
         switch (m_class) {
-        case PC_SHORT_RANGE:
-        case PC_POINT_DEFENSE:
-        case PC_MISSILES:
-        case PC_FIGHTERS:
         case PC_COLONY:
         case PC_TROOPS:
             m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
             break;
+        case PC_DIRECT_WEAPON:
+        case PC_FIGHTERS: {
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
+            break;
+        }
         case PC_SHIELD:
             m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     m_capacity));
             break;
@@ -647,13 +648,27 @@ float ShipDesign::AdjustedAttack(float shield) const {
     // accumulate attack stat from all weapon parts in design
     const PartTypeManager& manager = GetPartTypeManager();
 
+    // TODO: get empire fighter damage, adjusted for specified shield strength
+    float empire_fighter_damage = 4.0f - shield;
+
     float total_attack = 0.0f;
     std::vector<std::string> all_parts = Parts();
     for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
         const PartType* part = manager.GetPartType(*it);
-        if (part && (part->Class() == PC_SHORT_RANGE || part->Class() == PC_POINT_DEFENSE ||
-                     part->Class() == PC_MISSILES    || part->Class() == PC_FIGHTERS))
-        { total_attack += std::max(0.0f, static_cast<float>(part->Capacity()) - shield); }
+        if (!part)
+            continue;
+        ShipPartClass part_class = part->Class();
+
+        // get the attack power for each weapon part
+        if (part_class == PC_DIRECT_WEAPON) {
+            float part_attack = part->Capacity();
+            if (part_attack > shield)
+                total_attack += part_attack - shield;
+        } else if (part_class == PC_FIGHTERS && empire_fighter_damage > 0.0f) {
+            // each fighter (number determined by capacity) shoots with the empire fighter strength stat
+            float all_fighters_combined_attack = empire_fighter_damage * part->Capacity();
+            total_attack += all_fighters_combined_attack;
+        }
     }
     return total_attack;
 }
@@ -686,8 +701,7 @@ std::vector<std::string> ShipDesign::Weapons() const {
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
-        if (part_class == PC_SHORT_RANGE    || part_class == PC_MISSILES ||
-            part_class == PC_FIGHTERS       || part_class == PC_POINT_DEFENSE)
+        if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTERS)
         { retval.push_back(part_name); }
     }
     return retval;
@@ -831,10 +845,8 @@ void ShipDesign::BuildStatCaches() {
             m_producible = false;
 
         switch (part->Class()) {
-        case PC_SHORT_RANGE:
-        case PC_MISSILES:
-        case PC_FIGHTERS:
-        case PC_POINT_DEFENSE: {
+        case PC_DIRECT_WEAPON:
+        case PC_FIGHTERS: {
             m_is_armed = true;
             break;
         }
@@ -1106,6 +1118,7 @@ int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
         return ShipDesign::INVALID_DESIGN_ID;
     return it->second;
 }
+
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //

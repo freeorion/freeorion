@@ -90,8 +90,8 @@ namespace parse {
                         //    [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
                         //  )
                         > ( parse::label(Class_token) >
-                            ( tok.ShortRange_       | tok.Missiles_     | tok.Fighters_
-                            | tok.PointDefense_     | tok.Shield_       | tok.Armour_
+                            ( tok.ShortRange_       | tok.Fighters_     | tok.Shield_
+                            | tok.Armour_
                             | tok.Troops_           | tok.Detection_    | tok.Stealth_
                             | tok.Fuel_             | tok.Colony_       | tok.Speed_
                             | tok.General_          | tok.Bombard_      | tok.Research_

@@ -3047,10 +3047,8 @@ void Empire::CheckProductionProgress() {
                     // later clamped, they will equal the max meter after effects
                     // have been applied, letting new ships start with maxed
                     // everything that is traced with an associated max meter.
-                    ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-                    ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-                    ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
-                    ship->BackPropegateMeters();
+                    ship->SetShipMetersToMax();
+
 
                     ship->Rename(NewShipName());
 
