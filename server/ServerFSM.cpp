@@ -928,9 +928,12 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
 
     // if all expected players have connected, proceed to start new or load game
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
+        DebugLogger() << "WaitingForSPGameJoiners::react(const CheckStartConditions& u) : have all " << m_num_expected_players << " expected players connected.";
         if (m_single_player_setup_data->m_new_game) {
+            DebugLogger() << "Initializing new SP game...";
             server.NewSPGameInit(*m_single_player_setup_data);
         } else {
+            DebugLogger() << "Loading SP game save file: " << m_single_player_setup_data->m_filename;
             try {
                 LoadGame(m_single_player_setup_data->m_filename,            *m_server_save_game_data,
                          m_player_save_game_data,   GetUniverse(),          Empires(),
@@ -941,8 +944,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
                 return transit<Idle>();
             }
 
-            server.LoadSPGameInit(m_player_save_game_data,
-                                  m_server_save_game_data);
+            server.LoadSPGameInit(m_player_save_game_data, m_server_save_game_data);
         }
         return transit<PlayingGame>();
     }
@@ -1056,10 +1058,13 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
     ServerApp& server = Server();
 
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
-        if (m_player_save_game_data.empty())
+        if (m_player_save_game_data.empty()) {
+            DebugLogger() << "Initializing new MP game...";
             server.NewMPGameInit(*m_lobby_data);
-        else
+        } else {
+            DebugLogger() << "Initializing loaded MP game";
             server.LoadMPGameInit(*m_lobby_data, m_player_save_game_data, m_server_save_game_data);
+        }
         return transit<PlayingGame>();
     }
 
