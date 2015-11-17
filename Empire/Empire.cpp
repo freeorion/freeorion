@@ -3048,7 +3048,7 @@ void Empire::CheckProductionProgress() {
                     // have been applied, letting new ships start with maxed
                     // everything that is traced with an associated max meter.
                     ship->SetShipMetersToMax();
-
+                    ship->BackPropegateMeters();
 
                     ship->Rename(NewShipName());
 
