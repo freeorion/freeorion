@@ -5,10 +5,11 @@
 
 CUILinkTextBlock::CUILinkTextBlock(const std::string& str, const boost::shared_ptr<GG::Font>& font,
                                    GG::Flags<GG::TextFormat> format, const GG::Clr& color,
-                                   GG::Flags<GG::WndFlag> flags)
-: GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
-m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY |
-    GG::MULTI_LEFT | GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL | GG::MULTI_NO_VSCROLL))
+                                   GG::Flags<GG::WndFlag> flags) :
+    GG::BlockControl(GG::X0, GG::Y0, GG::X1, flags | GG::INTERACTIVE),
+    m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_LEFT |
+                                              GG::MULTI_LINEWRAP | GG::MULTI_TOP | GG::MULTI_NO_HSCROLL |
+                                              GG::MULTI_NO_VSCROLL))
 {
     AttachChild(m_link_text);
 
@@ -16,8 +17,7 @@ m_link_text(new CUILinkTextMultiEdit(str, GG::MULTI_WORDBREAK | GG::MULTI_READ_O
     m_link_text->SetInteriorColor(GG::CLR_ZERO);
 }
 
-GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width)
-{
+GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width) {
     m_link_text->Resize(GG::Pt(width, GG::Y1));
     // Resize to have enough place to show the whole text.
     GG::Pt size = m_link_text->FullSize();
@@ -32,9 +32,8 @@ GG::Pt CUILinkTextBlock::SetMaxWidth(GG::X width)
     return size;
 }
 
-CUILinkTextMultiEdit& CUILinkTextBlock::Text() {
-    return *m_link_text;
-}
+CUILinkTextMultiEdit& CUILinkTextBlock::Text()
+{ return *m_link_text; }
 
 GG::BlockControl* CUILinkTextBlock::Factory::CreateFromTag(
     const std::string& tag, const GG::RichText::TAG_PARAMS& params, const std::string& content,
