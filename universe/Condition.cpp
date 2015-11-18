@@ -8509,7 +8509,7 @@ bool Condition::Described::operator==(const Condition::ConditionBase& rhs) const
 }
 
 void Condition::Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
-                          SearchDomain search_domain/* = NON_MATCHES*/) const
+                                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     TemporaryPtr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);

@@ -1727,7 +1727,7 @@ namespace {
         //DebugLogger() << "Generated new target set!";
         return *target_set; 
     }
-    
+
     void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator ()()
     {
         ScopedTimer timer("StoreTargetsAndCausesOfEffectsGroups");

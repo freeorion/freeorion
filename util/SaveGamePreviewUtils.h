@@ -22,15 +22,15 @@
 struct FO_COMMON_API SaveGamePreviewData {
     /// Initialize with unknown markers.
     SaveGamePreviewData();
-    
+
     /// Checks that this is a valid preview
     bool Valid() const;
-    
+
     /// A marker for the presence of the header
     static const short PREVIEW_PRESENT_MARKER = 0xDA;
     /// This should always contain PREVIEW_PRESENT_MARKER
     short magic_number;
-    
+
     /// The name of the hosting player, or the single human player in single player games
     std::string main_player_name;
     /// The name of the empire of the main player
@@ -45,15 +45,15 @@ struct FO_COMMON_API SaveGamePreviewData {
     short number_of_empires;
     /// The number of human players in the game
     short number_of_human_players;
-    
+
     template <class Archive>
-    void serialize ( Archive& ar, unsigned int version );
+    void serialize (Archive& ar, unsigned int version);
 };
 
 BOOST_CLASS_VERSION(SaveGamePreviewData, 1);
 
 /// Stores all aggregated information about a save file
-struct FO_COMMON_API FullPreview{
+struct FO_COMMON_API FullPreview {
     /// The name of the file
     std::string filename;
     /// The preview data from the file
@@ -89,8 +89,10 @@ FO_COMMON_API std::string ColumnInPreview(const FullPreview& full, const std::st
 /// \param path Directory where to look for files
 /// \param extension File name extension to filter by
 /// \param [out] previews The previews will be put here
-FO_COMMON_API void LoadSaveGamePreviews ( const boost::filesystem::path& path, const std::string& extension, std::vector<FullPreview>& previews );
+FO_COMMON_API void LoadSaveGamePreviews(const boost::filesystem::path& path, const std::string& extension,
+                                        std::vector<FullPreview>& previews);
 
 /// If path is inside directory, returns true
 FO_COMMON_API bool IsInside(const boost::filesystem::path& path, const boost::filesystem::path& directory);
+
 #endif // SAVEGAMEPREVIEW_H

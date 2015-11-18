@@ -817,9 +817,11 @@ void SaveFileDialog::UpdatePreviewList() {
     DebugLogger() << "SaveFileDialog::UpdatePreviewList";
 
     m_file_list->Clear();
+
     // Needed because there is a bug in ListBox, where the headers
     // never resize to less wide
     m_file_list->ResetColHeaders();
+
     // If no browsing, no reloading
     if (!m_server_previews) {
         m_file_list->LoadSaveGamePreviews(GetDirPath(), m_extension);
@@ -834,8 +836,7 @@ void SaveFileDialog::UpdatePreviewList() {
         row->push_back(new CUILabel(SERVER_LABEL));
         m_remote_dir_dropdown->Insert(row);
 
-        for (std::vector<std::string>::const_iterator
-             it = preview_information.subdirectories.begin();
+        for (std::vector<std::string>::const_iterator it = preview_information.subdirectories.begin();
              it != preview_information.subdirectories.end(); ++it)
         {
             GG::DropDownList::Row* row = new GG::DropDownList::Row();
