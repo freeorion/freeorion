@@ -1314,6 +1314,9 @@ void FleetDataPanel::DragDropLeave()
 { Select(false); }
 
 void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
+    // only used when FleetDataPanel sets independently in the FleetWnd, not
+    // in a FleetListBox
+
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
     TemporaryPtr<const Fleet> this_panel_fleet = GetFleet(m_fleet_id);
 
@@ -1358,6 +1361,9 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
 }
 
 void FleetDataPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    // only used when FleetDataPanel sets independently in the FleetWnd, not
+    // in a FleetListBox
+
     DebugLogger() << "FleetWnd::AcceptDrops with " << wnds.size() << " wnds at pt: " << pt;
     std::vector<int> ship_ids;
     ship_ids.reserve(wnds.size());
@@ -1712,8 +1718,9 @@ public:
             return;
 
         // extract drop target fleet from row under drop point
+        const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(*row);
         TemporaryPtr<const Fleet> target_fleet;
-        if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(*row))
+        if (fleet_row)
             target_fleet = GetFleet(fleet_row->FleetID());
 
         // loop through dropped Wnds, checking if each is a valid ship or fleet.  this doesn't
@@ -1721,6 +1728,9 @@ public:
         // independently.  actual drops will probably only accept one or the other, not a mixture
         // of fleets and ships being dropped simultaneously.
         for (DropsAcceptableIter it = first; it != last; ++it) {
+            if (it->first == fleet_row)
+                continue;   // can't drop onto self
+
             // for either of fleet or ship being dropped, check if merge or transfer is valid.
             // if any of the nested if's fail, the default rejection of the drop will remain set
             if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
