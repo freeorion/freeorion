@@ -125,6 +125,19 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_
     m_text(0)
 {}
 
+WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_drop_wnds) :
+    m_type(type),
+    m_point(pt),
+    m_key(GGK_UNKNOWN),
+    m_key_code_point(0),
+    m_mod_keys(),
+    m_wheel_move(0),
+    m_ticks(0),
+    m_timer(0),
+    m_text(0),
+    m_dropped_wnds(drag_drop_wnds)
+{}
+
 WndEvent::WndEvent(EventType type, Key key, boost::uint32_t code_point, Flags<ModKey> mod_keys) :
     m_type(type),
     m_key(key),
@@ -148,16 +161,15 @@ WndEvent::WndEvent(EventType type, unsigned int ticks, Timer* timer) :
 {}
 
 WndEvent::WndEvent (WndEvent::EventType type, const std::string* text):
-m_type(type),
-m_key(GGK_UNKNOWN),
-m_key_code_point(0),
-m_mod_keys(),
-m_wheel_move(0),
-m_ticks(0),
-m_timer(0),
-m_text(text){
-
-}
+    m_type(type),
+    m_key(GGK_UNKNOWN),
+    m_key_code_point(0),
+    m_mod_keys(),
+    m_wheel_move(0),
+    m_ticks(0),
+    m_timer(0),
+    m_text(text)
+{}
 
 WndEvent::WndEvent(EventType type) :
     m_type(type),
@@ -193,6 +205,9 @@ int WndEvent::WheelMove() const
 
 const std::map<Wnd*, Pt>& WndEvent::DragDropWnds() const
 { return m_drag_drop_wnds; }
+
+std::vector<Wnd*>& WndEvent::GetDragDropWnds() const
+{ return m_dropped_wnds; }
 
 unsigned int WndEvent::Ticks() const
 { return m_ticks; }

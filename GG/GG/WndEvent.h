@@ -99,6 +99,7 @@ public:
         DragDropEnter,
         DragDropHere,
         DragDropLeave,
+        DragDroppedOn,
         KeyPress,
         KeyRelease,
         TextInput,
@@ -128,6 +129,10 @@ public:
     WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
 
     /** Constructs an WndEvent that is used to invoke a function taking
+        parameters (const std::vector<Wnd*>& wnds, const Pt& pt). */
+    WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_drop_wnds);
+
+    /** Constructs an WndEvent that is used to invoke a function taking
         parameters (Key key, Flags<ModKey> mod_keys), eg KeyPress(). */
     WndEvent(EventType type, Key key, boost::uint32_t code_point, Flags<ModKey> mod_keys);
 
@@ -154,19 +159,21 @@ public:
     unsigned int              Ticks() const;        ///< returns the number of ticks represented by the WndEvent. if any
     Timer*                    GetTimer() const;     ///< returns the Timer represented by the WndEvent. if any
     const std::string*        GetText() const;      ///< returns the utf8 text represented by the WndEvent, if any
+    std::vector<Wnd*>&        GetDragDropWnds() const;
 
 private:
-    EventType          m_type;
-    Pt                 m_point;
-    Key                m_key;
-    boost::uint32_t    m_key_code_point;
-    Flags<ModKey>      m_mod_keys;
-    Pt                 m_drag_move;
-    int                m_wheel_move;
-    std::map<Wnd*, Pt> m_drag_drop_wnds;
-    unsigned int       m_ticks;
-    Timer*             m_timer;
-    const std::string* m_text;
+    EventType                   m_type;
+    Pt                          m_point;
+    Key                         m_key;
+    boost::uint32_t             m_key_code_point;
+    Flags<ModKey>               m_mod_keys;
+    Pt                          m_drag_move;
+    int                         m_wheel_move;
+    std::map<Wnd*, Pt>          m_drag_drop_wnds;
+    unsigned int                m_ticks;
+    Timer*                      m_timer;
+    const std::string*          m_text;
+    mutable std::vector<Wnd*>   m_dropped_wnds;
 };
 
 } // namespace GG

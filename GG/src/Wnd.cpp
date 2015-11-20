@@ -1097,6 +1097,9 @@ void Wnd::HandleEvent(const WndEvent& event)
         case WndEvent::DragDropLeave:
             DragDropLeave();
             break;
+        case WndEvent::DragDroppedOn:
+            AcceptDrops(event.GetDragDropWnds(), event.Point());
+            break;
         case WndEvent::MouseWheel:
             MouseWheel(event.Point(), event.WheelMove(), event.ModKeys());
             break;

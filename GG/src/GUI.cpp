@@ -541,8 +541,8 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                 std::vector<Wnd*> accepted_wnds;
                 std::vector<const Wnd*> unaccepted_wnds;
                 for (std::map<const Wnd*, bool>::iterator it = m_drag_drop_wnds_acceptable.begin();
-                     it != m_drag_drop_wnds_acceptable.end();
-                     ++it) {
+                     it != m_drag_drop_wnds_acceptable.end(); ++it)
+                {
                     if (it->second)
                         accepted_wnds.push_back(const_cast<Wnd*>(it->first));
                     else
@@ -552,8 +552,9 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                     m_drag_drop_originating_wnd->CancellingChildDragDrop(unaccepted_wnds);
                     m_drag_drop_originating_wnd->ChildrenDraggedAway(accepted_wnds, m_curr_wnd_under_cursor);
                 }
-                if (!accepted_wnds.empty())
-                    m_curr_wnd_under_cursor->AcceptDrops(accepted_wnds, pos);
+                if (!accepted_wnds.empty()) {
+                    m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDroppedOn, pos, accepted_wnds));
+                }
             }
         }
     }

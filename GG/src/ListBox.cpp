@@ -1472,6 +1472,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::DragDropEnter:
     case WndEvent::DragDropHere:
     case WndEvent::DragDropLeave:
+    case WndEvent::DragDroppedOn:
         if (w == this)
             return false;
         HandleEvent(event);

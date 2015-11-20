@@ -1102,6 +1102,9 @@ public:
 
     mutable boost::signals2::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
 
+protected:
+    virtual bool        EventFilter(GG::Wnd* w, const GG::WndEvent& event);
+
 private:
     void                AggressionToggleButtonPressed();
 
@@ -1158,6 +1161,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
+        //icon->InstallEventFilter(this);
         AttachChild(icon);
 
         if (fleet->HasArmedShips() || !fleet->HasTroopShips()) {
@@ -1181,6 +1185,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
+        //icon->InstallEventFilter(this);
         AttachChild(icon);
 
         // stat icon for fleet shields
@@ -1188,6 +1193,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
+        //icon->InstallEventFilter(this);
         AttachChild(icon);
 
         // stat icon for fleet fuel
@@ -1195,6 +1201,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_FUEL_SUMMARY"));
+        //icon->InstallEventFilter(this);
         AttachChild(icon);
 
         // stat icon for fleet speed
@@ -1202,6 +1209,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_SPEED, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_SPEED_SUMMARY"));
+        //icon->InstallEventFilter(this);
         AttachChild(icon);
 
 
@@ -1283,6 +1291,12 @@ void FleetDataPanel::Render() {
 }
 
 void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys) {
+    if (!m_new_fleet_drop_target && Parent()) {
+        // normally the containing row (or the listbox that contains that) will
+        // handle drag-drop related things
+        ForwardEventToParent();
+    }
+
     if (Disabled()) {
         Select(false);
         return;
@@ -1314,6 +1328,22 @@ void FleetDataPanel::DragDropLeave()
 { Select(false); }
 
 void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
+    if (!m_new_fleet_drop_target && Parent()) {
+        // normally the containing row (or the listbox that contains that) will
+        // handle drag-drops
+        const GG::Wnd* parent = Parent(); // a layout?
+        if (parent) {
+            const GG::Wnd* gp = parent->Parent();   // should be the row
+            if (gp) {
+                const GG::Wnd* ggp = gp->Parent();  // should be the FleetListBox
+                if (ggp) {
+                    ggp->DropsAcceptable(first, last, pt);
+                    return;
+                }
+            }
+        }
+    }
+
     // only used when FleetDataPanel sets independently in the FleetWnd, not
     // in a FleetListBox
 
@@ -1361,8 +1391,26 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
 }
 
 void FleetDataPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
-    // only used when FleetDataPanel sets independently in the FleetWnd, not
-    // in a FleetListBox
+    if (!m_new_fleet_drop_target && Parent()) {
+        // normally the containing row (or the listbox that contains that) will
+        // handle drag-drops
+        ForwardEventToParent();
+        //GG::Wnd* parent = Parent(); // a layout?
+        //if (parent) {
+        //    GG::Wnd* gp = parent->Parent();     // should be the row
+        //    if (gp) {
+        //        GG::Wnd* ggp = gp->Parent();    // should be the FleetListBox
+        //        if (ggp) {
+        //            ForwardEventToParent();
+        //            //ggp->AcceptDrops(wnds, pt);
+        //            return;
+        //        }
+        //    }
+        //}
+    }
+
+    // following only used when FleetDataPanel sets independently in the
+    // FleetWnd, not in a FleetListBox
 
     DebugLogger() << "FleetWnd::AcceptDrops with " << wnds.size() << " wnds at pt: " << pt;
     std::vector<int> ship_ids;
@@ -1405,6 +1453,19 @@ void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     //std::cout << "FleetDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
     if (old_size != Size())
         DoLayout();
+}
+
+bool FleetDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    std::cout << "FleetDataPanel::EventFilter: " << event.Type() << std::endl;
+    switch (event.Type()) {
+    case GG::WndEvent::DragDropEnter:
+    case GG::WndEvent::DragDropHere:
+    case GG::WndEvent::DragDropLeave:
+    case GG::WndEvent::LButtonUp:
+        return true;
+    default:
+        return false;
+    }
 }
 
 void FleetDataPanel::AggressionToggleButtonPressed() {
