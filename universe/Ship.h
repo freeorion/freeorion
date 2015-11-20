@@ -87,6 +87,7 @@ public:
     Meter*          GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     virtual void    ResetTargetMaxUnpairedMeters();
+    virtual void    ResetPairedActiveMeters();
     virtual void    SetShipMetersToMax();
     //@}
 
