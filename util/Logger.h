@@ -14,6 +14,8 @@ FO_COMMON_API void InitLogger(const std::string& logFile, const std::string& pat
 /** Accessors for the App's logger */
 FO_COMMON_API void SetLoggerPriority(int priority);
 
+#define __BASE_FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
+
 #define TraceLogger()\
     BOOST_LOG_TRIVIAL(trace)
 
@@ -21,10 +23,10 @@ FO_COMMON_API void SetLoggerPriority(int priority);
     BOOST_LOG_TRIVIAL(debug)
 
 #define ErrorLogger()\
-    BOOST_LOG_TRIVIAL(error)
+    BOOST_LOG_TRIVIAL(error) << __BASE_FILENAME__ << " @ " << __LINE__ << ": "
 
 #define FatalLogger()\
-    BOOST_LOG_TRIVIAL(fatal)
+    BOOST_LOG_TRIVIAL(fatal) << __BASE_FILENAME__ << " @ " << __LINE__ << ": "
 
 extern int g_indent;
 
