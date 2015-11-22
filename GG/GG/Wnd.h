@@ -320,13 +320,6 @@ public:
         Wnd cannot be drag-and-dropped. */
     const std::string& DragDropDataType() const;
 
-    /** Sets the \a second member of each iterator to true or false,
-        indicating whether the Wnd in the \a first member would be accepted if
-        dropped on this Wnd at \a pt. */
-    virtual void DropsAcceptable(DropsAcceptableIter first,
-                                 DropsAcceptableIter last,
-                                 const Pt& pt) const;
-
     /** Returns the upper-left corner of window in \a screen \a coordinates
         (taking into account parent's screen position, if any) */
     Pt UpperLeft() const;
@@ -453,11 +446,12 @@ public:
         UpperLeft(). */
     virtual void StartingChildDragDrop(const Wnd* wnd, const Pt& offset);
 
-    /** When the user drops Wnds onto this Wnd, DropsAcceptable() is passed
-        the list of dropped Wnds.  The Wnds marked acceptable by
-        DropsAcceptable() are then passed to AcceptDrops(), which handles the
-        receipt of one or more drag-and-drop wnds into this Wnd. */
-    virtual void AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt);
+    /** When the user drops Wnds onto this Wnd, a DragDropHere event is
+        generated, which determines which of the dropped Wnds are acceptable
+        by the dropped-on Wnd by calling DropsAcceptable. The acceptable Wnds
+        are then passed to AcceptDrops(), which handles the eceipt of one or
+        more drag-and-drop wnds into this Wnd. */
+    virtual void AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys);
 
     /** Handles the cancellation of the dragging of one or more child windows,
         whose dragging was established by the most recent call to
@@ -477,8 +471,7 @@ public:
         in that order, and are always called at the end of any drag-and-drop
         sequence performed on a child of this Wnd, whether the drag-and-drop
         is successful or not. */
-    virtual void ChildrenDraggedAway(const std::vector<Wnd*>& wnds,
-                                     const Wnd* destination);
+    virtual void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
 
     /** Sets a name for this Wnd.  This name is not used by GG in any way; it
         only exists for user convenience. */
@@ -672,6 +665,12 @@ public:
     //@}
 
 protected:
+    /** Sets the \a second member of each iterator to true or false,
+        indicating whether the Wnd in the \a first member would be accepted if
+        dropped on this Wnd at \a pt. */
+    virtual void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                 const Pt& pt, Flags<ModKey> mod_keys) const;
+
     /** The states a Wnd may be in, with respect to drag-and-drop operations.
         Wnds may wish to consider the current state when rendering to provide
         visual feedback to the user. */
@@ -799,18 +798,20 @@ protected:
     virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
 
     /** Respond to the cursor entering the Wnd's coords while dragging
-        drag-and-drop Wnds.  The Pts in \a drag_drop_wnds are the Wnds'
-        offsets from \a pt. */
-    virtual void DragDropEnter(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds,
+        drag-and-drop Wnds.  \a drop_wnds_acceptable will have the bools
+        set to true or valse to indicate whether this Wnd can accept the
+        dragged wnds as a drop. */
+    virtual void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                                Flags<ModKey> mod_keys);
 
     /** Respond to cursor moving about within the Wnd, or to cursor lingering
         within the Wnd for a long period of time, while dragging drag-and-drop
         Wnds.  A DragDropHere() message will not be generated the first time
         the cursor enters the window's area.  In that case, a DragDropEnter()
-        message is generated The Pts in \a drag_drop_wnds are the Wnds'
-        offsets from \a pt. */
-    virtual void DragDropHere(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds,
+        message is generated.  \a drop_wnds_acceptable will have the bools
+        set to true or valse to indicate whether this Wnd can accept the
+        dragged wnds as a drop. */
+    virtual void DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                               Flags<ModKey> mod_keys);
 
     /** Respond to cursor leaving the Wnd's bounds while dragging

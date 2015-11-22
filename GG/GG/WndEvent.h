@@ -108,58 +108,34 @@ public:
         TimerFiring
     };
 
-    /** Constructs an WndEvent that is used to invoke a function taking
-        parameters (const GG::Pt& pt, Flags<ModKey> mod_keys), eg
-        LButtonDown(). */
+    /** \name Structors */ ///@{
     WndEvent(EventType type, const Pt& pt, Flags<ModKey> mod_keys);
-
-    /** Constructs an WndEvent that is used to invoke a function taking
-        parameters (const Pt& pt, const Pt& move, Flags<ModKey> mod_keys), eg
-        LDrag(). */
     WndEvent(EventType type, const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
-
-    /** Constructs an WndEvent that is used to invoke a function taking
-        parameters (const Pt& pt, int move, Flags<ModKey> mod_keys), eg
-        MouseWheel(). */
     WndEvent(EventType type, const Pt& pt, int move, Flags<ModKey> mod_keys);
-
-    /** Constructs an WndEvent that is used to invoke a function taking
-        parameters (const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds,
-        Flags<ModKey> mod_keys), eg DragDropEnter(). */
+    WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_drop_wnds, Flags<ModKey> mod_keys);
     WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
-
-    /** Constructs an WndEvent that is used to invoke a function taking
-        parameters (const std::vector<Wnd*>& wnds, const Pt& pt). */
-    WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_drop_wnds);
-
-    /** Constructs an WndEvent that is used to invoke a function taking
-        parameters (Key key, Flags<ModKey> mod_keys), eg KeyPress(). */
+    WndEvent(EventType type, const Pt& pt, Wnd* drag_wnd, Flags<ModKey> mod_keys);
     WndEvent(EventType type, Key key, boost::uint32_t code_point, Flags<ModKey> mod_keys);
-
-    /** Constructs an WndEvent that is used to invoke a function taking
-        parameters (unsigned int, Timer*), eg TimerFiring(). */
     WndEvent(EventType type, unsigned int ticks, Timer* timer);
-
-    /** Constructs an WndEvent that is used to invoke a function taking an unicode text vector as a
-     parameter, eg TextInput().* */
-    explicit WndEvent(EventType type, const std::string* text);
-
-    /** Constructs an WndEvent that is used to invoke a function taking no
-        parameters, eg GainingFocus(). */
+    WndEvent(EventType type, const std::string* text);
     explicit WndEvent(EventType type);
+    //@}
 
-    EventType                 Type() const;         ///< returns the type of the WndEvent
-    const Pt&                 Point() const;        ///< returns the point at which the event took place, if any
-    Key                       GetKey() const;       ///< returns the key pressed or released in the WndEvent, if any
-    boost::uint32_t           KeyCodePoint() const; ///< returns the Unicode code point for the key pressed or released in the WndEvent, if any.  \note This may be zero, even in a KeyPress or KeyRelease event, if Unicode support is unavailable.
-    Flags<ModKey>             ModKeys() const;      ///< returns the modifiers to the WndEvent's keypress, if any
-    const Pt&                 DragMove() const;     ///< returns the amount of drag movement represented by the WndEvent, if any
-    int                       WheelMove() const;    ///< returns the ammount of mouse wheel movement represented by the WndEvent, if any
-    const std::map<Wnd*, Pt>& DragDropWnds() const; ///< returns the drag-and-drop wnds represented by the WndEvent, if any
-    unsigned int              Ticks() const;        ///< returns the number of ticks represented by the WndEvent. if any
-    Timer*                    GetTimer() const;     ///< returns the Timer represented by the WndEvent. if any
-    const std::string*        GetText() const;      ///< returns the utf8 text represented by the WndEvent, if any
-    std::vector<Wnd*>&        GetDragDropWnds() const;
+    /** \name Accessors */ ///@{
+    EventType                   Type() const;           ///< returns the type of the WndEvent
+    const Pt&                   Point() const;          ///< returns the point at which the event took place, if any
+    Key                         GetKey() const;         ///< returns the key pressed or released in the WndEvent, if any
+    boost::uint32_t             KeyCodePoint() const;   ///< returns the Unicode code point for the key pressed or released in the WndEvent, if any.  \note This may be zero, even in a KeyPress or KeyRelease event, if Unicode support is unavailable.
+    Flags<ModKey>               ModKeys() const;        ///< returns the modifiers to the WndEvent's keypress, if any
+    const Pt&                   DragMove() const;       ///< returns the amount of drag movement represented by the WndEvent, if any
+    int                         WheelMove() const;      ///< returns the ammount of mouse wheel movement represented by the WndEvent, if any
+    unsigned int                Ticks() const;          ///< returns the number of ticks represented by the WndEvent. if any
+    Timer*                      GetTimer() const;       ///< returns the Timer represented by the WndEvent. if any
+    const std::string*          GetText() const;        ///< returns the utf8 text represented by the WndEvent, if any
+    const std::map<Wnd*, Pt>&   DragDropWnds() const;   ///< returns the drag-and-drop wnds represented by the WndEvent, if any
+    std::vector<Wnd*>&          GetDragDropWnds() const;
+    std::map<const Wnd*, bool>& GetAcceptableDropWnds() const;
+    //@}
 
 private:
     EventType                   m_type;
@@ -169,11 +145,15 @@ private:
     Flags<ModKey>               m_mod_keys;
     Pt                          m_drag_move;
     int                         m_wheel_move;
+
     std::map<Wnd*, Pt>          m_drag_drop_wnds;
+
     unsigned int                m_ticks;
     Timer*                      m_timer;
     const std::string*          m_text;
-    mutable std::vector<Wnd*>   m_dropped_wnds;
+
+    mutable std::vector<Wnd*>           m_dropped_wnds;
+    mutable std::map<const Wnd*, bool>  m_acceptable_drop_wnds;
 };
 
 } // namespace GG

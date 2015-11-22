@@ -268,13 +268,12 @@ const std::string& Wnd::Name() const
 const std::string& Wnd::DragDropDataType() const
 { return m_drag_drop_data_type; }
 
-void Wnd::DropsAcceptable(DropsAcceptableIter first,
-                          DropsAcceptableIter last,
-                          const Pt& pt) const
+void Wnd::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                          const Pt& pt, Flags<ModKey> mod_keys) const
 {
-    for (std::map<const Wnd*, bool>::iterator it = first; it != last; ++it) {
+    // default reject all drops. derived classes can override to accept drops
+    for (std::map<const Wnd*, bool>::iterator it = first; it != last; ++it)
         it->second = false;
-    }
 }
 
 Pt Wnd::UpperLeft() const
@@ -422,10 +421,17 @@ void Wnd::SetDragDropDataType(const std::string& data_type)
 void Wnd::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 {}
 
-void Wnd::AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt)
-{}
+void Wnd::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys)
+{
+    if (!Interactive() && Parent())
+        ForwardEventToParent();
+    // if dropped Wnds were accepted, but no handler or parent exists to handle them, delete them
+    for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it)
+        delete *it;
+}
 
-void Wnd::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) {}
+void Wnd::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds)
+{}
 
 void Wnd::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination)
 {
@@ -995,11 +1001,15 @@ void Wnd::MouseLeave()
 void Wnd::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 { if (!Interactive()) ForwardEventToParent(); }
 
-void Wnd::DragDropEnter(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys)
-{ if (!Interactive()) ForwardEventToParent(); }
+void Wnd::DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
+{ this->DragDropHere(pt, drop_wnds_acceptable, mod_keys); }
 
-void Wnd::DragDropHere(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys)
-{ if (!Interactive()) ForwardEventToParent(); }
+void Wnd::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
+{
+    if (!Interactive())
+        ForwardEventToParent();
+    this->DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
+}
 
 void Wnd::DragDropLeave()
 { if (!Interactive()) ForwardEventToParent(); }
@@ -1089,16 +1099,16 @@ void Wnd::HandleEvent(const WndEvent& event)
             MouseLeave();
             break;
         case WndEvent::DragDropEnter:
-            DragDropEnter(event.Point(), event.DragDropWnds(), event.ModKeys());
+            DragDropEnter(event.Point(), event.GetAcceptableDropWnds(), event.ModKeys());
             break;
         case WndEvent::DragDropHere:
-            DragDropHere(event.Point(), event.DragDropWnds(), event.ModKeys());
+            DragDropHere(event.Point(), event.GetAcceptableDropWnds(), event.ModKeys());
             break;
         case WndEvent::DragDropLeave:
             DragDropLeave();
             break;
         case WndEvent::DragDroppedOn:
-            AcceptDrops(event.GetDragDropWnds(), event.Point());
+            AcceptDrops(event.Point(), event.GetDragDropWnds(), event.ModKeys());
             break;
         case WndEvent::MouseWheel:
             MouseWheel(event.Point(), event.WheelMove(), event.ModKeys());
