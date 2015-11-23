@@ -2385,6 +2385,7 @@ void SlotControl::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>&
                                GG::Flags<GG::ModKey> mod_keys)
 {
     // TODO: mouseover highlight
+    Control::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 }
 
 void SlotControl::DragDropLeave() {

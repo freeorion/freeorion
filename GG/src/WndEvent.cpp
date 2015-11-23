@@ -138,7 +138,8 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_d
     m_wheel_move(0),
     m_ticks(0),
     m_timer(0),
-    m_text(0)
+    m_text(0),
+    m_dropped_wnds(drag_drop_wnds)
 {}
 
 WndEvent::WndEvent(EventType type, const Pt& pt, Wnd* drag_wnd, Flags<ModKey> mod_keys) :
