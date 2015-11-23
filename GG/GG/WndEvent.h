@@ -98,6 +98,7 @@ public:
         MouseWheel,
         DragDropEnter,
         DragDropHere,
+        CheckDrops,
         DragDropLeave,
         DragDroppedOn,
         KeyPress,

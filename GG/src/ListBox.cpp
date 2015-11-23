@@ -474,7 +474,8 @@ void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter las
         const Row* row = dynamic_cast<const Row*>(it->first);
         if (row &&
             (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-             m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end())) {
+             m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end()))
+        {
             iterator insertion_it = RowUnderPt(pt);
             try {
                 DropAcceptableSignal(insertion_it);
@@ -1475,6 +1476,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 
     case WndEvent::DragDropEnter:
     case WndEvent::DragDropHere:
+    case WndEvent::CheckDrops:
     case WndEvent::DragDropLeave:
     case WndEvent::DragDroppedOn:
         if (w == this)

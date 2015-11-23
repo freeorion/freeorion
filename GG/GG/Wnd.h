@@ -814,6 +814,11 @@ protected:
     virtual void DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
                               Flags<ModKey> mod_keys);
 
+    /** Polls this Wnd about whether the Wnds in \a drop_wnds_acceptable will
+        be accpeted by this Wnd by calling DropsAcceptable(...) */
+    virtual void CheckDrops(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+                            Flags<ModKey> mod_keys);
+
     /** Respond to cursor leaving the Wnd's bounds while dragging
         drag-and-drop Wnds. */
     virtual void DragDropLeave();

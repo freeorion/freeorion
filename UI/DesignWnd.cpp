@@ -2384,8 +2384,8 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
 void SlotControl::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                GG::Flags<GG::ModKey> mod_keys)
 {
-    // TODO: mouseover highlight
     Control::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
+    // TODO: mouseover highlight if drop acceptable
 }
 
 void SlotControl::DragDropLeave() {

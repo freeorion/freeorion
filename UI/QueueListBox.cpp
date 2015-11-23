@@ -134,6 +134,7 @@ void QueueListBox::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>
                                  GG::Flags<GG::ModKey> mod_keys)
 {
     CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
+
     if (drop_wnds_acceptable.size() == 1 &&
         AllowedDropTypes().find(drop_wnds_acceptable.begin()->first->DragDropDataType()) !=
         AllowedDropTypes().end())

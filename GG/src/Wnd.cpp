@@ -1011,6 +1011,14 @@ void Wnd::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_accep
     this->DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 }
 
+void Wnd::CheckDrops(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable,
+                     Flags<ModKey> mod_keys)
+{
+    if (!Interactive())
+        ForwardEventToParent();
+    this->DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
+}
+
 void Wnd::DragDropLeave()
 { if (!Interactive()) ForwardEventToParent(); }
 
@@ -1103,6 +1111,9 @@ void Wnd::HandleEvent(const WndEvent& event)
             break;
         case WndEvent::DragDropHere:
             DragDropHere(event.Point(), event.GetAcceptableDropWnds(), event.ModKeys());
+            break;
+        case WndEvent::CheckDrops:
+            CheckDrops(event.Point(), event.GetAcceptableDropWnds(), event.ModKeys());
             break;
         case WndEvent::DragDropLeave:
             DragDropLeave();
