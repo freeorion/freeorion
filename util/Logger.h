@@ -23,10 +23,10 @@ FO_COMMON_API void SetLoggerPriority(int priority);
     BOOST_LOG_TRIVIAL(debug)
 
 #define ErrorLogger()\
-    BOOST_LOG_TRIVIAL(error) << __BASE_FILENAME__ << " @ " << __LINE__ << ": "
+    BOOST_LOG_TRIVIAL(error) << __BASE_FILENAME__ << ":" << __LINE__ << " : "
 
 #define FatalLogger()\
-    BOOST_LOG_TRIVIAL(fatal) << __BASE_FILENAME__ << " @ " << __LINE__ << ": "
+    BOOST_LOG_TRIVIAL(fatal) << __BASE_FILENAME__ << ":" << __LINE__ << " : "
 
 extern int g_indent;
 
