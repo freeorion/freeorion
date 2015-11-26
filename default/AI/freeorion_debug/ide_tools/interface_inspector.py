@@ -128,6 +128,8 @@ def _inspect(obj, *instances):
 
 
 def inspect(obj, *instances):
+    print "Start generating skeleton for %s" % obj.__name__
     folder_name = os.path.join(os.path.dirname(__file__), 'result')
     result_path = os.path.join(folder_name, '%s.py' % obj.__name__)
     make_stub(_inspect(obj, *instances), result_path)
+    print "Skeleton written to %s" % result_path

@@ -16,6 +16,48 @@ class GGColor(object):
         pass
 
 
+class GalaxySetupData(object):
+    @property
+    def specialsFrequency(self):
+        return galaxySetupOption()
+
+    @property
+    def age(self):
+        return galaxySetupOption()
+
+    @property
+    def starlaneFrequency(self):
+        return galaxySetupOption()
+
+    @property
+    def nativeFrequency(self):
+        return galaxySetupOption()
+
+    @property
+    def planetDensity(self):
+        return galaxySetupOption()
+
+    @property
+    def shape(self):
+        return galaxyShape()
+
+    @property
+    def seed(self):
+        return str()
+
+    @property
+    def monsterFrequency(self):
+        return galaxySetupOption()
+
+    @property
+    def size(self):
+        return int()
+
+    @property
+    def maxAIAggression(self):
+        return aggression()
+
+
 class IntBoolMap(object):
     def __delitem__(self, obj):
         """
@@ -1524,48 +1566,6 @@ class fieldType(object):
     @property
     def name(self):
         return str()
-
-
-class galaxySetupData(object):
-    @property
-    def specialsFrequency(self):
-        return galaxySetupOption()
-
-    @property
-    def age(self):
-        return galaxySetupOption()
-
-    @property
-    def starlaneFrequency(self):
-        return galaxySetupOption()
-
-    @property
-    def nativeFrequency(self):
-        return galaxySetupOption()
-
-    @property
-    def planetDensity(self):
-        return galaxySetupOption()
-
-    @property
-    def shape(self):
-        return galaxyShape()
-
-    @property
-    def seed(self):
-        return str()
-
-    @property
-    def monsterFrequency(self):
-        return galaxySetupOption()
-
-    @property
-    def size(self):
-        return int()
-
-    @property
-    def maxAIAggression(self):
-        return aggression()
 
 
 class hullType(object):
@@ -3316,60 +3316,58 @@ class meterType(Enum):
     targetResearch = None  # meterType(2, "targetResearch")
     targetTrade = None  # meterType(3, "targetTrade")
     targetConstruction = None  # meterType(4, "targetConstruction")
-    maxFuel = None  # meterType(6, "maxFuel")
-    maxShield = None  # meterType(7, "maxShield")
-    maxStructure = None  # meterType(8, "maxStructure")
-    maxDefense = None  # meterType(9, "maxDefense")
-    maxTroops = None  # meterType(10, "maxTroops")
+    maxFuel = None  # meterType(7, "maxFuel")
+    maxShield = None  # meterType(8, "maxShield")
+    maxStructure = None  # meterType(9, "maxStructure")
+    maxDefense = None  # meterType(10, "maxDefense")
     maxSupply = None  # meterType(11, "maxSupply")
-    population = None  # meterType(12, "population")
-    industry = None  # meterType(13, "industry")
-    research = None  # meterType(14, "research")
-    trade = None  # meterType(15, "trade")
-    construction = None  # meterType(16, "construction")
-    fuel = None  # meterType(18, "fuel")
-    shield = None  # meterType(19, "shield")
-    structure = None  # meterType(20, "structure")
-    defense = None  # meterType(21, "defense")
-    troops = None  # meterType(22, "troops")
-    supply = None  # meterType(23, "supply")
-    rebels = None  # meterType(24, "rebels")
-    size = None  # meterType(25, "size")
-    stealth = None  # meterType(26, "stealth")
-    detection = None  # meterType(27, "detection")
-    starlaneSpeed = None  # meterType(28, "starlaneSpeed")
-    damage = None  # meterType(29, "damage")
-    capacity = None  # meterType(30, "capacity")
+    maxTroops = None  # meterType(12, "maxTroops")
+    population = None  # meterType(13, "population")
+    industry = None  # meterType(14, "industry")
+    research = None  # meterType(15, "research")
+    trade = None  # meterType(16, "trade")
+    construction = None  # meterType(17, "construction")
+    capacity = None  # meterType(19, "capacity")
+    fuel = None  # meterType(20, "fuel")
+    shield = None  # meterType(21, "shield")
+    structure = None  # meterType(22, "structure")
+    defense = None  # meterType(23, "defense")
+    supply = None  # meterType(24, "supply")
+    troops = None  # meterType(25, "troops")
+    rebels = None  # meterType(26, "rebels")
+    size = None  # meterType(27, "size")
+    stealth = None  # meterType(28, "stealth")
+    detection = None  # meterType(29, "detection")
+    starlaneSpeed = None  # meterType(30, "starlaneSpeed")
 
 meterType.targetPopulation = meterType(0, "targetPopulation")
 meterType.targetIndustry = meterType(1, "targetIndustry")
 meterType.targetResearch = meterType(2, "targetResearch")
 meterType.targetTrade = meterType(3, "targetTrade")
 meterType.targetConstruction = meterType(4, "targetConstruction")
-meterType.maxFuel = meterType(6, "maxFuel")
-meterType.maxShield = meterType(7, "maxShield")
-meterType.maxStructure = meterType(8, "maxStructure")
-meterType.maxDefense = meterType(9, "maxDefense")
-meterType.maxTroops = meterType(10, "maxTroops")
+meterType.maxFuel = meterType(7, "maxFuel")
+meterType.maxShield = meterType(8, "maxShield")
+meterType.maxStructure = meterType(9, "maxStructure")
+meterType.maxDefense = meterType(10, "maxDefense")
 meterType.maxSupply = meterType(11, "maxSupply")
-meterType.population = meterType(12, "population")
-meterType.industry = meterType(13, "industry")
-meterType.research = meterType(14, "research")
-meterType.trade = meterType(15, "trade")
-meterType.construction = meterType(16, "construction")
-meterType.fuel = meterType(18, "fuel")
-meterType.shield = meterType(19, "shield")
-meterType.structure = meterType(20, "structure")
-meterType.defense = meterType(21, "defense")
-meterType.troops = meterType(22, "troops")
-meterType.supply = meterType(23, "supply")
-meterType.rebels = meterType(24, "rebels")
-meterType.size = meterType(25, "size")
-meterType.stealth = meterType(26, "stealth")
-meterType.detection = meterType(27, "detection")
-meterType.starlaneSpeed = meterType(28, "starlaneSpeed")
-meterType.damage = meterType(29, "damage")
-meterType.capacity = meterType(30, "capacity")
+meterType.maxTroops = meterType(12, "maxTroops")
+meterType.population = meterType(13, "population")
+meterType.industry = meterType(14, "industry")
+meterType.research = meterType(15, "research")
+meterType.trade = meterType(16, "trade")
+meterType.construction = meterType(17, "construction")
+meterType.capacity = meterType(19, "capacity")
+meterType.fuel = meterType(20, "fuel")
+meterType.shield = meterType(21, "shield")
+meterType.structure = meterType(22, "structure")
+meterType.defense = meterType(23, "defense")
+meterType.supply = meterType(24, "supply")
+meterType.troops = meterType(25, "troops")
+meterType.rebels = meterType(26, "rebels")
+meterType.size = meterType(27, "size")
+meterType.stealth = meterType(28, "stealth")
+meterType.detection = meterType(29, "detection")
+meterType.starlaneSpeed = meterType(30, "starlaneSpeed")
 
 
 class planetEnvironment(Enum):
@@ -3468,42 +3466,38 @@ class shipPartClass(Enum):
         self.numerator = numerator
 
     shortRange = None  # shipPartClass(0, "shortRange")
-    missiles = None  # shipPartClass(1, "missiles")
-    fighters = None  # shipPartClass(2, "fighters")
-    pointDefense = None  # shipPartClass(3, "pointDefense")
-    shields = None  # shipPartClass(4, "shields")
-    armour = None  # shipPartClass(5, "armour")
-    troops = None  # shipPartClass(6, "troops")
-    detection = None  # shipPartClass(7, "detection")
-    stealth = None  # shipPartClass(8, "stealth")
-    fuel = None  # shipPartClass(9, "fuel")
-    colony = None  # shipPartClass(10, "colony")
-    speed = None  # shipPartClass(11, "speed")
-    general = None  # shipPartClass(12, "general")
-    bombard = None  # shipPartClass(13, "bombard")
-    industry = None  # shipPartClass(14, "industry")
-    research = None  # shipPartClass(15, "research")
-    trade = None  # shipPartClass(16, "trade")
-    productionLocation = None  # shipPartClass(17, "productionLocation")
+    fighters = None  # shipPartClass(1, "fighters")
+    shields = None  # shipPartClass(2, "shields")
+    armour = None  # shipPartClass(3, "armour")
+    troops = None  # shipPartClass(4, "troops")
+    detection = None  # shipPartClass(5, "detection")
+    stealth = None  # shipPartClass(6, "stealth")
+    fuel = None  # shipPartClass(7, "fuel")
+    colony = None  # shipPartClass(8, "colony")
+    speed = None  # shipPartClass(9, "speed")
+    general = None  # shipPartClass(10, "general")
+    bombard = None  # shipPartClass(11, "bombard")
+    industry = None  # shipPartClass(12, "industry")
+    research = None  # shipPartClass(13, "research")
+    trade = None  # shipPartClass(14, "trade")
+    productionLocation = None  # shipPartClass(15, "productionLocation")
 
 shipPartClass.shortRange = shipPartClass(0, "shortRange")
-shipPartClass.missiles = shipPartClass(1, "missiles")
-shipPartClass.fighters = shipPartClass(2, "fighters")
-shipPartClass.pointDefense = shipPartClass(3, "pointDefense")
-shipPartClass.shields = shipPartClass(4, "shields")
-shipPartClass.armour = shipPartClass(5, "armour")
-shipPartClass.troops = shipPartClass(6, "troops")
-shipPartClass.detection = shipPartClass(7, "detection")
-shipPartClass.stealth = shipPartClass(8, "stealth")
-shipPartClass.fuel = shipPartClass(9, "fuel")
-shipPartClass.colony = shipPartClass(10, "colony")
-shipPartClass.speed = shipPartClass(11, "speed")
-shipPartClass.general = shipPartClass(12, "general")
-shipPartClass.bombard = shipPartClass(13, "bombard")
-shipPartClass.industry = shipPartClass(14, "industry")
-shipPartClass.research = shipPartClass(15, "research")
-shipPartClass.trade = shipPartClass(16, "trade")
-shipPartClass.productionLocation = shipPartClass(17, "productionLocation")
+shipPartClass.fighters = shipPartClass(1, "fighters")
+shipPartClass.shields = shipPartClass(2, "shields")
+shipPartClass.armour = shipPartClass(3, "armour")
+shipPartClass.troops = shipPartClass(4, "troops")
+shipPartClass.detection = shipPartClass(5, "detection")
+shipPartClass.stealth = shipPartClass(6, "stealth")
+shipPartClass.fuel = shipPartClass(7, "fuel")
+shipPartClass.colony = shipPartClass(8, "colony")
+shipPartClass.speed = shipPartClass(9, "speed")
+shipPartClass.general = shipPartClass(10, "general")
+shipPartClass.bombard = shipPartClass(11, "bombard")
+shipPartClass.industry = shipPartClass(12, "industry")
+shipPartClass.research = shipPartClass(13, "research")
+shipPartClass.trade = shipPartClass(14, "trade")
+shipPartClass.productionLocation = shipPartClass(15, "productionLocation")
 
 
 class shipSlotType(Enum):
@@ -3725,9 +3719,9 @@ def getGalaxySetupData():
     """
     C++ signature:
         GalaxySetupData getGalaxySetupData()
-    :rtype galaxySetupData
+    :rtype GalaxySetupData
     """
-    return galaxySetupData()
+    return GalaxySetupData()
 
 
 def getHullType(string):
