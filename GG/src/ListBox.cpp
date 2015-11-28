@@ -1371,6 +1371,44 @@ void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
     }
 }
 
+namespace {
+    std::string EventTypeName(const GG::WndEvent& event) {
+        switch(event.Type()) {
+        case GG::WndEvent::LButtonDown:     return "(LButtonDown)";
+        case GG::WndEvent::LDrag:           return "(LDrag)";
+        case GG::WndEvent::LButtonUp:       return "(LButtonUp)";
+        case GG::WndEvent::LClick:          return "(LClick)";
+        case GG::WndEvent::LDoubleClick:    return "(LDoubleClick)";
+        case GG::WndEvent::MButtonDown:     return "(MButtonDown)";
+        case GG::WndEvent::MDrag:           return "(MDrag)";
+        case GG::WndEvent::MButtonUp:       return "(MButtonUp)";
+        case GG::WndEvent::MClick:          return "(MClick)";
+        case GG::WndEvent::MDoubleClick:    return "(MDoubleClick)";
+        case GG::WndEvent::RButtonDown:     return "(RButtonDown)";
+        case GG::WndEvent::RDrag:           return "(RDrag)";
+        case GG::WndEvent::RButtonUp:       return "(RButtonUp)";
+        case GG::WndEvent::RClick:          return "(RClick)";
+        case GG::WndEvent::RDoubleClick:    return "(RDoubleClick)";
+        case GG::WndEvent::MouseEnter:      return "(MouseEnter)";
+        case GG::WndEvent::MouseHere:       return "(MouseHere)";
+        case GG::WndEvent::MouseLeave:      return "(MouseLeave)";
+        case GG::WndEvent::MouseWheel:      return "(MouseWheel)";
+        case GG::WndEvent::DragDropEnter:   return "(DragDropEnter)";
+        case GG::WndEvent::DragDropHere:    return "(DragDropHere)";
+        case GG::WndEvent::CheckDrops:      return "(CheckDrops)";
+        case GG::WndEvent::DragDropLeave:   return "(DragDropLeave)";
+        case GG::WndEvent::DragDroppedOn:   return "(DragDroppedOn)";
+        case GG::WndEvent::KeyPress:        return "(KeyPress)";
+        case GG::WndEvent::KeyRelease:      return "(KeyRelease)";
+        case GG::WndEvent::TextInput:       return "(TextInput)";
+        case GG::WndEvent::GainingFocus:    return "(GainingFocus)";
+        case GG::WndEvent::LosingFocus:     return "(LosingFocus)";
+        case GG::WndEvent::TimerFiring:     return "(TimerFiring)";
+        default:                            return "(Unknown Event Type)";
+        }
+    }
+}
+
 bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 {
     assert(w == this || dynamic_cast<Row*>(w));
@@ -1481,6 +1519,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::DragDroppedOn:
         if (w == this)
             return false;
+        std::cout << "ListBox::EventFilter of type: " << EventTypeName(event) << std::endl << std::flush;
         HandleEvent(event);
         break;
 

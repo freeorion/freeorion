@@ -1299,9 +1299,11 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, boo
     if (!m_new_fleet_drop_target) {
         // normally the containing row (or the listbox that contains that) will
         // handle drag-drop related things
+        //std::cout << "FleetDataPanel::DragDropHere forwarding to parent..." << std::endl << std::flush;
         ForwardEventToParent();
     }
 
+    //std::cout << "FleetDataPanel::DragDropHere locally checking drops..." << std::endl << std::flush;
     DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
     if (Disabled()) {
@@ -1338,17 +1340,22 @@ void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>
 }
 
 void FleetDataPanel::DragDropLeave()
-{ Select(false); }
+{
+    std::cout << "FleetDataPanel::DragDropLeave" << std::endl << std::flush;
+    Select(false);
+}
 
 void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                      const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
 {
     if (!m_new_fleet_drop_target) {
+        //std::cout << "FleetDataPanel::DropsAcceptable default rejecting all" << std::endl << std::flush;
         // reject all
         Wnd::DropsAcceptable(first, last, pt, mod_keys);
         return;
     }
 
+    //std::cout << "FleetDataPanel::DropsAcceptable locally checking drops" << std::endl << std::flush;
     // only used when FleetDataPanel sets independently in the FleetWnd, not
     // in a FleetListBox
 
@@ -1487,7 +1494,7 @@ namespace {
 }
 
 bool FleetDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
-    DebugLogger() << "FleetDataPanel::EventFilter " << EventTypeName(event);
+    //std::cout << "FleetDataPanel::EventFilter " << EventTypeName(event) << std::endl << std::flush;
 
     if (w == this)
         return false;
@@ -1498,6 +1505,9 @@ bool FleetDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     case GG::WndEvent::CheckDrops:
     case GG::WndEvent::DragDropLeave:
     case GG::WndEvent::DragDroppedOn:
+        if (w == this)
+            std::cout << "FleetDataPanel::EventFilter w == this !!!" << std::endl << std::flush;
+        std::cout << "FleetDataPanel::EventFilter of type: " << EventTypeName(event) << std::endl << std::flush;
         HandleEvent(event);
         return true;
         break;
@@ -1943,11 +1953,12 @@ public:
     virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                  GG::Flags<GG::ModKey> mod_keys)
     {
+        //std::cout << "FleetsListBox::DragDropHere" << std::endl << std::flush;
         CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 
         // default to removing highlighting of any row that has it.
         // used to check: if (m_highlighted_row_it != row_it) before doing this...
-        ClearHighlighting();
+        //ClearHighlighting();
 
         // abort if this FleetsListBox can't be manipulated
         if (!m_order_issuing_enabled)
@@ -2027,8 +2038,16 @@ public:
         HighlightRow(row_it);
     }
 
-    virtual void    DragDropLeave()
-    { ClearHighlighting(); }
+    virtual void    DragDropLeave() {
+        std::cout << "FleetsListBox::DragDropLeave" << std::endl << std::flush;
+        CUIListBox::DragDropLeave();
+        try {
+            ClearHighlighting();
+        } catch (const std::exception& e) {
+            std::cerr << "FleetsListBox::DragDropLeave while clearhing highlighting caught exception: " << e.what() << std::endl << std::flush;
+        }
+        std::cout << "FleetsListBox::DragDropLeave done" << std::endl << std::flush;
+    }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
@@ -2131,18 +2150,51 @@ private:
     }
 
     void            ClearHighlighting() {
+        std::cout << "FleetsListBox::ClearHighlighting this: " << this << std::endl << std::flush;
         if (m_highlighted_row_it == end())
             return;
 
+        // check that m_highlighted_row_it points to a valid row.
+        // have been getting intermittant crashes when dragging rows after
+        // drops onto other rows that occur after attempting to use an
+        // invalid iterator
+        bool valid_highlight_row = false;
+        for (iterator test_it = this->begin(); test_it != this->end(); ++test_it) {
+            if (test_it == m_highlighted_row_it) {
+                valid_highlight_row = true;
+                break;
+            }
+        }
+        if (!valid_highlight_row) {
+            std::cout << "m_highlighted_row not valid!" << std::endl << std::flush;
+            m_highlighted_row_it = end();
+            return;
+        }
+
+
+
         GG::ListBox::Row* selected_row = *m_highlighted_row_it;
-        assert(selected_row);
-        assert(!selected_row->empty());
+        std::cout << "selected_row: " << selected_row << std::endl << std::flush;
+        if (!selected_row) {
+            std::cerr << "no selected row!" << std::endl << std::flush;
+        }
+        if (selected_row->empty()) {
+            std::cerr << "selected row empty!" << std::endl << std::flush;
+        }
+
         GG::Control* control = (*selected_row)[0];
+        if (!control) {
+            std::cerr << "null control in selected row!" << std::endl << std::flush;
+        }
+
         FleetDataPanel* data_panel = boost::polymorphic_downcast<FleetDataPanel*>(control);
-        assert(data_panel);
+        if (!data_panel) {
+            std::cerr << "no data panel!" << std::endl << std::flush;
+        }
 
         data_panel->Select(false);
         m_highlighted_row_it = end();
+        std::cout << "FleetsListBox::ClearHighlighting done" << std::endl << std::flush;
     }
 
     void            InitRowSizes() {
