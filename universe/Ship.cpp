@@ -134,7 +134,7 @@ void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id)
             this->m_design_id =             copied_ship->m_design_id;
             for (PartMeterMap::const_iterator it = copied_ship->m_part_meters.begin();
                  it != copied_ship->m_part_meters.end(); ++it)
-            { this->m_part_meters[it->first]; }
+            { this->m_part_meters = copied_ship->m_part_meters; }
             this->m_species_name =          copied_ship->m_species_name;
 
             if (vis >= VIS_FULL_VISIBILITY) {
@@ -143,7 +143,6 @@ void Ship::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id)
                 this->m_ordered_invade_planet_id  = copied_ship->m_ordered_invade_planet_id;
                 this->m_ordered_bombard_planet_id = copied_ship->m_ordered_bombard_planet_id;
                 this->m_last_turn_active_in_combat= copied_ship->m_last_turn_active_in_combat;
-                this->m_part_meters =               copied_ship->m_part_meters;
                 this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
             }
         }
@@ -590,6 +589,7 @@ void Ship::SetShipMetersToMax() {
         if (max_it == m_part_meters.end())
             continue;
 
+        max_it->second.SetCurrent(Meter::LARGE_VALUE);
         it->second.SetCurrent(Meter::LARGE_VALUE);
     }
 }
