@@ -882,17 +882,17 @@ bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name)
     if (home_planet)
         home_system = GetSystem(home_planet->SystemID());
     if (!home_planet || !home_system) {
-        ErrorLogger() << "UniverseGenerator::SetEmpireHomeworld: couldn't get homeworld or system for empire" << empire->EmpireID();
+        ErrorLogger() << "SetEmpireHomeworld: couldn't get homeworld or system for empire" << empire->EmpireID();
         return false;
     }
 
-    DebugLogger() << "UniverseGenerator::SetEmpireHomeworld: setting system " << home_system->ID()
+    DebugLogger() << "SetEmpireHomeworld: setting system " << home_system->ID()
                   << " (planet " <<  home_planet->ID() << ") to be home system for empire " << empire->EmpireID();
 
     // get species, check if it exists
     Species* species = GetSpeciesManager().GetSpecies(species_name);
     if (!species) {
-        ErrorLogger() << "UniverseGenerator::SetEmpireHomeworld: couldn't get species \""
+        ErrorLogger() << "SetEmpireHomeworld: couldn't get species \""
                       << species_name << "\" to set with homeworld id " << home_planet->ID();
         return false;
     }
@@ -939,7 +939,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
     {
         int         player_id =     setup_data_it->first;
         if (player_id == Networking::INVALID_PLAYER_ID)
-            ErrorLogger() << "Universe::InitEmpires player id (" << player_id << ") is invalid";
+            ErrorLogger() << "InitEmpires player id (" << player_id << ") is invalid";
 
         // use player ID for empire ID so that the calling code can get the
         // correct empire for each player ID  in player_setup_data
