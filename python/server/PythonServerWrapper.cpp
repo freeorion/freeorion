@@ -116,7 +116,7 @@ namespace {
         } else {
             Empire* empire = GetEmpire(empire_id);
             if (!empire) {
-                ErrorLogger() << "PythonServerWrapper::GenerateSitRep: couldn't get empire with ID " << empire_id;
+                ErrorLogger() << "GenerateSitRep: couldn't get empire with ID " << empire_id;
                 return;
             }
             empire->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));

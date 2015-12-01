@@ -219,7 +219,7 @@ namespace AIInterface {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = ::GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "AIInterface::UpdateResearchQueue : couldn't get empire with id " << empire_id;
+            ErrorLogger() << "UpdateResearchQueue : couldn't get empire with id " << empire_id;
             return;
         }
         empire->UpdateResearchQueue();
@@ -229,7 +229,7 @@ namespace AIInterface {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         Empire* empire = ::GetEmpire(empire_id);
         if (!empire) {
-            ErrorLogger() << "AIInterface::UpdateProductionQueue : couldn't get empire with id " << empire_id;
+            ErrorLogger() << "UpdateProductionQueue : couldn't get empire with id " << empire_id;
             return;
         }
         empire->UpdateProductionQueue();
@@ -238,13 +238,13 @@ namespace AIInterface {
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {
         TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
-            ErrorLogger() << "AIInterface::IssueFleetMoveOrder : passed an invalid fleet_id";
+            ErrorLogger() << "IssueFleetMoveOrder : passed an invalid fleet_id";
             return 0;
         }
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueFleetMoveOrder : passed fleet_id of fleet not owned by player";
+            ErrorLogger() << "IssueFleetMoveOrder : passed fleet_id of fleet not owned by player";
             return 0;
         }
 
@@ -262,7 +262,7 @@ namespace AIInterface {
 
     int IssueRenameOrder(int object_id, const std::string& new_name) {
         if (new_name.empty()) {
-            ErrorLogger() << "AIInterface::IssueRenameOrder : passed an empty new name";
+            ErrorLogger() << "IssueRenameOrder : passed an empty new name";
             return 0;
         }
 
@@ -270,11 +270,11 @@ namespace AIInterface {
         TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
 
         if (!obj) {
-            ErrorLogger() << "AIInterface::IssueRenameOrder : passed an invalid object_id";
+            ErrorLogger() << "IssueRenameOrder : passed an invalid object_id";
             return 0;
         }
         if (!obj->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueRenameOrder : passed object_id of object not owned by player";
+            ErrorLogger() << "IssueRenameOrder : passed object_id of object not owned by player";
             return 0;
         }
 
@@ -285,7 +285,7 @@ namespace AIInterface {
 
     int IssueScrapOrder(const std::vector<int>& object_ids) {
             if (object_ids.empty()) {
-                ErrorLogger() << "AIInterface::IssueScrapOrder : passed empty vector of object_ids";
+                ErrorLogger() << "IssueScrapOrder : passed empty vector of object_ids";
                 return 0;
             }
 
@@ -296,12 +296,12 @@ namespace AIInterface {
                 TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
 
                 if (!obj) {
-                    ErrorLogger() << "AIInterface::IssueScrapOrder : passed an invalid object_id";
+                    ErrorLogger() << "IssueScrapOrder : passed an invalid object_id";
                     return 0;
                 }
 
                 if (!obj->OwnedBy(empire_id)) {
-                    ErrorLogger() << "AIInterface::IssueScrapOrder : passed object_id of object not owned by player";
+                    ErrorLogger() << "IssueScrapOrder : passed object_id of object not owned by player";
                     return 0;
                 }
 
@@ -319,12 +319,12 @@ namespace AIInterface {
 
     int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids) {
         if (ship_ids.empty()) {
-            ErrorLogger() << "AIInterface::IssueNewFleetOrder : passed empty vector of ship_ids";
+            ErrorLogger() << "IssueNewFleetOrder : passed empty vector of ship_ids";
             return 0;
         }
 
         if (fleet_name.empty()) {
-            ErrorLogger() << "AIInterface::IssueNewFleetOrder : tried to create a nameless fleet";
+            ErrorLogger() << "IssueNewFleetOrder : tried to create a nameless fleet";
             return 0;
         }
 
@@ -335,11 +335,11 @@ namespace AIInterface {
         for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
             ship = GetShip(*it);
             if (!ship) {
-                ErrorLogger() << "AIInterface::IssueNewFleetOrder : passed an invalid ship_id";
+                ErrorLogger() << "IssueNewFleetOrder : passed an invalid ship_id";
                 return 0;
             }
             if (!ship->OwnedBy(empire_id)) {
-                ErrorLogger() << "AIInterface::IssueNewFleetOrder : passed ship_id of ship not owned by player";
+                ErrorLogger() << "IssueNewFleetOrder : passed ship_id of ship not owned by player";
                 return 0;
             }
         }
@@ -347,7 +347,7 @@ namespace AIInterface {
         // make sure all ships are at a system, and that all are at the same system
         int system_id = ship->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
+            ErrorLogger() << "IssueNewFleetOrder : passed ship_ids of ships at different locations";
             return 0;
         }
 
@@ -355,7 +355,7 @@ namespace AIInterface {
         for (++it; it != ship_ids.end(); ++it) {
             TemporaryPtr<const Ship> ship2 = GetShip(*it);
             if (ship2->SystemID() != system_id) {
-                ErrorLogger() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
+                ErrorLogger() << "IssueNewFleetOrder : passed ship_ids of ships at different locations";
                 return 0;
             }
         }
@@ -378,36 +378,36 @@ namespace AIInterface {
 
         TemporaryPtr<const Ship> ship = GetShip(ship_id);
         if (!ship) {
-            ErrorLogger() << "AIInterface::IssueFleetTransferOrder : passed an invalid ship_id " << ship_id;
+            ErrorLogger() << "IssueFleetTransferOrder : passed an invalid ship_id " << ship_id;
             return 0;
         }
         int ship_sys_id = ship->SystemID();
         if (ship_sys_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "AIInterface::IssueFleetTransferOrder : ship is not in a system";
+            ErrorLogger() << "IssueFleetTransferOrder : ship is not in a system";
             return 0;
         }
         if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueFleetTransferOrder : passed ship_id of ship not owned by player";
+            ErrorLogger() << "IssueFleetTransferOrder : passed ship_id of ship not owned by player";
             return 0;
         }
 
         TemporaryPtr<const Fleet> fleet = GetFleet(new_fleet_id);
         if (!fleet) {
-            ErrorLogger() << "AIInterface::IssueFleetTransferOrder : passed an invalid new_fleet_id " << new_fleet_id;
+            ErrorLogger() << "IssueFleetTransferOrder : passed an invalid new_fleet_id " << new_fleet_id;
             return 0;
         }
         int fleet_sys_id = fleet->SystemID();
         if (fleet_sys_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "AIInterface::IssueFleetTransferOrder : new fleet is not in a system";
+            ErrorLogger() << "IssueFleetTransferOrder : new fleet is not in a system";
             return 0;
         }
         if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueFleetTransferOrder : passed fleet_id "<< new_fleet_id << " of fleet not owned by player";
+            ErrorLogger() << "IssueFleetTransferOrder : passed fleet_id "<< new_fleet_id << " of fleet not owned by player";
             return 0;
         }
 
         if (fleet_sys_id != ship_sys_id) {
-            ErrorLogger() << "AIInterface::IssueFleetTransferOrder : new fleet in system " << fleet_sys_id << " and ship in system "<< ship_sys_id <<  " are not in the same system";
+            ErrorLogger() << "IssueFleetTransferOrder : new fleet in system " << fleet_sys_id << " and ship in system "<< ship_sys_id <<  " are not in the same system";
             return 0;
         }
 
@@ -424,45 +424,45 @@ namespace AIInterface {
         // make sure ship_id is a ship...
         TemporaryPtr<const Ship> ship = GetShip(ship_id);
         if (!ship) {
-            ErrorLogger() << "AIInterface::IssueColonizeOrder : passed an invalid ship_id";
+            ErrorLogger() << "IssueColonizeOrder : passed an invalid ship_id";
             return 0;
         }
 
         // get fleet of ship
         TemporaryPtr<const Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet) {
-            ErrorLogger() << "AIInterface::IssueColonizeOrder : ship with passed ship_id has invalid fleet_id";
+            ErrorLogger() << "IssueColonizeOrder : ship with passed ship_id has invalid fleet_id";
             return 0;
         }
 
         // make sure player owns ship and its fleet
         if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueColonizeOrder : empire does not own fleet of passed ship";
+            ErrorLogger() << "IssueColonizeOrder : empire does not own fleet of passed ship";
             return 0;
         }
         if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueColonizeOrder : empire does not own passed ship";
+            ErrorLogger() << "IssueColonizeOrder : empire does not own passed ship";
             return 0;
         }
 
         // verify that planet exists and is un-occupied.
         TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
         if (!planet) {
-            ErrorLogger() << "AIInterface::IssueColonizeOrder : no planet with passed planet_id";
+            ErrorLogger() << "IssueColonizeOrder : no planet with passed planet_id";
             return 0;
         }
         if ((!planet->Unowned()) && !( planet->OwnedBy(empire_id) && planet->CurrentMeterValue(METER_POPULATION)==0)) {
-            ErrorLogger() << "AIInterface::IssueColonizeOrder : planet with passed planet_id "<<planet_id<<" is already owned, or colonized by own empire";
+            ErrorLogger() << "IssueColonizeOrder : planet with passed planet_id "<<planet_id<<" is already owned, or colonized by own empire";
             return 0;
         }
 
         // verify that planet is in same system as the fleet
         if (planet->SystemID() != fleet->SystemID()) {
-            ErrorLogger() << "AIInterface::IssueColonizeOrder : fleet and planet are not in the same system";
+            ErrorLogger() << "IssueColonizeOrder : fleet and planet are not in the same system";
             return 0;
         }
         if (ship->SystemID() == INVALID_OBJECT_ID) {
-            ErrorLogger() << "AIInterface::IssueColonizeOrder : ship is not in a system";
+            ErrorLogger() << "IssueColonizeOrder : ship is not in a system";
             return 0;
         }
 
@@ -477,31 +477,31 @@ namespace AIInterface {
         // make sure ship_id is a ship...
         TemporaryPtr<const Ship> ship = GetShip(ship_id);
         if (!ship) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : passed an invalid ship_id";
+            ErrorLogger() << "IssueInvadeOrder : passed an invalid ship_id";
             return 0;
         }
 
         // get fleet of ship
         TemporaryPtr<const Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : ship with passed ship_id has invalid fleet_id";
+            ErrorLogger() << "IssueInvadeOrder : ship with passed ship_id has invalid fleet_id";
             return 0;
         }
 
         // make sure player owns ship and its fleet
         if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : empire does not own fleet of passed ship";
+            ErrorLogger() << "IssueInvadeOrder : empire does not own fleet of passed ship";
             return 0;
         }
         if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : empire does not own passed ship";
+            ErrorLogger() << "IssueInvadeOrder : empire does not own passed ship";
             return 0;
         }
 
         // verify that planet exists and is occupied by another empire
         TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
         if (!planet) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : no planet with passed planet_id";
+            ErrorLogger() << "IssueInvadeOrder : no planet with passed planet_id";
             return 0;
         }
         bool owned_by_invader = planet->OwnedBy(empire_id);
@@ -514,25 +514,25 @@ namespace AIInterface {
         //bool being_invaded = planet->IsAboutToBeInvaded();
         bool invadable = !owned_by_invader && vulnerable && (populated || !unowned) && visible ;// && !being_invaded; a 'being_invaded' check prevents AI from invading with multiple ships at once, which is important
         if (!invadable) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : planet with passed planet_id " << planet_id
+            ErrorLogger() << "IssueInvadeOrder : planet with passed planet_id " << planet_id
                           << " and species " << this_species << " is not invadable due to one or more of: owned by invader empire, "
                           << "not visible to invader empire, has shields above zero, or is already being invaded.";
             if (!unowned) 
-                ErrorLogger() << "AIInterface::IssueInvadeOrder : planet (id " << planet_id << ") is not unowned";
+                ErrorLogger() << "IssueInvadeOrder : planet (id " << planet_id << ") is not unowned";
             if (!visible)
-                ErrorLogger() << "AIInterface::IssueInvadeOrder : planet (id " << planet_id << ") is not visible";
+                ErrorLogger() << "IssueInvadeOrder : planet (id " << planet_id << ") is not visible";
             if (!vulnerable)
-                ErrorLogger() << "AIInterface::IssueInvadeOrder : planet (id " << planet_id << ") is not vulnerable, shields at "<<shields;
+                ErrorLogger() << "IssueInvadeOrder : planet (id " << planet_id << ") is not vulnerable, shields at "<<shields;
             return 0;
         }
 
         // verify that planet is in same system as the fleet
         if (planet->SystemID() != fleet->SystemID()) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : fleet and planet are not in the same system";
+            ErrorLogger() << "IssueInvadeOrder : fleet and planet are not in the same system";
             return 0;
         }
         if (ship->SystemID() == INVALID_OBJECT_ID) {
-            ErrorLogger() << "AIInterface::IssueInvadeOrder : ship is not in a system";
+            ErrorLogger() << "IssueInvadeOrder : ship is not in a system";
             return 0;
         }
 
@@ -547,15 +547,15 @@ namespace AIInterface {
         // make sure ship_id is a ship...
         TemporaryPtr<const Ship> ship = GetShip(ship_id);
         if (!ship) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : passed an invalid ship_id";
+            ErrorLogger() << "IssueBombardOrder : passed an invalid ship_id";
             return 0;
         }
         if (ship->TotalWeaponsDamage() <= 0) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : ship can't attack / bombard";
+            ErrorLogger() << "IssueBombardOrder : ship can't attack / bombard";
             return 0;
         }
         if (!ship->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : ship isn't owned by the order-issuing empire";
+            ErrorLogger() << "IssueBombardOrder : ship isn't owned by the order-issuing empire";
             return 0;
         }
 
@@ -563,31 +563,31 @@ namespace AIInterface {
         // verify that planet exists and is occupied by another empire
         TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
         if (!planet) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : no planet with passed planet_id";
+            ErrorLogger() << "IssueBombardOrder : no planet with passed planet_id";
             return 0;
         }
         if (planet->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : planet is already owned by the order-issuing empire";
+            ErrorLogger() << "IssueBombardOrder : planet is already owned by the order-issuing empire";
             return 0;
         }
         if (!planet->Unowned() && Empires().GetDiplomaticStatus(planet->Owner(), empire_id) != DIPLO_WAR) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : planet owned by an empire not at war with order-issuing empire";
+            ErrorLogger() << "IssueBombardOrder : planet owned by an empire not at war with order-issuing empire";
             return 0;
         }
         if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) < VIS_BASIC_VISIBILITY) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
+            ErrorLogger() << "IssueBombardOrder : planet that empire reportedly has insufficient visibility of, but will be allowed to proceed pending investigation";
             //return;
         }
 
 
         int ship_system_id = ship->SystemID();
         if (ship_system_id == INVALID_OBJECT_ID) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : given id of ship not in a system";
+            ErrorLogger() << "IssueBombardOrder : given id of ship not in a system";
             return 0;
         }
         int planet_system_id = planet->SystemID();
         if (ship_system_id != planet_system_id) {
-            ErrorLogger() << "AIInterface::IssueBombardOrder : given ids of ship and planet not in the same system";
+            ErrorLogger() << "IssueBombardOrder : given ids of ship and planet not in the same system";
             return 0;
         }
 
@@ -605,11 +605,11 @@ namespace AIInterface {
 
         TemporaryPtr<const Fleet> fleet = GetFleet(object_id);
         if (!fleet) {
-            ErrorLogger() << "AIInterface::IssueAggressionOrder : no fleet with passed id";
+            ErrorLogger() << "IssueAggressionOrder : no fleet with passed id";
             return 0;
         }
         if (!fleet->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueAggressionOrder : passed object_id of object not owned by player";
+            ErrorLogger() << "IssueAggressionOrder : passed object_id of object not owned by player";
             return 0;
         }
 
@@ -623,34 +623,34 @@ namespace AIInterface {
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
         if (GetEmpire(recipient_id) == 0) {
-            ErrorLogger() << "AIInterface::IssueGiveObjectToEmpireOrder : given invalid recipient empire id";
+            ErrorLogger() << "IssueGiveObjectToEmpireOrder : given invalid recipient empire id";
             return 0;
         }
 
         if (Empires().GetDiplomaticStatus(empire_id, recipient_id) != DIPLO_PEACE) {
-            ErrorLogger() << "AIInterface::IssueGiveObjectToEmpireOrder : attempting to give to empire not at peace";
+            ErrorLogger() << "IssueGiveObjectToEmpireOrder : attempting to give to empire not at peace";
             return 0;
         }
 
         TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
-            ErrorLogger() << "AIInterface::IssueGiveObjectToEmpireOrder : passed invalid object id";
+            ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed invalid object id";
             return 0;
         }
 
         if (!obj->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueGiveObjectToEmpireOrder : passed object not owned by player";
+            ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed object not owned by player";
             return 0;
         }
 
         if (obj->ObjectType() != OBJ_FLEET && obj->ObjectType() != OBJ_PLANET) {
-            ErrorLogger() << "AIInterface::IssueGiveObjectToEmpireOrder : passed object that is not a fleet or planet";
+            ErrorLogger() << "IssueGiveObjectToEmpireOrder : passed object that is not a fleet or planet";
             return 0;
         }
 
         TemporaryPtr<System> system = GetSystem(obj->SystemID());
         if (!system) {
-            ErrorLogger() << "AIInterface::IssueGiveObjectToEmpireOrder : couldn't get system of object";
+            ErrorLogger() << "IssueGiveObjectToEmpireOrder : couldn't get system of object";
             return 0;
         }
 
@@ -668,7 +668,7 @@ namespace AIInterface {
             }
         }
         if (!recipient_has_something_here) {
-            ErrorLogger() << "AIInterface::IssueGiveObjectToEmpireOrder : recipient empire has nothing in system";
+            ErrorLogger() << "IssueGiveObjectToEmpireOrder : recipient empire has nothing in system";
             return 0;
         }
 
@@ -683,15 +683,15 @@ namespace AIInterface {
 
         TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
         if (!planet) {
-            ErrorLogger() << "AIInterface::IssueChangeFocusOrder : no planet with passed planet_id "<<planet_id;
+            ErrorLogger() << "IssueChangeFocusOrder : no planet with passed planet_id "<<planet_id;
             return 0;
         }
         if (!planet->OwnedBy(empire_id)) {
-            ErrorLogger() << "AIInterface::IssueChangeFocusOrder : empire does not own planet with passed planet_id";
+            ErrorLogger() << "IssueChangeFocusOrder : empire does not own planet with passed planet_id";
             return 0;
         }
         if (false) {    // todo: verify that focus is valid for specified planet
-            ErrorLogger() << "AIInterface::IssueChangeFocusOrder : invalid focus specified";
+            ErrorLogger() << "IssueChangeFocusOrder : invalid focus specified";
             return 0;
         }
 
@@ -704,7 +704,7 @@ namespace AIInterface {
     int IssueEnqueueTechOrder(const std::string& tech_name, int position) {
         const Tech* tech = GetTech(tech_name);
         if (!tech) {
-            ErrorLogger() << "AIInterface::IssueEnqueueTechOrder : passed tech_name that is not the name of a tech.";
+            ErrorLogger() << "IssueEnqueueTechOrder : passed tech_name that is not the name of a tech.";
             return 0;
         }
 
@@ -719,7 +719,7 @@ namespace AIInterface {
     int IssueDequeueTechOrder(const std::string& tech_name) {
         const Tech* tech = GetTech(tech_name);
         if (!tech) {
-            ErrorLogger() << "AIInterface::IssueDequeueTechOrder : passed tech_name that is not the name of a tech.";
+            ErrorLogger() << "IssueDequeueTechOrder : passed tech_name that is not the name of a tech.";
             return 0;
         }
 
@@ -735,7 +735,7 @@ namespace AIInterface {
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
 
         if (!empire->ProducibleItem(BT_BUILDING, item_name, location_id)) {
-            ErrorLogger() << "AIInterface::IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
+            ErrorLogger() << "IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
             return 0;
         }
 
@@ -750,7 +750,7 @@ namespace AIInterface {
         Empire* empire = AIClientApp::GetApp()->GetEmpire(empire_id);
 
         if (!empire->ProducibleItem(BT_SHIP, design_id, location_id)) {
-            ErrorLogger() << "AIInterface::IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
+            ErrorLogger() << "IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
             return 0;
         }
 
@@ -766,11 +766,11 @@ namespace AIInterface {
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
-            ErrorLogger() << "AIInterface::IssueChangeProductionQuantityOrder : passed queue_index outside range of items on queue.";
+            ErrorLogger() << "IssueChangeProductionQuantityOrder : passed queue_index outside range of items on queue.";
             return 0;
         }
         if (queue[queue_index].item.build_type != BT_SHIP) {
-            ErrorLogger() << "AIInterface::IssueChangeProductionQuantityOrder : passed queue_index for a non-ship item.";
+            ErrorLogger() << "IssueChangeProductionQuantityOrder : passed queue_index for a non-ship item.";
             return 0;
         }
 
@@ -782,7 +782,7 @@ namespace AIInterface {
 
     int IssueRequeueProductionOrder(int old_queue_index, int new_queue_index) {
         if (old_queue_index == new_queue_index) {
-            ErrorLogger() << "AIInterface::IssueRequeueProductionOrder : passed same old and new indexes... nothing to do.";
+            ErrorLogger() << "IssueRequeueProductionOrder : passed same old and new indexes... nothing to do.";
             return 0;
         }
 
@@ -791,7 +791,7 @@ namespace AIInterface {
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (old_queue_index < 0 || static_cast<int>(queue.size()) <= old_queue_index) {
-            ErrorLogger() << "AIInterface::IssueRequeueProductionOrder : passed old_queue_index outside range of items on queue.";
+            ErrorLogger() << "IssueRequeueProductionOrder : passed old_queue_index outside range of items on queue.";
             return 0;
         }
 
@@ -803,7 +803,7 @@ namespace AIInterface {
             actual_new_index = new_queue_index - 1;
 
         if (new_queue_index < 0 || static_cast<int>(queue.size()) <= actual_new_index) {
-            ErrorLogger() << "AIInterface::IssueRequeueProductionOrder : passed new_queue_index outside range of items on queue.";
+            ErrorLogger() << "IssueRequeueProductionOrder : passed new_queue_index outside range of items on queue.";
             return 0;
         }
 
@@ -819,7 +819,7 @@ namespace AIInterface {
 
         const ProductionQueue& queue = empire->GetProductionQueue();
         if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
-            ErrorLogger() << "AIInterface::IssueDequeueProductionOrder : passed queue_index outside range of items on queue.";
+            ErrorLogger() << "IssueDequeueProductionOrder : passed queue_index outside range of items on queue.";
             return 0;
         }
 
@@ -834,11 +834,11 @@ namespace AIInterface {
                                    const std::string& icon, const std::string& model, bool nameDescInStringTable)
     {
         if (name.empty() || description.empty() || hull.empty()) {
-            ErrorLogger() << "AIInterface::IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
+            ErrorLogger() << "IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
             return 0;
         }
         if (!ShipDesign::ValidDesign(hull, parts)) {
-            ErrorLogger() << "AIInterface::IssueCreateShipDesignOrderOrder : pass a hull and parts that do not make a valid ShipDesign";
+            ErrorLogger() << "IssueCreateShipDesignOrderOrder : pass a hull and parts that do not make a valid ShipDesign";
             return 0;
         }
 
@@ -850,7 +850,7 @@ namespace AIInterface {
                                             hull, parts, icon, model, nameDescInStringTable);
 
         if (!design) {
-            ErrorLogger() << "AIInterface::IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
+            ErrorLogger() << "IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
             return 0;
         }
 
