@@ -760,6 +760,7 @@ Part
                     Unowned
                 ]
                 VisibleToEmpire empire = Source.Owner
+                HasTag name = "ORGANIC"
             ]
             effects = [
                 SetPopulation value = Value - 0.5
@@ -781,6 +782,7 @@ Part
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
+                HasTag name = "ORGANIC"
             ]
             activation = And [
                 Unowned
@@ -821,6 +823,7 @@ Part
                     Unowned
                 ]
                 VisibleToEmpire empire = Source.Owner
+                HasTag name = "ORGANIC"
             ]
             effects = [
                 SetPopulation value = Value - 1
@@ -842,6 +845,7 @@ Part
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
                 Stealth high = Source.Detection
+                HasTag name = "ORGANIC"
             ]
             activation = And [
                 Unowned
