@@ -1519,7 +1519,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::DragDroppedOn:
         if (w == this)
             return false;
-        std::cout << "ListBox::EventFilter of type: " << EventTypeName(event) << std::endl << std::flush;
+        //std::cout << "ListBox::EventFilter of type: " << EventTypeName(event) << std::endl << std::flush;
         HandleEvent(event);
         break;
 

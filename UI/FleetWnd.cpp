@@ -1341,7 +1341,7 @@ void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>
 
 void FleetDataPanel::DragDropLeave()
 {
-    std::cout << "FleetDataPanel::DragDropLeave" << std::endl << std::flush;
+    //std::cout << "FleetDataPanel::DragDropLeave" << std::endl << std::flush;
     Select(false);
 }
 
@@ -1505,9 +1505,10 @@ bool FleetDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     case GG::WndEvent::CheckDrops:
     case GG::WndEvent::DragDropLeave:
     case GG::WndEvent::DragDroppedOn:
-        if (w == this)
-            std::cout << "FleetDataPanel::EventFilter w == this !!!" << std::endl << std::flush;
-        std::cout << "FleetDataPanel::EventFilter of type: " << EventTypeName(event) << std::endl << std::flush;
+        if (w == this) {
+            ErrorLogger() << "FleetDataPanel::EventFilter w == this";
+            return false;
+        }
         HandleEvent(event);
         return true;
         break;
@@ -2039,14 +2040,10 @@ public:
     }
 
     virtual void    DragDropLeave() {
-        std::cout << "FleetsListBox::DragDropLeave" << std::endl << std::flush;
+        //std::cout << "FleetsListBox::DragDropLeave" << std::endl << std::flush;
         CUIListBox::DragDropLeave();
-        try {
-            ClearHighlighting();
-        } catch (const std::exception& e) {
-            std::cerr << "FleetsListBox::DragDropLeave while clearhing highlighting caught exception: " << e.what() << std::endl << std::flush;
-        }
-        std::cout << "FleetsListBox::DragDropLeave done" << std::endl << std::flush;
+        ClearHighlighting();
+        //std::cout << "FleetsListBox::DragDropLeave done" << std::endl << std::flush;
     }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2150,7 +2147,6 @@ private:
     }
 
     void            ClearHighlighting() {
-        std::cout << "FleetsListBox::ClearHighlighting this: " << this << std::endl << std::flush;
         if (m_highlighted_row_it == end())
             return;
 
@@ -2166,7 +2162,7 @@ private:
             }
         }
         if (!valid_highlight_row) {
-            std::cout << "m_highlighted_row not valid!" << std::endl << std::flush;
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : m_highlighted_row not valid! aborting";
             m_highlighted_row_it = end();
             return;
         }
@@ -2174,27 +2170,29 @@ private:
 
 
         GG::ListBox::Row* selected_row = *m_highlighted_row_it;
-        std::cout << "selected_row: " << selected_row << std::endl << std::flush;
         if (!selected_row) {
-            std::cerr << "no selected row!" << std::endl << std::flush;
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : no selected row!";
+            return;
         }
         if (selected_row->empty()) {
-            std::cerr << "selected row empty!" << std::endl << std::flush;
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : selected row empty!";
+            return;
         }
 
         GG::Control* control = (*selected_row)[0];
         if (!control) {
-            std::cerr << "null control in selected row!" << std::endl << std::flush;
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : null control in selected row!";
+            return;
         }
 
         FleetDataPanel* data_panel = boost::polymorphic_downcast<FleetDataPanel*>(control);
         if (!data_panel) {
-            std::cerr << "no data panel!" << std::endl << std::flush;
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : no data panel!";
+            return;
         }
 
         data_panel->Select(false);
         m_highlighted_row_it = end();
-        std::cout << "FleetsListBox::ClearHighlighting done" << std::endl << std::flush;
     }
 
     void            InitRowSizes() {
