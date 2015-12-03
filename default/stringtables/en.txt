@@ -9436,24 +9436,9 @@ Capacity: %9% fighters'''
 #############################################################
 
 SR_WEAPON_1_1
-Mass Driver 1
+Mass Driver
 SR_WEAPON_1_1_DESC
 The Mass Driver, a basic weapon.
-
-SR_WEAPON_1_2
-Mass Driver 2
-SR_WEAPON_1_2_DESC
-Mass Driver, refined to level 2.
-
-SR_WEAPON_1_3
-Mass Driver 3
-SR_WEAPON_1_3_DESC
-Mass Driver, refined to level 3.
-
-SR_WEAPON_1_4
-Mass Driver 4
-SR_WEAPON_1_4_DESC
-Mass Driver, refined to level 4.
 
 SR_WEAPON_2_1
 Laser 1

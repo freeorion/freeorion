@@ -2863,7 +2863,15 @@ Tech
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_ROOT_AGGRESSION"
-    unlock = Item type = ShipPart name = "SR_WEAPON_1_2"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
+            ]
+            accountinglabel = "SR_WEAPON_1_2"
+            effects = SetMaxCapacity partname = "SR_WEAPON_1_1" value = Value + 1
     graphic = "icons/ship_parts/mass-driver-2.png"
     
 Tech
@@ -2875,7 +2883,15 @@ Tech
     researchcost = 6 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_1_2"
-    unlock = Item type = ShipPart name = "SR_WEAPON_1_3"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999 name = "SR_WEAPON_1_1"
+            ]
+            accountinglabel = "SR_WEAPON_1_3_DESC"
+            effects = SetMaxCapacity partname = "SR_WEAPON_1_1" value = Value + 1
     graphic = "icons/ship_parts/mass-driver-3.png"
 
 Tech
@@ -2887,7 +2903,15 @@ Tech
     researchcost = 10 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
     prerequisites = "SHP_WEAPON_1_3"
-    unlock = Item type = ShipPart name = "SR_WEAPON_1_4"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                OwnedBy empire = Source.Owner
+                DesignHasPart low = 1 high = 999  name = "SR_WEAPON_1_1"
+            ]
+            accountinglabel = "SR_WEAPON_1_4"
+            effects = SetMaxCapacity partname = "SR_WEAPON_1_1" value = Value + 1
     graphic = "icons/ship_parts/mass-driver-4.png"
 
 Tech
@@ -3049,7 +3073,7 @@ Tech
             scope = OR [
                 Building
                 Planet
-                ]
+            ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             accountinglabel = "BASIC_PLANET_STEALTH"
             effects = SetStealth value = Value + 5
