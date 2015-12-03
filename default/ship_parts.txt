@@ -60,39 +60,6 @@ Part
     buildtime = 2
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/laser-1.png"
-
-Part
-    name = "SR_WEAPON_2_2"
-    description = "SR_WEAPON_2_2_DESC"
-    class = ShortRange
-    damage = 7
-    mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 2
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/laser-2.png"
-
-Part
-    name = "SR_WEAPON_2_3"
-    description = "SR_WEAPON_2_3_DESC"
-    class = ShortRange
-    damage = 9
-    mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 2
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/laser-3.png"
-
-Part
-    name = "SR_WEAPON_2_4"
-    description = "SR_WEAPON_2_4_DESC"
-    class = ShortRange
-    damage = 11
-    mountableSlotTypes = External
-    buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 2
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/laser-4.png"
     
 Part
     name = "SR_WEAPON_3_1"
@@ -106,39 +73,6 @@ Part
     icon = "icons/ship_parts/plasma-1.png"
     
 Part
-    name = "SR_WEAPON_3_2"
-    description = "SR_WEAPON_3_2_DESC"
-    class = ShortRange
-    damage = 12
-    mountableSlotTypes = External
-    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 3
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/plasma-2.png"
-    
-Part
-    name = "SR_WEAPON_3_3"
-    description = "SR_WEAPON_3_3_DESC"
-    class = ShortRange
-    damage = 15
-    mountableSlotTypes = External
-    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 3
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/plasma-3.png" 
-
-Part
-    name = "SR_WEAPON_3_4"
-    description = "SR_WEAPON_3_4_DESC"
-    class = ShortRange
-    damage = 18
-    mountableSlotTypes = External
-    buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 3
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/plasma-4.png"
-
-Part
     name = "SR_WEAPON_4_1"
     description = "SR_WEAPON_4_1_DESC"
     class = ShortRange
@@ -148,39 +82,6 @@ Part
     buildtime = 4
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/death-ray-1.png"    
-
-Part
-    name = "SR_WEAPON_4_2"
-    description = "SR_WEAPON_4_2_DESC"
-    class = ShortRange
-    damage = 20
-    mountableSlotTypes = External
-    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 4
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/death-ray-2.png"
-
-Part
-    name = "SR_WEAPON_4_3"
-    description = "SR_WEAPON_4_3_DESC"
-    class = ShortRange
-    damage = 25
-    mountableSlotTypes = External
-    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 4
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/death-ray-3.png"
-
-Part
-    name = "SR_WEAPON_4_4"
-    description = "SR_WEAPON_4_4_DESC"
-    class = ShortRange
-    damage = 30
-    mountableSlotTypes = External
-    buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 4
-    location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/death-ray-4.png"
 
 Part
     name = "SR_SPINAL_ANTIMATTER"

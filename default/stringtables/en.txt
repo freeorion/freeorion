@@ -7840,6 +7840,9 @@ Unlocks Ship Part
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Unlocks Ship Weapon
 
+SHIP_WEAPON_IMPROVE_SHORT_DESC
+Improves Ships Weapon
+
 SHIP_HULL_UNLOCK_SHORT_DESC
 Unlocks Ship Hull
 
