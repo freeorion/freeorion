@@ -221,11 +221,11 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
     }
 
     if (!fs::exists(path)) {
-        ErrorLogger() << "SaveFileListBox::LoadSaveGamePreviews: Save Game directory \"" << path << "\" not found";
+        ErrorLogger() << "LoadSaveGamePreviews: Save Game directory \"" << path << "\" not found";
         return;
     }
     if (!fs::is_directory(path)) {
-        ErrorLogger() << "SaveFileListBox::LoadSaveGamePreviews: Save Game directory \"" << path << "\" was not a directory";
+        ErrorLogger() << "LoadSaveGamePreviews: Save Game directory \"" << path << "\" was not a directory";
         return;
     }
 
@@ -239,7 +239,7 @@ void LoadSaveGamePreviews(const fs::path& orig_path, const std::string& extensio
                 }
             }
         } catch (const std::exception& e) {
-            ErrorLogger() << "SaveFileListBox::LoadSaveGamePreviews: Failed loading preview from " << it->path() << " because: " << e.what();
+            ErrorLogger() << "LoadSaveGamePreviews: Failed loading preview from " << it->path() << " because: " << e.what();
         }
     }
 }
