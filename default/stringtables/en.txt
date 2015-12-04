@@ -6290,14 +6290,10 @@ Empty
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Short Range
-PC_MISSILES
-Missiles
+PC_DIRECT_WEAPON
+Direct Weapon
 PC_FIGHTERS
 Fighters
-PC_POINT_DEFENSE
-Point Defense
 PC_SHIELD
 Shields
 PC_ARMOUR
