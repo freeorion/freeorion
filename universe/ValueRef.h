@@ -1670,10 +1670,10 @@ std::string ValueRef::Operation<T>::Description() const
     }
 
     if (m_op_type == RANDOM_UNIFORM)
-        return "randomnumber(" + LHS()->Description() + ", " + RHS()->Description() + ")";
+        return "RandomNumber(" + LHS()->Description() + ", " + RHS()->Description() + ")";
 
     if (m_op_type == RANDOM_PICK) {
-        std::string retval = "randompick(";
+        std::string retval = "OneOf(";
         for (typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
              it != m_operands.end(); ++it)
         {
