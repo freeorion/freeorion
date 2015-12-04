@@ -229,6 +229,7 @@
     (NextSystemID)                              \
     (NextTurnPopGrowth)                         \
     (NextYoungerStarType)                       \
+    (NoDefaultCapacityEffect)                   \
     (None)                                      \
     (NoStar)                                    \
     (NoStringtableLookup)                       \

@@ -62,6 +62,7 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_f_type _f;
+            qi::_g_type _g;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_r3_type _r3;
@@ -116,9 +117,12 @@ namespace {
                    | (parse::label(Damage_token)    >> parse::double_ [ _d = _1 ])
                    |  eps [ _d = 0.0 ]
                   )
+                > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
+                   |  eps [ _g = true ]
+                  )
                 >   slots(_f)
                 >   common_params [ _e = _1 ]
-                    [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f)) ]
+                    [ insert(_r1, new_<PartType>(_a, _b, _c, _d, _e, _f, _g)) ]
                 ;
 
             start
@@ -191,7 +195,8 @@ namespace {
                 ShipPartClass,
                 double,
                 PartHullCommonParams,
-                std::vector<ShipSlotType>
+                std::vector<ShipSlotType>,
+                bool
             >,
             parse::skipper_type
         > part_type_rule;
