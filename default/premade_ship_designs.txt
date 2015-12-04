@@ -219,7 +219,7 @@ ShipDesign
     description = "SD_SMALL_MARK2_DESC"
     hull = "SH_BASIC_SMALL"
     parts = [
-        "SR_WEAPON_1_3"
+        "SR_WEAPON_1_1"
     ]
     model = "fighter"
 
@@ -239,7 +239,7 @@ ShipDesign
     description = "SD_MARK2_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_WEAPON_1_3"
+        "SR_WEAPON_1_1"
         "AR_STD_PLATE"
         "FU_BASIC_TANK"
     ]
@@ -250,7 +250,7 @@ ShipDesign
     description = "SD_MARK3_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_WEAPON_2_2"
+        "SR_WEAPON_2_1"
         "AR_STD_PLATE"
         "FU_BASIC_TANK"
     ]
@@ -261,7 +261,7 @@ ShipDesign
     description = "SD_MARK4_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
     ]
@@ -284,7 +284,7 @@ ShipDesign
     description = "SD_LARGE_MARK2_DESC"
     hull = "SH_STANDARD"
     parts = [
-        "SR_WEAPON_1_3"
+        "SR_WEAPON_1_1"
         "AR_STD_PLATE"
         "AR_STD_PLATE"
         "FU_BASIC_TANK"
@@ -296,7 +296,7 @@ ShipDesign
     description = "SD_LARGE_MARK3_DESC"
     hull = "SH_STANDARD"
     parts = [
-        "SR_WEAPON_2_2"
+        "SR_WEAPON_2_1"
         "AR_STD_PLATE"
         "AR_STD_PLATE"
         "FU_BASIC_TANK"
@@ -308,7 +308,7 @@ ShipDesign
     description = "SD_LARGE_MARK4_DESC"
     hull = "SH_STANDARD"
     parts = [
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
@@ -320,8 +320,8 @@ ShipDesign
     description = "SD_ROBOTIC1_DESC"
     hull = "SH_ROBOTIC"
     parts = [
-        "SR_WEAPON_1_4"
-        "SR_WEAPON_1_4"
+        "SR_WEAPON_1_1"
+        "SR_WEAPON_1_1"
         "AR_STD_PLATE"
         "AR_STD_PLATE"
         "FU_BASIC_TANK"
@@ -333,8 +333,8 @@ ShipDesign
     description = "SD_ROBOTIC2_DESC"
     hull = "SH_ROBOTIC"
     parts = [
-        "SR_WEAPON_2_2"
-        "SR_WEAPON_2_2"
+        "SR_WEAPON_2_1"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
@@ -346,8 +346,8 @@ ShipDesign
     description = "SD_ROBOTIC3_DESC"
     hull = "SH_ROBOTIC"
     parts = [
-        "SR_WEAPON_2_4"
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_1"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
@@ -359,7 +359,7 @@ ShipDesign
     description = "SD_ENG1_DESC"
     hull = "SH_COMPRESSED_ENERGY"
     parts = [
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_1"
     ]
     model = "mark1"
 
@@ -368,7 +368,7 @@ ShipDesign
     description = "SD_ENG2_DESC"
     hull = "SH_COMPRESSED_ENERGY"
     parts = [
-        "SR_WEAPON_3_2"
+        "SR_WEAPON_3_1"
     ]
     model = "mark1"
 
@@ -377,7 +377,7 @@ ShipDesign
     description = "SD_ORGANIC1_DESC"
     hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_1_4"
+        "SR_WEAPON_1_1"
         "AR_STD_PLATE"
         "AR_STD_PLATE"
         "FU_BASIC_TANK"
@@ -389,7 +389,7 @@ ShipDesign
     description = "SD_ORGANIC2_DESC"
     hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_2_2"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
@@ -401,7 +401,7 @@ ShipDesign
     description = "SD_ORGANIC3_DESC"
     hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
@@ -413,7 +413,7 @@ ShipDesign
     description = "SD_SHIELD_BUG_1_DESC"
     hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_1_4"
+        "SR_WEAPON_1_1"
         "AR_STD_PLATE"
         "AR_STD_PLATE"
         "SH_DEFENSE_GRID"
@@ -425,7 +425,7 @@ ShipDesign
     description = "SD_SHIELD_BUG_2_DESC"
     hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_2_2"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "SH_DEFENSE_GRID"
@@ -437,7 +437,7 @@ ShipDesign
     description = "SD_SHIELD_BUG_3_DESC"
     hull = "SH_ORGANIC"
     parts = [
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "SH_DEFLECTOR"
@@ -450,9 +450,9 @@ ShipDesign
     hull = "SH_XENTRONIUM"
     parts = [
         "DT_DETECTOR_4"
-        "SR_WEAPON_4_2"
-        "SR_WEAPON_4_2"
-        "SR_WEAPON_4_2"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
         "FU_ZERO_FUEL"
     ]
     model = "mark1"
@@ -465,7 +465,7 @@ ShipDesign
     parts = [
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
         "FU_BASIC_TANK"
@@ -479,7 +479,7 @@ ShipDesign
     parts = [
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
-        "SR_WEAPON_3_2"
+        "SR_WEAPON_3_1"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
         "FU_BASIC_TANK"
@@ -493,7 +493,7 @@ ShipDesign
     parts = [
         "AR_ROCK_PLATE"
         "AR_ROCK_PLATE"
-        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_1"
         "AR_ROCK_PLATE"
         "FU_BASIC_TANK"
         "FU_BASIC_TANK"
@@ -509,8 +509,8 @@ ShipDesign
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
-        "SR_WEAPON_3_2"
-        "SR_WEAPON_3_2"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
         "FU_IMPROVED_ENGINE_COUPLINGS"
         "FU_BASIC_TANK"
         "FU_BASIC_TANK"
@@ -526,8 +526,8 @@ ShipDesign
         "AR_ROCK_PLATE"
         "AR_ROCK_PLATE"
         "AR_ROCK_PLATE"
-        "SR_WEAPON_3_4"
-        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
         "FU_IMPROVED_ENGINE_COUPLINGS"
         "FU_BASIC_TANK"
         "FU_BASIC_TANK"
@@ -541,7 +541,7 @@ ShipDesign
     parts = [
         "AR_CRYSTAL_PLATE"
         "AR_CRYSTAL_PLATE"
-        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_1"
         "AR_CRYSTAL_PLATE"
         "FU_BASIC_TANK"
         "FU_BASIC_TANK"
@@ -553,8 +553,8 @@ ShipDesign
     description = "SD_ENDO_1_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
-        "SR_WEAPON_2_2"
-        "SR_WEAPON_2_2"
+        "SR_WEAPON_2_1"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "SH_DEFENSE_GRID"
@@ -567,8 +567,8 @@ ShipDesign
     description = "SD_ENDO_2_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
-        "SR_WEAPON_2_4"
-        "SR_WEAPON_2_4"
+        "SR_WEAPON_2_1"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "AR_ZORTRIUM_PLATE"
         "SH_DEFENSE_GRID"
@@ -581,8 +581,8 @@ ShipDesign
     description = "SD_ENDO_3_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
-        "SR_WEAPON_3_2"
-        "SR_WEAPON_3_2"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
         "AR_DIAMOND_PLATE"
         "AR_DIAMOND_PLATE"
         "SH_DEFLECTOR"
@@ -595,8 +595,8 @@ ShipDesign
     description = "SD_ENDO_4_DESC"
     hull = "SH_ENDOMORPHIC"
     parts = [
-        "SR_WEAPON_3_4"
-        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
         "AR_DIAMOND_PLATE"
         "AR_DIAMOND_PLATE"
         "SH_DEFLECTOR"
@@ -610,9 +610,9 @@ ShipDesign
     hull = "SH_SELF_GRAVITATING"
     parts = [
         "DT_DETECTOR_4"
-        "SR_WEAPON_4_4"
-        "SR_WEAPON_4_4"
-        "SR_WEAPON_4_4"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
+        "SR_WEAPON_4_1"
         "AR_XENTRONIUM_PLATE"
         "FU_SINGULARITY_ENGINE_CORE"
         "AR_XENTRONIUM_PLATE"
@@ -627,10 +627,10 @@ ShipDesign
     hull = "SH_FRACTAL_ENERGY"
     parts = [
         "DT_DETECTOR_3"
-        "SR_WEAPON_3_4"
-        "SR_WEAPON_3_4"
-        "SR_WEAPON_3_4"
-        "SR_WEAPON_3_4"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
+        "SR_WEAPON_3_1"
         "AR_XENTRONIUM_PLATE"
         "AR_XENTRONIUM_PLATE"
         "AR_XENTRONIUM_PLATE"
