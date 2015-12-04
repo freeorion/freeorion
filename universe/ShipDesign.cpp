@@ -182,7 +182,7 @@ namespace {
 // PartType
 ////////////////////////////////////////////////
 void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
-    if (m_capacity != 0) {
+    if (m_capacity != 0 && m_add_standard_capacity_effect) {
         switch (m_class) {
         case PC_COLONY:
         case PC_TROOPS:

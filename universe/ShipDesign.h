@@ -82,12 +82,15 @@ public:
         m_tags(),
         m_location(0),
         m_effects(),
-        m_icon()
+        m_icon(),
+        m_add_standard_capacity_effect(false)
     {}
+
     PartType(const std::string& name, const std::string& description,
              ShipPartClass part_class, double capacity,
              const PartHullCommonParams& common_params,
-             std::vector<ShipSlotType> mountable_slot_types) :
+             std::vector<ShipSlotType> mountable_slot_types,
+             bool add_standard_capacity_effect = true) :
         m_name(name),
         m_description(description),
         m_class(part_class),
@@ -99,10 +102,11 @@ public:
         m_tags(),
         m_location(common_params.location),
         m_effects(),
-        m_icon(common_params.icon)
+        m_icon(common_params.icon),
+        m_add_standard_capacity_effect(add_standard_capacity_effect)
     {
         Init(common_params.effects);
-        for ( std::set< std::string >::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
+        for (std::set<std::string>::iterator tag_it = common_params.tags.begin(); tag_it != common_params.tags.end(); tag_it++)
             m_tags.insert(boost::to_upper_copy<std::string>(*tag_it));
     }
 
@@ -146,6 +150,7 @@ private:
     Condition::ConditionBase*                               m_location;
     std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
     std::string                                             m_icon;
+    bool                                                    m_add_standard_capacity_effect;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -634,7 +639,8 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_tags)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_icon);
+        & BOOST_SERIALIZATION_NVP(m_icon)
+        & BOOST_SERIALIZATION_NVP(m_add_standard_capacity_effect);
 }
 
 template <class Archive>
