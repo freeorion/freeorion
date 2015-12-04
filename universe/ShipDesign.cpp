@@ -247,6 +247,7 @@ const std::string PartType::CapacityDescription() const {
     case PC_FUEL:
     case PC_TROOPS:
     case PC_COLONY:
+    case PC_FIGHTERS:
         desc_string += UserString("PART_DESC_CAPACITY");
         break;
     case PC_SHIELD:
