@@ -126,27 +126,6 @@ class AIstate(object):
         res = hex(int(time_delta))[2:].strip('L')
         return res
 
-    def __setstate__(self, state_dict):
-        self.__dict__.update(state_dict)  # update attributes
-        for dict_attrib in ['qualifyingColonyBaseTargets',
-                            'qualifyingOutpostBaseTargets',
-                            'qualifyingTroopBaseTargets',
-                            'planet_status',
-                            'diplomatic_logs']:
-            if dict_attrib not in state_dict:
-                self.__dict__[dict_attrib] = {}
-        for std_attrib in ['empire_standard_fighter', 'empire_standard_enemy']:
-            if std_attrib not in state_dict:
-                self.__dict__[std_attrib] = (4, ((4, 1),), 0.0, 10.0)
-        for odict_attrib in ['colonisablePlanetIDs', 'colonisableOutpostIDs']:
-            if dict_attrib not in state_dict:
-                self.__dict__[odict_attrib] = odict()
-        if 'uid' not in state_dict:
-            self.uid = self.generate_uid(first=True)
-        if 'turn_uids' not in state_dict:
-            self.turn_uids = {}
-        self.__dict__.setdefault('empire_standard_enemy_rating', 40)
-
     def set_turn_uid(self):
         """
         Set turn uid. Should be called once per generateOrders.
