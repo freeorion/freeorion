@@ -884,13 +884,37 @@ class ShipDesigner(object):
         to make sure we can easily adjust the values for future balance changes or after implementing a
         method to read out all stats.
         """
-        def parse_tokens(tokendict):
+
+        def parse_complex_tokens(tup):
+            """Parse complex tokens which have a value dependent on another value
+
+            Example usage:
+            Repair by 10% of max structure per turn. {REPAIR_PER_TURN: (STRUCTURE, 0.1)}
+            :param tup: (dependency, fraction_of_value)
+            :type tup: tuple
+            :return: float
+            """
+            dependency, value = tup
+            dep_val = 0
+            if dependency == AIDependencies.STRUCTURE:
+                dep_val = self.structure
+            elif dependency == AIDependencies.FUEL:
+                dep_val = self.fuel
+            else:
+                print "Can't parse dependent token: ", tup
+            return dep_val * value
+
+        def parse_tokens(tokendict, is_hull=False):
             """Adjust design stats according to the token dict key-value pairs.
 
             :param tokendict: tokens and values
             :type tokendict: dict
+            :param is_hull: tokendict is related to hull
+            :type is_hull: bool
             """
             for token, value in tokendict.items():
+                if isinstance(value, tuple) and token is not AIDependencies.ORGANIC_GROWTH:
+                    value = parse_complex_tokens(value)
                 if token == AIDependencies.REPAIR_PER_TURN:
                     self.repair_per_turn += min(value, self.structure)
                 elif token == AIDependencies.FUEL_PER_TURN:
@@ -910,17 +934,30 @@ class ShipDesigner(object):
                     self.maximum_organic_growth += value[1]
                 elif token == AIDependencies.SOLAR_STEALTH:
                     self.solar_stealth = max(self.solar_stealth, value)
-            if AIDependencies.DETECTION not in tokendict:
+                elif token == AIDependencies.SPEED:
+                    self.speed += value
+                elif token == AIDependencies.FUEL:
+                    self.fuel += value
+                elif token == AIDependencies.STRUCTURE:
+                    self.structure += value
+                else:
+                    print "WARNING: Failed to parse token: " % token
+            # if the hull has no special detection specified, then it has base detection.
+            if is_hull and AIDependencies.DETECTION not in tokendict:
                 self.detection += AIDependencies.BASE_DETECTION
 
         if self.hull.name not in AIDependencies.HULL_EFFECTS:
             self.detection += AIDependencies.BASE_DETECTION
         else:
-            parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name])
+            parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name], is_hull=True)
 
         for partname in set(self.partnames):
             if partname in AIDependencies.PART_EFFECTS:
                 parse_tokens(AIDependencies.PART_EFFECTS[partname])
+
+        for tech in AIDependencies.TECH_EFFECTS:
+            if tech_is_complete(tech):
+                parse_tokens(AIDependencies.TECH_EFFECTS[tech])
 
     def add_design(self, verbose=False):
         """Add a real (i.e. gameobject) ship design of the current configuration.
@@ -1027,6 +1064,7 @@ class ShipDesigner(object):
             relevant_techs = []
             if WEAPONS & self.useful_part_classes:
                 relevant_techs = [tech for tech in AIDependencies.WEAPON_UPGRADE_TECHS if tech_is_complete(tech)]
+            relevant_techs += [tech for tech in AIDependencies.TECH_EFFECTS if tech_is_complete(tech)]
             relevant_techs = tuple(relevant_techs)
             design_cache_tech = design_cache_reqs.setdefault(relevant_techs, {})
 
