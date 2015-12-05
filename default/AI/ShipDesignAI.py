@@ -1,7 +1,7 @@
 """
 This module deals with the autonomous shipdesign from the AI. The design process is class-based.
-The basic functionality is defined in the class ShipDesigner. The more specialised classes mostly 
-implement the rating function and some additional information for the optimizing algorithms to improve performance. 
+The basic functionality is defined in the class ShipDesigner. The more specialised classes mostly
+implement the rating function and some additional information for the optimizing algorithms to improve performance.
 
 Example usage of this module:
 import ShipDesignAI
@@ -38,9 +38,12 @@ global variables:
 # TODO: Use the distance to next colonisable planets as base for speed modifiers for troops/colo/outpost ships
 # TODO: For stable release, comment out the profiling functionality
 
+# TODO: Implement a better system for the new weapon upgrade functionality:
+#       - _calculate_weapon_strength() may be removed
+#       - Filtering the weapon parts must be updated (current cache does not consider tech upgrades, weapons are ignored)
+
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
-import ColonisationAI
 import AIDependencies
 import copy
 import traceback
@@ -48,6 +51,7 @@ import math
 import AIstate
 from collections import Counter, defaultdict
 from freeorion_tools import print_error, UserString
+from ResearchAI import tech_is_complete
 
 # Define meta classes for the ship parts
 ARMOUR = frozenset({fo.shipPartClass.armour})
@@ -192,19 +196,26 @@ class ShipDesignCache(object):
         print "Currently cached best designs:"
         for classname in self.best_designs:
             print classname
-            for consider_fleet in self.best_designs[classname]:
+            cache_name = self.best_designs[classname]
+            for consider_fleet in cache_name:
                 print "    Consider fleet upkeep:", consider_fleet
-                for req_tuple in self.best_designs[classname][consider_fleet]:
+                cache_upkeep = cache_name[consider_fleet]
+                for req_tuple in cache_upkeep:
                     print "        ", req_tuple
-                    for species_tuple in self.best_designs[classname][consider_fleet][req_tuple]:
-                        print "            ", species_tuple, " # relevant species stats"
-                        for avParts in self.best_designs[classname][consider_fleet][req_tuple][species_tuple]:
-                            print "                ", avParts
-                            for hullname in sorted(self.best_designs[classname][consider_fleet][req_tuple][species_tuple][avParts].keys(),
-                                                   reverse=True, key=lambda x: self.best_designs[classname][consider_fleet][req_tuple]
-                                                                               [species_tuple][avParts][x][0]):
-                                print "                    ", hullname, ":",
-                                print self.best_designs[classname][consider_fleet][req_tuple][species_tuple][avParts][hullname]
+                    cache_reqs = cache_upkeep[req_tuple]
+                    for tech_tuple in cache_reqs:
+                        print "            ", tech_tuple, " # relevant tech upgrades"
+                        cache_techs = cache_reqs[tech_tuple]
+                        for species_tuple in cache_techs:
+                            print "                ", species_tuple, " # relevant species stats"
+                            cache_species = cache_techs[species_tuple]
+                            for avParts in cache_species:
+                                print "                    ", avParts
+                                cache_parts = cache_species[avParts]
+                                for hullname in sorted(cache_parts.keys(),
+                                                       reverse=True, key=lambda x: cache_parts[x][0]):
+                                    print "                        ", hullname, ":",
+                                    print cache_parts[hullname]
 
     def print_production_cost(self):
         """Print production_cost cache."""
@@ -392,6 +403,8 @@ class ShipDesignCache(object):
         pid = self.production_cost.keys()[0]  # as only location invariant parts are considered, use arbitrary planet.
         for new_part in new_parts:
             self.strictly_worse_parts[new_part.name] = []
+            if new_part.partClass in WEAPONS:
+                continue  # TODO:  Update cache-functionality to handle tech upgrades
             if not new_part.costTimeLocationInvariant:
                 print "new part %s not location invariant!" % new_part.name
                 continue
@@ -815,7 +828,7 @@ class ShipDesigner(object):
             self.production_cost += local_cost_cache.get(part.name, part.productionCost(fo.getEmpire().empireID, self.pid))
             self.production_time = max(self.production_time, local_time_cache.get(part.name, part.productionTime(fo.getEmpire().empireID, self.pid)))
             partclass = part.partClass
-            capacity = part.capacity
+            capacity = part.capacity if partclass not in WEAPONS else _calculate_weapon_strength(part)
             if partclass in FUEL:
                 self.fuel += capacity
             elif partclass in ENGINES:
@@ -1010,6 +1023,13 @@ class ShipDesigner(object):
             planet = universe.getPlanet(pid)
             self.pid = pid
             self.update_species(planet.speciesName)
+
+            relevant_techs = []
+            if WEAPONS & self.useful_part_classes:
+                relevant_techs = [tech for tech in AIDependencies.WEAPON_UPGRADE_TECHS if tech_is_complete(tech)]
+            relevant_techs = tuple(relevant_techs)
+            design_cache_tech = design_cache_reqs.setdefault(relevant_techs, {})
+
             # The piloting species is only important if its modifiers are of any use to the design
             # Therefore, consider only those treats that are actually useful. Note that the
             # canColonize trait is covered by the parts we can build, so no need to consider it here.
@@ -1023,8 +1043,10 @@ class ShipDesigner(object):
             if TROOPS & self.useful_part_classes:
                 relevant_grades.append("TROOPS: %s" % troops_grade)
             species_tuple = tuple(relevant_grades)
+            design_cache_species = design_cache_tech.setdefault(species_tuple, {})
 
-            design_cache_species = design_cache_reqs.setdefault(species_tuple, {})
+
+
             available_hulls = list(Cache.hulls_for_planets[pid]) + additional_hulls
             if verbose:
                 print "Evaluating planet %s" % planet.name
@@ -1110,7 +1132,8 @@ class ShipDesigner(object):
 
         if self.filter_inefficient_parts:
             local_cost_cache = Cache.production_cost[self.pid]
-            check_for_redundance = (WEAPONS | ARMOUR | ENGINES | FUEL | SHIELDS
+            # TODO: Check for redundance of weapons with new tech upgrade system
+            check_for_redundance = (ARMOUR | ENGINES | FUEL | SHIELDS
                                     | STEALTH | DETECTION | TROOPS) & self.useful_part_classes
             for slottype in part_dict:
                 partclass_dict = defaultdict(list)
@@ -1442,7 +1465,7 @@ class MilitaryShipDesigner(ShipDesigner):
         armours = [part for part in parts if part.partClass in ARMOUR]
         cap = lambda x: x.capacity
         if weapons:
-            weapon_part = max(weapons, key=cap)
+            weapon_part = max(weapons, key=_calculate_weapon_strength)
             weapon = weapon_part.name
             idxweapon = available_parts.index(weapon)
             cw = Cache.production_cost[self.pid].get(weapon, weapon_part.productionCost(fo.getEmpire().empireID, self.pid))
@@ -1844,7 +1867,7 @@ def _get_design_by_name(design_name, verbose=False):
     Results are cached for performance improvements. The cache is to be
     checked for consistency with check_cache_for_consistency() once per turn
     as there appears to be a random bug in multiplayer, changing IDs.
-    
+
     :param design_name: string
     :return: shipDesign object
     """
@@ -1911,3 +1934,24 @@ def _can_build(design, empire_id, pid):
     :return: bool
     """
     return design.productionLocationForEmpire(empire_id, pid)
+
+
+def _calculate_weapon_strength(weapon):
+    weapon_name = weapon.name
+    damage = weapon.capacity
+    try:
+        upgrades = AIDependencies.WEAPON_UPGRADE_DICT[weapon_name]
+    except KeyError:
+        print "WARNING: Encountered unknown weapon (%s): Damage estimate (%d) may be incorrect." % (weapon_name, damage)
+        print "Please update AIDependencies.py and add the weapon with its upgrade techs to WEAPON_UPGRADE_DICT"
+        return damage
+    total_tech_bonus = 0
+    for tech, dmg_bonus in upgrades:
+        try:
+            total_tech_bonus += dmg_bonus if tech_is_complete(tech) else 0
+        except Exception as e:
+            print "ERROR: Could not retrieve tech %s" % tech
+            print "Please update AIDependencies.py! In WEAPON_UPGRADE_DICT enter the correct upgrade tech(s) for %s" % weapon_name
+            print_error(e)
+    print "%s, total tech bonus: %d" % (weapon_name, total_tech_bonus)
+    return damage + total_tech_bonus

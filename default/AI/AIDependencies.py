@@ -290,3 +290,14 @@ PART_EFFECTS = {
     PART_KRILL_SPAWNER: {STEALTH_MODIFIER: 40, STACKING_RULES: [NO_EFFECT_WITH_CLOAKS]}
 }
 
+WEAPON_UPGRADE_DICT = {
+    # "PARTNAME": tuple([  (tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ... ])
+    "SR_WEAPON_1_1": tuple([("SHP_WEAPON_1_%d" % i, 1) for i in [2, 3, 4]]),
+    "SR_WEAPON_2_1": tuple([("SHP_WEAPON_2_%d" % i, 2) for i in [2, 3, 4]]),
+    "SR_WEAPON_3_1": tuple([("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]]),
+    "SR_WEAPON_4_1": tuple([("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]]),
+    "SR_SPINAL_ANTIMATTER": tuple([])
+}
+
+# DO NOT TOUCH THIS ENTRY BUT UPDATE WEAPON_UPGRADE_DICT INSTEAD!
+WEAPON_UPGRADE_TECHS = [tech_name for tups in WEAPON_UPGRADE_DICT.values() for (tech_name, _) in tups]
