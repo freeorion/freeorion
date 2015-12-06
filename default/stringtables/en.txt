@@ -9495,6 +9495,11 @@ Capacity: %9% fighters'''
 ####                 S H I P   P A R T S                 ####
 #############################################################
 
+FT_WEAPON_1_1
+Test Fighter Bay
+FT_WEAPON_1_1_DESC
+Prototype storage and launch system for independently piloted combat craft.
+
 SR_WEAPON_1_1
 Mass Driver
 SR_WEAPON_1_1_DESC

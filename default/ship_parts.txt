@@ -37,7 +37,7 @@ Part
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/ion_cannon.png"
+    icon = "icons/ship_parts/fighters-1.png"
 
 Part
     name = "SR_WEAPON_1_1"
