@@ -2703,10 +2703,6 @@ void ServerApp::ProcessCombats() {
     // collect data about locations where combat is to occur
     AssembleSystemCombatInfo(combats);
 
-    // TODO: inform players of locations of controllable combats, and get
-    // players to specify which should be controlled and which should be
-    // auto-resolved
-
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
     for (std::vector<CombatInfo>::iterator it = combats.begin(); it != combats.end(); ++it) {
