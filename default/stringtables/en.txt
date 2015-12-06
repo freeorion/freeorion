@@ -1516,6 +1516,9 @@ Open freeorion.org
 INTRO_BTN_CREDITS
 Credits
 
+INTRO_BTN_ENCYCLOPEDIA
+Encyclopedia
+
 INTRO_BTN_EXIT
 Exit
 

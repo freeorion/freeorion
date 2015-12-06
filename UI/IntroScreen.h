@@ -10,6 +10,7 @@
 
 class CUIWnd;
 class CreditsWnd;
+class EncyclopediaDetailPanel;
 
 
 /** This is the first screen the user sees in FreeOrion.  It will always be the
@@ -29,6 +30,7 @@ public:
     void            OnLoadGame();
     void            OnOptions();
     void            OnAbout();
+    void            OnEncyclopedia();
     void            OnWebsite();
     void            OnCredits();
     void            OnExitGame();
@@ -48,9 +50,11 @@ private:
     GG::Button*         m_about;        //!< opens a dialog to choose to see credits or license
     GG::Button*         m_website;      //!< opens web browser (or however system handles urls) to http://freeorion.org
     GG::Button*         m_credits;      //!< displays credits
+    GG::Button*         m_encyclopedia;      //!< displays encyclopedia
     GG::Button*         m_exit_game;    //!< button that exits the program
 
     CreditsWnd*         m_credits_wnd;
+    EncyclopediaDetailPanel*    m_pedia_panel;      //!< encyclpedia panel
 
     CUIWnd*             m_menu;
     GG::StaticGraphic*  m_splash;

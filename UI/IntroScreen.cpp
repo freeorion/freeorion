@@ -13,6 +13,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 #include "../util/Version.h"
+#include "EncyclopediaDetailPanel.h"
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
@@ -29,6 +30,7 @@ namespace {
     const GG::X MAIN_MENU_WIDTH(200);
     const GG::Y MAIN_MENU_HEIGHT(380);
 
+    const std::string INTRO_PEDIA_WND_NAME = "intro.pedia";
     void Options(OptionsDB& db) {
         db.AddFlag("force-external-server",             UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),     false);
         db.Add<std::string>("external-server-address",  UserStringNop("OPTIONS_DB_EXTERNAL_SERVER_ADDRESS"),   "localhost");
@@ -192,8 +194,10 @@ IntroScreen::IntroScreen() :
     m_about(0),
     m_website(0),
     m_credits(0),
+    m_encyclopedia(0),
     m_exit_game(0),
     m_credits_wnd(0),
+    m_pedia_panel(0),
     m_menu(0),
     m_splash(0),
     m_logo(0),
@@ -209,10 +213,20 @@ IntroScreen::IntroScreen() :
     m_version = new CUILabel(FreeOrionVersionString(), GG::FORMAT_NOWRAP);
     m_version->MoveTo(GG::Pt(Width() - m_version->Width(), Height() - m_version->Height()));
 
+    m_pedia_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE , INTRO_PEDIA_WND_NAME);
+    m_pedia_panel->InitSizeMove(GG::Pt(GG::X(50),GG::Y(50)),GG::Pt(GG::X(350),GG::Y(350)));
+    if (m_pedia_panel->GetItemsSize() == 0)
+        m_pedia_panel->SetIndex();
+    // update pedia window
+    m_pedia_panel->Refresh();
+    // but don't show it
+    m_pedia_panel->Hide();
+
     AttachChild(m_splash);
     m_splash->AttachChild(m_logo);
     m_splash->AttachChild(m_menu);
     m_splash->AttachChild(m_version);
+    m_splash->AttachChild(m_pedia_panel);
 
     //create buttons
     m_single_player = new CUIButton(UserString("INTRO_BTN_SINGLE_PLAYER"));
@@ -223,6 +237,7 @@ IntroScreen::IntroScreen() :
     m_about =         new CUIButton(UserString("INTRO_BTN_ABOUT"));
     m_website =       new CUIButton(UserString("INTRO_BTN_WEBSITE"));
     m_credits =       new CUIButton(UserString("INTRO_BTN_CREDITS"));
+    m_encyclopedia =  new CUIButton(UserString("INTRO_BTN_ENCYCLOPEDIA"));
     m_exit_game =     new CUIButton(UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
@@ -234,6 +249,7 @@ IntroScreen::IntroScreen() :
     m_menu->AttachChild(m_about);
     m_menu->AttachChild(m_website);
     m_menu->AttachChild(m_credits);
+    m_menu->AttachChild(m_encyclopedia);
     m_menu->AttachChild(m_exit_game);
 
     //connect signals and slots
@@ -245,6 +261,7 @@ IntroScreen::IntroScreen() :
     GG::Connect(m_about->LeftClickedSignal,         &IntroScreen::OnAbout,          this);
     GG::Connect(m_website->LeftClickedSignal,       &IntroScreen::OnWebsite,        this);
     GG::Connect(m_credits->LeftClickedSignal,       &IntroScreen::OnCredits,        this);
+    GG::Connect(m_encyclopedia->LeftClickedSignal,  &IntroScreen::OnEncyclopedia,   this);
     GG::Connect(m_exit_game->LeftClickedSignal,     &IntroScreen::OnExitGame,       this);
 
     DoLayout();
@@ -332,6 +349,16 @@ void IntroScreen::OnCredits() {
     m_splash->AttachChild(m_credits_wnd);
 }
 
+void IntroScreen::OnEncyclopedia() {
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+    if (!m_pedia_panel->Visible()){
+        m_pedia_panel->Show();
+    } else {
+        m_pedia_panel->Hide();
+    }
+}
+
 void IntroScreen::OnExitGame() {
     delete m_credits_wnd;
     m_credits_wnd = 0;
@@ -374,6 +401,7 @@ void IntroScreen::DoLayout() {
     button_width = std::max(button_width, m_about->MinUsableSize().x);
     button_width = std::max(button_width, m_website->MinUsableSize().x);
     button_width = std::max(button_width, m_credits->MinUsableSize().x);
+    button_width = std::max(button_width, m_encyclopedia->MinUsableSize().x);
     button_width = std::max(button_width, m_exit_game->MinUsableSize().x);
     button_width = std::max(MIN_BUTTON_WIDTH, button_width);
 
@@ -381,7 +409,7 @@ void IntroScreen::DoLayout() {
     button_cell_height = std::max(MIN_BUTTON_HEIGHT, m_exit_game->MinUsableSize().y);
     //culate window width and height
     mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
-    mainmenu_height = 9.75 * button_cell_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+    mainmenu_height = 10.75 * button_cell_height + V_MAINMENU_MARGIN; // 9 rows + 0.75 before exit button
 
     // place buttons
     GG::Pt button_ul(GG::X(15), GG::Y(12));
@@ -408,6 +436,9 @@ void IntroScreen::DoLayout() {
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
     m_website->SizeMove(button_ul, button_lr);
+    button_ul.y += GG::Y(button_cell_height);
+    button_lr.y += GG::Y(button_cell_height);
+    m_encyclopedia->SizeMove(button_ul,button_lr);
     button_ul.y += GG::Y(button_cell_height);
     button_lr.y += GG::Y(button_cell_height);
     m_credits->SizeMove(button_ul, button_lr);
