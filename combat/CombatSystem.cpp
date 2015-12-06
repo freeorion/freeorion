@@ -579,14 +579,23 @@ namespace {
     struct AutoresolveInfo {
         typedef std::map<int, EmpireCombatInfo>::iterator empire_it;
 
+        // Describes the state of a single fighter in combat
+        struct FighterInfo {
+            int     id;         // negative number used to refer to a fighter in the target/attacker object ids
+            int     empire_id;  // which empire owns the fighter
+            int     ship_id;    // from which ship was this fighter launched
+            bool    destroyed;  // has this fighter been destroyed?
+        };
+
+        std::map<int, FighterInfo>      fighter_info;               // all fighters involved in battle, indexed by fighter id (which should be negative ints)
         std::set<int>                   valid_target_object_ids;    // all objects that can be attacked
         std::set<int>                   valid_attacker_object_ids;  // all objects that can attack
-        std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information
-        float                           monster_detection;          // monster's detections strength
+        std::map<int, EmpireCombatInfo> empire_infos;               // empire specific information, indexed by empire id
+        float                           monster_detection;          // monster (non-player combatants) detection strength
         CombatInfo&                     combat_info;                // a reference to the combat info
 
-        AutoresolveInfo(CombatInfo& combat_info):
-        combat_info(combat_info)
+        AutoresolveInfo(CombatInfo& combat_info) :
+            combat_info(combat_info)
         {
             monster_detection = GetMonsterDetection(combat_info);
             PopulateAttackersAndTargets(combat_info);
