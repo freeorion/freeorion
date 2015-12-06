@@ -6290,14 +6290,10 @@ Vide
 
 # Ship Part Classes
 
-PC_SHORT_RANGE
-Courte portée
-PC_MISSILES  # translated
-Missiles
+PC_DIRECT_WEAPON
+Armement
 PC_FIGHTERS
 Chasseurs
-PC_POINT_DEFENSE
-Point de défense
 PC_SHIELD
 Bouclier
 PC_ARMOUR
@@ -7839,6 +7835,9 @@ Débloque un équipement d'astronef
 
 SHIP_WEAPON_UNLOCK_SHORT_DESC
 Débloque un armement d'astronef
+
+SHIP_WEAPON_IMPROVE_SHORT_DESC
+Améliore un armement d'astronef
 
 SHIP_HULL_UNLOCK_SHORT_DESC
 Débloque une coque d'astronef
@@ -9436,24 +9435,9 @@ Capacité: %9% chasseurs'''
 #############################################################
 
 SR_WEAPON_1_1
-Canon Mitrailleur 1
+Canon Mitrailleur
 SR_WEAPON_1_1_DESC
 Le Canon Mitrailleur, une arme de base.
-
-SR_WEAPON_1_2
-Canon Mitrailleur 2
-SR_WEAPON_1_2_DESC
-Canon Mitrailleur, perfectionné au niveau 2.
-
-SR_WEAPON_1_3
-Canon Mitrailleur 3
-SR_WEAPON_1_3_DESC
-Canon Mitrailleur, perfectionné au niveau 3.
-
-SR_WEAPON_1_4
-Canon Mitrailleur 4
-SR_WEAPON_1_4_DESC
-Canon Mitrailleur, perfectionné au niveau 4.
 
 SR_WEAPON_2_1
 Canon Laser 1
