@@ -25,7 +25,7 @@ Classes:
 - ShipDesignCache: caches information used in this module. Only use the defined instance (variable name "Cache")
 - ShipDesigner: base class for all designs. Provides basic and general functionalities
 - ColonisationShipDesignerBaseClass: base class for all colonisation ships which provides common functionalities
-- OutpostShipDesignerBaseClass: same but for outposter ships
+- OutpostShipDesignerBaseClass: same but for outpost ships
 - TroopShipDesignerBaseClass: same but for troop ships
 - AdditionalSpecifications:  Defines all requirements we have for our designs such as minimum fuel or minimum speed.
 
@@ -78,8 +78,12 @@ MISSING_REQUIREMENT_MULTIPLIER = -1000
 INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSING_REQUIREMENT_MULTIPLIER
 
 # Potentially, not adding techs to AIDependencies is intended for testing purposes.
-# Therefore, chat the player ingame only once to inform him about the issue to prevent spam.
+# Therefore, chat the player only once to inform him about the issue to prevent spam.
 __raised_warnings = []
+
+# string constants for better readability of the cache
+WITH_UPKEEP = "considering fleet upkeep"
+WITHOUT_UPKEEP = "not considering fleet upkeep"
 
 
 class ShipDesignCache(object):
@@ -201,7 +205,7 @@ class ShipDesignCache(object):
             print classname
             cache_name = self.best_designs[classname]
             for consider_fleet in cache_name:
-                print 4*" ", "Consider fleet upkeep:", consider_fleet
+                print 4*" ", consider_fleet
                 cache_upkeep = cache_name[consider_fleet]
                 for req_tuple in cache_upkeep:
                     print 8*" ", req_tuple
@@ -478,7 +482,7 @@ class ShipDesignCache(object):
 
         # 3. Update ship part test designs
         #     Because there are different slottypes, we need to find a hull that can host said slot.
-        #     However, not every planet can buld every hull. Thus, for each inhabited planet:
+        #     However, not every planet can build every hull. Thus, for each inhabited planet:
         #       I. Check which parts do not have a testdesign yet with a hull we can build on this planet
         #       II. If there are parts, find out which slots we need
         #       III. For each slot type, try to find a hull we can build on this planet
@@ -539,7 +543,7 @@ class ShipDesignCache(object):
                     available_hulls[i], available_hulls[idx] = available_hulls[idx], available_hulls[i]
             except ValueError:
                 print "ERROR: hull in testhull cache not in available_hulls",
-                print "eventhough it is supposed to be a proper subset."
+                print "even though it is supposed to be a proper subset."
                 traceback.print_exc()
         number_of_testhulls = len(self.testhulls)
 
@@ -661,7 +665,7 @@ class ShipDesigner(object):
     filter_useful_parts = True              # removes any part not belonging to self.useful_part_classes
     filter_inefficient_parts = False        # removes cost-inefficient parts (less capacity and less capacity/cost)
 
-    consider_fleet_count = True             # defines if we consider fleet upkee cost
+    consider_fleet_count = True             # defines if we consider fleet upkeep cost
 
     NAMETABLE = "AI_SHIPDESIGN_NAME_INVALID"
     NAME_THRESHOLDS = []                    # list of rating thresholds to choose a different name
@@ -1052,7 +1056,7 @@ class ShipDesigner(object):
 
         # TODO: Rework caching to only cache raw stats of designs, then evaluate them
         design_cache_class = Cache.best_designs.setdefault(self.__class__.__name__, {})
-        design_cache_fleet_upkeep = design_cache_class.setdefault(consider_fleet_count, {})
+        design_cache_fleet_upkeep = design_cache_class.setdefault(WITH_UPKEEP if consider_fleet_count else WITHOUT_UPKEEP, {})
         req_tuple = self.additional_specifications.convert_to_tuple()
         design_cache_reqs = design_cache_fleet_upkeep.setdefault(req_tuple, {})
         universe = fo.getUniverse()
@@ -1450,7 +1454,7 @@ class MilitaryShipDesigner(ShipDesigner):
     # TODO: Consider subclassing into small/big ships.
     # While big flagships are good in one-on-one situations, we may want to consider building small ships to support
     # them efficiently and act as decoys and anti-decoy-weapon in the fleet. Before doing so, changes need to be done
-    # to how the AI assemmbles its military fleets.
+    # to how the AI assembles its military fleets.
 
     basename = "Warship"
     description = "Military Ship"
@@ -1931,7 +1935,7 @@ def _get_design_by_name(design_name, verbose=False):
 def _get_part_type(partname):
     """Return the partType object (fo.getPartType(partname)) of the given partname.
 
-    As the function in lategame may be called some thousand times, the results are cached.
+    As the function in late game may be called some thousand times, the results are cached.
 
     :param partname: string
     :returns:        partType object
