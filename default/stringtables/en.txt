@@ -7789,6 +7789,12 @@ Force-Energy Compression
 SHP_FRC_ENRG_COMP_DESC
 Typically, the manipulation of energy requires it to be in the form of matter so that potential energy can be stored as desired and released on demand. Matter converted to pure energy stored in the fabric of space-time itself would be more versatile than any material substance, but impossible to contain without advanced force-field technology.
 
+SHP_ENRG_FRIGATE
+Military Energy Compression
+
+SHP_ENRG_FRIGATE_DESC
+Advanced forcefields allow energy and matter to be combined to make warships, but immense energy is needed to build them at scale.
+
 SHP_QUANT_ENRG_MAG
 Quantum Energy Magnification
 
@@ -10223,6 +10229,15 @@ SH_COMPRESSED_ENERGY_DESC
 '''This fast hull is comprised entirely of compressed energy and has a single external slot. 
 
 Structure is low, [[encyclopedia STEALTH_TITLE]] is good, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and [[encyclopedia STARLANE_SPEED_TITLE]] is very high. 
+
+This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
+
+SH_ENERGY_FRIGATE
+Energy Frigate
+SH_ENERGY_FRIGATE_DESC
+'''This fast hull combines compressed energy and warship technology to create a fast but fragile attack ship. 
+
+Structure and [[encyclopedia STEALTH_TITLE]] are low, [[encyclopedia DETECTION_RANGE_TITLE]] is normal and [[encyclopedia STARLANE_SPEED_TITLE]] is very high. 
 
 This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole and requires a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] at the planet where it is formed.'''
 
