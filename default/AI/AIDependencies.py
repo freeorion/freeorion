@@ -230,10 +230,6 @@ SYSTEM_SHIP_FACILITIES = {
     "BLD_SHIPYARD_AST_REF",
 }
 
-FULL_REPAIR = 1e6  # arbitrary large number higher than any structure.
-FULL_FUEL = 1e6
-BASE_DETECTION = 25
-
 
 PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
 
@@ -243,19 +239,34 @@ FUEL_PER_TURN = "FUEL_PER_TURN"
 STEALTH_MODIFIER = "STEALTH_MODIFIER"
 ASTEROID_STEALTH = "ASTEROID_STEALTH"
 SOLAR_STEALTH = "SOLAR_STEALTH"
+SPEED = "SPEED"
+FUEL = "FUEL"
 SHIELDS = "SHIELDS"
-DETECTION = "DETECTION"                 # do only specify if irregular detection
+STRUCTURE = "STRUCTURE"
+DETECTION = "DETECTION"                 # do only specify for hulls if irregular detection
 ORGANIC_GROWTH = "ORGANIC_GROWTH"       # structure for value is (per_turn, maximum)
 STACKING_RULES = "STACKING_RULES"       # expects a list of stacking rules
 # stacking rules
 NO_EFFECT_WITH_CLOAKS = "NO_EFFECT_WITH_CLOAKS"
 
+BASE_DETECTION = 25
+
+
+TECH_EFFECTS = {
+    "SHP_REINFORCED_HULL": {STRUCTURE: 5},
+    "SHP_BASIC_DAM_CONT": {REPAIR_PER_TURN: 1},
+    "SHP_FLEET_REPAIR": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
+    "SHP_ADV_DAM_CONT": {REPAIR_PER_TURN: (STRUCTURE, 0.1)},  # 10% of max structure
+    "SHP_INTSTEL_LOG": {SPEED: 20},  # technically not correct, but as approximation good enough...
+    "GRO_ENERGY_META": {FUEL: 2}
+}
+
 HULL_EFFECTS = {
     # Robotic line
     "SH_ROBOTIC": {REPAIR_PER_TURN: 2},
     "SH_SPATIAL_FLUX": {STEALTH_MODIFIER: -30},
-    "SH_NANOROBOTIC": {REPAIR_PER_TURN: FULL_REPAIR},
-    "SH_LOGISTICS_FACILITATOR": {REPAIR_PER_TURN: FULL_REPAIR},
+    "SH_NANOROBOTIC": {REPAIR_PER_TURN: (STRUCTURE, 1)},  # 100% of max structure
+    "SH_LOGISTICS_FACILITATOR": {REPAIR_PER_TURN: (STRUCTURE, 1)},  # 100% of max structure
     # Asteroid line
     "SH_SMALL_ASTEROID": {ASTEROID_STEALTH: 20},
     "SH_ASTEROID": {ASTEROID_STEALTH: 20},
@@ -272,21 +283,32 @@ HULL_EFFECTS = {
     "SH_PROTOPLASMIC": {REPAIR_PER_TURN: 2, FUEL_PER_TURN: 0.2, DETECTION: 50, ORGANIC_GROWTH: (0.5, 25)},
     "SH_ENDOSYMBIOTIC": {REPAIR_PER_TURN: 2, FUEL_PER_TURN: 0.2, DETECTION: 50, ORGANIC_GROWTH: (0.5, 15)},
     "SH_RAVENOUS": {DETECTION: 75, ORGANIC_GROWTH: (0.5, 20)},
-    "SH_BIOADAPTIVE": {REPAIR_PER_TURN: FULL_REPAIR, FUEL_PER_TURN: 0.2,
+    "SH_BIOADAPTIVE": {REPAIR_PER_TURN: (STRUCTURE, 1), FUEL_PER_TURN: 0.2,
                        DETECTION: 75, ORGANIC_GROWTH: (0.5, 25)},
     "SH_SENTIENT": {REPAIR_PER_TURN: 2, FUEL_PER_TURN: 0.2, DETECTION: 70,
                     ORGANIC_GROWTH: (1, 45), STEALTH_MODIFIER: 20},
     # Energy Line
-    "SH_SOLAR": {SOLAR_STEALTH: 120, FUEL_PER_TURN: FULL_FUEL}
+    "SH_SOLAR": {SOLAR_STEALTH: 120, FUEL_PER_TURN: (FUEL, 1)}  # 100% of fuel
 }
 
 PART_EFFECTS = {
     "SH_MULTISPEC": {SOLAR_STEALTH: 60},
     "FU_TRANSPATIAL_DRIVE": {},  # not supported yet
     "FU_RAMSCOOP": {FUEL_PER_TURN: 0.1},
-    "FU_ZERO_FUEL": {FUEL_PER_TURN: FULL_FUEL},
+    "FU_ZERO_FUEL": {FUEL_PER_TURN: (FUEL, 1)},  # 100% of fuel
     "SP_DISTORTION_MODULATOR": {},  # not supported yet
     "SH_ROBOTIC_INTERFACE_SHIELDS": {},  # not supported yet
     PART_KRILL_SPAWNER: {STEALTH_MODIFIER: 40, STACKING_RULES: [NO_EFFECT_WITH_CLOAKS]}
 }
 
+WEAPON_UPGRADE_DICT = {
+    # "PARTNAME": tuple([  (tech_name, dmg_upgrade), (tech_name2, dmg_upgrade2), ... ])
+    "SR_WEAPON_1_1": tuple([("SHP_WEAPON_1_%d" % i, 1) for i in [2, 3, 4]]),
+    "SR_WEAPON_2_1": tuple([("SHP_WEAPON_2_%d" % i, 2) for i in [2, 3, 4]]),
+    "SR_WEAPON_3_1": tuple([("SHP_WEAPON_3_%d" % i, 3) for i in [2, 3, 4]]),
+    "SR_WEAPON_4_1": tuple([("SHP_WEAPON_4_%d" % i, 5) for i in [2, 3, 4]]),
+    "SR_SPINAL_ANTIMATTER": tuple([])
+}
+
+# DO NOT TOUCH THIS ENTRY BUT UPDATE WEAPON_UPGRADE_DICT INSTEAD!
+WEAPON_UPGRADE_TECHS = [tech_name for tups in WEAPON_UPGRADE_DICT.values() for (tech_name, _) in tups]
