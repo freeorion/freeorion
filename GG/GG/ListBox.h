@@ -242,23 +242,19 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual void    DropsAcceptable(DropsAcceptableIter first,
-                                    DropsAcceptableIter last,
-                                    const Pt& pt) const;
-
     virtual Pt      MinUsableSize() const;
     virtual Pt      ClientUpperLeft() const;
     virtual Pt      ClientLowerRight() const;
 
-    bool                    Empty() const;          ///< returns true when the ListBox is empty
-    const_iterator          begin() const;          ///< returns an iterator to the first list row
-    const_iterator          end() const;            ///< returns an iterator to the imaginary row one past the last
-    const Row&              GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
-    iterator                Caret() const;          ///< returns the row that has the caret
-    const SelectionSet&     Selections() const;     ///< returns a const reference to the set row indexes that is currently selected
-    bool                    Selected(iterator it) const; ///< returns true if row \a it is selected
-    Clr                     InteriorColor() const;  ///< returns the color painted into the client area of the control
-    Clr                     HiliteColor() const;    ///< returns the color behind selected line items
+    bool                Empty() const;          ///< returns true when the ListBox is empty
+    const_iterator      begin() const;          ///< returns an iterator to the first list row
+    const_iterator      end() const;            ///< returns an iterator to the imaginary row one past the last
+    const Row&          GetRow(std::size_t n) const; ///< returns a const reference to the row at index \a n; not range-checked.  \note This function is O(n).
+    iterator            Caret() const;          ///< returns the row that has the caret
+    const SelectionSet& Selections() const;     ///< returns a const reference to the set row indexes that is currently selected
+    bool                Selected(iterator it) const; ///< returns true if row \a it is selected
+    Clr                 InteriorColor() const;  ///< returns the color painted into the client area of the control
+    Clr                 HiliteColor() const;    ///< returns the color behind selected line items
 
     /** Returns the style flags of the listbox \see GG::ListBoxStyle */
     Flags<ListBoxStyle> Style() const;
@@ -318,7 +314,7 @@ public:
 
     /** \name Mutators */ ///@{
     virtual void    StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset);
-    virtual void    AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt);
+    virtual void    AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys);
     virtual void    ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
     virtual void    Render();
 
@@ -484,8 +480,8 @@ protected:
     /** \name Mutators */ ///@{
     virtual void    KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
     virtual void    MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
-    virtual void    DragDropEnter(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
-    virtual void    DragDropHere(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
+    virtual void    DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys);
+    virtual void    DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys);
     virtual void    DragDropLeave();
     virtual void    TimerFiring(unsigned int ticks, Timer* timer);
 
@@ -502,6 +498,10 @@ protected:
     //@}
 
     void            AdjustScrolls(bool adjust_for_resize);  ///< creates, destroys, or resizes scrolls to reflect size of data in listbox
+
+protected:
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const Pt& pt, Flags<ModKey> mod_keys) const;
 
 private:
     void            ConnectSignals();

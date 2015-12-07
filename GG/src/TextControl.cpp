@@ -54,7 +54,10 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
 }
 
 TextControl::~TextControl()
-{ delete m_render_cache; }
+{
+    delete m_render_cache;
+    m_render_cache = 0;
+}
 
 Pt TextControl::MinUsableSize() const
 { return m_text_lr - m_text_ul; }
@@ -145,8 +148,9 @@ void TextControl::RefreshCache() {
         m_font->PreRenderText(Pt(X0, Y0), Size(), m_text, m_format, *m_render_cache, &m_line_data);
 }
 
-void TextControl::PurgeCache() {
-    if(m_render_cache)
+void TextControl::PurgeCache()
+{
+    if (m_render_cache)
         delete m_render_cache;
 
     m_render_cache = 0;
@@ -233,7 +237,8 @@ void TextControl::SetTextFormat(Flags<TextFormat> format)
         SetText(m_text);
 }
 
-void TextControl::SetTextColor(Clr color){
+void TextControl::SetTextColor(Clr color)
+{
     m_text_color = color;
     PurgeCache();
 }

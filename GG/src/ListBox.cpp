@@ -466,14 +466,16 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
 ListBox::~ListBox()
 { delete m_header_row; }
 
-void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const Pt& pt) const
+void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                              const Pt& pt, Flags<ModKey> mod_keys) const
 {
     for (std::map<const Wnd*, bool>::iterator it = first; it != last; ++it) {
         it->second = false;
         const Row* row = dynamic_cast<const Row*>(it->first);
         if (row &&
             (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-             m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end())) {
+             m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end()))
+        {
             iterator insertion_it = RowUnderPt(pt);
             try {
                 DropAcceptableSignal(insertion_it);
@@ -637,7 +639,7 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
     }
 }
 
-void ListBox::AcceptDrops(const std::vector<Wnd*>& wnds, const Pt& pt)
+void ListBox::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys)
 {
     // TODO: Pull the call to RowUnderPt() out and reuse the value in each loop iteration.
     for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
@@ -1285,38 +1287,41 @@ void ListBox::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
     SignalScroll(*m_vscroll, true);
 }
 
-void ListBox::DragDropEnter(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys)
+void ListBox::DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 {
     ResetAutoScrollVars();
-    DragDropHere(pt, drag_drop_wnds, mod_keys);
+    DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 }
 
-void ListBox::DragDropHere(const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys)
+void ListBox::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys)
 {
-    if (!m_rows.empty() && m_auto_scroll_during_drag_drops && InClient(pt)) {
-        const Pt MARGIN_OFFSET = Pt(X(m_auto_scroll_margin), Y(m_auto_scroll_margin));
-        Rect client_no_scroll_hole(ClientUpperLeft() + MARGIN_OFFSET, ClientLowerRight() - MARGIN_OFFSET);
-        m_auto_scrolling_up = pt.y < client_no_scroll_hole.ul.y;
-        m_auto_scrolling_down = client_no_scroll_hole.lr.y < pt.y;
-        m_auto_scrolling_left = pt.x < client_no_scroll_hole.ul.x;
-        m_auto_scrolling_right = client_no_scroll_hole.lr.x < pt.x;
-        if (m_auto_scrolling_up || m_auto_scrolling_down || m_auto_scrolling_left || m_auto_scrolling_right) {
-            bool acceptable_drop = false;
-            for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
-                if (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-                    m_allowed_drop_types.find(it->first->DragDropDataType()) != m_allowed_drop_types.end()) {
-                    acceptable_drop = true;
-                    break;
-                }
+    this->DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
+
+    if (m_rows.empty() || !m_auto_scroll_during_drag_drops || !InClient(pt))
+        return;
+
+    const Pt MARGIN_OFFSET = Pt(X(m_auto_scroll_margin), Y(m_auto_scroll_margin));
+    Rect client_no_scroll_hole(ClientUpperLeft() + MARGIN_OFFSET, ClientLowerRight() - MARGIN_OFFSET);
+    m_auto_scrolling_up = pt.y < client_no_scroll_hole.ul.y;
+    m_auto_scrolling_down = client_no_scroll_hole.lr.y < pt.y;
+    m_auto_scrolling_left = pt.x < client_no_scroll_hole.ul.x;
+    m_auto_scrolling_right = client_no_scroll_hole.lr.x < pt.x;
+    if (m_auto_scrolling_up || m_auto_scrolling_down || m_auto_scrolling_left || m_auto_scrolling_right) {
+        bool acceptable_drop = false;
+        for (std::map<const Wnd*, bool>::const_iterator it = drop_wnds_acceptable.begin(); it != drop_wnds_acceptable.end(); ++it) {
+            if (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
+                m_allowed_drop_types.find(it->first->DragDropDataType()) != m_allowed_drop_types.end()) {
+                acceptable_drop = true;
+                break;
             }
-            if (acceptable_drop) {
-                if (!m_auto_scroll_timer.Running()) {
-                    m_auto_scroll_timer.Reset(GUI::GetGUI()->Ticks());
-                    m_auto_scroll_timer.Start();
-                }
-            } else {
-                DragDropLeave();
+        }
+        if (acceptable_drop) {
+            if (!m_auto_scroll_timer.Running()) {
+                m_auto_scroll_timer.Reset(GUI::GetGUI()->Ticks());
+                m_auto_scroll_timer.Start();
             }
+        } else {
+            DragDropLeave();
         }
     }
 }
@@ -1362,6 +1367,44 @@ void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
                     SignalScroll(*m_hscroll, true);
                 }
             }
+        }
+    }
+}
+
+namespace {
+    std::string EventTypeName(const GG::WndEvent& event) {
+        switch(event.Type()) {
+        case GG::WndEvent::LButtonDown:     return "(LButtonDown)";
+        case GG::WndEvent::LDrag:           return "(LDrag)";
+        case GG::WndEvent::LButtonUp:       return "(LButtonUp)";
+        case GG::WndEvent::LClick:          return "(LClick)";
+        case GG::WndEvent::LDoubleClick:    return "(LDoubleClick)";
+        case GG::WndEvent::MButtonDown:     return "(MButtonDown)";
+        case GG::WndEvent::MDrag:           return "(MDrag)";
+        case GG::WndEvent::MButtonUp:       return "(MButtonUp)";
+        case GG::WndEvent::MClick:          return "(MClick)";
+        case GG::WndEvent::MDoubleClick:    return "(MDoubleClick)";
+        case GG::WndEvent::RButtonDown:     return "(RButtonDown)";
+        case GG::WndEvent::RDrag:           return "(RDrag)";
+        case GG::WndEvent::RButtonUp:       return "(RButtonUp)";
+        case GG::WndEvent::RClick:          return "(RClick)";
+        case GG::WndEvent::RDoubleClick:    return "(RDoubleClick)";
+        case GG::WndEvent::MouseEnter:      return "(MouseEnter)";
+        case GG::WndEvent::MouseHere:       return "(MouseHere)";
+        case GG::WndEvent::MouseLeave:      return "(MouseLeave)";
+        case GG::WndEvent::MouseWheel:      return "(MouseWheel)";
+        case GG::WndEvent::DragDropEnter:   return "(DragDropEnter)";
+        case GG::WndEvent::DragDropHere:    return "(DragDropHere)";
+        case GG::WndEvent::CheckDrops:      return "(CheckDrops)";
+        case GG::WndEvent::DragDropLeave:   return "(DragDropLeave)";
+        case GG::WndEvent::DragDroppedOn:   return "(DragDroppedOn)";
+        case GG::WndEvent::KeyPress:        return "(KeyPress)";
+        case GG::WndEvent::KeyRelease:      return "(KeyRelease)";
+        case GG::WndEvent::TextInput:       return "(TextInput)";
+        case GG::WndEvent::GainingFocus:    return "(GainingFocus)";
+        case GG::WndEvent::LosingFocus:     return "(LosingFocus)";
+        case GG::WndEvent::TimerFiring:     return "(TimerFiring)";
+        default:                            return "(Unknown Event Type)";
         }
     }
 }
@@ -1471,9 +1514,12 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
 
     case WndEvent::DragDropEnter:
     case WndEvent::DragDropHere:
+    case WndEvent::CheckDrops:
     case WndEvent::DragDropLeave:
+    case WndEvent::DragDroppedOn:
         if (w == this)
             return false;
+        //std::cout << "ListBox::EventFilter of type: " << EventTypeName(event) << std::endl << std::flush;
         HandleEvent(event);
         break;
 

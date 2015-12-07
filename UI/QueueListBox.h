@@ -15,11 +15,8 @@ public:
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const;
-    virtual void    AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt);
-    virtual void    DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds,
-                                  GG::Flags<GG::ModKey> mod_keys);
-    virtual void    DragDropHere(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds,
+    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                  GG::Flags<GG::ModKey> mod_keys);
     virtual void    DragDropLeave();
 
@@ -33,6 +30,10 @@ public:
 
     boost::signals2::signal<void (GG::ListBox::Row*, std::size_t)>  QueueItemMovedSignal;
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
+
+protected:
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     void    ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);

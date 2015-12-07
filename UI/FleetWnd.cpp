@@ -1088,19 +1088,25 @@ public:
     virtual GG::Pt      ClientUpperLeft() const;  ///< upper left plus border insets
     virtual GG::Pt      ClientLowerRight() const; ///< lower right minus border insets
 
-    virtual void        DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const;
-
     bool                Selected() const;
     NewFleetAggression  GetNewFleetAggression() const;
 
     virtual void        Render();
-    virtual void        DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys);
+    virtual void        DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                     GG::Flags<GG::ModKey> mod_keys);
+    virtual void        CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                   GG::Flags<GG::ModKey> mod_keys);
     virtual void        DragDropLeave();
-    virtual void        AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt);
+    virtual void        AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
     void                Select(bool b);
     virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     mutable boost::signals2::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
+
+protected:
+    virtual bool        EventFilter(GG::Wnd* w, const GG::WndEvent& event);
+    virtual void        DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                        const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
 private:
     void                AggressionToggleButtonPressed();
@@ -1158,6 +1164,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
+        icon->InstallEventFilter(this);
         AttachChild(icon);
 
         if (fleet->HasArmedShips() || !fleet->HasTroopShips()) {
@@ -1181,6 +1188,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
+        icon->InstallEventFilter(this);
         AttachChild(icon);
 
         // stat icon for fleet shields
@@ -1188,6 +1196,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
+        icon->InstallEventFilter(this);
         AttachChild(icon);
 
         // stat icon for fleet fuel
@@ -1195,6 +1204,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_FUEL, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_FUEL_SUMMARY"));
+        icon->InstallEventFilter(this);
         AttachChild(icon);
 
         // stat icon for fleet speed
@@ -1202,6 +1212,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
         m_stat_icons.push_back(std::make_pair(METER_SPEED, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(UserString("FW_FLEET_SPEED_SUMMARY"));
+        icon->InstallEventFilter(this);
         AttachChild(icon);
 
 
@@ -1282,7 +1293,19 @@ void FleetDataPanel::Render() {
     GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
 }
 
-void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys) {
+void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                  GG::Flags<GG::ModKey> mod_keys)
+{
+    if (!m_new_fleet_drop_target) {
+        // normally the containing row (or the listbox that contains that) will
+        // handle drag-drop related things
+        //std::cout << "FleetDataPanel::DragDropHere forwarding to parent..." << std::endl << std::flush;
+        ForwardEventToParent();
+    }
+
+    //std::cout << "FleetDataPanel::DragDropHere locally checking drops..." << std::endl << std::flush;
+    DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
+
     if (Disabled()) {
         Select(false);
         return;
@@ -1292,16 +1315,11 @@ void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG
 
     Select(true);   // default
 
-    // make map from Wnd to bool to store whether each dropped Wnd is acceptable to drop here
-    std::map<const GG::Wnd*, bool> drops_acceptable_map;
-    for (std::map<GG::Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it)
-        drops_acceptable_map[it->first] = false;
-
     // get whether each Wnd is dropable
-    DropsAcceptable(drops_acceptable_map.begin(), drops_acceptable_map.end(), pt);
+    DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
     // scan through wnds, looking for one that isn't dropable
-    for (DropsAcceptableIter it = drops_acceptable_map.begin(); it != drops_acceptable_map.end(); ++it) {
+    for (DropsAcceptableIter it = drop_wnds_acceptable.begin(); it != drop_wnds_acceptable.end(); ++it) {
         if (!it->second) {
             // wnd can't be dropped
             Select(false);
@@ -1310,10 +1328,37 @@ void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG
     }
 }
 
-void FleetDataPanel::DragDropLeave()
-{ Select(false); }
+void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                GG::Flags<GG::ModKey> mod_keys)
+{
+    if (!m_new_fleet_drop_target) {
+        // normally the containing row (or the listbox that contains that) will
+        // handle drag-drop related things
+        ForwardEventToParent();
+    }
+    Control::CheckDrops(pt, drop_wnds_acceptable, mod_keys);
+}
 
-void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
+void FleetDataPanel::DragDropLeave()
+{
+    //std::cout << "FleetDataPanel::DragDropLeave" << std::endl << std::flush;
+    Select(false);
+}
+
+void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                     const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+{
+    if (!m_new_fleet_drop_target) {
+        //std::cout << "FleetDataPanel::DropsAcceptable default rejecting all" << std::endl << std::flush;
+        // reject all
+        Wnd::DropsAcceptable(first, last, pt, mod_keys);
+        return;
+    }
+
+    //std::cout << "FleetDataPanel::DropsAcceptable locally checking drops" << std::endl << std::flush;
+    // only used when FleetDataPanel sets independently in the FleetWnd, not
+    // in a FleetListBox
+
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
     TemporaryPtr<const Fleet> this_panel_fleet = GetFleet(m_fleet_id);
 
@@ -1357,7 +1402,16 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
     }
 }
 
-void FleetDataPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+void FleetDataPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
+    if (!m_new_fleet_drop_target && Parent()) {
+        // normally the containing row (or the listbox that contains that) will
+        // handle drag-drops
+        ForwardEventToParent();
+    }
+
+    // following only used when FleetDataPanel sets independently in the
+    // FleetWnd, not in a FleetListBox
+
     DebugLogger() << "FleetWnd::AcceptDrops with " << wnds.size() << " wnds at pt: " << pt;
     std::vector<int> ship_ids;
     ship_ids.reserve(wnds.size());
@@ -1399,6 +1453,68 @@ void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     //std::cout << "FleetDataPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
     if (old_size != Size())
         DoLayout();
+}
+
+namespace {
+    std::string EventTypeName(const GG::WndEvent& event) {
+        switch(event.Type()) {
+        case GG::WndEvent::LButtonDown:     return "(LButtonDown)";
+        case GG::WndEvent::LDrag:           return "(LDrag)";
+        case GG::WndEvent::LButtonUp:       return "(LButtonUp)";
+        case GG::WndEvent::LClick:          return "(LClick)";
+        case GG::WndEvent::LDoubleClick:    return "(LDoubleClick)";
+        case GG::WndEvent::MButtonDown:     return "(MButtonDown)";
+        case GG::WndEvent::MDrag:           return "(MDrag)";
+        case GG::WndEvent::MButtonUp:       return "(MButtonUp)";
+        case GG::WndEvent::MClick:          return "(MClick)";
+        case GG::WndEvent::MDoubleClick:    return "(MDoubleClick)";
+        case GG::WndEvent::RButtonDown:     return "(RButtonDown)";
+        case GG::WndEvent::RDrag:           return "(RDrag)";
+        case GG::WndEvent::RButtonUp:       return "(RButtonUp)";
+        case GG::WndEvent::RClick:          return "(RClick)";
+        case GG::WndEvent::RDoubleClick:    return "(RDoubleClick)";
+        case GG::WndEvent::MouseEnter:      return "(MouseEnter)";
+        case GG::WndEvent::MouseHere:       return "(MouseHere)";
+        case GG::WndEvent::MouseLeave:      return "(MouseLeave)";
+        case GG::WndEvent::MouseWheel:      return "(MouseWheel)";
+        case GG::WndEvent::DragDropEnter:   return "(DragDropEnter)";
+        case GG::WndEvent::DragDropHere:    return "(DragDropHere)";
+        case GG::WndEvent::CheckDrops:      return "(CheckDrops)";
+        case GG::WndEvent::DragDropLeave:   return "(DragDropLeave)";
+        case GG::WndEvent::DragDroppedOn:   return "(DragDroppedOn)";
+        case GG::WndEvent::KeyPress:        return "(KeyPress)";
+        case GG::WndEvent::KeyRelease:      return "(KeyRelease)";
+        case GG::WndEvent::TextInput:       return "(TextInput)";
+        case GG::WndEvent::GainingFocus:    return "(GainingFocus)";
+        case GG::WndEvent::LosingFocus:     return "(LosingFocus)";
+        case GG::WndEvent::TimerFiring:     return "(TimerFiring)";
+        default:                            return "(Unknown Event Type)";
+        }
+    }
+}
+
+bool FleetDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    //std::cout << "FleetDataPanel::EventFilter " << EventTypeName(event) << std::endl << std::flush;
+
+    if (w == this)
+        return false;
+
+    switch (event.Type()) {
+    case GG::WndEvent::DragDropEnter:
+    case GG::WndEvent::DragDropHere:
+    case GG::WndEvent::CheckDrops:
+    case GG::WndEvent::DragDropLeave:
+    case GG::WndEvent::DragDroppedOn:
+        if (w == this) {
+            ErrorLogger() << "FleetDataPanel::EventFilter w == this";
+            return false;
+        }
+        HandleEvent(event);
+        return true;
+        break;
+    default:
+        return false;
+    }
 }
 
 void FleetDataPanel::AggressionToggleButtonPressed() {
@@ -1686,60 +1802,7 @@ public:
         m_order_issuing_enabled = enable;
     }
 
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
-        // default result, possibly to be updated later: reject all drops
-        for (DropsAcceptableIter it = first; it != last; ++it)
-            it->second = false;
-
-        // early termination check: if this FleetsListBox does not presently allow order
-        // issuing, all drops are unacceptable
-        if (!m_order_issuing_enabled)
-            return;
-
-        // semi-early termination if pt is not over a FleetRow, all drops are unacceptable.
-        // this is because ships can't be dropped into an empty spot of the FleetsListBox;
-        // ships must be dropped into existing fleet panels / rows, or onto the new fleet
-        // drop target.
-        // as well, there is presently no way to drop a FleetRow into a FleetsListBox that
-        // the row isn't already in, so if the drop isn't onto another FleetRow, there's
-        // no sense in doing such a drop.
-
-        // get FleetRow under drop point
-        iterator row = RowUnderPt(pt);
-
-        // if drop point isn't over a FleetRow, reject all drops (default case)
-        if (row == end())
-            return;
-
-        // extract drop target fleet from row under drop point
-        TemporaryPtr<const Fleet> target_fleet;
-        if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(*row))
-            target_fleet = GetFleet(fleet_row->FleetID());
-
-        // loop through dropped Wnds, checking if each is a valid ship or fleet.  this doesn't
-        // consider whether there is a mixture of fleets and ships, as each row is considered
-        // independently.  actual drops will probably only accept one or the other, not a mixture
-        // of fleets and ships being dropped simultaneously.
-        for (DropsAcceptableIter it = first; it != last; ++it) {
-            // for either of fleet or ship being dropped, check if merge or transfer is valid.
-            // if any of the nested if's fail, the default rejection of the drop will remain set
-            if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
-                if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(it->first))
-                    if (TemporaryPtr<const Fleet> fleet = GetFleet(fleet_row->FleetID()))
-                        it->second = ValidFleetMerge(fleet, target_fleet);
-
-            } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first))
-                    if (TemporaryPtr<const Ship> ship = GetShip(ship_row->ShipID()))
-                        it->second = ValidShipTransfer(ship, target_fleet);
-            } else {
-                // no valid drop type string
-                ErrorLogger() << "FleetsListBox unrecognized drop type: " << it->first->DragDropDataType();
-            }
-        }
-    }
-
-    virtual void    AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
         DebugLogger() << "FleetsListBox::AcceptDrops";
         if (wnds.empty()) {
             ErrorLogger() << "... dropped wnds empty";
@@ -1888,15 +1951,15 @@ public:
         DebugLogger() << "FleetsListBox::AcceptDrops finished";
     }
 
-    virtual void    DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
-    { DragDropHere(pt, drag_drop_wnds, mod_keys); }
-
-    virtual void    DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys) {
-        CUIListBox::DragDropHere(pt, drag_drop_wnds, mod_keys);
+    virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                                 GG::Flags<GG::ModKey> mod_keys)
+    {
+        //std::cout << "FleetsListBox::DragDropHere" << std::endl << std::flush;
+        CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 
         // default to removing highlighting of any row that has it.
         // used to check: if (m_highlighted_row_it != row_it) before doing this...
-        ClearHighlighting();
+        //ClearHighlighting();
 
         // abort if this FleetsListBox can't be manipulated
         if (!m_order_issuing_enabled)
@@ -1929,15 +1992,9 @@ public:
         TemporaryPtr<Fleet> drop_target_fleet = GetFleet(drop_target_fleet_row->FleetID());
         assert(drop_target_fleet);
 
-        // use DropsAcceptable to check whether wnds being dragged over can be dropped.
-
-        // make map from Wnd to bool indicating whether it is acceptable to drop here
-        std::map<const GG::Wnd*, bool> drops_acceptable_map;
-        for (std::map<GG::Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it)
-            drops_acceptable_map[it->first] = false;
 
         // get whether each Wnd is dropable
-        DropsAcceptable(drops_acceptable_map.begin(), drops_acceptable_map.end(), pt);
+        DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
 
         // scan through results in drops_acceptable_map and decide whether overall
@@ -1947,7 +2004,7 @@ public:
         bool fleets_seen = false;
         bool ships_seen = false;
 
-        for (DropsAcceptableIter it = drops_acceptable_map.begin(); it != drops_acceptable_map.end(); ++it) {
+        for (DropsAcceptableIter it = drop_wnds_acceptable.begin(); it != drop_wnds_acceptable.end(); ++it) {
             if (!it->second)
                 return; // a row was an invalid drop. abort without highlighting drop target.
 
@@ -1982,8 +2039,12 @@ public:
         HighlightRow(row_it);
     }
 
-    virtual void    DragDropLeave()
-    { ClearHighlighting(); }
+    virtual void    DragDropLeave() {
+        //std::cout << "FleetsListBox::DragDropLeave" << std::endl << std::flush;
+        CUIListBox::DragDropLeave();
+        ClearHighlighting();
+        //std::cout << "FleetsListBox::DragDropLeave done" << std::endl << std::flush;
+    }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         const GG::Pt old_size = Size();
@@ -1999,6 +2060,66 @@ public:
 
     GG::Pt          ListRowSize() const
     { return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
+
+protected:
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+    {
+        // default result, possibly to be updated later: reject all drops
+        for (DropsAcceptableIter it = first; it != last; ++it)
+            it->second = false;
+
+        // early termination check: if this FleetsListBox does not presently allow order
+        // issuing, all drops are unacceptable
+        if (!m_order_issuing_enabled)
+            return;
+
+        // semi-early termination if pt is not over a FleetRow, all drops are unacceptable.
+        // this is because ships can't be dropped into an empty spot of the FleetsListBox;
+        // ships must be dropped into existing fleet panels / rows, or onto the new fleet
+        // drop target.
+        // as well, there is presently no way to drop a FleetRow into a FleetsListBox that
+        // the row isn't already in, so if the drop isn't onto another FleetRow, there's
+        // no sense in doing such a drop.
+
+        // get FleetRow under drop point
+        iterator row = RowUnderPt(pt);
+
+        // if drop point isn't over a FleetRow, reject all drops (default case)
+        if (row == end())
+            return;
+
+        // extract drop target fleet from row under drop point
+        const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(*row);
+        TemporaryPtr<const Fleet> target_fleet;
+        if (fleet_row)
+            target_fleet = GetFleet(fleet_row->FleetID());
+
+        // loop through dropped Wnds, checking if each is a valid ship or fleet.  this doesn't
+        // consider whether there is a mixture of fleets and ships, as each row is considered
+        // independently.  actual drops will probably only accept one or the other, not a mixture
+        // of fleets and ships being dropped simultaneously.
+        for (DropsAcceptableIter it = first; it != last; ++it) {
+            if (it->first == fleet_row)
+                continue;   // can't drop onto self
+
+            // for either of fleet or ship being dropped, check if merge or transfer is valid.
+            // if any of the nested if's fail, the default rejection of the drop will remain set
+            if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
+                if (const FleetRow* fleet_row = boost::polymorphic_downcast<const FleetRow*>(it->first))
+                    if (TemporaryPtr<const Fleet> fleet = GetFleet(fleet_row->FleetID()))
+                        it->second = ValidFleetMerge(fleet, target_fleet);
+
+            } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+                if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first))
+                    if (TemporaryPtr<const Ship> ship = GetShip(ship_row->ShipID()))
+                        it->second = ValidShipTransfer(ship, target_fleet);
+            } else {
+                // no valid drop type string
+                ErrorLogger() << "FleetsListBox unrecognized drop type: " << it->first->DragDropDataType();
+            }
+        }
+    }
 
 private:
     void            HighlightRow(iterator row_it) {
@@ -2029,12 +2150,46 @@ private:
         if (m_highlighted_row_it == end())
             return;
 
+        // check that m_highlighted_row_it points to a valid row.
+        // have been getting intermittant crashes when dragging rows after
+        // drops onto other rows that occur after attempting to use an
+        // invalid iterator
+        bool valid_highlight_row = false;
+        for (iterator test_it = this->begin(); test_it != this->end(); ++test_it) {
+            if (test_it == m_highlighted_row_it) {
+                valid_highlight_row = true;
+                break;
+            }
+        }
+        if (!valid_highlight_row) {
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : m_highlighted_row not valid! aborting";
+            m_highlighted_row_it = end();
+            return;
+        }
+
+
+
         GG::ListBox::Row* selected_row = *m_highlighted_row_it;
-        assert(selected_row);
-        assert(!selected_row->empty());
+        if (!selected_row) {
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : no selected row!";
+            return;
+        }
+        if (selected_row->empty()) {
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : selected row empty!";
+            return;
+        }
+
         GG::Control* control = (*selected_row)[0];
+        if (!control) {
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : null control in selected row!";
+            return;
+        }
+
         FleetDataPanel* data_panel = boost::polymorphic_downcast<FleetDataPanel*>(control);
-        assert(data_panel);
+        if (!data_panel) {
+            ErrorLogger() << "FleetsListBox::ClearHighlighting : no data panel!";
+            return;
+        }
 
         data_panel->Select(false);
         m_highlighted_row_it = end();
@@ -2125,7 +2280,9 @@ public:
         m_order_issuing_enabled = enable;
     }
 
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+    {
         for (DropsAcceptableIter it = first; it != last; ++it) {
             it->second = false; // default
 
@@ -2156,7 +2313,7 @@ public:
         }
     }
 
-    virtual void    AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
         if (wnds.empty())
             return;
 

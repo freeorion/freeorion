@@ -1,7 +1,3 @@
-/*
- *
- */
-
 #include "OptionsDB.h"
 #include "SaveGamePreviewUtils.h"
 
@@ -57,15 +53,19 @@ namespace {
         if (!ifs)
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
 
+        // alias structs so variable passed into NVP deserialization macro has the
+        // same name as that passed into serialization macro in SaveGame function.
+        SaveGamePreviewData& save_preview_data = full.preview;
+        GalaxySetupData& galaxy_setup_data = full.galaxy;
 
-        DebugLogger() << "LoadSaveGamePreviewData: Loading preview from:" << path.string();
+        DebugLogger() << "LoadSaveGamePreviewData: Loading preview from: " << path.string();
         try {
             try {
                 // first attempt binary deserialziation
                 freeorion_bin_iarchive ia(ifs);
 
-                ia >> BOOST_SERIALIZATION_NVP(full.preview);
-                ia >> BOOST_SERIALIZATION_NVP(full.galaxy);
+                ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
+                ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
 
             } catch (...) {
                 // if binary deserialization failed, try more-portable XML deserialization
@@ -86,9 +86,11 @@ namespace {
                 // extract xml data from stringstream
                 freeorion_xml_iarchive ia(ss);
 
-                ia >> BOOST_SERIALIZATION_NVP(full.preview);
-                ia >> BOOST_SERIALIZATION_NVP(full.galaxy);
+                ia >> BOOST_SERIALIZATION_NVP(save_preview_data);
+                ia >> BOOST_SERIALIZATION_NVP(galaxy_setup_data);
             }
+
+            DebugLogger() << "Loaded preview with: " << save_preview_data.number_of_human_players << " human players";
 
         } catch (const std::exception& e) {
             ErrorLogger() << "LoadSaveGamePreviewData: Failed to read preview of " << path.string() << " because: " << e.what();
@@ -96,7 +98,7 @@ namespace {
         }
 
         if (full.preview.Valid()) {
-            DebugLogger() << "LoadSaveGamePreviewData: Successfully loaded preview from:" << path.string();
+            DebugLogger() << "LoadSaveGamePreviewData: Successfully loaded preview from: " << path.string();
             return true;
         } else {
             DebugLogger() << "LoadSaveGamePreviewData: Passing save file with no preview: " << path.string();
@@ -115,9 +117,8 @@ SaveGamePreviewData::SaveGamePreviewData() :
     number_of_human_players(-1)
 {}
 
-bool SaveGamePreviewData::Valid() const {
-    return magic_number == SaveGamePreviewData::PREVIEW_PRESENT_MARKER && current_turn >= -1 ;
-}
+bool SaveGamePreviewData::Valid() const
+{ return magic_number == SaveGamePreviewData::PREVIEW_PRESENT_MARKER && current_turn >= -1; }
 
 template<class Archive>
 void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
@@ -154,7 +155,8 @@ template void FullPreview::serialize<freeorion_xml_iarchive>(freeorion_xml_iarch
 
 
 template<typename Archive>
-void PreviewInformation::serialize(Archive& ar, const unsigned int version) {
+void PreviewInformation::serialize(Archive& ar, const unsigned int version)
+{
     ar & BOOST_SERIALIZATION_NVP(subdirectories)
        & BOOST_SERIALIZATION_NVP(folder)
        & BOOST_SERIALIZATION_NVP(previews);

@@ -82,7 +82,9 @@ void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     }
 }
 
-void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
+void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                                   const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+{
     if (std::distance(first, last) != 1) {
         ErrorLogger() << "QueueListBox::DropsAcceptable unexpected passed more than one Wnd to test";
     }
@@ -93,7 +95,7 @@ void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIte
     }
 }
 
-void QueueListBox::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (wnds.size() != 1)
         return;
     GG::Wnd* wnd = *wnds.begin();
@@ -128,17 +130,15 @@ void QueueListBox::Render() {
     }
 }
 
-void QueueListBox::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds,
+void QueueListBox::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                  GG::Flags<GG::ModKey> mod_keys)
-{ DragDropHere(pt, drag_drop_wnds, mod_keys); }
-
-void QueueListBox::DragDropHere(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds,
-                                GG::Flags<GG::ModKey> mod_keys)
 {
-    CUIListBox::DragDropHere(pt, drag_drop_wnds, mod_keys);
-    if (drag_drop_wnds.size() == 1 &&
-        AllowedDropTypes().find(drag_drop_wnds.begin()->first->DragDropDataType()) !=
-        AllowedDropTypes().end()) {
+    CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
+
+    if (drop_wnds_acceptable.size() == 1 &&
+        AllowedDropTypes().find(drop_wnds_acceptable.begin()->first->DragDropDataType()) !=
+        AllowedDropTypes().end())
+    {
         m_drop_point = RowUnderPt(pt);
         m_show_drop_point = true;
     } else {

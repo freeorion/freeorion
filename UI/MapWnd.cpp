@@ -2318,7 +2318,7 @@ void MapWnd::InitTurn() {
 
     // set turn button to current turn
     m_btn_turn->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
-                                          boost::lexical_cast<std::string>(turn_number)));
+                                       boost::lexical_cast<std::string>(turn_number)));
     MoveChildUp(m_btn_turn);
 
 
