@@ -16,7 +16,7 @@ ShipDesign
     hull = "SH_KRILL_2_BODY"
     parts = [
         ""
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_2_1"
         ""
     ]
     icon = "icons/monsters/krill-2.png"
@@ -28,7 +28,7 @@ ShipDesign
     hull = "SH_KRILL_3_BODY"
     parts = [
         "SP_DEATH_SPORE"
-        "SR_WEAPON_2_1"
+        "SR_WEAPON_3_1"
         ""
         ""
     ]
@@ -41,7 +41,7 @@ ShipDesign
     hull = "SH_KRILL_4_BODY"
     parts = [
         "SP_DEATH_SPORE"
-        "SR_WEAPON_3_1"
+        "SR_WEAPON_4_1"
         ""
         ""
     ]
@@ -102,7 +102,7 @@ ShipDesign
     description = "SM_GUARD_1_DESC"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_2_1"
+        "SR_WEAPON_3_1"
         ""
         ""
         ""
@@ -115,7 +115,7 @@ ShipDesign
     description = "SM_GUARD_2_DESC"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_3_1"
+        "SR_WEAPON_4_1"
         ""
         "AR_PRECURSOR_PLATE"
         "AR_PRECURSOR_PLATE"
@@ -146,7 +146,7 @@ ShipDesign
     hull = "SH_DRONE_BODY"
     parts = [
         "AR_ZORTRIUM_PLATE"
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_2_1"
         ""
     ]
     icon = "icons/monsters/drone.png"
@@ -157,7 +157,7 @@ ShipDesign
     description = "SM_DRONE_FACTORY_DESC"
     hull = "SH_IMMOBILE_FACTORY"
     parts = [
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_2_1"
         "SH_DEFLECTOR"
         ""
     ]
@@ -170,7 +170,7 @@ ShipDesign
     hull = "SH_KRAKEN_1_BODY"
     parts = [
         ""
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_2_1"
         ""
         ""
         ]
@@ -182,7 +182,7 @@ ShipDesign
     description = "SM_KRAKEN_2_DESC"
     hull = "SH_KRAKEN_2_BODY"
     parts = [
-        "SR_WEAPON_2_1"
+        "SR_WEAPON_3_1"
         "SP_DEATH_SPORE"
         ""
         ""
@@ -195,7 +195,7 @@ ShipDesign
     description = "SM_KRAKEN_3_DESC"
     hull = "SH_KRAKEN_3_BODY"
     parts = [
-        "SR_WEAPON_3_1"
+        "SR_WEAPON_4_1"
         "SP_BIOTERM"
         ""
         ""
@@ -221,7 +221,7 @@ ShipDesign
     description = "SM_SNOWFLAKE_2_DESC"
     hull = "SH_SNOWFLAKE_2_BODY"
     parts = [
-        "SR_WEAPON_2_1"
+        "SR_WEAPON_3_1"
         "SP_DEATH_SPORE"
         ""
         ""
@@ -247,7 +247,7 @@ ShipDesign
     description = "SM_JUGGERNAUT_1_DESC"
     hull = "SH_JUGGERNAUT_1_BODY"
     parts = [
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_2_1"
         ""
         ""
         "SH_DEFENSE_GRID"
@@ -330,7 +330,7 @@ ShipDesign
     description = "SM_SNAIL_DESC"
     hull = "SH_ASTEROID"
     parts = [
-        "SR_WEAPON_3_1"
+        "SR_WEAPON_4_1"
         ""
         ""
         ""
@@ -345,7 +345,7 @@ ShipDesign
     description = "SM_ACIREMA_GUARD_DESC"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_WEAPON_2_1"
+        "SR_WEAPON_3_1"
         "DT_DETECTOR_3"
         ""
         ""

@@ -8288,24 +8288,24 @@ SHP_WEAPON_1_4_DESC
 Refines Mass Driver to level 4.
 
 SHP_WEAPON_2_1
-Laser 1
+Laser Weapons
 SHP_WEAPON_2_1_DESC
 Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.
 
 SHP_WEAPON_2_2
 Laser 2
 SHP_WEAPON_2_2_DESC
-Refines Laser to level 2.
+Refines Laser weapons increasing base strength to 7.
 
 SHP_WEAPON_2_3
 Laser 3
 SHP_WEAPON_2_3_DESC
-Refines Laser to level 3.
+Refines Laser weapons increasing base strength to 9.
 
 SHP_WEAPON_2_4
 Laser 4
 SHP_WEAPON_2_4_DESC
-Refines Laser to level 4.
+Refines Laser weapons increasing base strength to 11.
 
 SHP_WEAPON_3_1
 Plasma Cannon 1
@@ -8315,17 +8315,17 @@ Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.
 SHP_WEAPON_3_2
 Plasma Cannon 2
 SHP_WEAPON_3_2_DESC
-Refines Plasma Cannon to level 2.
+Refines Plasma Cannon increasing base strength to 12.
 
 SHP_WEAPON_3_3
 Plasma Cannon 3
 SHP_WEAPON_3_3_DESC
-Refines Plasma Cannon to level 3.
+Refines Plasma Cannon increasing base strength to 15.
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
 SHP_WEAPON_3_4_DESC
-Refines Plasma Cannon to level 4.
+Refines Plasma Cannon increasing base strength to 18.
 
 SHP_WEAPON_4_1
 Death Ray 1
@@ -8335,17 +8335,17 @@ Unlocks the Death Ray, the ultimate ship's weapon.
 SHP_WEAPON_4_2
 Death Ray 2
 SHP_WEAPON_4_2_DESC
-Refines Death Ray to level 2.
+Refines Death Ray increasing base strength to 20.
 
 SHP_WEAPON_4_3
 Death Ray 3
 SHP_WEAPON_4_3_DESC
-Refines Death Ray to level 3.
+Refines Death Ray increasing base strength to 25.
 
 SHP_WEAPON_4_4
 Death Ray 4
 SHP_WEAPON_4_4_DESC
-Refines Death Ray to level 4. The ultimate refinement of the ultimate weapon.
+Refines Death Ray increasing base strength to 30. The ultimate refinement of the ultimate weapon.
 
 SHP_ION_CANNON
 Ion Cannon
@@ -8460,13 +8460,13 @@ SPY_DETECT_5_DESC
 The ultimate in detection. Increases the [[encyclopedia DETECTION_RANGE_TITLE]] of all planets to 300, and increases the imperial [[encyclopedia DETECTION_TITLE]] to 200.
 
 SPY_STEALTH_1
-Electromagnetic Damper
+Planetary Cloud Cover
 
 SPY_STEALTH_1_DESC
 Unlocks the [[shippart ST_CLOAK_1]] ship part and gives all planets and outposts in the empire the [[special CLOUD_COVER_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 20.
 
 SPY_STEALTH_2
-Absorption Field
+Planetary Ash Clouds
 
 SPY_STEALTH_2_DESC
 '''Unlocks the [[shippart ST_CLOAK_2]] ship part and gives all planets and outposts in the empire the [[special VOLCANIC_ASH_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 40. 
@@ -8474,13 +8474,13 @@ SPY_STEALTH_2_DESC
 Simply dampening electromagnetic emissions can make an object completely invisible to passive scans. Active scanning however, can make such methods of hiding an object nearly useless. By absorbing, rather than reflecting the radiation emitted by active scanning devices, the [[encyclopedia STEALTH_TITLE]] of a ship can be greatly increased.'''
 
 SPY_STEALTH_3
-Dimensional Cloak
+Planetary Dimensional Cloak
 
 SPY_STEALTH_3_DESC
 Unlocks the [[shippart ST_CLOAK_3]] ship part and gives all planets and outposts in the empire the [[special DIM_RIFT_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 60.
 
 SPY_STEALTH_4
-Phasing Cloak
+Planetary Phasing Cloak
 
 SPY_STEALTH_4_DESC
 '''Unlocks the [[shippart ST_CLOAK_4]] ship part and gives all planets and outposts in the empire the [[special VOID_SLAVE_SPECIAL]] special which increases the [[encyclopedia STEALTH_TITLE]] of all planets and buildings by 80. 
