@@ -206,8 +206,7 @@ def check_supply():
     print "    fleet_suppliable_planet_ids: %s" % fleet_suppliable_planet_ids
     print
 
-    print "-------\nEmpire Obstructed Starlanes:"
-    print list(empire.obstructedStarlanes())
+    print "-------\nEmpire Obstructed Starlanes: %s" % list(empire.obstructedStarlanes())
     colonization_timer.start('Determining Annexable Systems')
 
     annexable_system_ids.clear()  # TODO: distinguish colony-annexable systems and outpost-annexable systems
@@ -299,7 +298,7 @@ def survey_universe():
     un_ex_sys_ids = list(foAI.foAIstate.get_explorable_systems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     un_ex_systems = map(universe.getSystem, un_ex_sys_ids)
     print "Unexplored Systems: %s " % un_ex_systems
-    print "Explored SystemIDs: " + str(list(explored_system_ids))
+    print "Explored SystemIDs: %s" % list(explored_system_ids)
 
     explored_planet_ids = PlanetUtilsAI.get_planets_in__systems_ids(explored_system_ids)
     print "Explored PlanetIDs: %s" % explored_planet_ids

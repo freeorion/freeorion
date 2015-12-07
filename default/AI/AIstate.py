@@ -211,7 +211,7 @@ class AIstate(object):
             nametags.append("ID:%4d -- %20s" % (sys_id, (newsys and newsys.name) or"name unknown"))  # an explored system *should* always be able to be gotten
         if newly_explored:
             print "-------------------------------------------------"
-            print "newly explored systems: \n"+"\n".join(nametags)
+            print "Newly explored systems:\n"+"\n".join(nametags)
             print "-------------------------------------------------"
         # cleanup fleet roles
         # self.update_fleet_locs()
@@ -268,7 +268,7 @@ class AIstate(object):
         for sys_id in sys_id_list:
             sys_status = self.systemStatus.get(sys_id, {})
             system = universe.getSystem(sys_id)
-            print "%-20s: %s\n" % (system, sys_status)
+            print "%-20s: %s" % (system, sys_status)
 
     def assess_planet_threat(self, pid, sighting_age=0):
         sighting_age += 1  # play it safe
@@ -992,15 +992,13 @@ class AIstate(object):
         unaccounted_fleets = set(ok_fleets) - set(fleet_list)
         ship_count = 0
         print "----------------------------------------------------------------------------------"
-        print "in CleanFleetRoles"
-        print "fleet_list : %s" % fleet_list
+        print "In CleanFleetRoles %s" % fleet_list
         print "-----------"
-        print "FleetUtils empire-owned fleet_list : %s" % ok_fleets
+        print "Empire-owned fleet_list : %s" % ok_fleets
         print "-----------"
         if unaccounted_fleets:
             print "Fleets unaccounted for in Empire Records:", unaccounted_fleets
-            print "-----------"
-        print "-----------"
+        print "----------------------------------------------------------------------------------"
         min_threat_rating = {'overall': MilitaryAI.MinThreat, 'attack': MilitaryAI.MinThreat ** 0.5, 'health': MilitaryAI.MinThreat ** 0.5}
         fighters = {(0, ((0, 0),), 0.0, 5.0): [0]}  # start with a dummy entry
         destroyed_object_ids = universe.destroyedObjectIDs(fo.empireID())
@@ -1120,7 +1118,7 @@ class AIstate(object):
         print "--------------------"
         print "Map of Missions keyed by ID:"
         for item in self.get_fleet_missions_map().items():
-            print "    %-4d: %s" % item
+            print "%-5d: %s" % item
         print "--------------------"
         # TODO: check length of fleets for losses or do in AIstat.__cleanRoles
         known_fleets = self.get_fleet_roles_map()
@@ -1130,7 +1128,7 @@ class AIstate(object):
 
         if fleets_to_split:
             universe = fo.getUniverse()
-            print "splitting new fleets"
+            print "Splitting new fleets"
             for fleet_id in fleets_to_split:
                 fleet = universe.getFleet(fleet_id)
                 if not fleet:

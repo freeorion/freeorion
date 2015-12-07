@@ -14,7 +14,7 @@ def sys_name_ids(sys_ids):
     :return: list of string <name>:<id>
     """
     universe = fo.getUniverse()
-    return [fo.to_str('S', sys_id, safe_name(universe.getSystem(sys_id))) for sys_id in sys_ids]
+    return [str(universe.getSystem(sys_id)) for sys_id in sys_ids]
 
 
 def planet_name_ids(planet_ids):

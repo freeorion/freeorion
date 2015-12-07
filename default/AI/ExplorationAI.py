@@ -148,16 +148,20 @@ def follow_vis_system_connections(start_system_id, home_system_id):
             pre_vis = "an interior system"
         else:
             pre_vis = "an unknown system"
+        system_header = "*** system ID %d (%s);" % (cur_system_id, sys_name)
         if fo.currentTurn() < 50:
             visibility_turn_list = sorted(universe.getVisibilityTurnsMap(cur_system_id, empire_id).items(),
                                           key=lambda x: x[0].numerator)
             visibility_info = ['%s: %s' % (vis.name, turn) for vis, turn in visibility_turn_list]
-            print "*** system ID %d ( %s ) ; previously %s, new visibility turns info: %s " % (cur_system_id, sys_name, pre_vis, visibility_info)
-        status_str = "*** system ID %d ( %s ) ; " % (cur_system_id, sys_name)
+            print "%s previously %s, new visibility turns info: %s " % (system_header, pre_vis, visibility_info)
+            status_info = []
+        else:
+            status_info = [system_header]
+
         has_been_visible = universe.getVisibilityTurnsMap(cur_system_id, empire_id).get(fo.visibility.partial, 0) > 0
         is_connected = universe.systemsConnected(cur_system_id, home_system_id, -1)  # self.empire_id)
-        status_str += " -- is %s partially visible " % (["not", ""][has_been_visible])
-        status_str += " -- is %s visibly connected to homesystem " % (["not", ""][is_connected])
+        status_info.append("    -- is %s partially visible " % (["not", ""][has_been_visible]))
+        status_info.append("    -- is %s visibly connected to homesystem" % (["not", ""][is_connected]))
         if has_been_visible:
             sys_status = foAI.foAIstate.systemStatus.setdefault(cur_system_id, {})
             foAI.foAIstate.visInteriorSystemIDs[cur_system_id] = 1
@@ -193,7 +197,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
             #if set(neighbors) != set(neighbors2):
             # print "Error with neighbors: imn giving %s ; giN giving %s"%(neighbors2, neighbors)
             if neighbors:
-                status_str += " -- has neighbors %s " % neighbors
+                status_info.append(" -- has neighbors %s " % neighbors)
                 for sys_id in neighbors:
                     if sys_id not in foAI.foAIstate.exploredSystemIDs:
                         foAI.foAIstate.unexploredSystemIDs[sys_id] = 1
@@ -201,7 +205,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
                         foAI.foAIstate.visBorderSystemIDs[sys_id] = 1
                         exploration_list.append(sys_id)
         if fo.currentTurn() < 50:
-            print status_str
+            print '\n'.join(status_info)
             print "----------------------------------------------------------"
 
 
@@ -212,7 +216,7 @@ def update_explored_systems():
     #print "object is: %s"%(obs_lanes, ) #IntPairVec
     obs_lanes_list = [el for el in obs_lanes]  # should result in list of tuples (sys_id1, sys_id2)
     if obs_lanes_list:
-        print "obstructed starlanes are: %s" % obs_lanes_list
+        print "Obstructed starlanes are: %s" % obs_lanes_list
     else:
         print "No obstructed Starlanes"
     empire_id = foAI.foAIstate.empireID
