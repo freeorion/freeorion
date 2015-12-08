@@ -496,7 +496,7 @@ Unarmed vessel capable of creating an [[encyclopedia OUTPOSTS_TITLE]] on an unin
 SD_BASE_DECOY
 Comsat
 SD_BASE_DECOY_DESC
-Unarmed satellite that does nothing. Except get in the way of enemy fire. Can be built anywhere, does not require a shipyard.
+Unarmed satellite that can trigger planetary defenses even against passive enemies, but otherwise does nothing except get in the way of enemy fire. Can be built at any planet colonized by a shipbuilding species, does not require a shipyard.
 
 SD_TROOP_DROP
 Troop Drop
@@ -11058,7 +11058,7 @@ AI_SHIPDESIGN_NAME_OUTPOSTER_STANDARD
 Outposter
 
 AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
-'''Decoy
+'''ComSat
 Starbase'''
 
 AI_SHIPDESIGN_NAME_SCOUT
