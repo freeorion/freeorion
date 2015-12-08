@@ -505,7 +505,7 @@ Carries a brigade of ground [[encyclopedia TROOP_TITLE]] and equipment that can 
 
 SD_TROOP_DROP_HVY
 Heavy Troop Drop
-SD_TROOP_DROP_DESC
+SD_TROOP_DROP_HVY_DESC
 Carries a brigade of ground advanced [[encyclopedia TROOP_TITLE]] and equipment that can be used to invade a planet in the same system.
 
 SD_SMALL_TROOP_SHIP
