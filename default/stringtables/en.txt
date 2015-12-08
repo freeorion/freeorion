@@ -8336,17 +8336,17 @@ Allows basic weapons and [[shippart GT_TROOP_POD]]s.
 SHP_WEAPON_1_2
 Mass Driver 2
 SHP_WEAPON_1_2_DESC
-Refines Mass Driver to level 2.
+Improves Mass Driver by one level, increasing strength by 1.
 
 SHP_WEAPON_1_3
 Mass Driver 3
 SHP_WEAPON_1_3_DESC
-Refines Mass Driver to level 3.
+Improves Mass Driver by two levels, increasing strength by 2.
 
 SHP_WEAPON_1_4
 Mass Driver 4
 SHP_WEAPON_1_4_DESC
-Refines Mass Driver to level 4.
+Improves Mass Driver by three levels, increasing strength by 3.
 
 SHP_WEAPON_2_1
 Laser Weapons
@@ -8356,57 +8356,57 @@ Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.
 SHP_WEAPON_2_2
 Laser 2
 SHP_WEAPON_2_2_DESC
-Refines Laser weapons increasing base strength to 7.
+Improves Laser weapons by one level, increasing strength by 2.
 
 SHP_WEAPON_2_3
 Laser 3
 SHP_WEAPON_2_3_DESC
-Refines Laser weapons increasing base strength to 9.
+Improves Laser weapons by two levels, increasing strength by 4.
 
 SHP_WEAPON_2_4
 Laser 4
 SHP_WEAPON_2_4_DESC
-Refines Laser weapons increasing base strength to 11.
+Improves Laser weapons by three levels, increasing strength by 6.
 
 SHP_WEAPON_3_1
-Plasma Cannon 1
+Plasma Cannons
 SHP_WEAPON_3_1_DESC
 Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.
 
 SHP_WEAPON_3_2
 Plasma Cannon 2
 SHP_WEAPON_3_2_DESC
-Refines Plasma Cannon increasing base strength to 12.
+Improves Plasma Cannon by one level, increasing strength by 3.
 
 SHP_WEAPON_3_3
 Plasma Cannon 3
 SHP_WEAPON_3_3_DESC
-Refines Plasma Cannon increasing base strength to 15.
+Improves Plasma Cannon two levels increasing strength by 6.
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
 SHP_WEAPON_3_4_DESC
-Refines Plasma Cannon increasing base strength to 18.
+Improves Plasma Cannon three levels increasing base strength by 9.
 
 SHP_WEAPON_4_1
-Death Ray 1
+Death Rays
 SHP_WEAPON_4_1_DESC
 Unlocks the Death Ray, the ultimate ship's weapon.
 
 SHP_WEAPON_4_2
 Death Ray 2
 SHP_WEAPON_4_2_DESC
-Refines Death Ray increasing base strength to 20.
+Improves Death Ray by one level, increasing strength by 5.
 
 SHP_WEAPON_4_3
 Death Ray 3
 SHP_WEAPON_4_3_DESC
-Refines Death Ray increasing base strength to 25.
+Improves Death Ray by two levels, increasing strength by 10.
 
 SHP_WEAPON_4_4
 Death Ray 4
 SHP_WEAPON_4_4_DESC
-Refines Death Ray increasing base strength to 30. The ultimate refinement of the ultimate weapon.
+Improves Death Ray by three levels increasing strength by 15. The ultimate refinement of the ultimate weapon.
 
 SHP_ION_CANNON
 Ion Cannon
@@ -9501,64 +9501,19 @@ SR_WEAPON_1_1_DESC
 The Mass Driver, a basic weapon.
 
 SR_WEAPON_2_1
-Laser 1
+Laser Weapon
 SR_WEAPON_2_1_DESC
 The Laser, a more powerful ship's weapon than the Mass Driver.
 
-SR_WEAPON_2_2
-Laser 2
-SR_WEAPON_2_2_DESC
-Laser, refined to level 2.
-
-SR_WEAPON_2_3
-Laser 3
-SR_WEAPON_2_3_DESC
-Laser, refined to level 3.
-
-SR_WEAPON_2_4
-Laser 4
-SR_WEAPON_2_4_DESC
-Laser, refined to level 4.
-
 SR_WEAPON_3_1
-Plasma Cannon 1
+Plasma Cannons
 SR_WEAPON_3_1_DESC
 The Plasma Cannon, a more powerful ship's weapon than the Laser.
 
-SR_WEAPON_3_2
-Plasma Cannon 2
-SR_WEAPON_3_2_DESC
-Plasma Cannon, refined to level 2.
-
-SR_WEAPON_3_3
-Plasma Cannon 3
-SR_WEAPON_3_3_DESC
-Plasma Cannon, refined to level 3.
-
-SR_WEAPON_3_4
-Plasma Cannon 4
-SR_WEAPON_3_4_DESC
-Plasma Cannon, refined to level 4.
-
 SR_WEAPON_4_1
-Death Ray 1
+Death Ray
 SR_WEAPON_4_1_DESC
 The Death Ray, the ultimate ship's weapon.
-
-SR_WEAPON_4_2
-Death Ray 2
-SR_WEAPON_4_2_DESC
-Death Ray, refined to level 2.
-
-SR_WEAPON_4_3
-Death Ray 3
-SR_WEAPON_4_3_DESC
-Death Ray, refined to level 3.
-
-SR_WEAPON_4_4
-Death Ray 4
-SR_WEAPON_4_4_DESC
-Death Ray, refined to level 4. The ultimate refinement of the ultimate weapon.
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
@@ -9566,29 +9521,11 @@ Spinal Antimatter Cannon
 SR_SPINAL_ANTIMATTER_DESC
 A huge spinal mount mass driver firing heavy projectiles made of antimatter.
 
-SR_WEAPON_2
-Laser
-
-SR_WEAPON_2_DESC
-Lower power and mass
-
 SR_ION_CANNON
 Ion Cannon
 
 SR_ION_CANNON_DESC
 Moderate power and mass
-
-SR_WEAPON_1
-Mass Driver
-
-SR_WEAPON_1_DESC
-A projectile weapon capable of launching objects of tremendous mass at relativistic speeds.
-
-SR_WEAPON_4
-Death Ray
-
-SR_WEAPON_4_DESC
-Ultimate short range weapon
 
 PD_PULSE_LASER
 Pulse Laser
@@ -10642,16 +10579,16 @@ ULTIMATE_STEALTH
 +++	Ultimate Planetary [[encyclopedia STEALTH_TITLE]]: +60 bonus.
 
 BAD_WEAPONS
-−	Bad Pilots: 25% less damage.
+−	Bad Pilots: Base damage per ship weapon reduced by one level.
 
 GOOD_WEAPONS
-+	Good Pilots: 25% more damage.
++	Good Pilots: Base damage per ship weapon increased by one level.
 
 GREAT_WEAPONS
-++	Great Pilots: 50% more damage.
+++	Great Pilots: Base damage per ship weapon increased by two levels.
 
 ULTIMATE_WEAPONS
-+++	Ultimate Pilots: double damage.
++++	Ultimate Pilots: Base damage per ship level increased by three levels.
 
 BAD_POPULATION
 −	Bad Population 75%
