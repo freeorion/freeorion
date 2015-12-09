@@ -426,12 +426,6 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
                 DebugLogger() << " ... " << (*t_it)->Dump();
         }
 
-        if (log_verbose) {
-            DebugLogger() << "ExecuteEffects Targets after: ";
-            for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-                DebugLogger() << " ... " << (*t_it)->Dump();
-        }
-
         // for non-meter effects, can do default batch execute
         if (!accounting_map || (!set_meter_effect && !set_ship_part_meter_effect)) {
             Execute(source_context, targets);
@@ -486,6 +480,12 @@ void EffectBase::Execute(const Effect::TargetsCauses& targets_causes,
 
             // add accounting for this effect to end of vector
             (*accounting_map)[target->ID()][meter_type].push_back(info);
+        }
+
+        if (log_verbose) {
+            DebugLogger() << "ExecuteEffects Targets after: ";
+            for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
+                DebugLogger() << " ... " << (*t_it)->Dump();
         }
     }
 }
