@@ -9599,42 +9599,24 @@ Shield Strength: %1%
 
 PART_DESC_DETECTION
 Detection Range: %1%
-# Detection Strength: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
 Attack Damage: %1%
 
-## TEMPORARILY HIDDEN
-# Rate of Fire: %2% shots/turn
-# Range: %3%
 
-PART_DESC_LR_STATS
-'''Damage: %1%
-Rate of Fire: %2% missiles/turn
-Range: %3%
-Missile Speed: %4%
-Missile Structure: %5%
-Missile [[encyclopedia STEALTH_TITLE]]: %6%
-Capacity: %7% missiles'''
-
-PART_DESC_FIGHTER_STATS
-'''Fighter Type: %1%
-Fighter Anti-Fighter Damage: %3%
-Fighter Anti-Ship Damage: %2%
-Fighter Launch Rate: %4% fighters/turn
-Fighter Speed: %5%
-Fighter [[encyclopedia STRUCTURE_TITLE]]: %6%
-Fighter [[encyclopedia STEALTH_TITLE]]: %7%
-Fighter Detection: %8%
-Capacity: %9% fighters'''
 
 #############################################################
 ####                 S H I P   P A R T S                 ####
 #############################################################
 
-FT_WEAPON_1_1
-Test Fighter Bay
-FT_WEAPON_1_1_DESC
+FT_WEAPON_1
+Fighter Weapon
+FT_WEAPON_1_DESC
+Prototype weapon system for use with fighters. Does not function as a ship weapon.
+
+FT_BAY_1
+Fighter Bay
+FT_BAY_1_DESC
 Prototype storage and launch system for independently piloted combat craft.
 
 SR_WEAPON_1_1

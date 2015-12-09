@@ -189,7 +189,8 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
             m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
             break;
         case PC_DIRECT_WEAPON:
-        case PC_FIGHTERS: {
+        case PC_FIGHTER_BAY:
+        case PC_FIGHTER_WEAPON: {
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
             break;
         }
@@ -247,7 +248,7 @@ const std::string PartType::CapacityDescription() const {
     case PC_FUEL:
     case PC_TROOPS:
     case PC_COLONY:
-    case PC_FIGHTERS:
+    case PC_FIGHTER_BAY:
         desc_string += UserString("PART_DESC_CAPACITY");
         break;
     case PC_SHIELD:
@@ -650,7 +651,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
     const PartTypeManager& manager = GetPartTypeManager();
 
     // TODO: get empire fighter damage, adjusted for specified shield strength
-    float empire_fighter_damage = 4.0f - shield;
+    float ship_fighter_damage = 4.0f - shield;
 
     float total_attack = 0.0f;
     std::vector<std::string> all_parts = Parts();
@@ -665,9 +666,9 @@ float ShipDesign::AdjustedAttack(float shield) const {
             float part_attack = part->Capacity();
             if (part_attack > shield)
                 total_attack += part_attack - shield;
-        } else if (part_class == PC_FIGHTERS && empire_fighter_damage > 0.0f) {
+        } else if (part_class == PC_FIGHTER_BAY && ship_fighter_damage > 0.0f) {
             // each fighter (number determined by capacity) shoots with the empire fighter strength stat
-            float all_fighters_combined_attack = empire_fighter_damage * part->Capacity();
+            float all_fighters_combined_attack = ship_fighter_damage * part->Capacity();
             total_attack += all_fighters_combined_attack;
         }
     }
@@ -702,7 +703,7 @@ std::vector<std::string> ShipDesign::Weapons() const {
         if (!part)
             continue;
         ShipPartClass part_class = part->Class();
-        if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTERS)
+        if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTER_BAY)
         { retval.push_back(part_name); }
     }
     return retval;
@@ -847,7 +848,7 @@ void ShipDesign::BuildStatCaches() {
 
         switch (part->Class()) {
         case PC_DIRECT_WEAPON:
-        case PC_FIGHTERS: {
+        case PC_FIGHTER_BAY: {
             m_is_armed = true;
             break;
         }

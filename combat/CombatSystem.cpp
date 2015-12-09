@@ -526,7 +526,7 @@ namespace {
             // get the attack power for each weapon part
             float part_attack = 0.0f;
 
-            if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTERS)
+            if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTER_BAY || part_class == PC_FIGHTER_WEAPON)
                 part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
 
             if (part_attack > 0.0f)

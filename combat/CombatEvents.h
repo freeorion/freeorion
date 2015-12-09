@@ -69,13 +69,14 @@ private:
 /// Created when an fighter is destroyed
 struct FO_COMMON_API FighterDestructionEvent : public CombatEvent {
     FighterDestructionEvent();
-    FighterDestructionEvent(int bout, int fighter_id);
+    FighterDestructionEvent(int bout_, int destroyed_by_object_id_, int fighter_owner_empire_id_);
     virtual ~FighterDestructionEvent() {}
 
     virtual std::string DebugString() const;
 
     int bout;
-    int fighter_id;
+    int fighter_owner_empire_id;    // may be ALL_EMPIRE if fighter was owned by no empire
+    int destroyed_by_object_id;     // may be INVALID_OBJECT_ID if destroyed by another fighter
 
 private:
     friend class boost::serialization::access;
