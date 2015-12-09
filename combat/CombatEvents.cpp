@@ -148,17 +148,21 @@ void IncapacitationEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchi
 //////////////////////////////////////////
 FighterDestructionEvent::FighterDestructionEvent() :
     bout(-1),
-    fighter_id(INVALID_OBJECT_ID)
+    fighter_owner_empire_id(ALL_EMPIRES),
+    destroyed_by_object_id(INVALID_OBJECT_ID)
 {}
 
-FighterDestructionEvent::FighterDestructionEvent(int bout_, int fighter_id_) :
+FighterDestructionEvent::FighterDestructionEvent(int bout_, int destroyed_by_object_id_, int fighter_owner_empire_id_) :
     bout(bout_),
-    fighter_id(fighter_id_)
+    fighter_owner_empire_id(fighter_owner_empire_id_),
+    destroyed_by_object_id(destroyed_by_object_id_)
 {}
 
 std::string FighterDestructionEvent::DebugString() const {
     std::stringstream ss;
-    ss << "FighterDestruction of " << fighter_id << " at bout " << bout;
+    ss << "FighterDestruction by object " << destroyed_by_object_id
+       << " of fighter of empire " << fighter_owner_empire_id
+       << " at bout " << bout;
     return ss.str();
 }
 
@@ -166,7 +170,8 @@ template <class Archive>
 void FighterDestructionEvent::serialize (Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(fighter_id);
+       & BOOST_SERIALIZATION_NVP(fighter_owner_empire_id)
+       & BOOST_SERIALIZATION_NVP(destroyed_by_object_id);
 }
 
 BOOST_CLASS_EXPORT(FighterDestructionEvent)

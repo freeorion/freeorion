@@ -226,7 +226,8 @@ namespace parse {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<ShipPartClass>::type retval
             =   tok.ShortRange_         [ _val = PC_DIRECT_WEAPON ]
-            |   tok.Fighters_           [ _val = PC_FIGHTERS ]
+            |   tok.FighterBay_         [ _val = PC_FIGHTER_BAY ]
+            |   tok.FighterWeapon_      [ _val = PC_FIGHTER_WEAPON ]
             |   tok.Shield_             [ _val = PC_SHIELD ]
             |   tok.Armour_             [ _val = PC_ARMOUR ]
             |   tok.Troops_             [ _val = PC_TROOPS ]

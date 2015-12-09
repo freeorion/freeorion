@@ -29,10 +29,21 @@ Part
     icon = "icons/meter/rebels.png"
 
 Part
-    name = "FT_WEAPON_1_1"
-    description = "FT_WEAPON_1_1_DESC"
-    class = Fighters
-    capacity = 2
+    name = "FT_WEAPON_1"
+    description = "FT_WEAPON_1_DESC"
+    class = FighterWeapon
+    capacity = 1
+    mountableSlotTypes = [Internal External]
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1
+    location = OwnedBy empire = Source.Owner
+    icon = "icons/ship_parts/fighters-1.png"
+
+Part
+    name = "FT_BAY_1"
+    description = "FT_BAY_1_DESC"
+    class = FighterBay
+    capacity = 3
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
