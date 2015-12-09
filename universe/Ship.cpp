@@ -578,9 +578,9 @@ void Ship::ResetPairedActiveMeters() {
 
     for (PartMeterMap::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
        if (it->first.first == METER_CAPACITY) {
-            // special case for capacity... if it has an associated max capacity, reset it, otherwise don't
+            // special case for capacity... if it has an associated max capacity, don't reset it, otherwise do
             PartMeterMap::iterator max_it = m_part_meters.find(std::make_pair(METER_MAX_CAPACITY, it->first.second));
-            if (max_it != m_part_meters.end())
+            if (max_it == m_part_meters.end())
                 it->second.ResetCurrent();
         }
     }
