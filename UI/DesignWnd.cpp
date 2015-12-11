@@ -88,6 +88,8 @@ namespace {
             return 0.0f;
         switch (part_type->Class()) {
             case PC_DIRECT_WEAPON:
+            case PC_FIGHTER_BAY:
+            case PC_FIGHTER_WEAPON:
             case PC_SHIELD:
             case PC_DETECTION:
             case PC_STEALTH:
@@ -99,9 +101,6 @@ namespace {
             case PC_RESEARCH:
             case PC_INDUSTRY:
             case PC_TRADE:
-                return part_type->Capacity();
-                break;
-            case PC_FIGHTERS:   // fighters may have additional stats, so might need to do something special for their "main" stat that just capacity...
                 return part_type->Capacity();
                 break;
             case PC_GENERAL:
@@ -325,6 +324,7 @@ public:
 
     mutable boost::signals2::signal<void (const PartType*)> ClickedSignal;
     mutable boost::signals2::signal<void (const PartType*)> DoubleClickedSignal;
+
 private:
     GG::StaticGraphic*  m_icon;
     GG::StaticGraphic*  m_background;
@@ -556,8 +556,6 @@ bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, 
     // for now, will simply be conservative
     return false;
 }
-
-
 
 bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_part) {
     static std::map<std::pair<std::string, std::string>, bool> part_loc_comparison_map;
@@ -2219,6 +2217,7 @@ public:
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
 
 protected:
+    virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
     virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                     const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
 
@@ -2272,6 +2271,30 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
 
     SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new IconTextBrowseWnd(SlotBackgroundTexture(m_slot_type), title_text, UserString("SL_TOOLTIP_DESC"))));
+}
+
+bool SlotControl::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    //std::cout << "SlotControl::EventFilter " << EventTypeName(event) << std::endl << std::flush;
+
+    if (w == this)
+        return false;
+
+    switch (event.Type()) {
+    case GG::WndEvent::DragDropEnter:
+    case GG::WndEvent::DragDropHere:
+    case GG::WndEvent::CheckDrops:
+    case GG::WndEvent::DragDropLeave:
+    case GG::WndEvent::DragDroppedOn:
+        if (w == this) {
+            ErrorLogger() << "SlotControl::EventFilter w == this";
+            return false;
+        }
+        HandleEvent(event);
+        return true;
+        break;
+    default:
+        return false;
+    }
 }
 
 void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
@@ -2413,6 +2436,7 @@ void SlotControl::SetPart(const PartType* part_type) {
     if (part_type) {
         m_part_control = new PartControl(part_type);
         AttachChild(m_part_control);
+        m_part_control->InstallEventFilter(this);
 
         // single click shows encyclopedia data
         GG::Connect(m_part_control->ClickedSignal, PartTypeClickedSignal);
