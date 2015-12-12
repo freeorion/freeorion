@@ -926,7 +926,7 @@ def generateProductionOrders():
         planet=universe.getPlanet(pid)
         if not planet:
             continue
-        canBuildCamp = bldType.canBeProduced(empire.empireID, pid)
+        canBuildCamp = bldType.canBeProduced(empire.empireID, pid) and empire.buildingTypeAvailable(bldName)
         tPop = planet.currentMeterValue(fo.meterType.targetPopulation)
         tInd=planet.currentMeterValue(fo.meterType.targetIndustry)
         cInd=planet.currentMeterValue(fo.meterType.industry)
