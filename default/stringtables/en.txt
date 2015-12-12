@@ -8333,6 +8333,12 @@ Aggression
 SHP_ROOT_AGGRESSION_DESC
 Allows basic weapons and [[shippart GT_TROOP_POD]]s.
 
+SHP_BOMBARD
+Bombardment
+
+SHP_BOMBARD_DESC
+Allows development of planetary bombardment weapons.
+
 SHP_WEAPON_1_2
 Mass Driver 2
 SHP_WEAPON_1_2_DESC
@@ -8739,14 +8745,56 @@ SHP_DEATH_SPORE
 Death Spores
 
 SHP_DEATH_SPORE_DESC
-Unlocks the [[shippart SP_DEATH_SPORE]] which allows ships to reduce the population of enemy planets.
+Unlocks the [[shippart SP_DEATH_SPORE]] which allows ships to reduce the Organic population of enemy planets.
 
 SHP_BIOTERM
 Bio-Terminators
 
 SHP_BIOTERM_DESC
-Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the population of enemy planets.
+Unlocks the [[shippart SP_BIOTERM]], which allows ships to greatly reduce the Organic population of enemy planets.
 
+SHP_EMP
+EMP Generator
+
+SHP_EMP_DESC
+Unlocks the EMP Generator ship part, which allows ships to reduce the Robotic populations of enemy planets.
+
+SHP_EMO
+EMO Generator
+
+SHP_EMO_DESC
+Unlocks the EMO Generator ship part, which allows ships to greatly reduce the Robotic population of enemy planets.
+
+SHP_SONIC
+Sonic Shockwave
+
+SHP_SONIC_DESC
+Unlocks the Sonic Shockwave ship part, which allows ships to reduce the Lithic population of enemy planets.
+
+SHP_GRV
+Graviton Pulse
+
+SHP_GRV_DESC
+Unlocks the Graviton Pulse ship part, which allows ships to greatly reduce the Lithic populations of enemy planets.
+
+SHP_DARK_RAY
+Dark Ray
+
+SHP_DARK_RAY_DESC
+Unlocks the Dark Ray ship part, which allows ships to reduce the Phototrophic populations of enemy planets.
+
+SHP_VOID_SHADOW
+Void Shadow
+
+SHP_VOID_SHADOW_DESC
+Unlocks the Void Shadow ship part, which allows ships to greatly reduce the Phototrophic populations of enemy planets.
+
+SHP_CHAOS_WAVE
+Chaos Wave
+
+SHP_CHAOS_WAVE_DESC
+Unlocks the Chaos Wave ship part, which allows ships to greatly reduce the population of enemy planets.
+ 
 SPY_PLANET_STEALTH_MOD
 Planet Stealth Modifier
 
@@ -9882,13 +9930,55 @@ SP_DEATH_SPORE
 Death Spores
 
 SP_DEATH_SPORE_DESC
-A biological weapon which reduces the population of enemy planets.
+A biological weapon which gradually reduces the Organic population of enemy planets.
 
 SP_BIOTERM
 Bio-Terminators
 
 SP_BIOTERM_DESC
-A powerful biological weapon which quickly reduces the population of enemy planets.
+A powerful biological weapon which quickly reduces the Organic population of enemy planets.
+
+SP_EMP
+Electromagnetic Pulse Generator
+
+SP_EMP_DESC
+An electronic weapon which gradually reduces the Robotic population of enemy planets.
+
+SP_EMO
+Electromagnetic Overcharge Generator
+
+SP_EMO_DESC
+An electronic weapon which quickly reduces the Robotic population of enemy planets.
+
+SP_SONIC
+Sonic Shockwave
+
+SP_SONIC_DESC
+A vibration weapon which gradually shatters the Lithic population of enemy planets.
+
+SP_GRV
+Gravitic Pulse Generator
+
+SP_GRV_DESC
+A vibration weapon which quickly shatters the Lithic population of enemy planets.
+
+SP_DARK_RAY
+Dark Ray
+
+SP_DARK_RAY_DESC
+A negative energy weapon which gradually reduces the Phototrophic population of enemy planets.
+
+SP_VOID_SHADOW
+Void Shadow
+
+SP_VOID_SHADOW_DESC
+A negative energy weapon which quickly reduces the Phototrophic population of enemy planets.
+
+SP_CHAOS_WAVE
+Chaos Wave
+
+SP_CHAOS_WAVE_DESC
+A powerful weapon which quickly reduces any population.  WARNING: Also kills Gaia specials.
 
 SP_NOVA_BOMB
 Nova Bomb

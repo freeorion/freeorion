@@ -2731,8 +2731,10 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 450 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    prerequisites = 
+    prerequisites = [
+        "SHP_BOMBARD"
         "GRO_ADV_ECOMAN"
+    ]
     unlock = Item type = ShipPart name = "SP_DEATH_SPORE"
     graphic = "icons/ship_parts/death-spore.png"
 
@@ -2749,6 +2751,113 @@ Tech
         "GRO_BIOTERROR"
     ]
     unlock = Item type = ShipPart name = "SP_BIOTERM"
+    graphic = "icons/ship_parts/bioterm.png"
+
+Tech
+    name = "SHP_EMP"
+    description = "SHP_EMP_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 450 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = [
+        "SHP_BOMBARD"
+        "LRN_FORCE_FIELD"
+    ]
+    unlock = Item type = ShipPart name = "SP_EMP"
+    graphic = "icons/ship_parts/death-spore.png"
+
+Tech
+    name = "SHP_EMO"
+    description = "SHP_EMO_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "SHP_EMP"
+        "SHP_FRC_ENRG_COMP"
+    ]
+    unlock = Item type = ShipPart name = "SP_EMO"
+    graphic = "icons/ship_parts/bioterm.png"
+
+Tech
+    name = "SHP_SONIC"
+    description = "SHP_SONIC_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 450 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = [
+        "SHP_BOMBARD"
+        "LRN_FORCE_FIELD"
+    ]
+    unlock = Item type = ShipPart name = "SP_SONIC"
+    graphic = "icons/ship_parts/death-spore.png"
+
+Tech
+    name = "SHP_GRV"
+    description = "SHP_GRV_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "SHP_SONIC"
+        "LRN_GRAVITONICS"
+    ]
+    unlock = Item type = ShipPart name = "SP_GRV"
+    graphic = "icons/ship_parts/bioterm.png"
+
+Tech
+    name = "SHP_DARK_RAY"
+    description = "SHP_DARK_RAY_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 450 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 3
+    prerequisites = [
+        "SHP_BOMBARD"
+        "SPY_STEALTH_2"
+    ]
+    unlock = Item type = ShipPart name = "SP_DARK_RAY"
+    graphic = "icons/ship_parts/death-spore.png"
+
+Tech
+    name = "SHP_VOID_SHADOW"
+    description = "SHP_VOID_SHADOW_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 75 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "SHP_DARK_RAY"
+        "LRN_GATEWAY_VOID"
+    ]
+    unlock = Item type = ShipPart name = "SP_VOID_SHADOW"
+    graphic = "icons/ship_parts/bioterm.png"
+
+Tech
+    name = "SHP_CHAOS_WAVE"
+    description = "SHP_CHAOS_WAVE_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1500 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = [
+        "SHP_BIOTERM"
+        "SHP_GRV"
+        "SHP_EMO"
+        "SHP_VOID_SHADOW"
+    ]
+    unlock = Item type = ShipPart name = "SP_CHAOS_WAVE"
     graphic = "icons/ship_parts/bioterm.png"
 
 //#
@@ -2875,6 +2984,17 @@ Tech
         Item type = ShipPart name = "GT_TROOP_POD"
     ]
     graphic = "icons/tech/planetary_colonialism.png"
+
+Tech
+    name = "SHP_BOMBARD"
+    description = "SHP_BOMBARD_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Theory
+    category = "SHIPS_CATEGORY"
+    researchcost = 100 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 5
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    graphic = ""
 
 Tech
     name = "SHP_WEAPON_1_2"
