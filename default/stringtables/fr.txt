@@ -224,17 +224,17 @@ SD_AST_SCOUT_DESC
 Petit astronef économique mais non-armé, fabriqué à partir d'un astéroïde, conçu pour la reconnaissance et l'exploration. La [[encyclopedia RESEARCH_TITLE]] basée sur l'amélioration du [[encyclopedia DETECTION_RANGE_TITLE]] permettra la conception de meilleurs modèles. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_SCOUT_2
-Éclaireur II
+Éclaireur Radar
 SD_SCOUT_2_DESC
 Petit astronef économique mais non-armé, equipé d'un [[encyclopedia DETECTION_RANGE_TITLE]] légèrement amélioré, conçu pour la reconnaissance et l'exploration. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SCOUT_3
-Éclaireur III
+Éclaireur Scanner
 SD_SCOUT_3_DESC
 Petit astronef économique mais non-armé, equipé d'un [[encyclopedia DETECTION_RANGE_TITLE]] grandement amélioré, conçu pour la reconnaissance et l'exploration. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SCOUT_4
-Éclaireur IV
+Éclaireur Capteur
 SD_SCOUT_4_DESC
 Petit astronef économique mais non-armé, equipé d'un [[encyclopedia DETECTION_RANGE_TITLE]] de dernière génération, conçu pour la reconnaissance et l'exploration. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
@@ -244,158 +244,203 @@ SD_ENG_SCOUT_DESC
 Astronef compact et rapide mais non-armé, conçu pour la reconnaissance et l'exploration. La [[encyclopedia RESEARCH_TITLE]] basée sur l'amélioration du [[encyclopedia DETECTION_RANGE_TITLE]] permettra la conception de meilleurs modèles. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_SMALL_MARK_1  # translated
-Corvette I
+Corvette (M)
 SD_SMALL_MARK1_DESC
 Petit astronef équipé d'un Canon Mitrailleur basique. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_SMALL_MARK_2  # translated
-Corvette II
+Corvette (L)
 SD_SMALL_MARK2_DESC
 Petit astronef équipé d'un Canon Mitrailleur amélioré. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_MARK_1
-#Frigate I
+SD_MARK_1
+Frégate (M1)
 SD_MARK1_DESC
 Astronef patrouilleur équipé d'un Canon Mitrailleur basique. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_MARK_2
-#Frigate II
+SD_MARK_2
+Frégate (M2)
 SD_MARK2_DESC
 Astronef patrouilleur équipé d'un Canon Mitrailleur amélioré. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_MARK_3
-#Frigate III
+SD_MARK_3
+Frégate (L1)
 SD_MARK3_DESC
 Astronef patrouilleur équipé d'un Canon Laser standard. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_MARK_4
-#Frigate IV
+SD_MARK_4
+Frégate (L2)
 SD_MARK4_DESC
 Astronef patrouilleur équipé d'un Canon Laser avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_LARGE_MARK_1
-#Cruiser I
+SD_LARGE_MARK_1  # translated
+Destroyer (M1)
 SD_LARGE_MARK1_DESC
 Chasseur équipé d'un Canon Mitrailleur basique. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_LARGE_MARK_2
-#Cruiser II
+SD_LARGE_MARK_2  # translated
+Destroyer (M2)
 SD_LARGE_MARK2_DESC
 Chasseur équipé d'un Canon Mitrailleur amélioré. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_LARGE_MARK_3
-#Cruiser III
+SD_LARGE_MARK_3
+Croiseur (L1)
 SD_LARGE_MARK3_DESC
 Chasseur équipé d'un Canon Laser standard. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_LARGE_MARK_4
-#Cruiser IV
+SD_LARGE_MARK_4
+Croiseur (L2)
 SD_LARGE_MARK4_DESC
 Chasseur équipé de Blindages améliorés et d'un Canon Laser avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
-#SD_ROBOTIC1
-#Robocruiser I
+SD_ROBOTIC_OUTPOST
+Bâtisseur Robotique
+SD_ROBOTIC_OUTPOST_DESC
+Peut établir des avant-postes dans les mondes très lointains
+
+SD_ROBOTIC_COLONY
+Colonisateur Robotique
+SD_ROBOTIC_COLONY_DESC
+Peut établir des colonies dans les mondes très lointains
+
+SD_ROBOTIC_CRYOCOL
+Colonisateur Cryo-Robotique
+
+SD_ROBOTIC_CRYOCOL_DESC
+Peut établir des colonies évoluées dans les mondes très lointains
+
+SD_ROBO_FLUX_SCOUT
+Éclaireur Flux
+
+SD_ROBO_FLUX_SCOUT_DESC
+Équipé d'une coque d'éclaireur rapide
+
+SD_ROBO_FLUX_TROOPS
+Transporteur Flux d'Infanterie
+
+SD_ROBO_FLUX_TROOPS_DESC
+Transporteur d'infanterie rapide
+
+SD_ROBO_FLUX_TROOPS_HVY
+Transporteur Flux d'Infanterie Lourde
+
+SD_ROBO_FLUX_TROOPS_HVY_DESC
+Transporteur rapide d'infanterie améliorée
+
+SD_ROBOTIC1
+Robocroiseur (M1)
 SD_ROBOTIC1_DESC
 Chasseur robotique équipé de Canons Mitrailleurs avancés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
-#SD_ROBOTIC2
-#Robocruiser II
+SD_ROBOTIC2
+Robocroiseur (M2)
 SD_ROBOTIC2_DESC
 Chasseur robotique équipé de Blindages améliorés et de Canons Laser standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
-#SD_ROBOTIC3
-#Robocruiser III
+SD_ROBOTIC3
+Robocroiseur (L)
 SD_ROBOTIC3_DESC
 Chasseur robotique équipé de Blindages améliorés et de Canons Laser avancés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]].
 
-#SD_ORGANIC1
-#Organic I
+SD_NANOROBOTIC1
+Croiseur Nanobot
+
+SD_NANOROBOTIC1_DESC
+Croiseur lourd évolué capable de s'auto-réparer.
+
+SD_GRAVITATING1
+Cuirassé Gravitator (P)
+SD_GRAVITATING1_DESC
+Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], ainsi qu'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+
+SD_GRAVITATING2
+Cuirassé Gravitator (D)
+SD_GRAVITATING2_DESC
+Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], ainsi qu'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+
+#SD_ROBO_TITAN1
+#Dreadnaught
+SD_ROBO_TITAN1_DESC
+Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], ainsi qu'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
+
+SD_ORGANIC1
+Frégate Organic (M1)
 SD_ORGANIC1_DESC
 Chasseur organique équipé de Blindages standards et d'un Canon Mitrailleur avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
-#SD_ORGANIC2
-#Organic II
+SD_ORGANIC2
+Frégate Organic (M2)
 SD_ORGANIC2_DESC
 Chasseur organique équipé de Blindages améliorés et d'un Canon Laser standard. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
-#SD_ORGANIC3
-#Organic III
+SD_ORGANIC3
+Frégate Organic (L)
 SD_ORGANIC3_DESC
 Chasseur organique équipé de Blindages améliorés et d'un Canon Laser avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
-#SD_SHIELD_BUG_1
-#Shield Bug I
+SD_SHIELD_BUG_1
+Frégate Organic Lourde (M)
 SD_SHIELD_BUG_1_DESC
 Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés, et d'un Canon Mitrailleur avancé. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
-#SD_SHIELD_BUG_2
-#Shield Bug II
+SD_SHIELD_BUG_2
+Frégate Organic Lourde (L)
 SD_SHIELD_BUG_2_DESC
 Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés, et d'un Canon Laser standard. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
-#SD_SHIELD_BUG_3
-#Shield Bug III
-SD_SHIELD_BUG_3_DESC
-Chasseur organique équipé de [[encyclopedia SHIELDS_TITLE]], de Bliandages améliorés, et d'un Canon Laser avancé. Efficace contre les ennemis faiblement armés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
-
-#SD_AST_1
-#Rock I
+SD_AST_1
+Destroyer Rock (L)
 SD_AST_1_DESC
 Un astronef astéroïdal équipé d'un Canon Laser avancé. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
-#SD_AST_2
-#Rock II
+SD_AST_2
+Destroyer Rock (P1)
 SD_AST_2_DESC
 Un astronef astéroïdal équipé d'un Canon Plasma standard. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
-#SD_AST_3
-#Rock III
+SD_AST_3
+Destroyer Rock (P2)
 SD_AST_3_DESC
 Un astronef astéroïdal équipé d'un Canon Plasma avancé et de Blindages Carbone. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
-#SD_HEAVY_AST_1
-#Big Rock I
+SD_HEAVY_AST_1
+Cuirassé Rock (L)
 SD_HEAVY_AST_1_DESC
-Un astronef astéroïdal massif équipé de Canons Plasma standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
+Un astronef astéroïdal massif équipé de Canons Laser standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]].
 
-#SD_HEAVY_AST_2
-#Big Rock II
+SD_HEAVY_AST_2
+Cuirassé Rock (P)
 SD_HEAVY_AST_2_DESC
 Un astronef astéroïdal massif équipé de Canons Plasma avancés et de Blindages Carbone. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
-#SD_CRYSTAL
-#Crystal
+SD_CRYSTAL
+Destroyer Crystal (P)
 SD_CRYSTAL_DESC
 Un astronef astéroïdal cristallisé équipé d'un Canon Plasma avancé et de Blindages Cristal. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] au sein d'un système abritant un [[buildingtype BLD_SHIPYARD_AST]]. Un [[buildingtype BLD_SHIPYARD_AST_REF]] est également requis dans n'importe quel système appartenant à l'empire.
 
-#SD_ENDO_1
-#Endomorphic I
+SD_ENDO_1
+Croiseur Endomorphic (L)
 SD_ENDO_1_DESC
 Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés et de Canons Laser standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
-#SD_ENDO_2
-#Endomorphic II
+SD_ENDO_2
+Croiseur Endomorphic (P1)
 SD_ENDO_2_DESC
 Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]], de Blindages améliorés et de Canons Laser avancés. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
-#SD_ENDO_3
-#Endomorphic III
+SD_ENDO_3
+Croiseur Endomorphic (P2)
 SD_ENDO_3_DESC
 Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]] améliorés, de Blindages avancés et de Canons Plasma standards. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
 
-#SD_ENDO_4
-#Endomorphic IV
-SD_ENDO_4_DESC
-Chasseur endomorphique équipé de [[encyclopedia SHIELDS_TITLE]] améliorés, de Blindages et de Canons Plasma avancés.Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]], ainsi qu'une [[buildingtype BLD_SHIPYARD_ORG_XENO_FAC]].
-
-SD_GRAVITATING1
-Gravitator I
-SD_GRAVITATING1_DESC
-Cuirassé amiral armé et protégé à l'aide des technologies les plus abouties. Prix en conséquence. Ne peut construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]], une [[buildingtype BLD_SHIPYARD_ORBITAL_DRYDOCK]], ainsi qu'une [[buildingtype BLD_SHIPYARD_CON_GEOINT]].
-
-#SD_FRACTAL_1
-#Fractal I
+SD_FRACTAL_1
+Cuirassé Fractal (P)
 SD_FRACTAL_1_DESC
+Un bâtiment de guerre exotique, basé sur l'énergie fractale. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
+
+SD_FRACTAL_2
+Cuirassé Fractal (D)
+SD_FRACTAL_2_DESC
 Un bâtiment de guerre exotique, basé sur l'énergie fractale. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_COLONY_SHIP
@@ -448,38 +493,48 @@ Bâtisseur Stellaire
 SD_OUTPOST_BASE_DESC
 Astronef stellaire non-armé pouvant bâtir un [[encyclopedia OUTPOSTS_TITLE]] dans un monde inhabitable, seulement dans le système où il a été construit. Ce vaisseau ne peut pas voyager sur les Voies Spatiales.
 
+SD_BASE_DECOY  # translated
+Comsat
+SD_BASE_DECOY_DESC
+Satellite non-armé pouvant engager les défenses planétaires contre tout ennemi détecté (y compris passif), et n'a aucune autre fonction sinon de se mettre dans la ligne de feu de l'ennemi. Peut être construit sur toute planète peuplée par une espèce pouvant produire des astronefs, et ne requiert pas de [[buildingtype BLD_SHIPYARD_BASE]].
+
 SD_TROOP_DROP
 Largueur d'Infanterie
 SD_TROOP_DROP_DESC
-Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
+Transporte une brigade d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
+
+SD_TROOP_DROP_HVY
+Largueur d'Infanterie Lourde
+SD_TROOP_DROP_HVY_DESC
+Transporte une brigade d'[[encyclopedia TROOP_TITLE]] améliorée et l'équipement pouvant être utilisés pour envahir une planète dans un même système.
 
 SD_SMALL_TROOP_SHIP
 Petit Transporteur d'Infanterie
 SD_SMALL_TROOP_SHIP_DESC
-Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Transporte une brigade d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_TROOP_SHIP
 Transporteur d'Infanterie
 SD_TROOP_SHIP_DESC
-Transporte 6 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
+Transporte 3 brigades d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]].
 
 SD_ORG_TROOP_SHIP
-Transporteur d'Infanterie Organic
+Transporteur Organic d'Infanterie
 SD_ORG_TROOP_SHIP_DESC
-Transporte 8 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
+Transporte 4 brigades d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
 
 SD_ENG_TROOP_SHIP
-Transporteur d'Infanterie Energy
+Transporteur Energy d'Infanterie
 SD_ENG_TROOP_SHIP_DESC
-Transporte 2 unités d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
+Transporte une brigade d'[[encyclopedia TROOP_TITLE]] et l'équipement pouvant être utilisés pour envahir une planète. Cet astronef ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_ENG1
-Energy I
+Corvette Energy (L)
 SD_ENG1_DESC
 Astronef de combat compact et rapide. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
 SD_ENG2
-Energy II
+Corvette Energy (P)
 SD_ENG2_DESC
 Astronef de combat compact et rapide, avec armement amélioré. Ne peut être construit que dans une colonie possédant un [[buildingtype BLD_SHIPYARD_BASE]] ainsi qu'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et orbitant autour d'une Étoile Blanche, Bleue ou d'un Trou Noir.
 
@@ -5798,7 +5853,7 @@ CLOUD_COVER_MASTER_SPECIAL_DESC
 Cette planète est peuplée de créatures aériennes émettant d'importantes quantités d'humidité, ce qui entraîne la formation d'une épaisse couche nuageuse. Plus tardivement dans leur cycle de vie, elles s'enfouissent profondément dans le sol, provoquant une forte intensification de l'activité volcanique.
 
 CLOUD_COVER_SLAVE_SPECIAL
-Épaisses Nuées
+Couverture Nuageuse
 CLOUD_COVER_SLAVE_SPECIAL_DESC
 Cette planète est recouverte d'une épaisse couverture nuageuse qui accroît de 20 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que l'[[tech SPY_STEALTH_1]].
 
@@ -5833,7 +5888,7 @@ VOID_MASTER_SPECIAL_DESC
 Des monstres évoluant au cœur de la planète l'entraînent dans le Vide. Une catastrophe imminente pourrait peut-être découler de cette Particularité.
 
 VOID_SLAVE_SPECIAL
-Métamorphose par le Vide
+Métamorphose du Vide
 VOID_SLAVE_SPECIAL_DESC
 Cette planète existe en partie dans cet univers et en partie dans le Vide, ce qui accroît de 80 sa [[encyclopedia STEALTH_TITLE]]. Ce phénomène peut être soit naturel, soit le résultat de l'activité d'une créature de l'espace, soit le fruit d'une technologie telle que le [[tech SPY_STEALTH_4]].
 
@@ -7789,6 +7844,12 @@ Compression d'Énergie
 SHP_FRC_ENRG_COMP_DESC
 Habituellement, la manipulation de l'énergie nécessite que celle-ci soit disponible sous forme de matière afin de pouvoir être stockée et utilisée au besoin. De la matière convertie en énergie pure et stockée directement dans le tissu de l'espace-temps lui-même, serait bien plus polyvalente à l'utilisation que n'importe quelle substance matérielle, mais nécessiterait une technologie avancée de champ de force afin de la conserver.
 
+SHP_ENRG_FRIGATE
+Compression Militaire d'Énergie
+
+SHP_ENRG_FRIGATE_DESC
+Les champs de force avancés permettent de combiner l'énergie et la matière afin de concevoir des bâtiments de guerre, mais une immense quantité d'énergie est nécessaire pour les construire à l'échelle.
+
 SHP_QUANT_ENRG_MAG
 Amplification d'Énergie Quantique
 
@@ -8275,77 +8336,77 @@ Autorise l'armement de base et le [[shippart GT_TROOP_POD]].
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
 SHP_WEAPON_1_2_DESC
-Perfectionne le Canon Mitrailleur au niveau 2.
+Améliore le Canon Mitrailleur d'un niveau, augmentant sa Puissance de 1.
 
 SHP_WEAPON_1_3
 Canon Mitrailleur 3
 SHP_WEAPON_1_3_DESC
-Perfectionne le Canon Mitrailleur au niveau 3.
+Améliore le Canon Mitrailleur de deux niveaux, augmentant sa Puissance de 2.
 
 SHP_WEAPON_1_4
 Canon Mitrailleur 4
 SHP_WEAPON_1_4_DESC
-Perfectionne le Canon Mitrailleur au niveau 4.
+Améliore le Canon Mitrailleur de trois niveaux, augmentant sa Puissance de 3.
 
 SHP_WEAPON_2_1
-Canon Laser 1
+Canon Laser
 SHP_WEAPON_2_1_DESC
 Débloque le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
 
 SHP_WEAPON_2_2
 Canon Laser 2
 SHP_WEAPON_2_2_DESC
-Perfectionne le Canon Laser au niveau 2.
+Améliore le Canon Laser d'un niveau, augmentant sa Puissance de 2.
 
 SHP_WEAPON_2_3
 Canon Laser 3
 SHP_WEAPON_2_3_DESC
-Perfectionne le Canon Laser au niveau 3.
+Améliore le Canon Laser de deux niveaux, augmentant sa Puissance de 4.
 
 SHP_WEAPON_2_4
 Canon Laser 4
 SHP_WEAPON_2_4_DESC
-Perfectionne le Canon Laser au niveau 4.
+Améliore le Canon Laser de trois niveaux, augmentant sa Puissance de 6.
 
 SHP_WEAPON_3_1
-Canon Plasma 1
+Canon Plasma
 SHP_WEAPON_3_1_DESC
 Débloque le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
 
 SHP_WEAPON_3_2
 Canon Plasma 2
 SHP_WEAPON_3_2_DESC
-Perfectionne le Canon Plasma au niveau 2.
+Améliore le Canon Plasma d'un niveau, augmentant sa Puissance de 3.
 
 SHP_WEAPON_3_3
 Canon Plasma 3
 SHP_WEAPON_3_3_DESC
-Perfectionne le Canon Plasma au niveau 3.
+Améliore le Canon Plasma de deux niveaux, augmentant sa Puissance de 6.
 
 SHP_WEAPON_3_4
 Canon Plasma 4
 SHP_WEAPON_3_4_DESC
-Perfectionne le Canon Plasma au niveau 4.
+Améliore le Canon Plasma de trois niveaux, augmentant sa Puissance de 9.
 
 SHP_WEAPON_4_1
-Rayon Gamma 1
+Rayon Gamma
 SHP_WEAPON_4_1_DESC
 Débloque le Rayon Gamma, l'armement ultime des astronefs.
 
 SHP_WEAPON_4_2
 Rayon Gamma 2
 SHP_WEAPON_4_2_DESC
-Perfectionne le Rayon Gamma au niveau 2.
+Améliore le Rayon Gamma d'un niveau, augmentant sa Puissance de 5.
 
 SHP_WEAPON_4_3
 Rayon Gamma 3
 SHP_WEAPON_4_3_DESC
-Perfectionne le Rayon Gamma au niveau 3.
+Améliore le Rayon Gamma de deux niveaux, augmentant sa Puissance de 10.
 
 SHP_WEAPON_4_4
 Rayon Gamma 4
 SHP_WEAPON_4_4_DESC
-Perfectionne le Rayon Gamma au niveau 4. L'amélioration ultime de l'arme ultime.
+Améliore le Rayon Gamma de trois niveaux, augmentant sa Puissance de 15. Le perfectionnement ultime de l'arme ultime.
 
 SHP_ION_CANNON
 Canon Ionique
@@ -8460,13 +8521,13 @@ SPY_DETECT_5_DESC
 Le dispositif ultime en matière de détection. Porte le [[encyclopedia DETECTION_RANGE_TITLE]] de toutes les planètes à 300 et la [[encyclopedia DETECTION_TITLE]] impériale à 200.
 
 SPY_STEALTH_1
-Affaiblisseur Électromagnétique
+Couverture Nuageuse Planétaire
 
 SPY_STEALTH_1_DESC
 Débloque l'équipement [[shippart ST_CLOAK_1]] pour les astronefs et confère la Particularité [[special CLOUD_COVER_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 20 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
 
 SPY_STEALTH_2
-Champ d'Absorption
+Cendres Volcaniques Planétaires
 
 SPY_STEALTH_2_DESC
 '''Débloque l'équipement [[shippart ST_CLOAK_2]] pour les astronefs et confère la Particularité [[special VOLCANIC_ASH_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 40 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent. 
@@ -8474,13 +8535,13 @@ SPY_STEALTH_2_DESC
 Un simple affaiblissement des ondes électromagnétiques émises par un objet peut rendre ce dernier totalement invisible pour les dispositifs passifs de détection. Cependant, cette technique de dissimulation d'un objet est quasiment inutile face à des radars actifs. En absorbant plutôt qu'en réfléchissant les ondes émises par les dispositifs actifs de détection, la [[encyclopedia STEALTH_TITLE]] d'un astronef peut être considérablement accrue.'''
 
 SPY_STEALTH_3
-Camouflage Dimensionnel
+Camouflage Dimensionnel Planétaire
 
 SPY_STEALTH_3_DESC
 Débloque l'équipement [[shippart ST_CLOAK_3]] pour les astronefs et confère la Particularité [[special DIM_RIFT_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 60 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent.
 
 SPY_STEALTH_4
-Camouflage de Phase
+Camouflage de Phase Planétaire
 
 SPY_STEALTH_4_DESC
 '''Débloque l'équipement [[shippart ST_CLOAK_4]] pour les astronefs et confère la Particularité [[special VOID_SLAVE_SPECIAL]] à toutes les planètes et avant-postes de l'empire, augmentant ainsi de 80 la [[encyclopedia STEALTH_TITLE]] des planètes et des structures qui s'y trouvent. 
@@ -9440,64 +9501,19 @@ SR_WEAPON_1_1_DESC
 Le Canon Mitrailleur, une arme de base.
 
 SR_WEAPON_2_1
-Canon Laser 1
+Canon Laser
 SR_WEAPON_2_1_DESC
 Le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
 
-SR_WEAPON_2_2
-Canon Laser 2
-SR_WEAPON_2_2_DESC
-Canon Laser, perfectionné au niveau 2.
-
-SR_WEAPON_2_3
-Canon Laser 3
-SR_WEAPON_2_3_DESC
-Canon Laser, perfectionné au niveau 3.
-
-SR_WEAPON_2_4
-Canon Laser 4
-SR_WEAPON_2_4_DESC
-Canon Laser, perfectionné au niveau 4.
-
 SR_WEAPON_3_1
-Canon Plasma 1
+Canon Plasma
 SR_WEAPON_3_1_DESC
 Le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
 
-SR_WEAPON_3_2
-Canon Plasma 2
-SR_WEAPON_3_2_DESC
-Canon Plasma, perfectionné au niveau 2.
-
-SR_WEAPON_3_3
-Canon Plasma 3
-SR_WEAPON_3_3_DESC
-Canon Plasma, perfectionné au niveau 3.
-
-SR_WEAPON_3_4
-Canon Plasma 4
-SR_WEAPON_3_4_DESC
-Canon Plasma, perfectionné au niveau 4.
-
 SR_WEAPON_4_1
-Rayon Gamma 1
+Rayon Gamma
 SR_WEAPON_4_1_DESC
 Le Rayon Gamma, l'armement ultime des astronefs.
-
-SR_WEAPON_4_2
-Rayon Gamma 2
-SR_WEAPON_4_2_DESC
-Rayon Gamma, perfectionné au niveau 2.
-
-SR_WEAPON_4_3
-Rayon Gamma 3
-SR_WEAPON_4_3_DESC
-Rayon Gamma, perfectionné au niveau 3.
-
-SR_WEAPON_4_4
-Rayon Gamma 4
-SR_WEAPON_4_4_DESC
-Rayon Gamma, perfectionné au niveau 4. L'amélioration ultime de l'arme ultime.
 
 SR_SPINAL_ANTIMATTER
 Canon Anti-Matière
@@ -9505,29 +9521,11 @@ Canon Anti-Matière
 SR_SPINAL_ANTIMATTER_DESC
 Un gigantesque canon automatique propulsant de lourdes charges explosives faites d'anti-matière.
 
-SR_WEAPON_2
-Canon Laser
-
-SR_WEAPON_2_DESC
-Puissance limitée et faible solidité
-
 SR_ION_CANNON
 Canon Ionique
 
 SR_ION_CANNON_DESC
 Moyenne puissance et solidité accrue
-
-SR_WEAPON_1
-Canon Mitrailleur
-
-SR_WEAPON_1_DESC
-Arme à répétition capable de lancer des projectiles destructeurs à une vitesse relativiste.
-
-SR_WEAPON_4
-Rayon Gamma
-
-SR_WEAPON_4_DESC
-L'armement ultime de courte portée
 
 PD_PULSE_LASER
 Canon Laser à Impulsions
@@ -9855,7 +9853,7 @@ GT_TROOP_POD_DESC
   * Les astronefs transportant des troupes d'infanterie pendant une invasion sont destinés à des atterrissages rapides et dangereux, les rendant inutilisables par la suite.'''
 
 GT_TROOP_POD_2
-Module d'Infanterie Avancée
+Module d'Infanterie Améliorée
 
 GT_TROOP_POD_2_DESC
 '''Transporte 4 unités d'[[encyclopedia TROOP_TITLE]] cybernétique et l'équipement pouvant être déployés sur une planète.
@@ -10226,6 +10224,15 @@ Sa [[encyclopedia STRUCTURE_TITLE]] est faible, sa [[encyclopedia STEALTH_TITLE]
 
 La construction de cette coque nécessite un important apport d'énergie et ne peut donc être produite que dans un système abritant une Étoile Blanche, Bleue, ou un Trou Noir, ainsi qu'un [[buildingtype BLD_SHIPYARD_BASE]] et un [[buildingtype BLD_SHIPYARD_ENRG_COMP]] sur la planète où la coque sera façonnée.'''
 
+SH_ENERGY_FRIGATE
+Frégate Energy
+SH_ENERGY_FRIGATE_DESC
+'''Cette coque très rapide combine l'énergie compressée et la technologie militaire afin de créer un astronef d'attaque véloce mais fragile. 
+
+Sa [[encyclopedia STRUCTURE_TITLE]] et sa [[encyclopedia STEALTH_TITLE]] sont faibles, son [[encyclopedia DETECTION_RANGE_TITLE]] est normal et sa [[encyclopedia STARLANE_SPEED_TITLE]] très élevée. 
+
+La construction de cette coque nécessite un important apport d'énergie et ne peut donc être produite que dans un système abritant une Étoile Blanche, Bleue, ou un Trou Noir, ainsi qu'un [[buildingtype BLD_SHIPYARD_BASE]] et un [[buildingtype BLD_SHIPYARD_ENRG_COMP]] sur la planète où la coque sera façonnée.'''
+
 SH_FRACTAL_ENERGY
 Coque Énergie Fractale
 
@@ -10572,16 +10579,16 @@ ULTIMATE_STEALTH
 +++	Parfait en [[encyclopedia STEALTH_TITLE]] Planétaire : +60 bonus
 
 BAD_WEAPONS
-−	Mauvais Pilotes : -25% de dommages.
+−	Mauvais Pilotes : dommages de base par armement d'astronef réduits d'un niveau.
 
 GOOD_WEAPONS
-+	Bons Pilotes : +25% de dommages.
++	Bons Pilotes : dommages de base par armement d'astronef augmentés d'un niveau.
 
 GREAT_WEAPONS
-++	Excellents Pilotes : +50% de dommages.
+++	Excellents Pilotes : dommages de base par armement d'astronef augmentés de deux niveaux.
 
 ULTIMATE_WEAPONS
-+++	Parfaits Pilotes : +100% de dommages.
++++	Parfaits Pilotes : dommages de base par armement d'astronef augmentés de trois niveaux.
 
 BAD_POPULATION
 −	Faible Population : 75%
@@ -10988,7 +10995,7 @@ Invincible'''
 #Outposter
 
 #AI_SHIPDESIGN_NAME_ORBITAL_DEFENSE
-#'''Decoy
+#'''Comsat
 #Starbase'''
 
 #AI_SHIPDESIGN_NAME_SCOUT
