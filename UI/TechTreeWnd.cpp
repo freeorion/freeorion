@@ -1623,8 +1623,8 @@ void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const
 //////////////////////////////////////////////////
 TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_enc_detail_panel(0),
     m_tech_tree_controls(0),
+    m_enc_detail_panel(0),
     m_layout_panel(0),
     m_tech_list(0)
 {

@@ -547,7 +547,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
 bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, const Condition::ConditionBase* ref_part_loc) {
     //const Condition::ConditionBase* check_part_loc = check_part->Location();
     //const Condition::ConditionBase* ref_part_loc = ref_part->Location();
-    if (const Condition::All* ref_part_all = boost::dynamic_pointer_cast<const Condition::All>(ref_part_loc))
+    if (boost::dynamic_pointer_cast<const Condition::All>(ref_part_loc))
         return true;
     if (!check_part_loc || !ref_part_loc)
         return false;
@@ -1468,7 +1468,7 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
     if (wnds.empty())
         return;
-    if (!wnds.size() == 1)
+    if (wnds.size() != 1)
         ErrorLogger() << "BasesListBox::ChildrenDraggedAway unexpected informed that multiple Wnds were dragged away...";
     const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list as BasesListBost doesn't allow selection, so dragging is only one-at-a-time
     const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
