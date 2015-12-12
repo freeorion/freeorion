@@ -776,7 +776,7 @@ Part
             ]
 
         EffectsGroup    // monsters use death spores on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 Species
                 InSystem id = Source.SystemID
@@ -839,7 +839,7 @@ Part
             ]
 
         EffectsGroup    // monsters use terminators on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 Species
                 InSystem id = Source.SystemID
@@ -902,7 +902,7 @@ Part
             ]
 
         EffectsGroup    // monsters use EMP on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
@@ -964,7 +964,7 @@ Part
             ]
 
         EffectsGroup    // monsters use EMO on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
@@ -1026,7 +1026,7 @@ Part
             ]
 
         EffectsGroup    // monsters use sonic shockwave on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
@@ -1088,7 +1088,7 @@ Part
             ]
 
         EffectsGroup    // monsters use graviton pulse on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
@@ -1149,7 +1149,7 @@ Part
             ]
 
         EffectsGroup    // monsters use dark ray on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
@@ -1210,7 +1210,7 @@ Part
             ]
 
         EffectsGroup    // monsters use void shadow on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
@@ -1271,7 +1271,7 @@ Part
             ]
 
         EffectsGroup    // monsters use chaos wave on player planets
-            scope = And [
+            scope = NumberOf number = 1 condition = And [
                 Planet
                 InSystem id = Source.SystemID
                 OwnedBy affiliation = AnyEmpire
