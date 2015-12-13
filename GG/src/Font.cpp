@@ -1609,8 +1609,13 @@ bool Font::GenerateGlyph(FT_Face face, boost::uint32_t ch)
     using boost::lexical_cast;
     FT_UInt index = FT_Get_Char_Index(face, ch);
     if (index) {
-        if (FT_Load_Glyph(face, index, FT_LOAD_DEFAULT))
-            ThrowBadGlyph("GG::Font::GetGlyphBitmap : Freetype could not load the glyph for character '%1%'", ch);
+        if (FT_Load_Glyph(face, index, FT_LOAD_DEFAULT)) {
+            // loading of a glpyh failed so we replace it with
+            // the 'Replacement Character' at codepoint 0xFFFD
+            FT_UInt tmp_index = FT_Get_Char_Index(face, 0xFFFD);
+            if (FT_Load_Glyph(face, tmp_index, FT_LOAD_DEFAULT))
+                ThrowBadGlyph("GG::Font::GetGlyphBitmap : Freetype could not load the glyph for character '%1%'", ch);
+        }
 
         FT_GlyphSlot glyph = face->glyph;
 
