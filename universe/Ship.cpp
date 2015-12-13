@@ -431,40 +431,69 @@ float Ship::TotalWeaponsDamage(float shield_DR /* = 0.0 */) const {
     return total_attack;
 }
 
+namespace {
+    std::vector<float> WeaponDamageImpl(const Ship* ship, const ShipDesign* design, float DR, bool max = false) {
+        std::vector<float> retval;
+
+        if (!ship)
+            return retval;
+        if (!design)
+            return retval;
+        const std::vector<std::string>& parts = design->Parts();
+        if (parts.empty())
+            return retval;
+
+        MeterType METER = max ? METER_MAX_CAPACITY : METER_CAPACITY;
+
+        // TODO: get empire fighter damage
+        float empire_fighter_damage = 4.0f - DR;
+
+
+        // for each weapon part, get its damage meter value
+        for (std::vector<std::string>::const_iterator part_it = parts.begin();
+             part_it != parts.end(); ++part_it)
+        {
+            const std::string& part_name = *part_it;
+            const PartType* part = GetPartType(part_name);
+            if (!part)
+                continue;
+            ShipPartClass part_class = part->Class();
+
+            // get the attack power for each weapon part
+            if (part_class == PC_DIRECT_WEAPON) {
+                float part_attack = ship->CurrentPartMeterValue(METER, part_name);
+                if (part_attack > DR)
+                    retval.push_back(part_attack - DR);
+            } else if (part_class == PC_FIGHTERS && empire_fighter_damage > 0.0f) {
+                // each fighter (number determined by capacity) shoots with the empire fighter strength stat
+                float all_fighters_combined_attack = empire_fighter_damage * ship->CurrentPartMeterValue(METER, part_name);
+                retval.push_back(all_fighters_combined_attack);
+            }
+        }
+        return retval;
+    }
+}
+
 std::vector<float> Ship::AllWeaponsDamage(float shield_DR /* = 0.0 */) const {
     std::vector<float> retval;
-
+    if (!this)
+        return retval;
     const ShipDesign* design = GetShipDesign(m_design_id);
     if (!design)
         return retval;
-    const std::vector<std::string>& parts = design->Parts();
 
-    // TODO: get empire fighter damage
-    float empire_fighter_damage = 4.0f - shield_DR;
+    return WeaponDamageImpl(this, design, shield_DR, false);
+}
 
+std::vector<float> Ship::AllWeaponsMaxDamage(float shield_DR /* = 0.0 */) const {
+    std::vector<float> retval;
+    if (!this)
+        return retval;
+    const ShipDesign* design = GetShipDesign(m_design_id);
+    if (!design)
+        return retval;
 
-    // for each weapon part, get its damage meter value
-    for (std::vector<std::string>::const_iterator part_it = parts.begin();
-         part_it != parts.end(); ++part_it)
-    {
-        const std::string& part_name = *part_it;
-        const PartType* part = GetPartType(part_name);
-        if (!part)
-            continue;
-        ShipPartClass part_class = part->Class();
-
-        // get the attack power for each weapon part
-        if (part_class == PC_DIRECT_WEAPON) {
-            float part_attack = this->CurrentPartMeterValue(METER_CAPACITY, part_name);
-            if (part_attack > shield_DR)
-                retval.push_back(part_attack - shield_DR);
-        } else if (part_class == PC_FIGHTERS && empire_fighter_damage > 0.0f) {
-            // each fighter (number determined by capacity) shoots with the empire fighter strength stat
-            float all_fighters_combined_attack = empire_fighter_damage * this->CurrentPartMeterValue(METER_CAPACITY, part_name);
-            retval.push_back(all_fighters_combined_attack);
-        }
-    }
-    return retval;
+    return WeaponDamageImpl(this, design, shield_DR, true);
 }
 
 void Ship::SetFleetID(int fleet_id) {
