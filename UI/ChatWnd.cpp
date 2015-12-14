@@ -486,6 +486,7 @@ void MessageWnd::MessageHistoryUpRequested() {
         m_history[m_history_position] = m_edit->Text();
         ++m_history_position;
         m_edit->SetText(m_history[m_history_position]);
+        m_edit->SelectRange(m_edit->Length(), m_edit->Length());    // put cursor at end of historical input
     }
 }
 
@@ -494,6 +495,7 @@ void MessageWnd::MessageHistoryDownRequested() {
         m_history[m_history_position] = m_edit->Text();
         --m_history_position;
         m_edit->SetText(m_history[m_history_position]);
+        m_edit->SelectRange(m_edit->Length(), m_edit->Length());    // put cursor at end of historical input
     }
 }
 
