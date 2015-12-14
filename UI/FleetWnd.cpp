@@ -2899,7 +2899,7 @@ void FleetWnd::SetStatIconValues() {
             }
         }
     }
-    
+
     for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it =
         m_stat_icons.begin(); it != m_stat_icons.end(); ++it) 
     {
@@ -3036,7 +3036,7 @@ void FleetWnd::DoLayout() {
     const GG::Y AVAILABLE_HEIGHT(TOTAL_HEIGHT - GG::Y(INNER_BORDER_ANGLE_OFFSET+PAD) - FLEET_STAT_HEIGHT );
     GG::Y top( GG::Y0 + GG::Y(PAD) );
     const GG::Y ROW_HEIGHT(m_fleets_lb->ListRowSize().y);
-    
+
     // position fleet aggregate stat icons
     GG::Pt icon_ul = GG::Pt(GG::X0 + DATA_PANEL_TEXT_PAD, top);
     for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
@@ -3044,7 +3044,7 @@ void FleetWnd::DoLayout() {
         icon_ul.x += StatIconSize().x;
     }
     top += FLEET_STAT_HEIGHT;
-    
+
     // are there any fleets owned by this client's empire int his FleetWnd?
     bool this_client_owns_fleets_in_this_wnd(false);
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
