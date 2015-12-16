@@ -960,9 +960,19 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
-    parse::ship_designs(GetResourceDir() / "premade_ship_designs.txt", m_ship_designs);
+    try {
+        parse::ship_designs(GetResourceDir() / "premade_ship_designs.txt", m_ship_designs);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing premade_ship_designs.txt: error: " << e.what();
+        throw e;
+    }
 
-    parse::ship_designs(GetResourceDir() / "space_monsters.txt", m_monster_designs);
+    try {
+        parse::ship_designs(GetResourceDir() / "space_monsters.txt", m_monster_designs);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing space_monsters.txt: error: " << e.what();
+        throw e;
+    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Predefined Ship Designs:";
