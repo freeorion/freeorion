@@ -213,6 +213,11 @@ Cannot be produced
 ###########################
 # in premade_ship_designs.txt
 
+SD_CARRIER
+Protype Carrier
+SD_CARRIER_DESC
+Prototype design that launches fighters in battle instead of using direct-fire weapons.
+
 SD_SCOUT
 Scout
 SD_SCOUT_DESC
