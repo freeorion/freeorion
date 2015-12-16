@@ -526,7 +526,8 @@ namespace {
             // get the attack power for each weapon part
             float part_attack = 0.0f;
 
-            if (part_class == PC_DIRECT_WEAPON || part_class == PC_FIGHTER_BAY || part_class == PC_FIGHTER_WEAPON)
+            // only care about direct weapons; fighters handled differently
+            if (part_class == PC_DIRECT_WEAPON)
                 part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
 
             if (part_attack > 0.0f)
@@ -536,7 +537,7 @@ namespace {
     }
 
     // Information about a single empire during combat
-    struct EmpireCombatInfo{
+    struct EmpireCombatInfo {
         std::set<int> attacker_ids;
         std::set<int> target_ids;
         bool HasTargets() const     { return !target_ids.empty(); }
@@ -744,6 +745,7 @@ namespace {
                 std::swap(shuffled[i], shuffled[pos2]);
             }
         }
+
     private:
         typedef std::set<int>::const_iterator const_id_iterator;
 
