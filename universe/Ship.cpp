@@ -81,7 +81,8 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
                 break;
             }
             case PC_DIRECT_WEAPON:
-            case PC_FIGHTERS: {
+            case PC_FIGHTER_BAY:
+            case PC_FIGHTER_WEAPON: {
                 m_part_meters[std::make_pair(METER_CAPACITY,    part->Name())];
                 m_part_meters[std::make_pair(METER_MAX_CAPACITY,part->Name())];
                 break;
@@ -445,8 +446,8 @@ namespace {
 
         MeterType METER = max ? METER_MAX_CAPACITY : METER_CAPACITY;
 
-        // TODO: get empire fighter damage
-        float empire_fighter_damage = 4.0f - DR;
+        int fighter_attacks = 0;
+        float fighter_weapon_strength = 0.0f;
 
 
         // for each weapon part, get its damage meter value
@@ -464,12 +465,26 @@ namespace {
                 float part_attack = ship->CurrentPartMeterValue(METER, part_name);
                 if (part_attack > DR)
                     retval.push_back(part_attack - DR);
-            } else if (part_class == PC_FIGHTERS && empire_fighter_damage > 0.0f) {
-                // each fighter (number determined by capacity) shoots with the empire fighter strength stat
-                float all_fighters_combined_attack = empire_fighter_damage * ship->CurrentPartMeterValue(METER, part_name);
-                retval.push_back(all_fighters_combined_attack);
+            } else if (part_class == PC_FIGHTER_WEAPON) {
+                // attack strength of a ship's fighters is the max of the
+                // fighter weapon part strengths on the ship
+                float part_strength = ship->CurrentPartMeterValue(METER, part_name);
+                if (part_strength > DR)
+                    fighter_weapon_strength = std::max(fighter_weapon_strength, part_strength - DR);
+            } else if (part_class = PC_FIGHTER_BAY) {
+                // number of fighters a ship can launch is one per combat round,
+                // and fighters cannot attack on the round they are launched,
+                // but can attack any round after they are launched but have not
+                // been destroyed, so the optimal / ideal number of fighter
+                // attacks a carrier can make is 3x the number of launch bays
+                // the carrier has (the same as a normal weapon)
+                int part_fighter_attacks = static_cast<int>(ship->CurrentPartMeterValue(METER, part_name)*3);
+                fighter_attacks += part_fighter_attacks;
             }
         }
+        // add attacks for fighte?r bays
+        if (fighter_attacks > 0 && fighter_weapon_strength > 0.0f)
+            retval.push_back(fighter_attacks * fighter_weapon_strength);
         return retval;
     }
 }
