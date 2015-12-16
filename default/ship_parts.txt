@@ -37,7 +37,7 @@ Part
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/mass-driver-1.png"
+    icon = "icons/ship_parts/ion_cannon.png"
 
 Part
     name = "SR_WEAPON_1_1"
@@ -48,7 +48,7 @@ Part
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/mass-driver-1.png"
+    icon = "icons/ship_parts/mass-driver.png"
     
 Part
     name = "SR_WEAPON_2_1"
@@ -59,7 +59,7 @@ Part
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/laser-1.png"
+    icon = "icons/ship_parts/laser.png"
     
 Part
     name = "SR_WEAPON_3_1"
@@ -70,7 +70,7 @@ Part
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/plasma-1.png"
+    icon = "icons/ship_parts/plasma.png"
     
 Part
     name = "SR_WEAPON_4_1"
@@ -81,7 +81,7 @@ Part
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
-    icon = "icons/ship_parts/death-ray-1.png"    
+    icon = "icons/ship_parts/death-ray.png"    
 
 Part
     name = "SR_SPINAL_ANTIMATTER"
