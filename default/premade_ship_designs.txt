@@ -13,6 +13,17 @@ ShipDesign
     model = "mark1"
 
 ShipDesign
+    name = "SD_CARRIER"
+    description = "SD_CARRIER_DESC"
+    hull = "SH_BASIC_MEDIUM"
+    parts = [
+        "FT_WEAPON_1"
+        "FT_WEAPON_1"
+        "FT_BAY_1"
+    ]
+    model = "mark1"
+
+ShipDesign
     name = "SD_TROOP_DROP"
     description = "SD_TROOP_DROP_DESC"
     hull = "SH_COLONY_BASE"
