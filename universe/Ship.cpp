@@ -18,6 +18,7 @@ class Species;
 const Species* GetSpecies(const std::string& name);
 
 Ship::Ship() :
+    UniverseObject(),
     m_design_id(ShipDesign::INVALID_DESIGN_ID),
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
@@ -30,6 +31,7 @@ Ship::Ship() :
 
 Ship::Ship(int empire_id, int design_id, const std::string& species_name,
            int produced_by_empire_id/* = ALL_EMPIRES*/) :
+    UniverseObject(),
     m_design_id(design_id),
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
