@@ -117,7 +117,12 @@ PartTypeManager::PartTypeManager() {
 
     s_instance = this;
 
-    parse::ship_parts(GetResourceDir() / "ship_parts.txt", m_parts);
+    try {
+        parse::ship_parts(GetResourceDir() / "ship_parts.txt", m_parts);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing ship_parts.txt: error: " << e.what();
+        throw e;
+    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Part Types:";
@@ -427,7 +432,12 @@ HullTypeManager::HullTypeManager() {
 
     s_instance = this;
 
-    parse::ship_hulls(GetResourceDir() / "ship_hulls.txt", m_hulls);
+    try {
+        parse::ship_hulls(GetResourceDir() / "ship_hulls.txt", m_hulls);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing ship_hulls.txt: error: " << e.what();
+        throw e;
+    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Hull Types:";

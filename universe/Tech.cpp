@@ -328,7 +328,12 @@ TechManager::TechManager() {
 
     std::set<std::string> categories_seen_in_techs;
 
-    parse::techs(GetResourceDir() / "techs.txt", m_techs, m_categories, categories_seen_in_techs);
+    try {
+        parse::techs(GetResourceDir() / "techs.txt", m_techs, m_categories, categories_seen_in_techs);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing techs.txt: error: " << e.what();
+        throw e;
+    }
 
     std::set<std::string> empty_defined_categories;
     for (std::map<std::string, TechCategory*>::iterator map_it = m_categories.begin(); map_it != m_categories.end(); ++map_it) {
