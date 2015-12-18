@@ -326,7 +326,14 @@ SpeciesManager::SpeciesManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one SpeciesManager.");
     s_instance = this;
-    parse::species(GetResourceDir() / "species.txt", m_species);
+
+    try {
+        parse::species(GetResourceDir() / "species.txt", m_species);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing species.txt: error: " << e.what();
+        throw e;
+    }
+
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Species:";
         for (iterator it = begin(); it != end(); ++it) {

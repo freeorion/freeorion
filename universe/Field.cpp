@@ -230,7 +230,12 @@ FieldTypeManager::FieldTypeManager() {
 
     s_instance = this;
 
-    parse::fields(GetResourceDir() / "fields.txt", m_field_types);
+    try {
+        parse::fields(GetResourceDir() / "fields.txt", m_field_types);
+    } catch (const std::exception& e) {
+        ErrorLogger() << "Failed parsing encyclopedia.txt: error: " << e.what();
+        throw e;
+    }
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Field Types:";

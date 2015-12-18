@@ -1211,7 +1211,12 @@ namespace {
 
         DebugLogger() << "Initializing AlignmentManager";
 
-        parse::alignments(GetResourceDir() / "alignments.txt", m_alignments, m_effects_groups);
+        try {
+            parse::alignments(GetResourceDir() / "alignments.txt", m_alignments, m_effects_groups);
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Failed parsing alignments.txt: error: " << e.what();
+            throw e;
+        }
 
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
             DebugLogger() << "Alignments:";

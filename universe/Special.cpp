@@ -16,7 +16,14 @@ namespace {
     class SpecialManager {
     public:
         SpecialManager() {
-            parse::specials(GetResourceDir() / "specials.txt", m_specials);
+
+            try {
+                parse::specials(GetResourceDir() / "specials.txt", m_specials);
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Failed parsing specials.txt: error: " << e.what();
+                throw e;
+            }
+
             if (GetOptionsDB().Get<bool>("verbose-logging")) {
                 DebugLogger() << "Specials:";
                 for (std::map<std::string, Special*>::iterator it = m_specials.begin();
