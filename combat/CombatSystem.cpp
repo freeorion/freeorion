@@ -9,6 +9,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/Fighter.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
@@ -20,6 +21,8 @@
 #include "../network/Message.h"
 
 #include <boost/make_shared.hpp>
+
+
 
 ////////////////////////////////////////////////
 // CombatInfo
@@ -265,9 +268,9 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 namespace {
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_, float part_attack_) :
-        part_class(part_class_),
-        part_type_name(part_name_),
-        part_attack(part_attack_)
+            part_class(part_class_),
+            part_type_name(part_name_),
+            part_attack(part_attack_)
         {}
         ShipPartClass   part_class;
         std::string     part_type_name;
@@ -419,7 +422,9 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void Attack(TemporaryPtr<UniverseObject>& attacker, const PartAttackInfo& weapon, TemporaryPtr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round){
+    void Attack(TemporaryPtr<UniverseObject>& attacker, const PartAttackInfo& weapon,
+                TemporaryPtr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round)
+    {
         TemporaryPtr<Ship>      attack_ship =   boost::dynamic_pointer_cast<Ship>(attacker);
         TemporaryPtr<Planet>    attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
         TemporaryPtr<Ship>      target_ship =   boost::dynamic_pointer_cast<Ship>(target);
@@ -816,9 +821,10 @@ namespace {
         }
     };
 
-    const std::set<int> ValidTargetsForAttackerType(TemporaryPtr<UniverseObject>& attacker, 
-                                                     AutoresolveInfo& combat_state,
-                                                     const std::set<int>& potential_target_ids) {
+    const std::set<int> ValidTargetsForAttackerType(TemporaryPtr<UniverseObject>& attacker,
+                                                    AutoresolveInfo& combat_state,
+                                                    const std::set<int>& potential_target_ids)
+    {
         // currently, only planets are restricted as to what target types they can attack
         if (attacker->ObjectType() != OBJ_PLANET)
             return potential_target_ids;
@@ -845,10 +851,8 @@ namespace {
         return valid_target_ids;
     }
 
-    void ShootAllWeapons(TemporaryPtr<UniverseObject>& attacker,
-                         const std::vector<PartAttackInfo>& weapons,
-                         AutoresolveInfo& combat_state,
-                         int bout, int round)
+    void ShootAllWeapons(TemporaryPtr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
+                         AutoresolveInfo& combat_state, int bout, int round)
     {
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
         if (weapons.empty()) {
