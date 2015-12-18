@@ -216,6 +216,7 @@
     <ClInclude Include="..\..\universe\Encyclopedia.h" />
     <ClInclude Include="..\..\universe\Enums.h" />
     <ClInclude Include="..\..\universe\Field.h" />
+    <ClInclude Include="..\..\universe\Fighter.h" />
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\util\blocking_combiner.h" />
     <ClInclude Include="..\..\universe\Meter.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
+    <ClCompile Include="..\..\universe\Fighter.cpp" />
     <ClCompile Include="..\..\util\DependencyVersions.cpp" />
     <ClCompile Include="..\..\util\EnumText.cpp" />
     <ClCompile Include="..\..\util\SaveGamePreviewUtils.cpp" />
