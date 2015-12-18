@@ -9,6 +9,7 @@ class Planet;
 class Ship;
 class System;
 class Field;
+class Fighter;
 
 #include <boost/mpl/assert.hpp>
 #include <boost/pointer_cast.hpp>
@@ -42,6 +43,7 @@ struct FO_COMMON_API UniverseObjectVisitor {
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Ship> obj) const;
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<System> obj) const;
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Field> obj) const;
+    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fighter> obj) const;
     virtual ~UniverseObjectVisitor();
 };
 

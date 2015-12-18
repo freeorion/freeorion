@@ -226,6 +226,9 @@
     <ClInclude Include="..\..\combat\CombatLogManager.h">
       <Filter>Header Files\combat</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\Fighter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -398,6 +401,9 @@
     </ClCompile>
     <ClCompile Include="..\..\util\DependencyVersions.cpp">
       <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Fighter.cpp">
+      <Filter>Source Files\universe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

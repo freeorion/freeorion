@@ -166,6 +166,7 @@ set (freeorioncommon_HEADER
     universe/Encyclopedia.h
     universe/Enums.h
     universe/Field.h
+    universe/Fighter.h
     universe/Fleet.h
     universe/Meter.h
     universe/ObjectMap.h
@@ -227,6 +228,7 @@ set (freeorioncommon_SOURCE
     universe/Encyclopedia.cpp
     universe/Enums.cpp
     universe/Field.cpp
+    universe/Fighter.cpp
     universe/Fleet.cpp
     universe/Meter.cpp
     universe/ObjectMap.cpp

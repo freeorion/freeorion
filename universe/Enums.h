@@ -19,6 +19,7 @@ GG_ENUM(UniverseObjectType,
     OBJ_PROD_CENTER,
     OBJ_SYSTEM,
     OBJ_FIELD,
+    OBJ_FIGHTER,
     NUM_OBJ_TYPES
 )
 
