@@ -122,8 +122,8 @@ Hull
         [[UNOWNED_GOOD_VISION]]
         [[UNOWNED_MOVE]]
     ]
-    icon = "icons/ship_hulls/generic_hull.png"
-    graphic = "hulls_design/generic_hull.png"
+    icon = "icons/ship_hulls/basic-large-hull.png"
+    graphic = "hulls_design/basic-large-hull.png"
 
 Hull
     name = "SH_ROBOTIC"
