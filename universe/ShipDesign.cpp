@@ -193,8 +193,12 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
         case PC_TROOPS:
             m_effects.push_back(IncreaseMeter(METER_CAPACITY,       m_name, m_capacity, false));
             break;
+        case PC_FIGHTER_HANGAR:
+        case PC_FIGHTER_BAY: {
+            m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
+            break;
+        }
         case PC_DIRECT_WEAPON:
-        case PC_FIGHTER_BAY:
         case PC_FIGHTER_WEAPON: {
             m_effects.push_back(IncreaseMeter(METER_MAX_CAPACITY,   m_name, m_capacity, false));
             break;
@@ -254,6 +258,7 @@ const std::string PartType::CapacityDescription() const {
     case PC_TROOPS:
     case PC_COLONY:
     case PC_FIGHTER_BAY:
+    case PC_FIGHTER_HANGAR:
         desc_string += UserString("PART_DESC_CAPACITY");
         break;
     case PC_SHIELD:
@@ -661,7 +666,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
     const PartTypeManager& manager = GetPartTypeManager();
 
     // TODO: get empire fighter damage, adjusted for specified shield strength
-    float ship_fighter_damage = 4.0f - shield;
+    float ship_fighter_damage;
 
     float total_attack = 0.0f;
     std::vector<std::string> all_parts = Parts();

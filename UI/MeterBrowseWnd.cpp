@@ -509,6 +509,5 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         m_effect_labels_and_values.push_back(std::make_pair(label, value));
 
         top += m_row_height;
-
     }
 }

@@ -84,6 +84,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
             }
             case PC_DIRECT_WEAPON:
             case PC_FIGHTER_BAY:
+            case PC_FIGHTER_HANGAR:
             case PC_FIGHTER_WEAPON: {
                 m_part_meters[std::make_pair(METER_CAPACITY,    part->Name())];
                 m_part_meters[std::make_pair(METER_MAX_CAPACITY,part->Name())];

@@ -270,14 +270,29 @@ namespace {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_, float part_attack_) :
             part_class(part_class_),
             part_type_name(part_name_),
-            part_attack(part_attack_)
+            part_attack(part_attack_),
+            fighters_launched(0),
+            fighter_damage(0.0f)
         {}
+        PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_,
+                       int fighters_launched_, float fighter_damage_) :
+            part_class(part_class_),
+            part_type_name(part_name_),
+            part_attack(0.0f),
+            fighters_launched(fighters_launched_),
+            fighter_damage(fighter_damage_)
+        {}
+
         ShipPartClass   part_class;
         std::string     part_type_name;
-        float           part_attack;
+        float           part_attack;        // for direct damage parts
+        int             fighters_launched;  // for fighter bays, input value should be limited by ship available fighters to launch
+        float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
     };
 
-    void AttackShipShip(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Ship> target, CombatInfo& combat_info, int bout, int round) {
+    void AttackShipShip(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Ship> target,
+                        CombatInfo& combat_info, int bout, int round)
+    {
         if (!attacker || ! target) return;
 
         std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
@@ -311,7 +326,9 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackShipPlanet(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Planet> target, CombatInfo& combat_info, int bout, int round) {
+    void AttackShipPlanet(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Planet> target,
+                          CombatInfo& combat_info, int bout, int round)
+    {
         if (!attacker || ! target) return;
         if (damage <= 0.0f)
             return;
@@ -382,7 +399,13 @@ namespace {
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
-    void AttackPlanetShip(TemporaryPtr<Planet> attacker, TemporaryPtr<Ship> target, CombatInfo& combat_info, int bout, int round) {
+    void AttackShipFighter(TemporaryPtr<Ship> attacker, float damage, TemporaryPtr<Fighter> target,
+                           CombatInfo& combat_info, int bout, int round)
+    {}
+
+    void AttackPlanetShip(TemporaryPtr<Planet> attacker, TemporaryPtr<Ship> target,
+                          CombatInfo& combat_info, int bout, int round)
+    {
         if (!attacker || ! target) return;
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
@@ -422,23 +445,53 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
+    void AttackPlanetFighter(TemporaryPtr<Planet> attacker, TemporaryPtr<Fighter> target,
+                             CombatInfo& combat_info, int bout, int round)
+    {}
+
+    void AttackFighterShip(TemporaryPtr<Fighter> attacker, TemporaryPtr<Ship> target,
+                           CombatInfo& combat_info, int bout, int round)
+    {}
+
+    void AttackFighterPlanet(TemporaryPtr<Fighter> attacker, TemporaryPtr<Planet> target,
+                             CombatInfo& combat_info, int bout, int round)
+    {}
+
+    void AttackFighterFighter(TemporaryPtr<Fighter> attacker, TemporaryPtr<Fighter> target,
+                              CombatInfo& combat_info, int bout, int round)
+    {}
+
+
     void Attack(TemporaryPtr<UniverseObject>& attacker, const PartAttackInfo& weapon,
                 TemporaryPtr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round)
     {
         TemporaryPtr<Ship>      attack_ship =   boost::dynamic_pointer_cast<Ship>(attacker);
         TemporaryPtr<Planet>    attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
+        TemporaryPtr<Fighter>   attack_fighter =boost::dynamic_pointer_cast<Fighter>(attacker);
         TemporaryPtr<Ship>      target_ship =   boost::dynamic_pointer_cast<Ship>(target);
         TemporaryPtr<Planet>    target_planet = boost::dynamic_pointer_cast<Planet>(target);
+        TemporaryPtr<Fighter>   target_fighter =boost::dynamic_pointer_cast<Fighter>(target);
 
         if (attack_ship && target_ship) {
             AttackShipShip(attack_ship, weapon.part_attack, target_ship, combat_info, bout, round);
         } else if (attack_ship && target_planet) {
             AttackShipPlanet(attack_ship, weapon.part_attack, target_planet, combat_info, bout, round);
+        } else if (attack_ship && target_fighter) {
+            AttackShipFighter(attack_ship, weapon.part_attack, target_fighter, combat_info, bout, round);
         } else if (attack_planet && target_ship) {
             AttackPlanetShip(attack_planet, target_ship, combat_info, bout, round);
         } else if (attack_planet && target_planet) {
             // Planets don't attack each other, silly
+        } else if (attack_planet && target_fighter) {
+            AttackPlanetFighter(attack_planet, target_fighter, combat_info, bout, round);
+        } else if (attack_fighter && target_ship) {
+            AttackFighterShip(attack_fighter, target_ship, combat_info, bout, round);
+        } else if (attack_fighter && target_planet) {
+            AttackFighterPlanet(attack_fighter, target_planet, combat_info, bout, round);
+        } else if (attack_fighter && target_fighter) {
+            AttackFighterFighter(attack_fighter, target_fighter, combat_info, bout, round);
         }
+
     }
 
     bool ObjectCanBeAttacked(TemporaryPtr<const UniverseObject> obj) {
@@ -531,12 +584,17 @@ namespace {
             // get the attack power for each weapon part
             float part_attack = 0.0f;
 
-            // only care about direct weapons; fighters handled differently
-            if (part_class == PC_DIRECT_WEAPON)
+            // direct weapons and fighters handled differently...
+            if (part_class == PC_DIRECT_WEAPON) {
                 part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
+                if (part_attack > 0.0f)
+                    retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
 
-            if (part_attack > 0.0f)
-                retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
+            } else if (part_class == PC_FIGHTER_BAY) {
+                // check available fighters
+                // launch up this part's capacity this round... (limited by total available)
+
+            }
         }
         return retval;
     }
