@@ -115,6 +115,7 @@
     (Field)                                     \
     (FieldType)                                 \
     (FighterBay)                                \
+    (FighterHangar)                             \
     (FighterWeapon)                             \
     (FinalDestinationID)                        \
     (Fleet)                                     \
