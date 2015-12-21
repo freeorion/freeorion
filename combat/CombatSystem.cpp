@@ -571,7 +571,11 @@ namespace {
             return retval;
         const std::vector<std::string>& parts = design->Parts();
 
-        // for each weapon part, get its damage meter value
+        int available_fighters = 0;
+        float fighter_attack = 0.0f;
+        std::multimap<std::string, int> part_fighter_launch_capacities;
+
+        // determine what ship does during combat, based on parts and their meters...
         for (std::vector<std::string>::const_iterator part_it = parts.begin();
              part_it != parts.end(); ++part_it)
         {
@@ -581,21 +585,35 @@ namespace {
                 continue;
             ShipPartClass part_class = part->Class();
 
-            // get the attack power for each weapon part
-            float part_attack = 0.0f;
-
-            // direct weapons and fighters handled differently...
+            // direct weapon and fighter-related parts all handled differently...
             if (part_class == PC_DIRECT_WEAPON) {
-                part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
+                float part_attack = ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
                 if (part_attack > 0.0f)
                     retval.push_back(PartAttackInfo(part_class, part_name, part_attack));
-
+            } else if (part_class == PC_FIGHTER_HANGAR) {
+                available_fighters += ship->CurrentPartMeterValue(METER_CAPACITY, part_name);
             } else if (part_class == PC_FIGHTER_BAY) {
-                // check available fighters
-                // launch up this part's capacity this round... (limited by total available)
-
+                part_fighter_launch_capacities.insert(std::make_pair(part_name, ship->CurrentPartMeterValue(METER_CAPACITY, part_name)));
+            } else if (part_class == PC_FIGHTER_WEAPON) {
+                fighter_attack = std::max(fighter_attack, ship->CurrentPartMeterValue(METER_CAPACITY, part_name));
             }
         }
+
+        if (available_fighters > 0 && !part_fighter_launch_capacities.empty()) {
+            int launched_fighters = 0;
+            for (std::multimap<std::string, int>::iterator launch_it = part_fighter_launch_capacities.begin();
+                 launch_it != part_fighter_launch_capacities.end(); ++launch_it)
+            {
+                int to_launch = std::min(launch_it->second, available_fighters);
+                if (to_launch <= 0)
+                    continue;
+                retval.push_back(PartAttackInfo(PC_FIGHTER_BAY, launch_it->first, to_launch, fighter_attack)); // attack may be 0; that's ok: decoys
+                available_fighters -= to_launch;
+                if (available_fighters <= 0)
+                    break;
+            }
+        }
+
         return retval;
     }
 
