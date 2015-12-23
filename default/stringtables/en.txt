@@ -6383,8 +6383,12 @@ Empty
 
 PC_DIRECT_WEAPON
 Direct Weapon
-PC_FIGHTERS
-Fighters
+PC_FIGHTER_WEAPON
+Fighter Weapon
+PC_FIGHTER_HANGAR
+Fighter Hangar
+PC_FIGHTER_BAY
+Fighter Launch Bay
 PC_SHIELD
 Shields
 PC_ARMOUR
@@ -9622,7 +9626,12 @@ Prototype weapon system for use with fighters. Does not function as a ship weapo
 FT_BAY_1
 Fighter Bay
 FT_BAY_1_DESC
-Prototype storage and launch system for independently piloted combat craft.
+Prototype launch system for fighters.
+
+FT_HANGAR_1
+Fighter Hangar
+FT_HANGAR_1_DESC
+Prototype storage system for fighters.
 
 SR_WEAPON_1_1
 Mass Driver

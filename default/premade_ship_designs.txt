@@ -18,8 +18,8 @@ ShipDesign
     hull = "SH_BASIC_MEDIUM"
     parts = [
         "FT_WEAPON_1"
-        "FT_WEAPON_1"
         "FT_BAY_1"
+        "FT_HANGAR_1"
     ]
     model = "mark1"
 
