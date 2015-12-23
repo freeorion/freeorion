@@ -14,6 +14,7 @@ Fleet
     name = "FN_BATTLE_FLEET"
     ships = [
         "SD_MARK_1"
+        "SD_CARRIER"
     ]
     
 Fleet
