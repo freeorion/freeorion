@@ -383,7 +383,7 @@ ShipDesign
     hull = "SH_BLACK_KRAKEN_BODY"
     parts = [
         ""
-        "SP_BIOTERM"
+        "SP_CHAOS_WAVE"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
         "ST_CLOAK_1"
@@ -397,7 +397,7 @@ ShipDesign
     hull = "SH_BLOATED_JUGGERNAUT_BODY"
     parts = [
         ""
-        "SP_BIOTERM"
+        "SP_CHAOS_WAVE"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
         "SR_WEAPON_4_1"
@@ -412,7 +412,7 @@ ShipDesign
     description = "SM_PSIONIC_SNOWFLAKE_DESC"
     hull = "SH_PSIONIC_SNOWFLAKE_BODY"
     parts = [
-        "SP_BIOTERM"
+        "SP_CHAOS_WAVE"
         "SR_WEAPON_4_1"
         ""
         "ST_CLOAK_3"
