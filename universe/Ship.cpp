@@ -426,17 +426,19 @@ float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) 
     return 0.0f;
 }
 
-float Ship::TotalWeaponsDamage(float shield_DR /* = 0.0 */) const {
+float Ship::TotalWeaponsDamage(float shield_DR, bool include_fighters) const {
     // sum up all individual weapons' attack strengths
     float total_attack = 0.0;
-    std::vector<float> all_weapons_damage = AllWeaponsDamage(shield_DR);
+    std::vector<float> all_weapons_damage = AllWeaponsDamage(shield_DR, include_fighters);
     for (std::vector<float>::iterator it = all_weapons_damage.begin(); it != all_weapons_damage.end(); ++it)
         total_attack += *it;
     return total_attack;
 }
 
 namespace {
-    std::vector<float> WeaponDamageImpl(const Ship* ship, const ShipDesign* design, float DR, bool max = false) {
+    std::vector<float> WeaponDamageImpl(const Ship* ship, const ShipDesign* design,
+                                        float DR, bool max, bool include_fighters)
+    {
         std::vector<float> retval;
 
         if (!ship)
@@ -468,13 +470,13 @@ namespace {
                 float part_attack = ship->CurrentPartMeterValue(METER, part_name);
                 if (part_attack > DR)
                     retval.push_back(part_attack - DR);
-            } else if (part_class == PC_FIGHTER_WEAPON) {
+            } else if (part_class == PC_FIGHTER_WEAPON && include_fighters) {
                 // attack strength of a ship's fighters is the max of the
                 // fighter weapon part strengths on the ship
                 float part_strength = ship->CurrentPartMeterValue(METER, part_name);
                 if (part_strength > DR)
                     fighter_weapon_strength = std::max(fighter_weapon_strength, part_strength - DR);
-            } else if (part_class = PC_FIGHTER_BAY) {
+            } else if (part_class == PC_FIGHTER_BAY && include_fighters) {
                 // number of fighters a ship can launch is one per combat round,
                 // and fighters cannot attack on the round they are launched,
                 // but can attack any round after they are launched but have not
@@ -485,14 +487,14 @@ namespace {
                 fighter_attacks += part_fighter_attacks;
             }
         }
-        // add attacks for fighte?r bays
-        if (fighter_attacks > 0 && fighter_weapon_strength > 0.0f)
+        // add attacks for fighter bays
+        if (include_fighters && fighter_attacks > 0 && fighter_weapon_strength > 0.0f)
             retval.push_back(fighter_attacks * fighter_weapon_strength);
         return retval;
     }
 }
 
-std::vector<float> Ship::AllWeaponsDamage(float shield_DR /* = 0.0 */) const {
+std::vector<float> Ship::AllWeaponsDamage(float shield_DR, bool include_fighters) const {
     std::vector<float> retval;
     if (!this)
         return retval;
@@ -500,10 +502,10 @@ std::vector<float> Ship::AllWeaponsDamage(float shield_DR /* = 0.0 */) const {
     if (!design)
         return retval;
 
-    return WeaponDamageImpl(this, design, shield_DR, false);
+    return WeaponDamageImpl(this, design, shield_DR, false, include_fighters);
 }
 
-std::vector<float> Ship::AllWeaponsMaxDamage(float shield_DR /* = 0.0 */) const {
+std::vector<float> Ship::AllWeaponsMaxDamage(float shield_DR , bool include_fighters) const {
     std::vector<float> retval;
     if (!this)
         return retval;
@@ -511,7 +513,7 @@ std::vector<float> Ship::AllWeaponsMaxDamage(float shield_DR /* = 0.0 */) const 
     if (!design)
         return retval;
 
-    return WeaponDamageImpl(this, design, shield_DR, true);
+    return WeaponDamageImpl(this, design, shield_DR, true, include_fighters);
 }
 
 void Ship::SetFleetID(int fleet_id) {
